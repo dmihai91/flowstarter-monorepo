@@ -1,0 +1,62 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background glow -->
+  <circle cx="32" cy="32" r="28" fill="url(#bgGlow)" opacity="0.12"/>
+  
+  <!-- Flow lines with brand purple gradient -->
+  <path d="M 16 42 L 24 34 L 30 30 L 36 28 L 48 24" 
+        stroke="url(#flowGradient1)" 
+        stroke-width="2" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"
+        fill="none"
+        opacity="0.7"/>
+  
+  <path d="M 16 34 L 26 26 L 34 22 L 48 18" 
+        stroke="url(#flowGradient2)" 
+        stroke-width="3.5" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"
+        fill="none"/>
+  
+  <path d="M 16 48 L 22 42 L 28 38 L 34 34 L 42 30" 
+        stroke="url(#flowGradient3)" 
+        stroke-width="1.8" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"
+        fill="none"
+        opacity="0.6"/>
+  
+  <!-- Animated endpoint accent -->
+  <circle cx="48" cy="18" r="2.5" fill="url(#accentGradient)" opacity="0.95">
+    <animate attributeName="opacity" values="0.75;1;0.75" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="48" cy="18" r="5" stroke="url(#accentGradient)" stroke-width="0.6" fill="none" opacity="0.4">
+    <animate attributeName="opacity" values="0.25;0.5;0.25" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+  
+  <defs>
+    <!-- Brand purple gradients -->
+    <linearGradient id="flowGradient1" x1="16" y1="42" x2="48" y2="24" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7982ec" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#4d5dd9"/>
+    </linearGradient>
+    <linearGradient id="flowGradient2" x1="16" y1="34" x2="48" y2="18" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9098f2" stop-opacity="0.7"/>
+      <stop offset="0.4" stop-color="#6d75eb"/>
+      <stop offset="1" stop-color="#4d5dd9"/>
+    </linearGradient>
+    <linearGradient id="flowGradient3" x1="16" y1="48" x2="42" y2="30" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9098f2" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#6d75eb" stop-opacity="0.8"/>
+    </linearGradient>
+    <radialGradient id="accentGradient" cx="0.5" cy="0.5" r="0.5">
+      <stop stop-color="#6d75eb"/>
+      <stop offset="1" stop-color="#4d5dd9"/>
+    </radialGradient>
+    <radialGradient id="bgGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+      gradientTransform="translate(32 32) scale(28)">
+      <stop stop-color="#4d5dd9" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#4d5dd9" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

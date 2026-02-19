@@ -1,0 +1,24 @@
+echo "🔍 Running pre-commit checks..."
+
+# Run linter
+echo "\n📝 Running linter..."
+pnpm lint || {
+  echo "❌ Linting failed. Please fix the issues and try again."
+  exit 1
+}
+
+# Run type checking
+echo "\n🔧 Running type check..."
+pnpm tsc --noEmit || {
+  echo "❌ Type checking failed. Please fix the issues and try again."
+  exit 1
+}
+
+# Run tests
+echo "\n🧪 Running tests..."
+NODE_OPTIONS="--max-old-space-size=8192" pnpm test || {
+  echo "❌ Tests failed. Please fix the tests and try again."
+  exit 1
+}
+
+echo "\n✅ All pre-commit checks passed!"

@@ -1,0 +1,21 @@
+{
+  "name": "@flowstarter/library",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Template library for the Flowstarter AI-powered website builder",
+  "scripts": {
+    "dev": "astro dev"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.0",
+    "@supabase/supabase-js": "^2.89.0",
+    "@tailwindcss/vite": "^4.1.18",
+    "playwright": "^1.57.0",
+    "tailwindcss": "^4.1.18"
+  },
+  "devDependencies": {
+    "@tanstack/router-generator": "^1.141.2",
+    "puppeteer": "^24.36.0",
+    "astro": "4.0.0"
+  }
+}

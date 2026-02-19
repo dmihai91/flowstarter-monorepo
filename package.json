@@ -1,0 +1,41 @@
+
+
+
+
+{
+  "name": "flowstarter",
+  "version": "0.0.1",
+  "license": "MIT",
+  "private": true,
+  "packageManager": "pnpm@10.29.2",
+  "scripts": {
+    "dev": "pnpm nx run-many -t dev --output-style=stream",
+    "dev:main": "pnpm nx run flowstarter-main:dev --output-style=stream",
+    "dev:editor": "pnpm nx run flowstarter-editor:dev --output-style=stream",
+    "dev:library": "pnpm --filter @flowstarter/mcp-server run dev:http",
+    "dev:showcase": "pnpm nx run flowstarter-showcase:dev --output-style=stream",
+    "dev:editor:all": "mprocs --config mprocs.yaml",
+    "build:all": "pnpm nx run-many -t build --output-style=stream",
+    "lint:all": "pnpm nx run-many -t lint --output-style=stream --fix",
+    "dev:all": "mprocs --config mprocs-all.yaml",
+    "dev:supabase": "pnpm --filter flowstarter-main db:start"
+  },
+  "devDependencies": {
+    "@nx/eslint": "^22.4.5",
+    "@nx/js": "^22.4.5",
+    "@nx/next": "^22.4.5",
+    "@nx/node": "^22.4.5",
+    "@nx/react": "^22.4.5",
+    "@nx/remix": "^22.4.5",
+    "@swc-node/register": "~1.9.1",
+    "@swc/core": "~1.5.7",
+    "@swc/helpers": "~0.5.11",
+    "@types/node": "20.19.9",
+    "concurrently": "^7.6.0",
+    "mprocs": "^0.8.3",
+    "nx": "22.4.5",
+    "prettier": "~3.6.2",
+    "tslib": "^2.3.0",
+    "typescript": "~5.7.2"
+  }
+}

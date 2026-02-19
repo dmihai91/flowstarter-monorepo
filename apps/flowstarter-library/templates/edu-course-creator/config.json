@@ -1,0 +1,75 @@
+{
+  "name": "Course Creator Pro",
+  "slug": "edu-course-creator",
+  "description": "Modern template for online course creators and educators. Course catalog, student reviews, pricing tiers, and enrollment system. Perfect for selling digital courses and coaching programs.",
+  "category": "education",
+  "tags": [
+    "course",
+    "creator",
+    "education",
+    "tutor",
+    "instructor",
+    "online-learning",
+    "training",
+    "skills"
+  ],
+  "framework": "astro",
+  "features": [
+    "Multi-page",
+    "Course catalog",
+    "Pricing tiers",
+    "Booking integration",
+    "Newsletter integration",
+    "Testimonials",
+    "FAQ",
+    "Dark mode"
+  ],
+  "integrations": {
+    "booking": {
+      "name": "Booking System",
+      "description": "Connect Calendly for 1-on-1 mentoring sessions",
+      "providers": [
+        {
+          "id": "calendly",
+          "name": "Calendly",
+          "field": "calendly_url",
+          "placeholder": "https://calendly.com/your-username/mentoring"
+        },
+        {
+          "id": "calcom",
+          "name": "Cal.com",
+          "field": "calcom_url",
+          "placeholder": "https://cal.com/your-username/mentoring"
+        }
+      ],
+      "optional": true,
+      "configPath": "content/integrations/booking.md"
+    },
+    "newsletter": {
+      "name": "Newsletter",
+      "description": "Connect to build your email list with free resources",
+      "providers": [
+        {
+          "id": "mailchimp",
+          "name": "Mailchimp",
+          "field": "mailchimp_url",
+          "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+        },
+        {
+          "id": "convertkit",
+          "name": "ConvertKit",
+          "field": "convertkit_form_id",
+          "placeholder": "1234567"
+        },
+        {
+          "id": "buttondown",
+          "name": "Buttondown",
+          "field": "buttondown_username",
+          "placeholder": "your-username"
+        }
+      ],
+      "optional": true,
+      "configPath": "content/integrations/newsletter.md"
+    }
+  }
+}

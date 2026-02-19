@@ -1,0 +1,21 @@
+{
+  "id": "ocean-calm",
+  "name": "Ocean Calm",
+  "description": "Peaceful and reassuring. Great for mental health practitioners.",
+  "colors": {
+    "primary": "#5B8FA8",
+    "primary-dark": "#4A7A91",
+    "secondary": "#8FBCD4",
+    "accent": "#E8B4A0",
+    "background": "#F7FAFB",
+    "surface": "#FFFFFF",
+    "text": "#2C3E4A",
+    "text-muted": "#6B8494"
+  },
+  "fonts": {
+    "heading": "Libre Baskerville",
+    "body": "Open Sans",
+    "weights": { "heading": "700", "body": "400" }
+  },
+  "preview": { "gradient": "from-cyan-600 to-sky-400" }
+}

@@ -1,0 +1,366 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Icon } from 'astro-icon/components';
+
+interface Service {
+  icon: string;
+  title: string;
+  description: string;
+  price: string;
+}
+
+interface Approach {
+  title: string;
+  description: string;
+}
+
+interface Testimonial {
+  quote: string;
+  author: string;
+  role: string;
+  result: string;
+}
+
+interface FAQ {
+  question: string;
+  answer: string;
+}
+
+interface Credential {
+  text: string;
+}
+
+const services: Service[] = [
+  { icon: "lucide:crown", title: "Executive Coaching", description: "High-impact 1-on-1 coaching for C-suite leaders. Navigate high-stakes decisions, strengthen executive presence, and lead with vision and purpose.", price: "$500/session" },
+  { icon: "lucide:briefcase", title: "Business Coaching", description: "Scale your business with confidence. Strategic planning, leadership development, and accountability frameworks for entrepreneurs and founders.", price: "$350/session" },
+  { icon: "lucide:heart", title: "Life Coaching", description: "Gain clarity on your purpose, break through limiting beliefs, and design a life that truly fulfills you. Personal growth starts here.", price: "$200/session" },
+  { icon: "lucide:graduation-cap", title: "Career Coaching", description: "Navigate career transitions, land promotions, and build a career aligned with your values. From pivot to purpose with clarity and confidence.", price: "$200/session" },
+  { icon: "lucide:users", title: "Group Mastermind", description: "Accelerate growth with peer accountability. Monthly group sessions with like-minded professionals for collective breakthroughs.", price: "$150/month" },
+  { icon: "lucide:sparkles", title: "Intensive Programs", description: "90-day transformation programs with weekly sessions, structured milestones, and deep accountability. For clients ready for rapid, lasting change.", price: "Custom pricing" },
+];
+
+const approach: Approach[] = [
+  { title: "Goal Clarity", description: "We start by getting crystal clear on what you truly want. Through deep inquiry and assessment, we define your vision, identify obstacles, and create a compelling roadmap for your transformation." },
+  { title: "Accountability Framework", description: "I provide structured accountability that keeps you on track. Weekly check-ins, progress tracking, and honest feedback ensure you follow through on your commitments and stay aligned with your goals." },
+  { title: "Mindset Mastery", description: "We identify and rewire the limiting beliefs, patterns, and stories that hold you back. Through proven cognitive techniques, you develop an empowered mindset that supports lasting change." },
+  { title: "Action Planning", description: "Every session ends with clear, actionable next steps. We break big goals into manageable milestones, so you always know exactly what to do next to move forward with confidence." },
+];
+
+const testimonials: Testimonial[] = [
+  { quote: "I was stuck in a career that drained me for years. Within 6 months of working with James, I had the clarity to make my move, landed my dream role, and negotiated a 40% salary increase. The ROI was incredible.", author: "Rachel T.", role: "Senior Product Director", result: "Career pivot + 40% raise" },
+  { quote: "As a first-time founder, I was making decisions from fear and uncertainty. Business coaching helped me develop a clear growth strategy, set boundaries, and scale from $80K to $600K in revenue within 18 months.", author: "Marcus D.", role: "Tech Startup Founder", result: "7x revenue growth" },
+  { quote: "Executive coaching transformed how I lead. I went from burning out and micromanaging to delegating effectively and leading with purpose. My team engagement scores are up 35%, and I actually enjoy my work again.", author: "Christine W.", role: "VP of Operations", result: "Sustainable leadership transformation" },
+];
+
+const faqs: FAQ[] = [
+  { question: "What happens in a typical coaching session?", answer: "Each session begins with a check-in on your progress since our last meeting. We then dive into the key challenges or opportunities you are facing, using targeted questions and exercises to create breakthroughs. Every session ends with clear action items and accountability commitments. Sessions are 60 minutes and conducted via video call or in person." },
+  { question: "How often should I have coaching sessions?", answer: "Most clients see the best results with weekly or bi-weekly sessions. Weekly sessions create stronger momentum and faster results, while bi-weekly works well for maintenance and ongoing development. We will determine the right cadence based on your goals and schedule during our discovery call." },
+  { question: "What is the ROI of coaching?", answer: "The International Coaching Federation reports that 86% of companies that invested in coaching saw a positive ROI. My clients typically report outcomes like salary increases of 20-50%, revenue growth, improved leadership effectiveness, better work-life balance, and greater clarity and confidence in decision-making." },
+  { question: "Do you offer virtual coaching sessions?", answer: "Absolutely. The majority of my clients work with me virtually via secure video calls. Virtual coaching is just as effective as in-person sessions and offers the flexibility to work together regardless of location. I also offer in-person sessions in Austin, TX for local clients." },
+  { question: "How is coaching different from therapy?", answer: "While therapy typically focuses on healing past wounds and addressing mental health concerns, coaching is future-focused and action-oriented. Coaching assumes you are resourceful and capable, and helps you bridge the gap between where you are and where you want to be. I focus on goals, performance, accountability, and creating measurable results." },
+];
+
+const credentials: string[] = [
+  "ICF Professional Certified Coach (PCC)",
+  "Certified Executive Coach - Columbia University",
+  "MBA, Harvard Business School",
+  "12+ Years Coaching Experience",
+];
+---
+
+<Layout>
+  <!-- Hero Section -->
+  <section class="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
+    <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/5 dark:from-slate-800/50 to-transparent opacity-50"></div>
+    <div class="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl"></div>
+    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div>
+          <p class="text-primary font-medium mb-4 flex items-center gap-2">
+            <Icon name="lucide:award" class="w-5 h-5" />
+            ICF Certified Professional Coach
+          </p>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-semibold text-slate-800 dark:text-white leading-tight mb-6">
+            Unlock Your True <span class="text-primary">Potential</span>
+          </h1>
+          <p class="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-lg">
+            I'm James Parker, and I help ambitious professionals and entrepreneurs break through limitations, gain clarity, and achieve extraordinary results in life, career, and business.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 mb-8">
+            <a href="#contact" class="btn-primary">
+              Book a Discovery Call
+              <Icon name="lucide:arrow-right" class="w-5 h-5 ml-2" />
+            </a>
+            <a href="#services" class="btn-outline">View Programs</a>
+          </div>
+          <div class="flex items-center gap-6 text-sm text-slate-500 dark:text-slate-400">
+            <div class="flex items-center gap-2">
+              <Icon name="lucide:video" class="w-4 h-4 text-primary" />
+              Virtual Sessions Available
+            </div>
+            <div class="flex items-center gap-2">
+              <Icon name="lucide:globe" class="w-4 h-4 text-primary" />
+              Clients Worldwide
+            </div>
+          </div>
+        </div>
+        <div class="relative">
+          <div class="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl transform rotate-3"></div>
+          <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&h=700&fit=crop&crop=face" alt="James Parker, Certified Coach" class="relative rounded-3xl shadow-xl w-full object-cover aspect-[5/6]" />
+          <div class="absolute -bottom-6 -left-6 bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-lg">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="text-center">
+                <div class="text-2xl font-serif font-bold text-slate-800 dark:text-white">500+</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400">Clients Coached</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-serif font-bold text-slate-800 dark:text-white">96%</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400">Goal Achievement</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-serif font-bold text-slate-800 dark:text-white">12</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400">Years Experience</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-serif font-bold text-slate-800 dark:text-white">4.9</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400">Client Rating</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-20 bg-sage-50 dark:bg-slate-800/50 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="order-2 lg:order-1">
+          <div class="grid grid-cols-2 gap-4">
+            <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=300&h=400&fit=crop" alt="Modern coaching office" class="rounded-2xl shadow-md w-full object-cover aspect-[3/4]" />
+            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=300&h=400&fit=crop" alt="Coaching session" class="rounded-2xl shadow-md w-full object-cover aspect-[3/4] mt-8" />
+          </div>
+        </div>
+        <div class="order-1 lg:order-2">
+          <p class="text-primary font-medium mb-4">About Me</p>
+          <h2 class="text-3xl md:text-4xl font-serif font-semibold text-slate-800 dark:text-white mb-6">
+            Your Partner in Transformation
+          </h2>
+          <p class="text-slate-600 dark:text-slate-400 mb-6">
+            For over 12 years, I have been coaching leaders, entrepreneurs, and professionals through pivotal moments in their careers and lives. My approach blends strategic thinking with deep personal insight.
+          </p>
+          <p class="text-slate-600 dark:text-slate-400 mb-8">
+            I specialize in life transitions, leadership development, business growth, and career acceleration. Whether you are scaling a company, navigating a career pivot, or seeking greater fulfillment, I am here to help you achieve breakthrough results.
+          </p>
+          <ul class="space-y-3">
+            {credentials.map((credential: string) => (
+              <li class="flex items-center gap-3">
+                <Icon name="lucide:check-circle" class="w-5 h-5 text-primary flex-shrink-0" />
+                <span class="text-slate-700 dark:text-slate-300">{credential}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Programs Section -->
+  <section id="services" class="py-20 bg-cream dark:bg-slate-900 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <p class="text-primary font-medium mb-4">Programs</p>
+        <h2 class="text-3xl md:text-4xl font-serif font-semibold text-slate-800 dark:text-white mb-6">Coaching Programs Designed for Results</h2>
+        <p class="text-slate-600 dark:text-slate-400">Tailored coaching programs to meet you where you are and accelerate you toward where you want to be.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {services.map((service: Service) => (
+          <div class="card group hover:-translate-y-1">
+            <div class="w-14 h-14 bg-primary/10 dark:bg-primary/20 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors">
+              <Icon name={service.icon} class="w-7 h-7 text-primary" />
+            </div>
+            <h3 class="text-xl font-serif font-semibold text-slate-800 dark:text-white mb-2">{service.title}</h3>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">{service.description}</p>
+            <span class="inline-flex items-center gap-2 text-sm text-secondary font-semibold">
+              {service.price}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div class="mt-12 text-center">
+        <a href="#contact" class="btn-primary">
+          Book a Discovery Call
+          <Icon name="lucide:calendar" class="w-5 h-5 ml-2" />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Approach Section -->
+  <section id="approach" class="py-20 bg-warm-100 dark:bg-slate-800/50 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <p class="text-primary font-medium mb-4">My Approach</p>
+        <h2 class="text-3xl md:text-4xl font-serif font-semibold text-slate-800 dark:text-white mb-6">The Transformation Framework</h2>
+        <p class="text-slate-600 dark:text-slate-400">A proven four-pillar approach that creates lasting change and measurable results.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {approach.map((item: Approach, index: number) => (
+          <div class="flex gap-5">
+            <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-serif font-bold flex-shrink-0">{index + 1}</div>
+            <div>
+              <h3 class="text-xl font-serif font-semibold text-slate-800 dark:text-white mb-2">{item.title}</h3>
+              <p class="text-slate-600 dark:text-slate-400">{item.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="py-20 bg-cream dark:bg-slate-900 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <p class="text-primary font-medium mb-4">Success Stories</p>
+        <h2 class="text-3xl md:text-4xl font-serif font-semibold text-slate-800 dark:text-white mb-6">Client Transformations</h2>
+        <p class="text-slate-600 dark:text-slate-400">Real results from real clients who committed to the coaching process.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {testimonials.map((testimonial: Testimonial) => (
+          <div class="card-warm">
+            <div class="mb-4"><Icon name="lucide:quote" class="w-10 h-10 text-primary/30" /></div>
+            <p class="text-slate-700 dark:text-slate-300 mb-6 leading-relaxed italic">"{testimonial.quote}"</p>
+            <div class="mb-3">
+              <span class="inline-block px-3 py-1 bg-secondary/10 text-secondary text-xs font-semibold rounded-full">{testimonial.result}</span>
+            </div>
+            <div class="border-t border-warm-300 dark:border-slate-700 pt-4">
+              <div class="font-semibold text-slate-800 dark:text-white">{testimonial.author}</div>
+              <div class="text-sm text-slate-500 dark:text-slate-400">{testimonial.role}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="py-20 bg-sage-50 dark:bg-slate-800/50 transition-colors">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <p class="text-primary font-medium mb-4">FAQ</p>
+        <h2 class="text-3xl md:text-4xl font-serif font-semibold text-slate-800 dark:text-white mb-6">Common Questions</h2>
+        <p class="text-slate-600 dark:text-slate-400">Everything you need to know about working with a professional coach.</p>
+      </div>
+      <div class="space-y-4">
+        {faqs.map((faq: FAQ, index: number) => (
+          <div class="faq-item bg-white dark:bg-slate-800 rounded-xl shadow-sm dark:shadow-none dark:border dark:border-slate-700 overflow-hidden">
+            <button class="faq-trigger w-full px-6 py-5 flex items-center justify-between text-left" data-index={index}>
+              <span class="font-medium text-slate-800 dark:text-white pr-4">{faq.question}</span>
+              <Icon name="lucide:chevron-down" class="w-5 h-5 text-primary transition-transform faq-icon flex-shrink-0" />
+            </button>
+            <div class="faq-content hidden px-6 pb-5">
+              <p class="text-slate-600 dark:text-slate-400">{faq.answer}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-20 bg-cream dark:bg-slate-900 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div>
+          <p class="text-primary font-medium mb-4">Get Started</p>
+          <h2 class="text-3xl md:text-4xl font-serif font-semibold text-slate-800 dark:text-white mb-6">Ready to Transform Your Life?</h2>
+          <p class="text-slate-600 dark:text-slate-400 mb-8">The first step is a complimentary 30-minute discovery call. We will discuss your goals, explore how coaching can help, and determine if we are the right fit to work together.</p>
+          <div class="space-y-6 mb-8">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Icon name="lucide:map-pin" class="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Office Location</h4>
+                <p class="text-slate-600 dark:text-slate-400">456 Executive Blvd, Suite 300<br>Austin, TX 78701</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Icon name="lucide:clock" class="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Availability</h4>
+                <p class="text-slate-600 dark:text-slate-400">Monday - Friday: 8am - 6pm CT<br>Virtual sessions worldwide</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Icon name="lucide:phone" class="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Contact</h4>
+                <p class="text-slate-600 dark:text-slate-400">
+                  <a href="tel:+15552345678" class="hover:text-primary transition-colors">(555) 234-5678</a><br>
+                  <a href="mailto:coach@jamesparker.com" class="hover:text-primary transition-colors">coach@jamesparker.com</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-lg dark:shadow-none dark:border dark:border-slate-700">
+          <h3 class="text-xl font-serif font-semibold text-slate-800 dark:text-white mb-6">Book Your Free Discovery Call</h3>
+          <form class="space-y-5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">First Name</label>
+                <input type="text" class="input" placeholder="Your first name" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Last Name</label>
+                <input type="text" class="input" placeholder="Your last name" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email</label>
+              <input type="email" class="input" placeholder="your@email.com" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Phone</label>
+              <input type="tel" class="input" placeholder="(555) 234-5678" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">What are you looking to achieve?</label>
+              <textarea rows="4" class="textarea" placeholder="Tell me about your goals and what you hope to accomplish through coaching..."></textarea>
+            </div>
+            <button type="submit" class="btn-primary w-full">
+              Request Discovery Call
+              <Icon name="lucide:send" class="w-5 h-5 ml-2" />
+            </button>
+            <p class="text-xs text-slate-500 dark:text-slate-400 text-center">Your information is kept strictly confidential.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  document.querySelectorAll('.faq-trigger').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      const item = trigger.closest('.faq-item');
+      const content = item?.querySelector('.faq-content');
+      const icon = trigger.querySelector('.faq-icon');
+      document.querySelectorAll('.faq-item').forEach(otherItem => {
+        if (otherItem !== item) {
+          otherItem.querySelector('.faq-content')?.classList.add('hidden');
+          otherItem.querySelector('.faq-icon')?.classList.remove('rotate-180');
+        }
+      });
+      content?.classList.toggle('hidden');
+      icon?.classList.toggle('rotate-180');
+    });
+  });
+</script>

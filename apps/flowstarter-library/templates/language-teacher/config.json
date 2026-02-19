@@ -1,0 +1,29 @@
+{
+  "name": "Language Teacher",
+  "slug": "language-teacher",
+  "description": "Engaging template for language tutors, ESL teachers, and conversation coaches. Features lesson booking, language level assessment, and student progress showcase.",
+  "category": "education",
+  "tags": ["language", "ESL", "Spanish", "French", "Mandarin", "English", "conversation", "fluency", "tutor"],
+  "framework": "astro",
+  "features": ["Multi-page", "Booking integration", "Newsletter integration", "Language levels", "Testimonials", "Trial lessons"],
+  "integrations": {
+    "booking": {
+      "name": "Lesson Booking",
+      "description": "Let students book language lessons",
+      "providers": [
+        {"id": "calendly", "name": "Calendly", "field": "calendly_url", "placeholder": "https://calendly.com/your-username/language-lesson"}
+      ],
+      "optional": true,
+      "configPath": "content/integrations/booking.md"
+    },
+    "newsletter": {
+      "name": "Newsletter",
+      "description": "Share language tips and learning resources",
+      "providers": [
+        {"id": "mailchimp", "name": "Mailchimp", "field": "mailchimp_url", "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"}
+      ],
+      "optional": true,
+      "configPath": "content/integrations/newsletter.md"
+    }
+  }
+}

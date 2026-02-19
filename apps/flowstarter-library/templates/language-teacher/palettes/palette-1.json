@@ -1,0 +1,21 @@
+{
+  "id": "serene-sage",
+  "name": "Serene Sage",
+  "description": "Calming and grounded. Perfect for counselors and therapists.",
+  "colors": {
+    "primary": "#6B8E6B",
+    "primary-dark": "#5A7A5A",
+    "secondary": "#A8C5A8",
+    "accent": "#D4A574",
+    "background": "#F8FAF7",
+    "surface": "#FFFFFF",
+    "text": "#2D3B2D",
+    "text-muted": "#6B7C6B"
+  },
+  "fonts": {
+    "heading": "Cormorant Garamond",
+    "body": "Nunito",
+    "weights": { "heading": "600", "body": "400" }
+  },
+  "preview": { "gradient": "from-green-600 to-green-400" }
+}

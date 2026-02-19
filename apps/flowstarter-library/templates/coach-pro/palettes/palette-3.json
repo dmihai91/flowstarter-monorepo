@@ -1,0 +1,21 @@
+{
+  "id": "lavender-peace",
+  "name": "Lavender Peace",
+  "description": "Gentle and soothing. Ideal for wellness coaches.",
+  "colors": {
+    "primary": "#9B8BB4",
+    "primary-dark": "#8677A1",
+    "secondary": "#C4B8D9",
+    "accent": "#D4A574",
+    "background": "#FAF9FC",
+    "surface": "#FFFFFF",
+    "text": "#3D3650",
+    "text-muted": "#7B7290"
+  },
+  "fonts": {
+    "heading": "Playfair Display",
+    "body": "Lato",
+    "weights": { "heading": "600", "body": "400" }
+  },
+  "preview": { "gradient": "from-purple-400 to-violet-300" }
+}

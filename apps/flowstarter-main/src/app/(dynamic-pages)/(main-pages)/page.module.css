@@ -1,0 +1,9 @@
+.featureCard {
+  transition: all 0.2s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .featureCard:hover {
+    border-color: var(--purple-primary-lightest);
+  }
+}

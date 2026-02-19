@@ -1,0 +1,1917 @@
+[
+  {
+    "slug": "academic-tutor",
+    "name": "Academic Tutor",
+    "description": "Professional template for academic tutors, test prep specialists, and subject matter experts. Features 1-on-1 session booking, student testimonials, and subject expertise showcase.",
+    "category": "education",
+    "tags": [
+      "tutor",
+      "academic",
+      "test-prep",
+      "SAT",
+      "ACT",
+      "math",
+      "science",
+      "english",
+      "homework-help",
+      "online-tutoring"
+    ],
+    "color": "#3b82f6",
+    "thumbnail": "/thumbs/academic-tutor/thumbnail.png",
+    "thumbnailLight": "/thumbs/academic-tutor/thumbnail-light.png",
+    "thumbnailDark": "/thumbs/academic-tutor/thumbnail-dark.png",
+    "palettes": [
+      {
+        "id": "ocean-blue",
+        "name": "Ocean Blue",
+        "colors": {
+          "primary": "#3b82f6",
+          "secondary": "#1e40af",
+          "accent": "#dbeafe",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "emerald-scholar",
+        "name": "Emerald Scholar",
+        "colors": {
+          "primary": "#10b981",
+          "secondary": "#047857",
+          "accent": "#d1fae5",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "royal-purple",
+        "name": "Royal Purple",
+        "colors": {
+          "primary": "#8b5cf6",
+          "secondary": "#6d28d9",
+          "accent": "#ede9fe",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "warm-amber",
+        "name": "Warm Amber",
+        "colors": {
+          "primary": "#f59e0b",
+          "secondary": "#d97706",
+          "accent": "#fef3c7",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      }
+    ],
+    "fonts": [
+      {
+        "id": "inter-system",
+        "name": "Inter + System",
+        "heading": "Inter",
+        "body": "system-ui"
+      },
+      {
+        "id": "playfair-lato",
+        "name": "Playfair + Lato",
+        "heading": "Playfair Display",
+        "body": "Lato"
+      },
+      {
+        "id": "montserrat-opensans",
+        "name": "Montserrat + Open Sans",
+        "heading": "Montserrat",
+        "body": "Open Sans"
+      },
+      {
+        "id": "poppins-inter",
+        "name": "Poppins + Inter",
+        "heading": "Poppins",
+        "body": "Inter"
+      },
+      {
+        "id": "dm-sans",
+        "name": "DM Sans",
+        "heading": "DM Sans",
+        "body": "DM Sans"
+      },
+      {
+        "id": "space-grotesk",
+        "name": "Space Grotesk",
+        "heading": "Space Grotesk",
+        "body": "Inter"
+      }
+    ],
+    "features": [
+      "Multi-page",
+      "Booking integration",
+      "Newsletter integration",
+      "Subject showcase",
+      "Testimonials",
+      "Pricing packages"
+    ],
+    "integrations": {
+      "booking": {
+        "name": "Booking System",
+        "description": "Let students book tutoring sessions directly",
+        "providers": [
+          {
+            "id": "calendly",
+            "name": "Calendly",
+            "field": "calendly_url",
+            "placeholder": "https://calendly.com/your-username/tutoring-session"
+          },
+          {
+            "id": "calcom",
+            "name": "Cal.com",
+            "field": "calcom_url",
+            "placeholder": "https://cal.com/your-username/tutoring"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/booking.md"
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "description": "Share study tips and resources with students",
+        "providers": [
+          {
+            "id": "mailchimp",
+            "name": "Mailchimp",
+            "field": "mailchimp_url",
+            "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+          },
+          {
+            "id": "convertkit",
+            "name": "ConvertKit",
+            "field": "convertkit_form_id",
+            "placeholder": "1234567"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/newsletter.md"
+      }
+    },
+    "hasPreview": false,
+    "hero": {
+      "headline": "Unlock Your Academic Potential",
+      "subheadline": "Personalized tutoring that meets you where you are. Whether you're preparing for the SAT, struggling with calculus, or need help with essays — I'll help you build confidence and achieve your goals."
+    }
+  },
+  {
+    "slug": "beauty-stylist",
+    "name": "Beauty Stylist",
+    "description": "Template for hairstylists, makeup artists, estheticians, and beauty professionals. Elegant rose and gold design with appointment booking and service gallery.",
+    "category": "beauty",
+    "tags": [
+      "beauty",
+      "hair-stylist",
+      "makeup-artist",
+      "esthetician",
+      "salon",
+      "bridal",
+      "skincare"
+    ],
+    "color": "#f472b6",
+    "thumbnail": "/thumbs/beauty-stylist/thumbnail.png",
+    "thumbnailLight": "/thumbs/beauty-stylist/thumbnail-light.png",
+    "thumbnailDark": "/thumbs/beauty-stylist/thumbnail-dark.png",
+    "palettes": [
+      {
+        "id": "rose-gold",
+        "name": "Rose Gold",
+        "colors": {
+          "primary": "#f472b6",
+          "secondary": "#ec4899",
+          "accent": "#fce7f3",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "luxe-gold",
+        "name": "Luxe Gold",
+        "colors": {
+          "primary": "#d97706",
+          "secondary": "#b45309",
+          "accent": "#fef3c7",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "chic-black",
+        "name": "Chic Black",
+        "colors": {
+          "primary": "#18181b",
+          "secondary": "#27272a",
+          "accent": "#f4f4f5",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "soft-blush",
+        "name": "Soft Blush",
+        "colors": {
+          "primary": "#fda4af",
+          "secondary": "#fb7185",
+          "accent": "#ffe4e6",
+          "background": "#fff1f2",
+          "text": "#0f172a"
+        }
+      }
+    ],
+    "fonts": [
+      {
+        "id": "inter-system",
+        "name": "Inter + System",
+        "heading": "Inter",
+        "body": "system-ui"
+      },
+      {
+        "id": "playfair-lato",
+        "name": "Playfair + Lato",
+        "heading": "Playfair Display",
+        "body": "Lato"
+      },
+      {
+        "id": "montserrat-opensans",
+        "name": "Montserrat + Open Sans",
+        "heading": "Montserrat",
+        "body": "Open Sans"
+      },
+      {
+        "id": "poppins-inter",
+        "name": "Poppins + Inter",
+        "heading": "Poppins",
+        "body": "Inter"
+      },
+      {
+        "id": "dm-sans",
+        "name": "DM Sans",
+        "heading": "DM Sans",
+        "body": "DM Sans"
+      },
+      {
+        "id": "space-grotesk",
+        "name": "Space Grotesk",
+        "heading": "Space Grotesk",
+        "body": "Inter"
+      }
+    ],
+    "features": [
+      "Single-page",
+      "Appointment booking",
+      "Service gallery",
+      "Testimonials",
+      "FAQ accordion",
+      "Dark mode"
+    ],
+    "integrations": {
+      "booking": {
+        "name": "Booking System",
+        "description": "Connect Calendly to let clients book beauty appointments",
+        "providers": [
+          {
+            "id": "calendly",
+            "name": "Calendly",
+            "field": "calendly_url",
+            "placeholder": "https://calendly.com/your-username/appointment"
+          },
+          {
+            "id": "calcom",
+            "name": "Cal.com",
+            "field": "calcom_url",
+            "placeholder": "https://cal.com/your-username/appointment"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/booking.md"
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "description": "Connect Mailchimp to collect beauty newsletter subscribers",
+        "providers": [
+          {
+            "id": "mailchimp",
+            "name": "Mailchimp",
+            "field": "mailchimp_url",
+            "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+          },
+          {
+            "id": "convertkit",
+            "name": "ConvertKit",
+            "field": "convertkit_form_id",
+            "placeholder": "1234567"
+          },
+          {
+            "id": "buttondown",
+            "name": "Buttondown",
+            "field": "buttondown_username",
+            "placeholder": "your-username"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/newsletter.md"
+      }
+    },
+    "hasPreview": false,
+    "hero": {
+      "headline": "Elevate Your Beauty",
+      "subheadline": "With over 8 years of experience trained in Paris and New York, I blend artistry with expertise to create looks that are uniquely you. From precision cuts to bridal glamour, every detail matters."
+    }
+  },
+  {
+    "slug": "coach-pro",
+    "name": "Coach Pro",
+    "description": "Professional template for life coaches, business coaches, and executive coaches. Transformation-focused design with booking calendar, coaching packages, and client success stories.",
+    "category": "coaching",
+    "tags": [
+      "coach",
+      "life-coach",
+      "business-coach",
+      "career-coach",
+      "executive-coach",
+      "transformation",
+      "professional"
+    ],
+    "color": "#14b8a6",
+    "thumbnail": "/thumbs/coach-pro/thumbnail.png",
+    "thumbnailLight": "/thumbs/coach-pro/thumbnail-light.png",
+    "thumbnailDark": "/thumbs/coach-pro/thumbnail-dark.png",
+    "palettes": [
+      {
+        "id": "executive-teal",
+        "name": "Executive Teal",
+        "colors": {
+          "primary": "#14b8a6",
+          "secondary": "#0d9488",
+          "accent": "#ccfbf1",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "power-navy",
+        "name": "Power Navy",
+        "colors": {
+          "primary": "#1e3a8a",
+          "secondary": "#1e40af",
+          "accent": "#dbeafe",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "success-gold",
+        "name": "Success Gold",
+        "colors": {
+          "primary": "#ca8a04",
+          "secondary": "#a16207",
+          "accent": "#fef9c3",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "mindful-purple",
+        "name": "Mindful Purple",
+        "colors": {
+          "primary": "#7c3aed",
+          "secondary": "#6d28d9",
+          "accent": "#ede9fe",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      }
+    ],
+    "fonts": [
+      {
+        "id": "inter-system",
+        "name": "Inter + System",
+        "heading": "Inter",
+        "body": "system-ui"
+      },
+      {
+        "id": "playfair-lato",
+        "name": "Playfair + Lato",
+        "heading": "Playfair Display",
+        "body": "Lato"
+      },
+      {
+        "id": "montserrat-opensans",
+        "name": "Montserrat + Open Sans",
+        "heading": "Montserrat",
+        "body": "Open Sans"
+      },
+      {
+        "id": "poppins-inter",
+        "name": "Poppins + Inter",
+        "heading": "Poppins",
+        "body": "Inter"
+      },
+      {
+        "id": "dm-sans",
+        "name": "DM Sans",
+        "heading": "DM Sans",
+        "body": "DM Sans"
+      },
+      {
+        "id": "space-grotesk",
+        "name": "Space Grotesk",
+        "heading": "Space Grotesk",
+        "body": "Inter"
+      }
+    ],
+    "features": [
+      "Multi-page",
+      "Booking integration",
+      "Newsletter integration",
+      "Coaching packages",
+      "Testimonials",
+      "FAQ",
+      "Dark mode"
+    ],
+    "integrations": {
+      "booking": {
+        "name": "Booking System",
+        "description": "Connect Calendly to let clients book coaching sessions",
+        "providers": [
+          {
+            "id": "calendly",
+            "name": "Calendly",
+            "field": "calendly_url",
+            "placeholder": "https://calendly.com/your-username/discovery-call"
+          },
+          {
+            "id": "calcom",
+            "name": "Cal.com",
+            "field": "calcom_url",
+            "placeholder": "https://cal.com/your-username/discovery-call"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/booking.md"
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "description": "Connect Mailchimp to share coaching insights with subscribers",
+        "providers": [
+          {
+            "id": "mailchimp",
+            "name": "Mailchimp",
+            "field": "mailchimp_url",
+            "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+          },
+          {
+            "id": "convertkit",
+            "name": "ConvertKit",
+            "field": "convertkit_form_id",
+            "placeholder": "1234567"
+          },
+          {
+            "id": "buttondown",
+            "name": "Buttondown",
+            "field": "buttondown_username",
+            "placeholder": "your-username"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/newsletter.md"
+      }
+    },
+    "hasPreview": true,
+    "hero": {
+      "headline": "Unlock Your True Potential",
+      "subheadline": "Expert coaching to help you break through limitations, gain clarity, and achieve extraordinary results in life, career, and business. Your transformation starts with one conversation."
+    }
+  },
+  {
+    "slug": "coding-bootcamp",
+    "name": "Coding Bootcamp",
+    "description": "Modern template for coding instructors, bootcamp operators, and tech educators. Features course catalog, project showcase, and career outcome statistics.",
+    "category": "education",
+    "tags": [
+      "coding",
+      "programming",
+      "bootcamp",
+      "web-development",
+      "python",
+      "javascript",
+      "tech",
+      "career-change"
+    ],
+    "color": "#10b981",
+    "thumbnail": "/thumbs/coding-bootcamp/thumbnail.png",
+    "thumbnailLight": "/thumbs/coding-bootcamp/thumbnail-light.png",
+    "thumbnailDark": "/thumbs/coding-bootcamp/thumbnail-dark.png",
+    "palettes": [
+      {
+        "id": "hacker-green",
+        "name": "Hacker Green",
+        "colors": {
+          "primary": "#10b981",
+          "secondary": "#047857",
+          "accent": "#d1fae5",
+          "background": "#0f172a",
+          "text": "#f8fafc"
+        }
+      },
+      {
+        "id": "tech-blue",
+        "name": "Tech Blue",
+        "colors": {
+          "primary": "#3b82f6",
+          "secondary": "#1e40af",
+          "accent": "#dbeafe",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "startup-purple",
+        "name": "Startup Purple",
+        "colors": {
+          "primary": "#8b5cf6",
+          "secondary": "#6d28d9",
+          "accent": "#ede9fe",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "cyber-cyan",
+        "name": "Cyber Cyan",
+        "colors": {
+          "primary": "#06b6d4",
+          "secondary": "#0891b2",
+          "accent": "#cffafe",
+          "background": "#0f172a",
+          "text": "#f8fafc"
+        }
+      }
+    ],
+    "fonts": [
+      {
+        "id": "inter-system",
+        "name": "Inter + System",
+        "heading": "Inter",
+        "body": "system-ui"
+      },
+      {
+        "id": "playfair-lato",
+        "name": "Playfair + Lato",
+        "heading": "Playfair Display",
+        "body": "Lato"
+      },
+      {
+        "id": "montserrat-opensans",
+        "name": "Montserrat + Open Sans",
+        "heading": "Montserrat",
+        "body": "Open Sans"
+      },
+      {
+        "id": "poppins-inter",
+        "name": "Poppins + Inter",
+        "heading": "Poppins",
+        "body": "Inter"
+      },
+      {
+        "id": "dm-sans",
+        "name": "DM Sans",
+        "heading": "DM Sans",
+        "body": "DM Sans"
+      },
+      {
+        "id": "space-grotesk",
+        "name": "Space Grotesk",
+        "heading": "Space Grotesk",
+        "body": "Inter"
+      }
+    ],
+    "features": [
+      "Multi-page",
+      "Booking integration",
+      "Newsletter integration",
+      "Course catalog",
+      "Project gallery",
+      "Career outcomes"
+    ],
+    "integrations": {
+      "booking": {
+        "name": "Enrollment",
+        "description": "Let students enroll in coding programs",
+        "providers": [
+          {
+            "id": "calendly",
+            "name": "Calendly",
+            "field": "calendly_url",
+            "placeholder": "https://calendly.com/your-username/info-session"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/booking.md"
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "description": "Share coding tips and job opportunities",
+        "providers": [
+          {
+            "id": "mailchimp",
+            "name": "Mailchimp",
+            "field": "mailchimp_url",
+            "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/newsletter.md"
+      }
+    },
+    "hasPreview": false,
+    "hero": {
+      "headline": "Launch Your Tech Career in 12 Weeks",
+      "subheadline": "Intensive, hands-on coding programs designed to take you from beginner to job-ready developer. Learn by building real projects with expert mentorship."
+    }
+  },
+  {
+    "slug": "edu-course-creator",
+    "name": "Course Creator Pro",
+    "description": "Modern template for online course creators and educators. Course catalog, student reviews, pricing tiers, and enrollment system. Perfect for selling digital courses and coaching programs.",
+    "category": "education",
+    "tags": [
+      "course",
+      "creator",
+      "education",
+      "tutor",
+      "instructor",
+      "online-learning",
+      "training",
+      "skills"
+    ],
+    "color": "#6366f1",
+    "thumbnail": "/thumbs/edu-course-creator/thumbnail.png",
+    "thumbnailLight": "/thumbs/edu-course-creator/thumbnail-light.png",
+    "thumbnailDark": "/thumbs/edu-course-creator/thumbnail-dark.png",
+    "palettes": [
+      {
+        "id": "knowledge-indigo",
+        "name": "Knowledge Indigo",
+        "colors": {
+          "primary": "#6366f1",
+          "secondary": "#4338ca",
+          "accent": "#e0e7ff",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "growth-green",
+        "name": "Growth Green",
+        "colors": {
+          "primary": "#22c55e",
+          "secondary": "#16a34a",
+          "accent": "#dcfce7",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "wisdom-blue",
+        "name": "Wisdom Blue",
+        "colors": {
+          "primary": "#0ea5e9",
+          "secondary": "#0284c7",
+          "accent": "#e0f2fe",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "creative-coral",
+        "name": "Creative Coral",
+        "colors": {
+          "primary": "#fb7185",
+          "secondary": "#f43f5e",
+          "accent": "#ffe4e6",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      }
+    ],
+    "fonts": [
+      {
+        "id": "inter-system",
+        "name": "Inter + System",
+        "heading": "Inter",
+        "body": "system-ui"
+      },
+      {
+        "id": "playfair-lato",
+        "name": "Playfair + Lato",
+        "heading": "Playfair Display",
+        "body": "Lato"
+      },
+      {
+        "id": "montserrat-opensans",
+        "name": "Montserrat + Open Sans",
+        "heading": "Montserrat",
+        "body": "Open Sans"
+      },
+      {
+        "id": "poppins-inter",
+        "name": "Poppins + Inter",
+        "heading": "Poppins",
+        "body": "Inter"
+      },
+      {
+        "id": "dm-sans",
+        "name": "DM Sans",
+        "heading": "DM Sans",
+        "body": "DM Sans"
+      },
+      {
+        "id": "space-grotesk",
+        "name": "Space Grotesk",
+        "heading": "Space Grotesk",
+        "body": "Inter"
+      }
+    ],
+    "features": [
+      "Multi-page",
+      "Course catalog",
+      "Pricing tiers",
+      "Booking integration",
+      "Newsletter integration",
+      "Testimonials",
+      "FAQ",
+      "Dark mode"
+    ],
+    "integrations": {
+      "booking": {
+        "name": "Booking System",
+        "description": "Connect Calendly for 1-on-1 mentoring sessions",
+        "providers": [
+          {
+            "id": "calendly",
+            "name": "Calendly",
+            "field": "calendly_url",
+            "placeholder": "https://calendly.com/your-username/mentoring"
+          },
+          {
+            "id": "calcom",
+            "name": "Cal.com",
+            "field": "calcom_url",
+            "placeholder": "https://cal.com/your-username/mentoring"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/booking.md"
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "description": "Connect to build your email list with free resources",
+        "providers": [
+          {
+            "id": "mailchimp",
+            "name": "Mailchimp",
+            "field": "mailchimp_url",
+            "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+          },
+          {
+            "id": "convertkit",
+            "name": "ConvertKit",
+            "field": "convertkit_form_id",
+            "placeholder": "1234567"
+          },
+          {
+            "id": "buttondown",
+            "name": "Buttondown",
+            "field": "buttondown_username",
+            "placeholder": "your-username"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/newsletter.md"
+      }
+    },
+    "hasPreview": false,
+    "hero": {
+      "headline": "Master Skills That Matter",
+      "subheadline": "Hands-on courses designed for real-world impact. Whether you are starting a new career, leveling up, or pursuing a passion - you will get the skills you need to succeed."
+    }
+  },
+  {
+    "slug": "creative-portfolio",
+    "name": "Creative Portfolio",
+    "description": "Template for photographers, designers, videographers, and creative freelancers. Bold monochrome with amber accents, project inquiry form, and creative process showcase.",
+    "category": "creative",
+    "tags": [
+      "photographer",
+      "designer",
+      "videographer",
+      "creative",
+      "portfolio",
+      "freelancer",
+      "brand-identity",
+      "visual-design"
+    ],
+    "color": "#fbbf24",
+    "thumbnail": "/thumbs/creative-portfolio/thumbnail.png",
+    "thumbnailLight": "/thumbs/creative-portfolio/thumbnail-light.png",
+    "thumbnailDark": "/thumbs/creative-portfolio/thumbnail-dark.png",
+    "palettes": [
+      {
+        "id": "bold-amber",
+        "name": "Bold Amber",
+        "colors": {
+          "primary": "#fbbf24",
+          "secondary": "#f59e0b",
+          "accent": "#fef3c7",
+          "background": "#0f172a",
+          "text": "#f8fafc"
+        }
+      },
+      {
+        "id": "minimal-mono",
+        "name": "Minimal Mono",
+        "colors": {
+          "primary": "#18181b",
+          "secondary": "#3f3f46",
+          "accent": "#f4f4f5",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "electric-blue",
+        "name": "Electric Blue",
+        "colors": {
+          "primary": "#3b82f6",
+          "secondary": "#2563eb",
+          "accent": "#dbeafe",
+          "background": "#0f172a",
+          "text": "#f8fafc"
+        }
+      },
+      {
+        "id": "forest-green",
+        "name": "Forest Green",
+        "colors": {
+          "primary": "#166534",
+          "secondary": "#15803d",
+          "accent": "#dcfce7",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      }
+    ],
+    "fonts": [
+      {
+        "id": "inter-system",
+        "name": "Inter + System",
+        "heading": "Inter",
+        "body": "system-ui"
+      },
+      {
+        "id": "playfair-lato",
+        "name": "Playfair + Lato",
+        "heading": "Playfair Display",
+        "body": "Lato"
+      },
+      {
+        "id": "montserrat-opensans",
+        "name": "Montserrat + Open Sans",
+        "heading": "Montserrat",
+        "body": "Open Sans"
+      },
+      {
+        "id": "poppins-inter",
+        "name": "Poppins + Inter",
+        "heading": "Poppins",
+        "body": "Inter"
+      },
+      {
+        "id": "dm-sans",
+        "name": "DM Sans",
+        "heading": "DM Sans",
+        "body": "DM Sans"
+      },
+      {
+        "id": "space-grotesk",
+        "name": "Space Grotesk",
+        "heading": "Space Grotesk",
+        "body": "Inter"
+      }
+    ],
+    "features": [
+      "Single-page",
+      "Project inquiry form",
+      "Creative showcase",
+      "Testimonials",
+      "FAQ accordion",
+      "Dark mode"
+    ],
+    "integrations": {
+      "booking": {
+        "name": "Booking System",
+        "description": "Connect Calendly to let clients book creative consultations",
+        "providers": [
+          {
+            "id": "calendly",
+            "name": "Calendly",
+            "field": "calendly_url",
+            "placeholder": "https://calendly.com/your-username/project-call"
+          },
+          {
+            "id": "calcom",
+            "name": "Cal.com",
+            "field": "calcom_url",
+            "placeholder": "https://cal.com/your-username/project-call"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/booking.md"
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "description": "Connect Mailchimp to collect creative newsletter subscribers",
+        "providers": [
+          {
+            "id": "mailchimp",
+            "name": "Mailchimp",
+            "field": "mailchimp_url",
+            "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+          },
+          {
+            "id": "convertkit",
+            "name": "ConvertKit",
+            "field": "convertkit_form_id",
+            "placeholder": "1234567"
+          },
+          {
+            "id": "buttondown",
+            "name": "Buttondown",
+            "field": "buttondown_username",
+            "placeholder": "your-username"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/newsletter.md"
+      }
+    },
+    "hasPreview": false,
+    "hero": {
+      "headline": "Crafting Visual Stories",
+      "subheadline": "I'm Marcus Rivera — a visual designer and photographer who helps brands stand out through bold, purposeful creative. From identity systems to campaign photography, every project tells a story."
+    }
+  },
+  {
+    "slug": "fitness-coach",
+    "name": "Fitness Trainer Pro",
+    "description": "High-energy template for personal trainers and fitness coaches. Bold design with transformation gallery, training programs, booking system, and client results.",
+    "category": "fitness",
+    "tags": [
+      "fitness",
+      "personal-trainer",
+      "gym",
+      "trainer",
+      "workout",
+      "athletic",
+      "yoga",
+      "strength"
+    ],
+    "color": "#ef4444",
+    "thumbnail": "/thumbs/fitness-coach/thumbnail.png",
+    "thumbnailLight": "/thumbs/fitness-coach/thumbnail-light.png",
+    "thumbnailDark": "/thumbs/fitness-coach/thumbnail-dark.png",
+    "palettes": [
+      {
+        "id": "power-red",
+        "name": "Power Red",
+        "colors": {
+          "primary": "#ef4444",
+          "secondary": "#dc2626",
+          "accent": "#fee2e2",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "energy-orange",
+        "name": "Energy Orange",
+        "colors": {
+          "primary": "#f97316",
+          "secondary": "#ea580c",
+          "accent": "#ffedd5",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "strength-blue",
+        "name": "Strength Blue",
+        "colors": {
+          "primary": "#3b82f6",
+          "secondary": "#2563eb",
+          "accent": "#dbeafe",
+          "background": "#0f172a",
+          "text": "#f8fafc"
+        }
+      },
+      {
+        "id": "vitality-green",
+        "name": "Vitality Green",
+        "colors": {
+          "primary": "#22c55e",
+          "secondary": "#16a34a",
+          "accent": "#dcfce7",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      }
+    ],
+    "fonts": [
+      {
+        "id": "inter-system",
+        "name": "Inter + System",
+        "heading": "Inter",
+        "body": "system-ui"
+      },
+      {
+        "id": "playfair-lato",
+        "name": "Playfair + Lato",
+        "heading": "Playfair Display",
+        "body": "Lato"
+      },
+      {
+        "id": "montserrat-opensans",
+        "name": "Montserrat + Open Sans",
+        "heading": "Montserrat",
+        "body": "Open Sans"
+      },
+      {
+        "id": "poppins-inter",
+        "name": "Poppins + Inter",
+        "heading": "Poppins",
+        "body": "Inter"
+      },
+      {
+        "id": "dm-sans",
+        "name": "DM Sans",
+        "heading": "DM Sans",
+        "body": "DM Sans"
+      },
+      {
+        "id": "space-grotesk",
+        "name": "Space Grotesk",
+        "heading": "Space Grotesk",
+        "body": "Inter"
+      }
+    ],
+    "features": [
+      "Multi-page",
+      "Booking integration",
+      "Newsletter integration",
+      "Testimonials",
+      "Pricing",
+      "FAQ",
+      "Dark mode"
+    ],
+    "integrations": {
+      "booking": {
+        "name": "Booking System",
+        "description": "Connect Calendly to let clients book training sessions",
+        "providers": [
+          {
+            "id": "calendly",
+            "name": "Calendly",
+            "field": "calendly_url",
+            "placeholder": "https://calendly.com/your-username/session"
+          },
+          {
+            "id": "calcom",
+            "name": "Cal.com",
+            "field": "calcom_url",
+            "placeholder": "https://cal.com/your-username/session"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/booking.md"
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "description": "Connect Mailchimp to share fitness tips and workout plans",
+        "providers": [
+          {
+            "id": "mailchimp",
+            "name": "Mailchimp",
+            "field": "mailchimp_url",
+            "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+          },
+          {
+            "id": "convertkit",
+            "name": "ConvertKit",
+            "field": "convertkit_form_id",
+            "placeholder": "1234567"
+          },
+          {
+            "id": "buttondown",
+            "name": "Buttondown",
+            "field": "buttondown_username",
+            "placeholder": "your-username"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/newsletter.md"
+      }
+    },
+    "hasPreview": false,
+    "hero": {
+      "headline": "Push Beyond Your Limits",
+      "subheadline": "I'm Mike Torres, and I help people build the strongest version of themselves. Custom training programs, real accountability, and results you can see."
+    }
+  },
+  {
+    "slug": "language-teacher",
+    "name": "Language Teacher",
+    "description": "Engaging template for language tutors, ESL teachers, and conversation coaches. Features lesson booking, language level assessment, and student progress showcase.",
+    "category": "education",
+    "tags": [
+      "language",
+      "ESL",
+      "Spanish",
+      "French",
+      "Mandarin",
+      "English",
+      "conversation",
+      "fluency",
+      "tutor"
+    ],
+    "color": "#ec4899",
+    "thumbnail": "/thumbs/language-teacher/thumbnail.png",
+    "thumbnailLight": "/thumbs/language-teacher/thumbnail-light.png",
+    "thumbnailDark": "/thumbs/language-teacher/thumbnail-dark.png",
+    "palettes": [
+      {
+        "id": "romantic-pink",
+        "name": "Romantic Pink",
+        "colors": {
+          "primary": "#ec4899",
+          "secondary": "#db2777",
+          "accent": "#fce7f3",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "sunny-yellow",
+        "name": "Sunny Yellow",
+        "colors": {
+          "primary": "#eab308",
+          "secondary": "#ca8a04",
+          "accent": "#fef9c3",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "spanish-red",
+        "name": "Spanish Red",
+        "colors": {
+          "primary": "#ef4444",
+          "secondary": "#dc2626",
+          "accent": "#fee2e2",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "french-blue",
+        "name": "French Blue",
+        "colors": {
+          "primary": "#3b82f6",
+          "secondary": "#2563eb",
+          "accent": "#dbeafe",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      }
+    ],
+    "fonts": [
+      {
+        "id": "inter-system",
+        "name": "Inter + System",
+        "heading": "Inter",
+        "body": "system-ui"
+      },
+      {
+        "id": "playfair-lato",
+        "name": "Playfair + Lato",
+        "heading": "Playfair Display",
+        "body": "Lato"
+      },
+      {
+        "id": "montserrat-opensans",
+        "name": "Montserrat + Open Sans",
+        "heading": "Montserrat",
+        "body": "Open Sans"
+      },
+      {
+        "id": "poppins-inter",
+        "name": "Poppins + Inter",
+        "heading": "Poppins",
+        "body": "Inter"
+      },
+      {
+        "id": "dm-sans",
+        "name": "DM Sans",
+        "heading": "DM Sans",
+        "body": "DM Sans"
+      },
+      {
+        "id": "space-grotesk",
+        "name": "Space Grotesk",
+        "heading": "Space Grotesk",
+        "body": "Inter"
+      }
+    ],
+    "features": [
+      "Multi-page",
+      "Booking integration",
+      "Newsletter integration",
+      "Language levels",
+      "Testimonials",
+      "Trial lessons"
+    ],
+    "integrations": {
+      "booking": {
+        "name": "Lesson Booking",
+        "description": "Let students book language lessons",
+        "providers": [
+          {
+            "id": "calendly",
+            "name": "Calendly",
+            "field": "calendly_url",
+            "placeholder": "https://calendly.com/your-username/language-lesson"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/booking.md"
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "description": "Share language tips and learning resources",
+        "providers": [
+          {
+            "id": "mailchimp",
+            "name": "Mailchimp",
+            "field": "mailchimp_url",
+            "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/newsletter.md"
+      }
+    },
+    "hasPreview": false,
+    "hero": {
+      "headline": "Speak Confidently in Any Language",
+      "subheadline": "Personalized language lessons focused on real conversation. Whether you're preparing for travel, work, or just love learning — I'll help you speak with confidence."
+    }
+  },
+  {
+    "slug": "music-teacher",
+    "name": "Music Teacher",
+    "description": "Harmonious template for music instructors, instrument teachers, and vocal coaches. Features lesson booking, repertoire showcase, and student recital highlights.",
+    "category": "education",
+    "tags": [
+      "music",
+      "piano",
+      "guitar",
+      "voice",
+      "violin",
+      "lessons",
+      "instrument",
+      "recital",
+      "performance"
+    ],
+    "color": "#f59e0b",
+    "thumbnail": "/thumbs/music-teacher/thumbnail.png",
+    "thumbnailLight": "/thumbs/music-teacher/thumbnail-light.png",
+    "thumbnailDark": "/thumbs/music-teacher/thumbnail-dark.png",
+    "palettes": [
+      {
+        "id": "golden-melody",
+        "name": "Golden Melody",
+        "colors": {
+          "primary": "#f59e0b",
+          "secondary": "#d97706",
+          "accent": "#fef3c7",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "piano-black",
+        "name": "Piano Black",
+        "colors": {
+          "primary": "#374151",
+          "secondary": "#1f2937",
+          "accent": "#f3f4f6",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "jazz-blue",
+        "name": "Jazz Blue",
+        "colors": {
+          "primary": "#6366f1",
+          "secondary": "#4338ca",
+          "accent": "#e0e7ff",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "rock-red",
+        "name": "Rock Red",
+        "colors": {
+          "primary": "#ef4444",
+          "secondary": "#dc2626",
+          "accent": "#fee2e2",
+          "background": "#0f172a",
+          "text": "#f8fafc"
+        }
+      }
+    ],
+    "fonts": [
+      {
+        "id": "inter-system",
+        "name": "Inter + System",
+        "heading": "Inter",
+        "body": "system-ui"
+      },
+      {
+        "id": "playfair-lato",
+        "name": "Playfair + Lato",
+        "heading": "Playfair Display",
+        "body": "Lato"
+      },
+      {
+        "id": "montserrat-opensans",
+        "name": "Montserrat + Open Sans",
+        "heading": "Montserrat",
+        "body": "Open Sans"
+      },
+      {
+        "id": "poppins-inter",
+        "name": "Poppins + Inter",
+        "heading": "Poppins",
+        "body": "Inter"
+      },
+      {
+        "id": "dm-sans",
+        "name": "DM Sans",
+        "heading": "DM Sans",
+        "body": "DM Sans"
+      },
+      {
+        "id": "space-grotesk",
+        "name": "Space Grotesk",
+        "heading": "Space Grotesk",
+        "body": "Inter"
+      }
+    ],
+    "features": [
+      "Multi-page",
+      "Booking integration",
+      "Newsletter integration",
+      "Lesson packages",
+      "Testimonials",
+      "Recital showcase"
+    ],
+    "integrations": {
+      "booking": {
+        "name": "Lesson Booking",
+        "description": "Let students book music lessons",
+        "providers": [
+          {
+            "id": "calendly",
+            "name": "Calendly",
+            "field": "calendly_url",
+            "placeholder": "https://calendly.com/your-username/music-lesson"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/booking.md"
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "description": "Share practice tips and recital announcements",
+        "providers": [
+          {
+            "id": "mailchimp",
+            "name": "Mailchimp",
+            "field": "mailchimp_url",
+            "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/newsletter.md"
+      }
+    },
+    "hasPreview": false,
+    "hero": {
+      "headline": "Discover the Joy of Making Music",
+      "subheadline": "Patient, personalized music instruction for all ages and skill levels. Whether you dream of performing on stage or just playing for fun — let's make music together."
+    }
+  },
+  {
+    "slug": "therapist-care",
+    "name": "Therapist Care",
+    "description": "Calming, professional template for therapists and counselors. Warm sage-green palette with HIPAA-compliant design, appointment booking, and credential showcase.",
+    "category": "mental-health",
+    "tags": [
+      "therapist",
+      "counselor",
+      "psychologist",
+      "mental-health",
+      "LMFT",
+      "therapy",
+      "wellness",
+      "EMDR",
+      "CBT"
+    ],
+    "color": "#22c55e",
+    "thumbnail": "/thumbs/therapist-care/thumbnail.png",
+    "thumbnailLight": "/thumbs/therapist-care/thumbnail-light.png",
+    "thumbnailDark": "/thumbs/therapist-care/thumbnail-dark.png",
+    "palettes": [
+      {
+        "id": "calm-green",
+        "name": "Calm Green",
+        "colors": {
+          "primary": "#22c55e",
+          "secondary": "#16a34a",
+          "accent": "#dcfce7",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "serene-blue",
+        "name": "Serene Blue",
+        "colors": {
+          "primary": "#0ea5e9",
+          "secondary": "#0284c7",
+          "accent": "#e0f2fe",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "gentle-lavender",
+        "name": "Gentle Lavender",
+        "colors": {
+          "primary": "#a78bfa",
+          "secondary": "#8b5cf6",
+          "accent": "#ede9fe",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "warm-sand",
+        "name": "Warm Sand",
+        "colors": {
+          "primary": "#a8a29e",
+          "secondary": "#78716c",
+          "accent": "#f5f5f4",
+          "background": "#fafaf9",
+          "text": "#0f172a"
+        }
+      }
+    ],
+    "fonts": [
+      {
+        "id": "inter-system",
+        "name": "Inter + System",
+        "heading": "Inter",
+        "body": "system-ui"
+      },
+      {
+        "id": "playfair-lato",
+        "name": "Playfair + Lato",
+        "heading": "Playfair Display",
+        "body": "Lato"
+      },
+      {
+        "id": "montserrat-opensans",
+        "name": "Montserrat + Open Sans",
+        "heading": "Montserrat",
+        "body": "Open Sans"
+      },
+      {
+        "id": "poppins-inter",
+        "name": "Poppins + Inter",
+        "heading": "Poppins",
+        "body": "Inter"
+      },
+      {
+        "id": "dm-sans",
+        "name": "DM Sans",
+        "heading": "DM Sans",
+        "body": "DM Sans"
+      },
+      {
+        "id": "space-grotesk",
+        "name": "Space Grotesk",
+        "heading": "Space Grotesk",
+        "body": "Inter"
+      }
+    ],
+    "features": [
+      "Multi-page",
+      "Booking integration",
+      "Newsletter integration",
+      "Contact form",
+      "Testimonials",
+      "FAQ",
+      "Dark mode"
+    ],
+    "integrations": {
+      "booking": {
+        "name": "Booking System",
+        "description": "Connect Calendly to let clients schedule therapy sessions",
+        "providers": [
+          {
+            "id": "calendly",
+            "name": "Calendly",
+            "field": "calendly_url",
+            "placeholder": "https://calendly.com/your-username/consultation"
+          },
+          {
+            "id": "calcom",
+            "name": "Cal.com",
+            "field": "calcom_url",
+            "placeholder": "https://cal.com/your-username/consultation"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/booking.md"
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "description": "Connect Mailchimp to share mental health resources with clients",
+        "providers": [
+          {
+            "id": "mailchimp",
+            "name": "Mailchimp",
+            "field": "mailchimp_url",
+            "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+          },
+          {
+            "id": "convertkit",
+            "name": "ConvertKit",
+            "field": "convertkit_form_id",
+            "placeholder": "1234567"
+          },
+          {
+            "id": "buttondown",
+            "name": "Buttondown",
+            "field": "buttondown_username",
+            "placeholder": "your-username"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/newsletter.md"
+      }
+    },
+    "hasPreview": true,
+    "hero": {
+      "headline": "Unlock Your Full Potential",
+      "subheadline": "Breakthrough coaching that combines accountability, strategy, and support. Whether you're navigating career transition, scaling your business, or seeking personal growth — I'm here to help you get there."
+    }
+  },
+  {
+    "slug": "wellness-holistic",
+    "name": "Wellness Holistic",
+    "description": "Template for wellness practitioners, naturopathic doctors, nutritionists, massage therapists, and holistic health providers. Calming teal and lavender design with consultation booking and wellness programs.",
+    "category": "wellness",
+    "tags": [
+      "wellness",
+      "holistic",
+      "naturopathic",
+      "nutrition",
+      "massage",
+      "acupuncture",
+      "herbal-medicine",
+      "mindfulness"
+    ],
+    "color": "#2dd4bf",
+    "thumbnail": "/thumbs/wellness-holistic/thumbnail.png",
+    "thumbnailLight": "/thumbs/wellness-holistic/thumbnail-light.png",
+    "thumbnailDark": "/thumbs/wellness-holistic/thumbnail-dark.png",
+    "palettes": [
+      {
+        "id": "healing-teal",
+        "name": "Healing Teal",
+        "colors": {
+          "primary": "#2dd4bf",
+          "secondary": "#14b8a6",
+          "accent": "#ccfbf1",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "earth-brown",
+        "name": "Earth Brown",
+        "colors": {
+          "primary": "#a16207",
+          "secondary": "#854d0e",
+          "accent": "#fef3c7",
+          "background": "#fefce8",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "spirit-purple",
+        "name": "Spirit Purple",
+        "colors": {
+          "primary": "#a855f7",
+          "secondary": "#9333ea",
+          "accent": "#f3e8ff",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "nature-green",
+        "name": "Nature Green",
+        "colors": {
+          "primary": "#4ade80",
+          "secondary": "#22c55e",
+          "accent": "#dcfce7",
+          "background": "#f0fdf4",
+          "text": "#0f172a"
+        }
+      }
+    ],
+    "fonts": [
+      {
+        "id": "inter-system",
+        "name": "Inter + System",
+        "heading": "Inter",
+        "body": "system-ui"
+      },
+      {
+        "id": "playfair-lato",
+        "name": "Playfair + Lato",
+        "heading": "Playfair Display",
+        "body": "Lato"
+      },
+      {
+        "id": "montserrat-opensans",
+        "name": "Montserrat + Open Sans",
+        "heading": "Montserrat",
+        "body": "Open Sans"
+      },
+      {
+        "id": "poppins-inter",
+        "name": "Poppins + Inter",
+        "heading": "Poppins",
+        "body": "Inter"
+      },
+      {
+        "id": "dm-sans",
+        "name": "DM Sans",
+        "heading": "DM Sans",
+        "body": "DM Sans"
+      },
+      {
+        "id": "space-grotesk",
+        "name": "Space Grotesk",
+        "heading": "Space Grotesk",
+        "body": "Inter"
+      }
+    ],
+    "features": [
+      "Single-page",
+      "Consultation booking",
+      "Wellness programs",
+      "Testimonials",
+      "FAQ accordion",
+      "Dark mode"
+    ],
+    "integrations": {
+      "booking": {
+        "name": "Booking System",
+        "description": "Connect Calendly to let clients book wellness consultations",
+        "providers": [
+          {
+            "id": "calendly",
+            "name": "Calendly",
+            "field": "calendly_url",
+            "placeholder": "https://calendly.com/your-username/consultation"
+          },
+          {
+            "id": "calcom",
+            "name": "Cal.com",
+            "field": "calcom_url",
+            "placeholder": "https://cal.com/your-username/consultation"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/booking.md"
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "description": "Connect Mailchimp to collect wellness newsletter subscribers",
+        "providers": [
+          {
+            "id": "mailchimp",
+            "name": "Mailchimp",
+            "field": "mailchimp_url",
+            "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+          },
+          {
+            "id": "convertkit",
+            "name": "ConvertKit",
+            "field": "convertkit_form_id",
+            "placeholder": "1234567"
+          },
+          {
+            "id": "buttondown",
+            "name": "Buttondown",
+            "field": "buttondown_username",
+            "placeholder": "your-username"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/newsletter.md"
+      }
+    },
+    "hasPreview": false,
+    "hero": {
+      "headline": "Restore Balance. Reclaim Vitality.",
+      "subheadline": "As a licensed Naturopathic Doctor, I combine ancient healing wisdom with modern science to address the root cause of your health concerns. Together, we'll create a personalized path to lasting wellness."
+    }
+  },
+  {
+    "slug": "workshop-host",
+    "name": "Workshop Host",
+    "description": "Dynamic template for workshop facilitators, masterclass instructors, and seminar leaders. Features event registration, curriculum showcase, and participant testimonials.",
+    "category": "education",
+    "tags": [
+      "workshop",
+      "masterclass",
+      "seminar",
+      "facilitator",
+      "training",
+      "group-learning",
+      "professional-development"
+    ],
+    "color": "#8b5cf6",
+    "thumbnail": "/thumbs/workshop-host/thumbnail.png",
+    "thumbnailLight": "/thumbs/workshop-host/thumbnail-light.png",
+    "thumbnailDark": "/thumbs/workshop-host/thumbnail-dark.png",
+    "palettes": [
+      {
+        "id": "creative-purple",
+        "name": "Creative Purple",
+        "colors": {
+          "primary": "#8b5cf6",
+          "secondary": "#6d28d9",
+          "accent": "#ede9fe",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "energetic-orange",
+        "name": "Energetic Orange",
+        "colors": {
+          "primary": "#f97316",
+          "secondary": "#ea580c",
+          "accent": "#ffedd5",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "professional-blue",
+        "name": "Professional Blue",
+        "colors": {
+          "primary": "#0ea5e9",
+          "secondary": "#0284c7",
+          "accent": "#e0f2fe",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      },
+      {
+        "id": "fresh-teal",
+        "name": "Fresh Teal",
+        "colors": {
+          "primary": "#14b8a6",
+          "secondary": "#0d9488",
+          "accent": "#ccfbf1",
+          "background": "#ffffff",
+          "text": "#0f172a"
+        }
+      }
+    ],
+    "fonts": [
+      {
+        "id": "inter-system",
+        "name": "Inter + System",
+        "heading": "Inter",
+        "body": "system-ui"
+      },
+      {
+        "id": "playfair-lato",
+        "name": "Playfair + Lato",
+        "heading": "Playfair Display",
+        "body": "Lato"
+      },
+      {
+        "id": "montserrat-opensans",
+        "name": "Montserrat + Open Sans",
+        "heading": "Montserrat",
+        "body": "Open Sans"
+      },
+      {
+        "id": "poppins-inter",
+        "name": "Poppins + Inter",
+        "heading": "Poppins",
+        "body": "Inter"
+      },
+      {
+        "id": "dm-sans",
+        "name": "DM Sans",
+        "heading": "DM Sans",
+        "body": "DM Sans"
+      },
+      {
+        "id": "space-grotesk",
+        "name": "Space Grotesk",
+        "heading": "Space Grotesk",
+        "body": "Inter"
+      }
+    ],
+    "features": [
+      "Multi-page",
+      "Booking integration",
+      "Newsletter integration",
+      "Workshop catalog",
+      "Testimonials",
+      "Event registration"
+    ],
+    "integrations": {
+      "booking": {
+        "name": "Event Registration",
+        "description": "Let participants register for upcoming workshops",
+        "providers": [
+          {
+            "id": "calendly",
+            "name": "Calendly",
+            "field": "calendly_url",
+            "placeholder": "https://calendly.com/your-username/workshop"
+          },
+          {
+            "id": "eventbrite",
+            "name": "Eventbrite",
+            "field": "eventbrite_url",
+            "placeholder": "https://eventbrite.com/e/your-event"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/booking.md"
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "description": "Share workshop announcements and resources",
+        "providers": [
+          {
+            "id": "mailchimp",
+            "name": "Mailchimp",
+            "field": "mailchimp_url",
+            "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+          }
+        ],
+        "optional": true,
+        "configPath": "content/integrations/newsletter.md"
+      }
+    },
+    "hasPreview": false,
+    "hero": {
+      "headline": "Transform Your Team Through Immersive Workshops",
+      "subheadline": "Interactive workshops designed to spark creativity, build skills, and drive real results. From leadership development to design thinking — I create learning experiences that stick."
+    }
+  }
+]

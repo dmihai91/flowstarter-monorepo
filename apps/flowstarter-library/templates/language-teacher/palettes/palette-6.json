@@ -1,0 +1,21 @@
+{
+  "id": "forest-healing",
+  "name": "Forest Healing",
+  "description": "Deep and grounding. Ideal for nature therapy practices.",
+  "colors": {
+    "primary": "#4A6B5D",
+    "primary-dark": "#3A564A",
+    "secondary": "#7A9B89",
+    "accent": "#D4A574",
+    "background": "#F5F8F6",
+    "surface": "#FFFFFF",
+    "text": "#1F2E26",
+    "text-muted": "#5A7065"
+  },
+  "fonts": {
+    "heading": "Fraunces",
+    "body": "Nunito",
+    "weights": { "heading": "600", "body": "400" }
+  },
+  "preview": { "gradient": "from-emerald-700 to-green-500" }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "@flowstarter/library",
+  "projectType": "library",
+  "tags": ["type:library", "scope:templates"],
+  "targets": {
+    "build:templates": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/build-all-templates.mjs",
+        "cwd": "apps/flowstarter-library"
+      }
+    },
+    "thumbnails:generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/generate-template-thumbnails.js",
+        "cwd": "apps/flowstarter-library"
+      }
+    },
+    "thumbnails:theme": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/generate-theme-thumbnails.mjs",
+        "cwd": "apps/flowstarter-library"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

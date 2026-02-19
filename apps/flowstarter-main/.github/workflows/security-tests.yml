@@ -1,0 +1,234 @@
+name: Security Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run security tests daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  security-scan:
+    name: Run Security Tests
+    runs-on: ubuntu-latest
+    
+    services:
+      # Start Next.js application for testing
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: flowstarter_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9.0.6
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup environment variables
+        run: |
+          cat > .env.local << EOF
+          # Test environment configuration
+          NEXT_PUBLIC_SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{ secrets.CLERK_PUBLISHABLE_KEY }}
+          CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }}
+          
+          # Security testing mode
+          NODE_ENV=test
+          BASE_URL=http://localhost:3000
+          EOF
+
+      - name: Build application
+        run: pnpm build
+
+      - name: Start application in background
+        run: |
+          pnpm start &
+          echo "NEXT_PID=$!" >> $GITHUB_ENV
+          
+          # Wait for application to be ready
+          echo "Waiting for application to start..."
+          for i in {1..30}; do
+            if curl -f http://localhost:3000/api/health/database >/dev/null 2>&1; then
+              echo "Application is ready!"
+              break
+            fi
+            echo "Waiting... ($i/30)"
+            sleep 2
+          done
+
+      - name: Install test dependencies
+        run: |
+          # Install jq for JSON parsing
+          sudo apt-get update
+          sudo apt-get install -y jq curl uuid-runtime
+
+      - name: Make scripts executable
+        run: |
+          chmod +x security-tests/*.sh
+
+      - name: Run IDOR Security Tests
+        id: idor
+        continue-on-error: true
+        run: |
+          cd security-tests
+          ./test-idor.sh
+        env:
+          BASE_URL: http://localhost:3000
+
+      - name: Run Input Validation Tests
+        id: input-validation
+        continue-on-error: true
+        run: |
+          cd security-tests
+          ./test-input-validation.sh
+        env:
+          BASE_URL: http://localhost:3000
+
+      - name: Upload Security Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports
+          path: |
+            security-tests/*-report-*.json
+          retention-days: 30
+
+      - name: Stop application
+        if: always()
+        run: |
+          if [ ! -z "$NEXT_PID" ]; then
+            kill $NEXT_PID || true
+          fi
+
+      - name: Check test results
+        if: always()
+        run: |
+          echo "## 🔐 Security Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -f "security-tests/idor-test-report-*.json" ]; then
+            echo "### IDOR Tests" >> $GITHUB_STEP_SUMMARY
+            echo '```json' >> $GITHUB_STEP_SUMMARY
+            cat security-tests/idor-test-report-*.json >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ -f "security-tests/input-validation-report-*.json" ]; then
+            echo "### Input Validation Tests" >> $GITHUB_STEP_SUMMARY
+            echo '```json' >> $GITHUB_STEP_SUMMARY
+            cat security-tests/input-validation-report-*.json >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Fail workflow if either test failed
+          if [ "${{ steps.idor.outcome }}" != "success" ] || [ "${{ steps.input-validation.outcome }}" != "success" ]; then
+            echo "❌ Security vulnerabilities detected!" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          else
+            echo "✅ All security tests passed!" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const idorStatus = '${{ steps.idor.outcome }}';
+            const inputStatus = '${{ steps.input-validation.outcome }}';
+            
+            let comment = '## 🔐 Security Test Results\n\n';
+            comment += `- IDOR Tests: ${idorStatus === 'success' ? '✅ Passed' : '❌ Failed'}\n`;
+            comment += `- Input Validation Tests: ${inputStatus === 'success' ? '✅ Passed' : '❌ Failed'}\n\n`;
+            
+            if (idorStatus !== 'success' || inputStatus !== 'success') {
+              comment += '⚠️ **Security vulnerabilities detected!** Please review the test artifacts.\n';
+            } else {
+              comment += '✅ All security tests passed!\n';
+            }
+            
+            comment += '\n[View detailed reports in artifacts](../actions/runs/${{ github.run_id }})';
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  dependency-audit:
+    name: Dependency Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9.0.6
+
+      - name: Run pnpm audit
+        continue-on-error: true
+        run: |
+          pnpm audit --audit-level=moderate --json > audit-report.json || true
+          
+      - name: Check audit results
+        run: |
+          if [ -f "audit-report.json" ]; then
+            VULNERABILITIES=$(cat audit-report.json | jq '.metadata.vulnerabilities.total // 0')
+            echo "Total vulnerabilities found: $VULNERABILITIES"
+            
+            echo "## 📦 Dependency Audit Results" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Total vulnerabilities: $VULNERABILITIES" >> $GITHUB_STEP_SUMMARY
+            
+            if [ "$VULNERABILITIES" -gt 0 ]; then
+              echo "❌ Vulnerabilities detected in dependencies" >> $GITHUB_STEP_SUMMARY
+              echo '```json' >> $GITHUB_STEP_SUMMARY
+              cat audit-report.json >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+            else
+              echo "✅ No vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-audit-report
+          path: audit-report.json
+          retention-days: 30

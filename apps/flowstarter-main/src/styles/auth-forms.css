@@ -1,0 +1,186 @@
+.cl-footer {
+  margin-top: 0px !important;
+}
+
+:root[class~='dark'] .cl-footer {
+  background-color: #121212 !important;
+}
+
+:root[class~='dark'] .cl-headerSubtitle {
+  color: #ffffff !important;
+}
+
+:root[class~='dark']
+  .cl-socialButtons
+  img.cl-socialButtonsProviderIcon__github {
+  filter: brightness(0) invert(1);
+}
+
+:root[class~='dark'] .cl-navbarButton {
+  color: #ffffff !important;
+}
+
+.cl-rootBox.cl-signUp-root,
+.cl-rootBox.cl-signIn-root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.cl-rootBox.cl-cardBox {
+  width: 100% !important;
+  max-width: 30rem !important;
+  box-sizing: border-box;
+}
+
+.cl-formField {
+  padding: 6px;
+  background: transparent !important;
+}
+
+.cl-formResendCodeLink {
+  color: #6a44e6 !important;
+}
+
+:root[class~='dark'] .cl-formResendCodeLink {
+  color: #8465e9 !important;
+}
+
+@media (orientation: landscape) and (max-width: 960px) {
+  .fix-mobile-landscape {
+    margin-top: 120px;
+    margin-bottom: 80px;
+    transform: scale(0.5);
+  }
+
+  .fix-mobile-landscape .sign-up-form-wrapper {
+    transform: scale(0.45);
+  }
+}
+
+@media (orientation: landscape) and (max-width: 1024px) {
+  .fix-mobile-landscape {
+    transform: scale(0.7);
+  }
+}
+
+/* Improve social provider icon visibility in dark mode */
+/* Keep Google icon the same in dark mode; only invert Apple */
+:root[class~='dark'] .cl-socialButtons img.cl-socialButtonsProviderIcon__apple {
+  filter: brightness(0) invert(1) !important;
+}
+
+/* Ensure password visibility (eye) icon is visible in dark mode */
+:root[class~='dark'] .cl-formFieldActionIcon,
+:root[class~='dark'] .cl-formFieldActionButton,
+:root[class~='dark'] .cl-passwordField__visibilityToggle,
+:root[class~='dark'] .cl-formFieldAction > svg,
+:root[class~='dark'] button[aria-label='Show password'] svg,
+:root[class~='dark'] button[aria-label='Hide password'] svg {
+  color: #ffffff !important;
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+:root[class~='dark'] button[aria-label='Show password']:hover svg,
+:root[class~='dark'] button[aria-label='Hide password']:hover svg {
+  opacity: 1;
+}
+
+.cl-cardBox {
+  background-color: rgb(255, 255, 255, 0.7) !important;
+}
+
+:root[class~='dark'] .cl-cardBox {
+  background-color: rgb(0, 0, 0, 0.3) !important;
+}
+
+/* Ensure social buttons stretch full width */
+.cl-socialButtonsBlockButton,
+.cl-socialButtonsIconButton {
+  width: 100% !important;
+}
+
+/* Subtle background grid used in AuthLayout */
+.bg-grid {
+  background-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0.04) 0%,
+    rgba(0, 0, 0, 0.02) 0.5px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .bg-grid {
+    background-image: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.025) 0.5px,
+      transparent 1px
+    );
+  }
+}
+
+/* Clerk component improvements for tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .cl-rootBox {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .cl-card {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    border-radius: 0.75rem !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .cl-formFieldInput {
+    min-height: 44px !important;
+    font-size: 16px !important; /* Prevents zoom on iOS */
+    padding: 0.75rem !important;
+  }
+
+  .cl-formButtonPrimary {
+    min-height: 48px !important;
+    font-size: 1rem !important;
+    padding: 0.75rem 1.5rem !important;
+  }
+
+  .cl-socialButtonsBlockButton {
+    min-height: 44px !important;
+    font-size: 1rem !important;
+  }
+
+  .cl-formFieldLabel {
+    font-size: 0.875rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Better spacing between form elements */
+  .cl-formField {
+    margin-bottom: 1rem !important;
+  }
+
+  /* Improve loading states */
+  .cl-loading {
+    padding: 2rem !important;
+  }
+
+  /* Better error message styling */
+  .cl-formFieldError {
+    font-size: 0.875rem !important;
+    margin-top: 0.25rem !important;
+  }
+}
+
+.cl-userButtonPopoverActionButton__signOut,
+.cl-button__signOut {
+  display: none;
+}

@@ -1,0 +1,75 @@
+{
+  "brand": {
+    "name": "Flowstarter Library"
+  },
+  "nav": {
+    "templates": "Templates",
+    "blocks": "UI Blocks",
+    "components": "Components",
+    "soon": "Soon"
+  },
+  "search": {
+    "placeholder": "Search templates..."
+  },
+  "theme": {
+    "light": "Light mode",
+    "dark": "Dark mode",
+    "auto": "Auto mode"
+  },
+  "hero": {
+    "title": "Launch Your Website",
+    "titleHighlight": "In Minutes, Not Weeks",
+    "description": "Beautiful, production-ready templates built with modern technologies. Start building faster with Flowstarter Library.",
+    "stats": {
+      "templates": "Templates",
+      "framework": "Framework",
+      "styling": "Styling"
+    }
+  },
+  "sidebar": {
+    "categories": "Categories",
+    "technologies": "Technologies",
+    "features": "Features",
+    "filters": "Filters"
+  },
+  "categories": {
+    "all": "All Templates",
+    "business": "Business",
+    "portfolio": "Portfolio",
+    "landing": "Landing Pages",
+    "saas": "SaaS",
+    "services": "Services"
+  },
+  "tech": {
+    "astro": "Astro",
+    "tailwind": "Tailwind CSS",
+    "react": "React"
+  },
+  "features": {
+    "darkTheme": "Dark theme",
+    "booking": "Booking",
+    "newsletter": "Newsletter",
+    "contactForm": "Contact form",
+    "pricing": "Pricing",
+    "faq": "FAQ",
+    "gallery": "Gallery / portfolio",
+    "multipage": "Multi‑page"
+  },
+  "card": {
+    "free": "Free",
+    "preview": "Preview",
+    "viewDemo": "View Demo"
+  },
+  "footer": {
+    "about": "About",
+    "docs": "Documentation",
+    "github": "GitHub",
+    "contact": "Contact",
+    "copyright": "© {{year}} Flowstarter. All rights reserved.",
+    "tagline": "Built with Astro + Tailwind CSS"
+  },
+  "errors": {
+    "loadFailed": "Failed to load templates",
+    "noTemplates": "No templates found"
+  }
+}

@@ -1,0 +1,341 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Icon } from 'astro-icon/components';
+
+const services = [
+  { icon: "lucide:user", title: "Individual Therapy", description: "One-on-one sessions focused on personal growth, anxiety, depression, trauma, and life transitions.", duration: "50 min session" },
+  { icon: "lucide:heart", title: "Couples Therapy", description: "Strengthen your relationship through improved communication, conflict resolution, and deeper connection.", duration: "80 min session" },
+  { icon: "lucide:users", title: "Family Therapy", description: "Navigate family dynamics, improve relationships, and create healthier patterns together.", duration: "80 min session" },
+  { icon: "lucide:brain", title: "Trauma & EMDR", description: "Specialized trauma processing using evidence-based EMDR therapy for lasting healing.", duration: "50-80 min session" },
+];
+
+const approach = [
+  { title: "Compassionate Listening", description: "I create a safe, non-judgmental space where you can share your thoughts and feelings openly." },
+  { title: "Evidence-Based Methods", description: "I use proven therapeutic approaches including CBT, EMDR, attachment theory, and mindfulness." },
+  { title: "Collaborative Process", description: "We work together to set goals and develop strategies that fit your unique needs and values." },
+  { title: "Holistic Perspective", description: "I consider all aspects of your life—mind, body, relationships—in our work together." },
+];
+
+const testimonials = [
+  { quote: "Sarah has helped me through the most difficult time in my life. Her warmth and expertise made all the difference in my healing journey.", author: "Jennifer M.", type: "Individual Therapy Client" },
+  { quote: "My husband and I were on the verge of divorce. Sarah helped us rebuild our communication and rediscover why we fell in love.", author: "David & Lisa R.", type: "Couples Therapy Clients" },
+  { quote: "The EMDR therapy has been life-changing. I finally feel free from the trauma that held me back for years.", author: "Michael T.", type: "Trauma Therapy Client" },
+];
+
+const faqs = [
+  { question: "What can I expect in our first session?", answer: "Our first session is about getting to know each other. I'll ask about what brings you to therapy, your history, and your goals. This helps me understand how I can best support you. It's also a chance for you to ask questions and see if we're a good fit." },
+  { question: "How long does therapy typically last?", answer: "The length of therapy varies depending on your goals and needs. Some clients find relief in 8-12 sessions, while others benefit from longer-term work. We'll regularly check in on your progress and adjust our approach as needed." },
+  { question: "Do you accept insurance?", answer: "I am an out-of-network provider for most insurance plans. I can provide a superbill for you to submit to your insurance for potential reimbursement. I also offer a sliding scale for those who qualify." },
+  { question: "What is your cancellation policy?", answer: "I require 24 hours notice for cancellations. Sessions cancelled with less than 24 hours notice will be charged the full session fee, except in cases of emergency." },
+  { question: "Do you offer virtual sessions?", answer: "Yes! I offer secure video therapy sessions for clients throughout California. Virtual therapy can be just as effective as in-person sessions and offers added convenience." },
+];
+
+const credentials = [
+  "Licensed Marriage & Family Therapist (LMFT #87654)",
+  "EMDR Certified Therapist",
+  "Masters in Clinical Psychology, Stanford University",
+  "15+ Years Clinical Experience",
+];
+---
+
+<Layout>
+  <!-- Hero Section -->
+  <section class="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
+    <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-sage-100 dark:from-slate-800/50 to-transparent opacity-50"></div>
+    <div class="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl"></div>
+    
+    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div>
+          <p class="text-primary font-medium mb-4 flex items-center gap-2">
+            <Icon name="lucide:heart-handshake" class="w-5 h-5" />
+            Licensed Marriage & Family Therapist
+          </p>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-semibold text-slate-800 dark:text-white leading-tight mb-6">
+            Begin Your Journey to <span class="text-primary">Healing</span>
+          </h1>
+          <p class="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-lg">
+            I'm Sarah Mitchell, and I'm here to provide compassionate, evidence-based therapy to help you navigate life's challenges and discover your path to wellness.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 mb-8">
+            <a href="#contact" class="btn-primary">
+              Schedule a Free Consultation
+              <Icon name="lucide:arrow-right" class="w-5 h-5 ml-2" />
+            </a>
+            <a href="#services" class="btn-outline">Explore Services</a>
+          </div>
+          <div class="flex items-center gap-6 text-sm text-slate-500 dark:text-slate-400">
+            <div class="flex items-center gap-2">
+              <Icon name="lucide:video" class="w-4 h-4 text-primary" />
+              Virtual Sessions Available
+            </div>
+            <div class="flex items-center gap-2">
+              <Icon name="lucide:shield-check" class="w-4 h-4 text-primary" />
+              HIPAA Compliant
+            </div>
+          </div>
+        </div>
+        
+        <div class="relative">
+          <div class="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl transform rotate-3"></div>
+          <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=600&h=700&fit=crop&crop=face" alt="Sarah Mitchell, LMFT" class="relative rounded-3xl shadow-xl w-full object-cover aspect-[5/6]" />
+          <div class="absolute -bottom-6 -left-6 bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                <Icon name="lucide:award" class="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <div class="text-2xl font-serif font-bold text-slate-800 dark:text-white">15+</div>
+                <div class="text-sm text-slate-500 dark:text-slate-400">Years Experience</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-20 bg-sage-50 dark:bg-slate-800/50 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="order-2 lg:order-1">
+          <div class="grid grid-cols-2 gap-4">
+            <img src="https://images.unsplash.com/photo-1590650153855-d9e808231d41?w=300&h=400&fit=crop" alt="Therapy office" class="rounded-2xl shadow-md w-full object-cover aspect-[3/4]" />
+            <img src="https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=300&h=400&fit=crop" alt="Peaceful space" class="rounded-2xl shadow-md w-full object-cover aspect-[3/4] mt-8" />
+          </div>
+        </div>
+        
+        <div class="order-1 lg:order-2">
+          <p class="text-primary font-medium mb-4">About Me</p>
+          <h2 class="text-3xl md:text-4xl font-serif font-semibold text-slate-800 dark:text-white mb-6">
+            A Compassionate Partner in Your Healing Journey
+          </h2>
+          <p class="text-slate-600 dark:text-slate-400 mb-6">
+            For over 15 years, I've had the privilege of walking alongside individuals, couples, and families as they navigate life's most challenging moments.
+          </p>
+          <p class="text-slate-600 dark:text-slate-400 mb-8">
+            I specialize in anxiety, depression, relationship issues, trauma, and life transitions. Whether you're facing a specific challenge or seeking personal growth, I'm here to support you.
+          </p>
+          <ul class="space-y-3">
+            {credentials.map((credential) => (
+              <li class="flex items-center gap-3">
+                <Icon name="lucide:check-circle" class="w-5 h-5 text-primary flex-shrink-0" />
+                <span class="text-slate-700 dark:text-slate-300">{credential}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="py-20 bg-cream dark:bg-slate-900 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <p class="text-primary font-medium mb-4">Services</p>
+        <h2 class="text-3xl md:text-4xl font-serif font-semibold text-slate-800 dark:text-white mb-6">Therapy Services Tailored to Your Needs</h2>
+        <p class="text-slate-600 dark:text-slate-400">I offer a range of therapeutic services designed to meet you where you are and help you get where you want to be.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {services.map((service) => (
+          <div class="card group hover:-translate-y-1">
+            <div class="flex items-start gap-5">
+              <div class="w-14 h-14 bg-primary/10 dark:bg-primary/20 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors">
+                <Icon name={service.icon} class="w-7 h-7 text-primary" />
+              </div>
+              <div>
+                <h3 class="text-xl font-serif font-semibold text-slate-800 dark:text-white mb-2">{service.title}</h3>
+                <p class="text-slate-600 dark:text-slate-400 mb-4">{service.description}</p>
+                <span class="inline-flex items-center gap-2 text-sm text-primary font-medium">
+                  <Icon name="lucide:clock" class="w-4 h-4" />
+                  {service.duration}
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="mt-12 text-center">
+        <a href="#contact" class="btn-primary">
+          Book Your First Session
+          <Icon name="lucide:calendar" class="w-5 h-5 ml-2" />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Approach Section -->
+  <section id="approach" class="py-20 bg-warm-100 dark:bg-slate-800/50 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <p class="text-primary font-medium mb-4">My Approach</p>
+        <h2 class="text-3xl md:text-4xl font-serif font-semibold text-slate-800 dark:text-white mb-6">How We'll Work Together</h2>
+        <p class="text-slate-600 dark:text-slate-400">I believe in a collaborative, client-centered approach that honors your unique experiences and empowers lasting change.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {approach.map((item, index) => (
+          <div class="flex gap-5">
+            <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-serif font-bold flex-shrink-0">{index + 1}</div>
+            <div>
+              <h3 class="text-xl font-serif font-semibold text-slate-800 dark:text-white mb-2">{item.title}</h3>
+              <p class="text-slate-600 dark:text-slate-400">{item.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="py-20 bg-cream dark:bg-slate-900 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <p class="text-primary font-medium mb-4">Testimonials</p>
+        <h2 class="text-3xl md:text-4xl font-serif font-semibold text-slate-800 dark:text-white mb-6">What Clients Are Saying</h2>
+        <p class="text-slate-600 dark:text-slate-400">Hear from those who have experienced the transformative power of therapy.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {testimonials.map((testimonial) => (
+          <div class="card-warm">
+            <div class="mb-4"><Icon name="lucide:quote" class="w-10 h-10 text-primary/30" /></div>
+            <p class="text-slate-700 dark:text-slate-300 mb-6 leading-relaxed italic">"{testimonial.quote}"</p>
+            <div class="border-t border-warm-300 dark:border-slate-700 pt-4">
+              <div class="font-semibold text-slate-800 dark:text-white">{testimonial.author}</div>
+              <div class="text-sm text-slate-500 dark:text-slate-400">{testimonial.type}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="py-20 bg-sage-50 dark:bg-slate-800/50 transition-colors">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <p class="text-primary font-medium mb-4">FAQ</p>
+        <h2 class="text-3xl md:text-4xl font-serif font-semibold text-slate-800 dark:text-white mb-6">Common Questions</h2>
+        <p class="text-slate-600 dark:text-slate-400">Find answers to frequently asked questions about therapy with me.</p>
+      </div>
+
+      <div class="space-y-4">
+        {faqs.map((faq, index) => (
+          <div class="faq-item bg-white dark:bg-slate-800 rounded-xl shadow-sm dark:shadow-none dark:border dark:border-slate-700 overflow-hidden">
+            <button class="faq-trigger w-full px-6 py-5 flex items-center justify-between text-left" data-index={index}>
+              <span class="font-medium text-slate-800 dark:text-white pr-4">{faq.question}</span>
+              <Icon name="lucide:chevron-down" class="w-5 h-5 text-primary transition-transform faq-icon flex-shrink-0" />
+            </button>
+            <div class="faq-content hidden px-6 pb-5">
+              <p class="text-slate-600 dark:text-slate-400">{faq.answer}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-20 bg-cream dark:bg-slate-900 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div>
+          <p class="text-primary font-medium mb-4">Get Started</p>
+          <h2 class="text-3xl md:text-4xl font-serif font-semibold text-slate-800 dark:text-white mb-6">Ready to Begin Your Healing Journey?</h2>
+          <p class="text-slate-600 dark:text-slate-400 mb-8">Taking the first step can be the hardest part. I offer a free 15-minute phone consultation so we can discuss your needs and see if we're a good fit.</p>
+
+          <div class="space-y-6 mb-8">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Icon name="lucide:map-pin" class="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Office Location</h4>
+                <p class="text-slate-600 dark:text-slate-400">123 Wellness Way, Suite 200<br>San Francisco, CA 94102</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Icon name="lucide:clock" class="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Office Hours</h4>
+                <p class="text-slate-600 dark:text-slate-400">Monday – Thursday: 9am – 7pm<br>Friday: 9am – 3pm</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Icon name="lucide:phone" class="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Contact</h4>
+                <p class="text-slate-600 dark:text-slate-400">
+                  <a href="tel:+15551234567" class="hover:text-primary transition-colors">(555) 123-4567</a><br>
+                  <a href="mailto:sarah@therapywellness.com" class="hover:text-primary transition-colors">sarah@therapywellness.com</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-lg dark:shadow-none dark:border dark:border-slate-700">
+          <h3 class="text-xl font-serif font-semibold text-slate-800 dark:text-white mb-6">Request a Free Consultation</h3>
+          <form class="space-y-5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">First Name</label>
+                <input type="text" class="input" placeholder="Your first name" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Last Name</label>
+                <input type="text" class="input" placeholder="Your last name" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email</label>
+              <input type="email" class="input" placeholder="your@email.com" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Phone</label>
+              <input type="tel" class="input" placeholder="(555) 123-4567" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">What brings you to therapy?</label>
+              <textarea rows="4" class="textarea" placeholder="Share a brief description of what you're hoping to work on..."></textarea>
+            </div>
+            <button type="submit" class="btn-primary w-full">
+              Request Consultation
+              <Icon name="lucide:send" class="w-5 h-5 ml-2" />
+            </button>
+            <p class="text-xs text-slate-500 dark:text-slate-400 text-center">Your information is kept strictly confidential.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  document.querySelectorAll('.faq-trigger').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      const item = trigger.closest('.faq-item');
+      const content = item?.querySelector('.faq-content');
+      const icon = trigger.querySelector('.faq-icon');
+      
+      document.querySelectorAll('.faq-item').forEach(otherItem => {
+        if (otherItem !== item) {
+          otherItem.querySelector('.faq-content')?.classList.add('hidden');
+          otherItem.querySelector('.faq-icon')?.classList.remove('rotate-180');
+        }
+      });
+      
+      content?.classList.toggle('hidden');
+      icon?.classList.toggle('rotate-180');
+    });
+  });
+</script>

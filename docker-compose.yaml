@@ -1,0 +1,210 @@
+version: "3.8"
+
+# Flowstarter Monorepo Development Stack
+# Run: docker compose up -d --build
+
+services:
+  # ============================================
+  # CONVEX - Local Backend
+  # ============================================
+  convex:
+    image: convex/convex-local-backend:latest
+    ports:
+      - "3210:3210"  # Convex backend
+      - "4001:4001"  # Convex dashboard
+    volumes:
+      - convex_data:/convex_data
+    environment:
+      - CONVEX_SITE_URL=http://localhost:5173
+    networks:
+      - flowstarter-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3210/version"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # EDITOR - Main Flowstarter Editor App
+  # ============================================
+  editor:
+    build:
+      context: ./apps/flowstarter-editor
+      dockerfile: Dockerfile
+      target: flowstarter-development
+    ports:
+      - "5173:5173"
+    env_file: 
+      - ./apps/flowstarter-editor/.env.local
+    environment:
+      - NODE_ENV=development
+      - VITE_HMR_PROTOCOL=ws
+      - VITE_HMR_HOST=0.0.0.0
+      - VITE_HMR_PORT=5173
+      - CHOKIDAR_USEPOLLING=true
+      - RUNNING_IN_DOCKER=true
+      # Convex local
+      - CONVEX_URL=http://convex:3210
+      - VITE_CONVEX_URL=http://localhost:3210
+      # Supabase direct connections
+      - SUPABASE_URL=http://localhost:54323
+      - SUPABASE_AUTH_URL=http://localhost:54321
+    volumes:
+      - ./apps/flowstarter-editor:/app:cached
+      - editor_node_modules:/app/node_modules
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: pnpm run dev --host 0.0.0.0
+    depends_on:
+      convex:
+        condition: service_healthy
+      supabase-db:
+        condition: service_healthy
+    networks:
+      - flowstarter-network
+
+  # Convex CLI for syncing functions
+  convex-dev:
+    build:
+      context: ./apps/flowstarter-editor
+      dockerfile: Dockerfile
+      target: flowstarter-development
+    environment:
+      - CONVEX_URL=http://convex:3210
+    volumes:
+      - ./apps/flowstarter-editor:/app:cached
+      - editor_node_modules:/app/node_modules
+    command: npx convex dev --url http://convex:3210 --admin-key convex-local
+    depends_on:
+      convex:
+        condition: service_healthy
+    networks:
+      - flowstarter-network
+
+  # ============================================
+  # LIBRARY - MCP Template Server
+  # ============================================
+  library:
+    build:
+      context: ./apps/flowstarter-library
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+    volumes:
+      - ./apps/flowstarter-library:/app:cached
+      - library_node_modules:/app/node_modules
+    command: pnpm run dev
+    networks:
+      - flowstarter-network
+
+  # ============================================
+  # SUPABASE - Simplified Local Stack
+  # ============================================
+  
+  # PostgreSQL Database
+  supabase-db:
+    image: supabase/postgres:15.8.1.145
+    ports:
+      - "54322:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
+    volumes:
+      - supabase_db_data:/var/lib/postgresql/data
+    networks:
+      - flowstarter-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Supabase Auth
+  supabase-auth:
+    image: supabase/gotrue:v2.165.1
+    ports:
+      - "54321:9999"
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: 9999
+      API_EXTERNAL_URL: http://localhost:54321
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://postgres:postgres@supabase-db:5432/postgres?search_path=auth
+      GOTRUE_SITE_URL: http://localhost:5173
+      GOTRUE_URI_ALLOW_LIST: "*"
+      GOTRUE_DISABLE_SIGNUP: "false"
+      GOTRUE_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
+      GOTRUE_MAILER_AUTOCONFIRM: "true"
+    depends_on:
+      supabase-db:
+        condition: service_healthy
+    networks:
+      - flowstarter-network
+
+  # Supabase REST API (PostgREST)
+  supabase-rest:
+    image: postgrest/postgrest:v12.2.8
+    ports:
+      - "54323:3000"
+    environment:
+      PGRST_DB_URI: postgres://postgres:postgres@supabase-db:5432/postgres
+      PGRST_DB_SCHEMAS: public,storage
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
+      PGRST_DB_USE_LEGACY_GUCS: "false"
+    depends_on:
+      supabase-db:
+        condition: service_healthy
+    networks:
+      - flowstarter-network
+
+  # Supabase Studio (Dashboard)
+  supabase-studio:
+    image: supabase/studio:20241202-71e5240
+    ports:
+      - "54328:3000"
+    environment:
+      STUDIO_PG_META_URL: http://supabase-meta:8080
+      POSTGRES_PASSWORD: postgres
+      DEFAULT_ORGANIZATION_NAME: Flowstarter
+      DEFAULT_PROJECT_NAME: flowstarter-local
+      SUPABASE_URL: http://supabase-rest:3000
+      SUPABASE_PUBLIC_URL: http://localhost:54323
+      SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+      SUPABASE_SERVICE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+    depends_on:
+      - supabase-meta
+    networks:
+      - flowstarter-network
+
+  # Supabase Meta (for Studio)
+  supabase-meta:
+    image: supabase/postgres-meta:v0.84.2
+    ports:
+      - "54329:8080"
+    environment:
+      PG_META_PORT: 8080
+      PG_META_DB_HOST: supabase-db
+      PG_META_DB_PORT: 5432
+      PG_META_DB_NAME: postgres
+      PG_META_DB_USER: postgres
+      PG_META_DB_PASSWORD: postgres
+    depends_on:
+      supabase-db:
+        condition: service_healthy
+    networks:
+      - flowstarter-network
+
+networks:
+  flowstarter-network:
+    driver: bridge
+
+volumes:
+  convex_data:
+  editor_node_modules:
+  library_node_modules:
+  supabase_db_data:

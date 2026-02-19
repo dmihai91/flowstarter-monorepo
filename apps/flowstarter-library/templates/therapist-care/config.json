@@ -1,0 +1,32 @@
+{
+  "name": "Therapist Care",
+  "slug": "therapist-care",
+  "description": "Calming, professional template for therapists and counselors. Warm sage-green palette with HIPAA-compliant design, appointment booking, and credential showcase.",
+  "category": "mental-health",
+  "tags": ["therapist", "counselor", "psychologist", "mental-health", "LMFT", "therapy", "wellness", "EMDR", "CBT"],
+  "framework": "astro",
+  "features": ["Multi-page", "Booking integration", "Newsletter integration", "Contact form", "Testimonials", "FAQ", "Dark mode"],
+  "integrations": {
+    "booking": {
+      "name": "Booking System",
+      "description": "Connect Calendly to let clients schedule therapy sessions",
+      "providers": [
+        {"id": "calendly", "name": "Calendly", "field": "calendly_url", "placeholder": "https://calendly.com/your-username/consultation"},
+        {"id": "calcom", "name": "Cal.com", "field": "calcom_url", "placeholder": "https://cal.com/your-username/consultation"}
+      ],
+      "optional": true,
+      "configPath": "content/integrations/booking.md"
+    },
+    "newsletter": {
+      "name": "Newsletter",
+      "description": "Connect Mailchimp to share mental health resources with clients",
+      "providers": [
+        {"id": "mailchimp", "name": "Mailchimp", "field": "mailchimp_url", "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"},
+        {"id": "convertkit", "name": "ConvertKit", "field": "convertkit_form_id", "placeholder": "1234567"},
+        {"id": "buttondown", "name": "Buttondown", "field": "buttondown_username", "placeholder": "your-username"}
+      ],
+      "optional": true,
+      "configPath": "content/integrations/newsletter.md"
+    }
+  }
+}

@@ -1,0 +1,247 @@
+---
+/**
+ * Booking Widget Integration
+ * Supports: Calendly, Cal.com, or custom form
+ * Reads config from content/integrations/booking.md
+ */
+import { frontmatter as data } from '../../../content/integrations/booking.md';
+
+// TypeScript interfaces for strict type checking
+interface TimeSlot {
+  day: string;
+  times: string[];
+}
+
+interface BookingField {
+  name: string;
+  label: string;
+  type: string;
+  required?: boolean;
+}
+
+const { 
+  enabled, 
+  provider,
+  calendly_url,
+  calcom_url,
+  title, 
+  description, 
+  cta, 
+  slots, 
+  fields 
+} = data as {
+  enabled: boolean;
+  provider: string;
+  calendly_url: string;
+  calcom_url: string;
+  title: string;
+  description: string;
+  cta: string;
+  slots?: TimeSlot[];
+  fields?: BookingField[];
+};
+
+// Determine which booking system to use
+const useCalendly = provider === 'calendly' && calendly_url;
+const useCalcom = provider === 'calcom' && calcom_url;
+const useCustom = !useCalendly && !useCalcom;
+---
+
+<section id="booking" class="py-24 bg-gray-950 relative overflow-hidden">
+  <div class="absolute inset-0" style="background: var(--gradient-mesh);"></div>
+  
+  <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Section header -->
+    <div class="text-center mb-12">
+      <span class="text-gradient font-semibold text-sm uppercase tracking-wider">Book Now</span>
+      <h2 class="text-3xl md:text-5xl font-bold text-white mt-4 mb-6">
+        {title}
+      </h2>
+      {description && (
+        <p class="text-lg text-gray-400 max-w-2xl mx-auto">{description}</p>
+      )}
+    </div>
+
+    {/* Calendly Integration */}
+    {useCalendly && (
+      <div class="bg-white rounded-2xl overflow-hidden shadow-2xl">
+        <!-- Calendly inline widget -->
+        <div 
+          class="calendly-inline-widget" 
+          data-url={calendly_url}
+          style="min-width:320px;height:700px;"
+        ></div>
+        <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+      </div>
+    )}
+
+    {/* Cal.com Integration */}
+    {useCalcom && (
+      <div class="bg-white rounded-2xl overflow-hidden shadow-2xl">
+        <iframe 
+          src={calcom_url}
+          frameborder="0"
+          class="w-full"
+          style="min-height:700px;"
+          allow="camera; microphone"
+        ></iframe>
+      </div>
+    )}
+
+    {/* Custom Booking Form (fallback) */}
+    {useCustom && (
+      <div class="bg-gray-900 rounded-2xl overflow-hidden border border-gray-800">
+        <div class="grid lg:grid-cols-5">
+          <!-- Left side: Info -->
+          <div class="lg:col-span-2 p-8 lg:p-12 bg-gradient-to-br from-primary to-primary-dark text-white">
+            <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-6">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <h3 class="text-2xl font-bold mb-4">Schedule Your Free Consultation</h3>
+            <p class="text-white/80 mb-8">
+              Pick a time that works for you. We'll send you a calendar invite with video call details.
+            </p>
+            
+            <!-- Benefits -->
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                <span>30-minute video call</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                <span>Personalized assessment</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                <span>No obligation</span>
+              </div>
+            </div>
+
+            <!-- Available times preview -->
+            {slots && slots.length > 0 && (
+              <div class="mt-8 pt-8 border-t border-white/20">
+                <p class="text-sm font-medium text-white/60 uppercase tracking-wide mb-4">Next Available</p>
+                <div class="space-y-3">
+                  {slots.slice(0, 2).map((slot: TimeSlot) => (
+                    <div>
+                      <p class="font-medium">{slot.day}</p>
+                      <div class="flex flex-wrap gap-2 mt-1">
+                        {slot.times.slice(0, 3).map((time: string, i: number) => (
+                          <span class="px-2 py-1 rounded text-xs bg-white/20">{time}</span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <!-- Right side: Form -->
+          <div class="lg:col-span-3 p-8 lg:p-12">
+            <form id="bookingForm" class="space-y-6">
+              <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm text-gray-400 mb-2">First Name *</label>
+                  <input type="text" name="firstName" required class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:border-primary focus:outline-none transition-colors" />
+                </div>
+                <div>
+                  <label class="block text-sm text-gray-400 mb-2">Last Name *</label>
+                  <input type="text" name="lastName" required class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:border-primary focus:outline-none transition-colors" />
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-sm text-gray-400 mb-2">Email *</label>
+                <input type="email" name="email" required class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:border-primary focus:outline-none transition-colors" />
+              </div>
+              
+              <div>
+                <label class="block text-sm text-gray-400 mb-2">Phone</label>
+                <input type="tel" name="phone" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:border-primary focus:outline-none transition-colors" />
+              </div>
+              
+              <div>
+                <label class="block text-sm text-gray-400 mb-2">Preferred Date & Time</label>
+                <input type="datetime-local" name="datetime" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:border-primary focus:outline-none transition-colors" />
+              </div>
+              
+              <div>
+                <label class="block text-sm text-gray-400 mb-2">What can we help you with?</label>
+                <textarea name="message" rows="3" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:border-primary focus:outline-none transition-colors resize-none"></textarea>
+              </div>
+              
+              <button type="submit" class="w-full btn-gradient py-4 flex items-center justify-center gap-2">
+                <span>{cta || 'Book Consultation'}</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                </svg>
+              </button>
+            </form>
+
+            <!-- Success state -->
+            <div id="bookingSuccess" class="hidden text-center py-12">
+              <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-white mb-2">Booking Requested!</h3>
+              <p class="text-gray-400">We'll confirm your appointment within 24 hours.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    <!-- Setup notice when not configured -->
+    {!enabled && useCustom && (
+      <div class="mt-8 p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <div class="text-sm">
+            <p class="font-medium text-amber-400">Connect Your Booking System</p>
+            <p class="text-amber-400/70 mt-1">
+              Edit <code class="bg-amber-500/20 px-1 rounded">content/integrations/booking.md</code> to connect Calendly, Cal.com, or configure the form.
+            </p>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+</section>
+
+<script>
+  // Custom form handling
+  const form = document.getElementById('bookingForm');
+  const success = document.getElementById('bookingSuccess');
+  
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Show loading state
+    const btn = form.querySelector('button[type="submit"]');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span>Submitting...</span>';
+    btn.disabled = true;
+    
+    // Simulate API call (replace with real endpoint)
+    await new Promise(r => setTimeout(r, 1500));
+    
+    // Show success
+    form.classList.add('hidden');
+    success?.classList.remove('hidden');
+  });
+</script>
+

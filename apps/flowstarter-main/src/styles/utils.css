@@ -1,0 +1,136 @@
+.hide-dialog-close > .absolute.right-4.top-4 {
+  /* Adjust selector based on actual rendered classes of DialogClose */
+  display: none; /* This assumes you know the classes applied to DialogClose, adjust selector accordingly */
+}
+
+/* onboarding page */
+.light .onboarding-page {
+  position: relative;
+  background: radial-gradient(
+      circle at 50% 100%,
+      #eef2f680 5%,
+      #eef2f6 5% 7.5%,
+      #eef2f680 7.5% 10%,
+      #eef2f6 10% 12.5%,
+      #eef2f680 12.5% 15%,
+      #eef2f6 15% 17.5%,
+      #eef2f680 17.5% 20%,
+      #eef2f6 20% 22.5%,
+      #eef2f680 22.5% 25%,
+      #eef2f6 25% 27.5%,
+      #eef2f680 27.5% 30%,
+      #eef2f6 30% 32.5%,
+      #eef2f680 32.5% 35%,
+      #eef2f6 35% 37.5%,
+      #eef2f680 37.5% 40%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 100% 50%,
+      #eef2f680 5%,
+      #eef2f6 5% 7.5%,
+      #eef2f680 7.5% 10%,
+      #eef2f6 10% 12.5%,
+      #eef2f680 12.5% 15%,
+      #eef2f6 15% 17.5%,
+      #eef2f680 17.5% 20%,
+      #eef2f6 20% 22.5%,
+      #eef2f680 22.5% 25%,
+      #eef2f6 25% 27.5%,
+      #eef2f680 27.5% 30%,
+      #eef2f6 30% 32.5%,
+      #eef2f680 32.5% 35%,
+      #eef2f6 35% 37.5%,
+      #eef2f680 37.5% 40%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 50% 0%,
+      #eef2f680 5%,
+      #eef2f6 5% 7.5%,
+      #eef2f680 7.5% 10%,
+      #eef2f6 10% 12.5%,
+      #eef2f680 12.5% 15%,
+      #eef2f6 15% 17.5%,
+      #eef2f680 17.5% 20%,
+      #eef2f6 20% 22.5%,
+      #eef2f680 22.5% 25%,
+      #eef2f6 25% 27.5%,
+      #eef2f680 27.5% 30%,
+      #eef2f6 30% 32.5%,
+      #eef2f680 32.5% 35%,
+      #eef2f6 35% 37.5%,
+      #eef2f680 37.5% 40%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 0 50%,
+      #eef2f680 5%,
+      #eef2f6 5% 7.5%,
+      #eef2f680 7.5% 10%,
+      #eef2f6 10% 12.5%,
+      #eef2f680 12.5% 15%,
+      #eef2f6 15% 17.5%,
+      #eef2f680 17.5% 20%,
+      #eef2f6 20% 22.5%,
+      #eef2f680 22.5% 25%,
+      #eef2f6 25% 27.5%,
+      #eef2f680 27.5% 30%,
+      #eef2f6 30% 32.5%,
+      #eef2f680 32.5% 35%,
+      #eef2f6 35% 37.5%,
+      #eef2f680 37.5% 40%,
+      transparent 40%
+    );
+  background-size: 2em 2em;
+  background-color: #ffffff;
+  opacity: 1;
+}
+
+/* Add subtle grain to onboarding page */
+.light .onboarding-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.02;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+  mix-blend-mode: overlay;
+}
+
+.prose {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    a.peer {
+      text-decoration: none;
+    }
+  }
+}
+
+.border-grid {
+  border-style: dashed;
+  border-color: var(--color-border) / 0.5;
+  &:is(.dark *) {
+    border-color: var(--color-border);
+  }
+}
+
+/* Add container-fluid utility class */
+.container-fluid {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+/* Keep content sections centered with max-width for better readability on ultra-wide screens */
+@media (min-width: 1400px) {
+  .container-fluid .max-w-7xl {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

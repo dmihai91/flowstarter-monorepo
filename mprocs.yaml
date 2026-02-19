@@ -1,0 +1,12 @@
+shell: "pwsh -Command"
+
+procs:
+  "📝 Editor":
+    shell: "pnpm dev:editor"
+    autostart: true
+  "📚 Library":
+    shell: "pnpm dev:library"
+    autostart: true
+  "⚡ Convex":
+    shell: "pnpm --filter flowstarter-editor convex:dev"
+    autostart: true

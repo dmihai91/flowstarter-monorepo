@@ -1,0 +1,395 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Icon } from 'astro-icon/components';
+
+interface Course {
+  icon: string;
+  title: string;
+  description: string;
+  price: string;
+}
+
+interface LearningFeature {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+interface Testimonial {
+  quote: string;
+  author: string;
+  role: string;
+  result: string;
+}
+
+interface FAQ {
+  question: string;
+  answer: string;
+}
+
+const courses: Course[] = [
+  { icon: "lucide:code", title: "Web Development Mastery", description: "From HTML/CSS to full-stack JavaScript. Build real projects and deploy to production. 12-week comprehensive program.", price: "$299" },
+  { icon: "lucide:palette", title: "UI/UX Design Foundations", description: "User research, wireframing, Figma mastery, and design systems. Create portfolios that get you hired.", price: "$249" },
+  { icon: "lucide:bar-chart", title: "Data Analytics with Python", description: "Pandas, data visualization, SQL, and storytelling with data. Turn raw numbers into actionable insights.", price: "$199" },
+  { icon: "lucide:megaphone", title: "Digital Marketing Essentials", description: "SEO, paid advertising, email marketing, and analytics. Launch campaigns that actually convert.", price: "$179" },
+  { icon: "lucide:video", title: "Video Production for Creators", description: "Scripting, filming, editing, and publishing. Create professional content for YouTube and social media.", price: "$229" },
+  { icon: "lucide:sparkles", title: "AI Tools for Professionals", description: "ChatGPT, automation workflows, and AI-powered productivity. Work smarter, not harder.", price: "$99" },
+];
+
+const learningFeatures: LearningFeature[] = [
+  { icon: "lucide:book-open", title: "Structured Curriculum", description: "Step-by-step learning paths designed by industry experts. No guessing what to learn next." },
+  { icon: "lucide:hammer", title: "Hands-On Projects", description: "Build real portfolio pieces as you learn. Every course includes practical assignments and capstone projects." },
+  { icon: "lucide:users", title: "Community Access", description: "Join a community of motivated learners. Get help, share wins, and network with peers in your field." },
+  { icon: "lucide:refresh-cw", title: "Lifetime Updates", description: "Course content is continuously updated. Enroll once and get access to all future updates at no extra cost." },
+];
+
+const testimonials: Testimonial[] = [
+  { quote: "The Web Development course gave me everything I needed to land my first dev job. Clear structure, real projects, and the instructor actually responded to questions within hours.", author: "Alex K.", role: "Junior Developer", result: "Landed first dev job in 3 months" },
+  { quote: "I had tried free tutorials for years with no progress. This course had a clear path, deadlines, and accountability. Finished in 10 weeks and built 3 portfolio pieces that got me hired.", author: "Sara M.", role: "UI/UX Designer", result: "Built 3 portfolio projects" },
+  { quote: "The Data Analytics course was worth every penny. I automated reports at work and got a promotion within 3 months of completing it. Best investment in my career.", author: "James P.", role: "Business Analyst", result: "Promotion + 20% raise" },
+];
+
+const faqs: FAQ[] = [
+  { question: "How long do I have access to the courses?", answer: "You get lifetime access to all course materials. Once you enroll, the content is yours forever, including any future updates and additions to the curriculum." },
+  { question: "Do I need any prerequisites or prior experience?", answer: "Most courses are designed for beginners. Each course listing specifies the recommended experience level. Our Web Development and AI Tools courses start from absolute zero, while Data Analytics assumes basic computer literacy." },
+  { question: "What is your refund policy?", answer: "We offer a 30-day money-back guarantee on all courses. If you are not satisfied with the content for any reason, contact us within 30 days of purchase for a full refund, no questions asked." },
+  { question: "Do I get a certificate upon completion?", answer: "Yes! Every course includes a verified certificate of completion that you can share on LinkedIn and add to your resume. Certificates include your name, course title, and completion date." },
+  { question: "Is 1-on-1 mentoring available?", answer: "Yes, we offer optional 1-on-1 mentoring sessions with our instructors. You can book 30-minute or 60-minute sessions to get personalized guidance on your projects, career questions, or course material." },
+];
+
+const stats = [
+  { value: "5,000+", label: "Students Enrolled" },
+  { value: "25+", label: "Expert Courses" },
+  { value: "4.9", label: "Average Rating" },
+  { value: "95%", label: "Completion Rate" },
+];
+---
+
+<Layout>
+  <!-- Hero Section -->
+  <section class="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
+    <div class="absolute inset-0 grid-pattern opacity-50"></div>
+    <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/5 dark:from-primary/10 to-transparent"></div>
+    <div class="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl"></div>
+    
+    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div>
+          <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 dark:bg-primary/20 rounded-full mb-6">
+            <Icon name="lucide:trending-up" class="w-4 h-4 text-primary" />
+            <span class="text-sm font-semibold text-primary">5,000+ Students Enrolled</span>
+          </div>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-slate-800 dark:text-white leading-tight mb-6">
+            Master Skills That <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Matter</span>
+          </h1>
+          <p class="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-lg">
+            Hands-on courses designed for real-world impact. Whether you are starting a new career, leveling up, or pursuing a passion - you will get the skills you need to succeed.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 mb-8">
+            <a href="#courses" class="btn-primary">
+              Browse Courses
+              <Icon name="lucide:arrow-right" class="w-5 h-5 ml-2" />
+            </a>
+            <a href="#testimonials" class="btn-outline">See Student Reviews</a>
+          </div>
+          <div class="grid grid-cols-4 gap-4">
+            {stats.map((stat: { value: string; label: string }) => (
+              <div class="text-center">
+                <div class="text-2xl font-display font-bold text-slate-800 dark:text-white">{stat.value}</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        <div class="relative">
+          <div class="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl transform rotate-3"></div>
+          <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=700&fit=crop" alt="Students collaborating on a project" class="relative rounded-3xl shadow-xl w-full object-cover aspect-[5/6]" />
+          <div class="absolute -bottom-6 -left-6 bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-accent-100 dark:bg-accent-500/20 rounded-full flex items-center justify-center">
+                <Icon name="lucide:award" class="w-6 h-6 text-accent-500" />
+              </div>
+              <div>
+                <div class="text-2xl font-display font-bold text-slate-800 dark:text-white">4.9/5</div>
+                <div class="text-sm text-slate-500 dark:text-slate-400">Student Rating</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-20 bg-cool-50 dark:bg-slate-800/50 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="order-2 lg:order-1">
+          <div class="grid grid-cols-2 gap-4">
+            <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=300&h=400&fit=crop" alt="Instructor teaching a class" class="rounded-2xl shadow-md w-full object-cover aspect-[3/4]" />
+            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300&h=400&fit=crop" alt="Student working on laptop" class="rounded-2xl shadow-md w-full object-cover aspect-[3/4] mt-8" />
+          </div>
+        </div>
+        
+        <div class="order-1 lg:order-2">
+          <p class="text-primary font-semibold mb-4">About the Instructor</p>
+          <h2 class="text-3xl md:text-4xl font-display font-bold text-slate-800 dark:text-white mb-6">
+            Learn From Someone Who Has Done It
+          </h2>
+          <p class="text-slate-600 dark:text-slate-400 mb-6">
+            With over 10 years of industry experience building products at top tech companies, I transitioned into education because I believe practical skills should be accessible to everyone.
+          </p>
+          <p class="text-slate-600 dark:text-slate-400 mb-8">
+            I have helped thousands of students launch new careers, earn promotions, and build the confidence to tackle real-world challenges. My courses focus on practical, project-based learning - not just theory.
+          </p>
+          <ul class="space-y-3">
+            <li class="flex items-center gap-3">
+              <Icon name="lucide:check-circle" class="w-5 h-5 text-primary flex-shrink-0" />
+              <span class="text-slate-700 dark:text-slate-300">10+ years industry experience at top tech companies</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <Icon name="lucide:check-circle" class="w-5 h-5 text-primary flex-shrink-0" />
+              <span class="text-slate-700 dark:text-slate-300">5,000+ students taught across 25+ courses</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <Icon name="lucide:check-circle" class="w-5 h-5 text-primary flex-shrink-0" />
+              <span class="text-slate-700 dark:text-slate-300">Featured speaker at EdTech and industry conferences</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <Icon name="lucide:check-circle" class="w-5 h-5 text-primary flex-shrink-0" />
+              <span class="text-slate-700 dark:text-slate-300">Passionate about making quality education accessible</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Courses Section -->
+  <section id="courses" class="py-20 bg-cream dark:bg-slate-900 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <p class="text-primary font-semibold mb-4">Course Catalog</p>
+        <h2 class="text-3xl md:text-4xl font-display font-bold text-slate-800 dark:text-white mb-6">Featured Courses</h2>
+        <p class="text-slate-600 dark:text-slate-400">Learn in-demand skills with structured curriculum, hands-on projects, and lifetime access.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {courses.map((course: Course) => (
+          <div class="card group hover:-translate-y-1 relative">
+            <div class="absolute top-4 right-4 px-3 py-1 bg-secondary/10 dark:bg-secondary/20 text-secondary font-bold text-sm rounded-lg">
+              {course.price}
+            </div>
+            <div class="w-14 h-14 bg-primary/10 dark:bg-primary/20 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors">
+              <Icon name={course.icon} class="w-7 h-7 text-primary" />
+            </div>
+            <h3 class="text-xl font-display font-bold text-slate-800 dark:text-white mb-3">{course.title}</h3>
+            <p class="text-slate-600 dark:text-slate-400 mb-5">{course.description}</p>
+            <a href="#contact" class="inline-flex items-center gap-2 text-sm text-primary font-semibold hover:gap-3 transition-all">
+              Learn More
+              <Icon name="lucide:arrow-right" class="w-4 h-4" />
+            </a>
+          </div>
+        ))}
+      </div>
+
+      <div class="mt-12 text-center">
+        <a href="#contact" class="btn-primary">
+          Enroll Now
+          <Icon name="lucide:rocket" class="w-5 h-5 ml-2" />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Learning Experience Section -->
+  <section id="pricing" class="py-20 bg-cool-100 dark:bg-slate-800/50 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <p class="text-primary font-semibold mb-4">The Learning Experience</p>
+        <h2 class="text-3xl md:text-4xl font-display font-bold text-slate-800 dark:text-white mb-6">Why Students Choose SkillForge</h2>
+        <p class="text-slate-600 dark:text-slate-400">We do not just teach concepts - we build skills through a proven methodology that gets results.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {learningFeatures.map((feature: LearningFeature, index: number) => (
+          <div class="flex gap-5">
+            <div class="w-12 h-12 bg-gradient-to-br from-primary to-secondary text-white rounded-xl flex items-center justify-center font-display font-bold flex-shrink-0">
+              <Icon name={feature.icon} class="w-6 h-6" />
+            </div>
+            <div>
+              <h3 class="text-xl font-display font-bold text-slate-800 dark:text-white mb-2">{feature.title}</h3>
+              <p class="text-slate-600 dark:text-slate-400">{feature.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="py-20 bg-cream dark:bg-slate-900 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <p class="text-primary font-semibold mb-4">Student Success Stories</p>
+        <h2 class="text-3xl md:text-4xl font-display font-bold text-slate-800 dark:text-white mb-6">Real Results from Real Learners</h2>
+        <p class="text-slate-600 dark:text-slate-400">See how our courses have transformed careers and opened new doors.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {testimonials.map((testimonial: Testimonial) => (
+          <div class="card-cool">
+            <div class="mb-4"><Icon name="lucide:quote" class="w-10 h-10 text-primary/30" /></div>
+            <p class="text-slate-700 dark:text-slate-300 mb-6 leading-relaxed italic">"{testimonial.quote}"</p>
+            <div class="mb-3">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-accent-100 dark:bg-accent-500/20 text-accent-500 text-xs font-semibold rounded-full">
+                <Icon name="lucide:trophy" class="w-3 h-3" />
+                {testimonial.result}
+              </span>
+            </div>
+            <div class="border-t border-cool-300 dark:border-slate-700 pt-4">
+              <div class="font-semibold text-slate-800 dark:text-white">{testimonial.author}</div>
+              <div class="text-sm text-slate-500 dark:text-slate-400">{testimonial.role}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="py-20 bg-cool-50 dark:bg-slate-800/50 transition-colors">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <p class="text-primary font-semibold mb-4">FAQ</p>
+        <h2 class="text-3xl md:text-4xl font-display font-bold text-slate-800 dark:text-white mb-6">Common Questions</h2>
+        <p class="text-slate-600 dark:text-slate-400">Everything you need to know before enrolling.</p>
+      </div>
+
+      <div class="space-y-4">
+        {faqs.map((faq: FAQ, index: number) => (
+          <div class="faq-item bg-white dark:bg-slate-800 rounded-xl shadow-sm dark:shadow-none dark:border dark:border-slate-700 overflow-hidden">
+            <button class="faq-trigger w-full px-6 py-5 flex items-center justify-between text-left" data-index={index}>
+              <span class="font-medium text-slate-800 dark:text-white pr-4">{faq.question}</span>
+              <Icon name="lucide:chevron-down" class="w-5 h-5 text-primary transition-transform faq-icon flex-shrink-0" />
+            </button>
+            <div class="faq-content hidden px-6 pb-5">
+              <p class="text-slate-600 dark:text-slate-400">{faq.answer}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-20 bg-cream dark:bg-slate-900 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div>
+          <p class="text-primary font-semibold mb-4">Get Started</p>
+          <h2 class="text-3xl md:text-4xl font-display font-bold text-slate-800 dark:text-white mb-6">Ready to Level Up Your Skills?</h2>
+          <p class="text-slate-600 dark:text-slate-400 mb-8">Have questions about our courses or need help choosing the right one? Reach out and we will help you find the perfect learning path.</p>
+
+          <div class="space-y-6 mb-8">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Icon name="lucide:mail" class="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Email Us</h4>
+                <p class="text-slate-600 dark:text-slate-400">
+                  <a href="mailto:hello@skillforge.academy" class="hover:text-primary transition-colors">hello@skillforge.academy</a>
+                </p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Icon name="lucide:phone" class="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Call Us</h4>
+                <p class="text-slate-600 dark:text-slate-400">
+                  <a href="tel:+15554567890" class="hover:text-primary transition-colors">(555) 456-7890</a><br>
+                  <span class="text-sm">Mon-Fri, 9am-6pm EST</span>
+                </p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Icon name="lucide:message-circle" class="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Community</h4>
+                <p class="text-slate-600 dark:text-slate-400">Join our Discord community for peer support, study groups, and networking.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-lg dark:shadow-none dark:border dark:border-slate-700">
+          <h3 class="text-xl font-display font-bold text-slate-800 dark:text-white mb-6">Enrollment Inquiry</h3>
+          <form class="space-y-5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">First Name</label>
+                <input type="text" class="input" placeholder="Your first name" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Last Name</label>
+                <input type="text" class="input" placeholder="Your last name" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email</label>
+              <input type="email" class="input" placeholder="your@email.com" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Course Interest</label>
+              <select class="input">
+                <option value="">Select a course...</option>
+                <option value="web-dev">Web Development Mastery</option>
+                <option value="ui-ux">UI/UX Design Foundations</option>
+                <option value="data">Data Analytics with Python</option>
+                <option value="marketing">Digital Marketing Essentials</option>
+                <option value="video">Video Production for Creators</option>
+                <option value="ai">AI Tools for Professionals</option>
+                <option value="multiple">Multiple Courses / Bundle</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Message (Optional)</label>
+              <textarea rows="4" class="textarea" placeholder="Tell us about your goals or any questions you have..."></textarea>
+            </div>
+            <button type="submit" class="btn-primary w-full">
+              Submit Inquiry
+              <Icon name="lucide:send" class="w-5 h-5 ml-2" />
+            </button>
+            <p class="text-xs text-slate-500 dark:text-slate-400 text-center">We typically respond within 24 hours.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  document.querySelectorAll('.faq-trigger').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      const item = trigger.closest('.faq-item');
+      const content = item?.querySelector('.faq-content');
+      const icon = trigger.querySelector('.faq-icon');
+      
+      document.querySelectorAll('.faq-item').forEach(otherItem => {
+        if (otherItem !== item) {
+          otherItem.querySelector('.faq-content')?.classList.add('hidden');
+          otherItem.querySelector('.faq-icon')?.classList.remove('rotate-180');
+        }
+      });
+      
+      content?.classList.toggle('hidden');
+      icon?.classList.toggle('rotate-180');
+    });
+  });
+</script>

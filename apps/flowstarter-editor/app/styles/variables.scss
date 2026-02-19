@@ -1,0 +1,376 @@
+/* Color Tokens Light Theme - Modernized with improved contrast */
+:root[data-theme='light'] {
+  /* Custom Brand Purple */
+  --flowstarter-accent-purple: #4d5dd9;
+  --flowstarter-accent-purple-rgb: 77, 93, 217;
+
+  --flowstarter-elements-borderColor: #d4d4d8;
+  /* Zinc-300 - stronger border */
+  --flowstarter-elements-borderColorActive: #09090b;
+  /* Zinc-950 */
+
+  --flowstarter-elements-bg-depth-1: #ffffff;
+  --flowstarter-elements-bg-depth-2: #f4f4f5;
+  /* Zinc-100 */
+  --flowstarter-elements-bg-depth-3: #e4e4e7;
+  /* Zinc-200 */
+  --flowstarter-elements-bg-depth-4: #d4d4d8;
+  /* Zinc-300 */
+
+  /* Aliases for background-depth variables */
+  --flowstarter-elements-background-depth-1: var(--flowstarter-elements-bg-depth-1);
+  --flowstarter-elements-background-depth-2: var(--flowstarter-elements-bg-depth-2);
+  --flowstarter-elements-background-depth-3: var(--flowstarter-elements-bg-depth-3);
+  --flowstarter-elements-background-depth-4: var(--flowstarter-elements-bg-depth-4);
+
+  --flowstarter-elements-textPrimary: #09090b;
+  /* Zinc-950 */
+  --flowstarter-elements-textSecondary: #3f3f46;
+  /* Zinc-700 - darker for better contrast */
+  --flowstarter-elements-textTertiary: #71717a;
+  /* Zinc-500 - darker */
+
+  --flowstarter-elements-code-background: #f4f4f5;
+  --flowstarter-elements-code-text: #09090b;
+
+  /* Buttons */
+  --flowstarter-elements-button-primary-background: #18181b;
+  /* Zinc-900 */
+  --flowstarter-elements-button-primary-backgroundHover: #27272a;
+  --flowstarter-elements-button-primary-text: #ffffff;
+
+  --flowstarter-elements-button-secondary-background: #ffffff;
+  --flowstarter-elements-button-secondary-backgroundHover: #f4f4f5;
+  --flowstarter-elements-button-secondary-text: #09090b;
+
+  --flowstarter-elements-button-danger-background: #fee2e2;
+  --flowstarter-elements-button-danger-backgroundHover: #fecaca;
+  --flowstarter-elements-button-danger-text: #dc2626;
+
+  /* Items - improved contrast */
+  --flowstarter-elements-item-contentDefault: #3f3f46;
+  /* Darker */
+  --flowstarter-elements-item-contentActive: #09090b;
+  --flowstarter-elements-item-contentAccent: #09090b;
+  --flowstarter-elements-item-contentDanger: #dc2626;
+  --flowstarter-elements-item-backgroundDefault: transparent;
+  --flowstarter-elements-item-backgroundActive: #f4f4f5;
+  --flowstarter-elements-item-backgroundAccent: #f4f4f5;
+  /* Zinc-100 - neutral */
+  --flowstarter-elements-item-backgroundDanger: #fef2f2;
+
+  --flowstarter-elements-loader-background: #e4e4e7;
+  --flowstarter-elements-loader-progress: var(--flowstarter-accent-purple);
+
+  /* Artifacts - Card Style */
+  --flowstarter-elements-artifacts-background: #ffffff;
+  --flowstarter-elements-artifacts-backgroundHover: #fafafa;
+  --flowstarter-elements-artifacts-borderColor: #e4e4e7;
+  --flowstarter-elements-artifacts-inlineCode-background: #f4f4f5;
+  --flowstarter-elements-artifacts-inlineCode-text: #09090b;
+
+  --flowstarter-elements-actions-background: #fafafa;
+  /* Slightly offset for contrast */
+  --flowstarter-elements-actions-code-background: #f4f4f5;
+
+  /* Messages - neutral zinc tones for cohesive light theme */
+  --flowstarter-elements-messages-background: #f4f4f5;
+  /* Zinc-100 for message bubbles */
+  --flowstarter-elements-messages-linkColor: #4d5dd9;
+  /* Use accent color for links */
+  --flowstarter-elements-messages-code-background: #e4e4e7;
+  /* Zinc-200 */
+  --flowstarter-elements-messages-inlineCode-background: #e4e4e7;
+  --flowstarter-elements-messages-inlineCode-text: var(--flowstarter-elements-textPrimary);
+
+  --flowstarter-elements-glow-thinking-base: rgba(var(--flowstarter-accent-purple-rgb), 0.08);
+  --flowstarter-elements-glow-thinking-primary: rgba(var(--flowstarter-accent-purple-rgb), 0.2);
+  --flowstarter-elements-glow-thinking-secondary: rgba(var(--flowstarter-accent-purple-rgb), 0.35);
+
+  --flowstarter-elements-glow-building-base: rgba(34, 197, 94, 0.1);
+  --flowstarter-elements-glow-building-primary: rgba(34, 197, 94, 0.3);
+  --flowstarter-elements-glow-building-secondary: rgba(74, 222, 128, 0.45);
+
+  /* Icons - improved contrast */
+  --flowstarter-elements-icon-success: #15803d;
+  /* Darker green */
+  --flowstarter-elements-icon-error: #dc2626;
+  --flowstarter-elements-icon-primary: #09090b;
+  --flowstarter-elements-icon-secondary: #3f3f46;
+  /* Darker */
+  --flowstarter-elements-icon-tertiary: #71717a;
+  /* Darker */
+
+  --flowstarter-elements-dividerColor: #d4d4d8;
+  /* Stronger divider */
+
+  --flowstarter-elements-prompt-background: rgba(255, 255, 255, 0.95);
+
+  --flowstarter-elements-sidebar-dropdownShadow: rgba(0, 0, 0, 0.08);
+  --flowstarter-elements-sidebar-buttonBackgroundDefault: #f4f4f5;
+  --flowstarter-elements-sidebar-buttonBackgroundHover: #e4e4e7;
+  --flowstarter-elements-sidebar-buttonText: #09090b;
+
+  --flowstarter-elements-preview-addressBar-background: #ffffff;
+  --flowstarter-elements-preview-addressBar-backgroundHover: #f4f4f5;
+  --flowstarter-elements-preview-addressBar-backgroundActive: #ffffff;
+  --flowstarter-elements-preview-addressBar-text: #3f3f46;
+  /* Darker for better contrast */
+  --flowstarter-elements-preview-addressBar-textActive: #09090b;
+
+  --flowstarter-elements-terminals-background: #ffffff;
+  --flowstarter-elements-terminals-buttonBackground: #f4f4f5;
+
+  --flowstarter-elements-cta-background: #18181b;
+  --flowstarter-elements-cta-text: #ffffff;
+
+  /* Terminal Colors */
+  --flowstarter-terminal-background: #ffffff;
+  --flowstarter-terminal-foreground: #09090b;
+  --flowstarter-terminal-selection-background: #e4e4e7;
+  --flowstarter-terminal-black: #000000;
+  --flowstarter-terminal-red: #ef4444;
+  --flowstarter-terminal-green: #16a34a;
+  --flowstarter-terminal-yellow: #ca8a04;
+  --flowstarter-terminal-blue: var(--flowstarter-accent-purple);
+  --flowstarter-terminal-magenta: var(--flowstarter-accent-purple);
+  --flowstarter-terminal-cyan: #0891b2;
+  --flowstarter-terminal-white: #e4e4e7;
+  --flowstarter-terminal-brightBlack: #52525b;
+  --flowstarter-terminal-brightRed: #ef4444;
+  --flowstarter-terminal-brightGreen: #16a34a;
+  --flowstarter-terminal-brightYellow: #ca8a04;
+  --flowstarter-terminal-brightBlue: var(--flowstarter-accent-purple);
+  --flowstarter-terminal-brightMagenta: var(--flowstarter-accent-purple);
+  --flowstarter-terminal-brightCyan: #0891b2;
+  --flowstarter-terminal-brightWhite: #f4f4f5;
+  --modern-scrollbar-thumb-background: rgba(0, 0, 0, 0.2);
+  --modern-scrollbar-thumb-backgroundHover: rgba(0, 0, 0, 0.4);
+
+  /* Command/Dialog popover variables - Light Theme */
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+  --primary: 240 5.9% 10%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 240 10% 3.9%;
+
+  /* Editor specific */
+  --flowstarter-elements-editor-activeLine: rgba(0, 0, 0, 0.04);
+  --flowstarter-elements-editor-selection: rgba(var(--flowstarter-accent-purple-rgb), 0.25);
+  --flowstarter-elements-editor-match: rgba(245, 101, 101, 0.4);
+}
+
+/* Color Tokens Dark Theme - Modernized */
+:root,
+:root[data-theme='dark'] {
+  /* Custom Brand Purple */
+  --flowstarter-accent-purple: #c1c8ff;
+  --flowstarter-accent-purple-rgb: 193, 200, 255;
+
+  --flowstarter-elements-borderColor: #27272a;
+  /* Zinc-800 */
+  --flowstarter-elements-borderColorActive: #52525b;
+  /* Zinc-600 */
+
+  --flowstarter-elements-bg-depth-1: #101012;
+  /* Darker shade for cards/UI elements */
+  --flowstarter-elements-bg-depth-2: #18181b;
+  /* Zinc-900 */
+  --flowstarter-elements-bg-depth-3: #27272a;
+  /* Zinc-800 */
+  --flowstarter-elements-bg-depth-4: #3f3f46;
+  /* Zinc-700 */
+
+  /* Aliases for background-depth variables */
+  --flowstarter-elements-background-depth-1: var(--flowstarter-elements-bg-depth-1);
+  --flowstarter-elements-background-depth-2: var(--flowstarter-elements-bg-depth-2);
+  --flowstarter-elements-background-depth-3: var(--flowstarter-elements-bg-depth-3);
+  --flowstarter-elements-background-depth-4: var(--flowstarter-elements-bg-depth-4);
+
+  --flowstarter-elements-textPrimary: #ffffff;
+  --flowstarter-elements-textSecondary: #a1a1aa;
+  /* Zinc-400 */
+  --flowstarter-elements-textTertiary: #71717a;
+  /* Zinc-500 */
+
+  --flowstarter-elements-code-background: #121212;
+  /* Deep black for code */
+  --flowstarter-elements-code-text: #e4e4e7;
+
+  /* Buttons */
+  --flowstarter-elements-button-primary-background: #fafafa;
+  --flowstarter-elements-button-primary-backgroundHover: #ffffff;
+  --flowstarter-elements-button-primary-text: #09090b;
+
+  --flowstarter-elements-button-secondary-background: #27272a;
+  --flowstarter-elements-button-secondary-backgroundHover: #3f3f46;
+  --flowstarter-elements-button-secondary-text: #e4e4e7;
+
+  --flowstarter-elements-button-danger-background: rgba(239, 68, 68, 0.1);
+  --flowstarter-elements-button-danger-backgroundHover: rgba(239, 68, 68, 0.2);
+  --flowstarter-elements-button-danger-text: #f87171;
+
+  /* Items */
+  --flowstarter-elements-item-contentDefault: #a1a1aa;
+  --flowstarter-elements-item-contentActive: #ffffff;
+  --flowstarter-elements-item-contentAccent: #ffffff;
+  --flowstarter-elements-item-contentDanger: #f87171;
+  --flowstarter-elements-item-backgroundDefault: transparent;
+  --flowstarter-elements-item-backgroundActive: #27272a;
+  --flowstarter-elements-item-backgroundAccent: #27272a;
+  --flowstarter-elements-item-backgroundDanger: rgba(239, 68, 68, 0.1);
+
+  --flowstarter-elements-loader-background: #27272a;
+  --flowstarter-elements-loader-progress: var(--flowstarter-accent-purple);
+
+  /* Artifacts - Card Style Dark */
+  --flowstarter-elements-artifacts-background: #18181b;
+  /* Card bg */
+  --flowstarter-elements-artifacts-backgroundHover: #27272a;
+  --flowstarter-elements-artifacts-borderColor: #27272a;
+  --flowstarter-elements-artifacts-inlineCode-background: #27272a;
+  --flowstarter-elements-artifacts-inlineCode-text: #e4e4e7;
+
+  --flowstarter-elements-actions-background: #131316;
+  /* Darker header */
+  --flowstarter-elements-actions-code-background: #09090b;
+
+  /* Messages */
+  --flowstarter-elements-messages-background: #18181b;
+  /* Card bubble */
+  --flowstarter-elements-messages-linkColor: var(--flowstarter-accent-purple);
+  --flowstarter-elements-messages-code-background: var(--flowstarter-elements-bg-depth-1);
+  --flowstarter-elements-messages-inlineCode-background: var(--flowstarter-elements-bg-depth-3);
+  --flowstarter-elements-messages-inlineCode-text: #e4e4e7;
+
+  /* Icons */
+  --flowstarter-elements-icon-success: #4ade80;
+  --flowstarter-elements-icon-error: #f87171;
+  --flowstarter-elements-icon-primary: #e4e4e7;
+  --flowstarter-elements-icon-secondary: #a1a1aa;
+  --flowstarter-elements-icon-tertiary: #52525b;
+
+  --flowstarter-elements-dividerColor: #27272a;
+
+  --flowstarter-elements-prompt-background: rgba(9, 9, 11, 0.85);
+
+  --flowstarter-elements-sidebar-dropdownShadow: rgba(0, 0, 0, 0.3);
+  --flowstarter-elements-sidebar-buttonBackgroundDefault: #27272a;
+  --flowstarter-elements-sidebar-buttonBackgroundHover: #3f3f46;
+  --flowstarter-elements-sidebar-buttonText: #e4e4e7;
+
+  --flowstarter-elements-preview-addressBar-background: #18181b;
+  --flowstarter-elements-preview-addressBar-backgroundHover: #27272a;
+  --flowstarter-elements-preview-addressBar-backgroundActive: #09090b;
+  --flowstarter-elements-preview-addressBar-text: #a1a1aa;
+  --flowstarter-elements-preview-addressBar-textActive: #ffffff;
+
+  --flowstarter-elements-terminals-background: #09090b;
+  --flowstarter-elements-terminals-buttonBackground: #27272a;
+
+  --flowstarter-elements-cta-background: #e4e4e7;
+  --flowstarter-elements-cta-text: #09090b;
+
+  /* Terminal Colors */
+  --flowstarter-terminal-background: #09090b;
+  --flowstarter-terminal-foreground: #e4e4e7;
+  --flowstarter-terminal-selection-background: #27272a;
+  --flowstarter-terminal-black: #000000;
+  --flowstarter-terminal-red: #f87171;
+  --flowstarter-terminal-green: #4ade80;
+  --flowstarter-terminal-yellow: #facc15;
+  --flowstarter-terminal-blue: var(--flowstarter-accent-purple);
+  --flowstarter-terminal-magenta: var(--flowstarter-accent-purple);
+  --flowstarter-terminal-cyan: #22d3ee;
+  --flowstarter-terminal-white: #e4e4e7;
+  --flowstarter-terminal-brightBlack: #71717a;
+  --flowstarter-terminal-brightRed: #f87171;
+  --flowstarter-terminal-brightGreen: #4ade80;
+  --flowstarter-terminal-brightYellow: #facc15;
+  --flowstarter-terminal-brightBlue: var(--flowstarter-accent-purple);
+  --flowstarter-terminal-brightMagenta: var(--flowstarter-accent-purple);
+  --flowstarter-terminal-brightCyan: #22d3ee;
+  --flowstarter-terminal-brightWhite: #ffffff;
+  --modern-scrollbar-thumb-background: rgba(255, 255, 255, 0.1);
+  --modern-scrollbar-thumb-backgroundHover: rgba(255, 255, 255, 0.2);
+
+  /* Command/Dialog popover variables - Dark Theme */
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 240 5.9% 10%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --ring: 240 4.9% 83.9%;
+
+  /* Editor specific */
+  --flowstarter-elements-editor-activeLine: rgba(255, 255, 255, 0.08);
+  --flowstarter-elements-editor-selection: rgba(255, 255, 255, 0.25);
+  --flowstarter-elements-editor-match: rgba(234, 92, 0, 0.4);
+}
+
+/*
+ * Element Tokens
+ *
+ * Hierarchy: Element Token -> (Element Token | Color Tokens) -> Primitives
+ */
+:root {
+  --header-height: 48px;
+  --chat-max-width: 36rem;
+  --chat-min-width: 533px;
+  --workbench-width: min(calc(100% - var(--chat-min-width)), 3000px);
+  --workbench-inner-width: var(--workbench-width);
+  --workbench-left: calc(100% - var(--workbench-width) + 20px);
+
+  /* Toasts */
+  --toastify-color-progress-success: var(--flowstarter-elements-icon-success);
+  --toastify-color-progress-error: var(--flowstarter-elements-icon-error);
+
+  /* Terminal */
+  --flowstarter-elements-terminal-backgroundColor: var(--flowstarter-terminal-background);
+  --flowstarter-elements-terminal-textColor: var(--flowstarter-terminal-foreground);
+  --flowstarter-elements-terminal-cursorColor: var(--flowstarter-terminal-foreground);
+  --flowstarter-elements-terminal-selection-backgroundColor: var(--flowstarter-terminal-selection-background);
+  --flowstarter-elements-terminal-color-black: var(--flowstarter-terminal-black);
+  --flowstarter-elements-terminal-color-red: var(--flowstarter-terminal-red);
+  --flowstarter-elements-terminal-color-green: var(--flowstarter-terminal-green);
+  --flowstarter-elements-terminal-color-yellow: var(--flowstarter-terminal-yellow);
+  --flowstarter-elements-terminal-color-blue: var(--flowstarter-terminal-blue);
+  --flowstarter-elements-terminal-color-magenta: var(--flowstarter-terminal-magenta);
+  --flowstarter-elements-terminal-color-cyan: var(--flowstarter-terminal-cyan);
+  --flowstarter-elements-terminal-color-white: var(--flowstarter-terminal-white);
+  --flowstarter-elements-terminal-color-brightBlack: var(--flowstarter-terminal-brightBlack);
+  --flowstarter-elements-terminal-color-brightRed: var(--flowstarter-terminal-brightRed);
+  --flowstarter-elements-terminal-color-brightGreen: var(--flowstarter-terminal-brightGreen);
+  --flowstarter-elements-terminal-color-brightYellow: var(--flowstarter-terminal-brightYellow);
+  --flowstarter-elements-terminal-color-brightBlue: var(--flowstarter-terminal-brightBlue);
+  --flowstarter-elements-terminal-color-brightMagenta: var(--flowstarter-terminal-brightMagenta);
+  --flowstarter-elements-terminal-color-brightCyan: var(--flowstarter-terminal-brightCyan);
+  --flowstarter-elements-terminal-color-brightWhite: var(--flowstarter-terminal-brightWhite);
+}

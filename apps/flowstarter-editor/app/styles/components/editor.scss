@@ -1,0 +1,83 @@
+:root {
+  /* Base colors */
+  --cm-backgroundColor: var(--flowstarter-elements-bg-depth-1);
+  --cm-textColor: var(--flowstarter-elements-textPrimary);
+
+  /* Gutter */
+  --cm-gutter-backgroundColor: var(--flowstarter-elements-bg-depth-1);
+  --cm-gutter-textColor: var(--flowstarter-elements-textTertiary);
+  --cm-gutter-activeLineTextColor: var(--flowstarter-elements-textSecondary);
+
+  /* Fold Gutter */
+  --cm-foldGutter-textColor: var(--flowstarter-elements-textTertiary);
+  --cm-foldGutter-textColorHover: var(--flowstarter-elements-textSecondary);
+
+  /* Active Line */
+  --cm-activeLineBackgroundColor: var(--flowstarter-elements-editor-activeLine);
+
+  /* Cursor */
+  --cm-cursor-width: 2px;
+  --cm-cursor-backgroundColor: var(--flowstarter-elements-textSecondary);
+
+  /* Matching Brackets */
+  --cm-matching-bracket: rgba(var(--flowstarter-accent-purple-rgb), 0.25);
+
+  /* Selection */
+  --cm-selection-backgroundColorFocused: var(--flowstarter-elements-editor-selection);
+  --cm-selection-backgroundOpacityFocused: 1;
+  /* Variable already contains opacity */
+
+  --cm-selection-backgroundColorBlured: var(--flowstarter-elements-editor-selection);
+  --cm-selection-backgroundOpacityBlured: 0.6;
+
+  /* Panels */
+  --cm-panels-borderColor: var(--flowstarter-elements-borderColor);
+
+  /* Search */
+  --cm-search-backgroundColor: var(--flowstarter-elements-bg-depth-2);
+  --cm-search-textColor: var(--flowstarter-elements-textPrimary);
+
+  --cm-search-closeButton-backgroundColor: transparent;
+  --cm-search-closeButton-backgroundColorHover: var(--flowstarter-elements-bg-depth-3);
+
+  --cm-search-closeButton-textColor: var(--flowstarter-elements-textTertiary);
+  --cm-search-closeButton-textColorHover: var(--flowstarter-elements-textPrimary);
+
+  --cm-search-button-backgroundColor: var(--flowstarter-elements-bg-depth-3);
+  --cm-search-button-backgroundColorHover: var(--flowstarter-elements-bg-depth-4);
+
+  --cm-search-button-textColor: var(--flowstarter-elements-textSecondary);
+  --cm-search-button-textColorHover: var(--flowstarter-elements-textPrimary);
+
+  --cm-search-button-borderColor: transparent;
+  --cm-search-button-borderColorHover: var(--flowstarter-elements-borderColorActive);
+
+  --cm-search-button-borderColorFocused: var(--flowstarter-accent-purple);
+
+  --cm-search-input-backgroundColor: var(--flowstarter-elements-bg-depth-1);
+  --cm-search-input-textColor: var(--flowstarter-elements-textPrimary);
+  --cm-search-input-borderColor: var(--flowstarter-elements-borderColor);
+  --cm-search-input-borderColorFocused: var(--flowstarter-accent-purple);
+
+  /* Tooltip */
+  --cm-tooltip-backgroundColor: var(--flowstarter-elements-bg-depth-3);
+  --cm-tooltip-textColor: var(--flowstarter-elements-textPrimary);
+
+  --cm-tooltip-backgroundColorSelected: rgba(var(--flowstarter-accent-purple-rgb), 0.2);
+  --cm-tooltip-textColorSelected: var(--flowstarter-elements-textPrimary);
+
+  --cm-tooltip-borderColor: var(--flowstarter-elements-borderColor);
+
+  /* Search highlight */
+  --cm-searchMatch-backgroundColor: var(--flowstarter-elements-editor-match);
+}
+
+/* Theme overrides only if necessary for specific contrast adjustments */
+html[data-theme='light'] {
+  --cm-search-backgroundColor: var(--flowstarter-elements-bg-depth-1);
+  --cm-search-input-backgroundColor: var(--flowstarter-elements-bg-depth-2);
+}
+
+html[data-theme='dark'] {
+  --cm-activeLineBackgroundColor: var(--flowstarter-elements-editor-activeLine);
+}

@@ -1,0 +1,111 @@
+:root {
+  --purple-primary: hsl(241 93% 61%);
+  --purple-primary-light: hsl(241 93% 61% / 0.8);
+  --purple-primary-lighter: hsl(241 93% 61% / 0.6);
+  --purple-primary-lightest: hsl(241 93% 61% / 0.1);
+  --purple-primary-dark: hsl(241 92% 57%);
+
+  --accent-primary: hsl(250 93% 65%);
+  --accent-light: hsl(250 93% 65% / 0.8);
+  --accent-lighter: hsl(250 93% 65% / 0.6);
+  --accent-lightest: hsl(250 93% 65% / 0.1);
+  --accent-dark: hsl(250 92% 60%);
+
+  /* Secondary colors - warm blue to complement purple */
+  --secondary-primary: hsl(211 93% 61%);
+  --secondary-light: hsl(211 93% 61% / 0.8);
+  --secondary-lighter: hsl(211 93% 61% / 0.6);
+  --secondary-lightest: hsl(211 93% 61% / 0.1);
+  --secondary-dark: hsl(213, 85%, 54%);
+
+  /* Figma Design Tokens - Light Mode */
+  /* Neutral backgrounds */
+  --ui-bg-base: hsl(0 0% 100%);
+  --ui-bg-subtle: hsl(0 0% 95.3%);
+  --ui-bg-elevated: hsl(210 40% 98%);
+  --ui-bg-overlay: rgba(58, 58, 74, 0.3);
+  --ui-bg-overlay-hover: rgba(75, 75, 94, 0.3);
+  --ui-bg-input: rgba(51, 51, 61, 0.3);
+
+  /* UI Borders */
+  --ui-border-base: hsl(0 0% 34.12%);
+  --ui-border-strong: hsl(240 7% 40.78%);
+  --ui-border-focus: hsl(233 72% 74%);
+
+  /* Text colors */
+  --ui-text-primary: hsl(0 0% 100%);
+  --ui-text-secondary: hsl(240 5% 75.29%);
+  --ui-text-tertiary: hsl(240 5% 63.14%);
+  --ui-text-dark: hsl(240 17% 10.78%);
+  --ui-text-placeholder: hsl(240 4% 64.31%);
+
+  /* Accent colors */
+  --ui-accent-purple: hsl(233 65% 58%);
+  --ui-accent-purple-light: hsl(233 72% 74%);
+  --ui-accent-purple-bg: rgba(193, 200, 255, 0.2);
+  --ui-accent-green: hsl(119 100% 89.41%);
+  --ui-accent-green-bg: rgba(200, 255, 199, 0.2);
+  --ui-accent-orange: hsl(23 93% 59.41%);
+  --ui-accent-blue: hsl(211 93% 61%);
+
+  /* Status colors */
+  --status-success: hsl(119 100% 89.41%);
+  --status-warning: hsl(23 93% 59.41%);
+  --status-error: hsl(0 84% 60%);
+}
+
+/* Dark mode adjustments */
+.dark {
+  --purple-primary: hsl(241 96% 63%);
+  --purple-primary-light: hsl(241 96% 63% / 0.8);
+  --purple-primary-lighter: hsl(241 94% 67% / 0.6);
+  --purple-primary-lightest: hsl(241 94% 67% / 0.1);
+  --purple-primary-dark: hsl(241 92% 57%);
+
+  --accent-primary: hsl(250 96% 68%);
+  --accent-light: hsl(250 96% 68% / 0.8);
+  --accent-lighter: hsl(250 96% 68% / 0.6);
+  --accent-lightest: hsl(250 96% 68% / 0.1);
+  --accent-dark: hsl(250 93% 63%);
+
+  --secondary-primary: hsl(212 100% 61%);
+  --secondary-light: hsl(212 100% 61% / 0.8);
+  --secondary-lighter: hsl(212 100% 61% / 0.6);
+  --secondary-lightest: hsl(212 100% 61% / 0.1);
+  --secondary-dark: hsl(213 75% 54%);
+
+  /* Figma Design Tokens - Dark Mode */
+  /* Neutral backgrounds */
+  --ui-bg-base: hsl(240 16% 20%);
+  --ui-bg-subtle: hsl(240 9% 22%);
+  --ui-bg-elevated: hsl(215 13% 18%);
+  --ui-bg-overlay: rgba(58, 58, 74, 0.3);
+  --ui-bg-overlay-hover: rgba(75, 75, 94, 0.3);
+  --ui-bg-input: rgba(51, 51, 61, 0.3);
+
+  /* UI Borders */
+  --ui-border-base: hsl(0 0% 34.12%);
+  --ui-border-strong: hsl(240 7% 40.78%);
+  --ui-border-focus: hsl(233 72% 74%);
+
+  /* Text colors */
+  --ui-text-primary: hsl(0 0% 100%);
+  --ui-text-secondary: hsl(240 5% 75.29%);
+  --ui-text-tertiary: hsl(240 5% 63.14%);
+  --ui-text-dark: hsl(240 17% 10.78%);
+  --ui-text-placeholder: hsl(240 4% 64.31%);
+
+  /* Accent colors */
+  --ui-accent-purple: hsl(233 65% 58%);
+  --ui-accent-purple-light: hsl(233 72% 74%);
+  --ui-accent-purple-bg: rgba(193, 200, 255, 0.2);
+  --ui-accent-green: hsl(119 100% 89.41%);
+  --ui-accent-green-bg: rgba(200, 255, 199, 0.2);
+  --ui-accent-orange: hsl(23 93% 59.41%);
+  --ui-accent-blue: hsl(211 93% 61%);
+
+  /* Status colors */
+  --status-success: hsl(119 100% 89.41%);
+  --status-warning: hsl(23 93% 59.41%);
+  --status-error: hsl(0 84% 60%);
+}

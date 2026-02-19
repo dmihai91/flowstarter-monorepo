@@ -1,0 +1,20 @@
+---
+title: "Client Transformations"
+subtitle: "Real results from real clients. Here's what happens when you commit to the process."
+testimonials:
+  - quote: "I was stuck in a job I hated for years. Within 6 months of coaching, I had clarity on my next move, landed my dream role, and negotiated a 30% raise. The transformation was real."
+    author: "Sarah M."
+    role: "Marketing Director"
+    result: "Career transition + 30% raise"
+    avatar: "/images/testimonials/sarah.jpg"
+  - quote: "As a first-time founder, I was making decisions from fear. The business coaching helped me see clearly, set boundaries, and scale from $50K to $500K in 18 months."
+    author: "James K."
+    role: "Tech Startup Founder"
+    result: "10x revenue growth"
+    avatar: "/images/testimonials/james.jpg"
+  - quote: "I was burning out as a leader. Executive coaching gave me the tools to delegate, communicate boundaries, and lead with purpose. My team is now thriving, and so am I."
+    author: "Maria L."
+    role: "VP of Operations"
+    result: "Sustainable leadership"
+    avatar: "/images/testimonials/maria.jpg"
+---

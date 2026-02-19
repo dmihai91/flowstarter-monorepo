@@ -1,0 +1,30 @@
+{
+  "name": "Workshop Host",
+  "slug": "workshop-host",
+  "description": "Dynamic template for workshop facilitators, masterclass instructors, and seminar leaders. Features event registration, curriculum showcase, and participant testimonials.",
+  "category": "education",
+  "tags": ["workshop", "masterclass", "seminar", "facilitator", "training", "group-learning", "professional-development"],
+  "framework": "astro",
+  "features": ["Multi-page", "Booking integration", "Newsletter integration", "Workshop catalog", "Testimonials", "Event registration"],
+  "integrations": {
+    "booking": {
+      "name": "Event Registration",
+      "description": "Let participants register for upcoming workshops",
+      "providers": [
+        {"id": "calendly", "name": "Calendly", "field": "calendly_url", "placeholder": "https://calendly.com/your-username/workshop"},
+        {"id": "eventbrite", "name": "Eventbrite", "field": "eventbrite_url", "placeholder": "https://eventbrite.com/e/your-event"}
+      ],
+      "optional": true,
+      "configPath": "content/integrations/booking.md"
+    },
+    "newsletter": {
+      "name": "Newsletter",
+      "description": "Share workshop announcements and resources",
+      "providers": [
+        {"id": "mailchimp", "name": "Mailchimp", "field": "mailchimp_url", "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"}
+      ],
+      "optional": true,
+      "configPath": "content/integrations/newsletter.md"
+    }
+  }
+}

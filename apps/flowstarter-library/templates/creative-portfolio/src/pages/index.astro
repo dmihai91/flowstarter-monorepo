@@ -1,0 +1,359 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Icon } from 'astro-icon/components';
+
+interface Service {
+  icon: string;
+  title: string;
+  description: string;
+  price: string;
+}
+
+interface ProcessStep {
+  title: string;
+  description: string;
+}
+
+interface Testimonial {
+  quote: string;
+  author: string;
+  type: string;
+}
+
+interface FAQ {
+  question: string;
+  answer: string;
+}
+
+const services: Service[] = [
+  { icon: "lucide:palette", title: "Brand Identity", description: "Complete brand identity systems including logos, color palettes, typography, and comprehensive brand guidelines.", price: "From $3,000" },
+  { icon: "lucide:camera", title: "Photography", description: "Product photography, portraits, lifestyle shoots, and event coverage. Crisp, editorial-quality imagery.", price: "From $500/session" },
+  { icon: "lucide:monitor", title: "Web Design", description: "Responsive, conversion-focused websites that look stunning on every device. From concept to launch.", price: "From $5,000" },
+  { icon: "lucide:video", title: "Video Production", description: "Brand films, social media content, product videos, and motion graphics that capture attention.", price: "From $2,000" },
+  { icon: "lucide:share-2", title: "Social Media Content", description: "Strategic content creation and visual storytelling for Instagram, TikTok, LinkedIn, and beyond.", price: "$1,500/month" },
+  { icon: "lucide:book-open", title: "Print Design", description: "Packaging, editorial layouts, business collateral, and exhibition materials with meticulous attention to detail.", price: "From $1,500" },
+];
+
+const process: ProcessStep[] = [
+  { title: "Discovery", description: "We dive deep into your brand, audience, and objectives. I want to understand not just what you need, but why it matters." },
+  { title: "Concept", description: "I develop creative concepts and mood boards that align with your vision. We collaborate until the direction feels right." },
+  { title: "Create", description: "With the concept locked in, I bring it to life with meticulous craft. You'll see progress at every milestone." },
+  { title: "Launch", description: "Final assets are delivered in all formats you need, with a style guide ensuring consistency across every touchpoint." },
+];
+
+const testimonials: Testimonial[] = [
+  { quote: "Marcus completely transformed our brand identity. The new visual system he created helped us secure our Series A — investors said our branding was the most professional they'd seen at our stage.", author: "David Chen", type: "CEO, NovaTech" },
+  { quote: "The product photography Marcus delivered went viral on our social channels. We saw a 340% increase in engagement and our best sales quarter ever. He has an incredible eye for detail.", author: "Priya Sharma", type: "Marketing Director, Lumina" },
+  { quote: "We hired Marcus for our annual gala and the photos were absolutely breathtaking. He captured every moment perfectly and the final gallery told the complete story of the evening.", author: "Angela Torres", type: "Event Director, Arts Foundation" },
+];
+
+const faqs: FAQ[] = [
+  { question: "What is your typical project timeline?", answer: "Timelines vary by scope. Brand identity projects typically take 4-6 weeks, web design 6-8 weeks, and photography projects 1-2 weeks from shoot to delivery. I'll provide a detailed timeline during our discovery call." },
+  { question: "How many revisions are included?", answer: "All projects include 2 rounds of revisions at each milestone. I find that our thorough discovery process means we usually nail it by the first revision. Additional rounds can be added at a reasonable rate." },
+  { question: "Who owns the final deliverables?", answer: "You do. Upon final payment, all rights to the created work transfer to you. I retain the right to showcase the work in my portfolio unless we agree otherwise." },
+  { question: "What's your budget range?", answer: "Projects range from $500 for a single photo session to $15,000+ for comprehensive brand identity packages. I'm transparent about pricing from our first conversation and always work within your budget." },
+  { question: "What does collaboration look like?", answer: "I keep communication open and regular. You'll have access to a shared project board, receive weekly updates, and we'll have check-in calls at each milestone. I'm responsive on email and Slack." },
+];
+
+const stats = [
+  { value: "200+", label: "Projects Completed" },
+  { value: "6", label: "Years Experience" },
+  { value: "50+", label: "Brands Served" },
+  { value: "Forbes", label: "Featured In" },
+];
+---
+
+<Layout>
+  <!-- Hero Section -->
+  <section class="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
+    <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-warm-100 dark:from-slate-800/50 to-transparent opacity-50"></div>
+    <div class="absolute bottom-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
+    
+    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div>
+          <p class="text-primary font-medium mb-4 flex items-center gap-2">
+            <Icon name="lucide:award" class="w-5 h-5" />
+            Award-Winning Creative
+          </p>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-sans font-bold text-slate-800 dark:text-white leading-tight mb-6">
+            Crafting Visual <span class="text-primary">Stories</span>
+          </h1>
+          <p class="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-lg">
+            I'm Marcus Rivera — a visual designer and photographer who helps brands stand out through bold, purposeful creative. From identity systems to campaign photography, every project tells a story.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 mb-8">
+            <a href="#contact" class="btn-primary">
+              Start a Project
+              <Icon name="lucide:arrow-right" class="w-5 h-5 ml-2" />
+            </a>
+            <a href="#services" class="btn-outline">View Work</a>
+          </div>
+          <div class="grid grid-cols-4 gap-4">
+            {stats.map((stat: { value: string; label: string }) => (
+              <div class="text-center">
+                <div class="text-2xl font-bold text-slate-800 dark:text-white">{stat.value}</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        <div class="relative">
+          <div class="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl transform rotate-3"></div>
+          <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600&h=700&fit=crop&crop=face" alt="Marcus Rivera, Visual Designer" class="relative rounded-3xl shadow-xl w-full object-cover aspect-[5/6]" />
+          <div class="absolute -bottom-6 -left-6 bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                <Icon name="lucide:camera" class="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <div class="text-2xl font-bold text-slate-800 dark:text-white">200+</div>
+                <div class="text-sm text-slate-500 dark:text-slate-400 font-mono">Projects</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-20 bg-warm-50 dark:bg-slate-800/50 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="order-2 lg:order-1">
+          <div class="grid grid-cols-2 gap-4">
+            <img src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=300&h=400&fit=crop" alt="Photography work" class="rounded-2xl shadow-md w-full object-cover aspect-[3/4]" />
+            <img src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=300&h=400&fit=crop" alt="Design studio" class="rounded-2xl shadow-md w-full object-cover aspect-[3/4] mt-8" />
+          </div>
+        </div>
+        
+        <div class="order-1 lg:order-2">
+          <p class="text-primary font-medium mb-4">About Me</p>
+          <h2 class="text-3xl md:text-4xl font-bold text-slate-800 dark:text-white mb-6">
+            Design With Purpose
+          </h2>
+          <p class="text-slate-600 dark:text-slate-400 mb-6">
+            With a BFA from Rhode Island School of Design and 6 years of professional experience, I've had the privilege of working with Fortune 500 companies and ambitious startups alike.
+          </p>
+          <p class="text-slate-600 dark:text-slate-400 mb-8">
+            I'm passionate about visual storytelling that drives results. Whether it's a complete rebrand, a product launch, or ongoing content creation, I bring the same level of craft and strategic thinking to every project.
+          </p>
+          <ul class="space-y-3">
+            {["BFA in Graphic Design, RISD", "Former Creative Lead at Pentagram", "Featured in Forbes, Communication Arts", "50+ Brands Across 12 Industries"].map((credential: string) => (
+              <li class="flex items-center gap-3">
+                <Icon name="lucide:check-circle" class="w-5 h-5 text-primary flex-shrink-0" />
+                <span class="text-slate-700 dark:text-slate-300">{credential}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services / Work Section -->
+  <section id="services" class="py-20 bg-cream dark:bg-slate-900 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <p class="text-primary font-medium mb-4">Work</p>
+        <h2 class="text-3xl md:text-4xl font-bold text-slate-800 dark:text-white mb-6">Selected Work</h2>
+        <p class="text-slate-600 dark:text-slate-400">A curated selection of services spanning brand identity, photography, web design, and content creation.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {services.map((service: Service) => (
+          <div class="card group hover:-translate-y-1">
+            <div class="w-14 h-14 bg-primary/10 dark:bg-primary/20 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors">
+              <Icon name={service.icon} class="w-7 h-7 text-primary" />
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">{service.title}</h3>
+            <p class="text-slate-600 dark:text-slate-400 mb-4">{service.description}</p>
+            <span class="inline-flex items-center gap-2 text-sm text-primary font-medium font-mono">
+              {service.price}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div class="mt-12 text-center">
+        <a href="#contact" class="btn-primary">
+          Start a Project
+          <Icon name="lucide:arrow-right" class="w-5 h-5 ml-2" />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process Section -->
+  <section id="process" class="py-20 bg-warm-100 dark:bg-slate-800/50 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <p class="text-primary font-medium mb-4">Process</p>
+        <h2 class="text-3xl md:text-4xl font-bold text-slate-800 dark:text-white mb-6">How I Work</h2>
+        <p class="text-slate-600 dark:text-slate-400">A structured yet flexible process that keeps projects on track and delivers exceptional results.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {process.map((item: ProcessStep, index: number) => (
+          <div class="flex gap-5">
+            <div class="w-12 h-12 bg-primary text-secondary-dark rounded-full flex items-center justify-center font-bold font-mono flex-shrink-0">{String(index + 1).padStart(2, '0')}</div>
+            <div>
+              <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">{item.title}</h3>
+              <p class="text-slate-600 dark:text-slate-400">{item.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="py-20 bg-cream dark:bg-slate-900 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <p class="text-primary font-medium mb-4">Testimonials</p>
+        <h2 class="text-3xl md:text-4xl font-bold text-slate-800 dark:text-white mb-6">Client Feedback</h2>
+        <p class="text-slate-600 dark:text-slate-400">What happens when creativity meets strategy — hear from the brands I've worked with.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {testimonials.map((testimonial: Testimonial) => (
+          <div class="card-warm">
+            <div class="mb-4"><Icon name="lucide:quote" class="w-10 h-10 text-primary/30" /></div>
+            <p class="text-slate-700 dark:text-slate-300 mb-6 leading-relaxed italic">"{testimonial.quote}"</p>
+            <div class="border-t border-warm-300 dark:border-slate-700 pt-4">
+              <div class="font-semibold text-slate-800 dark:text-white">{testimonial.author}</div>
+              <div class="text-sm text-slate-500 dark:text-slate-400">{testimonial.type}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="py-20 bg-warm-50 dark:bg-slate-800/50 transition-colors">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <p class="text-primary font-medium mb-4">FAQ</p>
+        <h2 class="text-3xl md:text-4xl font-bold text-slate-800 dark:text-white mb-6">Common Questions</h2>
+        <p class="text-slate-600 dark:text-slate-400">Everything you need to know about working together.</p>
+      </div>
+
+      <div class="space-y-4">
+        {faqs.map((faq: FAQ, index: number) => (
+          <div class="faq-item bg-white dark:bg-slate-800 rounded-xl shadow-sm dark:shadow-none dark:border dark:border-slate-700 overflow-hidden">
+            <button class="faq-trigger w-full px-6 py-5 flex items-center justify-between text-left" data-index={index}>
+              <span class="font-medium text-slate-800 dark:text-white pr-4">{faq.question}</span>
+              <Icon name="lucide:chevron-down" class="w-5 h-5 text-primary transition-transform faq-icon flex-shrink-0" />
+            </button>
+            <div class="faq-content hidden px-6 pb-5">
+              <p class="text-slate-600 dark:text-slate-400">{faq.answer}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-20 bg-cream dark:bg-slate-900 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div>
+          <p class="text-primary font-medium mb-4">Let's Talk</p>
+          <h2 class="text-3xl md:text-4xl font-bold text-slate-800 dark:text-white mb-6">Have a Project in Mind?</h2>
+          <p class="text-slate-600 dark:text-slate-400 mb-8">I'd love to hear about your project. Tell me what you're working on and let's figure out how to bring it to life together.</p>
+
+          <div class="space-y-6 mb-8">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Icon name="lucide:map-pin" class="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Studio</h4>
+                <p class="text-slate-600 dark:text-slate-400">42 Wythe Avenue, Studio 3F<br>Brooklyn, NY 11249</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Icon name="lucide:clock" class="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Availability</h4>
+                <p class="text-slate-600 dark:text-slate-400">Monday – Friday: 10am – 6pm<br>Open to remote collaboration</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Icon name="lucide:phone" class="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Contact</h4>
+                <p class="text-slate-600 dark:text-slate-400">
+                  <a href="tel:+17185550237" class="hover:text-primary transition-colors">(718) 555-0237</a><br>
+                  <a href="mailto:hello@marcusrivera.com" class="hover:text-primary transition-colors">hello@marcusrivera.com</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-lg dark:shadow-none dark:border dark:border-slate-700">
+          <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-6">Start a Project</h3>
+          <form class="space-y-5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Name</label>
+                <input type="text" class="input" placeholder="Your name" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Company</label>
+                <input type="text" class="input" placeholder="Your company" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email</label>
+              <input type="email" class="input" placeholder="your@email.com" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Budget Range</label>
+              <input type="text" class="input" placeholder="e.g. $3,000 - $5,000" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tell me about your project</label>
+              <textarea rows="4" class="textarea" placeholder="What are you working on? What are your goals and timeline?"></textarea>
+            </div>
+            <button type="submit" class="btn-primary w-full">
+              Send Inquiry
+              <Icon name="lucide:send" class="w-5 h-5 ml-2" />
+            </button>
+            <p class="text-xs text-slate-500 dark:text-slate-400 text-center">I'll respond within 24-48 hours with next steps.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  document.querySelectorAll('.faq-trigger').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      const item = trigger.closest('.faq-item');
+      const content = item?.querySelector('.faq-content');
+      const icon = trigger.querySelector('.faq-icon');
+      
+      document.querySelectorAll('.faq-item').forEach(otherItem => {
+        if (otherItem !== item) {
+          otherItem.querySelector('.faq-content')?.classList.add('hidden');
+          otherItem.querySelector('.faq-icon')?.classList.remove('rotate-180');
+        }
+      });
+      
+      content?.classList.toggle('hidden');
+      icon?.classList.toggle('rotate-180');
+    });
+  });
+</script>

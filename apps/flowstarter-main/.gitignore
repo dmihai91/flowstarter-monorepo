@@ -1,0 +1,53 @@
+.env.local
+.env.*.local
+node_modules
+tsconfig.tsbuildinfo
+supabase/.temp/project-ref
+.DS_Store
+
+# next.js
+/.next
+/out
+
+# next-sitemap
+public/robots.txt
+public/sitemap.xml
+public/sitemap-*.xml
+
+# debug
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+*.tsbuildinfo
+/.env
+# clerk configuration (can include secrets)
+/.clerk/
+proxy/.env
+design/*
+
+# coverage reports
+coverage
+
+certificates
+scripts/unused-translations.txt
+scripts/check-translations.js
+scripts/find-unused-translations.js
+scripts/remove-unused-keys.js
+
+.tasks.md
+# coding-agent service
+coding-agent/.env
+venv/*
+coding-agent/venv/*
+coding-agent/venv-docker/*
+coding-agent/workspace/*
+coding-agent/.venv/*
+coding-agent/__pycache__/*
+coding-agent/**/__pycache__/*
+coding-agent/config/config2.yaml
+coding-agent/test-service.ps1
+.vercel
+core
+credentials.txt

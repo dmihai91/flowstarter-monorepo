@@ -1,0 +1,712 @@
+---
+alwaysApply: false
+---
+
+# Flowstarter Development Rules
+
+## Project Overview
+
+**Flowstarter** is an AI-powered business website building platform that combines professional templates with multi-agent AI code generation and real-time analytics.
+
+### Core Purpose
+
+- Generate custom websites using AI agents (AG2 framework)
+- Provide professional templates (Personal Brand, Local Business, SaaS Product)
+- Real-time streaming progress during website generation
+- Built-in analytics, lead management, and domain integration
+
+---
+
+## Tech Stack
+
+### Frontend
+
+| Technology    | Version | Purpose                             |
+| ------------- | ------- | ----------------------------------- |
+| Next.js       | 15.3    | React framework with App Router     |
+| React         | 19.1    | UI library with concurrent features |
+| TypeScript    | 5.9     | Type-safe JavaScript                |
+| Tailwind CSS  | 4.1     | Utility-first styling               |
+| Shadcn/UI     | -       | 40+ Radix UI components             |
+| Zustand       | 4       | Global state management             |
+| React Query   | 5       | Server state management             |
+| Framer Motion | -       | Animations                          |
+| Recharts      | -       | Data visualization                  |
+
+### Backend & Database
+
+| Technology         | Purpose                                                  |
+| ------------------ | -------------------------------------------------------- |
+| Supabase           | PostgreSQL database with RLS, Auth helpers               |
+| Convex             | Real-time database for generation state & agent sessions |
+| Clerk              | Authentication (SSO, OAuth, magic links)                 |
+| Next.js API Routes | REST API endpoints                                       |
+
+### AI & Code Generation
+
+| Technology              | Purpose                               |
+| ----------------------- | ------------------------------------- |
+| AG2 Framework (AutoGen) | Multi-agent orchestration             |
+| FastAPI (Python)        | Coding agent service backend          |
+| Vercel AI SDK           | Unified AI provider interface         |
+| Anthropic Claude 3.5    | Primary AI for code generation        |
+| OpenAI GPT-4/5          | Alternative provider, logo generation |
+| Groq                    | Fast inference alternative            |
+
+### Infrastructure
+
+| Technology  | Purpose                                           |
+| ----------- | ------------------------------------------------- |
+| Vercel      | Hosting with edge functions                       |
+| Arcjet      | Rate limiting, bot detection, and security shield |
+| UploadThing | File uploads with CDN                             |
+| GoDaddy API | Domain availability and pricing                   |
+| Daytona     | Code workspace and live preview                   |
+
+---
+
+## Project Structure
+
+```
+flowstarter/
+├── src/                          # Next.js Frontend (TypeScript)
+│   ├── app/                      # App Router pages and API routes
+│   │   ├── (dynamic-pages)/      # Route groups
+│   │   │   ├── (login-pages)/    # Auth pages
+│   │   │   └── (main-pages)/     # Protected pages
+│   │   │       └── (logged-in-pages)/
+│   │   │           ├── dashboard/    # Main dashboard
+│   │   │           │   ├── new/      # Project wizard
+│   │   │           │   ├── templates/
+│   │   │           │   └── integrations/
+│   │   │           ├── profile/
+│   │   │           └── projects/
+│   │   └── api/                  # API Routes (see API section)
+│   ├── components/               # Reusable UI components
+│   │   ├── assistant/            # AI assistant UI
+│   │   ├── auth/                 # Auth components
+│   │   └── ui/                   # Shadcn components
+│   ├── hooks/                    # Custom React hooks (40+ files)
+│   ├── lib/                      # Utilities, services, configs
+│   │   └── ai/                   # AI configurations
+│   ├── store/                    # Zustand stores
+│   │   ├── wizard-store.ts       # Project wizard state
+│   │   ├── draft-store.ts        # Draft persistence
+│   │   └── ai-suggestions-store.ts
+│   ├── types/                    # TypeScript definitions
+│   ├── data/                     # Database operations
+│   ├── supabase-clients/         # Supabase client instances
+│   └── generated-types.ts        # Auto-generated Supabase types
+│
+├── coding-agent/                 # AI Coding Service (Python)
+│   ├── src/
+│   │   ├── main.py               # FastAPI entry point
+│   │   ├── ag2/                  # AG2 agent implementations
+│   │   │   ├── orchestrator.py   # Multi-agent orchestration
+│   │   │   ├── planner.py        # Product manager agent
+│   │   │   ├── code_generator.py # Code engineer agent
+│   │   │   ├── code_reviewer.py  # Review agent
+│   │   │   └── error_fixer.py    # QA engineer agent
+│   │   ├── llm_router.py         # Multi-provider LLM routing
+│   │   ├── routers/              # FastAPI routers
+│   │   │   ├── agent.py          # Agent endpoints
+│   │   │   └── site.py           # Site generation endpoints
+│   │   ├── convex_integration/   # Convex state sync
+│   │   ├── daytona/              # Daytona workspace integration
+│   │   └── services/             # Business logic services
+│   ├── config.yaml               # Agent configuration
+│   └── requirements.txt          # Python dependencies
+│
+├── convex/                       # Convex Backend
+│   ├── schema.ts                 # Database schema
+│   ├── generationSessions.ts     # Wizard session mutations
+│   ├── codingAgentState.ts       # Agent state mutations
+│   ├── sites.ts                  # Site storage mutations
+│   ├── siteVersions.ts           # Version management
+│   └── aguiSessions.ts           # AG-UI protocol sessions
+│
+├── supabase/                     # Supabase Configuration
+│   ├── migrations/               # SQL migrations
+│   └── config.toml               # Local config
+│
+├── templates/                    # Website Templates
+│   ├── local-business-pro/
+│   ├── personal-brand-pro/
+│   └── saas-product-pro/
+│
+├── e2e/                          # Playwright E2E tests
+└── docs/                         # Documentation
+```
+
+---
+
+## API Routes
+
+### AI Generation (`/api/ai/`)
+
+| Route                              | Method | Purpose                        |
+| ---------------------------------- | ------ | ------------------------------ |
+| `/api/ai/agent`                    | POST   | Direct agent invocation        |
+| `/api/ai/agent/stream`             | POST   | Streaming agent response (SSE) |
+| `/api/ai/pipelines/site`           | POST   | Full site generation pipeline  |
+| `/api/ai/generate-website`         | POST   | Website generation             |
+| `/api/ai/generate-logo`            | POST   | AI logo generation (OpenAI)    |
+| `/api/ai/generate-project-details` | POST   | AI project suggestions         |
+| `/api/ai/moderate`                 | POST   | Content moderation             |
+| `/api/ai/classify-project`         | POST   | Project classification         |
+| `/api/ai/evaluate-description`     | POST   | Description quality scoring    |
+| `/api/ai/enhance-preview`          | POST   | Preview enhancement            |
+| `/api/ai/template-agent`           | POST   | Template customization agent   |
+
+### Projects (`/api/projects/`)
+
+| Route                      | Method           | Purpose              |
+| -------------------------- | ---------------- | -------------------- |
+| `/api/projects`            | GET, POST        | List/create projects |
+| `/api/projects/[id]`       | GET, PUT, DELETE | Project CRUD         |
+| `/api/projects/draft`      | GET, POST, PUT   | Draft management     |
+| `/api/projects/check-name` | POST             | Name availability    |
+
+### Integrations (`/api/integrations/`)
+
+| Route                                  | Purpose                            |
+| -------------------------------------- | ---------------------------------- |
+| `/api/integrations/google-analytics/*` | Google Analytics OAuth + resources |
+| `/api/integrations/calendly/*`         | Calendly OAuth + resources         |
+| `/api/integrations/mailchimp/*`        | Mailchimp OAuth + resources        |
+
+### Other Routes
+
+| Route                                 | Purpose                       |
+| ------------------------------------- | ----------------------------- |
+| `/api/domains/availability`           | Domain availability (GoDaddy) |
+| `/api/templates/[templateId]/preview` | Template preview generation   |
+| `/api/local-templates`                | Local template listing        |
+| `/api/uploadthing`                    | File upload handling          |
+| `/api/feedback`                       | User feedback submission      |
+
+---
+
+## Database Schema
+
+### Supabase (PostgreSQL)
+
+Primary data store for persistent business data:
+
+- **Users** - Managed via Clerk authentication
+- **Projects** - Website projects with configurations
+- **Deployments** - Published site deployments
+- **Analytics** - Visitor tracking and metrics
+- **Domains** - Domain availability cache
+
+Types are auto-generated: `pnpm gen:types` → `src/generated-types.ts`
+
+### Convex (Real-time)
+
+Real-time state for generation sessions and agent execution:
+
+```typescript
+// Key tables:
+generationSessions; // Wizard flow state
+wizardUIState; // UI state for wizard
+sessionDesignConfig; // Design choices
+codingAgentSessions; // Agent execution runs
+agentExecutionSteps; // Step-by-step progress
+agentLLMInteractions; // LLM call logs
+agentGeneratedFiles; // Generated file metadata
+sites; // Generated site storage
+siteVersions; // Version snapshots (gzipped)
+aguiSessions; // AG-UI protocol sessions
+```
+
+---
+
+## Coding Agent Architecture
+
+### Multi-Agent System (AG2)
+
+```
+┌─────────────────────────────────────────┐
+│     Product Manager Agent               │
+│     Creates technical plans             │
+└──────────────┬──────────────────────────┘
+               ↓
+┌──────────────┴──────────────────────────┐
+│     Code Engineer Agent                 │
+│     Generates TypeScript/React code     │
+└──────────────┬──────────────────────────┘
+               ↓
+┌──────────────┴──────────────────────────┐
+│     Code Reviewer Agent                 │
+│     Reviews for quality & best practices│
+└──────────────┬──────────────────────────┘
+               ↓
+┌──────────────┴──────────────────────────┐
+│     QA Engineer Agent                   │
+│     Debugs and fixes issues             │
+└─────────────────────────────────────────┘
+```
+
+### LLM Router Configuration
+
+```python
+# coding-agent/src/llm_router.py
+# Supports: Anthropic, OpenAI, Groq, xAI
+# Primary: Claude 3.5 Sonnet for code generation
+# Fallback: GPT-4 for alternative generation
+```
+
+### Streaming Progress (SSE)
+
+Real-time updates via Server-Sent Events:
+
+- Step progress updates
+- File generation notifications
+- Error reporting
+- Preview URL delivery
+
+---
+
+## State Management
+
+### Zustand Stores (`src/store/`)
+
+```typescript
+// wizard-store.ts - Project creation wizard
+interface WizardStore {
+  currentStep: WizardStep;
+  projectDetails: ProjectDetails;
+  templateId: string | null;
+  designConfig: DesignConfig;
+  // ... actions
+}
+
+// draft-store.ts - Auto-save draft persistence
+// ai-suggestions-store.ts - AI recommendation cache
+```
+
+### Convex Real-time Sync
+
+Generation state syncs between:
+
+- Frontend (React) ↔ Convex (real-time DB) ↔ Coding Agent (Python)
+
+---
+
+## Configuration Files
+
+| File                       | Purpose                                        |
+| -------------------------- | ---------------------------------------------- |
+| `tsconfig.json`            | TypeScript config (strict null checks enabled) |
+| `tailwind.config.js`       | Tailwind CSS configuration                     |
+| `next.config.mjs`          | Next.js configuration                          |
+| `vitest.config.mts`        | Vitest test configuration                      |
+| `playwright.config.ts`     | E2E test configuration                         |
+| `coding-agent/config.yaml` | Agent configuration                            |
+
+### Path Aliases
+
+```typescript
+// tsconfig.json paths
+"@/*"       → "./src/*"
+"@public/*" → "./public/*"
+```
+
+### Environment Variables
+
+Required:
+
+- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`
+- `ANTHROPIC_API_KEY` (primary AI)
+- `CONVEX_DEPLOYMENT`, `NEXT_PUBLIC_CONVEX_URL`
+
+Optional:
+
+- `OPENAI_API_KEY`, `GROQ_API_KEY`, `XAI_API_KEY`
+- `GODADDY_API_KEY`, `GODADDY_API_SECRET`
+- `UPLOADTHING_SECRET`, `UPLOADTHING_APP_ID`
+- `ARCJET_KEY` (rate limiting and security)
+
+---
+
+## Development Commands
+
+```bash
+# Development
+pnpm dev                    # Start Next.js + Convex
+pnpm dev:coding-agent       # Start Python coding agent
+pnpm dev:all                # Start everything
+
+# Testing
+pnpm test                   # Run Vitest unit tests
+pnpm test:watch             # Watch mode
+pnpm test:e2e               # Run Playwright E2E
+
+# Code Quality
+pnpm lint                   # ESLint + fix
+pnpm lint:prettier          # Format with Prettier
+pnpm tsc                    # Type check
+
+# Database
+pnpm db:start               # Start local Supabase
+pnpm db:push                # Push migrations
+pnpm gen:types              # Generate TypeScript types
+pnpm convex:start           # Start Convex dev server
+
+# Templates
+pnpm gen:thumbs             # Generate template thumbnails
+pnpm gen:previews           # Build template previews
+```
+
+---
+
+## Core Development Rules
+
+All AI models working on this codebase MUST adhere to the following requirements:
+
+### 1. Type Safety (MANDATORY)
+
+- **All code must be fully type-safe** - No `any` types unless absolutely unavoidable and documented
+- Use TypeScript strict mode patterns even though `strict: false` is set in tsconfig
+- **Always define explicit types** for:
+  - Function parameters and return types
+  - React component props (use interfaces)
+  - State variables and hooks
+  - API request/response payloads
+  - Database query results
+- Leverage the generated Supabase types from `src/generated-types.ts`
+- Use Zod schemas for runtime validation where appropriate
+- Prefer `unknown` over `any` when type is truly unknown, then narrow with type guards
+
+```typescript
+// ✅ Good - Explicit types
+interface UserProps {
+  id: string;
+  name: string;
+  email: string;
+}
+
+function getUser(id: string): Promise<UserProps> {
+  // implementation
+}
+
+// ❌ Bad - Implicit or any types
+function getUser(id) {
+  // implementation
+}
+```
+
+### 2. Unit Testing (MANDATORY)
+
+- **Every new feature, function, hook, or component MUST have accompanying unit tests**
+- Test files should be co-located with the source file: `ComponentName.test.tsx` or `utils.test.ts`
+- Use **Vitest** with **React Testing Library** for all tests
+- Minimum test coverage expectations:
+  - All utility functions: 100%
+  - All custom hooks: 100%
+  - All components: Critical paths and user interactions
+  - All API routes: Request/response handling
+
+#### Testing Commands
+
+```bash
+pnpm test                    # Run all unit tests
+pnpm test:watch              # Run tests in watch mode
+pnpm test src/path/file.test.ts  # Run specific test file
+pnpm test:e2e                # Run Playwright E2E tests
+```
+
+#### Test Structure Example
+
+```typescript
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { MyComponent } from './MyComponent';
+
+describe('MyComponent', () => {
+  it('should render correctly with default props', () => {
+    render(<MyComponent title="Test" />);
+    expect(screen.getByText('Test')).toBeInTheDocument();
+  });
+
+  it('should handle user interaction', async () => {
+    const onClickMock = vi.fn();
+    render(<MyComponent title="Test" onClick={onClickMock} />);
+
+    fireEvent.click(screen.getByRole('button'));
+    expect(onClickMock).toHaveBeenCalledOnce();
+  });
+});
+```
+
+### 3. Code Quality Standards
+
+- Run `pnpm lint` before committing - fix all errors
+- Run `pnpm tsc` to verify type checking passes
+- Follow existing code patterns and conventions in the codebase
+- Use the shadcn/ui component library for UI elements
+- Translations must be type-safe
+
+### 4. Before Submitting Code
+
+Every code change must pass these checks:
+
+```bash
+pnpm tsc        # Type checking
+pnpm lint       # Linting
+pnpm test       # Unit tests
+```
+
+### 5. File Organization
+
+- Components: `src/components/` - PascalCase naming
+- Hooks: `src/hooks/` - camelCase with `use` prefix
+- Utilities: `src/lib/` - camelCase naming
+- Types: `src/types/` - PascalCase for interfaces/types
+- Tests: Co-located with source files (`.test.ts` / `.test.tsx`)
+
+### 6. React Patterns
+
+- Use functional components with hooks
+- Prefer custom hooks for reusable logic
+- Use Zustand for global state management
+- Follow the existing component patterns in `src/components/`
+
+### 7. Database Operations
+
+- Use the Supabase client from `src/supabase-clients/`
+- Use Convex mutations/queries for real-time state
+- All database operations should use typed queries
+- Generate types after schema changes: `pnpm gen:types`
+
+### 8. UI Design Standards
+
+- Use minimalistic and professional UI design
+- Dashboard cards use glass backgrounds:
+  - Light mode: `rgba(243, 243, 243, 0.30)`
+  - Dark mode: `rgba(58, 58, 74, 0.30)`
+- Prefer shadcn/ui autocomplete component over custom implementations
+
+### 9. Security Requirements (CRITICAL - 10+/10 Standard)
+
+**All code must follow these security principles:**
+
+#### Input Validation & Sanitization
+
+```typescript
+// ✅ CORRECT: Validate ALL inputs
+function validateEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+}
+
+function validateTemplateId(id: string): boolean {
+  return /^[a-zA-Z0-9_-]+$/.test(id) && id.length <= 64
+}
+
+// ❌ WRONG: No validation
+function saveUser(data: any) {
+  await db.insert(data) // Dangerous!
+}
+```
+
+**Validation Rules:**
+- Email: `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`
+- Names: max 100 chars
+- Messages: max 1000 chars  
+- UUIDs: `/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i`
+- Template IDs: `/^[a-zA-Z0-9_-]+$/`
+
+#### XSS Prevention
+
+```typescript
+// ✅ CORRECT: React auto-escapes
+function UserComment({ text }: { text: string }) {
+  return <p>{text}</p>
+}
+
+// ❌ WRONG: XSS vulnerability
+function UserComment({ html }: { html: string }) {
+  return <div dangerouslySetInnerHTML={{ __html: html }} />
+}
+```
+
+**Rules:**
+- NEVER use `dangerouslySetInnerHTML`
+- Use JSX for rendering (auto-escapes)
+- Escape server responses with HTML entities
+
+#### Path Traversal Protection
+
+```typescript
+// ✅ CORRECT: Allowlist validation
+const ALLOWED_TEMPLATES = new Set(['template-1', 'template-2'])
+
+function getTemplate(id: string) {
+  if (!ALLOWED_TEMPLATES.has(id)) return null
+  return templates.find(t => t.id === id)
+}
+
+// ❌ WRONG: User-controlled path
+function getTemplate(id: string) {
+  return fs.readFileSync(`./templates/${id}.json`) // Path traversal!
+}
+```
+
+**Rules:**
+- Use allowlists for resource access
+- Validate IDs with `/^[a-zA-Z0-9_-]+$/`
+- Never construct file paths from user input
+- Verify resolved paths stay within base directory
+
+#### API Security
+
+```typescript
+// ✅ CORRECT: Authenticate first
+import { requireAuth } from '@/lib/api-auth'
+
+export async function GET(req: NextRequest) {
+  const authResult = await requireAuth()
+  if (!authResult.authenticated) {
+    return authResult.response // 401
+  }
+  // Proceed with authenticated logic
+}
+
+// ❌ WRONG: No auth check
+export async function GET(req: NextRequest) {
+  const data = await db.query('SELECT * FROM projects')
+  return NextResponse.json(data) // Anyone can access!
+}
+```
+
+**Rules:**
+- Use `requireAuth()` for protected routes
+- Use `requireAuthWithSupabase()` for DB access
+- Return 401 for unauthenticated, 403 for unauthorized
+- Log security events with anonymized IPs
+
+#### Secrets Management
+
+```typescript
+// ✅ CORRECT: Environment variables
+const apiKey = process.env.OPENAI_API_KEY
+
+// ❌ WRONG: Hardcoded
+const apiKey = 'sk-1234567890' // NEVER!
+```
+
+**Rules:**
+- Use `.env.local` for development
+- Use Vercel environment variables for production
+- Never log secrets
+- Use `crypto.timingSafeEqual()` for token comparison
+
+#### SQL Injection Prevention
+
+```typescript
+// ✅ CORRECT: Parameterized (Supabase)
+const { data } = await supabase
+  .from('projects')
+  .select('*')
+  .eq('user_id', userId)
+
+// ❌ WRONG: String concatenation
+const query = `SELECT * FROM projects WHERE user_id = '${userId}'`
+```
+
+**Rules:**
+- Use Supabase client (auto-parameterizes)
+- Never build SQL strings manually
+- Validate all query parameters
+
+#### GDPR & Privacy
+
+```typescript
+// ✅ CORRECT: Anonymize IPs
+function anonymizeIP(ip: string): string {
+  // IPv4: 192.168.1.100 → 192.168.1.0
+  return ip.split('.').slice(0, 3).join('.') + '.0'
+}
+
+// ❌ WRONG: Log full IP
+console.log('Login from', clientIP) // GDPR violation!
+```
+
+**Rules:**
+- Anonymize IPs (remove last octet/80 bits)
+- Don't log emails or PII
+- Truncate user input in logs (max 50 chars)
+- Add GDPR consent to forms
+- Link to privacy policy
+
+#### Security Headers & CSP
+
+```typescript
+// ✅ CORRECT: Nonce-based CSP
+const nonce = crypto.randomBytes(16).toString('base64')
+const html = `<script nonce="${nonce}">console.log('Safe')</script>`
+const csp = `script-src 'nonce-${nonce}'`
+
+// ❌ WRONG: unsafe-inline
+const csp = `script-src 'unsafe-inline'` // Allows XSS!
+```
+
+**Headers Required:**
+- `X-Content-Type-Options: nosniff`
+- `X-Frame-Options: SAMEORIGIN`
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- `Content-Security-Policy` with nonces
+- `Vary: Accept-Encoding` for cached responses
+
+#### Security Checklist
+
+Before committing, verify:
+
+- [ ] All form inputs validated
+- [ ] Email regex: `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`
+- [ ] Text inputs have `maxLength` attributes
+- [ ] No `dangerouslySetInnerHTML` usage
+- [ ] No user input in file paths
+- [ ] API routes use `requireAuth()`
+- [ ] No secrets in code
+- [ ] Supabase uses parameterized queries
+- [ ] Forms include GDPR consent
+- [ ] IPs anonymized in logs
+- [ ] Security headers applied
+- [ ] CSP uses nonces (no unsafe-inline)
+
+#### Reference Implementation
+
+See `src/app/api/template-preview/[id]/route.ts` for **10+/10 security**:
+- Nonce-based CSP
+- IP anonymization
+- Allowlist validation
+- Integrity monitoring
+- GDPR compliant
+
+**Documentation:** `docs/TEMPLATE_PREVIEW_SECURITY.md`
+
+#### Security Resources
+
+- Path validation: `src/lib/path-validation.ts`
+- API auth: `src/lib/api-auth.ts`
+- Security headers: `src/utils/security-headers.ts`
+- Middleware: `src/middleware.ts`
+- Security tests: `security-tests/run-tests.ps1`
+
+---
+
+## Summary
+
+**Non-negotiable requirements for all AI-generated code:**
+
+1. ✅ Full TypeScript type safety - no implicit `any`
+2. ✅ Unit tests for all new code using Vitest
+3. ✅ Pass `pnpm tsc` and `pnpm lint` checks
+4. ✅ Follow existing codebase patterns and conventions
+5. ✅ Use existing libraries (Shadcn/UI, Zustand, React Query)
+6. ✅ Sync with both Supabase and Convex where appropriate
+7. ✅ **Security-first: Validate, sanitize, and protect all user inputs**
+8. ✅ **Privacy-compliant: Anonymize PII, add GDPR consent**
+9. ✅ **Run security tests: `security-tests/run-tests.ps1` before deploy**

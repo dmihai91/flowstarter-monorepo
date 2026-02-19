@@ -1,0 +1,26 @@
+-- Fix RLS policies for Clerk integration
+-- Use 'sub' claim directly instead of user_metadata->user_id
+
+-- Drop existing policies
+DROP POLICY IF EXISTS "Users can view their own projects" ON projects;
+DROP POLICY IF EXISTS "Users can insert their own projects" ON projects;
+DROP POLICY IF EXISTS "Users can update their own projects" ON projects;
+DROP POLICY IF EXISTS "Users can delete their own projects" ON projects;
+
+-- Create new policies using Clerk's 'sub' claim
+CREATE POLICY "Users can view their own projects"
+  ON projects FOR SELECT
+  USING (user_id = (SELECT current_setting('request.jwt.claims', true)::json->>'sub'));
+
+CREATE POLICY "Users can insert their own projects"
+  ON projects FOR INSERT
+  WITH CHECK (user_id = (SELECT current_setting('request.jwt.claims', true)::json->>'sub'));
+
+CREATE POLICY "Users can update their own projects"
+  ON projects FOR UPDATE
+  USING (user_id = (SELECT current_setting('request.jwt.claims', true)::json->>'sub'))
+  WITH CHECK (user_id = (SELECT current_setting('request.jwt.claims', true)::json->>'sub'));
+
+CREATE POLICY "Users can delete their own projects"
+  ON projects FOR DELETE
+  USING (user_id = (SELECT current_setting('request.jwt.claims', true)::json->>'sub'));

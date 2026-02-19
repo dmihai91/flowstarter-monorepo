@@ -1,0 +1,294 @@
+import arcjet, {
+  ArcjetDecision,
+  ArcjetRuleResult,
+  detectBot,
+  shield,
+  slidingWindow,
+  tokenBucket,
+} from '@arcjet/next';
+import { NextRequest, NextResponse } from 'next/server';
+
+// Validate that ARCJET_KEY is set
+if (!process.env.ARCJET_KEY) {
+  console.warn(
+    '[Arcjet] ARCJET_KEY environment variable is not set. Security features will be disabled.'
+  );
+}
+
+/**
+ * Base Arcjet client with shield protection enabled.
+ * Shield provides protection against common attacks like SQL injection, XSS, etc.
+ */
+export const aj = arcjet({
+  key: process.env.ARCJET_KEY!,
+  characteristics: ['ip.src'], // Rate limit by IP address
+  rules: [
+    // Shield protects against common attacks (SQLi, XSS, etc.)
+    shield({
+      mode: 'LIVE',
+    }),
+    // Detect and optionally block bots
+    detectBot({
+      mode: 'LIVE',
+      allow: [
+        // Allow search engine crawlers
+        'CATEGORY:SEARCH_ENGINE',
+        // Allow monitoring services
+        'CATEGORY:MONITOR',
+        // Allow preview bots (social media, etc.)
+        'CATEGORY:PREVIEW',
+      ],
+    }),
+  ],
+});
+
+/**
+ * Arcjet client with standard API rate limiting.
+ * 100 requests per minute per IP (matches previous Upstash config).
+ */
+export const ajWithRateLimit = arcjet({
+  key: process.env.ARCJET_KEY!,
+  characteristics: ['ip.src'],
+  rules: [
+    shield({ mode: 'LIVE' }),
+    detectBot({
+      mode: 'LIVE',
+      allow: ['CATEGORY:SEARCH_ENGINE', 'CATEGORY:MONITOR', 'CATEGORY:PREVIEW'],
+    }),
+    // Sliding window rate limit: 20 requests per 60 seconds
+    slidingWindow({
+      mode: 'LIVE',
+      interval: '1m',
+      max: 20,
+    }),
+  ],
+});
+
+/**
+ * Arcjet client for AI endpoints with stricter rate limiting.
+ * Uses token bucket for burst protection.
+ */
+export const ajAI = arcjet({
+  key: process.env.ARCJET_KEY!,
+  characteristics: ['ip.src'],
+  rules: [
+    shield({ mode: 'LIVE' }),
+    detectBot({
+      mode: 'LIVE',
+      allow: ['CATEGORY:SEARCH_ENGINE', 'CATEGORY:MONITOR'],
+    }),
+    // Token bucket: 10 tokens max, refills at 5 per minute
+    // Allows bursts but limits sustained usage
+    tokenBucket({
+      mode: 'LIVE',
+      refillRate: 5,
+      interval: '1m',
+      capacity: 10,
+    }),
+  ],
+});
+
+/**
+ * Arcjet client for sensitive endpoints (auth, feedback, etc.)
+ * with stricter rate limiting.
+ */
+export const ajSensitive = arcjet({
+  key: process.env.ARCJET_KEY!,
+  characteristics: ['ip.src'],
+  rules: [
+    shield({ mode: 'LIVE' }),
+    detectBot({
+      mode: 'LIVE',
+      allow: ['CATEGORY:MONITOR'],
+    }),
+    // Stricter rate limit for sensitive endpoints
+    slidingWindow({
+      mode: 'LIVE',
+      interval: '1m',
+      max: 20,
+    }),
+  ],
+});
+
+/**
+ * Arcjet client for public/read-only endpoints with generous limits.
+ */
+export const ajPublic = arcjet({
+  key: process.env.ARCJET_KEY!,
+  characteristics: ['ip.src'],
+  rules: [
+    shield({ mode: 'LIVE' }),
+    detectBot({
+      mode: 'LIVE',
+      allow: ['CATEGORY:SEARCH_ENGINE', 'CATEGORY:MONITOR', 'CATEGORY:PREVIEW'],
+    }),
+    // More generous limit for public endpoints
+    slidingWindow({
+      mode: 'LIVE',
+      interval: '1m',
+      max: 200,
+    }),
+  ],
+});
+
+/**
+ * Helper type for Arcjet clients
+ */
+export type ArcjetClient =
+  | typeof aj
+  | typeof ajWithRateLimit
+  | typeof ajAI
+  | typeof ajSensitive
+  | typeof ajPublic;
+
+/**
+ * Creates a standardized error response for blocked requests
+ */
+export function createBlockedResponse(
+  decision: ArcjetDecision
+): NextResponse | null {
+  if (decision.isDenied()) {
+    // Find the reason for denial
+    const reason = decision.reason;
+
+    if (reason.isRateLimit()) {
+      return NextResponse.json(
+        {
+          error: 'Too many requests',
+          message: 'Rate limit exceeded. Please try again later.',
+        },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': '60',
+            'X-RateLimit-Limit': String(reason.max),
+            'X-RateLimit-Remaining': String(reason.remaining),
+            'X-RateLimit-Reset': String(
+              Math.floor(reason.resetTime?.getTime() ?? 0 / 1000)
+            ),
+          },
+        }
+      );
+    }
+
+    if (reason.isBot()) {
+      return NextResponse.json(
+        {
+          error: 'Forbidden',
+          message: 'Bot activity detected.',
+        },
+        { status: 403 }
+      );
+    }
+
+    if (reason.isShield()) {
+      return NextResponse.json(
+        {
+          error: 'Forbidden',
+          message: 'Request blocked for security reasons.',
+        },
+        { status: 403 }
+      );
+    }
+
+    // Generic denial
+    return NextResponse.json(
+      {
+        error: 'Forbidden',
+        message: 'Request denied.',
+      },
+      { status: 403 }
+    );
+  }
+
+  return null;
+}
+
+/**
+ * Higher-order function to wrap API route handlers with Arcjet protection.
+ *
+ * @example
+ * ```ts
+ * import { withArcjet, ajAI } from '@/lib/arcjet';
+ *
+ * export const POST = withArcjet(ajAI, async (request) => {
+ *   // Your handler logic
+ *   return NextResponse.json({ success: true });
+ * });
+ * ```
+ */
+export function withArcjet<T extends ArcjetClient>(
+  client: T,
+  handler: (request: NextRequest) => Promise<NextResponse>
+): (request: NextRequest) => Promise<NextResponse> {
+  return async (request: NextRequest) => {
+    // Skip protection if ARCJET_KEY is not configured
+    if (!process.env.ARCJET_KEY) {
+      return handler(request);
+    }
+
+    const decision = await client.protect(request, { requested: 1 });
+
+    const blockedResponse = createBlockedResponse(decision);
+    if (blockedResponse) {
+      return blockedResponse;
+    }
+
+    // Add rate limit headers to successful responses
+    const response = await handler(request);
+
+    // Find rate limit result if present
+    const rateLimitResult = decision.results.find((r: ArcjetRuleResult) =>
+      r.reason.isRateLimit()
+    );
+    if (rateLimitResult && rateLimitResult.reason.isRateLimit()) {
+      const reason = rateLimitResult.reason;
+      response.headers.set('X-RateLimit-Limit', String(reason.max));
+      response.headers.set('X-RateLimit-Remaining', String(reason.remaining));
+      response.headers.set(
+        'X-RateLimit-Reset',
+        String(Math.floor(reason.resetTime?.getTime() ?? 0 / 1000))
+      );
+    }
+
+    return response;
+  };
+}
+
+/**
+ * Protect a request using the standard rate-limited client.
+ * Returns a blocked response if denied, or null if allowed.
+ */
+export async function protectRequest(
+  request: NextRequest
+): Promise<NextResponse | null> {
+  if (!process.env.ARCJET_KEY) {
+    return null;
+  }
+
+  const decision = await ajWithRateLimit.protect(request);
+  return createBlockedResponse(decision);
+}
+
+/**
+ * Get rate limit info from a decision for adding to response headers
+ */
+export function getRateLimitHeaders(
+  decision: ArcjetDecision
+): Record<string, string> {
+  const headers: Record<string, string> = {};
+
+  const rateLimitResult = decision.results.find((r: ArcjetRuleResult) =>
+    r.reason.isRateLimit()
+  );
+  if (rateLimitResult && rateLimitResult.reason.isRateLimit()) {
+    const reason = rateLimitResult.reason;
+    headers['X-RateLimit-Limit'] = String(reason.max);
+    headers['X-RateLimit-Remaining'] = String(reason.remaining);
+    headers['X-RateLimit-Reset'] = String(
+      Math.floor(reason.resetTime?.getTime() ?? 0 / 1000)
+    );
+  }
+
+  return headers;
+}

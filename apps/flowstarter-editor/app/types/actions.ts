@@ -1,0 +1,80 @@
+import type { Change } from 'diff';
+
+export type ActionType = 'file' | 'shell';
+
+export interface BaseAction {
+  content: string;
+}
+
+export interface FileAction extends BaseAction {
+  type: 'file';
+  filePath: string;
+}
+
+export interface ShellAction extends BaseAction {
+  type: 'shell';
+}
+
+export interface StartAction extends BaseAction {
+  type: 'start';
+}
+
+export interface BuildAction extends BaseAction {
+  type: 'build';
+}
+
+export type BoltAction = FileAction | ShellAction | StartAction | BuildAction;
+
+export type BoltActionData = BoltAction | BaseAction;
+
+export interface ActionAlert {
+  type: string;
+  title: string;
+  description: string;
+  content?: string;
+  source?: 'terminal' | 'preview';
+  stackTrace?: string;
+  affectedFiles?: Array<{ path: string; line?: number; column?: number }>;
+  errorType?: 'syntax' | 'runtime' | 'build' | 'network' | 'permission' | 'dependency' | 'unknown';
+  timestamp?: number;
+  command?: string;
+  exitCode?: number;
+  isStreaming?: boolean;
+  streamingOutput?: string;
+  progress?: number;
+}
+
+export interface DeployAlert {
+  type: 'success' | 'error' | 'info';
+  title: string;
+  description: string;
+  content?: string;
+  url?: string;
+  stage?: 'building' | 'deploying' | 'complete';
+  buildStatus?: 'pending' | 'running' | 'complete' | 'failed';
+  deployStatus?: 'pending' | 'running' | 'complete' | 'failed';
+  source?: 'vercel' | 'netlify' | 'github' | 'gitlab' | 'cloudflare';
+}
+
+export interface LlmErrorAlertType {
+  type: 'error' | 'warning';
+  title: string;
+  description: string;
+  content?: string;
+  provider?: string;
+  errorType?: 'authentication' | 'rate_limit' | 'quota' | 'network' | 'unknown';
+}
+
+export interface FileHistory {
+  originalContent: string;
+  lastModified: number;
+  changes: Change[];
+  versions: {
+    timestamp: number;
+    content: string;
+  }[];
+
+  // Field to track the source of changes
+  changeSource?: 'user' | 'auto-save' | 'external';
+}
+

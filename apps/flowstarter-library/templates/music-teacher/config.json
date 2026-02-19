@@ -1,0 +1,29 @@
+{
+  "name": "Music Teacher",
+  "slug": "music-teacher",
+  "description": "Harmonious template for music instructors, instrument teachers, and vocal coaches. Features lesson booking, repertoire showcase, and student recital highlights.",
+  "category": "education",
+  "tags": ["music", "piano", "guitar", "voice", "violin", "lessons", "instrument", "recital", "performance"],
+  "framework": "astro",
+  "features": ["Multi-page", "Booking integration", "Newsletter integration", "Lesson packages", "Testimonials", "Recital showcase"],
+  "integrations": {
+    "booking": {
+      "name": "Lesson Booking",
+      "description": "Let students book music lessons",
+      "providers": [
+        {"id": "calendly", "name": "Calendly", "field": "calendly_url", "placeholder": "https://calendly.com/your-username/music-lesson"}
+      ],
+      "optional": true,
+      "configPath": "content/integrations/booking.md"
+    },
+    "newsletter": {
+      "name": "Newsletter",
+      "description": "Share practice tips and recital announcements",
+      "providers": [
+        {"id": "mailchimp", "name": "Mailchimp", "field": "mailchimp_url", "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"}
+      ],
+      "optional": true,
+      "configPath": "content/integrations/newsletter.md"
+    }
+  }
+}

@@ -1,0 +1,83 @@
+@use '../z-index';
+
+[data-resize-handle] {
+  position: relative;
+  transition: all 0.15s ease;
+
+  /* Horizontal resize handle (between left/right panels) */
+  &[data-panel-group-direction='horizontal'] {
+    width: 1px;
+    background: transparent;
+    cursor: col-resize;
+
+    /* Expand hit area without visual change */
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: -5px;
+      right: -5px;
+      z-index: z-index.$zIndexMax;
+    }
+  }
+
+  /* Vertical resize handle (between top/bottom panels) */
+  &[data-panel-group-direction='vertical'] {
+    height: 1px;
+    background: transparent;
+    cursor: row-resize;
+
+    /* Expand hit area without visual change */
+    &:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -5px;
+      bottom: -5px;
+      z-index: z-index.$zIndexMax;
+    }
+  }
+
+  /* Hover state - subtle highlight */
+  &[data-resize-handle-state='hover'] {
+    &[data-panel-group-direction='horizontal'] {
+      background: rgba(99, 102, 241, 0.5);
+      box-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
+    }
+    &[data-panel-group-direction='vertical'] {
+      background: rgba(99, 102, 241, 0.5);
+      box-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
+    }
+  }
+
+  /* Drag state - active styling */
+  &[data-resize-handle-state='drag'] {
+    &[data-panel-group-direction='horizontal'] {
+      background: rgba(99, 102, 241, 0.8);
+      box-shadow: 0 0 12px rgba(99, 102, 241, 0.5);
+    }
+    &[data-panel-group-direction='vertical'] {
+      background: rgba(99, 102, 241, 0.8);
+      box-shadow: 0 0 12px rgba(99, 102, 241, 0.5);
+    }
+  }
+}
+
+/* Light mode - show visible handle (separate rule for proper specificity) */
+html[data-theme='light'] [data-resize-handle][data-panel-group-direction='horizontal'],
+:root[data-theme='light'] [data-resize-handle][data-panel-group-direction='horizontal'] {
+  width: 4px;
+  background: #d1d5db;
+  border-left: 1px solid #9ca3af;
+  border-right: 1px solid #9ca3af;
+}
+
+html[data-theme='light'] [data-resize-handle][data-panel-group-direction='vertical'],
+:root[data-theme='light'] [data-resize-handle][data-panel-group-direction='vertical'] {
+  height: 4px;
+  background: #d1d5db;
+  border-top: 1px solid #9ca3af;
+  border-bottom: 1px solid #9ca3af;
+}

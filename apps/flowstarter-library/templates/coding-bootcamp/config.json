@@ -1,0 +1,29 @@
+{
+  "name": "Coding Bootcamp",
+  "slug": "coding-bootcamp",
+  "description": "Modern template for coding instructors, bootcamp operators, and tech educators. Features course catalog, project showcase, and career outcome statistics.",
+  "category": "education",
+  "tags": ["coding", "programming", "bootcamp", "web-development", "python", "javascript", "tech", "career-change"],
+  "framework": "astro",
+  "features": ["Multi-page", "Booking integration", "Newsletter integration", "Course catalog", "Project gallery", "Career outcomes"],
+  "integrations": {
+    "booking": {
+      "name": "Enrollment",
+      "description": "Let students enroll in coding programs",
+      "providers": [
+        {"id": "calendly", "name": "Calendly", "field": "calendly_url", "placeholder": "https://calendly.com/your-username/info-session"}
+      ],
+      "optional": true,
+      "configPath": "content/integrations/booking.md"
+    },
+    "newsletter": {
+      "name": "Newsletter",
+      "description": "Share coding tips and job opportunities",
+      "providers": [
+        {"id": "mailchimp", "name": "Mailchimp", "field": "mailchimp_url", "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"}
+      ],
+      "optional": true,
+      "configPath": "content/integrations/newsletter.md"
+    }
+  }
+}

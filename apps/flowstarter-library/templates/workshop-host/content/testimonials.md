@@ -1,0 +1,20 @@
+---
+title: "Student Reviews"
+subtitle: "What students say about our courses. Real feedback from real learners."
+testimonials:
+  - quote: "The Web Development course gave me everything I needed to land my first dev job. Clear structure, real projects, and the instructor actually responded to questions."
+    author: "Alex K."
+    role: "Junior Developer"
+    result: "Landed first dev job"
+    avatar: "/images/testimonials/alex.jpg"
+  - quote: "I'd tried free tutorials for years with no progress. This course had a clear path, deadlines, and accountability. Finished in 10 weeks and built 3 portfolio pieces."
+    author: "Sara M."
+    role: "UI Designer"
+    result: "3 portfolio projects"
+    avatar: "/images/testimonials/sara.jpg"
+  - quote: "The Data Analytics course was worth every penny. I was able to automate reports at work and got a promotion within 3 months of completing it."
+    author: "James P."
+    role: "Business Analyst"
+    result: "Promotion + 20% raise"
+    avatar: "/images/testimonials/james.jpg"
+---

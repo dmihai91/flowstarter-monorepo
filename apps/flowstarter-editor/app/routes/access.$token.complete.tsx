@@ -114,8 +114,8 @@ function MagicLinkCompleteContent() {
         localStorage.setItem('flowstarter_client_id', result.clientId!);
         localStorage.setItem('flowstarter_project_id', result.projectId!);
         
-        // Redirect to project
-        navigate(`/project/${result.projectUrlId}`);
+        // Redirect to client editor
+        navigate(`/client/project/${result.projectUrlId}`);
         
       } catch (err) {
         console.error('Complete access error:', err);

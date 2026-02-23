@@ -87,8 +87,8 @@ export default function TeamLogin() {
       localStorage.setItem('flowstarter_team_user', JSON.stringify(data.user));
       localStorage.setItem('flowstarter_mode', 'team');
       
-      // Redirect to editor
-      navigate('/new');
+      // Redirect to team dashboard
+      navigate('/team');
       
     } catch (err) {
       setError('Something went wrong');

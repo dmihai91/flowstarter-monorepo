@@ -20,3 +20,6 @@ export { useConversations, type Conversation, type ConversationMessage } from '.
 // Deletion hooks
 export { useProjectDelete, useConversationDelete } from './useProjectDelete';
 
+// Auth and mode detection
+export { useUserMode } from './useUserMode';
+

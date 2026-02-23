@@ -8,9 +8,13 @@ import { PublishButton } from './PublishButton';
 import { ThemeToggle } from './ThemeToggle';
 import { UserAvatar } from './UserAvatar';
 import { Separator } from './Separator';
+import { MagicLinkButton } from './MagicLinkButton';
+import { useUserMode } from '~/lib/hooks';
+import type { Id } from '../../../../convex/_generated/dataModel';
 
 interface EditorHeaderProps {
   projectName: string;
+  projectId?: Id<'projects'> | null;
   viewMode: ViewMode;
   isPublishEnabled: boolean;
   onViewModeChange: (mode: ViewMode) => void;
@@ -21,6 +25,7 @@ interface EditorHeaderProps {
 
 export function EditorHeader({
   projectName,
+  projectId,
   viewMode,
   isPublishEnabled,
   onViewModeChange,
@@ -30,6 +35,7 @@ export function EditorHeader({
 }: EditorHeaderProps) {
   const { isDark } = useThemeStyles();
   const colors = getColors(isDark);
+  const { isTeam, capabilities } = useUserMode();
 
   return (
     <header
@@ -83,6 +89,29 @@ export function EditorHeader({
 
       {/* RIGHT: Actions */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {/* Team mode indicator */}
+        {isTeam && (
+          <span
+            style={{
+              padding: '4px 10px',
+              backgroundColor: isDark ? 'rgba(124, 58, 237, 0.2)' : 'rgba(124, 58, 237, 0.1)',
+              borderRadius: '6px',
+              fontSize: '11px',
+              fontWeight: 600,
+              color: '#a78bfa',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+            }}
+          >
+            Team
+          </span>
+        )}
+        
+        {/* Magic Link button - Team only */}
+        {capabilities.canGenerateMagicLink && (
+          <MagicLinkButton projectId={projectId ?? null} />
+        )}
+        
         <PublishButton isEnabled={isPublishEnabled} onClick={onPublish} />
         <Separator />
         <ThemeToggle />

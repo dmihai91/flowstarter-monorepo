@@ -183,6 +183,7 @@ export function EditorLayout({
 
       <EditorHeader
         projectName={displayProjectName}
+        projectId={projectId}
         viewMode={viewMode}
         isPublishEnabled={isPublishEnabled}
         onViewModeChange={handleViewModeChange}

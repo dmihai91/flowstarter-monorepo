@@ -60,6 +60,31 @@ export default function TeamLogin() {
   const fetcher = useFetcher<typeof action>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isDark, setIsDark] = useState(true);
+  
+  // Detect theme from localStorage or system preference
+  useEffect(() => {
+    const stored = localStorage.getItem('flowstarter_theme');
+    if (stored === 'light') {
+      setIsDark(false);
+    } else if (stored === 'dark') {
+      setIsDark(true);
+    } else {
+      // System preference
+      setIsDark(window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }
+    
+    // Listen for system theme changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = (e: MediaQueryListEvent) => {
+      const stored = localStorage.getItem('flowstarter_theme');
+      if (!stored || stored === 'system') {
+        setIsDark(e.matches);
+      }
+    };
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
   
   // Redirect if already logged in
   useEffect(() => {
@@ -80,42 +105,70 @@ export default function TeamLogin() {
   const error = fetcher.data && !fetcher.data.success ? fetcher.data.error : null;
   
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900">
+    <div className={`min-h-screen flex items-center justify-center transition-colors ${
+      isDark 
+        ? 'bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900' 
+        : 'bg-gradient-to-br from-gray-50 via-purple-100/30 to-gray-100'
+    }`}>
       <div className="w-full max-w-sm p-6">
         <div className="text-center mb-8">
           <div className="text-4xl mb-3">🔧</div>
-          <h1 className="text-2xl font-semibold text-white mb-2">Team Login</h1>
-          <p className="text-gray-400 text-sm">Internal access only</p>
+          <h1 className={`text-2xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            Team Login
+          </h1>
+          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+            Internal access only
+          </p>
         </div>
         
-        <fetcher.Form method="post" className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <fetcher.Form method="post" className={`rounded-xl p-6 border ${
+          isDark 
+            ? 'bg-white/5 border-white/10' 
+            : 'bg-white border-gray-200 shadow-lg'
+        }`}>
           {error && (
-            <div className="mb-4 p-3 bg-red-500/20 border border-red-500/40 rounded-lg text-red-300 text-sm">
+            <div className={`mb-4 p-3 rounded-lg text-sm ${
+              isDark 
+                ? 'bg-red-500/20 border border-red-500/40 text-red-300' 
+                : 'bg-red-50 border border-red-200 text-red-600'
+            }`}>
               {error}
             </div>
           )}
           
           <div className="mb-4">
-            <label className="block text-sm text-gray-300 mb-2">Email</label>
+            <label className={`block text-sm mb-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+              Email
+            </label>
             <input
               name="email"
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 bg-black/30 border border-white/15 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+              className={`w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors ${
+                isDark 
+                  ? 'bg-black/30 border border-white/15 text-white placeholder-gray-500' 
+                  : 'bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400'
+              }`}
             />
           </div>
           
           <div className="mb-6">
-            <label className="block text-sm text-gray-300 mb-2">Password</label>
+            <label className={`block text-sm mb-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+              Password
+            </label>
             <input
               name="password"
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 bg-black/30 border border-white/15 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+              className={`w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors ${
+                isDark 
+                  ? 'bg-black/30 border border-white/15 text-white placeholder-gray-500' 
+                  : 'bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400'
+              }`}
             />
           </div>
           

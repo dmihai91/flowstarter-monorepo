@@ -3,6 +3,59 @@
 
 ---
 
+## Editor Architecture: Two Modes
+
+The editor needs to be split into **two distinct experiences**:
+
+### Mode 1: Internal Draft Generator (Team Only)
+**Purpose:** Go from template → first site draft → publish
+**Users:** Darius + Dorin
+**Flow:** Template selection → Business info → AI content generation → Review → Publish
+
+### Mode 2: Client Customization (Post-Delivery)
+**Purpose:** Simple changes via natural language
+**Users:** Clients
+**Flow:** Describe change → AI executes → Preview → Approve → Publish
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    EDITOR ARCHITECTURE                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│   INTERNAL MODE                    CLIENT MODE                   │
+│   (/internal/project/new)          (/project/:id)               │
+│   ┌─────────────────────┐         ┌─────────────────────┐       │
+│   │                     │         │                     │       │
+│   │  Template Selector  │         │   Change Request    │       │
+│   │  Business Info Form │         │   Chat Interface    │       │
+│   │  AI Content Gen     │         │                     │       │
+│   │  Full File Browser  │         │   Live Preview      │       │
+│   │  Code Editor        │         │   (read-only files) │       │
+│   │  Terminal           │         │                     │       │
+│   │                     │         │   Publish Button    │       │
+│   │  Publish Draft      │         │   Export Button     │       │
+│   │                     │         │                     │       │
+│   └─────────────────────┘         └─────────────────────┘       │
+│                                                                  │
+│   SHARED COMPONENTS:                                             │
+│   • EditorLayout (shell)                                         │
+│   • Preview panel                                                │
+│   • Chat message components                                      │
+│   • Convex providers                                             │
+│                                                                  │
+│   INTERNAL-ONLY:                  CLIENT-ONLY:                   │
+│   • TemplateGallery               • SimpleChangeChat             │
+│   • BusinessInfoForm              • ReadOnlyFileTree             │
+│   • ContentGenerator              • ApprovalFlow                 │
+│   • FullCodeEditor                • ExportButton                 │
+│   • Terminal                                                     │
+│   • DraftPublisher                                               │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
 ## Current Codebase Structure
 
 ```
@@ -65,6 +118,400 @@ flowstarter-monorepo/
 | Client dashboard | P3 | `main/dashboard/` | Medium |
 | Integration components | P3 | `editor/app/components/integrations/` | Medium |
 | Supabase Vault setup | P3 | Infrastructure | Easy |
+
+---
+
+## Phase 0: Editor Refactor (Week 1)
+
+### 0.1 Editor Mode Split
+
+**Goal:** Split the current monolithic editor into two focused experiences
+
+**Current state:**
+- `new.tsx` - Onboarding flow (welcome → describe → template → build)
+- `project.$projectId.tsx` - Full editor with everything
+
+**Target state:**
+- `/internal/draft/:projectId` - Internal draft generator (team only)
+- `/project/:projectId` - Client customization interface (simplified)
+
+**Route structure:**
+
+```
+apps/flowstarter-editor/app/routes/
+├── _index.tsx                      # Redirect based on user type
+├── internal/
+│   ├── _layout.tsx                 # Internal-only layout with team auth
+│   ├── new.tsx                     # Start new project (template select)
+│   └── draft.$projectId.tsx        # Full internal editor
+└── project.$projectId.tsx          # Client customization (simplified)
+```
+
+### 0.2 Internal Draft Generator
+
+**New file: `routes/internal/_layout.tsx`**
+
+```tsx
+// apps/flowstarter-editor/app/routes/internal/_layout.tsx
+import { Outlet, redirect } from '@remix-run/react';
+import type { LoaderFunctionArgs } from '@remix-run/cloudflare';
+
+const TEAM_EMAILS = ['darius@flowstarter.com', 'dorin@flowstarter.com'];
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  // Get user from session/auth
+  const user = await getUser(request);
+  
+  if (!user || !TEAM_EMAILS.includes(user.email)) {
+    throw redirect('/');
+  }
+  
+  return null;
+}
+
+export default function InternalLayout() {
+  return (
+    <div className="internal-editor">
+      <div className="internal-banner">
+        🔧 Internal Mode - Team Only
+      </div>
+      <Outlet />
+    </div>
+  );
+}
+```
+
+**New file: `routes/internal/new.tsx`**
+
+```tsx
+// apps/flowstarter-editor/app/routes/internal/new.tsx
+import { useState } from 'react';
+import { useNavigate } from '@remix-run/react';
+import { useMutation } from 'convex/react';
+import { api } from '../../../convex/_generated/api';
+
+// Steps for internal draft generation
+type InternalStep = 
+  | 'select_template'
+  | 'business_info'
+  | 'content_review'
+  | 'generating'
+  | 'preview';
+
+export default function InternalNewProject() {
+  const navigate = useNavigate();
+  const [step, setStep] = useState<InternalStep>('select_template');
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [businessInfo, setBusinessInfo] = useState<BusinessInfo | null>(null);
+  
+  const createProject = useMutation(api.projects.createFromTemplate);
+  
+  const handleTemplateSelect = (templateId: string) => {
+    setSelectedTemplate(templateId);
+    setStep('business_info');
+  };
+  
+  const handleBusinessInfoSubmit = async (info: BusinessInfo) => {
+    setBusinessInfo(info);
+    setStep('generating');
+    
+    // Create project and generate content
+    const project = await createProject({
+      templateId: selectedTemplate!,
+      businessInfo: info,
+    });
+    
+    // Navigate to internal editor
+    navigate(`/internal/draft/${project.urlId}`);
+  };
+  
+  return (
+    <div className="internal-new-project">
+      {step === 'select_template' && (
+        <TemplateSelector onSelect={handleTemplateSelect} />
+      )}
+      {step === 'business_info' && (
+        <BusinessInfoForm 
+          templateId={selectedTemplate!}
+          onSubmit={handleBusinessInfoSubmit}
+        />
+      )}
+      {step === 'generating' && (
+        <GeneratingIndicator />
+      )}
+    </div>
+  );
+}
+```
+
+**New file: `routes/internal/draft.$projectId.tsx`**
+
+```tsx
+// apps/flowstarter-editor/app/routes/internal/draft.$projectId.tsx
+// This is the FULL editor - code, terminal, file browser, everything
+
+import { EditorLayout } from '~/components/editor';
+import { InternalChatPanel } from '~/components/internal/InternalChatPanel';
+import { FullWorkbench } from '~/components/workbench/FullWorkbench';
+import { PreviewPanel } from '~/components/preview/PreviewPanel';
+import { DraftPublisher } from '~/components/internal/DraftPublisher';
+
+export default function InternalDraftEditor() {
+  const { projectId } = useParams();
+  
+  return (
+    <EditorLayout mode="internal">
+      {/* Left: Full workbench with file tree, code editor, terminal */}
+      <FullWorkbench projectId={projectId} />
+      
+      {/* Center: Live preview */}
+      <PreviewPanel projectId={projectId} />
+      
+      {/* Right: Internal chat + generation controls */}
+      <InternalChatPanel projectId={projectId}>
+        <ContentGenerator />
+        <IntegrationSetup />
+        <DraftPublisher />
+      </InternalChatPanel>
+    </EditorLayout>
+  );
+}
+```
+
+### 0.3 Client Customization Interface
+
+**Simplify: `routes/project.$projectId.tsx`**
+
+```tsx
+// apps/flowstarter-editor/app/routes/project.$projectId.tsx
+// SIMPLIFIED for clients - no code editor, no terminal
+
+import { EditorLayout } from '~/components/editor';
+import { SimpleChangeChat } from '~/components/client/SimpleChangeChat';
+import { PreviewPanel } from '~/components/preview/PreviewPanel';
+import { ReadOnlyFileTree } from '~/components/client/ReadOnlyFileTree';
+import { PublishButton } from '~/components/client/PublishButton';
+import { ExportButton } from '~/components/client/ExportButton';
+
+export default function ClientEditor() {
+  const { projectId } = useParams();
+  
+  return (
+    <EditorLayout mode="client">
+      {/* Left: Simple chat for changes */}
+      <div className="client-sidebar">
+        <SimpleChangeChat projectId={projectId} />
+        
+        {/* Optional: Collapsible file tree (read-only) */}
+        <details className="file-tree-collapsible">
+          <summary>View Files</summary>
+          <ReadOnlyFileTree projectId={projectId} />
+        </details>
+      </div>
+      
+      {/* Center: Live preview */}
+      <PreviewPanel projectId={projectId} />
+      
+      {/* Actions */}
+      <div className="client-actions">
+        <PublishButton projectId={projectId} />
+        <ExportButton projectId={projectId} />
+      </div>
+    </EditorLayout>
+  );
+}
+```
+
+### 0.4 Component Reorganization
+
+**Current structure (messy):**
+```
+app/components/
+├── editor/
+│   ├── EditorLayout.tsx
+│   ├── EditorChatPanel.tsx          # Does too much
+│   ├── editor-chat/
+│   │   ├── components/              # Mixed concerns
+│   │   │   ├── TemplateGallery.tsx  # Internal
+│   │   │   ├── BuildTimeline.tsx    # Internal
+│   │   │   ├── ChatInput.tsx        # Shared
+│   │   │   └── ...
+│   │   └── hooks/
+│   └── ...
+├── workbench/
+│   ├── file-tree/
+│   └── terminal/
+└── ...
+```
+
+**Target structure (clean):**
+```
+app/components/
+├── shared/                           # Used by both modes
+│   ├── EditorLayout.tsx
+│   ├── PreviewPanel.tsx
+│   ├── chat/
+│   │   ├── ChatInput.tsx
+│   │   ├── MessageBubble.tsx
+│   │   └── ...
+│   └── ui/
+│       └── ...
+│
+├── internal/                         # Internal mode only
+│   ├── InternalChatPanel.tsx
+│   ├── TemplateSelector.tsx
+│   ├── BusinessInfoForm.tsx
+│   ├── ContentGenerator.tsx
+│   ├── IntegrationSetup.tsx
+│   ├── DraftPublisher.tsx
+│   └── FullWorkbench/
+│       ├── FileTree.tsx
+│       ├── CodeEditor.tsx
+│       └── Terminal.tsx
+│
+└── client/                           # Client mode only
+    ├── SimpleChangeChat.tsx
+    ├── ReadOnlyFileTree.tsx
+    ├── PublishButton.tsx
+    ├── ExportButton.tsx
+    └── ChangeApprovalFlow.tsx
+```
+
+### 0.5 Internal Draft Generator Flow
+
+**The full internal flow:**
+
+```
+1. TEMPLATE SELECTION
+   ┌─────────────────────────────────────────┐
+   │  Choose Template for [Business Name]   │
+   │                                         │
+   │  ┌─────────┐ ┌─────────┐ ┌─────────┐   │
+   │  │ Service │ │  Local  │ │Creative │   │
+   │  │  Pro    │ │Business │ │Portfolio│   │
+   │  └─────────┘ └─────────┘ └─────────┘   │
+   │                                         │
+   │              [Next →]                   │
+   └─────────────────────────────────────────┘
+                    │
+                    ▼
+2. BUSINESS INFO (from discovery call)
+   ┌─────────────────────────────────────────┐
+   │  Business Details                       │
+   │                                         │
+   │  Name: [Maria's Life Coaching_______]   │
+   │  Industry: [Coaching ▼]                 │
+   │  Services: [Life coaching, career...]   │
+   │                                         │
+   │  Contact:                               │
+   │  Email: [_____] Phone: [_____]          │
+   │                                         │
+   │  Discovery Call Notes:                  │
+   │  [________________________________]     │
+   │  [________________________________]     │
+   │                                         │
+   │              [Generate Draft →]         │
+   └─────────────────────────────────────────┘
+                    │
+                    ▼
+3. AI CONTENT GENERATION
+   ┌─────────────────────────────────────────┐
+   │  Generating Site Content...             │
+   │                                         │
+   │  ✅ Analyzing business context          │
+   │  ✅ Generating hero copy                │
+   │  ⏳ Writing service descriptions        │
+   │  ○  Creating about section             │
+   │  ○  Setting up SEO                     │
+   │                                         │
+   │  [━━━━━━━━━━░░░░░░░░░░] 45%             │
+   └─────────────────────────────────────────┘
+                    │
+                    ▼
+4. FULL INTERNAL EDITOR
+   ┌─────────────────────────────────────────────────────────────┐
+   │  [Files]  [Code]  [Terminal]  │  [Preview]  │  [Chat]      │
+   │  ├── src/                     │             │              │
+   │  │   ├── pages/               │  ┌───────┐  │  AI Chat     │
+   │  │   │   └── index.astro      │  │       │  │  for edits   │
+   │  │   └── content/             │  │ Live  │  │              │
+   │  │       ├── hero.md          │  │Preview│  │  [Regenerate]│
+   │  │       └── services.md      │  │       │  │  [Add Page]  │
+   │  ├── public/                  │  └───────┘  │              │
+   │  └── astro.config.mjs         │             │              │
+   │─────────────────────────────────────────────│  [Setup      │
+   │  $ npm run dev                │             │   Integrations]
+   │  Server running on port 4321  │             │              │
+   │                               │             │  [Publish    │
+   │                               │             │   Draft →]   │
+   └─────────────────────────────────────────────────────────────┘
+                    │
+                    ▼
+5. PUBLISH DRAFT
+   ┌─────────────────────────────────────────┐
+   │  Ready to Publish?                      │
+   │                                         │
+   │  Client: Maria Ionescu                  │
+   │  Domain: mariascoaching.com             │
+   │                                         │
+   │  ✅ Site generated                      │
+   │  ✅ Contact form working                │
+   │  ✅ Calendly integrated                 │
+   │  ✅ GA4 tracking added                  │
+   │                                         │
+   │  [Preview Live] [Publish to Cloudflare] │
+   └─────────────────────────────────────────┘
+```
+
+### 0.6 Migration Steps
+
+**Step 1: Create new route structure (don't delete old)**
+```bash
+# Create internal routes
+mkdir -p app/routes/internal
+touch app/routes/internal/_layout.tsx
+touch app/routes/internal/new.tsx
+touch app/routes/internal/draft.$projectId.tsx
+```
+
+**Step 2: Extract shared components**
+```bash
+# Move shared components
+mkdir -p app/components/shared
+mv app/components/editor/EditorLayout.tsx app/components/shared/
+# ... etc
+```
+
+**Step 3: Create internal components**
+```bash
+# New internal-only components
+mkdir -p app/components/internal
+touch app/components/internal/InternalChatPanel.tsx
+touch app/components/internal/TemplateSelector.tsx
+touch app/components/internal/BusinessInfoForm.tsx
+# ... etc
+```
+
+**Step 4: Create client components**
+```bash
+# New client-only components
+mkdir -p app/components/client
+touch app/components/client/SimpleChangeChat.tsx
+touch app/components/client/ReadOnlyFileTree.tsx
+# ... etc
+```
+
+**Step 5: Simplify project route**
+- Remove code editor from `project.$projectId.tsx`
+- Remove terminal
+- Add simple change chat
+- Keep preview
+
+**Step 6: Delete old unused code**
+- Remove duplicated components
+- Clean up imports
+
+**Estimated time:** 3-4 days
 
 ---
 
@@ -840,14 +1287,65 @@ export function CalendlyWidget({ projectId }: { projectId: string }) {
 
 | Week | Focus | Deliverables |
 |------|-------|-------------|
-| **Week 1** | Foundation | Hide wizard, template schemas (1/3) |
-| **Week 2** | Customization Engine | Request analyzer, plan generator, basic executor |
-| **Week 3** | Analytics Backend | GA4 service, Supabase schema, caching |
-| **Week 4** | Analytics UI | Dashboard, leads list, notifications |
-| **Week 5** | Publish Pipeline | CF Pages upload, R2 backup, rollback |
-| **Week 6** | Integrations | Components, secure API routes, Vault setup |
-| **Week 7** | Polish | Testing, empty states, error handling |
-| **Week 8** | Pilot Ready | End-to-end flow, pilot client onboard |
+| **Week 1** | Editor Refactor | Split into internal/client modes, route structure |
+| **Week 2** | Internal Draft Generator | Template selector, business info form, content gen |
+| **Week 3** | Customization Engine | Request analyzer, plan generator, executor |
+| **Week 4** | Analytics Backend | GA4 service, Supabase schema, caching |
+| **Week 5** | Analytics UI | Dashboard, leads list, notifications |
+| **Week 6** | Publish Pipeline | CF Pages upload, R2 backup, rollback |
+| **Week 7** | Integrations | Components, secure API routes, Vault setup |
+| **Week 8** | Polish + Pilot | Testing, end-to-end, first client |
+
+### Detailed Phase Timeline
+
+```
+WEEK 1: Editor Refactor
+├── Day 1-2: Create route structure (/internal/*, /project/*)
+├── Day 3-4: Extract shared components
+└── Day 5: Create internal layout with team auth
+
+WEEK 2: Internal Draft Generator
+├── Day 1-2: Template selector UI
+├── Day 3-4: Business info form (from discovery call)
+├── Day 5-6: AI content generation pipeline
+└── Day 7: Internal editor with full workbench
+
+WEEK 3: Customization Engine
+├── Day 1-2: Template schema system
+├── Day 3-4: Request analyzer (Claude)
+├── Day 5-6: Plan generator + executor
+└── Day 7: Validation layer
+
+WEEK 4: Analytics Backend
+├── Day 1-2: Supabase schema (leads, analytics_snapshots)
+├── Day 3-4: GA4 Data API integration
+├── Day 5: Caching layer + cron job
+└── Day 6-7: API routes
+
+WEEK 5: Analytics UI
+├── Day 1-2: Metric cards (visitors, pageviews, leads)
+├── Day 3: Trend chart
+├── Day 4-5: Leads list + detail view
+└── Day 6-7: Notifications (email + WhatsApp)
+
+WEEK 6: Publish Pipeline
+├── Day 1-2: Build pipeline (Convex → static)
+├── Day 3-4: Cloudflare Pages Direct Upload
+├── Day 5: R2 backup + rollback
+└── Day 6-7: Domain configuration
+
+WEEK 7: Integrations
+├── Day 1-2: Supabase Vault setup
+├── Day 3-4: Integration components (Calendly, Contact)
+├── Day 5: Server-side API routes
+└── Day 6-7: Integration testing
+
+WEEK 8: Polish + Pilot
+├── Day 1-2: Error handling + empty states
+├── Day 3-4: End-to-end testing
+├── Day 5: Documentation
+└── Day 6-7: 🎯 PILOT CLIENT ONBOARD
+```
 
 ---
 
@@ -857,20 +1355,50 @@ export function CalendlyWidget({ projectId }: { projectId: string }) {
 NEW FILES:
 ├── apps/flowstarter-editor/
 │   └── app/
-│       ├── services/customization/     # Customization engine
-│       │   ├── index.ts
-│       │   ├── request-analyzer.ts
-│       │   ├── plan-generator.ts
-│       │   ├── executor.ts
-│       │   └── types.ts
-│       ├── components/integrations/    # Secure integration components
-│       │   ├── CalendlyWidget.tsx
-│       │   ├── ContactForm.tsx
-│       │   └── ...
-│       └── routes/
-│           ├── api.publish.ts          # CF Pages publish
-│           ├── api.integrations.$projectId.*.ts  # Integration APIs
-│           └── api.customization.ts    # Customization endpoint
+│       │
+│       ├── routes/
+│       │   ├── internal/                    # NEW: Internal-only routes
+│       │   │   ├── _layout.tsx              # Team auth check
+│       │   │   ├── new.tsx                  # Template → business info
+│       │   │   └── draft.$projectId.tsx     # Full internal editor
+│       │   ├── project.$projectId.tsx       # SIMPLIFIED: Client editor
+│       │   ├── api.publish.ts               # CF Pages publish
+│       │   ├── api.customization.ts         # Customization endpoint
+│       │   └── api.integrations.$projectId.*.ts
+│       │
+│       ├── components/
+│       │   ├── shared/                      # NEW: Used by both modes
+│       │   │   ├── EditorLayout.tsx
+│       │   │   ├── PreviewPanel.tsx
+│       │   │   └── chat/
+│       │   │       ├── ChatInput.tsx
+│       │   │       └── MessageBubble.tsx
+│       │   │
+│       │   ├── internal/                    # NEW: Internal mode only
+│       │   │   ├── InternalChatPanel.tsx
+│       │   │   ├── TemplateSelector.tsx
+│       │   │   ├── BusinessInfoForm.tsx
+│       │   │   ├── ContentGenerator.tsx
+│       │   │   ├── IntegrationSetup.tsx
+│       │   │   ├── DraftPublisher.tsx
+│       │   │   └── FullWorkbench/
+│       │   │       ├── FileTree.tsx
+│       │   │       ├── CodeEditor.tsx
+│       │   │       └── Terminal.tsx
+│       │   │
+│       │   └── client/                      # NEW: Client mode only
+│       │       ├── SimpleChangeChat.tsx
+│       │       ├── ReadOnlyFileTree.tsx
+│       │       ├── PublishButton.tsx
+│       │       ├── ExportButton.tsx
+│       │       └── ChangeApprovalFlow.tsx
+│       │
+│       └── services/customization/          # NEW: Customization engine
+│           ├── index.ts
+│           ├── request-analyzer.ts
+│           ├── plan-generator.ts
+│           ├── executor.ts
+│           └── types.ts
 │
 ├── apps/flowstarter-main/
 │   └── src/
@@ -890,6 +1418,22 @@ NEW FILES:
 └── supabase/migrations/
     └── add_leads_and_analytics.sql
 ```
+
+---
+
+## Editor Component Migration Map
+
+| Current Location | Action | New Location |
+|-----------------|--------|--------------|
+| `editor/EditorLayout.tsx` | Move | `shared/EditorLayout.tsx` |
+| `editor/EditorChatPanel.tsx` | Split | `internal/InternalChatPanel.tsx` + `client/SimpleChangeChat.tsx` |
+| `editor/editor-chat/components/TemplateGallery.tsx` | Move | `internal/TemplateSelector.tsx` |
+| `editor/editor-chat/components/BuildTimeline.tsx` | Move | `internal/ContentGenerator.tsx` |
+| `editor/editor-chat/components/IntegrationsPanel.tsx` | Move | `internal/IntegrationSetup.tsx` |
+| `editor/editor-chat/components/ChatInput.tsx` | Move | `shared/chat/ChatInput.tsx` |
+| `workbench/file-tree/` | Keep + Simplify | `internal/FullWorkbench/FileTree.tsx` + `client/ReadOnlyFileTree.tsx` |
+| `workbench/terminal/` | Move | `internal/FullWorkbench/Terminal.tsx` |
+| `editor/codemirror/` | Move | `internal/FullWorkbench/CodeEditor.tsx` |
 
 ---
 

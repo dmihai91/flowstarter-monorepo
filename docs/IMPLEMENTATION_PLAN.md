@@ -379,7 +379,7 @@ app/components/
 
 ### 0.5 Internal Draft Generator Flow
 
-**The full internal flow:**
+**The full internal flow (iterative, not one-shot):**
 
 ```
 1. TEMPLATE SELECTION
@@ -410,13 +410,13 @@ app/components/
    │  [________________________________]     │
    │  [________________________________]     │
    │                                         │
-   │              [Generate Draft →]         │
+   │              [Generate First Draft →]   │
    └─────────────────────────────────────────┘
                     │
                     ▼
-3. AI CONTENT GENERATION
+3. AI GENERATES FIRST DRAFT (~80% done)
    ┌─────────────────────────────────────────┐
-   │  Generating Site Content...             │
+   │  Generating Initial Draft...            │
    │                                         │
    │  ✅ Analyzing business context          │
    │  ✅ Generating hero copy                │
@@ -425,42 +425,239 @@ app/components/
    │  ○  Setting up SEO                     │
    │                                         │
    │  [━━━━━━━━━━░░░░░░░░░░] 45%             │
+   │                                         │
+   │  Note: This is a FIRST DRAFT.           │
+   │  You'll refine it with AI chat next.    │
    └─────────────────────────────────────────┘
                     │
                     ▼
-4. FULL INTERNAL EDITOR
-   ┌─────────────────────────────────────────────────────────────┐
-   │  [Files]  [Code]  [Terminal]  │  [Preview]  │  [Chat]      │
-   │  ├── src/                     │             │              │
-   │  │   ├── pages/               │  ┌───────┐  │  AI Chat     │
-   │  │   │   └── index.astro      │  │       │  │  for edits   │
-   │  │   └── content/             │  │ Live  │  │              │
-   │  │       ├── hero.md          │  │Preview│  │  [Regenerate]│
-   │  │       └── services.md      │  │       │  │  [Add Page]  │
-   │  ├── public/                  │  └───────┘  │              │
-   │  └── astro.config.mjs         │             │              │
-   │─────────────────────────────────────────────│  [Setup      │
-   │  $ npm run dev                │             │   Integrations]
-   │  Server running on port 4321  │             │              │
-   │                               │             │  [Publish    │
-   │                               │             │   Draft →]   │
-   └─────────────────────────────────────────────────────────────┘
+4. ITERATIVE REFINEMENT (AI Chat + Full Editor)
+   ┌─────────────────────────────────────────────────────────────────────┐
+   │  [Files]  [Code]  [Terminal]    │  [Preview]   │  [💬 AI Chat]     │
+   │  ├── src/                       │              │                    │
+   │  │   ├── pages/                 │  ┌────────┐  │  You: "Make the   │
+   │  │   │   ├── index.astro        │  │        │  │  headline more    │
+   │  │   │   └── about.astro        │  │  Live  │  │  punchy"          │
+   │  │   └── content/               │  │Preview │  │                    │
+   │  │       ├── hero.md            │  │        │  │  AI: Done! Changed│
+   │  │       └── services.md        │  │        │  │  to "Transform    │
+   │  ├── public/                    │  └────────┘  │  Your Life Today" │
+   │  └── astro.config.mjs           │              │                    │
+   │────────────────────────────────────────────────│  You: "Add a      │
+   │  $ npm run dev                  │              │  testimonials     │
+   │  Server running on port 4321    │              │  section"         │
+   │                                 │              │                    │
+   │                                 │              │  AI: Added 3      │
+   │                                 │              │  testimonials...  │
+   │                                 │              │                    │
+   │                                 │              │  [________________]│
+   │                                 │              │  [Send Message]   │
+   └─────────────────────────────────────────────────────────────────────┘
+   
+   TEAM CAN:
+   • Chat with AI to make changes ("make the colors warmer")
+   • Ask AI to add sections ("add a pricing section")
+   • Ask AI to rewrite copy ("make this more professional")
+   • Manually edit code if needed
+   • Preview changes live
+   • Iterate until satisfied
+   
                     │
                     ▼
-5. PUBLISH DRAFT
+5. SETUP INTEGRATIONS
+   ┌─────────────────────────────────────────┐
+   │  Configure Integrations                 │
+   │                                         │
+   │  📅 Calendly                            │
+   │  [x] Enabled                            │
+   │  Username: [mariacoaching___]           │
+   │  Event: [discovery-call___]             │
+   │                                         │
+   │  📧 Contact Form                        │
+   │  [x] Enabled (always on)                │
+   │  Notify via: [x] Email [ ] WhatsApp     │
+   │                                         │
+   │  📊 Google Analytics                    │
+   │  [x] Enabled                            │
+   │  Property ID: [G-XXXXXXXXXX]            │
+   │                                         │
+   │              [Save & Continue →]        │
+   └─────────────────────────────────────────┘
+                    │
+                    ▼
+6. FINAL REVIEW & PUBLISH
    ┌─────────────────────────────────────────┐
    │  Ready to Publish?                      │
    │                                         │
    │  Client: Maria Ionescu                  │
    │  Domain: mariascoaching.com             │
    │                                         │
-   │  ✅ Site generated                      │
+   │  ✅ Site generated & refined            │
    │  ✅ Contact form working                │
    │  ✅ Calendly integrated                 │
    │  ✅ GA4 tracking added                  │
    │                                         │
    │  [Preview Live] [Publish to Cloudflare] │
    └─────────────────────────────────────────┘
+```
+
+### 0.5.1 Internal AI Chat Capabilities
+
+**The internal editor AI can do everything the customization engine can, plus more:**
+
+| Capability | Example Prompt | Available |
+|------------|----------------|-----------|
+| **Change text** | "Make the headline more punchy" | ✅ |
+| **Change colors** | "Use warmer colors, more orange" | ✅ |
+| **Add sections** | "Add a testimonials section with 3 reviews" | ✅ |
+| **Remove sections** | "Remove the pricing section" | ✅ |
+| **Reorder sections** | "Move about section above services" | ✅ |
+| **Add pages** | "Create an FAQ page" | ✅ |
+| **Change layout** | "Make the features 2 columns" | ✅ |
+| **Regenerate content** | "Rewrite the about section, more personal" | ✅ |
+| **SEO updates** | "Update meta description for better SEO" | ✅ |
+| **Add images** | "Add a hero image of a coach" | ✅ |
+| **Code changes** | "Add a custom animation to the hero" | ✅ (internal only) |
+| **Install packages** | "Add a lightbox for the gallery" | ✅ (internal only) |
+
+**Key difference from client mode:**
+- Internal: Full AI coding capabilities (can modify any code)
+- Client: Constrained to template-safe operations only
+
+### 0.5.2 Internal Chat Panel Component
+
+```tsx
+// apps/flowstarter-editor/app/components/internal/InternalChatPanel.tsx
+export function InternalChatPanel({ projectId }: { projectId: string }) {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+    
+    // Add user message
+    const userMessage = { role: 'user', content: input };
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
+    setIsGenerating(true);
+    
+    // Stream AI response - full coding capabilities
+    const response = await fetch('/api/internal/chat', {
+      method: 'POST',
+      body: JSON.stringify({
+        projectId,
+        message: input,
+        mode: 'internal', // Full capabilities
+      }),
+    });
+    
+    // Handle streaming response...
+    // AI can modify files, run commands, etc.
+    
+    setIsGenerating(false);
+  };
+  
+  return (
+    <div className="internal-chat-panel">
+      <div className="chat-header">
+        <h3>🤖 AI Assistant</h3>
+        <span className="mode-badge">Internal Mode - Full Access</span>
+      </div>
+      
+      <div className="messages">
+        {messages.map((msg, i) => (
+          <MessageBubble key={i} message={msg} />
+        ))}
+        {isGenerating && <TypingIndicator />}
+      </div>
+      
+      <div className="quick-actions">
+        <button onClick={() => setInput('Add a testimonials section')}>
+          + Testimonials
+        </button>
+        <button onClick={() => setInput('Add a pricing section')}>
+          + Pricing
+        </button>
+        <button onClick={() => setInput('Regenerate hero copy')}>
+          🔄 Redo Hero
+        </button>
+      </div>
+      
+      <div className="chat-input">
+        <textarea
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          placeholder="Tell AI what to change... (full coding access)"
+          onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
+        />
+        <button onClick={sendMessage} disabled={isGenerating}>
+          Send
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+### 0.5.3 Internal vs Client AI Modes
+
+```typescript
+// apps/flowstarter-editor/app/routes/api.internal.chat.ts
+// INTERNAL MODE: Full coding capabilities
+
+export const action: ActionFunction = async ({ request }) => {
+  const { projectId, message } = await request.json();
+  
+  // Verify internal user
+  const user = await getUser(request);
+  if (!isTeamMember(user)) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  
+  // Full AI coding agent - can do anything
+  const response = await runCodingAgent({
+    projectId,
+    message,
+    capabilities: [
+      'read_files',
+      'write_files',
+      'run_terminal',
+      'install_packages',
+      'modify_config',
+      'create_pages',
+      'delete_files',
+    ],
+  });
+  
+  return streamResponse(response);
+};
+
+// apps/flowstarter-editor/app/routes/api.customization.ts
+// CLIENT MODE: Constrained to safe operations
+
+export const action: ActionFunction = async ({ request }) => {
+  const { projectId, message } = await request.json();
+  
+  // Load template schema for constraints
+  const schema = await getTemplateSchema(projectId);
+  
+  // Customization engine - constrained operations
+  const response = await runCustomizationEngine({
+    projectId,
+    message,
+    schema,
+    capabilities: [
+      'update_content',    // Text, images in defined slots
+      'change_colors',     // Within palette constraints
+      'toggle_sections',   // Pre-defined sections only
+      'update_seo',        // Meta tags
+    ],
+    // NO: arbitrary code changes, terminal, package installs
+  });
+  
+  return streamResponse(response);
+};
 ```
 
 ### 0.6 Migration Steps

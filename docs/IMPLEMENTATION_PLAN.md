@@ -1241,45 +1241,402 @@ async function uploadToCloudflarePages(projectName: string, outputDir: string) {
 
 ---
 
-### 3.2 Integration Components Library
+### 3.2 Secure Integration Architecture
 
-**Goal:** Secure, reusable components for client sites
+**CRITICAL: No API keys in frontend. Everything through our API.**
 
 ```
-apps/flowstarter-editor/app/components/integrations/
-├── CalendlyWidget.tsx
-├── MailchimpForm.tsx
-├── ContactForm.tsx
-├── WhatsAppButton.tsx
-├── GoogleAnalytics.tsx
-└── index.ts
+┌─────────────────────────────────────────────────────────────────┐
+│                     INTEGRATION SECURITY                         │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│   CLIENT SITE                    OUR BACKEND                    │
+│   (browser)                      (server-side only)             │
+│   ┌─────────────┐               ┌─────────────────────────┐     │
+│   │ React       │    HTTPS      │ API Routes              │     │
+│   │ Components  │ ─────────────▶│ /api/integrations/*     │     │
+│   │             │               │                         │     │
+│   │ NO API KEYS │               │ ✓ Has Vault access     │     │
+│   │ NO SECRETS  │               │ ✓ Decrypts secrets     │     │
+│   │             │               │ ✓ Calls third-party    │     │
+│   └─────────────┘               └───────────┬─────────────┘     │
+│                                             │                   │
+│                                             ▼                   │
+│                                 ┌─────────────────────────┐     │
+│                                 │   SUPABASE VAULT        │     │
+│                                 │   (encrypted at rest)   │     │
+│                                 │                         │     │
+│                                 │   calendly_api_key_*    │     │
+│                                 │   mailchimp_token_*     │     │
+│                                 │   stripe_secret_*       │     │
+│                                 └───────────┬─────────────┘     │
+│                                             │                   │
+│                                             ▼                   │
+│                                 ┌─────────────────────────┐     │
+│                                 │   THIRD-PARTY APIs      │     │
+│                                 │   Calendly, Mailchimp,  │     │
+│                                 │   Stripe, GA4, etc.     │     │
+│                                 └─────────────────────────┘     │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-Each component calls our API (never third-party directly):
+### 3.3 Integration API Routes
+
+**All integration logic is server-side. Frontend components only call our APIs.**
+
+```
+apps/flowstarter-editor/app/routes/
+├── api.integrations.$projectId.calendly.ts
+├── api.integrations.$projectId.mailchimp.ts
+├── api.integrations.$projectId.contact-form.ts
+├── api.integrations.$projectId.analytics.ts
+└── api.integrations.$projectId.whatsapp.ts
+```
+
+**Calendly API (server-side):**
+
+```typescript
+// apps/flowstarter-editor/app/routes/api.integrations.$projectId.calendly.ts
+import type { ActionFunction, LoaderFunction } from '@remix-run/cloudflare';
+import { getVaultSecret } from '~/lib/vault';
+import { getProjectIntegration } from '~/lib/integrations';
+
+// GET /api/integrations/:projectId/calendly
+// Returns public embed URL (no secrets)
+export const loader: LoaderFunction = async ({ params }) => {
+  const { projectId } = params;
+  const integration = await getProjectIntegration(projectId, 'calendly');
+  
+  if (!integration || integration.status !== 'active') {
+    return Response.json({ enabled: false });
+  }
+  
+  // Return public info only - no API keys
+  return Response.json({
+    enabled: true,
+    embedUrl: `https://calendly.com/${integration.config.username}/${integration.config.eventSlug}`,
+  });
+};
+
+// POST /api/integrations/:projectId/calendly/webhook
+// Handle Calendly webhooks (booking created, etc.)
+export const action: ActionFunction = async ({ request, params }) => {
+  const { projectId } = params;
+  const body = await request.json();
+  
+  // Get webhook secret from vault to verify signature
+  const webhookSecret = await getVaultSecret(`calendly_webhook_secret_${projectId}`);
+  
+  // Verify webhook signature
+  const signature = request.headers.get('Calendly-Webhook-Signature');
+  if (!verifyCalendlySignature(body, signature, webhookSecret)) {
+    return Response.json({ error: 'Invalid signature' }, { status: 401 });
+  }
+  
+  // Process booking
+  if (body.event === 'invitee.created') {
+    await saveBookingToSupabase(projectId, body.payload);
+    await notifyClient(projectId, body.payload);
+  }
+  
+  return Response.json({ success: true });
+};
+```
+
+**Mailchimp API (server-side):**
+
+```typescript
+// apps/flowstarter-editor/app/routes/api.integrations.$projectId.mailchimp.ts
+import type { ActionFunction } from '@remix-run/cloudflare';
+import { getVaultSecret } from '~/lib/vault';
+import { getProjectIntegration } from '~/lib/integrations';
+import mailchimp from '@mailchimp/mailchimp_marketing';
+
+// POST /api/integrations/:projectId/mailchimp/subscribe
+export const action: ActionFunction = async ({ request, params }) => {
+  const { projectId } = params;
+  const { email, firstName, lastName } = await request.json();
+  
+  // Get integration config
+  const integration = await getProjectIntegration(projectId, 'mailchimp');
+  if (!integration) {
+    return Response.json({ error: 'Mailchimp not configured' }, { status: 400 });
+  }
+  
+  // Get API key from vault (NEVER sent to frontend)
+  const apiKey = await getVaultSecret(`mailchimp_api_key_${projectId}`);
+  const server = apiKey.split('-')[1]; // dc from API key
+  
+  // Configure Mailchimp client server-side
+  mailchimp.setConfig({ apiKey, server });
+  
+  try {
+    // Add subscriber
+    await mailchimp.lists.addListMember(integration.config.listId, {
+      email_address: email,
+      status: 'subscribed',
+      merge_fields: {
+        FNAME: firstName || '',
+        LNAME: lastName || '',
+      },
+    });
+    
+    // Also save to our leads table
+    await saveLeadToSupabase(projectId, { email, firstName, lastName, source: 'newsletter' });
+    
+    return Response.json({ success: true });
+  } catch (error: any) {
+    if (error.status === 400 && error.response?.body?.title === 'Member Exists') {
+      return Response.json({ success: true, alreadySubscribed: true });
+    }
+    return Response.json({ error: 'Failed to subscribe' }, { status: 500 });
+  }
+};
+```
+
+**Contact Form API (server-side):**
+
+```typescript
+// apps/flowstarter-editor/app/routes/api.integrations.$projectId.contact-form.ts
+import type { ActionFunction } from '@remix-run/cloudflare';
+import { supabase } from '~/lib/supabase';
+import { sendLeadNotification } from '~/lib/notifications';
+
+// POST /api/integrations/:projectId/contact-form
+export const action: ActionFunction = async ({ request, params }) => {
+  const { projectId } = params;
+  const formData = await request.json();
+  
+  // Get UTM params
+  const { name, email, phone, message, utm_source, utm_medium, utm_campaign } = formData;
+  
+  // 1. Save to Supabase leads table
+  const { data: lead, error } = await supabase
+    .from('leads')
+    .insert({
+      project_id: projectId,
+      name,
+      email,
+      phone,
+      message,
+      source: 'contact_form',
+      utm_source,
+      utm_medium,
+      utm_campaign,
+      status: 'new',
+    })
+    .select()
+    .single();
+  
+  if (error) {
+    return Response.json({ error: 'Failed to save lead' }, { status: 500 });
+  }
+  
+  // 2. Send notification to client (email + optional WhatsApp)
+  await sendLeadNotification(projectId, lead);
+  
+  // 3. Forward to Mailchimp if configured
+  const mailchimpIntegration = await getProjectIntegration(projectId, 'mailchimp');
+  if (mailchimpIntegration?.status === 'active' && email) {
+    await addToMailchimp(projectId, email, name);
+  }
+  
+  return Response.json({ success: true, leadId: lead.id });
+};
+```
+
+### 3.4 Frontend Integration Components
+
+**Components call our API, never third-party services directly:**
 
 ```tsx
 // apps/flowstarter-editor/app/components/integrations/CalendlyWidget.tsx
 export function CalendlyWidget({ projectId }: { projectId: string }) {
-  const [embedUrl, setEmbedUrl] = useState<string | null>(null);
+  const [config, setConfig] = useState<{ enabled: boolean; embedUrl?: string } | null>(null);
   
   useEffect(() => {
-    // Fetch from our API - we look up the calendly URL server-side
-    fetch(`/api/integrations/${projectId}/calendly/embed-url`)
+    // Fetch from OUR API - not Calendly directly
+    fetch(`/api/integrations/${projectId}/calendly`)
       .then(res => res.json())
-      .then(data => setEmbedUrl(data.url));
+      .then(setConfig);
   }, [projectId]);
   
-  if (!embedUrl) return null;
+  if (!config?.enabled) return null;
   
   return (
-    <button onClick={() => window.open(embedUrl, '_blank')}>
+    <button 
+      onClick={() => {
+        // Open Calendly popup with public embed URL
+        // @ts-ignore
+        window.Calendly?.initPopupWidget({ url: config.embedUrl });
+      }}
+      className="btn btn-primary"
+    >
       📅 Book a Call
     </button>
   );
 }
 ```
 
-**Estimated time:** 2 days
+```tsx
+// apps/flowstarter-editor/app/components/integrations/MailchimpForm.tsx
+export function MailchimpForm({ projectId }: { projectId: string }) {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setStatus('loading');
+    
+    // Submit to OUR API - we handle Mailchimp server-side
+    const res = await fetch(`/api/integrations/${projectId}/mailchimp/subscribe`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    
+    setStatus(res.ok ? 'success' : 'error');
+  };
+  
+  return (
+    <form onSubmit={handleSubmit}>
+      <input 
+        type="email" 
+        value={email} 
+        onChange={e => setEmail(e.target.value)}
+        placeholder="your@email.com"
+        required
+      />
+      <button type="submit" disabled={status === 'loading'}>
+        {status === 'loading' ? 'Subscribing...' : 'Subscribe'}
+      </button>
+      {status === 'success' && <p>Thanks for subscribing!</p>}
+    </form>
+  );
+}
+```
+
+```tsx
+// apps/flowstarter-editor/app/components/integrations/ContactForm.tsx
+export function ContactForm({ projectId }: { projectId: string }) {
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setStatus('loading');
+    
+    const formData = new FormData(e.currentTarget);
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Submit to OUR API
+    const res = await fetch(`/api/integrations/${projectId}/contact-form`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        message: formData.get('message'),
+        utm_source: urlParams.get('utm_source'),
+        utm_medium: urlParams.get('utm_medium'),
+        utm_campaign: urlParams.get('utm_campaign'),
+      }),
+    });
+    
+    setStatus(res.ok ? 'success' : 'error');
+    if (res.ok) e.currentTarget.reset();
+  };
+  
+  if (status === 'success') {
+    return (
+      <div className="success-message">
+        <h3>Thanks for reaching out!</h3>
+        <p>We'll get back to you soon.</p>
+      </div>
+    );
+  }
+  
+  return (
+    <form onSubmit={handleSubmit}>
+      <input name="name" placeholder="Your name" required />
+      <input name="email" type="email" placeholder="your@email.com" required />
+      <input name="phone" type="tel" placeholder="Phone (optional)" />
+      <textarea name="message" placeholder="How can we help?" required />
+      <button type="submit" disabled={status === 'loading'}>
+        {status === 'loading' ? 'Sending...' : 'Send Message'}
+      </button>
+    </form>
+  );
+}
+```
+
+### 3.5 Supabase Vault Helper
+
+```typescript
+// apps/flowstarter-editor/app/lib/vault.ts
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_KEY! // Service key for vault access
+);
+
+export async function getVaultSecret(secretName: string): Promise<string> {
+  const { data, error } = await supabase
+    .rpc('get_secret', { secret_name: secretName });
+  
+  if (error) {
+    throw new Error(`Failed to get secret ${secretName}: ${error.message}`);
+  }
+  
+  return data;
+}
+
+export async function setVaultSecret(secretName: string, secretValue: string): Promise<void> {
+  const { error } = await supabase
+    .rpc('set_secret', { 
+      secret_name: secretName,
+      secret_value: secretValue,
+    });
+  
+  if (error) {
+    throw new Error(`Failed to set secret ${secretName}: ${error.message}`);
+  }
+}
+
+// Supabase function (create this in Supabase)
+/*
+CREATE OR REPLACE FUNCTION get_secret(secret_name TEXT)
+RETURNS TEXT
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  secret_value TEXT;
+BEGIN
+  SELECT decrypted_secret INTO secret_value
+  FROM vault.decrypted_secrets
+  WHERE name = secret_name;
+  
+  RETURN secret_value;
+END;
+$$;
+*/
+```
+
+### 3.6 Integration Security Checklist
+
+| Rule | Implementation |
+|------|----------------|
+| **No API keys in frontend** | All keys in Supabase Vault |
+| **No direct third-party calls from browser** | All calls through `/api/integrations/*` |
+| **Server-side only vault access** | Service key only on server |
+| **Webhook signature verification** | Verify all incoming webhooks |
+| **Per-project isolation** | Each project has own secrets |
+| **Audit logging** | Log all vault access |
+
+**Estimated time:** 3 days
 
 ---
 

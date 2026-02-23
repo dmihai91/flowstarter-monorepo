@@ -91,6 +91,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/template-preview(.*)',
   '/template-preview(.*)',
   '/api/health(.*)',
+  '/api/auth/session(.*)', // Session check for editor SSO
   '/gdpr(.*)',
   '/contact(.*)',
   '/guides(.*)',

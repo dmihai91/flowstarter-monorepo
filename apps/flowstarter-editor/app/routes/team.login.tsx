@@ -2,7 +2,11 @@
  * Team Login - Shared Clerk Session
  * 
  * Uses shared Clerk cookies between main platform and editor.
- * Checks session via API call to main platform.
+ * 
+ * Environments:
+ * - Integration (dev domains): flowstarter.dev / editor.flowstarter.dev
+ * - Isolation (localhost): localhost:3000 / localhost:5175
+ * - Production: flowstarter.app / editor.flowstarter.app
  */
 
 import { useEffect, useState } from 'react';
@@ -17,29 +21,26 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-// Platform URLs based on environment
-function getPlatformUrl(): string {
-  if (typeof window === 'undefined') return 'http://localhost:3000';
+// Platform URL detection
+function getPlatformConfig() {
+  if (typeof window === 'undefined') {
+    return { platformUrl: 'http://localhost:3000', mode: 'isolation' as const };
+  }
   
   const hostname = window.location.hostname;
   
-  // Local development
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    return 'http://localhost:3000';
+  // Production
+  if (hostname === 'editor.flowstarter.app' || hostname === 'flowstarter.app') {
+    return { platformUrl: 'https://flowstarter.app', mode: 'production' as const };
   }
   
-  // Development (editor.flowstarter.dev -> flowstarter.dev)
-  if (hostname.endsWith('.flowstarter.dev')) {
-    return 'https://flowstarter.dev';
+  // Development (integration mode with dev domains)
+  if (hostname === 'editor.flowstarter.dev' || hostname === 'flowstarter.dev') {
+    return { platformUrl: 'http://flowstarter.dev:3000', mode: 'integration' as const };
   }
   
-  // Production (editor.flowstarter.app -> flowstarter.app)
-  if (hostname.endsWith('.flowstarter.app')) {
-    return 'https://flowstarter.app';
-  }
-  
-  // Fallback
-  return 'http://localhost:3000';
+  // Local isolation mode
+  return { platformUrl: 'http://localhost:3000', mode: 'isolation' as const };
 }
 
 export default function TeamLogin() {
@@ -48,7 +49,7 @@ export default function TeamLogin() {
   const [status, setStatus] = useState<'checking' | 'idle' | 'denied' | 'error'>('checking');
   const [error, setError] = useState<string | null>(null);
   
-  const platformUrl = getPlatformUrl();
+  const { platformUrl, mode } = getPlatformConfig();
   
   // Detect theme
   useEffect(() => {
@@ -62,25 +63,24 @@ export default function TeamLogin() {
     }
   }, []);
   
-  // Check for existing Clerk session via shared cookies
+  // Check for existing Clerk session
   useEffect(() => {
-    // Already authenticated locally
     if (isTeamAuthenticated()) {
       navigate('/');
       return;
     }
     
-    // Check session on main platform
     checkSession();
   }, []);
   
   async function checkSession() {
     try {
       const response = await fetch(`${platformUrl}/api/auth/session`, {
-        credentials: 'include', // Include cookies for cross-origin
+        credentials: 'include',
       });
       
       if (!response.ok) {
+        console.log('Session check returned:', response.status);
         setStatus('idle');
         return;
       }
@@ -88,33 +88,26 @@ export default function TeamLogin() {
       const data = await response.json();
       
       if (data.authenticated && data.isTeam) {
-        // User is authenticated and is a team member
-        setTeamSession(data.userId, { 
-          email: data.email, 
-          name: data.name 
-        });
+        setTeamSession(data.userId, { email: data.email, name: data.name });
         navigate('/');
       } else if (data.authenticated && !data.isTeam) {
-        // Authenticated but not a team member
         setStatus('denied');
         setError(`Access denied. Only ${TEAM_EMAIL_DOMAINS.join(', ')} emails allowed.`);
       } else {
-        // Not authenticated - show login button
         setStatus('idle');
       }
     } catch (err) {
       console.error('Session check failed:', err);
-      setStatus('idle'); // Show login button on error
+      setStatus('idle');
     }
   }
   
   const handleLogin = () => {
-    // Redirect to main platform login, then back here
     const returnUrl = encodeURIComponent(window.location.href);
     window.location.href = `${platformUrl}/login?redirect_url=${returnUrl}`;
   };
   
-  // Loading state
+  // Loading
   if (status === 'checking') {
     return (
       <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
@@ -126,7 +119,7 @@ export default function TeamLogin() {
     );
   }
   
-  // Access denied
+  // Denied
   if (status === 'denied') {
     return (
       <div className={`min-h-screen flex items-center justify-center ${
@@ -147,7 +140,7 @@ export default function TeamLogin() {
     );
   }
   
-  // Login prompt
+  // Login
   return (
     <div className={`min-h-screen flex items-center justify-center ${
       isDark ? 'bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900' : 'bg-gradient-to-br from-gray-50 via-purple-100/30 to-gray-100'
@@ -174,6 +167,12 @@ export default function TeamLogin() {
           <p className={`mt-4 text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
             Team domains: {TEAM_EMAIL_DOMAINS.join(', ')}
           </p>
+          
+          {mode !== 'production' && (
+            <p className={`mt-2 text-xs ${isDark ? 'text-gray-600' : 'text-gray-300'}`}>
+              Mode: {mode} → {platformUrl}
+            </p>
+          )}
         </div>
       </div>
     </div>

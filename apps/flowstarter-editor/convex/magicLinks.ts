@@ -128,6 +128,7 @@ export const validate = query({
         id: client._id,
         name: client.name,
         email: client.email,
+        hasClerkAccount: !!client.clerkUserId,
       },
       project: {
         id: project._id,
@@ -298,6 +299,99 @@ export const revoke = mutation({
     });
     
     return { success: true };
+  },
+});
+
+/**
+ * Complete client access - links Clerk user to client record
+ * Called after client signs up via Google/Apple
+ */
+export const completeClientAccess = mutation({
+  args: {
+    token: v.string(),
+    clerkUserId: v.string(),
+    signupMethod: v.union(v.literal('google'), v.literal('apple'), v.literal('email')),
+  },
+  handler: async (ctx, args) => {
+    // Validate the magic link
+    const link = await ctx.db
+      .query('magicLinks')
+      .withIndex('by_token', (q) => q.eq('token', args.token))
+      .first();
+    
+    if (!link) {
+      return { success: false, error: 'Link not found' };
+    }
+    
+    if (link.isRevoked) {
+      return { success: false, error: 'Link has been revoked' };
+    }
+    
+    if (link.expiresAt && link.expiresAt < Date.now()) {
+      return { success: false, error: 'Link has expired' };
+    }
+    
+    const now = Date.now();
+    
+    // Get the client record
+    const client = await ctx.db.get(link.clientId);
+    if (!client) {
+      return { success: false, error: 'Client not found' };
+    }
+    
+    // Check if this Clerk user is already linked to another client
+    const existingClientWithClerk = await ctx.db
+      .query('clients')
+      .withIndex('by_clerkUserId', (q) => q.eq('clerkUserId', args.clerkUserId))
+      .first();
+    
+    if (existingClientWithClerk && existingClientWithClerk._id !== client._id) {
+      return { success: false, error: 'This account is already linked to another client' };
+    }
+    
+    // Link Clerk user to client (if not already linked)
+    if (!client.clerkUserId) {
+      await ctx.db.patch(client._id, {
+        clerkUserId: args.clerkUserId,
+        signupMethod: args.signupMethod,
+        signedUpAt: now,
+        status: 'onboarding',
+        updatedAt: now,
+      });
+    }
+    
+    // Update magic link usage
+    await ctx.db.patch(link._id, {
+      useCount: link.useCount + 1,
+      usedAt: link.usedAt || now,
+    });
+    
+    // Create client session
+    const sessionToken = generateSessionToken();
+    const sessionExpiry = now + 30 * 24 * 60 * 60 * 1000; // 30 days
+    
+    await ctx.db.insert('clientSessions', {
+      token: sessionToken,
+      clientId: link.clientId,
+      magicLinkId: link._id,
+      projectId: link.projectId,
+      accessLevel: link.accessLevel,
+      expiresAt: sessionExpiry,
+      lastActiveAt: now,
+      createdAt: now,
+    });
+    
+    // Get project for redirect URL
+    const project = await ctx.db.get(link.projectId);
+    
+    return {
+      success: true,
+      sessionToken,
+      clientId: link.clientId,
+      projectId: link.projectId,
+      projectUrlId: project?.urlId,
+      accessLevel: link.accessLevel,
+    };
   },
 });
 

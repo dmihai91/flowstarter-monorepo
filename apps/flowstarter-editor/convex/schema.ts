@@ -76,17 +76,25 @@ export default defineSchema({
   // NOTE: Team auth is handled by Clerk in the main platform
   // ═══════════════════════════════════════════════════════════════════════════
   clients: defineTable({
-    // Contact info
+    // Contact info (from team input)
     email: v.string(),
     name: v.string(),
     phone: v.optional(v.string()),
     company: v.optional(v.string()),
     
+    // Clerk integration - linked after client signs up via Google/Apple
+    clerkUserId: v.optional(v.string()),  // Set when client creates Clerk account
+    signupMethod: v.optional(v.union(
+      v.literal('google'),
+      v.literal('apple'),
+      v.literal('email')
+    )),
+    signedUpAt: v.optional(v.number()),   // When they completed signup
+    
     // Status
     status: v.union(
-      v.literal('lead'),       // Initial contact
-      v.literal('onboarding'), // Discovery call done, creating site
-      v.literal('review'),     // Site ready for client review
+      v.literal('invited'),    // Magic link sent, hasn't signed up yet
+      v.literal('onboarding'), // Signed up, reviewing site
       v.literal('active'),     // Launched, paying customer
       v.literal('churned')     // No longer active
     ),
@@ -110,7 +118,8 @@ export default defineSchema({
     updatedAt: v.number(),
   })
     .index('by_email', ['email'])
-    .index('by_status', ['status']),
+    .index('by_status', ['status'])
+    .index('by_clerkUserId', ['clerkUserId']),
 
   // ═══════════════════════════════════════════════════════════════════════════
   // MAGIC LINKS - Secure access links for clients

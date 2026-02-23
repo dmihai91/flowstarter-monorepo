@@ -92,6 +92,34 @@ export const getByEmail = query({
   },
 });
 
+/**
+ * Get client by Clerk user ID (after they've signed up)
+ */
+export const getByClerkUserId = query({
+  args: {
+    clerkUserId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const client = await ctx.db
+      .query('clients')
+      .withIndex('by_clerkUserId', (q) => q.eq('clerkUserId', args.clerkUserId))
+      .first();
+    
+    if (!client) return null;
+    
+    // Get their projects
+    const projects = await ctx.db
+      .query('projects')
+      .withIndex('by_client', (q) => q.eq('clientId', client._id))
+      .collect();
+    
+    return {
+      ...client,
+      projects,
+    };
+  },
+});
+
 // ═══════════════════════════════════════════════════════════════════════════
 // MUTATIONS
 // ═══════════════════════════════════════════════════════════════════════════
@@ -127,7 +155,7 @@ export const create = mutation({
       phone: args.phone,
       company: args.company,
       discoveryNotes: args.discoveryNotes,
-      status: 'onboarding',
+      status: 'invited', // Will change to 'onboarding' when they sign up via magic link
       createdBy: args.createdBy,
       createdAt: now,
       updatedAt: now,

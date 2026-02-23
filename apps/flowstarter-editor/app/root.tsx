@@ -1,6 +1,6 @@
 import { useStore } from '@nanostores/react';
-import type { LinksFunction } from '@remix-run/cloudflare';
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
+import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/cloudflare';
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from '@remix-run/react';
 import tailwindReset from '@unocss/reset/tailwind-compat.css?url';
 import { themeStore } from './lib/stores/theme';
 import { stripIndents } from './utils/stripIndent';
@@ -13,6 +13,9 @@ import { AmplitudeProvider } from './components/AmplitudeProvider';
 import { GTMProvider } from './components/GTMProvider';
 import { ConvexProvider, ConvexReactClient } from 'convex/react';
 import { QueryProvider } from './components/QueryProvider';
+import { ClerkProvider } from '@clerk/remix';
+import { rootAuthLoader } from '@clerk/remix/ssr.server';
+import { getClerkEnv } from './lib/clerk.server';
 
 // Core styles - loaded immediately (critical for initial render)
 import globalStyles from './styles/index.scss?url';
@@ -43,6 +46,30 @@ function getConvexClient(): ConvexReactClient | null {
   }
 
   return convexClientSingleton;
+}
+
+// Clerk loader - provides auth state to the app (optional)
+export async function loader(args: LoaderFunctionArgs) {
+  const { context } = args;
+  const clerkEnv = getClerkEnv(context as any);
+  
+  // Only use Clerk if configured
+  if (clerkEnv.publishableKey && clerkEnv.secretKey) {
+    try {
+      return rootAuthLoader(args, () => ({
+        clerkPublishableKey: clerkEnv.publishableKey,
+        clerkEnabled: true,
+      }));
+    } catch (error) {
+      console.warn('Clerk SSR failed, falling back to client-only:', error);
+    }
+  }
+  
+  // Clerk not configured or failed - return basic data
+  return {
+    clerkPublishableKey: clerkEnv.publishableKey || '',
+    clerkEnabled: false,
+  };
 }
 
 export const links: LinksFunction = () => [
@@ -274,6 +301,8 @@ import { logStore } from './lib/stores/logs';
 
 export default function App() {
   const theme = useStore(themeStore);
+  const loaderData = useLoaderData<typeof loader>();
+  const clerkKey = loaderData?.clerkPublishableKey;
 
   useEffect(() => {
     logStore.logSystem('Application initialized', {
@@ -283,9 +312,20 @@ export default function App() {
     });
   }, []);
 
-  return (
+  // Only wrap with ClerkProvider if publishable key is configured
+  const content = (
     <Layout>
       <Outlet />
     </Layout>
   );
+
+  if (clerkKey) {
+    return (
+      <ClerkProvider publishableKey={clerkKey}>
+        {content}
+      </ClerkProvider>
+    );
+  }
+
+  return content;
 }

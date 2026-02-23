@@ -2,9 +2,23 @@
  * Auth & Mode Utilities
  * 
  * Handles team authentication and mode detection.
- * - Team: Simple email/password, stored in localStorage
- * - Client: Clerk auth via magic link, stored in localStorage
+ * - Team: Clerk auth, verified by email domain
+ * - Client: Clerk auth via magic link
  */
+
+/**
+ * Team email domains that are allowed to access the editor
+ */
+export const TEAM_EMAIL_DOMAINS = ['flowstarter.co', 'flowstarter.com'];
+
+/**
+ * Check if a user email is a team member (client-side)
+ */
+export function isTeamEmail(email: string | undefined | null): boolean {
+  if (!email) return false;
+  const domain = email.split('@')[1]?.toLowerCase();
+  return TEAM_EMAIL_DOMAINS.includes(domain);
+}
 
 export type UserMode = 'team' | 'client' | 'guest';
 

@@ -8,7 +8,8 @@
  */
 
 import { useEffect, useState } from 'react';
-import { useNavigate, Link } from '@remix-run/react';
+import { useNavigate } from '@remix-run/react';
+import { Link } from '@remix-run/react';
 import { useQuery } from 'convex/react';
 import { ClientOnly } from 'remix-utils/client-only';
 // eslint-disable-next-line no-restricted-imports
@@ -95,8 +96,10 @@ function TeamDashboardContent() {
       <main style={{ padding: '32px 24px', maxWidth: 1200, margin: '0 auto' }}>
         {/* Quick Actions */}
         <div style={{ marginBottom: 40 }}>
-          <Link
-            to="/team/project/new"
+          <a
+            href="http://localhost:3000/dashboard"
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -110,8 +113,11 @@ function TeamDashboardContent() {
               fontSize: 16,
             }}
           >
-            ➕ New Client Project
-          </Link>
+            ➕ New Project (Main Platform)
+          </a>
+          <p style={{ marginTop: 12, fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>
+            Create projects in the main platform, then they'll appear here for site generation.
+          </p>
         </div>
         
         {/* Stats */}
@@ -227,10 +233,12 @@ function EmptyState() {
       <div style={{ fontSize: 48, marginBottom: 16 }}>📋</div>
       <h3 style={{ fontSize: 18, marginBottom: 8 }}>No projects yet</h3>
       <p style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>
-        Create your first client project to get started
+        Create a project in the main platform, then it will appear here.
       </p>
-      <Link
-        to="/team/project/new"
+      <a
+        href="http://localhost:3000/dashboard"
+        target="_blank"
+        rel="noopener noreferrer"
         style={{
           display: 'inline-block',
           padding: '12px 24px',
@@ -241,8 +249,8 @@ function EmptyState() {
           fontWeight: 500,
         }}
       >
-        Create Project
-      </Link>
+        Go to Main Platform →
+      </a>
     </div>
   );
 }

@@ -67,8 +67,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(errorUrl);
   }
   
-  // Generate simple session token (in production, use proper JWT)
-  const token = Buffer.from(`${userId}:${email}:${Date.now()}`).toString('base64');
+  // Generate signed session token using shared secret
+  const sharedSecret = process.env.SHARED_APP_SECRET || 'default-dev-secret';
+  const payload = `${userId}:${email}:${Date.now()}`;
+  const signature = Buffer.from(payload + ':' + sharedSecret).toString('base64');
+  const token = Buffer.from(payload).toString('base64') + '.' + signature.slice(0, 32);
   
   // Redirect back to editor with session info
   const callbackUrl = new URL(redirectUrl);

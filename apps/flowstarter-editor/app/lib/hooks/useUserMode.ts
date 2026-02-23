@@ -1,8 +1,9 @@
 /**
  * React hook for user mode and capabilities
+ * SSR-safe - returns guest mode on server
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { 
   getUserMode, 
   getModeCapabilities, 
@@ -25,14 +26,28 @@ interface UseUserModeReturn {
   isLoading: boolean;
 }
 
+// Default capabilities for guest (used during SSR)
+const GUEST_CAPABILITIES: ModeCapabilities = {
+  canGenerateMagicLink: false,
+  canPublish: false,
+  canEditCode: false,
+  canUseTerminal: false,
+  canDeleteProject: false,
+  canAccessAllProjects: false,
+  customizationLevel: 'none',
+};
+
 export function useUserMode(): UseUserModeReturn {
   const [mode, setMode] = useState<UserMode>('guest');
   const [teamUser, setTeamUser] = useState<TeamUser | null>(null);
   const [clientUser, setClientUser] = useState<ClientUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    // Read from localStorage on client
+    setIsMounted(true);
+    
+    // Read from localStorage on client only
     const currentMode = getUserMode();
     setMode(currentMode);
     
@@ -45,16 +60,20 @@ export function useUserMode(): UseUserModeReturn {
     setIsLoading(false);
   }, []);
 
-  const capabilities = getModeCapabilities(mode);
+  // Memoize capabilities to prevent unnecessary re-renders
+  const capabilities = useMemo(() => {
+    if (!isMounted) return GUEST_CAPABILITIES;
+    return getModeCapabilities(mode);
+  }, [mode, isMounted]);
 
   return {
     mode,
     capabilities,
     teamUser,
     clientUser,
-    isTeam: mode === 'team',
-    isClient: mode === 'client',
-    isGuest: mode === 'guest',
-    isLoading,
+    isTeam: isMounted && mode === 'team',
+    isClient: isMounted && mode === 'client',
+    isGuest: !isMounted || mode === 'guest',
+    isLoading: !isMounted || isLoading,
   };
 }

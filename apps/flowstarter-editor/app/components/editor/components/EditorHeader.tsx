@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useThemeStyles, getColors } from '~/components/editor/hooks';
 import { MenuButton } from './MenuButton';
 import { Logo } from './Logo';
@@ -9,7 +9,7 @@ import { ThemeToggle } from './ThemeToggle';
 import { UserAvatar } from './UserAvatar';
 import { Separator } from './Separator';
 import { MagicLinkButton } from './MagicLinkButton';
-import { useUserMode } from '~/lib/hooks';
+import { isTeamMode, getModeCapabilities, getUserMode } from '~/lib/team-auth';
 import type { Id } from '../../../../convex/_generated/dataModel';
 
 interface EditorHeaderProps {
@@ -35,7 +35,17 @@ export function EditorHeader({
 }: EditorHeaderProps) {
   const { isDark } = useThemeStyles();
   const colors = getColors(isDark);
-  const { isTeam, capabilities } = useUserMode();
+  
+  // Client-side only mode detection
+  const [isTeam, setIsTeam] = useState(false);
+  const [canGenerateMagicLink, setCanGenerateMagicLink] = useState(false);
+  
+  useEffect(() => {
+    const mode = getUserMode();
+    setIsTeam(mode === 'team');
+    const caps = getModeCapabilities(mode);
+    setCanGenerateMagicLink(caps.canGenerateMagicLink);
+  }, []);
 
   return (
     <header
@@ -108,7 +118,7 @@ export function EditorHeader({
         )}
         
         {/* Magic Link button - Team only */}
-        {capabilities.canGenerateMagicLink && (
+        {canGenerateMagicLink && (
           <MagicLinkButton projectId={projectId ?? null} />
         )}
         

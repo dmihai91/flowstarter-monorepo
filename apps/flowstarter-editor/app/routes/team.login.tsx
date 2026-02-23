@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from '@remix-run/react';
+import { useNavigate, useFetcher } from '@remix-run/react';
 import type { MetaFunction, ActionFunctionArgs } from '@remix-run/cloudflare';
 import { json } from '@remix-run/cloudflare';
 import { setTeamSession, isTeamAuthenticated } from '~/lib/team-auth';
@@ -57,10 +57,9 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 export default function TeamLogin() {
   const navigate = useNavigate();
+  const fetcher = useFetcher<typeof action>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   
   // Redirect if already logged in
   useEffect(() => {
@@ -69,36 +68,16 @@ export default function TeamLogin() {
     }
   }, [navigate]);
   
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setIsLoading(true);
-    
-    try {
-      const res = await fetch('/team/login', {
-        method: 'POST',
-        body: new FormData(e.target as HTMLFormElement),
-      });
-      
-      const data = await res.json();
-      
-      if (!res.ok || !data.success) {
-        setError(data.error || 'Login failed');
-        setIsLoading(false);
-        return;
-      }
-      
-      // Store team session
-      setTeamSession(data.token, data.user);
-      
-      // Redirect to main editor (team mode is now set)
+  // Handle action response
+  useEffect(() => {
+    if (fetcher.data?.success && fetcher.data?.token && fetcher.data?.user) {
+      setTeamSession(fetcher.data.token, fetcher.data.user);
       navigate('/');
-      
-    } catch (err) {
-      setError('Something went wrong');
-      setIsLoading(false);
     }
-  };
+  }, [fetcher.data, navigate]);
+  
+  const isLoading = fetcher.state === 'submitting';
+  const error = fetcher.data && !fetcher.data.success ? fetcher.data.error : null;
   
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900">
@@ -109,7 +88,7 @@ export default function TeamLogin() {
           <p className="text-gray-400 text-sm">Internal access only</p>
         </div>
         
-        <form onSubmit={handleSubmit} className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <fetcher.Form method="post" className="bg-white/5 border border-white/10 rounded-xl p-6">
           {error && (
             <div className="mb-4 p-3 bg-red-500/20 border border-red-500/40 rounded-lg text-red-300 text-sm">
               {error}
@@ -147,7 +126,7 @@ export default function TeamLogin() {
           >
             {isLoading ? 'Signing in...' : 'Sign In'}
           </button>
-        </form>
+        </fetcher.Form>
       </div>
     </div>
   );

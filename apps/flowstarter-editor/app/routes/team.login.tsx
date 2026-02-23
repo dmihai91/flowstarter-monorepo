@@ -1,14 +1,14 @@
 /**
- * Team Login - SSO via Main Platform
+ * Team Login - Shared Clerk Session
  * 
- * Redirects to main platform for Clerk authentication.
- * No fallback - must authenticate through main platform.
+ * Uses shared Clerk cookies between main platform and editor.
+ * Checks session via API call to main platform.
  */
 
 import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from '@remix-run/react';
+import { useNavigate } from '@remix-run/react';
 import type { MetaFunction } from '@remix-run/cloudflare';
-import { setTeamSession, isTeamAuthenticated, TEAM_EMAIL_DOMAINS } from '~/lib/team-auth';
+import { setTeamSession, isTeamAuthenticated, clearTeamSession, TEAM_EMAIL_DOMAINS } from '~/lib/team-auth';
 
 export const meta: MetaFunction = () => {
   return [
@@ -17,14 +17,38 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-const MAIN_PLATFORM_URL = 'http://localhost:3000';
+// Platform URLs based on environment
+function getPlatformUrl(): string {
+  if (typeof window === 'undefined') return 'http://localhost:3000';
+  
+  const hostname = window.location.hostname;
+  
+  // Local development
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://localhost:3000';
+  }
+  
+  // Development (editor.flowstarter.dev -> flowstarter.dev)
+  if (hostname.endsWith('.flowstarter.dev')) {
+    return 'https://flowstarter.dev';
+  }
+  
+  // Production (editor.flowstarter.app -> flowstarter.app)
+  if (hostname.endsWith('.flowstarter.app')) {
+    return 'https://flowstarter.app';
+  }
+  
+  // Fallback
+  return 'http://localhost:3000';
+}
 
 export default function TeamLogin() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const [isDark, setIsDark] = useState(true);
-  const [status, setStatus] = useState<'checking' | 'idle' | 'denied'>('checking');
+  const [status, setStatus] = useState<'checking' | 'idle' | 'denied' | 'error'>('checking');
   const [error, setError] = useState<string | null>(null);
+  
+  const platformUrl = getPlatformUrl();
   
   // Detect theme
   useEffect(() => {
@@ -38,7 +62,7 @@ export default function TeamLogin() {
     }
   }, []);
   
-  // Handle auth flow
+  // Check for existing Clerk session via shared cookies
   useEffect(() => {
     // Already authenticated locally
     if (isTeamAuthenticated()) {
@@ -46,47 +70,63 @@ export default function TeamLogin() {
       return;
     }
     
-    // Check for callback params
-    const token = searchParams.get('token');
-    const email = searchParams.get('email');
-    const name = searchParams.get('name');
-    const errorParam = searchParams.get('error');
-    
-    if (errorParam) {
-      setStatus('denied');
-      setError(decodeURIComponent(errorParam));
-      return;
-    }
-    
-    if (token && email) {
-      // Validate team domain
-      const domain = email.split('@')[1]?.toLowerCase();
-      if (domain && TEAM_EMAIL_DOMAINS.includes(domain)) {
-        setTeamSession(token, { email, name: name || email.split('@')[0] });
+    // Check session on main platform
+    checkSession();
+  }, []);
+  
+  async function checkSession() {
+    try {
+      const response = await fetch(`${platformUrl}/api/auth/session`, {
+        credentials: 'include', // Include cookies for cross-origin
+      });
+      
+      if (!response.ok) {
+        setStatus('idle');
+        return;
+      }
+      
+      const data = await response.json();
+      
+      if (data.authenticated && data.isTeam) {
+        // User is authenticated and is a team member
+        setTeamSession(data.userId, { 
+          email: data.email, 
+          name: data.name 
+        });
         navigate('/');
-      } else {
+      } else if (data.authenticated && !data.isTeam) {
+        // Authenticated but not a team member
         setStatus('denied');
         setError(`Access denied. Only ${TEAM_EMAIL_DOMAINS.join(', ')} emails allowed.`);
+      } else {
+        // Not authenticated - show login button
+        setStatus('idle');
       }
-      return;
+    } catch (err) {
+      console.error('Session check failed:', err);
+      setStatus('idle'); // Show login button on error
     }
-    
-    setStatus('idle');
-  }, [searchParams, navigate]);
+  }
   
   const handleLogin = () => {
-    const returnUrl = encodeURIComponent(window.location.origin + '/team/login');
-    window.location.href = `${MAIN_PLATFORM_URL}/api/team-auth?redirect_url=${returnUrl}`;
+    // Redirect to main platform login, then back here
+    const returnUrl = encodeURIComponent(window.location.href);
+    window.location.href = `${platformUrl}/login?redirect_url=${returnUrl}`;
   };
   
+  // Loading state
   if (status === 'checking') {
     return (
       <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
-        <div className="animate-spin w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full" />
+        <div className="text-center">
+          <div className="animate-spin w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full mx-auto mb-4" />
+          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Checking session...</p>
+        </div>
       </div>
     );
   }
   
+  // Access denied
   if (status === 'denied') {
     return (
       <div className={`min-h-screen flex items-center justify-center ${
@@ -96,7 +136,10 @@ export default function TeamLogin() {
           <div className="text-5xl mb-4">🚫</div>
           <h1 className={`text-2xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>Access Denied</h1>
           <p className={`text-sm mb-6 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{error}</p>
-          <button onClick={() => window.location.href = MAIN_PLATFORM_URL} className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg">
+          <button 
+            onClick={() => { clearTeamSession(); window.location.href = platformUrl; }} 
+            className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg"
+          >
             Go to Flowstarter
           </button>
         </div>
@@ -104,6 +147,7 @@ export default function TeamLogin() {
     );
   }
   
+  // Login prompt
   return (
     <div className={`min-h-screen flex items-center justify-center ${
       isDark ? 'bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900' : 'bg-gradient-to-br from-gray-50 via-purple-100/30 to-gray-100'

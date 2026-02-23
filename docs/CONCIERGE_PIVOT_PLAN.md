@@ -1558,7 +1558,7 @@ Hi [Client Name],
 Your website is ready! Here are your account logins:
 
 🌐 WEBSITE DASHBOARD
-flowstarter.com/dashboard
+flowstarter.app/dashboard
 (Login with this email)
 
 📧 BUSINESS EMAIL
@@ -2398,7 +2398,7 @@ Click the button above to access your dashboard where you can:
 • Download your site files anytime
 
 The link expires in 7 days. After that, you can always 
-log in at flowstarter.com with this email.
+log in at flowstarter.app with this email.
 
 Questions? Just reply to this email.
 

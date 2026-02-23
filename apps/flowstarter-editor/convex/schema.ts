@@ -71,12 +71,156 @@ const integrationsSchema = v.object({
 });
 
 export default defineSchema({
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TEAM MEMBERS - Internal team (Darius, Dorin, etc.)
+  // ═══════════════════════════════════════════════════════════════════════════
+  teamMembers: defineTable({
+    email: v.string(),
+    name: v.string(),
+    role: v.union(v.literal('admin'), v.literal('editor')),
+    
+    // Auth - using simple email-based auth for now
+    passwordHash: v.optional(v.string()), // For password auth
+    authProvider: v.optional(v.string()), // 'google', 'github', etc.
+    authProviderId: v.optional(v.string()),
+    
+    // Session management
+    lastLoginAt: v.optional(v.number()),
+    
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index('by_email', ['email']),
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // CLIENTS - Client accounts linked to projects
+  // ═══════════════════════════════════════════════════════════════════════════
+  clients: defineTable({
+    // Contact info
+    email: v.string(),
+    name: v.string(),
+    phone: v.optional(v.string()),
+    company: v.optional(v.string()),
+    
+    // Status
+    status: v.union(
+      v.literal('lead'),       // Initial contact
+      v.literal('onboarding'), // Discovery call done, creating site
+      v.literal('review'),     // Site ready for client review
+      v.literal('active'),     // Launched, paying customer
+      v.literal('churned')     // No longer active
+    ),
+    
+    // Notes from discovery call
+    discoveryNotes: v.optional(v.string()),
+    
+    // Subscription info (for future billing)
+    plan: v.optional(v.union(
+      v.literal('trial'),
+      v.literal('starter'),
+      v.literal('professional'),
+      v.literal('enterprise')
+    )),
+    planStartedAt: v.optional(v.number()),
+    
+    // Created by team member
+    createdBy: v.optional(v.id('teamMembers')),
+    
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index('by_email', ['email'])
+    .index('by_status', ['status'])
+    .index('by_createdBy', ['createdBy']),
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // MAGIC LINKS - Secure access links for clients
+  // ═══════════════════════════════════════════════════════════════════════════
+  magicLinks: defineTable({
+    // Link details
+    token: v.string(), // Unique token (UUID or similar)
+    
+    // What this link grants access to
+    clientId: v.id('clients'),
+    projectId: v.id('projects'),
+    
+    // Access level
+    accessLevel: v.union(
+      v.literal('view'),       // Can only view the site
+      v.literal('customize'),  // Can make customizations (default for clients)
+      v.literal('full')        // Full access (for team sharing)
+    ),
+    
+    // Validity
+    expiresAt: v.optional(v.number()), // null = never expires
+    usedAt: v.optional(v.number()),    // First use timestamp
+    useCount: v.number(),              // How many times used
+    maxUses: v.optional(v.number()),   // null = unlimited
+    
+    // Status
+    isRevoked: v.boolean(),
+    revokedAt: v.optional(v.number()),
+    revokedReason: v.optional(v.string()),
+    
+    // Created by
+    createdBy: v.optional(v.id('teamMembers')),
+    
+    createdAt: v.number(),
+  })
+    .index('by_token', ['token'])
+    .index('by_client', ['clientId'])
+    .index('by_project', ['projectId']),
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // SESSIONS - Auth sessions for both team and clients
+  // ═══════════════════════════════════════════════════════════════════════════
+  sessions: defineTable({
+    // Session token (stored in cookie)
+    token: v.string(),
+    
+    // Who this session belongs to
+    userType: v.union(v.literal('team'), v.literal('client')),
+    teamMemberId: v.optional(v.id('teamMembers')),
+    clientId: v.optional(v.id('clients')),
+    
+    // For magic link sessions
+    magicLinkId: v.optional(v.id('magicLinks')),
+    projectId: v.optional(v.id('projects')), // Scoped to specific project
+    
+    // Session metadata
+    userAgent: v.optional(v.string()),
+    ipAddress: v.optional(v.string()),
+    
+    // Validity
+    expiresAt: v.number(),
+    lastActiveAt: v.number(),
+    
+    createdAt: v.number(),
+  })
+    .index('by_token', ['token'])
+    .index('by_teamMember', ['teamMemberId'])
+    .index('by_client', ['clientId'])
+    .index('by_expiresAt', ['expiresAt']),
+
   // Projects - core project data
   projects: defineTable({
     // Basic info
     urlId: v.string(), // URL-friendly identifier
     name: v.string(),
     description: v.string(),
+
+    // ══════ NEW: Client & Team linking ══════
+    clientId: v.optional(v.id('clients')),      // Which client owns this
+    createdBy: v.optional(v.id('teamMembers')), // Which team member created it
+    
+    // Project status
+    status: v.optional(v.union(
+      v.literal('draft'),      // Being built by team
+      v.literal('review'),     // Ready for client review
+      v.literal('approved'),   // Client approved
+      v.literal('published'),  // Live on the web
+      v.literal('archived')    // No longer active
+    )),
 
     // Business details from onboarding
     businessDetails: businessDetailsSchema,
@@ -105,6 +249,12 @@ export default defineSchema({
         v.literal('stopped'),
       ),
     ),
+    
+    // ══════ NEW: Publishing info ══════
+    publishedUrl: v.optional(v.string()),       // Live URL (e.g., client.flowstarter.app)
+    customDomain: v.optional(v.string()),       // Custom domain if configured
+    publishedAt: v.optional(v.number()),        // When it was published
+    lastPublishedBy: v.optional(v.id('teamMembers')),
 
     // Timestamps
     createdAt: v.number(),
@@ -112,7 +262,9 @@ export default defineSchema({
   })
     .index('by_urlId', ['urlId'])
     .index('by_updatedAt', ['updatedAt'])
-    .index('by_workspace', ['daytonaWorkspaceId']),
+    .index('by_workspace', ['daytonaWorkspaceId'])
+    .index('by_client', ['clientId'])
+    .index('by_status', ['status']),
 
   // Files - editor file contents
   files: defineTable({

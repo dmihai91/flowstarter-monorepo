@@ -362,32 +362,188 @@ export const generateUrlId = mutation({
 // Create an empty project immediately when user starts (first prompt)
 // Data is populated incrementally as user progresses through onboarding
 export const createEmpty = mutation({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    // Optional - for internal flow
+    name: v.optional(v.string()),
+    description: v.optional(v.string()),
+    templateId: v.optional(v.string()),
+    templateName: v.optional(v.string()),
+    businessDetails: v.optional(v.object({
+      businessName: v.string(),
+      description: v.string(),
+      targetAudience: v.optional(v.string()),
+      features: v.optional(v.array(v.string())),
+      goals: v.optional(v.array(v.string())),
+    })),
+    tags: v.optional(v.array(v.string())),
+    // Client and team member linking (for internal flow)
+    clientId: v.optional(v.id('clients')),
+    createdBy: v.optional(v.id('teamMembers')),
+  },
+  handler: async (ctx, args) => {
     const now = Date.now();
     
-    // Generate a unique URL ID
-    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    let urlId = '';
-    for (let i = 0; i < 8; i++) {
-      urlId += chars.charAt(Math.floor(Math.random() * chars.length));
+    // Generate a unique URL ID from name or random
+    let urlId: string;
+    if (args.name) {
+      const baseSlug = args.name
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 40);
+      
+      // Check uniqueness
+      let candidate = baseSlug || 'project';
+      let attempt = 1;
+      while (attempt <= 20) {
+        const existing = await ctx.db
+          .query('projects')
+          .withIndex('by_urlId', (q) => q.eq('urlId', candidate))
+          .first();
+        if (!existing) break;
+        attempt++;
+        candidate = `${baseSlug}-${attempt}`;
+      }
+      urlId = candidate;
+    } else {
+      // Random URL ID for self-serve flow
+      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      urlId = '';
+      for (let i = 0; i < 8; i++) {
+        urlId += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
     }
 
     const projectId = await ctx.db.insert('projects', {
       urlId,
-      name: '', // Empty name - will be generated when needed
-      description: '',
-      businessDetails: {
-        businessName: '', // Empty - will be set when name is generated
-        description: '',
+      name: args.name || '',
+      description: args.description || '',
+      businessDetails: args.businessDetails || {
+        businessName: args.name || '',
+        description: args.description || '',
       },
-      tags: [],
-      templateId: '',
+      tags: args.tags || [],
+      templateId: args.templateId || '',
+      templateName: args.templateName,
+      // New fields for client/team flow
+      clientId: args.clientId,
+      createdBy: args.createdBy,
+      status: args.clientId ? 'draft' : undefined, // Set status if client-linked
       createdAt: now,
       updatedAt: now,
     });
 
     return { projectId, urlId };
+  },
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INTERNAL TEAM FUNCTIONS
+// ═══════════════════════════════════════════════════════════════════════════
+
+// List projects by status (for internal dashboard)
+export const listByStatus = query({
+  args: {
+    status: v.union(
+      v.literal('draft'),
+      v.literal('review'),
+      v.literal('approved'),
+      v.literal('published'),
+      v.literal('archived')
+    ),
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const limit = args.limit || 50;
+    
+    return await ctx.db
+      .query('projects')
+      .withIndex('by_status', (q) => q.eq('status', args.status))
+      .order('desc')
+      .take(limit);
+  },
+});
+
+// List projects for a client
+export const listByClient = query({
+  args: {
+    clientId: v.id('clients'),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query('projects')
+      .withIndex('by_client', (q) => q.eq('clientId', args.clientId))
+      .collect();
+  },
+});
+
+// Update project status
+export const updateStatus = mutation({
+  args: {
+    projectId: v.id('projects'),
+    status: v.union(
+      v.literal('draft'),
+      v.literal('review'),
+      v.literal('approved'),
+      v.literal('published'),
+      v.literal('archived')
+    ),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.projectId, {
+      status: args.status,
+      updatedAt: Date.now(),
+    });
+    return { success: true };
+  },
+});
+
+// Publish project (set live URL)
+export const publish = mutation({
+  args: {
+    projectId: v.id('projects'),
+    publishedUrl: v.string(),
+    customDomain: v.optional(v.string()),
+    publishedBy: v.optional(v.id('teamMembers')),
+  },
+  handler: async (ctx, args) => {
+    const now = Date.now();
+    
+    await ctx.db.patch(args.projectId, {
+      status: 'published',
+      publishedUrl: args.publishedUrl,
+      customDomain: args.customDomain,
+      publishedAt: now,
+      lastPublishedBy: args.publishedBy,
+      updatedAt: now,
+    });
+    
+    // Update client status if linked
+    const project = await ctx.db.get(args.projectId);
+    if (project?.clientId) {
+      await ctx.db.patch(project.clientId, {
+        status: 'active',
+        updatedAt: now,
+      });
+    }
+    
+    return { success: true, publishedUrl: args.publishedUrl };
+  },
+});
+
+// Link project to client
+export const linkToClient = mutation({
+  args: {
+    projectId: v.id('projects'),
+    clientId: v.id('clients'),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.projectId, {
+      clientId: args.clientId,
+      updatedAt: Date.now(),
+    });
+    return { success: true };
   },
 });
   

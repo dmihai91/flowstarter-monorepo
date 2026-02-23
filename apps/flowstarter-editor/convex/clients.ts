@@ -106,7 +106,7 @@ export const create = mutation({
     phone: v.optional(v.string()),
     company: v.optional(v.string()),
     discoveryNotes: v.optional(v.string()),
-    createdBy: v.optional(v.id('teamMembers')),
+    createdBy: v.optional(v.string()), // Clerk user ID
   },
   handler: async (ctx, args) => {
     const now = Date.now();

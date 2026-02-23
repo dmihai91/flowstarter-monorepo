@@ -378,7 +378,7 @@ export const createEmpty = mutation({
     tags: v.optional(v.array(v.string())),
     // Client and team member linking (for internal flow)
     clientId: v.optional(v.id('clients')),
-    createdBy: v.optional(v.id('teamMembers')),
+    createdBy: v.optional(v.string()), // Clerk user ID
   },
   handler: async (ctx, args) => {
     const now = Date.now();
@@ -505,7 +505,7 @@ export const publish = mutation({
     projectId: v.id('projects'),
     publishedUrl: v.string(),
     customDomain: v.optional(v.string()),
-    publishedBy: v.optional(v.id('teamMembers')),
+    publishedBy: v.optional(v.string()), // Clerk user ID
   },
   handler: async (ctx, args) => {
     const now = Date.now();

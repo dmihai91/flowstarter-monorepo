@@ -156,7 +156,7 @@ export const create = mutation({
     )),
     expiresInDays: v.optional(v.number()), // null = never expires
     maxUses: v.optional(v.number()),       // null = unlimited
-    createdBy: v.optional(v.id('teamMembers')),
+    createdBy: v.optional(v.string()),     // Clerk user ID
   },
   handler: async (ctx, args) => {
     const now = Date.now();
@@ -240,18 +240,17 @@ export const use = mutation({
       usedAt: link.usedAt || now, // Only set first use time
     });
     
-    // Create session
+    // Create client session
     const sessionToken = generateSessionToken();
     const sessionExpiry = now + 30 * 24 * 60 * 60 * 1000; // 30 days
     
-    await ctx.db.insert('sessions', {
+    await ctx.db.insert('clientSessions', {
       token: sessionToken,
-      userType: 'client',
       clientId: link.clientId,
       magicLinkId: link._id,
       projectId: link.projectId,
+      accessLevel: link.accessLevel,
       userAgent: args.userAgent,
-      ipAddress: args.ipAddress,
       expiresAt: sessionExpiry,
       lastActiveAt: now,
       createdAt: now,

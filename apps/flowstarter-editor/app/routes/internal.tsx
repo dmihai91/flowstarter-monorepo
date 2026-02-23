@@ -1,18 +1,15 @@
 /**
  * Internal Layout - Team Only Access
  * 
- * This layout wraps all /internal/* routes and restricts access
- * to team members only (Darius, Dorin).
+ * Uses the main platform's Clerk auth via handoff tokens.
+ * Team members are identified by email allowlist.
  */
 
 import { useState, useEffect } from 'react';
 import { Outlet, useLoaderData, useNavigate, useLocation } from '@remix-run/react';
 import type { LoaderFunctionArgs } from '@remix-run/cloudflare';
 import { json, redirect } from '@remix-run/cloudflare';
-import { useQuery } from 'convex/react';
 import { ClientOnly } from 'remix-utils/client-only';
-// eslint-disable-next-line no-restricted-imports
-import { api } from '../../convex/_generated/api';
 
 // Team member emails - only these users can access internal routes
 const TEAM_EMAILS = [
@@ -20,6 +17,9 @@ const TEAM_EMAILS = [
   'dorin@flowstarter.com',
   'dmihai91@gmail.com', // Darius personal
 ];
+
+// Main platform URL for auth
+const MAIN_PLATFORM_URL = process.env.MAIN_PLATFORM_URL || 'http://localhost:3000';
 
 export async function loader({ request }: LoaderFunctionArgs) {
   // Check if internal mode is enabled
@@ -32,6 +32,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return json({ 
     mode: 'internal',
     teamEmails: TEAM_EMAILS,
+    mainPlatformUrl: MAIN_PLATFORM_URL,
   });
 }
 
@@ -69,72 +70,180 @@ function LoadingFallback() {
   );
 }
 
+interface TeamUser {
+  id: string;
+  email: string;
+  name: string;
+}
+
 function InternalLayoutContent() {
-  const { mode } = useLoaderData<typeof loader>();
+  const { mainPlatformUrl, teamEmails } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
   const location = useLocation();
-  const [sessionToken, setSessionToken] = useState<string | null>(null);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<TeamUser | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
-  // Get session token from localStorage
+  // Check auth on mount
   useEffect(() => {
-    const token = localStorage.getItem('flowstarter_team_session');
-    const storedUser = localStorage.getItem('flowstarter_team_user');
-    
-    if (token) {
-      setSessionToken(token);
-    }
-    if (storedUser) {
+    async function checkAuth() {
       try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {}
-    }
-  }, []);
-  
-  // Validate session with Convex
-  const sessionValidation = useQuery(
-    api.teamAuth.validateSession,
-    sessionToken ? { token: sessionToken } : 'skip'
-  );
-  
-  // Handle auth redirect
-  useEffect(() => {
-    // Skip auth check for login page
-    if (location.pathname === '/internal/login') {
-      return;
-    }
-    
-    // No token, redirect to login
-    if (sessionToken === null && typeof window !== 'undefined') {
-      const token = localStorage.getItem('flowstarter_team_session');
-      if (!token) {
-        navigate('/internal/login');
+        // Check for existing session
+        const storedUser = localStorage.getItem('flowstarter_team_user');
+        const sessionExpiry = localStorage.getItem('flowstarter_team_session_expiry');
+        
+        if (storedUser && sessionExpiry) {
+          const expiry = parseInt(sessionExpiry, 10);
+          if (expiry > Date.now()) {
+            const parsed = JSON.parse(storedUser);
+            // Verify email is in team list
+            if (teamEmails.includes(parsed.email)) {
+              setUser(parsed);
+              setIsLoading(false);
+              return;
+            }
+          }
+        }
+        
+        // Check URL for handoff token from main platform
+        const params = new URLSearchParams(window.location.search);
+        const handoffToken = params.get('handoff');
+        
+        if (handoffToken) {
+          // Validate handoff token with main platform
+          const response = await fetch(`${mainPlatformUrl}/api/editor/handoff?token=${handoffToken}`);
+          
+          if (response.ok) {
+            const data = await response.json();
+            
+            // Check if user email is in team list
+            if (data.user?.email && teamEmails.includes(data.user.email)) {
+              const teamUser: TeamUser = {
+                id: data.userId,
+                email: data.user.email,
+                name: data.user.name || data.user.email.split('@')[0],
+              };
+              
+              // Store session (24 hour expiry)
+              localStorage.setItem('flowstarter_team_user', JSON.stringify(teamUser));
+              localStorage.setItem('flowstarter_team_session_expiry', String(Date.now() + 24 * 60 * 60 * 1000));
+              
+              setUser(teamUser);
+              
+              // Clean up URL
+              params.delete('handoff');
+              const newUrl = params.toString() 
+                ? `${location.pathname}?${params.toString()}`
+                : location.pathname;
+              window.history.replaceState({}, '', newUrl);
+              
+              setIsLoading(false);
+              return;
+            } else {
+              setError('Access denied. Team members only.');
+              setIsLoading(false);
+              return;
+            }
+          }
+        }
+        
+        // No valid session, redirect to main platform login
+        setIsLoading(false);
+        
+      } catch (err) {
+        console.error('Auth check failed:', err);
+        setError('Authentication failed');
+        setIsLoading(false);
       }
     }
     
-    // Token invalid/expired
-    if (sessionValidation && !sessionValidation.valid) {
-      localStorage.removeItem('flowstarter_team_session');
-      localStorage.removeItem('flowstarter_team_user');
-      navigate('/internal/login');
-    }
-  }, [sessionToken, sessionValidation, navigate, location.pathname]);
+    checkAuth();
+  }, [mainPlatformUrl, teamEmails, location.pathname]);
   
   // Handle logout
   const handleLogout = () => {
-    localStorage.removeItem('flowstarter_team_session');
     localStorage.removeItem('flowstarter_team_user');
-    navigate('/internal/login');
+    localStorage.removeItem('flowstarter_team_session_expiry');
+    setUser(null);
   };
   
-  // Show login page without layout
-  if (location.pathname === '/internal/login') {
-    return <Outlet />;
+  // Handle login redirect
+  const handleLogin = () => {
+    // Redirect to main platform login with return URL
+    const returnUrl = encodeURIComponent(window.location.href);
+    window.location.href = `${mainPlatformUrl}/login?next=/dashboard&editor_return=${returnUrl}`;
+  };
+  
+  if (isLoading) {
+    return <LoadingFallback />;
   }
   
-  // Still checking auth
-  if (!sessionValidation && sessionToken) {
-    return <LoadingFallback />;
+  if (error) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#0a0a0f',
+        color: 'white',
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>🚫</div>
+          <h1 style={{ marginBottom: '8px' }}>{error}</h1>
+          <button
+            onClick={handleLogin}
+            style={{
+              marginTop: '16px',
+              padding: '12px 24px',
+              backgroundColor: '#7c3aed',
+              border: 'none',
+              borderRadius: '8px',
+              color: 'white',
+              cursor: 'pointer',
+            }}
+          >
+            Try Different Account
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
+  if (!user) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#0a0a0f',
+        color: 'white',
+      }}>
+        <div style={{ textAlign: 'center', maxWidth: '400px' }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔐</div>
+          <h1 style={{ marginBottom: '8px', fontSize: '24px' }}>Internal Access</h1>
+          <p style={{ marginBottom: '24px', color: 'rgba(255,255,255,0.7)' }}>
+            Sign in with your Flowstarter team account to access the internal editor.
+          </p>
+          <button
+            onClick={handleLogin}
+            style={{
+              padding: '14px 32px',
+              backgroundColor: '#7c3aed',
+              border: 'none',
+              borderRadius: '8px',
+              color: 'white',
+              fontSize: '16px',
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            Sign In with Flowstarter
+          </button>
+        </div>
+      </div>
+    );
   }
   
   return (
@@ -185,11 +294,9 @@ function InternalLayoutContent() {
         </div>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          {user && (
-            <span style={{ opacity: 0.8 }}>
-              {user.name || user.email}
-            </span>
-          )}
+          <span style={{ opacity: 0.8 }}>
+            {user.name || user.email}
+          </span>
           <button
             onClick={handleLogout}
             style={{

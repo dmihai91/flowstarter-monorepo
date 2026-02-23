@@ -72,28 +72,8 @@ const integrationsSchema = v.object({
 
 export default defineSchema({
   // ═══════════════════════════════════════════════════════════════════════════
-  // TEAM MEMBERS - Internal team (Darius, Dorin, etc.)
-  // ═══════════════════════════════════════════════════════════════════════════
-  teamMembers: defineTable({
-    email: v.string(),
-    name: v.string(),
-    role: v.union(v.literal('admin'), v.literal('editor')),
-    
-    // Auth - using simple email-based auth for now
-    passwordHash: v.optional(v.string()), // For password auth
-    authProvider: v.optional(v.string()), // 'google', 'github', etc.
-    authProviderId: v.optional(v.string()),
-    
-    // Session management
-    lastLoginAt: v.optional(v.number()),
-    
-    createdAt: v.number(),
-    updatedAt: v.number(),
-  })
-    .index('by_email', ['email']),
-
-  // ═══════════════════════════════════════════════════════════════════════════
   // CLIENTS - Client accounts linked to projects
+  // NOTE: Team auth is handled by Clerk in the main platform
   // ═══════════════════════════════════════════════════════════════════════════
   clients: defineTable({
     // Contact info
@@ -123,15 +103,14 @@ export default defineSchema({
     )),
     planStartedAt: v.optional(v.number()),
     
-    // Created by team member
-    createdBy: v.optional(v.id('teamMembers')),
+    // Created by team member (Clerk user ID)
+    createdBy: v.optional(v.string()),
     
     createdAt: v.number(),
     updatedAt: v.number(),
   })
     .index('by_email', ['email'])
-    .index('by_status', ['status'])
-    .index('by_createdBy', ['createdBy']),
+    .index('by_status', ['status']),
 
   // ═══════════════════════════════════════════════════════════════════════════
   // MAGIC LINKS - Secure access links for clients
@@ -162,8 +141,8 @@ export default defineSchema({
     revokedAt: v.optional(v.number()),
     revokedReason: v.optional(v.string()),
     
-    // Created by
-    createdBy: v.optional(v.id('teamMembers')),
+    // Created by (Clerk user ID)
+    createdBy: v.optional(v.string()),
     
     createdAt: v.number(),
   })
@@ -172,24 +151,23 @@ export default defineSchema({
     .index('by_project', ['projectId']),
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // SESSIONS - Auth sessions for both team and clients
+  // CLIENT SESSIONS - Auth sessions for magic link access
+  // NOTE: Team auth sessions are handled by Clerk in the main platform
   // ═══════════════════════════════════════════════════════════════════════════
-  sessions: defineTable({
-    // Session token (stored in cookie)
+  clientSessions: defineTable({
+    // Session token (stored in cookie/localStorage)
     token: v.string(),
     
-    // Who this session belongs to
-    userType: v.union(v.literal('team'), v.literal('client')),
-    teamMemberId: v.optional(v.id('teamMembers')),
-    clientId: v.optional(v.id('clients')),
+    // Client this session belongs to
+    clientId: v.id('clients'),
     
     // For magic link sessions
     magicLinkId: v.optional(v.id('magicLinks')),
-    projectId: v.optional(v.id('projects')), // Scoped to specific project
+    projectId: v.id('projects'), // Scoped to specific project
+    accessLevel: v.union(v.literal('view'), v.literal('customize'), v.literal('full')),
     
     // Session metadata
     userAgent: v.optional(v.string()),
-    ipAddress: v.optional(v.string()),
     
     // Validity
     expiresAt: v.number(),
@@ -198,9 +176,8 @@ export default defineSchema({
     createdAt: v.number(),
   })
     .index('by_token', ['token'])
-    .index('by_teamMember', ['teamMemberId'])
     .index('by_client', ['clientId'])
-    .index('by_expiresAt', ['expiresAt']),
+    .index('by_project', ['projectId']),
 
   // Projects - core project data
   projects: defineTable({
@@ -209,9 +186,9 @@ export default defineSchema({
     name: v.string(),
     description: v.string(),
 
-    // ══════ NEW: Client & Team linking ══════
-    clientId: v.optional(v.id('clients')),      // Which client owns this
-    createdBy: v.optional(v.id('teamMembers')), // Which team member created it
+    // ══════ Client & Team linking ══════
+    clientId: v.optional(v.id('clients')),  // Which client owns this
+    createdBy: v.optional(v.string()),      // Clerk user ID of team member who created it
     
     // Project status
     status: v.optional(v.union(
@@ -250,11 +227,11 @@ export default defineSchema({
       ),
     ),
     
-    // ══════ NEW: Publishing info ══════
-    publishedUrl: v.optional(v.string()),       // Live URL (e.g., client.flowstarter.app)
-    customDomain: v.optional(v.string()),       // Custom domain if configured
-    publishedAt: v.optional(v.number()),        // When it was published
-    lastPublishedBy: v.optional(v.id('teamMembers')),
+    // ══════ Publishing info ══════
+    publishedUrl: v.optional(v.string()),   // Live URL (e.g., client.flowstarter.app)
+    customDomain: v.optional(v.string()),   // Custom domain if configured
+    publishedAt: v.optional(v.number()),    // When it was published
+    lastPublishedBy: v.optional(v.string()), // Clerk user ID
 
     // Timestamps
     createdAt: v.number(),

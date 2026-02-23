@@ -4,6 +4,7 @@ import { useCreateProjectFromConfig } from '@/hooks/useCreateProjectFromConfig';
 import { useInvalidateDashboardStats } from '@/hooks/useDashboardStats';
 import { useWizardDraft } from '@/hooks/wizard/useWizardDraft';
 import { useTranslations } from '@/lib/i18n';
+import { safeGetItem, safeRemoveItem, safeSetItem } from '@/lib/safe-storage';
 import { useProjectAIStore } from '@/store/ai-suggestions-store';
 import { useWizardStore } from '@/store/wizard-store';
 import type { ProjectConfig, ProjectWizardStep } from '@/types/project-config';
@@ -218,22 +219,18 @@ export default function ProjectWizard({
       console.log(
         '[ProjectWizard] Starting fresh - clearing draft localStorage'
       );
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('flowstarter_current_draft');
-      }
+      safeRemoveItem('flowstarter_current_draft');
       return undefined;
     }
 
     // Check localStorage for ongoing draft session
-    if (typeof window !== 'undefined') {
-      const storedDraftId = localStorage.getItem('flowstarter_current_draft');
-      if (storedDraftId) {
-        console.log(
-          '[ProjectWizard] Found draft ID in localStorage:',
-          storedDraftId
-        );
-        return storedDraftId;
-      }
+    const storedDraftId = safeGetItem('flowstarter_current_draft');
+    if (storedDraftId) {
+      console.log(
+        '[ProjectWizard] Found draft ID in localStorage:',
+        storedDraftId
+      );
+      return storedDraftId;
     }
     // Default to 'latest' to fetch most recent draft from server
     return 'latest';
@@ -283,9 +280,7 @@ export default function ProjectWizard({
     if (loadedDraftId && loadedDraftId !== effectiveDraftId) {
       console.log('[ProjectWizard] Updating draft ID:', loadedDraftId);
       setEffectiveDraftId(loadedDraftId);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('flowstarter_current_draft', loadedDraftId);
-      }
+      safeSetItem('flowstarter_current_draft', loadedDraftId);
     }
   }, [loadedDraftId, effectiveDraftId]);
   const aiReset = useProjectAIStore((s) => s.reset);
@@ -643,7 +638,7 @@ export default function ProjectWizard({
             window.sessionStorage.setItem('fs_new_project_id', projectId);
           }
           // Clear draft localStorage since project is now created
-          localStorage.removeItem('flowstarter_current_draft');
+          safeRemoveItem('flowstarter_current_draft');
         }
       } catch {
         // ignore
@@ -751,9 +746,7 @@ export default function ProjectWizard({
       setHasAIGenerated(false);
 
       // Clear draft localStorage since draft is deleted
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('flowstarter_current_draft');
-      }
+      safeRemoveItem('flowstarter_current_draft');
 
       // Navigate to dashboard after cleanup
       router.replace('/dashboard');

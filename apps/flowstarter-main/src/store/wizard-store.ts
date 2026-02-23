@@ -1,8 +1,9 @@
 'use client';
 
+import { safeSessionStorage } from '@/lib/safe-storage';
 import type { ProjectConfig, ProjectWizardStep } from '@/types/project-config';
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 
 interface HostedAvailabilityState {
   suggestedDomain: string | null;
@@ -213,11 +214,8 @@ export const useWizardStore = create<WizardStoreState>()(
     }),
     {
       name: 'flowstarter-wizard-storage',
-      storage: createJSONStorage(() => sessionStorage),
+      storage: safeSessionStorage,
       partialize: (state) => ({
-        // ONLY persist prefill data for AI-generated content
-        // The projectConfig itself is managed by the server-side draft system
-        // to avoid conflicts between sessionStorage and server state
         prefillData: state.prefillData,
         prefillImages: state.prefillImages,
         skipLoadingScreen: state.skipLoadingScreen,

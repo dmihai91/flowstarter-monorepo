@@ -1,5 +1,6 @@
 'use client';
 
+import { safeGetItem, safeSetItem } from '@/lib/safe-storage';
 import {
   createContext,
   useCallback,
@@ -32,13 +33,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 // Safely access localStorage to avoid SSR issues
 const getStoredTheme = (): Theme | null => {
-  if (typeof window === 'undefined') return null;
-  try {
-    return localStorage.getItem('theme') as Theme | null;
-  } catch (e) {
-    console.error('Error accessing localStorage:', e);
-    return null;
-  }
+  return safeGetItem('theme') as Theme | null;
 };
 
 // Safely access window.matchMedia to avoid SSR issues
@@ -153,11 +148,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Save to localStorage - only do this client-side
-    try {
-      localStorage.setItem('theme', theme);
-    } catch (e) {
-      console.error('Error setting theme in localStorage:', e);
-    }
+    safeSetItem('theme', theme);
   }, [theme, resolvedTheme, mounted]);
 
   // Update theme function with more robust implementation
@@ -166,12 +157,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       if (!mounted) return;
 
       setTheme(newTheme);
-
-      try {
-        localStorage.setItem('theme', newTheme);
-      } catch (e) {
-        console.error('Error saving theme preference:', e);
-      }
+      safeSetItem('theme', newTheme);
 
       // Immediately update the resolved theme
       if (newTheme === 'auto') {

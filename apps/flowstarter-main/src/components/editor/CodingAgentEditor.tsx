@@ -4,7 +4,7 @@ import TemplatePreview from '@/components/template-preview/TemplatePreview';
 import { Button } from '@/components/ui/button';
 import { GradientBackground } from '@/components/ui/gradient-background';
 import { useImageAttachment } from '@/hooks/useImageAttachment';
-import { usePanelResize } from '@/hooks/usePanelResize';
+// Panel resize removed - using fixed width
 import type {
   GenerationProgress,
   GenerationStep,
@@ -76,14 +76,10 @@ export function CodingAgentEditor({
     clearImage,
   } = useImageAttachment();
 
-  const {
-    width: panelWidth,
-    isResizing,
-    handleMouseDown,
-  } = usePanelResize({
-    storageKey: 'codingAgentEditor_messagesPanelWidth',
-    defaultWidth: 600,
-  });
+  // Fixed panel width - removed dynamic resize
+  const panelWidth = 600;
+  const isResizing = false;
+  const handleMouseDown = () => {};
 
   const handleSend = async (message: string, imageData?: string | null) => {
     clearImage();

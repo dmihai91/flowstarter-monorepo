@@ -1,3 +1,6 @@
+// Polyfill localStorage/sessionStorage for Node.js 22+ SSR compatibility
+import '@/lib/storage-polyfill';
+
 import { DatabaseOfflineHandler } from '@/components/DatabaseOfflineHandler';
 import { ErrorBoundaryWrapper } from '@/components/ErrorBoundary';
 import { GoogleAnalytics } from '@/components/GoogleAnalytics';

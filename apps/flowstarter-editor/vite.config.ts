@@ -84,6 +84,8 @@ export default defineConfig((config) => {
         // Fix undici trying to import util/types which doesn't exist in browser polyfill
         'util/types': path.resolve(__dirname, 'app/lib/utils/util-types-stub.ts'),
         'node:util/types': path.resolve(__dirname, 'app/lib/utils/util-types-stub.ts'),
+        // Convex generated files
+        '../../convex/_generated': path.resolve(__dirname, 'convex/_generated'),
       },
     },
     optimizeDeps: {

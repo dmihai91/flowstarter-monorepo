@@ -1,14 +1,15 @@
 /**
  * Team Login - Simple Internal Auth
  * 
- * Just for Darius & Dorin. No Clerk, no OAuth.
- * Simple email/password stored in env vars.
+ * Uses existing editor design system.
+ * Redirects to main editor with team mode enabled.
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from '@remix-run/react';
 import type { MetaFunction, ActionFunctionArgs } from '@remix-run/cloudflare';
 import { json } from '@remix-run/cloudflare';
+import { setTeamSession, isTeamAuthenticated } from '~/lib/team-auth';
 
 export const meta: MetaFunction = () => {
   return [
@@ -28,7 +29,6 @@ export async function action({ request, context }: ActionFunctionArgs) {
   }
   
   // Get team credentials from env
-  // Format: TEAM_CREDENTIALS=email1:pass1,email2:pass2
   const teamCredentials = (context.cloudflare?.env as any)?.TEAM_CREDENTIALS 
     || process.env.TEAM_CREDENTIALS 
     || '';
@@ -46,7 +46,6 @@ export async function action({ request, context }: ActionFunctionArgs) {
     return json({ error: 'Invalid credentials' }, { status: 401 });
   }
   
-  // Create a simple session token
   const sessionToken = btoa(`${email}:${Date.now()}:${Math.random().toString(36)}`);
   
   return json({ 
@@ -62,6 +61,13 @@ export default function TeamLogin() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isTeamAuthenticated()) {
+      navigate('/');
+    }
+  }, [navigate]);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,12 +89,10 @@ export default function TeamLogin() {
       }
       
       // Store team session
-      localStorage.setItem('flowstarter_team_token', data.token);
-      localStorage.setItem('flowstarter_team_user', JSON.stringify(data.user));
-      localStorage.setItem('flowstarter_mode', 'team');
+      setTeamSession(data.token, data.user);
       
-      // Redirect to team dashboard
-      navigate('/team');
+      // Redirect to main editor (team mode is now set)
+      navigate('/');
       
     } catch (err) {
       setError('Something went wrong');
@@ -97,124 +101,49 @@ export default function TeamLogin() {
   };
   
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: '#0a0a0f',
-      padding: '24px',
-    }}>
-      <div style={{ width: '100%', maxWidth: '380px' }}>
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <div style={{ fontSize: '32px', marginBottom: '12px' }}>🔧</div>
-          <h1 style={{ 
-            fontSize: '24px', 
-            fontWeight: 600, 
-            color: 'white',
-            marginBottom: '8px',
-          }}>
-            Team Login
-          </h1>
-          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}>
-            Internal access only
-          </p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900">
+      <div className="w-full max-w-sm p-6">
+        <div className="text-center mb-8">
+          <div className="text-4xl mb-3">🔧</div>
+          <h1 className="text-2xl font-semibold text-white mb-2">Team Login</h1>
+          <p className="text-gray-400 text-sm">Internal access only</p>
         </div>
         
-        {/* Form */}
-        <form 
-          onSubmit={handleSubmit}
-          style={{
-            backgroundColor: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: '12px',
-            padding: '28px',
-          }}
-        >
+        <form onSubmit={handleSubmit} className="bg-white/5 border border-white/10 rounded-xl p-6">
           {error && (
-            <div style={{
-              padding: '12px',
-              backgroundColor: 'rgba(239,68,68,0.2)',
-              border: '1px solid rgba(239,68,68,0.4)',
-              borderRadius: '8px',
-              marginBottom: '20px',
-              color: '#fca5a5',
-              fontSize: '14px',
-            }}>
+            <div className="mb-4 p-3 bg-red-500/20 border border-red-500/40 rounded-lg text-red-300 text-sm">
               {error}
             </div>
           )}
           
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '6px',
-              fontSize: '14px',
-              color: 'rgba(255,255,255,0.8)',
-            }}>
-              Email
-            </label>
+          <div className="mb-4">
+            <label className="block text-sm text-gray-300 mb-2">Email</label>
             <input
               name="email"
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
-              style={{
-                width: '100%',
-                padding: '12px 14px',
-                backgroundColor: 'rgba(0,0,0,0.3)',
-                border: '1px solid rgba(255,255,255,0.15)',
-                borderRadius: '8px',
-                color: 'white',
-                fontSize: '15px',
-              }}
+              className="w-full px-4 py-3 bg-black/30 border border-white/15 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
             />
           </div>
           
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '6px',
-              fontSize: '14px',
-              color: 'rgba(255,255,255,0.8)',
-            }}>
-              Password
-            </label>
+          <div className="mb-6">
+            <label className="block text-sm text-gray-300 mb-2">Password</label>
             <input
               name="password"
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
-              style={{
-                width: '100%',
-                padding: '12px 14px',
-                backgroundColor: 'rgba(0,0,0,0.3)',
-                border: '1px solid rgba(255,255,255,0.15)',
-                borderRadius: '8px',
-                color: 'white',
-                fontSize: '15px',
-              }}
+              className="w-full px-4 py-3 bg-black/30 border border-white/15 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
             />
           </div>
           
           <button
             type="submit"
             disabled={isLoading}
-            style={{
-              width: '100%',
-              padding: '14px',
-              backgroundColor: '#7c3aed',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: 600,
-              cursor: isLoading ? 'wait' : 'pointer',
-              opacity: isLoading ? 0.7 : 1,
-            }}
+            className="w-full py-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-semibold rounded-lg transition-colors"
           >
             {isLoading ? 'Signing in...' : 'Sign In'}
           </button>

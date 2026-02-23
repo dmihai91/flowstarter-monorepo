@@ -1,15 +1,11 @@
 /**
- * Internal Entry Point - Redirects to Team Login
+ * Internal Entry Point
+ * Redirects to team login
  */
 
 import type { LoaderFunctionArgs } from '@remix-run/cloudflare';
 import { redirect } from '@remix-run/cloudflare';
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  // Redirect to team login page
-  throw redirect('/team/login');
-}
-
-export default function Internal() {
-  return null;
+export function loader({ request }: LoaderFunctionArgs) {
+  return redirect('/team/login');
 }

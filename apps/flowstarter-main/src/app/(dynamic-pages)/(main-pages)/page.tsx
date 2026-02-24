@@ -281,15 +281,15 @@ export default function LandingPage() {
                 </div>
                 
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
-                  Your website,
+                  Digital presence
                   <br />
                   <span className="bg-gradient-to-r from-violet-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent animate-gradient">
-                    finally done right
+                    done right
                   </span>
                 </h1>
                 
                 <p className="text-lg lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed max-w-lg mb-10">
-                  One call. Your draft in 1-2 weeks. Then customize it yourself with our AI editor—just describe what you want.
+                  A website that converts. Built for you in 1-2 weeks, then customize it anytime with our AI editor.
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-12">
@@ -666,12 +666,12 @@ export default function LandingPage() {
           
           <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center relative">
             <h2 className="text-4xl lg:text-6xl font-bold leading-tight mb-6">
-              Ready to get
+              Ready to
               <br />
-              <span className="bg-gradient-to-r from-violet-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent">started?</span>
+              <span className="bg-gradient-to-r from-violet-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent">convert?</span>
             </h2>
             <p className="text-lg text-gray-500 dark:text-white/40 mb-10 max-w-md mx-auto">
-              Book a free 30-minute call. No sales pitch. Just a conversation about your website.
+              Book a free 30-minute call. Let's build a website that actually works for your business.
             </p>
             <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
               <Button className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl px-10 h-14 text-base font-semibold shadow-lg transition-all hover:scale-[1.02]">

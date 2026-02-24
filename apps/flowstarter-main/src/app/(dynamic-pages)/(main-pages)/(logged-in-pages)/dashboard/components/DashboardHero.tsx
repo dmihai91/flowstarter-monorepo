@@ -1,6 +1,7 @@
 'use client';
 
 import { FlowstarterAssistant } from '@/app/(dynamic-pages)/(main-pages)/components/FlowstarterAssistant';
+import { useIsTeamMember } from '@/hooks/useIsTeamMember';
 import { useTranslations } from '@/lib/i18n';
 import { CalendarDays, Layers, PlusCircle } from 'lucide-react';
 import React from 'react';
@@ -8,11 +9,9 @@ import ActionCard from './ActionCard';
 import { ActionCardWithDropdown } from './ActionCardWithDropdown';
 import { PageSectionHeader } from './PageSectionHeader';
 
-// Feature flag - set to true to show create/edit features
-const SHOW_CREATE_FEATURES = false;
-
 export function DashboardHero({ children }: { children?: React.ReactNode }) {
   const { t } = useTranslations();
+  const { isTeamMember } = useIsTeamMember();
 
   return (
     <section className="relative">
@@ -23,8 +22,8 @@ export function DashboardHero({ children }: { children?: React.ReactNode }) {
           className="mb-4"
         />
 
-        {/* Quick Mode Actions - Cards row (hidden for now) */}
-        {SHOW_CREATE_FEATURES && (
+        {/* Quick Mode Actions - Cards row (Team members only) */}
+        {isTeamMember && (
           <div className="relative mb-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
               <ActionCardWithDropdown
@@ -57,8 +56,8 @@ export function DashboardHero({ children }: { children?: React.ReactNode }) {
           </div>
         )}
 
-        {/* Flowstarter Assistant - Below Action Cards (hidden for now) */}
-        {SHOW_CREATE_FEATURES && (
+        {/* Flowstarter Assistant - Below Action Cards (Team members only) */}
+        {isTeamMember && (
           <div id="flowstarter-assistant" className="mb-10">
             <FlowstarterAssistant
               className="flex flex-col gap-4"

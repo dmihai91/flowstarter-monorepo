@@ -9,50 +9,27 @@ const CALENDLY_URL = 'https://calendly.com/flowstarter/discovery';
 export default function LandingPage() {
   return (
     <div className="min-h-screen relative overflow-hidden bg-[#fafafa] dark:bg-[hsl(240,8%,8%)]">
-      {/* Animated Gradient Mesh Background */}
+      {/* Subtle Gradient Mesh Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {/* Primary Pink/Magenta Orb - Top Left */}
         <div 
-          className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full blur-[100px] animate-pulse"
+          className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full blur-[120px]"
           style={{ 
-            background: 'radial-gradient(circle, rgba(165, 90, 172, 0.5) 0%, rgba(165, 90, 172, 0.2) 40%, transparent 70%)',
-            animationDuration: '8s',
+            background: 'radial-gradient(circle, rgba(165, 90, 172, 0.25) 0%, rgba(165, 90, 172, 0.08) 40%, transparent 70%)',
           }}
         />
         {/* Purple Orb - Top Right */}
         <div 
-          className="absolute -top-[10%] -right-[10%] w-[55%] h-[55%] rounded-full blur-[90px] animate-pulse"
+          className="absolute -top-[10%] -right-[10%] w-[55%] h-[55%] rounded-full blur-[110px]"
           style={{ 
-            background: 'radial-gradient(circle, rgba(77, 93, 217, 0.45) 0%, rgba(77, 93, 217, 0.15) 40%, transparent 70%)',
-            animationDuration: '10s',
-            animationDelay: '1s',
-          }}
-        />
-        {/* Cyan accent - Middle Right */}
-        <div 
-          className="absolute top-[30%] -right-[5%] w-[35%] h-[35%] rounded-full blur-[80px] animate-pulse"
-          style={{ 
-            background: 'radial-gradient(circle, rgba(56, 189, 248, 0.3) 0%, transparent 70%)',
-            animationDuration: '12s',
-            animationDelay: '2s',
+            background: 'radial-gradient(circle, rgba(77, 93, 217, 0.2) 0%, rgba(77, 93, 217, 0.06) 40%, transparent 70%)',
           }}
         />
         {/* Warm accent - Bottom */}
         <div 
-          className="absolute -bottom-[15%] left-[20%] w-[50%] h-[40%] rounded-full blur-[100px] animate-pulse"
+          className="absolute -bottom-[15%] left-[20%] w-[50%] h-[40%] rounded-full blur-[120px]"
           style={{ 
-            background: 'radial-gradient(circle, rgba(251, 191, 36, 0.25) 0%, transparent 70%)',
-            animationDuration: '9s',
-            animationDelay: '3s',
-          }}
-        />
-        {/* Secondary pink - Bottom Left */}
-        <div 
-          className="absolute -bottom-[10%] -left-[10%] w-[40%] h-[40%] rounded-full blur-[80px] animate-pulse"
-          style={{ 
-            background: 'radial-gradient(circle, rgba(236, 72, 153, 0.3) 0%, transparent 70%)',
-            animationDuration: '11s',
-            animationDelay: '4s',
+            background: 'radial-gradient(circle, rgba(251, 191, 36, 0.12) 0%, transparent 70%)',
           }}
         />
       </div>

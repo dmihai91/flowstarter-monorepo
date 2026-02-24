@@ -8,435 +8,234 @@ const CALENDLY_URL = 'https://calendly.com/flowstarter/discovery';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#fafafa] dark:bg-[hsl(240,8%,8%)]">
-      {/* Subtle Gradient Mesh Background */}
+    <div className="min-h-screen relative bg-white dark:bg-[#0A0A0B]">
+      {/* Subtle gradient accent */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        {/* Primary Pink/Magenta Orb - Top Left */}
         <div 
-          className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full blur-[120px]"
-          style={{ 
-            background: 'radial-gradient(circle, rgba(165, 90, 172, 0.25) 0%, rgba(165, 90, 172, 0.08) 40%, transparent 70%)',
-          }}
-        />
-        {/* Purple Orb - Top Right */}
-        <div 
-          className="absolute -top-[10%] -right-[10%] w-[55%] h-[55%] rounded-full blur-[110px]"
-          style={{ 
-            background: 'radial-gradient(circle, rgba(77, 93, 217, 0.2) 0%, rgba(77, 93, 217, 0.06) 40%, transparent 70%)',
-          }}
-        />
-        {/* Warm accent - Bottom */}
-        <div 
-          className="absolute -bottom-[15%] left-[20%] w-[50%] h-[40%] rounded-full blur-[120px]"
-          style={{ 
-            background: 'radial-gradient(circle, rgba(251, 191, 36, 0.12) 0%, transparent 70%)',
-          }}
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] rounded-full blur-[150px] opacity-30 dark:opacity-20"
+          style={{ background: 'radial-gradient(circle, rgba(165, 90, 172, 0.4) 0%, rgba(77, 93, 217, 0.2) 50%, transparent 70%)' }}
         />
       </div>
 
-      {/* Noise texture overlay */}
+      {/* Grid pattern overlay */}
       <div 
-        className="fixed inset-0 pointer-events-none opacity-[0.015] dark:opacity-[0.03]"
+        className="fixed inset-0 pointer-events-none opacity-[0.02] dark:opacity-[0.04]"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          backgroundImage: `linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)`,
+          backgroundSize: '64px 64px',
         }}
       />
 
-      {/* Header - Premium Glassmorphism */}
-      <header className="fixed top-0 left-0 right-0 z-50">
-        <div className="mx-4 mt-4">
-          <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between rounded-2xl bg-white/50 dark:bg-white/[0.03] backdrop-blur-2xl border border-white/60 dark:border-white/[0.06] shadow-[0_8px_32px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
-            <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-9 h-9 bg-gradient-to-br from-[#A55AAC] via-[#7B6AD8] to-[#4D5DD9] rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/25">
-                <span className="text-white font-bold text-sm">F</span>
-              </div>
-              <span className="text-base font-semibold text-gray-900 dark:text-white">Flowstarter</span>
-            </Link>
-            <div className="flex items-center gap-3">
-              <ThemeToggle className="mr-2" />
-              <Link href="/login">
-                <Button variant="ghost" size="sm" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                  Sign In
-                </Button>
-              </Link>
-              <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-                <Button size="sm" className="bg-gradient-to-r from-[#A55AAC] via-[#7B6AD8] to-[#4D5DD9] hover:opacity-90 text-white border-0 shadow-lg shadow-purple-500/30 rounded-xl">
-                  Book a Call
-                </Button>
-              </a>
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 border-b border-gray-100 dark:border-white/[0.06] bg-white/80 dark:bg-[#0A0A0B]/80 backdrop-blur-xl">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 bg-gradient-to-br from-[#A55AAC] via-[#7B6AD8] to-[#4D5DD9] rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">F</span>
             </div>
+            <span className="text-base font-semibold text-gray-900 dark:text-white">Flowstarter</span>
+          </Link>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Link href="/login">
+              <Button variant="ghost" size="sm" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                Sign In
+              </Button>
+            </Link>
+            <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
+              <Button size="sm" className="bg-gray-900 dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-100 text-white dark:text-gray-900 rounded-lg">
+                Book a Call
+              </Button>
+            </a>
           </div>
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="relative pt-36 pb-24 md:pt-48 md:pb-36">
+      {/* Hero - Asymmetric, bold */}
+      <section className="relative pt-32 pb-20 md:pt-44 md:pb-32">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="max-w-3xl">
-            {/* Status badge - Glass */}
-            <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/50 dark:bg-white/[0.04] backdrop-blur-2xl border border-white/60 dark:border-white/[0.08] text-sm font-medium mb-8 shadow-[0_4px_24px_rgba(0,0,0,0.03)]">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#A55AAC] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9]"></span>
-              </span>
-              <span className="bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] bg-clip-text text-transparent font-semibold">Now accepting new clients</span>
-            </div>
-            
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white leading-[1.08] tracking-tight mb-8">
-              We build your
-              <br />
-              <span className="bg-gradient-to-r from-[#A55AAC] via-[#7B6AD8] to-[#4D5DD9] bg-clip-text text-transparent">
-                perfect website.
-              </span>
-            </h1>
-            
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 leading-relaxed mb-12 max-w-2xl">
-              You focus on your business. We handle the design, development, 
-              hosting, and ongoing updates. Simple as that.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4">
-              <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-                <Button size="xl" className="bg-gradient-to-r from-[#A55AAC] via-[#7B6AD8] to-[#4D5DD9] hover:opacity-90 text-white text-lg px-8 h-14 rounded-2xl shadow-[0_8px_32px_rgba(165,90,172,0.35)] border-0 transition-all hover:shadow-[0_12px_40px_rgba(165,90,172,0.45)] hover:scale-[1.02]">
-                  Book a Free Call
-                  <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </Button>
-              </a>
-              <Link href="/login">
-                <Button size="xl" variant="outline" className="text-lg px-8 h-14 rounded-2xl bg-white/50 dark:bg-white/[0.04] backdrop-blur-2xl border-white/60 dark:border-white/[0.08] hover:bg-white/70 dark:hover:bg-white/[0.08] shadow-[0_4px_24px_rgba(0,0,0,0.03)]">
-                  Client Login
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* What You Get - Premium Glass Cards */}
-      <section className="relative py-24 md:py-32">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="mb-16">
-            <span className="text-transparent bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] bg-clip-text font-semibold text-sm uppercase tracking-wider">
-              What you get
+          {/* Beta badge */}
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#A55AAC]/10 to-[#4D5DD9]/10 border border-[#A55AAC]/20 mb-8">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#A55AAC] animate-pulse" />
+            <span className="text-sm font-medium bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] bg-clip-text text-transparent">
+              Beta — 50% off for early adopters
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mt-4 max-w-3xl leading-tight">
-              Everything you need. Nothing you don&apos;t.
-            </h2>
           </div>
-
-          <div className="grid lg:grid-cols-2 gap-6">
-            {/* What's included - Glass Card */}
-            <div className="p-8 rounded-3xl bg-white/60 dark:bg-white/[0.03] backdrop-blur-2xl border border-white/70 dark:border-white/[0.06] shadow-[0_8px_40px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.2)]">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#A55AAC] via-[#7B6AD8] to-[#4D5DD9] flex items-center justify-center mb-6 shadow-lg shadow-purple-500/25">
-                <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          
+          <h1 className="text-[clamp(2.5rem,8vw,5.5rem)] font-bold text-gray-900 dark:text-white leading-[1.05] tracking-tight max-w-4xl">
+            We build your website.
+            <br />
+            <span className="bg-gradient-to-r from-[#A55AAC] via-[#7B6AD8] to-[#4D5DD9] bg-clip-text text-transparent">
+              You run your business.
+            </span>
+          </h1>
+          
+          <p className="mt-8 text-xl md:text-2xl text-gray-500 dark:text-gray-400 max-w-2xl leading-relaxed">
+            A 30-minute call. A professional website in days. 
+            Then customize it yourself with AI — no code needed.
+          </p>
+          
+          <div className="mt-10 flex flex-col sm:flex-row gap-4">
+            <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
+              <Button size="lg" className="bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] hover:opacity-90 text-white px-8 h-12 rounded-lg text-base font-medium shadow-[0_0_24px_rgba(165,90,172,0.3)]">
+                Get Started — €99.50
+                <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">What&apos;s included</h3>
-              <ul className="space-y-4">
-                {['Custom design tailored to your brand', 'Mobile-responsive on all devices', 'Fast hosting (under 2s load time)', 'SSL security certificate included', 'Ongoing maintenance and updates'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
-                    <span className="w-2 h-2 rounded-full bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] flex-shrink-0" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* What you skip - Subtle Glass */}
-            <div className="p-8 rounded-3xl bg-white/30 dark:bg-white/[0.015] backdrop-blur-xl border border-white/50 dark:border-white/[0.04]">
-              <div className="w-14 h-14 rounded-2xl bg-gray-200/80 dark:bg-white/[0.06] flex items-center justify-center mb-6">
-                <svg className="w-7 h-7 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">What you skip</h3>
-              <ul className="space-y-4">
-                {['Learning website builders', 'Dealing with hosting and DNS', 'Worrying about security updates', 'Chasing unreliable freelancers'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-gray-400 dark:text-gray-500 line-through">
-                    <span className="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600 flex-shrink-0" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Who It's For - Glass Cards with Gradient Borders */}
-      <section className="relative py-24 md:py-32">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="mb-16 text-center">
-            <span className="text-transparent bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] bg-clip-text font-semibold text-sm uppercase tracking-wider">
-              Who it&apos;s for
-            </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mt-4">
-              Built for businesses like yours.
-            </h2>
+              </Button>
+            </a>
+            <Button variant="outline" size="lg" className="px-8 h-12 rounded-lg text-base border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5">
+              See how it works
+            </Button>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Local Businesses */}
-            <div className="group relative p-[1px] rounded-3xl bg-gradient-to-br from-[#A55AAC]/50 via-transparent to-[#4D5DD9]/50 hover:from-[#A55AAC] hover:to-[#4D5DD9] transition-all duration-500">
-              <div className="h-full p-8 rounded-3xl bg-white/80 dark:bg-[hsl(240,8%,10%)] backdrop-blur-2xl">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#A55AAC]/10 to-[#4D5DD9]/10 dark:from-[#A55AAC]/20 dark:to-[#4D5DD9]/20 flex items-center justify-center mb-6 group-hover:from-[#A55AAC]/20 group-hover:to-[#4D5DD9]/20 transition-colors">
-                  <svg className="w-7 h-7 text-[#7B6AD8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Local Businesses</h3>
-                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">Restaurants, salons, gyms, clinics. Get found online and look professional.</p>
-              </div>
-            </div>
-
-            {/* Service Providers */}
-            <div className="group relative p-[1px] rounded-3xl bg-gradient-to-br from-[#A55AAC]/50 via-transparent to-[#4D5DD9]/50 hover:from-[#A55AAC] hover:to-[#4D5DD9] transition-all duration-500">
-              <div className="h-full p-8 rounded-3xl bg-white/80 dark:bg-[hsl(240,8%,10%)] backdrop-blur-2xl">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#A55AAC]/10 to-[#4D5DD9]/10 dark:from-[#A55AAC]/20 dark:to-[#4D5DD9]/20 flex items-center justify-center mb-6 group-hover:from-[#A55AAC]/20 group-hover:to-[#4D5DD9]/20 transition-colors">
-                  <svg className="w-7 h-7 text-[#7B6AD8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Service Providers</h3>
-                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">Consultants, coaches, agencies. Showcase your expertise and convert visitors.</p>
-              </div>
-            </div>
-
-            {/* Small Teams */}
-            <div className="group relative p-[1px] rounded-3xl bg-gradient-to-br from-[#A55AAC]/50 via-transparent to-[#4D5DD9]/50 hover:from-[#A55AAC] hover:to-[#4D5DD9] transition-all duration-500">
-              <div className="h-full p-8 rounded-3xl bg-white/80 dark:bg-[hsl(240,8%,10%)] backdrop-blur-2xl">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#A55AAC]/10 to-[#4D5DD9]/10 dark:from-[#A55AAC]/20 dark:to-[#4D5DD9]/20 flex items-center justify-center mb-6 group-hover:from-[#A55AAC]/20 group-hover:to-[#4D5DD9]/20 transition-colors">
-                  <svg className="w-7 h-7 text-[#7B6AD8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Small Teams</h3>
-                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">Startups and growing companies. Look established without the enterprise cost.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works - Detailed */}
-      <section className="relative py-24 md:py-32">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="mb-16">
-            <span className="text-transparent bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] bg-clip-text font-semibold text-sm uppercase tracking-wider">
-              How it works
-            </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mt-4">
-              From idea to live site in 2-3 weeks.
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400 mt-6 max-w-2xl">
-              No templates. No DIY builders. Just tell us what you need, and we&apos;ll build it for you.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-4 gap-6">
-            {[
-              { num: '01', title: 'Discovery Call', desc: 'We hop on a free 30-minute call to understand your business, goals, and vision.' },
-              { num: '02', title: 'Design & Revise', desc: 'We create custom designs and iterate until you\'re 100% happy.' },
-              { num: '03', title: 'Build & Test', desc: 'We develop your site with clean code, fast hosting, and thorough testing.' },
-              { num: '04', title: 'Launch & Support', desc: 'We deploy your site and provide ongoing maintenance and updates.' },
-            ].map((item) => (
-              <div key={item.num} className="relative p-6 rounded-2xl bg-white/40 dark:bg-white/[0.02] backdrop-blur-xl border border-white/50 dark:border-white/[0.04]">
-                <span className="text-5xl font-bold bg-gradient-to-br from-[#A55AAC]/20 to-[#4D5DD9]/20 bg-clip-text text-transparent">{item.num}</span>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mt-4 mb-2">{item.title}</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Platform Features */}
-          <div className="mt-20 p-8 md:p-12 rounded-3xl bg-white/60 dark:bg-white/[0.03] backdrop-blur-2xl border border-white/70 dark:border-white/[0.06]">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">What makes us different</h3>
-            <div className="grid md:grid-cols-3 gap-8">
-              <div>
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A55AAC]/20 to-[#4D5DD9]/20 flex items-center justify-center mb-4">
-                  <svg className="w-5 h-5 text-[#7B6AD8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
-                  </svg>
-                </div>
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Real Human Support</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">No chatbots. Direct access to your designer via our client portal.</p>
-              </div>
-              <div>
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A55AAC]/20 to-[#4D5DD9]/20 flex items-center justify-center mb-4">
-                  <svg className="w-5 h-5 text-[#7B6AD8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                  </svg>
-                </div>
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Unlimited Revisions</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">We iterate until you love it. No extra charges for design changes.</p>
-              </div>
-              <div>
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A55AAC]/20 to-[#4D5DD9]/20 flex items-center justify-center mb-4">
-                  <svg className="w-5 h-5 text-[#7B6AD8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-                  </svg>
-                </div>
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Lightning Fast</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Sites load in under 2 seconds. Optimized for SEO and conversions.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* AI Editor Feature */}
-      <section className="relative py-24 md:py-32">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Stats row */}
+          <div className="mt-20 pt-10 border-t border-gray-100 dark:border-white/[0.06] grid grid-cols-3 gap-8 max-w-2xl">
             <div>
-              <span className="text-transparent bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] bg-clip-text font-semibold text-sm uppercase tracking-wider">
-                After launch
-              </span>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mt-4 leading-tight">
-                Your site. Your control.
-                <br />
-                <span className="bg-gradient-to-r from-[#A55AAC] via-[#7B6AD8] to-[#4D5DD9] bg-clip-text text-transparent">
-                  Powered by AI.
-                </span>
-              </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-400 mt-6 leading-relaxed">
-                Once your site is live, you get access to our AI Editor. Just tell it what you want to change — 
-                in plain English — and watch your site update in real time.
-              </p>
-              <ul className="mt-8 space-y-4">
-                {[
-                  '"Add a new page about our services"',
-                  '"Change the hero image to something more modern"',
-                  '"Update the contact info in the footer"',
-                  '"Make the colors more vibrant"',
-                ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#A55AAC]/10 to-[#4D5DD9]/10 flex items-center justify-center flex-shrink-0">
-                      <svg className="w-4 h-4 text-[#7B6AD8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                      </svg>
-                    </div>
-                    <span className="italic">{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-8 text-gray-500 dark:text-gray-400">
-                No coding. No design skills. Just chat and customize.
-              </p>
+              <div className="text-3xl font-bold text-gray-900 dark:text-white">3-5</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">days to launch</div>
             </div>
-            
-            {/* Visual representation */}
-            <div className="relative">
-              <div className="p-[1px] rounded-3xl bg-gradient-to-br from-[#A55AAC]/50 via-transparent to-[#4D5DD9]/50">
-                <div className="p-8 rounded-3xl bg-white/80 dark:bg-[hsl(240,8%,10%)] backdrop-blur-2xl">
-                  {/* Mock chat interface */}
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-white/10 flex items-center justify-center flex-shrink-0">
-                        <span className="text-xs">You</span>
-                      </div>
-                      <div className="px-4 py-3 rounded-2xl rounded-tl-none bg-gray-100 dark:bg-white/5 text-sm text-gray-700 dark:text-gray-300">
-                        Make the headline bigger and add our new phone number
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#A55AAC] to-[#4D5DD9] flex items-center justify-center flex-shrink-0">
-                        <span className="text-xs text-white font-bold">AI</span>
-                      </div>
-                      <div className="px-4 py-3 rounded-2xl rounded-tl-none bg-gradient-to-r from-[#A55AAC]/10 to-[#4D5DD9]/10 text-sm text-gray-700 dark:text-gray-300">
-                        Done! I&apos;ve increased the headline size by 20% and added your phone number to the header and footer. Want me to adjust anything else?
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-6 pt-4 border-t border-gray-200 dark:border-white/10">
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-50 dark:bg-white/5 text-gray-400 text-sm">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                      </svg>
-                      Tell the AI what to change...
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div>
+              <div className="text-3xl font-bold text-gray-900 dark:text-white">€9.50</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">per month</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-gray-900 dark:text-white">0</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">code required</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Pricing - Single Plan */}
-      <section className="relative py-24 md:py-32">
+      {/* Bento Grid - What you get */}
+      <section className="relative py-24">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="mb-16 text-center">
-            <span className="text-transparent bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] bg-clip-text font-semibold text-sm uppercase tracking-wider">
-              Simple pricing
-            </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mt-4">
-              One plan. Everything included.
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400 mt-6 max-w-2xl mx-auto">
-              You pay once for setup, then a small monthly fee. We handle the rest.
-            </p>
-          </div>
+          <div className="grid md:grid-cols-3 gap-4">
+            {/* Large card - Discovery */}
+            <div className="md:col-span-2 p-8 rounded-2xl bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-white/[0.06]">
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A55AAC] to-[#4D5DD9] flex items-center justify-center mb-6">
+                    <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">We start with you</h3>
+                  <p className="text-gray-500 dark:text-gray-400 max-w-md">
+                    A 30-minute discovery call to understand your business, brand, and goals. We handle everything from there.
+                  </p>
+                </div>
+                <div className="hidden md:block text-6xl font-bold text-gray-100 dark:text-white/[0.03]">01</div>
+              </div>
+            </div>
 
-          {/* Beta Banner */}
-          <div className="max-w-2xl mx-auto mb-10 p-4 rounded-2xl bg-gradient-to-r from-[#A55AAC]/10 to-[#4D5DD9]/10 dark:from-[#A55AAC]/20 dark:to-[#4D5DD9]/20 border border-[#A55AAC]/20 dark:border-[#A55AAC]/30">
-            <div className="flex items-center justify-center gap-3">
-              <span className="px-3 py-1 rounded-full bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] text-white text-xs font-bold uppercase">Beta</span>
-              <p className="text-gray-700 dark:text-gray-300 font-medium">
-                Early adopters get <span className="text-[#A55AAC] font-bold">50% off</span> — limited time only!
+            {/* Small card - Speed */}
+            <div className="p-8 rounded-2xl bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-white/[0.06]">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A55AAC] to-[#4D5DD9] flex items-center justify-center mb-6">
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Live in days</h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Most sites launch within 3-5 business days. Not weeks.
+              </p>
+            </div>
+
+            {/* Small card - Hosting */}
+            <div className="p-8 rounded-2xl bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-white/[0.06]">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A55AAC] to-[#4D5DD9] flex items-center justify-center mb-6">
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Global hosting</h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Fast CDN, SSL included, 99.9% uptime. We handle it.
+              </p>
+            </div>
+
+            {/* Large card - AI Editor */}
+            <div className="md:col-span-2 p-8 rounded-2xl bg-gradient-to-br from-[#A55AAC]/5 to-[#4D5DD9]/5 dark:from-[#A55AAC]/10 dark:to-[#4D5DD9]/10 border border-[#A55AAC]/10 dark:border-[#A55AAC]/20">
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A55AAC] to-[#4D5DD9] flex items-center justify-center mb-6">
+                    <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Then customize with AI</h3>
+                  <p className="text-gray-500 dark:text-gray-400 max-w-md">
+                    After launch, update your site by chatting. &quot;Add a contact form&quot;, &quot;Change the colors&quot;, &quot;Add a new page&quot; — just say it.
+                  </p>
+                </div>
+                <div className="hidden md:block text-6xl font-bold bg-gradient-to-br from-[#A55AAC]/10 to-[#4D5DD9]/10 bg-clip-text text-transparent">AI</div>
+              </div>
+            </div>
+
+            {/* Small card - Email */}
+            <div className="p-8 rounded-2xl bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-white/[0.06]">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A55AAC] to-[#4D5DD9] flex items-center justify-center mb-6">
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Pro email included</h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                2 mailboxes at your domain. you@yourbusiness.com
               </p>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* Single Pricing Card */}
-          <div className="max-w-xl mx-auto">
-            <div className="relative p-[1px] rounded-3xl bg-gradient-to-br from-[#A55AAC] via-[#7B6AD8] to-[#4D5DD9]">
-              <div className="h-full p-8 md:p-10 rounded-3xl bg-white dark:bg-[hsl(240,8%,10%)]">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Launch Plan</h3>
-                <p className="text-gray-500 dark:text-gray-400 mt-2">Everything you need to get online</p>
-                
-                {/* Pricing */}
-                <div className="mt-8 flex flex-col sm:flex-row sm:items-end gap-6">
-                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">One-time setup</p>
+      {/* Pricing - Clean, single plan */}
+      <section className="relative py-24">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+                Simple, transparent pricing
+              </h2>
+              <p className="mt-4 text-lg text-gray-500 dark:text-gray-400">
+                One plan. Everything included. No surprises.
+              </p>
+            </div>
+
+            <div className="p-8 md:p-10 rounded-2xl bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-white/[0.06]">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8 pb-8 border-b border-gray-200 dark:border-white/[0.06]">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#A55AAC]/10 text-[#A55AAC] text-xs font-semibold mb-4">
+                    BETA PRICING — 50% OFF
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Launch Plan</h3>
+                  <p className="text-gray-500 dark:text-gray-400 mt-1">Everything you need to get online</p>
+                </div>
+                <div className="flex items-baseline gap-6">
+                  <div className="text-center">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Setup</div>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-bold text-gray-900 dark:text-white">€99.50</span>
+                      <span className="text-3xl font-bold text-gray-900 dark:text-white">€99.50</span>
                       <span className="text-lg text-gray-400 line-through">€199</span>
                     </div>
                   </div>
-                  <div className="sm:border-l sm:border-gray-200 dark:sm:border-white/10 sm:pl-6">
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Then monthly</p>
+                  <div className="text-center pl-6 border-l border-gray-200 dark:border-white/10">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Monthly</div>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-bold text-gray-900 dark:text-white">€9.50</span>
+                      <span className="text-3xl font-bold text-gray-900 dark:text-white">€9.50</span>
                       <span className="text-lg text-gray-400 line-through">€19</span>
-                      <span className="text-gray-500 dark:text-gray-400">/mo</span>
                     </div>
                   </div>
                 </div>
+              </div>
 
-                <p className="mt-4 text-sm text-[#7B6AD8] font-medium">
-                  ✨ First month FREE — billing starts month 2
-                </p>
-
-                <div className="my-8 h-px bg-gray-200 dark:bg-white/10" />
-
-                {/* What's included in setup */}
-                <div className="mb-8">
-                  <h4 className="font-semibold text-gray-900 dark:text-white mb-4">What&apos;s included in setup</h4>
+              <div className="grid md:grid-cols-2 gap-8 pt-8">
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Setup includes</h4>
                   <ul className="space-y-3">
-                    {[
-                      'Personal discovery call (30-45 min)',
-                      'We build your site from premium templates',
-                      'Domain configuration',
-                      'Professional email (2 mailboxes)',
-                      'Hosting setup on global CDN',
-                      'Your site goes live — fully turnkey',
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-400">
-                        <svg className="w-5 h-5 text-[#7B6AD8] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    {['30-min discovery call', 'Custom site built for you', 'Domain configuration', 'Professional email (2 mailboxes)', 'Global CDN hosting', 'Goes live in 3-5 days'].map((item, i) => (
+                      <li key={i} className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                        <svg className="w-4 h-4 text-[#A55AAC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
                         {item}
@@ -444,20 +243,12 @@ export default function LandingPage() {
                     ))}
                   </ul>
                 </div>
-
-                {/* What's included monthly */}
-                <div className="mb-8">
-                  <h4 className="font-semibold text-gray-900 dark:text-white mb-4">What&apos;s included monthly</h4>
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Monthly includes</h4>
                   <ul className="space-y-3">
-                    {[
-                      'Fast, secure hosting (SSL included)',
-                      'Professional email (2 mailboxes)',
-                      'Cloud storage (1GB)',
-                      'AI Editor — update content, pages, branding by chatting',
-                      'Ongoing platform access and updates',
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-400">
-                        <svg className="w-5 h-5 text-[#7B6AD8] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    {['Hosting + SSL', 'Email (2 mailboxes)', '1GB cloud storage', 'AI Editor access', 'Platform updates', 'Cancel anytime'].map((item, i) => (
+                      <li key={i} className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                        <svg className="w-4 h-4 text-[#A55AAC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
                         {item}
@@ -465,15 +256,16 @@ export default function LandingPage() {
                     ))}
                   </ul>
                 </div>
+              </div>
 
+              <div className="mt-8 pt-8 border-t border-gray-200 dark:border-white/[0.06]">
                 <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="block">
-                  <Button size="lg" className="w-full rounded-xl bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] hover:opacity-90 text-white border-0 shadow-lg shadow-purple-500/25 h-14 text-lg">
-                    Get Started — €99.50 during beta
+                  <Button className="w-full h-12 rounded-lg bg-gray-900 dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-100 text-white dark:text-gray-900 text-base font-medium">
+                    Book Your Discovery Call
                   </Button>
                 </a>
-
                 <p className="mt-4 text-center text-sm text-gray-500 dark:text-gray-400">
-                  No lock-in. Cancel anytime.
+                  First month free. No lock-in. Cancel anytime.
                 </p>
               </div>
             </div>
@@ -481,93 +273,57 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="relative py-24 md:py-32">
+      {/* FAQ - Minimal */}
+      <section className="relative py-24 border-t border-gray-100 dark:border-white/[0.06]">
         <div className="max-w-3xl mx-auto px-6">
-          <div className="mb-12 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-              Frequently asked questions
-            </h2>
-          </div>
-
-          <div className="space-y-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-12">Questions</h2>
+          <div className="space-y-8">
             {[
-              {
-                q: 'What happens on the discovery call?',
-                a: 'We learn about your business, your goals, your brand, and what you need from your website. This takes about 30-45 minutes. We handle everything from there.',
-              },
-              {
-                q: 'How long until my site is live?',
-                a: 'Most sites are live within 3-5 business days after the discovery call.',
-              },
-              {
-                q: 'Can I make changes after the site is built?',
-                a: 'Absolutely. Your subscription includes our AI Editor — just tell it what you want to change in plain English. Update content, add pages, tweak your branding, change colors — all by chatting. No coding required.',
-              },
-              {
-                q: 'What happens when the beta ends?',
-                a: 'Your price will move to the standard rate (€199 setup / €19 per month). You\'ll get 30 days notice before any price change.',
-              },
-              {
-                q: 'Do I need any technical skills?',
-                a: 'None. We handle the technical setup. The customization tools are designed for non-technical users.',
-              },
+              { q: 'How long until my site is live?', a: 'Most sites launch within 3-5 business days after your discovery call.' },
+              { q: 'Can I make changes after launch?', a: 'Yes. Your subscription includes our AI Editor — just tell it what to change in plain English. No coding required.' },
+              { q: 'What happens when beta ends?', a: 'Your price moves to standard rates (€199 setup / €19/month). You\'ll get 30 days notice.' },
+              { q: 'Do I need technical skills?', a: 'None. We handle the technical setup. The AI Editor is designed for non-technical users.' },
             ].map((item, i) => (
-              <div key={i} className="p-6 rounded-2xl bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl border border-white/70 dark:border-white/[0.06]">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{item.q}</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">{item.a}</p>
+              <div key={i} className="pb-8 border-b border-gray-100 dark:border-white/[0.06] last:border-0">
+                <h3 className="font-medium text-gray-900 dark:text-white mb-2">{item.q}</h3>
+                <p className="text-gray-500 dark:text-gray-400 text-sm">{item.a}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA - Gradient Glass */}
-      <section className="relative py-24 md:py-32">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="relative rounded-[2.5rem] p-12 md:p-20 overflow-hidden">
-            {/* Gradient background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#A55AAC] via-[#7B6AD8] to-[#4D5DD9]" />
-            {/* Glass overlay */}
-            <div className="absolute inset-0 bg-white/10 backdrop-blur-sm" />
-            {/* Decorative orbs */}
-            <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-white/20 blur-3xl" />
-            <div className="absolute -bottom-20 -left-20 w-60 h-60 rounded-full bg-white/10 blur-3xl" />
-            
-            <div className="relative text-center max-w-2xl mx-auto">
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                Ready to get started?
-              </h2>
-              <p className="text-xl text-white/80 mb-10">
-                Book a free 30-minute call. No pressure, no obligations.
-              </p>
-              <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-                <Button size="xl" className="bg-white hover:bg-white/95 text-gray-900 text-lg px-10 h-14 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.15)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.2)] transition-all hover:scale-[1.02]">
-                  Book Your Free Call
-                  <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </Button>
-              </a>
-            </div>
-          </div>
+      {/* CTA - Clean */}
+      <section className="relative py-24 bg-gray-50 dark:bg-white/[0.02]">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            Ready to get started?
+          </h2>
+          <p className="text-lg text-gray-500 dark:text-gray-400 mb-8">
+            Book a free call. No pressure, no obligations.
+          </p>
+          <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
+            <Button size="lg" className="bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] hover:opacity-90 text-white px-8 h-12 rounded-lg text-base font-medium shadow-[0_0_24px_rgba(165,90,172,0.3)]">
+              Book Your Free Call
+            </Button>
+          </a>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="relative py-12 border-t border-gray-200/50 dark:border-white/[0.04]">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-[#A55AAC] via-[#7B6AD8] to-[#4D5DD9] rounded-lg flex items-center justify-center">
+      {/* Footer - Minimal */}
+      <footer className="py-8 border-t border-gray-100 dark:border-white/[0.06]">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-gradient-to-br from-[#A55AAC] to-[#4D5DD9] rounded-md flex items-center justify-center">
               <span className="text-white font-bold text-xs">F</span>
             </div>
             <span className="text-sm text-gray-500 dark:text-gray-400">© 2026 Flowstarter</span>
           </div>
-          <div className="flex items-center gap-8">
-            <a href="mailto:hello@flowstarter.app" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+          <div className="flex items-center gap-6 text-sm text-gray-500 dark:text-gray-400">
+            <a href="mailto:hello@flowstarter.app" className="hover:text-gray-900 dark:hover:text-white transition-colors">
               hello@flowstarter.app
             </a>
-            <Link href="/login" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+            <Link href="/login" className="hover:text-gray-900 dark:hover:text-white transition-colors">
               Client Login
             </Link>
           </div>

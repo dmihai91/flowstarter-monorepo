@@ -164,45 +164,68 @@ export default function LandingPage() {
   useEffect(() => {
     if (hasInteracted) return; // Stop auto-cycling once user interacts
     
+    // First transition after 2 seconds (faster start)
+    const firstTimeout = setTimeout(() => {
+      if (hasInteracted) return;
+      advanceDemo();
+    }, 2000);
+    
+    // Then cycle every 3.5 seconds
     const cycleInterval = setInterval(() => {
+      if (hasInteracted) return;
+      advanceDemo();
+    }, 3500);
+    
+    function advanceDemo() {
       setDemoIndex(prev => {
         const nextIndex = (prev + 1) % demoSequence.length;
         const demo = demoSequence[nextIndex];
         
-        // Fade out transition
-        setIsTransitioning(true);
-        
-        setTimeout(() => {
-          // Replace messages (not accumulate)
-          setMessages([
-            { role: 'user', text: demo.prompt },
-          ]);
-          setIsTyping(true);
-          
-          // Update site state
-          setMockSite(s => ({ 
-            ...s, 
-            ...demo.siteState,
+        // If cycling back to start, reset messages
+        if (nextIndex === 0) {
+          setMessages([]);
+          setMockSite({
+            hasContactForm: false,
+            hasTestimonials: false,
+            hasPricingSection: false,
+            primaryColor: 'violet',
             hasAboutPage: false,
             headerStyle: 'default',
-          }));
-          
-          // AI response after typing delay
+          });
+          // Show first message after brief pause
           setTimeout(() => {
-            setIsTyping(false);
-            setMessages([
-              { role: 'user', text: demo.prompt },
-              { role: 'ai', text: demo.response }
-            ]);
-            setIsTransitioning(false);
-          }, 600);
-        }, 300);
+            const firstDemo = demoSequence[0];
+            setMessages([{ role: 'user', text: firstDemo.prompt }]);
+            setIsTyping(true);
+            setTimeout(() => {
+              setIsTyping(false);
+              setMessages(prev => [...prev, { role: 'ai', text: firstDemo.response }]);
+              setMockSite(s => ({ ...s, ...firstDemo.siteState }));
+            }, 500);
+          }, 200);
+          return 0;
+        }
+        
+        // Add new message to history (accumulate)
+        setMessages(prev => [...prev, { role: 'user', text: demo.prompt }]);
+        setIsTyping(true);
+        
+        // AI response after typing delay
+        setTimeout(() => {
+          setIsTyping(false);
+          setMessages(prev => [...prev, { role: 'ai', text: demo.response }]);
+          // Update site state
+          setMockSite(s => ({ ...s, ...demo.siteState }));
+        }, 500);
         
         return nextIndex;
       });
-    }, 4500); // Cycle every 4.5 seconds
+    }
     
-    return () => clearInterval(cycleInterval);
+    return () => {
+      clearTimeout(firstTimeout);
+      clearInterval(cycleInterval);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasInteracted]);
 

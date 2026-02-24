@@ -1,24 +1,15 @@
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import {
-  Clock,
-  Eye,
-  FileText,
-  Globe,
-  Lock,
-  Mail,
-  Shield,
-  Users,
-} from 'lucide-react';
+'use client';
+
+import Footer from '@/components/Footer';
+import Link from 'next/link';
 
 export default function PrivacyPage() {
-  const lastUpdated = 'December 15, 2024';
+  const lastUpdated = 'February 25, 2026';
 
   const sections = [
     {
-      icon: <FileText className="h-6 w-6" />,
       title: 'Information We Collect',
-      content: [
+      items: [
         {
           subtitle: 'Personal Information',
           text: 'When you create an account, we collect your name, email address, and billing information. This helps us provide you with personalized service and process payments securely.',
@@ -34,9 +25,8 @@ export default function PrivacyPage() {
       ],
     },
     {
-      icon: <Eye className="h-6 w-6" />,
       title: 'How We Use Your Information',
-      content: [
+      items: [
         {
           subtitle: 'Service Provision',
           text: 'We use your information to provide, maintain, and improve our website building platform, including hosting your websites and providing customer support.',
@@ -52,9 +42,8 @@ export default function PrivacyPage() {
       ],
     },
     {
-      icon: <Lock className="h-6 w-6" />,
       title: 'Data Security',
-      content: [
+      items: [
         {
           subtitle: 'Encryption',
           text: 'All data is encrypted in transit using TLS 1.3 and at rest using AES-256 encryption. Your payment information is processed securely through certified payment processors.',
@@ -70,9 +59,8 @@ export default function PrivacyPage() {
       ],
     },
     {
-      icon: <Users className="h-6 w-6" />,
       title: 'Your Rights',
-      content: [
+      items: [
         {
           subtitle: 'Data Access',
           text: 'You can access and download all your personal data at any time through your account settings or by contacting our support team.',
@@ -87,245 +75,187 @@ export default function PrivacyPage() {
         },
       ],
     },
+    {
+      title: 'Data Retention',
+      items: [
+        {
+          subtitle: 'Active Accounts',
+          text: 'We retain your data as long as your account is active or as needed to provide you services.',
+        },
+        {
+          subtitle: 'Deleted Accounts',
+          text: 'When you delete your account, we remove your personal data within 30 days, except for data we are required to retain for legal purposes.',
+        },
+        {
+          subtitle: 'Legal Requirements',
+          text: 'Certain data may be retained longer to comply with legal obligations, resolve disputes, and enforce our agreements.',
+        },
+      ],
+    },
+    {
+      title: 'Third-Party Services',
+      items: [
+        {
+          subtitle: 'Service Providers',
+          text: 'We work with trusted third-party services for hosting (Cloudflare), email (Zoho), analytics (Google Analytics), and payments (Stripe). These providers are contractually obligated to protect your data.',
+        },
+        {
+          subtitle: 'No Data Sales',
+          text: 'We never sell your personal information to third parties. Your data is yours.',
+        },
+      ],
+    },
+    {
+      title: 'Cookies',
+      items: [
+        {
+          subtitle: 'Essential Cookies',
+          text: 'We use essential cookies to keep you logged in and remember your preferences.',
+        },
+        {
+          subtitle: 'Analytics Cookies',
+          text: 'We use analytics cookies to understand how our service is used. You can opt out of these in your browser settings.',
+        },
+      ],
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Hero Section */}
-      <div className="relative bg-white dark:bg-gray-900 overflow-hidden">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <div className="text-center max-w-5xl mx-auto">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-blue-500/20 to-[var(--purple)]/20 flex items-center justify-center">
-                <Shield className="h-8 w-8" style={{ color: 'var(--blue)' }} />
+    <>
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+        .font-display { font-family: 'Outfit', system-ui, sans-serif; }
+      `}</style>
+      
+      <div className="min-h-screen font-display bg-[#FAFAFA] dark:bg-[#0a0a0c]">
+        {/* Flow lines background */}
+        <div className="fixed inset-0 pointer-events-none">
+          <svg 
+            className="absolute inset-0 w-full h-full opacity-[0.08] dark:opacity-[0.06]"
+            viewBox="0 0 1200 800" 
+            preserveAspectRatio="xMidYMid slice"
+            fill="none"
+          >
+            <defs>
+              <linearGradient id="privacyFlowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="var(--purple)" />
+                <stop offset="100%" stopColor="#3B82F6" />
+              </linearGradient>
+            </defs>
+            <g stroke="url(#privacyFlowGradient)" strokeWidth="1">
+              <path d="M-100,100 Q200,80 400,120 T800,100 T1300,140" />
+              <path d="M-100,200 Q150,220 350,180 T750,220 T1300,200" />
+              <path d="M-100,300 Q250,280 450,320 T850,290 T1300,330" />
+              <path d="M-100,400 Q180,420 380,380 T780,420 T1300,400" />
+              <path d="M-100,500 Q220,480 420,520 T820,490 T1300,530" />
+              <path d="M-100,600 Q200,620 400,580 T800,620 T1300,600" />
+              <path d="M-100,700 Q250,680 450,720 T850,690 T1300,730" />
+            </g>
+          </svg>
+        </div>
+
+        {/* Header */}
+        <header className="sticky top-0 z-50 bg-white/70 dark:bg-[#0a0a0c]/70 backdrop-blur-2xl backdrop-saturate-150 border-b border-gray-200/50 dark:border-white/10">
+          <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20 group-hover:shadow-[var(--purple)]/30 transition-shadow">
+                <span className="text-white font-bold text-sm">F</span>
               </div>
+              <span className="text-lg font-semibold text-gray-900 dark:text-white">Flowstarter</span>
+            </Link>
+            <Link 
+              href="/"
+              className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
+              ← Back to home
+            </Link>
+          </div>
+        </header>
+
+        {/* Content */}
+        <main className="relative z-10 max-w-4xl mx-auto px-6 py-16">
+          {/* Hero */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium mb-6">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              Your Privacy Matters
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-6">
+            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
               Privacy Policy
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-5xl mx-auto leading-relaxed mb-8">
-              Your privacy is important to us. This policy explains how we
-              collect, use, and protect your information.
+            <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl mx-auto mb-4">
+              We respect your privacy and are committed to protecting your personal data. This policy explains how we collect, use, and safeguard your information.
             </p>
-            <Badge
-              variant="outline"
-              className="text-blue-600 border-blue-200 bg-blue-50 dark:text-blue-400 dark:border-blue-800 dark:bg-blue-900/20"
-            >
-              <Clock className="h-4 w-4 mr-2" />
+            <p className="text-sm text-gray-400 dark:text-white/30">
               Last updated: {lastUpdated}
-            </Badge>
+            </p>
           </div>
-        </div>
-      </div>
 
-      {/* Quick Summary */}
-      <section className="py-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="backdrop-blur-md bg-linear-to-r from-blue-500/10 via-[var(--purple)]/10 to-pink-500/10 border border-white/40 shadow-xl mb-16">
-            <CardContent className="p-8">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                Quick Summary
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="text-center">
-                  <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-linear-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center">
-                    <Shield
-                      className="h-6 w-6"
-                      style={{ color: 'var(--green)' }}
-                    />
-                  </div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                    We Protect Your Data
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
-                    Enterprise-grade security with encryption and strict access
-                    controls.
-                  </p>
-                </div>
-                <div className="text-center">
-                  <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-linear-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
-                    <Users
-                      className="h-6 w-6"
-                      style={{ color: 'var(--blue)' }}
-                    />
-                  </div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                    You Control Your Data
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
-                    Access, update, or delete your data anytime through your
-                    account.
-                  </p>
-                </div>
-                <div className="text-center">
-                  <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-linear-to-br from-[var(--purple)]/20 to-pink-500/20 flex items-center justify-center">
-                    <Globe
-                      className="h-6 w-6"
-                      style={{ color: 'var(--purple)' }}
-                    />
-                  </div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                    No Data Selling
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
-                    We never sell your personal information to third parties.
-                  </p>
-                </div>
+          {/* Quick Summary */}
+          <div className="grid sm:grid-cols-3 gap-4 mb-16">
+            {[
+              { icon: '🔒', title: 'We Protect Your Data', desc: 'Enterprise-grade encryption and security.' },
+              { icon: '🎛️', title: 'You Control Your Data', desc: 'Access, update, or delete anytime.' },
+              { icon: '🚫', title: 'No Data Sales', desc: 'We never sell your information.' },
+            ].map((item, i) => (
+              <div key={i} className="p-6 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 text-center">
+                <div className="text-3xl mb-3">{item.icon}</div>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{item.title}</h3>
+                <p className="text-sm text-gray-500 dark:text-white/50">{item.desc}</p>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Detailed Sections */}
-          <div className="space-y-12">
-            {sections.map((section, index) => (
-              <Card
-                key={index}
-                className="backdrop-blur-md bg-white/80 dark:bg-gray-800/80 border border-white/40 shadow-xl"
-              >
-                <CardContent className="p-8">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500/20 to-[var(--purple)]/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                      {section.icon}
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {section.title}
-                    </h2>
-                  </div>
-
-                  <div className="space-y-6">
-                    {section.content.map((item, itemIndex) => (
-                      <div key={itemIndex}>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                          {item.subtitle}
-                        </h3>
-                        <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                          {item.text}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* Data Retention */}
-      <section className="py-20 bg:(var(--surface-2))">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="backdrop-blur-md bg-white/80 dark:bg-gray-800/80 border border-white/40 shadow-xl">
-            <CardContent className="p-8">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 rounded-lg bg-linear-to-br from-orange-500/20 to-red-500/20 flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-orange-600 dark:text-orange-400" />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  Data Retention
+          {/* Sections */}
+          <div className="space-y-12">
+            {sections.map((section, index) => (
+              <section key={index} className="p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
+                  <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center text-sm font-bold text-[var(--purple)]">
+                    {index + 1}
+                  </span>
+                  {section.title}
                 </h2>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                    Active Accounts
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
-                    We retain your data as long as your account is active or as
-                    needed to provide you services.
-                  </p>
-
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                    Deleted Accounts
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                    When you delete your account, we remove your personal data
-                    within 30 days, except for data we're required to retain for
-                    legal purposes.
-                  </p>
+                <div className="space-y-6">
+                  {section.items.map((item, itemIndex) => (
+                    <div key={itemIndex}>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                        {item.subtitle}
+                      </h3>
+                      <p className="text-gray-600 dark:text-white/60 leading-relaxed">
+                        {item.text}
+                      </p>
+                    </div>
+                  ))}
                 </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                    Legal Requirements
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
-                    Some data may be retained longer for legal compliance, fraud
-                    prevention, or security purposes.
-                  </p>
-
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                    Anonymous Data
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                    We may retain anonymous, aggregated data indefinitely for
-                    analytics and service improvement.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="backdrop-blur-md bg-linear-to-r from-blue-500/10 via-[var(--purple)]/10 to-pink-500/10 border border-white/40 shadow-xl">
-            <CardContent className="p-8 text-center">
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500/20 to-[var(--purple)]/20 flex items-center justify-center">
-                  <Mail className="h-6 w-6" style={{ color: 'var(--blue)' }} />
-                </div>
-              </div>
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                Questions About Privacy?
-              </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8">
-                If you have questions about this privacy policy or how we handle
-                your data, we're here to help. Contact our privacy team anytime.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a
-                  href="mailto:privacy@flowstarter.com"
-                  className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-linear-to-r from-blue-600 to-[var(--purple)] [@media(hover:hover)]:hover:from-blue-700 [@media(hover:hover)]:hover:to-[var(--purple)] transition-all duration-200 shadow-lg [@media(hover:hover)]:hover:shadow-xl"
-                >
-                  <Mail className="h-5 w-5 mr-2" />
-                  privacy@flowstarter.com
-                </a>
-                <a
-                  href="/contact"
-                  className="inline-flex items-center justify-center px-8 py-3 border border-gray-300 dark:border-gray-600 text-base font-medium rounded-xl text-gray-700 dark:text-gray-300 bg:(var(--surface-2)) [@media(hover:hover)]:hover:bg-gray-50 dark:[@media(hover:hover)]:hover:bg-gray-700 transition-all duration-200 shadow-lg [@media(hover:hover)]:hover:shadow-xl"
-                >
-                  Contact Support
-                </a>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* Legal Notice */}
-      <section className="py-12 border-t border-gray-200 dark:border-gray-800">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-sm text-gray-500 dark:text-gray-400">
-            <p className="mb-2">
-              This privacy policy is effective as of {lastUpdated} and will
-              remain in effect except with respect to any changes in its
-              provisions in the future, which will be in effect immediately
-              after being posted on this page.
-            </p>
-            <p>
-              We reserve the right to update or change our Privacy Policy at any
-              time and you should check this Privacy Policy periodically. Your
-              continued use of the service after we post any modifications to
-              the Privacy Policy on this page will constitute your
-              acknowledgment of the modifications and your consent to abide and
-              be bound by the modified Privacy Policy.
-            </p>
+              </section>
+            ))}
           </div>
-        </div>
-      </section>
-    </div>
+
+          {/* Contact */}
+          <div className="mt-16 p-8 rounded-2xl bg-gradient-to-r from-[var(--purple)]/5 via-blue-500/5 to-cyan-500/5 border border-[var(--purple)]/10 dark:border-[var(--purple)]/20 text-center">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              Questions about your privacy?
+            </h2>
+            <p className="text-gray-500 dark:text-white/50 mb-4">
+              We're here to help. Reach out anytime.
+            </p>
+            <a 
+              href="mailto:hello@flowstarter.dev"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 font-semibold hover:shadow-lg transition-all duration-300"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              hello@flowstarter.dev
+            </a>
+          </div>
+        </main>
+
+        <Footer />
+      </div>
+    </>
   );
 }

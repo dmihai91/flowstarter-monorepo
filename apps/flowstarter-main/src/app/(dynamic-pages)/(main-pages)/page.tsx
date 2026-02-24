@@ -15,6 +15,7 @@ export default function LandingPage() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [scrolled, setScrolled] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Mock site state for live preview
@@ -276,16 +277,46 @@ export default function LandingPage() {
 
               <div className="flex items-center gap-2 sm:gap-4">
                 <ThemeToggle />
-                <Link href="/login" className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors hidden sm:block">
+                <Link href="/login" className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors hidden md:block">
                   Sign In
                 </Link>
-                <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-                  <Button className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl px-3 sm:px-6 h-9 sm:h-10 text-xs sm:text-sm font-semibold shadow-lg transition-all">
-                    <span className="hidden sm:inline">Book a Call</span>
-                    <span className="sm:hidden">Book</span>
+                <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="hidden sm:block">
+                  <Button className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl px-6 h-10 text-sm font-semibold shadow-lg transition-all">
+                    Book a Call
                   </Button>
                 </a>
+                {/* Mobile menu button */}
+                <button
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+                  aria-label="Toggle menu"
+                >
+                  {mobileMenuOpen ? (
+                    <svg className="w-5 h-5 text-gray-600 dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5 text-gray-600 dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                  )}
+                </button>
               </div>
+            </div>
+
+            {/* Mobile menu dropdown */}
+            <div className={`md:hidden overflow-hidden transition-all duration-300 ${mobileMenuOpen ? 'max-h-64 pb-4' : 'max-h-0'}`}>
+              <nav className="flex flex-col gap-1 pt-2 border-t border-gray-200/50 dark:border-white/10">
+                <a href="#process" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors">Process</a>
+                <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors">Pricing</a>
+                <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors">FAQ</a>
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors">Sign In</Link>
+                <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)} className="mt-2">
+                  <Button className="w-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl h-10 text-sm font-semibold shadow-lg transition-all">
+                    Book a Call
+                  </Button>
+                </a>
+              </nav>
             </div>
           </div>
         </header>

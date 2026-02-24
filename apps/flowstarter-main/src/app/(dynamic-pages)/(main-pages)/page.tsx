@@ -378,13 +378,13 @@ export default function LandingPage() {
                   </div>
 
                   {/* Split: Chat + Preview */}
-                  <div className="flex divide-x divide-gray-200/30 dark:divide-white/5">
+                  <div className="flex divide-x divide-gray-200/30 dark:divide-white/5 min-h-[320px]">
                     {/* Chat Panel */}
-                    <div className="w-1/2 p-4">
+                    <div className="w-1/2 p-4 flex flex-col">
                       <div className="text-[9px] tracking-[0.15em] uppercase text-gray-400 dark:text-white/20 font-medium mb-3">AI Editor</div>
                       
-                      {/* Messages */}
-                      <div className="space-y-2.5 max-h-[130px] overflow-y-auto mb-3 pr-1">
+                      {/* Messages - grows to fill space */}
+                      <div className="flex-1 space-y-2.5 overflow-y-auto mb-3 pr-1">
                       {messages.map((msg, i) => (
                         msg.role === 'user' ? (
                           <div key={i} className="flex justify-end">
@@ -422,41 +422,44 @@ export default function LandingPage() {
                         </div>
                       )}
                       <div ref={messagesEndRef} />
-                    </div>
-
-                      {/* Input */}
-                      <div className="flex items-center gap-2 p-1.5 rounded-lg bg-white/50 dark:bg-white/[0.03] border border-white/60 dark:border-white/10">
-                        <input 
-                          type="text" 
-                          placeholder="Try: Add form..." 
-                          className="flex-1 bg-transparent text-[11px] outline-none px-2 placeholder:text-gray-400 dark:placeholder:text-white/20 text-gray-900 dark:text-white"
-                          value={inputValue}
-                          onChange={(e) => setInputValue(e.target.value)}
-                          onKeyDown={handleKeyDown}
-                        />
-                        <button 
-                          onClick={() => handleSend()}
-                          disabled={!inputValue.trim() || isTyping}
-                          className="w-7 h-7 rounded-md bg-gradient-to-r from-violet-500 to-blue-500 text-white flex items-center justify-center disabled:opacity-30 transition-all hover:shadow-lg"
-                        >
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-7-7l7 7-7 7" />
-                          </svg>
-                        </button>
                       </div>
 
-                      {/* Quick prompts */}
-                      <div className="flex flex-wrap gap-1.5 mt-2">
-                        {['Add pricing', 'Contact form', 'Change colors'].map((prompt) => (
-                          <button
-                            key={prompt}
-                            onClick={() => handleSend(prompt)}
-                            disabled={isTyping}
-                            className="px-2 py-1 text-[9px] rounded-full bg-white/40 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 border border-gray-200/50 dark:border-white/10 text-gray-500 dark:text-white/50 transition-all disabled:opacity-50"
+                      {/* Input area - stays at bottom */}
+                      <div className="mt-auto">
+                        {/* Input */}
+                        <div className="flex items-center gap-2 p-1.5 rounded-lg bg-white/50 dark:bg-white/[0.03] border border-white/60 dark:border-white/10">
+                          <input 
+                            type="text" 
+                            placeholder="Try: Add form..." 
+                            className="flex-1 bg-transparent text-[11px] outline-none px-2 placeholder:text-gray-400 dark:placeholder:text-white/20 text-gray-900 dark:text-white"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                          />
+                          <button 
+                            onClick={() => handleSend()}
+                            disabled={!inputValue.trim() || isTyping}
+                            className="w-7 h-7 rounded-md bg-gradient-to-r from-violet-500 to-blue-500 text-white flex items-center justify-center disabled:opacity-30 transition-all hover:shadow-lg"
                           >
-                            {prompt}
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-7-7l7 7-7 7" />
+                            </svg>
                           </button>
-                        ))}
+                        </div>
+
+                        {/* Quick prompts */}
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {['Add pricing', 'Contact form', 'Change colors'].map((prompt) => (
+                            <button
+                              key={prompt}
+                              onClick={() => handleSend(prompt)}
+                              disabled={isTyping}
+                              className="px-2 py-1 text-[9px] rounded-full bg-white/40 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 border border-gray-200/50 dark:border-white/10 text-gray-500 dark:text-white/50 transition-all disabled:opacity-50"
+                            >
+                              {prompt}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
 

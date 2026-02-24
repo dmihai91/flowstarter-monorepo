@@ -318,7 +318,7 @@ export default function LandingPage() {
         </header>
 
         {/* Hero */}
-        <section className="relative pt-24 lg:pt-32 pb-16 lg:pb-24">
+        <section className="relative pt-20 lg:pt-24 pb-12 lg:pb-16">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
               {/* Left: Copy */}
@@ -343,9 +343,9 @@ export default function LandingPage() {
                   For freelancers, small businesses, and creators.
                 </p>
 
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-12">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10">
                   <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-                    <Button className="relative overflow-hidden bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl px-8 h-14 text-base font-semibold shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl group">
+                    <Button className="relative overflow-hidden bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-gray-800 hover:via-gray-700 hover:to-gray-800 dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-8 h-14 text-base font-semibold shadow-lg hover:shadow-xl hover:shadow-violet-500/10 transition-all duration-300 hover:scale-[1.02] group">
                       <span className="absolute inset-0 animate-shimmer" />
                       Book Free Discovery Call
                       <svg className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -370,13 +370,13 @@ export default function LandingPage() {
                 </div>
 
                 {/* Stats */}
-                <div className="flex items-center justify-between sm:justify-start gap-4 sm:gap-8 pt-8 border-t border-gray-200 dark:border-white/10">
+                <div className="flex items-center justify-center lg:justify-start gap-8 sm:gap-16 pt-6 border-t border-gray-200 dark:border-white/10">
                   {[
                     { value: '1-2', label: 'Weeks' },
                     { value: '∞', label: 'AI edits' },
                     { value: '0', label: 'Code' },
                   ].map((stat, i) => (
-                    <div key={i} className="text-center sm:text-left">
+                    <div key={i} className="text-center">
                       <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-white/60 bg-clip-text text-transparent">{stat.value}</div>
                       <div className="text-[10px] sm:text-xs text-gray-400 dark:text-white/30 uppercase tracking-wider mt-1">{stat.label}</div>
                     </div>
@@ -655,7 +655,7 @@ export default function LandingPage() {
         </section>
 
         {/* Process Section */}
-        <section id="process" className="py-16 lg:py-24 relative overflow-hidden">
+        <section id="process" className="py-12 lg:py-16 relative overflow-hidden bg-gradient-to-b from-white via-[#F8F9FB] to-[#F1F3F7] dark:from-transparent dark:via-white/[0.01] dark:to-white/[0.02]">
           {/* Flow Field Background - Process Section (different direction) */}
           <div className="absolute inset-0 pointer-events-none">
             <svg 
@@ -681,20 +681,20 @@ export default function LandingPage() {
             </svg>
           </div>
           <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
-            <div className="max-w-xl mb-12">
+            <div className="max-w-xl mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight mb-3">
                 Three steps to your{' '}
                 <span className="bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">new website</span>
               </h2>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 gap-5">
               {features.map((feature, i) => (
                 <div 
                   key={i}
-                  className="group p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200 dark:border-white/5 hover:border-violet-500/30 dark:hover:border-violet-500/20 hover:bg-white dark:hover:bg-white/[0.04] hover:shadow-xl hover:shadow-violet-500/5 hover:-translate-y-1 transition-all duration-300"
+                  className="group p-7 rounded-2xl bg-white/80 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200/80 dark:border-white/5 hover:border-violet-500/40 dark:hover:border-violet-500/30 hover:bg-white dark:hover:bg-white/[0.04] hover:shadow-xl hover:shadow-violet-500/10 hover:-translate-y-1 hover:scale-[1.02] transition-all duration-300"
                 >
-                  <div className="text-5xl font-bold text-violet-500/20 dark:text-white/5 group-hover:text-violet-500/40 dark:group-hover:text-violet-500/20 transition-colors mb-4">
+                  <div className="text-5xl font-bold text-violet-500/20 dark:text-white/5 group-hover:text-violet-500/50 dark:group-hover:text-violet-500/30 transition-colors mb-4">
                     {feature.num}
                   </div>
                   <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
@@ -706,20 +706,20 @@ export default function LandingPage() {
         </section>
 
         {/* What's Included Section */}
-        <section className="py-16 lg:py-24 bg-gray-50/50 dark:bg-white/[0.01]">
+        <section className="py-10 lg:py-14 bg-white dark:bg-transparent">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
-            <div className="text-center mb-12">
+            <div className="text-center mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight">
                 Everything you need.{' '}
                 <span className="text-gray-400 dark:text-white/30">Nothing you don't.</span>
               </h2>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {/* Setup */}
-              <div className="p-8 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5">
+              <div className="group p-7 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200/80 dark:border-white/5 hover:border-violet-500/30 dark:hover:border-violet-500/20 hover:shadow-lg hover:shadow-violet-500/5 transition-all duration-300">
                 <h3 className="text-xl font-semibold mb-4">Setup <span className="text-sm font-normal text-gray-400 dark:text-white/30">(one-time)</span></h3>
-                <ul className="space-y-3">
+                <ul className="space-y-2.5">
                   {[
                     'Personal discovery call with our team',
                     'AI-generated website from premium templates',
@@ -739,9 +739,9 @@ export default function LandingPage() {
               </div>
 
               {/* Monthly subscription */}
-              <div className="p-8 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5">
+              <div className="group p-7 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200/80 dark:border-white/5 hover:border-violet-500/30 dark:hover:border-violet-500/20 hover:shadow-lg hover:shadow-violet-500/5 transition-all duration-300">
                 <h3 className="text-xl font-semibold mb-4">Monthly subscription</h3>
-                <ul className="space-y-3">
+                <ul className="space-y-2.5">
                   {[
                     'Website hosting (global CDN, automatic SSL)',
                     'Professional email (2 mailboxes)',
@@ -763,7 +763,7 @@ export default function LandingPage() {
         </section>
 
         {/* Social Proof / Trust Section - Placeholder for beta */}
-        <section className="py-12 lg:py-16">
+        <section className="py-6 lg:py-8">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="text-center p-8 lg:p-12 rounded-2xl bg-gradient-to-r from-violet-500/5 via-blue-500/5 to-cyan-500/5 border border-violet-500/10 dark:border-violet-500/20">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400 text-sm font-medium mb-4">
@@ -778,12 +778,12 @@ export default function LandingPage() {
         </section>
 
         {/* Pricing Section */}
-        <section id="pricing" className="py-16 lg:py-24 relative">
-          {/* Gradient accent */}
-          <div className="absolute inset-0 bg-gradient-to-b from-violet-500/5 via-transparent to-transparent pointer-events-none" />
+        <section id="pricing" className="py-10 lg:py-14 relative">
+          {/* Gradient accent - lavender tint */}
+          <div className="absolute inset-0 bg-gradient-to-b from-violet-500/[0.03] via-violet-500/[0.05] to-violet-500/[0.02] dark:from-violet-500/[0.02] dark:via-violet-500/[0.04] dark:to-transparent pointer-events-none" />
           
           <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
-            <div className="text-center mb-12">
+            <div className="text-center mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight">
                 Simple pricing.{' '}
                 <span className="text-gray-400 dark:text-white/30">No surprises.</span>
@@ -791,8 +791,8 @@ export default function LandingPage() {
             </div>
 
             <div className="max-w-lg mx-auto">
-              {/* Starter Plan Card */}
-              <div className="p-8 lg:p-10 rounded-2xl bg-white/80 dark:bg-white/[0.04] backdrop-blur-sm border-2 border-violet-500/30 dark:border-violet-500/20 shadow-xl shadow-violet-500/5 relative overflow-hidden">
+              {/* Starter Plan Card - Premium Treatment */}
+              <div className="group p-8 lg:p-10 rounded-2xl bg-gradient-to-br from-white via-white to-violet-50/50 dark:from-white/[0.04] dark:via-white/[0.03] dark:to-violet-500/[0.02] backdrop-blur-sm border-2 border-transparent bg-clip-padding shadow-xl shadow-violet-500/10 relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-violet-500/15" style={{ backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, rgba(168,85,247,0.3), rgba(59,130,246,0.3))', backgroundOrigin: 'border-box', backgroundClip: 'padding-box, border-box' }}>
                 {/* Beta badge */}
                 <div className="absolute top-4 right-4">
                   <span className="px-3 py-1 text-xs font-medium bg-violet-500 text-white rounded-full">50% off during beta</span>
@@ -838,7 +838,7 @@ export default function LandingPage() {
                 
                 {/* CTA */}
                 <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="block">
-                  <Button className="w-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl h-14 text-base font-semibold shadow-lg transition-all hover:scale-[1.02]">
+                  <Button className="w-full bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-gray-800 hover:via-gray-700 hover:to-gray-800 dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl h-14 text-base font-semibold shadow-lg hover:shadow-xl hover:shadow-violet-500/10 transition-all duration-300 hover:scale-[1.02]">
                     Book Free Discovery Call
                     <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -856,9 +856,9 @@ export default function LandingPage() {
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className="py-16 lg:py-24">
+        <section id="faq" className="py-10 lg:py-14 bg-gradient-to-b from-white via-gray-50/50 to-white dark:from-transparent dark:via-white/[0.01] dark:to-transparent">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
-            <div className="grid lg:grid-cols-2 gap-16">
+            <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
               <div>
                 <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-4 lg:sticky lg:top-32">
                   Questions?
@@ -867,7 +867,7 @@ export default function LandingPage() {
                 </h2>
               </div>
               
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {[
                   { q: 'What happens on the discovery call?', a: 'We spend 30–45 minutes learning about your business, your goals, and your brand. You don\'t need to prepare anything — just show up and tell us about what you do. We handle the rest.' },
                   { q: 'How long until my site is live?', a: 'Most sites go live within 1–2 weeks after the discovery call. We\'ll keep you updated throughout the process.' },
@@ -907,20 +907,20 @@ export default function LandingPage() {
         </section>
 
         {/* Final CTA */}
-        <section className="py-16 lg:py-24 relative">
-          <div className="absolute inset-0 bg-gradient-to-t from-violet-500/10 via-transparent to-transparent pointer-events-none" />
+        <section className="py-12 lg:py-16 relative">
+          <div className="absolute inset-0 bg-gradient-to-t from-violet-500/10 via-violet-500/5 to-transparent pointer-events-none" />
           
           <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center relative">
-            <h2 className="text-4xl lg:text-6xl font-bold leading-tight mb-6">
+            <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-5">
               Ready to get your
               <br />
               <span className="bg-gradient-to-r from-violet-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent">business online?</span>
             </h2>
-            <p className="text-lg text-gray-500 dark:text-white/40 mb-10 max-w-md mx-auto">
+            <p className="text-lg text-gray-500 dark:text-white/40 mb-8 max-w-md mx-auto">
               Book a free discovery call. We'll handle everything from there.
             </p>
             <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-              <Button className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl px-10 h-14 text-base font-semibold shadow-lg transition-all hover:scale-[1.02]">
+              <Button className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-gray-800 hover:via-gray-700 hover:to-gray-800 dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-10 h-14 text-base font-semibold shadow-lg hover:shadow-xl hover:shadow-violet-500/10 transition-all duration-300 hover:scale-[1.02]">
                 Book Free Discovery Call
                 <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />

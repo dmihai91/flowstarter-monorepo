@@ -50,22 +50,25 @@ function OnboardingStepper() {
   return (
     <div ref={ref} className="mb-6">
       {/* Desktop Layout - Horizontal with connector */}
-      <div className="hidden md:block relative">
-        {/* Progress connector line - 2px, behind cards */}
-        <div className="absolute top-[52px] left-[80px] right-[80px] flex items-center z-0">
-          {/* Purple segment (completed) */}
+      <div className="hidden md:block relative pt-6">
+        {/* Progress connector line - positioned at the Step badge level (top of cards) */}
+        <div className="absolute top-[18px] left-[calc(16.67%-8px)] right-[calc(16.67%-8px)] flex items-center z-0">
+          {/* Purple solid segment (to current step) */}
           <div 
             className="h-0.5 bg-[var(--purple)]"
             style={{ width: `${(currentStepIndex / (steps.length - 1)) * 100}%` }}
           />
           {/* Gray dashed segment (remaining) */}
           <div 
-            className="h-0.5 flex-1 border-t-2 border-dashed border-gray-300 dark:border-white/20"
+            className="h-0.5 flex-1"
+            style={{ 
+              backgroundImage: 'repeating-linear-gradient(to right, #D1D5DB 0, #D1D5DB 6px, transparent 6px, transparent 12px)',
+            }}
           />
         </div>
         
-        {/* Junction dots */}
-        <div className="absolute top-[48px] left-0 right-0 flex justify-between px-[76px] z-20 pointer-events-none">
+        {/* Junction dots at each step */}
+        <div className="absolute top-[14px] left-0 right-0 flex justify-around z-20 pointer-events-none">
           {steps.map((step, index) => {
             const isPastOrCurrent = index <= currentStepIndex;
             return (
@@ -74,7 +77,7 @@ function OnboardingStepper() {
                 className={`w-2 h-2 rounded-full ${
                   isPastOrCurrent 
                     ? 'bg-[var(--purple)]' 
-                    : 'bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-white/20'
+                    : 'bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-white/20'
                 }`}
               />
             );
@@ -106,9 +109,9 @@ function OnboardingStepper() {
                     }
                   `}
                 >
-                  {/* Step number badge - solid filled */}
+                  {/* Step number badge - solid filled, positioned inside card */}
                   <div className={`
-                    absolute -top-3 left-5 px-3 py-1 rounded-full text-xs font-bold
+                    inline-flex px-3 py-1 rounded-full text-xs font-bold mb-3
                     ${isActive 
                       ? 'bg-[var(--purple)] text-white shadow-sm' 
                       : isCompleted || isPast
@@ -119,7 +122,7 @@ function OnboardingStepper() {
                     Step {step.number}
                   </div>
                   
-                  <div className="flex items-start gap-4 mt-2">
+                  <div className="flex items-start gap-4">
                     <div className={`
                       w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0
                       ${isActive 

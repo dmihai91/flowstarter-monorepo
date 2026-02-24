@@ -164,67 +164,69 @@ export default function LandingPage() {
   useEffect(() => {
     if (hasInteracted) return; // Stop auto-cycling once user interacts
     
-    // First transition after 2 seconds (faster start)
-    const firstTimeout = setTimeout(() => {
-      if (hasInteracted) return;
-      advanceDemo();
-    }, 2000);
-    
-    // Then cycle every 3.5 seconds
-    const cycleInterval = setInterval(() => {
-      if (hasInteracted) return;
-      advanceDemo();
-    }, 3500);
+    let currentIndex = 0; // Start at 0, first advance goes to 1
     
     function advanceDemo() {
-      setDemoIndex(prev => {
-        const nextIndex = (prev + 1) % demoSequence.length;
-        const demo = demoSequence[nextIndex];
-        
-        // If cycling back to start, reset messages
-        if (nextIndex === 0) {
-          setMessages([]);
-          setMockSite({
-            hasContactForm: false,
-            hasTestimonials: false,
-            hasPricingSection: false,
-            primaryColor: 'violet',
-            hasAboutPage: false,
-            headerStyle: 'default',
-          });
-          // Show first message after brief pause
-          setTimeout(() => {
-            const firstDemo = demoSequence[0];
-            setMessages([{ role: 'user', text: firstDemo.prompt }]);
-            setIsTyping(true);
-            setTimeout(() => {
-              setIsTyping(false);
-              setMessages(prev => [...prev, { role: 'ai', text: firstDemo.response }]);
-              setMockSite(s => ({ ...s, ...firstDemo.siteState }));
-            }, 500);
-          }, 200);
-          return 0;
-        }
-        
-        // Add new message to history (accumulate)
-        setMessages(prev => [...prev, { role: 'user', text: demo.prompt }]);
-        setIsTyping(true);
-        
-        // AI response after typing delay
+      currentIndex = (currentIndex + 1) % demoSequence.length;
+      const demo = demoSequence[currentIndex];
+      
+      // If cycling back to start, reset everything
+      if (currentIndex === 0) {
+        setMessages([]);
+        setMockSite({
+          hasContactForm: false,
+          hasTestimonials: false,
+          hasPricingSection: false,
+          primaryColor: 'violet',
+          hasAboutPage: false,
+          headerStyle: 'default',
+        });
+        // Show first message after brief pause
         setTimeout(() => {
-          setIsTyping(false);
-          setMessages(prev => [...prev, { role: 'ai', text: demo.response }]);
-          // Update site state
-          setMockSite(s => ({ ...s, ...demo.siteState }));
-        }, 500);
-        
-        return nextIndex;
-      });
+          const firstDemo = demoSequence[0];
+          setMessages([{ role: 'user', text: firstDemo.prompt }]);
+          setIsTyping(true);
+          setTimeout(() => {
+            setIsTyping(false);
+            setMessages([
+              { role: 'user', text: firstDemo.prompt },
+              { role: 'ai', text: firstDemo.response }
+            ]);
+            setMockSite(s => ({ ...s, ...firstDemo.siteState }));
+          }, 800);
+        }, 300);
+        return;
+      }
+      
+      // Add new message to history (accumulate)
+      setMessages(prev => [...prev, { role: 'user', text: demo.prompt }]);
+      setIsTyping(true);
+      
+      // AI response after typing delay
+      setTimeout(() => {
+        setIsTyping(false);
+        setMessages(prev => [...prev, { role: 'ai', text: demo.response }]);
+        // Update site state
+        setMockSite(s => ({ ...s, ...demo.siteState }));
+      }, 800);
     }
     
+    // First advance after 3 seconds
+    const timeoutId = setTimeout(() => {
+      advanceDemo();
+      
+      // Then continue every 5 seconds
+      const intervalId = setInterval(advanceDemo, 5000);
+      
+      // Store interval for cleanup
+      (window as any).__demoInterval = intervalId;
+    }, 3000);
+    
     return () => {
-      clearTimeout(firstTimeout);
-      clearInterval(cycleInterval);
+      clearTimeout(timeoutId);
+      if ((window as any).__demoInterval) {
+        clearInterval((window as any).__demoInterval);
+      }
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasInteracted]);

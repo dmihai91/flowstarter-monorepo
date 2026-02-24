@@ -1028,7 +1028,7 @@ export default function LandingPage() {
                 </div>
               </div>
               
-              {/* Money-back Guarantee */}
+              {/* Risk-Free Guarantee */}
               <div className="p-6 lg:p-8 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 dark:from-emerald-500/5 dark:to-emerald-500/10 border border-emerald-500/20">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
@@ -1037,8 +1037,8 @@ export default function LandingPage() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">30-Day Money-Back Guarantee</h3>
-                    <p className="text-sm text-gray-600 dark:text-white/50">Not happy with your site? Get a full refund within 30 days. No questions asked.</p>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Risk-Free Trial</h3>
+                    <p className="text-sm text-gray-600 dark:text-white/50">First month free on your subscription. Not happy within 30 days? Get 50% of your setup fee back. No questions asked.</p>
                   </div>
                 </div>
               </div>

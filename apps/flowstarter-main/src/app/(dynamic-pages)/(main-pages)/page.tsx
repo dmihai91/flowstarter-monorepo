@@ -818,7 +818,7 @@ export default function LandingPage() {
 
             <div className="max-w-lg mx-auto">
               {/* Starter Plan Card - Premium Treatment */}
-              <div className="group p-8 lg:p-10 rounded-2xl bg-gradient-to-br from-white via-white to-violet-50/50 dark:from-white/[0.04] dark:via-white/[0.03] dark:to-violet-500/[0.02] backdrop-blur-sm border-2 border-transparent bg-clip-padding shadow-xl shadow-violet-500/10 relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-violet-500/15" style={{ backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, rgba(168,85,247,0.3), rgba(59,130,246,0.3))', backgroundOrigin: 'border-box', backgroundClip: 'padding-box, border-box' }}>
+              <div className="group p-8 lg:p-10 rounded-2xl bg-gradient-to-br from-white via-white to-violet-50/50 dark:from-[#0f0f12] dark:via-[#0f0f12] dark:to-[#12101a] backdrop-blur-sm border-2 border-violet-500/30 dark:border-violet-500/40 shadow-xl shadow-violet-500/10 relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-violet-500/20">
                 {/* Beta badge */}
                 <div className="absolute top-4 right-4">
                   <span className="px-3 py-1 text-xs font-medium bg-violet-500 text-white rounded-full">50% off during beta</span>

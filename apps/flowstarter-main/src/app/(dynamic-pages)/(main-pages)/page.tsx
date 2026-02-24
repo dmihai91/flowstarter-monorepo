@@ -14,6 +14,7 @@ export default function LandingPage() {
   const [isTyping, setIsTyping] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [scrolled, setScrolled] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Mock site state for live preview
@@ -81,6 +82,7 @@ export default function LandingPage() {
   const handleSend = (directMessage?: string) => {
     const message = directMessage || inputValue.trim();
     if (!message || isTyping) return;
+    setHasInteracted(true);
     setMessages(prev => [...prev, { role: 'user', text: message }]);
     setInputValue('');
     setIsTyping(true);
@@ -128,8 +130,11 @@ export default function LandingPage() {
   }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    // Only auto-scroll after user has interacted (not on initial load)
+    if (hasInteracted) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, hasInteracted]);
 
   const mouseParallax = (factor: number) => ({
     transform: `translate(${(mousePos.x - (typeof window !== 'undefined' ? window.innerWidth / 2 : 0)) * factor}px, ${(mousePos.y - (typeof window !== 'undefined' ? window.innerHeight / 2 : 0)) * factor}px)`

@@ -244,7 +244,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Process - with subtle glass */}
+      {/* How It Works - Detailed */}
       <section className="relative py-24 md:py-32">
         <div className="max-w-6xl mx-auto px-6">
           <div className="mb-16">
@@ -252,16 +252,19 @@ export default function LandingPage() {
               How it works
             </span>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mt-4">
-              Live in 2-3 weeks.
+              From idea to live site in 2-3 weeks.
             </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-400 mt-6 max-w-2xl">
+              No templates. No DIY builders. Just tell us what you need, and we&apos;ll build it for you.
+            </p>
           </div>
 
           <div className="grid md:grid-cols-4 gap-6">
             {[
-              { num: '01', title: 'Discovery', desc: 'Free call to understand your goals.' },
-              { num: '02', title: 'Design', desc: 'We create mockups until you love it.' },
-              { num: '03', title: 'Build', desc: 'Clean code, fast hosting configured.' },
-              { num: '04', title: 'Launch', desc: 'Deploy, test, and hand you the keys.' },
+              { num: '01', title: 'Discovery Call', desc: 'We hop on a free 30-minute call to understand your business, goals, and vision.' },
+              { num: '02', title: 'Design & Revise', desc: 'We create custom designs and iterate until you\'re 100% happy.' },
+              { num: '03', title: 'Build & Test', desc: 'We develop your site with clean code, fast hosting, and thorough testing.' },
+              { num: '04', title: 'Launch & Support', desc: 'We deploy your site and provide ongoing maintenance and updates.' },
             ].map((item) => (
               <div key={item.num} className="relative p-6 rounded-2xl bg-white/40 dark:bg-white/[0.02] backdrop-blur-xl border border-white/50 dark:border-white/[0.04]">
                 <span className="text-5xl font-bold bg-gradient-to-br from-[#A55AAC]/20 to-[#4D5DD9]/20 bg-clip-text text-transparent">{item.num}</span>
@@ -269,6 +272,146 @@ export default function LandingPage() {
                 <p className="text-gray-600 dark:text-gray-400 text-sm">{item.desc}</p>
               </div>
             ))}
+          </div>
+
+          {/* Platform Features */}
+          <div className="mt-20 p-8 md:p-12 rounded-3xl bg-white/60 dark:bg-white/[0.03] backdrop-blur-2xl border border-white/70 dark:border-white/[0.06]">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">What makes us different</h3>
+            <div className="grid md:grid-cols-3 gap-8">
+              <div>
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A55AAC]/20 to-[#4D5DD9]/20 flex items-center justify-center mb-4">
+                  <svg className="w-5 h-5 text-[#7B6AD8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+                  </svg>
+                </div>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Real Human Support</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">No chatbots. Direct access to your designer via our client portal.</p>
+              </div>
+              <div>
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A55AAC]/20 to-[#4D5DD9]/20 flex items-center justify-center mb-4">
+                  <svg className="w-5 h-5 text-[#7B6AD8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                  </svg>
+                </div>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Unlimited Revisions</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">We iterate until you love it. No extra charges for design changes.</p>
+              </div>
+              <div>
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A55AAC]/20 to-[#4D5DD9]/20 flex items-center justify-center mb-4">
+                  <svg className="w-5 h-5 text-[#7B6AD8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                  </svg>
+                </div>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Lightning Fast</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Sites load in under 2 seconds. Optimized for SEO and conversions.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section className="relative py-24 md:py-32">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="mb-16 text-center">
+            <span className="text-transparent bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] bg-clip-text font-semibold text-sm uppercase tracking-wider">
+              Simple pricing
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mt-4">
+              One price. Everything included.
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-400 mt-6 max-w-2xl mx-auto">
+              No hidden fees. No surprise invoices. Just a simple monthly subscription.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {/* Starter */}
+            <div className="p-8 rounded-3xl bg-white/60 dark:bg-white/[0.03] backdrop-blur-2xl border border-white/70 dark:border-white/[0.06]">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Starter</h3>
+              <p className="text-gray-500 dark:text-gray-400 mt-2 text-sm">Perfect for small businesses</p>
+              <div className="mt-6">
+                <span className="text-4xl font-bold text-gray-900 dark:text-white">$149</span>
+                <span className="text-gray-500 dark:text-gray-400">/month</span>
+              </div>
+              <ul className="mt-8 space-y-4">
+                {['Up to 5 pages', 'Mobile responsive', 'Contact form', 'Basic SEO setup', 'SSL certificate', 'Monthly updates'].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                    <svg className="w-5 h-5 text-[#7B6AD8] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="block mt-8">
+                <Button className="w-full rounded-xl bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/15 text-gray-900 dark:text-white border-0">
+                  Get Started
+                </Button>
+              </a>
+            </div>
+
+            {/* Professional - Featured */}
+            <div className="relative p-[1px] rounded-3xl bg-gradient-to-br from-[#A55AAC] via-[#7B6AD8] to-[#4D5DD9]">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] rounded-full text-white text-sm font-medium">
+                Most Popular
+              </div>
+              <div className="h-full p-8 rounded-3xl bg-white dark:bg-[hsl(240,8%,10%)]">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Professional</h3>
+                <p className="text-gray-500 dark:text-gray-400 mt-2 text-sm">For growing businesses</p>
+                <div className="mt-6">
+                  <span className="text-4xl font-bold text-gray-900 dark:text-white">$299</span>
+                  <span className="text-gray-500 dark:text-gray-400">/month</span>
+                </div>
+                <ul className="mt-8 space-y-4">
+                  {['Up to 15 pages', 'Everything in Starter', 'Blog functionality', 'Advanced SEO', 'Analytics dashboard', 'Priority support', 'Weekly updates'].map((item, i) => (
+                    <li key={i} className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                      <svg className="w-5 h-5 text-[#7B6AD8] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="block mt-8">
+                  <Button className="w-full rounded-xl bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] hover:opacity-90 text-white border-0 shadow-lg shadow-purple-500/25">
+                    Get Started
+                  </Button>
+                </a>
+              </div>
+            </div>
+
+            {/* Enterprise */}
+            <div className="p-8 rounded-3xl bg-white/60 dark:bg-white/[0.03] backdrop-blur-2xl border border-white/70 dark:border-white/[0.06]">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Enterprise</h3>
+              <p className="text-gray-500 dark:text-gray-400 mt-2 text-sm">For established companies</p>
+              <div className="mt-6">
+                <span className="text-4xl font-bold text-gray-900 dark:text-white">$499</span>
+                <span className="text-gray-500 dark:text-gray-400">/month</span>
+              </div>
+              <ul className="mt-8 space-y-4">
+                {['Unlimited pages', 'Everything in Professional', 'E-commerce ready', 'Custom integrations', 'Dedicated account manager', 'Same-day updates', '99.9% uptime SLA'].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                    <svg className="w-5 h-5 text-[#7B6AD8] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="block mt-8">
+                <Button className="w-full rounded-xl bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/15 text-gray-900 dark:text-white border-0">
+                  Get Started
+                </Button>
+              </a>
+            </div>
+          </div>
+
+          {/* FAQ-style note */}
+          <div className="mt-16 text-center">
+            <p className="text-gray-500 dark:text-gray-400">
+              <span className="font-semibold text-gray-900 dark:text-white">No setup fees.</span> No contracts. Cancel anytime.
+            </p>
           </div>
         </div>
       </section>

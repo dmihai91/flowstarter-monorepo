@@ -987,10 +987,69 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Social Proof / Trust Section - Placeholder for beta */}
+        {/* Trust Section - Tech Badges + Guarantee */}
+        <section className="py-8 lg:py-12">
+          <div className="max-w-7xl mx-auto px-6 lg:px-12">
+            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+              {/* Tech Trust Badges */}
+              <div className="p-6 lg:p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+                <p className="text-xs uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-4 text-center">Built on technology trusted by millions</p>
+                <div className="flex items-center justify-center gap-6 flex-wrap">
+                  {/* Cloudflare */}
+                  <div className="flex flex-col items-center gap-1.5 opacity-50 hover:opacity-80 transition-opacity">
+                    <svg className="w-8 h-8" viewBox="0 0 64 64" fill="currentColor">
+                      <path d="M42.93 35.64l.82-2.67a1.5 1.5 0 00-.06-1.1 1.44 1.44 0 00-.87-.74l-20.42-1.1a.49.49 0 01-.4-.23.47.47 0 010-.46.52.52 0 01.45-.32l20.75-1.1a5.52 5.52 0 004.65-3.74l1.52-4.86a.9.9 0 00.04-.36 15.33 15.33 0 00-29.62 3.88c0 .36 0 .72.02 1.08a9.57 9.57 0 00-8.17 10.77 9.68 9.68 0 009.46 8.3h21.55a.52.52 0 00.45-.32z" className="text-gray-400 dark:text-white/40"/>
+                    </svg>
+                    <span className="text-[10px] text-gray-400 dark:text-white/30">Cloudflare</span>
+                  </div>
+                  {/* Next.js */}
+                  <div className="flex flex-col items-center gap-1.5 opacity-50 hover:opacity-80 transition-opacity">
+                    <svg className="w-8 h-8" viewBox="0 0 180 180" fill="none">
+                      <circle cx="90" cy="90" r="90" fill="currentColor" className="text-gray-400 dark:text-white/40"/>
+                      <path d="M149.508 157.52L69.142 54H54v71.97h12.114V69.384l73.885 95.461A90.304 90.304 0 00149.508 157.52z" fill="#fff" className="dark:fill-gray-900"/>
+                      <path d="M115 54h12v72h-12z" fill="#fff" className="dark:fill-gray-900"/>
+                    </svg>
+                    <span className="text-[10px] text-gray-400 dark:text-white/30">Next.js</span>
+                  </div>
+                  {/* Google Analytics */}
+                  <div className="flex flex-col items-center gap-1.5 opacity-50 hover:opacity-80 transition-opacity">
+                    <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor" className="text-gray-400 dark:text-white/40">
+                      <path d="M22.84 2.998v17.997c-.005 1.103-.9 1.998-2.003 2.003H3.164A2.006 2.006 0 011.16 20.995V2.998A2.006 2.006 0 013.164.995h17.673c1.103.005 1.998.9 2.003 2.003zM19.5 18.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0zm-5.25-4.5a1.5 1.5 0 10-3 0v4.5a1.5 1.5 0 003 0V14zm-5.25-6a1.5 1.5 0 10-3 0v10.5a1.5 1.5 0 003 0V8z"/>
+                    </svg>
+                    <span className="text-[10px] text-gray-400 dark:text-white/30">Analytics</span>
+                  </div>
+                  {/* Zoho */}
+                  <div className="flex flex-col items-center gap-1.5 opacity-50 hover:opacity-80 transition-opacity">
+                    <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor" className="text-gray-400 dark:text-white/40">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+                    </svg>
+                    <span className="text-[10px] text-gray-400 dark:text-white/30">Zoho Mail</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Money-back Guarantee */}
+              <div className="p-6 lg:p-8 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 dark:from-emerald-500/5 dark:to-emerald-500/10 border border-emerald-500/20">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-6 h-6 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">30-Day Money-Back Guarantee</h3>
+                    <p className="text-sm text-gray-600 dark:text-white/50">Not happy with your site? Get a full refund within 30 days. No questions asked.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Early Access Banner */}
         <section className="py-4 lg:py-5">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
-            <div className="text-center p-8 lg:p-12 rounded-2xl bg-gradient-to-r from-[var(--purple)]/5 via-blue-500/5 to-cyan-500/5 border border-[var(--purple)]/10 dark:border-[var(--purple)]/20">
+            <div className="text-center p-8 lg:p-10 rounded-2xl bg-gradient-to-r from-[var(--purple)]/5 via-blue-500/5 to-cyan-500/5 border border-[var(--purple)]/10 dark:border-[var(--purple)]/20">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] dark:text-[var(--purple)] text-sm font-medium mb-4">
                 <span className="w-2 h-2 rounded-full bg-[var(--purple)] animate-pulse" />
                 Early Access
@@ -1042,12 +1101,12 @@ export default function LandingPage() {
                   <p className="text-xs text-gray-400 dark:text-white/30 mt-2">Starts after your free first month</p>
                 </div>
                 
-                {/* Features - Grouped */}
+                {/* Features - Condensed to 5 Categories */}
                 <div className="space-y-4 mb-8">
                   {/* Setup & Build */}
                   <div>
                     <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Setup & Build</p>
-                    <ul className="space-y-2">
+                    <ul className="space-y-1.5">
                       {[
                         'Free discovery call + done-for-you site build',
                         'Up to 7 professionally designed pages',
@@ -1064,14 +1123,16 @@ export default function LandingPage() {
                     </ul>
                   </div>
                   
-                  {/* Hosting & Infrastructure */}
+                  {/* Hosting & Performance */}
                   <div>
-                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Hosting & Infrastructure</p>
-                    <ul className="space-y-2">
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Hosting & Performance</p>
+                    <ul className="space-y-1.5">
                       {[
                         'Hosting on global CDN (Cloudflare)',
                         'SSL certificate included',
                         '1 GB cloud storage',
+                        'Performance optimized (90+ Lighthouse score)',
+                        'Basic SEO setup (meta tags, sitemap, robots.txt)',
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
                           <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -1083,13 +1144,14 @@ export default function LandingPage() {
                     </ul>
                   </div>
                   
-                  {/* Communication */}
+                  {/* Communication & Support */}
                   <div>
-                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Communication</p>
-                    <ul className="space-y-2">
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Communication & Support</p>
+                    <ul className="space-y-1.5">
                       {[
                         'Professional email (2 mailboxes)',
                         '1 contact form with lead capture',
+                        'Email support (48h response)',
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
                           <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -1104,7 +1166,7 @@ export default function LandingPage() {
                   {/* Analytics & Dashboard */}
                   <div>
                     <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Analytics & Dashboard</p>
-                    <ul className="space-y-2">
+                    <ul className="space-y-1.5">
                       {[
                         'Built-in analytics dashboard (leads + page views)',
                         'Google Analytics integration',
@@ -1122,46 +1184,10 @@ export default function LandingPage() {
                   {/* AI & Customization */}
                   <div>
                     <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">AI & Customization</p>
-                    <ul className="space-y-2">
+                    <ul className="space-y-1.5">
                       {[
                         'AI-powered site customization credits (monthly)',
                         'First month free to customize',
-                      ].map((item, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
-                          <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  
-                  {/* SEO & Performance */}
-                  <div>
-                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">SEO & Performance</p>
-                    <ul className="space-y-2">
-                      {[
-                        'Basic SEO setup (meta tags, sitemap, robots.txt)',
-                        'Performance optimized (90+ Lighthouse score)',
-                      ].map((item, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
-                          <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  
-                  {/* Support */}
-                  <div>
-                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Support</p>
-                    <ul className="space-y-2">
-                      {[
-                        'Email support (48h response)',
-                        'No lock-in — cancel anytime',
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
                           <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -1207,6 +1233,7 @@ export default function LandingPage() {
                     <ul className="space-y-1.5 text-xs text-gray-400 dark:text-white/30">
                       <li>• Up to 3 sites, 1 subscription</li>
                       <li>• Blog, booking & newsletter integrations</li>
+                      <li>• Multi-language support</li>
                       <li>• Potential revenue tracking in dashboard</li>
                     </ul>
                   </div>
@@ -1229,8 +1256,10 @@ export default function LandingPage() {
                     <ul className="space-y-1.5 text-xs text-gray-400 dark:text-white/30">
                       <li>• E-commerce integrations (Shopify, Gumroad)</li>
                       <li>• Product catalog & Stripe payments</li>
+                      <li>• Advanced SEO & WhatsApp Business</li>
                       <li>• Full revenue tracking in dashboard</li>
                     </ul>
+                    <p className="text-[10px] text-gray-400/70 dark:text-white/20 mt-2 italic">Price varies based on complexity</p>
                   </div>
                 </div>
               </div>
@@ -1264,6 +1293,7 @@ export default function LandingPage() {
                   { q: 'Do I need any technical skills?', a: 'Zero. We handle the technical setup. The AI editor is built for people who\'ve never touched code.' },
                   { q: 'What happens when the beta ends?', a: 'Your beta discount (50% off) is locked for 1 year from signup. After that, pricing moves to standard rates (€299 setup / €29/month). You\'ll get 30 days notice before anything changes.' },
                   { q: 'What\'s included in the email?', a: 'Two professional email addresses with your domain (e.g., you@yourbusiness.com).' },
+                  { q: 'What kind of websites can you build?', a: 'We specialize in professional websites for freelancers, consultants, small businesses, restaurants, agencies, coaches, and creators. Whether you need a portfolio, a service page, a landing page, or a multi-page business site — we\'ve got you covered. E-commerce support is coming soon with our Business tier.' },
                 ].map((faq, i) => (
                   <div 
                     key={i} 

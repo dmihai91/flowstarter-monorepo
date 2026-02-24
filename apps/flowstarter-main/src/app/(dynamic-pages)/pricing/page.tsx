@@ -22,7 +22,7 @@ export default function PricingPage() {
     'Discovery call + done-for-you site build',
     'Up to 7 professionally designed pages',
     'Hosting on global CDN',
-    'Professional email (2 mailboxes)',
+    'Professional email (1 mailbox)',
     'Analytics dashboard (leads + page views)',
     'AI-powered site customization',
     'First month free',
@@ -35,7 +35,7 @@ export default function PricingPage() {
     'Up to 7 professionally designed pages',
     'Mobile-responsive design (looks great on any device)',
     'Custom domain setup and configuration',
-    'Professional email setup (2 mailboxes)',
+    'Professional email setup (1 mailbox)',
     'SSL certificate (HTTPS security)',
     'Contact form with lead capture',
     'Google Analytics integration',
@@ -54,7 +54,7 @@ export default function PricingPage() {
   // Monthly features (subscription)
   const monthlyFeatures = [
     'Website hosting (global CDN, automatic SSL)',
-    'Professional email (2 mailboxes)',
+    'Professional email (1 mailbox)',
     '1 GB cloud storage for your files and assets',
     'Analytics dashboard (leads + page views)',
     'AI-powered edits — content, pages, branding, SEO',

@@ -933,7 +933,7 @@ export default function LandingPage() {
                     'Up to 7 professionally designed pages',
                     'Mobile-responsive design (looks great on any device)',
                     'Custom domain setup and configuration',
-                    'Professional email setup (2 mailboxes)',
+                    'Professional email setup (1 mailbox)',
                     'Google Analytics integration',
                     'Basic SEO setup (meta tags, sitemap, robots.txt)',
                     'Performance optimized (90+ Lighthouse score)',
@@ -966,7 +966,7 @@ export default function LandingPage() {
                 <ul className="space-y-2">
                   {[
                     'Website hosting (global CDN, automatic SSL)',
-                    'Professional email (2 mailboxes)',
+                    'Professional email (1 mailbox)',
                     '1 GB cloud storage for files and assets',
                     'Analytics dashboard (leads + page views)',
                     '300 AI credits/month for content, pages, branding, SEO',
@@ -1151,7 +1151,7 @@ export default function LandingPage() {
                     <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Communication & Support</p>
                     <ul className="space-y-1.5">
                       {[
-                        'Professional email (2 mailboxes)',
+                        'Professional email (1 mailbox)',
                         '1 contact form with lead capture',
                         'Email support (48h response)',
                       ].map((item, i) => (
@@ -1297,7 +1297,7 @@ export default function LandingPage() {
                   { q: 'What if I want to cancel?', a: 'No lock-in. Cancel your subscription anytime. If you share feedback with us, we\'ll refund 50% of your setup fee. Either way, you can download all your site assets to use elsewhere.' },
                   { q: 'Do I need any technical skills?', a: 'Zero. We handle the technical setup. The AI editor is built for people who\'ve never touched code.' },
                   { q: 'What happens when the beta ends?', a: 'Your beta discount (50% off) is locked for 1 year from signup. After that, pricing moves to standard rates (€299 setup / €29/month). You\'ll get 30 days notice before anything changes.' },
-                  { q: 'What\'s included in the email?', a: 'Two professional email addresses with your domain (e.g., you@yourbusiness.com).' },
+                  { q: 'What\'s included in the email?', a: 'One professional email address with your domain (e.g., you@yourbusiness.com). Need more? We can add additional mailboxes.' },
                   { q: 'What kind of websites can you build?', a: 'We specialize in professional websites for freelancers, consultants, small businesses, restaurants, agencies, coaches, and creators. Whether you need a portfolio, a service page, a landing page, or a multi-page business site, we\'ve got you covered. E-commerce support is coming soon with our Business tier.' },
                   { q: 'Can I use my existing domain?', a: 'Absolutely. We\'ll help you connect your existing domain to your new site at no extra cost. If you don\'t have a domain yet, we can help you pick and set one up during the discovery call.' },
                   { q: 'What if I need more than 7 pages?', a: 'The Starter plan includes up to 7 pages, which covers most business websites. If you need more, we can discuss options during the discovery call, or you can add pages later using the AI editor.' },

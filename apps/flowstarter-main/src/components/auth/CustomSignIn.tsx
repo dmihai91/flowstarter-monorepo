@@ -8,6 +8,7 @@ import { useSignIn } from '@clerk/nextjs';
 import { useFormik } from 'formik';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import * as Yup from 'yup';
 import {
   useClerkErrorHandler,
@@ -21,12 +22,35 @@ export function CustomSignIn() {
   const { t } = useTranslations();
   const { handleError } = useClerkErrorHandler();
   const isEdgeBrowser = useEdgeBrowserDetection();
+  const searchParams = useSearchParams();
+  
+  // Get redirect URL from query params (for editor SSO flow)
+  const getRedirectUrl = (): string => {
+    const redirectUrl = searchParams.get('redirect_url');
+    // Only allow redirects to editor subdomain or same origin
+    if (redirectUrl) {
+      try {
+        const url = new URL(redirectUrl);
+        if (url.hostname.endsWith('flowstarter.dev') || 
+            url.hostname.endsWith('flowstarter.app') ||
+            url.hostname === 'localhost') {
+          return redirectUrl;
+        }
+      } catch {
+        // Invalid URL, fall through to default
+      }
+    }
+    return '/dashboard';
+  };
+  
+  const redirectTarget = getRedirectUrl();
+  
   const {
     isGoogleLoading,
     isAppleLoading,
     handleGoogleAuth: handleGoogleSignIn,
     handleAppleAuth: handleAppleSignIn,
-  } = useSocialAuth(signIn);
+  } = useSocialAuth(signIn, { redirectUrlComplete: redirectTarget });
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -63,13 +87,13 @@ export function CustomSignIn() {
 
         if (result.status === 'complete') {
           await setActive({ session: result.createdSessionId });
-          window.location.href = '/dashboard';
+          window.location.href = redirectTarget;
         }
       } catch (err: unknown) {
         const message = handleError(err, 'signIn');
-        // If session already exists, redirect to dashboard
+        // If session already exists, redirect
         if (message === '__SESSION_EXISTS__') {
-          window.location.href = '/dashboard';
+          window.location.href = redirectTarget;
           return;
         }
         setError(message);
@@ -121,7 +145,7 @@ export function CustomSignIn() {
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
         toast.success(t('auth.forgotPassword.success'));
-        window.location.href = '/dashboard';
+        window.location.href = redirectTarget;
       }
     } catch (err: any) {
       setError(

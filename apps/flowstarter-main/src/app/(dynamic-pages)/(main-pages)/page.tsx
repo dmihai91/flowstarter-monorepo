@@ -225,7 +225,7 @@ export default function LandingPage() {
         {/* Flow Field Background - Hero Section */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ height: '100vh' }}>
           <svg 
-            className="absolute inset-0 w-full h-full opacity-[0.20] dark:opacity-[0.28]"
+            className="absolute inset-0 w-full h-full opacity-[0.10] dark:opacity-[0.15]"
             viewBox="0 0 1200 800" 
             preserveAspectRatio="xMidYMid slice"
             fill="none"
@@ -672,7 +672,7 @@ export default function LandingPage() {
           {/* Flow Field Background - Process Section (different direction) */}
           <div className="absolute inset-0 pointer-events-none">
             <svg 
-              className="absolute inset-0 w-full h-full opacity-[0.18] dark:opacity-[0.24]"
+              className="absolute inset-0 w-full h-full opacity-[0.08] dark:opacity-[0.12]"
               viewBox="0 0 1200 600" 
               preserveAspectRatio="xMidYMid slice"
               fill="none"
@@ -938,7 +938,7 @@ export default function LandingPage() {
           {/* Flow Field Background - Footer CTA */}
           <div className="absolute inset-0 pointer-events-none">
             <svg 
-              className="absolute inset-0 w-full h-full opacity-[0.15] dark:opacity-[0.20]"
+              className="absolute inset-0 w-full h-full opacity-[0.08] dark:opacity-[0.12]"
               viewBox="0 0 1200 400" 
               preserveAspectRatio="xMidYMid slice"
               fill="none"

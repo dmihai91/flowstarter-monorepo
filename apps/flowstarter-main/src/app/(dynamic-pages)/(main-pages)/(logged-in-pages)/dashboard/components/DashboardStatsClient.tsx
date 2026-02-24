@@ -293,19 +293,28 @@ export function DashboardStatsClient({
             <span className="text-sm font-medium text-gray-500 dark:text-white/50">
               Integrations
             </span>
-            <Link
-              href="/dashboard/integrations"
-              className="text-xs font-medium text-[var(--purple)] hover:underline"
-            >
-              Set up →
-            </Link>
+            {hasLiveProject ? (
+              <Link
+                href="/dashboard/integrations"
+                className="text-xs font-medium text-[var(--purple)] hover:underline"
+              >
+                Set up →
+              </Link>
+            ) : (
+              <span className="text-xs text-gray-400 dark:text-white/30">
+                Available after launch
+              </span>
+            )}
           </div>
           
           <p className="text-sm text-gray-400 dark:text-white/40 mb-3">
-            Connect your tools after launch
+            {hasLiveProject 
+              ? 'Connect analytics, email & more' 
+              : 'Connect your tools once your site is live'
+            }
           </p>
           
-          <div className="flex items-center justify-around">
+          <div className="flex items-center justify-around flex-1">
             <IntegrationLogo name="Analytics" icon={BarChart3} />
             <IntegrationLogo name="Mailchimp" icon={Mail} />
             <IntegrationLogo name="Calendar" icon={() => (
@@ -329,10 +338,10 @@ export function DashboardStatsClient({
         return (
           <GlassCard 
             key={index} 
-            className="gap-4"
+            className="gap-4 h-full min-h-[180px]"
             style={animation.style}
           >
-            <div className={animation.className}>
+            <div className={`${animation.className} h-full flex flex-col`}>
               {card.content}
             </div>
           </GlassCard>

@@ -1,140 +1,210 @@
 'use client';
 
-import { PricingCard } from '@/components/PricingCard';
-import { useTranslations } from '@/lib/i18n';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import {
-  BookOpen,
-  Bot,
-  Briefcase,
-  Infinity as InfinityIcon,
-  LayoutGrid,
+  BarChart3,
+  Calendar,
+  Check,
+  Clock,
+  Crown,
+  Globe,
+  Headphones,
+  Layout,
+  Lock,
   Mail,
-  Palette,
+  MessageSquare,
   Rocket,
+  Shield,
   Sparkles,
-  Trophy,
-  UserCog,
+  Star,
   Users,
-  Wrench,
   Zap,
 } from 'lucide-react';
+import Link from 'next/link';
+
+const CALENDLY_URL = 'https://calendly.com/flowstarter/discovery';
 
 export function PricingSection() {
-  const { t } = useTranslations();
+  const starterFeatures = [
+    { icon: Users, text: 'Concierge setup with discovery call' },
+    { icon: Layout, text: 'Up to 7 pages' },
+    { icon: MessageSquare, text: 'Contact form included' },
+    { icon: Mail, text: 'Professional mailbox' },
+    { icon: Globe, text: 'Custom domain + hosting' },
+    { icon: BarChart3, text: 'Analytics dashboard' },
+    { icon: Sparkles, text: 'Monthly AI edit credits' },
+    { icon: Headphones, text: '48h email support' },
+  ];
 
   return (
     <section
       id="pricing"
       className="full-width-section py-16 md:py-24 lg:py-32 relative"
     >
-      {/* Distinct glassmorphism background for Pricing section */}
+      {/* Background */}
       <div className="absolute inset-0 backdrop-blur-xl bg-[rgba(243,243,243,0.3)] dark:bg-[rgba(58,58,74,0.3)]" />
       <div className="absolute inset-0 border-t border-b border-white/40 dark:border-white/10" />
-      {/* Subtle gradient overlay for distinction */}
-      <div className="absolute inset-0 bg-gradient-to-b from-amber-500/5 via-yellow-500/3 to-transparent pointer-events-none" />
-      {/* Animated gradient orbs */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[var(--purple)]/5 via-cyan-500/3 to-transparent pointer-events-none" />
+      
+      {/* Animated orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-amber-400/10 to-yellow-400/10 dark:from-amber-600/5 dark:to-yellow-600/5 blur-3xl animate-pulse" />
+        <div className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-[var(--purple)]/10 to-cyan-500/10 blur-3xl animate-pulse" />
         <div
-          className="absolute bottom-1/3 right-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-yellow-400/10 to-orange-400/10 dark:from-yellow-600/5 dark:to-orange-600/5 blur-3xl animate-pulse"
+          className="absolute bottom-1/3 right-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-cyan-500/10 to-[var(--purple)]/10 blur-3xl animate-pulse"
           style={{ animationDelay: '3s', animationDuration: '4s' }}
         />
       </div>
+
       <div className="full-width-content relative z-10">
         <div className="flex flex-col items-center justify-center space-y-6 text-center">
+          {/* Header */}
           <div className="space-y-4 max-w-[850px] mx-auto">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl tablet:text-4xl md:text-5xl">
-              {t('landing.pricing.sectionTitle')}
+            <Badge className="bg-gradient-to-r from-[var(--purple)] to-cyan-500 text-white border-0 px-4 py-1.5 text-sm font-semibold">
+              <Sparkles className="w-4 h-4 mr-2" />
+              Beta Pricing — 50% Off
+            </Badge>
+            
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+              Simple, transparent pricing
             </h2>
-            <p className="text-muted-foreground tablet:text-lg md:text-xl">
-              {t('landing.pricing.sectionSubtitle')}
+            
+            <p className="text-muted-foreground tablet:text-lg md:text-xl max-w-2xl mx-auto">
+              Get your professional website built by our team. 
+              50% off setup + 50% off subscription for your first year.
             </p>
+
+            {/* Limited spots */}
+            <div className="inline-flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-4 py-2 rounded-full">
+              <Clock className="w-4 h-4" />
+              <span className="font-medium">Limited beta spots available</span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 w-full max-w-7xl pt-6 px-2 sm:px-0">
-            {/* Free Plan */}
-            <PricingCard
-              title={t('landing.pricing.free.title')}
-              price={t('landing.pricing.free.price')}
-              period={t('landing.pricing.free.period')}
-              description={t('landing.pricing.free.description')}
-              features={[
-                { icon: Sparkles, text: t('landing.pricing.free.feature1') },
-                { icon: LayoutGrid, text: t('landing.pricing.free.feature2') },
-                { icon: Palette, text: t('landing.pricing.free.feature3') },
-                { icon: Wrench, text: t('landing.pricing.free.feature4') },
-                { icon: Users, text: t('landing.pricing.free.feature5') },
-              ]}
-              ctaText={t('landing.pricing.free.cta') || 'Get Started'}
-              ctaHref="/sign-up"
-            />
+          {/* Pricing Cards */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full max-w-5xl pt-8 px-2 sm:px-0">
+            
+            {/* STARTER - Main Card */}
+            <Card className="lg:col-span-1 relative bg-white/90 dark:bg-gray-800/90 border-2 border-[var(--purple)]/30 shadow-xl shadow-[var(--purple)]/5 overflow-hidden backdrop-blur-xl">
+              <div className="absolute -top-px left-0 right-0 h-1 bg-gradient-to-r from-[var(--purple)] to-cyan-500" />
+              
+              <CardContent className="p-6 sm:p-8">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--purple)]/20 to-cyan-500/20 flex items-center justify-center">
+                      <Rocket className="w-5 h-5 text-[var(--purple)]" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">Starter</h3>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Perfect for launch</p>
+                    </div>
+                  </div>
+                  <Badge className="bg-[var(--green)]/10 text-[var(--green)] border-[var(--green)]/20 text-xs">
+                    Available
+                  </Badge>
+                </div>
 
-            {/* Pro Plan */}
-            <PricingCard
-              title={t('landing.pricing.pro.title')}
-              price={t('landing.pricing.pro.price')}
-              period={t('landing.pricing.pro.period')}
-              description={t('landing.pricing.pro.description')}
-              features={[
-                { icon: Sparkles, text: t('landing.pricing.pro.feature1') },
-                { icon: LayoutGrid, text: t('landing.pricing.pro.feature2') },
-                { icon: Palette, text: t('landing.pricing.pro.feature3') },
-                { icon: BookOpen, text: t('landing.pricing.pro.feature4') },
-                { icon: Zap, text: t('landing.pricing.pro.feature5') },
-                { icon: Mail, text: t('landing.pricing.pro.feature6') },
-              ]}
-              ctaText={t('landing.pricing.pro.cta') || 'Get Started'}
-              ctaHref="/sign-up"
-              badge={t('landing.pricing.pro.badge')}
-              borderColor="var(--purple)"
-              ctaClassName="inline-flex h-11 w-full items-center justify-center rounded-[12px] px-4 text-sm font-medium transition-all duration-300 hover:scale-105 active:scale-[0.98] shadow-lg hover:shadow-xl"
-              ctaStyle={{
-                backgroundColor: 'var(--purple)',
-                color: 'white',
-              }}
-            />
+                {/* Setup Fee */}
+                <div className="mb-4 p-3 rounded-xl bg-gray-50 dark:bg-gray-900/50">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">One-time setup</p>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-xl text-gray-400 line-through">€299</span>
+                    <span className="text-3xl font-bold text-gray-900 dark:text-white">€150</span>
+                  </div>
+                </div>
 
-            {/* Premium Plan */}
-            <PricingCard
-              title={t('landing.pricing.premium.title')}
-              price={t('landing.pricing.premium.price')}
-              period={t('landing.pricing.premium.period')}
-              description={t('landing.pricing.premium.description')}
-              features={[
-                { icon: Sparkles, text: t('landing.pricing.premium.feature1') },
-                {
-                  icon: InfinityIcon,
-                  text: t('landing.pricing.premium.feature2'),
-                },
-                { icon: Sparkles, text: t('landing.pricing.premium.feature3') },
-                { icon: Bot, text: t('landing.pricing.premium.feature4') },
-                { icon: Wrench, text: t('landing.pricing.premium.feature5') },
-                { icon: Trophy, text: t('landing.pricing.premium.feature6') },
-              ]}
-              ctaText={t('landing.pricing.premium.cta') || 'Get Started'}
-              ctaHref="/sign-up"
-            />
+                {/* Monthly */}
+                <div className="mb-6 p-3 rounded-xl bg-gradient-to-br from-[var(--purple)]/5 to-cyan-500/5 border border-[var(--purple)]/10">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Monthly subscription</p>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-lg text-gray-400 line-through">€29</span>
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">€15</span>
+                    <span className="text-gray-500 text-sm">/mo</span>
+                  </div>
+                  <p className="text-[10px] text-[var(--purple)] mt-1">50% off for 1 year</p>
+                </div>
 
-            {/* Custom Plan */}
-            <PricingCard
-              title={t('landing.pricing.custom.title')}
-              price={t('landing.pricing.custom.price')}
-              period={` ${t('landing.pricing.custom.period')}`}
-              description={t('landing.pricing.custom.description')}
-              features={[
-                { icon: Briefcase, text: t('landing.pricing.custom.feature1') },
-                { icon: Sparkles, text: t('landing.pricing.custom.feature2') },
-                { icon: Rocket, text: t('landing.pricing.custom.feature3') },
-                { icon: Sparkles, text: t('landing.pricing.custom.feature4') },
-                { icon: Wrench, text: t('landing.pricing.custom.feature5') },
-                { icon: UserCog, text: t('landing.pricing.custom.feature6') },
-              ]}
-              ctaText={t('landing.pricing.custom.cta')}
-              className="mt-6"
-              ctaHref="https://calendly.com/flowstarter/custom-plan"
-              ctaClassName="inline-flex h-11 w-full items-center justify-center rounded-[12px] px-4 text-sm font-medium transition-all duration-300 hover:scale-105 active:scale-[0.98] backdrop-blur-xl border border-white dark:border-white/40 bg-[rgba(243,243,243,0.4)] dark:bg-[rgba(58,58,74,0.4)] text-gray-900 dark:text-white hover:bg-[rgba(243,243,243,0.6)] dark:hover:bg-[rgba(58,58,74,0.6)] shadow-md hover:shadow-lg"
-            />
+                {/* Features */}
+                <div className="space-y-2.5 mb-6">
+                  {starterFeatures.map((feature, index) => (
+                    <div key={index} className="flex items-start gap-2.5">
+                      <div className="w-4 h-4 rounded-full bg-[var(--green)]/10 flex items-center justify-center shrink-0 mt-0.5">
+                        <Check className="w-2.5 h-2.5 text-[var(--green)]" />
+                      </div>
+                      <span className="text-sm text-gray-600 dark:text-gray-300">{feature.text}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA */}
+                <a
+                  href={CALENDLY_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full text-center py-3 px-6 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+                  style={{
+                    background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+                  }}
+                >
+                  <Calendar className="w-4 h-4 inline-block mr-2" />
+                  Book Discovery Call
+                </a>
+              </CardContent>
+            </Card>
+
+            {/* Coming Soon Cards */}
+            <Card className="relative bg-gray-50/80 dark:bg-gray-800/50 border border-gray-200/50 dark:border-white/5 backdrop-blur-xl overflow-hidden">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-9 h-9 rounded-xl bg-gray-200/50 dark:bg-white/5 flex items-center justify-center">
+                      <Star className="w-4 h-4 text-gray-400" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-400">Pro</h3>
+                  </div>
+                  <Badge variant="outline" className="text-gray-400 border-gray-300 dark:border-gray-600 text-xs">
+                    <Lock className="w-3 h-3 mr-1" />
+                    Soon
+                  </Badge>
+                </div>
+                <p className="text-sm text-gray-400 mb-4">Multi-site, blog, booking, newsletter, multi-language</p>
+                <Button disabled className="w-full bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed">
+                  Coming Q2 2026
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="relative bg-gray-50/80 dark:bg-gray-800/50 border border-gray-200/50 dark:border-white/5 backdrop-blur-xl overflow-hidden">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-9 h-9 rounded-xl bg-gray-200/50 dark:bg-white/5 flex items-center justify-center">
+                      <Crown className="w-4 h-4 text-gray-400" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-400">Business</h3>
+                  </div>
+                  <Badge variant="outline" className="text-gray-400 border-gray-300 dark:border-gray-600 text-xs">
+                    <Lock className="w-3 h-3 mr-1" />
+                    Soon
+                  </Badge>
+                </div>
+                <p className="text-sm text-gray-400 mb-4">E-commerce, Stripe payments, advanced SEO, WhatsApp</p>
+                <Button disabled className="w-full bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed">
+                  Coming Q3 2026
+                </Button>
+              </CardContent>
+            </Card>
           </div>
+
+          {/* View full pricing link */}
+          <Link 
+            href="/pricing" 
+            className="text-sm text-[var(--purple)] hover:underline font-medium mt-4"
+          >
+            View full pricing details →
+          </Link>
         </div>
       </div>
     </section>

@@ -262,9 +262,9 @@ export default function LandingPage() {
   });
 
   const features = [
-    { num: '01', title: 'We talk', desc: 'Book a free 30-minute discovery call. We learn about your business, your brand, and your goals. You talk, we listen — no preparation needed.' },
+    { num: '01', title: 'We talk', desc: 'Book a free 30-minute discovery call. We learn about your business, your brand, and your goals. You talk, we listen. No preparation needed.' },
     { num: '02', title: 'We build', desc: 'Our AI engine generates your site from premium templates, tailored to your brand. We set up your domain, email, and hosting. You review, we refine.' },
-    { num: '03', title: 'You own it', desc: 'Your site goes live. From here, use the AI editor to update content, add pages, and tweak your design — anytime, no code needed. Your site, your rules.' },
+    { num: '03', title: 'You own it', desc: 'Your site goes live. From here, use the AI editor to update content, add pages, and tweak your design. Anytime, no code needed. Your site, your rules.' },
   ];
 
   return (
@@ -500,7 +500,7 @@ export default function LandingPage() {
               <div className={`transition-all duration-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/5 dark:bg-white/5 backdrop-blur-sm border border-gray-900/10 dark:border-white/10 mb-8">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-xs tracking-wide text-gray-600 dark:text-white/60">Beta — 50% off all pricing</span>
+                  <span className="text-xs tracking-wide text-gray-600 dark:text-white/60">Beta: 50% off all pricing</span>
                 </div>
                 
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
@@ -512,7 +512,7 @@ export default function LandingPage() {
                 </h1>
                 
                 <p className="text-lg lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed max-w-lg mb-3">
-                  Your professional website, built by us in 1–2 weeks — then yours to customize forever with AI. No code, no stress.
+                  Your professional website, built by us in 1-2 weeks, then yours to customize forever with AI. No code, no stress.
                 </p>
                 <p className="text-sm text-gray-400 dark:text-white/30 mb-10">
                   For freelancers, small businesses, and creators.
@@ -967,7 +967,7 @@ export default function LandingPage() {
                     'Professional email (2 mailboxes)',
                     '1 GB cloud storage for files and assets',
                     'Analytics dashboard (leads + page views)',
-                    '300 AI credits/month — content, pages, branding, SEO',
+                    '300 AI credits/month for content, pages, branding, SEO',
                     'Platform updates and improvements',
                     'Email support (48h response)',
                   ].map((item, i) => (
@@ -980,7 +980,7 @@ export default function LandingPage() {
                   ))}
                 </ul>
                 <p className="text-xs text-gray-400 dark:text-white/30 mt-4 pt-3 border-t border-gray-200 dark:border-white/5">
-                  First month free — billing starts 30 days after launch
+                  First month free. Billing starts 30 days after launch
                 </p>
               </div>
             </div>
@@ -1038,7 +1038,7 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">First Month Free</h3>
-                    <p className="text-sm text-gray-600 dark:text-white/50">Try your new site risk-free. Your subscription starts 30 days after launch — plenty of time to make sure you love it.</p>
+                    <p className="text-sm text-gray-600 dark:text-white/50">Try your new site risk-free. Your subscription starts 30 days after launch, plenty of time to make sure you love it.</p>
                   </div>
                 </div>
               </div>
@@ -1055,7 +1055,7 @@ export default function LandingPage() {
                 Early Access
               </div>
               <p className="text-lg text-gray-600 dark:text-white/60 max-w-xl mx-auto">
-                Launching beta — early adopters get <span className="font-semibold text-[var(--purple)] dark:text-[var(--purple)]">50% off all pricing</span> until v1.0 launches.
+                Launching beta. Early adopters get <span className="font-semibold text-[var(--purple)] dark:text-[var(--purple)]">50% off all pricing</span> until v1.0 launches.
               </p>
             </div>
           </div>
@@ -1186,9 +1186,9 @@ export default function LandingPage() {
                     <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">AI & Customization</p>
                     <ul className="space-y-1.5">
                       {[
-                        '300 AI credits/month — edit content, pages, branding, SEO',
+                        '300 AI credits/month to edit content, pages, branding, SEO',
                         'First month free to customize',
-                        'Need more? Top up anytime — €5 for 100 extra credits',
+                        'Need more? Top up anytime: €5 for 100 extra credits',
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
                           <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -1212,7 +1212,7 @@ export default function LandingPage() {
                 </a>
                 
                 {/* Footer note */}
-                <p className="text-xs text-gray-400 dark:text-white/30 text-center mt-4">No lock-in. Cancel anytime. Setup fee is non-refundable.</p>
+                <p className="text-xs text-gray-400 dark:text-white/30 text-center mt-4">No lock-in. Cancel anytime. Setup fee is partially refundable (you can download all site assets).</p>
               </div>
               
               {/* Coming Soon Tiers */}
@@ -1269,7 +1269,7 @@ export default function LandingPage() {
               
               {/* Fine print */}
               <p className="text-center text-sm text-gray-400 dark:text-white/30 mt-6">
-                No lock-in. Cancel anytime. Setup fee is non-refundable.
+                No lock-in. Cancel anytime. Setup fee is partially refundable (you can download all site assets).
               </p>
             </div>
           </div>
@@ -1289,17 +1289,17 @@ export default function LandingPage() {
               
               <div className="space-y-2">
                 {[
-                  { q: 'What happens on the discovery call?', a: 'We spend 30 minutes learning about your business, your goals, and your brand. You don\'t need to prepare anything — just show up and tell us about what you do. After the call, we\'ll send you a summary of what we discussed and start building your site within 24 hours.' },
+                  { q: 'What happens on the discovery call?', a: 'We spend 30 minutes learning about your business, your goals, and your brand. You don\'t need to prepare anything, just show up and tell us about what you do. After the call, we\'ll send you a summary of what we discussed and start building your site within 24 hours.' },
                   { q: 'How long until my site is live?', a: 'Most sites go live within 1–2 weeks after the discovery call. We\'ll keep you updated throughout the process.' },
-                  { q: 'Can I make changes after the site is built?', a: 'That\'s the whole point. Your subscription includes our AI editor — update text, add pages, change your branding, improve your SEO. All without writing a single line of code.' },
-                  { q: 'What if I want to cancel?', a: 'No lock-in. Cancel your subscription anytime. The setup fee is non-refundable since it covers real work (your discovery call and site build), but you keep all your site files.' },
+                  { q: 'Can I make changes after the site is built?', a: 'That\'s the whole point. Your subscription includes our AI editor: update text, add pages, change your branding, improve your SEO. All without writing a single line of code.' },
+                  { q: 'What if I want to cancel?', a: 'No lock-in. Cancel your subscription anytime. The setup fee is partially refundable, and you can download all your site assets to use elsewhere.' },
                   { q: 'Do I need any technical skills?', a: 'Zero. We handle the technical setup. The AI editor is built for people who\'ve never touched code.' },
                   { q: 'What happens when the beta ends?', a: 'Your beta discount (50% off) is locked for 1 year from signup. After that, pricing moves to standard rates (€299 setup / €29/month). You\'ll get 30 days notice before anything changes.' },
                   { q: 'What\'s included in the email?', a: 'Two professional email addresses with your domain (e.g., you@yourbusiness.com).' },
-                  { q: 'What kind of websites can you build?', a: 'We specialize in professional websites for freelancers, consultants, small businesses, restaurants, agencies, coaches, and creators. Whether you need a portfolio, a service page, a landing page, or a multi-page business site — we\'ve got you covered. E-commerce support is coming soon with our Business tier.' },
+                  { q: 'What kind of websites can you build?', a: 'We specialize in professional websites for freelancers, consultants, small businesses, restaurants, agencies, coaches, and creators. Whether you need a portfolio, a service page, a landing page, or a multi-page business site, we\'ve got you covered. E-commerce support is coming soon with our Business tier.' },
                   { q: 'Can I use my existing domain?', a: 'Absolutely. We\'ll help you connect your existing domain to your new site at no extra cost. If you don\'t have a domain yet, we can help you pick and set one up during the discovery call.' },
-                  { q: 'What if I need more than 7 pages?', a: 'The Starter plan includes up to 7 pages, which covers most business websites. If you need more, we can discuss options during the discovery call — or you can add pages later using the AI editor.' },
-                  { q: 'What are AI credits?', a: 'Each AI credit lets you make one edit to your site — update text, change colors, add a section, tweak your layout, improve SEO, and more. Your Starter plan includes 300 credits per month, which is more than enough for most businesses (the average client uses about 30-50 per month). If you ever need more, you can top up with 100 extra credits for €5. Unused credits don\'t roll over.' },
+                  { q: 'What if I need more than 7 pages?', a: 'The Starter plan includes up to 7 pages, which covers most business websites. If you need more, we can discuss options during the discovery call, or you can add pages later using the AI editor.' },
+                  { q: 'What are AI credits?', a: 'Each AI credit lets you make one edit to your site: update text, change colors, add a section, tweak your layout, improve SEO, and more. Your Starter plan includes 300 credits per month, which is more than enough for most businesses (the average client uses about 30-50 per month). If you ever need more, you can top up with 100 extra credits for €5. Unused credits don\'t roll over.' },
                 ].map((faq, i) => (
                   <div 
                     key={i} 

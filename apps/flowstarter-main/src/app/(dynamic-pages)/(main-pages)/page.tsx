@@ -1211,7 +1211,7 @@ export default function LandingPage() {
                 </a>
                 
                 {/* Footer note */}
-                <p className="text-xs text-gray-400 dark:text-white/30 text-center mt-4">No lock-in. Cancel anytime. Setup fee is non-refundable.</p>
+                <p className="text-xs text-gray-400 dark:text-white/30 text-center mt-4">No lock-in. Cancel anytime. Setup fee is 50% refundable within 30 days.</p>
               </div>
               
               {/* Coming Soon Tiers */}
@@ -1266,7 +1266,7 @@ export default function LandingPage() {
               
               {/* Fine print */}
               <p className="text-center text-sm text-gray-400 dark:text-white/30 mt-6">
-                No lock-in. Cancel anytime. Setup fee is non-refundable.
+                No lock-in. Cancel anytime. Setup fee is 50% refundable within 30 days.
               </p>
             </div>
           </div>
@@ -1289,7 +1289,7 @@ export default function LandingPage() {
                   { q: 'What happens on the discovery call?', a: 'We spend 30 minutes learning about your business, your goals, and your brand. You don\'t need to prepare anything — just show up and tell us about what you do. After the call, we\'ll send you a summary of what we discussed and start building your site within 24 hours.' },
                   { q: 'How long until my site is live?', a: 'Most sites go live within 1–2 weeks after the discovery call. We\'ll keep you updated throughout the process.' },
                   { q: 'Can I make changes after the site is built?', a: 'That\'s the whole point. Your subscription includes our AI editor — update text, add pages, change your branding, improve your SEO. All without writing a single line of code.' },
-                  { q: 'What if I want to cancel?', a: 'No lock-in. Cancel your subscription anytime. The setup fee is non-refundable since it covers real work (your discovery call and site build), but you keep all your site files.' },
+                  { q: 'What if I want to cancel?', a: 'No lock-in. Cancel your subscription anytime. Not happy within 30 days? Get 50% of your setup fee back. You keep all your site files either way.' },
                   { q: 'Do I need any technical skills?', a: 'Zero. We handle the technical setup. The AI editor is built for people who\'ve never touched code.' },
                   { q: 'What happens when the beta ends?', a: 'Your beta discount (50% off) is locked for 1 year from signup. After that, pricing moves to standard rates (€299 setup / €29/month). You\'ll get 30 days notice before anything changes.' },
                   { q: 'What\'s included in the email?', a: 'Two professional email addresses with your domain (e.g., you@yourbusiness.com).' },

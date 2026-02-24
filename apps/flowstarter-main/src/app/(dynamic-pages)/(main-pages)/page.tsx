@@ -851,6 +851,9 @@ export default function LandingPage() {
                   { q: 'What happens on the discovery call?', a: 'We spend 30–45 minutes learning about your business, your goals, and your brand. You don\'t need to prepare anything — just show up and tell us about what you do. We handle the rest.' },
                   { q: 'How long until my site is live?', a: 'Most sites go live within 1–2 weeks after the discovery call. We\'ll keep you updated throughout the process.' },
                   { q: 'Can I make changes after the site is built?', a: 'That\'s the whole point. Your subscription includes our AI editor — update text, add pages, change your branding, improve your SEO. All without writing a single line of code.' },
+                  { q: 'Do I need any technical skills?', a: 'Zero. We handle the technical setup. The AI editor is built for people who\'ve never touched code.' },
+                  { q: 'What happens when the beta ends?', a: 'Pricing moves to the standard rate (€199 setup / €19 per month). You\'ll get 30 days notice before anything changes.' },
+                  { q: 'What\'s included in the email?', a: 'Two professional email addresses with your domain (e.g., you@yourbusiness.com). Powered by Zoho Mail.' },
                   { q: 'What if I want to cancel?', a: 'No lock-in. Cancel your subscription anytime. The setup fee is non-refundable since it covers real work (your discovery call and site build), but you keep all your site files.' },
                 ].map((faq, i) => (
                   <div key={i} className="p-6 rounded-2xl bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/10 hover:shadow-lg transition-all">
@@ -869,19 +872,22 @@ export default function LandingPage() {
           
           <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center relative">
             <h2 className="text-4xl lg:text-6xl font-bold leading-tight mb-6">
-              Ready to
+              Ready to get your
               <br />
-              <span className="bg-gradient-to-r from-violet-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent">convert?</span>
+              <span className="bg-gradient-to-r from-violet-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent">business online?</span>
             </h2>
             <p className="text-lg text-gray-500 dark:text-white/40 mb-10 max-w-md mx-auto">
-              Book a free 30-minute call. Let's build a website that actually works for your business.
+              Book a free discovery call. We'll handle everything from there.
             </p>
             <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
               <Button className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl px-10 h-14 text-base font-semibold shadow-lg transition-all hover:scale-[1.02]">
                 Book Free Discovery Call
+                <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
               </Button>
             </a>
-            <p className="text-sm text-gray-400 dark:text-white/20 mt-4">No credit card required</p>
+            <p className="text-sm text-gray-400 dark:text-white/20 mt-4">€99.50 setup during beta · First month free · No code required</p>
           </div>
         </section>
 

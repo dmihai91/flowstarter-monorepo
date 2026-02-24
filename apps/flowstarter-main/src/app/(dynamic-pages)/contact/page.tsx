@@ -255,7 +255,7 @@ export default function ContactPage() {
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Other ways to reach us</h2>
                 <div className="space-y-4">
                   <a 
-                    href="mailto:hello@flowstarter.dev"
+                    href="mailto:hello@flowstarter.app"
                     className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group"
                   >
                     <div className="w-10 h-10 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center">
@@ -265,7 +265,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white group-hover:text-[var(--purple)] transition-colors">Email</p>
-                      <p className="text-sm text-gray-500 dark:text-white/50">hello@flowstarter.dev</p>
+                      <p className="text-sm text-gray-500 dark:text-white/50">hello@flowstarter.app</p>
                     </div>
                   </a>
                   <a 

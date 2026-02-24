@@ -1402,7 +1402,7 @@ export default function LandingPage() {
                   <span className="text-gray-300 dark:text-white/10">•</span>
                   <Link href="/terms" className="hover:text-gray-900 dark:hover:text-white transition-colors">Terms</Link>
                   <span className="text-gray-300 dark:text-white/10">•</span>
-                  <a href="mailto:hello@flowstarter.dev" className="hover:text-gray-900 dark:hover:text-white transition-colors">Contact</a>
+                  <a href="mailto:hello@flowstarter.app" className="hover:text-gray-900 dark:hover:text-white transition-colors">Contact</a>
                 </nav>
                 
                 {/* Social Links + Login */}

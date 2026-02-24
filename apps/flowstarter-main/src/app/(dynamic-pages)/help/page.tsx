@@ -157,12 +157,12 @@ export default function HelpPage() {
               <p className="text-sm text-gray-500 dark:text-white/50">Free 30-minute call to discuss your project</p>
             </a>
             <a 
-              href="mailto:hello@flowstarter.dev"
+              href="mailto:hello@flowstarter.app"
               className="p-6 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 hover:border-[var(--purple)]/40 transition-all group"
             >
               <div className="text-3xl mb-3">✉️</div>
               <h3 className="font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-[var(--purple)] transition-colors">Email Support</h3>
-              <p className="text-sm text-gray-500 dark:text-white/50">hello@flowstarter.dev • 48h response</p>
+              <p className="text-sm text-gray-500 dark:text-white/50">hello@flowstarter.app • 48h response</p>
             </a>
           </div>
 

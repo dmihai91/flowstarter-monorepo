@@ -110,7 +110,7 @@ function GlobalErrorContent({
                 Need immediate help?
               </p>
               <a 
-                href="mailto:hello@flowstarter.dev"
+                href="mailto:hello@flowstarter.app"
                 className="text-sm text-[#7B6AD8] hover:underline font-medium"
               >
                 Contact Support →

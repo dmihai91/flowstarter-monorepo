@@ -217,7 +217,7 @@ export default function LandingPage() {
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-12">
                   <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-                    <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl px-8 h-14 text-base font-semibold shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all hover:scale-[1.02] group">
+                    <Button className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl px-8 h-14 text-base font-semibold shadow-lg transition-all hover:scale-[1.02] group">
                       Book Free Discovery Call
                       <svg className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -539,7 +539,7 @@ export default function LandingPage() {
               Book a free 30-minute call. No sales pitch. Just a conversation about your website.
             </p>
             <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-              <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-violet-600 hover:to-blue-600 text-white rounded-xl px-10 h-14 text-base font-semibold shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all hover:scale-[1.02]">
+              <Button className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl px-10 h-14 text-base font-semibold shadow-lg transition-all hover:scale-[1.02]">
                 Book Free Discovery Call
               </Button>
             </a>

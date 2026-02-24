@@ -9,7 +9,7 @@
 /**
  * Team email domains that are allowed to access the editor
  */
-export const TEAM_EMAIL_DOMAINS = ['flowstarter.co', 'flowstarter.com'];
+export const TEAM_EMAIL_DOMAINS = ['flowstarter.app'];
 
 /**
  * Check if a user email is a team member (client-side)

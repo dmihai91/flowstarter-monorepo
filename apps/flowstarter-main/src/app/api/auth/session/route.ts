@@ -21,7 +21,7 @@ const ALLOWED_ORIGINS = [
 ];
 
 // Team email domains
-const TEAM_EMAIL_DOMAINS = ['flowstarter.co', 'flowstarter.com'];
+const TEAM_EMAIL_DOMAINS = ['flowstarter.app'];
 
 function getCorsHeaders(request: NextRequest) {
   const origin = request.headers.get('origin') || '';

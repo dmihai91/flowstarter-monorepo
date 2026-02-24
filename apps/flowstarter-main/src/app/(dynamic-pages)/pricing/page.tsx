@@ -190,7 +190,7 @@ export default function PricingPage() {
                 </a>
                 
                 <p className="text-center text-xs text-gray-400 dark:text-white/40 mt-4">
-                  No lock-in. Cancel anytime. Setup fee is partially refundable (you can download all site assets).
+                  No lock-in. Cancel anytime. 50% setup fee refund if you share feedback.
                 </p>
               </CardContent>
             </Card>

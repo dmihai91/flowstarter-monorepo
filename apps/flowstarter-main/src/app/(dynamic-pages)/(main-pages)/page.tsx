@@ -38,15 +38,15 @@ export default function LandingPage() {
     return aiResponses.default;
   };
 
-  const handleSend = () => {
-    if (!inputValue.trim() || isTyping) return;
-    const userMessage = inputValue.trim();
-    setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
+  const handleSend = (directMessage?: string) => {
+    const message = directMessage || inputValue.trim();
+    if (!message || isTyping) return;
+    setMessages(prev => [...prev, { role: 'user', text: message }]);
     setInputValue('');
     setIsTyping(true);
     setTimeout(() => {
       setIsTyping(false);
-      setMessages(prev => [...prev, { role: 'ai', text: getAiResponse(userMessage) }]);
+      setMessages(prev => [...prev, { role: 'ai', text: getAiResponse(message) }]);
     }, 800 + Math.random() * 400);
   };
 
@@ -90,7 +90,7 @@ export default function LandingPage() {
     { num: '01', title: 'Discovery Call', desc: 'We learn your business, goals, and vision in a focused 30-minute conversation.' },
     { num: '02', title: 'Custom Design', desc: 'Your site is designed and built from scratch. No templates. No compromises.' },
     { num: '03', title: 'AI Editor Access', desc: 'Update text, images, and layouts anytime by describing what you want.' },
-    { num: '04', title: 'Live in Days', desc: 'From call to launch in 3-5 business days. Domain, hosting, email—configured.' },
+    { num: '04', title: 'Your Draft Ready', desc: 'First draft in 1-2 weeks. Then customize it yourself with the AI editor—unlimited changes.' },
   ];
 
   return (
@@ -212,7 +212,7 @@ export default function LandingPage() {
                 </h1>
                 
                 <p className="text-lg lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed max-w-lg mb-10">
-                  One call. One week. A beautiful website you can update yourself—just by describing what you want.
+                  One call. Your draft in 1-2 weeks. Then customize it yourself with our AI editor—just describe what you want.
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-12">
@@ -238,7 +238,7 @@ export default function LandingPage() {
                 {/* Stats */}
                 <div className="flex items-center gap-8 pt-8 border-t border-gray-200 dark:border-white/10">
                   {[
-                    { value: '3-5', label: 'Days to launch' },
+                    { value: '1-2', label: 'Weeks to draft' },
                     { value: '∞', label: 'AI edits' },
                     { value: '0', label: 'Code needed' },
                   ].map((stat, i) => (
@@ -327,7 +327,7 @@ export default function LandingPage() {
                     <div className="flex items-center gap-3 p-2 rounded-xl bg-white/50 dark:bg-white/[0.03] backdrop-blur-lg border border-white/60 dark:border-white/10">
                       <input 
                         type="text" 
-                        placeholder="Try: Add a contact form..." 
+                        placeholder="Try it—type a change..." 
                         className="flex-1 bg-transparent text-sm outline-none px-3 placeholder:text-gray-400 dark:placeholder:text-white/20 text-gray-900 dark:text-white"
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
@@ -343,6 +343,20 @@ export default function LandingPage() {
                         </svg>
                       </button>
                     </div>
+
+                    {/* Quick prompts */}
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {['Add contact form', 'Change the colors', 'Create an About page'].map((prompt) => (
+                        <button
+                          key={prompt}
+                          onClick={() => handleSend(prompt)}
+                          disabled={isTyping}
+                          className="px-3 py-1.5 text-xs rounded-full bg-white/40 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 border border-gray-200/50 dark:border-white/10 text-gray-600 dark:text-white/50 transition-all disabled:opacity-50 hover:scale-105"
+                        >
+                          {prompt}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
@@ -351,8 +365,8 @@ export default function LandingPage() {
                   className="absolute -bottom-4 -right-4 w-24 h-24 rounded-2xl bg-gradient-to-br from-violet-500 to-blue-500 shadow-xl flex flex-col items-center justify-center animate-float text-white"
                   style={{ animationDelay: '1s' }}
                 >
-                  <div className="text-2xl font-bold">Live</div>
-                  <div className="text-xs text-white/70">3-5 days</div>
+                  <div className="text-2xl font-bold">Draft</div>
+                  <div className="text-xs text-white/70">1-2 weeks</div>
                 </div>
                 
                 <div 
@@ -430,7 +444,7 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <ul className="space-y-4">
-                  {['30-minute discovery call', 'Custom design & development', 'Domain configuration', '2 professional email addresses', 'Global hosting setup', 'Live in 3-5 business days'].map((item, i) => (
+                  {['30-minute discovery call', 'Custom design & development', 'Domain configuration', '2 professional email addresses', 'First draft in 1-2 weeks', 'Then customize with AI editor'].map((item, i) => (
                     <li key={i} className="flex items-start gap-3 text-sm text-gray-500 dark:text-white/50">
                       <svg className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -496,7 +510,7 @@ export default function LandingPage() {
               <div className="space-y-6">
                 {[
                   { q: 'What happens on the discovery call?', a: 'We talk about your business, your customers, and what you want your website to do. Takes about 30 minutes. Come with ideas—or just questions.' },
-                  { q: 'How long until my site is ready?', a: '3 to 5 business days after the call. We send you a preview before going live. No surprises.' },
+                  { q: 'How long until my site is ready?', a: '1-2 weeks for your first draft. We send it for your review, then you can customize it yourself using the AI editor—change text, images, colors, add pages, anything you want.' },
                   { q: 'Can I make changes after you build it?', a: 'Yes—that\'s the whole point. The AI Editor lets you change text, images, colors, add pages, forms, anything. Just describe what you want.' },
                   { q: 'What if I need help?', a: 'Email us. We respond within 24 hours. If something breaks, we fix it. If you\'re stuck, we help.' },
                   { q: 'What happens after the beta?', a: 'Prices go to €199 setup and €19/month. If you sign up during beta, you keep the beta price forever.' },

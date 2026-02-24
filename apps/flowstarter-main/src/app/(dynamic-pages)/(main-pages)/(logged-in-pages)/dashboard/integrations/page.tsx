@@ -10,11 +10,11 @@ import {
 } from '@/components/ui/dialog';
 import { GlassCard } from '@/components/ui/glass-card';
 import { useIntegrations, type Integration } from '@/hooks/useIntegrations';
+import { useScrollAnimation, getStaggeredAnimation } from '@/hooks/useScrollAnimation';
 import { useTranslations } from '@/lib/i18n';
 import {
   BarChart3,
   Calendar,
-  CheckCircle2,
   Mail,
   MessageSquare,
   Plug,
@@ -33,10 +33,11 @@ export default function IntegrationsIndexPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [wizardOpen, setWizardOpen] = useState(false);
-  const [selectedProvider, setSelectedProvider] = useState<Provider | null>(
-    null
-  );
+  const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null);
   const [oauthStatus, setOauthStatus] = useState<string | null>(null);
+  
+  const { ref: heroRef, isVisible: heroVisible } = useScrollAnimation();
+  const { ref: cardsRef, isVisible: cardsVisible } = useScrollAnimation();
 
   // Handle OAuth callback from URL params
   useEffect(() => {
@@ -128,7 +129,12 @@ export default function IntegrationsIndexPage() {
   return (
     <PageContainer gradientVariant="integrations">
       {/* Hero Section */}
-      <section className="relative mb-10">
+      <section 
+        ref={heroRef}
+        className={`relative mb-10 transition-all duration-500 ease-out ${
+          heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        }`}
+      >
         <div className="relative z-10">
           {/* Header */}
           <div className="mb-2">
@@ -136,10 +142,8 @@ export default function IntegrationsIndexPage() {
               Connect your favorite tools
             </p>
           </div>
-          <h1 className="text-3xl lg:text-4xl font-bold tracking-tight mb-4">
-            <span className="bg-gradient-to-r from-[var(--green)] to-[var(--purple)] bg-clip-text text-transparent">
-              Integrations
-            </span>
+          <h1 className="text-3xl lg:text-4xl font-bold tracking-tight mb-4 text-gray-900 dark:text-white">
+            Integrations
           </h1>
 
           {/* Status badges */}
@@ -161,17 +165,23 @@ export default function IntegrationsIndexPage() {
               </span>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* Integration Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            {integrations.map((integration) => (
-              <IntegrationCard
-                key={integration.id}
-                integration={integration}
-                onConnect={() => handleConnect(integration.id as Provider)}
-              />
-            ))}
-          </div>
+      {/* Integration Cards */}
+      <section ref={cardsRef}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-10">
+          {integrations.map((integration, index) => {
+            const animation = getStaggeredAnimation(index, cardsVisible);
+            return (
+              <div key={integration.id} className={animation.className} style={animation.style}>
+                <IntegrationCard
+                  integration={integration}
+                  onConnect={() => handleConnect(integration.id as Provider)}
+                />
+              </div>
+            );
+          })}
         </div>
       </section>
 
@@ -199,7 +209,7 @@ export default function IntegrationsIndexPage() {
 
       {/* Divider */}
       <div className="relative flex items-center justify-center my-10">
-        <div className="flex-grow border-t border-gray-300/60 dark:border-gray-600/40"></div>
+        <div className="flex-grow border-t border-gray-200/60 dark:border-white/10"></div>
       </div>
 
       {/* Custom Integration Request Section */}

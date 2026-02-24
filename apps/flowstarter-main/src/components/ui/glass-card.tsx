@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { ReactNode, forwardRef } from 'react';
+import { ReactNode, forwardRef, CSSProperties } from 'react';
 
 interface GlassCardProps {
   children: ReactNode;
@@ -10,7 +10,7 @@ interface GlassCardProps {
   onClick?: () => void;
   href?: string;
   as?: 'div' | 'button' | 'link';
-  style?: React.CSSProperties;
+  style?: CSSProperties;
   variant?: 'default' | 'elevated';
 }
 
@@ -23,18 +23,18 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
       // Glassmorphism effect
       variant === 'elevated' 
         ? 'bg-white/80 dark:bg-white/[0.06]'
-        : 'bg-white/60 dark:bg-white/[0.03]',
+        : 'bg-white/70 dark:bg-white/[0.04]',
       'backdrop-blur-xl backdrop-saturate-150',
-      'border border-gray-200/80 dark:border-white/10',
+      'border border-gray-200/60 dark:border-white/10',
       // Shadow
       variant === 'elevated'
         ? 'shadow-[0_8px_32px_rgba(77,93,217,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)]'
-        : 'shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.2)]',
-      // Hover effects
+        : 'shadow-[0_4px_20px_rgba(0,0,0,0.04)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.2)]',
+      // Hover effects - lift + shadow + border
       'transition-all duration-300 ease-out',
-      'hover:-translate-y-0.5',
-      'hover:shadow-[0_12px_40px_rgba(77,93,217,0.1)] dark:hover:shadow-[0_12px_40px_rgba(77,93,217,0.15)]',
-      'hover:border-[var(--purple)]/20 dark:hover:border-[var(--purple)]/30',
+      'hover:-translate-y-1',
+      'hover:shadow-[0_16px_48px_rgba(77,93,217,0.12)] dark:hover:shadow-[0_16px_48px_rgba(77,93,217,0.15)]',
+      'hover:border-[var(--purple)]/30 dark:hover:border-[var(--purple)]/40',
       // Active state
       'active:scale-[0.99]',
       // Flex layout

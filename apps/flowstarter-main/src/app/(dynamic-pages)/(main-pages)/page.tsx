@@ -225,13 +225,13 @@ export default function LandingPage() {
         {/* Flow Field Background - Hero Section */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ height: '100vh' }}>
           <svg 
-            className="absolute inset-0 w-full h-full opacity-[0.08] dark:opacity-[0.12]"
+            className="absolute inset-0 w-full h-full opacity-[0.18] dark:opacity-[0.25]"
             viewBox="0 0 1200 800" 
             preserveAspectRatio="xMidYMid slice"
             fill="none"
           >
             {/* Flow lines group 1 - horizontal drift */}
-            <g className="flow-line-1" stroke="#C7B8EA" strokeWidth="1.5">
+            <g className="flow-line-1" stroke="#C7B8EA" strokeWidth="2">
               <path d="M-100,100 Q200,80 400,120 T800,100 T1300,140" />
               <path d="M-100,180 Q150,200 350,160 T750,200 T1300,180" />
               <path d="M-100,260 Q250,240 450,280 T850,250 T1300,290" />
@@ -239,14 +239,14 @@ export default function LandingPage() {
               <path d="M-100,420 Q220,400 420,440 T820,410 T1300,450" />
             </g>
             {/* Flow lines group 2 - diagonal drift */}
-            <g className="flow-line-2" stroke="#C7B8EA" strokeWidth="1">
+            <g className="flow-line-2" stroke="#C7B8EA" strokeWidth="1.5">
               <path d="M-50,500 Q300,480 500,520 T900,490 T1350,530" />
               <path d="M-50,580 Q250,600 450,560 T850,600 T1350,570" />
               <path d="M-50,660 Q350,640 550,680 T950,650 T1350,690" />
               <path d="M-50,740 Q280,760 480,720 T880,760 T1350,740" />
             </g>
             {/* Flow lines group 3 - subtle curves */}
-            <g className="flow-line-3" stroke="#C7B8EA" strokeWidth="0.8">
+            <g className="flow-line-3" stroke="#C7B8EA" strokeWidth="1.2">
               <path d="M0,50 Q400,30 600,70 T1000,40 T1200,80" />
               <path d="M0,380 Q350,400 550,360 T950,400 T1200,380" />
               <path d="M0,620 Q400,600 600,640 T1000,610 T1200,650" />
@@ -659,13 +659,13 @@ export default function LandingPage() {
           {/* Flow Field Background - Process Section (different direction) */}
           <div className="absolute inset-0 pointer-events-none">
             <svg 
-              className="absolute inset-0 w-full h-full opacity-[0.06] dark:opacity-[0.10]"
+              className="absolute inset-0 w-full h-full opacity-[0.15] dark:opacity-[0.20]"
               viewBox="0 0 1200 600" 
               preserveAspectRatio="xMidYMid slice"
               fill="none"
             >
               {/* Vertical-ish flow lines */}
-              <g className="flow-line-2" stroke="#C7B8EA" strokeWidth="1.2">
+              <g className="flow-line-2" stroke="#C7B8EA" strokeWidth="1.8">
                 <path d="M100,-50 Q80,150 120,300 T100,500 T140,700" />
                 <path d="M300,-50 Q320,100 280,250 T320,450 T280,700" />
                 <path d="M500,-50 Q480,180 520,330 T480,530 T520,700" />
@@ -674,7 +674,7 @@ export default function LandingPage() {
                 <path d="M1100,-50 Q1120,140 1080,290 T1120,490 T1080,700" />
               </g>
               {/* Cross-flow curves */}
-              <g className="flow-line-3" stroke="#C7B8EA" strokeWidth="0.8">
+              <g className="flow-line-3" stroke="#C7B8EA" strokeWidth="1.2">
                 <path d="M-50,200 Q400,180 600,220 T1000,190 T1300,230" />
                 <path d="M-50,400 Q350,420 550,380 T950,420 T1300,400" />
               </g>

@@ -34,9 +34,9 @@ function getPlatformConfig() {
     return { platformUrl: 'https://flowstarter.app', mode: 'production' as const };
   }
   
-  // Development (integration mode with dev domains)
+  // Development (integration mode with dev domains via Cloudflare Tunnel)
   if (hostname === 'editor.flowstarter.dev' || hostname === 'flowstarter.dev') {
-    return { platformUrl: 'http://flowstarter.dev:3000', mode: 'integration' as const };
+    return { platformUrl: 'https://flowstarter.dev', mode: 'integration' as const };
   }
   
   // Local isolation mode

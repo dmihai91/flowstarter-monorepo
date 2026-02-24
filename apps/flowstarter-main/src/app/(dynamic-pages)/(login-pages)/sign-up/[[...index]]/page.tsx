@@ -1,11 +1,6 @@
-import { SignUpClient } from './SignUpClient';
-import { unstable_noStore as noStore } from 'next/cache';
+import { redirect } from 'next/navigation';
 
-export default async function SignUpPage() {
-  noStore(); // Prevent any caching of this page
-
-  return <SignUpClient />;
+// Sign-up is disabled - registration is done by Flowstarter after discovery call
+export default function SignUpPage() {
+  redirect('/login');
 }
-
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;

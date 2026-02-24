@@ -91,8 +91,8 @@ export function LoginClient() {
   return (
     <AuthRedirectWrapper>
       <AuthLayout
-        title="Welcome back"
-        subtitle="Sign in to access your projects and manage your websites."
+        title="Client Login"
+        subtitle="Sign in to manage your website and access the AI Editor."
         marketingKeys={[]}
       >
         {noticeContent ? (

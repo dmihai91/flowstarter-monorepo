@@ -378,13 +378,13 @@ export default function LandingPage() {
                   </div>
 
                   {/* Split: Chat + Preview */}
-                  <div className="flex divide-x divide-gray-200/30 dark:divide-white/5 min-h-[320px]">
+                  <div className="flex flex-col sm:flex-row sm:divide-x divide-gray-200/30 dark:divide-white/5 min-h-[280px] sm:min-h-[320px]">
                     {/* Chat Panel */}
-                    <div className="w-1/2 p-4 flex flex-col">
-                      <div className="text-[9px] tracking-[0.15em] uppercase text-gray-400 dark:text-white/20 font-medium mb-3">AI Editor</div>
+                    <div className="w-full sm:w-1/2 p-3 sm:p-4 flex flex-col border-b sm:border-b-0 border-gray-200/30 dark:border-white/5">
+                      <div className="text-[9px] tracking-[0.15em] uppercase text-gray-400 dark:text-white/20 font-medium mb-2 sm:mb-3">AI Editor</div>
                       
                       {/* Messages - grows to fill space */}
-                      <div className="flex-1 space-y-2.5 overflow-y-auto mb-3 pr-1">
+                      <div className="flex-1 space-y-2 sm:space-y-2.5 overflow-y-auto mb-2 sm:mb-3 pr-1 max-h-[100px] sm:max-h-none">
                       {messages.map((msg, i) => (
                         msg.role === 'user' ? (
                           <div key={i} className="flex justify-end">
@@ -464,7 +464,7 @@ export default function LandingPage() {
                     </div>
 
                     {/* Mock Site Preview */}
-                    <div className="w-1/2 bg-white dark:bg-[#0f0f12] min-h-[260px] overflow-hidden">
+                    <div className="w-full sm:w-1/2 bg-white dark:bg-[#0f0f12] min-h-[200px] sm:min-h-[260px] overflow-hidden">
                       {/* Realistic site header */}
                       <div className={`flex items-center justify-between px-4 py-2.5 border-b transition-all duration-500 ${mockSite.headerStyle === 'minimal' ? 'bg-transparent border-transparent' : 'bg-gray-50/80 dark:bg-gray-900/50 border-gray-100 dark:border-gray-800'}`}>
                         <div className="flex items-center gap-2">

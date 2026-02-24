@@ -539,7 +539,7 @@ export default function LandingPage() {
                       /mo
                     </div>
                     <div className="text-xs text-gray-400 dark:text-white/30 mt-1">
-                      Hosting, email, and AI customization included. 50% off for first year.
+                      Hosting, email, and 300 AI edits/month included. 50% off for first year.
                     </div>
                   </div>
                 </div>
@@ -548,7 +548,7 @@ export default function LandingPage() {
                 <div className="flex items-center justify-center lg:justify-start pt-6 border-t border-gray-200 dark:border-white/10">
                   {[
                     { value: '1-2', label: 'Weeks' },
-                    { value: '∞', label: 'AI edits' },
+                    { value: '300', label: 'AI edits/mo' },
                     { value: '0', label: 'Code' },
                   ].map((stat, i) => (
                     <div key={i} className="flex items-center">
@@ -967,7 +967,7 @@ export default function LandingPage() {
                     'Professional email (2 mailboxes)',
                     '1 GB cloud storage for files and assets',
                     'Analytics dashboard (leads + page views)',
-                    'AI-powered edits — content, pages, branding, SEO',
+                    '300 AI credits/month — content, pages, branding, SEO',
                     'Platform updates and improvements',
                     'Email support (48h response)',
                   ].map((item, i) => (
@@ -1186,8 +1186,9 @@ export default function LandingPage() {
                     <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">AI & Customization</p>
                     <ul className="space-y-1.5">
                       {[
-                        'AI-powered site customization credits (monthly)',
+                        '300 AI credits/month — edit content, pages, branding, SEO',
                         'First month free to customize',
+                        'Need more? Top up anytime — €5 for 100 extra credits',
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
                           <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -1231,6 +1232,7 @@ export default function LandingPage() {
                     </div>
                     <p className="text-xs text-gray-400 dark:text-white/30 mb-3">Starting at €499 setup + €49/month</p>
                     <ul className="space-y-1.5 text-xs text-gray-400 dark:text-white/30">
+                      <li>• 750 AI credits/month</li>
                       <li>• Up to 3 sites, 1 subscription</li>
                       <li>• Blog, booking & newsletter integrations</li>
                       <li>• Multi-language support</li>
@@ -1254,6 +1256,7 @@ export default function LandingPage() {
                     </div>
                     <p className="text-xs text-gray-400 dark:text-white/30 mb-3">Starting at €699 setup + €79/month</p>
                     <ul className="space-y-1.5 text-xs text-gray-400 dark:text-white/30">
+                      <li>• 1500 AI credits/month</li>
                       <li>• E-commerce integrations (Shopify, Gumroad)</li>
                       <li>• Product catalog & Stripe payments</li>
                       <li>• Advanced SEO & WhatsApp Business</li>
@@ -1296,6 +1299,7 @@ export default function LandingPage() {
                   { q: 'What kind of websites can you build?', a: 'We specialize in professional websites for freelancers, consultants, small businesses, restaurants, agencies, coaches, and creators. Whether you need a portfolio, a service page, a landing page, or a multi-page business site — we\'ve got you covered. E-commerce support is coming soon with our Business tier.' },
                   { q: 'Can I use my existing domain?', a: 'Absolutely. We\'ll help you connect your existing domain to your new site at no extra cost. If you don\'t have a domain yet, we can help you pick and set one up during the discovery call.' },
                   { q: 'What if I need more than 7 pages?', a: 'The Starter plan includes up to 7 pages, which covers most business websites. If you need more, we can discuss options during the discovery call — or you can add pages later using the AI editor.' },
+                  { q: 'What are AI credits?', a: 'Each AI credit lets you make one edit to your site — update text, change colors, add a section, tweak your layout, improve SEO, and more. Your Starter plan includes 300 credits per month, which is more than enough for most businesses (the average client uses about 30-50 per month). If you ever need more, you can top up with 100 extra credits for €5. Unused credits don\'t roll over.' },
                 ].map((faq, i) => (
                   <div 
                     key={i} 

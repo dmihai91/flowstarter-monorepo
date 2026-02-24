@@ -15,44 +15,22 @@ export default function LandingPage() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [scrolled, setScrolled] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
-  // Mock site state
-  const [mockSite, setMockSite] = useState({
-    showTestimonials: true,
-    showContactForm: false,
-    primaryColor: 'orange',
-    hasAboutPage: false,
-  });
 
-  const aiResponses: Record<string, { text: string; action?: () => void }> = {
-    'contact': { 
-      text: "Done. Contact form added below the hero section.", 
-      action: () => setMockSite(s => ({ ...s, showContactForm: true }))
-    },
-    'form': { 
-      text: "Done. Contact form added below the hero section.", 
-      action: () => setMockSite(s => ({ ...s, showContactForm: true }))
-    },
-    'color': { 
-      text: "Updated. Primary color changed to blue across the site.", 
-      action: () => setMockSite(s => ({ ...s, primaryColor: s.primaryColor === 'orange' ? 'blue' : 'orange' }))
-    },
-    'testimonial': { 
-      text: "Testimonials section added with 3 review cards.", 
-      action: () => setMockSite(s => ({ ...s, showTestimonials: true }))
-    },
-    'about': { 
-      text: "About page created and linked in the navigation.", 
-      action: () => setMockSite(s => ({ ...s, hasAboutPage: true }))
-    },
-    'page': { 
-      text: "New page created and linked in the navigation.", 
-      action: () => setMockSite(s => ({ ...s, hasAboutPage: true }))
-    },
-    'default': { text: "Changes applied. Check the preview on the right." }
+  const aiResponses: Record<string, string> = {
+    'contact': "Done. Contact form added—name, email, message fields. Submissions route to your inbox.",
+    'form': "Done. Contact form added—name, email, message fields. Submissions route to your inbox.",
+    'color': "Updated. New primary color applied across buttons, links, and accents.",
+    'header': "Header refined. New background with subtle blur on scroll.",
+    'footer': "Phone number added to footer. Tap-to-call enabled for mobile.",
+    'phone': "Phone number added to footer. Tap-to-call enabled for mobile.",
+    'page': "New page created and linked in navigation. Ready for content.",
+    'testimonial': "Testimonials section added. Three cards ready for your reviews.",
+    'image': "Image replaced and optimized. Loading time reduced by 40%.",
+    'font': "Typography updated site-wide. Headlines and body text refreshed.",
+    'default': "Changes applied. Preview updated. What else?"
   };
 
-  const getAiResponse = (input: string): { text: string; action?: () => void } => {
+  const getAiResponse = (input: string): string => {
     const lower = input.toLowerCase();
     for (const [key, response] of Object.entries(aiResponses)) {
       if (key !== 'default' && lower.includes(key)) return response;
@@ -66,15 +44,9 @@ export default function LandingPage() {
     setMessages(prev => [...prev, { role: 'user', text: message }]);
     setInputValue('');
     setIsTyping(true);
-    
-    const response = getAiResponse(message);
-    
     setTimeout(() => {
       setIsTyping(false);
-      setMessages(prev => [...prev, { role: 'ai', text: response.text }]);
-      if (response.action) {
-        setTimeout(() => response.action!(), 300);
-      }
+      setMessages(prev => [...prev, { role: 'ai', text: getAiResponse(message) }]);
     }, 800 + Math.random() * 400);
   };
 
@@ -89,7 +61,7 @@ export default function LandingPage() {
     setIsLoaded(true);
     setMessages([
       { role: 'user', text: 'Add a testimonials section' },
-      { role: 'ai', text: 'Testimonials section added with 3 review cards.' }
+      { role: 'ai', text: 'Testimonials section added. Three cards ready for your reviews.' }
     ]);
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -149,12 +121,12 @@ export default function LandingPage() {
       `}</style>
 
       <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#0a0a0c] text-gray-900 dark:text-white font-display relative overflow-hidden transition-colors duration-300">
-        {/* Animated gradient orbs - WARM colors */}
+        {/* Animated gradient orbs */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
           <div 
             className="absolute w-[800px] h-[800px] rounded-full blur-[120px] opacity-20 dark:opacity-30 transition-transform duration-[2000ms]"
             style={{ 
-              background: 'radial-gradient(circle, rgba(251, 146, 60, 0.5) 0%, transparent 70%)',
+              background: 'radial-gradient(circle, rgba(251, 146, 60, 0.4) 0%, transparent 70%)',
               top: '-20%',
               left: '-10%',
               ...mouseParallax(0.02),
@@ -163,7 +135,7 @@ export default function LandingPage() {
           <div 
             className="absolute w-[600px] h-[600px] rounded-full blur-[100px] opacity-15 dark:opacity-25 transition-transform duration-[2000ms]"
             style={{ 
-              background: 'radial-gradient(circle, rgba(244, 63, 94, 0.5) 0%, transparent 70%)',
+              background: 'radial-gradient(circle, rgba(251, 191, 36, 0.4) 0%, transparent 70%)',
               top: '30%',
               right: '-5%',
               ...mouseParallax(-0.015),
@@ -172,7 +144,7 @@ export default function LandingPage() {
           <div 
             className="absolute w-[500px] h-[500px] rounded-full blur-[80px] opacity-10 dark:opacity-20"
             style={{ 
-              background: 'radial-gradient(circle, rgba(251, 191, 36, 0.4) 0%, transparent 70%)',
+              background: 'radial-gradient(circle, rgba(244, 63, 94, 0.3) 0%, transparent 70%)',
               bottom: '10%',
               left: '20%',
             }}
@@ -193,7 +165,7 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="flex items-center justify-between h-16">
               <Link href="/" className="flex items-center gap-3 group">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-rose-500 flex items-center justify-center shadow-lg shadow-orange-500/20 group-hover:shadow-orange-500/30 transition-shadow">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/20 group-hover:shadow-orange-500/30 transition-shadow">
                   <span className="text-white font-bold text-lg">F</span>
                 </div>
                 <span className="text-xl font-semibold tracking-tight">Flowstarter</span>
@@ -234,7 +206,7 @@ export default function LandingPage() {
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
                   Your website,
                   <br />
-                  <span className="bg-gradient-to-r from-orange-500 via-rose-500 to-amber-500 bg-clip-text text-transparent animate-gradient">
+                  <span className="bg-gradient-to-r from-orange-500 via-amber-500 to-rose-400 bg-clip-text text-transparent animate-gradient">
                     finally done right
                   </span>
                 </h1>
@@ -245,7 +217,7 @@ export default function LandingPage() {
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-12">
                   <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-                    <Button className="bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white rounded-xl px-8 h-14 text-base font-semibold shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 transition-all hover:scale-[1.02] group">
+                    <Button className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-xl px-8 h-14 text-base font-semibold shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 transition-all hover:scale-[1.02] group">
                       Book Free Discovery Call
                       <svg className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -278,182 +250,130 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Right: Interactive Editor with Mock Site */}
+              {/* Right: Interactive Editor */}
               <div className={`relative transition-all duration-1000 delay-200 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                 {/* Glow effect behind editor */}
-                <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/20 via-rose-500/20 to-amber-500/20 rounded-3xl blur-2xl animate-pulse-glow" />
+                <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/20 via-amber-500/20 to-rose-400/20 rounded-3xl blur-2xl animate-pulse-glow" />
                 
-                {/* Editor + Preview Container */}
+                {/* Editor window */}
                 <div className="relative bg-white/60 dark:bg-white/[0.05] backdrop-blur-2xl rounded-3xl border border-white/50 dark:border-white/10 shadow-[0_20px_70px_-15px_rgba(0,0,0,0.2)] dark:shadow-[0_20px_70px_-15px_rgba(0,0,0,0.5)] overflow-hidden">
                   {/* Browser chrome */}
-                  <div className="flex items-center justify-between px-4 py-3 bg-white/40 dark:bg-white/[0.03] border-b border-gray-200/50 dark:border-white/5">
-                    <div className="flex items-center gap-2">
-                      <div className="flex gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
-                        <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
-                        <div className="w-2.5 h-2.5 rounded-full bg-[#28ca42]" />
+                  <div className="flex items-center justify-between px-5 py-4 bg-white/40 dark:bg-white/[0.03] border-b border-gray-200/50 dark:border-white/5">
+                    <div className="flex items-center gap-3">
+                      <div className="flex gap-2">
+                        <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
+                        <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
+                        <div className="w-3 h-3 rounded-full bg-[#28ca42]" />
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100/80 dark:bg-white/5 backdrop-blur text-[10px] text-gray-400 dark:text-white/30">
-                      <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-gray-100/80 dark:bg-white/5 backdrop-blur text-xs text-gray-400 dark:text-white/30">
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                       </svg>
-                      yourbusiness.com
+                      yoursite.com
                     </div>
-                    <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="text-[9px] font-medium text-emerald-600 dark:text-emerald-400">LIVE</span>
+                      <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 tracking-wide">LIVE</span>
                     </div>
                   </div>
 
-                  {/* Split view: Chat + Mock Site */}
-                  <div className="flex">
-                    {/* Chat Panel */}
-                    <div className="w-1/2 p-4 border-r border-gray-200/30 dark:border-white/5">
-                      <div className="text-[9px] tracking-[0.15em] uppercase text-gray-400 dark:text-white/20 font-medium mb-3">AI Editor</div>
-                      
-                      {/* Messages */}
-                      <div className="space-y-3 max-h-[140px] overflow-y-auto mb-4 pr-1">
-                        {messages.map((msg, i) => (
-                          msg.role === 'user' ? (
-                            <div key={i} className="flex justify-end">
-                              <div className="max-w-[90%] px-3 py-2 rounded-xl rounded-tr-sm bg-gradient-to-r from-orange-500 to-rose-500 text-white text-[11px] shadow-sm">
-                                {msg.text}
-                              </div>
+                  {/* Chat interface */}
+                  <div className="p-6">
+                    <div className="text-[10px] tracking-[0.2em] uppercase text-gray-400 dark:text-white/20 font-medium mb-4">AI Editor</div>
+                    
+                    {/* Messages */}
+                    <div className="space-y-4 max-h-[180px] overflow-y-auto mb-6 pr-2">
+                      {messages.map((msg, i) => (
+                        msg.role === 'user' ? (
+                          <div key={i} className="flex justify-end">
+                            <div className="max-w-[85%] px-4 py-3 rounded-2xl rounded-tr-sm bg-gradient-to-r from-orange-500 to-amber-500 text-white text-sm shadow-lg">
+                              {msg.text}
                             </div>
-                          ) : (
-                            <div key={i} className="flex gap-2">
-                              <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-orange-500/20 to-rose-500/20 border border-orange-500/20 flex items-center justify-center flex-shrink-0">
-                                <svg className="w-2.5 h-2.5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-                                </svg>
-                              </div>
-                              <div className="flex-1 px-3 py-2 rounded-xl rounded-tl-sm bg-white/60 dark:bg-white/[0.05] backdrop-blur border border-white/50 dark:border-white/10 text-[11px] text-gray-600 dark:text-white/70">
-                                {msg.text}
-                              </div>
-                            </div>
-                          )
-                        ))}
-                        {isTyping && (
-                          <div className="flex gap-2">
-                            <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-orange-500/20 to-rose-500/20 border border-orange-500/20 flex items-center justify-center flex-shrink-0">
-                              <svg className="w-2.5 h-2.5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          </div>
+                        ) : (
+                          <div key={i} className="flex gap-3">
+                            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-500/20 to-amber-500/20 border border-orange-500/20 flex items-center justify-center flex-shrink-0">
+                              <svg className="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
                               </svg>
                             </div>
-                            <div className="px-3 py-2 rounded-xl rounded-tl-sm bg-white/60 dark:bg-white/[0.05] backdrop-blur border border-white/50 dark:border-white/10">
-                              <div className="flex gap-1">
-                                <span className="w-1.5 h-1.5 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                                <span className="w-1.5 h-1.5 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                                <span className="w-1.5 h-1.5 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                              </div>
+                            <div className="flex-1 px-4 py-3 rounded-2xl rounded-tl-sm bg-white/60 dark:bg-white/[0.05] backdrop-blur-lg border border-white/50 dark:border-white/10 text-sm text-gray-600 dark:text-white/70">
+                              {msg.text}
                             </div>
                           </div>
-                        )}
-                        <div ref={messagesEndRef} />
-                      </div>
-
-                      {/* Input */}
-                      <div className="flex items-center gap-2 p-1.5 rounded-lg bg-white/50 dark:bg-white/[0.03] backdrop-blur border border-white/60 dark:border-white/10">
-                        <input 
-                          type="text" 
-                          placeholder="Type a change..." 
-                          className="flex-1 bg-transparent text-[11px] outline-none px-2 placeholder:text-gray-400 dark:placeholder:text-white/20 text-gray-900 dark:text-white"
-                          value={inputValue}
-                          onChange={(e) => setInputValue(e.target.value)}
-                          onKeyDown={handleKeyDown}
-                        />
-                        <button 
-                          onClick={() => handleSend()}
-                          disabled={!inputValue.trim() || isTyping}
-                          className="w-7 h-7 rounded-md bg-gradient-to-r from-orange-500 to-rose-500 text-white flex items-center justify-center disabled:opacity-30 transition-all hover:shadow-lg hover:shadow-orange-500/25"
-                        >
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-7-7l7 7-7 7" />
-                          </svg>
-                        </button>
-                      </div>
-
-                      {/* Quick prompts */}
-                      <div className="flex flex-wrap gap-1.5 mt-2">
-                        {['Add contact form', 'Change colors', 'About page'].map((prompt) => (
-                          <button
-                            key={prompt}
-                            onClick={() => handleSend(prompt)}
-                            disabled={isTyping}
-                            className="px-2 py-1 text-[9px] rounded-full bg-white/40 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 border border-gray-200/50 dark:border-white/10 text-gray-500 dark:text-white/50 transition-all disabled:opacity-50"
-                          >
-                            {prompt}
-                          </button>
-                        ))}
-                      </div>
+                        )
+                      ))}
+                      {isTyping && (
+                        <div className="flex gap-3">
+                          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-500/20 to-amber-500/20 border border-orange-500/20 flex items-center justify-center flex-shrink-0">
+                            <svg className="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                            </svg>
+                          </div>
+                          <div className="px-4 py-3 rounded-2xl rounded-tl-sm bg-white/60 dark:bg-white/[0.05] backdrop-blur-lg border border-white/50 dark:border-white/10">
+                            <div className="flex gap-1.5">
+                              <span className="w-2 h-2 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                              <span className="w-2 h-2 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                              <span className="w-2 h-2 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <div ref={messagesEndRef} />
                     </div>
 
-                    {/* Mock Site Preview */}
-                    <div className="w-1/2 p-3 bg-white dark:bg-gray-900 min-h-[280px]">
-                      {/* Mini site header */}
-                      <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-100 dark:border-gray-800">
-                        <div className="flex items-center gap-1.5">
-                          <div className={`w-4 h-4 rounded-md transition-colors duration-500 ${mockSite.primaryColor === 'orange' ? 'bg-orange-500' : 'bg-blue-500'}`} />
-                          <span className="text-[9px] font-semibold text-gray-800 dark:text-white">YourBrand</span>
-                        </div>
-                        <div className="flex gap-2 text-[8px] text-gray-400">
-                          <span>Home</span>
-                          {mockSite.hasAboutPage && <span className="text-orange-500 font-medium animate-pulse">About</span>}
-                          <span>Contact</span>
-                        </div>
-                      </div>
+                    {/* Input */}
+                    <div className="flex items-center gap-3 p-2 rounded-xl bg-white/50 dark:bg-white/[0.03] backdrop-blur-lg border border-white/60 dark:border-white/10">
+                      <input 
+                        type="text" 
+                        placeholder="Try it—type a change..." 
+                        className="flex-1 bg-transparent text-sm outline-none px-3 placeholder:text-gray-400 dark:placeholder:text-white/20 text-gray-900 dark:text-white"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                      />
+                      <button 
+                        onClick={handleSend}
+                        disabled={!inputValue.trim() || isTyping}
+                        className="w-10 h-10 rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 text-white flex items-center justify-center disabled:opacity-30 transition-all hover:shadow-lg hover:shadow-orange-500/25"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-7-7l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
 
-                      {/* Mini hero */}
-                      <div className="mb-3">
-                        <div className="h-2 w-20 bg-gray-200 dark:bg-gray-700 rounded mb-1.5" />
-                        <div className="h-1.5 w-28 bg-gray-100 dark:bg-gray-800 rounded mb-2" />
-                        <div className={`h-4 w-14 rounded transition-colors duration-500 ${mockSite.primaryColor === 'orange' ? 'bg-orange-500' : 'bg-blue-500'}`} />
-                      </div>
-
-                      {/* Contact form (conditional) */}
-                      {mockSite.showContactForm && (
-                        <div className="mb-3 p-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 animate-pulse">
-                          <div className="text-[8px] font-medium text-gray-600 dark:text-gray-300 mb-1.5">Contact Us</div>
-                          <div className="space-y-1">
-                            <div className="h-3 bg-white dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600" />
-                            <div className="h-3 bg-white dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600" />
-                            <div className={`h-3 w-10 rounded transition-colors duration-500 ${mockSite.primaryColor === 'orange' ? 'bg-orange-500' : 'bg-blue-500'}`} />
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Testimonials (conditional) */}
-                      {mockSite.showTestimonials && (
-                        <div className="mb-2">
-                          <div className="text-[8px] font-medium text-gray-600 dark:text-gray-300 mb-1.5">Testimonials</div>
-                          <div className="grid grid-cols-3 gap-1">
-                            {[1, 2, 3].map((i) => (
-                              <div key={i} className="p-1.5 rounded bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
-                                <div className="w-3 h-3 rounded-full bg-gray-200 dark:bg-gray-600 mb-1" />
-                                <div className="h-1 w-full bg-gray-100 dark:bg-gray-700 rounded mb-0.5" />
-                                <div className="h-1 w-2/3 bg-gray-100 dark:bg-gray-700 rounded" />
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Footer */}
-                      <div className="pt-2 border-t border-gray-100 dark:border-gray-800">
-                        <div className="h-1 w-12 bg-gray-100 dark:bg-gray-700 rounded" />
-                      </div>
+                    {/* Quick prompts */}
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {['Add contact form', 'Change the colors', 'Create an About page'].map((prompt) => (
+                        <button
+                          key={prompt}
+                          onClick={() => handleSend(prompt)}
+                          disabled={isTyping}
+                          className="px-3 py-1.5 text-xs rounded-full bg-white/40 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 border border-gray-200/50 dark:border-white/10 text-gray-600 dark:text-white/50 transition-all disabled:opacity-50 hover:scale-105"
+                        >
+                          {prompt}
+                        </button>
+                      ))}
                     </div>
                   </div>
                 </div>
 
                 {/* Floating elements */}
                 <div 
-                  className="absolute -bottom-4 -right-4 w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-500 to-rose-500 shadow-xl flex flex-col items-center justify-center animate-float text-white"
+                  className="absolute -bottom-4 -right-4 w-24 h-24 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 shadow-xl flex flex-col items-center justify-center animate-float text-white"
                   style={{ animationDelay: '1s' }}
                 >
-                  <div className="text-lg font-bold">Draft</div>
-                  <div className="text-[10px] text-white/70">1-2 weeks</div>
+                  <div className="text-2xl font-bold">Draft</div>
+                  <div className="text-xs text-white/70">1-2 weeks</div>
+                </div>
+                
+                <div 
+                  className="absolute -top-6 -left-6 w-16 h-16 rounded-2xl bg-white/60 dark:bg-white/[0.08] backdrop-blur-xl border border-white/50 dark:border-white/10 flex items-center justify-center animate-float shadow-xl"
+                  style={{ animationDelay: '0s' }}
+                >
+                  <div className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">98</div>
                 </div>
               </div>
             </div>
@@ -466,7 +386,7 @@ export default function LandingPage() {
             <div className="max-w-xl mb-12">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight mb-3">
                 The process is{' '}
-                <span className="bg-gradient-to-r from-orange-500 to-rose-500 bg-clip-text text-transparent">simple</span>
+                <span className="bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">simple</span>
               </h2>
               <p className="text-base text-gray-500 dark:text-white/40">
                 No back-and-forth revisions. No waiting weeks. Just results.
@@ -580,7 +500,7 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="grid lg:grid-cols-2 gap-16">
               <div>
-                <h2 className="text-3xl lg:text-4xl font-bold leading-tight mb-4 lg:sticky lg:top-32">
+                <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-4 lg:sticky lg:top-32">
                   Common
                   <br />
                   <span className="text-gray-400 dark:text-white/30">questions</span>
@@ -610,16 +530,16 @@ export default function LandingPage() {
           <div className="absolute inset-0 bg-gradient-to-t from-orange-500/10 via-transparent to-transparent pointer-events-none" />
           
           <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center relative">
-            <h2 className="text-3xl lg:text-5xl font-bold leading-tight mb-6">
+            <h2 className="text-4xl lg:text-6xl font-bold leading-tight mb-6">
               Ready to get
               <br />
-              <span className="bg-gradient-to-r from-orange-500 via-rose-500 to-amber-500 bg-clip-text text-transparent">started?</span>
+              <span className="bg-gradient-to-r from-orange-500 via-amber-500 to-rose-400 bg-clip-text text-transparent">started?</span>
             </h2>
             <p className="text-lg text-gray-500 dark:text-white/40 mb-10 max-w-md mx-auto">
               Book a free 30-minute call. No sales pitch. Just a conversation about your website.
             </p>
             <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-              <Button className="bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white rounded-xl px-10 h-14 text-base font-semibold shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 transition-all hover:scale-[1.02]">
+              <Button className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-xl px-10 h-14 text-base font-semibold shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 transition-all hover:scale-[1.02]">
                 Book Free Discovery Call
               </Button>
             </a>
@@ -632,7 +552,7 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-rose-500 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center">
                   <span className="text-white font-bold text-sm">F</span>
                 </div>
                 <span className="text-sm text-gray-400 dark:text-white/30">© 2025 Flowstarter</span>

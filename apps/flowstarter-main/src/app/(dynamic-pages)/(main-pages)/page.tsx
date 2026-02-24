@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
 
@@ -96,8 +97,8 @@ export default function LandingPage() {
           50% { transform: translateY(-20px); }
         }
         @keyframes pulse-glow {
-          0%, 100% { opacity: 0.4; }
-          50% { opacity: 0.8; }
+          0%, 100% { opacity: 0.3; }
+          50% { opacity: 0.6; }
         }
         @keyframes gradient-shift {
           0%, 100% { background-position: 0% 50%; }
@@ -111,11 +112,11 @@ export default function LandingPage() {
         }
       `}</style>
 
-      <div className="min-h-screen bg-[#0a0a0c] text-white font-display relative overflow-hidden">
+      <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#0a0a0c] text-gray-900 dark:text-white font-display relative overflow-hidden transition-colors duration-300">
         {/* Animated gradient orbs */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
           <div 
-            className="absolute w-[800px] h-[800px] rounded-full blur-[120px] opacity-30 transition-transform duration-[2000ms]"
+            className="absolute w-[800px] h-[800px] rounded-full blur-[120px] opacity-20 dark:opacity-30 transition-transform duration-[2000ms]"
             style={{ 
               background: 'radial-gradient(circle, rgba(139, 92, 246, 0.5) 0%, transparent 70%)',
               top: '-20%',
@@ -124,7 +125,7 @@ export default function LandingPage() {
             }}
           />
           <div 
-            className="absolute w-[600px] h-[600px] rounded-full blur-[100px] opacity-25 transition-transform duration-[2000ms]"
+            className="absolute w-[600px] h-[600px] rounded-full blur-[100px] opacity-15 dark:opacity-25 transition-transform duration-[2000ms]"
             style={{ 
               background: 'radial-gradient(circle, rgba(59, 130, 246, 0.5) 0%, transparent 70%)',
               top: '30%',
@@ -133,7 +134,7 @@ export default function LandingPage() {
             }}
           />
           <div 
-            className="absolute w-[500px] h-[500px] rounded-full blur-[80px] opacity-20"
+            className="absolute w-[500px] h-[500px] rounded-full blur-[80px] opacity-10 dark:opacity-20"
             style={{ 
               background: 'radial-gradient(circle, rgba(236, 72, 153, 0.4) 0%, transparent 70%)',
               bottom: '10%',
@@ -144,9 +145,9 @@ export default function LandingPage() {
 
         {/* Grid pattern overlay */}
         <div 
-          className="fixed inset-0 pointer-events-none opacity-[0.02]"
+          className="fixed inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.02]"
           style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+            backgroundImage: `linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)`,
             backgroundSize: '60px 60px'
           }}
         />
@@ -156,24 +157,25 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="flex items-center justify-between h-20">
               <Link href="/" className="flex items-center gap-3 group">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center shadow-lg shadow-violet-500/25 group-hover:shadow-violet-500/40 transition-shadow">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center shadow-lg shadow-violet-500/20 group-hover:shadow-violet-500/30 transition-shadow">
                   <span className="text-white font-bold text-lg">F</span>
                 </div>
                 <span className="text-xl font-semibold tracking-tight">Flowstarter</span>
               </Link>
               
               <nav className="hidden md:flex items-center gap-8">
-                <a href="#process" className="text-sm text-white/50 hover:text-white transition-colors">Process</a>
-                <a href="#pricing" className="text-sm text-white/50 hover:text-white transition-colors">Pricing</a>
-                <a href="#faq" className="text-sm text-white/50 hover:text-white transition-colors">FAQ</a>
+                <a href="#process" className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors">Process</a>
+                <a href="#pricing" className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors">Pricing</a>
+                <a href="#faq" className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors">FAQ</a>
               </nav>
 
               <div className="flex items-center gap-4">
-                <Link href="/login" className="text-sm text-white/50 hover:text-white transition-colors hidden sm:block">
+                <ThemeToggle />
+                <Link href="/login" className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors hidden sm:block">
                   Sign In
                 </Link>
                 <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-                  <Button className="bg-white text-[#0a0a0c] hover:bg-white/90 rounded-xl px-6 h-10 text-sm font-semibold shadow-lg shadow-white/10 hover:shadow-white/20 transition-all">
+                  <Button className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl px-6 h-10 text-sm font-semibold shadow-lg transition-all">
                     Book a Call
                   </Button>
                 </a>
@@ -188,20 +190,20 @@ export default function LandingPage() {
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
               {/* Left: Copy */}
               <div className={`transition-all duration-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 mb-8">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-xs tracking-wide text-white/60">Beta — 50% off all pricing</span>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/5 dark:bg-white/5 backdrop-blur-sm border border-gray-900/10 dark:border-white/10 mb-8">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-xs tracking-wide text-gray-600 dark:text-white/60">Beta — 50% off all pricing</span>
                 </div>
                 
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
                   Your website,
                   <br />
-                  <span className="bg-gradient-to-r from-violet-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent animate-gradient">
+                  <span className="bg-gradient-to-r from-violet-500 via-blue-500 to-cyan-500 bg-clip-text text-transparent animate-gradient">
                     finally done right
                   </span>
                 </h1>
                 
-                <p className="text-lg lg:text-xl text-white/50 leading-relaxed max-w-lg mb-10">
+                <p className="text-lg lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed max-w-lg mb-10">
                   One call. One week. A beautiful website you can update yourself—just by describing what you want.
                 </p>
 
@@ -214,27 +216,27 @@ export default function LandingPage() {
                       </svg>
                     </Button>
                   </a>
-                  <div className="text-sm text-white/40">
+                  <div className="text-sm text-gray-400 dark:text-white/40">
                     <span className="line-through opacity-60">€199</span>
-                    <span className="mx-2 text-white/80 font-medium">€99.50</span>
+                    <span className="mx-2 text-gray-700 dark:text-white/80 font-medium">€99.50</span>
                     setup
-                    <span className="mx-3 text-white/20">·</span>
+                    <span className="mx-3 text-gray-300 dark:text-white/20">·</span>
                     <span className="line-through opacity-60">€19</span>
-                    <span className="mx-2 text-white/80 font-medium">€9.50</span>
+                    <span className="mx-2 text-gray-700 dark:text-white/80 font-medium">€9.50</span>
                     /mo
                   </div>
                 </div>
 
                 {/* Stats */}
-                <div className="flex items-center gap-8 pt-8 border-t border-white/10">
+                <div className="flex items-center gap-8 pt-8 border-t border-gray-200 dark:border-white/10">
                   {[
                     { value: '3-5', label: 'Days to launch' },
                     { value: '∞', label: 'AI edits' },
                     { value: '0', label: 'Code needed' },
                   ].map((stat, i) => (
                     <div key={i}>
-                      <div className="text-3xl font-bold bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">{stat.value}</div>
-                      <div className="text-xs text-white/30 uppercase tracking-wider mt-1">{stat.label}</div>
+                      <div className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-white/60 bg-clip-text text-transparent">{stat.value}</div>
+                      <div className="text-xs text-gray-400 dark:text-white/30 uppercase tracking-wider mt-1">{stat.label}</div>
                     </div>
                   ))}
                 </div>
@@ -246,9 +248,9 @@ export default function LandingPage() {
                 <div className="absolute -inset-4 bg-gradient-to-r from-violet-500/20 via-blue-500/20 to-cyan-500/20 rounded-3xl blur-2xl animate-pulse-glow" />
                 
                 {/* Editor window */}
-                <div className="relative bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
+                <div className="relative bg-white/80 dark:bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-white/10 shadow-2xl overflow-hidden">
                   {/* Browser chrome */}
-                  <div className="flex items-center justify-between px-5 py-4 bg-white/[0.02] border-b border-white/5">
+                  <div className="flex items-center justify-between px-5 py-4 bg-gray-50/80 dark:bg-white/[0.02] border-b border-gray-200 dark:border-white/5">
                     <div className="flex items-center gap-3">
                       <div className="flex gap-2">
                         <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
@@ -256,24 +258,24 @@ export default function LandingPage() {
                         <div className="w-3 h-3 rounded-full bg-[#28ca42]" />
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-white/5 text-xs text-white/30">
+                    <div className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 text-xs text-gray-400 dark:text-white/30">
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                       </svg>
                       yoursite.com
                     </div>
                     <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      <span className="text-[10px] font-medium text-emerald-400 tracking-wide">LIVE</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 tracking-wide">LIVE</span>
                     </div>
                   </div>
 
                   {/* Chat interface */}
                   <div className="p-6">
-                    <div className="text-[10px] tracking-[0.2em] uppercase text-white/20 font-medium mb-4">AI Editor</div>
+                    <div className="text-[10px] tracking-[0.2em] uppercase text-gray-400 dark:text-white/20 font-medium mb-4">AI Editor</div>
                     
                     {/* Messages */}
-                    <div className="space-y-4 max-h-[180px] overflow-y-auto mb-6 pr-2 scrollbar-thin scrollbar-thumb-white/10">
+                    <div className="space-y-4 max-h-[180px] overflow-y-auto mb-6 pr-2">
                       {messages.map((msg, i) => (
                         msg.role === 'user' ? (
                           <div key={i} className="flex justify-end">
@@ -283,12 +285,12 @@ export default function LandingPage() {
                           </div>
                         ) : (
                           <div key={i} className="flex gap-3">
-                            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500/20 to-blue-500/20 border border-white/10 flex items-center justify-center flex-shrink-0">
-                              <svg className="w-4 h-4 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500/20 to-blue-500/20 border border-violet-500/20 flex items-center justify-center flex-shrink-0">
+                              <svg className="w-4 h-4 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
                               </svg>
                             </div>
-                            <div className="flex-1 px-4 py-3 rounded-2xl rounded-tl-sm bg-white/[0.03] border border-white/5 text-sm text-white/70">
+                            <div className="flex-1 px-4 py-3 rounded-2xl rounded-tl-sm bg-gray-100 dark:bg-white/[0.03] border border-gray-200 dark:border-white/5 text-sm text-gray-600 dark:text-white/70">
                               {msg.text}
                             </div>
                           </div>
@@ -296,16 +298,16 @@ export default function LandingPage() {
                       ))}
                       {isTyping && (
                         <div className="flex gap-3">
-                          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500/20 to-blue-500/20 border border-white/10 flex items-center justify-center flex-shrink-0">
-                            <svg className="w-4 h-4 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500/20 to-blue-500/20 border border-violet-500/20 flex items-center justify-center flex-shrink-0">
+                            <svg className="w-4 h-4 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
                             </svg>
                           </div>
-                          <div className="px-4 py-3 rounded-2xl rounded-tl-sm bg-white/[0.03] border border-white/5">
+                          <div className="px-4 py-3 rounded-2xl rounded-tl-sm bg-gray-100 dark:bg-white/[0.03] border border-gray-200 dark:border-white/5">
                             <div className="flex gap-1.5">
-                              <span className="w-2 h-2 bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                              <span className="w-2 h-2 bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                              <span className="w-2 h-2 bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                              <span className="w-2 h-2 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                              <span className="w-2 h-2 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                              <span className="w-2 h-2 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                             </div>
                           </div>
                         </div>
@@ -314,11 +316,11 @@ export default function LandingPage() {
                     </div>
 
                     {/* Input */}
-                    <div className="flex items-center gap-3 p-2 rounded-xl bg-white/[0.02] border border-white/5">
+                    <div className="flex items-center gap-3 p-2 rounded-xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/5">
                       <input 
                         type="text" 
                         placeholder="Try: Add a contact form..." 
-                        className="flex-1 bg-transparent text-sm outline-none px-3 placeholder:text-white/20 text-white"
+                        className="flex-1 bg-transparent text-sm outline-none px-3 placeholder:text-gray-400 dark:placeholder:text-white/20 text-gray-900 dark:text-white"
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={handleKeyDown}
@@ -338,7 +340,7 @@ export default function LandingPage() {
 
                 {/* Floating elements */}
                 <div 
-                  className="absolute -bottom-4 -right-4 w-24 h-24 rounded-2xl bg-gradient-to-br from-violet-500 to-blue-500 shadow-xl flex flex-col items-center justify-center animate-float"
+                  className="absolute -bottom-4 -right-4 w-24 h-24 rounded-2xl bg-gradient-to-br from-violet-500 to-blue-500 shadow-xl flex flex-col items-center justify-center animate-float text-white"
                   style={{ animationDelay: '1s' }}
                 >
                   <div className="text-2xl font-bold">Live</div>
@@ -346,10 +348,10 @@ export default function LandingPage() {
                 </div>
                 
                 <div 
-                  className="absolute -top-6 -left-6 w-16 h-16 rounded-xl bg-white/[0.03] backdrop-blur border border-white/10 flex items-center justify-center animate-float"
+                  className="absolute -top-6 -left-6 w-16 h-16 rounded-xl bg-white/80 dark:bg-white/[0.03] backdrop-blur border border-gray-200 dark:border-white/10 flex items-center justify-center animate-float shadow-lg"
                   style={{ animationDelay: '0s' }}
                 >
-                  <div className="text-2xl font-bold bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent">98</div>
+                  <div className="text-2xl font-bold bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">98</div>
                 </div>
               </div>
             </div>
@@ -362,9 +364,9 @@ export default function LandingPage() {
             <div className="max-w-xl mb-16">
               <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-4">
                 The process is{' '}
-                <span className="bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent">simple</span>
+                <span className="bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">simple</span>
               </h2>
-              <p className="text-lg text-white/40">
+              <p className="text-lg text-gray-500 dark:text-white/40">
                 No back-and-forth revisions. No waiting weeks. Just results.
               </p>
             </div>
@@ -373,13 +375,13 @@ export default function LandingPage() {
               {features.map((feature, i) => (
                 <div 
                   key={i}
-                  className="group p-8 rounded-2xl bg-white/[0.02] backdrop-blur-sm border border-white/5 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300"
+                  className="group p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/10 hover:bg-white dark:hover:bg-white/[0.04] hover:shadow-lg transition-all duration-300"
                 >
-                  <div className="text-5xl font-bold text-white/5 group-hover:text-violet-500/20 transition-colors mb-4">
+                  <div className="text-5xl font-bold text-gray-100 dark:text-white/5 group-hover:text-violet-500/20 transition-colors mb-4">
                     {feature.num}
                   </div>
                   <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-sm text-white/40 leading-relaxed">{feature.desc}</p>
+                  <p className="text-sm text-gray-500 dark:text-white/40 leading-relaxed">{feature.desc}</p>
                 </div>
               ))}
             </div>
@@ -393,36 +395,36 @@ export default function LandingPage() {
           
           <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
             <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 mb-6">
-                <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                <span className="text-xs tracking-wide text-white/50">Beta pricing — Lock it in forever</span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/5 dark:bg-white/5 backdrop-blur-sm border border-gray-900/10 dark:border-white/10 mb-6">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="text-xs tracking-wide text-gray-600 dark:text-white/50">Beta pricing — Lock it in forever</span>
               </div>
               <h2 className="text-4xl lg:text-5xl font-bold leading-tight">
                 Transparent pricing,
                 <br />
-                <span className="text-white/30">exceptional value</span>
+                <span className="text-gray-400 dark:text-white/30">exceptional value</span>
               </h2>
             </div>
 
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {/* Setup */}
-              <div className="p-8 lg:p-10 rounded-2xl bg-white/[0.02] backdrop-blur-sm border border-white/5 hover:border-white/10 transition-all group">
+              <div className="p-8 lg:p-10 rounded-2xl bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/10 hover:shadow-lg transition-all group">
                 <div className="flex items-start justify-between mb-8">
                   <div>
                     <h3 className="text-2xl font-semibold mb-1">Setup</h3>
-                    <p className="text-sm text-white/30">One-time fee</p>
+                    <p className="text-sm text-gray-400 dark:text-white/30">One-time fee</p>
                   </div>
                   <div className="text-right">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-white/20 line-through text-lg">€199</span>
+                      <span className="text-gray-300 dark:text-white/20 line-through text-lg">€199</span>
                       <span className="text-4xl font-bold">€99.50</span>
                     </div>
                   </div>
                 </div>
                 <ul className="space-y-4">
                   {['30-minute discovery call', 'Custom design & development', 'Domain configuration', '2 professional email addresses', 'Global hosting setup', 'Live in 3-5 business days'].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-sm text-white/50">
-                      <svg className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <li key={i} className="flex items-start gap-3 text-sm text-gray-500 dark:text-white/50">
+                      <svg className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                       {item}
@@ -432,24 +434,24 @@ export default function LandingPage() {
               </div>
 
               {/* Monthly */}
-              <div className="p-8 lg:p-10 rounded-2xl bg-white/[0.02] backdrop-blur-sm border border-white/5 hover:border-white/10 transition-all group">
+              <div className="p-8 lg:p-10 rounded-2xl bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/10 hover:shadow-lg transition-all group">
                 <div className="flex items-start justify-between mb-8">
                   <div>
                     <h3 className="text-2xl font-semibold mb-1">Monthly</h3>
-                    <p className="text-sm text-white/30">First month free</p>
+                    <p className="text-sm text-gray-400 dark:text-white/30">First month free</p>
                   </div>
                   <div className="text-right">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-white/20 line-through text-lg">€19</span>
+                      <span className="text-gray-300 dark:text-white/20 line-through text-lg">€19</span>
                       <span className="text-4xl font-bold">€9.50</span>
-                      <span className="text-white/30">/mo</span>
+                      <span className="text-gray-400 dark:text-white/30">/mo</span>
                     </div>
                   </div>
                 </div>
                 <ul className="space-y-4">
                   {['Fast, secure hosting', 'SSL certificate included', 'Your 2 email addresses', 'AI Editor—unlimited changes', '1GB image storage', 'Cancel anytime'].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-sm text-white/50">
-                      <svg className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <li key={i} className="flex items-start gap-3 text-sm text-gray-500 dark:text-white/50">
+                      <svg className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                       {item}
@@ -462,11 +464,11 @@ export default function LandingPage() {
             {/* CTA */}
             <div className="text-center mt-12">
               <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-                <Button className="bg-white text-[#0a0a0c] hover:bg-white/90 rounded-xl px-10 h-14 text-base font-semibold shadow-lg shadow-white/10 hover:shadow-white/20 transition-all hover:scale-[1.02]">
+                <Button className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl px-10 h-14 text-base font-semibold shadow-lg transition-all hover:scale-[1.02]">
                   Book Your Call
                 </Button>
               </a>
-              <p className="text-sm text-white/20 mt-4">No credit card required</p>
+              <p className="text-sm text-gray-400 dark:text-white/20 mt-4">No credit card required</p>
             </div>
           </div>
         </section>
@@ -479,7 +481,7 @@ export default function LandingPage() {
                 <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-4 lg:sticky lg:top-32">
                   Common
                   <br />
-                  <span className="text-white/30">questions</span>
+                  <span className="text-gray-400 dark:text-white/30">questions</span>
                 </h2>
               </div>
               
@@ -491,9 +493,9 @@ export default function LandingPage() {
                   { q: 'What if I need help?', a: 'Email us. We respond within 24 hours. If something breaks, we fix it. If you\'re stuck, we help.' },
                   { q: 'What happens after the beta?', a: 'Prices go to €199 setup and €19/month. If you sign up during beta, you keep the beta price forever.' },
                 ].map((faq, i) => (
-                  <div key={i} className="p-6 rounded-2xl bg-white/[0.02] backdrop-blur-sm border border-white/5">
+                  <div key={i} className="p-6 rounded-2xl bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/10 hover:shadow-lg transition-all">
                     <h3 className="text-lg font-semibold mb-3">{faq.q}</h3>
-                    <p className="text-white/40 leading-relaxed text-sm">{faq.a}</p>
+                    <p className="text-gray-500 dark:text-white/40 leading-relaxed text-sm">{faq.a}</p>
                   </div>
                 ))}
               </div>
@@ -509,9 +511,9 @@ export default function LandingPage() {
             <h2 className="text-4xl lg:text-6xl font-bold leading-tight mb-6">
               Ready to get
               <br />
-              <span className="bg-gradient-to-r from-violet-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">started?</span>
+              <span className="bg-gradient-to-r from-violet-500 via-blue-500 to-cyan-500 bg-clip-text text-transparent">started?</span>
             </h2>
-            <p className="text-lg text-white/40 mb-10 max-w-md mx-auto">
+            <p className="text-lg text-gray-500 dark:text-white/40 mb-10 max-w-md mx-auto">
               Book a free 30-minute call. No sales pitch. Just a conversation about your website.
             </p>
             <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
@@ -519,25 +521,25 @@ export default function LandingPage() {
                 Book Free Discovery Call
               </Button>
             </a>
-            <p className="text-sm text-white/20 mt-4">No credit card required</p>
+            <p className="text-sm text-gray-400 dark:text-white/20 mt-4">No credit card required</p>
           </div>
         </section>
 
         {/* Footer */}
-        <footer className="py-8 border-t border-white/5">
+        <footer className="py-8 border-t border-gray-200 dark:border-white/5">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center">
                   <span className="text-white font-bold text-sm">F</span>
                 </div>
-                <span className="text-sm text-white/30">© 2025 Flowstarter</span>
+                <span className="text-sm text-gray-400 dark:text-white/30">© 2025 Flowstarter</span>
               </div>
               <div className="flex items-center gap-6">
-                <a href="mailto:hello@flowstarter.app" className="text-sm text-white/30 hover:text-white transition-colors">
+                <a href="mailto:hello@flowstarter.app" className="text-sm text-gray-400 dark:text-white/30 hover:text-gray-900 dark:hover:text-white transition-colors">
                   hello@flowstarter.app
                 </a>
-                <Link href="/login" className="text-sm text-white/30 hover:text-white transition-colors">
+                <Link href="/login" className="text-sm text-gray-400 dark:text-white/30 hover:text-gray-900 dark:hover:text-white transition-colors">
                   Client Login
                 </Link>
               </div>

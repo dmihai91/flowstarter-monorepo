@@ -3,6 +3,8 @@
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
+const CALENDLY_URL = 'https://calendly.com/flowstarter/discovery';
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
@@ -21,9 +23,9 @@ export default function LandingPage() {
                 Sign In
               </Button>
             </Link>
-            <a href="mailto:hello@flowstarter.app">
+            <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
               <Button size="sm" className="bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 dark:text-gray-900">
-                Get in Touch
+                Book a Call
               </Button>
             </a>
           </div>
@@ -40,20 +42,20 @@ export default function LandingPage() {
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-[1.1] tracking-tight mb-6">
-              We design and build
+              We build your website.
               <br />
-              <span className="text-gray-400 dark:text-gray-500">websites that work.</span>
+              <span className="text-gray-400 dark:text-gray-500">You run your business.</span>
             </h1>
             
             <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 leading-relaxed mb-10 max-w-xl">
-              Professional web development for businesses who want results. 
-              Fast turnaround. Clean code. No bloat.
+              Tell us what you need. We handle everything — design, development, 
+              hosting, and updates. You get a professional website without the headache.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <a href="mailto:hello@flowstarter.app">
+              <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
                 <Button size="xl" className="bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 dark:text-gray-900 text-base px-8 h-12">
-                  Start a Project
+                  Book a Free Call
                 </Button>
               </a>
               <Link href="/login">
@@ -66,82 +68,134 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* What We Do */}
+      {/* What We Do - Detailed */}
       <section className="py-20 md:py-28 bg-gray-50 dark:bg-gray-900/50">
         <div className="max-w-6xl mx-auto px-6">
           <div className="mb-16">
             <h2 className="text-sm font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">
               What we do
             </h2>
-            <p className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white max-w-2xl">
-              We handle the technical stuff so you can focus on your business.
+            <p className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white max-w-3xl">
+              A complete web presence service for businesses who don't want to deal with tech.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 md:gap-12">
-            <div>
-              <div className="w-10 h-10 rounded-lg bg-gray-900 dark:bg-white flex items-center justify-center mb-5">
-                <svg className="w-5 h-5 text-white dark:text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-                Web Design
+          <div className="grid lg:grid-cols-2 gap-12 mb-16">
+            <div className="space-y-6">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                Here's exactly what you get:
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                Custom designs that reflect your brand. No templates, no cookie-cutter solutions. Every site is built specifically for you.
-              </p>
+              <ul className="space-y-4">
+                {[
+                  'Custom-designed website tailored to your brand and goals',
+                  'Mobile-responsive — looks great on phones, tablets, and desktops',
+                  'Fast hosting included — your site loads in under 2 seconds',
+                  'SSL certificate (the padlock) for security and SEO',
+                  'Basic SEO setup so Google can find you',
+                  'Contact forms that actually work and notify you',
+                  'Analytics so you know who's visiting',
+                  'Ongoing updates and maintenance included',
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <svg className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-gray-600 dark:text-gray-400">{item}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            <div>
-              <div className="w-10 h-10 rounded-lg bg-gray-900 dark:bg-white flex items-center justify-center mb-5">
-                <svg className="w-5 h-5 text-white dark:text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-                Development
+            <div className="space-y-6">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                What you don't have to do:
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                Clean, fast, maintainable code. We build sites that load quickly, rank well, and won't break when you need them most.
-              </p>
-            </div>
-
-            <div>
-              <div className="w-10 h-10 rounded-lg bg-gray-900 dark:bg-white flex items-center justify-center mb-5">
-                <svg className="w-5 h-5 text-white dark:text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-                Ongoing Support
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                We don't disappear after launch. Updates, maintenance, and support whenever you need it. Your site keeps working.
-              </p>
+              <ul className="space-y-4">
+                {[
+                  'Learn WordPress, Wix, Squarespace, or any other tool',
+                  'Deal with hosting companies, DNS, or technical jargon',
+                  'Worry about security updates or your site breaking',
+                  'Figure out why your site is slow or not ranking',
+                  'Chase freelancers who ghost after the first payment',
+                  'Pay separately for hosting, domains, SSL, maintenance',
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <svg className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    <span className="text-gray-600 dark:text-gray-400">{item}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Process */}
+      {/* Who It's For */}
       <section className="py-20 md:py-28">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="mb-16">
+            <h2 className="text-sm font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">
+              Who it's for
+            </h2>
+            <p className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white max-w-2xl">
+              Perfect for businesses that need a website but not the complexity.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                title: 'Local Businesses',
+                desc: 'Restaurants, salons, gyms, clinics, shops. You need a professional online presence to show up in local searches and look credible.',
+                examples: 'Restaurants • Salons • Clinics • Retail',
+              },
+              {
+                title: 'Service Providers',
+                desc: 'Consultants, coaches, freelancers, agencies. You need a site that explains what you do and makes it easy for clients to contact you.',
+                examples: 'Consultants • Coaches • Agencies • Freelancers',
+              },
+              {
+                title: 'Small Teams',
+                desc: 'Startups and small companies who want a polished site without hiring a full-time developer or wasting time on DIY builders.',
+                examples: 'Startups • Small businesses • Non-profits',
+              },
+            ].map((item) => (
+              <div key={item.title} className="p-6 rounded-2xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+                  {item.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">
+                  {item.desc}
+                </p>
+                <p className="text-sm text-gray-400 dark:text-gray-500">
+                  {item.examples}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Process */}
+      <section className="py-20 md:py-28 bg-gray-50 dark:bg-gray-900/50">
         <div className="max-w-6xl mx-auto px-6">
           <div className="mb-16">
             <h2 className="text-sm font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">
               How it works
             </h2>
             <p className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white max-w-2xl">
-              Simple process. Fast results.
+              From first call to live site in 2-3 weeks.
             </p>
           </div>
 
           <div className="grid md:grid-cols-4 gap-8">
             {[
-              { step: '01', title: 'Discovery', desc: 'We learn about your business, goals, and what you need.' },
-              { step: '02', title: 'Design', desc: 'We create mockups and iterate until you love it.' },
-              { step: '03', title: 'Build', desc: 'We develop your site with clean, fast code.' },
-              { step: '04', title: 'Launch', desc: 'We deploy, test, and hand over the keys.' },
+              { step: '01', title: 'Discovery Call', desc: 'Free 30-minute call to understand your business, goals, and what you need.' },
+              { step: '02', title: 'Design', desc: 'We create a mockup. You give feedback. We refine until you love it.' },
+              { step: '03', title: 'Build', desc: 'We develop your site with clean code, fast hosting, and everything configured.' },
+              { step: '04', title: 'Launch', desc: 'We deploy, test, and hand you the keys. You're live and ready for business.' },
             ].map((item) => (
               <div key={item.step}>
                 <span className="text-4xl font-bold text-gray-200 dark:text-gray-800 mb-4 block">
@@ -159,18 +213,39 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Pricing Hint */}
+      <section className="py-20 md:py-28">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Simple, transparent pricing.
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
+              One-time setup fee + small monthly for hosting and support. 
+              No hidden costs. No surprises. We'll give you exact numbers on our call.
+            </p>
+            <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
+              <Button size="lg" variant="outline" className="border-gray-200 dark:border-gray-700">
+                Get a Quote →
+              </Button>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-20 md:py-28 bg-gray-900 dark:bg-gray-800">
         <div className="max-w-6xl mx-auto px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Ready to get started?
+            Ready to get your website sorted?
           </h2>
           <p className="text-gray-400 mb-8 max-w-lg mx-auto">
-            Tell us about your project. We'll get back to you within 24 hours.
+            Book a free 30-minute discovery call. No pressure, no obligations. 
+            Just a conversation about what you need.
           </p>
-          <a href="mailto:hello@flowstarter.app">
+          <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
             <Button size="xl" className="bg-white hover:bg-gray-100 text-gray-900 text-base px-8 h-12">
-              hello@flowstarter.app
+              Book Your Free Call
             </Button>
           </a>
         </div>
@@ -182,9 +257,14 @@ export default function LandingPage() {
           <p className="text-sm text-gray-500">
             © 2026 Flowstarter. All rights reserved.
           </p>
-          <Link href="/login" className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-            Client Login
-          </Link>
+          <div className="flex items-center gap-6">
+            <a href="mailto:hello@flowstarter.app" className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+              hello@flowstarter.app
+            </a>
+            <Link href="/login" className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+              Client Login
+            </Link>
+          </div>
         </div>
       </footer>
     </div>

@@ -8,22 +8,65 @@ import { useEffect, useState } from 'react';
 const CALENDLY_URL = 'https://calendly.com/flowstarter/discovery';
 
 export default function LandingPage() {
-  const [activeChat, setActiveChat] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [scrollY, setScrollY] = useState(0);
+  const [inputValue, setInputValue] = useState('');
+  const [messages, setMessages] = useState<{role: 'user' | 'ai', text: string}[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
 
-  const chatExamples = [
-    { user: "Add a testimonials section with 3 cards", ai: "Done! I added a testimonials section below the features. Want me to help you write the actual testimonials?" },
-    { user: "Change the header background to white", ai: "Updated! The header is now white with a subtle shadow on scroll. How does it look?" },
-    { user: "Add my phone number to the footer", ai: "Added your phone number next to the email. I also made it clickable on mobile." },
-  ];
+  const aiResponses: Record<string, string> = {
+    'contact': "Done! I added a contact form with name, email, and message fields. It sends submissions to your email.",
+    'form': "Done! I added a contact form with name, email, and message fields. It sends submissions to your email.",
+    'color': "Updated! I changed the primary color across the site. The buttons, links, and accents now use the new color.",
+    'header': "Updated! The header is now white with a subtle shadow on scroll. Logo and nav links adjusted for visibility.",
+    'footer': "Added! Your phone number is now in the footer, clickable on mobile so visitors can tap to call.",
+    'phone': "Added! Your phone number is now in the footer, clickable on mobile so visitors can tap to call.",
+    'page': "Created! I added a new page to your site. You can find it in the navigation. What content should go on it?",
+    'testimonial': "Done! I added a testimonials section with 3 cards. Want me to help you write the actual testimonials?",
+    'image': "Updated! I replaced the image. The new one is optimized for fast loading. How does it look?",
+    'font': "Changed! The site now uses the new font. I updated headings and body text to match.",
+    'default': "Got it! I made the changes to your website. The preview on the right shows the update. Anything else?"
+  };
+
+  const getAiResponse = (input: string): string => {
+    const lower = input.toLowerCase();
+    for (const [key, response] of Object.entries(aiResponses)) {
+      if (key !== 'default' && lower.includes(key)) {
+        return response;
+      }
+    }
+    return aiResponses.default;
+  };
+
+  const handleSend = () => {
+    if (!inputValue.trim()) return;
+    
+    const userMessage = inputValue.trim();
+    setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
+    setInputValue('');
+    setIsTyping(true);
+    
+    setTimeout(() => {
+      setIsTyping(false);
+      setMessages(prev => [...prev, { role: 'ai', text: getAiResponse(userMessage) }]);
+    }, 1000 + Math.random() * 500);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
 
   useEffect(() => {
     setIsLoaded(true);
-    const interval = setInterval(() => {
-      setActiveChat((prev) => (prev + 1) % chatExamples.length);
-    }, 4000);
+    // Add initial demo message
+    setMessages([
+      { role: 'user', text: 'Add a testimonials section with 3 cards' },
+      { role: 'ai', text: 'Done! I added a testimonials section below the features. Want me to help you write the actual testimonials?' }
+    ]);
     
     const handleMouseMove = (e: MouseEvent) => {
       setMousePos({ x: e.clientX, y: e.clientY });
@@ -34,7 +77,6 @@ export default function LandingPage() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     
     return () => {
-      clearInterval(interval);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
     };
@@ -215,37 +257,65 @@ export default function LandingPage() {
                   </div>
                   
                   {/* Chat Content */}
-                  <div className="p-4 sm:p-6 space-y-4 min-h-[280px] sm:min-h-[320px]">
-                    <div className="text-[10px] sm:text-xs font-semibold text-gray-400 uppercase tracking-wider">Chat with your website</div>
+                  <div className="p-4 sm:p-6 flex flex-col min-h-[280px] sm:min-h-[320px]">
+                    <div className="text-[10px] sm:text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Chat with your website</div>
                     
-                    {/* User message */}
-                    <div className="flex justify-end">
-                      <div className="max-w-[85%] px-4 py-2.5 sm:py-3 rounded-2xl rounded-tr-md bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-sm shadow-lg">
-                        {chatExamples[activeChat].user}
-                      </div>
-                    </div>
-                    
-                    {/* AI response */}
-                    <div className="flex gap-2 sm:gap-3">
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gray-900 dark:bg-white flex items-center justify-center flex-shrink-0 shadow-lg">
-                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-                        </svg>
-                      </div>
-                      <div className="flex-1 px-4 py-2.5 sm:py-3 rounded-2xl rounded-tl-md bg-white dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] text-sm text-gray-700 dark:text-gray-300">
-                        {chatExamples[activeChat].ai}
-                      </div>
+                    {/* Messages */}
+                    <div className="flex-1 space-y-3 overflow-y-auto max-h-[160px] sm:max-h-[180px] mb-4 pr-1">
+                      {messages.map((msg, i) => (
+                        msg.role === 'user' ? (
+                          <div key={i} className="flex justify-end">
+                            <div className="max-w-[85%] px-3 py-2 rounded-2xl rounded-tr-md bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-sm">
+                              {msg.text}
+                            </div>
+                          </div>
+                        ) : (
+                          <div key={i} className="flex gap-2">
+                            <div className="w-6 h-6 rounded-lg bg-gray-900 dark:bg-white flex items-center justify-center flex-shrink-0">
+                              <svg className="w-3 h-3 text-white dark:text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                              </svg>
+                            </div>
+                            <div className="flex-1 px-3 py-2 rounded-2xl rounded-tl-md bg-gray-100 dark:bg-white/[0.04] text-sm text-gray-700 dark:text-gray-300">
+                              {msg.text}
+                            </div>
+                          </div>
+                        )
+                      ))}
+                      {isTyping && (
+                        <div className="flex gap-2">
+                          <div className="w-6 h-6 rounded-lg bg-gray-900 dark:bg-white flex items-center justify-center flex-shrink-0">
+                            <svg className="w-3 h-3 text-white dark:text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                            </svg>
+                          </div>
+                          <div className="px-4 py-2.5 rounded-2xl rounded-tl-md bg-gray-100 dark:bg-white/[0.04]">
+                            <div className="flex gap-1">
+                              <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                              <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                              <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Input */}
-                    <div className="flex items-center gap-2 p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-gray-50 dark:bg-white/[0.02] border border-black/[0.04] dark:border-white/[0.06]">
+                    <div className="flex items-center gap-2 p-2 rounded-xl bg-gray-50 dark:bg-white/[0.02] border border-black/[0.04] dark:border-white/[0.06]">
                       <input 
                         type="text" 
-                        placeholder="Tell me what to change..." 
+                        placeholder="Try: Add a contact form" 
                         className="flex-1 bg-transparent text-sm outline-none text-gray-700 dark:text-gray-300 placeholder-gray-400 px-2"
-                        readOnly
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={handleKeyDown}
                       />
-                      <Button size="sm" className="h-8 sm:h-9 px-3 sm:px-4 rounded-lg sm:rounded-xl bg-gray-900 dark:bg-white text-white dark:text-gray-900">
+                      <Button 
+                        size="sm" 
+                        className="h-8 px-3 rounded-lg bg-gray-900 dark:bg-white text-white dark:text-gray-900 disabled:opacity-50"
+                        onClick={handleSend}
+                        disabled={!inputValue.trim() || isTyping}
+                      >
                         Send
                       </Button>
                     </div>
@@ -253,15 +323,21 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Try prompts */}
+              {/* Quick prompts */}
               <div className="flex flex-wrap justify-center gap-2 mt-4 sm:mt-6">
-                {['Contact form', 'New colors', 'Add page'].map((prompt, i) => (
+                {[
+                  { label: 'Contact form', value: 'Add a contact form' },
+                  { label: 'Change colors', value: 'Change the primary color to blue' },
+                  { label: 'New page', value: 'Create a new About page' },
+                ].map((prompt, i) => (
                   <button
                     key={i}
-                    onClick={() => setActiveChat(i % chatExamples.length)}
+                    onClick={() => {
+                      setInputValue(prompt.value);
+                    }}
                     className="px-3 py-1.5 rounded-full bg-white/80 dark:bg-white/[0.04] hover:bg-white dark:hover:bg-white/[0.08] border border-black/[0.04] dark:border-white/[0.06] text-xs sm:text-sm text-gray-600 dark:text-gray-400 transition-all"
                   >
-                    {prompt}
+                    {prompt.label}
                   </button>
                 ))}
               </div>

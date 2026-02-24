@@ -548,7 +548,7 @@ export default function LandingPage() {
                 <div className="flex items-center justify-center lg:justify-start pt-6 border-t border-gray-200 dark:border-white/10">
                   {[
                     { value: '1-2', label: 'Weeks' },
-                    { value: '300', label: 'AI edits/mo' },
+                    { value: '~300', label: 'edits/month' },
                     { value: '0', label: 'Code' },
                   ].map((stat, i) => (
                     <div key={i} className="flex items-center">

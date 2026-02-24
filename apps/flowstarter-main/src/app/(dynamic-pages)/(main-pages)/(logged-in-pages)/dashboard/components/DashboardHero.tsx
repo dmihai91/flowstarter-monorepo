@@ -51,12 +51,12 @@ function OnboardingStepper() {
           return (
             <div
               key={step.number}
-              className={animation.className}
+              className={`${animation.className} h-full`}
               style={animation.style}
             >
               <div
                 className={`
-                  relative p-5 rounded-2xl border transition-all duration-300
+                  relative p-5 rounded-2xl border transition-all duration-300 h-full flex flex-col
                   ${isActive 
                     ? 'bg-white dark:bg-white/[0.06] border-[var(--purple)]/30 shadow-lg shadow-[var(--purple)]/5' 
                     : isCompleted
@@ -120,17 +120,22 @@ function OnboardingStepper() {
                   </div>
                 </div>
                 
+                {/* Spacer to push button to bottom */}
+                <div className="flex-1" />
+                
                 {/* Active step CTA */}
-                {isActive && (
+                {isActive ? (
                   <a
                     href={CALENDLY_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 text-sm font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(var(--purple-rgb),0.2)] transition-all duration-300 hover:scale-[1.02]"
+                    className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 text-sm font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(77,93,217,0.2)] transition-all duration-300 hover:scale-[1.02]"
                   >
                     <Calendar className="w-4 h-4" />
                     Book Free Call
                   </a>
+                ) : (
+                  <div className="mt-4 h-[42px]" /> 
                 )}
               </div>
             </div>

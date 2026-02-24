@@ -225,31 +225,44 @@ export default function LandingPage() {
         {/* Flow Field Background - Hero Section */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ height: '100vh' }}>
           <svg 
-            className="absolute inset-0 w-full h-full opacity-[0.18] dark:opacity-[0.25]"
+            className="absolute inset-0 w-full h-full opacity-[0.20] dark:opacity-[0.28]"
             viewBox="0 0 1200 800" 
             preserveAspectRatio="xMidYMid slice"
             fill="none"
           >
+            <defs>
+              <linearGradient id="flowGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#A855F7" />
+                <stop offset="100%" stopColor="#3B82F6" />
+              </linearGradient>
+              <linearGradient id="flowGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#8B5CF6" />
+                <stop offset="100%" stopColor="#06B6D4" />
+              </linearGradient>
+            </defs>
             {/* Flow lines group 1 - horizontal drift */}
-            <g className="flow-line-1" stroke="#C7B8EA" strokeWidth="2">
-              <path d="M-100,100 Q200,80 400,120 T800,100 T1300,140" />
-              <path d="M-100,180 Q150,200 350,160 T750,200 T1300,180" />
-              <path d="M-100,260 Q250,240 450,280 T850,250 T1300,290" />
-              <path d="M-100,340 Q180,360 380,320 T780,360 T1300,340" />
-              <path d="M-100,420 Q220,400 420,440 T820,410 T1300,450" />
+            <g className="flow-line-1" stroke="url(#flowGradient1)" strokeWidth="1.8">
+              <path d="M-100,80 Q200,60 400,100 T800,80 T1300,120" />
+              <path d="M-100,140 Q150,160 350,120 T750,160 T1300,140" />
+              <path d="M-100,200 Q250,180 450,220 T850,190 T1300,230" />
+              <path d="M-100,260 Q180,280 380,240 T780,280 T1300,260" />
+              <path d="M-100,320 Q220,300 420,340 T820,310 T1300,350" />
+              <path d="M-100,380 Q200,400 400,360 T800,400 T1300,380" />
             </g>
             {/* Flow lines group 2 - diagonal drift */}
-            <g className="flow-line-2" stroke="#C7B8EA" strokeWidth="1.5">
-              <path d="M-50,500 Q300,480 500,520 T900,490 T1350,530" />
-              <path d="M-50,580 Q250,600 450,560 T850,600 T1350,570" />
-              <path d="M-50,660 Q350,640 550,680 T950,650 T1350,690" />
+            <g className="flow-line-2" stroke="url(#flowGradient2)" strokeWidth="1.4">
+              <path d="M-50,440 Q300,420 500,460 T900,430 T1350,470" />
+              <path d="M-50,500 Q250,520 450,480 T850,520 T1350,490" />
+              <path d="M-50,560 Q350,540 550,580 T950,550 T1350,590" />
+              <path d="M-50,620 Q280,640 480,600 T880,640 T1350,620" />
+              <path d="M-50,680 Q320,660 520,700 T920,670 T1350,710" />
               <path d="M-50,740 Q280,760 480,720 T880,760 T1350,740" />
             </g>
             {/* Flow lines group 3 - subtle curves */}
-            <g className="flow-line-3" stroke="#C7B8EA" strokeWidth="1.2">
+            <g className="flow-line-3" stroke="url(#flowGradient1)" strokeWidth="1">
               <path d="M0,50 Q400,30 600,70 T1000,40 T1200,80" />
-              <path d="M0,380 Q350,400 550,360 T950,400 T1200,380" />
-              <path d="M0,620 Q400,600 600,640 T1000,610 T1200,650" />
+              <path d="M0,110 Q350,130 550,90 T950,130 T1200,110" />
+              <path d="M0,780 Q400,760 600,800 T1000,770 T1200,810" />
             </g>
           </svg>
         </div>
@@ -266,9 +279,9 @@ export default function LandingPage() {
               </Link>
               
               <nav className="hidden md:flex items-center gap-8">
-                <a href="#process" className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors">Process</a>
-                <a href="#pricing" className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors">Pricing</a>
-                <a href="#faq" className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors">FAQ</a>
+                <a href="#process" onClick={(e) => { e.preventDefault(); document.getElementById('process')?.scrollIntoView({ behavior: 'smooth' }); }} className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer">Process</a>
+                <a href="#pricing" onClick={(e) => { e.preventDefault(); document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }); }} className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer">Pricing</a>
+                <a href="#faq" onClick={(e) => { e.preventDefault(); document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' }); }} className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer">FAQ</a>
               </nav>
 
               <div className="flex items-center gap-2 sm:gap-4">
@@ -277,7 +290,7 @@ export default function LandingPage() {
                   Sign In
                 </Link>
                 <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="hidden sm:block">
-                  <Button className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl px-6 h-10 text-sm font-semibold shadow-lg transition-all">
+                  <Button className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-gray-800 hover:via-gray-700 hover:to-gray-800 dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-6 h-10 text-sm font-semibold shadow-lg hover:shadow-xl hover:shadow-violet-500/10 transition-all duration-300">
                     Book a Call
                   </Button>
                 </a>
@@ -303,12 +316,12 @@ export default function LandingPage() {
             {/* Mobile menu dropdown */}
             <div className={`md:hidden overflow-hidden transition-all duration-300 ${mobileMenuOpen ? 'max-h-64 pb-4' : 'max-h-0'}`}>
               <nav className="flex flex-col gap-1 pt-3 mt-2 border-t border-gray-200/50 dark:border-white/10 bg-white/95 dark:bg-[#0a0a0c]/95 backdrop-blur-xl -mx-4 px-4 sm:-mx-6 sm:px-6">
-                <a href="#process" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors">Process</a>
-                <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors">Pricing</a>
-                <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors">FAQ</a>
+                <a href="#process" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); document.getElementById('process')?.scrollIntoView({ behavior: 'smooth' }); }} className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer">Process</a>
+                <a href="#pricing" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }); }} className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer">Pricing</a>
+                <a href="#faq" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' }); }} className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer">FAQ</a>
                 <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors">Sign In</Link>
                 <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)} className="mt-2">
-                  <Button className="w-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl h-10 text-sm font-semibold shadow-lg transition-all">
+                  <Button className="w-full bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-gray-800 hover:via-gray-700 hover:to-gray-800 rounded-xl h-10 text-sm font-semibold shadow-lg transition-all duration-300">
                     Book a Call
                   </Button>
                 </a>
@@ -377,7 +390,7 @@ export default function LandingPage() {
                     { value: '0', label: 'Code' },
                   ].map((stat, i) => (
                     <div key={i} className="text-center">
-                      <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-white/60 bg-clip-text text-transparent">{stat.value}</div>
+                      <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">{stat.value}</div>
                       <div className="text-[10px] sm:text-xs text-gray-400 dark:text-white/30 uppercase tracking-wider mt-1">{stat.label}</div>
                     </div>
                   ))}
@@ -659,24 +672,37 @@ export default function LandingPage() {
           {/* Flow Field Background - Process Section (different direction) */}
           <div className="absolute inset-0 pointer-events-none">
             <svg 
-              className="absolute inset-0 w-full h-full opacity-[0.15] dark:opacity-[0.20]"
+              className="absolute inset-0 w-full h-full opacity-[0.18] dark:opacity-[0.24]"
               viewBox="0 0 1200 600" 
               preserveAspectRatio="xMidYMid slice"
               fill="none"
             >
+              <defs>
+                <linearGradient id="flowGradientV1" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#A855F7" />
+                  <stop offset="100%" stopColor="#3B82F6" />
+                </linearGradient>
+                <linearGradient id="flowGradientV2" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#8B5CF6" />
+                  <stop offset="100%" stopColor="#06B6D4" />
+                </linearGradient>
+              </defs>
               {/* Vertical-ish flow lines */}
-              <g className="flow-line-2" stroke="#C7B8EA" strokeWidth="1.8">
+              <g className="flow-line-2" stroke="url(#flowGradientV1)" strokeWidth="1.5">
                 <path d="M100,-50 Q80,150 120,300 T100,500 T140,700" />
-                <path d="M300,-50 Q320,100 280,250 T320,450 T280,700" />
-                <path d="M500,-50 Q480,180 520,330 T480,530 T520,700" />
-                <path d="M700,-50 Q720,120 680,270 T720,470 T680,700" />
-                <path d="M900,-50 Q880,160 920,310 T880,510 T920,700" />
-                <path d="M1100,-50 Q1120,140 1080,290 T1120,490 T1080,700" />
+                <path d="M250,-50 Q270,100 230,250 T270,450 T230,700" />
+                <path d="M400,-50 Q380,180 420,330 T380,530 T420,700" />
+                <path d="M550,-50 Q570,120 530,270 T570,470 T530,700" />
+                <path d="M700,-50 Q680,160 720,310 T680,510 T720,700" />
+                <path d="M850,-50 Q870,140 830,290 T870,490 T830,700" />
+                <path d="M1000,-50 Q980,180 1020,330 T980,530 T1020,700" />
+                <path d="M1150,-50 Q1170,120 1130,270 T1170,470 T1130,700" />
               </g>
               {/* Cross-flow curves */}
-              <g className="flow-line-3" stroke="#C7B8EA" strokeWidth="1.2">
-                <path d="M-50,200 Q400,180 600,220 T1000,190 T1300,230" />
-                <path d="M-50,400 Q350,420 550,380 T950,420 T1300,400" />
+              <g className="flow-line-3" stroke="url(#flowGradientV2)" strokeWidth="1">
+                <path d="M-50,150 Q400,130 600,170 T1000,140 T1300,180" />
+                <path d="M-50,300 Q350,320 550,280 T950,320 T1300,300" />
+                <path d="M-50,450 Q400,430 600,470 T1000,440 T1300,480" />
               </g>
             </svg>
           </div>
@@ -711,7 +737,7 @@ export default function LandingPage() {
             <div className="text-center mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight">
                 Everything you need.{' '}
-                <span className="text-gray-400 dark:text-white/30">Nothing you don't.</span>
+                <span className="bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">Nothing you don't.</span>
               </h2>
             </div>
 
@@ -786,7 +812,7 @@ export default function LandingPage() {
             <div className="text-center mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight">
                 Simple pricing.{' '}
-                <span className="text-gray-400 dark:text-white/30">No surprises.</span>
+                <span className="bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">No surprises.</span>
               </h2>
             </div>
 
@@ -863,7 +889,7 @@ export default function LandingPage() {
                 <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-4 lg:sticky lg:top-32">
                   Questions?
                   <br />
-                  <span className="text-gray-400 dark:text-white/30">Answered.</span>
+                  <span className="bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">Answered.</span>
                 </h2>
               </div>
               
@@ -883,11 +909,11 @@ export default function LandingPage() {
                   >
                     <button
                       onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                      className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors"
+                      className="group/faq w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors"
                     >
                       <h3 className="text-base font-semibold pr-4">{faq.q}</h3>
                       <svg 
-                        className={`w-5 h-5 text-gray-400 flex-shrink-0 transition-transform duration-200 ${openFaq === i ? 'rotate-180' : ''}`} 
+                        className={`w-5 h-5 text-gray-400 group-hover/faq:text-violet-500 flex-shrink-0 transition-all duration-200 ${openFaq === i ? 'rotate-180 text-violet-500' : ''}`} 
                         fill="none" 
                         viewBox="0 0 24 24" 
                         stroke="currentColor" 
@@ -907,8 +933,30 @@ export default function LandingPage() {
         </section>
 
         {/* Final CTA */}
-        <section className="py-12 lg:py-16 relative">
+        <section className="py-12 lg:py-16 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-t from-violet-500/10 via-violet-500/5 to-transparent pointer-events-none" />
+          {/* Flow Field Background - Footer CTA */}
+          <div className="absolute inset-0 pointer-events-none">
+            <svg 
+              className="absolute inset-0 w-full h-full opacity-[0.15] dark:opacity-[0.20]"
+              viewBox="0 0 1200 400" 
+              preserveAspectRatio="xMidYMid slice"
+              fill="none"
+            >
+              <defs>
+                <linearGradient id="flowGradientF" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#A855F7" />
+                  <stop offset="100%" stopColor="#3B82F6" />
+                </linearGradient>
+              </defs>
+              <g className="flow-line-1" stroke="url(#flowGradientF)" strokeWidth="1.2">
+                <path d="M-100,80 Q200,60 400,100 T800,70 T1300,110" />
+                <path d="M-100,160 Q250,180 450,140 T850,180 T1300,150" />
+                <path d="M-100,240 Q200,220 400,260 T800,230 T1300,270" />
+                <path d="M-100,320 Q250,340 450,300 T850,340 T1300,310" />
+              </g>
+            </svg>
+          </div>
           
           <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center relative">
             <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-5">
@@ -939,7 +987,7 @@ export default function LandingPage() {
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center">
                   <span className="text-white font-bold text-sm">F</span>
                 </div>
-                <span className="text-sm text-gray-400 dark:text-white/30">© 2025 Flowstarter</span>
+                <span className="text-sm text-gray-400 dark:text-white/30">© 2026 Flowstarter</span>
               </div>
               <div className="flex items-center gap-6">
                 <a href="mailto:hello@flowstarter.app" className="text-sm text-gray-400 dark:text-white/30 hover:text-gray-900 dark:hover:text-white transition-colors">

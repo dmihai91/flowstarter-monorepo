@@ -16,6 +16,7 @@ export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Mock site state for live preview
@@ -750,7 +751,7 @@ export default function LandingPage() {
                 Early Access
               </div>
               <p className="text-lg text-gray-600 dark:text-white/60 max-w-xl mx-auto">
-                Launching beta — early adopters get <span className="font-semibold text-violet-600 dark:text-violet-400">50% off for life</span>.
+                Launching beta — early adopters get <span className="font-semibold text-violet-600 dark:text-violet-400">50% off all pricing</span> until v1.0 launches.
               </p>
             </div>
           </div>
@@ -846,19 +847,38 @@ export default function LandingPage() {
                 </h2>
               </div>
               
-              <div className="space-y-6">
+              <div className="space-y-3">
                 {[
                   { q: 'What happens on the discovery call?', a: 'We spend 30–45 minutes learning about your business, your goals, and your brand. You don\'t need to prepare anything — just show up and tell us about what you do. We handle the rest.' },
                   { q: 'How long until my site is live?', a: 'Most sites go live within 1–2 weeks after the discovery call. We\'ll keep you updated throughout the process.' },
                   { q: 'Can I make changes after the site is built?', a: 'That\'s the whole point. Your subscription includes our AI editor — update text, add pages, change your branding, improve your SEO. All without writing a single line of code.' },
+                  { q: 'What if I want to cancel?', a: 'No lock-in. Cancel your subscription anytime. The setup fee is non-refundable since it covers real work (your discovery call and site build), but you keep all your site files.' },
                   { q: 'Do I need any technical skills?', a: 'Zero. We handle the technical setup. The AI editor is built for people who\'ve never touched code.' },
                   { q: 'What happens when the beta ends?', a: 'Pricing moves to the standard rate (€199 setup / €19 per month). You\'ll get 30 days notice before anything changes.' },
-                  { q: 'What\'s included in the email?', a: 'Two professional email addresses with your domain (e.g., you@yourbusiness.com). Powered by Zoho Mail.' },
-                  { q: 'What if I want to cancel?', a: 'No lock-in. Cancel your subscription anytime. The setup fee is non-refundable since it covers real work (your discovery call and site build), but you keep all your site files.' },
+                  { q: 'What\'s included in the email?', a: 'Two professional email addresses with your domain (e.g., you@yourbusiness.com).' },
                 ].map((faq, i) => (
-                  <div key={i} className="p-6 rounded-2xl bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/10 hover:shadow-lg transition-all">
-                    <h3 className="text-lg font-semibold mb-3">{faq.q}</h3>
-                    <p className="text-gray-500 dark:text-white/40 leading-relaxed text-sm">{faq.a}</p>
+                  <div 
+                    key={i} 
+                    className="rounded-2xl bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200 dark:border-white/5 overflow-hidden transition-all"
+                  >
+                    <button
+                      onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                      className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors"
+                    >
+                      <h3 className="text-base font-semibold pr-4">{faq.q}</h3>
+                      <svg 
+                        className={`w-5 h-5 text-gray-400 flex-shrink-0 transition-transform duration-200 ${openFaq === i ? 'rotate-180' : ''}`} 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        stroke="currentColor" 
+                        strokeWidth={2}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    <div className={`overflow-hidden transition-all duration-300 ${openFaq === i ? 'max-h-48 pb-5' : 'max-h-0'}`}>
+                      <p className="px-6 text-gray-500 dark:text-white/40 leading-relaxed text-sm">{faq.a}</p>
+                    </div>
                   </div>
                 ))}
               </div>

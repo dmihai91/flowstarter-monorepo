@@ -92,8 +92,14 @@ const isPublicRoute = createRouteMatcher([
   '/template-preview(.*)',
   '/api/health(.*)',
   '/api/auth/session(.*)', // Session check for editor SSO
+  '/api/contact(.*)', // Public contact form API
   '/gdpr(.*)',
   '/contact(.*)',
+  '/help(.*)', // Public help page
+  '/privacy(.*)', // Public privacy policy
+  '/terms(.*)', // Public terms of service
+  '/pricing(.*)', // Public pricing page
+  '/blog(.*)', // Public blog
   '/guides(.*)',
   '/blogs(.*)',
   '/cookie-policy(.*)',

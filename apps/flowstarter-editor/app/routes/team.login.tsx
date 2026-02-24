@@ -1,5 +1,5 @@
 /**
- * Team Login - Simple email/password only
+ * Team Login
  */
 
 import { useSignIn, useUser } from '@clerk/remix';
@@ -7,6 +7,10 @@ import { useNavigate } from '@remix-run/react';
 import type { MetaFunction } from '@remix-run/cloudflare';
 import { useEffect, useState } from 'react';
 import { setTeamSession, clearTeamSession, TEAM_EMAIL_DOMAINS } from '~/lib/team-auth';
+import { Button } from '~/components/ui/Button';
+import { Input } from '~/components/ui/Input';
+import { Label } from '~/components/ui/Label';
+import { Card, CardHeader, CardTitle, CardContent } from '~/components/ui/Card';
 
 export const meta: MetaFunction = () => {
   return [
@@ -16,7 +20,7 @@ export const meta: MetaFunction = () => {
 };
 
 export default function TeamLogin() {
-  const { signIn, setActive, isLoaded: signInLoaded } = useSignIn();
+  const { signIn, setActive } = useSignIn();
   const { isLoaded: userLoaded, isSignedIn, user } = useUser();
   const navigate = useNavigate();
   
@@ -25,7 +29,6 @@ export default function TeamLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   
-  // Check if already signed in
   useEffect(() => {
     if (userLoaded && isSignedIn && user) {
       const userEmail = user.primaryEmailAddress?.emailAddress;
@@ -66,68 +69,58 @@ export default function TeamLogin() {
   };
   
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#fafafa]">
+    <div className="min-h-screen flex items-center justify-center bg-flowstarter-elements-background p-4">
       <div className="w-full max-w-sm">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 text-xl font-semibold text-gray-900">
-            <svg className="w-6 h-6 text-purple-600" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M13 3L4 14h7v7l9-11h-7V3z" />
-            </svg>
-            Flowstarter
-          </div>
+        <div className="text-center mb-6">
+          <div className="i-flowstarter:logo-text?mask text-flowstarter-elements-textPrimary w-32 h-8 mx-auto" />
         </div>
         
-        {/* Card */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-          <h1 className="text-xl font-semibold text-gray-900 text-center mb-6">
-            Team Login
-          </h1>
-          
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@flowstarter.app"
-                className="w-full h-10 px-3 rounded-lg border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                required
-              />
-            </div>
+        <Card>
+          <CardHeader className="text-center pb-4">
+            <CardTitle className="text-lg">Team Login</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@flowstarter.app"
+                  required
+                />
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full h-10 px-3 rounded-lg border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                required
-              />
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
 
-            {error && (
-              <p className="text-sm text-red-600">{error}</p>
-            )}
+              {error && (
+                <p className="text-sm text-red-500">{error}</p>
+              )}
 
-            <button
-              type="submit"
-              disabled={isLoading || !email || !password}
-              className="w-full h-10 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? 'Signing in...' : 'Sign in'}
-            </button>
-          </form>
-        </div>
+              <Button
+                type="submit"
+                disabled={isLoading || !email || !password}
+                className="w-full"
+              >
+                {isLoading ? 'Signing in...' : 'Sign in'}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
         
-        <p className="text-center text-xs text-gray-400 mt-4">
+        <p className="text-center text-xs text-flowstarter-elements-textSecondary mt-4">
           Team access only
         </p>
       </div>

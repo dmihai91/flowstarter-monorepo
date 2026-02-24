@@ -310,6 +310,85 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* AI Editor Feature */}
+      <section className="relative py-24 md:py-32">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <span className="text-transparent bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] bg-clip-text font-semibold text-sm uppercase tracking-wider">
+                After launch
+              </span>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mt-4 leading-tight">
+                Your site. Your control.
+                <br />
+                <span className="bg-gradient-to-r from-[#A55AAC] via-[#7B6AD8] to-[#4D5DD9] bg-clip-text text-transparent">
+                  Powered by AI.
+                </span>
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-400 mt-6 leading-relaxed">
+                Once your site is live, you get access to our AI Editor. Just tell it what you want to change — 
+                in plain English — and watch your site update in real time.
+              </p>
+              <ul className="mt-8 space-y-4">
+                {[
+                  '"Add a new page about our services"',
+                  '"Change the hero image to something more modern"',
+                  '"Update the contact info in the footer"',
+                  '"Make the colors more vibrant"',
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#A55AAC]/10 to-[#4D5DD9]/10 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-4 h-4 text-[#7B6AD8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                    </div>
+                    <span className="italic">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-8 text-gray-500 dark:text-gray-400">
+                No coding. No design skills. Just chat and customize.
+              </p>
+            </div>
+            
+            {/* Visual representation */}
+            <div className="relative">
+              <div className="p-[1px] rounded-3xl bg-gradient-to-br from-[#A55AAC]/50 via-transparent to-[#4D5DD9]/50">
+                <div className="p-8 rounded-3xl bg-white/80 dark:bg-[hsl(240,8%,10%)] backdrop-blur-2xl">
+                  {/* Mock chat interface */}
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-white/10 flex items-center justify-center flex-shrink-0">
+                        <span className="text-xs">You</span>
+                      </div>
+                      <div className="px-4 py-3 rounded-2xl rounded-tl-none bg-gray-100 dark:bg-white/5 text-sm text-gray-700 dark:text-gray-300">
+                        Make the headline bigger and add our new phone number
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#A55AAC] to-[#4D5DD9] flex items-center justify-center flex-shrink-0">
+                        <span className="text-xs text-white font-bold">AI</span>
+                      </div>
+                      <div className="px-4 py-3 rounded-2xl rounded-tl-none bg-gradient-to-r from-[#A55AAC]/10 to-[#4D5DD9]/10 text-sm text-gray-700 dark:text-gray-300">
+                        Done! I&apos;ve increased the headline size by 20% and added your phone number to the header and footer. Want me to adjust anything else?
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-6 pt-4 border-t border-gray-200 dark:border-white/10">
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-50 dark:bg-white/5 text-gray-400 text-sm">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                      Tell the AI what to change...
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Pricing - Single Plan */}
       <section className="relative py-24 md:py-32">
         <div className="max-w-6xl mx-auto px-6">
@@ -397,7 +476,7 @@ export default function LandingPage() {
                       'Fast, secure hosting (SSL included)',
                       'Professional email (2 mailboxes)',
                       'Cloud storage (1GB)',
-                      'Update content, pages, branding anytime',
+                      'AI Editor — update content, pages, branding by chatting',
                       'Ongoing platform access and updates',
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-400">
@@ -446,7 +525,7 @@ export default function LandingPage() {
               },
               {
                 q: 'Can I make changes after the site is built?',
-                a: 'Absolutely. Your subscription includes easy customization tools. Update content, add pages, tweak your branding — all without touching code.',
+                a: 'Absolutely. Your subscription includes our AI Editor — just tell it what you want to change in plain English. Update content, add pages, tweak your branding, change colors — all by chatting. No coding required.',
               },
               {
                 q: 'What happens when the beta ends?',

@@ -197,65 +197,61 @@ export default function LandingPage() {
           background-size: 200% 200%;
           animation: gradient-shift 8s ease infinite;
         }
+        
+        /* Flow field animations */
+        @keyframes flow-drift-1 {
+          0%, 100% { transform: translateX(0) translateY(0); }
+          25% { transform: translateX(15px) translateY(-10px); }
+          50% { transform: translateX(5px) translateY(15px); }
+          75% { transform: translateX(-10px) translateY(5px); }
+        }
+        @keyframes flow-drift-2 {
+          0%, 100% { transform: translateX(0) translateY(0); }
+          25% { transform: translateX(-12px) translateY(8px); }
+          50% { transform: translateX(8px) translateY(-12px); }
+          75% { transform: translateX(15px) translateY(10px); }
+        }
+        @keyframes flow-drift-3 {
+          0%, 100% { transform: translateX(0) translateY(0); }
+          33% { transform: translateX(10px) translateY(15px); }
+          66% { transform: translateX(-15px) translateY(-5px); }
+        }
+        .flow-line-1 { animation: flow-drift-1 25s ease-in-out infinite; will-change: transform; }
+        .flow-line-2 { animation: flow-drift-2 30s ease-in-out infinite; will-change: transform; }
+        .flow-line-3 { animation: flow-drift-3 22s ease-in-out infinite; will-change: transform; }
       `}</style>
 
       <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#0a0a0c] text-gray-900 dark:text-white font-display relative overflow-hidden transition-colors duration-300">
-        {/* Animated gradient orbs */}
-        <div className="fixed inset-0 pointer-events-none overflow-hidden">
-          <div 
-            className="absolute w-[800px] h-[800px] rounded-full blur-[120px] opacity-20 dark:opacity-30 transition-transform duration-[2000ms]"
-            style={{ 
-              background: 'radial-gradient(circle, rgba(168, 85, 247, 0.5) 0%, transparent 70%)',
-              top: '-20%',
-              left: '-10%',
-              ...mouseParallax(0.02),
-            }}
-          />
-          <div 
-            className="absolute w-[600px] h-[600px] rounded-full blur-[100px] opacity-15 dark:opacity-25 transition-transform duration-[2000ms]"
-            style={{ 
-              background: 'radial-gradient(circle, rgba(219, 39, 119, 0.4) 0%, transparent 70%)',
-              top: '30%',
-              right: '-5%',
-              ...mouseParallax(-0.015),
-            }}
-          />
-          <div 
-            className="absolute w-[500px] h-[500px] rounded-full blur-[80px] opacity-10 dark:opacity-20"
-            style={{ 
-              background: 'radial-gradient(circle, rgba(236, 72, 153, 0.4) 0%, transparent 70%)',
-              bottom: '10%',
-              left: '20%',
-            }}
-          />
-        </div>
-
-        {/* Grid pattern overlay */}
-        <div 
-          className="fixed inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.02]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)`,
-            backgroundSize: '60px 60px'
-          }}
-        />
-
-        {/* Floating decorative shapes */}
-        <div className="fixed inset-0 pointer-events-none overflow-hidden">
-          {/* Morphing blob */}
-          <div 
-            className="absolute w-64 h-64 bg-gradient-to-br from-violet-500/10 to-blue-500/10 animate-morph"
-            style={{ top: '15%', right: '10%' }}
-          />
-          {/* Spinning ring */}
-          <div 
-            className="absolute w-48 h-48 border border-violet-500/10 rounded-full animate-spin-slow"
-            style={{ bottom: '20%', left: '5%' }}
-          />
-          {/* Small floating dots */}
-          <div className="absolute w-3 h-3 bg-violet-500/30 rounded-full animate-float" style={{ top: '25%', left: '15%', animationDelay: '0s' }} />
-          <div className="absolute w-2 h-2 bg-blue-500/30 rounded-full animate-float" style={{ top: '45%', right: '20%', animationDelay: '1s' }} />
-          <div className="absolute w-4 h-4 bg-cyan-500/20 rounded-full animate-float" style={{ bottom: '30%', left: '25%', animationDelay: '2s' }} />
-          <div className="absolute w-2 h-2 bg-pink-500/30 rounded-full animate-float" style={{ top: '60%', right: '8%', animationDelay: '3s' }} />
+        {/* Flow Field Background - Hero Section */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ height: '100vh' }}>
+          <svg 
+            className="absolute inset-0 w-full h-full opacity-[0.08] dark:opacity-[0.12]"
+            viewBox="0 0 1200 800" 
+            preserveAspectRatio="xMidYMid slice"
+            fill="none"
+          >
+            {/* Flow lines group 1 - horizontal drift */}
+            <g className="flow-line-1" stroke="#C7B8EA" strokeWidth="1.5">
+              <path d="M-100,100 Q200,80 400,120 T800,100 T1300,140" />
+              <path d="M-100,180 Q150,200 350,160 T750,200 T1300,180" />
+              <path d="M-100,260 Q250,240 450,280 T850,250 T1300,290" />
+              <path d="M-100,340 Q180,360 380,320 T780,360 T1300,340" />
+              <path d="M-100,420 Q220,400 420,440 T820,410 T1300,450" />
+            </g>
+            {/* Flow lines group 2 - diagonal drift */}
+            <g className="flow-line-2" stroke="#C7B8EA" strokeWidth="1">
+              <path d="M-50,500 Q300,480 500,520 T900,490 T1350,530" />
+              <path d="M-50,580 Q250,600 450,560 T850,600 T1350,570" />
+              <path d="M-50,660 Q350,640 550,680 T950,650 T1350,690" />
+              <path d="M-50,740 Q280,760 480,720 T880,760 T1350,740" />
+            </g>
+            {/* Flow lines group 3 - subtle curves */}
+            <g className="flow-line-3" stroke="#C7B8EA" strokeWidth="0.8">
+              <path d="M0,50 Q400,30 600,70 T1000,40 T1200,80" />
+              <path d="M0,380 Q350,400 550,360 T950,400 T1200,380" />
+              <path d="M0,620 Q400,600 600,640 T1000,610 T1200,650" />
+            </g>
+          </svg>
         </div>
 
         {/* Header */}
@@ -659,8 +655,32 @@ export default function LandingPage() {
         </section>
 
         {/* Process Section */}
-        <section id="process" className="py-16 lg:py-24 relative">
-          <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        <section id="process" className="py-16 lg:py-24 relative overflow-hidden">
+          {/* Flow Field Background - Process Section (different direction) */}
+          <div className="absolute inset-0 pointer-events-none">
+            <svg 
+              className="absolute inset-0 w-full h-full opacity-[0.06] dark:opacity-[0.10]"
+              viewBox="0 0 1200 600" 
+              preserveAspectRatio="xMidYMid slice"
+              fill="none"
+            >
+              {/* Vertical-ish flow lines */}
+              <g className="flow-line-2" stroke="#C7B8EA" strokeWidth="1.2">
+                <path d="M100,-50 Q80,150 120,300 T100,500 T140,700" />
+                <path d="M300,-50 Q320,100 280,250 T320,450 T280,700" />
+                <path d="M500,-50 Q480,180 520,330 T480,530 T520,700" />
+                <path d="M700,-50 Q720,120 680,270 T720,470 T680,700" />
+                <path d="M900,-50 Q880,160 920,310 T880,510 T920,700" />
+                <path d="M1100,-50 Q1120,140 1080,290 T1120,490 T1080,700" />
+              </g>
+              {/* Cross-flow curves */}
+              <g className="flow-line-3" stroke="#C7B8EA" strokeWidth="0.8">
+                <path d="M-50,200 Q400,180 600,220 T1000,190 T1300,230" />
+                <path d="M-50,400 Q350,420 550,380 T950,420 T1300,400" />
+              </g>
+            </svg>
+          </div>
+          <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
             <div className="max-w-xl mb-12">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight mb-3">
                 Three steps to your{' '}

@@ -1,55 +1,30 @@
 /**
- * Team Login - Shared Clerk Session
+ * Team Login - Clerk Authentication
  * 
- * Uses shared Clerk cookies between main platform and editor.
- * 
- * Environments:
- * - Integration (dev domains): flowstarter.dev / editor.flowstarter.dev
- * - Isolation (localhost): localhost:3000 / localhost:5175
- * - Production: flowstarter.app / editor.flowstarter.app
+ * Uses Clerk for authentication, restricted to team email domains.
+ * Styled to match the main platform login.
  */
 
-import { useEffect, useState } from 'react';
+import { SignIn, useUser } from '@clerk/remix';
 import { useNavigate } from '@remix-run/react';
 import type { MetaFunction } from '@remix-run/cloudflare';
-import { setTeamSession, isTeamAuthenticated, clearTeamSession, TEAM_EMAIL_DOMAINS } from '~/lib/team-auth';
+import { useEffect, useState } from 'react';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Team Login - Flowstarter' },
+    { title: 'Team Login - Flowstarter Editor' },
     { name: 'robots', content: 'noindex' },
   ];
 };
 
-// Platform URL detection
-function getPlatformConfig() {
-  if (typeof window === 'undefined') {
-    return { platformUrl: 'http://localhost:3000', mode: 'isolation' as const };
-  }
-  
-  const hostname = window.location.hostname;
-  
-  // Production
-  if (hostname === 'editor.flowstarter.app' || hostname === 'flowstarter.app') {
-    return { platformUrl: 'https://flowstarter.app', mode: 'production' as const };
-  }
-  
-  // Development (integration mode with dev domains via Cloudflare Tunnel)
-  if (hostname === 'editor.flowstarter.dev' || hostname === 'flowstarter.dev') {
-    return { platformUrl: 'https://flowstarter.dev', mode: 'integration' as const };
-  }
-  
-  // Local isolation mode
-  return { platformUrl: 'http://localhost:3000', mode: 'isolation' as const };
-}
+// Team email domains allowed to access
+const TEAM_EMAIL_DOMAINS = ['flowstarter.app'];
 
 export default function TeamLogin() {
+  const { isLoaded, isSignedIn, user } = useUser();
   const navigate = useNavigate();
   const [isDark, setIsDark] = useState(true);
-  const [status, setStatus] = useState<'checking' | 'idle' | 'denied' | 'error'>('checking');
-  const [error, setError] = useState<string | null>(null);
-  
-  const { platformUrl, mode } = getPlatformConfig();
+  const [accessDenied, setAccessDenied] = useState(false);
   
   // Detect theme
   useEffect(() => {
@@ -63,75 +38,40 @@ export default function TeamLogin() {
     }
   }, []);
   
-  // Check for existing Clerk session
+  // Check if signed in user is team member
   useEffect(() => {
-    if (isTeamAuthenticated()) {
-      navigate('/');
-      return;
-    }
-    
-    checkSession();
-  }, []);
-  
-  async function checkSession() {
-    try {
-      const response = await fetch(`${platformUrl}/api/auth/session`, {
-        credentials: 'include',
-      });
+    if (isLoaded && isSignedIn && user) {
+      const email = user.primaryEmailAddress?.emailAddress;
+      const domain = email?.split('@')[1]?.toLowerCase();
+      const isTeam = domain && TEAM_EMAIL_DOMAINS.includes(domain);
       
-      if (!response.ok) {
-        console.log('Session check returned:', response.status);
-        setStatus('idle');
-        return;
-      }
-      
-      const data = await response.json();
-      
-      if (data.authenticated && data.isTeam) {
-        setTeamSession(data.userId, { email: data.email, name: data.name });
+      if (isTeam) {
         navigate('/');
-      } else if (data.authenticated && !data.isTeam) {
-        setStatus('denied');
-        setError(`Access denied. Only ${TEAM_EMAIL_DOMAINS.join(', ')} emails allowed.`);
       } else {
-        setStatus('idle');
+        setAccessDenied(true);
       }
-    } catch (err) {
-      console.error('Session check failed:', err);
-      setStatus('idle');
     }
-  }
+  }, [isLoaded, isSignedIn, user, navigate]);
   
-  const handleLogin = () => {
-    const returnUrl = encodeURIComponent(window.location.href);
-    window.location.href = `${platformUrl}/login?redirect_url=${returnUrl}`;
-  };
-  
-  // Loading
-  if (status === 'checking') {
-    return (
-      <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
-        <div className="text-center">
-          <div className="animate-spin w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full mx-auto mb-4" />
-          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Checking session...</p>
-        </div>
-      </div>
-    );
-  }
-  
-  // Denied
-  if (status === 'denied') {
+  // Access denied view
+  if (accessDenied) {
     return (
       <div className={`min-h-screen flex items-center justify-center ${
-        isDark ? 'bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900' : 'bg-gradient-to-br from-gray-50 via-purple-100/30 to-gray-100'
+        isDark 
+          ? 'bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900' 
+          : 'bg-gradient-to-br from-purple-50 via-white to-blue-50'
       }`}>
-        <div className="w-full max-w-sm p-6 text-center">
-          <div className="text-5xl mb-4">🚫</div>
-          <h1 className={`text-2xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>Access Denied</h1>
-          <p className={`text-sm mb-6 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{error}</p>
-          <button 
-            onClick={() => { clearTeamSession(); window.location.href = platformUrl; }} 
-            className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg"
+        <div className="w-full max-w-md p-8 text-center">
+          <div className="text-6xl mb-6">🚫</div>
+          <h1 className={`text-2xl font-bold mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            Access Denied
+          </h1>
+          <p className={`mb-6 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+            Only team members with @{TEAM_EMAIL_DOMAINS.join(' or @')} emails can access the editor.
+          </p>
+          <button
+            onClick={() => window.location.href = 'https://flowstarter.dev'}
+            className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-xl transition-colors"
           >
             Go to Flowstarter
           </button>
@@ -140,40 +80,89 @@ export default function TeamLogin() {
     );
   }
   
-  // Login
   return (
     <div className={`min-h-screen flex items-center justify-center ${
-      isDark ? 'bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900' : 'bg-gradient-to-br from-gray-50 via-purple-100/30 to-gray-100'
+      isDark 
+        ? 'bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900' 
+        : 'bg-gradient-to-br from-purple-50 via-white to-blue-50'
     }`}>
-      <div className="w-full max-w-sm p-6">
+      {/* Background decorations */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className={`absolute -top-40 -right-40 w-80 h-80 rounded-full blur-3xl ${
+          isDark ? 'bg-purple-500/10' : 'bg-purple-400/20'
+        }`} />
+        <div className={`absolute -bottom-40 -left-40 w-80 h-80 rounded-full blur-3xl ${
+          isDark ? 'bg-blue-500/10' : 'bg-blue-400/20'
+        }`} />
+      </div>
+      
+      <div className="relative w-full max-w-lg px-4">
+        {/* Header */}
         <div className="text-center mb-8">
-          <div className="text-4xl mb-3">🔧</div>
-          <h1 className={`text-2xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>Team Login</h1>
-          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Internal access only</p>
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-700 mb-4">
+            <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
+          <h1 className={`text-3xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            Team Access
+          </h1>
+          <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+            Sign in to access the Flowstarter Editor
+          </p>
         </div>
         
-        <div className={`rounded-xl p-6 border text-center ${isDark ? 'bg-white/5 border-white/10' : 'bg-white border-gray-200 shadow-lg'}`}>
-          <p className={`mb-6 text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-            Sign in with your Flowstarter account.
-          </p>
-          
-          <button onClick={handleLogin} className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg flex items-center justify-center gap-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-            </svg>
-            Sign in via Flowstarter
-          </button>
-          
-          <p className={`mt-4 text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-            Team domains: {TEAM_EMAIL_DOMAINS.join(', ')}
-          </p>
-          
-          {mode !== 'production' && (
-            <p className={`mt-2 text-xs ${isDark ? 'text-gray-600' : 'text-gray-300'}`}>
-              Mode: {mode} → {platformUrl}
-            </p>
-          )}
+        {/* Clerk SignIn Component */}
+        <div className={`rounded-2xl p-6 backdrop-blur-xl ${
+          isDark 
+            ? 'bg-white/5 border border-white/10' 
+            : 'bg-white/80 border border-gray-200 shadow-xl'
+        }`}>
+          <SignIn
+            appearance={{
+              elements: {
+                rootBox: 'w-full',
+                card: 'bg-transparent shadow-none p-0',
+                headerTitle: 'hidden',
+                headerSubtitle: 'hidden',
+                socialButtonsBlockButton: `w-full h-12 rounded-xl font-medium border transition-all ${
+                  isDark 
+                    ? 'bg-white/5 border-white/10 text-white hover:bg-white/10' 
+                    : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                }`,
+                socialButtonsBlockButtonText: 'font-medium',
+                dividerLine: isDark ? 'bg-white/10' : 'bg-gray-200',
+                dividerText: isDark ? 'text-gray-500' : 'text-gray-400',
+                formFieldLabel: isDark ? 'text-gray-300' : 'text-gray-600',
+                formFieldInput: `h-12 rounded-xl ${
+                  isDark 
+                    ? 'bg-white/5 border-white/10 text-white placeholder:text-gray-500' 
+                    : 'bg-white border-gray-200 text-gray-900'
+                }`,
+                formButtonPrimary: 'h-12 rounded-xl bg-purple-600 hover:bg-purple-700 font-medium',
+                footerActionLink: 'text-purple-500 hover:text-purple-400',
+                identityPreviewText: isDark ? 'text-white' : 'text-gray-900',
+                identityPreviewEditButton: 'text-purple-500',
+                formFieldAction: 'text-purple-500 hover:text-purple-400',
+                footer: 'hidden',
+              },
+              layout: {
+                socialButtonsPlacement: 'top',
+                showOptionalFields: false,
+              },
+            }}
+            routing="path"
+            path="/team/login"
+            signUpUrl="/team/login"
+            forceRedirectUrl="/"
+          />
         </div>
+        
+        {/* Footer */}
+        <p className={`text-center mt-6 text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+          Team access only • @{TEAM_EMAIL_DOMAINS.join(', @')} emails
+        </p>
       </div>
     </div>
   );

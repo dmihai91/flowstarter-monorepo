@@ -1,6 +1,6 @@
 import { useStore } from '@nanostores/react';
-import type { LinksFunction } from '@remix-run/cloudflare';
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
+import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/cloudflare';
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from '@remix-run/react';
 import tailwindReset from '@unocss/reset/tailwind-compat.css?url';
 import { themeStore } from './lib/stores/theme';
 import { stripIndents } from './utils/stripIndent';
@@ -13,6 +13,8 @@ import { AmplitudeProvider } from './components/AmplitudeProvider';
 import { GTMProvider } from './components/GTMProvider';
 import { ConvexProvider, ConvexReactClient } from 'convex/react';
 import { QueryProvider } from './components/QueryProvider';
+import { ClerkProvider } from '@clerk/remix';
+import { rootAuthLoader } from '@clerk/remix/ssr.server';
 
 // Core styles - loaded immediately (critical for initial render)
 import globalStyles from './styles/index.scss?url';
@@ -44,6 +46,9 @@ function getConvexClient(): ConvexReactClient | null {
 
   return convexClientSingleton;
 }
+
+// Clerk auth loader
+export const loader = (args: LoaderFunctionArgs) => rootAuthLoader(args);
 
 export const links: LinksFunction = () => [
   // Favicons
@@ -274,6 +279,7 @@ import { logStore } from './lib/stores/logs';
 
 export default function App() {
   const theme = useStore(themeStore);
+  const loaderData = useLoaderData<typeof loader>();
 
   useEffect(() => {
     logStore.logSystem('Application initialized', {
@@ -284,8 +290,10 @@ export default function App() {
   }, []);
 
   return (
-    <Layout>
-      <Outlet />
-    </Layout>
+    <ClerkProvider {...loaderData}>
+      <Layout>
+        <Outlet />
+      </Layout>
+    </ClerkProvider>
   );
 }

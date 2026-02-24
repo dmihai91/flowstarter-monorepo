@@ -55,7 +55,7 @@ function SidebarLink({
           shouldExpand ? 'justify-start shrink-0' : 'justify-center w-full',
           isActive
             ? 'text-white'
-            : 'text-gray-500 group-hover:text-[#7C3AED] dark:text-gray-400 dark:group-hover:text-[#A78BFA]'
+            : 'text-gray-500 group-hover:text-[var(--purple)] dark:text-gray-400 dark:group-hover:text-[var(--purple)]'
         )}
       >
         <Icon
@@ -69,7 +69,7 @@ function SidebarLink({
           shouldExpand ? 'opacity-100 max-w-full' : 'opacity-0 max-w-0',
           isActive
             ? 'text-white'
-            : 'text-gray-700 dark:text-gray-200 group-hover:text-[#7C3AED] dark:group-hover:text-[#A78BFA]'
+            : 'text-gray-700 dark:text-gray-200 group-hover:text-[var(--purple)] dark:group-hover:text-[var(--purple)]'
         )}
       >
         {title}
@@ -79,12 +79,12 @@ function SidebarLink({
 
   const className = cn(
     'flex items-center rounded-xl transition-all duration-300 ease-out group relative',
-    'hover:bg-[#7C3AED]/8 dark:hover:bg-[#7C3AED]/12',
+    'hover:bg-[var(--purple)]/10 dark:hover:bg-[var(--purple)]/15',
     shouldExpand
       ? 'gap-3 pl-3 pr-4 py-3 w-full'
       : 'justify-center w-12 h-12 gap-0 mx-auto',
     isActive &&
-      'bg-gradient-to-r from-[#7C3AED] to-[#6D28D9] text-white shadow-lg shadow-[#7C3AED]/25 ring-1 ring-[#7C3AED]/20'
+      'bg-[var(--purple)] text-white shadow-lg shadow-[var(--purple)]/30 ring-1 ring-[var(--purple)]/20'
   );
 
   if (type === 'button') {

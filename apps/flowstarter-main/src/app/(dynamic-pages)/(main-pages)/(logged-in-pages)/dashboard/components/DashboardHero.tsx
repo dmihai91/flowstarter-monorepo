@@ -26,7 +26,7 @@ export function DashboardHero({ children }: { children?: React.ReactNode }) {
             Welcome back, <span className="text-gray-700 dark:text-white/70 font-medium">{firstName}</span>
           </p>
           <h1 className="text-3xl lg:text-4xl font-bold tracking-tight">
-            <span className="bg-gradient-to-r from-[#7C3AED] to-blue-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[var(--purple)] to-[var(--blue)] bg-clip-text text-transparent">
               Dashboard
             </span>
           </h1>
@@ -35,7 +35,7 @@ export function DashboardHero({ children }: { children?: React.ReactNode }) {
         {/* Getting Started Card - for users without projects */}
         <div className="mb-8 p-6 rounded-2xl bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-sm">
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#7C3AED] to-blue-500 flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--purple)] to-[var(--blue)] flex items-center justify-center flex-shrink-0">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div className="flex-1">

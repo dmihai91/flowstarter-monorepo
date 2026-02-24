@@ -25,16 +25,16 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
         ? 'bg-white/80 dark:bg-white/[0.06]'
         : 'bg-white/60 dark:bg-white/[0.03]',
       'backdrop-blur-xl backdrop-saturate-150',
-      'border border-white/80 dark:border-white/10',
+      'border border-gray-200/80 dark:border-white/10',
       // Shadow
       variant === 'elevated'
-        ? 'shadow-[0_8px_32px_rgba(124,58,237,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)]'
+        ? 'shadow-[0_8px_32px_rgba(77,93,217,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)]'
         : 'shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.2)]',
       // Hover effects
       'transition-all duration-300 ease-out',
       'hover:-translate-y-0.5',
-      'hover:shadow-[0_12px_40px_rgba(124,58,237,0.1)] dark:hover:shadow-[0_12px_40px_rgba(124,58,237,0.15)]',
-      'hover:border-[#7C3AED]/20 dark:hover:border-[#7C3AED]/30',
+      'hover:shadow-[0_12px_40px_rgba(77,93,217,0.1)] dark:hover:shadow-[0_12px_40px_rgba(77,93,217,0.15)]',
+      'hover:border-[var(--purple)]/20 dark:hover:border-[var(--purple)]/30',
       // Active state
       'active:scale-[0.99]',
       // Flex layout
@@ -49,7 +49,7 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
         style={style}
       >
         {/* Subtle gradient overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#7C3AED]/0 to-blue-500/0 group-hover:from-[#7C3AED]/[0.02] group-hover:to-blue-500/[0.02] transition-all duration-300 rounded-2xl" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--purple)]/0 to-[var(--blue)]/0 group-hover:from-[var(--purple)]/[0.02] group-hover:to-[var(--blue)]/[0.02] transition-all duration-300 rounded-2xl" />
         <div className="relative z-10 flex flex-col gap-[inherit] h-full">
           {children}
         </div>

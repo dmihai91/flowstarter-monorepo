@@ -63,8 +63,8 @@ export function DashboardStatsClient({
           <span className="text-sm font-medium text-gray-500 dark:text-white/50">
             Your Website
           </span>
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#7C3AED]/10 to-blue-500/10 border border-[#7C3AED]/20 flex items-center justify-center">
-            <Globe className="w-4 h-4 text-[#7C3AED]" />
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[var(--purple)]/10 to-blue-500/10 border border-[var(--purple)]/20 flex items-center justify-center">
+            <Globe className="w-4 h-4 text-[var(--purple)]" />
           </div>
         </div>
         
@@ -91,7 +91,7 @@ export function DashboardStatsClient({
                 href={`https://${lastProject.name.toLowerCase().replace(/\s+/g, '-')}.flowstarter.app`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#7C3AED] text-sm font-medium text-white hover:bg-[#6D28D9] transition-colors"
+                className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--purple)] text-sm font-medium text-white hover:bg-[#6D28D9] transition-colors"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
                 View
@@ -134,7 +134,7 @@ export function DashboardStatsClient({
           {totalLeads > 0 && (
             <Link
               href="/dashboard/analytics/leads"
-              className="text-xs font-medium text-[#7C3AED] hover:underline"
+              className="text-xs font-medium text-[var(--purple)] hover:underline"
             >
               Details →
             </Link>
@@ -173,7 +173,7 @@ export function DashboardStatsClient({
           {totalViews > 0 && (
             <Link
               href="/dashboard/analytics/traffic"
-              className="text-xs font-medium text-[#7C3AED] hover:underline"
+              className="text-xs font-medium text-[var(--purple)] hover:underline"
             >
               Details →
             </Link>

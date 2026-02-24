@@ -64,7 +64,7 @@ const steps = [
     title: 'Book Your Discovery Call',
     description: 'Schedule a free 30-minute call with our team to discuss your business and website needs.',
     icon: Calendar,
-    iconColor: '#7C3AED',
+    iconColor: 'var(--purple)',
   },
   {
     number: 2,
@@ -102,7 +102,7 @@ export default function HelpPage() {
               </p>
             </div>
             <h1 className="text-3xl lg:text-4xl font-bold tracking-tight mb-4">
-              <span className="bg-gradient-to-r from-[#7C3AED] to-blue-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
                 Help & Support
               </span>
             </h1>
@@ -154,7 +154,7 @@ export default function HelpPage() {
 
         {/* CTA Card */}
         <section>
-          <GlassCard className="bg-gradient-to-br from-[#7C3AED]/5 to-blue-500/5">
+          <GlassCard className="bg-gradient-to-br from-[var(--purple)]/5 to-blue-500/5">
             <div className="flex flex-col sm:flex-row items-center gap-6">
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -168,7 +168,7 @@ export default function HelpPage() {
                 href={CALENDLY_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#7C3AED] to-[#6D28D9] text-white font-semibold shadow-lg shadow-[#7C3AED]/25 hover:shadow-xl hover:shadow-[#7C3AED]/30 transition-all duration-300 hover:scale-[1.02]"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--purple)] to-[#6D28D9] text-white font-semibold shadow-lg shadow-[var(--purple)]/25 hover:shadow-xl hover:shadow-[var(--purple)]/30 transition-all duration-300 hover:scale-[1.02]"
               >
                 <Calendar className="w-4 h-4" />
                 Book Free Call
@@ -181,7 +181,7 @@ export default function HelpPage() {
         {/* FAQs */}
         <section>
           <div className="flex items-center gap-2 mb-6">
-            <HelpCircle className="w-5 h-5 text-[#7C3AED]" />
+            <HelpCircle className="w-5 h-5 text-[var(--purple)]" />
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
               Frequently Asked Questions
             </h2>

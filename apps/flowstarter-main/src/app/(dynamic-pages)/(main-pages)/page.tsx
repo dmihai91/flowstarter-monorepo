@@ -5,7 +5,7 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
 
-const CALENDLY_URL = 'https://calendly.com/flowstarter/discovery';
+const CALENDLY_URL = 'https://calendly.com/flowstarter-app/discovery';
 
 export default function LandingPage() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -86,11 +86,28 @@ export default function LandingPage() {
     const message = directMessage || inputValue.trim();
     if (!message || isTyping) return;
     setHasInteracted(true);
-    setMessages(prev => [...prev, { role: 'user', text: message }]);
     setInputValue('');
-    setIsTyping(true);
     
+    // Check if it's a known command
     const response = getAiResponse(message);
+    const isKnownCommand = response !== aiResponses.default;
+    
+    if (!isKnownCommand) {
+      // For custom/unknown prompts, show a message and redirect to booking
+      setMessages(prev => [...prev, { role: 'user', text: message }]);
+      setIsTyping(true);
+      setTimeout(() => {
+        setIsTyping(false);
+        setMessages(prev => [...prev, { role: 'ai', text: "Great idea! Let's discuss this on a discovery call. Redirecting you to book..." }]);
+        setTimeout(() => {
+          window.open(CALENDLY_URL, '_blank');
+        }, 1500);
+      }, 800);
+      return;
+    }
+    
+    setMessages(prev => [...prev, { role: 'user', text: message }]);
+    setIsTyping(true);
     
     setTimeout(() => {
       setIsTyping(false);
@@ -109,14 +126,15 @@ export default function LandingPage() {
     }
   };
 
-  // Auto-cycle demo prompts
+  // Auto-cycle demo prompts - each demo replaces the previous one
   const demoSequence = [
-    { prompt: 'Add a testimonials section', response: 'Done! Added testimonials with star ratings.', action: () => setMockSite(s => ({ ...s, hasTestimonials: true })) },
-    { prompt: 'Add pricing tables', response: 'Pricing section added with 2 plans.', action: () => setMockSite(s => ({ ...s, hasPricingSection: true })) },
-    { prompt: 'Change the color scheme', response: 'Updated. Primary color changed across the site.', action: () => setMockSite(s => ({ ...s, primaryColor: 'emerald' })) },
-    { prompt: 'Add a contact form', response: 'Done. Contact form added below hero.', action: () => setMockSite(s => ({ ...s, hasContactForm: true })) },
+    { prompt: 'Add a testimonials section', response: 'Done! Added testimonials with star ratings.', siteState: { hasTestimonials: true, hasPricingSection: false, primaryColor: 'violet', hasContactForm: false } },
+    { prompt: 'Add pricing tables', response: 'Pricing section added with 2 plans.', siteState: { hasTestimonials: true, hasPricingSection: true, primaryColor: 'violet', hasContactForm: false } },
+    { prompt: 'Change the color scheme', response: 'Updated. Primary color changed across the site.', siteState: { hasTestimonials: true, hasPricingSection: true, primaryColor: 'emerald', hasContactForm: false } },
+    { prompt: 'Add a contact form', response: 'Done. Contact form added below hero.', siteState: { hasTestimonials: true, hasPricingSection: true, primaryColor: 'emerald', hasContactForm: true } },
   ];
   const [demoIndex, setDemoIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     setIsLoaded(true);
@@ -151,32 +169,38 @@ export default function LandingPage() {
         const nextIndex = (prev + 1) % demoSequence.length;
         const demo = demoSequence[nextIndex];
         
-        // Reset site state for fresh demo if cycling back to start
-        if (nextIndex === 0) {
-          setMockSite({
-            hasContactForm: false,
-            hasTestimonials: false,
-            hasPricingSection: false,
-            primaryColor: 'violet',
+        // Fade out transition
+        setIsTransitioning(true);
+        
+        setTimeout(() => {
+          // Replace messages (not accumulate)
+          setMessages([
+            { role: 'user', text: demo.prompt },
+          ]);
+          setIsTyping(true);
+          
+          // Update site state
+          setMockSite(s => ({ 
+            ...s, 
+            ...demo.siteState,
             hasAboutPage: false,
             headerStyle: 'default',
-          });
-        }
-        
-        // Show typing indicator
-        setIsTyping(true);
-        setMessages(prev => [...prev, { role: 'user', text: demo.prompt }]);
-        
-        // AI response after delay
-        setTimeout(() => {
-          setIsTyping(false);
-          setMessages(prev => [...prev, { role: 'ai', text: demo.response }]);
-          setTimeout(() => demo.action(), 200);
-        }, 800);
+          }));
+          
+          // AI response after typing delay
+          setTimeout(() => {
+            setIsTyping(false);
+            setMessages([
+              { role: 'user', text: demo.prompt },
+              { role: 'ai', text: demo.response }
+            ]);
+            setIsTransitioning(false);
+          }, 600);
+        }, 300);
         
         return nextIndex;
       });
-    }, 4000); // Cycle every 4 seconds
+    }, 4500); // Cycle every 4.5 seconds
     
     return () => clearInterval(cycleInterval);
   // eslint-disable-next-line react-hooks/exhaustive-deps

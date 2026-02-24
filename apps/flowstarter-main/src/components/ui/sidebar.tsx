@@ -16,7 +16,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
-const CALENDLY_URL = 'https://calendly.com/flowstarter/discovery';
+const CALENDLY_URL = 'https://calendly.com/flowstarter-app/discovery';
 
 interface SidebarItem {
   title: string;

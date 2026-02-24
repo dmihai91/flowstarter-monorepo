@@ -131,7 +131,7 @@ export function PricingSection() {
               ]}
               ctaText={t('landing.pricing.custom.cta')}
               className="mt-6"
-              ctaHref="https://calendly.com/flowstarter/custom-plan"
+              ctaHref="https://calendly.com/flowstarter-app/custom-plan"
               ctaClassName="inline-flex h-11 w-full items-center justify-center rounded-[12px] px-4 text-sm font-medium transition-all duration-300 hover:scale-105 active:scale-[0.98] backdrop-blur-xl border border-white dark:border-white/40 bg-[rgba(243,243,243,0.4)] dark:bg-[rgba(58,58,74,0.4)] text-gray-900 dark:text-white hover:bg-[rgba(243,243,243,0.6)] dark:hover:bg-[rgba(58,58,74,0.6)] shadow-md hover:shadow-lg"
             />
           </div>

@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-const CALENDLY_URL = 'https://calendly.com/flowstarter/discovery';
+const CALENDLY_URL = 'https://calendly.com/flowstarter-app/discovery';
 
 export function PricingSection() {
   const starterFeatures = [

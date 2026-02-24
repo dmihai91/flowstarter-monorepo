@@ -5,7 +5,7 @@ import { useScrollAnimation, getStaggeredAnimation } from '@/hooks/useScrollAnim
 import { Calendar, CheckCircle2, Globe, Lock, Sparkles } from 'lucide-react';
 import React from 'react';
 
-const CALENDLY_URL = 'https://calendly.com/flowstarter/discovery';
+const CALENDLY_URL = 'https://calendly.com/flowstarter-app/discovery';
 
 // Feature flag
 const SHOW_CREATE_FEATURES = false;

@@ -23,7 +23,7 @@ import {
   Zap,
 } from 'lucide-react';
 
-const CALENDLY_URL = 'https://calendly.com/flowstarter/discovery';
+const CALENDLY_URL = 'https://calendly.com/flowstarter-app/discovery';
 
 export default function PricingPage() {
   const starterFeatures = [

@@ -800,7 +800,7 @@ export default function LandingPage() {
                       {/* Footer */}
                       <div className="px-4 py-2.5 bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
                         <div className="flex items-center justify-between">
-                          <div className="text-[9px] text-gray-400">© 2025 CoffeeRoast</div>
+                          <div className="text-[9px] text-gray-400">© {new Date().getFullYear()} CoffeeRoast</div>
                           <div className="flex gap-2">
                             {['📘', '📷', '✉️'].map((icon, i) => (
                               <span key={i} className="text-xs opacity-50">{icon}</span>
@@ -1383,7 +1383,7 @@ export default function LandingPage() {
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center">
                     <span className="text-white font-bold text-sm">F</span>
                   </div>
-                  <span className="text-sm text-gray-400 dark:text-white/30">© 2026 Flowstarter</span>
+                  <span className="text-sm text-gray-400 dark:text-white/30">© {new Date().getFullYear()} Flowstarter</span>
                 </div>
                 
                 {/* Navigation Links */}

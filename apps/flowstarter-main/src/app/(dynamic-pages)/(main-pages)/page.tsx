@@ -49,35 +49,24 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen relative overflow-x-hidden bg-[#FAFAFB] dark:bg-[#08080A]">
-      {/* Animated gradient mesh */}
+      {/* Subtle gradient background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div 
-          className="absolute w-[1000px] h-[1000px] rounded-full blur-[150px] transition-transform duration-[2000ms] ease-out"
+          className="absolute w-[1000px] h-[1000px] rounded-full blur-[180px] transition-transform duration-[3000ms] ease-out"
           style={{ 
-            background: 'conic-gradient(from 180deg at 50% 50%, rgba(165, 90, 172, 0.4) 0deg, rgba(77, 93, 217, 0.3) 120deg, rgba(165, 90, 172, 0.4) 360deg)',
-            opacity: 0.5,
-            top: '-30%',
+            background: 'radial-gradient(circle, rgba(165, 90, 172, 0.15) 0%, transparent 70%)',
+            top: '-40%',
             left: '-20%',
-            ...mouseParallax(0.02),
+            ...mouseParallax(0.01),
           }}
         />
         <div 
-          className="absolute w-[800px] h-[800px] rounded-full blur-[120px] transition-transform duration-[2000ms] ease-out"
+          className="absolute w-[800px] h-[800px] rounded-full blur-[150px] transition-transform duration-[3000ms] ease-out"
           style={{ 
-            background: 'conic-gradient(from 0deg at 50% 50%, rgba(77, 93, 217, 0.35) 0deg, rgba(123, 106, 216, 0.25) 180deg, rgba(77, 93, 217, 0.35) 360deg)',
-            opacity: 0.4,
-            top: '30%',
+            background: 'radial-gradient(circle, rgba(77, 93, 217, 0.12) 0%, transparent 70%)',
+            top: '20%',
             right: '-15%',
-            ...mouseParallax(-0.015),
-          }}
-        />
-        <div 
-          className="absolute w-[600px] h-[600px] rounded-full blur-[100px]"
-          style={{ 
-            background: 'radial-gradient(circle, rgba(251, 191, 36, 0.2) 0%, transparent 70%)',
-            opacity: 0.5,
-            bottom: '-10%',
-            left: '20%',
+            ...mouseParallax(-0.01),
           }}
         />
       </div>
@@ -110,7 +99,7 @@ export default function LandingPage() {
                 <Button variant="ghost" size="sm" className="text-gray-600 dark:text-gray-400">Sign In</Button>
               </Link>
               <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-                <Button size="sm" className="bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] hover:opacity-90 text-white rounded-xl border-0 shadow-lg shadow-purple-500/20">
+                <Button size="sm" className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl shadow-sm">
                   Book a Call
                 </Button>
               </a>
@@ -153,7 +142,7 @@ export default function LandingPage() {
               {/* CTA */}
               <div className={`flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start mb-10 transition-all duration-1000 delay-300 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                 <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-                  <Button size="lg" className="h-14 px-8 rounded-2xl bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] hover:opacity-90 text-white text-lg font-medium shadow-[0_8px_32px_rgba(165,90,172,0.35)] hover:shadow-[0_12px_40px_rgba(165,90,172,0.5)] transition-all hover:scale-[1.02]">
+                  <Button size="lg" className="h-14 px-8 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 text-lg font-medium shadow-lg hover:shadow-xl transition-all">
                     Book Free Call
                     <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -197,16 +186,16 @@ export default function LandingPage() {
               </div>
 
               <div 
-                className="absolute -bottom-4 -right-4 w-28 h-20 rounded-2xl bg-gradient-to-br from-[#A55AAC] to-[#4D5DD9] shadow-xl p-4 hidden lg:flex flex-col justify-center animate-float z-10"
+                className="absolute -bottom-4 -right-4 w-28 h-20 rounded-2xl bg-gray-900 dark:bg-white shadow-xl p-4 hidden lg:flex flex-col justify-center animate-float z-10"
                 style={{ ...mouseParallax(0.02), animationDelay: '1s' }}
               >
-                <div className="text-xl font-bold text-white">Live</div>
-                <div className="text-xs text-white/70">in 3-5 days</div>
+                <div className="text-xl font-bold text-white dark:text-gray-900">Live</div>
+                <div className="text-xs text-white/70 dark:text-gray-500">in 3-5 days</div>
               </div>
 
               {/* Main Editor Card */}
               <div className="relative">
-                <div className="absolute -inset-4 bg-gradient-to-r from-[#A55AAC]/20 via-[#7B6AD8]/20 to-[#4D5DD9]/20 rounded-[2rem] blur-2xl" />
+                <div className="absolute -inset-4 bg-gray-900/5 dark:bg-white/5 rounded-[2rem] blur-2xl" />
                 
                 <div className="relative rounded-2xl sm:rounded-3xl bg-white/90 dark:bg-[#111114]/90 backdrop-blur-xl border border-white/60 dark:border-white/[0.08] shadow-2xl overflow-hidden">
                   {/* Editor Header */}
@@ -231,14 +220,14 @@ export default function LandingPage() {
                     
                     {/* User message */}
                     <div className="flex justify-end">
-                      <div className="max-w-[85%] px-4 py-2.5 sm:py-3 rounded-2xl rounded-tr-md bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] text-white text-sm shadow-lg">
+                      <div className="max-w-[85%] px-4 py-2.5 sm:py-3 rounded-2xl rounded-tr-md bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-sm shadow-lg">
                         {chatExamples[activeChat].user}
                       </div>
                     </div>
                     
                     {/* AI response */}
                     <div className="flex gap-2 sm:gap-3">
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-br from-[#A55AAC] to-[#4D5DD9] flex items-center justify-center flex-shrink-0 shadow-lg">
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gray-900 dark:bg-white flex items-center justify-center flex-shrink-0 shadow-lg">
                         <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
                         </svg>
@@ -294,7 +283,7 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
             {/* Setup Card */}
             <div className="group relative">
-              <div className="absolute -inset-px bg-gradient-to-br from-[#A55AAC]/40 to-[#4D5DD9]/40 rounded-3xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute -inset-px bg-gray-900/5 dark:bg-white/10 rounded-3xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative p-6 sm:p-8 rounded-2xl sm:rounded-3xl bg-white/80 dark:bg-white/[0.03] backdrop-blur-xl border border-white/60 dark:border-white/[0.06] shadow-xl h-full">
                 <div className="flex items-start justify-between mb-6">
                   <div>
@@ -324,7 +313,7 @@ export default function LandingPage() {
 
             {/* Monthly Card */}
             <div className="group relative">
-              <div className="absolute -inset-px bg-gradient-to-br from-[#A55AAC]/40 to-[#4D5DD9]/40 rounded-3xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute -inset-px bg-gray-900/5 dark:bg-white/10 rounded-3xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative p-6 sm:p-8 rounded-2xl sm:rounded-3xl bg-white/80 dark:bg-white/[0.03] backdrop-blur-xl border border-white/60 dark:border-white/[0.06] shadow-xl h-full">
                 <div className="flex items-start justify-between mb-6">
                   <div>
@@ -354,14 +343,14 @@ export default function LandingPage() {
           </div>
 
           {/* Beta CTA */}
-          <div className="mt-8 sm:mt-12 p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-[#A55AAC]/10 to-[#4D5DD9]/10 border border-[#A55AAC]/20">
+          <div className="mt-8 sm:mt-12 p-5 sm:p-6 rounded-2xl bg-gray-100 dark:bg-white/[0.03] border border-gray-200 dark:border-white/10">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <div className="font-semibold text-gray-900 dark:text-white">Beta pricing ends soon</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Lock in 50% off before launch</div>
               </div>
               <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-                <Button className="w-full sm:w-auto bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] hover:opacity-90 text-white rounded-xl shadow-lg">
+                <Button className="w-full sm:w-auto bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl shadow-sm">
                   Book Your Call
                 </Button>
               </a>
@@ -433,7 +422,7 @@ export default function LandingPage() {
             Book a free 30-minute call. No pressure.
           </p>
           <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-            <Button size="lg" className="h-14 px-10 rounded-2xl bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] hover:opacity-90 text-white text-lg font-medium shadow-[0_8px_32px_rgba(165,90,172,0.35)] hover:shadow-[0_12px_40px_rgba(165,90,172,0.5)] transition-all hover:scale-[1.02]">
+            <Button size="lg" className="h-14 px-10 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 text-lg font-medium shadow-lg hover:shadow-xl transition-all">
               Book Free Discovery Call
             </Button>
           </a>

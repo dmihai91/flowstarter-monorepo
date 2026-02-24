@@ -56,21 +56,21 @@ export function GradientBackground({
           style={{ background: 'radial-gradient(circle, hsl(211, 93%, 61%, 0.4) 0%, transparent 70%)' }}
         />
         
-        {/* Animated Flow lines */}
+        {/* Animated Flow lines - subtle */}
         <svg 
-          className="absolute inset-0 w-full h-full"
+          className="absolute inset-0 w-full h-full opacity-[0.12] dark:opacity-[0.10]"
           viewBox="0 0 1200 800" 
           preserveAspectRatio="xMidYMid slice"
           fill="none"
         >
           <defs>
             <linearGradient id="flowGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="hsl(233, 65%, 58%)" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="hsl(211, 93%, 61%)" stopOpacity="0.3" />
+              <stop offset="0%" stopColor="hsl(233, 65%, 58%)" />
+              <stop offset="100%" stopColor="hsl(211, 93%, 61%)" />
             </linearGradient>
             <linearGradient id="flowGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="hsl(211, 93%, 61%)" stopOpacity="0.2" />
-              <stop offset="100%" stopColor="hsl(233, 65%, 58%)" stopOpacity="0.2" />
+              <stop offset="0%" stopColor="hsl(211, 93%, 61%)" />
+              <stop offset="100%" stopColor="hsl(233, 65%, 58%)" />
             </linearGradient>
           </defs>
           <g className="flow-line-1" stroke="url(#flowGradient1)" strokeWidth="1.5">

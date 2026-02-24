@@ -24,10 +24,28 @@ export function CustomSignIn() {
   const isEdgeBrowser = useEdgeBrowserDetection();
   const searchParams = useSearchParams();
   
-  // Get redirect URL from query params (for editor SSO flow)
-  const getRedirectUrl = (): string => {
+  // Team email domains - redirect to editor
+  const TEAM_EMAIL_DOMAINS = ['flowstarter.app'];
+  
+  // Get redirect URL based on user email or query params
+  const getRedirectUrl = (userEmail?: string): string => {
+    // Check if team member - redirect to editor
+    if (userEmail) {
+      const domain = userEmail.split('@')[1]?.toLowerCase();
+      if (domain && TEAM_EMAIL_DOMAINS.includes(domain)) {
+        // Get current hostname to determine environment
+        const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+        if (hostname === 'flowstarter.dev') {
+          return 'https://editor.flowstarter.dev';
+        } else if (hostname === 'flowstarter.app') {
+          return 'https://editor.flowstarter.app';
+        }
+        return 'https://editor.flowstarter.dev'; // default to dev
+      }
+    }
+    
+    // Check for explicit redirect_url param
     const redirectUrl = searchParams.get('redirect_url');
-    // Only allow redirects to editor subdomain or same origin
     if (redirectUrl) {
       try {
         const url = new URL(redirectUrl);
@@ -43,14 +61,15 @@ export function CustomSignIn() {
     return '/dashboard';
   };
   
-  const redirectTarget = getRedirectUrl();
+  // Default redirect (social auth can't know email ahead of time)
+  const defaultRedirect = getRedirectUrl();
   
   const {
     isGoogleLoading,
     isAppleLoading,
     handleGoogleAuth: handleGoogleSignIn,
     handleAppleAuth: handleAppleSignIn,
-  } = useSocialAuth(signIn, { redirectUrlComplete: redirectTarget });
+  } = useSocialAuth(signIn, { redirectUrlComplete: defaultRedirect });
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -87,13 +106,14 @@ export function CustomSignIn() {
 
         if (result.status === 'complete') {
           await setActive({ session: result.createdSessionId });
-          window.location.href = redirectTarget;
+          // Redirect based on email - team members go to editor
+          window.location.href = getRedirectUrl(values.email);
         }
       } catch (err: unknown) {
         const message = handleError(err, 'signIn');
         // If session already exists, redirect
         if (message === '__SESSION_EXISTS__') {
-          window.location.href = redirectTarget;
+          window.location.href = getRedirectUrl(values.email);
           return;
         }
         setError(message);
@@ -145,7 +165,7 @@ export function CustomSignIn() {
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
         toast.success(t('auth.forgotPassword.success'));
-        window.location.href = redirectTarget;
+        window.location.href = getRedirectUrl(resetEmail);
       }
     } catch (err: any) {
       setError(

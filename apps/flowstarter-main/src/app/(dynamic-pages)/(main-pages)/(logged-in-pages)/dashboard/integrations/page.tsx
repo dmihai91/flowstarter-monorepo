@@ -10,16 +10,19 @@ import {
 } from '@/components/ui/dialog';
 import { GlassCard } from '@/components/ui/glass-card';
 import { useIntegrations, type Integration } from '@/hooks/useIntegrations';
+import { useProjects } from '@/hooks/useProjects';
 import { useScrollAnimation, getStaggeredAnimation } from '@/hooks/useScrollAnimation';
 import { useTranslations } from '@/lib/i18n';
 import {
   BarChart3,
   Calendar,
+  Lock,
   Mail,
   MessageSquare,
   Plug,
   Zap,
 } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { IntegrationCard } from './components/IntegrationCard';
@@ -30,6 +33,7 @@ type Provider = 'google-analytics' | 'calendly' | 'mailchimp';
 export default function IntegrationsIndexPage() {
   const { t } = useTranslations();
   const { isConnected } = useIntegrations();
+  const { data: projects = [], isLoading } = useProjects();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [wizardOpen, setWizardOpen] = useState(false);
@@ -38,6 +42,12 @@ export default function IntegrationsIndexPage() {
   
   const { ref: heroRef, isVisible: heroVisible } = useScrollAnimation();
   const { ref: cardsRef, isVisible: cardsVisible } = useScrollAnimation();
+
+  // Check if user has any live (non-draft) projects
+  const hasLiveProject = projects.some(p => 
+    !(p as unknown as { is_draft?: boolean }).is_draft && 
+    (p.status === 'completed' || p.status === 'active')
+  );
 
   // Handle OAuth callback from URL params
   useEffect(() => {
@@ -52,6 +62,7 @@ export default function IntegrationsIndexPage() {
   }, [searchParams, router]);
 
   const handleConnect = (provider: Provider) => {
+    if (!hasLiveProject) return; // Don't allow connection if no live project
     setSelectedProvider(provider);
     setOauthStatus(null);
     setWizardOpen(true);
@@ -125,6 +136,76 @@ export default function IntegrationsIndexPage() {
 
   const activeCount = integrations.filter((i) => isConnected(i.id)).length;
   const availableCount = integrations.length;
+
+  // Show locked state if no live project
+  if (!isLoading && !hasLiveProject) {
+    return (
+      <PageContainer gradientVariant="integrations">
+        <section 
+          ref={heroRef}
+          className={`relative transition-all duration-500 ease-out ${
+            heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+          }`}
+        >
+          <div className="relative z-10">
+            <div className="mb-2">
+              <p className="text-gray-500 dark:text-white/50">
+                Connect your favorite tools
+              </p>
+            </div>
+            <h1 className="text-3xl lg:text-4xl font-bold tracking-tight mb-4 text-gray-900 dark:text-white">
+              Integrations
+            </h1>
+          </div>
+        </section>
+
+        {/* Locked State */}
+        <div className="mt-10">
+          <GlassCard className="text-center py-16 max-w-2xl mx-auto">
+            <div className="flex justify-center mb-6">
+              <div className="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center">
+                <Lock className="w-8 h-8 text-gray-400 dark:text-white/30" />
+              </div>
+            </div>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+              Integrations unlock after your site is live
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto">
+              Once we build and launch your website, you'll be able to connect analytics, email marketing, scheduling tools, and more.
+            </p>
+            
+            {/* Preview of integrations - grayed out */}
+            <div className="flex items-center justify-center gap-6 mb-8 opacity-40">
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+                  <BarChart3 className="w-6 h-6 text-gray-400" />
+                </div>
+                <span className="text-xs text-gray-400">Analytics</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+                  <Mail className="w-6 h-6 text-gray-400" />
+                </div>
+                <span className="text-xs text-gray-400">Mailchimp</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+                  <Calendar className="w-6 h-6 text-gray-400" />
+                </div>
+                <span className="text-xs text-gray-400">Calendly</span>
+              </div>
+            </div>
+
+            <Link href="/dashboard">
+              <Button>
+                ← Back to Dashboard
+              </Button>
+            </Link>
+          </GlassCard>
+        </div>
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer gradientVariant="integrations">

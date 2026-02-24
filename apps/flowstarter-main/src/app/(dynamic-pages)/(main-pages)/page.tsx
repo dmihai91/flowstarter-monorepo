@@ -15,22 +15,49 @@ export default function LandingPage() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [scrolled, setScrolled] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // Mock site state for live preview
+  const [mockSite, setMockSite] = useState({
+    hasContactForm: false,
+    hasTestimonials: true,
+    primaryColor: 'violet',
+    hasAboutPage: false,
+    headerStyle: 'default',
+  });
 
-  const aiResponses: Record<string, string> = {
-    'contact': "Done. Contact form added—name, email, message fields. Submissions route to your inbox.",
-    'form': "Done. Contact form added—name, email, message fields. Submissions route to your inbox.",
-    'color': "Updated. New primary color applied across buttons, links, and accents.",
-    'header': "Header refined. New background with subtle blur on scroll.",
-    'footer': "Phone number added to footer. Tap-to-call enabled for mobile.",
-    'phone': "Phone number added to footer. Tap-to-call enabled for mobile.",
-    'page': "New page created and linked in navigation. Ready for content.",
-    'testimonial': "Testimonials section added. Three cards ready for your reviews.",
-    'image': "Image replaced and optimized. Loading time reduced by 40%.",
-    'font': "Typography updated site-wide. Headlines and body text refreshed.",
-    'default': "Changes applied. Preview updated. What else?"
+  const aiResponses: Record<string, { text: string; action?: () => void }> = {
+    'contact': { 
+      text: "Done. Contact form added below hero.", 
+      action: () => setMockSite(s => ({ ...s, hasContactForm: true }))
+    },
+    'form': { 
+      text: "Done. Contact form added below hero.", 
+      action: () => setMockSite(s => ({ ...s, hasContactForm: true }))
+    },
+    'color': { 
+      text: "Updated. Primary color changed across the site.", 
+      action: () => setMockSite(s => ({ ...s, primaryColor: s.primaryColor === 'violet' ? 'emerald' : 'violet' }))
+    },
+    'testimonial': { 
+      text: "Testimonials section added with 3 cards.", 
+      action: () => setMockSite(s => ({ ...s, hasTestimonials: true }))
+    },
+    'about': { 
+      text: "About page created and linked in nav.", 
+      action: () => setMockSite(s => ({ ...s, hasAboutPage: true }))
+    },
+    'page': { 
+      text: "New page created and linked in nav.", 
+      action: () => setMockSite(s => ({ ...s, hasAboutPage: true }))
+    },
+    'header': {
+      text: "Header updated with new style.",
+      action: () => setMockSite(s => ({ ...s, headerStyle: s.headerStyle === 'default' ? 'minimal' : 'default' }))
+    },
+    'default': { text: "Changes applied. Check the preview!" }
   };
 
-  const getAiResponse = (input: string): string => {
+  const getAiResponse = (input: string): { text: string; action?: () => void } => {
     const lower = input.toLowerCase();
     for (const [key, response] of Object.entries(aiResponses)) {
       if (key !== 'default' && lower.includes(key)) return response;
@@ -44,9 +71,16 @@ export default function LandingPage() {
     setMessages(prev => [...prev, { role: 'user', text: message }]);
     setInputValue('');
     setIsTyping(true);
+    
+    const response = getAiResponse(message);
+    
     setTimeout(() => {
       setIsTyping(false);
-      setMessages(prev => [...prev, { role: 'ai', text: getAiResponse(message) }]);
+      setMessages(prev => [...prev, { role: 'ai', text: response.text }]);
+      // Trigger the site update after AI responds
+      if (response.action) {
+        setTimeout(() => response.action!(), 200);
+      }
     }, 800 + Math.random() * 400);
   };
 
@@ -297,69 +331,71 @@ export default function LandingPage() {
               {/* Right: Interactive Editor */}
               <div className={`relative transition-all duration-1000 delay-200 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                 {/* Glow effect behind editor */}
-                <div className="absolute -inset-4 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-rose-400/20 rounded-3xl blur-2xl animate-pulse-glow" />
+                <div className="absolute -inset-4 bg-gradient-to-r from-violet-500/20 via-blue-500/20 to-cyan-400/20 rounded-3xl blur-2xl animate-pulse-glow" />
                 
                 {/* Editor window */}
                 <div className="relative bg-white/60 dark:bg-white/[0.05] backdrop-blur-2xl rounded-3xl border border-white/50 dark:border-white/10 shadow-[0_20px_70px_-15px_rgba(0,0,0,0.2)] dark:shadow-[0_20px_70px_-15px_rgba(0,0,0,0.5)] overflow-hidden">
                   {/* Browser chrome */}
-                  <div className="flex items-center justify-between px-5 py-4 bg-white/40 dark:bg-white/[0.03] border-b border-gray-200/50 dark:border-white/5">
-                    <div className="flex items-center gap-3">
-                      <div className="flex gap-2">
-                        <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
-                        <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
-                        <div className="w-3 h-3 rounded-full bg-[#28ca42]" />
+                  <div className="flex items-center justify-between px-4 py-3 bg-white/40 dark:bg-white/[0.03] border-b border-gray-200/50 dark:border-white/5">
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1.5">
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#28ca42]" />
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-gray-100/80 dark:bg-white/5 backdrop-blur text-xs text-gray-400 dark:text-white/30">
-                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100/80 dark:bg-white/5 backdrop-blur text-[10px] text-gray-400 dark:text-white/30">
+                      <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                       </svg>
                       yoursite.com
                     </div>
-                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                    <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 tracking-wide">LIVE</span>
+                      <span className="text-[9px] font-medium text-emerald-600 dark:text-emerald-400">LIVE</span>
                     </div>
                   </div>
 
-                  {/* Chat interface */}
-                  <div className="p-6">
-                    <div className="text-[10px] tracking-[0.2em] uppercase text-gray-400 dark:text-white/20 font-medium mb-4">AI Editor</div>
-                    
-                    {/* Messages */}
-                    <div className="space-y-4 max-h-[180px] overflow-y-auto mb-6 pr-2">
+                  {/* Split: Chat + Preview */}
+                  <div className="flex divide-x divide-gray-200/30 dark:divide-white/5">
+                    {/* Chat Panel */}
+                    <div className="w-1/2 p-4">
+                      <div className="text-[9px] tracking-[0.15em] uppercase text-gray-400 dark:text-white/20 font-medium mb-3">AI Editor</div>
+                      
+                      {/* Messages */}
+                      <div className="space-y-2.5 max-h-[130px] overflow-y-auto mb-3 pr-1">
                       {messages.map((msg, i) => (
                         msg.role === 'user' ? (
                           <div key={i} className="flex justify-end">
-                            <div className="max-w-[85%] px-4 py-3 rounded-2xl rounded-tr-sm bg-gradient-to-r from-violet-500 to-blue-500 text-white text-sm shadow-lg">
+                            <div className="max-w-[95%] px-3 py-2 rounded-xl rounded-tr-sm bg-gradient-to-r from-violet-500 to-blue-500 text-white text-[11px] shadow-sm">
                               {msg.text}
                             </div>
                           </div>
                         ) : (
-                          <div key={i} className="flex gap-3">
-                            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500/20 to-blue-500/20 border border-violet-500/20 flex items-center justify-center flex-shrink-0">
-                              <svg className="w-4 h-4 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <div key={i} className="flex gap-2">
+                            <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-violet-500/20 to-blue-500/20 border border-violet-500/20 flex items-center justify-center flex-shrink-0">
+                              <svg className="w-2.5 h-2.5 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
                               </svg>
                             </div>
-                            <div className="flex-1 px-4 py-3 rounded-2xl rounded-tl-sm bg-white/60 dark:bg-white/[0.05] backdrop-blur-lg border border-white/50 dark:border-white/10 text-sm text-gray-600 dark:text-white/70">
+                            <div className="flex-1 px-3 py-2 rounded-xl rounded-tl-sm bg-white/60 dark:bg-white/[0.05] border border-white/50 dark:border-white/10 text-[11px] text-gray-600 dark:text-white/70">
                               {msg.text}
                             </div>
                           </div>
                         )
                       ))}
                       {isTyping && (
-                        <div className="flex gap-3">
-                          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500/20 to-blue-500/20 border border-violet-500/20 flex items-center justify-center flex-shrink-0">
-                            <svg className="w-4 h-4 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <div className="flex gap-2">
+                          <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-violet-500/20 to-blue-500/20 border border-violet-500/20 flex items-center justify-center flex-shrink-0">
+                            <svg className="w-2.5 h-2.5 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
                             </svg>
                           </div>
-                          <div className="px-4 py-3 rounded-2xl rounded-tl-sm bg-white/60 dark:bg-white/[0.05] backdrop-blur-lg border border-white/50 dark:border-white/10">
-                            <div className="flex gap-1.5">
-                              <span className="w-2 h-2 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                              <span className="w-2 h-2 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                              <span className="w-2 h-2 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                          <div className="px-3 py-2 rounded-xl rounded-tl-sm bg-white/60 dark:bg-white/[0.05] border border-white/50 dark:border-white/10">
+                            <div className="flex gap-1">
+                              <span className="w-1.5 h-1.5 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                              <span className="w-1.5 h-1.5 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                              <span className="w-1.5 h-1.5 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                             </div>
                           </div>
                         </div>
@@ -367,39 +403,94 @@ export default function LandingPage() {
                       <div ref={messagesEndRef} />
                     </div>
 
-                    {/* Input */}
-                    <div className="flex items-center gap-3 p-2 rounded-xl bg-white/50 dark:bg-white/[0.03] backdrop-blur-lg border border-white/60 dark:border-white/10">
-                      <input 
-                        type="text" 
-                        placeholder="Try it—type a change..." 
-                        className="flex-1 bg-transparent text-sm outline-none px-3 placeholder:text-gray-400 dark:placeholder:text-white/20 text-gray-900 dark:text-white"
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                      />
-                      <button 
-                        onClick={handleSend}
-                        disabled={!inputValue.trim() || isTyping}
-                        className="w-10 h-10 rounded-lg bg-gradient-to-r from-violet-500 to-blue-500 text-white flex items-center justify-center disabled:opacity-30 transition-all hover:shadow-lg hover:shadow-violet-500/25"
-                      >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-7-7l7 7-7 7" />
-                        </svg>
-                      </button>
+                      {/* Input */}
+                      <div className="flex items-center gap-2 p-1.5 rounded-lg bg-white/50 dark:bg-white/[0.03] border border-white/60 dark:border-white/10">
+                        <input 
+                          type="text" 
+                          placeholder="Try: Add form..." 
+                          className="flex-1 bg-transparent text-[11px] outline-none px-2 placeholder:text-gray-400 dark:placeholder:text-white/20 text-gray-900 dark:text-white"
+                          value={inputValue}
+                          onChange={(e) => setInputValue(e.target.value)}
+                          onKeyDown={handleKeyDown}
+                        />
+                        <button 
+                          onClick={() => handleSend()}
+                          disabled={!inputValue.trim() || isTyping}
+                          className="w-7 h-7 rounded-md bg-gradient-to-r from-violet-500 to-blue-500 text-white flex items-center justify-center disabled:opacity-30 transition-all hover:shadow-lg"
+                        >
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-7-7l7 7-7 7" />
+                          </svg>
+                        </button>
+                      </div>
+
+                      {/* Quick prompts */}
+                      <div className="flex flex-wrap gap-1.5 mt-2">
+                        {['Contact form', 'Colors', 'About page'].map((prompt) => (
+                          <button
+                            key={prompt}
+                            onClick={() => handleSend(prompt)}
+                            disabled={isTyping}
+                            className="px-2 py-1 text-[9px] rounded-full bg-white/40 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 border border-gray-200/50 dark:border-white/10 text-gray-500 dark:text-white/50 transition-all disabled:opacity-50"
+                          >
+                            {prompt}
+                          </button>
+                        ))}
+                      </div>
                     </div>
 
-                    {/* Quick prompts */}
-                    <div className="flex flex-wrap gap-2 mt-3">
-                      {['Add contact form', 'Change the colors', 'Create an About page'].map((prompt) => (
-                        <button
-                          key={prompt}
-                          onClick={() => handleSend(prompt)}
-                          disabled={isTyping}
-                          className="px-3 py-1.5 text-xs rounded-full bg-white/40 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 border border-gray-200/50 dark:border-white/10 text-gray-600 dark:text-white/50 transition-all disabled:opacity-50 hover:scale-105"
-                        >
-                          {prompt}
-                        </button>
-                      ))}
+                    {/* Mock Site Preview */}
+                    <div className="w-1/2 p-3 bg-white dark:bg-[#0f0f12] min-h-[260px]">
+                      {/* Mini header */}
+                      <div className={`flex items-center justify-between mb-2 pb-1.5 border-b transition-all duration-500 ${mockSite.headerStyle === 'minimal' ? 'border-transparent' : 'border-gray-100 dark:border-gray-800'}`}>
+                        <div className="flex items-center gap-1">
+                          <div className={`w-3 h-3 rounded transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-500' : 'bg-emerald-500'}`} />
+                          <span className="text-[8px] font-semibold text-gray-700 dark:text-white">Brand</span>
+                        </div>
+                        <div className="flex gap-1.5 text-[7px] text-gray-400">
+                          <span>Home</span>
+                          {mockSite.hasAboutPage && <span className={`font-medium transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'text-violet-500' : 'text-emerald-500'}`}>About</span>}
+                          <span>Contact</span>
+                        </div>
+                      </div>
+
+                      {/* Mini hero */}
+                      <div className="mb-2">
+                        <div className="h-1.5 w-16 bg-gray-800 dark:bg-white rounded mb-1" />
+                        <div className="h-1 w-24 bg-gray-200 dark:bg-gray-700 rounded mb-1.5" />
+                        <div className={`h-3 w-12 rounded transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-500' : 'bg-emerald-500'}`} />
+                      </div>
+
+                      {/* Contact form - animated in */}
+                      <div className={`mb-2 overflow-hidden transition-all duration-500 ${mockSite.hasContactForm ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'}`}>
+                        <div className="p-1.5 rounded bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700">
+                          <div className="text-[7px] font-medium text-gray-600 dark:text-gray-300 mb-1">Contact</div>
+                          <div className="space-y-1">
+                            <div className="h-2.5 bg-white dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600" />
+                            <div className="h-2.5 bg-white dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600" />
+                            <div className={`h-2.5 w-8 rounded transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-500' : 'bg-emerald-500'}`} />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Testimonials */}
+                      <div className={`mb-2 transition-all duration-500 ${mockSite.hasTestimonials ? 'opacity-100' : 'opacity-30'}`}>
+                        <div className="text-[7px] font-medium text-gray-600 dark:text-gray-300 mb-1">Reviews</div>
+                        <div className="grid grid-cols-3 gap-1">
+                          {[1, 2, 3].map((i) => (
+                            <div key={i} className="p-1 rounded bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700">
+                              <div className="w-2.5 h-2.5 rounded-full bg-gray-200 dark:bg-gray-600 mb-0.5" />
+                              <div className="h-0.5 w-full bg-gray-100 dark:bg-gray-700 rounded mb-0.5" />
+                              <div className="h-0.5 w-2/3 bg-gray-100 dark:bg-gray-700 rounded" />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Footer */}
+                      <div className="pt-1.5 border-t border-gray-100 dark:border-gray-800">
+                        <div className="h-0.5 w-10 bg-gray-100 dark:bg-gray-700 rounded" />
+                      </div>
                     </div>
                   </div>
                 </div>

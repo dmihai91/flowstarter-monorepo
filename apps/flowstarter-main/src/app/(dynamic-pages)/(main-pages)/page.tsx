@@ -327,7 +327,7 @@ export default function LandingPage() {
                   Sign In
                 </Link>
                 <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="hidden sm:block">
-                  <Button className="bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-6 h-10 text-sm font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300">
+                  <Button className="bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-6 h-10 text-sm font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300">
                     Book a Call
                   </Button>
                 </a>
@@ -358,7 +358,7 @@ export default function LandingPage() {
                 <a href="#faq" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' }); }} className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer">FAQ</a>
                 <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors">Sign In</Link>
                 <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)} className="mt-2">
-                  <Button className="w-full bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] rounded-xl h-10 text-sm font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300">
+                  <Button className="w-full bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] rounded-xl h-10 text-sm font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300">
                     Book a Call
                   </Button>
                 </a>
@@ -368,7 +368,7 @@ export default function LandingPage() {
         </header>
 
         {/* Hero */}
-        <section className="relative pt-20 lg:pt-24 pb-12 lg:pb-16">
+        <section className="relative pt-20 lg:pt-24 pb-12 lg:pb-16 bg-gradient-to-b from-white via-white to-[#F5F3FF]/50 dark:from-transparent dark:via-transparent dark:to-transparent">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
               {/* Left: Copy */}
@@ -395,7 +395,7 @@ export default function LandingPage() {
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10">
                   <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-                    <Button className="relative overflow-hidden bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-8 h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300 hover:scale-[1.02] group">
+                    <Button className="relative overflow-hidden bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-8 h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 hover:scale-[1.02] group">
                       <span className="absolute inset-0 animate-shimmer" />
                       Book Free Discovery Call
                       <svg className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -428,7 +428,7 @@ export default function LandingPage() {
                   ].map((stat, i) => (
                     <div key={i} className="flex items-center">
                       <div className="text-center px-6 sm:px-10 lg:px-12">
-                        <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">{stat.value}</div>
+                        <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#7C3AED] to-blue-500 bg-clip-text text-transparent">{stat.value}</div>
                         <div className="text-[10px] sm:text-xs text-gray-400 dark:text-white/30 uppercase tracking-wider mt-1">{stat.label}</div>
                       </div>
                       {i < 2 && <div className="w-px h-10 bg-gray-200 dark:bg-white/10" />}
@@ -750,7 +750,7 @@ export default function LandingPage() {
             <div className="max-w-xl mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight mb-3">
                 Three steps to your{' '}
-                <span className="bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">new website</span>
+                <span className="bg-gradient-to-r from-[#7C3AED] to-blue-500 bg-clip-text text-transparent">new website</span>
               </h2>
             </div>
 
@@ -778,7 +778,7 @@ export default function LandingPage() {
             <div className="text-center mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight">
                 Everything you need.{' '}
-                <span className="bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">Nothing you don't.</span>
+                <span className="bg-gradient-to-r from-[#7C3AED] to-blue-500 bg-clip-text text-transparent">Nothing you don't.</span>
               </h2>
             </div>
 
@@ -853,16 +853,16 @@ export default function LandingPage() {
             <div className="text-center mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight">
                 Simple pricing.{' '}
-                <span className="bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">No surprises.</span>
+                <span className="bg-gradient-to-r from-[#7C3AED] to-blue-500 bg-clip-text text-transparent">No surprises.</span>
               </h2>
             </div>
 
             <div className="max-w-lg mx-auto">
               {/* Starter Plan Card - Premium Treatment */}
-              <div className="group p-8 lg:p-10 rounded-2xl bg-gradient-to-br from-white via-white to-violet-50/50 dark:from-[#0f0f12] dark:via-[#0f0f12] dark:to-[#12101a] backdrop-blur-sm border-2 border-violet-500/30 dark:border-violet-500/40 shadow-xl shadow-violet-500/10 relative overflow-hidden transition-all duration-300 hover:border-violet-500/50 dark:hover:border-violet-500/60 hover:shadow-[0_8px_30px_rgba(139,92,246,0.12)]">
+              <div className="group p-8 lg:p-10 rounded-2xl bg-gradient-to-br from-white via-white to-violet-50/50 dark:from-[#0f0f12] dark:via-[#0f0f12] dark:to-[#12101a] backdrop-blur-sm border-2 border-[#7C3AED]/30 dark:border-[#7C3AED]/40 shadow-xl shadow-[#7C3AED]/10 relative overflow-hidden transition-all duration-300 hover:border-[#7C3AED]/50 dark:hover:border-[#7C3AED]/60 hover:shadow-[0_8px_30px_rgba(124,58,237,0.15)]">
                 {/* Beta badge */}
                 <div className="absolute top-4 right-4">
-                  <span className="px-3 py-1 text-xs font-medium bg-violet-500 text-white rounded-full">50% off during beta</span>
+                  <span className="px-3 py-1 text-xs font-medium bg-[#7C3AED] text-white rounded-full">50% off during beta</span>
                 </div>
                 
                 <h3 className="text-2xl font-bold mb-6">Starter Plan</h3>
@@ -905,7 +905,7 @@ export default function LandingPage() {
                 
                 {/* CTA */}
                 <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="block">
-                  <Button className="w-full bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300 hover:scale-[1.02]">
+                  <Button className="w-full bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 hover:scale-[1.02]">
                     Book Free Discovery Call
                     <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -930,7 +930,7 @@ export default function LandingPage() {
                 <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-4 lg:sticky lg:top-32">
                   Questions?
                   <br />
-                  <span className="bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">Answered.</span>
+                  <span className="bg-gradient-to-r from-[#7C3AED] to-blue-500 bg-clip-text text-transparent">Answered.</span>
                 </h2>
               </div>
               
@@ -1009,7 +1009,7 @@ export default function LandingPage() {
               Book a free discovery call. We'll handle everything from there.
             </p>
             <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-              <Button className="bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-10 h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300 hover:scale-[1.02]">
+              <Button className="bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-10 h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 hover:scale-[1.02]">
                 Book Free Discovery Call
                 <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />

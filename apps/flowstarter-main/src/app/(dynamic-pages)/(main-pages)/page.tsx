@@ -440,56 +440,110 @@ export default function LandingPage() {
                     </div>
 
                     {/* Mock Site Preview */}
-                    <div className="w-1/2 p-3 bg-white dark:bg-[#0f0f12] min-h-[260px]">
-                      {/* Mini header */}
-                      <div className={`flex items-center justify-between mb-2 pb-1.5 border-b transition-all duration-500 ${mockSite.headerStyle === 'minimal' ? 'border-transparent' : 'border-gray-100 dark:border-gray-800'}`}>
-                        <div className="flex items-center gap-1">
-                          <div className={`w-3 h-3 rounded transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-500' : 'bg-emerald-500'}`} />
-                          <span className="text-[8px] font-semibold text-gray-700 dark:text-white">Brand</span>
+                    <div className="w-1/2 bg-white dark:bg-[#0f0f12] min-h-[260px] overflow-hidden">
+                      {/* Realistic site header */}
+                      <div className={`flex items-center justify-between px-3 py-2 border-b transition-all duration-500 ${mockSite.headerStyle === 'minimal' ? 'bg-transparent border-transparent' : 'bg-gray-50/80 dark:bg-gray-900/50 border-gray-100 dark:border-gray-800'}`}>
+                        <div className="flex items-center gap-1.5">
+                          <div className={`w-4 h-4 rounded-md flex items-center justify-center text-[6px] font-bold text-white transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-500' : 'bg-emerald-500'}`}>
+                            C
+                          </div>
+                          <span className="text-[9px] font-semibold text-gray-800 dark:text-white">CoffeeRoast</span>
                         </div>
-                        <div className="flex gap-1.5 text-[7px] text-gray-400">
-                          <span>Home</span>
-                          {mockSite.hasAboutPage && <span className={`font-medium transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'text-violet-500' : 'text-emerald-500'}`}>About</span>}
+                        <div className="flex items-center gap-2 text-[7px] text-gray-500 dark:text-gray-400">
+                          <span className="hover:text-gray-900 dark:hover:text-white cursor-default">Home</span>
+                          {mockSite.hasAboutPage && (
+                            <span className={`font-medium transition-all duration-500 ${mockSite.primaryColor === 'violet' ? 'text-violet-500' : 'text-emerald-500'}`}>About</span>
+                          )}
+                          <span>Shop</span>
                           <span>Contact</span>
                         </div>
                       </div>
 
-                      {/* Mini hero */}
-                      <div className="mb-2">
-                        <div className="h-1.5 w-16 bg-gray-800 dark:bg-white rounded mb-1" />
-                        <div className="h-1 w-24 bg-gray-200 dark:bg-gray-700 rounded mb-1.5" />
-                        <div className={`h-3 w-12 rounded transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-500' : 'bg-emerald-500'}`} />
-                      </div>
-
-                      {/* Contact form - animated in */}
-                      <div className={`mb-2 overflow-hidden transition-all duration-500 ${mockSite.hasContactForm ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'}`}>
-                        <div className="p-1.5 rounded bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700">
-                          <div className="text-[7px] font-medium text-gray-600 dark:text-gray-300 mb-1">Contact</div>
-                          <div className="space-y-1">
-                            <div className="h-2.5 bg-white dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600" />
-                            <div className="h-2.5 bg-white dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600" />
-                            <div className={`h-2.5 w-8 rounded transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-500' : 'bg-emerald-500'}`} />
+                      {/* Hero section with image placeholder */}
+                      <div className="px-3 py-3 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+                        <div className="flex gap-2">
+                          <div className="flex-1">
+                            <div className="h-2 w-20 bg-gray-800 dark:bg-white rounded mb-1" />
+                            <div className={`h-2.5 w-16 rounded mb-1.5 transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-500' : 'bg-emerald-500'}`} />
+                            <div className="h-1 w-24 bg-gray-300 dark:bg-gray-600 rounded mb-0.5" />
+                            <div className="h-1 w-20 bg-gray-300 dark:bg-gray-600 rounded mb-2" />
+                            <div className={`h-3 w-14 rounded-full text-[6px] text-white flex items-center justify-center transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-500' : 'bg-emerald-500'}`}>
+                              Shop Now
+                            </div>
+                          </div>
+                          <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-amber-200 to-amber-400 dark:from-amber-700 dark:to-amber-900 flex items-center justify-center">
+                            <span className="text-lg">☕</span>
                           </div>
                         </div>
                       </div>
 
+                      {/* Contact form - animated in */}
+                      <div className={`overflow-hidden transition-all duration-500 ${mockSite.hasContactForm ? 'max-h-24 opacity-100' : 'max-h-0 opacity-0'}`}>
+                        <div className="px-3 py-2 bg-gray-50 dark:bg-gray-900/30">
+                          <div className="text-[8px] font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Get in Touch</div>
+                          <div className="grid grid-cols-2 gap-1 mb-1">
+                            <div className="h-3 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 px-1 flex items-center">
+                              <span className="text-[6px] text-gray-400">Name</span>
+                            </div>
+                            <div className="h-3 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 px-1 flex items-center">
+                              <span className="text-[6px] text-gray-400">Email</span>
+                            </div>
+                          </div>
+                          <div className="h-5 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 mb-1 px-1 flex items-start pt-0.5">
+                            <span className="text-[6px] text-gray-400">Message...</span>
+                          </div>
+                          <div className={`h-3 w-12 rounded text-[6px] text-white flex items-center justify-center transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-500' : 'bg-emerald-500'}`}>
+                            Send
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Products/Features section */}
+                      <div className="px-3 py-2">
+                        <div className="text-[8px] font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Our Blends</div>
+                        <div className="grid grid-cols-3 gap-1.5">
+                          {['☕', '🫘', '✨'].map((emoji, i) => (
+                            <div key={i} className="p-1.5 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 text-center">
+                              <div className="text-sm mb-0.5">{emoji}</div>
+                              <div className="h-1 w-8 mx-auto bg-gray-200 dark:bg-gray-700 rounded mb-0.5" />
+                              <div className={`h-1 w-5 mx-auto rounded transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-400' : 'bg-emerald-400'}`} />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
                       {/* Testimonials */}
-                      <div className={`mb-2 transition-all duration-500 ${mockSite.hasTestimonials ? 'opacity-100' : 'opacity-30'}`}>
-                        <div className="text-[7px] font-medium text-gray-600 dark:text-gray-300 mb-1">Reviews</div>
-                        <div className="grid grid-cols-3 gap-1">
-                          {[1, 2, 3].map((i) => (
-                            <div key={i} className="p-1 rounded bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700">
-                              <div className="w-2.5 h-2.5 rounded-full bg-gray-200 dark:bg-gray-600 mb-0.5" />
+                      <div className={`px-3 py-2 transition-all duration-500 ${mockSite.hasTestimonials ? 'opacity-100' : 'opacity-20'}`}>
+                        <div className="text-[8px] font-semibold text-gray-700 dark:text-gray-300 mb-1.5">What Customers Say</div>
+                        <div className="flex gap-1">
+                          {[1, 2].map((i) => (
+                            <div key={i} className="flex-1 p-1.5 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700">
+                              <div className="flex items-center gap-1 mb-0.5">
+                                <div className="w-3 h-3 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-700" />
+                                <div className="h-1 w-8 bg-gray-200 dark:bg-gray-700 rounded" />
+                              </div>
                               <div className="h-0.5 w-full bg-gray-100 dark:bg-gray-700 rounded mb-0.5" />
-                              <div className="h-0.5 w-2/3 bg-gray-100 dark:bg-gray-700 rounded" />
+                              <div className="h-0.5 w-4/5 bg-gray-100 dark:bg-gray-700 rounded" />
+                              <div className="flex gap-0.5 mt-1">
+                                {[1,2,3,4,5].map(s => (
+                                  <span key={s} className={`text-[6px] ${mockSite.primaryColor === 'violet' ? 'text-violet-400' : 'text-emerald-400'}`}>★</span>
+                                ))}
+                              </div>
                             </div>
                           ))}
                         </div>
                       </div>
 
                       {/* Footer */}
-                      <div className="pt-1.5 border-t border-gray-100 dark:border-gray-800">
-                        <div className="h-0.5 w-10 bg-gray-100 dark:bg-gray-700 rounded" />
+                      <div className="px-3 py-1.5 bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+                        <div className="flex items-center justify-between">
+                          <div className="text-[6px] text-gray-400">© 2025 CoffeeRoast</div>
+                          <div className="flex gap-1.5">
+                            {['📘', '📷', '✉️'].map((icon, i) => (
+                              <span key={i} className="text-[8px] opacity-50">{icon}</span>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

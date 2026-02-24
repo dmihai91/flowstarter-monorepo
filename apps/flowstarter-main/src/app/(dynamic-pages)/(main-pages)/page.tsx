@@ -17,6 +17,7 @@ export default function LandingPage() {
   const [hasInteracted, setHasInteracted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Mock site state for live preview
@@ -138,6 +139,25 @@ export default function LandingPage() {
     }
   }, [messages, hasInteracted]);
 
+  // Scroll animation observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisibleSections((prev) => new Set(prev).add(entry.target.id));
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+    );
+
+    const sections = document.querySelectorAll('[data-animate]');
+    sections.forEach((section) => observer.observe(section));
+
+    return () => observer.disconnect();
+  }, []);
+
   const mouseParallax = (factor: number) => ({
     transform: `translate(${(mousePos.x - (typeof window !== 'undefined' ? window.innerWidth / 2 : 0)) * factor}px, ${(mousePos.y - (typeof window !== 'undefined' ? window.innerHeight / 2 : 0)) * factor}px)`
   });
@@ -175,6 +195,23 @@ export default function LandingPage() {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
         }
+        @keyframes fade-in-up {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in-up {
+          animation: fade-in-up 0.6s ease-out forwards;
+        }
+        .animate-fade-in-up-delay-1 { animation-delay: 100ms; }
+        .animate-fade-in-up-delay-2 { animation-delay: 200ms; }
+        .animate-fade-in-up-delay-3 { animation-delay: 300ms; }
+        
         @keyframes morph {
           0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
           50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
@@ -290,7 +327,7 @@ export default function LandingPage() {
                   Sign In
                 </Link>
                 <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="hidden sm:block">
-                  <Button className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-gray-800 hover:via-gray-700 hover:to-gray-800 dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-6 h-10 text-sm font-semibold shadow-lg hover:shadow-xl hover:shadow-violet-500/10 transition-all duration-300">
+                  <Button className="bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-6 h-10 text-sm font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300">
                     Book a Call
                   </Button>
                 </a>
@@ -321,7 +358,7 @@ export default function LandingPage() {
                 <a href="#faq" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' }); }} className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer">FAQ</a>
                 <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors">Sign In</Link>
                 <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)} className="mt-2">
-                  <Button className="w-full bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-gray-800 hover:via-gray-700 hover:to-gray-800 rounded-xl h-10 text-sm font-semibold shadow-lg transition-all duration-300">
+                  <Button className="w-full bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] rounded-xl h-10 text-sm font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300">
                     Book a Call
                   </Button>
                 </a>
@@ -358,7 +395,7 @@ export default function LandingPage() {
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10">
                   <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-                    <Button className="relative overflow-hidden bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-gray-800 hover:via-gray-700 hover:to-gray-800 dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-8 h-14 text-base font-semibold shadow-lg hover:shadow-xl hover:shadow-violet-500/10 transition-all duration-300 hover:scale-[1.02] group">
+                    <Button className="relative overflow-hidden bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-8 h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300 hover:scale-[1.02] group">
                       <span className="absolute inset-0 animate-shimmer" />
                       Book Free Discovery Call
                       <svg className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -383,15 +420,18 @@ export default function LandingPage() {
                 </div>
 
                 {/* Stats */}
-                <div className="flex items-center justify-center lg:justify-start gap-8 sm:gap-16 pt-6 border-t border-gray-200 dark:border-white/10">
+                <div className="flex items-center justify-center lg:justify-start pt-6 border-t border-gray-200 dark:border-white/10">
                   {[
                     { value: '1-2', label: 'Weeks' },
                     { value: '∞', label: 'AI edits' },
                     { value: '0', label: 'Code' },
                   ].map((stat, i) => (
-                    <div key={i} className="text-center">
-                      <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">{stat.value}</div>
-                      <div className="text-[10px] sm:text-xs text-gray-400 dark:text-white/30 uppercase tracking-wider mt-1">{stat.label}</div>
+                    <div key={i} className="flex items-center">
+                      <div className="text-center px-6 sm:px-10 lg:px-12">
+                        <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">{stat.value}</div>
+                        <div className="text-[10px] sm:text-xs text-gray-400 dark:text-white/30 uppercase tracking-wider mt-1">{stat.label}</div>
+                      </div>
+                      {i < 2 && <div className="w-px h-10 bg-gray-200 dark:bg-white/10" />}
                     </div>
                   ))}
                 </div>
@@ -403,9 +443,9 @@ export default function LandingPage() {
                 <div className="absolute -inset-4 bg-gradient-to-r from-violet-500/20 via-blue-500/20 to-cyan-400/20 rounded-3xl blur-2xl animate-pulse-glow" />
                 
                 {/* Editor window */}
-                <div className="relative bg-white/60 dark:bg-white/[0.05] backdrop-blur-2xl rounded-3xl border border-white/50 dark:border-white/10 shadow-[0_20px_70px_-15px_rgba(0,0,0,0.2)] dark:shadow-[0_20px_70px_-15px_rgba(0,0,0,0.5)] overflow-hidden">
+                <div className="relative bg-white/60 dark:bg-white/[0.05] backdrop-blur-2xl rounded-3xl border border-white/50 dark:border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden transition-all duration-300 hover:shadow-[0_25px_70px_rgba(0,0,0,0.12)] dark:hover:shadow-[0_25px_70px_rgba(0,0,0,0.5)] hover:scale-[1.01]">
                   {/* Browser chrome */}
-                  <div className="flex items-center justify-between px-4 py-3 bg-white/40 dark:bg-white/[0.03] border-b border-gray-200/50 dark:border-white/5">
+                  <div className="flex items-center justify-between px-4 py-3 bg-[#F5F5F7] dark:bg-white/[0.03] border-b border-gray-200/50 dark:border-white/5">
                     <div className="flex items-center gap-2">
                       <div className="flex gap-1.5">
                         <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
@@ -714,11 +754,12 @@ export default function LandingPage() {
               </h2>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-5">
+            <div id="process-cards" data-animate className="grid md:grid-cols-3 gap-5">
               {features.map((feature, i) => (
                 <div 
                   key={i}
-                  className="group p-7 rounded-2xl bg-white/80 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200/80 dark:border-white/5 hover:border-violet-500/40 dark:hover:border-violet-500/30 hover:bg-white dark:hover:bg-white/[0.04] hover:shadow-xl hover:shadow-violet-500/10 hover:-translate-y-1 hover:scale-[1.02] transition-all duration-300"
+                  className={`group p-7 rounded-2xl bg-white/80 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200/80 dark:border-white/5 hover:border-violet-500/40 dark:hover:border-violet-500/30 hover:bg-white dark:hover:bg-white/[0.04] hover:shadow-xl hover:shadow-violet-500/10 hover:-translate-y-1 hover:scale-[1.02] transition-all duration-250 ease-out ${visibleSections.has('process-cards') ? `opacity-100 translate-y-0 animate-fade-in-up animate-fade-in-up-delay-${i + 1}` : 'opacity-0 translate-y-5'}`}
+                  style={{ animationFillMode: 'forwards' }}
                 >
                   <div className="text-5xl font-bold text-violet-500/20 dark:text-white/5 group-hover:text-violet-500/50 dark:group-hover:text-violet-500/30 transition-colors mb-4">
                     {feature.num}
@@ -732,7 +773,7 @@ export default function LandingPage() {
         </section>
 
         {/* What's Included Section */}
-        <section className="py-10 lg:py-14 bg-white dark:bg-transparent">
+        <section className="py-8 lg:py-10 bg-white dark:bg-transparent">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="text-center mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight">
@@ -743,7 +784,7 @@ export default function LandingPage() {
 
             <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {/* Setup */}
-              <div className="group p-7 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200/80 dark:border-white/5 hover:border-violet-500/30 dark:hover:border-violet-500/20 hover:shadow-lg hover:shadow-violet-500/5 transition-all duration-300">
+              <div className="group p-7 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200/80 dark:border-white/5 hover:border-violet-500/30 dark:hover:border-violet-500/20 hover:shadow-lg hover:shadow-violet-500/5 hover:-translate-y-1 transition-all duration-250 ease-out">
                 <h3 className="text-xl font-semibold mb-4">Setup <span className="text-sm font-normal text-gray-400 dark:text-white/30">(one-time)</span></h3>
                 <ul className="space-y-2.5">
                   {[
@@ -765,7 +806,7 @@ export default function LandingPage() {
               </div>
 
               {/* Monthly subscription */}
-              <div className="group p-7 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200/80 dark:border-white/5 hover:border-violet-500/30 dark:hover:border-violet-500/20 hover:shadow-lg hover:shadow-violet-500/5 transition-all duration-300">
+              <div className="group p-7 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200/80 dark:border-white/5 hover:border-violet-500/30 dark:hover:border-violet-500/20 hover:shadow-lg hover:shadow-violet-500/5 hover:-translate-y-1 transition-all duration-250 ease-out">
                 <h3 className="text-xl font-semibold mb-4">Monthly subscription</h3>
                 <ul className="space-y-2.5">
                   {[
@@ -789,7 +830,7 @@ export default function LandingPage() {
         </section>
 
         {/* Social Proof / Trust Section - Placeholder for beta */}
-        <section className="py-6 lg:py-8">
+        <section className="py-4 lg:py-5">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="text-center p-8 lg:p-12 rounded-2xl bg-gradient-to-r from-violet-500/5 via-blue-500/5 to-cyan-500/5 border border-violet-500/10 dark:border-violet-500/20">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400 text-sm font-medium mb-4">
@@ -804,7 +845,7 @@ export default function LandingPage() {
         </section>
 
         {/* Pricing Section */}
-        <section id="pricing" className="py-10 lg:py-14 relative">
+        <section id="pricing" className="py-8 lg:py-10 relative">
           {/* Gradient accent - lavender tint */}
           <div className="absolute inset-0 bg-gradient-to-b from-violet-500/[0.03] via-violet-500/[0.05] to-violet-500/[0.02] dark:from-violet-500/[0.02] dark:via-violet-500/[0.04] dark:to-transparent pointer-events-none" />
           
@@ -818,7 +859,7 @@ export default function LandingPage() {
 
             <div className="max-w-lg mx-auto">
               {/* Starter Plan Card - Premium Treatment */}
-              <div className="group p-8 lg:p-10 rounded-2xl bg-gradient-to-br from-white via-white to-violet-50/50 dark:from-[#0f0f12] dark:via-[#0f0f12] dark:to-[#12101a] backdrop-blur-sm border-2 border-violet-500/30 dark:border-violet-500/40 shadow-xl shadow-violet-500/10 relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-violet-500/20">
+              <div className="group p-8 lg:p-10 rounded-2xl bg-gradient-to-br from-white via-white to-violet-50/50 dark:from-[#0f0f12] dark:via-[#0f0f12] dark:to-[#12101a] backdrop-blur-sm border-2 border-violet-500/30 dark:border-violet-500/40 shadow-xl shadow-violet-500/10 relative overflow-hidden transition-all duration-300 hover:border-violet-500/50 dark:hover:border-violet-500/60 hover:shadow-[0_8px_30px_rgba(139,92,246,0.12)]">
                 {/* Beta badge */}
                 <div className="absolute top-4 right-4">
                   <span className="px-3 py-1 text-xs font-medium bg-violet-500 text-white rounded-full">50% off during beta</span>
@@ -864,7 +905,7 @@ export default function LandingPage() {
                 
                 {/* CTA */}
                 <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="block">
-                  <Button className="w-full bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-gray-800 hover:via-gray-700 hover:to-gray-800 dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl h-14 text-base font-semibold shadow-lg hover:shadow-xl hover:shadow-violet-500/10 transition-all duration-300 hover:scale-[1.02]">
+                  <Button className="w-full bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300 hover:scale-[1.02]">
                     Book Free Discovery Call
                     <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -905,7 +946,7 @@ export default function LandingPage() {
                 ].map((faq, i) => (
                   <div 
                     key={i} 
-                    className="rounded-2xl bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200 dark:border-white/5 overflow-hidden transition-all"
+                    className="rounded-2xl bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200 dark:border-white/5 overflow-hidden transition-all hover:bg-[#F9F9FB] dark:hover:bg-white/[0.03]"
                   >
                     <button
                       onClick={() => setOpenFaq(openFaq === i ? null : i)}
@@ -968,7 +1009,7 @@ export default function LandingPage() {
               Book a free discovery call. We'll handle everything from there.
             </p>
             <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-              <Button className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-gray-800 hover:via-gray-700 hover:to-gray-800 dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-10 h-14 text-base font-semibold shadow-lg hover:shadow-xl hover:shadow-violet-500/10 transition-all duration-300 hover:scale-[1.02]">
+              <Button className="bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-10 h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300 hover:scale-[1.02]">
                 Book Free Discovery Call
                 <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />

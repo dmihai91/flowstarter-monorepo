@@ -1,376 +1,326 @@
-import { Badge } from '@/components/ui/badge';
+'use client';
+
+import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Clock,
-  Headphones,
-  Mail,
-  MapPin,
-  MessageSquare,
-  Phone,
-  Send,
-} from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
+
+const CALENDLY_URL = 'https://calendly.com/flowstarter-app/discovery';
 
 export default function ContactPage() {
-  const contactMethods = [
-    {
-      icon: <Mail className="h-6 w-6" />,
-      title: 'Email Support',
-      description: 'Get help with your account, billing, or technical issues',
-      contact: 'support@flowstarter.com',
-      response: 'Response within 24 hours',
-    },
-    {
-      icon: <MessageSquare className="h-6 w-6" />,
-      title: 'Live Chat',
-      description: 'Chat with our support team in real-time',
-      contact: 'Available in dashboard',
-      response: 'Instant response',
-    },
-    {
-      icon: <Phone className="h-6 w-6" />,
-      title: 'Phone Support',
-      description: 'Speak directly with our technical experts',
-      contact: '+1 (555) 123-4567',
-      response: 'Mon-Fri, 9 AM - 6 PM PST',
-    },
-  ];
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: '',
+  });
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const businessContacts = [
-    {
-      icon: <Mail className="h-6 w-6" />,
-      title: 'Sales Inquiries',
-      email: 'sales@flowstarter.com',
-      description:
-        'Questions about pricing, enterprise plans, or custom solutions',
-    },
-    {
-      icon: <Headphones className="h-6 w-6" />,
-      title: 'Partnership',
-      email: 'partnerships@flowstarter.com',
-      description:
-        'Integration partnerships, affiliate programs, and collaborations',
-    },
-    {
-      icon: <MessageSquare className="h-6 w-6" />,
-      title: 'Media & Press',
-      email: 'press@flowstarter.com',
-      description: 'Press inquiries, interviews, and media kit requests',
-    },
-  ];
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('loading');
+    setErrorMessage('');
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Something went wrong');
+      }
+
+      setStatus('success');
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (error) {
+      setStatus('error');
+      setErrorMessage(error instanceof Error ? error.message : 'Something went wrong');
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Hero Section */}
-      <div className="relative bg-white dark:bg-gray-900 overflow-hidden">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <div className="text-center max-w-5xl mx-auto">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-blue-500/20 to-[var(--purple)]/20 flex items-center justify-center">
-                <MessageSquare
-                  className="h-8 w-8"
-                  style={{ color: 'var(--blue)' }}
-                />
-              </div>
-            </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-6">
-              Get in Touch
-            </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-5xl mx-auto leading-relaxed">
-              We're here to help you succeed. Reach out to our team with any
-              questions, feedback, or support needs.
-            </p>
-          </div>
+    <>
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+        .font-display { font-family: 'Outfit', system-ui, sans-serif; }
+      `}</style>
+      
+      <div className="min-h-screen font-display bg-[#FAFAFA] dark:bg-[#0a0a0c]">
+        {/* Flow lines background */}
+        <div className="fixed inset-0 pointer-events-none">
+          <svg 
+            className="absolute inset-0 w-full h-full opacity-[0.08] dark:opacity-[0.06]"
+            viewBox="0 0 1200 800" 
+            preserveAspectRatio="xMidYMid slice"
+            fill="none"
+          >
+            <defs>
+              <linearGradient id="contactFlowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="var(--purple)" />
+                <stop offset="100%" stopColor="#3B82F6" />
+              </linearGradient>
+            </defs>
+            <g stroke="url(#contactFlowGradient)" strokeWidth="1">
+              <path d="M-100,100 Q200,80 400,120 T800,100 T1300,140" />
+              <path d="M-100,200 Q150,220 350,180 T750,220 T1300,200" />
+              <path d="M-100,300 Q250,280 450,320 T850,290 T1300,330" />
+              <path d="M-100,400 Q180,420 380,380 T780,420 T1300,400" />
+              <path d="M-100,500 Q220,480 420,520 T820,490 T1300,530" />
+              <path d="M-100,600 Q200,620 400,580 T800,620 T1300,600" />
+              <path d="M-100,700 Q250,680 450,720 T850,690 T1300,730" />
+            </g>
+          </svg>
         </div>
-      </div>
 
-      {/* Contact Methods */}
-      <section className="py-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <header className="sticky top-0 z-50 bg-white/70 dark:bg-[#0a0a0c]/70 backdrop-blur-2xl backdrop-saturate-150 border-b border-gray-200/50 dark:border-white/10">
+          <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20 group-hover:shadow-[var(--purple)]/30 transition-shadow">
+                <span className="text-white font-bold text-sm">F</span>
+              </div>
+              <span className="text-lg font-semibold text-gray-900 dark:text-white">Flowstarter</span>
+            </Link>
+            <Link 
+              href="/"
+              className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
+              ← Back to home
+            </Link>
+          </div>
+        </header>
+
+        {/* Content */}
+        <main className="relative z-10 max-w-5xl mx-auto px-6 py-16">
+          {/* Hero */}
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              How Can We Help?
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Choose the best way to reach us based on your needs.
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium mb-6">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+              Get in Touch
+            </div>
+            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+              Let's talk about your project
+            </h1>
+            <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl mx-auto">
+              Have a question or ready to get started? We'd love to hear from you.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-            {contactMethods.map((method, index) => (
-              <Card
-                key={index}
-                className="backdrop-blur-md bg-white/80 dark:bg-gray-800/80 border border-white/40 shadow-xl text-center [@media(hover:hover)]:hover:shadow-2xl transition-all duration-300 [@media(hover:hover)]:hover:scale-105"
-              >
-                <CardContent className="p-8">
-                  <div className="w-16 h-16 mx-auto mb-6 rounded-xl bg-linear-to-br from-blue-500/20 to-[var(--purple)]/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                    {method.icon}
+          <div className="grid lg:grid-cols-2 gap-12">
+            {/* Contact Form */}
+            <div className="p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Send us a message</h2>
+              
+              {status === 'success' ? (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                    <svg className="w-8 h-8 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                    {method.title}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
-                    {method.description}
-                  </p>
-                  <div className="space-y-2">
-                    <p className="font-semibold text-blue-600 dark:text-blue-400">
-                      {method.contact}
-                    </p>
-                    <Badge
-                      variant="outline"
-                      className="text-green-600 border-green-200 bg-green-50 dark:text-green-400 dark:border-green-800 dark:bg-green-900/20"
-                    >
-                      <Clock className="h-3 w-3 mr-1" />
-                      {method.response}
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Contact Form */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <Card className="backdrop-blur-md bg-white/80 dark:bg-gray-800/80 border border-white/40 shadow-xl">
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                  Send us a Message
-                </h3>
-                <form className="space-y-6">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        First Name
-                      </label>
-                      <Input
-                        placeholder="John"
-                        className="bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Last Name
-                      </label>
-                      <Input
-                        placeholder="Doe"
-                        className="bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600"
-                      />
-                    </div>
-                  </div>
-
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Message sent!</h3>
+                  <p className="text-gray-500 dark:text-white/50 mb-6">We'll get back to you within 48 hours.</p>
+                  <Button 
+                    onClick={() => setStatus('idle')}
+                    variant="outline"
+                    className="rounded-xl"
+                  >
+                    Send another message
+                  </Button>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-5">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Email Address
+                    <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
+                      Your name
                     </label>
-                    <Input
-                      type="email"
-                      placeholder="john@example.com"
-                      className="bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600"
+                    <input
+                      type="text"
+                      required
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      placeholder="John Doe"
+                      className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
+                      Email address
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      placeholder="john@example.com"
+                      className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
                       Subject
                     </label>
-                    <Select>
-                      <SelectTrigger className="h-10 rounded-md border border-gray-300 bg-white/90 text-gray-900 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 dark:focus:border-blue-400">
-                        <SelectValue placeholder="Select a topic" />
-                      </SelectTrigger>
-                      <SelectContent className="border border-gray-200 dark:border-gray-600 rounded-md shadow-lg bg:(var(--surface-2))">
-                        <SelectItem value="general">General Support</SelectItem>
-                        <SelectItem value="technical">
-                          Technical Issue
-                        </SelectItem>
-                        <SelectItem value="billing">
-                          Billing Question
-                        </SelectItem>
-                        <SelectItem value="feature">Feature Request</SelectItem>
-                        <SelectItem value="partnership">
-                          Partnership Inquiry
-                        </SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <select
+                      required
+                      value={formData.subject}
+                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
+                    >
+                      <option value="">Select a topic</option>
+                      <option value="general">General inquiry</option>
+                      <option value="quote">Get a quote</option>
+                      <option value="support">Support question</option>
+                      <option value="feedback">Feedback</option>
+                      <option value="partnership">Partnership</option>
+                      <option value="other">Other</option>
+                    </select>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
                       Message
                     </label>
-                    <Textarea
-                      placeholder="Tell us how we can help you..."
-                      rows={6}
-                      className="bg-white/50 dark:bg-gray-700/50 border-gray-300 dark:border-gray-600"
+                    <textarea
+                      required
+                      rows={5}
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      placeholder="Tell us about your project or question..."
+                      className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all resize-none"
                     />
                   </div>
 
-                  <Button className="w-full bg-linear-to-r from-blue-600 to-[var(--purple)] [@media(hover:hover)]:hover:from-blue-700 [@media(hover:hover)]:hover:to-[var(--purple)] text-white">
-                    <Send className="h-4 w-4 mr-2" />
-                    Send Message
+                  {status === 'error' && (
+                    <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-sm">
+                      {errorMessage}
+                    </div>
+                  )}
+
+                  <Button 
+                    type="submit"
+                    disabled={status === 'loading'}
+                    className="w-full bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl h-12 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {status === 'loading' ? (
+                      <span className="flex items-center gap-2">
+                        <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        Sending...
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        Send Message
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
+                      </span>
+                    )}
                   </Button>
                 </form>
-              </CardContent>
-            </Card>
+              )}
+            </div>
 
-            {/* Business Contacts */}
+            {/* Contact Info */}
             <div className="space-y-6">
-              <Card className="backdrop-blur-md bg-white/80 dark:bg-gray-800/80 border border-white/40 shadow-xl">
-                <CardContent className="p-8">
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                    Business Contacts
-                  </h3>
-                  <div className="space-y-6">
-                    {businessContacts.map((contact, index) => (
-                      <div key={index} className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500/20 to-[var(--purple)]/20 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
-                          {contact.icon}
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
-                            {contact.title}
-                          </h4>
-                          <a
-                            href={`mailto:${contact.email}`}
-                            className="text-blue-600 dark:text-blue-400 font-medium [@media(hover:hover)]:hover:underline"
-                          >
-                            {contact.email}
-                          </a>
-                          <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
-                            {contact.description}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Quick Contact */}
+              <div className="p-8 rounded-2xl bg-gradient-to-br from-[var(--purple)]/10 to-blue-500/10 border border-[var(--purple)]/20">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Prefer to talk?</h2>
+                <p className="text-gray-500 dark:text-white/50 mb-6">
+                  Book a free discovery call and let's discuss your project in person.
+                </p>
+                <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
+                  <Button className="w-full bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 rounded-xl h-12 text-base font-semibold shadow-lg transition-all duration-300">
+                    <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Book Free Discovery Call
+                  </Button>
+                </a>
+              </div>
 
-              <Card className="backdrop-blur-md bg-white/80 dark:bg-gray-800/80 border border-white/40 shadow-xl">
-                <CardContent className="p-8">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 rounded-lg bg-linear-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center">
-                      <MapPin className="h-6 w-6 text-green-600 dark:text-green-400" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                      Our Office
-                    </h3>
-                  </div>
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-                        Headquarters
-                      </h4>
-                      <p className="text-gray-600 dark:text-gray-300">
-                        123 Innovation Drive
-                        <br />
-                        San Francisco, CA 94107
-                        <br />
-                        United States
-                      </p>
+              {/* Contact Methods */}
+              <div className="p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Other ways to reach us</h2>
+                <div className="space-y-4">
+                  <a 
+                    href="mailto:hello@flowstarter.dev"
+                    className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center">
+                      <svg className="w-5 h-5 text-[var(--purple)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-                        Office Hours
-                      </h4>
-                      <p className="text-gray-600 dark:text-gray-300">
-                        Monday - Friday: 9:00 AM - 6:00 PM PST
-                        <br />
-                        Saturday - Sunday: Closed
-                      </p>
+                      <p className="font-medium text-gray-900 dark:text-white group-hover:text-[var(--purple)] transition-colors">Email</p>
+                      <p className="text-sm text-gray-500 dark:text-white/50">hello@flowstarter.dev</p>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </a>
+                  <a 
+                    href="https://twitter.com/flowstarter"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center">
+                      <svg className="w-5 h-5 text-[var(--purple)]" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white group-hover:text-[var(--purple)] transition-colors">Twitter</p>
+                      <p className="text-sm text-gray-500 dark:text-white/50">@flowstarter</p>
+                    </div>
+                  </a>
+                  <a 
+                    href="https://linkedin.com/company/flowstarter"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center">
+                      <svg className="w-5 h-5 text-[var(--purple)]" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white group-hover:text-[var(--purple)] transition-colors">LinkedIn</p>
+                      <p className="text-sm text-gray-500 dark:text-white/50">Flowstarter</p>
+                    </div>
+                  </a>
+                </div>
+              </div>
+
+              {/* Response Time */}
+              <div className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 flex items-center gap-4">
+                <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900 dark:text-white">Response within 48 hours</p>
+                  <p className="text-sm text-gray-500 dark:text-white/50">Usually much faster!</p>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </main>
 
-      {/* FAQ Section */}
-      <section className="py-20 bg:(var(--surface-2))">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Quick answers to common questions. Need more help? Feel free to
-              contact us.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            <Card className="backdrop-blur-md bg-white/80 dark:bg-gray-800/80 border border-white/40 shadow-xl">
-              <CardContent className="p-6">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
-                  How quickly do you respond to support requests?
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  We aim to respond to all support requests within 24 hours.
-                  Priority support customers receive responses within 4 hours
-                  during business hours.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="backdrop-blur-md bg-white/80 dark:bg-gray-800/80 border border-white/40 shadow-xl">
-              <CardContent className="p-6">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
-                  Do you offer phone support?
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Yes! Phone support is available Monday through Friday, 9 AM to
-                  6 PM PST. You can reach us at +1 (555) 123-4567.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="backdrop-blur-md bg-white/80 dark:bg-gray-800/80 border border-white/40 shadow-xl">
-              <CardContent className="p-6">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
-                  Can I schedule a demo or consultation?
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Absolutely! Contact our sales team at sales@flowstarter.com to
-                  schedule a personalized demo or consultation.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="backdrop-blur-md bg-white/80 dark:bg-gray-800/80 border border-white/40 shadow-xl">
-              <CardContent className="p-6">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
-                  Do you have a knowledge base?
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Yes! Visit our Help Center for detailed guides, tutorials, and
-                  troubleshooting articles to help you get the most out of
-                  Flowstarter.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="text-center mt-12">
-            <a
-              href="/help"
-              className="inline-flex items-center justify-center px-8 py-3 border border-gray-300 dark:border-gray-600 text-base font-medium rounded-xl text-gray-700 dark:text-gray-300 bg:(var(--surface-2)) [@media(hover:hover)]:hover:bg-gray-50 dark:[@media(hover:hover)]:hover:bg-gray-700 transition-all duration-200 shadow-lg [@media(hover:hover)]:hover:shadow-xl"
-            >
-              Visit Help Center
-            </a>
-          </div>
-        </div>
-      </section>
-    </div>
+        <Footer />
+      </div>
+    </>
   );
 }

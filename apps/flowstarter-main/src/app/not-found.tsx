@@ -2,23 +2,16 @@
 
 import { ErrorPageLayout } from '@/components/ErrorPageLayout';
 import { Button } from '@/components/ui/button';
-import { GlassCard } from '@/components/ui/glass-card';
 import { setIsErrorPageFlag, useErrorPage } from '@/contexts/ErrorPageContext';
-import { useTranslations } from '@/lib/i18n';
-import { AlertCircle, Home, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect } from 'react';
 
 export default function NotFound() {
-  const { t } = useTranslations();
   const { setIsErrorPage } = useErrorPage();
 
-  // Set error page flag synchronously to hide navbar immediately
-  // This ensures NavigationWrapper sees it on first render
   setIsErrorPageFlag(true);
 
   useEffect(() => {
-    // Cleanup when component unmounts
     return () => {
       setIsErrorPage(false);
     };
@@ -26,76 +19,60 @@ export default function NotFound() {
 
   return (
     <ErrorPageLayout>
-      <GlassCard className="p-12 sm:p-16">
-        <div className="text-center">
-          {/* Error Icon */}
-          <div className="w-24 h-24 mx-auto mb-8 rounded-[24px] bg-gradient-to-br from-black/10 to-black/10 dark:from-white/10 dark:to-white/10 backdrop-blur-sm flex items-center justify-center ring-1 ring-black/20 dark:ring-white/30">
-            <AlertCircle className="h-12 w-12 text-black dark:text-white" />
-          </div>
+      <div className="text-center">
+        {/* Error Code */}
+        <div className="mb-6">
+          <h1 className="text-8xl sm:text-9xl font-bold bg-gradient-to-r from-[var(--purple)] via-blue-500 to-cyan-400 bg-clip-text text-transparent">
+            404
+          </h1>
+        </div>
 
-          {/* Error Code */}
-          <div className="mb-4">
-            <h1
-              className="text-7xl sm:text-8xl font-bold mb-2"
-              style={{ color: 'var(--copy-headlines)' }}
-            >
-              404
-            </h1>
-            <h2
-              className="text-2xl sm:text-3xl font-bold mb-4"
-              style={{ color: 'var(--copy-headlines)' }}
-            >
-              {t('notFound.title')}
-            </h2>
-          </div>
+        {/* Title */}
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">
+          Page not found
+        </h2>
 
-          {/* Description */}
-          <p
-            className="text-lg mb-8 leading-relaxed"
-            style={{ color: 'var(--copy-body)' }}
-          >
-            {t('notFound.subtitle')}
-          </p>
+        {/* Description */}
+        <p className="text-gray-500 dark:text-white/50 mb-8 max-w-md mx-auto">
+          The page you're looking for doesn't exist or has been moved. Let's get you back on track.
+        </p>
 
-          {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
-            <Button
-              asChild
-              size="lg"
-              className="w-full sm:w-auto h-12 text-white shadow-md rounded-lg transition-all duration-200 font-semibold"
-            >
-              <Link href="/">
-                <Home className="h-4 w-4" />
-                {t('error.goHome')}
-              </Link>
+        {/* Actions */}
+        <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+          <Link href="/">
+            <Button className="bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-8 h-12 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300">
+              Back to Home
+              <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
             </Button>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="w-full sm:w-auto h-12 border-2 border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 rounded-lg transition-all duration-200 font-semibold"
-            >
-              <Link href="/dashboard">
-                <Search className="h-4 w-4" />
-                {t('landing.cta.goToDashboard')}
-              </Link>
+          </Link>
+          <Link href="/help">
+            <Button variant="outline" className="rounded-xl px-8 h-12 text-base font-semibold border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 transition-all duration-300">
+              Get Help
             </Button>
-          </div>
+          </Link>
+        </div>
 
-          {/* Help Text */}
-          <div className="mt-8 pt-8 border-t border-white dark:border-gray-600/30">
-            <p className="text-sm mb-3" style={{ color: 'var(--copy-labels)' }}>
-              {t('app.needHelp')}
-            </p>
-            <Link
-              href="/help"
-              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-white/30 dark:bg-[rgba(58,58,74,0.25)] backdrop-blur-xl border border-white/60 dark:border-white/15 text-black dark:text-white font-medium hover:bg-white/40 dark:hover:bg-[rgba(58,58,74,0.35)] transition-all duration-200 shadow-[0_4px_16px_rgba(0,0,0,0.06),0_1px_4px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.4)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.15),0_1px_4px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.05)]"
-            >
-              {t('footer.links.helpCenter')}
-            </Link>
+        {/* Stats */}
+        <div className="mt-12 pt-8 border-t border-gray-200 dark:border-white/10">
+          <div className="flex items-center justify-center gap-6">
+            {[
+              { value: '1-2', label: 'Weeks' },
+              { value: '~300', label: 'edits/mo' },
+              { value: '0', label: 'Code' },
+            ].map((stat, i) => (
+              <div key={i} className="flex items-center">
+                <div className="text-center px-3">
+                  <div className="text-lg font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">{stat.value}</div>
+                  <div className="text-[9px] text-gray-400 dark:text-white/30 uppercase tracking-wider">{stat.label}</div>
+                </div>
+                {i < 2 && <div className="w-px h-6 bg-gray-200 dark:bg-white/10" />}
+              </div>
+            ))}
           </div>
         </div>
-      </GlassCard>
+      </div>
     </ErrorPageLayout>
   );
 }

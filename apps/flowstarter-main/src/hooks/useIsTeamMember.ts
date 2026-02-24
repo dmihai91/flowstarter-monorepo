@@ -2,12 +2,8 @@
 
 import { useUser } from '@clerk/nextjs';
 
-// Team email domains that have access to creation features
-const TEAM_DOMAINS = [
-  'flowstarter.app',
-  'flowstarter.dev',
-  'flowstarter.io',
-];
+// Team email domain that has access to creation features
+const TEAM_DOMAIN = 'flowstarter.app';
 
 /**
  * Hook to check if the current user is a team member
@@ -24,7 +20,7 @@ export function useIsTeamMember(): { isTeamMember: boolean; isLoaded: boolean } 
   const email = user.primaryEmailAddress?.emailAddress || '';
   const domain = email.split('@')[1]?.toLowerCase() || '';
   
-  const isTeamMember = TEAM_DOMAINS.includes(domain);
+  const isTeamMember = domain === TEAM_DOMAIN;
 
   return { isTeamMember, isLoaded };
 }

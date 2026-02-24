@@ -28,7 +28,7 @@ export default function PricingPage() {
     'First month free',
   ];
 
-  // Setup features (one-time)
+  // Setup features (one-time) - everything we build
   const setupFeatures = [
     'Personal discovery call with our team',
     'AI-generated website from premium templates',
@@ -36,9 +36,18 @@ export default function PricingPage() {
     'Mobile-responsive design (looks great on any device)',
     'Custom domain setup and configuration',
     'Professional email setup (2 mailboxes)',
+    'SSL certificate (HTTPS security)',
+    'Contact form with lead capture',
     'Google Analytics integration',
-    'Basic SEO setup (meta tags, sitemap, performance optimization)',
-    '90+ Lighthouse performance score',
+    'Basic SEO setup (meta tags, sitemap, robots.txt)',
+    'Open Graph tags for social sharing',
+    'Performance optimization (90+ Lighthouse score)',
+    'Image optimization and lazy loading',
+    'Cloudflare CDN configuration',
+    'DNS setup and domain verification',
+    'Cookie consent banner (GDPR compliant)',
+    'Privacy policy and terms pages (templates)',
+    'Favicon and brand assets setup',
     'Your site, live and ready',
   ];
 

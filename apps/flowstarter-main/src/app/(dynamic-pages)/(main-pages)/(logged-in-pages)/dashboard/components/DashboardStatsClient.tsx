@@ -35,12 +35,12 @@ function GhostChart() {
   );
 }
 
-// Integration logo with label - bigger icons
+// Integration logo with label - 40x40px icons
 function IntegrationLogo({ name, icon: Icon }: { name: string; icon: React.ComponentType<{ className?: string }> }) {
   return (
-    <div className="flex flex-col items-center gap-1.5 group-hover:opacity-60 transition-opacity">
-      <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center opacity-40">
-        <Icon className="w-5 h-5 text-gray-500 dark:text-white/50" />
+    <div className="flex flex-col items-center gap-1.5 opacity-40 group-hover:opacity-60 transition-opacity duration-300">
+      <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-200/50 dark:border-white/5 flex items-center justify-center">
+        <Icon className="w-5 h-5 text-gray-500 dark:text-white/40" />
       </div>
       <span className="text-[10px] text-gray-400 dark:text-white/30 font-medium">{name}</span>
     </div>

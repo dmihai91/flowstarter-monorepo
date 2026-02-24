@@ -24,18 +24,18 @@ export default function DashboardPage() {
         <DashboardInit>
           {/* Hero card with gradient containing everything */}
           <DashboardHero>
-            {/* Analytics snapshot - no header */}
-            <div className="mb-10">
+            {/* Analytics snapshot - reduced gap from stepper */}
+            <div className="mb-8">
               <DashboardStatsClientFetcher />
             </div>
 
             {/* Divider */}
-            <div className="relative flex items-center justify-center my-10">
-              <div className="flex-grow border-t border-gray-300/60 dark:border-gray-600/40"></div>
+            <div className="relative flex items-center justify-center my-8">
+              <div className="flex-grow border-t border-gray-200/60 dark:border-white/10"></div>
             </div>
 
             {/* Projects grid */}
-            <div className="mb-12">
+            <div className="mb-10">
               <PageSectionHeader
                 title={t('projects.title')}
                 subtitle={t('projects.subtitle')}

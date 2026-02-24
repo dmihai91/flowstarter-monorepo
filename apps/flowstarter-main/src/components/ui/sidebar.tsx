@@ -5,7 +5,8 @@ import { useSidebar } from '@/contexts/SidebarContext';
 import { useTranslations } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import {
-  FileText,
+  Calendar,
+  HelpCircle,
   LayoutDashboard,
   MessageSquare,
   Puzzle,
@@ -15,10 +16,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
+const CALENDLY_URL = 'https://calendly.com/flowstarter/discovery';
+
 interface SidebarItem {
   title: string;
   href: string;
   icon: LucideIcon;
+  external?: boolean;
   badge?: string | number;
 }
 
@@ -30,6 +34,7 @@ interface SidebarLinkProps {
   title: string;
   onClick?: () => void;
   type?: 'link' | 'button';
+  external?: boolean;
 }
 
 function SidebarLink({
@@ -40,6 +45,7 @@ function SidebarLink({
   title,
   onClick,
   type = 'link',
+  external = false,
 }: SidebarLinkProps) {
   const content = (
     <>
@@ -48,8 +54,8 @@ function SidebarLink({
           'flex items-center transition-all duration-300 ease-out',
           shouldExpand ? 'justify-start shrink-0' : 'justify-center w-full',
           isActive
-            ? 'text-white dark:text-gray-900'
-            : 'text-slate-500 group-hover:text-[#4d5dd9] dark:text-slate-400 dark:group-hover:text-[#a5b4f5]'
+            ? 'text-white'
+            : 'text-gray-500 group-hover:text-[#7C3AED] dark:text-gray-400 dark:group-hover:text-[#A78BFA]'
         )}
       >
         <Icon
@@ -59,11 +65,11 @@ function SidebarLink({
       </div>
       <span
         className={cn(
-          'font-semibold text-sm transition-all duration-300 ease-out truncate overflow-hidden',
+          'font-medium text-sm transition-all duration-300 ease-out truncate overflow-hidden',
           shouldExpand ? 'opacity-100 max-w-full' : 'opacity-0 max-w-0',
           isActive
-            ? 'text-white dark:text-gray-900'
-            : 'text-slate-800 dark:text-slate-200 group-hover:text-[#4d5dd9] dark:group-hover:text-[#a5b4f5]'
+            ? 'text-white'
+            : 'text-gray-700 dark:text-gray-200 group-hover:text-[#7C3AED] dark:group-hover:text-[#A78BFA]'
         )}
       >
         {title}
@@ -73,15 +79,12 @@ function SidebarLink({
 
   const className = cn(
     'flex items-center rounded-xl transition-all duration-300 ease-out group relative',
-    'hover:bg-[#4d5dd9]/8 dark:hover:bg-[#4d5dd9]/12',
+    'hover:bg-[#7C3AED]/8 dark:hover:bg-[#7C3AED]/12',
     shouldExpand
       ? 'gap-3 pl-3 pr-4 py-3 w-full'
       : 'justify-center w-12 h-12 gap-0 mx-auto',
     isActive &&
-      (shouldExpand
-        ? 'bg-gray-950 text-white dark:bg-white dark:text-gray-900 hover:bg-gray-900 dark:hover:bg-gray-50 shadow-lg shadow-gray-950/30 dark:shadow-white/10 ring-2 ring-gray-950/10 dark:ring-white/10'
-        : 'bg-gray-950 text-white dark:bg-white dark:text-gray-900 hover:bg-gray-900 dark:hover:bg-gray-50 shadow-lg shadow-gray-950/30 dark:shadow-white/10 ring-2 ring-gray-950/10 dark:ring-white/10'),
-    type === 'button' && shouldExpand && 'w-full'
+      'bg-gradient-to-r from-[#7C3AED] to-[#6D28D9] text-white shadow-lg shadow-[#7C3AED]/25 ring-1 ring-[#7C3AED]/20'
   );
 
   if (type === 'button') {
@@ -93,6 +96,21 @@ function SidebarLink({
       >
         {content}
       </button>
+    );
+  }
+
+  if (external) {
+    return (
+      <a
+        href={href!}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={onClick}
+        className={className}
+        title={!shouldExpand ? title : undefined}
+      >
+        {content}
+      </a>
     );
   }
 
@@ -113,13 +131,11 @@ export function Sidebar() {
   const { isCollapsed, isMobileOpen, setIsMobileOpen } = useSidebar();
   const { t } = useTranslations();
 
-  // Start collapsed by default like Supabase
   const [isHovered, setIsHovered] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
-  // On mobile, always expand when opened; on desktop, respect hover state
   const shouldExpand = isMobileOpen || !isCollapsed || isHovered;
 
-  const sidebarItems: SidebarItem[] = [
+  const mainItems: SidebarItem[] = [
     {
       title: t('sidebar.dashboard'),
       href: '/dashboard',
@@ -130,19 +146,28 @@ export function Sidebar() {
       href: '/dashboard/integrations',
       icon: Puzzle,
     },
+  ];
+
+  const secondaryItems: SidebarItem[] = [
+    {
+      title: 'Book a Call',
+      href: CALENDLY_URL,
+      icon: Calendar,
+      external: true,
+    },
     {
       title: t('sidebar.helpGuide'),
       href: '/help',
-      icon: FileText,
+      icon: HelpCircle,
     },
   ];
 
   return (
     <>
-      {/* Mobile Overlay - Glassmorphism effect */}
+      {/* Mobile Overlay */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 bg-black/10 dark:bg-black/20 backdrop-blur-sm z-30 lg:hidden transition-opacity duration-300 ease-out"
+          className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm z-30 lg:hidden transition-opacity duration-300 ease-out"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
@@ -150,39 +175,38 @@ export function Sidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          // Shared shell styles
-          'fixed left-0 top-16 bottom-0 flex flex-col backdrop-blur-xl border-r border-black/5 dark:border-white/10 glass-shadow-shell z-40',
-          // Mobile: smooth slide-in transition from left to right with custom ease curve
+          'fixed left-0 top-16 bottom-0 flex flex-col backdrop-blur-xl border-r border-gray-200/50 dark:border-white/10 z-40',
           'transition-[transform,opacity] duration-350 ease-in-out',
           isMobileOpen
             ? 'translate-x-0 opacity-100'
             : '-translate-x-full opacity-0 lg:opacity-100',
-          // Desktop: always visible
           'lg:translate-x-0',
-          // Expanded vs collapsed layout - smooth transition for hover expansion only
-          // Using preferred glass backgrounds: rgba(243, 243, 243, 0.30) for light and rgba(58, 58, 74, 0.30) for dark
           shouldExpand
-            ? 'items-start px-4 pt-6 pb-4 w-[240px] bg-[rgba(243,243,243,0.30)] dark:bg-[rgba(58,58,74,0.30)] transition-[width,padding] duration-300 ease-out'
-            : 'items-center px-0 pt-6 pb-4 w-16 bg-[rgba(243,243,243,0.30)] dark:bg-[rgba(58,58,74,0.30)] transition-[width,padding] duration-300 ease-out'
+            ? 'items-start px-4 pt-6 pb-4 w-[240px] bg-white/60 dark:bg-[rgba(58,58,74,0.40)] transition-[width,padding] duration-300 ease-out'
+            : 'items-center px-0 pt-6 pb-4 w-16 bg-white/60 dark:bg-[rgba(58,58,74,0.40)] transition-[width,padding] duration-300 ease-out'
         )}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Navigation Items */}
+        {/* Main Navigation */}
         <nav
           className={cn(
-            'flex-1 w-full overflow-y-auto flex flex-col',
-            shouldExpand ? 'space-y-2' : 'space-y-3 items-center'
+            'w-full flex flex-col',
+            shouldExpand ? 'space-y-1' : 'space-y-2 items-center'
           )}
         >
-          {sidebarItems.map((item) => {
-            // Remove hash from href for comparison
+          {shouldExpand && (
+            <p className="px-3 mb-2 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+              Main
+            </p>
+          )}
+          {mainItems.map((item) => {
             const itemPath = item.href.split('#')[0];
-            // Special handling for dashboard: active for /dashboard and /dashboard/new but not other sub-routes
             const isActive =
               itemPath === '/dashboard'
                 ? pathname === '/dashboard' ||
-                  pathname?.startsWith('/dashboard/new')
+                  pathname?.startsWith('/dashboard/new') ||
+                  pathname?.startsWith('/dashboard/projects')
                 : pathname === itemPath || pathname?.startsWith(itemPath);
 
             return (
@@ -199,13 +223,47 @@ export function Sidebar() {
           })}
         </nav>
 
+        {/* Secondary Navigation */}
+        <nav
+          className={cn(
+            'w-full flex flex-col mt-6',
+            shouldExpand ? 'space-y-1' : 'space-y-2 items-center'
+          )}
+        >
+          {shouldExpand && (
+            <p className="px-3 mb-2 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+              Support
+            </p>
+          )}
+          {secondaryItems.map((item) => {
+            const itemPath = item.href.split('#')[0];
+            const isActive = !item.external && (pathname === itemPath || pathname?.startsWith(itemPath));
+
+            return (
+              <SidebarLink
+                key={item.href}
+                href={item.href}
+                icon={item.icon}
+                title={item.title}
+                isActive={isActive}
+                shouldExpand={shouldExpand}
+                external={item.external}
+                onClick={() => setIsMobileOpen(false)}
+              />
+            );
+          })}
+        </nav>
+
+        {/* Spacer */}
+        <div className="flex-1" />
+
         {/* Footer Section */}
         <div
           className={cn(
-            'shrink-0 w-full border-t transition-[padding,border-color,justify] duration-300 ease-out flex',
+            'shrink-0 w-full border-t transition-[padding,border-color] duration-300 ease-out',
             shouldExpand
-              ? 'pt-4 border-gray-200/70 dark:border-gray-700/60'
-              : 'pt-3 border-gray-200/50 dark:border-gray-700/50 justify-center'
+              ? 'pt-4 border-gray-200/70 dark:border-white/10'
+              : 'pt-3 border-gray-200/50 dark:border-white/5 flex justify-center'
           )}
         >
           <SidebarLink

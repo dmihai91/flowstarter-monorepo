@@ -8,365 +8,244 @@ import {
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { GlassCard } from '@/components/ui/glass-card';
-import { QuickLinkCard } from '@/components/ui/quick-link-card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useI18n } from '@/lib/i18n';
 import {
-  BookOpen,
+  Calendar,
+  CheckCircle2,
   ChevronRight,
   Clock,
   HelpCircle,
   Mail,
   MessageCircle,
+  Pencil,
   Rocket,
-  Settings,
-  Users,
+  Sparkles,
 } from 'lucide-react';
-import { DashboardSubtitle } from '../dashboard/components/DashboardSubtitle';
-import { PageSectionHeader } from '../dashboard/components/PageSectionHeader';
 
-const getFaqs = (t: (key: string) => string) => [
+const CALENDLY_URL = 'https://calendly.com/flowstarter/discovery';
+
+const faqs = [
   {
-    question: t('help.faqs.items.0.question'),
-    answer: t('help.faqs.items.0.answer'),
+    question: 'How does the process work?',
+    answer: 'It\'s simple! Book a free discovery call with our team. We\'ll learn about your business, goals, and design preferences. Then we build your professional website in 1-2 weeks. Once it\'s live, you can manage and edit it from your dashboard.',
   },
   {
-    question: t('help.faqs.items.1.question'),
-    answer: t('help.faqs.items.1.answer'),
+    question: 'How long does it take to build my website?',
+    answer: 'Most websites are completed within 1-2 weeks after your discovery call. Complex projects with custom features may take a bit longer. We\'ll give you a clear timeline during your call.',
   },
   {
-    question: t('help.faqs.items.2.question'),
-    answer: t('help.faqs.items.2.answer'),
+    question: 'What happens during the discovery call?',
+    answer: 'We\'ll discuss your business, target audience, design preferences, and any specific features you need. This helps us understand your vision so we can build exactly what you need.',
   },
   {
-    question: t('help.faqs.items.3.question'),
-    answer: t('help.faqs.items.3.answer'),
+    question: 'Can I make changes after my site is live?',
+    answer: 'Absolutely! You\'ll have full access to edit your website content, images, and settings from your dashboard. For major design changes or new features, we\'re here to help.',
   },
   {
-    question: t('help.faqs.items.4.question'),
-    answer: t('help.faqs.items.4.answer'),
+    question: 'What\'s included in my website?',
+    answer: 'Every website includes professional design, mobile responsiveness, SEO optimization, contact forms, analytics integration, and hosting. During your discovery call, we\'ll discuss any additional features you need.',
   },
   {
-    question: t('help.faqs.items.5.question'),
-    answer: t('help.faqs.items.5.answer'),
+    question: 'Do I need any technical skills?',
+    answer: 'Not at all! We handle all the technical work. Once your site is live, our easy-to-use dashboard lets you make content updates without any coding knowledge.',
   },
   {
-    question: t('help.faqs.items.6.question'),
-    answer: t('help.faqs.items.6.answer'),
+    question: 'How do I track my website performance?',
+    answer: 'Your dashboard shows key metrics like visitor traffic, leads, and engagement. You can also connect Google Analytics for detailed insights through our integrations page.',
   },
   {
-    question: t('help.faqs.items.7.question'),
-    answer: t('help.faqs.items.7.answer'),
-  },
-  {
-    question: t('help.faqs.items.8.question'),
-    answer: t('help.faqs.items.8.answer'),
-  },
-  {
-    question: t('help.faqs.items.9.question'),
-    answer: t('help.faqs.items.9.answer'),
+    question: 'What if I need help after my site launches?',
+    answer: 'We\'re always here to help! You can reach out through the dashboard or book a follow-up call. We want your website to succeed as much as you do.',
   },
 ];
 
-const getGuides = (t: (key: string) => string) => [
+const steps = [
   {
-    title: t('help.guides.items.0.title'),
-    description: t('help.guides.items.0.description'),
+    number: 1,
+    title: 'Book Your Discovery Call',
+    description: 'Schedule a free 30-minute call with our team to discuss your business and website needs.',
+    icon: Calendar,
+    iconColor: '#7C3AED',
+  },
+  {
+    number: 2,
+    title: 'We Build Your Website',
+    description: 'Our team designs and develops your professional website within 1-2 weeks.',
+    icon: Sparkles,
+    iconColor: '#3B82F6',
+  },
+  {
+    number: 3,
+    title: 'Review & Launch',
+    description: 'You review the site, we make any adjustments, then launch it to the world.',
     icon: Rocket,
-    iconColor: 'var(--blue)',
-    time: t('help.guides.items.0.time'),
-    steps: [
-      t('help.guides.items.0.steps.0'),
-      t('help.guides.items.0.steps.1'),
-      t('help.guides.items.0.steps.2'),
-      t('help.guides.items.0.steps.3'),
-      t('help.guides.items.0.steps.4'),
-    ],
+    iconColor: '#10B981',
   },
   {
-    title: t('help.guides.items.1.title'),
-    description: t('help.guides.items.1.description'),
-    icon: BookOpen,
-    iconColor: 'var(--green)',
-    time: t('help.guides.items.1.time'),
-    steps: [
-      t('help.guides.items.1.steps.0'),
-      t('help.guides.items.1.steps.1'),
-      t('help.guides.items.1.steps.2'),
-      t('help.guides.items.1.steps.3'),
-      t('help.guides.items.1.steps.4'),
-    ],
-  },
-  {
-    title: t('help.guides.items.2.title'),
-    description: t('help.guides.items.2.description'),
-    icon: Settings,
-    iconColor: 'var(--purple)',
-    time: t('help.guides.items.2.time'),
-    steps: [
-      t('help.guides.items.2.steps.0'),
-      t('help.guides.items.2.steps.1'),
-      t('help.guides.items.2.steps.2'),
-      t('help.guides.items.2.steps.3'),
-      t('help.guides.items.2.steps.4'),
-    ],
+    number: 4,
+    title: 'Manage From Dashboard',
+    description: 'Edit content, track analytics, and manage leads — all from your dashboard.',
+    icon: Pencil,
+    iconColor: '#F59E0B',
   },
 ];
 
 export default function HelpPage() {
-  const { t } = useI18n();
-  const faqs = getFaqs(t);
-  const guides = getGuides(t);
-
   return (
     <PageContainer gradientVariant="help">
       <div className="space-y-12">
         {/* Hero Section */}
-        <section className="relative mb-12">
+        <section className="relative">
           <div className="relative z-10">
-            {/* Header Title - Top Left */}
-            <PageSectionHeader
-              title={t('help.overview.title')}
-              className="mb-4"
-            />
-
-            {/* Greeting section */}
-            <div className="mb-8">
-              <DashboardSubtitle>
-                {t('help.overview.subtitle')}
-              </DashboardSubtitle>
+            <div className="mb-2">
+              <p className="text-gray-500 dark:text-white/50">
+                Everything you need to know
+              </p>
             </div>
-
-            {/* Quick Links */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-              <QuickLinkCard
-                icon={HelpCircle}
-                title={t('help.quicklinks.faqs.title')}
-                description={t('help.quicklinks.faqs.desc')}
-                gradientFrom="from-blue-500"
-                gradientTo="to-indigo-500"
-              />
-              <QuickLinkCard
-                icon={BookOpen}
-                title={t('help.quicklinks.guides.title')}
-                description={t('help.quicklinks.guides.desc')}
-                gradientFrom="from-emerald-500"
-                gradientTo="to-teal-500"
-              />
-              <QuickLinkCard
-                icon={MessageCircle}
-                title={t('help.quicklinks.community.title')}
-                description={t('help.quicklinks.community.desc')}
-                gradientFrom="from-violet-500"
-                gradientTo="to-fuchsia-500"
-              />
-              <QuickLinkCard
-                icon={Mail}
-                title={t('help.quicklinks.support.title')}
-                description={t('help.quicklinks.support.desc')}
-                gradientFrom="from-gray-900"
-                gradientTo="to-gray-800"
-              />
-            </div>
-
-            {/* Divider */}
-            <div className="relative flex items-center justify-center my-10">
-              <div className="flex-grow border-t border-gray-300/60 dark:border-gray-600/40"></div>
-            </div>
-
-            {/* Main Content - Tabs */}
-            <Tabs defaultValue="guides" className="space-y-8">
-              <TabsList className="grid w-full grid-cols-2 h-auto p-1 rounded-[16px] bg-[rgba(243,243,243,0.3)] dark:bg-[rgba(58,58,74,0.3)] backdrop-blur-xl border border-white dark:border-white/40">
-                <TabsTrigger
-                  value="faqs"
-                  className="flex items-center justify-center gap-2 text-sm h-11 px-6 rounded-lg transition-all data-[state=active]:bg-white/80 dark:data-[state=active]:bg-white/10"
-                  style={{
-                    color: 'var(--copy-headlines)',
-                  }}
-                >
-                  <HelpCircle className="h-4 w-4" />
-                  <span className="font-medium">{t('help.faqs.title')}</span>
-                </TabsTrigger>
-                <TabsTrigger
-                  value="guides"
-                  className="flex items-center justify-center gap-2 text-sm h-11 px-6 rounded-lg transition-all data-[state=active]:bg-white/80 dark:data-[state=active]:bg-white/10"
-                  style={{
-                    color: 'var(--copy-headlines)',
-                  }}
-                >
-                  <BookOpen className="h-4 w-4" />
-                  <span className="font-medium">{t('help.guides.title')}</span>
-                </TabsTrigger>
-              </TabsList>
-
-              {/* FAQs Tab */}
-              <TabsContent value="faqs" className="space-y-6">
-                <div>
-                  <Accordion
-                    type="single"
-                    collapsible
-                    defaultValue={`item-${faqs[0]?.question
-                      .replace(/[^a-z0-9]/gi, '-')
-                      .toLowerCase()}`}
-                    className="space-y-4"
-                  >
-                    {faqs.map((faq) => (
-                      <AccordionItem
-                        key={`faq-${faq.question
-                          .replace(/[^a-z0-9]/gi, '-')
-                          .toLowerCase()}`}
-                        value={`item-${faq.question
-                          .replace(/[^a-z0-9]/gi, '-')
-                          .toLowerCase()}`}
-                        className="border border-white dark:border-white/40 rounded-[16px] px-6 bg-[rgba(243,243,243,0.3)] dark:bg-[rgba(58,58,74,0.3)] backdrop-blur-xl"
-                      >
-                        <AccordionTrigger
-                          className="text-left font-semibold"
-                          style={{ color: 'var(--copy-headlines)' }}
-                        >
-                          {faq.question}
-                        </AccordionTrigger>
-                        <AccordionContent style={{ color: 'var(--copy-body)' }}>
-                          {faq.answer}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </div>
-              </TabsContent>
-
-              {/* Guides Tab */}
-              <TabsContent value="guides" className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {guides.map((guide) => {
-                    const IconComponent = guide.icon;
-                    return (
-                      <GlassCard
-                        key={`guide-${guide.title
-                          .replace(/[^a-z0-9]/gi, '-')
-                          .toLowerCase()}`}
-                        href={`/help/${guide.title
-                          .toLowerCase()
-                          .replace(/[^a-z0-9]/gi, '-')
-                          .replace('getting-started-guide', 'getting-started')
-                          .replace(
-                            'template-selection-guide',
-                            'template-selection'
-                          )
-                          .replace('customization-guide', 'customization')}`}
-                        as="link"
-                        className="group relative"
-                      >
-                        <div className="relative">
-                          {/* Header with icon */}
-                          <div className="flex items-start gap-4 mb-4">
-                            <div className="shrink-0 rounded-xl p-3 transition-transform duration-300 group-hover:scale-105 backdrop-blur-sm border border-white dark:border-white/40 bg-[rgba(243,243,243,0.30)] dark:bg-[rgba(58,58,74,0.30)]">
-                              <IconComponent
-                                className="h-6 w-6"
-                                style={{ color: guide.iconColor }}
-                              />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h3
-                                className="text-lg font-semibold mb-1.5"
-                                style={{ color: 'var(--copy-headlines)' }}
-                              >
-                                {guide.title}
-                              </h3>
-                              <p
-                                className="text-sm leading-relaxed"
-                                style={{ color: 'var(--copy-body)' }}
-                              >
-                                {guide.description}
-                              </p>
-                            </div>
-                          </div>
-
-                          {/* Time estimate */}
-                          <div
-                            className="flex items-center gap-2 mb-4 text-xs"
-                            style={{ color: 'var(--copy-labels)' }}
-                          >
-                            <Clock className="h-3.5 w-3.5" />
-                            <span>{guide.time}</span>
-                          </div>
-
-                          {/* Steps list */}
-                          <div className="space-y-2 mb-4">
-                            {guide.steps.map((step, stepIndex) => (
-                              <div
-                                key={`${guide.title}-step-${stepIndex + 1}`}
-                                className="flex items-start gap-2.5"
-                              >
-                                <div className="shrink-0 w-5 h-5 rounded-full bg-gray-100 dark:bg-[#3a3a42] border border-gray-200/50 dark:border-gray-600/50 text-gray-700 dark:text-gray-200 text-xs font-medium flex items-center justify-center mt-0.5">
-                                  {stepIndex + 1}
-                                </div>
-                                <span
-                                  className="text-sm leading-relaxed"
-                                  style={{ color: 'var(--copy-body)' }}
-                                >
-                                  {step}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* CTA */}
-                          <div
-                            className="flex items-center gap-2 text-sm font-medium transition-colors"
-                            style={{ color: 'var(--copy-body)' }}
-                          >
-                            <span>{t('help.guides.start')}</span>
-                            <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                          </div>
-                        </div>
-                      </GlassCard>
-                    );
-                  })}
-                </div>
-              </TabsContent>
-            </Tabs>
+            <h1 className="text-3xl lg:text-4xl font-bold tracking-tight mb-4">
+              <span className="bg-gradient-to-r from-[#7C3AED] to-blue-500 bg-clip-text text-transparent">
+                Help & Support
+              </span>
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300 max-w-2xl">
+              Learn how Flowstarter works and get answers to common questions.
+            </p>
           </div>
         </section>
 
-        {/* Contact Support */}
-        <div className="text-center">
-          <GlassCard className="py-10">
-            <div className="relative z-10 w-full">
-              <div className="flex justify-center mb-5">
-                <div className="shrink-0 rounded-xl text-white p-3 bg-gradient-to-br from-gray-900 to-gray-800">
-                  <MessageCircle className="h-6 w-6" />
-                </div>
+        {/* How It Works */}
+        <section>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+            How It Works
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {steps.map((step) => {
+              const IconComponent = step.icon;
+              return (
+                <GlassCard key={step.number} className="relative">
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-10 h-10 rounded-xl flex items-center justify-center"
+                        style={{ backgroundColor: `${step.iconColor}15` }}
+                      >
+                        <IconComponent 
+                          className="w-5 h-5" 
+                          style={{ color: step.iconColor }}
+                        />
+                      </div>
+                      <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                        Step {step.number}
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                        {step.title}
+                      </h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {step.description}
+                      </p>
+                    </div>
+                  </div>
+                </GlassCard>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* CTA Card */}
+        <section>
+          <GlassCard className="bg-gradient-to-br from-[#7C3AED]/5 to-blue-500/5">
+            <div className="flex flex-col sm:flex-row items-center gap-6">
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  Ready to get started?
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Book your free discovery call and let's build your website together.
+                </p>
               </div>
-              <h2
-                className="text-xl sm:text-2xl font-bold mb-3"
-                style={{ color: 'var(--copy-headlines)' }}
+              <a
+                href={CALENDLY_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#7C3AED] to-[#6D28D9] text-white font-semibold shadow-lg shadow-[#7C3AED]/25 hover:shadow-xl hover:shadow-[#7C3AED]/30 transition-all duration-300 hover:scale-[1.02]"
               >
-                {t('help.support.title')}
-              </h2>
-              <p
-                className="text-sm mb-6 max-w-2xl mx-auto"
-                style={{ color: 'var(--copy-body)' }}
-              >
-                {t('help.support.subtitle')}
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="flex items-center gap-2">
-                  <Mail className="h-5 w-5" />
-                  {t('help.support.contactSupport')}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="flex items-center gap-2"
-                >
-                  <Users className="h-5 w-5" />
-                  {t('help.support.joinCommunity')}
-                </Button>
-              </div>
+                <Calendar className="w-4 h-4" />
+                Book Free Call
+                <ChevronRight className="w-4 h-4" />
+              </a>
             </div>
           </GlassCard>
-        </div>
+        </section>
+
+        {/* FAQs */}
+        <section>
+          <div className="flex items-center gap-2 mb-6">
+            <HelpCircle className="w-5 h-5 text-[#7C3AED]" />
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              Frequently Asked Questions
+            </h2>
+          </div>
+          <Accordion
+            type="single"
+            collapsible
+            defaultValue="item-0"
+            className="space-y-3"
+          >
+            {faqs.map((faq, index) => (
+              <AccordionItem
+                key={`faq-${index}`}
+                value={`item-${index}`}
+                className="border border-gray-200/80 dark:border-white/10 rounded-2xl px-6 bg-white/60 dark:bg-white/[0.03] backdrop-blur-sm"
+              >
+                <AccordionTrigger className="text-left font-semibold text-gray-900 dark:text-white hover:no-underline">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-600 dark:text-gray-300">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </section>
+
+        {/* Contact Support */}
+        <section>
+          <GlassCard className="text-center py-10">
+            <div className="flex justify-center mb-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-900 to-gray-700 dark:from-white dark:to-gray-200 flex items-center justify-center">
+                <MessageCircle className="w-6 h-6 text-white dark:text-gray-900" />
+              </div>
+            </div>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              Still have questions?
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">
+              We're here to help. Reach out and we'll get back to you as soon as possible.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button size="lg" className="inline-flex items-center gap-2">
+                <Mail className="w-4 h-4" />
+                Contact Support
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                asChild
+              >
+                <a
+                  href={CALENDLY_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2"
+                >
+                  <Calendar className="w-4 h-4" />
+                  Schedule a Call
+                </a>
+              </Button>
+            </div>
+          </GlassCard>
+        </section>
       </div>
     </PageContainer>
   );

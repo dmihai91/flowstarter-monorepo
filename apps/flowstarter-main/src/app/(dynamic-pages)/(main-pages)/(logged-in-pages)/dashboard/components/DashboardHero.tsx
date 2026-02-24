@@ -49,39 +49,43 @@ function OnboardingStepper() {
   
   return (
     <div ref={ref} className="mb-6">
-      {/* Desktop Layout - Horizontal with connector */}
-      <div className="hidden md:block relative pt-6">
-        {/* Progress connector line - positioned at the Step badge level (top of cards) */}
-        <div className="absolute top-[18px] left-[calc(16.67%-8px)] right-[calc(16.67%-8px)] flex items-center z-0">
-          {/* Purple solid segment (to current step) */}
+      {/* Desktop Layout - Horizontal with premium progress bar */}
+      <div className="hidden md:block relative pt-10">
+        {/* Progress Bar Container - positioned above cards */}
+        <div className="absolute top-0 left-[calc(16.67%)] right-[calc(16.67%)] h-[14px] flex items-center">
+          {/* Track (unfilled background) */}
+          <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-1 bg-gray-200 dark:bg-white/10 rounded-full" />
+          
+          {/* Fill (gradient progress) */}
           <div 
-            className="h-0.5 bg-[var(--purple)]"
-            style={{ width: `${(currentStepIndex / (steps.length - 1)) * 100}%` }}
-          />
-          {/* Gray dashed segment (remaining) */}
-          <div 
-            className="h-0.5 flex-1"
+            className="absolute top-1/2 -translate-y-1/2 left-0 h-1 rounded-full"
             style={{ 
-              backgroundImage: 'repeating-linear-gradient(to right, #D1D5DB 0, #D1D5DB 6px, transparent 6px, transparent 12px)',
+              width: `${(currentStepIndex / (steps.length - 1)) * 100}%`,
+              background: 'linear-gradient(90deg, #7C3AED, #06B6D4)',
             }}
           />
-        </div>
-        
-        {/* Junction dots at each step */}
-        <div className="absolute top-[14px] left-0 right-0 flex justify-around z-20 pointer-events-none">
-          {steps.map((step, index) => {
-            const isPastOrCurrent = index <= currentStepIndex;
-            return (
-              <div
-                key={`dot-${index}`}
-                className={`w-2 h-2 rounded-full ${
-                  isPastOrCurrent 
-                    ? 'bg-[var(--purple)]' 
-                    : 'bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-white/20'
-                }`}
-              />
-            );
-          })}
+          
+          {/* Step Dots */}
+          <div className="relative w-full flex justify-between z-10">
+            {steps.map((step, index) => {
+              const isActive = index === currentStepIndex;
+              const isCompleted = index < currentStepIndex;
+              const isLocked = index > currentStepIndex;
+              
+              return (
+                <div
+                  key={`dot-${index}`}
+                  className={`
+                    w-3.5 h-3.5 rounded-full border-2 transition-all duration-300
+                    ${isActive || isCompleted
+                      ? 'bg-[var(--purple)] border-white dark:border-gray-900 shadow-[0_0_0_2px_rgba(124,58,237,0.2),0_2px_8px_rgba(124,58,237,0.3)]' 
+                      : 'bg-white dark:bg-gray-900 border-gray-300 dark:border-white/20'
+                    }
+                  `}
+                />
+              );
+            })}
+          </div>
         </div>
         
         <div className="grid grid-cols-3 gap-4 relative z-10">
@@ -198,20 +202,41 @@ function OnboardingStepper() {
         </div>
       </div>
 
-      {/* Mobile Layout - Vertical with connector */}
-      <div className="md:hidden relative">
-        {/* Vertical progress line with dots */}
-        <div className="absolute left-[23px] top-6 bottom-6 w-0.5 z-0">
-          {/* Purple solid segment */}
+      {/* Mobile Layout - Vertical with premium progress bar */}
+      <div className="md:hidden relative pl-8">
+        {/* Vertical Progress Bar - left side */}
+        <div className="absolute left-[7px] top-4 bottom-4 w-[14px] flex flex-col items-center">
+          {/* Track (unfilled background) */}
+          <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-1 bg-gray-200 dark:bg-white/10 rounded-full" />
+          
+          {/* Fill (gradient progress) */}
           <div 
-            className="w-full bg-[var(--purple)]"
-            style={{ height: `${(currentStepIndex / (steps.length - 1)) * 100}%` }}
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-1 rounded-full"
+            style={{ 
+              height: `${(currentStepIndex / (steps.length - 1)) * 100}%`,
+              background: 'linear-gradient(180deg, #7C3AED, #06B6D4)',
+            }}
           />
-          {/* Gray dashed segment */}
-          <div 
-            className="w-full flex-1 border-l-2 border-dashed border-gray-300 dark:border-white/20"
-            style={{ height: `${((steps.length - 1 - currentStepIndex) / (steps.length - 1)) * 100}%` }}
-          />
+          
+          {/* Step Dots - positioned at card centers */}
+          <div className="relative h-full flex flex-col justify-between z-10">
+            {steps.map((step, index) => {
+              const isActiveOrCompleted = index <= currentStepIndex;
+              
+              return (
+                <div
+                  key={`mobile-dot-${index}`}
+                  className={`
+                    w-3.5 h-3.5 rounded-full border-2 transition-all duration-300
+                    ${isActiveOrCompleted
+                      ? 'bg-[var(--purple)] border-white dark:border-gray-900 shadow-[0_0_0_2px_rgba(124,58,237,0.2),0_2px_8px_rgba(124,58,237,0.3)]' 
+                      : 'bg-white dark:bg-gray-900 border-gray-300 dark:border-white/20'
+                    }
+                  `}
+                />
+              );
+            })}
+          </div>
         </div>
         
         <div className="space-y-3 relative z-10">
@@ -221,7 +246,6 @@ function OnboardingStepper() {
             const isCompleted = step.status === 'completed';
             const isLocked = step.status === 'locked';
             const isPast = index < currentStepIndex;
-            const isPastOrCurrent = index <= currentStepIndex;
             
             return (
               <div
@@ -238,12 +262,6 @@ function OnboardingStepper() {
                     }
                   `}
                 >
-                  {/* Junction dot on left */}
-                  <div className={`absolute -left-[18px] w-2 h-2 rounded-full ${
-                    isPastOrCurrent 
-                      ? 'bg-[var(--purple)]' 
-                      : 'bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-white/20'
-                  }`} />
                   
                   {/* Step indicator */}
                   <div className={`

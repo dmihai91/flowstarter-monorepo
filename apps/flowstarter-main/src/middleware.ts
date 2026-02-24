@@ -105,13 +105,6 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
-  const hostname = req.headers.get('host') || '';
-  
-  // Dev environment: redirect flowstarter.dev to team login
-  if (hostname === 'flowstarter.dev' && req.nextUrl.pathname === '/') {
-    return NextResponse.redirect('https://editor.flowstarter.dev/team/login');
-  }
-  
   const res = NextResponse.next();
 
   // Generate nonce for CSP - passed to layouts via header

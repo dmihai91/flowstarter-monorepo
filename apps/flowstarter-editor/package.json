@@ -88,6 +88,7 @@
         "@remix-run/express": "^2.17.1",
         "@remix-run/node": "^2.17.2",
         "@remix-run/react": "^2.17.3",
+        "@supabase/supabase-js": "^2.97.0",
         "@tanstack/react-query": "^5.90.20",
         "@types/unist": "^3.0.3",
         "@uiw/codemirror-theme-vscode": "^4.25.2",

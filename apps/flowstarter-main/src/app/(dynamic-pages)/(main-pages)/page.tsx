@@ -109,14 +109,23 @@ export default function LandingPage() {
     }
   };
 
+  // Auto-cycle demo prompts
+  const demoSequence = [
+    { prompt: 'Add a testimonials section', response: 'Done! Added testimonials with star ratings.', action: () => setMockSite(s => ({ ...s, hasTestimonials: true })) },
+    { prompt: 'Add pricing tables', response: 'Pricing section added with 2 plans.', action: () => setMockSite(s => ({ ...s, hasPricingSection: true })) },
+    { prompt: 'Change the color scheme', response: 'Updated. Primary color changed across the site.', action: () => setMockSite(s => ({ ...s, primaryColor: 'emerald' })) },
+    { prompt: 'Add a contact form', response: 'Done. Contact form added below hero.', action: () => setMockSite(s => ({ ...s, hasContactForm: true })) },
+  ];
+  const [demoIndex, setDemoIndex] = useState(0);
+
   useEffect(() => {
     setIsLoaded(true);
+    // Initial state
     setMessages([
-      { role: 'user', text: 'Add a testimonials section' },
-      { role: 'ai', text: 'Done! Added testimonials with star ratings.' }
+      { role: 'user', text: demoSequence[0].prompt },
+      { role: 'ai', text: demoSequence[0].response }
     ]);
-    // Show testimonials in preview after initial message
-    setTimeout(() => setMockSite(s => ({ ...s, hasTestimonials: true })), 500);
+    setTimeout(() => demoSequence[0].action(), 500);
 
     const handleMouseMove = (e: MouseEvent) => {
       setMousePos({ x: e.clientX, y: e.clientY });
@@ -130,7 +139,48 @@ export default function LandingPage() {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Auto-cycle through demos when user hasn't interacted
+  useEffect(() => {
+    if (hasInteracted) return; // Stop auto-cycling once user interacts
+    
+    const cycleInterval = setInterval(() => {
+      setDemoIndex(prev => {
+        const nextIndex = (prev + 1) % demoSequence.length;
+        const demo = demoSequence[nextIndex];
+        
+        // Reset site state for fresh demo if cycling back to start
+        if (nextIndex === 0) {
+          setMockSite({
+            hasContactForm: false,
+            hasTestimonials: false,
+            hasPricingSection: false,
+            primaryColor: 'violet',
+            hasAboutPage: false,
+            headerStyle: 'default',
+          });
+        }
+        
+        // Show typing indicator
+        setIsTyping(true);
+        setMessages(prev => [...prev, { role: 'user', text: demo.prompt }]);
+        
+        // AI response after delay
+        setTimeout(() => {
+          setIsTyping(false);
+          setMessages(prev => [...prev, { role: 'ai', text: demo.response }]);
+          setTimeout(() => demo.action(), 200);
+        }, 800);
+        
+        return nextIndex;
+      });
+    }, 4000); // Cycle every 4 seconds
+    
+    return () => clearInterval(cycleInterval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasInteracted]);
 
   useEffect(() => {
     // Only auto-scroll after user has interacted (not on initial load)
@@ -431,16 +481,16 @@ export default function LandingPage() {
                   </a>
                   <div className="flex flex-col">
                     <div className="text-sm text-gray-400 dark:text-white/40">
-                      <span className="line-through opacity-60">€199</span>
-                      <span className="mx-2 text-gray-700 dark:text-white/80 font-medium">€99.50</span>
+                      <span className="line-through opacity-60">€299</span>
+                      <span className="mx-2 text-gray-700 dark:text-white/80 font-medium">€150</span>
                       setup
                       <span className="mx-3 text-gray-300 dark:text-white/20">·</span>
-                      <span className="line-through opacity-60">€19</span>
-                      <span className="mx-2 text-gray-700 dark:text-white/80 font-medium">€9.50</span>
+                      <span className="line-through opacity-60">€29</span>
+                      <span className="mx-2 text-gray-700 dark:text-white/80 font-medium">€15</span>
                       /mo
                     </div>
                     <div className="text-xs text-gray-400 dark:text-white/30 mt-1">
-                      Hosting, email, and AI customization included. First month free.
+                      Hosting, email, and AI customization included. 50% off for first year.
                     </div>
                   </div>
                 </div>
@@ -897,17 +947,17 @@ export default function LandingPage() {
                 <div className="mb-6 pb-6 border-b border-gray-200 dark:border-white/10">
                   <div className="mb-2">
                     <span className="text-sm text-gray-400 dark:text-white/40">Setup: </span>
-                    <span className="text-gray-300 dark:text-white/20 line-through">€199</span>
-                    <span className="text-2xl font-bold ml-2">€99.50</span>
+                    <span className="text-gray-300 dark:text-white/20 line-through">€299</span>
+                    <span className="text-2xl font-bold ml-2">€150</span>
                     <span className="text-sm text-gray-400 dark:text-white/40 ml-1">one-time</span>
                   </div>
                   <div>
                     <span className="text-sm text-gray-400 dark:text-white/40">Monthly: </span>
-                    <span className="text-gray-300 dark:text-white/20 line-through">€19</span>
-                    <span className="text-2xl font-bold ml-2">€9.50</span>
+                    <span className="text-gray-300 dark:text-white/20 line-through">€29</span>
+                    <span className="text-2xl font-bold ml-2">€15</span>
                     <span className="text-sm text-gray-400 dark:text-white/40 ml-1">/month</span>
                   </div>
-                  <p className="text-xs text-gray-400 dark:text-white/30 mt-2">Starts after your free first month</p>
+                  <p className="text-xs text-gray-400 dark:text-white/30 mt-2">50% off subscription for your first year</p>
                 </div>
                 
                 {/* Features */}
@@ -967,7 +1017,7 @@ export default function LandingPage() {
                   { q: 'Can I make changes after the site is built?', a: 'That\'s the whole point. Your subscription includes our AI editor — update text, add pages, change your branding, improve your SEO. All without writing a single line of code.' },
                   { q: 'What if I want to cancel?', a: 'No lock-in. Cancel your subscription anytime. The setup fee is non-refundable since it covers real work (your discovery call and site build), but you keep all your site files.' },
                   { q: 'Do I need any technical skills?', a: 'Zero. We handle the technical setup. The AI editor is built for people who\'ve never touched code.' },
-                  { q: 'What happens when the beta ends?', a: 'Pricing moves to the standard rate (€199 setup / €19 per month). You\'ll get 30 days notice before anything changes.' },
+                  { q: 'What happens when the beta ends?', a: 'Your beta discount (50% off) is locked for 1 year from signup. After that, pricing moves to standard rates (€299 setup / €29/month). You\'ll get 30 days notice before anything changes.' },
                   { q: 'What\'s included in the email?', a: 'Two professional email addresses with your domain (e.g., you@yourbusiness.com).' },
                 ].map((faq, i) => (
                   <div 
@@ -1042,7 +1092,7 @@ export default function LandingPage() {
                 </svg>
               </Button>
             </a>
-            <p className="text-sm text-gray-400 dark:text-white/20 mt-4">€99.50 setup during beta · First month free · No code required</p>
+            <p className="text-sm text-gray-400 dark:text-white/20 mt-4">€150 setup during beta · €15/mo (50% off first year) · No code required</p>
           </div>
         </section>
 

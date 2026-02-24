@@ -295,21 +295,23 @@ export default function LandingPage() {
           to { transform: rotate(360deg); }
         }
         @keyframes fade-in-up {
-          from {
+          0% {
             opacity: 0;
-            transform: translateY(12px);
+            transform: translateY(24px) scale(0.96);
+            filter: blur(4px);
           }
-          to {
+          100% {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
+            filter: blur(0);
           }
         }
         .animate-fade-in-up {
-          animation: fade-in-up 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+          animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-        .animate-fade-in-up-delay-1 { animation-delay: 150ms; }
-        .animate-fade-in-up-delay-2 { animation-delay: 300ms; }
-        .animate-fade-in-up-delay-3 { animation-delay: 450ms; }
+        .animate-fade-in-up-delay-1 { animation-delay: 100ms; }
+        .animate-fade-in-up-delay-2 { animation-delay: 200ms; }
+        .animate-fade-in-up-delay-3 { animation-delay: 300ms; }
         
         @keyframes morph {
           0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
@@ -883,7 +885,7 @@ export default function LandingPage() {
               {features.map((feature, i) => (
                 <div 
                   key={i}
-                  className={`group p-7 rounded-2xl bg-white/80 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200/80 dark:border-white/5 hover:border-[var(--purple)]/40 dark:hover:border-[var(--purple)]/30 hover:bg-white dark:hover:bg-white/[0.04] hover:shadow-xl hover:shadow-[var(--purple)]/10 hover:-translate-y-1 hover:scale-[1.02] transition-all duration-250 ease-out ${visibleSections.has('process-cards') ? `animate-fade-in-up animate-fade-in-up-delay-${i + 1}` : 'opacity-0 translate-y-3'}`}
+                  className={`group p-7 rounded-2xl bg-white/80 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200/80 dark:border-white/5 hover:border-[var(--purple)]/40 dark:hover:border-[var(--purple)]/30 hover:bg-white dark:hover:bg-white/[0.04] hover:shadow-xl hover:shadow-[var(--purple)]/10 hover:-translate-y-1 hover:scale-[1.02] transition-all duration-250 ease-out ${visibleSections.has('process-cards') ? `animate-fade-in-up animate-fade-in-up-delay-${i + 1}` : 'opacity-0 translate-y-6 scale-[0.96] blur-[4px]'}`}
                   style={{ animationFillMode: 'forwards' }}
                 >
                   <div className="text-5xl font-bold text-[var(--purple)]/20 dark:text-white/5 group-hover:text-[var(--purple)]/50 dark:group-hover:text-[var(--purple)]/30 transition-colors mb-4">

@@ -262,7 +262,7 @@ export default function LandingPage() {
         {/* Flow Field Background - Hero Section */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ height: '100vh' }}>
           <svg 
-            className="absolute inset-0 w-full h-full opacity-[0.10] dark:opacity-[0.15]"
+            className="absolute inset-0 w-full h-full opacity-[0.25] dark:opacity-[0.15]"
             viewBox="0 0 1200 800" 
             preserveAspectRatio="xMidYMid slice"
             fill="none"
@@ -368,7 +368,7 @@ export default function LandingPage() {
         </header>
 
         {/* Hero */}
-        <section className="relative pt-20 lg:pt-24 pb-12 lg:pb-16 bg-gradient-to-b from-white via-white to-[#F5F3FF]/50 dark:from-transparent dark:via-transparent dark:to-transparent">
+        <section className="relative pt-20 lg:pt-24 pb-12 lg:pb-16 bg-gradient-to-b from-white via-[#FAFAFF] to-[#F5F3FF] dark:from-transparent dark:via-transparent dark:to-transparent">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
               {/* Left: Copy */}

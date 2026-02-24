@@ -89,7 +89,7 @@ export function DashboardStatsClient({
     {
       content: (
         <>
-          <div className="flex items-center justify-between w-full">
+          <div className="flex items-center justify-between w-full mb-3">
             <span className="text-sm font-medium text-gray-500 dark:text-white/50">
               Your Website
             </span>
@@ -160,7 +160,7 @@ export function DashboardStatsClient({
     {
       content: (
         <>
-          <div className="flex items-center justify-between w-full">
+          <div className="flex items-center justify-between w-full mb-3">
             <span className="text-sm font-medium text-gray-500 dark:text-white/50">
               {t('dashboard.analytics.websiteTraffic')}
             </span>
@@ -215,7 +215,7 @@ export function DashboardStatsClient({
     {
       content: (
         <>
-          <div className="flex items-center justify-between w-full">
+          <div className="flex items-center justify-between w-full mb-3">
             <span className="text-sm font-medium text-gray-500 dark:text-white/50">
               {t('dashboard.analytics.businessLeads')}
             </span>
@@ -267,7 +267,7 @@ export function DashboardStatsClient({
     {
       content: (
         <>
-          <div className="flex items-center justify-between w-full">
+          <div className="flex items-center justify-between w-full mb-3">
             <span className="text-sm font-medium text-gray-500 dark:text-white/50">
               Integrations
             </span>

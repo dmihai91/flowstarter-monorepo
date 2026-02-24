@@ -160,10 +160,13 @@ export default function LandingPage() {
                     </svg>
                   </Button>
                 </a>
-                <div className="flex items-center gap-3 text-sm text-gray-500">
-                  <span className="font-semibold text-gray-900 dark:text-white">€99.50</span> setup
-                  <span className="w-1 h-1 rounded-full bg-gray-300" />
-                  <span className="font-semibold text-gray-900 dark:text-white">€9.50</span>/month
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium text-xs">50% OFF</span>
+                  <span className="text-gray-400 line-through">€199</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">€99.50</span>
+                  <span className="text-gray-400">+</span>
+                  <span className="text-gray-400 line-through">€19</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">€9.50<span className="font-normal text-gray-500">/mo</span></span>
                 </div>
               </div>
 
@@ -296,11 +299,14 @@ export default function LandingPage() {
                 <div className="flex items-start justify-between mb-6">
                   <div>
                     <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Setup</h3>
-                    <p className="text-sm text-gray-500 mt-1">One-time</p>
+                    <p className="text-sm text-gray-500 mt-1">One-time fee</p>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">€99.50</div>
-                    <div className="text-sm text-gray-400 line-through">€199</div>
+                    <div className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">€199</div>
+                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold mt-1">
+                      <span>BETA: 50% OFF</span>
+                      <span className="font-bold">→ €99.50</span>
+                    </div>
                   </div>
                 </div>
                 <ul className="space-y-3">
@@ -326,8 +332,11 @@ export default function LandingPage() {
                     <p className="text-sm text-gray-500 mt-1">First month free</p>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">€9.50<span className="text-lg font-normal text-gray-400">/mo</span></div>
-                    <div className="text-sm text-gray-400 line-through">€19</div>
+                    <div className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">€19<span className="text-lg font-normal text-gray-400">/mo</span></div>
+                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold mt-1">
+                      <span>BETA: 50% OFF</span>
+                      <span className="font-bold">→ €9.50/mo</span>
+                    </div>
                   </div>
                 </div>
                 <ul className="space-y-3">

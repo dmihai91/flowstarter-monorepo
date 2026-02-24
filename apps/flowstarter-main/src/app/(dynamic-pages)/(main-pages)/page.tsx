@@ -19,7 +19,8 @@ export default function LandingPage() {
   // Mock site state for live preview
   const [mockSite, setMockSite] = useState({
     hasContactForm: false,
-    hasTestimonials: true,
+    hasTestimonials: false,
+    hasPricingSection: false,
     primaryColor: 'violet',
     hasAboutPage: false,
     headerStyle: 'default',
@@ -39,8 +40,20 @@ export default function LandingPage() {
       action: () => setMockSite(s => ({ ...s, primaryColor: s.primaryColor === 'violet' ? 'emerald' : 'violet' }))
     },
     'testimonial': { 
-      text: "Testimonials section added with 3 cards.", 
+      text: "Done! Added testimonials with star ratings.", 
       action: () => setMockSite(s => ({ ...s, hasTestimonials: true }))
+    },
+    'review': { 
+      text: "Done! Added testimonials with star ratings.", 
+      action: () => setMockSite(s => ({ ...s, hasTestimonials: true }))
+    },
+    'pricing': { 
+      text: "Pricing section added with 2 plans.", 
+      action: () => setMockSite(s => ({ ...s, hasPricingSection: true }))
+    },
+    'plan': { 
+      text: "Pricing section added with 2 plans.", 
+      action: () => setMockSite(s => ({ ...s, hasPricingSection: true }))
     },
     'about': { 
       text: "About page created and linked in nav.", 
@@ -95,8 +108,10 @@ export default function LandingPage() {
     setIsLoaded(true);
     setMessages([
       { role: 'user', text: 'Add a testimonials section' },
-      { role: 'ai', text: 'Testimonials section added. Three cards ready for your reviews.' }
+      { role: 'ai', text: 'Done! Added testimonials with star ratings.' }
     ]);
+    // Show testimonials in preview after initial message
+    setTimeout(() => setMockSite(s => ({ ...s, hasTestimonials: true })), 500);
 
     const handleMouseMove = (e: MouseEvent) => {
       setMousePos({ x: e.clientX, y: e.clientY });
@@ -427,7 +442,7 @@ export default function LandingPage() {
 
                       {/* Quick prompts */}
                       <div className="flex flex-wrap gap-1.5 mt-2">
-                        {['Contact form', 'Colors', 'About page'].map((prompt) => (
+                        {['Add pricing', 'Contact form', 'Change colors'].map((prompt) => (
                           <button
                             key={prompt}
                             onClick={() => handleSend(prompt)}
@@ -513,25 +528,51 @@ export default function LandingPage() {
                         </div>
                       </div>
 
-                      {/* Testimonials */}
-                      <div className={`px-3 py-2 transition-all duration-500 ${mockSite.hasTestimonials ? 'opacity-100' : 'opacity-20'}`}>
-                        <div className="text-[8px] font-semibold text-gray-700 dark:text-gray-300 mb-1.5">What Customers Say</div>
-                        <div className="flex gap-1">
-                          {[1, 2].map((i) => (
-                            <div key={i} className="flex-1 p-1.5 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700">
-                              <div className="flex items-center gap-1 mb-0.5">
-                                <div className="w-3 h-3 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-700" />
-                                <div className="h-1 w-8 bg-gray-200 dark:bg-gray-700 rounded" />
+                      {/* Testimonials - animated in */}
+                      <div className={`overflow-hidden transition-all duration-500 ${mockSite.hasTestimonials ? 'max-h-24 opacity-100' : 'max-h-0 opacity-0'}`}>
+                        <div className="px-3 py-2">
+                          <div className="text-[8px] font-semibold text-gray-700 dark:text-gray-300 mb-1.5">What Customers Say</div>
+                          <div className="flex gap-1">
+                            {[1, 2].map((i) => (
+                              <div key={i} className="flex-1 p-1.5 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700">
+                                <div className="flex items-center gap-1 mb-0.5">
+                                  <div className="w-3 h-3 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-700" />
+                                  <div className="h-1 w-8 bg-gray-200 dark:bg-gray-700 rounded" />
+                                </div>
+                                <div className="h-0.5 w-full bg-gray-100 dark:bg-gray-700 rounded mb-0.5" />
+                                <div className="h-0.5 w-4/5 bg-gray-100 dark:bg-gray-700 rounded" />
+                                <div className="flex gap-0.5 mt-1">
+                                  {[1,2,3,4,5].map(s => (
+                                    <span key={s} className={`text-[6px] ${mockSite.primaryColor === 'violet' ? 'text-violet-400' : 'text-emerald-400'}`}>★</span>
+                                  ))}
+                                </div>
                               </div>
-                              <div className="h-0.5 w-full bg-gray-100 dark:bg-gray-700 rounded mb-0.5" />
-                              <div className="h-0.5 w-4/5 bg-gray-100 dark:bg-gray-700 rounded" />
-                              <div className="flex gap-0.5 mt-1">
-                                {[1,2,3,4,5].map(s => (
-                                  <span key={s} className={`text-[6px] ${mockSite.primaryColor === 'violet' ? 'text-violet-400' : 'text-emerald-400'}`}>★</span>
-                                ))}
-                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Pricing section - animated in */}
+                      <div className={`overflow-hidden transition-all duration-500 ${mockSite.hasPricingSection ? 'max-h-28 opacity-100' : 'max-h-0 opacity-0'}`}>
+                        <div className="px-3 py-2 bg-gray-50 dark:bg-gray-900/30">
+                          <div className="text-[8px] font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Pricing</div>
+                          <div className="flex gap-1.5">
+                            <div className="flex-1 p-1.5 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                              <div className="text-[7px] font-medium text-gray-600 dark:text-gray-400">Basic</div>
+                              <div className={`text-[10px] font-bold transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'text-violet-600' : 'text-emerald-600'}`}>$9/mo</div>
+                              <div className="h-0.5 w-full bg-gray-100 dark:bg-gray-700 rounded mt-1 mb-0.5" />
+                              <div className="h-0.5 w-3/4 bg-gray-100 dark:bg-gray-700 rounded" />
                             </div>
-                          ))}
+                            <div className={`flex-1 p-1.5 rounded-lg border-2 transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-50 dark:bg-violet-900/20 border-violet-300 dark:border-violet-700' : 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-300 dark:border-emerald-700'}`}>
+                              <div className="flex items-center gap-1">
+                                <div className="text-[7px] font-medium text-gray-600 dark:text-gray-400">Pro</div>
+                                <div className={`text-[5px] px-1 rounded-full text-white transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-500' : 'bg-emerald-500'}`}>POPULAR</div>
+                              </div>
+                              <div className={`text-[10px] font-bold transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'text-violet-600' : 'text-emerald-600'}`}>$29/mo</div>
+                              <div className="h-0.5 w-full bg-gray-100 dark:bg-gray-700 rounded mt-1 mb-0.5" />
+                              <div className="h-0.5 w-3/4 bg-gray-100 dark:bg-gray-700 rounded" />
+                            </div>
+                          </div>
                         </div>
                       </div>
 

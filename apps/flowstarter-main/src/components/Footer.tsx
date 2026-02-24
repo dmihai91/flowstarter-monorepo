@@ -12,13 +12,13 @@ const Footer = () => {
             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center">
               <span className="text-white font-bold text-xs">F</span>
             </div>
-            <span className="text-sm text-gray-400 dark:text-white/30">© 2026 Flowstarter</span>
+            <span className="text-sm text-gray-400 dark:text-white/30">© {new Date().getFullYear()} Flowstarter</span>
           </div>
 
           {/* Links */}
           <div className="flex items-center gap-6 text-sm text-gray-400 dark:text-white/30">
-            <a href="mailto:hello@flowstarter.app" className="hover:text-gray-600 dark:hover:text-white/60 transition-colors">
-              hello@flowstarter.app
+            <a href="mailto:hello@flowstarter.dev" className="hover:text-gray-600 dark:hover:text-white/60 transition-colors">
+              hello@flowstarter.dev
             </a>
             <Link href="/privacy" className="hover:text-gray-600 dark:hover:text-white/60 transition-colors">
               Privacy

@@ -100,7 +100,7 @@ export default function AuthLayout({
               <div className="flex items-center justify-center gap-6">
                 {[
                   { value: '1-2', label: 'Weeks' },
-                  { value: '∞', label: 'AI edits' },
+                  { value: '~300', label: 'edits/mo' },
                   { value: '0', label: 'Code' },
                 ].map((stat, i) => (
                   <div key={i} className="flex items-center">

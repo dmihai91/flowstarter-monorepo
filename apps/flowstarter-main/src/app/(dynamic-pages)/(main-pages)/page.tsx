@@ -262,9 +262,9 @@ export default function LandingPage() {
   });
 
   const features = [
-    { num: '01', title: 'We talk', desc: 'Book a free 30-minute discovery call. We learn about your business, your brand, and what you need. You talk, we listen.' },
+    { num: '01', title: 'We talk', desc: 'Book a free 30-minute discovery call. We learn about your business, your brand, and your goals. You talk, we listen — no preparation needed.' },
     { num: '02', title: 'We build', desc: 'Our AI engine generates your site from premium templates, tailored to your brand. We set up your domain, email, and hosting. You review, we refine.' },
-    { num: '03', title: 'You own it', desc: 'Your site goes live. From here, use the AI editor to update content, add pages, and tweak your design — anytime, no code needed.' },
+    { num: '03', title: 'You own it', desc: 'Your site goes live. From here, use the AI editor to update content, add pages, and tweak your design — anytime, no code needed. Your site, your rules.' },
   ];
 
   return (
@@ -905,23 +905,41 @@ export default function LandingPage() {
                 Everything you need.{' '}
                 <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">Nothing you don't.</span>
               </h2>
+              <p className="text-gray-500 dark:text-white/40 mt-2 max-w-xl mx-auto">
+                Clear breakdown of what you get upfront vs. what stays active monthly
+              </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
               {/* Setup */}
               <div className="group p-7 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200/80 dark:border-white/5 hover:border-[var(--purple)]/30 dark:hover:border-[var(--purple)]/20 hover:shadow-lg hover:shadow-[var(--purple)]/5 hover:-translate-y-1 transition-all duration-250 ease-out">
-                <h3 className="text-xl font-semibold mb-4">Setup <span className="text-sm font-normal text-gray-400 dark:text-white/30">(one-time)</span></h3>
-                <ul className="space-y-2.5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-[var(--purple)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold">Setup <span className="text-sm font-normal text-gray-400 dark:text-white/30">(one-time)</span></h3>
+                    <p className="text-xs text-gray-400 dark:text-white/30">What we build for you</p>
+                  </div>
+                </div>
+                <ul className="space-y-2">
                   {[
                     'Personal discovery call with our team',
                     'AI-generated website from premium templates',
-                    'Domain setup and configuration',
-                    'Professional email (2 mailboxes)',
-                    'Hosting on a global CDN — fast, secure, SSL included',
-                    'Your site, live and ready'
+                    'Up to 7 professionally designed pages',
+                    'Mobile-responsive design (looks great on any device)',
+                    'Custom domain setup and configuration',
+                    'Professional email setup (2 mailboxes)',
+                    'Google Analytics integration',
+                    'Basic SEO setup (meta tags, sitemap, robots.txt)',
+                    'Performance optimized (90+ Lighthouse score)',
+                    '1 contact form with lead capture',
+                    'Your site, live and ready',
                   ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-sm text-gray-600 dark:text-white/50">
-                      <svg className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <li key={i} className="flex items-start gap-2.5 text-sm text-gray-600 dark:text-white/50">
+                      <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                       {item}
@@ -932,23 +950,38 @@ export default function LandingPage() {
 
               {/* Monthly subscription */}
               <div className="group p-7 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200/80 dark:border-white/5 hover:border-[var(--purple)]/30 dark:hover:border-[var(--purple)]/20 hover:shadow-lg hover:shadow-[var(--purple)]/5 hover:-translate-y-1 transition-all duration-250 ease-out">
-                <h3 className="text-xl font-semibold mb-4">Monthly subscription</h3>
-                <ul className="space-y-2.5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold">Monthly subscription</h3>
+                    <p className="text-xs text-gray-400 dark:text-white/30">What stays active</p>
+                  </div>
+                </div>
+                <ul className="space-y-2">
                   {[
                     'Website hosting (global CDN, automatic SSL)',
                     'Professional email (2 mailboxes)',
-                    '1 GB cloud storage for your files and assets',
-                    'Unlimited AI-powered edits — content, pages, branding, SEO',
-                    'Platform updates and improvements'
+                    '1 GB cloud storage for files and assets',
+                    'Analytics dashboard (leads + page views)',
+                    'AI-powered edits — content, pages, branding, SEO',
+                    'Platform updates and improvements',
+                    'Email support (48h response)',
                   ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-sm text-gray-600 dark:text-white/50">
-                      <svg className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <li key={i} className="flex items-start gap-2.5 text-sm text-gray-600 dark:text-white/50">
+                      <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                       {item}
                     </li>
                   ))}
                 </ul>
+                <p className="text-xs text-gray-400 dark:text-white/30 mt-4 pt-3 border-t border-gray-200 dark:border-white/5">
+                  First month free — billing starts 30 days after launch
+                </p>
               </div>
             </div>
           </div>

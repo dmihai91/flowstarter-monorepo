@@ -368,8 +368,34 @@ export default function LandingPage() {
         </header>
 
         {/* Hero */}
-        <section className="relative pt-20 lg:pt-24 pb-12 lg:pb-16 bg-gradient-to-b from-white via-[#F8F7FF] to-[#EDE9FE] dark:from-transparent dark:via-transparent dark:to-transparent">
-          <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        <section className="relative pt-20 lg:pt-24 pb-12 lg:pb-16 bg-gradient-to-b from-white via-[#F8F7FF] to-[#EDE9FE] dark:from-transparent dark:via-transparent dark:to-transparent overflow-hidden">
+          {/* Flow lines INSIDE hero so they appear on top of background */}
+          <div className="absolute inset-0 pointer-events-none">
+            <svg 
+              className="absolute inset-0 w-full h-full opacity-[0.35] dark:opacity-[0.18]"
+              viewBox="0 0 1200 800" 
+              preserveAspectRatio="xMidYMid slice"
+              fill="none"
+            >
+              <defs>
+                <linearGradient id="heroFlowGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#7C3AED" />
+                  <stop offset="100%" stopColor="#3B82F6" />
+                </linearGradient>
+              </defs>
+              <g stroke="url(#heroFlowGradient1)" strokeWidth="1.5">
+                <path d="M-100,80 Q200,60 400,100 T800,80 T1300,120" />
+                <path d="M-100,160 Q150,180 350,140 T750,180 T1300,160" />
+                <path d="M-100,240 Q250,220 450,260 T850,230 T1300,270" />
+                <path d="M-100,320 Q180,340 380,300 T780,340 T1300,320" />
+                <path d="M-100,400 Q220,380 420,420 T820,390 T1300,430" />
+                <path d="M-100,480 Q200,500 400,460 T800,500 T1300,480" />
+                <path d="M-100,560 Q250,540 450,580 T850,550 T1300,590" />
+                <path d="M-100,640 Q180,660 380,620 T780,660 T1300,640" />
+              </g>
+            </svg>
+          </div>
+          <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
               {/* Left: Copy */}
               <div className={`transition-all duration-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>

@@ -10,6 +10,50 @@ export default function LandingPage() {
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
+    // Inject styles
+    const styleId = 'landing-page-styles';
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style');
+      style.id = styleId;
+      style.textContent = `
+        .fade-up {
+          opacity: 0;
+          transform: translateY(30px);
+          transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+                      transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .fade-up.animate-in {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        .fade-up:nth-child(2) { transition-delay: 0.1s; }
+        .fade-up:nth-child(3) { transition-delay: 0.2s; }
+        .fade-up:nth-child(4) { transition-delay: 0.3s; }
+        
+        @keyframes landing-float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(2deg); }
+        }
+        @keyframes landing-pulse-glow {
+          0%, 100% { opacity: 0.4; transform: scale(1); }
+          50% { opacity: 0.6; transform: scale(1.05); }
+        }
+        @keyframes landing-gradient-shift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .animate-landing-float { animation: landing-float 6s ease-in-out infinite; }
+        .animate-landing-pulse-glow { animation: landing-pulse-glow 4s ease-in-out infinite; }
+        .animate-landing-gradient { 
+          background-size: 200% 200%;
+          animation: landing-gradient-shift 8s ease infinite; 
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // Setup intersection observer
     observerRef.current = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -30,68 +74,24 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-[#fafafa] dark:bg-[#0a0a0a] overflow-x-hidden">
-      <style jsx global>{`
-        .fade-up {
-          opacity: 0;
-          transform: translateY(30px);
-          transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
-                      transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .fade-up.animate-in {
-          opacity: 1;
-          transform: translateY(0);
-        }
-        .fade-up:nth-child(2) { transition-delay: 0.1s; }
-        .fade-up:nth-child(3) { transition-delay: 0.2s; }
-        .fade-up:nth-child(4) { transition-delay: 0.3s; }
-        
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-20px) rotate(2deg); }
-        }
-        @keyframes pulse-glow {
-          0%, 100% { opacity: 0.4; transform: scale(1); }
-          50% { opacity: 0.6; transform: scale(1.05); }
-        }
-        @keyframes gradient-shift {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        .animate-float { animation: float 6s ease-in-out infinite; }
-        .animate-pulse-glow { animation: pulse-glow 4s ease-in-out infinite; }
-        .animate-gradient { 
-          background-size: 200% 200%;
-          animation: gradient-shift 8s ease infinite; 
-        }
-        
-        .glass {
-          background: rgba(255, 255, 255, 0.7);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-        }
-        .dark .glass {
-          background: rgba(20, 20, 20, 0.8);
-        }
-      `}</style>
 
       {/* Gradient Orbs Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div 
-          className="absolute -top-[40%] -right-[20%] w-[80%] h-[80%] rounded-full animate-pulse-glow"
+          className="absolute -top-[40%] -right-[20%] w-[80%] h-[80%] rounded-full animate-landing-pulse-glow"
           style={{ 
             background: 'radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%)',
           }} 
         />
         <div 
-          className="absolute -bottom-[30%] -left-[20%] w-[70%] h-[70%] rounded-full animate-pulse-glow"
+          className="absolute -bottom-[30%] -left-[20%] w-[70%] h-[70%] rounded-full animate-landing-pulse-glow"
           style={{ 
             background: 'radial-gradient(circle, rgba(20, 184, 166, 0.12) 0%, transparent 70%)',
             animationDelay: '2s',
           }} 
         />
         <div 
-          className="absolute top-[20%] left-[10%] w-[40%] h-[40%] rounded-full animate-pulse-glow"
+          className="absolute top-[20%] left-[10%] w-[40%] h-[40%] rounded-full animate-landing-pulse-glow"
           style={{ 
             background: 'radial-gradient(circle, rgba(251, 191, 36, 0.08) 0%, transparent 70%)',
             animationDelay: '4s',
@@ -100,7 +100,7 @@ export default function LandingPage() {
       </div>
 
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 glass border-b border-gray-200/50 dark:border-gray-800/50">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/70 dark:bg-gray-950/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
             <div className="w-9 h-9 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/20 group-hover:shadow-teal-500/40 transition-shadow">
@@ -138,7 +138,7 @@ export default function LandingPage() {
             <h1 className="fade-up text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white leading-[1.05] tracking-tight mb-8">
               We build your
               <br />
-              <span className="bg-gradient-to-r from-teal-600 via-cyan-600 to-teal-600 bg-clip-text text-transparent animate-gradient">
+              <span className="bg-gradient-to-r from-teal-600 via-cyan-600 to-teal-600 bg-clip-text text-transparent animate-landing-gradient">
                 perfect website.
               </span>
             </h1>
@@ -166,13 +166,13 @@ export default function LandingPage() {
           </div>
 
           {/* Floating Elements */}
-          <div className="hidden lg:block absolute right-12 top-48 animate-float">
+          <div className="hidden lg:block absolute right-12 top-48 animate-landing-float">
             <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 shadow-2xl shadow-amber-500/30" />
           </div>
-          <div className="hidden lg:block absolute right-48 top-80 animate-float" style={{ animationDelay: '1s' }}>
+          <div className="hidden lg:block absolute right-48 top-80 animate-landing-float" style={{ animationDelay: '1s' }}>
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-400 to-cyan-500 shadow-xl shadow-cyan-500/30" />
           </div>
-          <div className="hidden lg:block absolute right-24 bottom-24 animate-float" style={{ animationDelay: '2s' }}>
+          <div className="hidden lg:block absolute right-24 bottom-24 animate-landing-float" style={{ animationDelay: '2s' }}>
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-rose-400 to-pink-500 shadow-xl shadow-rose-500/30" />
           </div>
         </div>

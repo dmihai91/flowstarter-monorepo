@@ -29,7 +29,7 @@ export function DashboardHero({ children }: { children?: React.ReactNode }) {
               description={t(
                 'dashboard.hero.actions.startNewProject.description'
               )}
-              iconBg="bg-gradient-to-br from-blue-500 to-indigo-500"
+              iconBg="bg-gradient-to-br from-[#7C3AED] to-blue-500"
             />
             <ActionCard
               icon={Layers}
@@ -38,7 +38,7 @@ export function DashboardHero({ children }: { children?: React.ReactNode }) {
                 'dashboard.hero.actions.chooseTemplate.description'
               )}
               href="/dashboard/new?path=gallery"
-              iconBg="bg-gradient-to-br from-emerald-500 to-teal-500"
+              iconBg="bg-gradient-to-br from-emerald-500 to-cyan-500"
             />
             <ActionCard
               icon={CalendarDays}
@@ -47,7 +47,7 @@ export function DashboardHero({ children }: { children?: React.ReactNode }) {
                 'dashboard.hero.actions.exploreExamples.description'
               )}
               href="/dashboard/examples"
-              iconBg="bg-gradient-to-br from-violet-500 to-fuchsia-500"
+              iconBg="bg-gradient-to-br from-[#7C3AED] to-pink-500"
             />
           </div>
         </div>

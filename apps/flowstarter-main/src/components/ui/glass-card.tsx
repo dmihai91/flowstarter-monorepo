@@ -15,8 +15,28 @@ interface GlassCardProps {
 
 export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
   ({ children, className, onClick, href, as = 'div', style }, ref) => {
-    const baseClasses =
-      'glass-3d group relative overflow-hidden rounded-[16px] px-4 py-3 sm:px-5 md:px-6 lg:px-[24px] sm:py-3.5 md:py-4 lg:py-[16px] transition-all duration-500 active:scale-[0.98] sm:hover:-translate-y-1 sm:hover:shadow-[0_20px_60px_rgba(0,0,0,0.12),0_8px_24px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-2px_8px_rgba(0,0,0,0.06)] bg-white/30 dark:bg-[rgba(58,58,74,0.25)] backdrop-blur-xl border border-white/60 dark:border-white/15 flex flex-col shadow-[0_8px_32px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.4),inset_0_2px_6px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.05),inset_0_2px_6px_rgba(0,0,0,0.08)]';
+    const baseClasses = cn(
+      // Base structure
+      'group relative overflow-hidden rounded-2xl',
+      'px-5 py-4 sm:px-6 sm:py-5',
+      // Glassmorphism effect
+      'bg-white/70 dark:bg-white/[0.04]',
+      'backdrop-blur-xl backdrop-saturate-150',
+      'border border-white/60 dark:border-white/10',
+      // Shadow - refined
+      'shadow-[0_4px_24px_rgba(0,0,0,0.04)]',
+      'dark:shadow-[0_4px_24px_rgba(0,0,0,0.2)]',
+      // Hover effects
+      'transition-all duration-300 ease-out',
+      'hover:-translate-y-1',
+      'hover:shadow-[0_12px_40px_rgba(124,58,237,0.08)]',
+      'dark:hover:shadow-[0_12px_40px_rgba(124,58,237,0.15)]',
+      'hover:border-[#7C3AED]/20 dark:hover:border-[#7C3AED]/30',
+      // Active state
+      'active:scale-[0.98]',
+      // Flex layout
+      'flex flex-col'
+    );
 
     const content = (
       <div

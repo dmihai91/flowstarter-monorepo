@@ -11,7 +11,7 @@ import React from 'react';
 interface PageContainerProps extends React.PropsWithChildren {
   /**
    * Gradient variant to use for the background
-   * 'dashboard' | 'integrations' | 'help' | 'wizard'
+   * 'dashboard' | 'integrations' | 'help' | 'wizard' | 'landing'
    */
   gradientVariant?: GradientVariant;
   /**
@@ -31,14 +31,19 @@ export function PageContainer({
   contentClassName,
 }: PageContainerProps) {
   return (
-    <div className={cn('min-h-screen relative', className)}>
-      {/* Background gradient - layered radial */}
-      <GradientBackground variant={gradientVariant} className="fixed" />
-      <MaxWidthContainer
-        className={cn('p-4 sm:p-6 lg:p-8 mt-4', contentClassName)}
-      >
-        {children}
-      </MaxWidthContainer>
-    </div>
+    <>
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+      `}</style>
+      <div className={cn('min-h-screen relative font-[Outfit,system-ui,sans-serif]', className)}>
+        {/* Background gradient - layered radial */}
+        <GradientBackground variant={gradientVariant} className="fixed" />
+        <MaxWidthContainer
+          className={cn('p-4 sm:p-6 lg:p-8 mt-4', contentClassName)}
+        >
+          {children}
+        </MaxWidthContainer>
+      </div>
+    </>
   );
 }

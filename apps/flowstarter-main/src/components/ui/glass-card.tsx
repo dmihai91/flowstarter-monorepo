@@ -12,10 +12,11 @@ interface GlassCardProps {
   as?: 'div' | 'button' | 'link';
   style?: CSSProperties;
   variant?: 'default' | 'elevated';
+  noHover?: boolean;
 }
 
 export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
-  ({ children, className, onClick, href, as = 'div', style, variant = 'default' }, ref) => {
+  ({ children, className, onClick, href, as = 'div', style, variant = 'default', noHover = false }, ref) => {
     const baseClasses = cn(
       // Base structure
       'group relative overflow-hidden rounded-2xl',
@@ -30,11 +31,15 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
       variant === 'elevated'
         ? 'shadow-[0_8px_32px_rgba(77,93,217,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)]'
         : 'shadow-[0_4px_20px_rgba(0,0,0,0.04)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.2)]',
-      // Hover effects - lift + shadow + border
-      'transition-all duration-300 ease-out',
-      'hover:-translate-y-1',
-      'hover:shadow-[0_16px_48px_rgba(77,93,217,0.12)] dark:hover:shadow-[0_16px_48px_rgba(77,93,217,0.15)]',
-      'hover:border-[var(--purple)]/30 dark:hover:border-[var(--purple)]/40',
+      // Hover effects - lift + shadow + border (unless noHover)
+      'transition-all duration-250 ease-out',
+      !noHover && [
+        'hover:-translate-y-[3px]',
+        'hover:shadow-[0_8px_25px_rgba(0,0,0,0.06)]',
+        'hover:border-[rgba(124,58,237,0.12)]',
+        'dark:hover:shadow-[0_8px_25px_rgba(124,58,237,0.1)]',
+        'dark:hover:border-[rgba(124,58,237,0.25)]',
+      ],
       // Active state
       'active:scale-[0.99]',
       // Flex layout

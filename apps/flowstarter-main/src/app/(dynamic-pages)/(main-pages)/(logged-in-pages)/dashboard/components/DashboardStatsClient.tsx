@@ -18,29 +18,28 @@ export interface UserEngagementStats {
   newUsersThisMonth: number;
 }
 
-// Refined ghost chart - subtle upward trend
+// Refined ghost chart - subtle upward trend, thinner
 function GhostChart() {
   return (
-    <svg className="w-full h-12 mt-3" viewBox="0 0 200 40" fill="none">
-      {/* Subtle upward trending line */}
+    <svg className="w-full h-10 mt-2" viewBox="0 0 200 35" fill="none">
       <path 
-        d="M0 35 Q30 32, 60 28 T120 22 T180 15 T200 10" 
-        stroke="currentColor" 
+        d="M0 30 Q40 28, 80 24 T160 16 T200 8" 
+        stroke="var(--purple)" 
         strokeWidth="1" 
-        strokeDasharray="3 3"
-        className="text-gray-200 dark:text-white/[0.08]"
+        strokeDasharray="4 4"
+        strokeOpacity="0.15"
         strokeLinecap="round"
       />
     </svg>
   );
 }
 
-// Integration logo with label - 40x40px icons
+// Integration logo with label - brand purple at 35% opacity
 function IntegrationLogo({ name, icon: Icon }: { name: string; icon: React.ComponentType<{ className?: string }> }) {
   return (
-    <div className="flex flex-col items-center gap-1.5 opacity-40 group-hover:opacity-60 transition-opacity duration-300">
-      <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-200/50 dark:border-white/5 flex items-center justify-center">
-        <Icon className="w-5 h-5 text-gray-500 dark:text-white/40" />
+    <div className="flex flex-col items-center gap-1.5 transition-opacity duration-300">
+      <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
+        <Icon className="w-5 h-5 text-[var(--purple)] opacity-35 group-hover:opacity-50 transition-opacity" />
       </div>
       <span className="text-[10px] text-gray-400 dark:text-white/30 font-medium">{name}</span>
     </div>
@@ -86,7 +85,7 @@ export function DashboardStatsClient({
   const hasAnyProject = totalProjects > 0;
 
   const cards = [
-    // Your Website Card
+    // Your Website Card - Active icon at 80% opacity
     {
       content: (
         <>
@@ -95,7 +94,7 @@ export function DashboardStatsClient({
               Your Website
             </span>
             <div className="w-8 h-8 rounded-xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center">
-              <Globe className="w-4 h-4 text-[var(--purple)]" />
+              <Globe className="w-4 h-4 text-[var(--purple)] opacity-80" />
             </div>
           </div>
           
@@ -157,7 +156,7 @@ export function DashboardStatsClient({
         </>
       ),
     },
-    // Website Traffic Card
+    // Website Traffic Card - Disabled icon at 25% opacity
     {
       content: (
         <>
@@ -178,8 +177,8 @@ export function DashboardStatsClient({
           {totalViews > 0 ? (
             <div className="flex-1 flex flex-col">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[var(--blue)]/10 border border-[var(--blue)]/20 flex items-center justify-center">
-                  <BarChart3 className="w-5 h-5 text-[var(--blue)]" />
+                <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center">
+                  <BarChart3 className="w-5 h-5 text-[var(--purple)] opacity-80" />
                 </div>
                 <div>
                   <p className="text-2xl font-semibold text-gray-900 dark:text-white">
@@ -199,8 +198,8 @@ export function DashboardStatsClient({
           ) : (
             <div className="flex-1 flex flex-col">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-gray-300 dark:text-white/20" />
+                <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-[var(--purple)] opacity-25" />
                 </div>
                 <p className="text-sm text-gray-400 dark:text-white/40 flex-1">
                   Traffic data appears once your site is live
@@ -212,7 +211,7 @@ export function DashboardStatsClient({
         </>
       ),
     },
-    // Business Leads Card
+    // Business Leads Card - Disabled icon at 25% opacity
     {
       content: (
         <>
@@ -233,8 +232,8 @@ export function DashboardStatsClient({
           {totalLeads > 0 ? (
             <div className="flex-1 flex flex-col">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[var(--green)]/10 border border-[var(--green)]/20 flex items-center justify-center">
-                  <Users className="w-5 h-5 text-[var(--green)]" />
+                <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center">
+                  <Users className="w-5 h-5 text-[var(--purple)] opacity-80" />
                 </div>
                 <div>
                   <p className="text-2xl font-semibold text-gray-900 dark:text-white">
@@ -252,9 +251,8 @@ export function DashboardStatsClient({
           ) : (
             <div className="flex-1 flex flex-col">
               <div className="flex items-center gap-3">
-                {/* Single muted icon instead of three circles */}
                 <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
-                  <Users className="w-5 h-5 text-[var(--purple)]/30" />
+                  <Users className="w-5 h-5 text-[var(--purple)] opacity-25" />
                 </div>
                 <p className="text-sm text-gray-400 dark:text-white/40 flex-1">
                   Lead tracking activates when your site goes live
@@ -265,7 +263,7 @@ export function DashboardStatsClient({
         </>
       ),
     },
-    // Integrations Card
+    // Integrations Card - Icons at 35% opacity
     {
       content: (
         <>
@@ -281,7 +279,7 @@ export function DashboardStatsClient({
                 Set up →
               </Link>
             ) : (
-              <span className="text-xs text-gray-400 dark:text-white/30 bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] text-gray-400 dark:text-white/30 bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded-full font-medium">
                 After launch
               </span>
             )}

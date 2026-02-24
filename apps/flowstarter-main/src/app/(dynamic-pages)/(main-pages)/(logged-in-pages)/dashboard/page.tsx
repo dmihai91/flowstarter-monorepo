@@ -30,12 +30,12 @@ export default function DashboardPage() {
             </div>
 
             {/* Divider */}
-            <div className="relative flex items-center justify-center my-8">
+            <div className="relative flex items-center justify-center my-6">
               <div className="flex-grow border-t border-gray-200/60 dark:border-white/10"></div>
             </div>
 
             {/* Projects grid */}
-            <div className="mb-10">
+            <div className="mb-8">
               <PageSectionHeader
                 title={t('projects.title')}
                 subtitle={t('projects.subtitle')}

@@ -7,8 +7,16 @@ import React from 'react';
 
 const CALENDLY_URL = 'https://calendly.com/flowstarter/discovery';
 
-// Feature flag - set to true to show create/edit features
+// Feature flag
 const SHOW_CREATE_FEATURES = false;
+
+// Get time-based greeting
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 18) return 'Good afternoon';
+  return 'Good evening';
+}
 
 // Onboarding steps
 const steps = [
@@ -43,12 +51,34 @@ function OnboardingStepper() {
     <div ref={ref} className="mb-6">
       {/* Desktop Layout - Horizontal with connector */}
       <div className="hidden md:block relative">
-        {/* Progress connector line - behind cards */}
-        <div className="absolute top-8 left-[60px] right-[60px] h-0.5 bg-gray-200 dark:bg-white/10 z-0">
+        {/* Progress connector line - 2px, behind cards */}
+        <div className="absolute top-[52px] left-[80px] right-[80px] flex items-center z-0">
+          {/* Purple segment (completed) */}
           <div 
-            className="h-full bg-[var(--purple)] transition-all duration-500"
+            className="h-0.5 bg-[var(--purple)]"
             style={{ width: `${(currentStepIndex / (steps.length - 1)) * 100}%` }}
           />
+          {/* Gray dashed segment (remaining) */}
+          <div 
+            className="h-0.5 flex-1 border-t-2 border-dashed border-gray-300 dark:border-white/20"
+          />
+        </div>
+        
+        {/* Junction dots */}
+        <div className="absolute top-[48px] left-0 right-0 flex justify-between px-[76px] z-20 pointer-events-none">
+          {steps.map((step, index) => {
+            const isPastOrCurrent = index <= currentStepIndex;
+            return (
+              <div
+                key={`dot-${index}`}
+                className={`w-2 h-2 rounded-full ${
+                  isPastOrCurrent 
+                    ? 'bg-[var(--purple)]' 
+                    : 'bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-white/20'
+                }`}
+              />
+            );
+          })}
         </div>
         
         <div className="grid grid-cols-3 gap-4 relative z-10">
@@ -62,26 +92,25 @@ function OnboardingStepper() {
             return (
               <div
                 key={step.number}
-                className={`${animation.className}`}
+                className={animation.className}
                 style={animation.style}
               >
                 <div
                   className={`
-                    relative p-5 rounded-2xl border transition-all duration-300 h-full flex flex-col
+                    relative p-5 rounded-2xl transition-all duration-300 h-full flex flex-col
                     ${isActive 
-                      ? 'bg-white dark:bg-white/[0.06] border-[var(--purple)]/30 shadow-lg shadow-[var(--purple)]/5' 
+                      ? 'bg-gradient-to-br from-white to-[#FAFAFF] dark:from-white/[0.08] dark:to-white/[0.04] border-2 border-[var(--purple)]/20 shadow-[0_4px_20px_rgba(124,58,237,0.08)]' 
                       : isCompleted || isPast
-                      ? 'bg-[var(--green)]/5 dark:bg-[var(--green)]/10 border-[var(--green)]/30'
-                      : 'bg-gray-50/50 dark:bg-white/[0.02] border-gray-200/50 dark:border-white/5'
+                      ? 'bg-[var(--green)]/5 dark:bg-[var(--green)]/10 border border-[var(--green)]/30'
+                      : 'bg-gray-50/80 dark:bg-white/[0.02] border border-gray-200/60 dark:border-white/5'
                     }
-                    ${isActive ? 'hover:shadow-xl hover:shadow-[var(--purple)]/10 hover:-translate-y-0.5' : ''}
                   `}
                 >
-                  {/* Step number badge */}
+                  {/* Step number badge - solid filled */}
                   <div className={`
-                    absolute -top-3 left-5 px-2.5 py-0.5 rounded-full text-xs font-semibold
+                    absolute -top-3 left-5 px-3 py-1 rounded-full text-xs font-bold
                     ${isActive 
-                      ? 'bg-[var(--purple)] text-white' 
+                      ? 'bg-[var(--purple)] text-white shadow-sm' 
                       : isCompleted || isPast
                       ? 'bg-[var(--green)] text-white'
                       : 'bg-gray-200 dark:bg-white/10 text-gray-500 dark:text-white/50'
@@ -90,7 +119,7 @@ function OnboardingStepper() {
                     Step {step.number}
                   </div>
                   
-                  <div className="flex items-start gap-4 mt-1">
+                  <div className="flex items-start gap-4 mt-2">
                     <div className={`
                       w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0
                       ${isActive 
@@ -133,13 +162,25 @@ function OnboardingStepper() {
                   
                   <div className="flex-1" />
                   
-                  {/* Active step CTA */}
+                  {/* Active step CTA - Navy gradient */}
                   {isActive ? (
                     <a
                       href={CALENDLY_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 text-sm font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(77,93,217,0.15)] transition-all duration-300 hover:scale-[1.02] hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100"
+                      className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-white text-sm font-semibold transition-all duration-300 hover:scale-[1.02]"
+                      style={{
+                        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'linear-gradient(135deg, #1f1f3a 0%, #1b2847 100%)';
+                        e.currentTarget.style.boxShadow = '0 0 20px rgba(124, 58, 237, 0.15), 0 4px 12px rgba(0,0,0,0.15)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                      }}
                     >
                       <Calendar className="w-4 h-4" />
                       Book Free Call
@@ -156,11 +197,17 @@ function OnboardingStepper() {
 
       {/* Mobile Layout - Vertical with connector */}
       <div className="md:hidden relative">
-        {/* Vertical progress line */}
-        <div className="absolute left-[23px] top-8 bottom-8 w-0.5 bg-gray-200 dark:bg-white/10 z-0">
+        {/* Vertical progress line with dots */}
+        <div className="absolute left-[23px] top-6 bottom-6 w-0.5 z-0">
+          {/* Purple solid segment */}
           <div 
-            className="w-full bg-[var(--purple)] transition-all duration-500"
+            className="w-full bg-[var(--purple)]"
             style={{ height: `${(currentStepIndex / (steps.length - 1)) * 100}%` }}
+          />
+          {/* Gray dashed segment */}
+          <div 
+            className="w-full flex-1 border-l-2 border-dashed border-gray-300 dark:border-white/20"
+            style={{ height: `${((steps.length - 1 - currentStepIndex) / (steps.length - 1)) * 100}%` }}
           />
         </div>
         
@@ -171,6 +218,7 @@ function OnboardingStepper() {
             const isCompleted = step.status === 'completed';
             const isLocked = step.status === 'locked';
             const isPast = index < currentStepIndex;
+            const isPastOrCurrent = index <= currentStepIndex;
             
             return (
               <div
@@ -180,14 +228,21 @@ function OnboardingStepper() {
               >
                 <div
                   className={`
-                    relative rounded-2xl border transition-all duration-300 flex items-center gap-3
+                    relative rounded-2xl transition-all duration-300 flex items-center gap-3
                     ${isActive 
-                      ? 'p-4 bg-white dark:bg-white/[0.06] border-[var(--purple)]/30 shadow-lg shadow-[var(--purple)]/5' 
-                      : 'p-3 bg-gray-50/50 dark:bg-white/[0.02] border-gray-200/50 dark:border-white/5'
+                      ? 'p-4 bg-gradient-to-br from-white to-[#FAFAFF] dark:from-white/[0.08] dark:to-white/[0.04] border-2 border-[var(--purple)]/20 shadow-[0_4px_20px_rgba(124,58,237,0.08)]' 
+                      : 'p-3 bg-gray-50/80 dark:bg-white/[0.02] border border-gray-200/60 dark:border-white/5'
                     }
                   `}
                 >
-                  {/* Step indicator circle */}
+                  {/* Junction dot on left */}
+                  <div className={`absolute -left-[18px] w-2 h-2 rounded-full ${
+                    isPastOrCurrent 
+                      ? 'bg-[var(--purple)]' 
+                      : 'bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-white/20'
+                  }`} />
+                  
+                  {/* Step indicator */}
                   <div className={`
                     w-[46px] h-[46px] rounded-xl flex items-center justify-center flex-shrink-0
                     ${isActive 
@@ -209,9 +264,9 @@ function OnboardingStepper() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       <span className={`
-                        text-[10px] font-semibold uppercase tracking-wider
+                        text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full
                         ${isActive 
-                          ? 'text-[var(--purple)]' 
+                          ? 'bg-[var(--purple)] text-white' 
                           : 'text-gray-400 dark:text-white/40'
                         }
                       `}>
@@ -234,16 +289,19 @@ function OnboardingStepper() {
                     )}
                   </div>
                   
-                  {/* Active step CTA - Mobile */}
+                  {/* Mobile CTA */}
                   {isActive && (
                     <a
                       href={CALENDLY_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="shrink-0 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 text-xs font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(77,93,217,0.15)] transition-all duration-300"
+                      className="shrink-0 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-white text-xs font-semibold transition-all duration-300"
+                      style={{
+                        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+                      }}
                     >
                       <Calendar className="w-3.5 h-3.5" />
-                      Book Call
+                      Book
                     </a>
                   )}
                 </div>
@@ -261,11 +319,12 @@ export function DashboardHero({ children }: { children?: React.ReactNode }) {
   const { ref, isVisible } = useScrollAnimation();
   
   const firstName = user?.firstName || 'there';
+  const greeting = getGreeting();
 
   return (
     <section className="relative">
       <div className="relative z-10">
-        {/* Welcome message + Dashboard title */}
+        {/* Welcome message with time-based greeting */}
         <div 
           ref={ref}
           className={`mb-6 transition-all duration-500 ease-out ${
@@ -273,7 +332,7 @@ export function DashboardHero({ children }: { children?: React.ReactNode }) {
           }`}
         >
           <p className="text-gray-500 dark:text-white/50 mb-1">
-            Welcome back, <span className="text-gray-700 dark:text-white/70 font-medium">{firstName}</span>
+            {greeting}, <span className="text-gray-700 dark:text-white/70 font-medium">{firstName}</span>
           </p>
           <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
             Dashboard

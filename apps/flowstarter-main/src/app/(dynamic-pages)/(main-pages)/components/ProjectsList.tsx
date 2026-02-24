@@ -227,16 +227,16 @@ export const ProjectsList = ({
 
   if (cards.length === 0) {
     return (
-      <div className="rounded-2xl border border-gray-200/80 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl p-8 text-center">
-        <div className="max-w-md mx-auto">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--purple)]/10 to-blue-500/10 dark:from-[var(--purple)]/20 dark:to-blue-500/20 border border-[var(--purple)]/20 mb-4">
-            <LayoutDashboard className="h-6 w-6 text-[var(--purple)]" />
+      <div className="rounded-2xl border border-gray-200/60 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl p-6 text-center transition-all duration-250 ease-out hover:-translate-y-[3px] hover:shadow-[0_8px_25px_rgba(0,0,0,0.06)] hover:border-[rgba(124,58,237,0.12)]">
+        <div className="max-w-sm mx-auto">
+          <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 mb-3">
+            <LayoutDashboard className="h-5 w-5 text-[var(--purple)] opacity-40" />
           </div>
-          <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">
+          <h3 className="text-base font-semibold mb-1 text-gray-800 dark:text-gray-100">
             Your website will appear here
           </h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-            Once we build your site after the discovery call, you'll be able to view and manage it from this dashboard.
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Once we build your site, you'll manage it from here.
           </p>
         </div>
       </div>

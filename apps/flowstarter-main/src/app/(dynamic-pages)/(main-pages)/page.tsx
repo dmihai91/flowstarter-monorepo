@@ -239,13 +239,13 @@ export default function LandingPage() {
 
         {/* Header */}
         <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'} ${scrolled ? 'bg-white/70 dark:bg-[#0a0a0c]/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/5 shadow-sm' : ''}`}>
-          <div className="max-w-7xl mx-auto px-6 lg:px-12">
-            <div className="flex items-center justify-between h-16">
-              <Link href="/" className="flex items-center gap-3 group">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center shadow-lg shadow-violet-500/20 group-hover:shadow-violet-500/30 transition-shadow">
-                  <span className="text-white font-bold text-lg">F</span>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
+            <div className="flex items-center justify-between h-14 sm:h-16">
+              <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center shadow-lg shadow-violet-500/20 group-hover:shadow-violet-500/30 transition-shadow">
+                  <span className="text-white font-bold text-base sm:text-lg">F</span>
                 </div>
-                <span className="text-xl font-semibold tracking-tight">Flowstarter</span>
+                <span className="text-lg sm:text-xl font-semibold tracking-tight">Flowstarter</span>
               </Link>
               
               <nav className="hidden md:flex items-center gap-8">
@@ -254,14 +254,15 @@ export default function LandingPage() {
                 <a href="#faq" className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors">FAQ</a>
               </nav>
 
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 sm:gap-4">
                 <ThemeToggle />
                 <Link href="/login" className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors hidden sm:block">
                   Sign In
                 </Link>
                 <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-                  <Button className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl px-6 h-10 text-sm font-semibold shadow-lg transition-all">
-                    Book a Call
+                  <Button className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl px-3 sm:px-6 h-9 sm:h-10 text-xs sm:text-sm font-semibold shadow-lg transition-all">
+                    <span className="hidden sm:inline">Book a Call</span>
+                    <span className="sm:hidden">Book</span>
                   </Button>
                 </a>
               </div>

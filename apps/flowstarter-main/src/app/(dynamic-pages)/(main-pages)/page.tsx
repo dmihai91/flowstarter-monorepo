@@ -1286,7 +1286,7 @@ export default function LandingPage() {
               
               <div className="space-y-2">
                 {[
-                  { q: 'What happens on the discovery call?', a: 'We spend 30–45 minutes learning about your business, your goals, and your brand. You don\'t need to prepare anything — just show up and tell us about what you do. We handle the rest.' },
+                  { q: 'What happens on the discovery call?', a: 'We spend 30 minutes learning about your business, your goals, and your brand. You don\'t need to prepare anything — just show up and tell us about what you do. After the call, we\'ll send you a summary of what we discussed and start building your site within 24 hours.' },
                   { q: 'How long until my site is live?', a: 'Most sites go live within 1–2 weeks after the discovery call. We\'ll keep you updated throughout the process.' },
                   { q: 'Can I make changes after the site is built?', a: 'That\'s the whole point. Your subscription includes our AI editor — update text, add pages, change your branding, improve your SEO. All without writing a single line of code.' },
                   { q: 'What if I want to cancel?', a: 'No lock-in. Cancel your subscription anytime. The setup fee is non-refundable since it covers real work (your discovery call and site build), but you keep all your site files.' },
@@ -1294,6 +1294,8 @@ export default function LandingPage() {
                   { q: 'What happens when the beta ends?', a: 'Your beta discount (50% off) is locked for 1 year from signup. After that, pricing moves to standard rates (€299 setup / €29/month). You\'ll get 30 days notice before anything changes.' },
                   { q: 'What\'s included in the email?', a: 'Two professional email addresses with your domain (e.g., you@yourbusiness.com).' },
                   { q: 'What kind of websites can you build?', a: 'We specialize in professional websites for freelancers, consultants, small businesses, restaurants, agencies, coaches, and creators. Whether you need a portfolio, a service page, a landing page, or a multi-page business site — we\'ve got you covered. E-commerce support is coming soon with our Business tier.' },
+                  { q: 'Can I use my existing domain?', a: 'Absolutely. We\'ll help you connect your existing domain to your new site at no extra cost. If you don\'t have a domain yet, we can help you pick and set one up during the discovery call.' },
+                  { q: 'What if I need more than 7 pages?', a: 'The Starter plan includes up to 7 pages, which covers most business websites. If you need more, we can discuss options during the discovery call — or you can add pages later using the AI editor.' },
                 ].map((faq, i) => (
                   <div 
                     key={i} 
@@ -1381,10 +1383,16 @@ export default function LandingPage() {
                 </div>
                 <span className="text-sm text-gray-400 dark:text-white/30">© 2026 Flowstarter</span>
               </div>
-              <div className="flex items-center gap-6">
-                <a href="mailto:hello@flowstarter.app" className="text-sm text-gray-400 dark:text-white/30 hover:text-gray-900 dark:hover:text-white transition-colors">
-                  hello@flowstarter.app
+              <div className="flex items-center gap-4 sm:gap-6 flex-wrap justify-center">
+                <a href="mailto:hello@flowstarter.dev" className="text-sm text-gray-400 dark:text-white/30 hover:text-gray-900 dark:hover:text-white transition-colors">
+                  hello@flowstarter.dev
                 </a>
+                <Link href="/privacy" className="text-sm text-gray-400 dark:text-white/30 hover:text-gray-900 dark:hover:text-white transition-colors">
+                  Privacy
+                </Link>
+                <Link href="/terms" className="text-sm text-gray-400 dark:text-white/30 hover:text-gray-900 dark:hover:text-white transition-colors">
+                  Terms
+                </Link>
                 <Link href="/login" className="text-sm text-gray-400 dark:text-white/30 hover:text-gray-900 dark:hover:text-white transition-colors">
                   Client Login
                 </Link>

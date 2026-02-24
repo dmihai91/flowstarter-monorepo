@@ -399,7 +399,7 @@ export default function LandingPage() {
                   key={i}
                   className="group p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/10 hover:bg-white dark:hover:bg-white/[0.04] hover:shadow-lg transition-all duration-300"
                 >
-                  <div className="text-5xl font-bold text-gray-100 dark:text-white/5 group-hover:text-violet-500/20 transition-colors mb-4">
+                  <div className="text-5xl font-bold text-violet-500/20 dark:text-white/5 group-hover:text-violet-500/40 dark:group-hover:text-violet-500/20 transition-colors mb-4">
                     {feature.num}
                   </div>
                   <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>

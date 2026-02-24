@@ -16,8 +16,8 @@ export default function LandingPage() {
             <span className="text-xl font-bold text-gray-900 dark:text-white">Flowstarter</span>
           </div>
           <Link href="/login">
-            <Button variant="outline" size="sm">
-              Team Login
+            <Button variant="default" size="sm">
+              Sign In
             </Button>
           </Link>
         </div>
@@ -46,6 +46,11 @@ export default function LandingPage() {
                 Get in touch
               </Button>
             </a>
+            <Link href="/login">
+              <Button size="xl" variant="outline" className="text-lg px-8">
+                Client Portal
+              </Button>
+            </Link>
           </div>
         </div>
 
@@ -110,9 +115,11 @@ export default function LandingPage() {
           <p className="text-sm text-gray-500">
             © 2026 Flowstarter. All rights reserved.
           </p>
-          <Link href="/login" className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-            Team Login
-          </Link>
+          <div className="flex items-center gap-6">
+            <Link href="/login" className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+              Sign In
+            </Link>
+          </div>
         </div>
       </footer>
     </div>

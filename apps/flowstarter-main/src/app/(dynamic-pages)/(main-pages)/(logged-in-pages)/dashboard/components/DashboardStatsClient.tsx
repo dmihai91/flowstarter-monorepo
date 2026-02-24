@@ -159,7 +159,7 @@ export function DashboardStatsClient({
           </p>
         ) : (
           <p className="text-xs text-gray-500 dark:text-white/50 bg-gray-100/80 dark:bg-white/5 rounded-md px-2 py-1.5">
-            {hasLiveProject ? 'No leads yet — they'll appear here' : 'Track leads once your site is live'}
+            {hasLiveProject ? "No leads yet — they'll appear here" : "Track leads once your site is live"}
           </p>
         )}
       </GlassCard>

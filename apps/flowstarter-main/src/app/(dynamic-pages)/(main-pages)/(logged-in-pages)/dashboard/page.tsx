@@ -16,7 +16,7 @@ export default function DashboardPage() {
 
   return (
     <DashboardWrapper>
-      <PageContainer gradientVariant="dashboard">
+      <PageContainer gradientVariant="landing">
         {/* Messages */}
         <DashboardMessages />
 

@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 
-export type GradientVariant = 'dashboard' | 'integrations' | 'help' | 'wizard';
+export type GradientVariant = 'dashboard' | 'integrations' | 'help' | 'wizard' | 'landing';
 
 interface GradientBackgroundProps {
   variant?: GradientVariant;
@@ -40,9 +40,54 @@ export function GradientBackground({
       top2: 'var(--wizard-gradient-right)',
       bottom: 'transparent',
     },
+    landing: {
+      top1: '#7C3AED',
+      top2: '#3B82F6',
+      bottom: '#EDE9FE',
+    },
   };
 
   const gradients = gradientVars[variant];
+
+  // New landing style with flow lines
+  if (variant === 'landing') {
+    return (
+      <div
+        className={cn(
+          'pointer-events-none absolute inset-0 -z-10 overflow-hidden',
+          className
+        )}
+      >
+        {/* Base gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white via-[#F8F7FF] to-[#EDE9FE] dark:from-[#0a0a0c] dark:via-[#0a0a0c] dark:to-[#0a0a0c]" />
+        
+        {/* Flow lines */}
+        <svg 
+          className="absolute inset-0 w-full h-full opacity-[0.12] dark:opacity-[0.10]"
+          viewBox="0 0 1200 800" 
+          preserveAspectRatio="xMidYMid slice"
+          fill="none"
+        >
+          <defs>
+            <linearGradient id="dashboardFlowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#7C3AED" />
+              <stop offset="100%" stopColor="#3B82F6" />
+            </linearGradient>
+          </defs>
+          <g stroke="url(#dashboardFlowGradient)" strokeWidth="1.5">
+            <path d="M-100,80 Q200,60 400,100 T800,80 T1300,120" />
+            <path d="M-100,180 Q150,200 350,160 T750,200 T1300,180" />
+            <path d="M-100,280 Q250,260 450,300 T850,270 T1300,310" />
+            <path d="M-100,380 Q180,400 380,360 T780,400 T1300,380" />
+            <path d="M-100,480 Q220,460 420,500 T820,470 T1300,510" />
+            <path d="M-100,580 Q200,600 400,560 T800,600 T1300,580" />
+            <path d="M-100,680 Q250,660 450,700 T850,670 T1300,710" />
+            <path d="M-100,780 Q180,800 380,760 T780,800 T1300,780" />
+          </g>
+        </svg>
+      </div>
+    );
+  }
 
   if (variant === 'wizard') {
     return (

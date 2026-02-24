@@ -935,7 +935,7 @@ export default function LandingPage() {
 
             <div className="max-w-lg mx-auto">
               {/* Starter Plan Card - Premium Treatment */}
-              <div className="group p-8 lg:p-10 rounded-2xl bg-gradient-to-br from-white via-white to-[var(--purple)]/50 dark:from-[#0f0f12] dark:via-[#0f0f12] dark:to-[#12101a] backdrop-blur-sm border-2 border-[var(--purple)]/30 dark:border-[var(--purple)]/40 shadow-xl shadow-[var(--purple)]/10 relative overflow-hidden transition-all duration-300 hover:border-[var(--purple)]/50 dark:hover:border-[var(--purple)]/60 hover:shadow-[0_8px_30px_rgba(124,58,237,0.15)]">
+              <div className="group p-8 lg:p-10 rounded-2xl bg-gradient-to-br from-white via-white to-[var(--purple)]/5 dark:from-[#0f0f12] dark:via-[#0f0f12] dark:to-[#12101a] backdrop-blur-sm border-2 border-[var(--purple)]/30 dark:border-[var(--purple)]/40 shadow-xl shadow-[var(--purple)]/10 relative overflow-hidden transition-all duration-300 hover:border-[var(--purple)]/50 dark:hover:border-[var(--purple)]/60 hover:shadow-[0_8px_30px_rgba(124,58,237,0.15)]">
                 {/* Beta badge */}
                 <div className="absolute top-4 right-4">
                   <span className="px-3 py-1 text-xs font-medium bg-[var(--purple)] text-white rounded-full">50% off during beta</span>
@@ -957,27 +957,140 @@ export default function LandingPage() {
                     <span className="text-2xl font-bold ml-2">€15</span>
                     <span className="text-sm text-gray-400 dark:text-white/40 ml-1">/month</span>
                   </div>
-                  <p className="text-xs text-gray-400 dark:text-white/30 mt-2">50% off subscription for your first year</p>
+                  <p className="text-xs text-gray-400 dark:text-white/30 mt-2">Starts after your free first month</p>
                 </div>
                 
-                {/* Features */}
-                <ul className="space-y-3 mb-8">
-                  {[
-                    'Discovery call + done-for-you site build',
-                    'Hosting on global CDN',
-                    'Professional email (2 mailboxes)',
-                    '1 GB cloud storage',
-                    'Unlimited AI customization',
-                    'First month free'
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-sm text-gray-600 dark:text-white/60">
-                      <svg className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+                {/* Features - Grouped */}
+                <div className="space-y-4 mb-8">
+                  {/* Setup & Build */}
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Setup & Build</p>
+                    <ul className="space-y-2">
+                      {[
+                        'Free discovery call + done-for-you site build',
+                        'Up to 7 professionally designed pages',
+                        'Custom domain setup',
+                        'Mobile-responsive design',
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
+                          <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  {/* Hosting & Infrastructure */}
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Hosting & Infrastructure</p>
+                    <ul className="space-y-2">
+                      {[
+                        'Hosting on global CDN (Cloudflare)',
+                        'SSL certificate included',
+                        '1 GB cloud storage',
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
+                          <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  {/* Communication */}
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Communication</p>
+                    <ul className="space-y-2">
+                      {[
+                        'Professional email (2 mailboxes)',
+                        '1 contact form with lead capture',
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
+                          <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  {/* Analytics & Dashboard */}
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Analytics & Dashboard</p>
+                    <ul className="space-y-2">
+                      {[
+                        'Built-in analytics dashboard (leads + page views)',
+                        'Google Analytics integration',
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
+                          <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  {/* AI & Customization */}
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">AI & Customization</p>
+                    <ul className="space-y-2">
+                      {[
+                        'AI-powered site customization credits (monthly)',
+                        'First month free to customize',
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
+                          <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  {/* SEO & Performance */}
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">SEO & Performance</p>
+                    <ul className="space-y-2">
+                      {[
+                        'Basic SEO setup (meta tags, sitemap, robots.txt)',
+                        'Performance optimized (90+ Lighthouse score)',
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
+                          <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  {/* Support */}
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Support</p>
+                    <ul className="space-y-2">
+                      {[
+                        'Email support (48h response)',
+                        'No lock-in — cancel anytime',
+                      ].map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
+                          <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
                 
                 {/* CTA */}
                 <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="block">
@@ -988,6 +1101,56 @@ export default function LandingPage() {
                     </svg>
                   </Button>
                 </a>
+                
+                {/* Footer note */}
+                <p className="text-xs text-gray-400 dark:text-white/30 text-center mt-4">No lock-in. Cancel anytime. Setup fee is non-refundable.</p>
+              </div>
+              
+              {/* Coming Soon Tiers */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+                {/* Pro - Coming Soon */}
+                <div className="p-6 rounded-2xl bg-gray-100/50 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-100/80 dark:to-gray-900/50 pointer-events-none" />
+                  <div className="relative">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-lg font-bold text-gray-400 dark:text-white/40">Pro</h4>
+                      <span className="px-2 py-0.5 text-[10px] font-medium bg-gray-200 dark:bg-white/10 text-gray-500 dark:text-white/40 rounded-full flex items-center gap-1">
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        Coming Soon
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-400 dark:text-white/30 mb-3">Starting at €499 setup + €49/month</p>
+                    <ul className="space-y-1.5 text-xs text-gray-400 dark:text-white/30">
+                      <li>• Up to 3 sites, 1 subscription</li>
+                      <li>• Blog, booking & newsletter integrations</li>
+                      <li>• Potential revenue tracking in dashboard</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                {/* Business - Coming Soon */}
+                <div className="p-6 rounded-2xl bg-gray-100/50 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-100/80 dark:to-gray-900/50 pointer-events-none" />
+                  <div className="relative">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-lg font-bold text-gray-400 dark:text-white/40">Business</h4>
+                      <span className="px-2 py-0.5 text-[10px] font-medium bg-gray-200 dark:bg-white/10 text-gray-500 dark:text-white/40 rounded-full flex items-center gap-1">
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        Coming Soon
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-400 dark:text-white/30 mb-3">Starting at €699 setup + €79/month</p>
+                    <ul className="space-y-1.5 text-xs text-gray-400 dark:text-white/30">
+                      <li>• E-commerce integrations (Shopify, Gumroad)</li>
+                      <li>• Product catalog & Stripe payments</li>
+                      <li>• Full revenue tracking in dashboard</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
               
               {/* Fine print */}

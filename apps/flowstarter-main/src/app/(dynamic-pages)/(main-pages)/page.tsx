@@ -198,7 +198,7 @@ export default function LandingPage() {
         @keyframes fade-in-up {
           from {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(12px);
           }
           to {
             opacity: 1;
@@ -206,11 +206,11 @@ export default function LandingPage() {
           }
         }
         .animate-fade-in-up {
-          animation: fade-in-up 0.6s ease-out forwards;
+          animation: fade-in-up 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
         }
-        .animate-fade-in-up-delay-1 { animation-delay: 100ms; }
-        .animate-fade-in-up-delay-2 { animation-delay: 200ms; }
-        .animate-fade-in-up-delay-3 { animation-delay: 300ms; }
+        .animate-fade-in-up-delay-1 { animation-delay: 150ms; }
+        .animate-fade-in-up-delay-2 { animation-delay: 300ms; }
+        .animate-fade-in-up-delay-3 { animation-delay: 450ms; }
         
         @keyframes morph {
           0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
@@ -758,7 +758,7 @@ export default function LandingPage() {
               {features.map((feature, i) => (
                 <div 
                   key={i}
-                  className={`group p-7 rounded-2xl bg-white/80 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200/80 dark:border-white/5 hover:border-violet-500/40 dark:hover:border-violet-500/30 hover:bg-white dark:hover:bg-white/[0.04] hover:shadow-xl hover:shadow-violet-500/10 hover:-translate-y-1 hover:scale-[1.02] transition-all duration-250 ease-out ${visibleSections.has('process-cards') ? `opacity-100 translate-y-0 animate-fade-in-up animate-fade-in-up-delay-${i + 1}` : 'opacity-0 translate-y-5'}`}
+                  className={`group p-7 rounded-2xl bg-white/80 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200/80 dark:border-white/5 hover:border-violet-500/40 dark:hover:border-violet-500/30 hover:bg-white dark:hover:bg-white/[0.04] hover:shadow-xl hover:shadow-violet-500/10 hover:-translate-y-1 hover:scale-[1.02] transition-all duration-250 ease-out ${visibleSections.has('process-cards') ? `animate-fade-in-up animate-fade-in-up-delay-${i + 1}` : 'opacity-0 translate-y-3'}`}
                   style={{ animationFillMode: 'forwards' }}
                 >
                   <div className="text-5xl font-bold text-violet-500/20 dark:text-white/5 group-hover:text-violet-500/50 dark:group-hover:text-violet-500/30 transition-colors mb-4">

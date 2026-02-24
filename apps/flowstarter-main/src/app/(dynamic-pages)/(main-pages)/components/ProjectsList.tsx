@@ -227,16 +227,16 @@ export const ProjectsList = ({
 
   if (cards.length === 0) {
     return (
-      <div className="rounded-xl border-2 border-dashed border-white/30 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-xl p-10 text-center shadow-[0_4px_16px_0_rgba(31,38,135,0.08)]">
-        <div className="max-w-lg mx-auto">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-linear-to-br from-indigo-500/10 to-violet-500/10 dark:from-indigo-500/20 dark:to-violet-500/20 border border-indigo-500/20 dark:border-violet-400/40 mb-5">
-            <Sparkles className="h-7 w-7 text-indigo-600 dark:text-violet-300" />
+      <div className="rounded-2xl border border-gray-200/80 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl p-8 text-center">
+        <div className="max-w-md mx-auto">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-[#7C3AED]/10 to-blue-500/10 dark:from-[#7C3AED]/20 dark:to-blue-500/20 border border-[#7C3AED]/20 mb-4">
+            <LayoutDashboard className="h-6 w-6 text-[#7C3AED]" />
           </div>
-          <h3 className="text-lg sm:text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100 tracking-tight">
-            {t('projects.noProjectsYet')}
+          <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">
+            Your website will appear here
           </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-            {t('projects.noProjectsYetDescription')}
+          <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+            Once we build your site after the discovery call, you'll be able to view and manage it from this dashboard.
           </p>
         </div>
       </div>

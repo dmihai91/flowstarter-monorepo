@@ -110,7 +110,7 @@ export function DashboardStatsClient({
       trend: undefined,
       zeroState:
         totalProjects === 0
-          ? t('dashboard.placeholders.createFirstProject')
+          ? 'Your website will appear here after we build it'
           : undefined,
       detailsLink: undefined, // No details link for projects card
       lastProject: lastProject,
@@ -130,21 +130,7 @@ export function DashboardStatsClient({
       tone: 'green' as const,
       zeroState:
         totalLeads === 0 ? (
-          showAnalyticsSetup ? (
-            <div className="flex flex-col gap-2">
-              <span>{t('dashboard.analytics.setup.description')}</span>
-              <a
-                className="underline hover:no-underline transition-all font-medium w-fit"
-                href="/dashboard/integrations"
-                onClick={(e) => e.stopPropagation()}
-                style={{ color: 'var(--copy-headlines)' }}
-              >
-                {t('dashboard.analytics.setup.button')}
-              </a>
-            </div>
-          ) : (
-            t('dashboard.placeholders.leadsZero')
-          )
+          'Track leads once your site is live'
         ) : undefined,
       detailsLink: '/dashboard/analytics/leads',
     },
@@ -180,21 +166,7 @@ export function DashboardStatsClient({
       trend: undefined,
       zeroState:
         totalViews === 0 ? (
-          showAnalyticsSetup ? (
-            <div className="flex flex-col gap-2">
-              <span>{t('dashboard.analytics.setup.description')}</span>
-              <a
-                className="underline hover:no-underline transition-all font-medium w-fit"
-                href="/dashboard/integrations"
-                onClick={(e) => e.stopPropagation()}
-                style={{ color: 'var(--copy-headlines)' }}
-              >
-                {t('dashboard.analytics.setup.button')}
-              </a>
-            </div>
-          ) : (
-            t('dashboard.placeholders.trafficZero')
-          )
+          'Monitor traffic once your site is live'
         ) : undefined,
       detailsLink: '/dashboard/analytics/traffic',
     },

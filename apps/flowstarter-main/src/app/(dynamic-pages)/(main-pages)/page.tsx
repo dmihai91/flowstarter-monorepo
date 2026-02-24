@@ -310,7 +310,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing */}
+      {/* Pricing - Single Plan */}
       <section className="relative py-24 md:py-32">
         <div className="max-w-6xl mx-auto px-6">
           <div className="mb-16 text-center">
@@ -318,100 +318,150 @@ export default function LandingPage() {
               Simple pricing
             </span>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mt-4">
-              One price. Everything included.
+              One plan. Everything included.
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-400 mt-6 max-w-2xl mx-auto">
-              No hidden fees. No surprise invoices. Just a simple monthly subscription.
+              You pay once for setup, then a small monthly fee. We handle the rest.
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {/* Starter */}
-            <div className="p-8 rounded-3xl bg-white/60 dark:bg-white/[0.03] backdrop-blur-2xl border border-white/70 dark:border-white/[0.06]">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Starter</h3>
-              <p className="text-gray-500 dark:text-gray-400 mt-2 text-sm">Perfect for small businesses</p>
-              <div className="mt-6">
-                <span className="text-4xl font-bold text-gray-900 dark:text-white">$149</span>
-                <span className="text-gray-500 dark:text-gray-400">/month</span>
-              </div>
-              <ul className="mt-8 space-y-4">
-                {['Up to 5 pages', 'Mobile responsive', 'Contact form', 'Basic SEO setup', 'SSL certificate', 'Monthly updates'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-                    <svg className="w-5 h-5 text-[#7B6AD8] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="block mt-8">
-                <Button className="w-full rounded-xl bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/15 text-gray-900 dark:text-white border-0">
-                  Get Started
-                </Button>
-              </a>
+          {/* Beta Banner */}
+          <div className="max-w-2xl mx-auto mb-10 p-4 rounded-2xl bg-gradient-to-r from-[#A55AAC]/10 to-[#4D5DD9]/10 dark:from-[#A55AAC]/20 dark:to-[#4D5DD9]/20 border border-[#A55AAC]/20 dark:border-[#A55AAC]/30">
+            <div className="flex items-center justify-center gap-3">
+              <span className="px-3 py-1 rounded-full bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] text-white text-xs font-bold uppercase">Beta</span>
+              <p className="text-gray-700 dark:text-gray-300 font-medium">
+                Early adopters get <span className="text-[#A55AAC] font-bold">50% off</span> — limited time only!
+              </p>
             </div>
+          </div>
 
-            {/* Professional - Featured */}
+          {/* Single Pricing Card */}
+          <div className="max-w-xl mx-auto">
             <div className="relative p-[1px] rounded-3xl bg-gradient-to-br from-[#A55AAC] via-[#7B6AD8] to-[#4D5DD9]">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] rounded-full text-white text-sm font-medium">
-                Most Popular
-              </div>
-              <div className="h-full p-8 rounded-3xl bg-white dark:bg-[hsl(240,8%,10%)]">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Professional</h3>
-                <p className="text-gray-500 dark:text-gray-400 mt-2 text-sm">For growing businesses</p>
-                <div className="mt-6">
-                  <span className="text-4xl font-bold text-gray-900 dark:text-white">$299</span>
-                  <span className="text-gray-500 dark:text-gray-400">/month</span>
+              <div className="h-full p-8 md:p-10 rounded-3xl bg-white dark:bg-[hsl(240,8%,10%)]">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Launch Plan</h3>
+                <p className="text-gray-500 dark:text-gray-400 mt-2">Everything you need to get online</p>
+                
+                {/* Pricing */}
+                <div className="mt-8 flex flex-col sm:flex-row sm:items-end gap-6">
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">One-time setup</p>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-bold text-gray-900 dark:text-white">€99.50</span>
+                      <span className="text-lg text-gray-400 line-through">€199</span>
+                    </div>
+                  </div>
+                  <div className="sm:border-l sm:border-gray-200 dark:sm:border-white/10 sm:pl-6">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Then monthly</p>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-bold text-gray-900 dark:text-white">€9.50</span>
+                      <span className="text-lg text-gray-400 line-through">€19</span>
+                      <span className="text-gray-500 dark:text-gray-400">/mo</span>
+                    </div>
+                  </div>
                 </div>
-                <ul className="mt-8 space-y-4">
-                  {['Up to 15 pages', 'Everything in Starter', 'Blog functionality', 'Advanced SEO', 'Analytics dashboard', 'Priority support', 'Weekly updates'].map((item, i) => (
-                    <li key={i} className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-                      <svg className="w-5 h-5 text-[#7B6AD8] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="block mt-8">
-                  <Button className="w-full rounded-xl bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] hover:opacity-90 text-white border-0 shadow-lg shadow-purple-500/25">
-                    Get Started
+
+                <p className="mt-4 text-sm text-[#7B6AD8] font-medium">
+                  ✨ First month FREE — billing starts month 2
+                </p>
+
+                <div className="my-8 h-px bg-gray-200 dark:bg-white/10" />
+
+                {/* What's included in setup */}
+                <div className="mb-8">
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-4">What&apos;s included in setup</h4>
+                  <ul className="space-y-3">
+                    {[
+                      'Personal discovery call (30-45 min)',
+                      'We build your site from premium templates',
+                      'Domain configuration',
+                      'Professional email (2 mailboxes)',
+                      'Hosting setup on global CDN',
+                      'Your site goes live — fully turnkey',
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-400">
+                        <svg className="w-5 h-5 text-[#7B6AD8] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* What's included monthly */}
+                <div className="mb-8">
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-4">What&apos;s included monthly</h4>
+                  <ul className="space-y-3">
+                    {[
+                      'Fast, secure hosting (SSL included)',
+                      'Professional email (2 mailboxes)',
+                      'Cloud storage (1GB)',
+                      'Update content, pages, branding anytime',
+                      'Ongoing platform access and updates',
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-400">
+                        <svg className="w-5 h-5 text-[#7B6AD8] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="block">
+                  <Button size="lg" className="w-full rounded-xl bg-gradient-to-r from-[#A55AAC] to-[#4D5DD9] hover:opacity-90 text-white border-0 shadow-lg shadow-purple-500/25 h-14 text-lg">
+                    Get Started — €99.50 during beta
                   </Button>
                 </a>
-              </div>
-            </div>
 
-            {/* Enterprise */}
-            <div className="p-8 rounded-3xl bg-white/60 dark:bg-white/[0.03] backdrop-blur-2xl border border-white/70 dark:border-white/[0.06]">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Enterprise</h3>
-              <p className="text-gray-500 dark:text-gray-400 mt-2 text-sm">For established companies</p>
-              <div className="mt-6">
-                <span className="text-4xl font-bold text-gray-900 dark:text-white">$499</span>
-                <span className="text-gray-500 dark:text-gray-400">/month</span>
+                <p className="mt-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                  No lock-in. Cancel anytime.
+                </p>
               </div>
-              <ul className="mt-8 space-y-4">
-                {['Unlimited pages', 'Everything in Professional', 'E-commerce ready', 'Custom integrations', 'Dedicated account manager', 'Same-day updates', '99.9% uptime SLA'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-                    <svg className="w-5 h-5 text-[#7B6AD8] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="block mt-8">
-                <Button className="w-full rounded-xl bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/15 text-gray-900 dark:text-white border-0">
-                  Get Started
-                </Button>
-              </a>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* FAQ-style note */}
-          <div className="mt-16 text-center">
-            <p className="text-gray-500 dark:text-gray-400">
-              <span className="font-semibold text-gray-900 dark:text-white">No setup fees.</span> No contracts. Cancel anytime.
-            </p>
+      {/* FAQ */}
+      <section className="relative py-24 md:py-32">
+        <div className="max-w-3xl mx-auto px-6">
+          <div className="mb-12 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+              Frequently asked questions
+            </h2>
+          </div>
+
+          <div className="space-y-6">
+            {[
+              {
+                q: 'What happens on the discovery call?',
+                a: 'We learn about your business, your goals, your brand, and what you need from your website. This takes about 30-45 minutes. We handle everything from there.',
+              },
+              {
+                q: 'How long until my site is live?',
+                a: 'Most sites are live within 3-5 business days after the discovery call.',
+              },
+              {
+                q: 'Can I make changes after the site is built?',
+                a: 'Absolutely. Your subscription includes easy customization tools. Update content, add pages, tweak your branding — all without touching code.',
+              },
+              {
+                q: 'What happens when the beta ends?',
+                a: 'Your price will move to the standard rate (€199 setup / €19 per month). You\'ll get 30 days notice before any price change.',
+              },
+              {
+                q: 'Do I need any technical skills?',
+                a: 'None. We handle the technical setup. The customization tools are designed for non-technical users.',
+              },
+            ].map((item, i) => (
+              <div key={i} className="p-6 rounded-2xl bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl border border-white/70 dark:border-white/[0.06]">
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{item.q}</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">{item.a}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

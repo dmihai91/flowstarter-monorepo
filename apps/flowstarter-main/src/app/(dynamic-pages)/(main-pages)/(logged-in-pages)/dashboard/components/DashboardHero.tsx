@@ -1,69 +1,36 @@
 'use client';
 
-import { FlowstarterAssistant } from '@/app/(dynamic-pages)/(main-pages)/components/FlowstarterAssistant';
-import { useIsTeamMember } from '@/hooks/useIsTeamMember';
 import { useTranslations } from '@/lib/i18n';
-import { CalendarDays, Layers, PlusCircle } from 'lucide-react';
 import React from 'react';
-import ActionCard from './ActionCard';
-import { ActionCardWithDropdown } from './ActionCardWithDropdown';
 import { PageSectionHeader } from './PageSectionHeader';
+
+// Feature flag - set to true to show create/edit features
+const SHOW_CREATE_FEATURES = false;
 
 export function DashboardHero({ children }: { children?: React.ReactNode }) {
   const { t } = useTranslations();
-  const { isTeamMember } = useIsTeamMember();
 
   return (
     <section className="relative">
       <div className="relative z-10">
-        {/* Dashboard Title - Top */}
-        <PageSectionHeader
-          title={t('dashboard.badge.dashboard')}
-          className="mb-4"
-        />
+        {/* Dashboard Title with gradient accent */}
+        <div className="mb-8">
+          <h1 className="text-3xl lg:text-4xl font-bold tracking-tight">
+            <span className="text-gray-900 dark:text-white">Welcome to your </span>
+            <span className="bg-gradient-to-r from-[#7C3AED] to-blue-500 bg-clip-text text-transparent">
+              Dashboard
+            </span>
+          </h1>
+          <p className="mt-2 text-gray-500 dark:text-white/50">
+            Manage your website and track performance
+          </p>
+        </div>
 
-        {/* Quick Mode Actions - Cards row (Team members only) */}
-        {isTeamMember && (
-          <div className="relative mb-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
-              <ActionCardWithDropdown
-                icon={PlusCircle}
-                title={t('dashboard.hero.actions.startNewProject.title')}
-                description={t(
-                  'dashboard.hero.actions.startNewProject.description'
-                )}
-                iconBg="bg-gradient-to-br from-[#7C3AED] to-blue-500"
-              />
-              <ActionCard
-                icon={Layers}
-                title={t('dashboard.hero.actions.chooseTemplate.title')}
-                description={t(
-                  'dashboard.hero.actions.chooseTemplate.description'
-                )}
-                href="/dashboard/new?path=gallery"
-                iconBg="bg-gradient-to-br from-emerald-500 to-cyan-500"
-              />
-              <ActionCard
-                icon={CalendarDays}
-                title={t('dashboard.hero.actions.exploreExamples.title')}
-                description={t(
-                  'dashboard.hero.actions.exploreExamples.description'
-                )}
-                href="/dashboard/examples"
-                iconBg="bg-gradient-to-br from-[#7C3AED] to-pink-500"
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Flowstarter Assistant - Below Action Cards (Team members only) */}
-        {isTeamMember && (
-          <div id="flowstarter-assistant" className="mb-10">
-            <FlowstarterAssistant
-              className="flex flex-col gap-4"
-              target="editor"
-            />
-          </div>
+        {/* Create features hidden - keeping code for later */}
+        {SHOW_CREATE_FEATURES && (
+          <>
+            {/* Action cards and assistant would go here */}
+          </>
         )}
 
         {/* Dashboard Sections - Stats and Projects */}

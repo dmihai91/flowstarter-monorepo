@@ -9,24 +9,14 @@ import { cn } from '@/lib/utils';
 import React from 'react';
 
 interface PageContainerProps extends React.PropsWithChildren {
-  /**
-   * Gradient variant to use for the background
-   * 'dashboard' | 'integrations' | 'help' | 'wizard' | 'landing'
-   */
   gradientVariant?: GradientVariant;
-  /**
-   * Custom className for the outer container
-   */
   className?: string;
-  /**
-   * Custom className for the content container (MaxWidthContainer)
-   */
   contentClassName?: string;
 }
 
 export function PageContainer({
   children,
-  gradientVariant = 'dashboard',
+  gradientVariant = 'landing',
   className,
   contentClassName,
 }: PageContainerProps) {
@@ -36,10 +26,10 @@ export function PageContainer({
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
       `}</style>
       <div className={cn('min-h-screen relative font-[Outfit,system-ui,sans-serif]', className)}>
-        {/* Background gradient - layered radial */}
+        {/* Gradient background with flow lines */}
         <GradientBackground variant={gradientVariant} className="fixed" />
         <MaxWidthContainer
-          className={cn('p-4 sm:p-6 lg:p-8 mt-4', contentClassName)}
+          className={cn('p-4 sm:p-6 lg:p-8 pt-6', contentClassName)}
         >
           {children}
         </MaxWidthContainer>

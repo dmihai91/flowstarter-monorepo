@@ -11,29 +11,32 @@ interface GlassCardProps {
   href?: string;
   as?: 'div' | 'button' | 'link';
   style?: React.CSSProperties;
+  variant?: 'default' | 'elevated';
 }
 
 export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
-  ({ children, className, onClick, href, as = 'div', style }, ref) => {
+  ({ children, className, onClick, href, as = 'div', style, variant = 'default' }, ref) => {
     const baseClasses = cn(
       // Base structure
       'group relative overflow-hidden rounded-2xl',
-      'px-5 py-4 sm:px-6 sm:py-5',
+      'px-6 py-5',
       // Glassmorphism effect
-      'bg-white/70 dark:bg-white/[0.04]',
+      variant === 'elevated' 
+        ? 'bg-white/80 dark:bg-white/[0.06]'
+        : 'bg-white/60 dark:bg-white/[0.03]',
       'backdrop-blur-xl backdrop-saturate-150',
-      'border border-white/60 dark:border-white/10',
-      // Shadow - refined
-      'shadow-[0_4px_24px_rgba(0,0,0,0.04)]',
-      'dark:shadow-[0_4px_24px_rgba(0,0,0,0.2)]',
+      'border border-white/80 dark:border-white/10',
+      // Shadow
+      variant === 'elevated'
+        ? 'shadow-[0_8px_32px_rgba(124,58,237,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)]'
+        : 'shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.2)]',
       // Hover effects
       'transition-all duration-300 ease-out',
-      'hover:-translate-y-1',
-      'hover:shadow-[0_12px_40px_rgba(124,58,237,0.08)]',
-      'dark:hover:shadow-[0_12px_40px_rgba(124,58,237,0.15)]',
+      'hover:-translate-y-0.5',
+      'hover:shadow-[0_12px_40px_rgba(124,58,237,0.1)] dark:hover:shadow-[0_12px_40px_rgba(124,58,237,0.15)]',
       'hover:border-[#7C3AED]/20 dark:hover:border-[#7C3AED]/30',
       // Active state
-      'active:scale-[0.98]',
+      'active:scale-[0.99]',
       // Flex layout
       'flex flex-col'
     );
@@ -45,6 +48,8 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
         onClick={onClick}
         style={style}
       >
+        {/* Subtle gradient overlay on hover */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#7C3AED]/0 to-blue-500/0 group-hover:from-[#7C3AED]/[0.02] group-hover:to-blue-500/[0.02] transition-all duration-300 rounded-2xl" />
         <div className="relative z-10 flex flex-col gap-[inherit] h-full">
           {children}
         </div>

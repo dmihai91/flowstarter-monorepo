@@ -118,12 +118,12 @@ export function TemplatesSection() {
       <div className="absolute inset-0 backdrop-blur-xl bg-[rgba(243,243,243,0.3)] dark:bg-[rgba(58,58,74,0.3)]" />
       <div className="absolute inset-0 border-t border-b border-white/40 dark:border-white/10" />
       {/* Subtle gradient overlay for distinction */}
-      <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/5 via-purple-500/3 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[var(--purple)]/5 via-[var(--purple)]/3 to-transparent pointer-events-none" />
       {/* Animated gradient orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 right-1/3 w-96 h-96 rounded-full bg-gradient-to-br from-indigo-400/10 to-purple-400/10 dark:from-indigo-600/5 dark:to-purple-600/5 blur-3xl animate-pulse" />
+        <div className="absolute top-1/4 right-1/3 w-96 h-96 rounded-full bg-gradient-to-br from-[var(--purple)]/10 to-[var(--purple)]/40/10 dark:from-[var(--purple)]/5 dark:to-[var(--purple)]/5 blur-3xl animate-pulse" />
         <div
-          className="absolute bottom-1/4 left-1/3 w-96 h-96 rounded-full bg-gradient-to-br from-purple-400/10 to-pink-400/10 dark:from-purple-600/5 dark:to-pink-600/5 blur-3xl animate-pulse"
+          className="absolute bottom-1/4 left-1/3 w-96 h-96 rounded-full bg-gradient-to-br from-[var(--purple)]/40/10 to-pink-400/10 dark:from-[var(--purple)]/5 dark:to-pink-600/5 blur-3xl animate-pulse"
           style={{ animationDelay: '2.5s', animationDuration: '4s' }}
         />
       </div>
@@ -159,7 +159,7 @@ export function TemplatesSection() {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-800">
-                        <div className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
+                        <div className="w-8 h-8 border-4 border-[var(--purple)] border-t-transparent rounded-full animate-spin" />
                       </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -179,7 +179,7 @@ export function TemplatesSection() {
             {templateCategories.map((category, idx) => (
               <div
                 key={category.title}
-                className="group flex flex-col space-y-4 rounded-[16px] p-6 transition-all duration-300 hover:scale-105 hover:-translate-y-1 active:scale-[0.98] backdrop-blur-xl border border-white dark:border-white/40 hover:border-indigo-400/50 dark:hover:border-indigo-400/30 text-left cursor-pointer bg-[rgba(243,243,243,0.3)] dark:bg-[rgba(58,58,74,0.3)] shadow-lg hover:shadow-xl"
+                className="group flex flex-col space-y-4 rounded-[16px] p-6 transition-all duration-300 hover:scale-105 hover:-translate-y-1 active:scale-[0.98] backdrop-blur-xl border border-white dark:border-white/40 hover:border-[var(--purple)]/50 dark:hover:border-[var(--purple)]/30 text-left cursor-pointer bg-[rgba(243,243,243,0.3)] dark:bg-[rgba(58,58,74,0.3)] shadow-lg hover:shadow-xl"
                 style={{
                   transitionDelay: `${idx * 50}ms`,
                 }}
@@ -194,7 +194,7 @@ export function TemplatesSection() {
                     {category.icon}
                   </div>
                 </div>
-                <h3 className="text-xl font-bold transition-colors group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                <h3 className="text-xl font-bold transition-colors group-hover:text-[var(--purple)] dark:group-hover:text-[var(--purple)]">
                   {category.title}
                 </h3>
                 <p className="text-muted-foreground">{category.description}</p>

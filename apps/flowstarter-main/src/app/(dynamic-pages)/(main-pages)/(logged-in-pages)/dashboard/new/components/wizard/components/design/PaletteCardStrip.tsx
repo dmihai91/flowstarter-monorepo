@@ -65,7 +65,7 @@ export function PaletteCardStrip({
                     'inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold shadow-md',
                     palette.badge === 'Original'
                       ? 'bg-primary text-primary-foreground'
-                      : 'bg-violet-500 text-white'
+                      : 'bg-[var(--purple)] text-white'
                   )}
                 >
                   {palette.badge}

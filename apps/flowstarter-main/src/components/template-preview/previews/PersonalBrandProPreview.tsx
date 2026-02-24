@@ -34,7 +34,7 @@ export default function PersonalBrandProPreview() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700">
+      <div className="bg-gradient-to-br from-blue-600 via-[var(--purple)] to-[var(--purple)]">
         <nav className="relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
@@ -205,7 +205,7 @@ export default function PersonalBrandProPreview() {
                 icon: Clock,
                 value: '10+',
                 label: 'Years Experience',
-                color: 'from-purple-600 to-pink-500',
+                color: 'from-[var(--purple)] to-pink-500',
               },
             ].map((stat, i) => (
               <motion.div
@@ -368,7 +368,7 @@ export default function PersonalBrandProPreview() {
                 title: 'Team Development',
                 description:
                   'Build high-performing teams with leadership training and organizational development programs.',
-                color: 'from-purple-600 to-pink-500',
+                color: 'from-[var(--purple)] to-pink-500',
               },
             ].map((service, i) => (
               <motion.div
@@ -456,7 +456,7 @@ export default function PersonalBrandProPreview() {
                   "{testimonial.quote}"
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full"></div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-[var(--purple)] rounded-full"></div>
                   <div>
                     <div className="font-semibold text-gray-900 dark:text-white">
                       {testimonial.name}
@@ -475,7 +475,7 @@ export default function PersonalBrandProPreview() {
       {/* Pricing Section */}
       <section
         id="pricing"
-        className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-950"
+        className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-[var(--purple)]/5 dark:from-gray-900 dark:to-gray-950"
       >
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -545,12 +545,12 @@ export default function PersonalBrandProPreview() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 className={`relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 p-8 ${
-                  plan.popular ? 'ring-2 ring-purple-500 scale-105' : ''
+                  plan.popular ? 'ring-2 ring-[var(--purple)] scale-105' : ''
                 }`}
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
+                    <span className="bg-gradient-to-r from-[var(--purple)] to-pink-600 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
                       Most Popular
                     </span>
                   </div>
@@ -585,7 +585,7 @@ export default function PersonalBrandProPreview() {
                   href="#contact"
                   className={`block w-full text-center px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
                     plan.popular
-                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5'
+                      ? 'bg-gradient-to-r from-[var(--purple)] to-pink-600 text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5'
                       : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600'
                   }`}
                 >
@@ -598,7 +598,7 @@ export default function PersonalBrandProPreview() {
       </section>
 
       {/* Newsletter */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-purple-600">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-[var(--purple)]">
         <div className="max-w-4xl mx-auto text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -759,7 +759,7 @@ export default function PersonalBrandProPreview() {
                   type="submit"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg bg-gradient-to-tl from-blue-500 to-violet-500 text-white hover:shadow-xl flex items-center justify-center"
+                  className="w-full px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg bg-gradient-to-tl from-blue-500 to-[var(--purple)] text-white hover:shadow-xl flex items-center justify-center"
                 >
                   <Send className="mr-2 h-5 w-5" />
                   Get in Touch

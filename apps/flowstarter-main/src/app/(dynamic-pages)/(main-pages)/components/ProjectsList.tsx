@@ -229,8 +229,8 @@ export const ProjectsList = ({
     return (
       <div className="rounded-2xl border border-gray-200/80 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl p-8 text-center">
         <div className="max-w-md mx-auto">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-[#7C3AED]/10 to-blue-500/10 dark:from-[#7C3AED]/20 dark:to-blue-500/20 border border-[#7C3AED]/20 mb-4">
-            <LayoutDashboard className="h-6 w-6 text-[#7C3AED]" />
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--purple)]/10 to-blue-500/10 dark:from-[var(--purple)]/20 dark:to-blue-500/20 border border-[var(--purple)]/20 mb-4">
+            <LayoutDashboard className="h-6 w-6 text-[var(--purple)]" />
           </div>
           <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">
             Your website will appear here
@@ -346,9 +346,9 @@ export const ProjectsList = ({
               return {
                 icon: LayoutDashboard,
                 bgGradient:
-                  'from-indigo-500/10 to-purple-500/10 dark:from-indigo-500/20 dark:to-purple-500/20',
-                borderColor: 'border-indigo-200/30 dark:border-indigo-500/20',
-                iconColor: 'text-indigo-600/70 dark:text-indigo-400/70',
+                  'from-[var(--purple)]/10 to-[var(--purple)]/10 dark:from-[var(--purple)]/20 dark:to-[var(--purple)]/20',
+                borderColor: 'border-[var(--purple)]/30 dark:border-[var(--purple)]/20',
+                iconColor: 'text-[var(--purple)]/70 dark:text-[var(--purple)]/70',
               };
             };
 
@@ -364,7 +364,7 @@ export const ProjectsList = ({
                 className={cn(
                   'group relative h-full min-h-[180px] flex flex-col',
                   isHighlighted &&
-                    'ring-2 ring-indigo-500/50 dark:ring-violet-500/50 animate-pulse'
+                    'ring-2 ring-[var(--purple)]/50 dark:ring-[var(--purple)]/50 animate-pulse'
                 )}
               >
                 <div className="relative z-10 flex flex-col gap-4 flex-1">

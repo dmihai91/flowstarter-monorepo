@@ -9,7 +9,7 @@ const Footer = () => {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           {/* Logo + Copyright */}
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#7C3AED] to-blue-500 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center">
               <span className="text-white font-bold text-xs">F</span>
             </div>
             <span className="text-sm text-gray-400 dark:text-white/30">© 2026 Flowstarter</span>

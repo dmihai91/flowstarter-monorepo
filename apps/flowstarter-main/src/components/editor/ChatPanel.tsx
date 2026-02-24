@@ -82,7 +82,7 @@ export function ChatPanel({
         }}
       >
         <div className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/2">
-          <div className="bg-white dark:bg-gray-700 group-hover:bg-[var(--purple)] rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg border border-gray-200 dark:border-gray-600 group-hover:border-[var(--purple)] group-hover:shadow-purple-500/50">
+          <div className="bg-white dark:bg-gray-700 group-hover:bg-[var(--purple)] rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg border border-gray-200 dark:border-gray-600 group-hover:border-[var(--purple)] group-hover:shadow-[var(--purple)]/50">
             <GripVertical className="h-4 w-4 text-gray-500 dark:text-gray-300 group-hover:text-white transition-colors" />
           </div>
         </div>

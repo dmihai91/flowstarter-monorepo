@@ -168,7 +168,7 @@ export default function HelpPage() {
                 href={CALENDLY_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--purple)] to-[#6D28D9] text-white font-semibold shadow-lg shadow-[var(--purple)]/25 hover:shadow-xl hover:shadow-[var(--purple)]/30 transition-all duration-300 hover:scale-[1.02]"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--purple)] to-[var(--purple)] text-white font-semibold shadow-lg shadow-[var(--purple)]/25 hover:shadow-xl hover:shadow-[var(--purple)]/30 transition-all duration-300 hover:scale-[1.02]"
               >
                 <Calendar className="w-4 h-4" />
                 Book Free Call

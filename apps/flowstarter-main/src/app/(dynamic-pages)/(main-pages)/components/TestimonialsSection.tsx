@@ -36,12 +36,12 @@ export function TestimonialsSection() {
       <div className="absolute inset-0 backdrop-blur-xl bg-[rgba(243,243,243,0.3)] dark:bg-[rgba(58,58,74,0.3)]" />
       <div className="absolute inset-0 border-t border-b border-white/40 dark:border-white/10" />
       {/* Subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-purple-500/5 via-blue-500/3 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[var(--purple)]/5 via-blue-500/3 to-transparent pointer-events-none" />
       {/* Animated gradient orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-purple-400/10 to-blue-400/10 dark:from-purple-600/5 dark:to-blue-600/5 blur-3xl animate-pulse" />
+        <div className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-[var(--purple)]/40/10 to-blue-400/10 dark:from-[var(--purple)]/5 dark:to-blue-600/5 blur-3xl animate-pulse" />
         <div
-          className="absolute bottom-1/3 right-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-blue-400/10 to-indigo-400/10 dark:from-blue-600/5 dark:to-indigo-600/5 blur-3xl animate-pulse"
+          className="absolute bottom-1/3 right-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-blue-400/10 to-[var(--purple)]/10 dark:from-blue-600/5 dark:to-[var(--purple)]/5 blur-3xl animate-pulse"
           style={{ animationDelay: '1.5s', animationDuration: '4s' }}
         />
       </div>

@@ -26,13 +26,13 @@ export function CTASection() {
 
       {/* Subtle animated gradient orbs - more refined for dark mode */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-gradient-to-br from-blue-400/20 to-purple-400/20 dark:from-blue-500/10 dark:to-purple-500/10 blur-3xl animate-pulse" />
+        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-gradient-to-br from-blue-400/20 to-[var(--purple)]/40/20 dark:from-blue-500/10 dark:to-[var(--purple)]/10 blur-3xl animate-pulse" />
         <div
-          className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-gradient-to-br from-purple-400/20 to-pink-400/20 dark:from-purple-500/10 dark:to-pink-500/10 blur-3xl animate-pulse"
+          className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-gradient-to-br from-[var(--purple)]/40/20 to-pink-400/20 dark:from-[var(--purple)]/10 dark:to-pink-500/10 blur-3xl animate-pulse"
           style={{ animationDelay: '1.5s', animationDuration: '4s' }}
         />
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-indigo-300/15 to-purple-300/15 dark:from-indigo-400/8 dark:to-purple-400/8 blur-3xl animate-pulse"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[var(--purple)]/15 to-[var(--blue)]/15 dark:from-[var(--purple)]/10 dark:to-[var(--blue)]/10 blur-3xl animate-pulse"
           style={{ animationDelay: '0.75s', animationDuration: '5s' }}
         />
       </div>

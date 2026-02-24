@@ -15,9 +15,9 @@ import {
 
 export default function SaasProductLaunch1Preview() {
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-gray-50 to-zinc-50 dark:from-violet-900 dark:via-purple-900 dark:to-fuchsia-900">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-gray-50 to-zinc-50 dark:from-[var(--purple)] dark:via-[var(--purple)] dark:to-fuchsia-900">
       {/* Navigation */}
-      <nav className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-violet-200 dark:border-violet-700 sticky top-0 z-50">
+      <nav className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-[var(--purple)]/20 dark:border-[var(--purple)] sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="text-2xl font-bold bg-linear-to-r from-slate-700 to-slate-800 bg-clip-text text-transparent">
@@ -49,7 +49,7 @@ export default function SaasProductLaunch1Preview() {
                 Contact
               </a>
             </div>
-            <button className="bg-linear-to-r from-violet-500 to-purple-500 text-white px-6 py-2 rounded-full [@media(hover:hover)]:hover:from-violet-600 [@media(hover:hover)]:hover:to-purple-600 transition-all">
+            <button className="bg-linear-to-r from-[var(--purple)] to-[var(--purple)] text-white px-6 py-2 rounded-full [@media(hover:hover)]:hover:from-[var(--purple)] [@media(hover:hover)]:hover:to-[var(--purple)] transition-all">
               Join Waitlist
             </button>
           </div>
@@ -58,10 +58,10 @@ export default function SaasProductLaunch1Preview() {
 
       {/* Hero Section */}
       <section className="relative py-20 lg:py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-r from-violet-400/20 to-purple-400/20"></div>
+        <div className="absolute inset-0 bg-linear-to-r from-[var(--purple)]/20 to-[var(--purple)]/40/20"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center space-y-6">
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-violet-100 dark:bg-violet-900/50 text-violet-700 dark:text-violet-300 text-sm font-medium">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-[var(--purple)]/10 dark:bg-[var(--purple)]/50 text-[var(--purple)] dark:text-[var(--purple)] text-sm font-medium">
               <Rocket className="w-4 h-4 mr-2" />
               Launching Soon
             </div>
@@ -77,11 +77,11 @@ export default function SaasProductLaunch1Preview() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="inline-flex items-center px-8 py-4 bg-linear-to-r from-slate-700 to-slate-800 text-white font-semibold rounded-full [@media(hover:hover)]:hover:from-violet-700 [@media(hover:hover)]:hover:to-purple-700 transition-all transform [@media(hover:hover)]:hover:scale-105 shadow-lg">
+              <button className="inline-flex items-center px-8 py-4 bg-linear-to-r from-slate-700 to-slate-800 text-white font-semibold rounded-full [@media(hover:hover)]:hover:from-[var(--purple)] [@media(hover:hover)]:hover:to-[var(--purple)] transition-all transform [@media(hover:hover)]:hover:scale-105 shadow-lg">
                 Get Early Access
                 <ArrowRight className="ml-2 w-5 h-5" />
               </button>
-              <button className="inline-flex items-center px-8 py-4 border-2 border-violet-300 dark:border-violet-600 text-violet-700 dark:text-violet-300 font-semibold rounded-full [@media(hover:hover)]:hover:bg-violet-50 dark:[@media(hover:hover)]:hover:bg-violet-900/50 transition-all">
+              <button className="inline-flex items-center px-8 py-4 border-2 border-[var(--purple)]/30 dark:border-[var(--purple)] text-[var(--purple)] dark:text-[var(--purple)] font-semibold rounded-full [@media(hover:hover)]:hover:bg-[var(--purple)]/5 dark:[@media(hover:hover)]:hover:bg-[var(--purple)]/50 transition-all">
                 <Play className="mr-2 w-5 h-5" />
                 Watch Demo
               </button>
@@ -109,7 +109,7 @@ export default function SaasProductLaunch1Preview() {
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star
                       key={star}
-                      className="w-4 h-4 fill-violet-400 text-violet-400"
+                      className="w-4 h-4 fill-[var(--purple)]/40 text-[var(--purple)]"
                     />
                   ))}
                 </div>
@@ -169,9 +169,9 @@ export default function SaasProductLaunch1Preview() {
             ].map((feature, index) => (
               <div
                 key={index}
-                className="group bg-linear-to-br from-violet-50 to-purple-50 dark:from-violet-900/30 dark:to-purple-900/30 rounded-2xl p-6 [@media(hover:hover)]:hover:shadow-xl transition-all"
+                className="group bg-linear-to-br from-[var(--purple)]/5 to-[var(--purple)]/5 dark:from-[var(--purple)]/30 dark:to-[var(--purple)]/30 rounded-2xl p-6 [@media(hover:hover)]:hover:shadow-xl transition-all"
               >
-                <div className="w-12 h-12 bg-linear-to-r from-violet-500 to-purple-500 rounded-xl flex items-center justify-center mb-6">
+                <div className="w-12 h-12 bg-linear-to-r from-[var(--purple)] to-[var(--purple)] rounded-xl flex items-center justify-center mb-6">
                   <feature.icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
@@ -189,7 +189,7 @@ export default function SaasProductLaunch1Preview() {
       {/* Pricing Section */}
       <section
         id="pricing"
-        className="py-20 bg-linear-to-r from-violet-50 to-purple-50 dark:from-violet-900/50 dark:to-purple-900/50"
+        className="py-20 bg-linear-to-r from-[var(--purple)]/5 to-[var(--purple)]/5 dark:from-[var(--purple)]/50 dark:to-[var(--purple)]/50"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -233,12 +233,12 @@ export default function SaasProductLaunch1Preview() {
               <div
                 key={index}
                 className={`bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-xl ${
-                  plan.popular ? 'ring-2 ring-violet-500' : ''
+                  plan.popular ? 'ring-2 ring-[var(--purple)]/50' : ''
                 }`}
               >
                 {plan.popular && (
                   <div className="text-center mb-4">
-                    <span className="bg-violet-500 text-white px-3 py-1 rounded-full text-sm">
+                    <span className="bg-[var(--purple)] text-white px-3 py-1 rounded-full text-sm">
                       Most Popular
                     </span>
                   </div>
@@ -265,8 +265,8 @@ export default function SaasProductLaunch1Preview() {
                 <button
                   className={`w-full py-3 rounded-xl font-semibold transition-all ${
                     plan.popular
-                      ? 'bg-violet-500 text-white [@media(hover:hover)]:hover:bg-(--purple)'
-                      : 'border border-violet-300 text-slate-700 [@media(hover:hover)]:hover:bg-violet-50'
+                      ? 'bg-[var(--purple)] text-white [@media(hover:hover)]:hover:bg-(--purple)'
+                      : 'border border-[var(--purple)]/30 text-slate-700 [@media(hover:hover)]:hover:bg-[var(--purple)]/5'
                   }`}
                 >
                   Get Started
@@ -280,14 +280,14 @@ export default function SaasProductLaunch1Preview() {
       {/* Contact Section */}
       <section
         id="contact"
-        className="py-20 bg-linear-to-r from-violet-900 to-purple-900 text-white"
+        className="py-20 bg-linear-to-r from-[var(--purple)] to-[var(--purple)] text-white"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
               Ready to Transform Your Startup?
             </h2>
-            <p className="text-xl text-violet-100 max-w-2xl mx-auto">
+            <p className="text-xl text-[var(--purple)] max-w-2xl mx-auto">
               Join thousands of startups already using our platform
             </p>
           </div>
@@ -298,7 +298,7 @@ export default function SaasProductLaunch1Preview() {
                 <Mail className="w-6 h-6" />
                 <div>
                   <div className="font-semibold">Email</div>
-                  <div className="text-violet-200">hello@example.com</div>
+                  <div className="text-[var(--purple)]">hello@example.com</div>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -328,27 +328,27 @@ export default function SaasProductLaunch1Preview() {
                 <input
                   type="text"
                   placeholder="Your Name"
-                  className="w-full px-4 py-3 bg-white/10 border border-white/40 rounded-xl text-white placeholder-violet-200 focus:outline-none focus:border-white/40"
+                  className="w-full px-4 py-3 bg-white/10 border border-white/40 rounded-xl text-white placeholder-[var(--purple)]/20 focus:outline-none focus:border-white/40"
                 />
                 <input
                   type="email"
                   placeholder="Your Email"
-                  className="w-full px-4 py-3 bg-white/10 border border-white/40 rounded-xl text-white placeholder-violet-200 focus:outline-none focus:border-white/40"
+                  className="w-full px-4 py-3 bg-white/10 border border-white/40 rounded-xl text-white placeholder-[var(--purple)]/20 focus:outline-none focus:border-white/40"
                 />
               </div>
               <input
                 type="text"
                 placeholder="Company"
-                className="w-full px-4 py-3 bg-white/10 border border-white/40 rounded-xl text-white placeholder-violet-200 focus:outline-none focus:border-white/40"
+                className="w-full px-4 py-3 bg-white/10 border border-white/40 rounded-xl text-white placeholder-[var(--purple)]/20 focus:outline-none focus:border-white/40"
               />
               <textarea
                 placeholder="Tell us about your startup..."
                 rows={4}
-                className="w-full px-4 py-3 bg-white/10 border border-white/40 rounded-xl text-white placeholder-violet-200 focus:outline-none focus:border-white/40"
+                className="w-full px-4 py-3 bg-white/10 border border-white/40 rounded-xl text-white placeholder-[var(--purple)]/20 focus:outline-none focus:border-white/40"
               ></textarea>
               <button
                 type="submit"
-                className="w-full px-8 py-4 bg-white text-violet-900 font-semibold rounded-xl [@media(hover:hover)]:hover:bg-violet-50 transition-colors flex items-center justify-center gap-2"
+                className="w-full px-8 py-4 bg-white text-[var(--purple)] font-semibold rounded-xl [@media(hover:hover)]:hover:bg-[var(--purple)]/5 transition-colors flex items-center justify-center gap-2"
               >
                 Join the Revolution
                 <Send className="w-5 h-5" />
@@ -362,7 +362,7 @@ export default function SaasProductLaunch1Preview() {
       <footer className="bg-slate-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="text-2xl font-bold bg-linear-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent mb-4">
+            <div className="text-2xl font-bold bg-linear-to-r from-[var(--purple)]/40 to-[var(--purple)]/40 bg-clip-text text-transparent mb-4">
               saas-product-launch-1
             </div>
             <p className="text-slate-400 mb-6">

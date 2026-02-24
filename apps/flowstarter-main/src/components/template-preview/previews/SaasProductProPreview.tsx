@@ -43,7 +43,7 @@ export default function SaasProductProPreview() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-700">
+      <div className="bg-gradient-to-br from-blue-600 via-[var(--purple)] to-[var(--purple)]">
         <nav className="relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
@@ -150,7 +150,7 @@ export default function SaasProductProPreview() {
                 href="#contact"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-lg bg-white text-indigo-600 hover:shadow-xl flex items-center justify-center"
+                className="px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-lg bg-white text-[var(--purple)] hover:shadow-xl flex items-center justify-center"
               >
                 Start Free Trial
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -217,7 +217,7 @@ export default function SaasProductProPreview() {
                 icon: Zap,
                 value: '50ms',
                 label: 'Avg Response',
-                color: 'from-violet-500 to-violet-600',
+                color: 'from-[var(--purple)] to-[var(--purple)]',
               },
               {
                 icon: Shield,
@@ -251,7 +251,7 @@ export default function SaasProductProPreview() {
       >
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <div className="inline-block bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+            <div className="inline-block bg-[var(--purple)]/10 dark:bg-[var(--purple)]/30 text-[var(--purple)] dark:text-[var(--purple)] px-4 py-2 rounded-full text-sm font-semibold mb-4">
               Powerful Features
             </div>
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -284,7 +284,7 @@ export default function SaasProductProPreview() {
                 title: 'Developer First',
                 description:
                   'RESTful APIs, webhooks, SDKs for all major languages, and comprehensive documentation.',
-                color: 'from-violet-500 to-purple-500',
+                color: 'from-[var(--purple)] to-[var(--purple)]',
               },
               {
                 icon: BarChart3,
@@ -337,11 +337,11 @@ export default function SaasProductProPreview() {
       {/* How It Works */}
       <section
         id="how-it-works"
-        className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-gray-900 dark:to-gray-950"
+        className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[var(--purple)]/5 to-[var(--purple)]/5 dark:from-gray-900 dark:to-gray-950"
       >
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <div className="inline-block bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+            <div className="inline-block bg-[var(--purple)]/10 dark:bg-[var(--purple)]/30 text-[var(--purple)] dark:text-[var(--purple)] px-4 py-2 rounded-full text-sm font-semibold mb-4">
               How It Works
             </div>
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -382,7 +382,7 @@ export default function SaasProductProPreview() {
                 className="relative"
               >
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 relative z-10">
-                  <div className="text-6xl font-bold text-indigo-100 dark:text-indigo-900/50 mb-4">
+                  <div className="text-6xl font-bold text-[var(--purple)] dark:text-[var(--purple)]/50 mb-4">
                     {item.step}
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
@@ -394,7 +394,7 @@ export default function SaasProductProPreview() {
                 </div>
                 {i < 2 && (
                   <div className="hidden md:block absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 z-20">
-                    <ArrowRight className="h-8 w-8 text-indigo-300" />
+                    <ArrowRight className="h-8 w-8 text-[var(--purple)]" />
                   </div>
                 )}
               </motion.div>
@@ -456,7 +456,7 @@ export default function SaasProductProPreview() {
                   "{testimonial.quote}"
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-400 to-violet-500 rounded-full"></div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-[var(--purple)]/40 to-[var(--purple)] rounded-full"></div>
                   <div>
                     <div className="font-semibold text-gray-900 dark:text-white">
                       {testimonial.name}
@@ -524,11 +524,11 @@ export default function SaasProductProPreview() {
       {/* Pricing Section */}
       <section
         id="pricing"
-        className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-gray-900 dark:to-gray-950"
+        className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[var(--purple)]/5 to-[var(--purple)]/5 dark:from-gray-900 dark:to-gray-950"
       >
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <div className="inline-block bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+            <div className="inline-block bg-[var(--purple)]/10 dark:bg-[var(--purple)]/30 text-[var(--purple)] dark:text-[var(--purple)] px-4 py-2 rounded-full text-sm font-semibold mb-4">
               Pricing Plans
             </div>
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -593,12 +593,12 @@ export default function SaasProductProPreview() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 className={`relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 p-8 ${
-                  plan.popular ? 'ring-2 ring-indigo-500 scale-105' : ''
+                  plan.popular ? 'ring-2 ring-[var(--purple)]/50 scale-105' : ''
                 }`}
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
+                    <span className="bg-gradient-to-r from-[var(--purple)] to-[var(--purple)] text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
                       Most Popular
                     </span>
                   </div>
@@ -633,7 +633,7 @@ export default function SaasProductProPreview() {
                   href="#contact"
                   className={`block w-full text-center px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
                     plan.popular
-                      ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5'
+                      ? 'bg-gradient-to-r from-[var(--purple)] to-[var(--purple)] text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5'
                       : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600'
                   }`}
                 >
@@ -650,7 +650,7 @@ export default function SaasProductProPreview() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-indigo-600 to-violet-600">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-[var(--purple)] to-[var(--purple)]">
         <div className="max-w-4xl mx-auto text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -669,7 +669,7 @@ export default function SaasProductProPreview() {
               href="#contact"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-gray-100 transition-colors flex items-center justify-center gap-2"
+              className="px-8 py-4 bg-white text-[var(--purple)] rounded-xl font-semibold hover:bg-gray-100 transition-colors flex items-center justify-center gap-2"
             >
               <Rocket className="h-5 w-5" />
               Start Free Trial
@@ -694,7 +694,7 @@ export default function SaasProductProPreview() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-900">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <div className="inline-block bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+            <div className="inline-block bg-[var(--purple)]/10 dark:bg-[var(--purple)]/30 text-[var(--purple)] dark:text-[var(--purple)] px-4 py-2 rounded-full text-sm font-semibold mb-4">
               Frequently Asked Questions
             </div>
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white">
@@ -744,7 +744,7 @@ export default function SaasProductProPreview() {
                     icon: MapPin,
                     label: 'Location',
                     value: 'San Francisco, CA',
-                    color: 'from-violet-500 to-purple-500',
+                    color: 'from-[var(--purple)] to-[var(--purple)]',
                   },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-4">
@@ -776,7 +776,7 @@ export default function SaasProductProPreview() {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[var(--purple)]/50 focus:border-[var(--purple)]/50 outline-none transition-colors"
                       placeholder="Your name"
                     />
                   </div>
@@ -786,7 +786,7 @@ export default function SaasProductProPreview() {
                     </label>
                     <input
                       type="email"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[var(--purple)]/50 focus:border-[var(--purple)]/50 outline-none transition-colors"
                       placeholder="you@company.com"
                     />
                   </div>
@@ -797,7 +797,7 @@ export default function SaasProductProPreview() {
                   </label>
                   <input
                     type="text"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-colors"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[var(--purple)]/50 focus:border-[var(--purple)]/50 outline-none transition-colors"
                     placeholder="Your company"
                   />
                 </div>
@@ -807,7 +807,7 @@ export default function SaasProductProPreview() {
                   </label>
                   <textarea
                     rows={5}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-colors resize-none"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[var(--purple)]/50 focus:border-[var(--purple)]/50 outline-none transition-colors resize-none"
                     placeholder="Tell us about your project..."
                   ></textarea>
                 </div>
@@ -815,7 +815,7 @@ export default function SaasProductProPreview() {
                   type="submit"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg bg-gradient-to-tl from-indigo-500 to-violet-500 text-white hover:shadow-xl flex items-center justify-center"
+                  className="w-full px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg bg-gradient-to-tl from-[var(--purple)] to-[var(--purple)] text-white hover:shadow-xl flex items-center justify-center"
                 >
                   <Send className="mr-2 h-5 w-5" />
                   Send Message

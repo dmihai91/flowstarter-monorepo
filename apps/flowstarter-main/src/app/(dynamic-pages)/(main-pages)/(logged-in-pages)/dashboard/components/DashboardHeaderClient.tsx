@@ -38,7 +38,7 @@ export function DashboardHeaderClient() {
         </svg>
 
         {/* Subtle color auras */}
-        <div className="pointer-events-none absolute -top-16 -left-20 h-64 w-64 rounded-full bg-purple-500/10 blur-2xl" />
+        <div className="pointer-events-none absolute -top-16 -left-20 h-64 w-64 rounded-full bg-[var(--purple)]/10 blur-2xl" />
         <div className="pointer-events-none absolute -bottom-20 -right-16 h-64 w-64 rounded-full bg-blue-500/10 blur-2xl" />
 
         <div className="relative flex items-center justify-between">

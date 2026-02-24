@@ -38,7 +38,7 @@ export function DraftNotice({
         'max-w-lg w-full sm:w-auto mx-auto',
         'bg-blue-500/10 border-blue-500/20 text-blue-900 backdrop-blur-sm',
         'dark:bg-blue-500/10 dark:border-blue-400/20 dark:text-blue-100',
-        'before:absolute before:inset-0 before:bg-gradient-to-br before:from-blue-500/5 before:to-purple-500/5 before:pointer-events-none',
+        'before:absolute before:inset-0 before:bg-gradient-to-br before:from-blue-500/5 before:to-[var(--purple)]/5 before:pointer-events-none',
         'transition-[colors,box-shadow] motion-reduce:transition-none mt-3 md:w-full',
         className
       )}

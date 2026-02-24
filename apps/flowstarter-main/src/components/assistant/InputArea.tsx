@@ -112,7 +112,7 @@ export function InputArea({
             <button
               onClick={onInlineGenerate}
               disabled={inlineGenerateButtonDisabled || isGenerating}
-              className="px-3 py-2 sm:px-6 sm:py-2.5 rounded-lg bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white text-xs sm:text-sm font-medium shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 sm:gap-2 flex-shrink-0"
+              className="px-3 py-2 sm:px-6 sm:py-2.5 rounded-lg bg-linear-to-r from-[var(--purple)] to-[var(--purple)] hover:from-[var(--purple)] hover:to-[var(--purple)] text-white text-xs sm:text-sm font-medium shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 sm:gap-2 flex-shrink-0"
               type="button"
             >
               {isGenerating ? (

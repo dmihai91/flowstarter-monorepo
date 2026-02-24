@@ -100,7 +100,7 @@ export default function FooterCompact() {
               </a>
               <a
                 href="https://discord.gg/flowstarter"
-                className="w-7 h-7 bg-(--surface-1) rounded-full flex items-center justify-center [@media(hover:hover)]:hover:bg-purple-100 dark:[@media(hover:hover)]:hover:bg-purple-100 transition-colors"
+                className="w-7 h-7 bg-(--surface-1) rounded-full flex items-center justify-center [@media(hover:hover)]:hover:bg-[var(--purple)]/10 dark:[@media(hover:hover)]:hover:bg-[var(--purple)]/10 transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={t('footer.social.discordAria')}

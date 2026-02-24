@@ -34,7 +34,7 @@ export default function QuickChatCard() {
     <section className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-gradient-to-b from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-900/80 shadow-sm p-5 sm:p-6">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-start gap-3">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 dark:from-indigo-400 dark:to-purple-500 flex items-center justify-center shadow-sm">
+          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-[var(--purple)] to-[var(--purple)] dark:from-[var(--purple)]/40 dark:to-[var(--purple)] flex items-center justify-center shadow-sm">
             <MessageSquare className="h-4.5 w-4.5 text-white" />
           </div>
           <div>
@@ -46,7 +46,7 @@ export default function QuickChatCard() {
             </p>
           </div>
         </div>
-        <Badge className="bg-gradient-to-br from-indigo-500 to-purple-600 dark:from-indigo-400 dark:to-purple-500 text-white border-0 text-xs font-medium px-2.5 py-0.5">
+        <Badge className="bg-gradient-to-br from-[var(--purple)] to-[var(--purple)] dark:from-[var(--purple)]/40 dark:to-[var(--purple)] text-white border-0 text-xs font-medium px-2.5 py-0.5">
           <Wand2 className="h-3 w-3 mr-1" />
           AI powered
         </Badge>
@@ -54,7 +54,7 @@ export default function QuickChatCard() {
 
       <div className="rounded-2xl border border-gray-200/70 dark:border-gray-800 bg-white/60 dark:bg-gray-900/50 p-4">
         <div className="flex items-start gap-3">
-          <div className="mt-1 rounded-xl bg-indigo-500/10 p-2 text-indigo-500 dark:text-indigo-300">
+          <div className="mt-1 rounded-xl bg-[var(--purple)]/10 p-2 text-[var(--purple)] dark:text-[var(--purple)]">
             <Bot className="h-5 w-5" />
           </div>
           <div className="flex-1 min-w-0">
@@ -102,7 +102,7 @@ export default function QuickChatCard() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={t('dashboard.quickMode.placeholder')}
-          className="min-h-[120px] resize-none border-0 bg-white/80 dark:bg-gray-900/60 text-gray-900 dark:text-gray-100 focus-visible:ring-2 focus-visible:ring-indigo-500/60"
+          className="min-h-[120px] resize-none border-0 bg-white/80 dark:bg-gray-900/60 text-gray-900 dark:text-gray-100 focus-visible:ring-2 focus-visible:ring-[var(--purple)]/60"
         />
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 text-xs text-gray-600 dark:text-gray-300">

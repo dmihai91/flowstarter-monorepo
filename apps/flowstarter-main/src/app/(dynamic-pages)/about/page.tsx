@@ -39,7 +39,7 @@ export default function AboutPage() {
               </p>
               <ul className="space-y-4 mt-6">
                 <li className="flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/20 flex items-center justify-center">
+                  <span className="w-10 h-10 rounded-full bg-[var(--purple)]/10 dark:bg-[var(--purple)]/20 flex items-center justify-center">
                     <Target className="w-6 h-6 text-(--purple-primary)" />
                   </span>
                   <span className="text-muted-foreground">
@@ -58,7 +58,7 @@ export default function AboutPage() {
                   </span>
                 </li>
                 <li className="flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/20 flex items-center justify-center">
+                  <span className="w-10 h-10 rounded-full bg-[var(--purple)]/10 dark:bg-[var(--purple)]/20 flex items-center justify-center">
                     <Rocket className="w-6 h-6 text-pink-500" />
                   </span>
                   <span className="text-muted-foreground">
@@ -83,7 +83,7 @@ export default function AboutPage() {
         </section>
 
         {/* Values Section with Elevated Cards */}
-        <section className="py-16 bg-linear-to-br from-purple-100/40 via-transparent to-blue-100/40 dark:from-purple-900/20 dark:to-blue-900/20">
+        <section className="py-16 bg-linear-to-br from-[var(--purple)]/10/40 via-transparent to-blue-100/40 dark:from-[var(--purple)]/20 dark:to-blue-900/20">
           <div className="max-w-5xl mx-auto">
             <div className="flex flex-col items-center mb-10">
               <div className="w-2 h-8 bg-[--purple-primary] rounded-full mb-2" />

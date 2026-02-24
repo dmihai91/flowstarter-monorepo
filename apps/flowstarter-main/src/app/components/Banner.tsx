@@ -2,7 +2,7 @@ import React from 'react';
 
 const Banner: React.FC = () => {
   return (
-    <div className="bg-violet-500 text-white w-full py-4 text-center">
+    <div className="bg-[var(--purple)] text-white w-full py-4 text-center">
       <p>
         🎉 Ready to launch your business online?{' '}
         <a href="/dashboard/new" className="underline font-semibold">

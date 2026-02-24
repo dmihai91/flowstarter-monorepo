@@ -95,7 +95,7 @@ export default function PersonalBrand1Preview() {
                   <div className="flex -space-x-2">
                     <div className="w-8 h-8 bg-blue-500 rounded-full border-2 border-white dark:border-zinc-800"></div>
                     <div className="w-8 h-8 bg-green-500 rounded-full border-2 border-white dark:border-zinc-800"></div>
-                    <div className="w-8 h-8 bg-purple-500 rounded-full border-2 border-white dark:border-zinc-800"></div>
+                    <div className="w-8 h-8 bg-[var(--purple)] rounded-full border-2 border-white dark:border-zinc-800"></div>
                   </div>
                   <span className="text-sm text-slate-600 dark:text-slate-300">
                     500+ Happy Clients
@@ -115,7 +115,7 @@ export default function PersonalBrand1Preview() {
               </div>
             </div>
             <div className="relative">
-              <div className="bg-linear-to-br from-blue-100 to-purple-100 dark:from-blue-950/50 dark:to-purple-950/50 rounded-2xl p-8 h-96 flex items-center justify-center">
+              <div className="bg-linear-to-br from-blue-100 to-[var(--purple)]/10 dark:from-blue-950/50 dark:to-[var(--purple)]/50 rounded-2xl p-8 h-96 flex items-center justify-center">
                 <div className="text-center">
                   <div className="w-24 h-24 bg-slate-200 dark:bg-zinc-700 rounded-full mx-auto mb-4 flex items-center justify-center">
                     <Users className="h-12 w-12 text-slate-500 dark:text-slate-300" />
@@ -293,8 +293,8 @@ export default function PersonalBrand1Preview() {
                 92% Success Rate
               </div>
             </div>
-            <div className="bg-linear-to-br from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50 p-6 rounded-xl border dark:border-purple-800">
-              <Users className="h-10 w-10 text-slate-700 dark:text-purple-400 mb-4" />
+            <div className="bg-linear-to-br from-[var(--purple)]/5 to-[var(--purple)]/10 dark:from-[var(--purple)]/50 dark:to-[var(--purple)]/50 p-6 rounded-xl border dark:border-[var(--purple)]">
+              <Users className="h-10 w-10 text-slate-700 dark:text-[var(--purple)]/40 mb-4" />
               <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">
                 Team Leadership
               </h3>
@@ -302,10 +302,10 @@ export default function PersonalBrand1Preview() {
                 Building and leading high-performance teams that deliver
                 results.
               </p>
-              <div className="bg-purple-200 dark:bg-purple-800 rounded-full h-2">
-                <div className="bg-purple-600 dark:bg-purple-400 h-2 rounded-full w-[98%]"></div>
+              <div className="bg-[var(--purple)]/20 dark:bg-[var(--purple)] rounded-full h-2">
+                <div className="bg-[var(--purple)] dark:bg-[var(--purple)]/40 h-2 rounded-full w-[98%]"></div>
               </div>
-              <div className="text-sm text-slate-700 dark:text-purple-400 font-medium mt-2">
+              <div className="text-sm text-slate-700 dark:text-[var(--purple)]/40 font-medium mt-2">
                 98% Success Rate
               </div>
             </div>
@@ -382,8 +382,8 @@ export default function PersonalBrand1Preview() {
               </ul>
             </div>
             <div className="bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-sm [@media(hover:hover)]:hover:shadow-lg transition-shadow border border-slate-100 dark:border-zinc-700">
-              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-xl flex items-center justify-center mb-6">
-                <Users className="h-6 w-6 text-slate-700 dark:text-purple-400" />
+              <div className="w-12 h-12 bg-[var(--purple)]/10 dark:bg-[var(--purple)] rounded-xl flex items-center justify-center mb-6">
+                <Users className="h-6 w-6 text-slate-700 dark:text-[var(--purple)]/40" />
               </div>
               <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
                 Team Building
@@ -428,7 +428,7 @@ export default function PersonalBrand1Preview() {
                 key={project}
                 className="group bg-white dark:bg-zinc-900 rounded-xl overflow-hidden shadow-sm [@media(hover:hover)]:hover:shadow-lg transition-all duration-300 border border-slate-100 dark:border-zinc-700"
               >
-                <div className="bg-linear-to-br from-blue-100 to-purple-100 dark:from-blue-950/50 dark:to-purple-950/50 h-48 flex items-center justify-center">
+                <div className="bg-linear-to-br from-blue-100 to-[var(--purple)]/10 dark:from-blue-950/50 dark:to-[var(--purple)]/50 h-48 flex items-center justify-center">
                   <div className="text-center">
                     <Rocket className="h-12 w-12 text-slate-500 dark:text-slate-300 mx-auto mb-2" />
                     <p className="text-slate-500 dark:text-slate-300 text-sm">
@@ -563,8 +563,8 @@ export default function PersonalBrand1Preview() {
                 </div>
               </div>
               <div className="flex items-center">
-                <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-xl flex items-center justify-center mr-4">
-                  <MapPin className="h-6 w-6 text-slate-700 dark:text-purple-400" />
+                <div className="w-12 h-12 bg-[var(--purple)]/10 dark:bg-[var(--purple)] rounded-xl flex items-center justify-center mr-4">
+                  <MapPin className="h-6 w-6 text-slate-700 dark:text-[var(--purple)]/40" />
                 </div>
                 <div>
                   <div className="font-semibold text-slate-900 dark:text-white">

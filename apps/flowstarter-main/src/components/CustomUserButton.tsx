@@ -83,7 +83,7 @@ export const CustomUserButton = ({ className }: CustomUserButtonProps) => {
                 className="h-10 w-10 rounded-full border-[3px] border-gray-900 dark:border-white object-cover shadow-sm"
               />
             ) : (
-              <div className="h-10 w-10 rounded-full border-[3px] border-gray-900 dark:border-white bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm font-semibold shadow-sm">
+              <div className="h-10 w-10 rounded-full border-[3px] border-gray-900 dark:border-white bg-gradient-to-br from-[var(--purple)] to-[var(--purple)] flex items-center justify-center text-white text-sm font-semibold shadow-sm">
                 {getInitials()}
               </div>
             )}
@@ -105,7 +105,7 @@ export const CustomUserButton = ({ className }: CustomUserButtonProps) => {
                 className="h-10 w-10 rounded-full border-[3px] border-gray-900 dark:border-white object-cover shadow-sm flex-shrink-0"
               />
             ) : (
-              <div className="h-10 w-10 rounded-full border-[3px] border-gray-900 dark:border-white bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm font-semibold shadow-sm flex-shrink-0">
+              <div className="h-10 w-10 rounded-full border-[3px] border-gray-900 dark:border-white bg-gradient-to-br from-[var(--purple)] to-[var(--purple)] flex items-center justify-center text-white text-sm font-semibold shadow-sm flex-shrink-0">
                 {getInitials()}
               </div>
             )}

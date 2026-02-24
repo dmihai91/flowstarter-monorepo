@@ -167,7 +167,7 @@ export function WaitlistDialog({
 
         <Button
           type="submit"
-          className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+          className="w-full bg-gradient-to-r from-[var(--purple)] to-pink-600 hover:from-[var(--purple)] hover:to-pink-700 text-white"
           disabled={state === 'submitting'}
         >
           {state === 'submitting' ? (
@@ -191,7 +191,7 @@ export function WaitlistDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="flex items-center gap-2 mb-2">
-            <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border-0">
+            <Badge className="bg-[var(--purple)]/10 text-[var(--purple)] dark:bg-[var(--purple)]/30 dark:text-[var(--purple)]/40 border-0">
               {t('waitlist.badge')}
             </Badge>
             {plan && (

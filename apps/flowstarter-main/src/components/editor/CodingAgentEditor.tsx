@@ -142,7 +142,7 @@ export function CodingAgentEditor({
               Close
             </Button>
           </div>
-          <div className="w-[min(95vw,1400px)] h-[95vh] bg-white dark:bg-gray-950 rounded-2xl overflow-hidden border border-border/60 shadow-2xl ring-1 ring-purple-500/10">
+          <div className="w-[min(95vw,1400px)] h-[95vh] bg-white dark:bg-gray-950 rounded-2xl overflow-hidden border border-border/60 shadow-2xl ring-1 ring-[var(--purple)]/10">
             <TemplatePreview templateId={templateId} theme="light" />
           </div>
         </div>

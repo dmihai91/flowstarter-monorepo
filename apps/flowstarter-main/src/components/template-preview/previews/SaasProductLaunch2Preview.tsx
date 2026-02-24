@@ -16,7 +16,7 @@ import {
 
 export default function SaasProductLaunch2Preview() {
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-[var(--purple)]/5 dark:from-slate-900 dark:via-blue-900 dark:to-[var(--purple)]">
       {/* Navigation */}
       <nav className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

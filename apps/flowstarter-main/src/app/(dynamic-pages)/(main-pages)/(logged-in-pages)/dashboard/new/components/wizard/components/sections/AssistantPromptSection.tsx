@@ -176,7 +176,7 @@ export const AssistantPromptSection = forwardRef<
                             // Collapse after selection on mobile
                             setIsExamplesOpen(false);
                           }}
-                          className="group relative overflow-hidden rounded-xl bg-linear-to-br from-violet-50 to-blue-50 dark:from-violet-950/30 dark:to-blue-950/30 border border-violet-200/50 dark:border-purple-800/30 px-3 py-0.5 text-left text-xs text-gray-700 dark:text-gray-300 active:border-violet-300 dark:active:border-violet-700 transition-all duration-200 shadow-[0_2px_4px_rgba(139,92,246,0.15),0_1px_2px_rgba(139,92,246,0.1)] active:shadow-[0_4px_8px_rgba(139,92,246,0.2),0_2px_4px_rgba(139,92,246,0.15),inset_0_1px_0_rgba(255,255,255,0.4)] min-w-fit touch-manipulation"
+                          className="group relative overflow-hidden rounded-xl bg-linear-to-br from-[var(--purple)]/5 to-blue-50 dark:from-[var(--purple)]/30 dark:to-blue-950/30 border border-[var(--purple)]/50 dark:border-[var(--purple)]/30 px-3 py-0.5 text-left text-xs text-gray-700 dark:text-gray-300 active:border-[var(--purple)]/30 dark:active:border-[var(--purple)] transition-all duration-200 shadow-[0_2px_4px_rgba(139,92,246,0.15),0_1px_2px_rgba(139,92,246,0.1)] active:shadow-[0_4px_8px_rgba(139,92,246,0.2),0_2px_4px_rgba(139,92,246,0.15),inset_0_1px_0_rgba(255,255,255,0.4)] min-w-fit touch-manipulation"
                           style={{
                             transformOrigin: 'center',
                             transformStyle: 'preserve-3d',

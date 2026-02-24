@@ -110,8 +110,8 @@ export function AssistantSearchBar() {
       <div className="relative z-10 flex flex-col gap-6">
         <div className="flex items-center justify-between">
           <div className="inline-flex items-center gap-2 text-xs font-medium text-gray-600 dark:text-gray-300">
-            <div className="p-1.5 rounded-xl bg-linear-to-br from-indigo-500/10 to-violet-500/10 border border-indigo-500/20 dark:border-violet-500/20">
-              <Sparkles className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+            <div className="p-1.5 rounded-xl bg-linear-to-br from-[var(--purple)]/10 to-[var(--purple)]/10 border border-[var(--purple)]/20 dark:border-[var(--purple)]/20">
+              <Sparkles className="h-4 w-4 text-[var(--purple)] dark:text-[var(--purple)]" />
             </div>
             <span>{t('dashboard.search.poweredBy')}</span>
           </div>
@@ -146,7 +146,7 @@ export function AssistantSearchBar() {
             </Link>
           </div>
           <Button
-            className="rounded-lg bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-lg bg-linear-to-r from-[var(--purple)] to-[var(--purple)] hover:from-[var(--purple)] hover:to-[var(--purple)] text-white shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleSubmit}
             disabled={isClassifying || (!validation.isValid && touched)}
           >

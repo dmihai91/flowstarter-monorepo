@@ -19,7 +19,7 @@ export function ActionCardWithDropdown({
   description,
   icon: Icon,
   className,
-  iconBg = 'bg-gradient-to-br from-blue-500 to-indigo-500',
+  iconBg = 'bg-gradient-to-br from-blue-500 to-[var(--purple)]/50',
 }: ActionCardWithDropdownProps) {
   const cardContent = (
     <GlassCard className={cn('gap-0 h-full cursor-pointer', className)}>

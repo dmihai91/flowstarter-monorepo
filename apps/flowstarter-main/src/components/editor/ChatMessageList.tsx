@@ -572,7 +572,7 @@ export function ChatMessageList({
                             className="object-cover"
                           />
                         ) : (
-                          <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-sm font-medium">
+                          <AvatarFallback className="bg-gradient-to-br from-[var(--purple)] to-[var(--purple)] text-white text-sm font-medium">
                             {getUserInitials()}
                           </AvatarFallback>
                         )}

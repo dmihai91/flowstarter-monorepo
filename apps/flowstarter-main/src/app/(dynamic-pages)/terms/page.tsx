@@ -20,7 +20,7 @@ export default function TermsPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center max-w-5xl mx-auto">
             <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-blue-500/20 to-[var(--purple)]/20 flex items-center justify-center">
                 <Gavel className="h-8 w-8" style={{ color: 'var(--blue)' }} />
               </div>
             </div>
@@ -50,7 +50,7 @@ export default function TermsPage() {
             <Card className="backdrop-blur-md bg-white/80 dark:bg-gray-800/80 border border-white/40 shadow-xl">
               <CardContent className="p-8">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500/20 to-[var(--purple)]/20 flex items-center justify-center">
                     <FileText
                       className="h-6 w-6"
                       style={{ color: 'var(--blue)' }}
@@ -151,7 +151,7 @@ export default function TermsPage() {
             <Card className="backdrop-blur-md bg-white/80 dark:bg-gray-800/80 border border-white/40 shadow-xl">
               <CardContent className="p-8">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-lg bg-linear-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-lg bg-linear-to-br from-[var(--purple)]/20 to-pink-500/20 flex items-center justify-center">
                     <CreditCard
                       className="h-6 w-6"
                       style={{ color: 'var(--purple)' }}
@@ -290,10 +290,10 @@ export default function TermsPage() {
       {/* Contact Section */}
       <section className="py-20 bg:(var(--surface-2))">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="backdrop-blur-md bg-linear-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 border border-white/40 shadow-xl">
+          <Card className="backdrop-blur-md bg-linear-to-r from-blue-500/10 via-[var(--purple)]/10 to-pink-500/10 border border-white/40 shadow-xl">
             <CardContent className="p-8 text-center">
               <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500/20 to-[var(--purple)]/20 flex items-center justify-center">
                   <Mail className="h-6 w-6" style={{ color: 'var(--blue)' }} />
                 </div>
               </div>
@@ -307,7 +307,7 @@ export default function TermsPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
                   href="mailto:legal@flowstarter.com"
-                  className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-linear-to-r from-blue-600 to-purple-600 [@media(hover:hover)]:hover:from-blue-700 [@media(hover:hover)]:hover:to-purple-700 transition-all duration-200 shadow-lg [@media(hover:hover)]:hover:shadow-xl"
+                  className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-linear-to-r from-blue-600 to-[var(--purple)] [@media(hover:hover)]:hover:from-blue-700 [@media(hover:hover)]:hover:to-[var(--purple)] transition-all duration-200 shadow-lg [@media(hover:hover)]:hover:shadow-xl"
                 >
                   <Mail className="h-5 w-5 mr-2" />
                   legal@flowstarter.com

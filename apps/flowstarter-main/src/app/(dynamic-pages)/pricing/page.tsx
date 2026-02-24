@@ -104,8 +104,8 @@ export default function PricingPage() {
       period: '/month',
       yearlyPrice: '$20',
       icon: <Star className="h-6 w-6" />,
-      color: 'from-purple-500/20 to-pink-500/20',
-      textColor: 'text-purple-600 dark:text-purple-400',
+      color: 'from-[var(--purple)]/20 to-pink-500/20',
+      textColor: 'text-[var(--purple)] dark:text-[var(--purple)]/40',
       popular: true,
       credits: 800,
       creditsLabelKey: 'pricing.credits.perMonth',
@@ -260,13 +260,13 @@ export default function PricingPage() {
           <div className="text-center max-w-5xl mx-auto">
             <Badge
               variant="outline"
-              className="mb-6 text-purple-600 border-purple-200 bg-purple-50 dark:text-purple-400 dark:border-purple-800 dark:bg-purple-900/20"
+              className="mb-6 text-[var(--purple)] border-[var(--purple)]/20 bg-[var(--purple)]/5 dark:text-[var(--purple)]/40 dark:border-[var(--purple)] dark:bg-[var(--purple)]/20"
             >
               {t('pricing.badge')}
             </Badge>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-6">
               {t('pricing.hero.title')}{' '}
-              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[var(--purple)] to-pink-600 bg-clip-text text-transparent">
                 {t('pricing.hero.titleHighlight')}
               </span>
             </h1>
@@ -294,7 +294,7 @@ export default function PricingPage() {
           }
           className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
             billingPeriod === 'yearly'
-              ? 'bg-purple-600'
+              ? 'bg-[var(--purple)]'
               : 'bg-gray-200 dark:bg-gray-700'
           }`}
         >
@@ -329,13 +329,13 @@ export default function PricingPage() {
                 key={index}
                 className={`backdrop-blur-md bg-white/80 dark:bg-gray-800/80 border border-white/40 shadow-xl relative flex flex-col ${
                   plan.popular
-                    ? 'ring-2 ring-purple-500/50 dark:ring-purple-400/50 lg:scale-105 z-10'
+                    ? 'ring-2 ring-[var(--purple)]/50 dark:ring-[var(--purple)]/40/50 lg:scale-105 z-10'
                     : ''
                 } [@media(hover:hover)]:hover:shadow-2xl transition-all duration-300`}
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg">
+                    <Badge className="bg-gradient-to-r from-[var(--purple)] to-pink-600 text-white shadow-lg">
                       <Sparkles className="w-3 h-3 mr-1" />
                       {t('pricing.badge.popular')}
                     </Badge>
@@ -383,9 +383,9 @@ export default function PricingPage() {
                   </div>
 
                   {/* Credits Highlight */}
-                  <div className="mb-6 flex items-center gap-3 rounded-xl bg-purple-50 dark:bg-purple-900/20 p-4 border border-purple-100 dark:border-purple-800/30">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-800/50">
-                      <Zap className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                  <div className="mb-6 flex items-center gap-3 rounded-xl bg-[var(--purple)]/5 dark:bg-[var(--purple)]/20 p-4 border border-[var(--purple)]/10 dark:border-[var(--purple)]/30">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--purple)]/10 dark:bg-[var(--purple)]/50">
+                      <Zap className="h-5 w-5 text-[var(--purple)] dark:text-[var(--purple)]/40" />
                     </div>
                     <div>
                       <div className="text-xl font-bold text-gray-900 dark:text-white">
@@ -432,7 +432,7 @@ export default function PricingPage() {
                       onClick={() => openWaitlist(plan.key)}
                       className={`w-full ${
                         plan.ctaStyle === 'primary'
-                          ? 'bg-gradient-to-r from-purple-600 to-pink-600 [@media(hover:hover)]:hover:from-purple-700 [@media(hover:hover)]:hover:to-pink-700 text-white'
+                          ? 'bg-gradient-to-r from-[var(--purple)] to-pink-600 [@media(hover:hover)]:hover:from-[var(--purple)] [@media(hover:hover)]:hover:to-pink-700 text-white'
                           : plan.ctaStyle === 'outline'
                           ? 'bg-transparent border-2 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white [@media(hover:hover)]:hover:bg-gray-100 dark:[@media(hover:hover)]:hover:bg-gray-800'
                           : 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 [@media(hover:hover)]:hover:bg-gray-800 dark:[@media(hover:hover)]:hover:bg-gray-100'
@@ -470,7 +470,7 @@ export default function PricingPage() {
                 <CardContent className="p-6 text-center">
                   <Badge
                     variant="outline"
-                    className="mb-3 text-purple-600 border-purple-200 bg-purple-50 dark:text-purple-400 dark:border-purple-800 dark:bg-purple-900/20"
+                    className="mb-3 text-[var(--purple)] border-[var(--purple)]/20 bg-[var(--purple)]/5 dark:text-[var(--purple)]/40 dark:border-[var(--purple)] dark:bg-[var(--purple)]/20"
                   >
                     {t(`pricing.plan.${item.tierKey}` as any)}
                   </Badge>
@@ -486,7 +486,7 @@ export default function PricingPage() {
                         key={idx}
                         className="flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-300"
                       >
-                        <Rocket className="h-4 w-4 text-purple-500" />
+                        <Rocket className="h-4 w-4 text-[var(--purple)]" />
                         {t(exampleKey as any)}
                       </div>
                     ))}
@@ -520,7 +520,7 @@ export default function PricingPage() {
                   onClick={() => setSelectedTier(plan.key)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                     selectedTier === plan.key
-                      ? 'bg-purple-600 text-white shadow-lg'
+                      ? 'bg-[var(--purple)] text-white shadow-lg'
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 [@media(hover:hover)]:hover:bg-gray-200 dark:[@media(hover:hover)]:hover:bg-gray-700'
                   }`}
                 >
@@ -593,7 +593,7 @@ export default function PricingPage() {
                     <Button
                       onClick={() => openWaitlist(selectedTier)}
                       variant="outline"
-                      className="w-full mt-4 border-purple-200 text-purple-600 [@media(hover:hover)]:hover:bg-purple-50 dark:border-purple-800 dark:text-purple-400 dark:[@media(hover:hover)]:hover:bg-purple-900/20"
+                      className="w-full mt-4 border-[var(--purple)]/20 text-[var(--purple)] [@media(hover:hover)]:hover:bg-[var(--purple)]/5 dark:border-[var(--purple)] dark:text-[var(--purple)]/40 dark:[@media(hover:hover)]:hover:bg-[var(--purple)]/20"
                     >
                       <Bell className="w-4 h-4 mr-2" />
                       {t('waitlist.cta.notifyMe')}
@@ -625,7 +625,7 @@ export default function PricingPage() {
                 className="backdrop-blur-md bg-white/80 dark:bg-gray-800/80 border border-white/40 shadow-lg text-center"
               >
                 <CardContent className="p-8">
-                  <div className="w-16 h-16 mx-auto mb-6 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                  <div className="w-16 h-16 mx-auto mb-6 rounded-xl bg-gradient-to-br from-[var(--purple)]/20 to-pink-500/20 flex items-center justify-center text-[var(--purple)] dark:text-[var(--purple)]/40">
                     {feature.icon}
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
@@ -673,7 +673,7 @@ export default function PricingPage() {
       {/* CTA Section */}
       <section className="py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="backdrop-blur-md bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10 border border-white/40 shadow-xl max-w-4xl mx-auto">
+          <Card className="backdrop-blur-md bg-gradient-to-r from-[var(--purple)]/10 via-pink-500/10 to-orange-500/10 border border-white/40 shadow-xl max-w-4xl mx-auto">
             <CardContent className="p-12 text-center">
               <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-6">
                 {t('pricing.cta.title')}
@@ -684,7 +684,7 @@ export default function PricingPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button
                   onClick={() => openWaitlist()}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 [@media(hover:hover)]:hover:from-purple-700 [@media(hover:hover)]:hover:to-pink-700 text-white px-8 py-3 text-lg"
+                  className="bg-gradient-to-r from-[var(--purple)] to-pink-600 [@media(hover:hover)]:hover:from-[var(--purple)] [@media(hover:hover)]:hover:to-pink-700 text-white px-8 py-3 text-lg"
                 >
                   <Sparkles className="w-5 h-5 mr-2" />
                   {t('waitlist.cta.getEarlyAccess')}

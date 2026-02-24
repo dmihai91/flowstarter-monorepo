@@ -52,9 +52,9 @@ function InteractivePromptInput({
       <div
         className={`glass-3d relative rounded-[16px] backdrop-blur-xl border transition-all duration-500 ease-out bg-white/25 dark:bg-[rgba(58,58,74,0.2)] px-6 py-4 group ${
           isFocused
-            ? 'border-purple-400/60 dark:border-purple-400/50 shadow-[0_20px_60px_rgba(139,92,246,0.25),0_8px_24px_rgba(139,92,246,0.15),inset_0_2px_0_rgba(255,255,255,0.8),inset_0_2px_8px_rgba(0,0,0,0.05)] -translate-y-1'
+            ? 'border-[var(--purple)]/40/60 dark:border-[var(--purple)]/40/50 shadow-[0_20px_60px_rgba(139,92,246,0.25),0_8px_24px_rgba(139,92,246,0.15),inset_0_2px_0_rgba(255,255,255,0.8),inset_0_2px_8px_rgba(0,0,0,0.05)] -translate-y-1'
             : isHovered
-            ? 'border-purple-300/40 dark:border-purple-400/30 shadow-[0_16px_48px_rgba(139,92,246,0.15),0_6px_18px_rgba(139,92,246,0.1),inset_0_2px_0_rgba(255,255,255,0.7),inset_0_2px_6px_rgba(0,0,0,0.04)] -translate-y-0.5 scale-[1.005]'
+            ? 'border-[var(--purple)]/30/40 dark:border-[var(--purple)]/40/30 shadow-[0_16px_48px_rgba(139,92,246,0.15),0_6px_18px_rgba(139,92,246,0.1),inset_0_2px_0_rgba(255,255,255,0.7),inset_0_2px_6px_rgba(0,0,0,0.04)] -translate-y-0.5 scale-[1.005]'
             : 'border-gray-200/80 dark:border-white/40 shadow-[0_12px_40px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05),inset_0_2px_0_rgba(255,255,255,0.6),inset_0_2px_6px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_2px_8px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1),inset_0_2px_6px_rgba(0,0,0,0.15)]'
         }`}
         onMouseEnter={() => setIsHovered(true)}
@@ -62,11 +62,11 @@ function InteractivePromptInput({
       >
         <div className="flex items-center gap-2 mb-4">
           <div
-            className={`p-1.5 rounded-lg bg-gradient-to-br from-indigo-500/10 to-violet-500/10 border border-indigo-500/20 dark:border-violet-500/20 transition-all duration-300 ${
+            className={`p-1.5 rounded-lg bg-gradient-to-br from-[var(--purple)]/10 to-[var(--purple)]/10 border border-[var(--purple)]/20 dark:border-[var(--purple)]/20 transition-all duration-300 ${
               isHovered ? 'scale-105 rotate-6' : ''
             }`}
           >
-            <Sparkles className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+            <Sparkles className="h-4 w-4 text-[var(--purple)] dark:text-[var(--purple)]" />
           </div>
           <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
             {t('landing.hero.aiPowered')}
@@ -80,7 +80,7 @@ function InteractivePromptInput({
               key={idx}
               onClick={() => handleExampleClick(example)}
               type="button"
-              className={`inline-flex items-center rounded-md border border-white dark:border-white/40 backdrop-blur-xl bg-[rgba(243,243,243,0.3)] dark:bg-[rgba(58,58,74,0.3)] px-2 py-1 sm:px-3 sm:py-1.5 text-sm sm:text-base font-medium text-gray-700 dark:text-gray-200 hover:border-purple-300 dark:hover:border-purple-500 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 active:scale-95 hover:-translate-y-0.5 max-w-full ${
+              className={`inline-flex items-center rounded-md border border-white dark:border-white/40 backdrop-blur-xl bg-[rgba(243,243,243,0.3)] dark:bg-[rgba(58,58,74,0.3)] px-2 py-1 sm:px-3 sm:py-1.5 text-sm sm:text-base font-medium text-gray-700 dark:text-gray-200 hover:border-[var(--purple)]/30 dark:hover:border-[var(--purple)] transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 active:scale-95 hover:-translate-y-0.5 max-w-full ${
                 idx >= 2 ? 'hidden sm:inline-flex' : ''
               }`}
               style={{
@@ -127,7 +127,7 @@ function InteractivePromptInput({
           <button
             onClick={handleSubmit}
             disabled={!prompt.trim()}
-            className="rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-md hover:shadow-xl hover:shadow-purple-500/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 flex items-center gap-2 text-sm font-medium hover:scale-105 active:scale-95 hover:-translate-y-0.5"
+            className="rounded-lg bg-gradient-to-r from-[var(--purple)] to-[var(--purple)] hover:from-[var(--purple)] hover:to-[var(--purple)] text-white shadow-md hover:shadow-xl hover:shadow-[var(--purple)]/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 flex items-center gap-2 text-sm font-medium hover:scale-105 active:scale-95 hover:-translate-y-0.5"
           >
             <Send
               className={`h-4 w-4 transition-transform duration-300 ${
@@ -182,9 +182,9 @@ export function HeroSection() {
         <div className="wizard-aura-accent" />
         <div className="wizard-noise" />
         {/* Additional animated orbs */}
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-purple-400/20 to-blue-400/20 dark:from-purple-600/10 dark:to-blue-600/10 blur-3xl animate-pulse" />
+        <div className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-[var(--purple)]/40/20 to-blue-400/20 dark:from-[var(--purple)]/10 dark:to-blue-600/10 blur-3xl animate-pulse" />
         <div
-          className="absolute bottom-1/4 left-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-pink-400/20 to-purple-400/20 dark:from-pink-600/10 dark:to-purple-600/10 blur-3xl animate-pulse"
+          className="absolute bottom-1/4 left-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-pink-400/20 to-[var(--purple)]/40/20 dark:from-pink-600/10 dark:to-[var(--purple)]/10 blur-3xl animate-pulse"
           style={{ animationDelay: '1.5s', animationDuration: '4s' }}
         />
       </div>
@@ -199,7 +199,7 @@ export function HeroSection() {
         <div className="mt-1 flex flex-col items-center space-y-6 sm:space-y-8 text-center">
           <div className="space-y-4 sm:space-y-6">
             <div className="inline-flex flex-col sm:flex-row sm:items-center items-center rounded-lg px-3 py-1.5 sm:px-4 text-sm sm:text-md font-medium transition-all hover:scale-105 backdrop-blur-xl border border-white dark:border-white/40 cursor-default bg-[rgba(243,243,243,0.3)] dark:bg-[rgba(58,58,74,0.3)]">
-              <span className="font-semibold bg-gradient-to-r from-indigo-600 to-indigo-500 dark:from-indigo-400 dark:to-indigo-300 bg-clip-text text-transparent">
+              <span className="font-semibold bg-gradient-to-r from-[var(--purple)] to-[var(--purple)] dark:from-[var(--purple)]/40 dark:to-[var(--purple)]/30 bg-clip-text text-transparent">
                 {t('landing.hero.badge')}
               </span>
               <span className="mx-2 text-muted-foreground hidden sm:inline">
@@ -211,7 +211,7 @@ export function HeroSection() {
             </div>
             <h1 className="text-3xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
               {t('landing.hero.title')}
-              <span className="block mt-1 bg-gradient-to-r from-indigo-600 to-indigo-500 dark:from-indigo-400 dark:to-indigo-300 bg-clip-text text-transparent">
+              <span className="block mt-1 bg-gradient-to-r from-[var(--purple)] to-[var(--purple)] dark:from-[var(--purple)]/40 dark:to-[var(--purple)]/30 bg-clip-text text-transparent">
                 {t('landing.hero.titleHighlight')}
               </span>
             </h1>
@@ -272,7 +272,7 @@ export function HeroSection() {
           <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-6 pt-4 w-full max-w-md sm:max-w-none">
             <button
               onClick={() => setWaitlistOpen(true)}
-              className="w-full sm:w-auto inline-flex h-12 items-center justify-center rounded-lg px-6 text-sm font-medium transition-all duration-300 ease-in-out hover:scale-105 active:scale-[0.98] bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 group"
+              className="w-full sm:w-auto inline-flex h-12 items-center justify-center rounded-lg px-6 text-sm font-medium transition-all duration-300 ease-in-out hover:scale-105 active:scale-[0.98] bg-gradient-to-r from-[var(--purple)] to-pink-600 hover:from-[var(--purple)] hover:to-pink-700 text-white shadow-lg hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--purple)] focus-visible:ring-offset-2 group"
             >
               <Bell className="mr-2 h-4 w-4 transition-transform duration-300 group-hover:rotate-12" />
               {t('waitlist.cta.getEarlyAccess')}

@@ -92,7 +92,7 @@ export function WaitlistForm({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t('waitlist.landing.emailPlaceholder')}
-                  className="h-14 pl-12 text-base rounded-xl backdrop-blur-xl border-white/60 dark:border-white/30 bg-white/60 dark:bg-white/10 focus:border-purple-400 dark:focus:border-purple-500"
+                  className="h-14 pl-12 text-base rounded-xl backdrop-blur-xl border-white/60 dark:border-white/30 bg-white/60 dark:bg-white/10 focus:border-[var(--purple)]/40 dark:focus:border-[var(--purple)]"
                   required
                   disabled={state === 'submitting'}
                 />
@@ -100,7 +100,7 @@ export function WaitlistForm({
               <Button
                 type="submit"
                 disabled={state === 'submitting'}
-                className="h-14 px-8 text-base font-medium rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                className="h-14 px-8 text-base font-medium rounded-xl bg-gradient-to-r from-[var(--purple)] to-pink-600 hover:from-[var(--purple)] hover:to-pink-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
                 {state === 'submitting' ? (
                   <>
@@ -151,7 +151,7 @@ export function WaitlistForm({
               type="submit"
               size="sm"
               disabled={state === 'submitting'}
-              className="h-10 px-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+              className="h-10 px-4 bg-gradient-to-r from-[var(--purple)] to-pink-600 hover:from-[var(--purple)] hover:to-pink-700 text-white"
             >
               {state === 'submitting' ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -204,7 +204,7 @@ export function WaitlistForm({
             <Button
               type="submit"
               disabled={state === 'submitting'}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+              className="bg-gradient-to-r from-[var(--purple)] to-pink-600 hover:from-[var(--purple)] hover:to-pink-700 text-white"
             >
               {state === 'submitting' ? (
                 <>

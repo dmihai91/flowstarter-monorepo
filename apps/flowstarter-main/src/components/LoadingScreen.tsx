@@ -32,7 +32,7 @@ export function LoadingScreen({ message = 'Loading...' }: LoadingScreenProps) {
         >
           <defs>
             <linearGradient id="loadingFlowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#7C3AED" />
+              <stop offset="0%" stopColor="var(--purple)" />
               <stop offset="100%" stopColor="#3B82F6" />
             </linearGradient>
           </defs>
@@ -52,7 +52,7 @@ export function LoadingScreen({ message = 'Loading...' }: LoadingScreenProps) {
       <div className="relative flex flex-col items-center gap-8">
         {/* Logo */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#7C3AED] to-blue-500 flex items-center justify-center shadow-lg shadow-[#7C3AED]/20">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20">
             <span className="text-white font-bold text-lg">F</span>
           </div>
           <span className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -68,7 +68,7 @@ export function LoadingScreen({ message = 'Loading...' }: LoadingScreenProps) {
           />
           {/* Spinning arc */}
           <div 
-            className="absolute inset-0 rounded-full border-2 border-transparent border-t-[#7C3AED] animate-spin"
+            className="absolute inset-0 rounded-full border-2 border-transparent border-t-[var(--purple)] animate-spin"
             style={{ animationDuration: '0.8s' }}
           />
         </div>

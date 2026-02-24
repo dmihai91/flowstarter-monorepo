@@ -96,7 +96,7 @@ export default function PrivacyPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center max-w-5xl mx-auto">
             <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-blue-500/20 to-[var(--purple)]/20 flex items-center justify-center">
                 <Shield className="h-8 w-8" style={{ color: 'var(--blue)' }} />
               </div>
             </div>
@@ -121,7 +121,7 @@ export default function PrivacyPage() {
       {/* Quick Summary */}
       <section className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="backdrop-blur-md bg-linear-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 border border-white/40 shadow-xl mb-16">
+          <Card className="backdrop-blur-md bg-linear-to-r from-blue-500/10 via-[var(--purple)]/10 to-pink-500/10 border border-white/40 shadow-xl mb-16">
             <CardContent className="p-8">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                 Quick Summary
@@ -158,7 +158,7 @@ export default function PrivacyPage() {
                   </p>
                 </div>
                 <div className="text-center">
-                  <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-linear-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-linear-to-br from-[var(--purple)]/20 to-pink-500/20 flex items-center justify-center">
                     <Globe
                       className="h-6 w-6"
                       style={{ color: 'var(--purple)' }}
@@ -184,7 +184,7 @@ export default function PrivacyPage() {
               >
                 <CardContent className="p-8">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                    <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500/20 to-[var(--purple)]/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
                       {section.icon}
                     </div>
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -271,10 +271,10 @@ export default function PrivacyPage() {
       {/* Contact Section */}
       <section className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="backdrop-blur-md bg-linear-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 border border-white/40 shadow-xl">
+          <Card className="backdrop-blur-md bg-linear-to-r from-blue-500/10 via-[var(--purple)]/10 to-pink-500/10 border border-white/40 shadow-xl">
             <CardContent className="p-8 text-center">
               <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500/20 to-[var(--purple)]/20 flex items-center justify-center">
                   <Mail className="h-6 w-6" style={{ color: 'var(--blue)' }} />
                 </div>
               </div>
@@ -288,7 +288,7 @@ export default function PrivacyPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
                   href="mailto:privacy@flowstarter.com"
-                  className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-linear-to-r from-blue-600 to-purple-600 [@media(hover:hover)]:hover:from-blue-700 [@media(hover:hover)]:hover:to-purple-700 transition-all duration-200 shadow-lg [@media(hover:hover)]:hover:shadow-xl"
+                  className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-linear-to-r from-blue-600 to-[var(--purple)] [@media(hover:hover)]:hover:from-blue-700 [@media(hover:hover)]:hover:to-[var(--purple)] transition-all duration-200 shadow-lg [@media(hover:hover)]:hover:shadow-xl"
                 >
                   <Mail className="h-5 w-5 mr-2" />
                   privacy@flowstarter.com

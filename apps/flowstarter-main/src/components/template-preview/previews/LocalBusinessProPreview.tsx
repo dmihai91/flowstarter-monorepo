@@ -368,7 +368,7 @@ export default function LocalBusinessProPreview() {
                 description:
                   'In-depth assessment and expert recommendations tailored to your specific needs and goals.',
                 price: 'From $99',
-                color: 'from-blue-500 to-indigo-500',
+                color: 'from-blue-500 to-[var(--purple)]/50',
               },
               {
                 icon: Wrench,
@@ -376,7 +376,7 @@ export default function LocalBusinessProPreview() {
                 description:
                   'Complete end-to-end solutions handled by our experienced team of professionals.',
                 price: 'Custom Quote',
-                color: 'from-indigo-500 to-violet-500',
+                color: 'from-[var(--purple)] to-[var(--purple)]/50',
               },
               {
                 icon: Award,
@@ -384,7 +384,7 @@ export default function LocalBusinessProPreview() {
                 description:
                   'Priority service with dedicated support and extended warranty on all work performed.',
                 price: 'From $149',
-                color: 'from-violet-500 to-purple-500',
+                color: 'from-[var(--purple)] to-[var(--purple)]',
               },
             ].map((item, i) => (
               <motion.div

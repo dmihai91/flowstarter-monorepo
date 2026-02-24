@@ -75,7 +75,7 @@ export default function ContactPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center max-w-5xl mx-auto">
             <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-blue-500/20 to-[var(--purple)]/20 flex items-center justify-center">
                 <MessageSquare
                   className="h-8 w-8"
                   style={{ color: 'var(--blue)' }}
@@ -112,7 +112,7 @@ export default function ContactPage() {
                 className="backdrop-blur-md bg-white/80 dark:bg-gray-800/80 border border-white/40 shadow-xl text-center [@media(hover:hover)]:hover:shadow-2xl transition-all duration-300 [@media(hover:hover)]:hover:scale-105"
               >
                 <CardContent className="p-8">
-                  <div className="w-16 h-16 mx-auto mb-6 rounded-xl bg-linear-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                  <div className="w-16 h-16 mx-auto mb-6 rounded-xl bg-linear-to-br from-blue-500/20 to-[var(--purple)]/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
                     {method.icon}
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
@@ -214,7 +214,7 @@ export default function ContactPage() {
                     />
                   </div>
 
-                  <Button className="w-full bg-linear-to-r from-blue-600 to-purple-600 [@media(hover:hover)]:hover:from-blue-700 [@media(hover:hover)]:hover:to-purple-700 text-white">
+                  <Button className="w-full bg-linear-to-r from-blue-600 to-[var(--purple)] [@media(hover:hover)]:hover:from-blue-700 [@media(hover:hover)]:hover:to-[var(--purple)] text-white">
                     <Send className="h-4 w-4 mr-2" />
                     Send Message
                   </Button>
@@ -232,7 +232,7 @@ export default function ContactPage() {
                   <div className="space-y-6">
                     {businessContacts.map((contact, index) => (
                       <div key={index} className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
+                        <div className="w-12 h-12 rounded-lg bg-linear-to-br from-blue-500/20 to-[var(--purple)]/20 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
                           {contact.icon}
                         </div>
                         <div>

@@ -88,7 +88,7 @@ export function MobileNavigation() {
                 className="h-8 w-8"
                 alt="Flowstarter Logo"
               />
-              <span className="text-lg font-semibold bg-gradient-to-r from-indigo-600 to-indigo-500 dark:from-indigo-400 dark:to-indigo-300 bg-clip-text text-transparent">
+              <span className="text-lg font-semibold bg-gradient-to-r from-[var(--purple)] to-[var(--blue)] bg-clip-text text-transparent">
                 Flowstarter
               </span>
             </Link>

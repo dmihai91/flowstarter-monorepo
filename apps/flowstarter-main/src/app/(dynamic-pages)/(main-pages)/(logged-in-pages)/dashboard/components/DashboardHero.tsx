@@ -49,7 +49,7 @@ export function DashboardHero({ children }: { children?: React.ReactNode }) {
                 href={CALENDLY_URL} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] text-white text-sm font-semibold shadow-md hover:shadow-lg hover:shadow-[#7C3AED]/10 transition-all duration-300 hover:scale-[1.02]"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] text-white text-sm font-semibold shadow-md hover:shadow-lg hover:shadow-[var(--purple)]/10 transition-all duration-300 hover:scale-[1.02]"
               >
                 <Calendar className="w-4 h-4" />
                 Book Free Discovery Call

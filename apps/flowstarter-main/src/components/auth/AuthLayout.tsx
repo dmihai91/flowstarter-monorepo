@@ -36,7 +36,7 @@ export default function AuthLayout({
           >
             <defs>
               <linearGradient id="authFlowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#7C3AED" />
+                <stop offset="0%" stopColor="var(--purple)" />
                 <stop offset="100%" stopColor="#3B82F6" />
               </linearGradient>
             </defs>
@@ -56,7 +56,7 @@ export default function AuthLayout({
         <header className="fixed top-0 left-0 right-0 z-50 bg-white/70 dark:bg-[#0a0a0c]/70 backdrop-blur-2xl backdrop-saturate-150 border-b border-gray-200/50 dark:border-white/10">
           <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#7C3AED] to-blue-500 flex items-center justify-center shadow-lg shadow-[#7C3AED]/20 group-hover:shadow-[#7C3AED]/30 transition-shadow">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20 group-hover:shadow-[var(--purple)]/30 transition-shadow">
                 <span className="text-white font-bold text-sm">F</span>
               </div>
               <span className="text-lg font-semibold text-gray-900 dark:text-white">Flowstarter</span>
@@ -78,7 +78,7 @@ export default function AuthLayout({
               {title && (
                 <h1 className="text-3xl font-bold tracking-tight mb-3">
                   <span className="text-gray-900 dark:text-white">{title.split(' ').slice(0, -1).join(' ')} </span>
-                  <span className="bg-gradient-to-r from-[#7C3AED] to-blue-500 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
                     {title.split(' ').slice(-1)}
                   </span>
                 </h1>
@@ -105,7 +105,7 @@ export default function AuthLayout({
                 ].map((stat, i) => (
                   <div key={i} className="flex items-center">
                     <div className="text-center px-3">
-                      <div className="text-lg font-bold bg-gradient-to-r from-[#7C3AED] to-blue-500 bg-clip-text text-transparent">{stat.value}</div>
+                      <div className="text-lg font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">{stat.value}</div>
                       <div className="text-[9px] text-gray-400 dark:text-white/30 uppercase tracking-wider">{stat.label}</div>
                     </div>
                     {i < 2 && <div className="w-px h-6 bg-gray-200 dark:bg-white/10" />}

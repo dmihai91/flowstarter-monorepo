@@ -27,7 +27,7 @@ export function GenerateButton({
       }`}
     >
       {isGenerating && (
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 via-pink-500 via-orange-500 to-yellow-500 opacity-50 animate-shimmer-rainbow" />
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-[var(--purple)] via-pink-500 via-orange-500 to-yellow-500 opacity-50 animate-shimmer-rainbow" />
       )}
       {isGenerating ? (
         <>

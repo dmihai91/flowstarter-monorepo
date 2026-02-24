@@ -309,7 +309,7 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
             <div className="flex items-center justify-between h-14 sm:h-16">
               <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center shadow-lg shadow-violet-500/20 group-hover:shadow-violet-500/30 transition-shadow">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20 group-hover:shadow-[var(--purple)]/30 transition-shadow">
                   <span className="text-white font-bold text-base sm:text-lg">F</span>
                 </div>
                 <span className="text-lg sm:text-xl font-semibold tracking-tight">Flowstarter</span>
@@ -379,7 +379,7 @@ export default function LandingPage() {
             >
               <defs>
                 <linearGradient id="heroFlowGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#7C3AED" />
+                  <stop offset="0%" stopColor="var(--purple)" />
                   <stop offset="100%" stopColor="#3B82F6" />
                 </linearGradient>
               </defs>
@@ -407,7 +407,7 @@ export default function LandingPage() {
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
                   Digital presence
                   <br />
-                  <span className="bg-gradient-to-r from-violet-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent animate-gradient">
+                  <span className="bg-gradient-to-r from-[var(--purple)] via-blue-500 to-cyan-400 bg-clip-text text-transparent animate-gradient">
                     done for you
                   </span>
                 </h1>
@@ -454,7 +454,7 @@ export default function LandingPage() {
                   ].map((stat, i) => (
                     <div key={i} className="flex items-center">
                       <div className="text-center px-6 sm:px-10 lg:px-12">
-                        <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#7C3AED] to-blue-500 bg-clip-text text-transparent">{stat.value}</div>
+                        <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">{stat.value}</div>
                         <div className="text-[10px] sm:text-xs text-gray-400 dark:text-white/30 uppercase tracking-wider mt-1">{stat.label}</div>
                       </div>
                       {i < 2 && <div className="w-px h-10 bg-gray-200 dark:bg-white/10" />}
@@ -466,7 +466,7 @@ export default function LandingPage() {
               {/* Right: Interactive Editor */}
               <div className={`relative transition-all duration-1000 delay-200 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                 {/* Glow effect behind editor */}
-                <div className="absolute -inset-4 bg-gradient-to-r from-violet-500/20 via-blue-500/20 to-cyan-400/20 rounded-3xl blur-2xl animate-pulse-glow" />
+                <div className="absolute -inset-4 bg-gradient-to-r from-[var(--purple)]/20 via-blue-500/20 to-cyan-400/20 rounded-3xl blur-2xl animate-pulse-glow" />
                 
                 {/* Editor window */}
                 <div className="relative bg-white/60 dark:bg-white/[0.05] backdrop-blur-2xl rounded-3xl border border-white/50 dark:border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden transition-all duration-300 hover:shadow-[0_25px_70px_rgba(0,0,0,0.12)] dark:hover:shadow-[0_25px_70px_rgba(0,0,0,0.5)] hover:scale-[1.01]">
@@ -502,14 +502,14 @@ export default function LandingPage() {
                       {messages.map((msg, i) => (
                         msg.role === 'user' ? (
                           <div key={i} className="flex justify-end">
-                            <div className="max-w-[95%] px-3 py-2 rounded-xl rounded-tr-sm bg-gradient-to-r from-violet-500 to-blue-500 text-white text-[13px] shadow-sm">
+                            <div className="max-w-[95%] px-3 py-2 rounded-xl rounded-tr-sm bg-gradient-to-r from-[var(--purple)] to-blue-500 text-white text-[13px] shadow-sm">
                               {msg.text}
                             </div>
                           </div>
                         ) : (
                           <div key={i} className="flex gap-2">
-                            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-violet-500/20 to-blue-500/20 border border-violet-500/20 flex items-center justify-center flex-shrink-0">
-                              <svg className="w-3 h-3 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 border border-[var(--purple)]/20 flex items-center justify-center flex-shrink-0">
+                              <svg className="w-3 h-3 text-[var(--purple)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
                               </svg>
                             </div>
@@ -521,8 +521,8 @@ export default function LandingPage() {
                       ))}
                       {isTyping && (
                         <div className="flex gap-2">
-                          <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-violet-500/20 to-blue-500/20 border border-violet-500/20 flex items-center justify-center flex-shrink-0">
-                            <svg className="w-3 h-3 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 border border-[var(--purple)]/20 flex items-center justify-center flex-shrink-0">
+                            <svg className="w-3 h-3 text-[var(--purple)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
                             </svg>
                           </div>
@@ -553,7 +553,7 @@ export default function LandingPage() {
                           <button 
                             onClick={() => handleSend()}
                             disabled={!inputValue.trim() || isTyping}
-                            className="w-8 h-8 rounded-lg bg-gradient-to-r from-violet-500 to-blue-500 text-white flex items-center justify-center disabled:opacity-30 transition-all hover:shadow-lg"
+                            className="w-8 h-8 rounded-lg bg-gradient-to-r from-[var(--purple)] to-blue-500 text-white flex items-center justify-center disabled:opacity-30 transition-all hover:shadow-lg"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-7-7l7 7-7 7" />
@@ -582,7 +582,7 @@ export default function LandingPage() {
                       {/* Realistic site header */}
                       <div className={`flex items-center justify-between px-4 py-2.5 border-b transition-all duration-500 ${mockSite.headerStyle === 'minimal' ? 'bg-transparent border-transparent' : 'bg-gray-50/80 dark:bg-gray-900/50 border-gray-100 dark:border-gray-800'}`}>
                         <div className="flex items-center gap-2">
-                          <div className={`w-5 h-5 rounded-md flex items-center justify-center text-[8px] font-bold text-white transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-500' : 'bg-emerald-500'}`}>
+                          <div className={`w-5 h-5 rounded-md flex items-center justify-center text-[8px] font-bold text-white transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-[var(--purple)]/50' : 'bg-emerald-500'}`}>
                             C
                           </div>
                           <span className="text-xs font-semibold text-gray-800 dark:text-white">CoffeeRoast</span>
@@ -590,7 +590,7 @@ export default function LandingPage() {
                         <div className="flex items-center gap-3 text-[10px] text-gray-500 dark:text-gray-400">
                           <span className="hover:text-gray-900 dark:hover:text-white cursor-default">Home</span>
                           {mockSite.hasAboutPage && (
-                            <span className={`font-medium transition-all duration-500 ${mockSite.primaryColor === 'violet' ? 'text-violet-500' : 'text-emerald-500'}`}>About</span>
+                            <span className={`font-medium transition-all duration-500 ${mockSite.primaryColor === 'violet' ? 'text-[var(--purple)]' : 'text-emerald-500'}`}>About</span>
                           )}
                           <span>Shop</span>
                           <span>Contact</span>
@@ -602,10 +602,10 @@ export default function LandingPage() {
                         <div className="flex gap-3">
                           <div className="flex-1">
                             <div className="h-2.5 w-24 bg-gray-800 dark:bg-white rounded mb-1.5" />
-                            <div className={`h-3 w-20 rounded mb-2 transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-500' : 'bg-emerald-500'}`} />
+                            <div className={`h-3 w-20 rounded mb-2 transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-[var(--purple)]/50' : 'bg-emerald-500'}`} />
                             <div className="h-1.5 w-28 bg-gray-300 dark:bg-gray-600 rounded mb-1" />
                             <div className="h-1.5 w-24 bg-gray-300 dark:bg-gray-600 rounded mb-3" />
-                            <div className={`h-5 w-16 rounded-full text-[9px] text-white flex items-center justify-center transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-500' : 'bg-emerald-500'}`}>
+                            <div className={`h-5 w-16 rounded-full text-[9px] text-white flex items-center justify-center transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-[var(--purple)]/50' : 'bg-emerald-500'}`}>
                               Shop Now
                             </div>
                           </div>
@@ -630,7 +630,7 @@ export default function LandingPage() {
                           <div className="h-7 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 mb-2 px-2 flex items-start pt-1">
                             <span className="text-[9px] text-gray-400">Message...</span>
                           </div>
-                          <div className={`h-5 w-14 rounded text-[9px] text-white flex items-center justify-center transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-500' : 'bg-emerald-500'}`}>
+                          <div className={`h-5 w-14 rounded text-[9px] text-white flex items-center justify-center transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-[var(--purple)]/50' : 'bg-emerald-500'}`}>
                             Send
                           </div>
                         </div>
@@ -644,7 +644,7 @@ export default function LandingPage() {
                             <div key={i} className="p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 text-center">
                               <div className="text-base mb-1">{emoji}</div>
                               <div className="h-1.5 w-10 mx-auto bg-gray-200 dark:bg-gray-700 rounded mb-1" />
-                              <div className={`h-1.5 w-6 mx-auto rounded transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-400' : 'bg-emerald-400'}`} />
+                              <div className={`h-1.5 w-6 mx-auto rounded transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-[var(--purple)]/40' : 'bg-emerald-400'}`} />
                             </div>
                           ))}
                         </div>
@@ -665,7 +665,7 @@ export default function LandingPage() {
                                 <div className="h-1 w-4/5 bg-gray-100 dark:bg-gray-700 rounded" />
                                 <div className="flex gap-0.5 mt-1.5">
                                   {[1,2,3,4,5].map(s => (
-                                    <span key={s} className={`text-[8px] ${mockSite.primaryColor === 'violet' ? 'text-violet-400' : 'text-emerald-400'}`}>★</span>
+                                    <span key={s} className={`text-[8px] ${mockSite.primaryColor === 'violet' ? 'text-[var(--purple)]' : 'text-emerald-400'}`}>★</span>
                                   ))}
                                 </div>
                               </div>
@@ -681,16 +681,16 @@ export default function LandingPage() {
                           <div className="flex gap-2">
                             <div className="flex-1 p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                               <div className="text-[10px] font-medium text-gray-600 dark:text-gray-400">Basic</div>
-                              <div className={`text-sm font-bold transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'text-violet-600' : 'text-emerald-600'}`}>$9/mo</div>
+                              <div className={`text-sm font-bold transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'text-[var(--purple)]' : 'text-emerald-600'}`}>$9/mo</div>
                               <div className="h-1 w-full bg-gray-100 dark:bg-gray-700 rounded mt-1.5 mb-1" />
                               <div className="h-1 w-3/4 bg-gray-100 dark:bg-gray-700 rounded" />
                             </div>
-                            <div className={`flex-1 p-2 rounded-lg border-2 transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-50 dark:bg-violet-900/20 border-violet-300 dark:border-violet-700' : 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-300 dark:border-emerald-700'}`}>
+                            <div className={`flex-1 p-2 rounded-lg border-2 transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-[var(--purple)]/5 dark:bg-[var(--purple)]/20 border-[var(--purple)]/30 dark:border-[var(--purple)]' : 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-300 dark:border-emerald-700'}`}>
                               <div className="flex items-center gap-1">
                                 <div className="text-[10px] font-medium text-gray-600 dark:text-gray-400">Pro</div>
-                                <div className={`text-[7px] px-1 py-0.5 rounded-full text-white transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-violet-500' : 'bg-emerald-500'}`}>POPULAR</div>
+                                <div className={`text-[7px] px-1 py-0.5 rounded-full text-white transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'bg-[var(--purple)]/50' : 'bg-emerald-500'}`}>POPULAR</div>
                               </div>
-                              <div className={`text-sm font-bold transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'text-violet-600' : 'text-emerald-600'}`}>$29/mo</div>
+                              <div className={`text-sm font-bold transition-colors duration-500 ${mockSite.primaryColor === 'violet' ? 'text-[var(--purple)]' : 'text-emerald-600'}`}>$29/mo</div>
                               <div className="h-1 w-full bg-gray-100 dark:bg-gray-700 rounded mt-1.5 mb-1" />
                               <div className="h-1 w-3/4 bg-gray-100 dark:bg-gray-700 rounded" />
                             </div>
@@ -715,7 +715,7 @@ export default function LandingPage() {
 
                 {/* Floating elements - hidden on small mobile */}
                 <div 
-                  className="absolute -bottom-3 -right-3 sm:-bottom-4 sm:-right-4 w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-xl sm:rounded-2xl bg-gradient-to-br from-violet-500 to-blue-500 shadow-xl hidden xs:flex flex-col items-center justify-center animate-float text-white"
+                  className="absolute -bottom-3 -right-3 sm:-bottom-4 sm:-right-4 w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--purple)] to-blue-500 shadow-xl hidden xs:flex flex-col items-center justify-center animate-float text-white"
                   style={{ animationDelay: '1s' }}
                 >
                   <div className="text-base sm:text-lg lg:text-2xl font-bold">Draft</div>
@@ -726,7 +726,7 @@ export default function LandingPage() {
                   className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 lg:-top-6 lg:-left-6 w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/60 dark:bg-white/[0.08] backdrop-blur-xl border border-white/50 dark:border-white/10 hidden xs:flex items-center justify-center animate-float shadow-xl"
                   style={{ animationDelay: '0s' }}
                 >
-                  <div className="text-base sm:text-lg lg:text-2xl font-bold bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">98</div>
+                  <div className="text-base sm:text-lg lg:text-2xl font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">98</div>
                 </div>
               </div>
             </div>
@@ -776,7 +776,7 @@ export default function LandingPage() {
             <div className="max-w-xl mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight mb-3">
                 Three steps to your{' '}
-                <span className="bg-gradient-to-r from-[#7C3AED] to-blue-500 bg-clip-text text-transparent">new website</span>
+                <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">new website</span>
               </h2>
             </div>
 
@@ -784,10 +784,10 @@ export default function LandingPage() {
               {features.map((feature, i) => (
                 <div 
                   key={i}
-                  className={`group p-7 rounded-2xl bg-white/80 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200/80 dark:border-white/5 hover:border-violet-500/40 dark:hover:border-violet-500/30 hover:bg-white dark:hover:bg-white/[0.04] hover:shadow-xl hover:shadow-violet-500/10 hover:-translate-y-1 hover:scale-[1.02] transition-all duration-250 ease-out ${visibleSections.has('process-cards') ? `animate-fade-in-up animate-fade-in-up-delay-${i + 1}` : 'opacity-0 translate-y-3'}`}
+                  className={`group p-7 rounded-2xl bg-white/80 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200/80 dark:border-white/5 hover:border-[var(--purple)]/40 dark:hover:border-[var(--purple)]/30 hover:bg-white dark:hover:bg-white/[0.04] hover:shadow-xl hover:shadow-[var(--purple)]/10 hover:-translate-y-1 hover:scale-[1.02] transition-all duration-250 ease-out ${visibleSections.has('process-cards') ? `animate-fade-in-up animate-fade-in-up-delay-${i + 1}` : 'opacity-0 translate-y-3'}`}
                   style={{ animationFillMode: 'forwards' }}
                 >
-                  <div className="text-5xl font-bold text-violet-500/20 dark:text-white/5 group-hover:text-violet-500/50 dark:group-hover:text-violet-500/30 transition-colors mb-4">
+                  <div className="text-5xl font-bold text-[var(--purple)]/20 dark:text-white/5 group-hover:text-[var(--purple)]/50 dark:group-hover:text-[var(--purple)]/30 transition-colors mb-4">
                     {feature.num}
                   </div>
                   <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
@@ -804,13 +804,13 @@ export default function LandingPage() {
             <div className="text-center mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight">
                 Everything you need.{' '}
-                <span className="bg-gradient-to-r from-[#7C3AED] to-blue-500 bg-clip-text text-transparent">Nothing you don't.</span>
+                <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">Nothing you don't.</span>
               </h2>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {/* Setup */}
-              <div className="group p-7 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200/80 dark:border-white/5 hover:border-violet-500/30 dark:hover:border-violet-500/20 hover:shadow-lg hover:shadow-violet-500/5 hover:-translate-y-1 transition-all duration-250 ease-out">
+              <div className="group p-7 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200/80 dark:border-white/5 hover:border-[var(--purple)]/30 dark:hover:border-[var(--purple)]/20 hover:shadow-lg hover:shadow-[var(--purple)]/5 hover:-translate-y-1 transition-all duration-250 ease-out">
                 <h3 className="text-xl font-semibold mb-4">Setup <span className="text-sm font-normal text-gray-400 dark:text-white/30">(one-time)</span></h3>
                 <ul className="space-y-2.5">
                   {[
@@ -832,7 +832,7 @@ export default function LandingPage() {
               </div>
 
               {/* Monthly subscription */}
-              <div className="group p-7 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200/80 dark:border-white/5 hover:border-violet-500/30 dark:hover:border-violet-500/20 hover:shadow-lg hover:shadow-violet-500/5 hover:-translate-y-1 transition-all duration-250 ease-out">
+              <div className="group p-7 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200/80 dark:border-white/5 hover:border-[var(--purple)]/30 dark:hover:border-[var(--purple)]/20 hover:shadow-lg hover:shadow-[var(--purple)]/5 hover:-translate-y-1 transition-all duration-250 ease-out">
                 <h3 className="text-xl font-semibold mb-4">Monthly subscription</h3>
                 <ul className="space-y-2.5">
                   {[
@@ -858,13 +858,13 @@ export default function LandingPage() {
         {/* Social Proof / Trust Section - Placeholder for beta */}
         <section className="py-4 lg:py-5">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
-            <div className="text-center p-8 lg:p-12 rounded-2xl bg-gradient-to-r from-violet-500/5 via-blue-500/5 to-cyan-500/5 border border-violet-500/10 dark:border-violet-500/20">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400 text-sm font-medium mb-4">
-                <span className="w-2 h-2 rounded-full bg-violet-500 animate-pulse" />
+            <div className="text-center p-8 lg:p-12 rounded-2xl bg-gradient-to-r from-[var(--purple)]/5 via-blue-500/5 to-cyan-500/5 border border-[var(--purple)]/10 dark:border-[var(--purple)]/20">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] dark:text-[var(--purple)] text-sm font-medium mb-4">
+                <span className="w-2 h-2 rounded-full bg-[var(--purple)] animate-pulse" />
                 Early Access
               </div>
               <p className="text-lg text-gray-600 dark:text-white/60 max-w-xl mx-auto">
-                Launching beta — early adopters get <span className="font-semibold text-violet-600 dark:text-violet-400">50% off all pricing</span> until v1.0 launches.
+                Launching beta — early adopters get <span className="font-semibold text-[var(--purple)] dark:text-[var(--purple)]">50% off all pricing</span> until v1.0 launches.
               </p>
             </div>
           </div>
@@ -873,22 +873,22 @@ export default function LandingPage() {
         {/* Pricing Section */}
         <section id="pricing" className="py-8 lg:py-10 relative">
           {/* Gradient accent - lavender tint */}
-          <div className="absolute inset-0 bg-gradient-to-b from-violet-500/[0.03] via-violet-500/[0.05] to-violet-500/[0.02] dark:from-violet-500/[0.02] dark:via-violet-500/[0.04] dark:to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[var(--purple)]/[0.03] via-[var(--purple)]/50/[0.05] to-[var(--purple)]/[0.02] dark:from-[var(--purple)]/[0.02] dark:via-[var(--purple)]/50/[0.04] dark:to-transparent pointer-events-none" />
           
           <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
             <div className="text-center mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight">
                 Simple pricing.{' '}
-                <span className="bg-gradient-to-r from-[#7C3AED] to-blue-500 bg-clip-text text-transparent">No surprises.</span>
+                <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">No surprises.</span>
               </h2>
             </div>
 
             <div className="max-w-lg mx-auto">
               {/* Starter Plan Card - Premium Treatment */}
-              <div className="group p-8 lg:p-10 rounded-2xl bg-gradient-to-br from-white via-white to-violet-50/50 dark:from-[#0f0f12] dark:via-[#0f0f12] dark:to-[#12101a] backdrop-blur-sm border-2 border-[#7C3AED]/30 dark:border-[#7C3AED]/40 shadow-xl shadow-[#7C3AED]/10 relative overflow-hidden transition-all duration-300 hover:border-[#7C3AED]/50 dark:hover:border-[#7C3AED]/60 hover:shadow-[0_8px_30px_rgba(124,58,237,0.15)]">
+              <div className="group p-8 lg:p-10 rounded-2xl bg-gradient-to-br from-white via-white to-[var(--purple)]/50 dark:from-[#0f0f12] dark:via-[#0f0f12] dark:to-[#12101a] backdrop-blur-sm border-2 border-[var(--purple)]/30 dark:border-[var(--purple)]/40 shadow-xl shadow-[var(--purple)]/10 relative overflow-hidden transition-all duration-300 hover:border-[var(--purple)]/50 dark:hover:border-[var(--purple)]/60 hover:shadow-[0_8px_30px_rgba(124,58,237,0.15)]">
                 {/* Beta badge */}
                 <div className="absolute top-4 right-4">
-                  <span className="px-3 py-1 text-xs font-medium bg-[#7C3AED] text-white rounded-full">50% off during beta</span>
+                  <span className="px-3 py-1 text-xs font-medium bg-[var(--purple)] text-white rounded-full">50% off during beta</span>
                 </div>
                 
                 <h3 className="text-2xl font-bold mb-6">Starter Plan</h3>
@@ -956,7 +956,7 @@ export default function LandingPage() {
                 <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-4 lg:sticky lg:top-32">
                   Questions?
                   <br />
-                  <span className="bg-gradient-to-r from-[#7C3AED] to-blue-500 bg-clip-text text-transparent">Answered.</span>
+                  <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">Answered.</span>
                 </h2>
               </div>
               
@@ -980,7 +980,7 @@ export default function LandingPage() {
                     >
                       <h3 className="text-base font-semibold pr-4">{faq.q}</h3>
                       <svg 
-                        className={`w-5 h-5 text-gray-400 group-hover/faq:text-violet-500 flex-shrink-0 transition-all duration-200 ${openFaq === i ? 'rotate-180 text-violet-500' : ''}`} 
+                        className={`w-5 h-5 text-gray-400 group-hover/faq:text-[var(--purple)] flex-shrink-0 transition-all duration-200 ${openFaq === i ? 'rotate-180 text-[var(--purple)]' : ''}`} 
                         fill="none" 
                         viewBox="0 0 24 24" 
                         stroke="currentColor" 
@@ -1001,7 +1001,7 @@ export default function LandingPage() {
 
         {/* Final CTA */}
         <section className="py-12 lg:py-16 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-t from-violet-500/10 via-violet-500/5 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--purple)]/10 via-[var(--purple)]/50/5 to-transparent pointer-events-none" />
           {/* Flow Field Background - Footer CTA */}
           <div className="absolute inset-0 pointer-events-none">
             <svg 
@@ -1029,7 +1029,7 @@ export default function LandingPage() {
             <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-5">
               Ready to get your
               <br />
-              <span className="bg-gradient-to-r from-violet-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent">business online?</span>
+              <span className="bg-gradient-to-r from-[var(--purple)] via-blue-500 to-cyan-400 bg-clip-text text-transparent">business online?</span>
             </h2>
             <p className="text-lg text-gray-500 dark:text-white/40 mb-8 max-w-md mx-auto">
               Book a free discovery call. We'll handle everything from there.
@@ -1051,7 +1051,7 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center">
                   <span className="text-white font-bold text-sm">F</span>
                 </div>
                 <span className="text-sm text-gray-400 dark:text-white/30">© 2026 Flowstarter</span>

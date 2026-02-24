@@ -91,7 +91,7 @@ export function DashboardStatsClient({
                 href={`https://${lastProject.name.toLowerCase().replace(/\s+/g, '-')}.flowstarter.app`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--purple)] text-sm font-medium text-white hover:bg-[#6D28D9] transition-colors"
+                className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--purple)] text-sm font-medium text-white hover:bg-[var(--purple)] transition-colors"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
                 View
@@ -180,7 +180,7 @@ export function DashboardStatsClient({
           )}
         </div>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/10 to-[var(--purple)]/10 border border-blue-500/20 flex items-center justify-center">
             <BarChart3 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           </div>
           <div>

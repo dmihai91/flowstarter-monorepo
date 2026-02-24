@@ -20,12 +20,12 @@ import {
 
 export default function LocalBusiness2Preview() {
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-900 dark:via-indigo-900 dark:to-purple-900">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-[var(--purple)]/5 to-[var(--purple)]/5 dark:from-blue-900 dark:via-[var(--purple)] dark:to-[var(--purple)]">
       {/* Navigation */}
       <nav className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-blue-200 dark:border-blue-700 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <div className="text-2xl font-bold bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <div className="text-2xl font-bold bg-linear-to-r from-blue-600 to-[var(--purple)] bg-clip-text text-transparent">
               local-business-2
             </div>
             <div className="hidden md:flex space-x-8">
@@ -54,7 +54,7 @@ export default function LocalBusiness2Preview() {
                 Contact
               </a>
             </div>
-            <button className="bg-linear-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded-full [@media(hover:hover)]:hover:from-blue-600 [@media(hover:hover)]:hover:to-indigo-600 transition-all hidden md:block">
+            <button className="bg-linear-to-r from-blue-500 to-[var(--purple)] text-white px-6 py-2 rounded-full [@media(hover:hover)]:hover:from-blue-600 [@media(hover:hover)]:hover:to-[var(--purple)] transition-all hidden md:block">
               Book Now
             </button>
           </div>
@@ -63,7 +63,7 @@ export default function LocalBusiness2Preview() {
 
       {/* Hero Section */}
       <section className="relative py-20 lg:py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-r from-blue-400/20 to-indigo-400/20 dark:from-blue-600/30 dark:to-indigo-600/30"></div>
+        <div className="absolute inset-0 bg-linear-to-r from-blue-400/20 to-[var(--purple)]/20 dark:from-blue-600/30 dark:to-[var(--purple)]/30"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
@@ -74,7 +74,7 @@ export default function LocalBusiness2Preview() {
                 </div>
                 <h1 className="text-4xl lg:text-6xl font-bold text-slate-900 dark:text-white leading-tight">
                   Quality
-                  <span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  <span className="bg-linear-to-r from-blue-600 to-[var(--purple)] bg-clip-text text-transparent">
                     Service
                   </span>
                   You Can Trust
@@ -86,7 +86,7 @@ export default function LocalBusiness2Preview() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="inline-flex items-center px-8 py-4 bg-linear-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-full [@media(hover:hover)]:hover:from-blue-700 [@media(hover:hover)]:hover:to-indigo-700 transition-all transform [@media(hover:hover)]:hover:scale-105 shadow-lg">
+                <button className="inline-flex items-center px-8 py-4 bg-linear-to-r from-blue-600 to-[var(--purple)] text-white font-semibold rounded-full [@media(hover:hover)]:hover:from-blue-700 [@media(hover:hover)]:hover:to-[var(--purple)] transition-all transform [@media(hover:hover)]:hover:scale-105 shadow-lg">
                   Book Service
                   <Calendar className="ml-2 w-5 h-5" />
                 </button>
@@ -131,7 +131,7 @@ export default function LocalBusiness2Preview() {
 
             <div className="relative">
               <div className="relative bg-white dark:bg-slate-800 rounded-xl p-8 shadow-2xl">
-                <div className="aspect-square bg-linear-to-br from-blue-400 to-indigo-400 rounded-2xl flex items-center justify-center">
+                <div className="aspect-square bg-linear-to-br from-blue-400 to-[var(--purple)]/40 rounded-2xl flex items-center justify-center">
                   <Wrench className="w-24 h-24 text-white" />
                 </div>
                 <div className="absolute -top-4 -right-4 bg-green-400 rounded-full p-4">
@@ -141,7 +141,7 @@ export default function LocalBusiness2Preview() {
                   <Award className="w-6 h-6 text-orange-900" />
                 </div>
               </div>
-              <div className="absolute inset-0 bg-linear-to-r from-blue-400/20 to-indigo-400/20 rounded-xl -rotate-6 -z-10"></div>
+              <div className="absolute inset-0 bg-linear-to-r from-blue-400/20 to-[var(--purple)]/20 rounded-xl -rotate-6 -z-10"></div>
             </div>
           </div>
         </div>
@@ -202,9 +202,9 @@ export default function LocalBusiness2Preview() {
             ].map((service, index) => (
               <div
                 key={index}
-                className="group bg-linear-to-br from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-2xl p-6 [@media(hover:hover)]:hover:shadow-xl transition-all"
+                className="group bg-linear-to-br from-blue-50 to-[var(--purple)]/5 dark:from-blue-900/30 dark:to-[var(--purple)]/30 rounded-2xl p-6 [@media(hover:hover)]:hover:shadow-xl transition-all"
               >
-                <div className="w-12 h-12 bg-linear-to-r from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 bg-linear-to-r from-blue-500 to-[var(--purple)] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   <service.icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
@@ -230,7 +230,7 @@ export default function LocalBusiness2Preview() {
       {/* About Section */}
       <section
         id="about"
-        className="py-20 bg-linear-to-r from-blue-50 to-indigo-50 dark:from-blue-900/50 dark:to-indigo-900/50"
+        className="py-20 bg-linear-to-r from-blue-50 to-[var(--purple)]/5 dark:from-blue-900/50 dark:to-[var(--purple)]/50"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -265,10 +265,10 @@ export default function LocalBusiness2Preview() {
                   <div className="aspect-square bg-linear-to-br from-slate-500 to-slate-600 rounded-xl flex items-center justify-center">
                     <Award className="w-8 h-8 text-white" />
                   </div>
-                  <div className="aspect-square bg-linear-to-br from-indigo-400 to-indigo-600 rounded-xl flex items-center justify-center">
+                  <div className="aspect-square bg-linear-to-br from-[var(--purple)]/40 to-[var(--purple)] rounded-xl flex items-center justify-center">
                     <CheckCircle className="w-8 h-8 text-white" />
                   </div>
-                  <div className="aspect-square bg-linear-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center">
+                  <div className="aspect-square bg-linear-to-br from-[var(--purple)]/40 to-[var(--purple)] rounded-xl flex items-center justify-center">
                     <Users className="w-8 h-8 text-white" />
                   </div>
                   <div className="aspect-square bg-linear-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center">
@@ -319,7 +319,7 @@ export default function LocalBusiness2Preview() {
             ].map((testimonial, index) => (
               <div
                 key={index}
-                className="bg-linear-to-br from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-2xl p-6"
+                className="bg-linear-to-br from-blue-50 to-[var(--purple)]/5 dark:from-blue-900/30 dark:to-[var(--purple)]/30 rounded-2xl p-6"
               >
                 <div className="flex items-center gap-1 mb-4">
                   {[1, 2, 3, 4, 5].map((star) => (
@@ -349,7 +349,7 @@ export default function LocalBusiness2Preview() {
       {/* Contact & Booking */}
       <section
         id="contact"
-        className="py-20 bg-linear-to-r from-blue-900 to-indigo-900 text-white"
+        className="py-20 bg-linear-to-r from-blue-900 to-[var(--purple)] text-white"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -473,7 +473,7 @@ export default function LocalBusiness2Preview() {
       <footer className="bg-slate-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="text-2xl font-bold bg-linear-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent mb-4">
+            <div className="text-2xl font-bold bg-linear-to-r from-blue-400 to-[var(--purple)]/40 bg-clip-text text-transparent mb-4">
               local-business-2
             </div>
             <p className="text-slate-400 mb-6">

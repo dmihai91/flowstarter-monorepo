@@ -27,35 +27,35 @@ const toneStyles: Record<
 > = {
   blue: {
     badgeBg:
-      'bg-gradient-to-br from-blue-500/10 to-indigo-500/10 backdrop-blur-sm border border-blue-500/20 dark:border-blue-400/20',
+      'bg-[var(--blue)]/10 backdrop-blur-sm border border-[var(--blue)]/20',
     iconColor: 'var(--blue)',
-    chipBg: 'bg-blue-500/10 backdrop-blur-sm dark:bg-blue-500/15',
-    chipText: 'text-blue-700 dark:text-blue-300',
-    ctaBg: 'bg-blue-600/10 dark:bg-blue-500/15',
+    chipBg: 'bg-[var(--blue)]/10 backdrop-blur-sm',
+    chipText: 'text-[var(--blue)]',
+    ctaBg: 'bg-[var(--blue)]/10',
   },
   green: {
     badgeBg:
-      'bg-gradient-to-br from-emerald-500/10 to-green-500/10 backdrop-blur-sm border border-emerald-500/20 dark:border-emerald-400/20',
+      'bg-[var(--green)]/10 backdrop-blur-sm border border-[var(--green)]/20',
     iconColor: 'var(--green)',
-    chipBg: 'bg-[var(--green)]/5 backdrop-blur-sm',
-    chipText: 'text-emerald-700 dark:text-emerald-300',
-    ctaBg: 'bg-[var(--green)]/5',
+    chipBg: 'bg-[var(--green)]/10 backdrop-blur-sm',
+    chipText: 'text-[var(--green)]',
+    ctaBg: 'bg-[var(--green)]/10',
   },
   indigo: {
     badgeBg:
-      'bg-gradient-to-br from-pink-500/10 to-purple-500/10 backdrop-blur-sm border border-purple-500/20 dark:border-purple-400/20',
+      'bg-[var(--purple)]/10 backdrop-blur-sm border border-[var(--purple)]/20',
     iconColor: 'var(--purple)',
-    chipBg: 'bg-[var(--purple)]/5 backdrop-blur-sm',
-    chipText: 'text-violet-700 dark:text-violet-300',
-    ctaBg: 'bg-[var(--purple)]/5',
+    chipBg: 'bg-[var(--purple)]/10 backdrop-blur-sm',
+    chipText: 'text-[var(--purple)]',
+    ctaBg: 'bg-[var(--purple)]/10',
   },
   purple: {
     badgeBg:
-      'bg-gradient-to-br from-orange-500/10 to-amber-500/10 backdrop-blur-sm border border-orange-500/20 dark:border-orange-400/20',
+      'bg-[var(--purple)]/10 backdrop-blur-sm border border-[var(--purple)]/20',
     iconColor: 'var(--purple)',
-    chipBg: 'bg-orange-500/10 backdrop-blur-sm dark:bg-orange-500/15',
-    chipText: 'text-orange-700 dark:text-orange-300',
-    ctaBg: 'bg-orange-600/10 dark:bg-orange-500/15',
+    chipBg: 'bg-[var(--purple)]/10 backdrop-blur-sm',
+    chipText: 'text-[var(--purple)]',
+    ctaBg: 'bg-[var(--purple)]/10',
   },
 };
 

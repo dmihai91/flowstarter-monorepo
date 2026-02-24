@@ -147,7 +147,7 @@ export default defineConfig((config) => {
     },
     server: {
       host: true, // Bind to all interfaces (0.0.0.0) for Tailscale access
-      allowedHosts: ['.ts.net'], // Allow all Tailscale MagicDNS hostnames
+      allowedHosts: ['.ts.net', 'editor.flowstarter.dev', 'flowstarter.dev', 'localhost'], // Allow Tailscale + dev domains
       proxy: {
         // Note: /mcp-live is handled by mcpLiveProxyPlugin middleware for HTML transformation
         // Do NOT add a proxy here as it will conflict with the middleware

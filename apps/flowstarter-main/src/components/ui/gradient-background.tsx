@@ -2,65 +2,95 @@
 
 import { cn } from '@/lib/utils';
 
-export type GradientVariant = 'dashboard' | 'integrations' | 'help' | 'landing' | 'default';
+export type GradientVariant = 'dashboard' | 'integrations' | 'help' | 'wizard' | 'landing' | 'default';
 
 interface GradientBackgroundProps {
   variant?: GradientVariant;
   className?: string;
 }
 
-const variantStyles: Record<GradientVariant, { orb1: string; orb2: string }> = {
+// Variant-specific accent colors (using CSS custom properties)
+const variantAccents: Record<GradientVariant, { primary: string; secondary: string }> = {
   dashboard: {
-    orb1: 'bg-[var(--purple)]/20',
-    orb2: 'bg-[var(--blue)]/15',
+    primary: 'var(--purple)',
+    secondary: 'var(--blue)',
   },
   integrations: {
-    orb1: 'bg-[var(--green)]/20',
-    orb2: 'bg-[var(--purple)]/15',
+    primary: 'var(--green)',
+    secondary: 'var(--purple)',
   },
   help: {
-    orb1: 'bg-[var(--blue)]/20',
-    orb2: 'bg-[var(--purple)]/15',
+    primary: 'var(--blue)',
+    secondary: 'var(--purple)',
+  },
+  wizard: {
+    primary: 'var(--purple)',
+    secondary: 'var(--blue)',
   },
   landing: {
-    orb1: 'bg-[var(--purple)]/15',
-    orb2: 'bg-[var(--blue)]/10',
+    primary: 'var(--purple)',
+    secondary: 'var(--blue)',
   },
   default: {
-    orb1: 'bg-[var(--purple)]/20',
-    orb2: 'bg-[var(--blue)]/15',
+    primary: 'var(--purple)',
+    secondary: 'var(--blue)',
   },
 };
 
-export function GradientBackground({ variant = 'default', className }: GradientBackgroundProps) {
-  const styles = variantStyles[variant];
-
+/**
+ * Gradient background with flow lines - matching landing page aesthetic
+ */
+export function GradientBackground({
+  variant = 'dashboard',
+  className,
+}: GradientBackgroundProps) {
+  const accents = variantAccents[variant];
+  
   return (
-    <div className={cn('fixed inset-0 -z-10 overflow-hidden', className)}>
-      {/* Base gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-gray-100/80 dark:from-[#1a1a2e] dark:via-[#16213e] dark:to-[#0f0f1a]" />
+    <div
+      className={cn(
+        'pointer-events-none absolute inset-0 -z-10 overflow-hidden',
+        className
+      )}
+    >
+      {/* Base gradient - white to lavender (light) / dark (dark) */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white via-[#FAFAFF] to-[#F0EEFF] dark:from-[#0a0a0c] dark:via-[#0c0c10] dark:to-[#0a0a0c]" />
       
-      {/* Accent orbs */}
+      {/* Accent gradient orb - top left */}
       <div 
-        className={cn(
-          'absolute -top-24 -right-24 w-96 h-96 rounded-full blur-3xl opacity-60 dark:opacity-40',
-          styles.orb1
-        )}
-      />
-      <div 
-        className={cn(
-          'absolute -bottom-24 -left-24 w-96 h-96 rounded-full blur-3xl opacity-50 dark:opacity-30',
-          styles.orb2
-        )}
+        className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full opacity-30 dark:opacity-20 blur-3xl"
+        style={{ background: `radial-gradient(circle, color-mix(in srgb, ${accents.primary} 40%, transparent) 0%, transparent 70%)` }}
       />
       
-      {/* Subtle pattern overlay */}
+      {/* Accent gradient orb - bottom right */}
       <div 
-        className="absolute inset-0 opacity-[0.015] dark:opacity-[0.03]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }}
+        className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full opacity-25 dark:opacity-15 blur-3xl"
+        style={{ background: `radial-gradient(circle, color-mix(in srgb, ${accents.secondary} 40%, transparent) 0%, transparent 70%)` }}
       />
+      
+      {/* Flow lines */}
+      <svg 
+        className="absolute inset-0 w-full h-full opacity-[0.08] dark:opacity-[0.06]"
+        viewBox="0 0 1200 800" 
+        preserveAspectRatio="xMidYMid slice"
+        fill="none"
+      >
+        <defs>
+          <linearGradient id="bgFlowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="hsl(233, 65%, 58%)" />
+            <stop offset="100%" stopColor="hsl(211, 93%, 61%)" />
+          </linearGradient>
+        </defs>
+        <g stroke="url(#bgFlowGradient)" strokeWidth="1">
+          <path d="M-100,100 Q200,80 400,120 T800,100 T1300,140" />
+          <path d="M-100,200 Q150,220 350,180 T750,220 T1300,200" />
+          <path d="M-100,300 Q250,280 450,320 T850,290 T1300,330" />
+          <path d="M-100,400 Q180,420 380,380 T780,420 T1300,400" />
+          <path d="M-100,500 Q220,480 420,520 T820,490 T1300,530" />
+          <path d="M-100,600 Q200,620 400,580 T800,620 T1300,600" />
+          <path d="M-100,700 Q250,680 450,720 T850,690 T1300,730" />
+        </g>
+      </svg>
     </div>
   );
 }

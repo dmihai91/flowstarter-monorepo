@@ -6,6 +6,7 @@ import type { ReactNode } from 'react';
 
 export default function MainPagesLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const isLandingPage = pathname === '/';
   const isLoggedInPage =
     pathname?.startsWith('/dashboard') ||
     pathname?.startsWith('/profile') ||
@@ -13,10 +14,13 @@ export default function MainPagesLayout({ children }: { children: ReactNode }) {
     pathname?.startsWith('/wizard') ||
     pathname?.startsWith('/help');
 
+  // Hide footer on landing page (has its own) and logged-in pages
+  const hideFooter = isLandingPage || isLoggedInPage;
+
   return (
     <>
       {children}
-      {!isLoggedInPage && <Footer />}
+      {!hideFooter && <Footer />}
     </>
   );
 }

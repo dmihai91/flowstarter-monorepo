@@ -16,6 +16,9 @@ import { ExternalNavigation, ExternalNavigationWithAuth } from './Navbar';
 // List of public routes that don't require authentication
 const publicRoutes = ['/', '/about', '/login', '/sign-up'];
 
+// Routes where we hide the default navbar (they have their own)
+const noNavbarRoutes = ['/'];
+
 export function NavigationWrapper() {
   const pathname = usePathname();
   const { isLoaded } = useAuth();
@@ -30,12 +33,13 @@ export function NavigationWrapper() {
   const isDashboardRoute = pathname === '/dashboard';
   const isWizardRoute = pathname === '/dashboard/new';
   const isTemplatePreview = pathname.startsWith('/template-preview');
+  const isNoNavbarRoute = noNavbarRoutes.includes(pathname);
   const [, setIsErrorPage] = useState(false);
 
   // Check synchronously during render to catch error pages immediately
   // This ensures the navbar is hidden even on the first render
   const errorPageFlag = getIsErrorPage();
-  const shouldHideNavbar = isTemplatePreview || errorPageFlag;
+  const shouldHideNavbar = isTemplatePreview || errorPageFlag || isNoNavbarRoute;
 
   // Sync state with flag for useEffect dependencies
   useEffect(() => {

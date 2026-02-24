@@ -290,7 +290,16 @@ export default function App() {
   }, []);
 
   return (
-    <ClerkProvider {...loaderData}>
+    <ClerkProvider 
+      {...loaderData}
+      // Share session across subdomains (flowstarter.dev, editor.flowstarter.dev)
+      domain={typeof window !== 'undefined' && window.location.hostname.includes('flowstarter.dev') 
+        ? '.flowstarter.dev' 
+        : undefined}
+      isSatellite={typeof window !== 'undefined' && window.location.hostname.includes('editor.flowstarter')}
+      signInUrl="https://flowstarter.dev/login"
+      signUpUrl="https://flowstarter.dev/login"
+    >
       <Layout>
         <Outlet />
       </Layout>

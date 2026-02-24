@@ -18,15 +18,8 @@ export default function AuthLayout({
 }: AuthLayoutProps) {
   useTheme();
   const { t } = useTranslations();
-  const defaultMarketingKeys: Array<TranslationKeys> = [
-    'auth.marketing.dashboard',
-    'auth.marketing.responsive',
-    'auth.marketing.secure',
-  ];
-  const items =
-    marketingKeys && marketingKeys.length > 0
-      ? marketingKeys
-      : defaultMarketingKeys;
+  // Only show marketing items if explicitly provided
+  const items = marketingKeys || [];
 
   // Dashboard gradient variables (matching PageContainer)
   const gradientTop1 = 'var(--dashboard-gradient-top-1)';
@@ -95,14 +88,16 @@ export default function AuthLayout({
                 </p>
               ) : null}
 
-              <ul className="mt-6 grid grid-cols-1 gap-4 text-sm text-muted-foreground">
-                {items.map((key) => (
-                  <li key={key} className="flex items-center gap-3">
-                    <span className="size-2 rounded-full bg-primary" />
-                    {t(key)}
-                  </li>
-                ))}
-              </ul>
+              {items.length > 0 && (
+                <ul className="mt-6 grid grid-cols-1 gap-4 text-sm text-muted-foreground">
+                  {items.map((key) => (
+                    <li key={key} className="flex items-center gap-3">
+                      <span className="size-2 rounded-full bg-primary" />
+                      {t(key)}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
 

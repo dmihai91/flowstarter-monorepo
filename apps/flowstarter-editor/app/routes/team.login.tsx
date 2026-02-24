@@ -9,6 +9,7 @@ import { SignIn, useUser } from '@clerk/remix';
 import { useNavigate } from '@remix-run/react';
 import type { MetaFunction } from '@remix-run/cloudflare';
 import { useEffect, useState } from 'react';
+import { setTeamSession, clearTeamSession } from '~/lib/team-auth';
 
 export const meta: MetaFunction = () => {
   return [
@@ -45,9 +46,15 @@ export default function TeamLogin() {
       const domain = email?.split('@')[1]?.toLowerCase();
       const isTeam = domain && TEAM_EMAIL_DOMAINS.includes(domain);
       
-      if (isTeam) {
+      if (isTeam && email) {
+        // Set team session for capabilities
+        setTeamSession(user.id, {
+          email,
+          name: user.fullName || user.firstName || undefined,
+        });
         navigate('/');
       } else {
+        clearTeamSession();
         setAccessDenied(true);
       }
     }

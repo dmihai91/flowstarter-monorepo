@@ -143,7 +143,7 @@ export default function LandingPage() {
       { role: 'user', text: demoSequence[0].prompt },
       { role: 'ai', text: demoSequence[0].response }
     ]);
-    setTimeout(() => demoSequence[0].action(), 500);
+    setTimeout(() => setMockSite(s => ({ ...s, ...demoSequence[0].siteState })), 500);
 
     const handleMouseMove = (e: MouseEvent) => {
       setMousePos({ x: e.clientX, y: e.clientY });

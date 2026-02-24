@@ -13,6 +13,7 @@ export default function LandingPage() {
   const [messages, setMessages] = useState<{role: 'user' | 'ai', text: string}[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [scrolled, setScrolled] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const aiResponses: Record<string, string> = {
@@ -66,8 +67,15 @@ export default function LandingPage() {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePos({ x: e.clientX, y: e.clientY });
     };
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   useEffect(() => {
@@ -153,9 +161,9 @@ export default function LandingPage() {
         />
 
         {/* Header */}
-        <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+        <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'} ${scrolled ? 'bg-white/70 dark:bg-[#0a0a0c]/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/5 shadow-sm' : ''}`}>
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
-            <div className="flex items-center justify-between h-20">
+            <div className="flex items-center justify-between h-16">
               <Link href="/" className="flex items-center gap-3 group">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center shadow-lg shadow-violet-500/20 group-hover:shadow-violet-500/30 transition-shadow">
                   <span className="text-white font-bold text-lg">F</span>
@@ -185,7 +193,7 @@ export default function LandingPage() {
         </header>
 
         {/* Hero */}
-        <section className="relative pt-32 lg:pt-40 pb-20 lg:pb-32">
+        <section className="relative pt-24 lg:pt-32 pb-16 lg:pb-24">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
               {/* Left: Copy */}
@@ -248,9 +256,9 @@ export default function LandingPage() {
                 <div className="absolute -inset-4 bg-gradient-to-r from-violet-500/20 via-blue-500/20 to-cyan-500/20 rounded-3xl blur-2xl animate-pulse-glow" />
                 
                 {/* Editor window */}
-                <div className="relative bg-white/80 dark:bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-white/10 shadow-2xl overflow-hidden">
+                <div className="relative bg-white/60 dark:bg-white/[0.05] backdrop-blur-2xl rounded-3xl border border-white/50 dark:border-white/10 shadow-[0_20px_70px_-15px_rgba(0,0,0,0.2)] dark:shadow-[0_20px_70px_-15px_rgba(0,0,0,0.5)] overflow-hidden">
                   {/* Browser chrome */}
-                  <div className="flex items-center justify-between px-5 py-4 bg-gray-50/80 dark:bg-white/[0.02] border-b border-gray-200 dark:border-white/5">
+                  <div className="flex items-center justify-between px-5 py-4 bg-white/40 dark:bg-white/[0.03] border-b border-gray-200/50 dark:border-white/5">
                     <div className="flex items-center gap-3">
                       <div className="flex gap-2">
                         <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
@@ -258,7 +266,7 @@ export default function LandingPage() {
                         <div className="w-3 h-3 rounded-full bg-[#28ca42]" />
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 text-xs text-gray-400 dark:text-white/30">
+                    <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-gray-100/80 dark:bg-white/5 backdrop-blur text-xs text-gray-400 dark:text-white/30">
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                       </svg>
@@ -290,7 +298,7 @@ export default function LandingPage() {
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
                               </svg>
                             </div>
-                            <div className="flex-1 px-4 py-3 rounded-2xl rounded-tl-sm bg-gray-100 dark:bg-white/[0.03] border border-gray-200 dark:border-white/5 text-sm text-gray-600 dark:text-white/70">
+                            <div className="flex-1 px-4 py-3 rounded-2xl rounded-tl-sm bg-white/60 dark:bg-white/[0.05] backdrop-blur-lg border border-white/50 dark:border-white/10 text-sm text-gray-600 dark:text-white/70">
                               {msg.text}
                             </div>
                           </div>
@@ -303,7 +311,7 @@ export default function LandingPage() {
                               <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
                             </svg>
                           </div>
-                          <div className="px-4 py-3 rounded-2xl rounded-tl-sm bg-gray-100 dark:bg-white/[0.03] border border-gray-200 dark:border-white/5">
+                          <div className="px-4 py-3 rounded-2xl rounded-tl-sm bg-white/60 dark:bg-white/[0.05] backdrop-blur-lg border border-white/50 dark:border-white/10">
                             <div className="flex gap-1.5">
                               <span className="w-2 h-2 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                               <span className="w-2 h-2 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -316,7 +324,7 @@ export default function LandingPage() {
                     </div>
 
                     {/* Input */}
-                    <div className="flex items-center gap-3 p-2 rounded-xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/5">
+                    <div className="flex items-center gap-3 p-2 rounded-xl bg-white/50 dark:bg-white/[0.03] backdrop-blur-lg border border-white/60 dark:border-white/10">
                       <input 
                         type="text" 
                         placeholder="Try: Add a contact form..." 
@@ -348,7 +356,7 @@ export default function LandingPage() {
                 </div>
                 
                 <div 
-                  className="absolute -top-6 -left-6 w-16 h-16 rounded-xl bg-white/80 dark:bg-white/[0.03] backdrop-blur border border-gray-200 dark:border-white/10 flex items-center justify-center animate-float shadow-lg"
+                  className="absolute -top-6 -left-6 w-16 h-16 rounded-2xl bg-white/60 dark:bg-white/[0.08] backdrop-blur-xl border border-white/50 dark:border-white/10 flex items-center justify-center animate-float shadow-xl"
                   style={{ animationDelay: '0s' }}
                 >
                   <div className="text-2xl font-bold bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">98</div>
@@ -359,14 +367,14 @@ export default function LandingPage() {
         </section>
 
         {/* Process Section */}
-        <section id="process" className="py-24 lg:py-32 relative">
+        <section id="process" className="py-16 lg:py-24 relative">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
-            <div className="max-w-xl mb-16">
-              <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-4">
+            <div className="max-w-xl mb-12">
+              <h2 className="text-3xl lg:text-4xl font-bold leading-tight mb-3">
                 The process is{' '}
                 <span className="bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">simple</span>
               </h2>
-              <p className="text-lg text-gray-500 dark:text-white/40">
+              <p className="text-base text-gray-500 dark:text-white/40">
                 No back-and-forth revisions. No waiting weeks. Just results.
               </p>
             </div>
@@ -389,17 +397,17 @@ export default function LandingPage() {
         </section>
 
         {/* Pricing Section */}
-        <section id="pricing" className="py-24 lg:py-32 relative">
+        <section id="pricing" className="py-16 lg:py-24 relative">
           {/* Gradient accent */}
           <div className="absolute inset-0 bg-gradient-to-b from-violet-500/5 via-transparent to-transparent pointer-events-none" />
           
           <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/5 dark:bg-white/5 backdrop-blur-sm border border-gray-900/10 dark:border-white/10 mb-6">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/5 dark:bg-white/5 backdrop-blur-sm border border-gray-900/10 dark:border-white/10 mb-4">
                 <span className="w-2 h-2 rounded-full bg-emerald-500" />
                 <span className="text-xs tracking-wide text-gray-600 dark:text-white/50">Beta pricing — Lock it in forever</span>
               </div>
-              <h2 className="text-4xl lg:text-5xl font-bold leading-tight">
+              <h2 className="text-3xl lg:text-4xl font-bold leading-tight">
                 Transparent pricing,
                 <br />
                 <span className="text-gray-400 dark:text-white/30">exceptional value</span>
@@ -474,7 +482,7 @@ export default function LandingPage() {
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className="py-24 lg:py-32">
+        <section id="faq" className="py-16 lg:py-24">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="grid lg:grid-cols-2 gap-16">
               <div>
@@ -504,7 +512,7 @@ export default function LandingPage() {
         </section>
 
         {/* Final CTA */}
-        <section className="py-24 lg:py-32 relative">
+        <section className="py-16 lg:py-24 relative">
           <div className="absolute inset-0 bg-gradient-to-t from-violet-500/10 via-transparent to-transparent pointer-events-none" />
           
           <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center relative">

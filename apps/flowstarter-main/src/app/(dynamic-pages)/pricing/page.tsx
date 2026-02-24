@@ -190,7 +190,7 @@ export default function PricingPage() {
                 </a>
                 
                 <p className="text-center text-xs text-gray-400 dark:text-white/40 mt-4">
-                  No lock-in. Cancel anytime. Setup fee is 50% refundable within 30 days.
+                  No lock-in. Cancel anytime. Setup fee is non-refundable.
                 </p>
               </CardContent>
             </Card>

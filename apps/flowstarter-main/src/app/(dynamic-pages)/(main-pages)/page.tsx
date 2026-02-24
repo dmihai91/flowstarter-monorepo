@@ -1028,17 +1028,17 @@ export default function LandingPage() {
                 </div>
               </div>
               
-              {/* Risk-Free Guarantee */}
+              {/* First Month Free */}
               <div className="p-6 lg:p-8 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 dark:from-emerald-500/5 dark:to-emerald-500/10 border border-emerald-500/20">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
                     <svg className="w-6 h-6 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Risk-Free Trial</h3>
-                    <p className="text-sm text-gray-600 dark:text-white/50">First month free on your subscription. Not happy within 30 days? Get 50% of your setup fee back. No questions asked.</p>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">First Month Free</h3>
+                    <p className="text-sm text-gray-600 dark:text-white/50">Try your new site risk-free. Your subscription starts 30 days after launch — plenty of time to make sure you love it.</p>
                   </div>
                 </div>
               </div>
@@ -1211,7 +1211,7 @@ export default function LandingPage() {
                 </a>
                 
                 {/* Footer note */}
-                <p className="text-xs text-gray-400 dark:text-white/30 text-center mt-4">No lock-in. Cancel anytime. Setup fee is 50% refundable within 30 days.</p>
+                <p className="text-xs text-gray-400 dark:text-white/30 text-center mt-4">No lock-in. Cancel anytime. Setup fee is non-refundable.</p>
               </div>
               
               {/* Coming Soon Tiers */}
@@ -1266,7 +1266,7 @@ export default function LandingPage() {
               
               {/* Fine print */}
               <p className="text-center text-sm text-gray-400 dark:text-white/30 mt-6">
-                No lock-in. Cancel anytime. Setup fee is 50% refundable within 30 days.
+                No lock-in. Cancel anytime. Setup fee is non-refundable.
               </p>
             </div>
           </div>
@@ -1289,7 +1289,7 @@ export default function LandingPage() {
                   { q: 'What happens on the discovery call?', a: 'We spend 30 minutes learning about your business, your goals, and your brand. You don\'t need to prepare anything — just show up and tell us about what you do. After the call, we\'ll send you a summary of what we discussed and start building your site within 24 hours.' },
                   { q: 'How long until my site is live?', a: 'Most sites go live within 1–2 weeks after the discovery call. We\'ll keep you updated throughout the process.' },
                   { q: 'Can I make changes after the site is built?', a: 'That\'s the whole point. Your subscription includes our AI editor — update text, add pages, change your branding, improve your SEO. All without writing a single line of code.' },
-                  { q: 'What if I want to cancel?', a: 'No lock-in. Cancel your subscription anytime. Not happy within 30 days? Get 50% of your setup fee back. You keep all your site files either way.' },
+                  { q: 'What if I want to cancel?', a: 'No lock-in. Cancel your subscription anytime. The setup fee is non-refundable since it covers real work (your discovery call and site build), but you keep all your site files.' },
                   { q: 'Do I need any technical skills?', a: 'Zero. We handle the technical setup. The AI editor is built for people who\'ve never touched code.' },
                   { q: 'What happens when the beta ends?', a: 'Your beta discount (50% off) is locked for 1 year from signup. After that, pricing moves to standard rates (€299 setup / €29/month). You\'ll get 30 days notice before anything changes.' },
                   { q: 'What\'s included in the email?', a: 'Two professional email addresses with your domain (e.g., you@yourbusiness.com).' },

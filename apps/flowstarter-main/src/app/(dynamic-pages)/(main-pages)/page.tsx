@@ -142,10 +142,9 @@ export default function LandingPage() {
   });
 
   const features = [
-    { num: '01', title: 'Discovery Call', desc: 'We learn your business, goals, and vision in a focused 30-minute conversation.' },
-    { num: '02', title: 'Custom Design', desc: 'Your site is designed and built from scratch. No templates. No compromises.' },
-    { num: '03', title: 'AI Editor Access', desc: 'Update text, images, and layouts anytime by describing what you want.' },
-    { num: '04', title: 'Your Draft Ready', desc: 'First draft in 1-2 weeks. Then customize it yourself with the AI editor—unlimited changes.' },
+    { num: '01', title: 'We talk', desc: 'Book a free 30-minute discovery call. We learn about your business, your brand, and what you need. You talk, we listen.' },
+    { num: '02', title: 'We build', desc: 'Our AI engine generates your site from premium templates, tailored to your brand. We set up your domain, email, and hosting. You review, we refine.' },
+    { num: '03', title: 'You own it', desc: 'Your site goes live. From here, use the AI editor to update content, add pages, and tweak your design — anytime, no code needed.' },
   ];
 
   return (
@@ -336,12 +335,15 @@ export default function LandingPage() {
                   Digital presence
                   <br />
                   <span className="bg-gradient-to-r from-violet-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent animate-gradient">
-                    done right
+                    done for you
                   </span>
                 </h1>
                 
-                <p className="text-lg lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed max-w-lg mb-10">
-                  A website that converts. Built for you in 1-2 weeks, then customize it anytime with our AI editor.
+                <p className="text-lg lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed max-w-lg mb-3">
+                  Your professional website, built by us in 1–2 weeks — then yours to customize forever with AI. No code, no stress.
+                </p>
+                <p className="text-sm text-gray-400 dark:text-white/30 mb-10">
+                  For freelancers, small businesses, and creators.
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-12">
@@ -354,14 +356,19 @@ export default function LandingPage() {
                       </svg>
                     </Button>
                   </a>
-                  <div className="text-sm text-gray-400 dark:text-white/40">
-                    <span className="line-through opacity-60">€199</span>
-                    <span className="mx-2 text-gray-700 dark:text-white/80 font-medium">€99.50</span>
-                    setup
-                    <span className="mx-3 text-gray-300 dark:text-white/20">·</span>
-                    <span className="line-through opacity-60">€19</span>
-                    <span className="mx-2 text-gray-700 dark:text-white/80 font-medium">€9.50</span>
-                    /mo
+                  <div className="flex flex-col">
+                    <div className="text-sm text-gray-400 dark:text-white/40">
+                      <span className="line-through opacity-60">€199</span>
+                      <span className="mx-2 text-gray-700 dark:text-white/80 font-medium">€99.50</span>
+                      setup
+                      <span className="mx-3 text-gray-300 dark:text-white/20">·</span>
+                      <span className="line-through opacity-60">€19</span>
+                      <span className="mx-2 text-gray-700 dark:text-white/80 font-medium">€9.50</span>
+                      /mo
+                    </div>
+                    <div className="text-xs text-gray-400 dark:text-white/30 mt-1">
+                      Hosting, email, and AI customization included. First month free.
+                    </div>
                   </div>
                 </div>
 
@@ -655,15 +662,12 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="max-w-xl mb-12">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight mb-3">
-                The process is{' '}
-                <span className="bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">simple</span>
+                Three steps to your{' '}
+                <span className="bg-gradient-to-r from-violet-500 to-blue-500 bg-clip-text text-transparent">new website</span>
               </h2>
-              <p className="text-base text-gray-500 dark:text-white/40">
-                No back-and-forth revisions. No waiting weeks. Just results.
-              </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-3 gap-6">
               {features.map((feature, i) => (
                 <div 
                   key={i}
@@ -680,6 +684,78 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* What's Included Section */}
+        <section className="py-16 lg:py-24 bg-gray-50/50 dark:bg-white/[0.01]">
+          <div className="max-w-7xl mx-auto px-6 lg:px-12">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl lg:text-4xl font-bold leading-tight">
+                Everything you need.{' '}
+                <span className="text-gray-400 dark:text-white/30">Nothing you don't.</span>
+              </h2>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {/* Setup */}
+              <div className="p-8 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5">
+                <h3 className="text-xl font-semibold mb-4">Setup <span className="text-sm font-normal text-gray-400 dark:text-white/30">(one-time)</span></h3>
+                <ul className="space-y-3">
+                  {[
+                    'Personal discovery call with our team',
+                    'AI-generated website from premium templates',
+                    'Domain setup and configuration',
+                    'Professional email (2 mailboxes)',
+                    'Hosting on a global CDN — fast, secure, SSL included',
+                    'Your site, live and ready'
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3 text-sm text-gray-600 dark:text-white/50">
+                      <svg className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Monthly subscription */}
+              <div className="p-8 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5">
+                <h3 className="text-xl font-semibold mb-4">Monthly subscription</h3>
+                <ul className="space-y-3">
+                  {[
+                    'Website hosting (global CDN, automatic SSL)',
+                    'Professional email (2 mailboxes)',
+                    '1 GB cloud storage for your files and assets',
+                    'Unlimited AI-powered edits — content, pages, branding, SEO',
+                    'Platform updates and improvements'
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3 text-sm text-gray-600 dark:text-white/50">
+                      <svg className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Social Proof / Trust Section - Placeholder for beta */}
+        <section className="py-12 lg:py-16">
+          <div className="max-w-7xl mx-auto px-6 lg:px-12">
+            <div className="text-center p-8 lg:p-12 rounded-2xl bg-gradient-to-r from-violet-500/5 via-blue-500/5 to-cyan-500/5 border border-violet-500/10 dark:border-violet-500/20">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400 text-sm font-medium mb-4">
+                <span className="w-2 h-2 rounded-full bg-violet-500 animate-pulse" />
+                Early Access
+              </div>
+              <p className="text-lg text-gray-600 dark:text-white/60 max-w-xl mx-auto">
+                Launching beta — early adopters get <span className="font-semibold text-violet-600 dark:text-violet-400">50% off for life</span>.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Pricing Section */}
         <section id="pricing" className="py-16 lg:py-24 relative">
           {/* Gradient accent */}
@@ -687,35 +763,50 @@ export default function LandingPage() {
           
           <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
             <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/5 dark:bg-white/5 backdrop-blur-sm border border-gray-900/10 dark:border-white/10 mb-4">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span className="text-xs tracking-wide text-gray-600 dark:text-white/50">Beta pricing — Lock it in forever</span>
-              </div>
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight">
-                Transparent pricing,
-                <br />
-                <span className="text-gray-400 dark:text-white/30">exceptional value</span>
+                Simple pricing.{' '}
+                <span className="text-gray-400 dark:text-white/30">No surprises.</span>
               </h2>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {/* Setup */}
-              <div className="p-8 lg:p-10 rounded-2xl bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/10 hover:shadow-lg transition-all group">
-                <div className="flex items-start justify-between mb-8">
-                  <div>
-                    <h3 className="text-2xl font-semibold mb-1">Setup</h3>
-                    <p className="text-sm text-gray-400 dark:text-white/30">One-time fee</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-gray-300 dark:text-white/20 line-through text-lg">€199</span>
-                      <span className="text-4xl font-bold">€99.50</span>
-                    </div>
-                  </div>
+            <div className="max-w-lg mx-auto">
+              {/* Starter Plan Card */}
+              <div className="p-8 lg:p-10 rounded-2xl bg-white/80 dark:bg-white/[0.04] backdrop-blur-sm border-2 border-violet-500/30 dark:border-violet-500/20 shadow-xl shadow-violet-500/5 relative overflow-hidden">
+                {/* Beta badge */}
+                <div className="absolute top-4 right-4">
+                  <span className="px-3 py-1 text-xs font-medium bg-violet-500 text-white rounded-full">50% off during beta</span>
                 </div>
-                <ul className="space-y-4">
-                  {['30-minute discovery call', 'Custom design & development', 'Domain configuration', '2 professional email addresses', 'First draft in 1-2 weeks', 'Then customize with AI editor'].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-sm text-gray-500 dark:text-white/50">
+                
+                <h3 className="text-2xl font-bold mb-6">Starter Plan</h3>
+                
+                {/* Pricing */}
+                <div className="mb-6 pb-6 border-b border-gray-200 dark:border-white/10">
+                  <div className="mb-2">
+                    <span className="text-sm text-gray-400 dark:text-white/40">Setup: </span>
+                    <span className="text-gray-300 dark:text-white/20 line-through">€199</span>
+                    <span className="text-2xl font-bold ml-2">€99.50</span>
+                    <span className="text-sm text-gray-400 dark:text-white/40 ml-1">one-time</span>
+                  </div>
+                  <div>
+                    <span className="text-sm text-gray-400 dark:text-white/40">Monthly: </span>
+                    <span className="text-gray-300 dark:text-white/20 line-through">€19</span>
+                    <span className="text-2xl font-bold ml-2">€9.50</span>
+                    <span className="text-sm text-gray-400 dark:text-white/40 ml-1">/month</span>
+                  </div>
+                  <p className="text-xs text-gray-400 dark:text-white/30 mt-2">Starts after your free first month</p>
+                </div>
+                
+                {/* Features */}
+                <ul className="space-y-3 mb-8">
+                  {[
+                    'Discovery call + done-for-you site build',
+                    'Hosting on global CDN',
+                    'Professional email (2 mailboxes)',
+                    '1 GB cloud storage',
+                    'Unlimited AI customization',
+                    'First month free'
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3 text-sm text-gray-600 dark:text-white/60">
                       <svg className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
@@ -723,44 +814,22 @@ export default function LandingPage() {
                     </li>
                   ))}
                 </ul>
+                
+                {/* CTA */}
+                <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="block">
+                  <Button className="w-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl h-14 text-base font-semibold shadow-lg transition-all hover:scale-[1.02]">
+                    Book Free Discovery Call
+                    <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </Button>
+                </a>
               </div>
-
-              {/* Monthly */}
-              <div className="p-8 lg:p-10 rounded-2xl bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/10 hover:shadow-lg transition-all group">
-                <div className="flex items-start justify-between mb-8">
-                  <div>
-                    <h3 className="text-2xl font-semibold mb-1">Monthly</h3>
-                    <p className="text-sm text-gray-400 dark:text-white/30">First month free</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-gray-300 dark:text-white/20 line-through text-lg">€19</span>
-                      <span className="text-4xl font-bold">€9.50</span>
-                      <span className="text-gray-400 dark:text-white/30">/mo</span>
-                    </div>
-                  </div>
-                </div>
-                <ul className="space-y-4">
-                  {['Fast, secure hosting', 'SSL certificate included', 'Your 2 email addresses', 'AI Editor—unlimited changes', '1GB image storage', 'Cancel anytime'].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-sm text-gray-500 dark:text-white/50">
-                      <svg className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* CTA */}
-            <div className="text-center mt-12">
-              <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-                <Button className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 rounded-xl px-10 h-14 text-base font-semibold shadow-lg transition-all hover:scale-[1.02]">
-                  Book Your Call
-                </Button>
-              </a>
-              <p className="text-sm text-gray-400 dark:text-white/20 mt-4">No credit card required</p>
+              
+              {/* Fine print */}
+              <p className="text-center text-sm text-gray-400 dark:text-white/30 mt-6">
+                No lock-in. Cancel anytime. Setup fee is non-refundable.
+              </p>
             </div>
           </div>
         </section>
@@ -771,19 +840,18 @@ export default function LandingPage() {
             <div className="grid lg:grid-cols-2 gap-16">
               <div>
                 <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-4 lg:sticky lg:top-32">
-                  Common
+                  Questions?
                   <br />
-                  <span className="text-gray-400 dark:text-white/30">questions</span>
+                  <span className="text-gray-400 dark:text-white/30">Answered.</span>
                 </h2>
               </div>
               
               <div className="space-y-6">
                 {[
-                  { q: 'What happens on the discovery call?', a: 'We talk about your business, your customers, and what you want your website to do. Takes about 30 minutes. Come with ideas—or just questions.' },
-                  { q: 'How long until my site is ready?', a: '1-2 weeks for your first draft. We send it for your review, then you can customize it yourself using the AI editor—change text, images, colors, add pages, anything you want.' },
-                  { q: 'Can I make changes after you build it?', a: 'Yes—that\'s the whole point. The AI Editor lets you change text, images, colors, add pages, forms, anything. Just describe what you want.' },
-                  { q: 'What if I need help?', a: 'Email us. We respond within 24 hours. If something breaks, we fix it. If you\'re stuck, we help.' },
-                  { q: 'What happens after the beta?', a: 'Prices go to €199 setup and €19/month. If you sign up during beta, you keep the beta price forever.' },
+                  { q: 'What happens on the discovery call?', a: 'We spend 30–45 minutes learning about your business, your goals, and your brand. You don\'t need to prepare anything — just show up and tell us about what you do. We handle the rest.' },
+                  { q: 'How long until my site is live?', a: 'Most sites go live within 1–2 weeks after the discovery call. We\'ll keep you updated throughout the process.' },
+                  { q: 'Can I make changes after the site is built?', a: 'That\'s the whole point. Your subscription includes our AI editor — update text, add pages, change your branding, improve your SEO. All without writing a single line of code.' },
+                  { q: 'What if I want to cancel?', a: 'No lock-in. Cancel your subscription anytime. The setup fee is non-refundable since it covers real work (your discovery call and site build), but you keep all your site files.' },
                 ].map((faq, i) => (
                   <div key={i} className="p-6 rounded-2xl bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/10 hover:shadow-lg transition-all">
                     <h3 className="text-lg font-semibold mb-3">{faq.q}</h3>

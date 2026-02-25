@@ -110,14 +110,14 @@ export default function TeamDashboardPage() {
         <div className="flex items-center gap-3 mb-6">
           {isAdmin && (
             <Link href="/team/dashboard/invite">
-              <Button variant="outline" className="rounded-xl">
+              <Button variant="outline" className="rounded-xl border-gray-300 dark:border-white/20 hover:border-[var(--purple)] hover:bg-[var(--purple)]/5">
                 <UserPlus className="w-4 h-4 mr-2" />
                 Invite Team
               </Button>
             </Link>
           )}
           <Link href="/team/dashboard/new">
-            <Button className="rounded-xl">
+            <Button className="rounded-xl bg-[var(--purple)] hover:bg-[var(--purple)]/90 text-white">
               <Plus className="w-4 h-4 mr-2" />
               New Project
             </Button>

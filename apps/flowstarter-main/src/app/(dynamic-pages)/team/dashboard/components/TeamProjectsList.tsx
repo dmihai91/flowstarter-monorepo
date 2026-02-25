@@ -109,15 +109,34 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
   });
   const updatePricingMutation = useTeamUpdateProjectPricing();
 
+  // Default pricing by project type
+  const PRICING_DEFAULTS: Record<string, { setup_fee: number; monthly_fee: number }> = {
+    standard: { setup_fee: 499, monthly_fee: 49 },
+    premium: { setup_fee: 999, monthly_fee: 99 },
+    enterprise: { setup_fee: 2499, monthly_fee: 249 },
+  };
+
   const openPricingDialog = (project: ProjectWithOwner) => {
     setProjectToPrice(project);
+    const projectType = project.project_type || 'standard';
+    const defaults = PRICING_DEFAULTS[projectType] || PRICING_DEFAULTS.standard;
     setPricingData({
-      project_type: project.project_type || 'standard',
-      setup_fee: project.setup_fee || 0,
-      monthly_fee: project.monthly_fee || 0,
+      project_type: projectType,
+      setup_fee: project.setup_fee ?? defaults.setup_fee,
+      monthly_fee: project.monthly_fee ?? defaults.monthly_fee,
       is_paid: project.is_paid || false,
     });
     setPricingDialogOpen(true);
+  };
+
+  const handleProjectTypeChange = (newType: string) => {
+    const defaults = PRICING_DEFAULTS[newType] || PRICING_DEFAULTS.standard;
+    setPricingData({
+      ...pricingData,
+      project_type: newType,
+      setup_fee: defaults.setup_fee,
+      monthly_fee: defaults.monthly_fee,
+    });
   };
 
   const handleUpdatePricing = async () => {
@@ -467,53 +486,84 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
 
       {/* Pricing Dialog */}
       <Dialog open={pricingDialogOpen} onOpenChange={setPricingDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>Project Pricing</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
+          <div className="space-y-5 py-4">
+            {/* Project Type */}
             <div className="space-y-2">
-              <Label htmlFor="project_type">Project Type</Label>
-              <select
-                id="project_type"
-                value={pricingData.project_type}
-                onChange={(e) => setPricingData({ ...pricingData, project_type: e.target.value })}
-                className="w-full h-10 px-3 rounded-md border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 text-sm"
-              >
-                <option value="standard">Standard</option>
-                <option value="premium">Premium</option>
-                <option value="enterprise">Enterprise</option>
-              </select>
+              <Label className="text-sm font-medium">Project Type</Label>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleProjectTypeChange('standard')}
+                  className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                    pricingData.project_type === 'standard'
+                      ? 'border-[var(--purple)] bg-[var(--purple)]/10 text-[var(--purple)]'
+                      : 'border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20'
+                  }`}
+                >
+                  Standard
+                </button>
+                <button
+                  type="button"
+                  disabled
+                  className="px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-white/10 text-gray-400 dark:text-white/30 cursor-not-allowed"
+                >
+                  Pro
+                </button>
+                <button
+                  type="button"
+                  disabled
+                  className="px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-white/10 text-gray-400 dark:text-white/30 cursor-not-allowed"
+                >
+                  Business
+                </button>
+              </div>
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="setup_fee">Setup Fee ($)</Label>
-              <Input
-                id="setup_fee"
-                type="number"
-                min="0"
-                step="0.01"
-                value={pricingData.setup_fee}
-                onChange={(e) => setPricingData({ ...pricingData, setup_fee: parseFloat(e.target.value) || 0 })}
-                placeholder="0.00"
-              />
+            {/* Fees Row */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="setup_fee" className="text-sm font-medium">Setup Fee</Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                  <Input
+                    id="setup_fee"
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={pricingData.setup_fee}
+                    onChange={(e) => setPricingData({ ...pricingData, setup_fee: parseFloat(e.target.value) || 0 })}
+                    className="pl-7"
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="monthly_fee" className="text-sm font-medium">Monthly Fee</Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                  <Input
+                    id="monthly_fee"
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={pricingData.monthly_fee}
+                    onChange={(e) => setPricingData({ ...pricingData, monthly_fee: parseFloat(e.target.value) || 0 })}
+                    className="pl-7"
+                  />
+                </div>
+              </div>
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="monthly_fee">Monthly Fee ($)</Label>
-              <Input
-                id="monthly_fee"
-                type="number"
-                min="0"
-                step="0.01"
-                value={pricingData.monthly_fee}
-                onChange={(e) => setPricingData({ ...pricingData, monthly_fee: parseFloat(e.target.value) || 0 })}
-                placeholder="0.00"
-              />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <Label htmlFor="is_paid">Paid</Label>
+            {/* Paid Toggle */}
+            <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-50 dark:bg-white/5">
+              <div>
+                <Label htmlFor="is_paid" className="text-sm font-medium">Payment Received</Label>
+                <p className="text-xs text-gray-500 dark:text-white/40">Mark as paid to count in revenue</p>
+              </div>
               <Switch
                 id="is_paid"
                 checked={pricingData.is_paid}

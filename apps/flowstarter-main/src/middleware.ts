@@ -289,11 +289,14 @@ export default clerkMiddleware(async (auth, req) => {
   // Check if user is authenticated and on root path
   if (req.nextUrl.pathname === '/') {
     try {
-      const { userId } = await auth();
+      const { userId, sessionClaims } = await auth();
       if (userId) {
-        // Instantly redirect authenticated users to dashboard
+        // Check if user is a team member
+        const role = (sessionClaims?.metadata as { role?: string })?.role?.toLowerCase();
+        const isTeamMember = role === 'team' || role === 'admin';
+        
         const url = req.nextUrl.clone();
-        url.pathname = '/dashboard';
+        url.pathname = isTeamMember ? '/team/dashboard' : '/dashboard';
         return NextResponse.redirect(url);
       }
     } catch {

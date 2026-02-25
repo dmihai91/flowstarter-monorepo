@@ -167,6 +167,10 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
       appearance={appearance}
       // Share session across subdomains (flowstarter.dev, editor.flowstarter.dev)
       domain={isFlowstarterDomain ? '.flowstarter.dev' : undefined}
+      signInUrl="/login"
+      signUpUrl="/login"
+      afterSignInUrl="/dashboard"
+      afterSignUpUrl="/dashboard"
     >
       {children}
     </ClerkProvider>

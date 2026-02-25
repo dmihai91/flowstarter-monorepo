@@ -4,6 +4,7 @@ import { PageContainer } from '@/components/PageContainer';
 import FooterCompact from '@/components/FooterCompact';
 import { ProjectsListSkeleton } from '@/app/(dynamic-pages)/(main-pages)/components/ProjectsListSkeleton';
 import { TeamProjectsList } from './components/TeamProjectsList';
+import { TeamProjectsStats } from './components/TeamProjectsStats';
 import { DashboardWrapper } from '@/app/(dynamic-pages)/(main-pages)/(logged-in-pages)/dashboard/components/DashboardWrapper';
 import { PageSectionHeader } from '@/app/(dynamic-pages)/(main-pages)/(logged-in-pages)/dashboard/components/PageSectionHeader';
 import { Button } from '@/components/ui/button';
@@ -17,6 +18,10 @@ import {
   Plus, 
   Loader2,
   UserPlus,
+  FolderOpen,
+  FileEdit,
+  CheckCircle2,
+  Clock,
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -91,6 +96,13 @@ export default function TeamDashboardPage() {
             </Link>
           </div>
         </div>
+
+        {/* Stats Section */}
+        {!projectsLoading && projects && projects.length > 0 && (
+          <div className="mb-8">
+            <TeamProjectsStats projects={projects} />
+          </div>
+        )}
 
         {/* Projects Section */}
         <div className="mb-8">

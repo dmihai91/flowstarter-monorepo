@@ -20,7 +20,7 @@ import {
   LayoutGrid,
   List,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 
 interface ProjectWithOwner extends TableType<'projects'> {
@@ -33,7 +33,17 @@ interface TeamProjectsListProps {
 }
 
 export function TeamProjectsList({ projects }: TeamProjectsListProps) {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('team-projects-view');
+      if (saved === 'list' || saved === 'grid') return saved;
+    }
+    return 'grid';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('team-projects-view', viewMode);
+  }, [viewMode]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<{ id: string; name: string } | null>(null);
   const deleteProjectMutation = useTeamDeleteProject();

@@ -25,14 +25,12 @@ import {
   ExternalLink,
   Clock,
   User,
-  Circle,
   LayoutGrid,
   List,
   Pencil,
   Globe,
   Mail,
   BarChart3,
-  Settings,
   DollarSign,
 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
@@ -259,13 +257,25 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-40">
+                      <DropdownMenuContent align="end" className="w-48">
                         {status === 'completed' && (
                           <DropdownMenuItem onClick={() => window.open(`/projects/${project.id}`, '_blank')}>
                             <ExternalLink className="h-4 w-4" />
-                            View
+                            View Site
                           </DropdownMenuItem>
                         )}
+                        <DropdownMenuItem onClick={() => window.open(`/team/dashboard/domains?project=${project.id}`, '_self')}>
+                          <Globe className="h-4 w-4" />
+                          Configure Domain
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => window.open(`/team/dashboard/email?project=${project.id}`, '_self')}>
+                          <Mail className="h-4 w-4" />
+                          Setup Email
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => window.open(`/team/dashboard/analytics?project=${project.id}`, '_self')}>
+                          <BarChart3 className="h-4 w-4" />
+                          Analytics
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => openRenameDialog({ id: project.id, name: project.name || 'Untitled' })}>
                           <Pencil className="h-4 w-4" />
                           Rename
@@ -313,9 +323,21 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                           {status === 'completed' && (
                             <DropdownMenuItem onClick={() => window.open(`/projects/${project.id}`, '_blank')}>
                               <ExternalLink className="h-4 w-4" />
-                              View
+                              View Site
                             </DropdownMenuItem>
                           )}
+                          <DropdownMenuItem onClick={() => window.open(`/team/dashboard/domains?project=${project.id}`, '_self')}>
+                            <Globe className="h-4 w-4" />
+                            Configure Domain
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => window.open(`/team/dashboard/email?project=${project.id}`, '_self')}>
+                            <Mail className="h-4 w-4" />
+                            Setup Email
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => window.open(`/team/dashboard/analytics?project=${project.id}`, '_self')}>
+                            <BarChart3 className="h-4 w-4" />
+                            Analytics
+                          </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => openRenameDialog({ id: project.id, name: project.name || 'Untitled' })}>
                             <Pencil className="h-4 w-4" />
                             Rename
@@ -378,13 +400,25 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                         <MoreVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-40">
+                    <DropdownMenuContent align="end" className="w-48">
                       {status === 'completed' && (
                         <DropdownMenuItem onClick={() => window.open(`/projects/${project.id}`, '_blank')}>
                           <ExternalLink className="h-4 w-4" />
-                          View
+                          View Site
                         </DropdownMenuItem>
                       )}
+                      <DropdownMenuItem onClick={() => window.open(`/team/dashboard/domains?project=${project.id}`, '_self')}>
+                        <Globe className="h-4 w-4" />
+                        Configure Domain
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => window.open(`/team/dashboard/email?project=${project.id}`, '_self')}>
+                        <Mail className="h-4 w-4" />
+                        Setup Email
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => window.open(`/team/dashboard/analytics?project=${project.id}`, '_self')}>
+                        <BarChart3 className="h-4 w-4" />
+                        Analytics
+                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => openRenameDialog({ id: project.id, name: project.name || 'Untitled' })}>
                         <Pencil className="h-4 w-4" />
                         Rename

@@ -29,38 +29,10 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
     .reduce((sum, p) => sum + (p.monthly_fee || 0), 0);
 
   const stats = [
-    {
-      icon: FolderOpen,
-      label: 'Total Projects',
-      value: totalProjects.toString(),
-      iconColor: 'text-[var(--purple)]',
-      iconBg: 'bg-[var(--purple)]/10',
-      iconBorder: 'border-[var(--purple)]/20',
-    },
-    {
-      icon: CheckCircle2,
-      label: 'Completed',
-      value: completedCount.toString(),
-      iconColor: 'text-emerald-500',
-      iconBg: 'bg-emerald-500/10',
-      iconBorder: 'border-emerald-500/20',
-    },
-    {
-      icon: DollarSign,
-      label: 'Setup Fees',
-      value: formatCurrency(totalSetupFees),
-      iconColor: 'text-blue-500',
-      iconBg: 'bg-blue-500/10',
-      iconBorder: 'border-blue-500/20',
-    },
-    {
-      icon: TrendingUp,
-      label: 'Monthly Revenue',
-      value: formatCurrency(monthlyRevenue),
-      iconColor: 'text-amber-500',
-      iconBg: 'bg-amber-500/10',
-      iconBorder: 'border-amber-500/20',
-    },
+    { icon: FolderOpen, label: 'Total Projects', value: totalProjects.toString() },
+    { icon: CheckCircle2, label: 'Completed', value: completedCount.toString() },
+    { icon: DollarSign, label: 'Setup Fees', value: formatCurrency(totalSetupFees) },
+    { icon: TrendingUp, label: 'Monthly Revenue', value: formatCurrency(monthlyRevenue) },
   ];
 
   return (
@@ -71,8 +43,8 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
           className="p-4 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02]"
         >
           <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-lg ${stat.iconBg} border ${stat.iconBorder} flex items-center justify-center`}>
-              <stat.icon className={`w-5 h-5 ${stat.iconColor}`} />
+            <div className="w-10 h-10 rounded-lg bg-[var(--purple)]/5 dark:bg-[var(--purple)]/10 flex items-center justify-center">
+              <stat.icon className="w-5 h-5 text-[var(--purple)]/70" />
             </div>
             <div className="min-w-0">
               <p className="text-xl font-bold text-gray-900 dark:text-white truncate">{stat.value}</p>

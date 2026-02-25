@@ -14,6 +14,10 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { 
   Plus, 
+  Globe, 
+  Mail, 
+  BarChart3, 
+  Settings, 
   LogOut,
   Loader2,
   UserPlus,
@@ -130,6 +134,35 @@ export default function TeamDashboardPage() {
                 </Button>
               </Link>
             </div>
+          </div>
+
+          {/* Quick actions */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            {[
+              { icon: Globe, label: 'Configure Domain', desc: 'DNS & SSL setup', color: 'text-blue-500', href: '/team/dashboard/domains' },
+              { icon: Mail, label: 'Setup Email', desc: 'Zoho Mail config', color: 'text-emerald-500', href: '/team/dashboard/email' },
+              { icon: BarChart3, label: 'Analytics', desc: 'Google Analytics', color: 'text-amber-500', href: '/team/dashboard/analytics' },
+              { icon: Settings, label: 'Services', desc: 'Integrations', color: 'text-purple-500', href: '/team/dashboard/services' },
+            ].map((action, i) => (
+              <Link
+                key={i}
+                href={action.href}
+                className="flex items-center gap-4 p-4 rounded-xl bg-white/60 dark:bg-white/[0.03] border border-gray-200/50 dark:border-white/10 hover:border-[var(--purple)]/30 dark:hover:border-[var(--purple)]/30 transition-all group backdrop-blur-sm"
+              >
+                <div className={`p-2.5 rounded-lg bg-gray-100 dark:bg-white/5 ${action.color} group-hover:scale-110 transition-transform`}>
+                  <action.icon className="w-5 h-5" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-gray-900 dark:text-white text-sm">{action.label}</p>
+                  <p className="text-xs text-gray-500 dark:text-white/40">{action.desc}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Divider */}
+          <div className="relative flex items-center justify-center my-6">
+            <div className="flex-grow border-t border-gray-200/60 dark:border-white/10"></div>
           </div>
 
           {/* Projects */}

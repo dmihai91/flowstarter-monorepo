@@ -8,7 +8,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useTeamDeleteProject } from '@/hooks/useTeamProjects';
+import { useTeamDeleteProject, useTeamRenameProject } from '@/hooks/useTeamProjects';
+import { Input } from '@/components/ui/input';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import type { Table as TableType } from '@/types';
 import {
   MoreVertical,
@@ -19,6 +27,7 @@ import {
   Circle,
   LayoutGrid,
   List,
+  Pencil,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
@@ -46,7 +55,11 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
   }, [viewMode]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+  const [projectToRename, setProjectToRename] = useState<{ id: string; name: string } | null>(null);
+  const [newName, setNewName] = useState('');
   const deleteProjectMutation = useTeamDeleteProject();
+  const renameProjectMutation = useTeamRenameProject();
 
   const handleDeleteProject = async () => {
     if (!projectToDelete) return;
@@ -60,6 +73,27 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
       console.error('Failed to delete project:', error);
       toast.error('Failed to delete project');
     }
+  };
+
+  const handleRenameProject = async () => {
+    if (!projectToRename || !newName.trim()) return;
+
+    try {
+      await renameProjectMutation.mutateAsync({ id: projectToRename.id, name: newName.trim() });
+      toast.success('Project renamed successfully');
+      setRenameDialogOpen(false);
+      setProjectToRename(null);
+      setNewName('');
+    } catch (error) {
+      console.error('Failed to rename project:', error);
+      toast.error('Failed to rename project');
+    }
+  };
+
+  const openRenameDialog = (project: { id: string; name: string }) => {
+    setProjectToRename(project);
+    setNewName(project.name);
+    setRenameDialogOpen(true);
   };
 
   const getTimeAgo = (date: string | null) => {
@@ -186,6 +220,10 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                             View
                           </DropdownMenuItem>
                         )}
+                        <DropdownMenuItem onClick={() => openRenameDialog({ id: project.id, name: project.name || 'Untitled' })}>
+                          <Pencil className="h-4 w-4" />
+                          Rename
+                        </DropdownMenuItem>
                         <DropdownMenuItem
                           variant="destructive"
                           onClick={() => {
@@ -228,6 +266,10 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                               View
                             </DropdownMenuItem>
                           )}
+                          <DropdownMenuItem onClick={() => openRenameDialog({ id: project.id, name: project.name || 'Untitled' })}>
+                            <Pencil className="h-4 w-4" />
+                            Rename
+                          </DropdownMenuItem>
                           <DropdownMenuItem
                             variant="destructive"
                             onClick={() => {
@@ -283,6 +325,10 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                           View
                         </DropdownMenuItem>
                       )}
+                      <DropdownMenuItem onClick={() => openRenameDialog({ id: project.id, name: project.name || 'Untitled' })}>
+                        <Pencil className="h-4 w-4" />
+                        Rename
+                      </DropdownMenuItem>
                       <DropdownMenuItem
                         variant="destructive"
                         onClick={() => {
@@ -329,6 +375,37 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
         onConfirmAction={handleDeleteProject}
         confirmVariant="destructive"
       />
+
+      {/* Rename Dialog */}
+      <Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Rename Project</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <Input
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="Project name"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleRenameProject();
+              }}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRenameDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              variant="accent" 
+              onClick={handleRenameProject}
+              disabled={renameProjectMutation.isPending || !newName.trim()}
+            >
+              {renameProjectMutation.isPending ? 'Saving...' : 'Save'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

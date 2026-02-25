@@ -92,6 +92,54 @@ export async function DELETE(
 }
 
 /**
+ * PATCH /api/team/projects/[id]
+ * 
+ * Update project (rename, etc.)
+ */
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const authCheck = await requireTeamAuth();
+  if (!authCheck.authorized) {
+    return authCheck.response;
+  }
+
+  try {
+    const { id } = await params;
+    const body = await request.json();
+    const { name } = body;
+
+    if (!name || typeof name !== 'string' || name.trim().length === 0) {
+      return NextResponse.json({ error: 'Name is required' }, { status: 400 });
+    }
+
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      { auth: { persistSession: false } }
+    );
+
+    const { data: project, error } = await supabaseAdmin
+      .from('projects')
+      .update({ name: name.trim(), updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('[Team Projects] Rename error:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ project });
+  } catch (error) {
+    console.error('[Team Projects] Rename error:', error);
+    return NextResponse.json({ error: 'Failed to rename project' }, { status: 500 });
+  }
+}
+
+/**
  * GET /api/team/projects/[id]
  * 
  * Get any project details (team members bypass RLS)

@@ -40,8 +40,13 @@ export default function TeamLoginPage() {
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
         router.push('/team/dashboard');
+      } else if (result.status === 'needs_first_factor') {
+        setError('Please check your email for a verification code.');
+      } else if (result.status === 'needs_second_factor') {
+        setError('Two-factor authentication required.');
       } else {
-        setError('Sign in incomplete. Please try again.');
+        console.log('Sign in status:', result.status, result);
+        setError(`Sign in incomplete (${result.status}). Please try again.`);
       }
     } catch (err: unknown) {
       const clerkError = err as { errors?: Array<{ message?: string }> };

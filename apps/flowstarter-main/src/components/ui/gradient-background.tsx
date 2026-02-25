@@ -27,9 +27,9 @@ export function GradientBackground({
   className,
 }: GradientBackgroundProps) {
   const gradientClass = variantGradients[variant];
-  // Dashboard uses subtle but visible lines
-  const lineOpacity = variant === 'dashboard' ? 'opacity-[0.12]' : 'opacity-[0.10]';
-  const lineOpacityDark = variant === 'dashboard' ? 'dark:opacity-[0.08]' : 'dark:opacity-[0.08]';
+  // Dashboard uses very subtle lines
+  const lineOpacity = variant === 'dashboard' ? 'opacity-[0.04]' : 'opacity-[0.08]';
+  const lineOpacityDark = variant === 'dashboard' ? 'dark:opacity-[0.03]' : 'dark:opacity-[0.06]';
   
   return (
     <>
@@ -62,16 +62,24 @@ export function GradientBackground({
           gradientClass
         )} />
         
+        {/* Main gradient overlay - top to bottom */}
+        <div 
+          className="absolute inset-0 opacity-40 dark:opacity-20"
+          style={{ 
+            background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(59, 130, 246, 0.05) 50%, transparent 100%)'
+          }}
+        />
+        
         {/* Accent gradient orb - top right */}
         <div 
-          className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full opacity-30 dark:opacity-20 blur-3xl"
-          style={{ background: 'radial-gradient(circle, hsl(233, 65%, 58%, 0.4) 0%, transparent 70%)' }}
+          className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full opacity-20 dark:opacity-10 blur-[100px]"
+          style={{ background: 'radial-gradient(circle, hsl(233, 65%, 58%, 0.3) 0%, transparent 70%)' }}
         />
         
         {/* Accent gradient orb - bottom left */}
         <div 
-          className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full opacity-25 dark:opacity-15 blur-3xl"
-          style={{ background: 'radial-gradient(circle, hsl(211, 93%, 61%, 0.4) 0%, transparent 70%)' }}
+          className="absolute -bottom-40 -left-40 w-[600px] h-[600px] rounded-full opacity-15 dark:opacity-8 blur-[100px]"
+          style={{ background: 'radial-gradient(circle, hsl(211, 93%, 61%, 0.25) 0%, transparent 70%)' }}
         />
         
         {/* Animated Flow lines - very subtle for dashboard */}

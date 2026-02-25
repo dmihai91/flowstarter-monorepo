@@ -9,14 +9,14 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Eye, EyeOff, Loader2, ShieldCheck, Mail } from 'lucide-react';
 
-type FlowStep = 'email' | 'password' | 'totp' | 'email_code';
+type FlowStep = 'credentials' | 'totp' | 'email_code';
 
 export default function TeamLoginPage() {
   const { signIn, setActive, isLoaded } = useSignIn();
   const router = useRouter();
   
   const [mounted, setMounted] = useState(false);
-  const [step, setStep] = useState<FlowStep>('email');
+  const [step, setStep] = useState<FlowStep>('credentials');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [code, setCode] = useState('');
@@ -28,58 +28,21 @@ export default function TeamLoginPage() {
     setMounted(true);
   }, []);
 
-  const handleEmailSubmit = async (e: React.FormEvent) => {
+  const handleCredentialsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!signIn || !email) return;
+    if (!signIn || !email || !password) return;
     
     setIsLoading(true);
     setError('');
 
     try {
-      // Start sign-in with email identifier
-      const result = await signIn.create({ identifier: email });
-      
-      // Check what's needed next
-      if (result.status === 'needs_first_factor') {
-        // Check supported first factors
-        const supportedFactors = result.supportedFirstFactors;
-        const passwordFactor = supportedFactors?.find(f => f.strategy === 'password');
-        const emailCodeFactor = supportedFactors?.find(f => f.strategy === 'email_code');
-        
-        if (passwordFactor) {
-          setStep('password');
-        } else if (emailCodeFactor) {
-          // Send email code
-          await signIn.prepareFirstFactor({ strategy: 'email_code', emailAddressId: emailCodeFactor.emailAddressId });
-          setStep('email_code');
-        } else {
-          setError('No supported sign-in method available');
-        }
-      } else if (result.status === 'complete') {
-        await setActive({ session: result.createdSessionId });
-        router.push('/team/dashboard');
-      }
-    } catch (err: unknown) {
-      const clerkError = err as { errors?: Array<{ message?: string; code?: string }> };
-      const errorMessage = clerkError.errors?.[0]?.message || 'An error occurred';
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handlePasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!signIn || !password) return;
-    
-    setIsLoading(true);
-    setError('');
-
-    try {
-      const result = await signIn.attemptFirstFactor({
-        strategy: 'password',
+      // Sign in with email and password directly
+      const result = await signIn.create({
+        identifier: email,
         password,
       });
+
+      console.log('Sign in result:', result.status, result);
 
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
@@ -90,30 +53,32 @@ export default function TeamLoginPage() {
         console.log('Second factors required:', supportedFactors);
         
         const totpFactor = supportedFactors?.find(f => f.strategy === 'totp');
-        const phoneFactor = supportedFactors?.find(f => f.strategy === 'phone_code');
         
         if (totpFactor) {
           setStep('totp');
-        } else if (phoneFactor) {
-          setError('Phone verification required but not supported in this flow');
         } else if (supportedFactors && supportedFactors.length > 0) {
           setError(`Second factor required: ${supportedFactors.map(f => f.strategy).join(', ')}`);
         } else {
-          // No second factors configured but still required - might be a Clerk config issue
-          setError('Two-factor authentication required. Please contact admin or check Clerk settings.');
+          setError('Two-factor authentication required. Please contact admin.');
         }
+      } else if (result.status === 'needs_first_factor') {
+        // Password might not be set - check what's available
+        const supportedFactors = result.supportedFirstFactors;
+        console.log('First factors:', supportedFactors);
+        setError('Password sign-in not available for this account');
       } else {
-        setError(`Unexpected status: ${result.status}`);
+        setError(`Sign in incomplete: ${result.status}`);
       }
     } catch (err: unknown) {
-      const clerkError = err as { errors?: Array<{ message?: string }> };
-      setError(clerkError.errors?.[0]?.message || 'Invalid password');
+      const clerkError = err as { errors?: Array<{ message?: string; code?: string }> };
+      const errorMessage = clerkError.errors?.[0]?.message || 'Invalid credentials';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleCodeSubmit = async (e: React.FormEvent) => {
+  const handleTotpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!signIn || !code) return;
     
@@ -121,29 +86,14 @@ export default function TeamLoginPage() {
     setError('');
 
     try {
-      let result;
-      
-      if (step === 'totp') {
-        result = await signIn.attemptSecondFactor({
-          strategy: 'totp',
-          code,
-        });
-      } else if (step === 'email_code') {
-        result = await signIn.attemptFirstFactor({
-          strategy: 'email_code',
-          code,
-        });
-      }
+      const result = await signIn.attemptSecondFactor({
+        strategy: 'totp',
+        code,
+      });
 
-      if (result?.status === 'complete') {
+      if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
         router.push('/team/dashboard');
-      } else if (result?.status === 'needs_second_factor') {
-        const totpFactor = result.supportedSecondFactors?.find(f => f.strategy === 'totp');
-        if (totpFactor) {
-          setCode('');
-          setStep('totp');
-        }
       } else {
         setError('Verification failed');
       }
@@ -158,12 +108,7 @@ export default function TeamLoginPage() {
   const goBack = () => {
     setError('');
     setCode('');
-    if (step === 'totp') {
-      setStep('password');
-    } else if (step === 'email_code' || step === 'password') {
-      setStep('email');
-      setPassword('');
-    }
+    setStep('credentials');
   };
 
   if (!mounted || !isLoaded) {
@@ -184,8 +129,8 @@ export default function TeamLoginPage() {
       <div className="w-full max-w-[520px] mx-auto">
         <div className="bg-white/95 dark:bg-[var(--surface-2)]/90 backdrop-blur-2xl backdrop-saturate-150 rounded-2xl border border-gray-200/50 dark:border-white/10 p-8 shadow-lg dark:shadow-2xl">
           
-          {/* Email Step */}
-          {step === 'email' && (
+          {/* Credentials Step - Email + Password together */}
+          {step === 'credentials' && (
             <>
               <div className="text-center mb-6">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -196,7 +141,7 @@ export default function TeamLoginPage() {
                 </p>
               </div>
 
-              <form onSubmit={handleEmailSubmit} className="space-y-5">
+              <form onSubmit={handleCredentialsSubmit} className="space-y-5">
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm text-gray-600 dark:text-white/60">
                     Email address
@@ -213,34 +158,6 @@ export default function TeamLoginPage() {
                   />
                 </div>
 
-                {error && (
-                  <div className="text-red-500 text-sm">{error}</div>
-                )}
-
-                <Button
-                  type="submit"
-                  disabled={isLoading || !email}
-                  className="w-full h-12 rounded-lg font-semibold bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 shadow-md transition-all disabled:opacity-50"
-                >
-                  {isLoading ? 'Loading...' : 'Continue'}
-                </Button>
-              </form>
-            </>
-          )}
-
-          {/* Password Step */}
-          {step === 'password' && (
-            <>
-              <div className="text-center mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Enter your password
-                </h2>
-                <p className="text-sm text-gray-500 dark:text-white/50 mt-1">
-                  {email}
-                </p>
-              </div>
-
-              <form onSubmit={handlePasswordSubmit} className="space-y-5">
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-sm text-gray-600 dark:text-white/60">
                     Password
@@ -254,7 +171,6 @@ export default function TeamLoginPage() {
                       onChange={(e) => setPassword(e.target.value)}
                       className="h-12 rounded-lg bg-white/80 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/30 dark:bg-[var(--surface-2)]/80 pr-12"
                       required
-                      autoFocus
                     />
                     {password && (
                       <button
@@ -274,19 +190,11 @@ export default function TeamLoginPage() {
 
                 <Button
                   type="submit"
-                  disabled={isLoading || !password}
+                  disabled={isLoading || !email || !password}
                   className="w-full h-12 rounded-lg font-semibold bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 shadow-md transition-all disabled:opacity-50"
                 >
                   {isLoading ? 'Signing in...' : 'Sign in'}
                 </Button>
-
-                <button
-                  type="button"
-                  onClick={goBack}
-                  className="w-full text-sm text-gray-500 dark:text-white/50 hover:text-gray-700 dark:hover:text-white/70 transition-colors"
-                >
-                  ← Use different email
-                </button>
               </form>
             </>
           )}
@@ -306,7 +214,7 @@ export default function TeamLoginPage() {
                 </p>
               </div>
 
-              <form onSubmit={handleCodeSubmit} className="space-y-5">
+              <form onSubmit={handleTotpSubmit} className="space-y-5">
                 <div className="space-y-2">
                   <Label htmlFor="code" className="text-sm text-gray-600 dark:text-white/60">
                     Authentication code
@@ -349,63 +257,7 @@ export default function TeamLoginPage() {
             </>
           )}
 
-          {/* Email Code Step */}
-          {step === 'email_code' && (
-            <>
-              <div className="text-center mb-6">
-                <div className="w-12 h-12 rounded-full bg-[var(--purple)]/10 flex items-center justify-center mx-auto mb-4">
-                  <Mail className="w-6 h-6 text-[var(--purple)]" />
-                </div>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Check your email
-                </h2>
-                <p className="text-sm text-gray-500 dark:text-white/50 mt-1">
-                  We sent a code to {email}
-                </p>
-              </div>
-
-              <form onSubmit={handleCodeSubmit} className="space-y-5">
-                <div className="space-y-2">
-                  <Label htmlFor="email-code" className="text-sm text-gray-600 dark:text-white/60">
-                    Verification code
-                  </Label>
-                  <Input
-                    id="email-code"
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    maxLength={6}
-                    placeholder="000000"
-                    value={code}
-                    onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-                    className="h-14 rounded-lg bg-white/80 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white text-center text-2xl tracking-[0.5em] font-mono placeholder:text-gray-300 dark:placeholder:text-white/20 dark:bg-[var(--surface-2)]/80"
-                    required
-                    autoFocus
-                  />
-                </div>
-
-                {error && (
-                  <div className="text-red-500 text-sm text-center">{error}</div>
-                )}
-
-                <Button
-                  type="submit"
-                  disabled={isLoading || code.length !== 6}
-                  className="w-full h-12 rounded-lg font-semibold bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 shadow-md transition-all disabled:opacity-50"
-                >
-                  {isLoading ? 'Verifying...' : 'Verify'}
-                </Button>
-
-                <button
-                  type="button"
-                  onClick={goBack}
-                  className="w-full text-sm text-gray-500 dark:text-white/50 hover:text-gray-700 dark:hover:text-white/70 transition-colors"
-                >
-                  ← Use different email
-                </button>
-              </form>
-            </>
-          )}
+          {/* Email Code Step - kept for future use */}
         </div>
       </div>
     </AuthLayout>

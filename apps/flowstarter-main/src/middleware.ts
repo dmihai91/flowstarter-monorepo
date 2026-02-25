@@ -286,8 +286,9 @@ export default clerkMiddleware(async (auth, req) => {
     // ignore cookie/geo issues
   }
 
-  // Check if user is authenticated and on root path
-  if (req.nextUrl.pathname === '/') {
+  // Check if user is authenticated and redirect based on role
+  const pathname = req.nextUrl.pathname;
+  if (pathname === '/' || pathname === '/dashboard') {
     try {
       const { userId, sessionClaims } = await auth();
       if (userId) {
@@ -295,9 +296,14 @@ export default clerkMiddleware(async (auth, req) => {
         const role = (sessionClaims?.metadata as { role?: string })?.role?.toLowerCase();
         const isTeamMember = role === 'team' || role === 'admin';
         
-        const url = req.nextUrl.clone();
-        url.pathname = isTeamMember ? '/team/dashboard' : '/dashboard';
-        return NextResponse.redirect(url);
+        const targetPath = isTeamMember ? '/team/dashboard' : '/dashboard';
+        
+        // Only redirect if not already on the correct path
+        if (pathname !== targetPath) {
+          const url = req.nextUrl.clone();
+          url.pathname = targetPath;
+          return NextResponse.redirect(url);
+        }
       }
     } catch {
       // User not authenticated, continue to landing page

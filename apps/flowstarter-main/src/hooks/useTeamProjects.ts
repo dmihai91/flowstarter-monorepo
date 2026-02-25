@@ -29,15 +29,17 @@ export function useTeamDeleteProject() {
     mutationFn: async (id: string) => {
       const res = await fetch(`/api/team/projects/${id}`, { 
         method: 'DELETE',
-        credentials: 'same-origin',
-        mode: 'same-origin',
-        headers: {
-          'Content-Type': 'application/json',
-        },
       });
       if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
-        throw new Error(err.error || 'Failed to delete project');
+        const text = await res.text();
+        let errorMessage = 'Failed to delete project';
+        try {
+          const json = JSON.parse(text);
+          errorMessage = json.error || errorMessage;
+        } catch {
+          errorMessage = text || `HTTP ${res.status}`;
+        }
+        throw new Error(errorMessage);
       }
       return true;
     },

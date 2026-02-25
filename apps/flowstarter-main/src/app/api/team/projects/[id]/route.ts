@@ -6,20 +6,25 @@ import { NextRequest, NextResponse } from 'next/server';
  * Check if the current user is a team member
  */
 async function requireTeamAuth() {
-  const { userId } = await auth();
-  if (!userId) {
-    return { authorized: false, response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
-  }
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return { authorized: false, response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
+    }
 
-  const user = await currentUser();
-  const metadata = user?.publicMetadata as { role?: string } | undefined;
-  const role = metadata?.role?.toLowerCase();
-  
-  if (role !== 'team' && role !== 'admin') {
-    return { authorized: false, response: NextResponse.json({ error: 'Not a team member' }, { status: 403 }) };
-  }
+    const user = await currentUser();
+    const metadata = user?.publicMetadata as { role?: string } | undefined;
+    const role = metadata?.role?.toLowerCase();
+    
+    if (role !== 'team' && role !== 'admin') {
+      return { authorized: false, response: NextResponse.json({ error: 'Not a team member' }, { status: 403 }) };
+    }
 
-  return { authorized: true, userId, role };
+    return { authorized: true, userId, role };
+  } catch (error) {
+    console.error('[Team Auth] Error:', error);
+    return { authorized: false, response: NextResponse.json({ error: 'Auth failed' }, { status: 500 }) };
+  }
 }
 
 /**

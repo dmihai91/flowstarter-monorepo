@@ -514,7 +514,7 @@ export default function LandingPage() {
                 </h1>
                 
                 <p className="text-lg lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed max-w-lg mb-3">
-                  A structured website launch without tool overload or tech chaos. Infrastructure you own. Built to last.
+                  A professional website, built for you. No tools to learn. No tech to manage. Yours to keep.
                 </p>
                 <p className="text-sm text-gray-400 dark:text-white/30 mb-10">
                   For freelancers, founders, and small businesses.

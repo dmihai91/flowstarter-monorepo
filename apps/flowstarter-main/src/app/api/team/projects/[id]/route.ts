@@ -1,4 +1,4 @@
-import { auth, currentUser } from '@clerk/nextjs/server';
+import { auth } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -7,14 +7,12 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 async function requireTeamAuth() {
   try {
-    const { userId } = await auth();
+    const { userId, sessionClaims } = await auth();
     if (!userId) {
       return { authorized: false, response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
     }
 
-    const user = await currentUser();
-    const metadata = user?.publicMetadata as { role?: string } | undefined;
-    const role = metadata?.role?.toLowerCase();
+    const role = (sessionClaims?.metadata as { role?: string })?.role?.toLowerCase();
     
     if (role !== 'team' && role !== 'admin') {
       return { authorized: false, response: NextResponse.json({ error: 'Not a team member' }, { status: 403 }) };

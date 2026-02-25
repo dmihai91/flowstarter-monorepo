@@ -1,4 +1,4 @@
-import { auth, currentUser, clerkClient } from '@clerk/nextjs/server';
+import { auth, clerkClient } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
@@ -10,16 +10,14 @@ import { NextResponse } from 'next/server';
  */
 export async function GET() {
   try {
-    // Check auth
-    const { userId } = await auth();
+    // Check auth using sessionClaims (same as middleware)
+    const { userId, sessionClaims } = await auth();
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check role
-    const user = await currentUser();
-    const metadata = user?.publicMetadata as { role?: string } | undefined;
-    const role = metadata?.role?.toLowerCase();
+    // Check role from sessionClaims.metadata
+    const role = (sessionClaims?.metadata as { role?: string })?.role?.toLowerCase();
     
     if (role !== 'team' && role !== 'admin') {
       return NextResponse.json({ error: 'Not a team member' }, { status: 403 });

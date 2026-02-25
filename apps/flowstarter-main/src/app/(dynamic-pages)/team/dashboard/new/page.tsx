@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { GradientBackground } from '@/components/ui/gradient-background';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useUser, useAuth } from '@clerk/nextjs';
@@ -176,7 +177,9 @@ export default function NewProjectPage() {
         .font-display { font-family: 'Outfit', system-ui, sans-serif; }
       `}</style>
       
-      <div className="min-h-screen font-display bg-gradient-to-b from-[#FAFAFA] via-[#F5F3FF] to-[#FAFAFA] dark:from-[#0a0a0c] dark:via-[#0f0a1a] dark:to-[#0a0a0c]">
+      <div className="min-h-screen font-display relative">
+        {/* Gradient background with flow lines */}
+        <GradientBackground variant="dashboard" className="fixed" />
         {/* Header */}
         <header className="sticky top-0 z-50 bg-white/80 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">
           <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">

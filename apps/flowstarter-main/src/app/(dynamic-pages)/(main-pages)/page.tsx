@@ -264,7 +264,7 @@ export default function LandingPage() {
   const features = [
     { num: '01', title: 'We talk', desc: 'A 30-minute call. We learn what you do and what you need. No prep required.' },
     { num: '02', title: 'We build', desc: 'We design your site, connect your domain, set up email, and configure analytics. You review it before launch.' },
-    { num: '03', title: 'You own it', desc: 'Your site goes live. Edit anything with AI. No code. No middleman. It's yours.' },
+    { num: '03', title: 'You own it', desc: "Your site goes live. Edit anything with AI. No code. No middleman. It's yours." },
   ];
 
   return (

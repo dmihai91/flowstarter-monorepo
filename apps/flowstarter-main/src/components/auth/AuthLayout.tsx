@@ -4,6 +4,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { TranslationKeys, useTranslations } from '@/lib/i18n';
 import Link from 'next/link';
 import Footer from '@/components/Footer';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 interface AuthLayoutProps {
   title?: string;
@@ -71,12 +72,15 @@ export default function AuthLayout({
                 </span>
               )}
             </Link>
-            <Link 
-              href="/"
-              className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors"
-            >
-              ← Back to home
-            </Link>
+            <div className="flex items-center gap-4">
+              <ThemeToggle />
+              <Link 
+                href="/"
+                className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors"
+              >
+                ← Back to home
+              </Link>
+            </div>
           </div>
         </header>
 

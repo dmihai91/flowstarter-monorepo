@@ -54,7 +54,12 @@ export default function TeamLoginPage() {
   // Show loading state until client is mounted and Clerk is ready
   if (!mounted || !isLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c]">
+      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c]" suppressHydrationWarning>
+        <style jsx global>{`
+          body { background: #FAFAFA; }
+          @media (prefers-color-scheme: dark) { body { background: #0a0a0c; } }
+          .dark body { background: #0a0a0c; }
+        `}</style>
         <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)]" />
       </div>
     );

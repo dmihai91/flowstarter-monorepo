@@ -14,10 +14,10 @@ import { useEffect, useRef, useState } from 'react';
 import { ExternalNavigation, ExternalNavigationWithAuth } from './Navbar';
 
 // List of public routes that don't require authentication
-const publicRoutes = ['/', '/about', '/login', '/sign-up'];
+const publicRoutes = ['/', '/about', '/login', '/sign-up', '/team', '/team/login'];
 
 // Routes where we hide the default navbar (they have their own)
-const noNavbarRoutes = ['/'];
+const noNavbarRoutes = ['/', '/team', '/team/login', '/team/dashboard', '/team/dashboard/new'];
 
 export function NavigationWrapper() {
   const pathname = usePathname();
@@ -27,13 +27,13 @@ export function NavigationWrapper() {
   const isDraftDiscarding = useWizardStore((state) => state.isDiscarding);
   const skipLoadingScreen = useWizardStore((state) => state.skipLoadingScreen);
   const loaderTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isPublicRoute = publicRoutes.includes(pathname);
+  const isPublicRoute = publicRoutes.includes(pathname) || pathname.startsWith('/team');
   const { t } = useTranslations();
   const [hasSeenInitial, setHasSeenInitial] = useState(false);
   const isDashboardRoute = pathname === '/dashboard';
   const isWizardRoute = pathname === '/dashboard/new';
   const isTemplatePreview = pathname.startsWith('/template-preview');
-  const isNoNavbarRoute = noNavbarRoutes.includes(pathname);
+  const isNoNavbarRoute = noNavbarRoutes.includes(pathname) || pathname.startsWith('/team');
   const [, setIsErrorPage] = useState(false);
 
   // Check synchronously during render to catch error pages immediately

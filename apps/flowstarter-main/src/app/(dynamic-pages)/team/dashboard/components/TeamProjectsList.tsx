@@ -29,8 +29,9 @@ import {
   List,
   Pencil,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 interface ProjectWithOwner extends TableType<'projects'> {
   owner_email?: string | null;
@@ -42,17 +43,7 @@ interface TeamProjectsListProps {
 }
 
 export function TeamProjectsList({ projects }: TeamProjectsListProps) {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('team-projects-view');
-      if (saved === 'list' || saved === 'grid') return saved;
-    }
-    return 'grid';
-  });
-
-  useEffect(() => {
-    localStorage.setItem('team-projects-view', viewMode);
-  }, [viewMode]);
+  const [viewMode, setViewMode] = useLocalStorage<'grid' | 'list'>('team-projects-view', 'grid');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<{ id: string; name: string } | null>(null);
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);

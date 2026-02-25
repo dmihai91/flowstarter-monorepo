@@ -34,9 +34,29 @@ export function useTeamDeleteProject() {
         const err = await res.json().catch(() => ({ error: 'Failed to delete' }));
         throw new Error(err.error || 'Failed to delete project');
       }
-      return true;
+      return id;
     },
-    onSuccess: () => {
+    onMutate: async (id: string) => {
+      // Cancel outgoing refetches
+      await qc.cancelQueries({ queryKey: ['team-projects'] });
+      
+      // Snapshot previous value
+      const previous = qc.getQueryData<ProjectWithOwner[]>(['team-projects']);
+      
+      // Optimistically remove the project
+      qc.setQueryData<ProjectWithOwner[]>(['team-projects'], (old) => 
+        old?.filter((p) => p.id !== id) ?? []
+      );
+      
+      return { previous };
+    },
+    onError: (_err, _id, context) => {
+      // Rollback on error
+      if (context?.previous) {
+        qc.setQueryData(['team-projects'], context.previous);
+      }
+    },
+    onSettled: () => {
       qc.invalidateQueries({ queryKey: ['team-projects'] });
       qc.invalidateQueries({ queryKey: ['projects'] });
     },
@@ -58,7 +78,27 @@ export function useTeamRenameProject() {
       }
       return res.json();
     },
-    onSuccess: () => {
+    onMutate: async ({ id, name }: { id: string; name: string }) => {
+      // Cancel outgoing refetches
+      await qc.cancelQueries({ queryKey: ['team-projects'] });
+      
+      // Snapshot previous value
+      const previous = qc.getQueryData<ProjectWithOwner[]>(['team-projects']);
+      
+      // Optimistically update the project name
+      qc.setQueryData<ProjectWithOwner[]>(['team-projects'], (old) => 
+        old?.map((p) => p.id === id ? { ...p, name } : p) ?? []
+      );
+      
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      // Rollback on error
+      if (context?.previous) {
+        qc.setQueryData(['team-projects'], context.previous);
+      }
+    },
+    onSettled: () => {
       qc.invalidateQueries({ queryKey: ['team-projects'] });
       qc.invalidateQueries({ queryKey: ['projects'] });
     },

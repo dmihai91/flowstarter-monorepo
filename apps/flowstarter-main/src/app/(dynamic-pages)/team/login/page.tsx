@@ -192,6 +192,7 @@ export default function TeamLoginPage() {
           </div>
           
           <SignIn
+            routing="hash"
             appearance={{
               elements: {
                 rootBox: "w-full",
@@ -203,7 +204,7 @@ export default function TeamLoginPage() {
                 showOptionalFields: false,
               },
             }}
-            redirectUrl="/team/dashboard"
+            forceRedirectUrl="/team/dashboard"
             signUpUrl="/team/login"
           />
         </div>

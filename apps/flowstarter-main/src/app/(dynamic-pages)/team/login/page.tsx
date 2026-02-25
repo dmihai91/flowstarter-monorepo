@@ -34,100 +34,125 @@ export default function TeamLoginPage() {
     >
       <div className="w-full max-w-[520px] mx-auto">
         <style jsx global>{`
-          /* Hide Clerk branding and customize header */
-          .cl-internal-b3fm6y { display: none !important; }
-          .cl-headerTitle { display: none !important; }
-          .cl-headerSubtitle { display: none !important; }
-          .cl-header { display: none !important; }
+          /* Hide everything we don't need */
+          .cl-headerTitle, .cl-headerSubtitle, .cl-header,
+          .cl-socialButtonsBlockButton, .cl-socialButtons, .cl-socialButtonsProviderIcon,
+          .cl-dividerRow, .cl-dividerLine, .cl-dividerText,
+          .cl-alternativeMethods, .cl-footerAction, .cl-footer,
+          .cl-internal-b3fm6y, .cl-internal-1dauvpw,
+          [data-localization-key="signIn.start.actionLink"],
+          [data-localization-key="dividerText"] { 
+            display: none !important; 
+          }
           
-          /* Hide social login for team */
-          .cl-socialButtonsBlockButton { display: none !important; }
-          .cl-socialButtonsProviderIcon { display: none !important; }
-          .cl-dividerRow { display: none !important; }
+          /* Root styling */
+          .cl-rootBox {
+            width: 100% !important;
+          }
           
-          /* Hide passkey option */
-          .cl-alternativeMethods { display: none !important; }
-          
-          /* Hide sign up link */
-          .cl-footerAction { display: none !important; }
-          
-          /* Card styling */
+          /* Card - make transparent since we have our own wrapper */
           .cl-card {
-            background: rgba(255, 255, 255, 0.95) !important;
-            border: 1px solid rgba(229, 231, 235, 0.5) !important;
-            border-radius: 1rem !important;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
-            padding: 2rem !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 2rem 2rem 2rem !important;
           }
           
-          .dark .cl-card {
-            background: rgba(26, 26, 46, 0.9) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-          }
-          
-          /* Form field styling */
+          /* Form field label */
           .cl-formFieldLabel {
             font-size: 0.875rem !important;
-            color: rgb(75, 85, 99) !important;
             font-weight: 500 !important;
+            color: rgb(75, 85, 99) !important;
+            margin-bottom: 0.5rem !important;
           }
           
           .dark .cl-formFieldLabel {
             color: rgba(255, 255, 255, 0.6) !important;
           }
           
-          .cl-formFieldInput {
+          /* Form field input */
+          .cl-formFieldInput,
+          .cl-formFieldInput[type="email"],
+          .cl-formFieldInput[type="password"],
+          .cl-formFieldInput[type="text"] {
             height: 3rem !important;
             border-radius: 0.5rem !important;
             border: 1px solid rgb(229, 231, 235) !important;
-            background: rgba(255, 255, 255, 0.8) !important;
+            background: white !important;
             font-size: 1rem !important;
+            padding: 0 1rem !important;
+            color: rgb(17, 24, 39) !important;
           }
           
-          .dark .cl-formFieldInput {
+          .dark .cl-formFieldInput,
+          .dark .cl-formFieldInput[type="email"],
+          .dark .cl-formFieldInput[type="password"],
+          .dark .cl-formFieldInput[type="text"] {
             background: rgba(255, 255, 255, 0.05) !important;
             border-color: rgba(255, 255, 255, 0.1) !important;
             color: white !important;
           }
           
-          .cl-formFieldInput:focus {
-            border-color: #7B6AD8 !important;
-            box-shadow: 0 0 0 3px rgba(123, 106, 216, 0.1) !important;
+          .cl-formFieldInput::placeholder {
+            color: rgb(156, 163, 175) !important;
           }
           
-          /* Button styling */
-          .cl-formButtonPrimary {
+          .dark .cl-formFieldInput::placeholder {
+            color: rgba(255, 255, 255, 0.3) !important;
+          }
+          
+          .cl-formFieldInput:focus {
+            border-color: #7B6AD8 !important;
+            box-shadow: 0 0 0 3px rgba(123, 106, 216, 0.15) !important;
+            outline: none !important;
+          }
+          
+          /* Primary button */
+          .cl-formButtonPrimary,
+          button.cl-formButtonPrimary {
             height: 3rem !important;
             border-radius: 0.5rem !important;
             font-weight: 600 !important;
             font-size: 1rem !important;
-            background: rgb(17, 24, 39) !important;
-            transition: all 0.2s !important;
+            background-color: rgb(17, 24, 39) !important;
+            color: white !important;
+            border: none !important;
+            margin-top: 0.5rem !important;
+            transition: background-color 0.2s !important;
           }
           
-          .cl-formButtonPrimary:hover {
-            background: rgb(31, 41, 55) !important;
+          .cl-formButtonPrimary:hover,
+          button.cl-formButtonPrimary:hover {
+            background-color: rgb(31, 41, 55) !important;
           }
           
-          .dark .cl-formButtonPrimary {
-            background: white !important;
+          .dark .cl-formButtonPrimary,
+          .dark button.cl-formButtonPrimary {
+            background-color: white !important;
             color: rgb(17, 24, 39) !important;
           }
           
-          .dark .cl-formButtonPrimary:hover {
-            background: rgb(243, 244, 246) !important;
+          .dark .cl-formButtonPrimary:hover,
+          .dark button.cl-formButtonPrimary:hover {
+            background-color: rgb(243, 244, 246) !important;
           }
           
-          /* Link styling */
+          /* Form field row spacing */
+          .cl-formFieldRow {
+            margin-bottom: 1.25rem !important;
+          }
+          
+          /* Links */
           .cl-footerActionLink,
           .cl-formFieldAction {
             color: #7B6AD8 !important;
           }
           
-          /* OTP input styling */
+          /* OTP/verification code inputs */
           .cl-otpCodeFieldInput {
             border-radius: 0.5rem !important;
             border: 1px solid rgb(229, 231, 235) !important;
+            font-size: 1.5rem !important;
           }
           
           .dark .cl-otpCodeFieldInput {
@@ -136,15 +161,23 @@ export default function TeamLoginPage() {
             color: white !important;
           }
           
-          /* Error styling */
+          /* Error messages */
           .cl-formFieldErrorText {
             color: rgb(220, 38, 38) !important;
             font-size: 0.875rem !important;
+            margin-top: 0.25rem !important;
           }
           
-          /* Powered by Clerk - hide it */
-          .cl-internal-1dauvpw { display: none !important; }
-          .cl-footer { display: none !important; }
+          /* Alert/info boxes */
+          .cl-alert {
+            border-radius: 0.5rem !important;
+            font-size: 0.875rem !important;
+          }
+          
+          /* Back button */
+          .cl-identityPreviewEditButton {
+            color: #7B6AD8 !important;
+          }
         `}</style>
         
         {/* Custom header inside the card area */}

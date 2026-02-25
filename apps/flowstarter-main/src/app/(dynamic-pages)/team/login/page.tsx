@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useSignIn } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Eye, EyeOff, Loader2, ShieldCheck, Mail } from 'lucide-react';
+import { Eye, EyeOff, Loader2, ShieldCheck, Fingerprint } from 'lucide-react';
 
 type FlowStep = 'credentials' | 'totp' | 'email_code';
 
@@ -22,11 +22,53 @@ export default function TeamLoginPage() {
   const [code, setCode] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isPasskeyLoading, setIsPasskeyLoading] = useState(false);
   const [error, setError] = useState('');
+  const [supportsPasskey, setSupportsPasskey] = useState(false);
+
+  // Check if browser supports passkeys
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.PublicKeyCredential) {
+      PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable?.()
+        .then(available => setSupportsPasskey(available))
+        .catch(() => setSupportsPasskey(false));
+    }
+  }, []);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handlePasskeySignIn = async () => {
+    if (!signIn) return;
+    
+    setIsPasskeyLoading(true);
+    setError('');
+
+    try {
+      const result = await signIn.authenticateWithPasskey();
+      
+      if (result.status === 'complete') {
+        await setActive({ session: result.createdSessionId });
+        router.push('/team/dashboard');
+      } else {
+        setError('Passkey verification failed');
+      }
+    } catch (err: unknown) {
+      const clerkError = err as { errors?: Array<{ message?: string; code?: string }> };
+      const errorCode = clerkError.errors?.[0]?.code;
+      
+      if (errorCode === 'passkey_not_supported') {
+        setError('Passkeys not supported on this device');
+      } else if (errorCode === 'passkey_registration_cancelled') {
+        // User cancelled, don't show error
+      } else {
+        setError(clerkError.errors?.[0]?.message || 'Passkey sign-in failed');
+      }
+    } finally {
+      setIsPasskeyLoading(false);
+    }
+  };
 
   const handleCredentialsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -196,6 +238,37 @@ export default function TeamLoginPage() {
                   {isLoading ? 'Signing in...' : 'Sign in'}
                 </Button>
               </form>
+
+              {/* Passkey option */}
+              {supportsPasskey && (
+                <>
+                  <div className="relative my-6">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-gray-200 dark:border-white/10" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-white dark:bg-[var(--surface-2)] px-2 text-gray-400 dark:text-white/30">
+                        or
+                      </span>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handlePasskeySignIn}
+                    disabled={isPasskeyLoading}
+                    className="w-full h-12 rounded-lg font-medium border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 transition-all"
+                  >
+                    {isPasskeyLoading ? (
+                      <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                    ) : (
+                      <Fingerprint className="w-5 h-5 mr-2" />
+                    )}
+                    {isPasskeyLoading ? 'Verifying...' : 'Sign in with Passkey'}
+                  </Button>
+                </>
+              )}
             </>
           )}
 

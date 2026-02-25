@@ -1,11 +1,11 @@
-import { auth, currentUser } from '@clerk/nextjs/server';
+import { auth, currentUser, clerkClient } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
 /**
  * GET /api/team/projects
  * 
- * Fetches ALL projects for team members.
+ * Fetches ALL projects for team members with owner info.
  * Requires team/admin role.
  */
 export async function GET() {
@@ -42,12 +42,33 @@ export async function GET() {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    console.info('[Team Projects] Fetched', {
-      count: projects?.length ?? 0,
-      byUser: userId,
-    });
+    // Get unique user IDs and fetch their info from Clerk
+    const userIds = [...new Set(projects?.map(p => p.user_id).filter(Boolean) || [])];
+    const userMap: Record<string, { email: string; name: string }> = {};
+    
+    if (userIds.length > 0) {
+      try {
+        const clerk = await clerkClient();
+        const users = await clerk.users.getUserList({ userId: userIds, limit: 100 });
+        for (const u of users.data) {
+          userMap[u.id] = {
+            email: u.emailAddresses?.[0]?.emailAddress || '',
+            name: u.firstName ? `${u.firstName} ${u.lastName || ''}`.trim() : '',
+          };
+        }
+      } catch (e) {
+        console.warn('[Team Projects] Failed to fetch user info:', e);
+      }
+    }
 
-    return NextResponse.json({ projects: projects ?? [] });
+    // Enrich projects with owner info
+    const enrichedProjects = projects?.map(p => ({
+      ...p,
+      owner_email: userMap[p.user_id]?.email || null,
+      owner_name: userMap[p.user_id]?.name || null,
+    })) || [];
+
+    return NextResponse.json({ projects: enrichedProjects });
   } catch (error) {
     console.error('[Team Projects] Error:', error);
     return NextResponse.json(

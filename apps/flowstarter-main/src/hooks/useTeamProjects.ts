@@ -3,10 +3,15 @@
 import type { Table } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+interface ProjectWithOwner extends Table<'projects'> {
+  owner_email?: string | null;
+  owner_name?: string | null;
+}
+
 export function useTeamProjects() {
   return useQuery({
     queryKey: ['team-projects'],
-    queryFn: async (): Promise<Array<Table<'projects'>>> => {
+    queryFn: async (): Promise<Array<ProjectWithOwner>> => {
       const res = await fetch('/api/team/projects', { cache: 'no-store' });
       if (!res.ok) {
         if (res.status === 403) throw new Error('Not authorized as team member');

@@ -108,6 +108,7 @@ const isPublicRoute = createRouteMatcher([
   '/sitemap(.*)',
   '/accessibility(.*)',
   '/security(.*)',
+  '/team', // Team index (redirects to login)
   '/team/login(.*)', // Team login page (public, auth handled by Clerk)
 ]);
 

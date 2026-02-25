@@ -262,9 +262,9 @@ export default function LandingPage() {
   });
 
   const features = [
-    { num: '01', title: 'We talk', desc: 'A 30-minute call. We learn what you do and what you need. No prep required.' },
-    { num: '02', title: 'We build', desc: 'We design your site, connect your domain, set up email, and configure analytics. You review it before launch.' },
-    { num: '03', title: 'You own it', desc: "Your site goes live. Edit anything with AI. No code. No middleman. It's yours." },
+    { num: '01', title: 'We talk', desc: 'A 30-minute call. We define scope, timeline, and deliverables. Clear from day one.' },
+    { num: '02', title: 'We build', desc: 'We set up your site, domain, email, and analytics. You review before launch. No surprises.' },
+    { num: '03', title: 'You own it', desc: "Your site goes live. A stable foundation you control. Edit anytime with AI. No code." },
   ];
 
   return (
@@ -514,10 +514,10 @@ export default function LandingPage() {
                 </h1>
                 
                 <p className="text-lg lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed max-w-lg mb-3">
-                  A professional website, ready in 1-2 weeks. We handle the tech. You stay in control.
+                  A structured website launch. No tool overload. No tech stress. Infrastructure you keep.
                 </p>
                 <p className="text-sm text-gray-400 dark:text-white/30 mb-10">
-                  For freelancers, founders, and small businesses.
+                  For freelancers, founders, and small businesses who want clarity, not chaos.
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10">
@@ -1084,7 +1084,8 @@ export default function LandingPage() {
                   <span className="px-3 py-1 text-xs font-medium bg-[var(--purple)] text-white rounded-full">50% off during beta</span>
                 </div>
                 
-                <h3 className="text-2xl font-bold mb-6">Starter Plan</h3>
+                <h3 className="text-2xl font-bold mb-1">Launch Infrastructure</h3>
+                <p className="text-sm text-gray-400 dark:text-white/40 mb-6">Everything you need to go live</p>
                 
                 {/* Pricing */}
                 <div className="mb-6 pb-6 border-b border-gray-200 dark:border-white/10">
@@ -1224,7 +1225,7 @@ export default function LandingPage() {
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-100/80 dark:to-gray-900/50 pointer-events-none" />
                   <div className="relative">
                     <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-lg font-bold text-gray-400 dark:text-white/40">Pro</h4>
+                      <h4 className="text-lg font-bold text-gray-400 dark:text-white/40">Growth Infrastructure</h4>
                       <span className="px-2 py-0.5 text-[10px] font-medium bg-gray-200 dark:bg-white/10 text-gray-500 dark:text-white/40 rounded-full flex items-center gap-1">
                         <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -1248,7 +1249,7 @@ export default function LandingPage() {
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-100/80 dark:to-gray-900/50 pointer-events-none" />
                   <div className="relative">
                     <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-lg font-bold text-gray-400 dark:text-white/40">Business</h4>
+                      <h4 className="text-lg font-bold text-gray-400 dark:text-white/40">Commerce Infrastructure</h4>
                       <span className="px-2 py-0.5 text-[10px] font-medium bg-gray-200 dark:bg-white/10 text-gray-500 dark:text-white/40 rounded-full flex items-center gap-1">
                         <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -1361,10 +1362,10 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center relative">
             <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-5">
               Ready to{' '}
-              <span className="bg-gradient-to-r from-[var(--purple)] via-blue-500 to-cyan-400 bg-clip-text text-transparent">get started?</span>
+              <span className="bg-gradient-to-r from-[var(--purple)] via-blue-500 to-cyan-400 bg-clip-text text-transparent">build your foundation?</span>
             </h2>
             <p className="text-lg text-gray-500 dark:text-white/40 mb-8 max-w-md mx-auto">
-              One call. We take it from there. No lock-in. First month free.
+              A structured launch. A calm process. Infrastructure that lasts.
             </p>
             <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
               <Button className="bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-10 h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 hover:scale-[1.02]">

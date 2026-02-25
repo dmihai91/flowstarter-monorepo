@@ -1,6 +1,7 @@
 'use client';
 
 import Footer from '@/components/Footer';
+import { SupportHeader } from '@/components/SupportHeader';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -78,23 +79,7 @@ export default function ContactPage() {
           </svg>
         </div>
 
-        {/* Header */}
-        <header className="sticky top-0 z-50 bg-white/80 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">
-          <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20 group-hover:shadow-[var(--purple)]/30 transition-shadow">
-                <span className="text-white font-bold text-sm">F</span>
-              </div>
-              <span className="text-lg font-semibold text-gray-900 dark:text-white">Flowstarter</span>
-            </Link>
-            <Link 
-              href="/"
-              className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors"
-            >
-              ← Back to home
-            </Link>
-          </div>
-        </header>
+        <SupportHeader />
 
         {/* Content */}
         <main className="relative z-10 max-w-5xl mx-auto px-6 py-16">

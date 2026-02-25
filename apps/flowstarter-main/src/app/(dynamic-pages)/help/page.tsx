@@ -2,6 +2,7 @@
 
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
+import { MessageCircle, Wrench, Rocket, Phone, Mail } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -55,19 +56,19 @@ const steps = [
     number: '01',
     title: 'We talk',
     description: 'Book a free 30-minute discovery call. We learn about your business, your brand, and your goals.',
-    icon: '💬',
+    Icon: MessageCircle,
   },
   {
     number: '02',
     title: 'We build',
     description: 'Our AI engine generates your site from premium templates, tailored to your brand. Ready in 1-2 weeks.',
-    icon: '🛠️',
+    Icon: Wrench,
   },
   {
     number: '03',
     title: 'You own it',
     description: 'Your site goes live. Use the AI editor to update content, add pages, and tweak your design anytime.',
-    icon: '🚀',
+    Icon: Rocket,
   },
 ];
 
@@ -152,7 +153,9 @@ export default function HelpPage() {
               rel="noopener noreferrer"
               className="p-6 rounded-2xl bg-gradient-to-br from-[var(--purple)]/10 to-blue-500/10 border border-[var(--purple)]/20 hover:border-[var(--purple)]/40 transition-all group"
             >
-              <div className="text-3xl mb-3">📞</div>
+              <div className="w-12 h-12 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center mb-3 group-hover:bg-[var(--purple)]/20 transition-colors">
+                <Phone className="w-6 h-6 text-[var(--purple)]" />
+              </div>
               <h3 className="font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-[var(--purple)] transition-colors">Book a Discovery Call</h3>
               <p className="text-sm text-gray-500 dark:text-white/50">Free 30-minute call to discuss your project</p>
             </a>
@@ -160,7 +163,9 @@ export default function HelpPage() {
               href="mailto:hello@flowstarter.app"
               className="p-6 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 hover:border-[var(--purple)]/40 transition-all group"
             >
-              <div className="text-3xl mb-3">✉️</div>
+              <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-3 group-hover:bg-[var(--purple)]/10 transition-colors">
+                <Mail className="w-6 h-6 text-gray-600 dark:text-white/60 group-hover:text-[var(--purple)] transition-colors" />
+              </div>
               <h3 className="font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-[var(--purple)] transition-colors">Email Support</h3>
               <p className="text-sm text-gray-500 dark:text-white/50">hello@flowstarter.app • 48h response</p>
             </a>
@@ -173,7 +178,9 @@ export default function HelpPage() {
               {steps.map((step, i) => (
                 <div key={i} className="p-6 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
                   <div className="flex items-center gap-3 mb-4">
-                    <span className="text-3xl">{step.icon}</span>
+                    <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center">
+                      <step.Icon className="w-5 h-5 text-[var(--purple)]" />
+                    </div>
                     <span className="text-sm font-bold text-[var(--purple)]">{step.number}</span>
                   </div>
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{step.title}</h3>

@@ -31,7 +31,7 @@ export default function AuthLayout({
         .font-display { font-family: 'Outfit', system-ui, sans-serif; }
       `}</style>
       
-      <div className="min-h-screen w-full font-display bg-[#FAFAFA] dark:bg-[#0a0a0c] relative overflow-hidden">
+      <div className="min-h-screen w-full font-display bg-[#FAFAFA] dark:bg-[#0a0a0c] relative overflow-hidden flex flex-col">
         {/* Flow lines background */}
         <div className="absolute inset-0 pointer-events-none">
           <svg 
@@ -77,8 +77,8 @@ export default function AuthLayout({
         </header>
 
         {/* Main content */}
-        <div className="relative z-10 min-h-screen px-4 pt-24 sm:pt-28 pb-10">
-          <div className="w-full max-w-md mx-auto">
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-8 mt-14">
+          <div className="w-full max-w-md">
             {/* Title */}
             <div className="text-center mb-8">
               {title && (

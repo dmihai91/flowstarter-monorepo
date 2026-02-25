@@ -163,6 +163,11 @@ export function NavigationWrapper() {
     return null;
   }
 
+  // Don't render navbar until client is mounted - prevents SSR hydration flash
+  if (!isMounted) {
+    return null;
+  }
+
   if (showLoading && !shouldHideNavbar) {
     // Determine message based on context and priority
     let message = t('app.loadingExperience');

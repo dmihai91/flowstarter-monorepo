@@ -91,15 +91,15 @@ export default function TeamDashboardPage() {
             <Link
               key={i}
               href={action.href}
-              className="group relative p-5 rounded-2xl transition-all duration-250 ease-out hover:-translate-y-[3px] hover:shadow-[0_8px_25px_rgba(0,0,0,0.06)] border border-gray-200/60 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl hover:border-[rgba(124,58,237,0.12)]"
+              className="group relative p-5 rounded-2xl transition-all duration-250 ease-out hover:-translate-y-[3px] hover:shadow-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-white/[0.03] hover:border-[var(--purple)]/40"
             >
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
-                  <action.icon className="h-5 w-5 text-[var(--purple)] opacity-60" />
+                <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center">
+                  <action.icon className="h-5 w-5 text-[var(--purple)]" />
                 </div>
                 <div>
                   <p className="font-semibold text-gray-900 dark:text-white text-sm">{action.label}</p>
-                  <p className="text-xs text-gray-500 dark:text-white/50 mt-0.5">{action.desc}</p>
+                  <p className="text-xs text-gray-600 dark:text-white/50 mt-0.5">{action.desc}</p>
                 </div>
               </div>
             </Link>

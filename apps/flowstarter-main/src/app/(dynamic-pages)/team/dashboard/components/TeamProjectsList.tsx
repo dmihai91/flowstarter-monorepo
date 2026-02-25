@@ -124,15 +124,15 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
 
   if (projects.length === 0) {
     return (
-      <div className="rounded-2xl border border-gray-200/60 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl p-6 text-center">
+      <div className="rounded-2xl border border-gray-300 dark:border-white/10 bg-white dark:bg-white/[0.03] p-8 text-center shadow-sm">
         <div className="max-w-sm mx-auto">
-          <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 mb-3">
-            <LayoutDashboard className="h-5 w-5 text-[var(--purple)] opacity-40" />
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 mb-4">
+            <LayoutDashboard className="h-6 w-6 text-gray-400 dark:text-white/40" />
           </div>
-          <h3 className="text-base font-semibold mb-1 text-gray-800 dark:text-gray-100">
+          <h3 className="text-base font-semibold mb-1 text-gray-900 dark:text-gray-100">
             No projects yet
           </h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Client projects will appear here
           </p>
         </div>

@@ -5,7 +5,6 @@ import { ProjectsListSkeleton } from '@/app/(dynamic-pages)/(main-pages)/compone
 import { TeamProjectsList } from './components/TeamProjectsList';
 import { DashboardWrapper } from '@/app/(dynamic-pages)/(main-pages)/(logged-in-pages)/dashboard/components/DashboardWrapper';
 import { PageSectionHeader } from '@/app/(dynamic-pages)/(main-pages)/(logged-in-pages)/dashboard/components/PageSectionHeader';
-import { GlassCard } from '@/components/ui/glass-card';
 import { Button } from '@/components/ui/button';
 import { useTeamProjects } from '@/hooks/useTeamProjects';
 import { useUser } from '@clerk/nextjs';
@@ -64,10 +63,10 @@ export default function TeamDashboardPage() {
       <TeamHeader />
 
       <PageContainer gradientVariant="dashboard">
-        <GlassCard className="p-6 sm:p-8 relative overflow-hidden">
+        <div className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#111113] p-6 sm:p-8 relative overflow-hidden shadow-sm">
           {/* Grid pattern background */}
           <svg
-            className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.4] [mask-image:radial-gradient(ellipse_at_top,white,transparent_70%)]"
+            className="pointer-events-none absolute inset-0 h-full w-full opacity-30 dark:opacity-20 [mask-image:radial-gradient(ellipse_at_top,white,transparent_60%)]"
             aria-hidden="true"
           >
             <defs>
@@ -88,7 +87,7 @@ export default function TeamDashboardPage() {
             <rect
               width="100%"
               height="100%"
-              className="text-gray-200 dark:text-white/[0.03]"
+              className="text-gray-300 dark:text-white/10"
               fill="url(#team-grid)"
             />
           </svg>
@@ -99,7 +98,7 @@ export default function TeamDashboardPage() {
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Client Projects
               </h1>
-              <p className="text-sm text-gray-500 dark:text-white/50 mt-1">
+              <p className="text-sm text-gray-600 dark:text-white/50 mt-1">
                 Manage all client websites and configure services
               </p>
             </div>
@@ -107,14 +106,14 @@ export default function TeamDashboardPage() {
             <div className="flex items-center gap-3">
               {isAdmin && (
                 <Link href="/team/dashboard/invite">
-                  <Button variant="outline" className="rounded-xl h-11 px-5 border-gray-200 dark:border-white/10 hover:border-[var(--purple)]/50">
+                  <Button variant="outline" className="rounded-xl h-10 px-4 border-gray-300 dark:border-white/10 hover:border-[var(--purple)] hover:bg-[var(--purple)]/5">
                     <UserPlus className="w-4 h-4 mr-2" />
                     Invite
                   </Button>
                 </Link>
               )}
               <Link href="/team/dashboard/new">
-                <Button className="bg-gradient-to-r from-[var(--purple)] to-blue-500 hover:from-[var(--purple)]/90 hover:to-blue-500/90 text-white font-semibold rounded-xl shadow-lg shadow-[var(--purple)]/20 h-11 px-5">
+                <Button className="bg-[var(--purple)] hover:bg-[var(--purple)]/90 text-white font-medium rounded-xl h-10 px-4">
                   <Plus className="w-4 h-4 mr-2" />
                   New Project
                 </Button>
@@ -133,14 +132,14 @@ export default function TeamDashboardPage() {
               <Link
                 key={i}
                 href={action.href}
-                className="flex items-center gap-3 p-3 rounded-lg bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20 transition-colors"
+                className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/10 hover:border-[var(--purple)]/50 hover:bg-gray-100 dark:hover:bg-white/[0.05] transition-all"
               >
-                <div className="p-2 rounded-md bg-gray-100 dark:bg-white/5">
-                  <action.icon className="w-4 h-4 text-gray-500 dark:text-white/50" />
+                <div className="p-2.5 rounded-lg bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 shadow-sm">
+                  <action.icon className="w-4 h-4 text-gray-600 dark:text-white/60" />
                 </div>
                 <div className="text-left">
                   <p className="font-medium text-gray-900 dark:text-white text-sm">{action.label}</p>
-                  <p className="text-xs text-gray-400 dark:text-white/30">{action.desc}</p>
+                  <p className="text-xs text-gray-500 dark:text-white/40">{action.desc}</p>
                 </div>
               </Link>
             ))}
@@ -164,7 +163,7 @@ export default function TeamDashboardPage() {
               <TeamProjectsList projects={projects || []} />
             )}
           </div>
-        </GlassCard>
+        </div>
       </PageContainer>
     </DashboardWrapper>
   );

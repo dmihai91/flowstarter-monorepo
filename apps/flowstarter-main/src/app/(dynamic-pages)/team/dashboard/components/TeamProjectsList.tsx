@@ -447,15 +447,15 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                   </p>
                 )}
 
-                {/* Pricing info - show if set */}
-                {(project.setup_fee && project.setup_fee > 0) && (
+                {/* Pricing info - show only if pricing has been set (not default 0) */}
+                {project.setup_fee !== null && project.setup_fee !== undefined && Number(project.setup_fee) > 0 && (
                   <div className="flex items-center gap-3 mb-4 py-2 px-3 rounded-lg bg-gray-50 dark:bg-white/5 text-sm">
                     <span className="text-gray-600 dark:text-white/60">
                       €{project.setup_fee} setup
                     </span>
                     <span className="text-gray-300 dark:text-white/20">•</span>
                     <span className="text-gray-600 dark:text-white/60">
-                      €{project.monthly_fee}/mo
+                      €{project.monthly_fee || 0}/mo
                     </span>
                     {project.is_paid && (
                       <>

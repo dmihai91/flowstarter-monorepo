@@ -6,6 +6,7 @@ import { TeamProjectsList } from './components/TeamProjectsList';
 import { TeamProjectsListSkeleton } from './components/TeamProjectsListSkeleton';
 import { TeamProjectsStats } from './components/TeamProjectsStats';
 import { TeamProjectsStatsSkeleton } from './components/TeamProjectsStatsSkeleton';
+import { QuickModeSection } from './components/QuickModeSection';
 import { DashboardWrapper } from '@/app/(dynamic-pages)/(main-pages)/(logged-in-pages)/dashboard/components/DashboardWrapper';
 import { PageSectionHeader } from '@/app/(dynamic-pages)/(main-pages)/(logged-in-pages)/dashboard/components/PageSectionHeader';
 import { Button } from '@/components/ui/button';
@@ -113,6 +114,11 @@ export default function TeamDashboardPage() {
           ) : (
             <TeamProjectsList projects={projects || []} />
           )}
+        </div>
+
+        {/* Quick Mode Section */}
+        <div className="mb-8">
+          <QuickModeSection />
         </div>
       </PageContainer>
 

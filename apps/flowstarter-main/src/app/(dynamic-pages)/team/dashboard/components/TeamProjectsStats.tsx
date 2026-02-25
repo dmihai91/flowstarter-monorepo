@@ -1,7 +1,7 @@
 'use client';
 
-import { ChevronRight } from 'lucide-react';
 import { ProjectWithOwner } from '@/hooks/useTeamProjects';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 interface TeamProjectsStatsProps {
   projects: ProjectWithOwner[];
@@ -17,6 +17,8 @@ function formatCurrency(amount: number): string {
 }
 
 export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
+  const { formatTimeAgo } = useFormatDate();
+  
   const totalProjects = projects.length;
   const draftCount = projects.filter(p => p.status === 'draft').length;
   const inProgressCount = projects.filter(p => p.status === 'in_progress' || p.status === 'building').length;
@@ -30,18 +32,34 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
     .reduce((sum, p) => sum + (p.monthly_fee || 0), 0);
   const paidCount = projects.filter(p => p.is_paid).length;
 
+  // Most recent project
+  const recentProject = projects.length > 0 
+    ? projects.reduce((latest, p) => {
+        const latestDate = new Date(latest.updated_at || latest.created_at || 0);
+        const pDate = new Date(p.updated_at || p.created_at || 0);
+        return pDate > latestDate ? p : latest;
+      })
+    : null;
+
+  const getStatusLabel = (status: string | null) => {
+    if (!status) return 'Draft';
+    if (status === 'completed') return 'Live';
+    if (status === 'in_progress' || status === 'building') return 'Building';
+    return 'Draft';
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Total Projects Card */}
       <div className="p-5 rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-2">
           <span className="text-sm text-gray-500 dark:text-white/50">Total Projects</span>
-          <button className="flex items-center gap-1 text-xs text-[var(--purple)] hover:underline">
-            Details <ChevronRight className="w-3 h-3" />
+          <button className="px-2.5 py-1 text-xs font-medium text-gray-600 dark:text-white/70 bg-gray-100 dark:bg-white/10 rounded-md hover:bg-gray-200 dark:hover:bg-white/15 transition-colors">
+            Details →
           </button>
         </div>
-        <p className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{totalProjects}</p>
-        <div className="flex items-center gap-3 text-xs">
+        <p className="text-3xl font-bold text-gray-900 dark:text-white mb-3">{totalProjects}</p>
+        <div className="flex items-center gap-3 text-xs mb-4">
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
             <span className="text-gray-600 dark:text-white/60">{completedCount} completed</span>
@@ -50,24 +68,52 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
             <span className="w-2 h-2 rounded-full bg-gray-400" />
             <span className="text-gray-600 dark:text-white/60">{draftCount} draft</span>
           </span>
-          {inProgressCount > 0 && (
+          {liveCount > 0 && (
             <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-amber-500" />
-              <span className="text-gray-600 dark:text-white/60">{inProgressCount} in progress</span>
+              <span className="w-2 h-2 rounded-full bg-blue-500" />
+              <span className="text-gray-600 dark:text-white/60">{liveCount} live</span>
             </span>
           )}
         </div>
+        
+        {/* Recent Project */}
+        {recentProject && (
+          <div className="pt-3 border-t border-gray-200 dark:border-white/10">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center text-lg">
+                {recentProject.name?.charAt(0) || 'P'}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className={`px-1.5 py-0.5 text-[10px] font-medium rounded ${
+                    recentProject.status === 'completed' 
+                      ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400'
+                      : 'bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-white/60'
+                  }`}>
+                    {getStatusLabel(recentProject.status)}
+                  </span>
+                </div>
+                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                  {recentProject.name || 'Untitled'}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-white/40">
+                  Last edit: {formatTimeAgo(recentProject.updated_at || recentProject.created_at)}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Revenue Card */}
       <div className="p-5 rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-2">
           <span className="text-sm text-gray-500 dark:text-white/50">Revenue</span>
-          <button className="flex items-center gap-1 text-xs text-[var(--purple)] hover:underline">
-            Details <ChevronRight className="w-3 h-3" />
+          <button className="px-2.5 py-1 text-xs font-medium text-gray-600 dark:text-white/70 bg-gray-100 dark:bg-white/10 rounded-md hover:bg-gray-200 dark:hover:bg-white/15 transition-colors">
+            Details →
           </button>
         </div>
-        <p className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{formatCurrency(totalSetupFees + monthlyRevenue)}</p>
+        <p className="text-3xl font-bold text-gray-900 dark:text-white mb-3">{formatCurrency(totalSetupFees + monthlyRevenue)}</p>
         <div className="flex items-center gap-3 text-xs">
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-blue-500" />

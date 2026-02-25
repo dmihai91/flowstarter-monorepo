@@ -22,15 +22,16 @@ export function useTeamDeleteProject() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      console.log('[useTeamDeleteProject] Deleting project:', id);
       const res = await fetch(`/api/team/projects/${id}`, { 
         method: 'DELETE',
-        credentials: 'include', // Ensure cookies are sent
+        credentials: 'same-origin',
+        mode: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
-      console.log('[useTeamDeleteProject] Response status:', res.status);
       if (!res.ok) {
         const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
-        console.error('[useTeamDeleteProject] Error:', err);
         throw new Error(err.error || 'Failed to delete project');
       }
       return true;

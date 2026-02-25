@@ -8,7 +8,6 @@ import { NextRequest, NextResponse } from 'next/server';
 async function requireTeamAuth() {
   const { userId } = await auth();
   if (!userId) {
-    console.log('[Team Auth] No userId');
     return { authorized: false, response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
   }
 
@@ -16,11 +15,8 @@ async function requireTeamAuth() {
   const metadata = user?.publicMetadata as { role?: string } | undefined;
   const role = metadata?.role?.toLowerCase();
   
-  console.log('[Team Auth] Checking role:', { userId, metadata, role });
-  
   if (role !== 'team' && role !== 'admin') {
-    console.log('[Team Auth] Role check failed:', role);
-    return { authorized: false, response: NextResponse.json({ error: `Not a team member. Role: ${role || 'none'}` }, { status: 403 }) };
+    return { authorized: false, response: NextResponse.json({ error: 'Not a team member' }, { status: 403 }) };
   }
 
   return { authorized: true, userId, role };

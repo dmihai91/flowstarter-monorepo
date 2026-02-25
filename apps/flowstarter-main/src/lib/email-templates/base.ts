@@ -115,7 +115,7 @@ export function baseEmailTemplate(content: string): string {
       ${content}
       <div class="footer">
         <p>
-          Need help? <a href="mailto:hello@flowstarter.app">Contact us</a><br>
+          Need help? <a href="mailto:hello@flowstarter.dev">Contact us</a><br>
           <a href="https://flowstarter.dev/help">Help Center</a> · <a href="https://flowstarter.dev/privacy">Privacy</a> · <a href="https://flowstarter.dev/terms">Terms</a>
         </p>
         <p style="margin-top: 16px;">

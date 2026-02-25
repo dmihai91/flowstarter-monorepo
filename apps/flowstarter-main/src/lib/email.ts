@@ -21,10 +21,7 @@ interface SendEmailResult {
   error?: string;
 }
 
-// Use Resend test domain for development, switch to flowstarter.app for production
-const DEFAULT_FROM = process.env.NODE_ENV === 'production' 
-  ? 'Flowstarter <hello@flowstarter.app>'
-  : 'Flowstarter <onboarding@resend.dev>';
+const DEFAULT_FROM = 'Flowstarter <hello@flowstarter.dev>';
 const RESEND_API_URL = 'https://api.resend.com/emails';
 
 export async function sendEmail({
@@ -32,7 +29,7 @@ export async function sendEmail({
   subject,
   html,
   from = DEFAULT_FROM,
-  replyTo = 'hello@flowstarter.app',
+  replyTo = 'hello@flowstarter.dev',
 }: SendEmailOptions): Promise<SendEmailResult> {
   const apiKey = process.env.RESEND_API_KEY;
 

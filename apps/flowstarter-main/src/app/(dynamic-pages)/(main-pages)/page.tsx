@@ -1057,7 +1057,7 @@ export default function LandingPage() {
                 Early Access
               </div>
               <p className="text-lg text-gray-600 dark:text-white/60 max-w-xl mx-auto">
-                Early adopters get <span className="font-semibold text-[var(--purple)] dark:text-[var(--purple)]">50% off</span> while we're in beta. Locked in for your first year.
+                Early supporters get <span className="font-semibold text-[var(--purple)] dark:text-[var(--purple)]">50% off</span> for their first year. Standard pricing applies after.
               </p>
             </div>
           </div>
@@ -1100,7 +1100,7 @@ export default function LandingPage() {
                     <span className="text-2xl font-bold ml-2">€15</span>
                     <span className="text-sm text-gray-400 dark:text-white/40 ml-1">/month</span>
                   </div>
-                  <p className="text-xs text-gray-400 dark:text-white/30 mt-2">Starts after your free first month</p>
+                  <p className="text-xs text-gray-400 dark:text-white/30 mt-2">Beta pricing valid for 12 months. Then €29/month.</p>
                 </div>
                 
                 {/* Features - Condensed to 5 Categories */}
@@ -1214,7 +1214,7 @@ export default function LandingPage() {
                 </a>
                 
                 {/* Footer note */}
-                <p className="text-xs text-gray-400 dark:text-white/30 text-center mt-4">No lock-in. Cancel anytime. 50% setup fee refund if you share feedback.</p>
+                <p className="text-xs text-gray-400 dark:text-white/30 text-center mt-4">No lock-in. Cancel anytime. No hidden fees.</p>
               </div>
               
               {/* Coming Soon Tiers */}
@@ -1271,7 +1271,7 @@ export default function LandingPage() {
               
               {/* Fine print */}
               <p className="text-center text-sm text-gray-400 dark:text-white/30 mt-6">
-                No lock-in. Cancel anytime. 50% setup fee refund if you share feedback.
+                No lock-in. Cancel anytime. First month free.
               </p>
             </div>
           </div>

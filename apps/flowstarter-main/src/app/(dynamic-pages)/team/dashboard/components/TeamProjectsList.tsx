@@ -33,7 +33,7 @@ interface TeamProjectsListProps {
 }
 
 export function TeamProjectsList({ projects }: TeamProjectsListProps) {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<{ id: string; name: string } | null>(null);
   const deleteProjectMutation = useTeamDeleteProject();

@@ -110,6 +110,7 @@ const isPublicRoute = createRouteMatcher([
   '/security(.*)',
   '/team', // Team index (redirects to login)
   '/team/login(.*)', // Team login page (public, auth handled by Clerk)
+  '/team/join(.*)', // Team join/invitation page (public)
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

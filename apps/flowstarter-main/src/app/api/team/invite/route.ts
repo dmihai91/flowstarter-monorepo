@@ -1,12 +1,15 @@
 /**
  * Team Invitation API
  * 
- * Creates Clerk invitations with team role for new team members.
+ * Creates custom invitation tokens and sends branded emails.
  * Only accessible by admin users.
  */
 
 import { auth, clerkClient } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { createInviteToken, getInviteUrl } from '@/lib/invite-tokens';
+import { sendEmail } from '@/lib/email';
+import { invitationEmail } from '@/lib/email-templates/invitation';
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
@@ -52,7 +55,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // Check if user already exists
+    // Check if user already exists in Clerk
     const existingUsers = await client.users.getUserList({
       emailAddress: [email],
     });
@@ -64,34 +67,54 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // Create invitation with team role
-    const invitation = await client.invitations.createInvitation({
-      emailAddress: email,
-      publicMetadata: { role: 'team' },
-      redirectUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'https://flowstarter.dev'}/team/login`,
+    // Get inviter info
+    const inviterName = user.firstName 
+      ? `${user.firstName} ${user.lastName || ''}`.trim()
+      : user.primaryEmailAddress?.emailAddress || 'A team member';
+    const inviterEmail = user.primaryEmailAddress?.emailAddress || '';
+
+    // Create invitation token
+    const token = await createInviteToken({
+      email,
+      role: 'team',
+      invitedBy: userId,
+      invitedByEmail: inviterEmail,
     });
 
-    console.info(`[Team Invite] Invitation sent to ${email} by ${user.primaryEmailAddress?.emailAddress}`);
+    const inviteUrl = getInviteUrl(token);
+
+    // Send invitation email
+    const { subject, html } = invitationEmail({
+      inviterName,
+      inviterEmail,
+      invitationUrl: inviteUrl,
+      expiresInDays: 7,
+    });
+
+    const emailResult = await sendEmail({
+      to: email,
+      subject,
+      html,
+    });
+
+    if (!emailResult.success) {
+      console.error('[Team Invite] Failed to send email:', emailResult.error);
+      return NextResponse.json(
+        { error: 'Failed to send invitation email' },
+        { status: 500 }
+      );
+    }
+
+    console.info(`[Team Invite] Invitation sent to ${email} by ${inviterEmail}`);
 
     return NextResponse.json({
       success: true,
-      invitationId: invitation.id,
       message: `Invitation sent to ${email}`,
     });
 
   } catch (error) {
     console.error('[Team Invite] Error creating invitation:', error);
     
-    // Handle specific Clerk errors
-    if (error instanceof Error) {
-      if (error.message.includes('already been invited')) {
-        return NextResponse.json(
-          { error: 'This email has already been invited' },
-          { status: 400 }
-        );
-      }
-    }
-
     return NextResponse.json(
       { error: 'Failed to create invitation' },
       { status: 500 }

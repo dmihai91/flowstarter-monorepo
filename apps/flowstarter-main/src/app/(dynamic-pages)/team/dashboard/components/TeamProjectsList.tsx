@@ -173,16 +173,37 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
 
   if (projects.length === 0) {
     return (
-      <div className="border border-gray-200 dark:border-white/10 rounded-lg bg-gray-50 dark:bg-white/[0.02] p-12 text-center">
-        <p className="text-gray-500 dark:text-white/50 text-sm">No projects yet</p>
-      </div>
+      <>
+        {/* Header */}
+        <div className="flex items-end justify-between mb-4">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-medium text-gray-900 dark:text-gray-100 tracking-tight">
+              All Projects
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm">
+              View and manage all client projects
+            </p>
+          </div>
+        </div>
+        <div className="border border-gray-200 dark:border-white/10 rounded-lg bg-gray-50 dark:bg-white/[0.02] p-12 text-center">
+          <p className="text-gray-500 dark:text-white/50 text-sm">No projects yet</p>
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="space-y-3">
-      {/* View Toggle */}
-      <div className="flex justify-end -mt-2">
+    <div className="space-y-4">
+      {/* Header with View Toggle */}
+      <div className="flex items-end justify-between">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-medium text-gray-900 dark:text-gray-100 tracking-tight">
+            All Projects
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm">
+            View and manage all client projects
+          </p>
+        </div>
         <div className="inline-flex items-center rounded-lg border border-gray-200 dark:border-white/10 p-1 bg-gray-50 dark:bg-white/[0.02]">
           <button
             onClick={() => setViewMode('list')}

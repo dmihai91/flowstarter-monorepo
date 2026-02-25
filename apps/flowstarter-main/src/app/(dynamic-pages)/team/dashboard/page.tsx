@@ -101,14 +101,15 @@ export default function TeamDashboardPage() {
 
         {/* Projects Section */}
         <div className="mb-8">
-          <PageSectionHeader
-            title="All Projects"
-            subtitle="View and manage all client projects"
-            className="mb-3"
-          />
-          
           {projectsLoading ? (
-            <TeamProjectsListSkeleton count={3} />
+            <>
+              <PageSectionHeader
+                title="All Projects"
+                subtitle="View and manage all client projects"
+                className="mb-3"
+              />
+              <TeamProjectsListSkeleton count={3} />
+            </>
           ) : (
             <TeamProjectsList projects={projects || []} />
           )}

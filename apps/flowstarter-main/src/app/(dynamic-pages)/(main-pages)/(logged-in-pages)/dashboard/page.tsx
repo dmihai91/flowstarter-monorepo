@@ -8,11 +8,27 @@ import { DashboardProjectsClient } from './components/DashboardProjects.client';
 import { DashboardStatsClientFetcher } from './components/DashboardStatsClientFetcher';
 import { DashboardWrapper } from './components/DashboardWrapper';
 import { PageSectionHeader } from './components/PageSectionHeader';
+import { useUser } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export const dynamic = 'force-dynamic';
 
 export default function DashboardPage() {
   const { t } = useTranslations();
+  const { user, isLoaded } = useUser();
+  const router = useRouter();
+
+  // Redirect team members to team dashboard
+  useEffect(() => {
+    if (isLoaded && user) {
+      const metadata = user.publicMetadata as { role?: string } | undefined;
+      const role = metadata?.role?.toLowerCase();
+      if (role === 'team' || role === 'admin') {
+        router.replace('/team/dashboard');
+      }
+    }
+  }, [isLoaded, user, router]);
 
   return (
     <DashboardWrapper>

@@ -325,10 +325,13 @@ export default clerkMiddleware(async (auth, req) => {
     const pathname = req.nextUrl.pathname;
     if (pathname.startsWith('/login') || pathname.startsWith('/sign-up')) {
       try {
-        const { userId } = await auth();
+        const { userId, sessionClaims } = await auth();
         if (userId) {
           const url = req.nextUrl.clone();
-          url.pathname = '/dashboard';
+          // Check if user is a team member
+          const role = (sessionClaims?.metadata as { role?: string })?.role?.toLowerCase();
+          const isTeamMember = role === 'team' || role === 'admin';
+          url.pathname = isTeamMember ? '/team/dashboard' : '/dashboard';
           return NextResponse.redirect(url);
         }
       } catch {

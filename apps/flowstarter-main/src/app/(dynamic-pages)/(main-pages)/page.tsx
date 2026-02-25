@@ -262,7 +262,7 @@ export default function LandingPage() {
   });
 
   const features = [
-    { num: '01', title: 'We talk', desc: 'A 30-minute call. We define scope, timeline, and deliverables. Clear from day one.' },
+    { num: '01', title: 'We talk', desc: 'A 45-minute call. We define scope, timeline, and deliverables. Clear from day one.' },
     { num: '02', title: 'We build', desc: 'We set up your site, domain, email, and analytics. You review before launch. No surprises.' },
     { num: '03', title: 'You own it', desc: "Your site goes live. A stable foundation you control. Edit anytime with AI. No code." },
   ];
@@ -1307,7 +1307,7 @@ export default function LandingPage() {
               
               <div className="space-y-2">
                 {[
-                  { q: 'What happens on the discovery call?', a: 'We spend 30 minutes learning about your business, your goals, and your brand. You don\'t need to prepare anything, just show up and tell us about what you do. After the call, we\'ll send you a summary of what we discussed and start building your site within 24 hours.' },
+                  { q: 'What happens on the discovery call?', a: 'We spend up to 45 minutes learning about your business, your goals, and your brand. You don\'t need to prepare anything, just show up and tell us about what you do. After the call, we\'ll send you a summary of what we discussed and start building your site within 24 hours.' },
                   { q: 'How long until my site is live?', a: 'Most sites go live within 1–2 weeks after the discovery call. We\'ll keep you updated throughout the process.' },
                   { q: 'Can I make changes after the site is built?', a: 'That\'s the whole point. Your subscription includes our AI editor: update text, add pages, change your branding, improve your SEO. All without writing a single line of code.' },
                   { q: 'What if I want to cancel?', a: 'No lock-in. Cancel your subscription anytime. If you share feedback with us, we\'ll refund 50% of your setup fee. Either way, you can download all your site assets to use elsewhere.' },

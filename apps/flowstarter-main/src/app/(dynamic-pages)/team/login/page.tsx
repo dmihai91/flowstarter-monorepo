@@ -50,6 +50,8 @@ export default function TeamLoginPage() {
     <AuthLayout
       title="Team Login"
       subtitle="Sign in to manage client projects and configure services."
+      showTeamBadge={true}
+      hideFooterStats={true}
     >
       <div className="w-full max-w-[520px] mx-auto">
         {/* Card container - matches client login */}

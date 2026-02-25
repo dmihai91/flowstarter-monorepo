@@ -9,12 +9,16 @@ interface AuthLayoutProps {
   subtitle?: string;
   children: React.ReactNode;
   marketingKeys?: Array<TranslationKeys>;
+  showTeamBadge?: boolean;
+  hideFooterStats?: boolean;
 }
 
 export default function AuthLayout({
   title,
   subtitle,
   children,
+  showTeamBadge = false,
+  hideFooterStats = false,
 }: AuthLayoutProps) {
   useTheme();
 
@@ -60,6 +64,11 @@ export default function AuthLayout({
                 <span className="text-white font-bold text-sm">F</span>
               </div>
               <span className="text-lg font-semibold text-gray-900 dark:text-white">Flowstarter</span>
+              {showTeamBadge && (
+                <span className="px-2 py-0.5 text-[10px] font-medium bg-[var(--purple)]/10 text-[var(--purple)] rounded-full">
+                  Team
+                </span>
+              )}
             </Link>
             <Link 
               href="/"
@@ -96,23 +105,25 @@ export default function AuthLayout({
             </div>
 
             {/* Footer trust */}
-            <div className="mt-10 pt-6 border-t border-gray-200 dark:border-white/10">
-              <div className="flex items-center justify-center gap-6">
-                {[
-                  { value: '1-2', label: 'Weeks' },
-                  { value: '~300', label: 'edits/mo' },
-                  { value: '0', label: 'Code' },
-                ].map((stat, i) => (
-                  <div key={i} className="flex items-center">
-                    <div className="text-center px-3">
-                      <div className="text-lg font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">{stat.value}</div>
-                      <div className="text-[9px] text-gray-400 dark:text-white/30 uppercase tracking-wider">{stat.label}</div>
+            {!hideFooterStats && (
+              <div className="mt-10 pt-6 border-t border-gray-200 dark:border-white/10">
+                <div className="flex items-center justify-center gap-6">
+                  {[
+                    { value: '1-2', label: 'Weeks' },
+                    { value: '~300', label: 'edits/mo' },
+                    { value: '0', label: 'Code' },
+                  ].map((stat, i) => (
+                    <div key={i} className="flex items-center">
+                      <div className="text-center px-3">
+                        <div className="text-lg font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">{stat.value}</div>
+                        <div className="text-[9px] text-gray-400 dark:text-white/30 uppercase tracking-wider">{stat.label}</div>
+                      </div>
+                      {i < 2 && <div className="w-px h-6 bg-gray-200 dark:bg-white/10" />}
                     </div>
-                    {i < 2 && <div className="w-px h-6 bg-gray-200 dark:bg-white/10" />}
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

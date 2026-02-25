@@ -194,10 +194,27 @@ export default function TeamLoginPage() {
           <SignIn
             routing="hash"
             appearance={{
+              variables: {
+                colorPrimary: '#111827',
+                colorText: '#111827',
+                colorTextSecondary: '#6b7280',
+                colorInputText: '#111827',
+                colorInputBackground: '#ffffff',
+                borderRadius: '0.5rem',
+              },
               elements: {
                 rootBox: "w-full",
                 card: "shadow-none border-none bg-transparent pt-0",
-                formButtonPrimary: "bg-gray-900 hover:bg-gray-800",
+                formButtonPrimary: {
+                  backgroundColor: '#111827',
+                  color: '#ffffff',
+                  '&:hover': {
+                    backgroundColor: '#1f2937',
+                  },
+                },
+                formFieldInput: {
+                  borderColor: '#e5e7eb',
+                },
               },
               layout: {
                 socialButtonsPlacement: "bottom",

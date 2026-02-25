@@ -506,18 +506,18 @@ export default function LandingPage() {
                 </div>
                 
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
-                  Your digital presence,
+                  Focus on your craft.
                   <br />
                   <span className="bg-gradient-to-r from-[var(--purple)] via-blue-500 to-cyan-400 bg-clip-text text-transparent animate-gradient">
-                    one call away.
+                    We build the system.
                   </span>
                 </h1>
                 
                 <p className="text-lg lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed max-w-lg mb-3">
-                  A structured website launch. No tool overload. No tech stress. Infrastructure you keep.
+                  A structured website launch without tool overload or tech chaos. Infrastructure you own. Built to last.
                 </p>
                 <p className="text-sm text-gray-400 dark:text-white/30 mb-10">
-                  For freelancers, founders, and small businesses who want clarity, not chaos.
+                  For freelancers, founders, and small businesses.
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10">
@@ -934,7 +934,7 @@ export default function LandingPage() {
                     'Looks great on phone, tablet, and desktop',
                     'Your domain, connected and configured',
                     'Professional email with your domain',
-                    'Analytics ready from day one',
+                    'Google Analytics configured from day one',
                     'Google-ready (SEO basics handled)',
                     'Fast-loading site that keeps visitors',
                     'Contact form to capture leads',
@@ -968,7 +968,7 @@ export default function LandingPage() {
                     'Your site stays online, fast, and secure',
                     'Professional email keeps working',
                     'Storage for images and files',
-                    'See who visits and what they do',
+                    'Business-ready analytics dashboard',
                     'Edit text, add pages, improve SEO with AI',
                     'Automatic updates and improvements',
                     'Support when you need it',
@@ -1171,8 +1171,8 @@ export default function LandingPage() {
                     <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Analytics</p>
                     <ul className="space-y-1.5">
                       {[
-                        'See who visits and what they do',
-                        'Google Analytics connected',
+                        'Google Analytics connected and configured',
+                        'See who visits and how your site performs',
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
                           <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>

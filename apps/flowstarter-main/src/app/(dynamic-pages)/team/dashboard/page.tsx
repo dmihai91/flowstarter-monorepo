@@ -64,9 +64,37 @@ export default function TeamDashboardPage() {
       <TeamHeader />
 
       <PageContainer gradientVariant="dashboard">
-        <GlassCard className="p-6 sm:p-8">
+        <GlassCard className="p-6 sm:p-8 relative overflow-hidden">
+          {/* Grid pattern background */}
+          <svg
+            className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.4] [mask-image:radial-gradient(ellipse_at_top,white,transparent_70%)]"
+            aria-hidden="true"
+          >
+            <defs>
+              <pattern
+                id="team-grid"
+                width="32"
+                height="32"
+                patternUnits="userSpaceOnUse"
+              >
+                <path
+                  d="M32 0H0V32"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="0.5"
+                />
+              </pattern>
+            </defs>
+            <rect
+              width="100%"
+              height="100%"
+              className="text-gray-200 dark:text-white/[0.03]"
+              fill="url(#team-grid)"
+            />
+          </svg>
+
           {/* Page header */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Client Projects
@@ -95,7 +123,7 @@ export default function TeamDashboardPage() {
           </div>
 
           {/* Quick actions */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+          <div className="relative grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
             {[
               { icon: Globe, label: 'Configure Domain', desc: 'Cloudflare DNS', href: '/team/dashboard/domains' },
               { icon: Mail, label: 'Setup Email', desc: 'Zoho Mail', href: '/team/dashboard/email' },
@@ -119,12 +147,12 @@ export default function TeamDashboardPage() {
           </div>
 
           {/* Divider */}
-          <div className="relative flex items-center justify-center my-6">
+          <div className="relative flex items-center justify-center my-6 z-10">
             <div className="flex-grow border-t border-gray-200/60 dark:border-white/10"></div>
           </div>
 
           {/* Projects */}
-          <div className="mb-8">
+          <div className="relative mb-8">
             <PageSectionHeader
               title="All Projects"
               subtitle="View and manage all client projects"

@@ -2,9 +2,10 @@
 
 import { PageContainer } from '@/components/PageContainer';
 import FooterCompact from '@/components/FooterCompact';
-import { ProjectsListSkeleton } from '@/app/(dynamic-pages)/(main-pages)/components/ProjectsListSkeleton';
 import { TeamProjectsList } from './components/TeamProjectsList';
+import { TeamProjectsListSkeleton } from './components/TeamProjectsListSkeleton';
 import { TeamProjectsStats } from './components/TeamProjectsStats';
+import { TeamProjectsStatsSkeleton } from './components/TeamProjectsStatsSkeleton';
 import { DashboardWrapper } from '@/app/(dynamic-pages)/(main-pages)/(logged-in-pages)/dashboard/components/DashboardWrapper';
 import { PageSectionHeader } from '@/app/(dynamic-pages)/(main-pages)/(logged-in-pages)/dashboard/components/PageSectionHeader';
 import { Button } from '@/components/ui/button';
@@ -90,11 +91,13 @@ export default function TeamDashboardPage() {
         </div>
 
         {/* Stats Section */}
-        {!projectsLoading && projects && projects.length > 0 && (
-          <div className="mb-8">
-            <TeamProjectsStats projects={projects} />
-          </div>
-        )}
+        <div className="mb-8">
+          {projectsLoading ? (
+            <TeamProjectsStatsSkeleton />
+          ) : (
+            <TeamProjectsStats projects={projects || []} />
+          )}
+        </div>
 
         {/* Projects Section */}
         <div className="mb-8">
@@ -105,7 +108,7 @@ export default function TeamDashboardPage() {
           />
           
           {projectsLoading ? (
-            <ProjectsListSkeleton count={3} />
+            <TeamProjectsListSkeleton count={3} />
           ) : (
             <TeamProjectsList projects={projects || []} />
           )}

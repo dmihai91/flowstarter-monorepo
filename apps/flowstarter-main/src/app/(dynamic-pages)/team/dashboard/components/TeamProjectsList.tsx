@@ -221,14 +221,14 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
           </div>
 
           {/* Project Rows */}
-          <div className="border border-gray-200 dark:border-white/10 rounded-lg overflow-hidden divide-y divide-gray-200 dark:divide-white/10">
+          <div className="border border-white/20 dark:border-white/10 rounded-xl overflow-hidden divide-y divide-white/10 dark:divide-white/5 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl shadow-lg shadow-black/[0.03]">
             {projects.map((project) => {
               const status = typeof project.status === 'string' ? project.status : 'draft';
 
               return (
                 <div
                   key={project.id}
-                  className="bg-white dark:bg-white/[0.02] hover:bg-gray-50 dark:hover:bg-white/[0.04] transition-colors"
+                  className="bg-transparent hover:bg-white/30 dark:hover:bg-white/[0.03] transition-colors"
                 >
                   {/* Desktop Row */}
                   <div className="hidden md:grid md:grid-cols-[1fr_100px_150px_100px_40px] gap-4 px-4 py-3 items-center">
@@ -353,7 +353,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
             return (
               <div
                 key={project.id}
-                className="p-5 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] hover:border-gray-300 dark:hover:border-white/20 transition-colors"
+                className="p-5 rounded-xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl shadow-lg shadow-black/[0.03] hover:bg-white/70 dark:hover:bg-white/[0.05] transition-colors"
               >
                 <div className="flex items-start justify-between gap-3 mb-4">
                   <div className="min-w-0 flex-1">

@@ -40,7 +40,7 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
       {stats.map((stat, i) => (
         <div
           key={i}
-          className="p-4 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02]"
+          className="p-4 rounded-xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl shadow-lg shadow-black/[0.03]"
         >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-[var(--purple)]/5 dark:bg-[var(--purple)]/10 flex items-center justify-center">

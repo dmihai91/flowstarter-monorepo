@@ -20,10 +20,9 @@ const publicRoutes = ['/', '/about', '/login', '/sign-up', '/team', '/team/login
 const noNavbarRoutes = ['/', '/team', '/team/login', '/team/dashboard', '/team/dashboard/new'];
 
 export function NavigationWrapper() {
-  const pathname = usePathname();
+  const pathname = usePathname() || '';
   
-  // Early exit for team routes - they have their own layout, no navbar needed
-  // This prevents any flicker by returning null before any hooks that might cause re-renders
+  // Check for team routes early - they have their own layout
   const isTeamRoute = pathname.startsWith('/team');
   
   const { isLoaded } = useAuth();

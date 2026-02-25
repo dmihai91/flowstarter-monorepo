@@ -1,6 +1,7 @@
 'use client';
 
 import Footer from '@/components/Footer';
+import { Sparkles, Package, DoorOpen } from 'lucide-react';
 import Link from 'next/link';
 
 export default function TermsPage() {
@@ -213,12 +214,14 @@ export default function TermsPage() {
           {/* Quick Summary */}
           <div className="grid sm:grid-cols-3 gap-4 mb-16">
             {[
-              { icon: '✨', title: 'Simple Pricing', desc: 'Setup fee + monthly subscription.' },
-              { icon: '📦', title: 'Your Content', desc: 'You own what you create.' },
-              { icon: '🚪', title: 'Cancel Anytime', desc: 'No lock-in contracts.' },
+              { Icon: Sparkles, title: 'Simple Pricing', desc: 'Setup fee + monthly subscription.' },
+              { Icon: Package, title: 'Your Content', desc: 'You own what you create.' },
+              { Icon: DoorOpen, title: 'Cancel Anytime', desc: 'No lock-in contracts.' },
             ].map((item, i) => (
               <div key={i} className="p-6 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 text-center">
-                <div className="text-3xl mb-3">{item.icon}</div>
+                <div className="w-12 h-12 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center mx-auto mb-3">
+                  <item.Icon className="w-6 h-6 text-[var(--purple)]" />
+                </div>
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{item.title}</h3>
                 <p className="text-sm text-gray-500 dark:text-white/50">{item.desc}</p>
               </div>

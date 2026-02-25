@@ -33,21 +33,33 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
       icon: FolderOpen,
       label: 'Total Projects',
       value: totalProjects.toString(),
+      iconColor: 'text-[var(--purple)]',
+      iconBg: 'bg-[var(--purple)]/10',
+      iconBorder: 'border-[var(--purple)]/20',
     },
     {
       icon: CheckCircle2,
       label: 'Completed',
       value: completedCount.toString(),
+      iconColor: 'text-emerald-500',
+      iconBg: 'bg-emerald-500/10',
+      iconBorder: 'border-emerald-500/20',
     },
     {
       icon: DollarSign,
       label: 'Setup Fees',
       value: formatCurrency(totalSetupFees),
+      iconColor: 'text-blue-500',
+      iconBg: 'bg-blue-500/10',
+      iconBorder: 'border-blue-500/20',
     },
     {
       icon: TrendingUp,
       label: 'Monthly Revenue',
       value: formatCurrency(monthlyRevenue),
+      iconColor: 'text-amber-500',
+      iconBg: 'bg-amber-500/10',
+      iconBorder: 'border-amber-500/20',
     },
   ];
 
@@ -59,8 +71,8 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
           className="p-4 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02]"
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center">
-              <stat.icon className="w-5 h-5 text-gray-500 dark:text-white/50" />
+            <div className={`w-10 h-10 rounded-lg ${stat.iconBg} border ${stat.iconBorder} flex items-center justify-center`}>
+              <stat.icon className={`w-5 h-5 ${stat.iconColor}`} />
             </div>
             <div className="min-w-0">
               <p className="text-xl font-bold text-gray-900 dark:text-white truncate">{stat.value}</p>

@@ -287,7 +287,13 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
             return (
               <div
                 key={project.id}
-                className="p-5 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] hover:border-gray-300 dark:hover:border-white/20 transition-colors"
+                className={`p-5 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] hover:border-gray-300 dark:hover:border-white/20 transition-colors border-l-4 ${
+                  status === 'completed' 
+                    ? 'border-l-emerald-500' 
+                    : status === 'in_progress' || status === 'building'
+                    ? 'border-l-amber-500'
+                    : 'border-l-[var(--purple)]'
+                }`}
               >
                 <div className="flex items-start justify-between gap-3 mb-4">
                   <div className="min-w-0 flex-1">
@@ -339,17 +345,17 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                 {/* Quick Actions for this project */}
                 <div className="grid grid-cols-4 gap-2 mb-4">
                   {[
-                    { icon: Globe, label: 'Domain', href: `/team/dashboard/domains?project=${project.id}` },
-                    { icon: Mail, label: 'Email', href: `/team/dashboard/email?project=${project.id}` },
-                    { icon: BarChart3, label: 'Analytics', href: `/team/dashboard/analytics?project=${project.id}` },
-                    { icon: Settings, label: 'Services', href: `/team/dashboard/services?project=${project.id}` },
+                    { icon: Globe, label: 'Domain', href: `/team/dashboard/domains?project=${project.id}`, color: 'text-blue-500 dark:text-blue-400' },
+                    { icon: Mail, label: 'Email', href: `/team/dashboard/email?project=${project.id}`, color: 'text-emerald-500 dark:text-emerald-400' },
+                    { icon: BarChart3, label: 'Analytics', href: `/team/dashboard/analytics?project=${project.id}`, color: 'text-amber-500 dark:text-amber-400' },
+                    { icon: Settings, label: 'Services', href: `/team/dashboard/services?project=${project.id}`, color: 'text-[var(--purple)]' },
                   ].map((action, i) => (
                     <Link
                       key={i}
                       href={action.href}
-                      className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors text-center"
+                      className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors text-center group"
                     >
-                      <action.icon className="w-4 h-4 text-gray-400 dark:text-white/40" />
+                      <action.icon className={`w-4 h-4 ${action.color} opacity-70 group-hover:opacity-100 transition-opacity`} />
                       <span className="text-[10px] text-gray-500 dark:text-white/40">{action.label}</span>
                     </Link>
                   ))}

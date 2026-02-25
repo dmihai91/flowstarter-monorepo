@@ -32,6 +32,7 @@ import {
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 interface ProjectWithOwner extends TableType<'projects'> {
   owner_email?: string | null;
@@ -51,6 +52,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
   const [newName, setNewName] = useState('');
   const deleteProjectMutation = useTeamDeleteProject();
   const renameProjectMutation = useTeamRenameProject();
+  const { formatTimeAgo, formatDate } = useFormatDate();
 
   const handleDeleteProject = async () => {
     if (!projectToDelete) return;
@@ -87,18 +89,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
     setRenameDialogOpen(true);
   };
 
-  const getTimeAgo = (date: string | null) => {
-    if (!date) return '';
-    const now = new Date();
-    const then = new Date(date);
-    const diffInHours = Math.floor((now.getTime() - then.getTime()) / (1000 * 60 * 60));
-
-    if (diffInHours < 1) return 'Just now';
-    if (diffInHours < 24) return `${diffInHours}h ago`;
-    const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays < 7) return `${diffInDays}d ago`;
-    return then.toLocaleDateString();
-  };
+  const getTimeAgo = (date: string | null) => formatTimeAgo(date);
 
   const getOwnerDisplay = (project: ProjectWithOwner) => {
     if (project.owner_name) return project.owner_name;

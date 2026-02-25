@@ -127,9 +127,9 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* View Toggle */}
-      <div className="flex justify-end">
+      <div className="flex justify-end -mt-2">
         <div className="inline-flex items-center rounded-lg border border-gray-200 dark:border-white/10 p-1 bg-gray-50 dark:bg-white/[0.02]">
           <button
             onClick={() => setViewMode('list')}

@@ -130,6 +130,7 @@ export default function TeamDashboardPage() {
           <PageSectionHeader
             title="All Projects"
             subtitle="View and manage all client projects"
+            className="mb-3"
           />
           
           {projectsLoading ? (

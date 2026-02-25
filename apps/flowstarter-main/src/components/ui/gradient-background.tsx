@@ -56,30 +56,30 @@ export function GradientBackground({
           className
         )}
       >
-        {/* Base gradient - subtle lavender wash */}
+        {/* Base gradient - smooth dark background */}
         <div className={cn(
-          'absolute inset-0 bg-gradient-to-br dark:from-[#0a0a0c] dark:via-[#0c0c10] dark:to-[#0a0a0c]',
+          'absolute inset-0 dark:bg-gradient-to-b dark:from-[#0c0c14] dark:via-[#0a0a10] dark:to-[#08080c]',
           gradientClass
         )} />
         
-        {/* Main gradient overlay - top to bottom */}
+        {/* Smooth gradient mesh - multiple layers for smoothness */}
+        <div 
+          className="absolute inset-0 opacity-60 dark:opacity-30"
+          style={{ 
+            background: 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(120, 119, 198, 0.15), transparent)'
+          }}
+        />
         <div 
           className="absolute inset-0 opacity-40 dark:opacity-20"
           style={{ 
-            background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(59, 130, 246, 0.05) 50%, transparent 100%)'
+            background: 'radial-gradient(ellipse 60% 40% at 100% 0%, rgba(139, 92, 246, 0.1), transparent)'
           }}
         />
-        
-        {/* Accent gradient orb - top right */}
         <div 
-          className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full opacity-20 dark:opacity-10 blur-[100px]"
-          style={{ background: 'radial-gradient(circle, hsl(233, 65%, 58%, 0.3) 0%, transparent 70%)' }}
-        />
-        
-        {/* Accent gradient orb - bottom left */}
-        <div 
-          className="absolute -bottom-40 -left-40 w-[600px] h-[600px] rounded-full opacity-15 dark:opacity-8 blur-[100px]"
-          style={{ background: 'radial-gradient(circle, hsl(211, 93%, 61%, 0.25) 0%, transparent 70%)' }}
+          className="absolute inset-0 opacity-30 dark:opacity-15"
+          style={{ 
+            background: 'radial-gradient(ellipse 50% 30% at 0% 100%, rgba(59, 130, 246, 0.1), transparent)'
+          }}
         />
         
         {/* Animated Flow lines - very subtle for dashboard */}

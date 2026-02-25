@@ -506,10 +506,10 @@ export default function LandingPage() {
                 </div>
                 
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
-                  We build it.
+                  Your digital presence,
                   <br />
                   <span className="bg-gradient-to-r from-[var(--purple)] via-blue-500 to-cyan-400 bg-clip-text text-transparent animate-gradient">
-                    You own it.
+                    one call away.
                   </span>
                 </h1>
                 

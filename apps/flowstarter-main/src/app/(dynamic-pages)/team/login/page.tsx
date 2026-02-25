@@ -55,7 +55,7 @@ export default function TeamLoginPage() {
     >
       <div className="w-full max-w-[520px] mx-auto">
         {/* Card container - matches client login */}
-        <div className="bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 p-8 shadow-sm">
+        <div className="bg-white/95 dark:bg-[var(--surface-2)]/90 backdrop-blur-2xl backdrop-saturate-150 rounded-2xl border border-gray-200/50 dark:border-white/10 p-8 shadow-lg dark:shadow-2xl">
           {/* Card header */}
           <div className="text-center mb-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -121,7 +121,7 @@ export default function TeamLoginPage() {
             <Button
               type="submit"
               disabled={isLoading || !email || !password}
-              className="w-full h-12 rounded-lg font-semibold mt-2 bg-gray-900 text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full h-12 rounded-lg font-semibold mt-2 bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Signing in...' : 'Sign in'}
             </Button>

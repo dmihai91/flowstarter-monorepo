@@ -76,14 +76,32 @@ export default function TeamDashboardPage() {
       <TeamHeader />
 
       <PageContainer gradientVariant="dashboard">
-        {/* Welcome message - same style as client dashboard */}
-        <div className="mb-6">
-          <p className="text-gray-500 dark:text-white/50 mb-1">
-            {greeting}, <span className="text-gray-700 dark:text-white/70 font-medium">{firstName}</span>
-          </p>
-          <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
-            Team Dashboard
-          </h1>
+        {/* Welcome message + action buttons */}
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+          <div>
+            <p className="text-gray-500 dark:text-white/50 mb-1">
+              {greeting}, <span className="text-gray-700 dark:text-white/70 font-medium">{firstName}</span>
+            </p>
+            <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
+              Team Dashboard
+            </h1>
+          </div>
+          <div className="flex items-center gap-3">
+            {isAdmin && (
+              <Link href="/team/dashboard/invite">
+                <Button variant="outline" size="lg">
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Invite Team
+                </Button>
+              </Link>
+            )}
+            <Link href="/team/dashboard/new">
+              <Button variant="accent" size="lg">
+                <Plus className="w-4 h-4 mr-2" />
+                New Project
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {/* Quick Actions - styled like client dashboard cards */}
@@ -105,29 +123,6 @@ export default function TeamDashboardPage() {
               </div>
             </Link>
           ))}
-        </div>
-
-        {/* Action buttons */}
-        <div className="flex items-center gap-3 mb-6">
-          {isAdmin && (
-            <Link href="/team/dashboard/invite">
-              <Button variant="outline" size="lg">
-                <UserPlus className="w-4 h-4 mr-2" />
-                Invite Team
-              </Button>
-            </Link>
-          )}
-          <Link href="/team/dashboard/new">
-            <Button variant="accent" size="lg">
-              <Plus className="w-4 h-4 mr-2" />
-              New Project
-            </Button>
-          </Link>
-        </div>
-
-        {/* Divider */}
-        <div className="relative flex items-center justify-center my-6">
-          <div className="flex-grow border-t border-gray-200/60 dark:border-white/10"></div>
         </div>
 
         {/* Projects Section */}

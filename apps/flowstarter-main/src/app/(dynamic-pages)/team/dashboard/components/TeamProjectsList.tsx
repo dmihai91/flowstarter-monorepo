@@ -119,10 +119,11 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
     setProjectToPrice(project);
     const projectType = project.project_type || 'standard';
     const defaults = PRICING_DEFAULTS[projectType] || PRICING_DEFAULTS.standard;
+    // Use stored values only if > 0, otherwise use defaults
     setPricingData({
       project_type: projectType,
-      setup_fee: project.setup_fee ?? defaults.setup_fee,
-      monthly_fee: project.monthly_fee ?? defaults.monthly_fee,
+      setup_fee: (project.setup_fee && project.setup_fee > 0) ? project.setup_fee : defaults.setup_fee,
+      monthly_fee: (project.monthly_fee && project.monthly_fee > 0) ? project.monthly_fee : defaults.monthly_fee,
       is_paid: project.is_paid || false,
     });
     setPricingDialogOpen(true);
@@ -530,11 +531,14 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
                   <Input
                     id="setup_fee"
-                    type="number"
-                    min="0"
-                    step="1"
-                    value={pricingData.setup_fee}
-                    onChange={(e) => setPricingData({ ...pricingData, setup_fee: parseFloat(e.target.value) || 0 })}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={pricingData.setup_fee || ''}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9]/g, '');
+                      setPricingData({ ...pricingData, setup_fee: val ? parseInt(val, 10) : 0 });
+                    }}
                     className="pl-7"
                   />
                 </div>
@@ -546,11 +550,14 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
                   <Input
                     id="monthly_fee"
-                    type="number"
-                    min="0"
-                    step="1"
-                    value={pricingData.monthly_fee}
-                    onChange={(e) => setPricingData({ ...pricingData, monthly_fee: parseFloat(e.target.value) || 0 })}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={pricingData.monthly_fee || ''}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9]/g, '');
+                      setPricingData({ ...pricingData, monthly_fee: val ? parseInt(val, 10) : 0 });
+                    }}
                     className="pl-7"
                   />
                 </div>

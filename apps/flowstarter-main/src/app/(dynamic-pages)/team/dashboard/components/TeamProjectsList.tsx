@@ -13,7 +13,6 @@ import { useTeamDeleteProject } from '@/hooks/useTeamProjects';
 import type { Table as TableType } from '@/types';
 import {
   CalendarClock,
-  FileText,
   LayoutDashboard,
   MoreVertical,
   Trash2,
@@ -116,8 +115,10 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
               {/* Header */}
               <div className="flex items-start justify-between gap-3 mb-3">
                 <div className="flex items-start gap-3 min-w-0">
-                  <div className="w-9 h-9 rounded-lg bg-gray-100 dark:bg-white/5 flex items-center justify-center shrink-0">
-                    <FileText className="h-4 w-4 text-gray-400 dark:text-white/40" />
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-100 to-gray-50 dark:from-white/10 dark:to-white/5 border border-gray-200/50 dark:border-white/10 flex items-center justify-center shrink-0 shadow-sm">
+                    <span className="text-base font-bold text-gray-400 dark:text-white/40">
+                      {(project.name || 'U').charAt(0).toUpperCase()}
+                    </span>
                   </div>
                   <div className="min-w-0">
                     <h3 className="font-medium text-sm text-gray-900 dark:text-white truncate">

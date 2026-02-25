@@ -111,8 +111,8 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
   // Default pricing by project type
   const PRICING_DEFAULTS: Record<string, { setup_fee: number; monthly_fee: number }> = {
     standard: { setup_fee: 499, monthly_fee: 49 },
-    premium: { setup_fee: 999, monthly_fee: 99 },
-    enterprise: { setup_fee: 2499, monthly_fee: 249 },
+    pro: { setup_fee: 999, monthly_fee: 99 },
+    business: { setup_fee: 2499, monthly_fee: 249 },
   };
 
   const openPricingDialog = (project: ProjectWithOwner) => {

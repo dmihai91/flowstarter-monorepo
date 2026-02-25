@@ -1154,6 +1154,7 @@ export default function LandingPage() {
                       {[
                         'Professional email with your domain',
                         'Contact form to capture leads',
+                        'Basic booking system (Calendly)',
                         'Support when you need help',
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
@@ -1238,15 +1239,15 @@ export default function LandingPage() {
                       </li>
                       <li className="flex items-center gap-2.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)]/50" />
-                        Blog, booking & newsletter
+                        Advanced booking system
+                      </li>
+                      <li className="flex items-center gap-2.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)]/50" />
+                        Blog & newsletter integrations
                       </li>
                       <li className="flex items-center gap-2.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)]/50" />
                         Multi-language support
-                      </li>
-                      <li className="flex items-center gap-2.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)]/50" />
-                        Revenue tracking dashboard
                       </li>
                     </ul>
                   </div>
@@ -1266,15 +1267,15 @@ export default function LandingPage() {
                     <ul className="space-y-2.5 text-sm text-gray-600 dark:text-white/50">
                       <li className="flex items-center gap-2.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
+                        Sell digital products
+                      </li>
+                      <li className="flex items-center gap-2.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
                         E-commerce integrations
                       </li>
                       <li className="flex items-center gap-2.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
                         Product catalog & payments
-                      </li>
-                      <li className="flex items-center gap-2.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
-                        Advanced SEO tools
                       </li>
                       <li className="flex items-center gap-2.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />

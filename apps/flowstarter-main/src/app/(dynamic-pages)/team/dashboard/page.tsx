@@ -24,6 +24,14 @@ import {
 
 export const dynamic = 'force-dynamic';
 
+// Quick action cards - same style as client dashboard
+const quickActions = [
+  { icon: Globe, label: 'Configure Domain', desc: 'Cloudflare DNS', href: '/team/dashboard/domains' },
+  { icon: Mail, label: 'Setup Email', desc: 'Zoho Mail', href: '/team/dashboard/email' },
+  { icon: BarChart3, label: 'Analytics', desc: 'Google Analytics', href: '/team/dashboard/analytics' },
+  { icon: Settings, label: 'Services', desc: 'Integrations', href: '/team/dashboard/services' },
+];
+
 export default function TeamDashboardPage() {
   const { user, isLoaded: userLoaded } = useUser();
   const router = useRouter();
@@ -58,78 +66,81 @@ export default function TeamDashboardPage() {
     );
   }
 
+  const firstName = user?.firstName || 'there';
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+
   return (
     <DashboardWrapper>
       <TeamHeader />
 
       <PageContainer gradientVariant="dashboard">
-        <div className="relative">
-          {/* Page header */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Client Projects
-              </h1>
-              <p className="text-sm text-gray-600 dark:text-white/50 mt-1">
-                Manage all client websites and configure services
-              </p>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              {isAdmin && (
-                <Link href="/team/dashboard/invite">
-                  <Button variant="outline" className="rounded-xl h-10 px-4 border-gray-300 dark:border-white/10 hover:border-[var(--purple)] hover:bg-[var(--purple)]/5">
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    Invite
-                  </Button>
-                </Link>
-              )}
-              <Link href="/team/dashboard/new">
-                <Button className="bg-[var(--purple)] hover:bg-[var(--purple)]/90 text-white font-medium rounded-xl h-10 px-4">
-                  <Plus className="w-4 h-4 mr-2" />
-                  New Project
-                </Button>
-              </Link>
-            </div>
-          </div>
+        {/* Welcome message - same style as client dashboard */}
+        <div className="mb-6">
+          <p className="text-gray-500 dark:text-white/50 mb-1">
+            {greeting}, <span className="text-gray-700 dark:text-white/70 font-medium">{firstName}</span>
+          </p>
+          <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
+            Team Dashboard
+          </h1>
+        </div>
 
-          {/* Quick actions */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-10">
-            {[
-              { icon: Globe, label: 'Configure Domain', desc: 'Cloudflare DNS', href: '/team/dashboard/domains' },
-              { icon: Mail, label: 'Setup Email', desc: 'Zoho Mail', href: '/team/dashboard/email' },
-              { icon: BarChart3, label: 'Analytics', desc: 'Google Analytics', href: '/team/dashboard/analytics' },
-              { icon: Settings, label: 'Services', desc: 'Integrations', href: '/team/dashboard/services' },
-            ].map((action, i) => (
-              <Link
-                key={i}
-                href={action.href}
-                className="flex items-center gap-3 p-4 rounded-2xl bg-gray-50/80 dark:bg-white/[0.02] border border-gray-200/60 dark:border-white/5 hover:border-[var(--purple)]/30 hover:shadow-sm transition-all"
-              >
-                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center">
-                  <action.icon className="w-5 h-5 text-gray-500 dark:text-white/50" />
+        {/* Quick Actions - styled like client dashboard cards */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {quickActions.map((action, i) => (
+            <Link
+              key={i}
+              href={action.href}
+              className="group relative p-5 rounded-2xl transition-all duration-250 ease-out hover:-translate-y-[3px] hover:shadow-[0_8px_25px_rgba(0,0,0,0.06)] border border-gray-200/60 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl hover:border-[rgba(124,58,237,0.12)]"
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
+                  <action.icon className="h-5 w-5 text-[var(--purple)] opacity-60" />
                 </div>
-                <div className="text-left">
+                <div>
                   <p className="font-semibold text-gray-900 dark:text-white text-sm">{action.label}</p>
-                  <p className="text-xs text-gray-500 dark:text-white/50">{action.desc}</p>
+                  <p className="text-xs text-gray-500 dark:text-white/50 mt-0.5">{action.desc}</p>
                 </div>
-              </Link>
-            ))}
-          </div>
+              </div>
+            </Link>
+          ))}
+        </div>
 
-          {/* Projects */}
-          <div className="mb-8">
-            <PageSectionHeader
-              title="All Projects"
-              subtitle="View and manage all client projects"
-            />
-            
-            {projectsLoading ? (
-              <ProjectsListSkeleton count={3} />
-            ) : (
-              <TeamProjectsList projects={projects || []} />
-            )}
-          </div>
+        {/* Action buttons */}
+        <div className="flex items-center gap-3 mb-6">
+          {isAdmin && (
+            <Link href="/team/dashboard/invite">
+              <Button variant="outline" className="rounded-xl">
+                <UserPlus className="w-4 h-4 mr-2" />
+                Invite Team
+              </Button>
+            </Link>
+          )}
+          <Link href="/team/dashboard/new">
+            <Button className="rounded-xl">
+              <Plus className="w-4 h-4 mr-2" />
+              New Project
+            </Button>
+          </Link>
+        </div>
+
+        {/* Divider */}
+        <div className="relative flex items-center justify-center my-6">
+          <div className="flex-grow border-t border-gray-200/60 dark:border-white/10"></div>
+        </div>
+
+        {/* Projects Section */}
+        <div className="mb-8">
+          <PageSectionHeader
+            title="All Projects"
+            subtitle="View and manage all client projects"
+          />
+          
+          {projectsLoading ? (
+            <ProjectsListSkeleton count={3} />
+          ) : (
+            <TeamProjectsList projects={projects || []} />
+          )}
         </div>
       </PageContainer>
     </DashboardWrapper>

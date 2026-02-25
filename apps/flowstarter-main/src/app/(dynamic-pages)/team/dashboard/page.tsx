@@ -63,37 +63,9 @@ export default function TeamDashboardPage() {
       <TeamHeader />
 
       <PageContainer gradientVariant="dashboard">
-        <div className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#111113] p-6 sm:p-8 relative overflow-hidden shadow-sm">
-          {/* Grid pattern background */}
-          <svg
-            className="pointer-events-none absolute inset-0 h-full w-full opacity-30 dark:opacity-20 [mask-image:radial-gradient(ellipse_at_top,white,transparent_60%)]"
-            aria-hidden="true"
-          >
-            <defs>
-              <pattern
-                id="team-grid"
-                width="32"
-                height="32"
-                patternUnits="userSpaceOnUse"
-              >
-                <path
-                  d="M32 0H0V32"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="0.5"
-                />
-              </pattern>
-            </defs>
-            <rect
-              width="100%"
-              height="100%"
-              className="text-gray-300 dark:text-white/10"
-              fill="url(#team-grid)"
-            />
-          </svg>
-
+        <div className="relative">
           {/* Page header */}
-          <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Client Projects
@@ -122,7 +94,7 @@ export default function TeamDashboardPage() {
           </div>
 
           {/* Quick actions */}
-          <div className="relative grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-10">
             {[
               { icon: Globe, label: 'Configure Domain', desc: 'Cloudflare DNS', href: '/team/dashboard/domains' },
               { icon: Mail, label: 'Setup Email', desc: 'Zoho Mail', href: '/team/dashboard/email' },
@@ -132,26 +104,21 @@ export default function TeamDashboardPage() {
               <Link
                 key={i}
                 href={action.href}
-                className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/10 hover:border-[var(--purple)]/50 hover:bg-gray-100 dark:hover:bg-white/[0.05] transition-all"
+                className="flex items-center gap-3 p-4 rounded-2xl bg-gray-50/80 dark:bg-white/[0.02] border border-gray-200/60 dark:border-white/5 hover:border-[var(--purple)]/30 hover:shadow-sm transition-all"
               >
-                <div className="p-2.5 rounded-lg bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 shadow-sm">
-                  <action.icon className="w-4 h-4 text-gray-600 dark:text-white/60" />
+                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+                  <action.icon className="w-5 h-5 text-gray-500 dark:text-white/50" />
                 </div>
                 <div className="text-left">
-                  <p className="font-medium text-gray-900 dark:text-white text-sm">{action.label}</p>
-                  <p className="text-xs text-gray-500 dark:text-white/40">{action.desc}</p>
+                  <p className="font-semibold text-gray-900 dark:text-white text-sm">{action.label}</p>
+                  <p className="text-xs text-gray-500 dark:text-white/50">{action.desc}</p>
                 </div>
               </Link>
             ))}
           </div>
 
-          {/* Divider */}
-          <div className="relative flex items-center justify-center my-6 z-10">
-            <div className="flex-grow border-t border-gray-200/60 dark:border-white/10"></div>
-          </div>
-
           {/* Projects */}
-          <div className="relative mb-8">
+          <div className="mb-8">
             <PageSectionHeader
               title="All Projects"
               subtitle="View and manage all client projects"

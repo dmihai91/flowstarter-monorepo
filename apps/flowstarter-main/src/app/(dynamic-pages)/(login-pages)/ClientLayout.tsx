@@ -1,6 +1,5 @@
 'use client';
 
-import Footer from '@/components/Footer';
 import { type ReactNode } from 'react';
 
 export function ClientLayout({ children }: { children: ReactNode }) {
@@ -9,7 +8,6 @@ export function ClientLayout({ children }: { children: ReactNode }) {
       <div className="flex flex-col items-stretch justify-center min-h-screen min-w-full">
         <div className="w-full">{children}</div>
       </div>
-      <Footer />
     </div>
   );
 }

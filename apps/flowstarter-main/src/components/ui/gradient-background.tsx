@@ -56,29 +56,33 @@ export function GradientBackground({
           className
         )}
       >
-        {/* Base gradient - smooth dark background */}
+        {/* Base gradient - deep dark background like Figma */}
         <div className={cn(
-          'absolute inset-0 dark:bg-gradient-to-b dark:from-[#0c0c14] dark:via-[#0a0a10] dark:to-[#08080c]',
-          gradientClass
+          'absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-gray-100',
+          'dark:from-[#0a0a12] dark:via-[#0c0c18] dark:to-[#0a0a14]'
         )} />
         
-        {/* Smooth gradient mesh - multiple layers for smoothness */}
+        {/* Large purple ellipse - top center (like Figma Ellipse 14) */}
         <div 
-          className="absolute inset-0 opacity-60 dark:opacity-30"
+          className="absolute -top-[400px] left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full opacity-[0.15] dark:opacity-[0.25]"
           style={{ 
-            background: 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(120, 119, 198, 0.15), transparent)'
+            background: 'radial-gradient(circle, rgba(99, 102, 241, 0.8) 0%, rgba(99, 102, 241, 0.4) 30%, transparent 70%)'
           }}
         />
+        
+        {/* Secondary purple ellipse - bottom left (like Figma Ellipse 12) */}
         <div 
-          className="absolute inset-0 opacity-40 dark:opacity-20"
+          className="absolute -bottom-[300px] -left-[200px] w-[810px] h-[810px] rounded-full opacity-[0.12] dark:opacity-[0.2]"
           style={{ 
-            background: 'radial-gradient(ellipse 60% 40% at 100% 0%, rgba(139, 92, 246, 0.1), transparent)'
+            background: 'radial-gradient(circle, rgba(139, 92, 246, 0.7) 0%, rgba(139, 92, 246, 0.3) 40%, transparent 70%)'
           }}
         />
+        
+        {/* Accent ellipse - right side */}
         <div 
-          className="absolute inset-0 opacity-30 dark:opacity-15"
+          className="absolute top-1/3 -right-[200px] w-[600px] h-[600px] rounded-full opacity-[0.08] dark:opacity-[0.15]"
           style={{ 
-            background: 'radial-gradient(ellipse 50% 30% at 0% 100%, rgba(59, 130, 246, 0.1), transparent)'
+            background: 'radial-gradient(circle, rgba(79, 70, 229, 0.6) 0%, transparent 60%)'
           }}
         />
         

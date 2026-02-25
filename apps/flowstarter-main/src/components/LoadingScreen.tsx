@@ -22,10 +22,28 @@ export function LoadingScreen({ message = 'Loading...' }: LoadingScreenProps) {
       aria-live="polite"
       aria-busy="true"
     >
-      {/* Flow lines background */}
+      {/* Gradient overlay */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-40 dark:opacity-20"
+        style={{ 
+          background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(59, 130, 246, 0.05) 50%, transparent 100%)'
+        }}
+      />
+      
+      {/* Gradient orbs */}
+      <div 
+        className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full opacity-20 dark:opacity-10 blur-[100px] pointer-events-none"
+        style={{ background: 'radial-gradient(circle, hsl(233, 65%, 58%, 0.3) 0%, transparent 70%)' }}
+      />
+      <div 
+        className="absolute -bottom-40 -left-40 w-[600px] h-[600px] rounded-full opacity-15 dark:opacity-8 blur-[100px] pointer-events-none"
+        style={{ background: 'radial-gradient(circle, hsl(211, 93%, 61%, 0.25) 0%, transparent 70%)' }}
+      />
+
+      {/* Flow lines background - subtle */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <svg 
-          className="absolute inset-0 w-full h-full opacity-[0.12] dark:opacity-[0.10]"
+          className="absolute inset-0 w-full h-full opacity-[0.04] dark:opacity-[0.03]"
           viewBox="0 0 1200 800" 
           preserveAspectRatio="xMidYMid slice"
           fill="none"
@@ -36,7 +54,7 @@ export function LoadingScreen({ message = 'Loading...' }: LoadingScreenProps) {
               <stop offset="100%" stopColor="#3B82F6" />
             </linearGradient>
           </defs>
-          <g stroke="url(#loadingFlowGradient)" strokeWidth="1.2">
+          <g stroke="url(#loadingFlowGradient)" strokeWidth="1.5">
             <path d="M-100,100 Q200,80 400,120 T800,100 T1300,140" />
             <path d="M-100,200 Q150,220 350,180 T750,220 T1300,200" />
             <path d="M-100,300 Q250,280 450,320 T850,290 T1300,330" />

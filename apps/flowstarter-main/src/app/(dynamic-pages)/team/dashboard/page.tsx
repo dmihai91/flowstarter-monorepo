@@ -126,7 +126,7 @@ export default function TeamDashboardPage() {
         </div>
 
         {/* Projects Section */}
-        <div className="mb-16">
+        <div className="mb-8">
           <PageSectionHeader
             title="All Projects"
             subtitle="View and manage all client projects"

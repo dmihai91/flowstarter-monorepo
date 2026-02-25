@@ -87,12 +87,20 @@ export default function TeamLoginPage() {
       } else if (result.status === 'needs_second_factor') {
         // Check what second factor is needed
         const supportedFactors = result.supportedSecondFactors;
+        console.log('Second factors required:', supportedFactors);
+        
         const totpFactor = supportedFactors?.find(f => f.strategy === 'totp');
+        const phoneFactor = supportedFactors?.find(f => f.strategy === 'phone_code');
         
         if (totpFactor) {
           setStep('totp');
+        } else if (phoneFactor) {
+          setError('Phone verification required but not supported in this flow');
+        } else if (supportedFactors && supportedFactors.length > 0) {
+          setError(`Second factor required: ${supportedFactors.map(f => f.strategy).join(', ')}`);
         } else {
-          setError('Two-factor authentication required but not configured');
+          // No second factors configured but still required - might be a Clerk config issue
+          setError('Two-factor authentication required. Please contact admin or check Clerk settings.');
         }
       } else {
         setError(`Unexpected status: ${result.status}`);

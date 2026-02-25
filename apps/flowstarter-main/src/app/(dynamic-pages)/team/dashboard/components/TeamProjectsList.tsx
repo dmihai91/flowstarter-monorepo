@@ -275,23 +275,23 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
 
       {/* Grid View */}
       {viewMode === 'grid' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {projects.map((project) => {
             const status = typeof project.status === 'string' ? project.status : 'draft';
 
             return (
               <div
                 key={project.id}
-                className="p-4 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] hover:border-gray-300 dark:hover:border-white/20 transition-colors"
+                className="p-5 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.02] hover:border-gray-300 dark:hover:border-white/20 transition-colors"
               >
-                <div className="flex items-start justify-between gap-3 mb-3">
+                <div className="flex items-start justify-between gap-3 mb-4">
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium text-gray-900 dark:text-white text-sm truncate">
+                    <p className="font-semibold text-gray-900 dark:text-white text-base truncate">
                       {project.name || 'Untitled Project'}
                     </p>
-                    <div className="flex items-center gap-1.5 mt-1">
-                      <Circle className={`w-2 h-2 fill-current ${getStatusColor(status)}`} />
-                      <span className="text-xs text-gray-500 dark:text-white/50">{getStatusLabel(status)}</span>
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <Circle className={`w-2.5 h-2.5 fill-current ${getStatusColor(status)}`} />
+                      <span className="text-sm text-gray-500 dark:text-white/50">{getStatusLabel(status)}</span>
                     </div>
                   </div>
                   <DropdownMenu>
@@ -326,18 +326,18 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                 </div>
 
                 {project.description && (
-                  <p className="text-xs text-gray-500 dark:text-white/40 line-clamp-2 mb-3">
+                  <p className="text-sm text-gray-500 dark:text-white/40 line-clamp-2 mb-4">
                     {project.description}
                   </p>
                 )}
 
-                <div className="flex items-center gap-4 text-xs text-gray-400 dark:text-white/30 pt-3 border-t border-gray-100 dark:border-white/5">
-                  <span className="flex items-center gap-1">
-                    <User className="w-3 h-3" />
+                <div className="flex items-center gap-5 text-sm text-gray-400 dark:text-white/30 pt-4 border-t border-gray-100 dark:border-white/5">
+                  <span className="flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5" />
                     {getOwnerDisplay(project)}
                   </span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
+                  <span className="flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5" />
                     {getTimeAgo(project.updated_at || project.created_at)}
                   </span>
                 </div>

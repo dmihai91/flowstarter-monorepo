@@ -1220,52 +1220,67 @@ export default function LandingPage() {
               
               {/* Coming Soon Tiers */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
-                {/* Pro - Coming Soon */}
-                <div className="p-6 rounded-2xl bg-gray-100/50 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-100/80 dark:to-gray-900/50 pointer-events-none" />
+                {/* Growth - Coming Soon */}
+                <div className="group p-6 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/50 dark:from-white/[0.04] dark:to-white/[0.02] border border-gray-200/80 dark:border-white/10 hover:border-[var(--purple)]/30 dark:hover:border-[var(--purple)]/30 relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-[var(--purple)]/5">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[var(--purple)]/10 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-lg font-bold text-gray-400 dark:text-white/40">Growth Infrastructure</h4>
-                      <span className="px-2 py-0.5 text-[10px] font-medium bg-gray-200 dark:bg-white/10 text-gray-500 dark:text-white/40 rounded-full flex items-center gap-1">
-                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="text-lg font-bold text-gray-700 dark:text-white/80">Growth Infrastructure</h4>
+                      <span className="px-3 py-1 text-[10px] font-medium bg-[var(--purple)]/10 text-[var(--purple)] dark:bg-[var(--purple)]/20 dark:text-[var(--purple)] rounded-full">
                         Coming Soon
                       </span>
                     </div>
-                    <p className="text-xs text-gray-400 dark:text-white/30 mb-3">Starting at €499 setup + €49/month</p>
-                    <ul className="space-y-1.5 text-xs text-gray-400 dark:text-white/30">
-                      <li>• 750 AI credits/month</li>
-                      <li>• Up to 3 sites, 1 subscription</li>
-                      <li>• Blog, booking & newsletter integrations</li>
-                      <li>• Multi-language support</li>
-                      <li>• Potential revenue tracking in dashboard</li>
+                    <p className="text-sm text-gray-500 dark:text-white/50 mb-4">Starting at €499 setup + €49/month</p>
+                    <ul className="space-y-2.5 text-sm text-gray-600 dark:text-white/50">
+                      <li className="flex items-center gap-2.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)]/50" />
+                        Multiple sites, one subscription
+                      </li>
+                      <li className="flex items-center gap-2.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)]/50" />
+                        Blog, booking & newsletter
+                      </li>
+                      <li className="flex items-center gap-2.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)]/50" />
+                        Multi-language support
+                      </li>
+                      <li className="flex items-center gap-2.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)]/50" />
+                        Revenue tracking dashboard
+                      </li>
                     </ul>
                   </div>
                 </div>
                 
-                {/* Business - Coming Soon */}
-                <div className="p-6 rounded-2xl bg-gray-100/50 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-100/80 dark:to-gray-900/50 pointer-events-none" />
+                {/* Commerce - Coming Soon */}
+                <div className="group p-6 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/50 dark:from-white/[0.04] dark:to-white/[0.02] border border-gray-200/80 dark:border-white/10 hover:border-blue-500/30 dark:hover:border-blue-500/30 relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/5">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-lg font-bold text-gray-400 dark:text-white/40">Commerce Infrastructure</h4>
-                      <span className="px-2 py-0.5 text-[10px] font-medium bg-gray-200 dark:bg-white/10 text-gray-500 dark:text-white/40 rounded-full flex items-center gap-1">
-                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="text-lg font-bold text-gray-700 dark:text-white/80">Commerce Infrastructure</h4>
+                      <span className="px-3 py-1 text-[10px] font-medium bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 rounded-full">
                         Coming Soon
                       </span>
                     </div>
-                    <p className="text-xs text-gray-400 dark:text-white/30 mb-3">Starting at €699 setup + €79/month</p>
-                    <ul className="space-y-1.5 text-xs text-gray-400 dark:text-white/30">
-                      <li>• 1500 AI credits/month</li>
-                      <li>• E-commerce integrations (Shopify, Gumroad)</li>
-                      <li>• Product catalog & Stripe payments</li>
-                      <li>• Advanced SEO & WhatsApp Business</li>
-                      <li>• Full revenue tracking in dashboard</li>
+                    <p className="text-sm text-gray-500 dark:text-white/50 mb-4">Starting at €699 setup + €79/month</p>
+                    <ul className="space-y-2.5 text-sm text-gray-600 dark:text-white/50">
+                      <li className="flex items-center gap-2.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
+                        E-commerce integrations
+                      </li>
+                      <li className="flex items-center gap-2.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
+                        Product catalog & payments
+                      </li>
+                      <li className="flex items-center gap-2.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
+                        Advanced SEO tools
+                      </li>
+                      <li className="flex items-center gap-2.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
+                        Full revenue tracking
+                      </li>
                     </ul>
-                    <p className="text-[10px] text-gray-400/70 dark:text-white/20 mt-2 italic">Price varies based on complexity</p>
                   </div>
                 </div>
               </div>

@@ -21,7 +21,8 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
-  UserPlus
+  UserPlus,
+  Shield
 } from 'lucide-react';
 
 // Mock data for now - will be replaced with real data
@@ -159,6 +160,13 @@ export default function TeamDashboardPage() {
               <span className="text-sm text-gray-500 dark:text-white/50">
                 {user?.primaryEmailAddress?.emailAddress}
               </span>
+              <Link
+                href="/team/dashboard/security"
+                className="flex items-center gap-2 px-3 py-2 text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors"
+              >
+                <Shield className="w-4 h-4" />
+                Security
+              </Link>
               <button
                 onClick={handleSignOut}
                 className="flex items-center gap-2 px-3 py-2 text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors"

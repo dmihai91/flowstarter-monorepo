@@ -21,7 +21,10 @@ interface SendEmailResult {
   error?: string;
 }
 
-const DEFAULT_FROM = 'Flowstarter <hello@flowstarter.app>';
+// Use Resend test domain for development, switch to flowstarter.app for production
+const DEFAULT_FROM = process.env.NODE_ENV === 'production' 
+  ? 'Flowstarter <hello@flowstarter.app>'
+  : 'Flowstarter <onboarding@resend.dev>';
 const RESEND_API_URL = 'https://api.resend.com/emails';
 
 export async function sendEmail({

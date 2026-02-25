@@ -3,6 +3,7 @@
 import { useTheme } from '@/contexts/ThemeContext';
 import { TranslationKeys, useTranslations } from '@/lib/i18n';
 import Link from 'next/link';
+import Footer from '@/components/Footer';
 
 interface AuthLayoutProps {
   title?: string;
@@ -104,7 +105,7 @@ export default function AuthLayout({
               {children}
             </div>
 
-            {/* Footer trust - for client login */}
+            {/* Stats - for client login only */}
             {!hideFooterStats && (
               <div className="mt-10 pt-6 border-t border-gray-200 dark:border-white/10">
                 <div className="flex items-center justify-center gap-6">
@@ -124,20 +125,11 @@ export default function AuthLayout({
                 </div>
               </div>
             )}
-
-            {/* Simple footer - for team login */}
-            {hideFooterStats && (
-              <div className="mt-10 pt-6 border-t border-gray-200 dark:border-white/10">
-                <div className="flex items-center justify-center gap-2">
-                  <div className="w-5 h-5 rounded-md bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center">
-                    <span className="text-white font-bold text-[8px]">F</span>
-                  </div>
-                  <span className="text-xs text-gray-400 dark:text-white/30">© {new Date().getFullYear()} Flowstarter</span>
-                </div>
-              </div>
-            )}
           </div>
         </div>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </>
   );

@@ -16,13 +16,9 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { 
   Plus, 
-  Loader2,
   UserPlus,
-  FolderOpen,
-  FileEdit,
-  CheckCircle2,
-  Clock,
 } from 'lucide-react';
+import { LoadingScreen } from '@/components/LoadingScreen';
 
 export const dynamic = 'force-dynamic';
 
@@ -53,11 +49,7 @@ export default function TeamDashboardPage() {
   }, [user, userLoaded, router]);
 
   if (isLoading || !userLoaded) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c]">
-        <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)]" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   const firstName = user?.firstName || 'there';

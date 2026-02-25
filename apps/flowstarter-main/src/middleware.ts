@@ -108,6 +108,7 @@ const isPublicRoute = createRouteMatcher([
   '/sitemap(.*)',
   '/accessibility(.*)',
   '/security(.*)',
+  '/team/login(.*)', // Team login page (public, auth handled by Clerk)
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

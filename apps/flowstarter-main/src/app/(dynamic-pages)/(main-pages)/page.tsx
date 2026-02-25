@@ -1231,11 +1231,11 @@ export default function LandingPage() {
                         Coming Soon
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500 dark:text-white/50 mb-4">Starting at €499 setup + €79/month + commission</p>
+                    <p className="text-sm text-gray-500 dark:text-white/50 mb-4">€499 setup + €49/month</p>
                     <ul className="space-y-2.5 text-sm text-gray-600 dark:text-white/50">
                       <li className="flex items-center gap-2.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)]/50" />
-                        Multiple sites, one subscription
+                        Additional sites as add-ons
                       </li>
                       <li className="flex items-center gap-2.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)]/50" />
@@ -1263,7 +1263,7 @@ export default function LandingPage() {
                         Coming Soon
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500 dark:text-white/50 mb-4">Starting at €699 setup + €79/month</p>
+                    <p className="text-sm text-gray-500 dark:text-white/50 mb-4">From €799 setup + €79/month + commission</p>
                     <ul className="space-y-2.5 text-sm text-gray-600 dark:text-white/50">
                       <li className="flex items-center gap-2.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />

@@ -8,9 +8,9 @@ interface TeamProjectsStatsProps {
 }
 
 function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('de-DE', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'EUR',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);

@@ -108,11 +108,11 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
   });
   const updatePricingMutation = useTeamUpdateProjectPricing();
 
-  // Default pricing by project type
+  // Default pricing by project type (in EUR)
   const PRICING_DEFAULTS: Record<string, { setup_fee: number; monthly_fee: number }> = {
-    standard: { setup_fee: 499, monthly_fee: 49 },
-    pro: { setup_fee: 999, monthly_fee: 99 },
-    business: { setup_fee: 2499, monthly_fee: 249 },
+    standard: { setup_fee: 299, monthly_fee: 29 },
+    pro: { setup_fee: 599, monthly_fee: 59 },
+    business: { setup_fee: 1499, monthly_fee: 149 },
   };
 
   const openPricingDialog = (project: ProjectWithOwner) => {
@@ -528,7 +528,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
               <div className="space-y-2">
                 <Label htmlFor="setup_fee" className="text-sm font-medium">Setup Fee</Label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">€</span>
                   <Input
                     id="setup_fee"
                     type="text"
@@ -547,7 +547,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
               <div className="space-y-2">
                 <Label htmlFor="monthly_fee" className="text-sm font-medium">Monthly Fee</Label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">€</span>
                   <Input
                     id="monthly_fee"
                     type="text"

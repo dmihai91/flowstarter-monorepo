@@ -426,7 +426,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                   ))}
                 </div>
 
-                <div className="flex items-center gap-5 text-sm text-gray-400 dark:text-white/30 pt-3 border-t border-gray-100 dark:border-white/5">
+                <div className="flex items-center justify-between text-sm text-gray-400 dark:text-white/30 pt-3 border-t border-gray-100 dark:border-white/5">
                   <span className="flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5" />
                     {getOwnerDisplay(project)}

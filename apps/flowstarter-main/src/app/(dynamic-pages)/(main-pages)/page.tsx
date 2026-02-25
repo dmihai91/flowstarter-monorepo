@@ -262,9 +262,9 @@ export default function LandingPage() {
   });
 
   const features = [
-    { num: '01', title: 'We talk', desc: 'Book a free 30-minute discovery call. We learn about your business, your brand, and your goals. You talk, we listen. No preparation needed.' },
-    { num: '02', title: 'We build', desc: 'Our AI engine generates your site from premium templates, tailored to your brand. We set up your domain, email, and hosting. You review, we refine.' },
-    { num: '03', title: 'You own it', desc: 'Your site goes live. From here, use the AI editor to update content, add pages, and tweak your design. Anytime, no code needed. Your site, your rules.' },
+    { num: '01', title: 'We talk', desc: 'A 30-minute call. We learn what you do and what you need. No prep required.' },
+    { num: '02', title: 'We build', desc: 'We design your site, connect your domain, set up email, and configure analytics. You review it before launch.' },
+    { num: '03', title: 'You own it', desc: 'Your site goes live. Edit anything with AI. No code. No middleman. It's yours.' },
   ];
 
   return (
@@ -506,18 +506,18 @@ export default function LandingPage() {
                 </div>
                 
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
-                  Digital presence
+                  We build it.
                   <br />
                   <span className="bg-gradient-to-r from-[var(--purple)] via-blue-500 to-cyan-400 bg-clip-text text-transparent animate-gradient">
-                    done for you
+                    You own it.
                   </span>
                 </h1>
                 
                 <p className="text-lg lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed max-w-lg mb-3">
-                  Your professional website, built by us in 1-2 weeks, then yours to customize forever with AI. No code, no stress.
+                  A professional website, ready in 1-2 weeks. We handle the tech. You stay in control.
                 </p>
                 <p className="text-sm text-gray-400 dark:text-white/30 mb-10">
-                  For freelancers, small businesses, and creators.
+                  For freelancers, founders, and small businesses.
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10">
@@ -541,7 +541,7 @@ export default function LandingPage() {
                       /mo
                     </div>
                     <div className="text-xs text-gray-400 dark:text-white/30 mt-1">
-                      Hosting, email, and 300 AI edits/month included. 50% off for first year.
+                      Hosting, email, and AI editing included. First month free.
                     </div>
                   </div>
                 </div>
@@ -876,8 +876,8 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
             <div className="max-w-xl mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight mb-3">
-                Three steps to your{' '}
-                <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">new website</span>
+                How it{' '}
+                <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">works</span>
               </h2>
             </div>
 
@@ -904,11 +904,11 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="text-center mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight">
-                Everything you need.{' '}
-                <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">Nothing you don't.</span>
+                What's{' '}
+                <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">included</span>
               </h2>
               <p className="text-gray-500 dark:text-white/40 mt-2 max-w-xl mx-auto">
-                Clear breakdown of what you get upfront vs. what stays active monthly
+                One-time setup. Ongoing infrastructure.
               </p>
             </div>
 
@@ -928,17 +928,17 @@ export default function LandingPage() {
                 </div>
                 <ul className="space-y-2">
                   {[
-                    'Personal discovery call with our team',
-                    'AI-generated website from premium templates',
-                    'Up to 7 professionally designed pages',
-                    'Mobile-responsive design (looks great on any device)',
-                    'Custom domain setup and configuration',
-                    'Professional email setup (1 mailbox)',
-                    'Google Analytics integration',
-                    'Basic SEO setup (meta tags, sitemap, robots.txt)',
-                    'Performance optimized (90+ Lighthouse score)',
-                    '1 contact form with lead capture',
-                    'Your site, live and ready',
+                    'Discovery call to understand your business',
+                    'Website designed from premium templates',
+                    'Up to 7 pages, built to your needs',
+                    'Looks great on phone, tablet, and desktop',
+                    'Your domain, connected and configured',
+                    'Professional email with your domain',
+                    'Analytics ready from day one',
+                    'Google-ready (SEO basics handled)',
+                    'Fast-loading site that keeps visitors',
+                    'Contact form to capture leads',
+                    'Live and ready to share',
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-2.5 text-sm text-gray-600 dark:text-white/50">
                       <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -965,13 +965,13 @@ export default function LandingPage() {
                 </div>
                 <ul className="space-y-2">
                   {[
-                    'Website hosting (global CDN, automatic SSL)',
-                    'Professional email (1 mailbox)',
-                    '1 GB cloud storage for files and assets',
-                    'Analytics dashboard (leads + page views)',
-                    '300 AI credits/month for content, pages, branding, SEO',
-                    'Platform updates and improvements',
-                    'Email support (48h response)',
+                    'Your site stays online, fast, and secure',
+                    'Professional email keeps working',
+                    'Storage for images and files',
+                    'See who visits and what they do',
+                    'Edit text, add pages, improve SEO with AI',
+                    'Automatic updates and improvements',
+                    'Support when you need it',
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-2.5 text-sm text-gray-600 dark:text-white/50">
                       <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -1040,7 +1040,7 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">First Month Free</h3>
-                    <p className="text-sm text-gray-600 dark:text-white/50">Try your new site risk-free. Your subscription starts 30 days after launch, plenty of time to make sure you love it.</p>
+                    <p className="text-sm text-gray-600 dark:text-white/50">Your subscription starts 30 days after launch. Plenty of time to settle in.</p>
                   </div>
                 </div>
               </div>
@@ -1057,7 +1057,7 @@ export default function LandingPage() {
                 Early Access
               </div>
               <p className="text-lg text-gray-600 dark:text-white/60 max-w-xl mx-auto">
-                Launching beta. Early adopters get <span className="font-semibold text-[var(--purple)] dark:text-[var(--purple)]">50% off all pricing</span> until v1.0 launches.
+                Early adopters get <span className="font-semibold text-[var(--purple)] dark:text-[var(--purple)]">50% off</span> while we're in beta. Locked in for your first year.
               </p>
             </div>
           </div>
@@ -1071,8 +1071,8 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
             <div className="text-center mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight">
-                Simple pricing.{' '}
-                <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">No surprises.</span>
+                Clear{' '}
+                <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">pricing</span>
               </h2>
             </div>
 
@@ -1107,13 +1107,13 @@ export default function LandingPage() {
                 <div className="space-y-4 mb-8">
                   {/* Setup & Build */}
                   <div>
-                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Setup & Build</p>
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">We Build</p>
                     <ul className="space-y-1.5">
                       {[
-                        'Free discovery call + done-for-you site build',
-                        'Up to 7 professionally designed pages',
-                        'Custom domain setup',
-                        'Mobile-responsive design',
+                        'Discovery call to understand your business',
+                        'Up to 7 pages, designed for you',
+                        'Your domain, connected',
+                        'Looks great on every device',
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
                           <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -1127,14 +1127,14 @@ export default function LandingPage() {
                   
                   {/* Hosting & Performance */}
                   <div>
-                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Hosting & Performance</p>
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Infrastructure</p>
                     <ul className="space-y-1.5">
                       {[
-                        'Hosting on global CDN (Cloudflare)',
-                        'SSL certificate included',
-                        '1 GB cloud storage',
-                        'Performance optimized (90+ Lighthouse score)',
-                        'Basic SEO setup (meta tags, sitemap, robots.txt)',
+                        'Fast, global hosting (Cloudflare)',
+                        'Secure connection (SSL)',
+                        'Storage for your images and files',
+                        'Fast-loading site that keeps visitors',
+                        'Google-ready from day one',
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
                           <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -1148,12 +1148,12 @@ export default function LandingPage() {
                   
                   {/* Communication & Support */}
                   <div>
-                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Communication & Support</p>
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Communication</p>
                     <ul className="space-y-1.5">
                       {[
-                        'Professional email (1 mailbox)',
-                        '1 contact form with lead capture',
-                        'Email support (48h response)',
+                        'Professional email with your domain',
+                        'Contact form to capture leads',
+                        'Support when you need help',
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
                           <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -1167,11 +1167,11 @@ export default function LandingPage() {
                   
                   {/* Analytics & Dashboard */}
                   <div>
-                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Analytics & Dashboard</p>
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">Analytics</p>
                     <ul className="space-y-1.5">
                       {[
-                        'Built-in analytics dashboard (leads + page views)',
-                        'Google Analytics integration',
+                        'See who visits and what they do',
+                        'Google Analytics connected',
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
                           <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -1185,12 +1185,12 @@ export default function LandingPage() {
                   
                   {/* AI & Customization */}
                   <div>
-                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">AI & Customization</p>
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">AI Editing</p>
                     <ul className="space-y-1.5">
                       {[
-                        '300 AI credits/month to edit content, pages, branding, SEO',
-                        'First month free to customize',
-                        'Need more? Top up anytime: €5 for 100 extra credits',
+                        'Update content, add pages, improve SEO instantly',
+                        'First month free to get comfortable',
+                        'Need more edits? Top up anytime',
                       ].map((item, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60">
                           <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -1360,12 +1360,11 @@ export default function LandingPage() {
           
           <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center relative">
             <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-5">
-              Ready to get your
-              <br />
-              <span className="bg-gradient-to-r from-[var(--purple)] via-blue-500 to-cyan-400 bg-clip-text text-transparent">business online?</span>
+              Ready to{' '}
+              <span className="bg-gradient-to-r from-[var(--purple)] via-blue-500 to-cyan-400 bg-clip-text text-transparent">get started?</span>
             </h2>
             <p className="text-lg text-gray-500 dark:text-white/40 mb-8 max-w-md mx-auto">
-              Book a free discovery call. We'll handle everything from there.
+              One call. We take it from there. No lock-in. First month free.
             </p>
             <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
               <Button className="bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-10 h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 hover:scale-[1.02]">
@@ -1375,7 +1374,7 @@ export default function LandingPage() {
                 </svg>
               </Button>
             </a>
-            <p className="text-sm text-gray-400 dark:text-white/20 mt-4">€150 setup during beta · €15/mo (50% off first year) · No code required</p>
+            <p className="text-sm text-gray-400 dark:text-white/20 mt-4">€150 setup · €15/month · Cancel anytime</p>
           </div>
         </section>
 

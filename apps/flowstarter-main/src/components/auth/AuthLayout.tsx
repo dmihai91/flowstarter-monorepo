@@ -72,22 +72,13 @@ export default function AuthLayout({
                 </span>
               )}
             </Link>
-            <div className="flex items-center gap-2 sm:gap-4">
-              <ThemeToggle />
-              <Link 
-                href="/"
-                className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors"
-              >
-                <span className="hidden sm:inline">← Back to home</span>
-                <span className="sm:hidden">←</span>
-              </Link>
-            </div>
+            <ThemeToggle />
           </div>
         </header>
 
         {/* Main content */}
         <div className="relative z-10 min-h-screen flex flex-col justify-center px-4 pt-28 pb-10">
-          <div className="w-full max-w-md">
+          <div className="w-full max-w-md mx-auto">
             {/* Title */}
             <div className="text-center mb-8">
               {title && (

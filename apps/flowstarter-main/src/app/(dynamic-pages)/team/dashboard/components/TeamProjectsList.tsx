@@ -407,24 +407,24 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                   </p>
                 )}
 
-                {/* Quick Actions for this project */}
-                <div className="grid grid-cols-4 gap-2 mb-4">
-                  {[
-                    { icon: Globe, label: 'Domain', href: `/team/dashboard/domains?project=${project.id}` },
-                    { icon: Mail, label: 'Email', href: `/team/dashboard/email?project=${project.id}` },
-                    { icon: BarChart3, label: 'Analytics', href: `/team/dashboard/analytics?project=${project.id}` },
-                    { icon: Settings, label: 'Services', href: `/team/dashboard/services?project=${project.id}` },
-                  ].map((action, i) => (
-                    <Link
-                      key={i}
-                      href={action.href}
-                      className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors text-center group"
-                    >
-                      <action.icon className="w-4 h-4 text-gray-400 dark:text-white/40 group-hover:text-[var(--purple)] transition-colors" />
-                      <span className="text-[10px] text-gray-500 dark:text-white/40">{action.label}</span>
-                    </Link>
-                  ))}
-                </div>
+                {/* Pricing info - show if set */}
+                {(project.setup_fee && project.setup_fee > 0) && (
+                  <div className="flex items-center gap-3 mb-4 py-2 px-3 rounded-lg bg-gray-50 dark:bg-white/5 text-sm">
+                    <span className="text-gray-600 dark:text-white/60">
+                      €{project.setup_fee} setup
+                    </span>
+                    <span className="text-gray-300 dark:text-white/20">•</span>
+                    <span className="text-gray-600 dark:text-white/60">
+                      €{project.monthly_fee}/mo
+                    </span>
+                    {project.is_paid && (
+                      <>
+                        <span className="text-gray-300 dark:text-white/20">•</span>
+                        <span className="text-emerald-600 dark:text-emerald-400 font-medium">Paid</span>
+                      </>
+                    )}
+                  </div>
+                )}
 
                 <div className="flex items-center justify-between text-sm text-gray-400 dark:text-white/30 pt-3 border-t border-gray-100 dark:border-white/5">
                   <span className="flex items-center gap-1.5">

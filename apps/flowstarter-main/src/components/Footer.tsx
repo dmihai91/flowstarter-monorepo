@@ -27,6 +27,8 @@ const Footer = () => {
               <Link href="/terms" className="hover:text-gray-900 dark:hover:text-white transition-colors">Terms</Link>
               <span className="text-gray-300 dark:text-white/10">•</span>
               <Link href="/contact" className="hover:text-gray-900 dark:hover:text-white transition-colors">Contact</Link>
+              <span className="text-gray-300 dark:text-white/10">•</span>
+              <Link href="/team" className="hover:text-gray-900 dark:hover:text-white transition-colors">Team</Link>
             </nav>
             
             {/* Social Links */}

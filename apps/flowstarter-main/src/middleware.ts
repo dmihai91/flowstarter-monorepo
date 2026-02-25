@@ -287,7 +287,6 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   // Check if user is authenticated and redirect based on role
-  const pathname = req.nextUrl.pathname;
   if (pathname === '/' || pathname === '/dashboard') {
     try {
       const { userId, sessionClaims } = await auth();

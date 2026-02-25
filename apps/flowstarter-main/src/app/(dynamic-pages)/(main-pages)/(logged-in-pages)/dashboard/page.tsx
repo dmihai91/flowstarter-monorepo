@@ -36,7 +36,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Projects grid */}
-            <div className="mb-8">
+            <div className="mb-16">
               <PageSectionHeader
                 title={t('projects.title')}
                 subtitle={t('projects.subtitle')}
@@ -44,11 +44,11 @@ export default function DashboardPage() {
               <DashboardProjectsClient />
             </div>
           </DashboardHero>
-
-          {/* Footer */}
-          <FooterCompact />
         </DashboardInit>
       </PageContainer>
+
+      {/* Footer - full width outside container */}
+      <FooterCompact />
     </DashboardWrapper>
   );
 }

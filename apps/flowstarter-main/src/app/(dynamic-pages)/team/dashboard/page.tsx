@@ -131,7 +131,7 @@ export default function TeamDashboardPage() {
         </div>
 
         {/* Projects Section */}
-        <div className="mb-8">
+        <div className="mb-16">
           <PageSectionHeader
             title="All Projects"
             subtitle="View and manage all client projects"
@@ -143,10 +143,10 @@ export default function TeamDashboardPage() {
             <TeamProjectsList projects={projects || []} />
           )}
         </div>
-
-        {/* Footer */}
-        <FooterCompact />
       </PageContainer>
+
+      {/* Footer - full width outside container */}
+      <FooterCompact />
     </DashboardWrapper>
   );
 }

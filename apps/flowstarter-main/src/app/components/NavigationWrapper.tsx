@@ -21,19 +21,24 @@ const noNavbarRoutes = ['/', '/team', '/team/login', '/team/dashboard', '/team/d
 
 export function NavigationWrapper() {
   const pathname = usePathname();
+  
+  // Early exit for team routes - they have their own layout, no navbar needed
+  // This prevents any flicker by returning null before any hooks that might cause re-renders
+  const isTeamRoute = pathname.startsWith('/team');
+  
   const { isLoaded } = useAuth();
   const [isMounted, setIsMounted] = useState(false);
   const [isDraftLoading, setIsDraftLoading] = useState(false);
   const isDraftDiscarding = useWizardStore((state) => state.isDiscarding);
   const skipLoadingScreen = useWizardStore((state) => state.skipLoadingScreen);
   const loaderTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isPublicRoute = publicRoutes.includes(pathname) || pathname.startsWith('/team');
+  const isPublicRoute = publicRoutes.includes(pathname) || isTeamRoute;
   const { t } = useTranslations();
   const [hasSeenInitial, setHasSeenInitial] = useState(false);
   const isDashboardRoute = pathname === '/dashboard';
   const isWizardRoute = pathname === '/dashboard/new';
   const isTemplatePreview = pathname.startsWith('/template-preview');
-  const isNoNavbarRoute = noNavbarRoutes.includes(pathname) || pathname.startsWith('/team');
+  const isNoNavbarRoute = noNavbarRoutes.includes(pathname) || isTeamRoute;
   const [, setIsErrorPage] = useState(false);
 
   // Check synchronously during render to catch error pages immediately
@@ -43,8 +48,9 @@ export function NavigationWrapper() {
 
   // Sync state with flag for useEffect dependencies
   useEffect(() => {
+    if (isTeamRoute) return; // Skip for team routes
     setIsErrorPage(errorPageFlag);
-  }, [errorPageFlag]);
+  }, [errorPageFlag, isTeamRoute]);
 
   // Poll periodically to catch error pages that set the flag after NavigationWrapper renders
   useEffect(() => {
@@ -138,22 +144,27 @@ export function NavigationWrapper() {
   }, [hasSeenInitial, isMounted, isLoaded, isPublicRoute]);
 
   // Show the general app loader once on the very first load of the app (public or protected)
-  const shouldShowInitial = !hasSeenInitial && (!isMounted || !isLoaded);
+  // Never show for team routes - they handle their own loading
+  const shouldShowInitial = !isTeamRoute && !hasSeenInitial && (!isMounted || !isLoaded);
 
   // Consolidate all loading conditions to prevent duplicate loading screens
+  // Never show for team routes
   const showLoading =
-    shouldShowInitial ||
-    isDraftLoading ||
-    isDraftDiscarding ||
-    !isMounted ||
-    (!isPublicRoute && !isLoaded);
+    !isTeamRoute && (
+      shouldShowInitial ||
+      isDraftLoading ||
+      isDraftDiscarding ||
+      !isMounted ||
+      (!isPublicRoute && !isLoaded)
+    );
 
-  // Don't render navigation for template previews or error pages
+  // Don't render navigation for template previews, error pages, or team routes
+  // Check this FIRST before any loading logic to prevent flicker
   if (shouldHideNavbar) {
     return null;
   }
 
-  if (showLoading) {
+  if (showLoading && !shouldHideNavbar) {
     // Determine message based on context and priority
     let message = t('app.loadingExperience');
 

@@ -77,7 +77,7 @@ export default function AuthLayout({
         </header>
 
         {/* Main content */}
-        <div className="relative z-10 min-h-screen flex flex-col justify-center px-4 pt-28 pb-10">
+        <div className="relative z-10 min-h-screen px-4 pt-24 sm:pt-28 pb-10">
           <div className="w-full max-w-md mx-auto">
             {/* Title */}
             <div className="text-center mb-8">

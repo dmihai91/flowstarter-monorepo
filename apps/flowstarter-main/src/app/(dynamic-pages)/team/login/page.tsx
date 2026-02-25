@@ -41,10 +41,15 @@ export default function TeamLoginPage() {
         password,
       });
 
+      console.log('Sign in result:', result.status, result);
+      
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
         router.push('/team/dashboard');
       } else if (result.status === 'needs_second_factor') {
+        // Check what second factor is needed
+        const supportedFactors = result.supportedSecondFactors;
+        console.log('Second factors:', supportedFactors);
         setNeeds2FA(true);
       } else if (result.status === 'needs_first_factor') {
         setError('Please verify your email first.');

@@ -1,10 +1,19 @@
 'use client';
 
-import { FolderOpen, FileEdit, CheckCircle2, Clock } from 'lucide-react';
+import { FolderOpen, FileEdit, CheckCircle2, Clock, DollarSign, TrendingUp } from 'lucide-react';
 import { ProjectWithOwner } from '@/hooks/useTeamProjects';
 
 interface TeamProjectsStatsProps {
   projects: ProjectWithOwner[];
+}
+
+function formatCurrency(amount: number): string {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
 }
 
 export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
@@ -13,26 +22,32 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
   const inProgressCount = projects.filter(p => p.status === 'in_progress' || p.status === 'building').length;
   const completedCount = projects.filter(p => p.status === 'completed').length;
 
+  // Revenue calculations
+  const totalSetupFees = projects.reduce((sum, p) => sum + (p.setup_fee || 0), 0);
+  const monthlyRevenue = projects
+    .filter(p => p.is_paid)
+    .reduce((sum, p) => sum + (p.monthly_fee || 0), 0);
+
   const stats = [
     {
       icon: FolderOpen,
       label: 'Total Projects',
-      value: totalProjects,
-    },
-    {
-      icon: FileEdit,
-      label: 'Drafts',
-      value: draftCount,
-    },
-    {
-      icon: Clock,
-      label: 'In Progress',
-      value: inProgressCount,
+      value: totalProjects.toString(),
     },
     {
       icon: CheckCircle2,
       label: 'Completed',
-      value: completedCount,
+      value: completedCount.toString(),
+    },
+    {
+      icon: DollarSign,
+      label: 'Setup Fees',
+      value: formatCurrency(totalSetupFees),
+    },
+    {
+      icon: TrendingUp,
+      label: 'Monthly Revenue',
+      value: formatCurrency(monthlyRevenue),
     },
   ];
 
@@ -47,8 +62,8 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
             <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center">
               <stat.icon className="w-5 h-5 text-gray-500 dark:text-white/50" />
             </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
+            <div className="min-w-0">
+              <p className="text-xl font-bold text-gray-900 dark:text-white truncate">{stat.value}</p>
               <p className="text-xs text-gray-500 dark:text-white/50">{stat.label}</p>
             </div>
           </div>

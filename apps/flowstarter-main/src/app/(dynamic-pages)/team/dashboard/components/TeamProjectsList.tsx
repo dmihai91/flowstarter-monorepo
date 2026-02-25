@@ -1,6 +1,5 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import {
@@ -9,23 +8,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { GlassCard } from '@/components/ui/glass-card';
 import { useTeamDeleteProject } from '@/hooks/useTeamProjects';
 import type { Table as TableType } from '@/types';
 import {
-  CalendarClock,
-  CheckCircle2,
-  FileText,
-  LayoutDashboard,
-  Loader2,
   MoreVertical,
   Trash2,
   ExternalLink,
+  Clock,
   User,
+  Circle,
 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
 
 interface ProjectWithOwner extends TableType<'projects'> {
   owner_email?: string | null;
@@ -34,28 +28,6 @@ interface ProjectWithOwner extends TableType<'projects'> {
 
 interface TeamProjectsListProps {
   projects: Array<ProjectWithOwner>;
-}
-
-function StatusChip({ status }: { status: string | null }) {
-  if (status === 'completed') {
-    return (
-      <Badge className="bg-emerald-100/90 text-emerald-800 border-emerald-200/70 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-700/50 font-medium shadow-sm rounded-lg px-2.5 py-0.5">
-        Live
-      </Badge>
-    );
-  }
-  if (status === 'generating') {
-    return (
-      <Badge className="bg-sky-100/90 text-sky-800 border-sky-200/70 dark:bg-sky-900/30 dark:text-sky-300 dark:border-sky-700/50 font-medium shadow-sm rounded-lg px-2.5 py-0.5">
-        Building
-      </Badge>
-    );
-  }
-  return (
-    <Badge className="bg-amber-100/90 text-amber-700 border-amber-200/70 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-700/50 font-medium shadow-sm rounded-lg px-2.5 py-0.5">
-      Draft
-    </Badge>
-  );
 }
 
 export function TeamProjectsList({ projects }: TeamProjectsListProps) {
@@ -93,148 +65,158 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
   const getOwnerDisplay = (project: ProjectWithOwner) => {
     if (project.owner_name) return project.owner_name;
     if (project.owner_email) return project.owner_email;
-    return project.user_id?.substring(0, 12) + '...';
+    return 'Unknown';
   };
 
-  // Get status icon config (same as client dashboard)
-  const getStatusConfig = (status: string) => {
-    if (status === 'completed') {
-      return {
-        icon: CheckCircle2,
-        bgGradient: 'from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20',
-        borderColor: 'border-emerald-200/30 dark:border-emerald-500/20',
-        iconColor: 'text-emerald-600/70 dark:text-emerald-400/70',
-      };
-    }
-    if (status === 'generating') {
-      return {
-        icon: Loader2,
-        bgGradient: 'from-sky-500/10 to-blue-500/10 dark:from-sky-500/20 dark:to-blue-500/20',
-        borderColor: 'border-sky-200/30 dark:border-sky-500/20',
-        iconColor: 'text-sky-600/70 dark:text-sky-400/70',
-      };
-    }
-    return {
-      icon: FileText,
-      bgGradient: 'from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20',
-      borderColor: 'border-amber-200/30 dark:border-amber-500/20',
-      iconColor: 'text-amber-600/70 dark:text-amber-400/70',
-    };
+  const getStatusColor = (status: string) => {
+    if (status === 'completed') return 'text-emerald-500';
+    if (status === 'generating') return 'text-blue-500';
+    return 'text-gray-400';
+  };
+
+  const getStatusLabel = (status: string) => {
+    if (status === 'completed') return 'Live';
+    if (status === 'generating') return 'Building';
+    return 'Draft';
   };
 
   if (projects.length === 0) {
     return (
-      <div className="rounded-2xl border border-gray-300 dark:border-white/10 bg-white dark:bg-white/[0.03] p-8 text-center shadow-sm">
-        <div className="max-w-sm mx-auto">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 mb-4">
-            <LayoutDashboard className="h-6 w-6 text-gray-400 dark:text-white/40" />
-          </div>
-          <h3 className="text-base font-semibold mb-1 text-gray-900 dark:text-gray-100">
-            No projects yet
-          </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Client projects will appear here
-          </p>
-        </div>
+      <div className="border border-gray-200 dark:border-white/10 rounded-lg bg-gray-50 dark:bg-white/[0.02] p-12 text-center">
+        <p className="text-gray-500 dark:text-white/50 text-sm">No projects yet</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
+    <div className="space-y-2">
+      {/* Table Header */}
+      <div className="hidden md:grid md:grid-cols-[1fr_120px_150px_120px_40px] gap-4 px-4 py-2 text-xs font-medium text-gray-500 dark:text-white/50 uppercase tracking-wider">
+        <div>Project</div>
+        <div>Status</div>
+        <div>Owner</div>
+        <div>Updated</div>
+        <div></div>
+      </div>
+
+      {/* Project Rows */}
+      <div className="border border-gray-200 dark:border-white/10 rounded-lg overflow-hidden divide-y divide-gray-200 dark:divide-white/10">
         {projects.map((project) => {
           const status = typeof project.status === 'string' ? project.status : 'draft';
-          const statusConfig = getStatusConfig(status);
-          const StatusIcon = statusConfig.icon;
 
           return (
-            <GlassCard
+            <div
               key={project.id}
-              className="group relative h-full min-h-[180px] flex flex-col"
+              className="bg-white dark:bg-white/[0.02] hover:bg-gray-50 dark:hover:bg-white/[0.04] transition-colors"
             >
-              <div className="relative z-10 flex flex-col gap-4 flex-1">
-                {/* Header Row */}
-                <div className="flex items-start gap-3">
-                  {/* Project Icon */}
-                  <div
-                    className={cn(
-                      'w-10 h-10 rounded-lg bg-linear-to-br shrink-0 flex items-center justify-center border',
-                      statusConfig.bgGradient,
-                      statusConfig.borderColor
-                    )}
-                  >
-                    <StatusIcon
-                      className={cn(
-                        'h-5 w-5',
-                        statusConfig.iconColor,
-                        status === 'generating' && 'animate-spin'
-                      )}
-                    />
-                  </div>
-
-                  {/* Title and Menu */}
-                  <div className="flex-1 min-w-0 flex items-start justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-gray-100 break-words mb-1.5">
-                        {project.name || 'Untitled Project'}
-                      </h3>
-                      <StatusChip status={status} />
-                    </div>
-
-                    {/* Actions Menu */}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 rounded-lg transition-colors hover:bg-[var(--surface-2)] shrink-0"
-                        >
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48">
-                        {status === 'completed' && (
-                          <DropdownMenuItem onClick={() => window.open(`/projects/${project.id}`, '_blank')}>
-                            <ExternalLink className="h-4 w-4" />
-                            View Project
-                          </DropdownMenuItem>
-                        )}
-                        <DropdownMenuItem
-                          variant="destructive"
-                          onClick={() => {
-                            setProjectToDelete({ id: project.id, name: project.name || 'Untitled' });
-                            setDeleteDialogOpen(true);
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
+              {/* Desktop Row */}
+              <div className="hidden md:grid md:grid-cols-[1fr_120px_150px_120px_40px] gap-4 px-4 py-3 items-center">
+                {/* Project Name */}
+                <div className="min-w-0">
+                  <p className="font-medium text-gray-900 dark:text-white text-sm truncate">
+                    {project.name || 'Untitled Project'}
+                  </p>
+                  {project.description && (
+                    <p className="text-xs text-gray-500 dark:text-white/40 truncate mt-0.5">
+                      {project.description}
+                    </p>
+                  )}
                 </div>
 
-                {/* Description */}
-                {project.description && (
-                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                    {project.description}
-                  </p>
-                )}
+                {/* Status */}
+                <div className="flex items-center gap-1.5">
+                  <Circle className={`w-2 h-2 fill-current ${getStatusColor(status)}`} />
+                  <span className="text-sm text-gray-600 dark:text-white/60">{getStatusLabel(status)}</span>
+                </div>
 
-                {/* Details */}
-                <div className="flex flex-col gap-1.5 text-xs text-gray-500 dark:text-gray-400 mt-auto">
-                  <div className="flex items-center gap-1.5">
-                    <CalendarClock className="h-3.5 w-3.5 shrink-0" />
-                    <span>Updated: {getTimeAgo(project.updated_at || project.created_at)}</span>
+                {/* Owner */}
+                <div className="text-sm text-gray-600 dark:text-white/60 truncate">
+                  {getOwnerDisplay(project)}
+                </div>
+
+                {/* Updated */}
+                <div className="text-sm text-gray-500 dark:text-white/40">
+                  {getTimeAgo(project.updated_at || project.created_at)}
+                </div>
+
+                {/* Actions */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-40">
+                    {status === 'completed' && (
+                      <DropdownMenuItem onClick={() => window.open(`/projects/${project.id}`, '_blank')}>
+                        <ExternalLink className="h-4 w-4" />
+                        View
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem
+                      variant="destructive"
+                      onClick={() => {
+                        setProjectToDelete({ id: project.id, name: project.name || 'Untitled' });
+                        setDeleteDialogOpen(true);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              {/* Mobile Row */}
+              <div className="md:hidden p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-gray-900 dark:text-white text-sm">
+                      {project.name || 'Untitled Project'}
+                    </p>
+                    <div className="flex items-center gap-3 mt-2 text-xs text-gray-500 dark:text-white/40">
+                      <span className="flex items-center gap-1">
+                        <Circle className={`w-2 h-2 fill-current ${getStatusColor(status)}`} />
+                        {getStatusLabel(status)}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <User className="w-3 h-3" />
+                        {getOwnerDisplay(project)}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {getTimeAgo(project.updated_at || project.created_at)}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <User className="h-3.5 w-3.5 shrink-0" />
-                    <span className="truncate">{getOwnerDisplay(project)}</span>
-                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-40">
+                      {status === 'completed' && (
+                        <DropdownMenuItem onClick={() => window.open(`/projects/${project.id}`, '_blank')}>
+                          <ExternalLink className="h-4 w-4" />
+                          View
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuItem
+                        variant="destructive"
+                        onClick={() => {
+                          setProjectToDelete({ id: project.id, name: project.name || 'Untitled' });
+                          setDeleteDialogOpen(true);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
-            </GlassCard>
+            </div>
           );
         })}
       </div>

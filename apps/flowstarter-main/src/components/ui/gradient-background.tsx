@@ -56,33 +56,33 @@ export function GradientBackground({
           className
         )}
       >
-        {/* Base gradient - deep dark background like Figma */}
+        {/* Base gradient - clean light / deep dark like Figma */}
         <div className={cn(
-          'absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-gray-100',
-          'dark:from-[#07070a] dark:via-[#09090d] dark:to-[#07070a]'
+          'absolute inset-0 bg-[#F8F8FC]',
+          'dark:bg-[#07070a]'
         )} />
         
         {/* Large purple ellipse - top center (like Figma Ellipse 14) */}
         <div 
-          className="absolute -top-[400px] left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full opacity-[0.15] dark:opacity-[0.12]"
+          className="absolute -top-[400px] left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full opacity-[0.35] dark:opacity-[0.12]"
           style={{ 
-            background: 'radial-gradient(circle, rgba(99, 102, 241, 0.8) 0%, rgba(99, 102, 241, 0.4) 30%, transparent 70%)'
+            background: 'radial-gradient(circle, rgba(99, 102, 241, 0.5) 0%, rgba(99, 102, 241, 0.2) 30%, transparent 70%)'
           }}
         />
         
         {/* Secondary purple ellipse - bottom left (like Figma Ellipse 12) */}
         <div 
-          className="absolute -bottom-[300px] -left-[200px] w-[810px] h-[810px] rounded-full opacity-[0.12] dark:opacity-[0.10]"
+          className="absolute -bottom-[300px] -left-[200px] w-[810px] h-[810px] rounded-full opacity-[0.25] dark:opacity-[0.10]"
           style={{ 
-            background: 'radial-gradient(circle, rgba(139, 92, 246, 0.7) 0%, rgba(139, 92, 246, 0.3) 40%, transparent 70%)'
+            background: 'radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, rgba(139, 92, 246, 0.15) 40%, transparent 70%)'
           }}
         />
         
         {/* Accent ellipse - right side */}
         <div 
-          className="absolute top-1/3 -right-[200px] w-[600px] h-[600px] rounded-full opacity-[0.08] dark:opacity-[0.06]"
+          className="absolute top-1/3 -right-[200px] w-[600px] h-[600px] rounded-full opacity-[0.20] dark:opacity-[0.06]"
           style={{ 
-            background: 'radial-gradient(circle, rgba(79, 70, 229, 0.6) 0%, transparent 60%)'
+            background: 'radial-gradient(circle, rgba(79, 70, 229, 0.3) 0%, transparent 60%)'
           }}
         />
         

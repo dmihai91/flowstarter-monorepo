@@ -1084,7 +1084,7 @@ export default function LandingPage() {
                   <span className="px-3 py-1 text-xs font-medium bg-[var(--purple)] text-white rounded-full">50% off during beta</span>
                 </div>
                 
-                <h3 className="text-2xl font-bold mb-1">Launch Infrastructure</h3>
+                <h3 className="text-2xl font-bold mb-1">Starter</h3>
                 <p className="text-sm text-gray-400 dark:text-white/40 mb-6">Everything you need to go live</p>
                 
                 {/* Pricing */}
@@ -1225,7 +1225,7 @@ export default function LandingPage() {
                   <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[var(--purple)]/10 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative">
                     <div className="flex items-center justify-between mb-4">
-                      <h4 className="text-lg font-bold text-gray-700 dark:text-white/80">Growth Infrastructure</h4>
+                      <h4 className="text-lg font-bold text-gray-700 dark:text-white/80">Pro</h4>
                       <span className="px-3 py-1 text-[10px] font-medium bg-[var(--purple)]/10 text-[var(--purple)] dark:bg-[var(--purple)]/20 dark:text-[var(--purple)] rounded-full">
                         Coming Soon
                       </span>
@@ -1257,7 +1257,7 @@ export default function LandingPage() {
                   <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative">
                     <div className="flex items-center justify-between mb-4">
-                      <h4 className="text-lg font-bold text-gray-700 dark:text-white/80">Commerce Infrastructure</h4>
+                      <h4 className="text-lg font-bold text-gray-700 dark:text-white/80">Business</h4>
                       <span className="px-3 py-1 text-[10px] font-medium bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 rounded-full">
                         Coming Soon
                       </span>

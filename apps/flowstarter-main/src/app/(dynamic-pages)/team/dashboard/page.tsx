@@ -3,9 +3,9 @@
 import { PageContainer } from '@/components/PageContainer';
 import { ProjectsList } from '@/app/(dynamic-pages)/(main-pages)/components/ProjectsList';
 import { ProjectsListSkeleton } from '@/app/(dynamic-pages)/(main-pages)/components/ProjectsListSkeleton';
-import { DashboardHero } from '@/app/(dynamic-pages)/(main-pages)/(logged-in-pages)/dashboard/components/DashboardHero';
 import { DashboardWrapper } from '@/app/(dynamic-pages)/(main-pages)/(logged-in-pages)/dashboard/components/DashboardWrapper';
 import { PageSectionHeader } from '@/app/(dynamic-pages)/(main-pages)/(logged-in-pages)/dashboard/components/PageSectionHeader';
+import { GlassCard } from '@/components/ui/glass-card';
 import { Button } from '@/components/ui/button';
 import { useTeamProjects } from '@/hooks/useTeamProjects';
 import { useUser, useAuth } from '@clerk/nextjs';
@@ -106,7 +106,7 @@ export default function TeamDashboardPage() {
       </header>
 
       <PageContainer gradientVariant="dashboard">
-        <DashboardHero>
+        <GlassCard className="p-6 sm:p-8">
           {/* Page header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <div>
@@ -177,7 +177,7 @@ export default function TeamDashboardPage() {
               <ProjectsList projects={projects || []} showActions={false} />
             )}
           </div>
-        </DashboardHero>
+        </GlassCard>
       </PageContainer>
     </DashboardWrapper>
   );

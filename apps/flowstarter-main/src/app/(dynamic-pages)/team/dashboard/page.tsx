@@ -176,10 +176,12 @@ export default function TeamDashboardPage() {
               </p>
             </div>
             
-            <Button className="bg-gradient-to-r from-[var(--purple)] to-blue-500 hover:from-[var(--purple)]/90 hover:to-blue-500/90 text-white font-semibold rounded-xl shadow-lg shadow-[var(--purple)]/20 h-11 px-5">
-              <Plus className="w-4 h-4 mr-2" />
-              New Project
-            </Button>
+            <Link href="/team/dashboard/new">
+              <Button className="bg-gradient-to-r from-[var(--purple)] to-blue-500 hover:from-[var(--purple)]/90 hover:to-blue-500/90 text-white font-semibold rounded-xl shadow-lg shadow-[var(--purple)]/20 h-11 px-5">
+                <Plus className="w-4 h-4 mr-2" />
+                New Project
+              </Button>
+            </Link>
           </div>
 
           {/* Quick actions */}

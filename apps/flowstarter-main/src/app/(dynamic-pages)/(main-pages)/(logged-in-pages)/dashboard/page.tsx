@@ -1,5 +1,6 @@
 'use client';
 import { PageContainer } from '@/components/PageContainer';
+import FooterCompact from '@/components/FooterCompact';
 import { useTranslations } from '@/lib/i18n';
 import { DashboardHero } from './components/DashboardHero';
 import { DashboardInit } from './components/DashboardInit';
@@ -43,6 +44,9 @@ export default function DashboardPage() {
               <DashboardProjectsClient />
             </div>
           </DashboardHero>
+
+          {/* Footer */}
+          <FooterCompact />
         </DashboardInit>
       </PageContainer>
     </DashboardWrapper>

@@ -1,6 +1,7 @@
 'use client';
 
 import { PageContainer } from '@/components/PageContainer';
+import FooterCompact from '@/components/FooterCompact';
 import { ProjectsListSkeleton } from '@/app/(dynamic-pages)/(main-pages)/components/ProjectsListSkeleton';
 import { TeamProjectsList } from './components/TeamProjectsList';
 import { DashboardWrapper } from '@/app/(dynamic-pages)/(main-pages)/(logged-in-pages)/dashboard/components/DashboardWrapper';
@@ -142,6 +143,9 @@ export default function TeamDashboardPage() {
             <TeamProjectsList projects={projects || []} />
           )}
         </div>
+
+        {/* Footer */}
+        <FooterCompact />
       </PageContainer>
     </DashboardWrapper>
   );

@@ -20,7 +20,8 @@ import {
   Clock,
   CheckCircle2,
   AlertCircle,
-  Loader2
+  Loader2,
+  UserPlus
 } from 'lucide-react';
 
 // Mock data for now - will be replaced with real data
@@ -59,6 +60,7 @@ export default function TeamDashboardPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // Check if user is team member
   useEffect(() => {
@@ -73,6 +75,7 @@ export default function TeamDashboardPage() {
         // Not a team member, redirect to client dashboard
         router.push('/dashboard');
       } else {
+        setIsAdmin(role === 'admin');
         setIsLoading(false);
       }
     }
@@ -180,12 +183,22 @@ export default function TeamDashboardPage() {
               </p>
             </div>
             
-            <Link href="/team/dashboard/new">
-              <Button className="bg-gradient-to-r from-[var(--purple)] to-blue-500 hover:from-[var(--purple)]/90 hover:to-blue-500/90 text-white font-semibold rounded-xl shadow-lg shadow-[var(--purple)]/20 h-11 px-5">
-                <Plus className="w-4 h-4 mr-2" />
-                New Project
-              </Button>
-            </Link>
+            <div className="flex items-center gap-3">
+              {isAdmin && (
+                <Link href="/team/dashboard/invite">
+                  <Button variant="outline" className="rounded-xl h-11 px-5 border-gray-200 dark:border-white/10 hover:border-[var(--purple)]/50">
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Invite
+                  </Button>
+                </Link>
+              )}
+              <Link href="/team/dashboard/new">
+                <Button className="bg-gradient-to-r from-[var(--purple)] to-blue-500 hover:from-[var(--purple)]/90 hover:to-blue-500/90 text-white font-semibold rounded-xl shadow-lg shadow-[var(--purple)]/20 h-11 px-5">
+                  <Plus className="w-4 h-4 mr-2" />
+                  New Project
+                </Button>
+              </Link>
+            </div>
           </div>
 
           {/* Quick actions */}

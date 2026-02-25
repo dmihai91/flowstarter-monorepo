@@ -6,18 +6,23 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useSignIn } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
 export default function TeamLoginPage() {
-  const { signIn, setActive } = useSignIn();
+  const { signIn, setActive, isLoaded } = useSignIn();
   const router = useRouter();
   
+  const [mounted, setMounted] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,6 +50,15 @@ export default function TeamLoginPage() {
       setIsLoading(false);
     }
   };
+
+  // Show loading state until client is mounted and Clerk is ready
+  if (!mounted || !isLoaded) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c]">
+        <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)]" />
+      </div>
+    );
+  }
 
   return (
     <AuthLayout

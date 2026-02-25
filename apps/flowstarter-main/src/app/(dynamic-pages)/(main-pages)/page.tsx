@@ -1231,7 +1231,7 @@ export default function LandingPage() {
                         Coming Soon
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500 dark:text-white/50 mb-4">Starting at €499 setup + €49/month</p>
+                    <p className="text-sm text-gray-500 dark:text-white/50 mb-4">Starting at €499 setup + €79/month + commission</p>
                     <ul className="space-y-2.5 text-sm text-gray-600 dark:text-white/50">
                       <li className="flex items-center gap-2.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)]/50" />

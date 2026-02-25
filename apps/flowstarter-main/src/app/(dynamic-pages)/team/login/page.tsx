@@ -1,25 +1,166 @@
 'use client';
 
 import AuthLayout from '@/components/auth/AuthLayout';
-import { SignIn } from '@clerk/nextjs';
-import { useEffect, useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useSignIn } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { Eye, EyeOff, Loader2, ShieldCheck, Mail } from 'lucide-react';
+
+type FlowStep = 'email' | 'password' | 'totp' | 'email_code';
 
 export default function TeamLoginPage() {
+  const { signIn, setActive, isLoaded } = useSignIn();
+  const router = useRouter();
+  
   const [mounted, setMounted] = useState(false);
+  const [step, setStep] = useState<FlowStep>('email');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [code, setCode] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!signIn || !email) return;
+    
+    setIsLoading(true);
+    setError('');
+
+    try {
+      // Start sign-in with email identifier
+      const result = await signIn.create({ identifier: email });
+      
+      // Check what's needed next
+      if (result.status === 'needs_first_factor') {
+        // Check supported first factors
+        const supportedFactors = result.supportedFirstFactors;
+        const passwordFactor = supportedFactors?.find(f => f.strategy === 'password');
+        const emailCodeFactor = supportedFactors?.find(f => f.strategy === 'email_code');
+        
+        if (passwordFactor) {
+          setStep('password');
+        } else if (emailCodeFactor) {
+          // Send email code
+          await signIn.prepareFirstFactor({ strategy: 'email_code', emailAddressId: emailCodeFactor.emailAddressId });
+          setStep('email_code');
+        } else {
+          setError('No supported sign-in method available');
+        }
+      } else if (result.status === 'complete') {
+        await setActive({ session: result.createdSessionId });
+        router.push('/team/dashboard');
+      }
+    } catch (err: unknown) {
+      const clerkError = err as { errors?: Array<{ message?: string; code?: string }> };
+      const errorMessage = clerkError.errors?.[0]?.message || 'An error occurred';
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!signIn || !password) return;
+    
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const result = await signIn.attemptFirstFactor({
+        strategy: 'password',
+        password,
+      });
+
+      if (result.status === 'complete') {
+        await setActive({ session: result.createdSessionId });
+        router.push('/team/dashboard');
+      } else if (result.status === 'needs_second_factor') {
+        // Check what second factor is needed
+        const supportedFactors = result.supportedSecondFactors;
+        const totpFactor = supportedFactors?.find(f => f.strategy === 'totp');
+        
+        if (totpFactor) {
+          setStep('totp');
+        } else {
+          setError('Two-factor authentication required but not configured');
+        }
+      } else {
+        setError(`Unexpected status: ${result.status}`);
+      }
+    } catch (err: unknown) {
+      const clerkError = err as { errors?: Array<{ message?: string }> };
+      setError(clerkError.errors?.[0]?.message || 'Invalid password');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCodeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!signIn || !code) return;
+    
+    setIsLoading(true);
+    setError('');
+
+    try {
+      let result;
+      
+      if (step === 'totp') {
+        result = await signIn.attemptSecondFactor({
+          strategy: 'totp',
+          code,
+        });
+      } else if (step === 'email_code') {
+        result = await signIn.attemptFirstFactor({
+          strategy: 'email_code',
+          code,
+        });
+      }
+
+      if (result?.status === 'complete') {
+        await setActive({ session: result.createdSessionId });
+        router.push('/team/dashboard');
+      } else if (result?.status === 'needs_second_factor') {
+        const totpFactor = result.supportedSecondFactors?.find(f => f.strategy === 'totp');
+        if (totpFactor) {
+          setCode('');
+          setStep('totp');
+        }
+      } else {
+        setError('Verification failed');
+      }
+    } catch (err: unknown) {
+      const clerkError = err as { errors?: Array<{ message?: string }> };
+      setError(clerkError.errors?.[0]?.message || 'Invalid code');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const goBack = () => {
+    setError('');
+    setCode('');
+    if (step === 'totp') {
+      setStep('password');
+    } else if (step === 'email_code' || step === 'password') {
+      setStep('email');
+      setPassword('');
+    }
+  };
+
+  if (!mounted || !isLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c]" suppressHydrationWarning>
-        <style jsx global>{`
-          body { background: #FAFAFA; }
-          @media (prefers-color-scheme: dark) { body { background: #0a0a0c; } }
-          .dark body { background: #0a0a0c; }
-        `}</style>
         <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)]" />
       </div>
     );
@@ -33,197 +174,230 @@ export default function TeamLoginPage() {
       hideFooterStats={true}
     >
       <div className="w-full max-w-[520px] mx-auto">
-        <style jsx global>{`
-          /* Hide everything we don't need */
-          .cl-headerTitle, .cl-headerSubtitle, .cl-header,
-          .cl-socialButtonsBlockButton, .cl-socialButtons, .cl-socialButtonsProviderIcon,
-          .cl-dividerRow, .cl-dividerLine, .cl-dividerText,
-          .cl-alternativeMethods, .cl-footerAction, .cl-footer,
-          .cl-internal-b3fm6y, .cl-internal-1dauvpw,
-          [data-localization-key="signIn.start.actionLink"],
-          [data-localization-key="dividerText"] { 
-            display: none !important; 
-          }
+        <div className="bg-white/95 dark:bg-[var(--surface-2)]/90 backdrop-blur-2xl backdrop-saturate-150 rounded-2xl border border-gray-200/50 dark:border-white/10 p-8 shadow-lg dark:shadow-2xl">
           
-          /* Root styling */
-          .cl-rootBox {
-            width: 100% !important;
-          }
-          
-          /* Card - make transparent since we have our own wrapper */
-          .cl-card {
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            padding: 0 2rem 2rem 2rem !important;
-          }
-          
-          /* Form field label */
-          .cl-formFieldLabel {
-            font-size: 0.875rem !important;
-            font-weight: 500 !important;
-            color: rgb(75, 85, 99) !important;
-            margin-bottom: 0.5rem !important;
-          }
-          
-          .dark .cl-formFieldLabel {
-            color: rgba(255, 255, 255, 0.6) !important;
-          }
-          
-          /* Form field input */
-          .cl-formFieldInput,
-          .cl-formFieldInput[type="email"],
-          .cl-formFieldInput[type="password"],
-          .cl-formFieldInput[type="text"] {
-            height: 3rem !important;
-            border-radius: 0.5rem !important;
-            border: 1px solid rgb(229, 231, 235) !important;
-            background: white !important;
-            font-size: 1rem !important;
-            padding: 0 1rem !important;
-            color: rgb(17, 24, 39) !important;
-          }
-          
-          .dark .cl-formFieldInput,
-          .dark .cl-formFieldInput[type="email"],
-          .dark .cl-formFieldInput[type="password"],
-          .dark .cl-formFieldInput[type="text"] {
-            background: rgba(255, 255, 255, 0.05) !important;
-            border-color: rgba(255, 255, 255, 0.1) !important;
-            color: white !important;
-          }
-          
-          .cl-formFieldInput::placeholder {
-            color: rgb(156, 163, 175) !important;
-          }
-          
-          .dark .cl-formFieldInput::placeholder {
-            color: rgba(255, 255, 255, 0.3) !important;
-          }
-          
-          .cl-formFieldInput:focus {
-            border-color: #7B6AD8 !important;
-            box-shadow: 0 0 0 3px rgba(123, 106, 216, 0.15) !important;
-            outline: none !important;
-          }
-          
-          /* Primary button */
-          .cl-formButtonPrimary,
-          button.cl-formButtonPrimary {
-            height: 3rem !important;
-            border-radius: 0.5rem !important;
-            font-weight: 600 !important;
-            font-size: 1rem !important;
-            background-color: rgb(17, 24, 39) !important;
-            color: white !important;
-            border: none !important;
-            margin-top: 0.5rem !important;
-            transition: background-color 0.2s !important;
-          }
-          
-          .cl-formButtonPrimary:hover,
-          button.cl-formButtonPrimary:hover {
-            background-color: rgb(31, 41, 55) !important;
-          }
-          
-          .dark .cl-formButtonPrimary,
-          .dark button.cl-formButtonPrimary {
-            background-color: white !important;
-            color: rgb(17, 24, 39) !important;
-          }
-          
-          .dark .cl-formButtonPrimary:hover,
-          .dark button.cl-formButtonPrimary:hover {
-            background-color: rgb(243, 244, 246) !important;
-          }
-          
-          /* Form field row spacing */
-          .cl-formFieldRow {
-            margin-bottom: 1.25rem !important;
-          }
-          
-          /* Links */
-          .cl-footerActionLink,
-          .cl-formFieldAction {
-            color: #7B6AD8 !important;
-          }
-          
-          /* OTP/verification code inputs */
-          .cl-otpCodeFieldInput {
-            border-radius: 0.5rem !important;
-            border: 1px solid rgb(229, 231, 235) !important;
-            font-size: 1.5rem !important;
-          }
-          
-          .dark .cl-otpCodeFieldInput {
-            border-color: rgba(255, 255, 255, 0.1) !important;
-            background: rgba(255, 255, 255, 0.05) !important;
-            color: white !important;
-          }
-          
-          /* Error messages */
-          .cl-formFieldErrorText {
-            color: rgb(220, 38, 38) !important;
-            font-size: 0.875rem !important;
-            margin-top: 0.25rem !important;
-          }
-          
-          /* Alert/info boxes */
-          .cl-alert {
-            border-radius: 0.5rem !important;
-            font-size: 0.875rem !important;
-          }
-          
-          /* Back button */
-          .cl-identityPreviewEditButton {
-            color: #7B6AD8 !important;
-          }
-        `}</style>
-        
-        {/* Custom header inside the card area */}
-        <div className="bg-white/95 dark:bg-[#1a1a2e]/90 backdrop-blur-2xl rounded-2xl border border-gray-200/50 dark:border-white/10 shadow-lg overflow-hidden">
-          <div className="text-center pt-8 pb-4 px-8">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Sign in to your account
-            </h2>
-            <p className="text-sm text-gray-500 dark:text-white/50 mt-1">
-              Team access only. Contact admin for credentials.
-            </p>
-          </div>
-          
-          <SignIn
-            routing="hash"
-            appearance={{
-              variables: {
-                colorPrimary: '#111827',
-                colorText: '#111827',
-                colorTextSecondary: '#6b7280',
-                colorInputText: '#111827',
-                colorInputBackground: '#ffffff',
-                borderRadius: '0.5rem',
-              },
-              elements: {
-                rootBox: "w-full",
-                card: "shadow-none border-none bg-transparent pt-0",
-                formButtonPrimary: {
-                  backgroundColor: '#111827',
-                  color: '#ffffff',
-                  '&:hover': {
-                    backgroundColor: '#1f2937',
-                  },
-                },
-                formFieldInput: {
-                  borderColor: '#e5e7eb',
-                },
-              },
-              layout: {
-                socialButtonsPlacement: "bottom",
-                showOptionalFields: false,
-              },
-            }}
-            forceRedirectUrl="/team/dashboard"
-            signUpUrl="/team/login"
-          />
+          {/* Email Step */}
+          {step === 'email' && (
+            <>
+              <div className="text-center mb-6">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Sign in to your account
+                </h2>
+                <p className="text-sm text-gray-500 dark:text-white/50 mt-1">
+                  Team access only. Contact admin for credentials.
+                </p>
+              </div>
+
+              <form onSubmit={handleEmailSubmit} className="space-y-5">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-sm text-gray-600 dark:text-white/60">
+                    Email address
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@flowstarter.app"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="h-12 rounded-lg bg-white/80 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/30 dark:bg-[var(--surface-2)]/80"
+                    required
+                    autoFocus
+                  />
+                </div>
+
+                {error && (
+                  <div className="text-red-500 text-sm">{error}</div>
+                )}
+
+                <Button
+                  type="submit"
+                  disabled={isLoading || !email}
+                  className="w-full h-12 rounded-lg font-semibold bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 shadow-md transition-all disabled:opacity-50"
+                >
+                  {isLoading ? 'Loading...' : 'Continue'}
+                </Button>
+              </form>
+            </>
+          )}
+
+          {/* Password Step */}
+          {step === 'password' && (
+            <>
+              <div className="text-center mb-6">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Enter your password
+                </h2>
+                <p className="text-sm text-gray-500 dark:text-white/50 mt-1">
+                  {email}
+                </p>
+              </div>
+
+              <form onSubmit={handlePasswordSubmit} className="space-y-5">
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-sm text-gray-600 dark:text-white/60">
+                    Password
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="h-12 rounded-lg bg-white/80 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/30 dark:bg-[var(--surface-2)]/80 pr-12"
+                      required
+                      autoFocus
+                    />
+                    {password && (
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-white/70 transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {error && (
+                  <div className="text-red-500 text-sm">{error}</div>
+                )}
+
+                <Button
+                  type="submit"
+                  disabled={isLoading || !password}
+                  className="w-full h-12 rounded-lg font-semibold bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 shadow-md transition-all disabled:opacity-50"
+                >
+                  {isLoading ? 'Signing in...' : 'Sign in'}
+                </Button>
+
+                <button
+                  type="button"
+                  onClick={goBack}
+                  className="w-full text-sm text-gray-500 dark:text-white/50 hover:text-gray-700 dark:hover:text-white/70 transition-colors"
+                >
+                  ← Use different email
+                </button>
+              </form>
+            </>
+          )}
+
+          {/* TOTP Step */}
+          {step === 'totp' && (
+            <>
+              <div className="text-center mb-6">
+                <div className="w-12 h-12 rounded-full bg-[var(--purple)]/10 flex items-center justify-center mx-auto mb-4">
+                  <ShieldCheck className="w-6 h-6 text-[var(--purple)]" />
+                </div>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Two-factor authentication
+                </h2>
+                <p className="text-sm text-gray-500 dark:text-white/50 mt-1">
+                  Enter the code from your authenticator app
+                </p>
+              </div>
+
+              <form onSubmit={handleCodeSubmit} className="space-y-5">
+                <div className="space-y-2">
+                  <Label htmlFor="code" className="text-sm text-gray-600 dark:text-white/60">
+                    Authentication code
+                  </Label>
+                  <Input
+                    id="code"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={6}
+                    placeholder="000000"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+                    className="h-14 rounded-lg bg-white/80 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white text-center text-2xl tracking-[0.5em] font-mono placeholder:text-gray-300 dark:placeholder:text-white/20 dark:bg-[var(--surface-2)]/80"
+                    required
+                    autoFocus
+                  />
+                </div>
+
+                {error && (
+                  <div className="text-red-500 text-sm text-center">{error}</div>
+                )}
+
+                <Button
+                  type="submit"
+                  disabled={isLoading || code.length !== 6}
+                  className="w-full h-12 rounded-lg font-semibold bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 shadow-md transition-all disabled:opacity-50"
+                >
+                  {isLoading ? 'Verifying...' : 'Verify'}
+                </Button>
+
+                <button
+                  type="button"
+                  onClick={goBack}
+                  className="w-full text-sm text-gray-500 dark:text-white/50 hover:text-gray-700 dark:hover:text-white/70 transition-colors"
+                >
+                  ← Back
+                </button>
+              </form>
+            </>
+          )}
+
+          {/* Email Code Step */}
+          {step === 'email_code' && (
+            <>
+              <div className="text-center mb-6">
+                <div className="w-12 h-12 rounded-full bg-[var(--purple)]/10 flex items-center justify-center mx-auto mb-4">
+                  <Mail className="w-6 h-6 text-[var(--purple)]" />
+                </div>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Check your email
+                </h2>
+                <p className="text-sm text-gray-500 dark:text-white/50 mt-1">
+                  We sent a code to {email}
+                </p>
+              </div>
+
+              <form onSubmit={handleCodeSubmit} className="space-y-5">
+                <div className="space-y-2">
+                  <Label htmlFor="email-code" className="text-sm text-gray-600 dark:text-white/60">
+                    Verification code
+                  </Label>
+                  <Input
+                    id="email-code"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={6}
+                    placeholder="000000"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+                    className="h-14 rounded-lg bg-white/80 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white text-center text-2xl tracking-[0.5em] font-mono placeholder:text-gray-300 dark:placeholder:text-white/20 dark:bg-[var(--surface-2)]/80"
+                    required
+                    autoFocus
+                  />
+                </div>
+
+                {error && (
+                  <div className="text-red-500 text-sm text-center">{error}</div>
+                )}
+
+                <Button
+                  type="submit"
+                  disabled={isLoading || code.length !== 6}
+                  className="w-full h-12 rounded-lg font-semibold bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 shadow-md transition-all disabled:opacity-50"
+                >
+                  {isLoading ? 'Verifying...' : 'Verify'}
+                </Button>
+
+                <button
+                  type="button"
+                  onClick={goBack}
+                  className="w-full text-sm text-gray-500 dark:text-white/50 hover:text-gray-700 dark:hover:text-white/70 transition-colors"
+                >
+                  ← Use different email
+                </button>
+              </form>
+            </>
+          )}
         </div>
       </div>
     </AuthLayout>

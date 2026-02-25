@@ -354,17 +354,23 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
             return (
               <div
                 key={project.id}
-                className="p-5 rounded-xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl shadow-lg shadow-black/[0.03] hover:bg-white/70 dark:hover:bg-white/[0.05] transition-colors"
+                className="p-5 rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl hover:bg-white/70 dark:hover:bg-white/[0.05] transition-colors"
               >
-                <div className="flex items-start justify-between gap-3 mb-4">
+                <div className="flex items-start justify-between gap-3 mb-3">
                   <div className="min-w-0 flex-1">
+                    {/* Status Badge */}
+                    <span className={`inline-block px-2 py-0.5 text-xs font-medium rounded mb-2 ${
+                      status === 'completed' || status === 'live'
+                        ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400'
+                        : status === 'in_progress' || status === 'building'
+                        ? 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400'
+                        : 'bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-white/60'
+                    }`}>
+                      {getStatusLabel(status)}
+                    </span>
                     <p className="font-semibold text-gray-900 dark:text-white text-base truncate">
                       {project.name || 'Untitled Project'}
                     </p>
-                    <div className="flex items-center gap-2 mt-1.5">
-                      <Circle className={`w-2.5 h-2.5 fill-current ${getStatusColor(status)}`} />
-                      <span className="text-sm text-gray-500 dark:text-white/50">{getStatusLabel(status)}</span>
-                    </div>
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -426,15 +432,9 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                   </div>
                 )}
 
-                <div className="flex items-center justify-between text-sm text-gray-400 dark:text-white/30 pt-3 border-t border-gray-100 dark:border-white/5">
-                  <span className="flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5" />
-                    {getOwnerDisplay(project)}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5" />
-                    {getTimeAgo(project.updated_at || project.created_at)}
-                  </span>
+                <div className="flex items-center justify-between text-xs text-gray-500 dark:text-white/40 pt-3 border-t border-gray-100 dark:border-white/5">
+                  <span>{getOwnerDisplay(project)}</span>
+                  <span>Last edit: {getTimeAgo(project.updated_at || project.created_at)}</span>
                 </div>
               </div>
             );

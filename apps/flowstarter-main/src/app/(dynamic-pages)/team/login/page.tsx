@@ -52,81 +52,79 @@ export default function TeamLoginPage() {
       subtitle="Sign in to manage client projects and configure services."
     >
       <div className="w-full max-w-[520px] mx-auto">
-        {/* Team badge */}
-        <div className="flex justify-center mb-6">
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-            Internal Access Only
-          </span>
-        </div>
-
-        {/* Email Form */}
-        <form onSubmit={handleSubmit} className="flex flex-col space-y-5">
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm text-muted-foreground">
-              Email
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="you@flowstarter.app"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="h-12 rounded-lg bg-white/80 border border-white/40 dark:border-white/10 text-foreground placeholder:text-muted-foreground/50 dark:bg-[var(--surface-2)]/80 dark:text-white backdrop-blur-sm"
-              required
-            />
+        {/* Card container - matches client login */}
+        <div className="bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-gray-200/50 dark:border-white/10 p-8 shadow-sm">
+          {/* Card header */}
+          <div className="text-center mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              Sign in to your account
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-white/50 mt-1">
+              Team access only. Contact admin for credentials.
+            </p>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-sm text-muted-foreground">
-              Password
-            </Label>
-            <div className="relative">
+          {/* Email Form */}
+          <form onSubmit={handleSubmit} className="flex flex-col space-y-5">
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-sm text-gray-600 dark:text-white/60">
+                Email address
+              </Label>
               <Input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="h-12 rounded-lg bg-white/80 border border-white/40 dark:border-white/10 text-foreground placeholder:text-muted-foreground/50 dark:bg-[var(--surface-2)]/80 dark:text-white pr-12 backdrop-blur-sm"
+                id="email"
+                type="email"
+                placeholder="you@flowstarter.app"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-12 rounded-lg bg-white/80 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/30 dark:bg-[var(--surface-2)]/80 backdrop-blur-sm"
                 required
               />
-              {password && (
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
-                </button>
-              )}
             </div>
-          </div>
 
-          {error && (
-            <div className="text-red-400 text-xs mt-1">{error}</div>
-          )}
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-sm text-gray-600 dark:text-white/60">
+                Password
+              </Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="h-12 rounded-lg bg-white/80 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/30 dark:bg-[var(--surface-2)]/80 pr-12 backdrop-blur-sm"
+                  required
+                />
+                {password && (
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-white/70 transition-colors"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </button>
+                )}
+              </div>
+            </div>
 
-          <Button
-            type="submit"
-            disabled={isLoading || !email || !password}
-            className="w-full h-12 rounded-lg font-semibold mt-4 bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 shadow-md hover:shadow-lg transition-all"
-          >
-            {isLoading ? 'Signing in...' : 'Sign In'}
-          </Button>
-        </form>
+            {error && (
+              <div className="text-red-500 text-sm">{error}</div>
+            )}
 
-        {/* Footer note */}
-        <p className="text-center text-xs text-gray-400 dark:text-white/30 mt-6">
-          Team access only. Contact admin for credentials.
-        </p>
+            <Button
+              type="submit"
+              disabled={isLoading || !email || !password}
+              className="w-full h-12 rounded-lg font-semibold mt-2 bg-gray-900 text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? 'Signing in...' : 'Sign in'}
+            </Button>
+          </form>
+        </div>
       </div>
     </AuthLayout>
   );

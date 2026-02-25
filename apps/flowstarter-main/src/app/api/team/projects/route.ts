@@ -34,13 +34,7 @@ export async function GET() {
 
     const { data: projects, error } = await supabaseAdmin
       .from('projects')
-      .select(`
-        *,
-        user:user_id (
-          id,
-          email
-        )
-      `)
+      .select('*')
       .order('created_at', { ascending: false });
 
     if (error) {

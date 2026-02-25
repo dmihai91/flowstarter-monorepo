@@ -8,7 +8,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useTeamDeleteProject, useTeamRenameProject } from '@/hooks/useTeamProjects';
+import { useTeamDeleteProject, useTeamRenameProject, useTeamUpdateProjectPricing } from '@/hooks/useTeamProjects';
+import type { ProjectPricingData } from '@/hooks/useTeamProjects';
 import { Input } from '@/components/ui/input';
 import {
   Dialog,
@@ -32,7 +33,10 @@ import {
   Mail,
   BarChart3,
   Settings,
+  DollarSign,
 } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -92,6 +96,42 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
     setProjectToRename(project);
     setNewName(project.name);
     setRenameDialogOpen(true);
+  };
+
+  // Pricing dialog state
+  const [pricingDialogOpen, setPricingDialogOpen] = useState(false);
+  const [projectToPricep, setProjectToPrice] = useState<ProjectWithOwner | null>(null);
+  const [pricingData, setPricingData] = useState<ProjectPricingData>({
+    project_type: 'standard',
+    setup_fee: 0,
+    monthly_fee: 0,
+    is_paid: false,
+  });
+  const updatePricingMutation = useTeamUpdateProjectPricing();
+
+  const openPricingDialog = (project: ProjectWithOwner) => {
+    setProjectToPrice(project);
+    setPricingData({
+      project_type: project.project_type || 'standard',
+      setup_fee: project.setup_fee || 0,
+      monthly_fee: project.monthly_fee || 0,
+      is_paid: project.is_paid || false,
+    });
+    setPricingDialogOpen(true);
+  };
+
+  const handleUpdatePricing = async () => {
+    if (!projectToPricep) return;
+
+    try {
+      await updatePricingMutation.mutateAsync({ id: projectToPricep.id, ...pricingData });
+      toast.success('Pricing updated successfully');
+      setPricingDialogOpen(false);
+      setProjectToPrice(null);
+    } catch (error) {
+      console.error('Failed to update pricing:', error);
+      toast.error('Failed to update pricing');
+    }
   };
 
   const getTimeAgo = (date: string | null) => formatTimeAgo(date);
@@ -211,6 +251,10 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                           <Pencil className="h-4 w-4" />
                           Rename
                         </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => openPricingDialog(project)}>
+                          <DollarSign className="h-4 w-4" />
+                          Pricing
+                        </DropdownMenuItem>
                         <DropdownMenuItem
                           variant="destructive"
                           onClick={() => {
@@ -256,6 +300,10 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                           <DropdownMenuItem onClick={() => openRenameDialog({ id: project.id, name: project.name || 'Untitled' })}>
                             <Pencil className="h-4 w-4" />
                             Rename
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => openPricingDialog(project)}>
+                            <DollarSign className="h-4 w-4" />
+                            Pricing
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             variant="destructive"
@@ -315,6 +363,10 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                       <DropdownMenuItem onClick={() => openRenameDialog({ id: project.id, name: project.name || 'Untitled' })}>
                         <Pencil className="h-4 w-4" />
                         Rename
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => openPricingDialog(project)}>
+                        <DollarSign className="h-4 w-4" />
+                        Pricing
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         variant="destructive"
@@ -408,6 +460,77 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
               disabled={renameProjectMutation.isPending || !newName.trim()}
             >
               {renameProjectMutation.isPending ? 'Saving...' : 'Save'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Pricing Dialog */}
+      <Dialog open={pricingDialogOpen} onOpenChange={setPricingDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Project Pricing</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="project_type">Project Type</Label>
+              <select
+                id="project_type"
+                value={pricingData.project_type}
+                onChange={(e) => setPricingData({ ...pricingData, project_type: e.target.value })}
+                className="w-full h-10 px-3 rounded-md border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 text-sm"
+              >
+                <option value="standard">Standard</option>
+                <option value="premium">Premium</option>
+                <option value="enterprise">Enterprise</option>
+              </select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="setup_fee">Setup Fee ($)</Label>
+              <Input
+                id="setup_fee"
+                type="number"
+                min="0"
+                step="0.01"
+                value={pricingData.setup_fee}
+                onChange={(e) => setPricingData({ ...pricingData, setup_fee: parseFloat(e.target.value) || 0 })}
+                placeholder="0.00"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="monthly_fee">Monthly Fee ($)</Label>
+              <Input
+                id="monthly_fee"
+                type="number"
+                min="0"
+                step="0.01"
+                value={pricingData.monthly_fee}
+                onChange={(e) => setPricingData({ ...pricingData, monthly_fee: parseFloat(e.target.value) || 0 })}
+                placeholder="0.00"
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <Label htmlFor="is_paid">Paid</Label>
+              <Switch
+                id="is_paid"
+                checked={pricingData.is_paid}
+                onCheckedChange={(checked) => setPricingData({ ...pricingData, is_paid: checked })}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPricingDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              variant="accent" 
+              onClick={handleUpdatePricing}
+              disabled={updatePricingMutation.isPending}
+            >
+              {updatePricingMutation.isPending ? 'Saving...' : 'Save'}
             </Button>
           </DialogFooter>
         </DialogContent>

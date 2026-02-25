@@ -109,3 +109,46 @@ export function useTeamRenameProject() {
     },
   });
 }
+
+export interface ProjectPricingData {
+  project_type?: string;
+  setup_fee?: number;
+  monthly_fee?: number;
+  is_paid?: boolean;
+}
+
+export function useTeamUpdateProjectPricing() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...data }: { id: string } & ProjectPricingData) => {
+      const res = await fetch(`/api/team/projects/${id}`, { 
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'Failed to update pricing' }));
+        throw new Error(err.error || 'Failed to update pricing');
+      }
+      return res.json();
+    },
+    onMutate: async ({ id, ...data }: { id: string } & ProjectPricingData) => {
+      await qc.cancelQueries({ queryKey: ['team-projects'] });
+      const previous = qc.getQueryData<ProjectWithOwner[]>(['team-projects']);
+      
+      qc.setQueryData<ProjectWithOwner[]>(['team-projects'], (old) => 
+        old?.map((p) => p.id === id ? { ...p, ...data } : p) ?? []
+      );
+      
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        qc.setQueryData(['team-projects'], context.previous);
+      }
+    },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: ['team-projects'] });
+    },
+  });
+}

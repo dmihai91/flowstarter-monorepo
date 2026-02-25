@@ -94,7 +94,7 @@ export async function DELETE(
 /**
  * PATCH /api/team/projects/[id]
  * 
- * Update project (rename, etc.)
+ * Update project (rename, pricing, status, etc.)
  */
 export async function PATCH(
   request: NextRequest,
@@ -108,10 +108,38 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { name } = body;
+    const { name, project_type, setup_fee, monthly_fee, is_paid, status } = body;
 
-    if (!name || typeof name !== 'string' || name.trim().length === 0) {
-      return NextResponse.json({ error: 'Name is required' }, { status: 400 });
+    // Build update object with only provided fields
+    const updateData: Record<string, unknown> = {
+      updated_at: new Date().toISOString(),
+    };
+
+    if (name !== undefined) {
+      if (typeof name !== 'string' || name.trim().length === 0) {
+        return NextResponse.json({ error: 'Name cannot be empty' }, { status: 400 });
+      }
+      updateData.name = name.trim();
+    }
+
+    if (project_type !== undefined) {
+      updateData.project_type = project_type;
+    }
+
+    if (setup_fee !== undefined) {
+      updateData.setup_fee = Number(setup_fee) || 0;
+    }
+
+    if (monthly_fee !== undefined) {
+      updateData.monthly_fee = Number(monthly_fee) || 0;
+    }
+
+    if (is_paid !== undefined) {
+      updateData.is_paid = Boolean(is_paid);
+    }
+
+    if (status !== undefined) {
+      updateData.status = status;
     }
 
     const supabaseAdmin = createClient(
@@ -122,20 +150,20 @@ export async function PATCH(
 
     const { data: project, error } = await supabaseAdmin
       .from('projects')
-      .update({ name: name.trim(), updated_at: new Date().toISOString() })
+      .update(updateData)
       .eq('id', id)
       .select()
       .single();
 
     if (error) {
-      console.error('[Team Projects] Rename error:', error);
+      console.error('[Team Projects] Update error:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     return NextResponse.json({ project });
   } catch (error) {
-    console.error('[Team Projects] Rename error:', error);
-    return NextResponse.json({ error: 'Failed to rename project' }, { status: 500 });
+    console.error('[Team Projects] Update error:', error);
+    return NextResponse.json({ error: 'Failed to update project' }, { status: 500 });
   }
 }
 

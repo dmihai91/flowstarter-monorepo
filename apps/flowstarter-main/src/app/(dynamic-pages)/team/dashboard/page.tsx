@@ -15,23 +15,11 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { 
   Plus, 
-  Globe, 
-  Mail, 
-  BarChart3, 
-  Settings, 
   Loader2,
   UserPlus,
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
-
-// Quick action cards - same style as client dashboard
-const quickActions = [
-  { icon: Globe, label: 'Configure Domain', desc: 'Cloudflare DNS', href: '/team/dashboard/domains' },
-  { icon: Mail, label: 'Setup Email', desc: 'Zoho Mail', href: '/team/dashboard/email' },
-  { icon: BarChart3, label: 'Analytics', desc: 'Google Analytics', href: '/team/dashboard/analytics' },
-  { icon: Settings, label: 'Services', desc: 'Integrations', href: '/team/dashboard/services' },
-];
 
 export default function TeamDashboardPage() {
   const { user, isLoaded: userLoaded } = useUser();
@@ -102,27 +90,6 @@ export default function TeamDashboardPage() {
               </Button>
             </Link>
           </div>
-        </div>
-
-        {/* Quick Actions - styled like client dashboard cards */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {quickActions.map((action, i) => (
-            <Link
-              key={i}
-              href={action.href}
-              className="group relative p-5 rounded-2xl transition-all duration-250 ease-out hover:-translate-y-[3px] hover:shadow-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-white/[0.03] hover:border-[var(--purple)]/40"
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center">
-                  <action.icon className="h-5 w-5 text-[var(--purple)]" />
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900 dark:text-white text-sm">{action.label}</p>
-                  <p className="text-xs text-gray-600 dark:text-white/50 mt-0.5">{action.desc}</p>
-                </div>
-              </div>
-            </Link>
-          ))}
         </div>
 
         {/* Projects Section */}

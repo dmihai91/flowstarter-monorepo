@@ -28,7 +28,12 @@ import {
   LayoutGrid,
   List,
   Pencil,
+  Globe,
+  Mail,
+  BarChart3,
+  Settings,
 } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
@@ -331,7 +336,26 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                   </p>
                 )}
 
-                <div className="flex items-center gap-5 text-sm text-gray-400 dark:text-white/30 pt-4 border-t border-gray-100 dark:border-white/5">
+                {/* Quick Actions for this project */}
+                <div className="grid grid-cols-4 gap-2 mb-4">
+                  {[
+                    { icon: Globe, label: 'Domain', href: `/team/dashboard/domains?project=${project.id}` },
+                    { icon: Mail, label: 'Email', href: `/team/dashboard/email?project=${project.id}` },
+                    { icon: BarChart3, label: 'Analytics', href: `/team/dashboard/analytics?project=${project.id}` },
+                    { icon: Settings, label: 'Services', href: `/team/dashboard/services?project=${project.id}` },
+                  ].map((action, i) => (
+                    <Link
+                      key={i}
+                      href={action.href}
+                      className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors text-center"
+                    >
+                      <action.icon className="w-4 h-4 text-gray-400 dark:text-white/40" />
+                      <span className="text-[10px] text-gray-500 dark:text-white/40">{action.label}</span>
+                    </Link>
+                  ))}
+                </div>
+
+                <div className="flex items-center gap-5 text-sm text-gray-400 dark:text-white/30 pt-3 border-t border-gray-100 dark:border-white/5">
                   <span className="flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5" />
                     {getOwnerDisplay(project)}

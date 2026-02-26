@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
  *
  * List all projects for the authenticated user.
  * Requires authentication - returns 401 if not authenticated.
- * RLS policies ensure users only see their own projects.
+ * Explicitly filters by user_id for clients (RLS as backup).
  */
 export async function GET() {
   // Verify authentication first
@@ -76,9 +76,11 @@ export async function GET() {
     // Use strict auth client that throws if no JWT
     const supabase = await useServerSupabaseWithAuthStrict();
 
+    // Explicitly filter by user_id to show only projects owned by this user
     const { data, error } = await supabase
       .from('projects')
       .select('*')
+      .eq('user_id', authResult.userId)
       .order('created_at', { ascending: false });
 
     if (error) {

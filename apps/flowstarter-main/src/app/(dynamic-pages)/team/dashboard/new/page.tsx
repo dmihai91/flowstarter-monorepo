@@ -1,7 +1,6 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { GradientBackground } from '@/components/ui/gradient-background';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useUser } from '@clerk/nextjs';
@@ -277,6 +276,9 @@ export default function NewProjectPage() {
     );
   }
 
+  // 3D card style (same as dashboard)
+  const cardClass = "rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.02)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset,0_-1px_0_rgba(0,0,0,0.2)_inset]";
+
   return (
     <>
       <style jsx global>{`
@@ -284,11 +286,12 @@ export default function NewProjectPage() {
         .font-display { font-family: 'Outfit', system-ui, sans-serif; }
       `}</style>
       
-      <div className="min-h-screen font-display relative">
-        {/* Gradient background with flow lines */}
-        <GradientBackground variant="dashboard" className="fixed" />
+      <div className="min-h-screen font-display relative bg-[#FAFAFA] dark:bg-[#0a0a0c]">
+        {/* Clean solid background */}
+        <div className="fixed inset-0 bg-[#FAFAFA] dark:bg-[#0a0a0c] -z-10" />
+        
         {/* Header */}
-        <header className="sticky top-0 z-50 bg-white/80 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">
+        <header className="fixed top-0 left-0 right-0 z-[100] bg-white/80 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">
           <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link 
@@ -317,6 +320,9 @@ export default function NewProjectPage() {
             </div>
           </div>
         </header>
+        
+        {/* Spacer for fixed header */}
+        <div className="h-16" />
 
         {/* Main content */}
         <main className="max-w-2xl mx-auto px-6 py-12">
@@ -335,7 +341,7 @@ export default function NewProjectPage() {
                 </p>
               </div>
 
-              <div className="bg-white dark:bg-white/[0.03] rounded-2xl border border-gray-200/50 dark:border-white/10 p-6 space-y-5">
+              <div className={`${cardClass} p-6 space-y-5`}>
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
                     Client Name *
@@ -344,7 +350,7 @@ export default function NewProjectPage() {
                     placeholder="John Smith"
                     value={projectData.clientName}
                     onChange={(e) => updateField('clientName', e.target.value)}
-                    className="h-12 bg-gray-50 dark:bg-white/5 border-gray-200 dark:border-white/10"
+                    className="h-12 bg-white/50 dark:bg-white/5 border-gray-200 dark:border-white/10"
                   />
                 </div>
                 
@@ -357,7 +363,7 @@ export default function NewProjectPage() {
                     placeholder="john@example.com"
                     value={projectData.clientEmail}
                     onChange={(e) => updateField('clientEmail', e.target.value)}
-                    className="h-12 bg-gray-50 dark:bg-white/5 border-gray-200 dark:border-white/10"
+                    className="h-12 bg-white/50 dark:bg-white/5 border-gray-200 dark:border-white/10"
                   />
                 </div>
                 
@@ -370,7 +376,7 @@ export default function NewProjectPage() {
                     placeholder="+49 123 456 7890"
                     value={projectData.clientPhone}
                     onChange={(e) => updateField('clientPhone', e.target.value)}
-                    className="h-12 bg-gray-50 dark:bg-white/5 border-gray-200 dark:border-white/10"
+                    className="h-12 bg-white/50 dark:bg-white/5 border-gray-200 dark:border-white/10"
                   />
                 </div>
               </div>
@@ -392,7 +398,7 @@ export default function NewProjectPage() {
                 </p>
               </div>
 
-              <div className="bg-white dark:bg-white/[0.03] rounded-2xl border border-gray-200/50 dark:border-white/10 p-6 space-y-5">
+              <div className={`${cardClass} p-6 space-y-5`}>
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
                     Business Name *
@@ -478,7 +484,7 @@ export default function NewProjectPage() {
 
               <div className="space-y-6">
                 {/* Goal */}
-                <div className="bg-white dark:bg-white/[0.03] rounded-2xl border border-gray-200/50 dark:border-white/10 p-6">
+                <div className={`${cardClass} p-6`}>
                   <Label className="text-sm font-medium text-gray-700 dark:text-white/70 mb-4 block">
                     Primary Goal *
                   </Label>
@@ -502,7 +508,7 @@ export default function NewProjectPage() {
                 </div>
 
                 {/* Offer Type */}
-                <div className="bg-white dark:bg-white/[0.03] rounded-2xl border border-gray-200/50 dark:border-white/10 p-6">
+                <div className={`${cardClass} p-6`}>
                   <Label className="text-sm font-medium text-gray-700 dark:text-white/70 mb-4 block">
                     What do they offer? *
                   </Label>
@@ -525,7 +531,7 @@ export default function NewProjectPage() {
                 </div>
 
                 {/* Brand Tone */}
-                <div className="bg-white dark:bg-white/[0.03] rounded-2xl border border-gray-200/50 dark:border-white/10 p-6">
+                <div className={`${cardClass} p-6`}>
                   <Label className="text-sm font-medium text-gray-700 dark:text-white/70 mb-4 block">
                     Brand Tone *
                   </Label>
@@ -566,7 +572,7 @@ export default function NewProjectPage() {
                 </p>
               </div>
 
-              <div className="bg-white dark:bg-white/[0.03] rounded-2xl border border-gray-200/50 dark:border-white/10 p-6 space-y-5">
+              <div className={`${cardClass} p-6 space-y-5`}>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-gray-700 dark:text-white/70">

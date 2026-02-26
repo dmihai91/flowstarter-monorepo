@@ -273,10 +273,12 @@ function NewProjectPageContent() {
     }
   };
 
-  // Show loading screen immediately for any loading state
-  const showLoading = isLoading || !userLoaded || isGenerating;
+  // Show generation screen for AI mode, regular loading for auth check
+  const showGenerationScreen = isGenerating || isAIMode;
+  const showLoading = (isLoading || !userLoaded) && !showGenerationScreen;
   
-  if (showLoading) {
+  // Generation screen - show immediately for AI mode
+  if (showGenerationScreen) {
     const currentIdx = generationSteps.findIndex(gs => gs.id === generationStep);
     
     return (
@@ -290,7 +292,6 @@ function NewProjectPageContent() {
         </div>
         
         <div className="relative z-10 flex flex-col items-center max-w-md mx-auto px-6">
-          {isGenerating ? (
             /* Glassmorphism card for generation */
             <div className="w-full rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset] p-6">
               {/* Header */}
@@ -377,17 +378,23 @@ function NewProjectPageContent() {
                 })}
               </div>
             </div>
-          ) : (
-            /* Simple loading - uses same card style */
-            <div className="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset] p-8">
-              <div className="flex flex-col items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--purple)] to-[var(--purple)]/70 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20">
-                  <Loader2 className="w-6 h-6 animate-spin text-white" />
-                </div>
-                <p className="text-gray-600 dark:text-white/70 font-medium">Setting up...</p>
-              </div>
+        </div>
+      </div>
+    );
+  }
+  
+  // Simple loading state for auth check (non-AI mode)
+  if (showLoading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+        <GradientBackground variant="dashboard" className="fixed" />
+        <div className="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset] p-8">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--purple)] to-[var(--purple)]/70 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20">
+              <Loader2 className="w-6 h-6 animate-spin text-white" />
             </div>
-          )}
+            <p className="text-gray-600 dark:text-white/70 font-medium">Loading...</p>
+          </div>
         </div>
       </div>
     );

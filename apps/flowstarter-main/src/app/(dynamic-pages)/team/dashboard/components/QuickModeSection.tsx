@@ -120,9 +120,18 @@ export function QuickModeSection() {
       </div>
 
       {/* Description */}
-      <p className="text-sm text-gray-600 dark:text-white/60 mb-4">
-        Hi {firstName}! Describe your client&apos;s project and our AI will help you build it.
-      </p>
+      <div className="mb-4">
+        <p className="text-sm text-gray-600 dark:text-white/60 mb-2">
+          Hi {firstName}! Tell me what you want to create, I&apos;ll handle the rest.
+        </p>
+        <ul className="text-xs text-gray-500 dark:text-white/40 space-y-1 ml-1">
+          <li>• <span className="text-gray-600 dark:text-white/50">Industry</span> – what type of business?</li>
+          <li>• <span className="text-gray-600 dark:text-white/50">Product type</span> – landing page or website?</li>
+          <li>• <span className="text-gray-600 dark:text-white/50">Audience</span> – who&apos;s it for?</li>
+          <li>• <span className="text-gray-600 dark:text-white/50">Goals</span> – sales, awareness, leads?</li>
+          <li>• <span className="text-gray-600 dark:text-white/50">Visual style</span> – minimalist, playful, bold?</li>
+        </ul>
+      </div>
 
       {/* Sample Prompts */}
       <div className="mb-4">

@@ -23,7 +23,7 @@ const publicRoutes = [
   '/team/login',
 ];
 
-// Routes where we hide the default navbar (they have their own)
+// Routes where we hide the default navbar (they have their own header)
 const noNavbarRoutes = [
   '/',
   '/team',
@@ -50,7 +50,8 @@ export function NavigationWrapper() {
   const isDashboardRoute = pathname === '/dashboard';
   const isWizardRoute = pathname === '/dashboard/new';
   const isTemplatePreview = pathname.startsWith('/template-preview');
-  const isNoNavbarRoute = noNavbarRoutes.includes(pathname) || isTeamRoute;
+  const isClientDashboard = pathname.startsWith('/dashboard'); // Client dashboard has its own header
+  const isNoNavbarRoute = noNavbarRoutes.includes(pathname) || isTeamRoute || isClientDashboard;
   const [, setIsErrorPage] = useState(false);
 
   // Check synchronously during render to catch error pages immediately

@@ -231,21 +231,25 @@ export default function NewProjectPage() {
     }
   };
 
-  if (isLoading || !userLoaded || isGenerating) {
+  // Show loading screen immediately for any loading state
+  const showLoading = isLoading || !userLoaded || isGenerating;
+  
+  if (showLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c] gap-4 relative">
-        {/* Clean solid background - no gradient */}
         <div className="absolute inset-0 bg-[#FAFAFA] dark:bg-[#0a0a0c]" />
         <div className="relative z-10 flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-[var(--purple)]/10 flex items-center justify-center">
             <Loader2 className="w-6 h-6 animate-spin text-[var(--purple)]" />
           </div>
-          {isGenerating && (
-            <div className="text-center">
-              <p className="text-gray-900 dark:text-white font-medium">Generating project details...</p>
+          <div className="text-center">
+            <p className="text-gray-900 dark:text-white font-medium">
+              {isGenerating ? 'Generating project details...' : 'Loading...'}
+            </p>
+            {isGenerating && (
               <p className="text-sm text-gray-500 dark:text-white/50 mt-1">AI is analyzing your description</p>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     );

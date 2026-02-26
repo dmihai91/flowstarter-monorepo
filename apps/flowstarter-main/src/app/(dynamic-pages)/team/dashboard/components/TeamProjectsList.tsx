@@ -135,13 +135,15 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
 
   // Default pricing by project type (in EUR)
   // Base prices (before any discount)
+  // Beta = 50% off: Standard €299/€29, Pro €499/€49, E-commerce €699/€69
   const BASE_PRICING: Record<
     string,
     { setup_fee: number; monthly_fee: number }
   > = {
     standard: { setup_fee: 599, monthly_fee: 59 },
     pro: { setup_fee: 999, monthly_fee: 99 },
-    business: { setup_fee: 1999, monthly_fee: 199 },
+    ecommerce: { setup_fee: 1399, monthly_fee: 139 },
+    business: { setup_fee: 1399, monthly_fee: 139 }, // alias for ecommerce
   };
 
   // Apply beta discount if enabled

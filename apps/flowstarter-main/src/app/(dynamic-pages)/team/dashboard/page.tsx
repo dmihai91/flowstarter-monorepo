@@ -62,6 +62,9 @@ export default function TeamDashboardPage() {
     <DashboardWrapper>
       <TeamHeader />
 
+      {/* Spacer for fixed header */}
+      <div className="h-16" />
+
       <PageContainer gradientVariant="dashboard">
         {/* Welcome message + action buttons */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">

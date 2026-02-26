@@ -14,6 +14,7 @@ import { useWizardStore } from '@/store/wizard-store';
 import { useProjectSuggestions } from '@/hooks/wizard/useProjectSuggestions';
 import { insertProjectAction } from '@/data/user/projects';
 import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   ArrowLeft,
   ArrowRight,
@@ -113,6 +114,7 @@ function NewProjectPageContent() {
   const { user, isLoaded: userLoaded } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
 
   // Get prefill data from wizard store (set by Quick Mode)
   const prefillData = useWizardStore((state) => state.prefillData);
@@ -458,6 +460,10 @@ function NewProjectPageContent() {
       // Clear stored wizard data
       setTeamWizardData(null);
       setPrefillData(null);
+      
+      // Invalidate project queries so dashboard refreshes
+      queryClient.invalidateQueries({ queryKey: ['team-projects'] });
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
 
       // Redirect to project page with UID
       router.push(`/team/dashboard/projects/${projectId}`);

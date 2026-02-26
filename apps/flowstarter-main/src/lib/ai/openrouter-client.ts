@@ -16,19 +16,19 @@ const openrouter = createOpenRouter({
  */
 export const models = {
   // Claude Sonnet 4 for project details - high quality generation
-  projectDetails: openrouter.chat('anthropic/claude-sonnet-4-20250514'),
+  projectDetails: openrouter.chat('anthropic/claude-sonnet-4'),
 
   // High-quality model for template generation and complex tasks
-  templateAgent: openrouter.chat('anthropic/claude-sonnet-4-20250514'),
+  templateAgent: openrouter.chat('anthropic/claude-sonnet-4'),
 
   // Alternative high-performance models
-  claude: openrouter.chat('anthropic/claude-sonnet-4-20250514'),
+  claude: openrouter.chat('anthropic/claude-sonnet-4'),
   gpt4: openrouter.chat('openai/gpt-4o'),
   llama: openrouter.chat('meta-llama/llama-3.1-70b-instruct'),
 
   // Specialized models
   reasoning: openrouter.chat('deepseek/deepseek-r1'), // For complex reasoning tasks
-  vision: openrouter.chat('anthropic/claude-3.5-sonnet'), // For image understanding
+  vision: openrouter.chat('anthropic/claude-3.7-sonnet'), // For image understanding
 } as const;
 
 /**

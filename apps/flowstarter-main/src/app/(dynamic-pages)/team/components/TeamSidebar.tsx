@@ -71,11 +71,11 @@ export function TeamSidebar() {
         isActive(href, exact)
           ? 'bg-[var(--purple)] text-white shadow-lg shadow-[var(--purple)]/25'
           : 'text-gray-600 dark:text-white/60 hover:bg-white/60 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
-        collapsed && 'lg:justify-center lg:px-2'
+        collapsed && 'md:justify-center md:px-2'
       )}
     >
       <Icon className="w-4 h-4 flex-shrink-0" />
-      <span className={cn('truncate', collapsed && 'lg:hidden')}>{label}</span>
+      <span className={cn('truncate', collapsed && 'md:hidden')}>{label}</span>
     </Link>
   );
 
@@ -95,7 +95,7 @@ export function TeamSidebar() {
       <div>
         <h3 className={cn(
           'px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider',
-          collapsed && 'lg:hidden'
+          collapsed && 'md:hidden'
         )}>
           Configuration
         </h3>
@@ -111,7 +111,7 @@ export function TeamSidebar() {
         <div>
           <h3 className={cn(
             'px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider',
-            collapsed && 'lg:hidden'
+            collapsed && 'md:hidden'
           )}>
             Team
           </h3>
@@ -126,11 +126,12 @@ export function TeamSidebar() {
       {/* Spacer */}
       <div className="flex-1" />
 
-      {/* Collapse toggle at bottom - desktop only */}
+      {/* Collapse toggle at bottom - desktop/tablet only */}
       {showToggle && (
         <div className="pt-4 border-t border-white/10">
           <button
             onClick={() => setCollapsed(!collapsed)}
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             className={cn(
               'flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all',
               'text-gray-500 dark:text-white/40 hover:bg-white/60 dark:hover:bg-white/5 hover:text-gray-700 dark:hover:text-white/60',

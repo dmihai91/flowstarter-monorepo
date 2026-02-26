@@ -246,46 +246,36 @@ function NewProjectPageContent() {
 
   const hasCreatedDraft = useRef(false);
   
-  // Create a draft project
+  // Create a draft project via API
   const createDraftProject = async () => {
     if (hasCreatedDraft.current || projectId) return;
     hasCreatedDraft.current = true;
     
     try {
       console.log('Creating draft project...');
-      const result = await insertProjectAction({
-        name: 'Untitled Project',
-        description: '',
-        chat: JSON.stringify({ draft: true }),
+      const response = await fetch('/api/team/projects/draft', {
+        method: 'POST',
       });
       
-      console.log('insertProjectAction result:', result);
+      const result = await response.json();
+      console.log('Draft API result:', result);
       
-      // safe-action returns { data, serverError, validationErrors }
-      if (result?.serverError) {
-        console.error('Server error:', result.serverError);
+      if (!response.ok) {
+        console.error('Draft API error:', result.error);
         hasCreatedDraft.current = false;
         return;
       }
       
-      if (result?.validationErrors) {
-        console.error('Validation errors:', result.validationErrors);
-        hasCreatedDraft.current = false;
-        return;
-      }
-      
-      // The action returns data.id directly, so result.data IS the ID
-      const newProjectId = result?.data;
-      if (newProjectId) {
-        setProjectId(newProjectId);
-        console.log('Draft project created:', newProjectId);
+      if (result.id) {
+        setProjectId(result.id);
+        console.log('Draft project created:', result.id);
       } else {
-        console.error('No project ID returned from insertProjectAction', result);
-        hasCreatedDraft.current = false; // Allow retry
+        console.error('No project ID returned from draft API', result);
+        hasCreatedDraft.current = false;
       }
     } catch (error) {
       console.error('Failed to create draft project:', error);
-      hasCreatedDraft.current = false; // Allow retry
+      hasCreatedDraft.current = false;
     }
   };
 

@@ -290,11 +290,10 @@ function NewProjectPageContent() {
     const currentIdx = generationSteps.findIndex(gs => gs.id === generationStep);
     
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="h-screen flex flex-col overflow-hidden">
         <TeamHeader />
-        <div className="h-16" />
-        <div className="flex-1 flex flex-col items-center justify-center relative overflow-hidden py-8">
-          <GradientBackground variant="dashboard" className="fixed" />
+        <div className="flex-1 flex flex-col items-center justify-center relative mt-16">
+          <GradientBackground variant="dashboard" className="fixed inset-0" />
           
           {/* Animated background orbs */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">

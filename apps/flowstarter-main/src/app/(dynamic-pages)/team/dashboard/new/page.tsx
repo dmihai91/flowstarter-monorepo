@@ -231,8 +231,8 @@ function NewProjectPageContent() {
           brandTone: (result?.brandTone?.toLowerCase() as BrandTone) || '',
         }));
         
-        // Start at step 1 (client info), business details will show AI badge
-        setStep(1);
+        // Start at step 2 (business details with AI-generated content)
+        setStep(2);
         
         if (result && (generatedName || result.description !== userDescription)) {
           toast.success('AI generated business details', {
@@ -1124,7 +1124,8 @@ function NewProjectPageContent() {
         {/* Fixed Navigation */}
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-[#0a0a0c]/95 backdrop-blur-xl border-t border-gray-200 dark:border-white/10">
           <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
-            {step === 1 ? (
+            {/* Back/Cancel button */}
+            {(isAIMode && step === 2) || (!isAIMode && step === 1) ? (
               <Link href="/team/dashboard">
                 <Button
                   variant="ghost"
@@ -1137,7 +1138,16 @@ function NewProjectPageContent() {
             ) : (
               <Button
                 variant="ghost"
-                onClick={() => setStep(step - 1)}
+                onClick={() => {
+                  // AI mode flow back: 1 → 2, 3 → 1, 4 → 3
+                  if (isAIMode) {
+                    if (step === 1) setStep(2);
+                    else if (step === 3) setStep(1);
+                    else setStep(step - 1);
+                  } else {
+                    setStep(step - 1);
+                  }
+                }}
                 className="text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -1145,9 +1155,19 @@ function NewProjectPageContent() {
               </Button>
             )}
             
+            {/* Continue button */}
             {step < 4 ? (
               <Button
-                onClick={() => setStep(step + 1)}
+                onClick={() => {
+                  // AI mode flow: 2 → 1 → 3 → 4
+                  if (isAIMode) {
+                    if (step === 2) setStep(1);
+                    else if (step === 1) setStep(3);
+                    else setStep(step + 1);
+                  } else {
+                    setStep(step + 1);
+                  }
+                }}
                 disabled={!canProceed()}
                 className="bg-gradient-to-r from-[var(--purple)] to-blue-500 hover:from-[var(--purple)]/90 hover:to-blue-500/90 text-white font-semibold rounded-xl shadow-lg shadow-[var(--purple)]/20 h-11 px-6"
               >

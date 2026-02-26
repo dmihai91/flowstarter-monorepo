@@ -102,9 +102,9 @@ export function QuickModeSection() {
   };
 
   const suggestions = [
-    "Bakery with online ordering",
-    "Fitness app landing page", 
-    "Photography portfolio",
+    "A modern bakery website with online ordering for cakes and pastries, targeting local customers",
+    "Landing page for a fitness coaching app with booking system and testimonials",
+    "Minimalist portfolio for a wedding photographer showcasing galleries and contact form",
   ];
 
   // 3D card style

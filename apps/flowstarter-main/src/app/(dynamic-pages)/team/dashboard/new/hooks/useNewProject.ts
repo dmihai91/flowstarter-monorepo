@@ -255,8 +255,8 @@ export function useNewProject() {
         businessName: finalName,
         description: suggestions.description || description,
         industry: detectIndustry(description) || prev.industry,
-        targetAudience: suggestions.targetAudience || prev.targetAudience,
-        uvp: suggestions.usp || prev.uvp,
+        targetAudience: suggestions.targetUsers || prev.targetAudience,
+        uvp: suggestions.USP || prev.uvp,
       }));
 
       // Save draft
@@ -265,8 +265,8 @@ export function useNewProject() {
           ...projectData,
           businessName: finalName,
           description: suggestions.description || description,
-          targetAudience: suggestions.targetAudience || '',
-          uvp: suggestions.usp || '',
+          targetAudience: suggestions.targetUsers || '',
+          uvp: suggestions.USP || '',
         }, true);
 
         await fetch(`/api/projects/${projectId}`, {

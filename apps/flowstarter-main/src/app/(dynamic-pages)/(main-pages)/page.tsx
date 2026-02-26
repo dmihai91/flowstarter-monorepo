@@ -831,24 +831,24 @@ export default function LandingPage() {
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/5 dark:bg-white/5 backdrop-blur-sm border border-gray-900/10 dark:border-white/10 mb-8">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="text-xs tracking-wide text-gray-600 dark:text-white/60">
-                    Beta: 50% off — only 10 spots
+                    Beta: 10 spots at founding rate
                   </span>
                 </div>
 
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
-                  Focus on your craft.
+                  Your website, built and managed.
                   <br />
                   <span className="bg-gradient-to-r from-[var(--purple)] via-blue-500 to-cyan-400 bg-clip-text text-transparent animate-gradient">
-                    We build the system.
+                    So you can focus on clients.
                   </span>
                 </h1>
 
                 <p className="text-lg lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed max-w-lg mb-3">
-                  A professional website, built for you. No tools to learn. No
-                  tech to manage. Yours to keep.
+                  A professional web presence for freelancers and consultants.
+                  Designed, launched, and maintained for you in 1–2 weeks.
                 </p>
                 <p className="text-sm text-gray-400 dark:text-white/30 mb-10">
-                  For freelancers, founders, and small businesses.
+                  No templates. No DIY. No tech headaches.
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10">
@@ -859,7 +859,7 @@ export default function LandingPage() {
                   >
                     <Button className="relative overflow-hidden bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-8 h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 hover:scale-[1.02] group">
                       <span className="absolute inset-0 animate-shimmer" />
-                      Book Free Discovery Call
+                      Book Your Free Discovery Call
                       <svg
                         className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
                         fill="none"
@@ -892,7 +892,7 @@ export default function LandingPage() {
                       /mo
                     </div>
                     <div className="text-xs text-gray-400 dark:text-white/30 mt-1">
-                      Hosting, email, and AI editing included. First month free.
+                      Beta rate locks for 12 months. First month free.
                     </div>
                   </div>
                 </div>
@@ -900,9 +900,9 @@ export default function LandingPage() {
                 {/* Stats */}
                 <div className="flex items-center justify-center lg:justify-start pt-6 border-t border-gray-200 dark:border-white/10">
                   {[
-                    { value: '1-2', label: 'Weeks' },
-                    { value: '~300', label: 'edits/month' },
-                    { value: '0', label: 'Code' },
+                    { value: '1-2', label: 'Weeks to launch' },
+                    { value: '1', label: 'Call needed' },
+                    { value: '0', label: 'Tech skills required' },
                   ].map((stat, i) => (
                     <div key={i} className="flex items-center">
                       <div className="text-center px-6 sm:px-10 lg:px-12">
@@ -1801,16 +1801,16 @@ export default function LandingPage() {
                   </span>
                 </div>
 
-                <h3 className="text-2xl font-bold mb-1">Starter</h3>
+                <h3 className="text-2xl font-bold mb-1">Beta Pricing</h3>
                 <p className="text-sm text-gray-400 dark:text-white/40 mb-6">
-                  Everything you need to go live
+                  Founding-client rate. Once 10 spots fill, the price doubles.
                 </p>
 
                 {/* Pricing */}
                 <div className="mb-6 pb-6 border-b border-gray-200 dark:border-white/10">
                   <div className="mb-2">
                     <span className="text-sm text-gray-400 dark:text-white/40">
-                      Setup:{' '}
+                      Your Launch:{' '}
                     </span>
                     <span className="text-gray-300 dark:text-white/20 line-through">
                       €599
@@ -1822,7 +1822,7 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <span className="text-sm text-gray-400 dark:text-white/40">
-                      Monthly:{' '}
+                      Ongoing Care:{' '}
                     </span>
                     <span className="text-gray-300 dark:text-white/20 line-through">
                       €59
@@ -1833,23 +1833,24 @@ export default function LandingPage() {
                     </span>
                   </div>
                   <p className="text-xs text-gray-400 dark:text-white/30 mt-2">
-                    Beta pricing valid for 12 months. Then €59/month.
+                    Your rate stays locked for 12 months. First month free.
                   </p>
                 </div>
 
-                {/* Features - Condensed to 5 Categories */}
+                {/* Features - Two Categories */}
                 <div className="space-y-4 mb-8">
-                  {/* Setup & Build */}
+                  {/* Your Launch */}
                   <div>
                     <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">
-                      We Build
+                      Your Launch
                     </p>
                     <ul className="space-y-1.5">
                       {[
-                        'Discovery call to understand your business',
-                        'Up to 7 pages, designed for you',
-                        'Your domain, connected',
-                        'Looks great on every device',
+                        'Discovery call to understand your positioning',
+                        'Up to 7 pages, designed around your goals',
+                        'Domain setup and professional email',
+                        'Mobile-ready, fast-loading, search-optimized',
+                        'Live in 1–2 weeks',
                       ].map((item, i) => (
                         <li
                           key={i}
@@ -1874,18 +1875,17 @@ export default function LandingPage() {
                     </ul>
                   </div>
 
-                  {/* Hosting & Performance */}
+                  {/* Ongoing Care */}
                   <div>
                     <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">
-                      Infrastructure
+                      Ongoing Care
                     </p>
                     <ul className="space-y-1.5">
                       {[
-                        'Fast, global hosting (Cloudflare)',
-                        'Secure connection (SSL)',
-                        'Storage for your images and files',
-                        'Fast-loading site that keeps visitors',
-                        'Google-ready from day one',
+                        'Secure, always-online hosting',
+                        'Content updates when you need them',
+                        'Analytics so you know what\'s working',
+                        'Priority support. Real humans, not tickets.',
                       ].map((item, i) => (
                         <li
                           key={i}
@@ -1910,107 +1910,6 @@ export default function LandingPage() {
                     </ul>
                   </div>
 
-                  {/* Communication & Support */}
-                  <div>
-                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">
-                      Communication
-                    </p>
-                    <ul className="space-y-1.5">
-                      {[
-                        'Professional email with your domain',
-                        'Contact form to capture leads',
-                        'Basic booking system (Calendly)',
-                        'Support when you need help',
-                      ].map((item, i) => (
-                        <li
-                          key={i}
-                          className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60"
-                        >
-                          <svg
-                            className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={2.5}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Analytics & Dashboard */}
-                  <div>
-                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">
-                      Analytics
-                    </p>
-                    <ul className="space-y-1.5">
-                      {[
-                        'Google Analytics connected and configured',
-                        'See who visits and how your site performs',
-                      ].map((item, i) => (
-                        <li
-                          key={i}
-                          className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60"
-                        >
-                          <svg
-                            className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={2.5}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* AI & Customization */}
-                  <div>
-                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">
-                      AI Editing
-                    </p>
-                    <ul className="space-y-1.5">
-                      {[
-                        'Update content, add pages, improve SEO instantly',
-                        'First month free to get comfortable',
-                        'Need more edits? Top up anytime',
-                      ].map((item, i) => (
-                        <li
-                          key={i}
-                          className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60"
-                        >
-                          <svg
-                            className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={2.5}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
                 </div>
 
                 {/* CTA */}
@@ -2021,7 +1920,7 @@ export default function LandingPage() {
                   className="block"
                 >
                   <Button className="w-full bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 hover:scale-[1.02]">
-                    Book Free Discovery Call
+                    Claim Your Beta Spot
                     <svg
                       className="w-4 h-4 ml-2"
                       fill="none"
@@ -2121,8 +2020,32 @@ export default function LandingPage() {
 
               {/* Fine print */}
               <p className="text-center text-sm text-gray-400 dark:text-white/30 mt-6">
-                No lock-in. Cancel anytime. First month free.
+                No contracts. Cancel anytime. First month free.
               </p>
+
+              {/* Who this is NOT for */}
+              <div className="mt-12 p-6 rounded-2xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+                <h4 className="text-sm font-semibold text-gray-700 dark:text-white/70 mb-4">
+                  This isn't for everyone.
+                </h4>
+                <ul className="space-y-2 text-sm text-gray-500 dark:text-white/50">
+                  <li className="flex items-start gap-2">
+                    <span className="text-gray-400 dark:text-white/30">→</span>
+                    If you want to build it yourself: try Framer or Webflow.
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-gray-400 dark:text-white/30">→</span>
+                    If you need e-commerce or complex apps: we're not there yet.
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-gray-400 dark:text-white/30">→</span>
+                    If you're a large team with in-house designers: you don't need us.
+                  </li>
+                </ul>
+                <p className="mt-4 text-sm text-gray-600 dark:text-white/60">
+                  This is for independents who want professional results without the DIY learning curve.
+                </p>
+              </div>
             </div>
           </div>
         </section>

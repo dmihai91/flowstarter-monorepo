@@ -8,9 +8,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { useWizardStore } from '@/store/wizard-store';
 
 const SAMPLE_PROMPTS = [
-  'A minimalist landing page for a SaaS product in the IT industry that...',
-  'Build a website for my local coffee shop in Brooklyn with online ordering...',
-  'A consulting site for a business coach offering 1-on-1 sessions and...',
+  'A minimalist landing page for a SaaS product in the IT industry that helps teams collaborate better. Target audience: tech startups. Style: clean, modern, professional.',
+  'Build a website for my local coffee shop in Brooklyn with online ordering capabilities. Warm and cozy aesthetic, showcasing our artisan coffee and pastries.',
+  'A consulting site for a business coach offering 1-on-1 sessions and group workshops. Professional yet approachable, with booking integration and testimonials.',
 ];
 
 export function QuickModeSection() {

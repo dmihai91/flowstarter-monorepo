@@ -65,6 +65,7 @@ export default function TeamInvitePage() {
       const response = await fetch('/api/team/invite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email: email.trim() }),
       });
 

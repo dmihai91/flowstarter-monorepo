@@ -400,9 +400,13 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                 className="p-5 rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl hover:bg-white/70 dark:hover:bg-white/[0.05] transition-colors"
               >
                 <div className="flex items-start justify-between gap-3 mb-3">
+                  {/* Project Icon */}
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center text-lg font-semibold text-[var(--purple)] shrink-0">
+                    {project.name?.charAt(0)?.toUpperCase() || 'P'}
+                  </div>
                   <div className="min-w-0 flex-1">
                     {/* Status Badge */}
-                    <span className={`inline-block px-2 py-0.5 text-xs font-medium rounded mb-2 ${
+                    <span className={`inline-block px-2 py-0.5 text-xs font-medium rounded mb-1 ${
                       status === 'completed' || status === 'live'
                         ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400'
                         : status === 'in_progress' || status === 'building'

@@ -745,27 +745,20 @@ function NewProjectPageContent() {
   );
 }
 
-// Loading fallback component
-function LoadingFallback() {
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-4 relative">
-      <GradientBackground variant="dashboard" className="fixed" />
-      <div className="relative z-10 flex flex-col items-center gap-4">
-        <div className="w-12 h-12 rounded-2xl bg-[var(--purple)]/10 flex items-center justify-center">
-          <Loader2 className="w-6 h-6 animate-spin text-[var(--purple)]" />
-        </div>
-        <div className="text-center">
-          <p className="text-gray-900 dark:text-white font-medium">Loading...</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // Wrap in Suspense to show loading immediately
 export default function NewProjectPage() {
   return (
-    <Suspense fallback={<LoadingFallback />}>
+    <Suspense fallback={
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 relative">
+        <GradientBackground variant="dashboard" className="fixed" />
+        <div className="relative z-10 flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-[var(--purple)]/10 flex items-center justify-center">
+            <Loader2 className="w-6 h-6 animate-spin text-[var(--purple)]" />
+          </div>
+          <p className="text-gray-900 dark:text-white font-medium">Loading...</p>
+        </div>
+      </div>
+    }>
       <NewProjectPageContent />
     </Suspense>
   );

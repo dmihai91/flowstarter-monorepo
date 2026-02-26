@@ -122,9 +122,16 @@ function NewProjectPageContent() {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(isAIMode); // Start true if AI mode
+  const [isGenerating, setIsGenerating] = useState(true); // Start true, will be set false after generation or if not AI mode
   const [generationStep, setGenerationStep] = useState<string>('classifying');
   const hasTriggeredGeneration = useRef(false);
+  
+  // If not AI mode, immediately set isGenerating to false
+  useEffect(() => {
+    if (!isAIMode) {
+      setIsGenerating(false);
+    }
+  }, [isAIMode]);
   
   // Generation steps for display
   const generationSteps = [
@@ -332,8 +339,8 @@ function NewProjectPageContent() {
     }
   };
 
-  // Show generation screen only while actively generating
-  const showGenerationScreen = isGenerating;
+  // Show generation screen while generating (AI mode starts with isGenerating=true)
+  const showGenerationScreen = isGenerating && isAIMode;
   const showLoading = (isLoading || !userLoaded) && !showGenerationScreen;
   
   // Generation screen - show immediately for AI mode

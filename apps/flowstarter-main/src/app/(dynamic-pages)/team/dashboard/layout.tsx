@@ -3,7 +3,6 @@
 import { TeamHeader } from '../components/TeamHeader';
 import { TeamSidebar } from '../components/TeamSidebar';
 import { GradientBackground } from '@/components/ui/gradient-background';
-import FooterCompact from '@/components/FooterCompact';
 import { usePathname } from 'next/navigation';
 
 // Pages that should NOT show sidebar (full-width layouts)
@@ -38,8 +37,6 @@ export default function TeamDashboardLayout({
           {children}
         </main>
       </div>
-      
-      <FooterCompact />
     </div>
   );
 }

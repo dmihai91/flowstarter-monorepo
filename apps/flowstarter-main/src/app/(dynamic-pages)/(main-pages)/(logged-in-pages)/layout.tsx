@@ -1,6 +1,5 @@
 'use client';
 
-import FooterCompact from '@/components/FooterCompact';
 import { GradientBackground } from '@/components/ui/gradient-background';
 import { Sidebar } from '@/components/ui/sidebar';
 import { SidebarProvider, useSidebar } from '@/contexts/SidebarContext';
@@ -13,9 +12,6 @@ function LayoutContent({ children }: { children: ReactNode }) {
 
   const hidesSidebar =
     pathname?.startsWith('/dashboard/new') || pathname?.startsWith('/wizard');
-
-  // Hide footer on all /dashboard/new pages and wizard (full-screen experiences)
-  const hidesFooter = hidesSidebar;
 
   const { isCollapsed } = useSidebar();
 
@@ -42,16 +38,6 @@ function LayoutContent({ children }: { children: ReactNode }) {
       >
         {children}
       </main>
-      
-      {!hidesFooter && (
-        <div
-          className={`relative z-10 ${
-            isCollapsed ? 'md:ml-[68px]' : 'md:ml-64'
-          }`}
-        >
-          <FooterCompact />
-        </div>
-      )}
     </div>
   );
 }

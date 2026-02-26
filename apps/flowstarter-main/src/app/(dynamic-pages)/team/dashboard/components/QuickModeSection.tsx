@@ -156,13 +156,13 @@ export function QuickModeSection() {
 
       {/* Input container - glassmorphism style */}
       <div 
-        className={`relative rounded-2xl border transition-all duration-200 ${
+        className={`relative rounded-2xl border backdrop-blur-xl transition-all duration-200 ${
           isFocused 
-            ? 'border-[var(--purple)] shadow-[0_0_0_3px_rgba(var(--purple-rgb),0.15)]' 
-            : 'border-black/[0.08] dark:border-white/[0.08] shadow-[0_2px_4px_rgba(0,0,0,0.02),0_1px_0_rgba(255,255,255,0.6)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_1px_0_rgba(255,255,255,0.03)_inset]'
+            ? 'border-[var(--purple)]/50 bg-white/90 dark:bg-white/[0.08] shadow-[0_0_0_3px_rgba(var(--purple-rgb),0.1),0_4px_12px_rgba(0,0,0,0.05),0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[0_0_0_3px_rgba(var(--purple-rgb),0.2),0_4px_12px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.1)_inset]' 
+            : 'border-black/[0.08] dark:border-white/[0.08] bg-white/70 dark:bg-white/[0.04] shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.02)_inset] dark:shadow-[0_2px_8px_rgba(0,0,0,0.15),0_1px_0_rgba(255,255,255,0.06)_inset,0_-1px_0_rgba(0,0,0,0.1)_inset]'
         }`}
       >
-        <div className="rounded-2xl bg-white dark:bg-[#1f1f24]">
+        <div className="rounded-2xl">
           {/* Textarea */}
           <textarea
             ref={textareaRef}
@@ -173,8 +173,8 @@ export function QuickModeSection() {
             onBlur={() => setIsFocused(false)}
             placeholder={`Describe your project, ${firstName}...`}
             rows={3}
-            className="w-full px-4 pt-4 pb-2 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 text-[15px] leading-relaxed resize-none focus:outline-none"
-            style={{ minHeight: '80px', maxHeight: '150px' }}
+            className="w-full px-4 pt-4 pb-2 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/50 text-[15px] leading-relaxed resize-none focus:outline-none"
+            style={{ minHeight: '88px', maxHeight: '150px' }}
           />
           
           {/* Bottom bar */}

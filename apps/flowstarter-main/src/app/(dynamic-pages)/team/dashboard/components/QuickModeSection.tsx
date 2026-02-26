@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useWizardStore } from '@/store/wizard-store';
+import { useUser } from '@clerk/nextjs';
 
 const SAMPLE_PROMPTS = [
   'A minimalist landing page for a SaaS product in the IT industry that helps teams collaborate better. Target audience: tech startups. Style: clean, modern, professional.',
@@ -15,11 +16,14 @@ const SAMPLE_PROMPTS = [
 
 export function QuickModeSection() {
   const router = useRouter();
+  const { user } = useUser();
   const [input, setInput] = useState('');
   const [isClassifying, setIsClassifying] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const setPrefillData = useWizardStore((state) => state.setPrefillData);
   const setSelectedIndustry = useWizardStore((state) => state.setSelectedIndustry);
+  
+  const firstName = user?.firstName || 'there';
 
   const handleSubmit = async () => {
     if (!input.trim()) return;
@@ -106,7 +110,7 @@ export function QuickModeSection() {
 
       {/* Description */}
       <p className="text-sm text-gray-600 dark:text-white/60 mb-4">
-        Hi! Let&apos;s build the best site for your client. Tell us about the project and our AI will guide you to build it. Be specific and offer all details about the: industry, audience, goals, visual style.
+        Hi {firstName}! Describe your client&apos;s project and our AI will help you build it.
       </p>
 
       {/* Sample Prompts */}

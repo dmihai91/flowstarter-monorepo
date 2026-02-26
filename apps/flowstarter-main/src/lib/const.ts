@@ -33,7 +33,7 @@ export const PLATFORM_CONFIG = {
   },
 
   // Layout constants
-  PAGE_MAX_WIDTH: '1600px',
+  PAGE_MAX_WIDTH: '1200px',
 } as const;
 
 // Dropdown Options for Customization Details

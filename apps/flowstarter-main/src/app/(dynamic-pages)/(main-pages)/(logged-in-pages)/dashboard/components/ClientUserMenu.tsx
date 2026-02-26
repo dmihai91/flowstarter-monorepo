@@ -2,6 +2,16 @@
 
 import { Button } from '@/components/ui/button';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -17,6 +27,7 @@ import { useEffect, useState } from 'react';
 
 export function ClientUserMenu() {
   const [mounted, setMounted] = useState(false);
+  const [showSignOutDialog, setShowSignOutDialog] = useState(false);
   const { signOut } = useClerk();
   const { user } = useUser();
   const router = useRouter();
@@ -50,6 +61,7 @@ export function ClientUserMenu() {
   };
 
   return (
+    <>
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
@@ -120,7 +132,7 @@ export function ClientUserMenu() {
         <DropdownMenuSeparator className="bg-gray-200 dark:bg-white/10" />
 
         <DropdownMenuItem
-          onClick={handleSignOut}
+          onClick={() => setShowSignOutDialog(true)}
           className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 focus:bg-red-50 dark:focus:bg-red-900/20"
         >
           <LogOut className="h-4 w-4" />
@@ -128,5 +140,29 @@ export function ClientUserMenu() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+
+    {/* Sign out confirmation dialog */}
+    <AlertDialog open={showSignOutDialog} onOpenChange={setShowSignOutDialog}>
+      <AlertDialogContent className="bg-white dark:bg-[#1a1a1f] border-gray-200 dark:border-white/10">
+        <AlertDialogHeader>
+          <AlertDialogTitle>Sign out?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to sign out of your account?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel className="border-gray-200 dark:border-white/10">
+            Cancel
+          </AlertDialogCancel>
+          <AlertDialogAction
+            onClick={handleSignOut}
+            className="bg-red-600 hover:bg-red-700 text-white"
+          >
+            Sign out
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }

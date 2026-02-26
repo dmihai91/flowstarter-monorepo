@@ -156,13 +156,13 @@ export function QuickModeSection() {
 
       {/* Input container - glassmorphism style */}
       <div 
-        className={`relative rounded-xl transition-all duration-200 ${
+        className={`relative rounded-2xl border transition-all duration-200 ${
           isFocused 
-            ? 'shadow-[0_0_0_2px_var(--purple),0_2px_8px_rgba(0,0,0,0.06)]' 
-            : 'shadow-[0_2px_4px_rgba(0,0,0,0.02),0_1px_0_rgba(255,255,255,0.6)_inset,0_0_0_1px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_1px_0_rgba(255,255,255,0.03)_inset,0_0_0_1px_rgba(255,255,255,0.08)]'
+            ? 'border-[var(--purple)] shadow-[0_0_0_3px_rgba(var(--purple-rgb),0.15)]' 
+            : 'border-black/[0.08] dark:border-white/[0.08] shadow-[0_2px_4px_rgba(0,0,0,0.02),0_1px_0_rgba(255,255,255,0.6)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_1px_0_rgba(255,255,255,0.03)_inset]'
         }`}
       >
-        <div className="rounded-xl bg-white dark:bg-[#1f1f24] overflow-hidden">
+        <div className="rounded-2xl bg-white dark:bg-[#1f1f24]">
           {/* Textarea */}
           <textarea
             ref={textareaRef}

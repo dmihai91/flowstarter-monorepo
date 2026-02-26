@@ -153,13 +153,14 @@ export function TeamSidebar() {
 
   return (
     <>
-      {/* Mobile menu button */}
+      {/* Mobile menu button - shows on tablet and mobile */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed bottom-4 left-4 z-50 p-3 rounded-full bg-[var(--purple)] text-white shadow-lg shadow-[var(--purple)]/25 hover:bg-[var(--purple)]/90 transition-colors"
+        className="lg:hidden fixed bottom-6 left-6 z-[200] p-4 rounded-2xl bg-[var(--purple)] text-white shadow-xl shadow-[var(--purple)]/30 hover:bg-[var(--purple)]/90 active:scale-95 transition-all"
         aria-label="Open menu"
+        style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
       >
-        <Menu className="w-5 h-5" />
+        <Menu className="w-6 h-6" />
       </button>
 
       {/* Mobile overlay */}

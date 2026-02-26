@@ -19,49 +19,32 @@ export function Logo({ size = 'md', showText = true, className }: LogoProps) {
   return (
     <div className={cn('flex items-center gap-3', className)}>
       <div className={cn(sizes[size], 'relative flex-shrink-0')}>
-        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
           <defs>
-            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style={{ stopColor: '#A855F7' }} />
-              <stop offset="50%" style={{ stopColor: '#8B5CF6' }} />
-              <stop offset="100%" style={{ stopColor: '#3B82F6' }} />
+            <linearGradient id="logoGrad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#8B5CF6" />
+              <stop offset="1" stopColor="#3B82F6" />
             </linearGradient>
           </defs>
           
-          {/* Background rounded square */}
-          <rect x="15" y="15" width="170" height="170" rx="42" fill="url(#logoGradient)" />
+          {/* Rounded square background */}
+          <rect width="40" height="40" rx="10" fill="url(#logoGrad)" />
           
-          {/* Abstract flow symbol - rising energy */}
-          <g transform="translate(100, 100)">
-            {/* Central rising flow */}
-            <path 
-              d="M0 45 Q-25 20, 0 -10 Q25 -40, 0 -55" 
-              stroke="white" 
-              strokeWidth="18" 
-              strokeLinecap="round"
-              fill="none"
-            />
-            
-            {/* Left accent flow */}
-            <path 
-              d="M-30 35 Q-40 10, -25 -15" 
-              stroke="white" 
-              strokeWidth="10" 
-              strokeLinecap="round"
-              fill="none"
-              opacity="0.6"
-            />
-            
-            {/* Right accent flow */}
-            <path 
-              d="M30 35 Q40 10, 25 -15" 
-              stroke="white" 
-              strokeWidth="10" 
-              strokeLinecap="round"
-              fill="none"
-              opacity="0.6"
-            />
-          </g>
+          {/* Clean "F" with flow curve */}
+          <path 
+            d="M12 10h16v4H16v5h10v4H16v9h-4V10z" 
+            fill="white"
+          />
+          
+          {/* Subtle flow accent - single smooth curve */}
+          <path 
+            d="M28 24c0 4-3 7-7 7" 
+            stroke="white" 
+            strokeWidth="2.5" 
+            strokeLinecap="round"
+            fill="none"
+            opacity="0.6"
+          />
         </svg>
       </div>
       

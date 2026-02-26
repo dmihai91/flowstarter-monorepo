@@ -1760,15 +1760,15 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Why not Wix? */}
+        {/* Why not DIY? */}
         <section className="py-8 lg:py-10">
           <div className="max-w-2xl mx-auto px-6 lg:px-12 text-center">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              Why not just use Wix?
+              Why not build it yourself?
             </h3>
             <p className="text-gray-500 dark:text-white/50 leading-relaxed mb-4">
-              You could. But you'd spend weeks learning the tool, choosing fonts, 
-              fighting layouts, and still end up with something that looks... templated.
+              You could. But you'd spend weeks learning tools, choosing fonts, 
+              fighting layouts, and still end up second-guessing every decision.
             </p>
             <p className="text-gray-500 dark:text-white/50 leading-relaxed mb-4">
               We take that off your plate entirely. You get a site that reflects 

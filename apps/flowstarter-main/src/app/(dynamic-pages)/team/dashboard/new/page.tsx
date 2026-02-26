@@ -1,7 +1,9 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { GradientBackground } from '@/components/ui/gradient-background';
 import { Input } from '@/components/ui/input';
+import { TeamHeader } from '../../components/TeamHeader';
 import { Label } from '@/components/ui/label';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
@@ -260,8 +262,8 @@ export default function NewProjectPage() {
   
   if (showLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 relative bg-[#FAFAFA] dark:bg-[#0a0a0c]">
-        <div className="fixed inset-0 bg-[#FAFAFA] dark:bg-[#0a0a0c] -z-10" />
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 relative">
+        <GradientBackground variant="dashboard" className="fixed" />
         <div className="relative z-10 flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-[var(--purple)]/10 flex items-center justify-center">
             <Loader2 className="w-6 h-6 animate-spin text-[var(--purple)]" />
@@ -294,29 +296,33 @@ export default function NewProjectPage() {
         .font-display { font-family: 'Outfit', system-ui, sans-serif; }
       `}</style>
       
-      {/* Clean dashboard background */}
-      <div className="fixed inset-0 -z-10 bg-[#FAFAFA] dark:bg-[#0a0a0c]" />
+      {/* Dashboard gradient background with flow lines */}
+      <GradientBackground variant="dashboard" className="fixed" />
 
       <div className="min-h-screen font-display relative">
-        {/* Header */}
-        <header className="fixed top-0 left-0 right-0 z-[100] bg-white/80 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">
-          <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link 
-                href="/team/dashboard"
-                className="flex items-center gap-2 text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Back
-              </Link>
-            </div>
+        {/* Same header as dashboard */}
+        <TeamHeader />
+        
+        {/* Spacer for fixed header */}
+        <div className="h-16" />
+        
+        {/* Progress bar below header */}
+        <div className="sticky top-16 z-50 bg-white/80 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">
+          <div className="max-w-2xl mx-auto px-6 py-3 flex items-center justify-between">
+            <Link 
+              href="/team/dashboard"
+              className="flex items-center gap-2 text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back
+            </Link>
             
             {/* Progress */}
             <div className="flex items-center gap-2">
               {[1, 2, 3, 4].map((s) => (
                 <div
                   key={s}
-                  className={`w-8 h-1 rounded-full transition-colors ${
+                  className={`w-8 h-1.5 rounded-full transition-colors ${
                     s <= step ? 'bg-[var(--purple)]' : 'bg-gray-200 dark:bg-white/10'
                   }`}
                 />
@@ -327,10 +333,7 @@ export default function NewProjectPage() {
               Step {step} of 4
             </div>
           </div>
-        </header>
-        
-        {/* Spacer for fixed header */}
-        <div className="h-16" />
+        </div>
 
         {/* Main content */}
         <main className="max-w-2xl mx-auto px-6 py-12">

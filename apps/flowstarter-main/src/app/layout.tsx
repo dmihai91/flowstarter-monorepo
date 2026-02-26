@@ -4,7 +4,6 @@ import '@/lib/storage-polyfill';
 import { DatabaseOfflineHandler } from '@/components/DatabaseOfflineHandler';
 import { ErrorBoundaryWrapper } from '@/components/ErrorBoundary';
 import { GoogleAnalytics } from '@/components/GoogleAnalytics';
-import { GradientBackground } from '@/components/ui/gradient-background';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { I18nProvider } from '@/lib/i18n';
 import { getServerT } from '@/lib/i18n-server';
@@ -93,9 +92,6 @@ export default async function RootLayout({
         style={{ fontFamily: 'var(--font-inter)' }}
         suppressHydrationWarning
       >
-        {/* Global gradient background with subtle lines */}
-        <GradientBackground variant="dashboard" className="fixed" />
-        
         <GoogleAnalytics
           measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || ''}
         />

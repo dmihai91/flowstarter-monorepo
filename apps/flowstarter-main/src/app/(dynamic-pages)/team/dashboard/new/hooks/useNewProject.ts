@@ -45,7 +45,6 @@ export function useNewProject() {
   const [isGenerating, setIsGenerating] = useState(true);
   const [generationStep, setGenerationStep] = useState<string>('classifying');
   const hasTriggeredGeneration = useRef(false);
-  const hasProcessedSuggestions = useRef(false);
 
   // Regeneration state
   const [regenField, setRegenField] = useState<string | null>(null);
@@ -164,14 +163,79 @@ export function useNewProject() {
     nameCheckTimeout.current = setTimeout(() => checkNameAvailability(value), 500);
   }, [updateField, checkNameAvailability]);
 
+  // Process AI suggestions helper
+  const processAISuggestions = useCallback(async (suggestions: any, draftProjectId: string | null) => {
+    const description = prefillData?.description || teamWizardData?.description || '';
+    
+    // Process name to ensure uniqueness
+    const processName = async (name: string): Promise<string> => {
+      const res = await fetch(`/api/projects/check-name?name=${encodeURIComponent(name)}&excludeId=${draftProjectId || ''}`);
+      const data = await res.json();
+      if (!data.exists) return name;
+
+      for (let i = 2; i <= 20; i++) {
+        const newName = `${name} ${i}`;
+        const checkRes = await fetch(`/api/projects/check-name?name=${encodeURIComponent(newName)}&excludeId=${draftProjectId || ''}`);
+        const checkData = await checkRes.json();
+        if (!checkData.exists) return newName;
+      }
+      return `${name} ${Date.now()}`;
+    };
+
+    const finalName = await processName(suggestions?.names?.[0] || 'New Project');
+    const finalDescription = suggestions?.description || description;
+    const finalTargetAudience = suggestions?.targetUsers || '';
+    const finalUVP = suggestions?.USP || '';
+
+    setProjectData((prev) => ({
+      ...prev,
+      businessName: finalName,
+      description: finalDescription,
+      industry: detectIndustry(description) || prev.industry,
+      targetAudience: finalTargetAudience,
+      uvp: finalUVP,
+    }));
+
+    // Save draft
+    if (draftProjectId) {
+      const chatData = buildChatData({
+        clientName: '',
+        clientEmail: '',
+        clientPhone: '',
+        businessName: finalName,
+        description: finalDescription,
+        industry: detectIndustry(description) || '',
+        targetAudience: finalTargetAudience,
+        uvp: finalUVP,
+        goal: '',
+        offerType: '',
+        brandTone: '',
+        businessEmail: '',
+        businessPhone: '',
+        businessAddress: '',
+        website: '',
+      }, true);
+
+      await fetch(`/api/projects/${draftProjectId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: finalName,
+          description: finalDescription,
+          chat: JSON.stringify(chatData),
+        }),
+      });
+    }
+  }, [prefillData, teamWizardData]);
+
   // AI Generation
   const triggerAIGeneration = useCallback(async () => {
     if (hasTriggeredGeneration.current) return;
     hasTriggeredGeneration.current = true;
-    hasProcessedSuggestions.current = false; // Reset for new generation
 
     const description = prefillData?.description || teamWizardData?.description;
     if (!description) {
+      console.log('[AI Generation] No description found, skipping');
       setIsGenerating(false);
       setIsLoading(false);
       return;
@@ -180,6 +244,8 @@ export function useNewProject() {
     try {
       // Create draft project
       setGenerationStep('classifying');
+      console.log('[AI Generation] Creating draft project...');
+      
       const draftRes = await fetch('/api/team/projects/draft', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -189,10 +255,13 @@ export function useNewProject() {
       if (!draftRes.ok) throw new Error('Failed to create draft');
       const { projectId: newId } = await draftRes.json();
       setProjectId(newId);
+      console.log('[AI Generation] Draft created:', newId);
 
       // Generate AI content
       setGenerationStep('generating');
-      await aiHook.generateSuggestions({
+      console.log('[AI Generation] Generating suggestions...');
+      
+      const suggestions = await aiHook.generateSuggestions({
         businessType: prefillData?.platformType || 'business',
         industry: prefillData?.industry || 'general',
         targetAudience: '',
@@ -202,13 +271,33 @@ export function useNewProject() {
         domain: prefillData?.industry || 'general',
         goal: [],
       });
+
+      console.log('[AI Generation] Suggestions received:', suggestions);
+
+      // Process suggestions immediately
+      setGenerationStep('finalizing');
+      
+      if (suggestions) {
+        await processAISuggestions(suggestions, newId);
+      } else {
+        // Fallback: use description as-is
+        console.log('[AI Generation] No suggestions, using description as-is');
+        setProjectData((prev) => ({
+          ...prev,
+          description: description,
+          industry: detectIndustry(description) || prev.industry,
+        }));
+      }
+
+      setIsGenerating(false);
+      setIsLoading(false);
     } catch (error) {
-      console.error('Generation error:', error);
+      console.error('[AI Generation] Error:', error);
       toast.error('Failed to generate project');
       setIsGenerating(false);
       setIsLoading(false);
     }
-  }, [prefillData, teamWizardData, aiHook]);
+  }, [prefillData, teamWizardData, aiHook, processAISuggestions]);
 
   // Start generation on mount (AI mode only)
   useEffect(() => {
@@ -218,74 +307,6 @@ export function useNewProject() {
       setIsLoading(false);
     }
   }, [isAIMode, triggerAIGeneration]);
-
-  // Process AI suggestions when ready
-  useEffect(() => {
-    const { suggestions } = aiHook;
-    
-    // Only process if we have suggestions with actual content and haven't processed yet
-    const hasContent = suggestions?.names?.length > 0 || suggestions?.description;
-    if (!hasContent || hasProcessedSuggestions.current) return;
-    
-    // Mark as processed
-    hasProcessedSuggestions.current = true;
-    setGenerationStep('finalizing');
-
-    const processName = async (name: string): Promise<string> => {
-      const res = await fetch(`/api/projects/check-name?name=${encodeURIComponent(name)}&excludeId=${projectId || ''}`);
-      const data = await res.json();
-      if (!data.exists) return name;
-
-      // Find available name with number suffix
-      for (let i = 2; i <= 20; i++) {
-        const newName = `${name} ${i}`;
-        const checkRes = await fetch(`/api/projects/check-name?name=${encodeURIComponent(newName)}&excludeId=${projectId || ''}`);
-        const checkData = await checkRes.json();
-        if (!checkData.exists) return newName;
-      }
-      return `${name} ${Date.now()}`;
-    };
-
-    const finalize = async () => {
-      const description = prefillData?.description || teamWizardData?.description || '';
-      const finalName = await processName(suggestions.names?.[0] || 'New Project');
-
-      setProjectData((prev) => ({
-        ...prev,
-        businessName: finalName,
-        description: suggestions.description || description,
-        industry: detectIndustry(description) || prev.industry,
-        targetAudience: suggestions.targetUsers || prev.targetAudience,
-        uvp: suggestions.USP || prev.uvp,
-      }));
-
-      // Save draft
-      if (projectId) {
-        const chatData = buildChatData({
-          ...projectData,
-          businessName: finalName,
-          description: suggestions.description || description,
-          targetAudience: suggestions.targetUsers || '',
-          uvp: suggestions.USP || '',
-        }, true);
-
-        await fetch(`/api/projects/${projectId}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: finalName,
-            description: suggestions.description || description,
-            chat: JSON.stringify(chatData),
-          }),
-        });
-      }
-
-      setIsGenerating(false);
-      setIsLoading(false);
-    };
-
-    finalize();
-  }, [aiHook.suggestions, projectId, prefillData, teamWizardData]);
 
   // Regeneration handler
   const handleRegenerate = useCallback(async (field: string, customPrompt?: string) => {

@@ -191,40 +191,35 @@ function NewProjectPageContent() {
         setGenerationStep('finalizing');
         await new Promise(r => setTimeout(r, 300));
         
-        if (result) {
-          // Apply AI-generated data to form
+        console.log('[TeamWizard] AI generation result:', result);
+        
+        // Apply AI-generated data to form (use whatever we got, fall back to user input)
+        const generatedName = Array.isArray(result?.names) && result.names.length > 0 
+          ? result.names[Math.floor(Math.random() * result.names.length)] 
+          : '';
+        
         setProjectData(prev => ({
           ...prev,
-          // AI Generated fields:
-          businessName: Array.isArray(result.names) && result.names.length > 0 
-            ? result.names[Math.floor(Math.random() * result.names.length)] 
-            : prev.businessName,
-          description: result.description || userDescription,
-          targetAudience: result.targetUsers || '',
-          uvp: result.USP || '',
+          businessName: generatedName || prev.businessName,
+          description: result?.description || userDescription,
+          targetAudience: result?.targetUsers || '',
+          uvp: result?.USP || '',
           industry: selectedIndustry || prefillData.industry || '',
-          // Brand tone from AI if available
-          brandTone: (result.brandTone?.toLowerCase() as BrandTone) || '',
+          brandTone: (result?.brandTone?.toLowerCase() as BrandTone) || '',
         }));
         
-        // Skip to step 2 (business details) - AI generated, user can review
+        // Skip to step 2 (business details) - user can review
         setStep(2);
         
-        toast.success('AI generated business details', {
-          description: 'Review the generated info, then set client info & preferences',
-        });
-      } else {
-        // AI returned no result - use the description as fallback
-        setProjectData(prev => ({
-          ...prev,
-          description: userDescription,
-          industry: selectedIndustry || prefillData.industry || '',
-        }));
-        setStep(2);
-        toast.info('Using your description', {
-          description: 'AI generation unavailable, please fill in the details',
-        });
-      }
+        if (result && (generatedName || result.description !== userDescription)) {
+          toast.success('AI generated business details', {
+            description: 'Review and edit the generated info',
+          });
+        } else {
+          toast.info('Using your description', {
+            description: 'Fill in the remaining details',
+          });
+        }
       setIsGenerating(false);
       setPrefillData(null);
       }).catch((error) => {

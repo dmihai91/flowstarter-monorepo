@@ -91,6 +91,11 @@ export default function TeamDashboardPage() {
           </div>
         </div>
 
+        {/* Quick Mode Section */}
+        <div className="mb-8">
+          <QuickModeSection />
+        </div>
+
         {/* Stats Section */}
         <div className="mb-8">
           {projectsLoading ? (
@@ -114,11 +119,6 @@ export default function TeamDashboardPage() {
           ) : (
             <TeamProjectsList projects={projects || []} />
           )}
-        </div>
-
-        {/* Quick Mode Section */}
-        <div className="mb-8">
-          <QuickModeSection />
         </div>
       </PageContainer>
 

@@ -95,7 +95,7 @@ export function QuickModeSection() {
   };
 
   return (
-    <div className="p-5 rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl">
+    <div className="p-5 rounded-2xl border border-white/30 dark:border-white/[0.08] bg-white/70 dark:bg-white/[0.02] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]">
       {/* Header */}
       <div className="flex items-center gap-2 mb-4">
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">

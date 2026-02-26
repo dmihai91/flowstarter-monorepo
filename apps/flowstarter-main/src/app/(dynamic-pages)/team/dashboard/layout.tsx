@@ -25,10 +25,12 @@ export default function TeamDashboardLayout({
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50/50 dark:bg-[#0a0a0c]">
+    <div className="min-h-screen flex flex-col">
+      {/* Gradient background - behind everything */}
+      <GradientBackground variant="dashboard" className="fixed inset-0 z-0" />
+      
       <TeamHeader />
       <div className="h-16" />
-      <GradientBackground variant="dashboard" className="fixed" />
       
       <div className="flex-1 flex relative z-10">
         <TeamSidebar />

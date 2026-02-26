@@ -25,8 +25,8 @@ export default function SSOCallbackPage() {
       {/* Clerk's SSO callback handler (hidden behind loader) */}
       <div className="sr-only">
         <AuthenticateWithRedirectCallback
-          signInForceRedirectUrl="/dashboard"
-          signUpForceRedirectUrl="/dashboard"
+          signInForceRedirectUrl="/team/dashboard"
+          signUpForceRedirectUrl="/team/dashboard"
         />
       </div>
     </>

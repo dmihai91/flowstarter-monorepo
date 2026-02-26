@@ -22,7 +22,7 @@ export function AuthRedirectWrapper({ children }: AuthRedirectWrapperProps) {
       setShowLoading(true);
       // Add a small delay to ensure loading state is visible and smooth transition
       const redirectTimer = setTimeout(() => {
-        router.push('/dashboard');
+        router.push('/team/dashboard');
       }, 150);
 
       return () => clearTimeout(redirectTimer);

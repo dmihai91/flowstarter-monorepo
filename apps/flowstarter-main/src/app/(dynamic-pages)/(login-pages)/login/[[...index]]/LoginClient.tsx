@@ -85,7 +85,7 @@ export function LoginClient() {
 
   useEffect(() => {
     // Prefetch dashboard to avoid blank frame on redirect after sign-in
-    router.prefetch('/dashboard');
+    router.prefetch('/team/dashboard');
   }, [router]);
 
   return (

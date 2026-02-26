@@ -40,10 +40,9 @@ export default function TeamDashboardPage() {
       const isTeam = role === 'team' || role === 'admin';
       
       if (!user) {
-        router.push('/team/login');
-      } else if (!isTeam) {
-        router.push('/dashboard');
+        router.push('/login');
       } else {
+        // All logged-in users can access team dashboard now (concierge pivot)
         setIsAdmin(role === 'admin');
         setIsLoading(false);
       }

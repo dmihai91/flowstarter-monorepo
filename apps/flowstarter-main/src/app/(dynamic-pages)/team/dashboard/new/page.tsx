@@ -260,8 +260,24 @@ export default function NewProjectPage() {
   
   if (showLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c] gap-4 relative">
-        <div className="absolute inset-0 bg-[#FAFAFA] dark:bg-[#0a0a0c]" />
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 relative">
+        {/* Same gradient background */}
+        <div className="pointer-events-none fixed inset-0 -z-10 bg-white dark:bg-[hsl(240,8%,17%)]">
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `radial-gradient(ellipse 120% 70% at 0% 0%, var(--wizard-gradient-left) 0%, color-mix(in srgb, var(--wizard-gradient-left) 70%, transparent) 28%, transparent 85%)`,
+              filter: 'blur(70px)',
+            }}
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `radial-gradient(ellipse 100% 65% at 100% 0%, var(--wizard-gradient-right) 0%, color-mix(in srgb, var(--wizard-gradient-right) 70%, transparent) 28%, transparent 85%)`,
+              filter: 'blur(70px)',
+            }}
+          />
+        </div>
         <div className="relative z-10 flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-[var(--purple)]/10 flex items-center justify-center">
             <Loader2 className="w-6 h-6 animate-spin text-[var(--purple)]" />
@@ -294,12 +310,38 @@ export default function NewProjectPage() {
         .font-display { font-family: 'Outfit', system-ui, sans-serif; }
       `}</style>
       
-      <div className="min-h-screen font-display relative bg-[#FAFAFA] dark:bg-[#0a0a0c]">
-        {/* Clean solid background */}
-        <div className="fixed inset-0 bg-[#FAFAFA] dark:bg-[#0a0a0c] -z-10" />
-        
+      {/* Wizard Gradient Background - matching old wizard style */}
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-white dark:bg-[hsl(240,8%,17%)]">
+        {/* Left ellipse - Pink */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `radial-gradient(ellipse 120% 70% at 0% 0%, var(--wizard-gradient-left) 0%, color-mix(in srgb, var(--wizard-gradient-left) 92%, transparent) 8%, color-mix(in srgb, var(--wizard-gradient-left) 70%, transparent) 28%, color-mix(in srgb, var(--wizard-gradient-left) 40%, transparent) 50%, transparent 85%)`,
+            filter: 'blur(70px)',
+          }}
+        />
+        {/* Right ellipse - Purple */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `radial-gradient(ellipse 100% 65% at 100% 0%, var(--wizard-gradient-right) 0%, color-mix(in srgb, var(--wizard-gradient-right) 92%, transparent) 8%, color-mix(in srgb, var(--wizard-gradient-right) 70%, transparent) 28%, color-mix(in srgb, var(--wizard-gradient-right) 40%, transparent) 50%, transparent 85%)`,
+            filter: 'blur(70px)',
+          }}
+        />
+        {/* Noise texture */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.025] dark:opacity-[0.06]"
+          style={{
+            backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E\")",
+            backgroundSize: '150px 150px',
+            mixBlendMode: 'overlay',
+          }}
+        />
+      </div>
+
+      <div className="min-h-screen font-display relative">
         {/* Header */}
-        <header className="fixed top-0 left-0 right-0 z-[100] bg-white/80 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">
+        <header className="fixed top-0 left-0 right-0 z-[100] bg-white/80 dark:bg-[hsl(240,8%,17%)]/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">
           <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link 

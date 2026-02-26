@@ -1774,8 +1774,12 @@ export default function LandingPage() {
               We take that off your plate entirely. You get a site that reflects 
               your positioning, not your patience for drag-and-drop.
             </p>
+            <p className="text-gray-500 dark:text-white/50 leading-relaxed mb-4">
+              And when you want to make changes? Our AI editor lets you update 
+              anything in seconds. Just describe what you want. No code. No complexity.
+            </p>
             <p className="text-gray-700 dark:text-white/70 font-medium">
-              One call. One process. Done.
+              One call. One process. Full control.
             </p>
           </div>
         </section>
@@ -1888,14 +1892,14 @@ export default function LandingPage() {
                       Ongoing Care (€29/month)
                     </p>
                     <p className="text-xs text-gray-500 dark:text-white/40 mb-3">
-                      Your site stays fast, secure, and up to date. Need a change? We handle it. No logins. No tickets. Just ask.
+                      Your site stays fast, secure, and up to date. Plus, you get full access to our AI editor to make changes yourself, anytime.
                     </p>
                     <ul className="space-y-1.5">
                       {[
+                        'AI editor: update text, images, pages instantly',
                         'Secure, always-online hosting',
-                        'Content updates when you need them',
                         'Analytics so you know what\'s working',
-                        'Priority support. Real humans, not tickets.',
+                        'Priority support when you need a hand',
                       ].map((item, i) => (
                         <li
                           key={i}

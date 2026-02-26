@@ -114,7 +114,15 @@ function NewProjectPageContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isGenerating, setIsGenerating] = useState(isAIMode); // Start true if AI mode
+  const [generationStep, setGenerationStep] = useState<string>('classifying');
   const hasTriggeredGeneration = useRef(false);
+  
+  // Generation steps for display
+  const generationSteps = [
+    { id: 'classifying', label: 'Analyzing your description...' },
+    { id: 'generating', label: 'Generating business details...' },
+    { id: 'finalizing', label: 'Preparing your project...' },
+  ];
   
   const [projectData, setProjectData] = useState<ProjectData>({
     clientName: '',
@@ -153,7 +161,7 @@ function NewProjectPageContent() {
   useEffect(() => {
     if (hasTriggeredGeneration.current || !prefillData || isLoading) return;
     
-    const isAIGenerated = searchParams.get('mode') === 'ai-generated';
+    const isAIGenerated = searchParams?.get('mode') === 'ai-generated';
     if (!isAIGenerated) return;
     
     const userDescription = prefillData.description || prefillData.userDescription || '';
@@ -161,9 +169,16 @@ function NewProjectPageContent() {
     
     hasTriggeredGeneration.current = true;
     setIsGenerating(true);
+    setGenerationStep('classifying');
     
-    // Call the SAME AI generation as old wizard
-    generateSuggestions({
+    // Run async generation
+    const runGeneration = async () => {
+      // Small delay to show first step
+      await new Promise(r => setTimeout(r, 500));
+      setGenerationStep('generating');
+      
+      // Call the SAME AI generation as old wizard
+      generateSuggestions({
       businessType: prefillData.platformType || 'business',
       industry: selectedIndustry || prefillData.industry || 'general',
       targetAudience: '',
@@ -172,9 +187,12 @@ function NewProjectPageContent() {
       goals: '',
       domain: selectedIndustry || prefillData.industry || 'general',
       goal: [],
-    }).then((result) => {
-      if (result) {
-        // Apply AI-generated data to form
+      }).then(async (result) => {
+        setGenerationStep('finalizing');
+        await new Promise(r => setTimeout(r, 300));
+        
+        if (result) {
+          // Apply AI-generated data to form
         setProjectData(prev => ({
           ...prev,
           // AI Generated fields:
@@ -209,21 +227,24 @@ function NewProjectPageContent() {
       }
       setIsGenerating(false);
       setPrefillData(null);
-    }).catch((error) => {
-      console.error('AI generation failed:', error);
-      // Fallback - use the description directly
-      setProjectData(prev => ({
-        ...prev,
-        description: userDescription,
-        industry: selectedIndustry || prefillData.industry || '',
-      }));
-      setStep(2);
-      setIsGenerating(false);
-      setPrefillData(null);
-      toast.error('AI generation failed', {
-        description: 'Please fill in the business details manually',
+      }).catch((error) => {
+        console.error('AI generation failed:', error);
+        // Fallback - use the description directly
+        setProjectData(prev => ({
+          ...prev,
+          description: userDescription,
+          industry: selectedIndustry || prefillData.industry || '',
+        }));
+        setStep(2);
+        setIsGenerating(false);
+        setPrefillData(null);
+        toast.error('AI generation failed', {
+          description: 'Please fill in the business details manually',
+        });
       });
-    });
+    };
+    
+    runGeneration();
   }, [prefillData, isLoading, searchParams, selectedIndustry, generateSuggestions, setPrefillData]);
 
   const updateField = (field: keyof ProjectData, value: string) => {
@@ -262,20 +283,54 @@ function NewProjectPageContent() {
   
   if (showLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 relative">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6 relative">
         <GradientBackground variant="dashboard" className="fixed" />
-        <div className="relative z-10 flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[var(--purple)]/10 flex items-center justify-center">
-            <Loader2 className="w-6 h-6 animate-spin text-[var(--purple)]" />
+        <div className="relative z-10 flex flex-col items-center gap-6">
+          <div className="w-14 h-14 rounded-2xl bg-[var(--purple)]/10 flex items-center justify-center">
+            <Loader2 className="w-7 h-7 animate-spin text-[var(--purple)]" />
           </div>
-          <div className="text-center">
-            <p className="text-gray-900 dark:text-white font-medium">
-              {isGenerating ? 'Generating project details...' : 'Loading...'}
-            </p>
-            {isGenerating && (
-              <p className="text-sm text-gray-500 dark:text-white/50 mt-1">AI is analyzing your description</p>
-            )}
-          </div>
+          
+          {isGenerating ? (
+            <div className="flex flex-col items-center gap-4">
+              <p className="text-lg font-medium text-gray-900 dark:text-white">
+                Creating your project
+              </p>
+              
+              {/* Steps indicator */}
+              <div className="flex flex-col gap-3 mt-2">
+                {generationSteps.map((s, i) => {
+                  const currentIdx = generationSteps.findIndex(gs => gs.id === generationStep);
+                  const isActive = s.id === generationStep;
+                  const isComplete = i < currentIdx;
+                  
+                  return (
+                    <div key={s.id} className="flex items-center gap-3">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium transition-all ${
+                        isComplete 
+                          ? 'bg-green-500 text-white' 
+                          : isActive 
+                            ? 'bg-[var(--purple)] text-white' 
+                            : 'bg-gray-200 dark:bg-white/10 text-gray-500 dark:text-white/50'
+                      }`}>
+                        {isComplete ? '✓' : i + 1}
+                      </div>
+                      <span className={`text-sm transition-all ${
+                        isActive 
+                          ? 'text-gray-900 dark:text-white font-medium' 
+                          : isComplete
+                            ? 'text-green-600 dark:text-green-400'
+                            : 'text-gray-500 dark:text-white/50'
+                      }`}>
+                        {s.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <p className="text-gray-900 dark:text-white font-medium">Loading...</p>
+          )}
         </div>
       </div>
     );

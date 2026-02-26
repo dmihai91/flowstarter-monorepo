@@ -18,6 +18,8 @@ import {
   Copy,
   Check,
 } from 'lucide-react';
+import { TeamHeader } from '../../components/TeamHeader';
+import FooterCompact from '@/components/FooterCompact';
 
 interface InvitationResult {
   success: boolean;
@@ -103,47 +105,13 @@ export default function TeamInvitePage() {
   }
 
   return (
-    <>
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-        .font-display {
-          font-family: 'Outfit', system-ui, sans-serif;
-        }
-      `}</style>
+    <div className="min-h-screen flex flex-col">
+      <TeamHeader />
+      <div className="h-16" />
+      <GradientBackground variant="dashboard" className="fixed" />
 
-      <div className="min-h-screen font-display relative">
-        <GradientBackground variant="dashboard" className="fixed" />
-
-        {/* Header */}
-        <header className="sticky top-0 z-50 bg-white/80 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">
-          <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link
-                href="/team/dashboard"
-                className="flex items-center gap-3 group"
-              >
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20">
-                  <span className="text-white font-bold text-sm">F</span>
-                </div>
-                <span className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Flowstarter
-                </span>
-                <span className="px-2 py-0.5 text-[10px] font-medium bg-[var(--purple)]/10 text-[var(--purple)] rounded-full">
-                  Team
-                </span>
-              </Link>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-500 dark:text-white/50">
-                {user?.primaryEmailAddress?.emailAddress}
-              </span>
-            </div>
-          </div>
-        </header>
-
-        {/* Content */}
-        <main className="relative z-10 max-w-2xl mx-auto px-6 py-12">
+      {/* Content */}
+      <main className="flex-1 relative z-10 max-w-2xl mx-auto px-6 py-12 w-full">
           {/* Back link */}
           <Link
             href="/team/dashboard"
@@ -265,7 +233,8 @@ export default function TeamInvitePage() {
             </ul>
           </div>
         </main>
-      </div>
-    </>
+
+      <FooterCompact />
+    </div>
   );
 }

@@ -182,8 +182,8 @@ export function Sidebar() {
             : '-translate-x-full opacity-0 lg:opacity-100',
           'lg:translate-x-0',
           shouldExpand
-            ? 'items-start px-4 pt-6 pb-4 w-[240px] bg-white/60 dark:bg-[rgba(58,58,74,0.40)] transition-[width,padding] duration-300 ease-out'
-            : 'items-center px-0 pt-6 pb-4 w-16 bg-white/60 dark:bg-[rgba(58,58,74,0.40)] transition-[width,padding] duration-300 ease-out'
+            ? 'items-start px-4 pt-6 pb-4 w-[240px] bg-white/60 dark:bg-white/[0.03] transition-[width,padding] duration-300 ease-out'
+            : 'items-center px-0 pt-6 pb-4 w-16 bg-white/60 dark:bg-white/[0.03] transition-[width,padding] duration-300 ease-out'
         )}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}

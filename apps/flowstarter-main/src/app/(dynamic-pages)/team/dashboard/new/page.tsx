@@ -419,7 +419,7 @@ function NewProjectPageContent() {
             <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
           </div>
           
-          <div className="relative z-10 flex flex-col items-center max-w-md mx-auto px-6">
+          <div className="relative z-10 flex flex-col items-center w-full max-w-xl mx-auto px-6">
           {/* Glassmorphism card for generation */}
           <div className="w-full rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset] p-6">
               {/* Header */}

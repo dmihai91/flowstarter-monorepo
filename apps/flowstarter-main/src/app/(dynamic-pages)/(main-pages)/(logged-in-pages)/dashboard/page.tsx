@@ -1,6 +1,5 @@
 'use client';
 
-import { PageContainer } from '@/components/PageContainer';
 import { useTranslations } from '@/lib/i18n';
 import { useUser } from '@clerk/nextjs';
 import { ClientHeader } from './components/ClientHeader';
@@ -167,23 +166,20 @@ export default function DashboardPage() {
     <DashboardWrapper>
       <ClientHeader />
 
-      {/* Spacer for fixed header */}
-      <div className="h-16" />
-
-      <PageContainer gradientVariant="dashboard">
+      <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
         {/* Messages */}
         <DashboardMessages />
 
         <DashboardInit>
           {/* Welcome message */}
           <div className="mb-8">
-            <p className="text-gray-500 dark:text-white/50 mb-1">
+            <p className="text-gray-500 dark:text-white/50 mb-1 text-sm sm:text-base">
               {greeting},{' '}
               <span className="text-gray-700 dark:text-white/70 font-medium">
                 {firstName}
               </span>
             </p>
-            <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
               Dashboard
             </h1>
           </div>
@@ -205,7 +201,7 @@ export default function DashboardPage() {
             <DashboardProjectsClient />
           </div>
         </DashboardInit>
-      </PageContainer>
+      </div>
     </DashboardWrapper>
   );
 }

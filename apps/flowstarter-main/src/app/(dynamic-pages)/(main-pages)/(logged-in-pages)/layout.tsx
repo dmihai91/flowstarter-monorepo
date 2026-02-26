@@ -1,6 +1,7 @@
 'use client';
 
 import FooterCompact from '@/components/FooterCompact';
+import { GradientBackground } from '@/components/ui/gradient-background';
 import { MobileSidebarToggle } from '@/components/ui/mobile-sidebar-toggle';
 import { Sidebar } from '@/components/ui/sidebar';
 import { SidebarProvider, useSidebar } from '@/contexts/SidebarContext';
@@ -19,29 +20,41 @@ function LayoutContent({ children }: { children: ReactNode }) {
 
   const { isCollapsed } = useSidebar();
 
-  return (
-    <>
+  if (hidesSidebar) {
+    // Full-width layout for wizard pages
+    return (
       <div className="min-h-screen flex flex-col">
-        {!hidesSidebar && <Sidebar />}
-        {!hidesSidebar && <MobileSidebarToggle />}
-        <main
-          className={`flex-1 mt-16 ${
-            hidesSidebar ? '' : isCollapsed ? 'lg:ml-16' : 'lg:ml-60'
+        <main className="flex-1 mt-16">{children}</main>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      {/* Gradient background - behind everything */}
+      <GradientBackground variant="dashboard" className="fixed inset-0 z-0" />
+      
+      <Sidebar />
+      <MobileSidebarToggle />
+      
+      <main
+        className={`flex-1 mt-16 relative z-10 ${
+          isCollapsed ? 'lg:ml-16' : 'lg:ml-60'
+        }`}
+      >
+        {children}
+      </main>
+      
+      {!hidesFooter && (
+        <div
+          className={`relative z-10 ${
+            isCollapsed ? 'lg:ml-16' : 'lg:ml-60'
           }`}
         >
-          {children}
-        </main>
-        {!hidesFooter && (
-          <div
-            className={`${
-              hidesSidebar ? '' : isCollapsed ? 'lg:ml-16' : 'lg:ml-60'
-            }`}
-          >
-            <FooterCompact />
-          </div>
-        )}
-      </div>
-    </>
+          <FooterCompact />
+        </div>
+      )}
+    </div>
   );
 }
 

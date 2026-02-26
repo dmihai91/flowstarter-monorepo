@@ -8,22 +8,24 @@ import { Button } from '@/components/ui/button';
 
 export function ClientHeader() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-white/80 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-black/[0.08] dark:border-white/[0.08]">
-      <div className="max-w-[1200px] mx-auto h-full px-4 sm:px-6 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/dashboard" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-[var(--purple)]/20">
+    <header className="fixed top-0 left-0 right-0 z-[100] h-16 bg-white/80 dark:bg-[#0a0a0c]/80 backdrop-blur-2xl backdrop-saturate-150 border-b border-gray-200/50 dark:border-white/10">
+      <div className="w-full h-full px-4 lg:px-6 flex items-center justify-between">
+        {/* Logo - Left corner */}
+        <Link href="/dashboard" className="flex items-center gap-3 group">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-[var(--purple)]/20 group-hover:shadow-[var(--purple)]/30 transition-shadow">
             F
           </div>
-          <span className="font-semibold text-gray-900 dark:text-white text-lg">
+          <span className="font-semibold text-gray-900 dark:text-white text-lg hidden sm:block">
             Flowstarter
           </span>
         </Link>
 
-        {/* Right side */}
-        <div className="flex items-center gap-3">
-          {/* Theme toggle (3-button) */}
+        {/* Right side - Theme switcher + User profile */}
+        <div className="flex items-center gap-2 lg:gap-3">
+          {/* Theme toggle */}
           <ThemeToggle />
+
+          <div className="w-px h-6 bg-gray-200 dark:bg-white/10 hidden sm:block" />
 
           {/* Support */}
           <Button
@@ -39,7 +41,7 @@ export function ClientHeader() {
             afterSignOutUrl="/"
             appearance={{
               elements: {
-                avatarBox: 'w-9 h-9 ring-2 ring-white/20 dark:ring-white/10',
+                avatarBox: 'w-9 h-9 ring-2 ring-gray-200 dark:ring-white/20',
               },
             }}
           />

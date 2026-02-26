@@ -2220,7 +2220,7 @@ export default function LandingPage() {
               </Button>
             </a>
             <p className="text-sm text-gray-400 dark:text-white/20 mt-4">
-              €150 setup · €15/month · Cancel anytime
+              €299 setup · €29/month · Cancel anytime
             </p>
           </div>
         </section>

@@ -106,10 +106,13 @@ export default function NewProjectPage() {
   // AI generation hook (from old wizard)
   const { generateSuggestions, isGeneratingWithAI } = useProjectSuggestions('business');
   
+  // Check if we're in AI generation mode immediately
+  const isAIMode = searchParams.get('mode') === 'ai-generated';
+  
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(isAIMode); // Start true if AI mode
   const hasTriggeredGeneration = useRef(false);
   
   const [projectData, setProjectData] = useState<ProjectData>({
@@ -230,14 +233,20 @@ export default function NewProjectPage() {
 
   if (isLoading || !userLoaded || isGenerating) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c] gap-4">
-        <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)]" />
-        {isGenerating && (
-          <div className="text-center">
-            <p className="text-gray-900 dark:text-white font-medium">Generating project details...</p>
-            <p className="text-sm text-gray-500 dark:text-white/50">AI is analyzing your description</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c] gap-4 relative">
+        {/* Clean solid background - no gradient */}
+        <div className="absolute inset-0 bg-[#FAFAFA] dark:bg-[#0a0a0c]" />
+        <div className="relative z-10 flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-[var(--purple)]/10 flex items-center justify-center">
+            <Loader2 className="w-6 h-6 animate-spin text-[var(--purple)]" />
           </div>
-        )}
+          {isGenerating && (
+            <div className="text-center">
+              <p className="text-gray-900 dark:text-white font-medium">Generating project details...</p>
+              <p className="text-sm text-gray-500 dark:text-white/50 mt-1">AI is analyzing your description</p>
+            </div>
+          )}
+        </div>
       </div>
     );
   }

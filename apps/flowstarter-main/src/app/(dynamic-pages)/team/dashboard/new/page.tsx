@@ -23,6 +23,7 @@ import { insertProjectAction } from '@/data/user/projects';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
 import {
+  AlertCircle,
   ArrowLeft,
   ArrowRight,
   Building2,
@@ -343,6 +344,36 @@ function NewProjectPageContent() {
   }, [projectId, projectData, isAIMode]);
 
   const hasCreatedDraft = useRef(false);
+  const [nameError, setNameError] = useState<string | null>(null);
+  
+  // Check if project name is available
+  const checkNameAvailability = async (name: string, excludeId?: string): Promise<boolean> => {
+    try {
+      const params = new URLSearchParams({ name });
+      if (excludeId) params.append('excludeId', excludeId);
+      
+      const response = await fetch(`/api/projects/check-name?${params}`);
+      const result = await response.json();
+      return result.available;
+    } catch (error) {
+      console.error('Failed to check name:', error);
+      return true; // Allow on error
+    }
+  };
+  
+  // Find an available name by appending a number
+  const findAvailableName = async (baseName: string, excludeId?: string): Promise<string> => {
+    let name = baseName;
+    let counter = 1;
+    
+    while (!(await checkNameAvailability(name, excludeId))) {
+      counter++;
+      name = `${baseName} ${counter}`;
+      if (counter > 10) break; // Safety limit
+    }
+    
+    return name;
+  };
   
   // Create a draft project via API
   const createDraftProject = async () => {
@@ -436,10 +467,15 @@ function NewProjectPageContent() {
           console.log('[TeamWizard] AI generation result:', result);
 
           // Apply AI-generated data to form (use whatever we got, fall back to user input)
-          const generatedName =
+          let generatedName =
             Array.isArray(result?.names) && result.names.length > 0
               ? result.names[Math.floor(Math.random() * result.names.length)]
               : '';
+          
+          // Check if generated name is available, find alternative if not
+          if (generatedName) {
+            generatedName = await findAvailableName(generatedName, projectId || undefined);
+          }
           
           // Auto-detect industry from description
           const generatedDescription = result?.description || userDescription;
@@ -502,6 +538,21 @@ function NewProjectPageContent() {
 
   const updateField = (field: keyof ProjectData, value: string) => {
     setProjectData((prev) => ({ ...prev, [field]: value }));
+    
+    // Validate business name uniqueness (debounced)
+    if (field === 'businessName' && value.trim()) {
+      setNameError(null);
+      // Debounce the check
+      const timeoutId = setTimeout(async () => {
+        const isAvailable = await checkNameAvailability(value, projectId || undefined);
+        if (!isAvailable) {
+          setNameError('A project with this name already exists');
+        } else {
+          setNameError(null);
+        }
+      }, 500);
+      return () => clearTimeout(timeoutId);
+    }
   };
 
   // Watch for suggestion updates and apply to form
@@ -671,6 +722,9 @@ function NewProjectPageContent() {
   };
 
   const canProceed = () => {
+    // Block if there's a name error
+    if (nameError) return false;
+    
     // In AI mode, steps 1 and 2 are swapped (Business Details first)
     const clientInfoStep = isAIMode ? 2 : 1;
     const businessInfoStep = isAIMode ? 1 : 2;
@@ -1010,8 +1064,16 @@ function NewProjectPageContent() {
                     onChange={(e) =>
                       updateField('businessName', e.target.value)
                     }
-                    className="h-12 bg-gray-50 dark:bg-white/5 border-gray-200 dark:border-white/10"
+                    className={`h-12 bg-gray-50 dark:bg-white/5 border-gray-200 dark:border-white/10 ${
+                      nameError ? 'border-red-500 dark:border-red-500' : ''
+                    }`}
                   />
+                  {nameError && (
+                    <p className="text-sm text-red-500 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4" />
+                      {nameError}
+                    </p>
+                  )}
                   {/* Regeneration Card */}
                   {regenField === 'businessName' && (
                     <div className="mt-3 p-4 rounded-xl bg-gradient-to-br from-[var(--purple)]/5 to-blue-500/5 border border-[var(--purple)]/20">

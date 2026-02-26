@@ -39,29 +39,22 @@ export function GradientBackground({
           className
         )}
       >
-        {/* Base - pure white for light, deep dark for dark */}
-        <div className={cn(
-          'absolute inset-0 bg-white',
-          'dark:bg-[#07070a]'
-        )} />
+        {/* Base gradient - light mode like Figma, dark mode deep */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#F5F5F7] via-[#FAFAFA] to-white dark:from-[#07070a] dark:via-[#09090d] dark:to-[#07070a]" />
         
-        {/* Dark mode only - purple ellipses */}
+        {/* Top purple glow - both modes */}
         <div 
-          className="absolute -top-[400px] left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full opacity-0 dark:opacity-[0.12]"
+          className="absolute -top-[300px] left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full opacity-[0.4] dark:opacity-[0.15]"
           style={{ 
-            background: 'radial-gradient(circle, rgba(99, 102, 241, 0.6) 0%, rgba(99, 102, 241, 0.2) 30%, transparent 70%)'
+            background: 'radial-gradient(ellipse, rgba(99, 102, 241, 0.15) 0%, transparent 70%)'
           }}
         />
+        
+        {/* Secondary glow - bottom */}
         <div 
-          className="absolute -bottom-[300px] -left-[200px] w-[810px] h-[810px] rounded-full opacity-0 dark:opacity-[0.10]"
+          className="absolute -bottom-[200px] left-1/4 w-[600px] h-[400px] rounded-full opacity-[0.3] dark:opacity-[0.10]"
           style={{ 
-            background: 'radial-gradient(circle, rgba(139, 92, 246, 0.5) 0%, rgba(139, 92, 246, 0.15) 40%, transparent 70%)'
-          }}
-        />
-        <div 
-          className="absolute top-1/3 -right-[200px] w-[600px] h-[600px] rounded-full opacity-0 dark:opacity-[0.06]"
-          style={{ 
-            background: 'radial-gradient(circle, rgba(79, 70, 229, 0.4) 0%, transparent 60%)'
+            background: 'radial-gradient(ellipse, rgba(139, 92, 246, 0.1) 0%, transparent 70%)'
           }}
         />
         

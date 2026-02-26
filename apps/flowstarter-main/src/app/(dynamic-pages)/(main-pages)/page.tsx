@@ -843,6 +843,9 @@ export default function LandingPage() {
                   </span>
                 </h1>
 
+                <p className="text-base text-gray-400 dark:text-white/40 mb-4">
+                  Tired of sending clients to an outdated site? Or worse, no site at all?
+                </p>
                 <p className="text-lg lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed max-w-lg mb-3">
                   A professional web presence for freelancers and consultants.
                   Designed, launched, and maintained for you in 1–2 weeks.
@@ -1757,22 +1760,23 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Early Access Banner */}
-        <section className="py-4 lg:py-5">
-          <div className="max-w-7xl mx-auto px-6 lg:px-12">
-            <div className="text-center p-8 lg:p-10 rounded-2xl bg-gradient-to-r from-[var(--purple)]/5 via-blue-500/5 to-cyan-500/5 border border-[var(--purple)]/10 dark:border-[var(--purple)]/20">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] dark:text-[var(--purple)] text-sm font-medium mb-4">
-                <span className="w-2 h-2 rounded-full bg-[var(--purple)] animate-pulse" />
-                Early Access
-              </div>
-              <p className="text-lg text-gray-600 dark:text-white/60 max-w-xl mx-auto">
-                Early supporters get{' '}
-                <span className="font-semibold text-[var(--purple)] dark:text-[var(--purple)]">
-                  50% off
-                </span>{' '}
-                for their first year. Standard pricing applies after.
-              </p>
-            </div>
+        {/* Why not Wix? */}
+        <section className="py-8 lg:py-10">
+          <div className="max-w-2xl mx-auto px-6 lg:px-12 text-center">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              Why not just use Wix?
+            </h3>
+            <p className="text-gray-500 dark:text-white/50 leading-relaxed mb-4">
+              You could. But you'd spend weeks learning the tool, choosing fonts, 
+              fighting layouts, and still end up with something that looks... templated.
+            </p>
+            <p className="text-gray-500 dark:text-white/50 leading-relaxed mb-4">
+              We take that off your plate entirely. You get a site that reflects 
+              your positioning, not your patience for drag-and-drop.
+            </p>
+            <p className="text-gray-700 dark:text-white/70 font-medium">
+              One call. One process. Done.
+            </p>
           </div>
         </section>
 
@@ -1838,16 +1842,19 @@ export default function LandingPage() {
                 </div>
 
                 {/* Features - Two Categories */}
-                <div className="space-y-4 mb-8">
+                <div className="space-y-5 mb-8">
                   {/* Your Launch */}
                   <div>
-                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">
-                      Your Launch
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-1">
+                      Your Launch (€299)
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-white/40 mb-3">
+                      A structured kickoff. We learn your business, define your positioning, and build a site that makes you look as sharp as your work.
                     </p>
                     <ul className="space-y-1.5">
                       {[
-                        'Discovery call to understand your positioning',
-                        'Up to 7 pages, designed around your goals',
+                        'Discovery call (30–45 min) to understand your goals',
+                        'Up to 7 pages, designed around your positioning',
                         'Domain setup and professional email',
                         'Mobile-ready, fast-loading, search-optimized',
                         'Live in 1–2 weeks',
@@ -1877,8 +1884,11 @@ export default function LandingPage() {
 
                   {/* Ongoing Care */}
                   <div>
-                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-2">
-                      Ongoing Care
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-1">
+                      Ongoing Care (€29/month)
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-white/40 mb-3">
+                      Your site stays fast, secure, and up to date. Need a change? We handle it. No logins. No tickets. Just ask.
                     </p>
                     <ul className="space-y-1.5">
                       {[
@@ -2026,24 +2036,24 @@ export default function LandingPage() {
               {/* Who this is NOT for */}
               <div className="mt-12 p-6 rounded-2xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
                 <h4 className="text-sm font-semibold text-gray-700 dark:text-white/70 mb-4">
-                  This isn't for everyone.
+                  This might not be for you if:
                 </h4>
                 <ul className="space-y-2 text-sm text-gray-500 dark:text-white/50">
                   <li className="flex items-start gap-2">
                     <span className="text-gray-400 dark:text-white/30">→</span>
-                    If you want to build it yourself: try Framer or Webflow.
+                    You enjoy building your own site
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-gray-400 dark:text-white/30">→</span>
-                    If you need e-commerce or complex apps: we're not there yet.
+                    You're an agency or need white-label work
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-gray-400 dark:text-white/30">→</span>
-                    If you're a large team with in-house designers: you don't need us.
+                    You need a custom web app or complex e-commerce
                   </li>
                 </ul>
                 <p className="mt-4 text-sm text-gray-600 dark:text-white/60">
-                  This is for independents who want professional results without the DIY learning curve.
+                  We're built for independents who want a professional site without becoming a part-time web designer.
                 </p>
               </div>
             </div>

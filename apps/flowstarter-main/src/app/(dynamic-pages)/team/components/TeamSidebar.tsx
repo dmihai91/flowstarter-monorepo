@@ -14,8 +14,11 @@ import {
   UserPlus,
   ChevronLeft,
   ChevronRight,
+  Menu,
+  X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useState, useEffect } from 'react';
 
 const configItems = [
   { label: 'Domains', href: '/team/dashboard/domains', icon: Globe },
@@ -33,9 +36,24 @@ export function TeamSidebar() {
   const pathname = usePathname();
   const { user } = useUser();
   const [collapsed, setCollapsed] = useLocalStorage('team-sidebar-collapsed', false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   
   const metadata = user?.publicMetadata as { role?: string } | undefined;
   const isAdmin = metadata?.role?.toLowerCase() === 'admin';
+
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  // Close mobile sidebar on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileOpen(false);
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, []);
 
   const isActive = (href: string, exact?: boolean) => {
     if (exact) return pathname === href;
@@ -46,80 +64,134 @@ export function TeamSidebar() {
     <Link
       href={href}
       title={collapsed ? label : undefined}
+      onClick={() => setMobileOpen(false)}
       className={cn(
         'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all',
         isActive(href, exact)
           ? 'bg-[var(--purple)] text-white shadow-md shadow-[var(--purple)]/25'
           : 'text-gray-600 dark:text-white/60 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
-        collapsed && 'justify-center px-2'
+        collapsed && 'lg:justify-center lg:px-2'
       )}
     >
       <Icon className="w-4 h-4 flex-shrink-0" />
-      {!collapsed && <span className="truncate">{label}</span>}
+      <span className={cn('truncate', collapsed && 'lg:hidden')}>{label}</span>
     </Link>
   );
 
-  return (
-    <aside 
-      className={cn(
-        'flex-shrink-0 border-r border-gray-200/50 dark:border-white/5 bg-white/50 dark:bg-white/[0.02] backdrop-blur-sm transition-all duration-300',
-        collapsed ? 'w-16' : 'w-64'
-      )}
-    >
-      <div className="sticky top-16 p-3 space-y-6 h-[calc(100vh-4rem)] overflow-y-auto">
-        {/* Collapse toggle */}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="w-full flex items-center justify-center p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
-          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          {collapsed ? (
-            <ChevronRight className="w-4 h-4" />
-          ) : (
-            <ChevronLeft className="w-4 h-4" />
-          )}
-        </button>
+  const SidebarContent = () => (
+    <div className="p-3 space-y-6 h-full overflow-y-auto">
+      {/* Collapse toggle - desktop only */}
+      <button
+        onClick={() => setCollapsed(!collapsed)}
+        className="hidden lg:flex w-full items-center justify-center p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+        title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+      >
+        {collapsed ? (
+          <ChevronRight className="w-4 h-4" />
+        ) : (
+          <ChevronLeft className="w-4 h-4" />
+        )}
+      </button>
 
-        {/* Main Navigation */}
+      {/* Main Navigation */}
+      <div className="space-y-1">
+        <NavLink 
+          href="/team/dashboard" 
+          icon={LayoutDashboard} 
+          label="Dashboard" 
+          exact 
+        />
+      </div>
+
+      {/* Configuration */}
+      <div>
+        <h3 className={cn(
+          'px-3 mb-2 text-xs font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider',
+          collapsed && 'lg:hidden'
+        )}>
+          Configuration
+        </h3>
         <div className="space-y-1">
-          <NavLink 
-            href="/team/dashboard" 
-            icon={LayoutDashboard} 
-            label="Dashboard" 
-            exact 
-          />
+          {configItems.map((item) => (
+            <NavLink key={item.href} {...item} />
+          ))}
         </div>
+      </div>
 
-        {/* Configuration */}
+      {/* Admin Only */}
+      {isAdmin && (
         <div>
-          {!collapsed && (
-            <h3 className="px-3 mb-2 text-xs font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
-              Configuration
-            </h3>
-          )}
+          <h3 className={cn(
+            'px-3 mb-2 text-xs font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider',
+            collapsed && 'lg:hidden'
+          )}>
+            Team
+          </h3>
           <div className="space-y-1">
-            {configItems.map((item) => (
+            {adminItems.map((item) => (
               <NavLink key={item.href} {...item} />
             ))}
           </div>
         </div>
+      )}
+    </div>
+  );
 
-        {/* Admin Only */}
-        {isAdmin && (
-          <div>
-            {!collapsed && (
-              <h3 className="px-3 mb-2 text-xs font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
-                Team
-              </h3>
-            )}
-            <div className="space-y-1">
-              {adminItems.map((item) => (
-                <NavLink key={item.href} {...item} />
-              ))}
-            </div>
-          </div>
+  return (
+    <>
+      {/* Mobile menu button */}
+      <button
+        onClick={() => setMobileOpen(true)}
+        className="lg:hidden fixed bottom-4 left-4 z-50 p-3 rounded-full bg-[var(--purple)] text-white shadow-lg shadow-[var(--purple)]/25 hover:bg-[var(--purple)]/90 transition-colors"
+        aria-label="Open menu"
+      >
+        <Menu className="w-5 h-5" />
+      </button>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-[150] bg-black/50 backdrop-blur-sm"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* Mobile sidebar */}
+      <aside
+        className={cn(
+          'lg:hidden fixed inset-y-0 left-0 z-[160] w-72 bg-white dark:bg-[#1a1a1f] border-r border-gray-200/50 dark:border-white/5 transform transition-transform duration-300 ease-in-out',
+          mobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
-      </div>
-    </aside>
+      >
+        {/* Mobile header */}
+        <div className="flex items-center justify-between p-4 border-b border-gray-200/50 dark:border-white/5">
+          <Link href="/team/dashboard" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center">
+              <span className="text-white font-bold text-xs">F</span>
+            </div>
+            <span className="font-semibold text-gray-900 dark:text-white">Flowstarter</span>
+          </Link>
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <SidebarContent />
+      </aside>
+
+      {/* Desktop sidebar */}
+      <aside 
+        className={cn(
+          'hidden lg:block flex-shrink-0 border-r border-gray-200/50 dark:border-white/5 bg-white/50 dark:bg-white/[0.02] backdrop-blur-sm transition-all duration-300',
+          collapsed ? 'w-16' : 'w-64'
+        )}
+      >
+        <div className="sticky top-16 h-[calc(100vh-4rem)]">
+          <SidebarContent />
+        </div>
+      </aside>
+    </>
   );
 }

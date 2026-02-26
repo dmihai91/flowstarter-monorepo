@@ -53,31 +53,32 @@ export default function TeamDashboardPage() {
     hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
       {/* Welcome message + action buttons */}
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+      <div className="flex flex-col gap-4 mb-8">
         <div>
-          <p className="text-gray-500 dark:text-white/50 mb-1">
+          <p className="text-gray-500 dark:text-white/50 mb-1 text-sm sm:text-base">
             {greeting},{' '}
             <span className="text-gray-700 dark:text-white/70 font-medium">
               {firstName}
             </span>
           </p>
-          <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
             Team Dashboard
           </h1>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
           {isAdmin && (
-            <Link href="/team/dashboard/invite">
-              <Button variant="outline" size="lg">
+            <Link href="/team/dashboard/invite" className="w-full sm:w-auto">
+              <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 <UserPlus className="w-4 h-4 mr-2" />
-                Invite Team Member
+                <span className="hidden sm:inline">Invite Team Member</span>
+                <span className="sm:hidden">Invite</span>
               </Button>
             </Link>
           )}
-          <Link href="/team/dashboard/new">
-            <Button variant="accent" size="lg">
+          <Link href="/team/dashboard/new" className="w-full sm:w-auto">
+            <Button variant="accent" size="lg" className="w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               New Project
             </Button>

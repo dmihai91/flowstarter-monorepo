@@ -122,14 +122,14 @@ function NewProjectPageContent() {
   
   // Check if we're in AI generation mode - from URL or stored data
   const isAIModeFromUrl = searchParams?.get('mode') === 'ai-generated';
-  const [isAIMode, setIsAIMode] = useState(() => isAIModeFromUrl || teamWizardData?.isAIMode || false);
+  const [isAIMode, setIsAIMode] = useState(false);
   
-  // Update AI mode when URL changes
+  // Update AI mode when URL or stored data changes
   useEffect(() => {
-    if (isAIModeFromUrl) {
+    if (isAIModeFromUrl || teamWizardData?.isAIMode) {
       setIsAIMode(true);
     }
-  }, [isAIModeFromUrl]);
+  }, [isAIModeFromUrl, teamWizardData?.isAIMode]);
   
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);

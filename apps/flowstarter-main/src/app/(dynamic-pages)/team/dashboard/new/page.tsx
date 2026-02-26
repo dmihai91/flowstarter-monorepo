@@ -3,6 +3,13 @@
 import { Button } from '@/components/ui/button';
 import { GradientBackground } from '@/components/ui/gradient-background';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { TeamHeader } from '../../components/TeamHeader';
 import FooterCompact from '@/components/FooterCompact';
 import { Label } from '@/components/ui/label';
@@ -943,18 +950,25 @@ function NewProjectPageContent() {
                   <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
                     Industry *
                   </Label>
-                  <select
+                  <Select
                     value={projectData.industry}
-                    onChange={(e) => updateField('industry', e.target.value)}
-                    className="w-full h-12 px-4 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white"
+                    onValueChange={(value) => updateField('industry', value)}
                   >
-                    <option value="">Select industry...</option>
-                    {industries.map((ind) => (
-                      <option key={ind} value={ind}>
-                        {ind}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-full h-12 px-4 rounded-xl bg-white dark:bg-white/5 border border-gray-300/90 dark:border-white/15 text-gray-900 dark:text-white">
+                      <SelectValue placeholder="Select industry..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white dark:bg-[#1a1a1f] border border-gray-200 dark:border-white/10 rounded-xl shadow-xl">
+                      {industries.map((ind) => (
+                        <SelectItem 
+                          key={ind} 
+                          value={ind}
+                          className="cursor-pointer hover:bg-gray-100 dark:hover:bg-white/10"
+                        >
+                          {ind}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 {/* Description Field */}

@@ -231,8 +231,8 @@ function NewProjectPageContent() {
           brandTone: (result?.brandTone?.toLowerCase() as BrandTone) || '',
         }));
         
-        // Skip to step 2 (business details) - user can review
-        setStep(2);
+        // Start at step 1 (client info), business details will show AI badge
+        setStep(1);
         
         if (result && (generatedName || result.description !== userDescription)) {
           toast.success('AI generated business details', {
@@ -1121,7 +1121,7 @@ function NewProjectPageContent() {
 
           {/* Navigation */}
           <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200 dark:border-white/10">
-            {(isAIMode && step === 2) || (!isAIMode && step === 1) ? (
+            {step === 1 ? (
               <Link href="/team/dashboard">
                 <Button
                   variant="ghost"
@@ -1134,16 +1134,7 @@ function NewProjectPageContent() {
             ) : (
               <Button
                 variant="ghost"
-                onClick={() => {
-                  // AI mode flow back: 1 → 2, 3 → 1
-                  if (isAIMode && step === 1) {
-                    setStep(2);
-                  } else if (isAIMode && step === 3) {
-                    setStep(1);
-                  } else {
-                    setStep(step - 1);
-                  }
-                }}
+                onClick={() => setStep(step - 1)}
                 className="text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -1153,16 +1144,7 @@ function NewProjectPageContent() {
             
             {step < 4 ? (
               <Button
-                onClick={() => {
-                  // AI mode flow: 2 → 1 → 3 → 4
-                  if (isAIMode && step === 2) {
-                    setStep(1); // Go to client info
-                  } else if (isAIMode && step === 1) {
-                    setStep(3); // Skip back to preferences
-                  } else {
-                    setStep(step + 1);
-                  }
-                }}
+                onClick={() => setStep(step + 1)}
                 disabled={!canProceed()}
                 className="bg-gradient-to-r from-[var(--purple)] to-blue-500 hover:from-[var(--purple)]/90 hover:to-blue-500/90 text-white font-semibold rounded-xl shadow-lg shadow-[var(--purple)]/20 h-11 px-6"
               >

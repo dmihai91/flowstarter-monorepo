@@ -203,10 +203,40 @@ export default function ProjectDetailPage() {
 
   // Auto-redirect to wizard if project is incomplete draft
   useEffect(() => {
-    if (!isLoading && project && !isProjectComplete() && project.is_draft) {
-      handleEditProject();
+    if (isLoading || !project) return;
+    
+    // Check if incomplete draft
+    const isComplete = parsedChat?.businessInfo?.name && 
+      parsedChat?.businessInfo?.description && 
+      parsedChat?.businessInfo?.industry &&
+      parsedChat?.clientInfo?.name &&
+      parsedChat?.clientInfo?.email;
+    
+    if (!isComplete && project.is_draft) {
+      // Redirect to wizard
+      setTeamWizardData({
+        clientName: parsedChat?.clientInfo?.name || '',
+        clientEmail: parsedChat?.clientInfo?.email || '',
+        clientPhone: parsedChat?.clientInfo?.phone || '',
+        businessName: parsedChat?.businessInfo?.name || project.name || '',
+        description: parsedChat?.businessInfo?.description || project.description || '',
+        industry: parsedChat?.businessInfo?.industry || '',
+        targetAudience: parsedChat?.businessInfo?.targetAudience || '',
+        uvp: parsedChat?.businessInfo?.uvp || '',
+        goal: parsedChat?.businessInfo?.goal || '',
+        offerType: parsedChat?.businessInfo?.offerType || '',
+        brandTone: parsedChat?.businessInfo?.brandTone || '',
+        businessEmail: parsedChat?.contactInfo?.email || '',
+        businessPhone: parsedChat?.contactInfo?.phone || '',
+        businessAddress: parsedChat?.contactInfo?.address || '',
+        website: parsedChat?.contactInfo?.website || '',
+        step: 1,
+        isAIMode: parsedChat?.generatedByAI || false,
+        projectId: project.id,
+      });
+      router.push(`/team/dashboard/new?id=${project.id}`);
     }
-  }, [isLoading, project, parsedChat]);
+  }, [isLoading, project, parsedChat, router, setTeamWizardData]);
 
   return (
     <div className="min-h-screen flex flex-col">

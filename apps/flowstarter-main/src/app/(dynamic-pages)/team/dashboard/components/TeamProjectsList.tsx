@@ -160,9 +160,9 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
   };
 
   const getStatusColor = (status: string) => {
-    if (status === 'completed') return 'text-emerald-500';
-    if (status === 'generating') return 'text-blue-500';
-    return 'text-gray-400';
+    if (status === 'completed') return 'bg-emerald-500';
+    if (status === 'generating' || status === 'building' || status === 'in_progress') return 'bg-blue-500';
+    return 'bg-gray-400';
   };
 
   const getStatusLabel = (status: string) => {
@@ -263,7 +263,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                       )}
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <Circle className={`w-2 h-2 fill-current ${getStatusColor(status)}`} />
+                      <span className={`w-2 h-2 rounded-full ${getStatusColor(status)}`} />
                       <span className="text-sm text-gray-600 dark:text-white/60">{getStatusLabel(status)}</span>
                     </div>
                     <div className="text-sm text-gray-600 dark:text-white/60 truncate">
@@ -328,7 +328,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                         </p>
                         <div className="flex items-center gap-3 mt-2 text-xs text-gray-500 dark:text-white/40">
                           <span className="flex items-center gap-1">
-                            <Circle className={`w-2 h-2 fill-current ${getStatusColor(status)}`} />
+                            <span className={`w-2 h-2 rounded-full ${getStatusColor(status)}`} />
                             {getStatusLabel(status)}
                           </span>
                           <span>{getOwnerDisplay(project)}</span>

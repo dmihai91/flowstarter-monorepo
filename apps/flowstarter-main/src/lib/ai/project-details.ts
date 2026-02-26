@@ -253,11 +253,12 @@ Use this exact JSON structure:
 }`;
 
   if (!process.env.OPENROUTER_API_KEY) {
-    throw new Error('OPENROUTER_API_KEY environment variable is not set');
+    console.error('[generateProjectDetails] OPENROUTER_API_KEY is not set!');
+    throw new Error('AI service not configured. Please set OPENROUTER_API_KEY environment variable.');
   }
 
   console.log(
-    `[generateProjectDetails] Starting generation with OpenRouter (deepseek/deepseek-chat)`
+    `[generateProjectDetails] Starting generation with OpenRouter (claude-sonnet-4)`
   );
   console.log(
     `[generateProjectDetails] Enhanced prompt length: ${enhancedPrompt.length} chars`

@@ -114,27 +114,27 @@ export default function ProjectDetailPage() {
 
   // Navigate to wizard with project data pre-filled
   const handleEditProject = () => {
-    if (!project || !parsedChat) return;
+    if (!project) return;
 
-    // Set wizard data from project
+    // Set wizard data from project (handle missing parsedChat)
     setTeamWizardData({
-      clientName: parsedChat.clientInfo?.name || '',
-      clientEmail: parsedChat.clientInfo?.email || '',
-      clientPhone: parsedChat.clientInfo?.phone || '',
-      businessName: parsedChat.businessInfo?.name || project.name || '',
-      description: parsedChat.businessInfo?.description || project.description || '',
-      industry: parsedChat.businessInfo?.industry || '',
-      targetAudience: parsedChat.businessInfo?.targetAudience || '',
-      uvp: parsedChat.businessInfo?.uvp || '',
-      goal: parsedChat.businessInfo?.goal || '',
-      offerType: parsedChat.businessInfo?.offerType || '',
-      brandTone: parsedChat.businessInfo?.brandTone || '',
-      businessEmail: parsedChat.contactInfo?.email || '',
-      businessPhone: parsedChat.contactInfo?.phone || '',
-      businessAddress: parsedChat.contactInfo?.address || '',
-      website: parsedChat.contactInfo?.website || '',
+      clientName: parsedChat?.clientInfo?.name || '',
+      clientEmail: parsedChat?.clientInfo?.email || '',
+      clientPhone: parsedChat?.clientInfo?.phone || '',
+      businessName: parsedChat?.businessInfo?.name || project.name || '',
+      description: parsedChat?.businessInfo?.description || project.description || '',
+      industry: parsedChat?.businessInfo?.industry || '',
+      targetAudience: parsedChat?.businessInfo?.targetAudience || '',
+      uvp: parsedChat?.businessInfo?.uvp || '',
+      goal: parsedChat?.businessInfo?.goal || '',
+      offerType: parsedChat?.businessInfo?.offerType || '',
+      brandTone: parsedChat?.businessInfo?.brandTone || '',
+      businessEmail: parsedChat?.contactInfo?.email || '',
+      businessPhone: parsedChat?.contactInfo?.phone || '',
+      businessAddress: parsedChat?.contactInfo?.address || '',
+      website: parsedChat?.contactInfo?.website || '',
       step: 1,
-      isAIMode: parsedChat.generatedByAI || false,
+      isAIMode: parsedChat?.generatedByAI || false,
       projectId: project.id,
     });
 

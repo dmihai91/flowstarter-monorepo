@@ -4,6 +4,7 @@ import { FeedbackDialog } from '@/components/FeedbackDialog';
 import { useSidebar } from '@/contexts/SidebarContext';
 import { useTranslations } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
+import { Logo } from '@/components/ui/logo';
 import {
   Calendar,
   HelpCircle,
@@ -268,11 +269,8 @@ export function Sidebar() {
       >
         {/* Mobile header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200/50 dark:border-white/5">
-          <Link href="/dashboard" className="flex items-center gap-2" onClick={() => setIsMobileOpen(false)}>
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20">
-              <span className="text-white font-bold text-xs">F</span>
-            </div>
-            <span className="font-semibold text-gray-900 dark:text-white">Flowstarter</span>
+          <Link href="/dashboard" onClick={() => setIsMobileOpen(false)}>
+            <Logo size="sm" />
           </Link>
           <button
             onClick={() => setIsMobileOpen(false)}

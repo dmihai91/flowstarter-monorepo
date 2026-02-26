@@ -97,20 +97,20 @@ export function QuickModeSection() {
     setInput(e.target.value);
     if (textareaRef.current) {
       textareaRef.current.style.height = '24px';
-      textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 150) + 'px';
+      textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 120) + 'px';
     }
   };
 
   const suggestions = [
-    "A bakery website with online ordering",
-    "Landing page for my fitness app",
-    "Portfolio site for photography",
+    "Bakery with online ordering",
+    "Fitness app landing page", 
+    "Photography portfolio",
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04)] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2)] p-5">
       {/* Header */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 mb-4">
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--purple)] to-[var(--purple)]/70 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20">
           <Sparkles className="w-5 h-5 text-white" />
         </div>
@@ -119,106 +119,96 @@ export function QuickModeSection() {
             What would you like to build?
           </h3>
           <p className="text-sm text-gray-500 dark:text-white/50">
-            AI will generate your project details
+            AI generates your project instantly
           </p>
         </div>
       </div>
 
-      {/* Chat input container */}
+      {/* Attachments preview */}
+      {attachments.length > 0 && (
+        <div className="mb-3 flex flex-wrap gap-2">
+          {attachments.map((file, i) => (
+            <div key={i} className="relative group">
+              {file.type.startsWith('image/') ? (
+                <img 
+                  src={URL.createObjectURL(file)} 
+                  alt={file.name}
+                  className="w-14 h-14 object-cover rounded-lg border border-gray-200 dark:border-white/10"
+                />
+              ) : (
+                <div className="w-14 h-14 flex items-center justify-center rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5">
+                  <span className="text-[10px] text-gray-500 uppercase">{file.name.split('.').pop()}</span>
+                </div>
+              )}
+              <button
+                onClick={() => removeAttachment(i)}
+                className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-black/80 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Input box */}
       <div 
-        className={`relative rounded-2xl transition-all duration-200 ${
+        className={`flex items-end gap-3 p-3 rounded-xl border transition-all duration-200 ${
           isFocused 
-            ? 'shadow-[0_0_0_2px_var(--purple),0_4px_20px_rgba(0,0,0,0.1)] dark:shadow-[0_0_0_2px_var(--purple),0_4px_20px_rgba(0,0,0,0.3)]' 
-            : 'shadow-[0_2px_8px_rgba(0,0,0,0.08),0_0_0_1px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.3),0_0_0_1px_rgba(255,255,255,0.08)]'
+            ? 'border-[var(--purple)] bg-white dark:bg-[#1f1f24] shadow-[0_0_0_3px_rgba(var(--purple-rgb),0.1)]' 
+            : 'border-gray-200 dark:border-white/10 bg-gray-50/50 dark:bg-white/[0.02]'
         }`}
       >
-        <div className="bg-white dark:bg-[#2a2a2f] rounded-2xl">
-          {/* Attachments */}
-          {attachments.length > 0 && (
-            <div className="px-4 pt-3 flex flex-wrap gap-2">
-              {attachments.map((file, i) => (
-                <div key={i} className="relative group">
-                  {file.type.startsWith('image/') ? (
-                    <img 
-                      src={URL.createObjectURL(file)} 
-                      alt={file.name}
-                      className="w-16 h-16 object-cover rounded-xl"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-white/10">
-                      <span className="text-xs text-gray-500 dark:text-white/50 text-center px-1 truncate">
-                        {file.name.split('.').pop()?.toUpperCase()}
-                      </span>
-                    </div>
-                  )}
-                  <button
-                    onClick={() => removeAttachment(i)}
-                    className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </div>
-              ))}
-            </div>
+        {/* Attach */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*,.pdf,.doc,.docx"
+          multiple
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+        >
+          <Paperclip className="w-[18px] h-[18px]" />
+        </button>
+
+        {/* Textarea */}
+        <textarea
+          ref={textareaRef}
+          value={input}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          placeholder={`Describe your project, ${firstName}...`}
+          rows={1}
+          className="flex-1 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 text-[15px] leading-6 resize-none focus:outline-none min-h-[24px] max-h-[120px] py-1"
+        />
+
+        {/* Send */}
+        <button
+          onClick={handleSubmit}
+          disabled={!input.trim() || isClassifying}
+          className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
+            input.trim() && !isClassifying
+              ? 'bg-[var(--purple)] text-white hover:bg-[var(--purple)]/90 active:scale-95'
+              : 'bg-gray-200 dark:bg-white/10 text-gray-400 dark:text-white/30 cursor-not-allowed'
+          }`}
+        >
+          {isClassifying ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <ArrowUp className="w-4 h-4" />
           )}
-
-          {/* Input row */}
-          <div className="flex items-end gap-2 p-3">
-            {/* Attach button */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*,.pdf,.doc,.docx"
-              multiple
-              onChange={handleFileSelect}
-              className="hidden"
-            />
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-white/70 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
-            >
-              <Paperclip className="w-5 h-5" />
-            </button>
-
-            {/* Textarea */}
-            <div className="flex-1 min-w-0">
-              <textarea
-                ref={textareaRef}
-                value={input}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
-                placeholder={`Message Flowstarter...`}
-                rows={1}
-                className="w-full bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 text-[15px] leading-6 resize-none focus:outline-none py-1.5"
-                style={{ height: '24px', maxHeight: '150px' }}
-              />
-            </div>
-
-            {/* Send button */}
-            <button
-              onClick={handleSubmit}
-              disabled={!input.trim() || isClassifying}
-              className={`flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 ${
-                input.trim() && !isClassifying
-                  ? 'bg-[var(--purple)] text-white hover:bg-[var(--purple)]/90 active:scale-95'
-                  : 'bg-gray-100 dark:bg-white/10 text-gray-300 dark:text-white/20 cursor-not-allowed'
-              }`}
-            >
-              {isClassifying ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <ArrowUp className="w-4 h-4" />
-              )}
-            </button>
-          </div>
-        </div>
+        </button>
       </div>
 
       {/* Suggestions */}
       {!input && (
-        <div className="flex flex-wrap gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           {suggestions.map((suggestion, i) => (
             <button
               key={i}
@@ -226,7 +216,7 @@ export function QuickModeSection() {
                 setInput(suggestion);
                 textareaRef.current?.focus();
               }}
-              className="px-4 py-2 text-sm rounded-xl bg-white dark:bg-[#2a2a2f] border border-gray-200 dark:border-white/10 text-gray-600 dark:text-white/70 hover:border-[var(--purple)]/50 hover:text-[var(--purple)] transition-colors shadow-sm"
+              className="px-3 py-1.5 text-xs rounded-lg border border-gray-200 dark:border-white/10 text-gray-500 dark:text-white/50 hover:border-[var(--purple)]/50 hover:text-[var(--purple)] hover:bg-[var(--purple)]/5 transition-all"
             >
               {suggestion}
             </button>

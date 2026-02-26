@@ -96,8 +96,8 @@ export function QuickModeSection() {
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
     if (textareaRef.current) {
-      textareaRef.current.style.height = '24px';
-      textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 120) + 'px';
+      textareaRef.current.style.height = '72px';
+      textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 150) + 'px';
     }
   };
 
@@ -184,8 +184,8 @@ export function QuickModeSection() {
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           placeholder={`Describe your project, ${firstName}...`}
-          rows={1}
-          className="flex-1 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 text-[15px] leading-6 resize-none focus:outline-none min-h-[24px] max-h-[120px] py-1"
+          rows={3}
+          className="flex-1 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 text-[15px] leading-6 resize-none focus:outline-none min-h-[72px] max-h-[150px] py-1"
         />
 
         {/* Send */}

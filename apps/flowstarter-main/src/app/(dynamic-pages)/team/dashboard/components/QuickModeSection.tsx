@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import { Sparkles, Paperclip, Loader2, ArrowUp, X } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
@@ -195,27 +196,24 @@ export function QuickModeSection() {
             </button>
           </div>
           
-          <button
+          <Button
             onClick={handleSubmit}
             disabled={!input.trim() || isClassifying}
-            className={`px-4 py-2 rounded-xl font-medium text-sm flex items-center gap-2 transition-all ${
-              input.trim() && !isClassifying
-                ? 'bg-[var(--purple)] text-white shadow-md shadow-[var(--purple)]/25 hover:shadow-lg hover:shadow-[var(--purple)]/30 active:scale-[0.98]'
-                : 'bg-gray-100 dark:bg-white/[0.06] text-gray-400 dark:text-white/30 cursor-not-allowed'
-            }`}
+            variant="accent"
+            size="default"
           >
             {isClassifying ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Creating...</span>
+                Creating...
               </>
             ) : (
               <>
                 <ArrowUp className="w-4 h-4" />
-                <span>Create</span>
+                Create
               </>
             )}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -229,7 +227,7 @@ export function QuickModeSection() {
                 setInput(suggestion);
                 textareaRef.current?.focus();
               }}
-              className="px-3 py-1.5 text-xs rounded-lg bg-gray-50 dark:bg-white/[0.04] border border-black/[0.06] dark:border-white/[0.06] text-gray-600 dark:text-white/60 hover:border-[var(--purple)]/40 hover:text-[var(--purple)] hover:bg-[var(--purple)]/5 transition-all shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+              className="px-3 py-1.5 text-xs rounded-md bg-gray-50 dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.08] text-gray-600 dark:text-white/60 hover:border-[var(--purple)]/40 hover:text-[var(--purple)] hover:bg-[var(--purple)]/5 transition-all"
             >
               {suggestion}
             </button>

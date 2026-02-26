@@ -129,7 +129,7 @@ function OnboardingStepper() {
                 href={CALENDLY_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-3 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[var(--purple)] to-blue-500 text-white text-sm font-semibold transition-all hover:opacity-90 shadow-lg shadow-[var(--purple)]/20"
+                className="mt-3 w-full inline-flex items-center justify-center gap-2 h-10 px-4 rounded-lg bg-[var(--purple)] text-white text-sm font-medium transition-all hover:bg-[var(--purple)]/90 hover:shadow-lg hover:scale-[1.02]"
               >
                 <Calendar className="w-4 h-4" />
                 Book Free Call

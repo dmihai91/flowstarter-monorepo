@@ -1169,7 +1169,8 @@ function NewProjectPageContent() {
                   }
                 }}
                 disabled={!canProceed()}
-                className="bg-gradient-to-r from-[var(--purple)] to-blue-500 hover:from-[var(--purple)]/90 hover:to-blue-500/90 text-white font-semibold rounded-xl shadow-lg shadow-[var(--purple)]/20 h-11 px-6"
+                variant="accent"
+                size="lg"
               >
                 Continue
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -1178,7 +1179,8 @@ function NewProjectPageContent() {
               <Button
                 onClick={handleSubmit}
                 disabled={isSaving}
-                className="bg-gradient-to-r from-[var(--purple)] to-blue-500 hover:from-[var(--purple)]/90 hover:to-blue-500/90 text-white font-semibold rounded-xl shadow-lg shadow-[var(--purple)]/20 h-11 px-6"
+                variant="accent"
+                size="lg"
               >
                 {isSaving ? (
                   <>

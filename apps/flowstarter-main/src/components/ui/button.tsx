@@ -30,12 +30,12 @@ const buttonVariants = cva(
       },
       size: {
         default: '!h-10 px-4 rounded-lg',
-        xs: '!h-8 px-3 rounded-xs',
-        sm: '!h-9 rounded-sm px-3',
-        md: '!h-10 rounded-md px-4',
-        lg: '!h-11 rounded-xl px-6 rounded-lg',
-        xl: '!h-12 rounded-lg px-8 rounded-xl',
-        icon: 'h-10 w-10',
+        xs: '!h-8 px-3 rounded-md',
+        sm: '!h-9 px-3 rounded-lg',
+        md: '!h-10 px-4 rounded-lg',
+        lg: '!h-11 px-6 rounded-lg',
+        xl: '!h-12 px-8 rounded-lg',
+        icon: 'h-10 w-10 rounded-lg',
       },
     },
     defaultVariants: {

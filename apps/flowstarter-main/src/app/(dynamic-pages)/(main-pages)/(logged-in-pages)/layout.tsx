@@ -2,7 +2,6 @@
 
 import FooterCompact from '@/components/FooterCompact';
 import { GradientBackground } from '@/components/ui/gradient-background';
-import { MobileSidebarToggle } from '@/components/ui/mobile-sidebar-toggle';
 import { Sidebar } from '@/components/ui/sidebar';
 import { SidebarProvider, useSidebar } from '@/contexts/SidebarContext';
 import { usePathname } from 'next/navigation';
@@ -35,7 +34,6 @@ function LayoutContent({ children }: { children: ReactNode }) {
       <GradientBackground variant="dashboard" className="fixed inset-0 z-0" />
       
       <Sidebar />
-      <MobileSidebarToggle />
       
       <main
         className={`flex-1 mt-16 relative z-10 ${

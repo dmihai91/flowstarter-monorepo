@@ -10,11 +10,15 @@ import {
   LayoutDashboard,
   MessageSquare,
   Puzzle,
+  PanelLeftClose,
+  PanelLeft,
+  Menu,
+  X,
   type LucideIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const CALENDLY_URL = 'https://calendly.com/flowstarter-app/discovery';
 
@@ -23,117 +27,13 @@ interface SidebarItem {
   href: string;
   icon: LucideIcon;
   external?: boolean;
-  badge?: string | number;
-}
-
-interface SidebarLinkProps {
-  href?: string;
-  isActive?: boolean;
-  shouldExpand: boolean;
-  icon: LucideIcon;
-  title: string;
-  onClick?: () => void;
-  type?: 'link' | 'button';
-  external?: boolean;
-}
-
-function SidebarLink({
-  href,
-  isActive = false,
-  shouldExpand,
-  icon: Icon,
-  title,
-  onClick,
-  type = 'link',
-  external = false,
-}: SidebarLinkProps) {
-  const content = (
-    <>
-      <div
-        className={cn(
-          'flex items-center transition-all duration-300 ease-out',
-          shouldExpand ? 'justify-start shrink-0' : 'justify-center w-full',
-          isActive
-            ? 'text-white'
-            : 'text-gray-500 group-hover:text-[var(--purple)] dark:text-gray-400 dark:group-hover:text-[var(--purple)]'
-        )}
-      >
-        <Icon
-          className={shouldExpand ? 'h-5 w-5' : 'h-4 w-4'}
-          strokeWidth={2}
-        />
-      </div>
-      <span
-        className={cn(
-          'font-medium text-sm transition-all duration-300 ease-out truncate overflow-hidden',
-          shouldExpand ? 'opacity-100 max-w-full' : 'opacity-0 max-w-0',
-          isActive
-            ? 'text-white'
-            : 'text-gray-700 dark:text-gray-200 group-hover:text-[var(--purple)] dark:group-hover:text-[var(--purple)]'
-        )}
-      >
-        {title}
-      </span>
-    </>
-  );
-
-  const className = cn(
-    'flex items-center rounded-xl transition-all duration-300 ease-out group relative',
-    'hover:bg-[var(--purple)]/10 dark:hover:bg-[var(--purple)]/15',
-    shouldExpand
-      ? 'gap-3 pl-3 pr-4 py-3 w-full'
-      : 'justify-center w-12 h-12 gap-0 mx-auto',
-    isActive &&
-      'bg-[var(--purple)] text-white shadow-lg shadow-[var(--purple)]/30 ring-1 ring-[var(--purple)]/20'
-  );
-
-  if (type === 'button') {
-    return (
-      <button
-        onClick={onClick}
-        className={className}
-        title={!shouldExpand ? title : undefined}
-      >
-        {content}
-      </button>
-    );
-  }
-
-  if (external) {
-    return (
-      <a
-        href={href!}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={onClick}
-        className={className}
-        title={!shouldExpand ? title : undefined}
-      >
-        {content}
-      </a>
-    );
-  }
-
-  return (
-    <Link
-      href={href!}
-      onClick={onClick}
-      className={className}
-      title={!shouldExpand ? title : undefined}
-    >
-      {content}
-    </Link>
-  );
 }
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { isCollapsed, isMobileOpen, setIsMobileOpen } = useSidebar();
+  const { isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen } = useSidebar();
   const { t } = useTranslations();
-
-  const [isHovered, setIsHovered] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
-  const shouldExpand = isMobileOpen || !isCollapsed || isHovered;
 
   const mainItems: SidebarItem[] = [
     {
@@ -148,7 +48,7 @@ export function Sidebar() {
     },
   ];
 
-  const secondaryItems: SidebarItem[] = [
+  const supportItems: SidebarItem[] = [
     {
       title: 'Book a Call',
       href: CALENDLY_URL,
@@ -162,120 +62,238 @@ export function Sidebar() {
     },
   ];
 
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    setIsMobileOpen(false);
+  }, [pathname, setIsMobileOpen]);
+
+  // Close mobile sidebar on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsMobileOpen(false);
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [setIsMobileOpen]);
+
+  const isActive = (href: string, exact?: boolean) => {
+    if (exact) return pathname === href;
+    if (href === '/dashboard') {
+      return pathname === '/dashboard' || 
+             pathname?.startsWith('/dashboard/new') || 
+             pathname?.startsWith('/dashboard/projects');
+    }
+    return pathname?.startsWith(href);
+  };
+
+  const NavLink = ({ 
+    href, 
+    icon: Icon, 
+    label, 
+    exact,
+    external,
+    onClick,
+  }: { 
+    href: string; 
+    icon: LucideIcon; 
+    label: string; 
+    exact?: boolean;
+    external?: boolean;
+    onClick?: () => void;
+  }) => {
+    const active = !external && isActive(href, exact);
+    
+    const className = cn(
+      'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all',
+      active
+        ? 'bg-[var(--purple)] text-white shadow-lg shadow-[var(--purple)]/25'
+        : 'text-gray-600 dark:text-white/60 hover:bg-white/60 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
+      isCollapsed && 'lg:justify-center lg:px-2'
+    );
+
+    const content = (
+      <>
+        <Icon className="w-4 h-4 flex-shrink-0" />
+        <span className={cn('truncate', isCollapsed && 'lg:hidden')}>{label}</span>
+      </>
+    );
+
+    if (external) {
+      return (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={isCollapsed ? label : undefined}
+          onClick={onClick}
+          className={className}
+        >
+          {content}
+        </a>
+      );
+    }
+
+    return (
+      <Link
+        href={href}
+        title={isCollapsed ? label : undefined}
+        onClick={onClick}
+        className={className}
+      >
+        {content}
+      </Link>
+    );
+  };
+
+  const SidebarContent = ({ showToggle = false }: { showToggle?: boolean }) => (
+    <div className="p-4 space-y-6 h-full overflow-y-auto flex flex-col">
+      {/* Main Navigation */}
+      <div>
+        <h3 className={cn(
+          'px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider',
+          isCollapsed && 'lg:hidden'
+        )}>
+          Main
+        </h3>
+        <div className="space-y-1">
+          {mainItems.map((item) => (
+            <NavLink 
+              key={item.href} 
+              href={item.href}
+              icon={item.icon}
+              label={item.title}
+              exact={item.href === '/dashboard'}
+              onClick={() => setIsMobileOpen(false)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Support */}
+      <div>
+        <h3 className={cn(
+          'px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider',
+          isCollapsed && 'lg:hidden'
+        )}>
+          Support
+        </h3>
+        <div className="space-y-1">
+          {supportItems.map((item) => (
+            <NavLink 
+              key={item.href} 
+              href={item.href}
+              icon={item.icon}
+              label={item.title}
+              external={item.external}
+              onClick={() => setIsMobileOpen(false)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Spacer */}
+      <div className="flex-1" />
+
+      {/* Feedback */}
+      <div className="border-t border-white/10 pt-4">
+        <button
+          onClick={() => setIsFeedbackOpen(true)}
+          className={cn(
+            'flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all',
+            'text-gray-600 dark:text-white/60 hover:bg-white/60 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
+            isCollapsed && 'lg:justify-center lg:px-2'
+          )}
+        >
+          <MessageSquare className="w-4 h-4 flex-shrink-0" />
+          <span className={cn('truncate', isCollapsed && 'lg:hidden')}>
+            {t('sidebar.feedback')}
+          </span>
+        </button>
+      </div>
+
+      {/* Collapse toggle at bottom - desktop only */}
+      {showToggle && (
+        <div className="pt-2">
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className={cn(
+              'flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all',
+              'text-gray-500 dark:text-white/40 hover:bg-white/60 dark:hover:bg-white/5 hover:text-gray-700 dark:hover:text-white/60',
+              isCollapsed && 'justify-center px-2'
+            )}
+          >
+            {isCollapsed ? (
+              <PanelLeft className="w-4 h-4" />
+            ) : (
+              <>
+                <PanelLeftClose className="w-4 h-4" />
+                <span>Collapse</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <>
-      {/* Mobile Overlay */}
+      {/* Mobile menu button */}
+      <button
+        onClick={() => setIsMobileOpen(true)}
+        className="lg:hidden fixed bottom-4 left-4 z-50 p-3 rounded-full bg-[var(--purple)] text-white shadow-lg shadow-[var(--purple)]/25 hover:bg-[var(--purple)]/90 transition-colors"
+        aria-label="Open menu"
+      >
+        <Menu className="w-5 h-5" />
+      </button>
+
+      {/* Mobile overlay */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm z-30 lg:hidden transition-opacity duration-300 ease-out"
+          className="lg:hidden fixed inset-0 z-[150] bg-black/50 backdrop-blur-sm"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
+      {/* Mobile sidebar */}
       <aside
         className={cn(
-          'fixed left-0 top-16 bottom-0 flex flex-col backdrop-blur-xl border-r border-gray-200/50 dark:border-white/10 z-40',
-          'transition-[transform,opacity] duration-350 ease-in-out',
-          isMobileOpen
-            ? 'translate-x-0 opacity-100'
-            : '-translate-x-full opacity-0 lg:opacity-100',
-          'lg:translate-x-0',
-          shouldExpand
-            ? 'items-start px-4 pt-6 pb-4 w-[240px] bg-white/60 dark:bg-white/[0.03] transition-[width,padding] duration-300 ease-out'
-            : 'items-center px-0 pt-6 pb-4 w-16 bg-white/60 dark:bg-white/[0.03] transition-[width,padding] duration-300 ease-out'
+          'lg:hidden fixed inset-y-0 left-0 z-[160] w-72',
+          'bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-2xl backdrop-saturate-150',
+          'border-r border-white/20 dark:border-white/10',
+          'shadow-2xl shadow-black/10 dark:shadow-black/30',
+          'transform transition-transform duration-300 ease-in-out',
+          isMobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Main Navigation */}
-        <nav
-          className={cn(
-            'w-full flex flex-col',
-            shouldExpand ? 'space-y-1' : 'space-y-2 items-center'
-          )}
-        >
-          {shouldExpand && (
-            <p className="px-3 mb-2 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
-              Main
-            </p>
-          )}
-          {mainItems.map((item) => {
-            const itemPath = item.href.split('#')[0];
-            const isActive =
-              itemPath === '/dashboard'
-                ? pathname === '/dashboard' ||
-                  pathname?.startsWith('/dashboard/new') ||
-                  pathname?.startsWith('/dashboard/projects')
-                : pathname === itemPath || pathname?.startsWith(itemPath);
-
-            return (
-              <SidebarLink
-                key={item.href}
-                href={item.href}
-                icon={item.icon}
-                title={item.title}
-                isActive={isActive}
-                shouldExpand={shouldExpand}
-                onClick={() => setIsMobileOpen(false)}
-              />
-            );
-          })}
-        </nav>
-
-        {/* Secondary Navigation */}
-        <nav
-          className={cn(
-            'w-full flex flex-col mt-6',
-            shouldExpand ? 'space-y-1' : 'space-y-2 items-center'
-          )}
-        >
-          {shouldExpand && (
-            <p className="px-3 mb-2 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
-              Support
-            </p>
-          )}
-          {secondaryItems.map((item) => {
-            const itemPath = item.href.split('#')[0];
-            const isActive =
-              !item.external &&
-              (pathname === itemPath || pathname?.startsWith(itemPath));
-
-            return (
-              <SidebarLink
-                key={item.href}
-                href={item.href}
-                icon={item.icon}
-                title={item.title}
-                isActive={isActive}
-                shouldExpand={shouldExpand}
-                external={item.external}
-                onClick={() => setIsMobileOpen(false)}
-              />
-            );
-          })}
-        </nav>
-
-        {/* Spacer */}
-        <div className="flex-1" />
-
-        {/* Footer Section */}
-        <div
-          className={cn(
-            'shrink-0 w-full border-t transition-[padding,border-color] duration-300 ease-out',
-            shouldExpand
-              ? 'pt-4 border-gray-200/70 dark:border-white/10'
-              : 'pt-3 border-gray-200/50 dark:border-white/5 flex justify-center'
-          )}
-        >
-          <SidebarLink
-            type="button"
-            icon={MessageSquare}
-            title={t('sidebar.feedback')}
-            shouldExpand={shouldExpand}
-            onClick={() => setIsFeedbackOpen(true)}
-          />
+        {/* Mobile header */}
+        <div className="flex items-center justify-between p-4 border-b border-gray-200/50 dark:border-white/5">
+          <Link href="/dashboard" className="flex items-center gap-2" onClick={() => setIsMobileOpen(false)}>
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20">
+              <span className="text-white font-bold text-xs">F</span>
+            </div>
+            <span className="font-semibold text-gray-900 dark:text-white">Flowstarter</span>
+          </Link>
+          <button
+            onClick={() => setIsMobileOpen(false)}
+            className="p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
+        <SidebarContent />
+      </aside>
+
+      {/* Desktop sidebar - Glassmorphism */}
+      <aside 
+        className={cn(
+          'hidden lg:flex flex-col flex-shrink-0 fixed left-0 top-16 bottom-0 transition-all duration-300 z-40',
+          'bg-white/60 dark:bg-white/[0.03] backdrop-blur-2xl backdrop-saturate-150',
+          'border-r border-white/50 dark:border-white/10',
+          isCollapsed ? 'w-[68px]' : 'w-64'
+        )}
+      >
+        <SidebarContent showToggle />
       </aside>
 
       <FeedbackDialog open={isFeedbackOpen} onOpenChange={setIsFeedbackOpen} />

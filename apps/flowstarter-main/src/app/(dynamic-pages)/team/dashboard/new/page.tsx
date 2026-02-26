@@ -281,6 +281,66 @@ function NewProjectPageContent() {
       window.history.replaceState({}, '', url.toString());
     }
   }, [projectId]);
+  
+  // Auto-save project data to database (debounced)
+  const autoSaveTimeout = useRef<NodeJS.Timeout | null>(null);
+  useEffect(() => {
+    if (!projectId || !projectData.businessName) return;
+    
+    // Clear previous timeout
+    if (autoSaveTimeout.current) {
+      clearTimeout(autoSaveTimeout.current);
+    }
+    
+    // Debounce auto-save by 1 second
+    autoSaveTimeout.current = setTimeout(async () => {
+      try {
+        const chatData = {
+          clientInfo: {
+            name: projectData.clientName,
+            email: projectData.clientEmail,
+            phone: projectData.clientPhone,
+          },
+          businessInfo: {
+            name: projectData.businessName,
+            industry: projectData.industry,
+            description: projectData.description,
+            targetAudience: projectData.targetAudience,
+            uvp: projectData.uvp,
+            goal: projectData.goal,
+            offerType: projectData.offerType,
+            brandTone: projectData.brandTone,
+          },
+          contactInfo: {
+            email: projectData.businessEmail,
+            phone: projectData.businessPhone,
+            address: projectData.businessAddress,
+            website: projectData.website,
+          },
+          generatedByAI: isAIMode,
+        };
+        
+        await fetch(`/api/projects/${projectId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: projectData.businessName || 'Untitled Project',
+            description: projectData.description || '',
+            chat: JSON.stringify(chatData),
+          }),
+        });
+        console.log('Auto-saved project data');
+      } catch (error) {
+        console.error('Auto-save failed:', error);
+      }
+    }, 1000);
+    
+    return () => {
+      if (autoSaveTimeout.current) {
+        clearTimeout(autoSaveTimeout.current);
+      }
+    };
+  }, [projectId, projectData, isAIMode]);
 
   const hasCreatedDraft = useRef(false);
   

@@ -288,20 +288,21 @@ export default clerkMiddleware(async (auth, req) => {
     // ignore cookie/geo issues
   }
 
-  // Check if user is authenticated and redirect to team dashboard (concierge pivot)
-  if (pathname === '/' || pathname === '/dashboard') {
+  // Check if user is authenticated and redirect based on role
+  if (pathname === '/') {
     try {
-      const { userId } = await auth();
+      const { userId, sessionClaims } = await auth();
       if (userId) {
-        // All authenticated users go to team dashboard (concierge pivot)
-        const targetPath = '/team/dashboard';
+        // Check if user is a team member
+        const role = (sessionClaims?.metadata as { role?: string })?.role?.toLowerCase();
+        const isTeamMember = role === 'team' || role === 'admin';
         
-        // Only redirect if not already on the correct path
-        if (pathname !== targetPath) {
-          const url = req.nextUrl.clone();
-          url.pathname = targetPath;
-          return NextResponse.redirect(url);
-        }
+        // Team users → /team/dashboard, Clients → /dashboard
+        const targetPath = isTeamMember ? '/team/dashboard' : '/dashboard';
+        
+        const url = req.nextUrl.clone();
+        url.pathname = targetPath;
+        return NextResponse.redirect(url);
       }
     } catch {
       // User not authenticated, continue to landing page

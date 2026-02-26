@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { GradientBackground } from '@/components/ui/gradient-background';
 import { TeamHeader } from '../../../components/TeamHeader';
 import FooterCompact from '@/components/FooterCompact';
-import { useUser } from '@clerk/nextjs';
+import { useWizardStore } from '@/store/wizard-store';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -21,6 +21,7 @@ import {
   Edit,
   ExternalLink,
   Sparkles,
+  AlertCircle,
 } from 'lucide-react';
 
 interface ProjectData {
@@ -61,7 +62,7 @@ interface ParsedChat {
 export default function ProjectDetailPage() {
   const { id } = useParams();
   const router = useRouter();
-  const { user, isLoaded: userLoaded } = useUser();
+  const setTeamWizardData = useWizardStore((state) => state.setTeamWizardData);
   const [project, setProject] = useState<ProjectData | null>(null);
   const [parsedChat, setParsedChat] = useState<ParsedChat | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -98,6 +99,48 @@ export default function ProjectDetailPage() {
     fetchProject();
   }, [id]);
 
+  // Check if project details are complete
+  const isProjectComplete = () => {
+    if (!parsedChat) return false;
+    const { businessInfo, clientInfo } = parsedChat;
+    return !!(
+      businessInfo?.name &&
+      businessInfo?.description &&
+      businessInfo?.industry &&
+      clientInfo?.name &&
+      clientInfo?.email
+    );
+  };
+
+  // Navigate to wizard with project data pre-filled
+  const handleEditProject = () => {
+    if (!project || !parsedChat) return;
+
+    // Set wizard data from project
+    setTeamWizardData({
+      clientName: parsedChat.clientInfo?.name || '',
+      clientEmail: parsedChat.clientInfo?.email || '',
+      clientPhone: parsedChat.clientInfo?.phone || '',
+      businessName: parsedChat.businessInfo?.name || project.name || '',
+      description: parsedChat.businessInfo?.description || project.description || '',
+      industry: parsedChat.businessInfo?.industry || '',
+      targetAudience: parsedChat.businessInfo?.targetAudience || '',
+      uvp: parsedChat.businessInfo?.uvp || '',
+      goal: parsedChat.businessInfo?.goal || '',
+      offerType: parsedChat.businessInfo?.offerType || '',
+      brandTone: parsedChat.businessInfo?.brandTone || '',
+      businessEmail: parsedChat.contactInfo?.email || '',
+      businessPhone: parsedChat.contactInfo?.phone || '',
+      businessAddress: parsedChat.contactInfo?.address || '',
+      website: parsedChat.contactInfo?.website || '',
+      step: 1,
+      isAIMode: parsedChat.generatedByAI || false,
+      projectId: project.id,
+    });
+
+    router.push(`/team/dashboard/new?id=${project.id}`);
+  };
+
   const cardClass = [
     'rounded-2xl border border-black/[0.08] dark:border-white/[0.08]',
     'bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl',
@@ -109,8 +152,9 @@ export default function ProjectDetailPage() {
     return (
       <div className="min-h-screen flex flex-col">
         <TeamHeader />
-        <div className="flex-1 flex items-center justify-center">
-          <GradientBackground variant="dashboard" className="fixed" />
+        <div className="h-16" />
+        <GradientBackground variant="dashboard" className="fixed" />
+        <div className="flex-1 flex items-center justify-center relative z-10">
           <div className={`${cardClass} p-8`}>
             <div className="flex flex-col items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--purple)] to-[var(--purple)]/70 flex items-center justify-center">
@@ -131,13 +175,17 @@ export default function ProjectDetailPage() {
     return (
       <div className="min-h-screen flex flex-col">
         <TeamHeader />
-        <div className="flex-1 flex items-center justify-center">
-          <GradientBackground variant="dashboard" className="fixed" />
+        <div className="h-16" />
+        <GradientBackground variant="dashboard" className="fixed" />
+        <div className="flex-1 flex items-center justify-center relative z-10">
           <div className={`${cardClass} p-8 max-w-md mx-auto text-center`}>
+            <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="w-6 h-6 text-red-500" />
+            </div>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
               Project not found
             </h2>
-            <p className="text-gray-500 dark:text-white/50 mb-4">
+            <p className="text-gray-500 dark:text-white/50 mb-6">
               {error || "The project you're looking for doesn't exist."}
             </p>
             <Link href="/team/dashboard">
@@ -153,6 +201,46 @@ export default function ProjectDetailPage() {
     );
   }
 
+  // If project is incomplete, redirect to wizard automatically
+  if (!isLoading && !isProjectComplete() && project.is_draft) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <TeamHeader />
+        <div className="h-16" />
+        <GradientBackground variant="dashboard" className="fixed" />
+        <main className="flex-1 relative z-10 max-w-2xl mx-auto px-6 py-12 w-full">
+          <div className={`${cardClass} p-8 text-center`}>
+            <div className="w-16 h-16 rounded-2xl bg-yellow-500/10 flex items-center justify-center mx-auto mb-6">
+              <AlertCircle className="w-8 h-8 text-yellow-500" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+              Project Details Incomplete
+            </h1>
+            <p className="text-gray-500 dark:text-white/50 mb-8 max-w-md mx-auto">
+              This project is missing some required information. Complete the setup to continue.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link href="/team/dashboard">
+                <Button variant="outline">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Dashboard
+                </Button>
+              </Link>
+              <Button
+                onClick={handleEditProject}
+                className="bg-gradient-to-r from-[var(--purple)] to-blue-500 text-white"
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                Complete Project Setup
+              </Button>
+            </div>
+          </div>
+        </main>
+        <FooterCompact />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <TeamHeader />
@@ -160,7 +248,7 @@ export default function ProjectDetailPage() {
 
       <GradientBackground variant="dashboard" className="fixed" />
 
-      <main className="flex-1 relative z-10 max-w-4xl mx-auto px-6 py-8 w-full">
+      <main className="flex-1 relative z-10 max-w-5xl mx-auto px-6 py-8 w-full">
         {/* Back button */}
         <Link
           href="/team/dashboard"
@@ -171,48 +259,46 @@ export default function ProjectDetailPage() {
         </Link>
 
         {/* Project Header */}
-        <div className={`${cardClass} p-6 mb-6`}>
-          <div className="flex items-start justify-between">
+        <div className={`${cardClass} p-6 mb-8`}>
+          <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center text-white font-bold text-xl">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-[var(--purple)]/20">
                 {project.name.charAt(0).toUpperCase()}
               </div>
               <div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3 flex-wrap">
                   <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                     {project.name}
                   </h1>
                   {parsedChat?.generatedByAI && (
-                    <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">
+                    <span className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">
                       <Sparkles className="w-3 h-3" />
                       AI Generated
                     </span>
                   )}
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      project.is_draft
+                        ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+                        : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                    }`}
+                  >
+                    {project.is_draft ? 'Draft' : 'Active'}
+                  </span>
                 </div>
-                <p className="text-gray-500 dark:text-white/50 text-sm mt-1">
-                  Project ID: {project.id}
+                <p className="text-gray-400 dark:text-white/40 text-sm mt-1 font-mono">
+                  {project.id}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span
-                className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  project.is_draft
-                    ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
-                    : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                }`}
-              >
-                {project.is_draft ? 'Draft' : 'Active'}
-              </span>
-              <Button size="sm" variant="outline">
-                <Edit className="w-4 h-4 mr-2" />
-                Edit
-              </Button>
-            </div>
+            <Button onClick={handleEditProject} variant="outline" size="sm">
+              <Edit className="w-4 h-4 mr-2" />
+              Edit
+            </Button>
           </div>
 
           {project.description && (
-            <p className="text-gray-600 dark:text-white/70 mt-4">
+            <p className="text-gray-600 dark:text-white/70 mt-4 leading-relaxed">
               {project.description}
             </p>
           )}
@@ -220,28 +306,28 @@ export default function ProjectDetailPage() {
 
         <div className="grid md:grid-cols-2 gap-6">
           {/* Client Information */}
-          {parsedChat?.clientInfo && (
-            <div className={`${cardClass} p-6`}>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                  <Users className="w-5 h-5 text-blue-500" />
-                </div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Client Information
-                </h2>
+          <div className={`${cardClass} p-6`}>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                <Users className="w-5 h-5 text-blue-500" />
               </div>
-              <div className="space-y-3">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Client Information
+              </h2>
+            </div>
+            {parsedChat?.clientInfo ? (
+              <div className="space-y-4">
                 {parsedChat.clientInfo.name && (
-                  <div className="flex items-center gap-3 text-sm">
-                    <Users className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-600 dark:text-white/70">
+                  <div className="flex items-center gap-3">
+                    <Users className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <span className="text-gray-700 dark:text-white/80">
                       {parsedChat.clientInfo.name}
                     </span>
                   </div>
                 )}
                 {parsedChat.clientInfo.email && (
-                  <div className="flex items-center gap-3 text-sm">
-                    <Mail className="w-4 h-4 text-gray-400" />
+                  <div className="flex items-center gap-3">
+                    <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
                     <a
                       href={`mailto:${parsedChat.clientInfo.email}`}
                       className="text-[var(--purple)] hover:underline"
@@ -251,137 +337,125 @@ export default function ProjectDetailPage() {
                   </div>
                 )}
                 {parsedChat.clientInfo.phone && (
-                  <div className="flex items-center gap-3 text-sm">
-                    <Phone className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-600 dark:text-white/70">
+                  <div className="flex items-center gap-3">
+                    <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <span className="text-gray-700 dark:text-white/80">
                       {parsedChat.clientInfo.phone}
                     </span>
                   </div>
                 )}
               </div>
-            </div>
-          )}
+            ) : (
+              <p className="text-gray-400 dark:text-white/40 text-sm">
+                No client information available
+              </p>
+            )}
+          </div>
 
           {/* Business Information */}
-          {parsedChat?.businessInfo && (
-            <div className={`${cardClass} p-6`}>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center">
-                  <Building2 className="w-5 h-5 text-[var(--purple)]" />
-                </div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Business Details
-                </h2>
+          <div className={`${cardClass} p-6`}>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center">
+                <Building2 className="w-5 h-5 text-[var(--purple)]" />
               </div>
-              <div className="space-y-3 text-sm">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Business Details
+              </h2>
+            </div>
+            {parsedChat?.businessInfo ? (
+              <div className="space-y-3">
                 {parsedChat.businessInfo.industry && (
-                  <div>
-                    <span className="text-gray-400 dark:text-white/40">
-                      Industry:
-                    </span>
-                    <span className="ml-2 text-gray-600 dark:text-white/70">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400 dark:text-white/40 text-sm">Industry</span>
+                    <span className="text-gray-700 dark:text-white/80 text-sm font-medium">
                       {parsedChat.businessInfo.industry}
                     </span>
                   </div>
                 )}
                 {parsedChat.businessInfo.targetAudience && (
-                  <div>
-                    <span className="text-gray-400 dark:text-white/40">
-                      Target Audience:
-                    </span>
-                    <span className="ml-2 text-gray-600 dark:text-white/70">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400 dark:text-white/40 text-sm">Target Audience</span>
+                    <span className="text-gray-700 dark:text-white/80 text-sm font-medium text-right max-w-[60%]">
                       {parsedChat.businessInfo.targetAudience}
                     </span>
                   </div>
                 )}
-                {parsedChat.businessInfo.uvp && (
-                  <div>
-                    <span className="text-gray-400 dark:text-white/40">
-                      UVP:
-                    </span>
-                    <span className="ml-2 text-gray-600 dark:text-white/70">
-                      {parsedChat.businessInfo.uvp}
-                    </span>
-                  </div>
-                )}
                 {parsedChat.businessInfo.brandTone && (
-                  <div>
-                    <span className="text-gray-400 dark:text-white/40">
-                      Brand Tone:
-                    </span>
-                    <span className="ml-2 text-gray-600 dark:text-white/70 capitalize">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400 dark:text-white/40 text-sm">Brand Tone</span>
+                    <span className="text-gray-700 dark:text-white/80 text-sm font-medium capitalize">
                       {parsedChat.businessInfo.brandTone}
                     </span>
                   </div>
                 )}
+                {parsedChat.businessInfo.uvp && (
+                  <div className="pt-2 border-t border-gray-100 dark:border-white/5 mt-3">
+                    <span className="text-gray-400 dark:text-white/40 text-sm block mb-1">Unique Value Proposition</span>
+                    <span className="text-gray-700 dark:text-white/80 text-sm">
+                      {parsedChat.businessInfo.uvp}
+                    </span>
+                  </div>
+                )}
               </div>
-            </div>
-          )}
+            ) : (
+              <p className="text-gray-400 dark:text-white/40 text-sm">
+                No business information available
+              </p>
+            )}
+          </div>
 
           {/* Contact Information */}
-          {parsedChat?.contactInfo &&
-            (parsedChat.contactInfo.email ||
-              parsedChat.contactInfo.phone ||
-              parsedChat.contactInfo.address ||
-              parsedChat.contactInfo.website) && (
-              <div className={`${cardClass} p-6`}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
-                    <Globe className="w-5 h-5 text-green-500" />
-                  </div>
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    Contact Information
-                  </h2>
-                </div>
-                <div className="space-y-3 text-sm">
-                  {parsedChat.contactInfo.email && (
-                    <div className="flex items-center gap-3">
-                      <Mail className="w-4 h-4 text-gray-400" />
-                      <a
-                        href={`mailto:${parsedChat.contactInfo.email}`}
-                        className="text-[var(--purple)] hover:underline"
-                      >
-                        {parsedChat.contactInfo.email}
-                      </a>
-                    </div>
-                  )}
-                  {parsedChat.contactInfo.phone && (
-                    <div className="flex items-center gap-3">
-                      <Phone className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-600 dark:text-white/70">
-                        {parsedChat.contactInfo.phone}
-                      </span>
-                    </div>
-                  )}
-                  {parsedChat.contactInfo.address && (
-                    <div className="flex items-center gap-3">
-                      <MapPin className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-600 dark:text-white/70">
-                        {parsedChat.contactInfo.address}
-                      </span>
-                    </div>
-                  )}
-                  {parsedChat.contactInfo.website && (
-                    <div className="flex items-center gap-3">
-                      <Globe className="w-4 h-4 text-gray-400" />
-                      <a
-                        href={parsedChat.contactInfo.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[var(--purple)] hover:underline inline-flex items-center gap-1"
-                      >
-                        {parsedChat.contactInfo.website}
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    </div>
-                  )}
-                </div>
+          <div className={`${cardClass} p-6`}>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                <Globe className="w-5 h-5 text-green-500" />
               </div>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Contact Information
+              </h2>
+            </div>
+            {parsedChat?.contactInfo && (parsedChat.contactInfo.email || parsedChat.contactInfo.phone || parsedChat.contactInfo.address || parsedChat.contactInfo.website) ? (
+              <div className="space-y-4">
+                {parsedChat.contactInfo.email && (
+                  <div className="flex items-center gap-3">
+                    <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <a href={`mailto:${parsedChat.contactInfo.email}`} className="text-[var(--purple)] hover:underline">
+                      {parsedChat.contactInfo.email}
+                    </a>
+                  </div>
+                )}
+                {parsedChat.contactInfo.phone && (
+                  <div className="flex items-center gap-3">
+                    <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <span className="text-gray-700 dark:text-white/80">{parsedChat.contactInfo.phone}</span>
+                  </div>
+                )}
+                {parsedChat.contactInfo.address && (
+                  <div className="flex items-center gap-3">
+                    <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <span className="text-gray-700 dark:text-white/80">{parsedChat.contactInfo.address}</span>
+                  </div>
+                )}
+                {parsedChat.contactInfo.website && (
+                  <div className="flex items-center gap-3">
+                    <Globe className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <a href={parsedChat.contactInfo.website} target="_blank" rel="noopener noreferrer" className="text-[var(--purple)] hover:underline inline-flex items-center gap-1">
+                      {parsedChat.contactInfo.website}
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="text-gray-400 dark:text-white/40 text-sm">
+                No contact information available
+              </p>
             )}
+          </div>
 
           {/* Quick Actions */}
           <div className={`${cardClass} p-6`}>
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center">
                 <Target className="w-5 h-5 text-orange-500" />
               </div>
@@ -389,13 +463,20 @@ export default function ProjectDetailPage() {
                 Quick Actions
               </h2>
             </div>
-            <div className="space-y-2">
-              <Button className="w-full justify-start" variant="outline">
-                <Edit className="w-4 h-4 mr-2" />
+            <div className="space-y-3">
+              <Button
+                onClick={handleEditProject}
+                className="w-full justify-start h-12"
+                variant="outline"
+              >
+                <Edit className="w-4 h-4 mr-3" />
                 Edit Project Details
               </Button>
-              <Button className="w-full justify-start bg-gradient-to-r from-[var(--purple)] to-blue-500 text-white">
-                <Sparkles className="w-4 h-4 mr-2" />
+              <Button
+                className="w-full justify-start h-12 bg-gradient-to-r from-[var(--purple)] to-blue-500 text-white hover:opacity-90"
+                disabled={!isProjectComplete()}
+              >
+                <Sparkles className="w-4 h-4 mr-3" />
                 Generate Website
               </Button>
             </div>

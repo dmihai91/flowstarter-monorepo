@@ -367,12 +367,14 @@ function NewProjectPageContent() {
         throw new Error(errors);
       }
 
+      const projectId = result?.data;
+      
       toast.success('Project created successfully!', {
-        description: 'Redirecting to dashboard...',
+        description: 'Opening project...',
       });
       
-      // Redirect to dashboard
-      router.push('/team/dashboard');
+      // Redirect to project page with UID
+      router.push(`/team/dashboard/projects/${projectId}`);
     } catch (error) {
       console.error('Failed to create project:', error);
       toast.error('Failed to create project', {

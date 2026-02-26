@@ -141,14 +141,6 @@ function NewProjectPageContent() {
     }
   }, [isAIMode]);
   
-  // Save wizard data to store whenever it changes
-  useEffect(() => {
-    setTeamWizardData({
-      ...projectData,
-      step,
-    });
-  }, [projectData, step, setTeamWizardData]);
-  
   // Generation steps for display
   const generationSteps = [
     { id: 'classifying', label: 'Analyzing your description...' },
@@ -198,6 +190,14 @@ function NewProjectPageContent() {
   
   // Restore step from stored data
   const [step, setStep] = useState(() => teamWizardData?.step || 1);
+
+  // Save wizard data to store whenever it changes
+  useEffect(() => {
+    setTeamWizardData({
+      ...projectData,
+      step,
+    });
+  }, [projectData, step, setTeamWizardData]);
 
   // Check if user is team member
   useEffect(() => {

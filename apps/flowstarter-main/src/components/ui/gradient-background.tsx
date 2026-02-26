@@ -27,9 +27,9 @@ export function GradientBackground({
   className,
 }: GradientBackgroundProps) {
   const gradientClass = variantGradients[variant];
-  // Lines visibility - visible in both modes
-  const lineOpacity = 'opacity-[0.15]';
-  const lineOpacityDark = 'dark:opacity-[0.10]';
+  // Lines visibility - subtle
+  const lineOpacity = 'opacity-[0.08]';
+  const lineOpacityDark = 'dark:opacity-[0.06]';
   
   return (
     <>

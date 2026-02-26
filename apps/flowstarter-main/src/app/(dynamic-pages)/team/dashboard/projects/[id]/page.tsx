@@ -201,45 +201,12 @@ export default function ProjectDetailPage() {
     );
   }
 
-  // If project is incomplete, redirect to wizard automatically
-  if (!isLoading && !isProjectComplete() && project.is_draft) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <TeamHeader />
-        <div className="h-16" />
-        <GradientBackground variant="dashboard" className="fixed" />
-        <main className="flex-1 relative z-10 max-w-2xl mx-auto px-6 py-12 w-full">
-          <div className={`${cardClass} p-8 text-center`}>
-            <div className="w-16 h-16 rounded-2xl bg-yellow-500/10 flex items-center justify-center mx-auto mb-6">
-              <AlertCircle className="w-8 h-8 text-yellow-500" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-              Project Details Incomplete
-            </h1>
-            <p className="text-gray-500 dark:text-white/50 mb-8 max-w-md mx-auto">
-              This project is missing some required information. Complete the setup to continue.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link href="/team/dashboard">
-                <Button variant="outline">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Dashboard
-                </Button>
-              </Link>
-              <Button
-                onClick={handleEditProject}
-                className="bg-gradient-to-r from-[var(--purple)] to-blue-500 text-white"
-              >
-                <Edit className="w-4 h-4 mr-2" />
-                Complete Project Setup
-              </Button>
-            </div>
-          </div>
-        </main>
-        <FooterCompact />
-      </div>
-    );
-  }
+  // Auto-redirect to wizard if project is incomplete draft
+  useEffect(() => {
+    if (!isLoading && project && !isProjectComplete() && project.is_draft) {
+      handleEditProject();
+    }
+  }, [isLoading, project, parsedChat]);
 
   return (
     <div className="min-h-screen flex flex-col">

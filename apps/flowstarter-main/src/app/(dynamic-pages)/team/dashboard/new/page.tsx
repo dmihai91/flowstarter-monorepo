@@ -6,8 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useUser, useAuth } from '@clerk/nextjs';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useWizardStore } from '@/store/wizard-store';
+import { toast } from 'sonner';
 import { 
   ArrowLeft,
   ArrowRight,
@@ -93,10 +95,17 @@ const toneOptions: { value: BrandTone; label: string; emoji: string }[] = [
 export default function NewProjectPage() {
   const { user, isLoaded: userLoaded } = useUser();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  // Get prefill data from wizard store (set by Quick Mode)
+  const prefillData = useWizardStore((state) => state.prefillData);
+  const setPrefillData = useWizardStore((state) => state.setPrefillData);
+  const selectedIndustry = useWizardStore((state) => state.selectedIndustry);
   
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [hasAppliedPrefill, setHasAppliedPrefill] = useState(false);
   
   const [projectData, setProjectData] = useState<ProjectData>({
     clientName: '',
@@ -130,6 +139,39 @@ export default function NewProjectPage() {
       }
     }
   }, [user, userLoaded, router]);
+
+  // Apply prefill data from Quick Mode AI generation
+  useEffect(() => {
+    if (hasAppliedPrefill || !prefillData) return;
+    
+    const isAIGenerated = searchParams.get('mode') === 'ai-generated';
+    
+    if (prefillData) {
+      // Apply prefill data to form
+      setProjectData(prev => ({
+        ...prev,
+        description: prefillData.description || prefillData.userDescription || '',
+        targetAudience: prefillData.targetUsers || '',
+        uvp: prefillData.USP || '',
+        businessName: prefillData.name || '',
+        industry: selectedIndustry || prefillData.industry || '',
+      }));
+      
+      // Skip to step 2 (business details) since we have AI data
+      setStep(2);
+      setHasAppliedPrefill(true);
+      
+      // Show success toast
+      if (isAIGenerated) {
+        toast.success('AI generated project details', {
+          description: 'Review and complete the remaining fields',
+        });
+      }
+      
+      // Clear prefill data after applying
+      setPrefillData(null);
+    }
+  }, [prefillData, hasAppliedPrefill, searchParams, selectedIndustry, setPrefillData]);
 
   const updateField = (field: keyof ProjectData, value: string) => {
     setProjectData(prev => ({ ...prev, [field]: value }));

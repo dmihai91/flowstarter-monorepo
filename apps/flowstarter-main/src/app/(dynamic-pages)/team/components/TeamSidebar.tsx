@@ -153,10 +153,10 @@ export function TeamSidebar() {
 
   return (
     <>
-      {/* Mobile menu button - shows on tablet and mobile */}
+      {/* Mobile menu button - shows on phones only */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed bottom-6 left-6 z-[200] p-4 rounded-2xl bg-[var(--purple)] text-white shadow-xl shadow-[var(--purple)]/30 hover:bg-[var(--purple)]/90 active:scale-95 transition-all"
+        className="md:hidden fixed bottom-6 left-6 z-[200] p-4 rounded-2xl bg-[var(--purple)] text-white shadow-xl shadow-[var(--purple)]/30 hover:bg-[var(--purple)]/90 active:scale-95 transition-all"
         aria-label="Open menu"
         style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
       >
@@ -166,7 +166,7 @@ export function TeamSidebar() {
       {/* Mobile overlay */}
       {mobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 z-[150] bg-black/50 backdrop-blur-sm"
+          className="md:hidden fixed inset-0 z-[150] bg-black/50 backdrop-blur-sm"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -174,7 +174,7 @@ export function TeamSidebar() {
       {/* Mobile sidebar */}
       <aside
         className={cn(
-          'lg:hidden fixed inset-y-0 left-0 z-[160] w-72',
+          'md:hidden fixed inset-y-0 left-0 z-[160] w-72',
           'bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-2xl backdrop-saturate-150',
           'border-r border-white/20 dark:border-white/10',
           'shadow-2xl shadow-black/10 dark:shadow-black/30',
@@ -197,10 +197,10 @@ export function TeamSidebar() {
         <SidebarContent />
       </aside>
 
-      {/* Desktop sidebar - Glassmorphism */}
+      {/* Desktop/Tablet sidebar - Glassmorphism */}
       <aside 
         className={cn(
-          'hidden lg:flex flex-col flex-shrink-0 transition-all duration-300',
+          'hidden md:flex flex-col flex-shrink-0 transition-all duration-300',
           'bg-white/60 dark:bg-white/[0.03] backdrop-blur-2xl backdrop-saturate-150',
           'border-r border-white/50 dark:border-white/10',
           collapsed ? 'w-[68px]' : 'w-64'

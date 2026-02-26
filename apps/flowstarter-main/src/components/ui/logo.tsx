@@ -21,26 +21,29 @@ export function Logo({ size = 'md', showText = true, className }: LogoProps) {
       <div className={cn(sizes[size], 'relative flex-shrink-0')}>
         <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
           <defs>
-            <linearGradient id="logoGrad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+            <linearGradient id="logoGrad" x1="0" y1="40" x2="40" y2="0" gradientUnits="userSpaceOnUse">
               <stop stopColor="#8B5CF6" />
-              <stop offset="1" stopColor="#3B82F6" />
+              <stop offset="1" stopColor="#06B6D4" />
             </linearGradient>
           </defs>
           
           {/* Rounded square background */}
           <rect width="40" height="40" rx="10" fill="url(#logoGrad)" />
           
-          {/* Clean "F" with flow curve */}
+          {/* Flowing wave - represents flow/movement */}
           <path 
-            d="M12 10h16v4H16v5h10v4H16v9h-4V10z" 
-            fill="white"
+            d="M8 26 Q14 18, 20 22 Q26 26, 32 18" 
+            stroke="white" 
+            strokeWidth="3.5" 
+            strokeLinecap="round"
+            fill="none"
           />
           
-          {/* Subtle flow accent - single smooth curve */}
+          {/* Second wave - depth/layers */}
           <path 
-            d="M28 24c0 4-3 7-7 7" 
+            d="M8 20 Q14 12, 20 16 Q26 20, 32 12" 
             stroke="white" 
-            strokeWidth="2.5" 
+            strokeWidth="3.5" 
             strokeLinecap="round"
             fill="none"
             opacity="0.6"

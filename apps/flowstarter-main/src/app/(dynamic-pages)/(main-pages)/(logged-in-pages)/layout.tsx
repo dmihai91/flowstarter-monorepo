@@ -37,7 +37,7 @@ function LayoutContent({ children }: { children: ReactNode }) {
       
       <main
         className={`flex-1 mt-16 relative z-10 ${
-          isCollapsed ? 'lg:ml-16' : 'lg:ml-60'
+          isCollapsed ? 'md:ml-[68px]' : 'md:ml-64'
         }`}
       >
         {children}
@@ -46,7 +46,7 @@ function LayoutContent({ children }: { children: ReactNode }) {
       {!hidesFooter && (
         <div
           className={`relative z-10 ${
-            isCollapsed ? 'lg:ml-16' : 'lg:ml-60'
+            isCollapsed ? 'md:ml-[68px]' : 'md:ml-64'
           }`}
         >
           <FooterCompact />

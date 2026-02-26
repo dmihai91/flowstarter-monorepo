@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { Logo } from '@/components/ui/logo';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
@@ -615,14 +616,7 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
             <div className="flex items-center justify-between h-14 sm:h-16">
               <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20 group-hover:shadow-[var(--purple)]/30 transition-shadow">
-                  <span className="text-white font-bold text-base sm:text-lg">
-                    F
-                  </span>
-                </div>
-                <span className="text-lg sm:text-xl font-semibold tracking-tight">
-                  Flowstarter
-                </span>
+                <Logo size="md" />
               </Link>
 
               <nav className="hidden md:flex items-center gap-8">

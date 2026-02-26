@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { Logo } from '@/components/ui/logo';
 
 interface FooterProps {
   showClientLogin?: boolean;
@@ -14,9 +15,7 @@ const Footer = ({ showClientLogin = false }: FooterProps) => {
           {/* Top row - Logo, Links, Social */}
           <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center">
-                <span className="text-white font-bold text-xs">F</span>
-              </div>
+              <Logo size="sm" showText={false} />
               <span className="text-sm text-gray-400 dark:text-white/30">
                 © {new Date().getFullYear()} Flowstarter
               </span>

@@ -1,0 +1,40 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="flowGrad3" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#8B5CF6"/>
+      <stop offset="100%" style="stop-color:#06B6D4"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Three flowing streams converging - represents business flow -->
+  
+  <!-- Stream 1 - top -->
+  <path d="M30 60 
+           Q70 50, 100 70
+           Q130 90, 170 80" 
+        stroke="url(#flowGrad3)" 
+        stroke-width="16" 
+        stroke-linecap="round"
+        fill="none"/>
+  
+  <!-- Stream 2 - middle (main) -->
+  <path d="M30 100 
+           Q80 90, 100 100
+           Q120 110, 170 100" 
+        stroke="url(#flowGrad3)" 
+        stroke-width="20" 
+        stroke-linecap="round"
+        fill="none"/>
+  
+  <!-- Stream 3 - bottom -->
+  <path d="M30 140 
+           Q70 150, 100 130
+           Q130 110, 170 120" 
+        stroke="url(#flowGrad3)" 
+        stroke-width="16" 
+        stroke-linecap="round"
+        fill="none"/>
+  
+  <!-- Spark/start point -->
+  <circle cx="170" cy="100" r="12" fill="url(#flowGrad3)"/>
+</svg>

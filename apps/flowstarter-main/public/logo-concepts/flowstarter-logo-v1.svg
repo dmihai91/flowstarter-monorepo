@@ -1,0 +1,30 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B5CF6"/>
+      <stop offset="100%" style="stop-color:#3B82F6"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Abstract flowing F shape -->
+  <path d="M60 40 
+           C60 40, 140 35, 145 60
+           C150 85, 100 90, 100 90
+           L100 160
+           C100 160, 100 170, 90 170
+           C80 170, 80 160, 80 160
+           L80 100
+           C80 100, 40 105, 40 75
+           C40 45, 60 40, 60 40Z" 
+        fill="url(#flowGradient)"/>
+  
+  <!-- Flow accent wave -->
+  <path d="M85 110 
+           C95 105, 110 115, 130 105
+           C150 95, 155 100, 160 95" 
+        stroke="url(#flowGradient)" 
+        stroke-width="8" 
+        stroke-linecap="round"
+        fill="none"
+        opacity="0.7"/>
+</svg>

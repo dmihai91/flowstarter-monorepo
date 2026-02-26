@@ -172,8 +172,8 @@ export function QuickModeSection() {
           onBlur={() => setIsFocused(false)}
           placeholder={`Describe your project, ${firstName}...`}
           rows={3}
-          className="w-full px-4 pt-4 pb-2 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/50 text-[15px] leading-relaxed resize-none focus:outline-none"
-          style={{ minHeight: '88px', maxHeight: '150px' }}
+          className="w-full px-4 pt-4 pb-2 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/50 text-[15px] leading-relaxed resize-none focus:outline-none border-0 border-none outline-none ring-0 shadow-none appearance-none"
+          style={{ minHeight: '88px', maxHeight: '150px', border: 'none', outline: 'none', boxShadow: 'none' }}
         />
         
         {/* Bottom bar */}

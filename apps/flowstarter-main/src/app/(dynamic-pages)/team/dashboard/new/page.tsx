@@ -615,7 +615,7 @@ function NewProjectPageContent() {
         </div>
 
         {/* Main content - add bottom padding for fixed nav */}
-        <main className="flex-1 max-w-3xl mx-auto px-6 py-12 pb-32">
+        <main className="flex-1 max-w-4xl mx-auto px-6 py-12 pb-32">
           {/* Step 1: Client Info */}
           {step === 1 && (
             <div className="space-y-8">

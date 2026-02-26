@@ -311,58 +311,39 @@ export function useProjectSuggestions(templateId: string) {
     isGeneratingWithAI: ai.isGenerating,
     generateSuggestions,
     loadingStates: ai.store.loading,
-    regenerateNames: (mode?: 'catchy' | 'alternatives') => {
-      const ctxMap: Record<string, { [key: string]: string }> = {
-        catchy: {
-          nameStyle: 'bold and memorable',
-          creativeFocus: 'punchy phrasing',
-        },
-        alternatives: { creativeFocus: 'varied tone and framing' },
-        regenerate: {},
-      };
-      const ctx = mode ? ctxMap[mode] || {} : {};
+    regenerateNames: (customPrompt?: string) => {
+      const ctx: Record<string, string> = {};
+      if (customPrompt) {
+        ctx.userInstructions = customPrompt;
+        ctx.nameStyle = 'follow user instructions';
+      } else {
+        const styles = ['creative', 'professional', 'modern', 'bold'];
+        ctx.nameStyle = styles[Math.floor(Math.random() * styles.length)];
+      }
       return regenerateField('names', ctx);
     },
-    regenerateDescription: (
-      mode?: 'regenerate' | 'catchy' | 'shorter' | 'alternatives'
-    ) => {
-      // Map modes to description-focused context for the agent
-      const map: Record<string, { [key: string]: string }> = {
-        catchy: {
-          descriptionApproach: 'story-driven and emotional',
-          emphasisFocus: 'memorable, punchy phrasing',
-        },
-        shorter: {
-          descriptionApproach: 'concise and benefit-focused',
-          emphasisFocus: 'brevity and clarity (<= 2 sentences)',
-        },
-        alternatives: {
-          descriptionApproach: 'multiple distinct angles',
-          emphasisFocus: 'varied tone and framing',
-        },
-        regenerate: {},
-      };
-      const ctx = mode ? map[mode] || {} : {};
+    regenerateDescription: (customPrompt?: string) => {
+      const ctx: Record<string, string> = {};
+      if (customPrompt) {
+        ctx.userInstructions = customPrompt;
+        ctx.descriptionApproach = 'follow user instructions';
+      } else {
+        const approaches = ['benefit-focused', 'story-driven', 'solution-focused'];
+        ctx.descriptionApproach = approaches[Math.floor(Math.random() * approaches.length)];
+      }
       return regenerateField('description', ctx);
     },
     regenerateTargetUsers: undefined,
     regenerateBusinessGoals: undefined,
-    regenerateUSP: (params?: {
-      mode?: 'regenerate' | 'punchy' | 'benefits';
-    }) => {
-      const mode = params?.mode;
-      const map: Record<string, { [key: string]: string }> = {
-        punchy: {
-          uspAngle: 'customer benefit focus',
-          uspEmphasis: 'punchy and memorable phrasing',
-        },
-        benefits: {
-          uspAngle: 'customer benefit focus',
-          uspEmphasis: 'clarify tangible benefits and outcomes',
-        },
-        regenerate: {},
-      };
-      const ctx = mode ? map[mode] || {} : {};
+    regenerateUSP: (customPrompt?: string) => {
+      const ctx: Record<string, string> = {};
+      if (customPrompt) {
+        ctx.userInstructions = customPrompt;
+        ctx.uspAngle = 'follow user instructions';
+      } else {
+        const angles = ['competitive differentiation', 'customer benefit focus', 'innovation'];
+        ctx.uspAngle = angles[Math.floor(Math.random() * angles.length)];
+      }
       return regenerateField('USP', ctx);
     },
     generateUSPWithContext,

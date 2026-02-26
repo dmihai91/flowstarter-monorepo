@@ -113,7 +113,9 @@ function NewProjectPageContent() {
     isGeneratingWithAI,
     regenerateNames,
     regenerateDescription,
-    regenerateUSP 
+    regenerateUSP,
+    suggestions,
+    loadingStates
   } = useProjectSuggestions('business');
   
   // Check if we're in AI generation mode immediately
@@ -125,6 +127,11 @@ function NewProjectPageContent() {
   const [isGenerating, setIsGenerating] = useState(true); // Start true, will be set false after generation or if not AI mode
   const [generationStep, setGenerationStep] = useState<string>('classifying');
   const hasTriggeredGeneration = useRef(false);
+  
+  // Regeneration panel state
+  const [regenField, setRegenField] = useState<string | null>(null);
+  const [regenPrompt, setRegenPrompt] = useState('');
+  const [isRegenerating, setIsRegenerating] = useState(false);
   
   // If not AI mode, immediately set isGenerating to false
   useEffect(() => {
@@ -260,6 +267,57 @@ function NewProjectPageContent() {
 
   const updateField = (field: keyof ProjectData, value: string) => {
     setProjectData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Watch for suggestion updates and apply to form
+  useEffect(() => {
+    if (suggestions?.names && suggestions.names.length > 0 && loadingStates?.names === false) {
+      const newName = suggestions.names[Math.floor(Math.random() * suggestions.names.length)];
+      if (newName && newName !== projectData.businessName) {
+        updateField('businessName', newName);
+      }
+    }
+  }, [suggestions?.names, loadingStates?.names]);
+  
+  useEffect(() => {
+    if (suggestions?.description && loadingStates?.description === false) {
+      if (suggestions.description !== projectData.description) {
+        updateField('description', suggestions.description);
+      }
+    }
+  }, [suggestions?.description, loadingStates?.description]);
+  
+  useEffect(() => {
+    if (suggestions?.USP && loadingStates?.USP === false) {
+      if (suggestions.USP !== projectData.uvp) {
+        updateField('uvp', suggestions.USP);
+      }
+    }
+  }, [suggestions?.USP, loadingStates?.USP]);
+
+  // Handle regeneration with custom prompt
+  const handleRegenerate = async (field: string) => {
+    setIsRegenerating(true);
+    try {
+      const customPrompt = regenPrompt.trim();
+      
+      if (field === 'businessName') {
+        await regenerateNames(customPrompt || undefined);
+      } else if (field === 'description') {
+        await regenerateDescription(customPrompt || undefined);
+      } else if (field === 'uvp') {
+        await regenerateUSP(customPrompt || undefined);
+      }
+      
+      toast.success(`${field === 'businessName' ? 'Name' : field === 'description' ? 'Description' : 'UVP'} regenerated`);
+      setRegenField(null);
+      setRegenPrompt('');
+    } catch (error) {
+      console.error('Regeneration failed:', error);
+      toast.error('Failed to regenerate');
+    } finally {
+      setIsRegenerating(false);
+    }
   };
 
   const handleSubmit = async () => {
@@ -591,6 +649,7 @@ function NewProjectPageContent() {
               </div>
 
               <div className={`${cardClass} p-6 space-y-5`}>
+                {/* Business Name Field */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
@@ -602,11 +661,11 @@ function NewProjectPageContent() {
                           <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
                           <button
                             type="button"
-                            onClick={() => regenerateNames()}
-                            className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-[var(--purple)] transition-colors"
-                            title="Regenerate"
+                            onClick={() => setRegenField(regenField === 'businessName' ? null : 'businessName')}
+                            className={`p-1.5 rounded-lg transition-colors ${regenField === 'businessName' ? 'bg-[var(--purple)]/10 text-[var(--purple)]' : 'hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-[var(--purple)]'}`}
+                            title="Regenerate with AI"
                           >
-                            <RefreshCw className="w-3.5 h-3.5" />
+                            <Sparkles className="w-3.5 h-3.5" />
                           </button>
                         </>
                       )}
@@ -618,6 +677,54 @@ function NewProjectPageContent() {
                     onChange={(e) => updateField('businessName', e.target.value)}
                     className="h-12 bg-gray-50 dark:bg-white/5 border-gray-200 dark:border-white/10"
                   />
+                  {/* Regeneration Card */}
+                  {regenField === 'businessName' && (
+                    <div className="mt-3 p-4 rounded-xl bg-gradient-to-br from-[var(--purple)]/5 to-blue-500/5 border border-[var(--purple)]/20">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center flex-shrink-0">
+                          <Sparkles className="w-4 h-4 text-[var(--purple)]" />
+                        </div>
+                        <div className="flex-1 space-y-3">
+                          <p className="text-sm text-gray-600 dark:text-white/70">
+                            Regenerate with custom instructions (optional)
+                          </p>
+                          <Input
+                            placeholder="e.g., Make it more modern, include 'Tech' in the name..."
+                            value={regenPrompt}
+                            onChange={(e) => setRegenPrompt(e.target.value)}
+                            className="h-10 text-sm bg-white dark:bg-white/10"
+                          />
+                          <div className="flex items-center gap-2">
+                            <Button
+                              size="sm"
+                              onClick={() => handleRegenerate('businessName')}
+                              disabled={isRegenerating}
+                              className="bg-[var(--purple)] hover:bg-[var(--purple)]/90 text-white"
+                            >
+                              {isRegenerating ? (
+                                <>
+                                  <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                                  Generating...
+                                </>
+                              ) : (
+                                <>
+                                  <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
+                                  Regenerate
+                                </>
+                              )}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => { setRegenField(null); setRegenPrompt(''); }}
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 
                 <div className="space-y-2">
@@ -636,6 +743,7 @@ function NewProjectPageContent() {
                   </select>
                 </div>
                 
+                {/* Description Field */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
@@ -647,11 +755,11 @@ function NewProjectPageContent() {
                           <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
                           <button
                             type="button"
-                            onClick={() => regenerateDescription()}
-                            className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-[var(--purple)] transition-colors"
-                            title="Regenerate"
+                            onClick={() => setRegenField(regenField === 'description' ? null : 'description')}
+                            className={`p-1.5 rounded-lg transition-colors ${regenField === 'description' ? 'bg-[var(--purple)]/10 text-[var(--purple)]' : 'hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-[var(--purple)]'}`}
+                            title="Regenerate with AI"
                           >
-                            <RefreshCw className="w-3.5 h-3.5" />
+                            <Sparkles className="w-3.5 h-3.5" />
                           </button>
                         </>
                       )}
@@ -664,6 +772,54 @@ function NewProjectPageContent() {
                     rows={3}
                     className="w-full px-4 py-3 rounded-lg bg-white/50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-400 resize-none"
                   />
+                  {/* Regeneration Card */}
+                  {regenField === 'description' && (
+                    <div className="mt-3 p-4 rounded-xl bg-gradient-to-br from-[var(--purple)]/5 to-blue-500/5 border border-[var(--purple)]/20">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center flex-shrink-0">
+                          <Sparkles className="w-4 h-4 text-[var(--purple)]" />
+                        </div>
+                        <div className="flex-1 space-y-3">
+                          <p className="text-sm text-gray-600 dark:text-white/70">
+                            Regenerate with custom instructions (optional)
+                          </p>
+                          <Input
+                            placeholder="e.g., Make it shorter, focus on sustainability..."
+                            value={regenPrompt}
+                            onChange={(e) => setRegenPrompt(e.target.value)}
+                            className="h-10 text-sm bg-white dark:bg-white/10"
+                          />
+                          <div className="flex items-center gap-2">
+                            <Button
+                              size="sm"
+                              onClick={() => handleRegenerate('description')}
+                              disabled={isRegenerating}
+                              className="bg-[var(--purple)] hover:bg-[var(--purple)]/90 text-white"
+                            >
+                              {isRegenerating ? (
+                                <>
+                                  <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                                  Generating...
+                                </>
+                              ) : (
+                                <>
+                                  <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
+                                  Regenerate
+                                </>
+                              )}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => { setRegenField(null); setRegenPrompt(''); }}
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 
                 <div className="space-y-2">
@@ -683,6 +839,7 @@ function NewProjectPageContent() {
                   />
                 </div>
                 
+                {/* UVP Field */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
@@ -694,11 +851,11 @@ function NewProjectPageContent() {
                           <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
                           <button
                             type="button"
-                            onClick={() => regenerateUSP()}
-                            className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-[var(--purple)] transition-colors"
-                            title="Regenerate"
+                            onClick={() => setRegenField(regenField === 'uvp' ? null : 'uvp')}
+                            className={`p-1.5 rounded-lg transition-colors ${regenField === 'uvp' ? 'bg-[var(--purple)]/10 text-[var(--purple)]' : 'hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-[var(--purple)]'}`}
+                            title="Regenerate with AI"
                           >
-                            <RefreshCw className="w-3.5 h-3.5" />
+                            <Sparkles className="w-3.5 h-3.5" />
                           </button>
                         </>
                       )}
@@ -710,6 +867,54 @@ function NewProjectPageContent() {
                     onChange={(e) => updateField('uvp', e.target.value)}
                     className="h-12 bg-white/50 dark:bg-white/5 border-gray-200 dark:border-white/10"
                   />
+                  {/* Regeneration Card */}
+                  {regenField === 'uvp' && (
+                    <div className="mt-3 p-4 rounded-xl bg-gradient-to-br from-[var(--purple)]/5 to-blue-500/5 border border-[var(--purple)]/20">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center flex-shrink-0">
+                          <Sparkles className="w-4 h-4 text-[var(--purple)]" />
+                        </div>
+                        <div className="flex-1 space-y-3">
+                          <p className="text-sm text-gray-600 dark:text-white/70">
+                            Regenerate with custom instructions (optional)
+                          </p>
+                          <Input
+                            placeholder="e.g., Emphasize quality, mention 24/7 support..."
+                            value={regenPrompt}
+                            onChange={(e) => setRegenPrompt(e.target.value)}
+                            className="h-10 text-sm bg-white dark:bg-white/10"
+                          />
+                          <div className="flex items-center gap-2">
+                            <Button
+                              size="sm"
+                              onClick={() => handleRegenerate('uvp')}
+                              disabled={isRegenerating}
+                              className="bg-[var(--purple)] hover:bg-[var(--purple)]/90 text-white"
+                            >
+                              {isRegenerating ? (
+                                <>
+                                  <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                                  Generating...
+                                </>
+                              ) : (
+                                <>
+                                  <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
+                                  Regenerate
+                                </>
+                              )}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => { setRegenField(null); setRegenPrompt(''); }}
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

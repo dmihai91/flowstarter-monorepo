@@ -1,7 +1,6 @@
 'use client';
 
 import { PageContainer } from '@/components/PageContainer';
-import FooterCompact from '@/components/FooterCompact';
 import { useTranslations } from '@/lib/i18n';
 import { useUser } from '@clerk/nextjs';
 import { ClientHeader } from './components/ClientHeader';
@@ -190,9 +189,6 @@ export default function DashboardPage() {
           </div>
         </DashboardInit>
       </PageContainer>
-
-      {/* Footer */}
-      <FooterCompact />
     </DashboardWrapper>
   );
 }

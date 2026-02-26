@@ -57,8 +57,14 @@ export async function sendEmail({
     const data = await response.json();
 
     if (!response.ok) {
-      console.error('[Email] Failed to send:', data);
-      return { success: false, error: data.message || 'Failed to send email' };
+      const errorMsg = data.message || data.error || JSON.stringify(data);
+      console.error('[Email] Failed to send:', {
+        status: response.status,
+        error: errorMsg,
+        to,
+        subject,
+      });
+      return { success: false, error: errorMsg };
     }
 
     console.info(`[Email] Sent to ${to}: ${subject}`);

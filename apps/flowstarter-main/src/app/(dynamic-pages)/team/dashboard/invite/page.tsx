@@ -180,14 +180,16 @@ export default function TeamInvitePage() {
                   Email address
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 z-10" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="colleague@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-12 pl-11 rounded-lg bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10"
+                    className="h-12 pl-12 rounded-lg bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10"
+                    autoComplete="off"
+                    data-form-type="other"
                     required
                   />
                 </div>

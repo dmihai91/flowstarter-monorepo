@@ -96,7 +96,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (!emailResult.success) {
       console.error('[Team Invite] Failed to send email:', emailResult.error);
       return NextResponse.json(
-        { error: 'Failed to send invitation email' },
+        { error: `Failed to send invitation email: ${emailResult.error}` },
         { status: 500 }
       );
     }

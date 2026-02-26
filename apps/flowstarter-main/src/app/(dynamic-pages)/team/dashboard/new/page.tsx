@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { GradientBackground } from '@/components/ui/gradient-background';
 import { Input } from '@/components/ui/input';
 import { TeamHeader } from '../../components/TeamHeader';
+import FooterCompact from '@/components/FooterCompact';
 import { Label } from '@/components/ui/label';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
@@ -383,6 +384,7 @@ function NewProjectPageContent() {
             </div>
           </div>
         </div>
+        <FooterCompact />
       </>
     );
   }

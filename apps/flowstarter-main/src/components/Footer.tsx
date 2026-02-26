@@ -59,10 +59,10 @@ const Footer = ({ showClientLogin = false }: FooterProps) => {
               </Link>
               <span className="text-gray-300 dark:text-white/10">•</span>
               <Link
-                href="/team"
+                href="/team/login"
                 className="hover:text-gray-900 dark:hover:text-white transition-colors"
               >
-                Team
+                Team Login
               </Link>
             </nav>
 

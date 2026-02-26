@@ -191,12 +191,34 @@ export default function NewProjectPage() {
         toast.success('AI generated project details', {
           description: 'Review and complete the remaining fields',
         });
+      } else {
+        // AI returned no result - use the description as fallback
+        setProjectData(prev => ({
+          ...prev,
+          description: userDescription,
+          industry: selectedIndustry || prefillData.industry || '',
+        }));
+        setStep(2);
+        toast.info('Using your description', {
+          description: 'AI generation unavailable, please fill in the details',
+        });
       }
       setIsGenerating(false);
       setPrefillData(null);
-    }).catch(() => {
+    }).catch((error) => {
+      console.error('AI generation failed:', error);
+      // Fallback - use the description directly
+      setProjectData(prev => ({
+        ...prev,
+        description: userDescription,
+        industry: selectedIndustry || prefillData.industry || '',
+      }));
+      setStep(2);
       setIsGenerating(false);
       setPrefillData(null);
+      toast.error('AI generation failed', {
+        description: 'Please fill in the business details manually',
+      });
     });
   }, [prefillData, isLoading, searchParams, selectedIndustry, generateSuggestions, setPrefillData]);
 

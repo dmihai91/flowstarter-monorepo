@@ -44,33 +44,33 @@ export function GradientBackground({
         
         {/* Top purple/indigo glow */}
         <div 
-          className="absolute -top-[200px] left-1/2 -translate-x-1/2 w-[1000px] h-[500px] rounded-full opacity-[0.25] dark:opacity-[0.15]"
+          className="absolute -top-[200px] left-1/2 -translate-x-1/2 w-[1000px] h-[500px] rounded-full opacity-[0.5] dark:opacity-[0.15]"
           style={{ 
-            background: 'radial-gradient(ellipse, rgba(99, 102, 241, 0.3) 0%, transparent 70%)'
+            background: 'radial-gradient(ellipse, rgba(99, 102, 241, 0.4) 0%, transparent 70%)'
           }}
         />
         
         {/* Right violet glow */}
         <div 
-          className="absolute top-1/4 -right-[100px] w-[500px] h-[500px] rounded-full opacity-[0.15] dark:opacity-[0.10]"
+          className="absolute top-1/4 -right-[100px] w-[500px] h-[500px] rounded-full opacity-[0.35] dark:opacity-[0.10]"
           style={{ 
-            background: 'radial-gradient(ellipse, rgba(139, 92, 246, 0.25) 0%, transparent 70%)'
+            background: 'radial-gradient(ellipse, rgba(139, 92, 246, 0.3) 0%, transparent 70%)'
           }}
         />
         
         {/* Bottom left - subtle warm/yellow tint */}
         <div 
-          className="absolute -bottom-[100px] -left-[100px] w-[600px] h-[400px] rounded-full opacity-[0.12] dark:opacity-[0.08]"
+          className="absolute -bottom-[100px] -left-[100px] w-[600px] h-[400px] rounded-full opacity-[0.25] dark:opacity-[0.08]"
           style={{ 
-            background: 'radial-gradient(ellipse, rgba(251, 191, 36, 0.2) 0%, transparent 70%)'
+            background: 'radial-gradient(ellipse, rgba(251, 191, 36, 0.25) 0%, transparent 70%)'
           }}
         />
         
         {/* Bottom right - violet accent */}
         <div 
-          className="absolute -bottom-[150px] right-1/4 w-[500px] h-[400px] rounded-full opacity-[0.10] dark:opacity-[0.08]"
+          className="absolute -bottom-[150px] right-1/4 w-[500px] h-[400px] rounded-full opacity-[0.20] dark:opacity-[0.08]"
           style={{ 
-            background: 'radial-gradient(ellipse, rgba(167, 139, 250, 0.2) 0%, transparent 70%)'
+            background: 'radial-gradient(ellipse, rgba(167, 139, 250, 0.25) 0%, transparent 70%)'
           }}
         />
         

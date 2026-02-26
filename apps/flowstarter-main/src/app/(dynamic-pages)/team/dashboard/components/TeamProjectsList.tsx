@@ -139,9 +139,9 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
     string,
     { setup_fee: number; monthly_fee: number }
   > = {
-    standard: { setup_fee: 299, monthly_fee: 29 },
-    pro: { setup_fee: 599, monthly_fee: 59 },
-    business: { setup_fee: 1499, monthly_fee: 149 },
+    standard: { setup_fee: 599, monthly_fee: 59 },
+    pro: { setup_fee: 999, monthly_fee: 99 },
+    business: { setup_fee: 1999, monthly_fee: 199 },
   };
 
   // Apply beta discount if enabled

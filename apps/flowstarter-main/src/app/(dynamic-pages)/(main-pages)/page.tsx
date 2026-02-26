@@ -883,17 +883,17 @@ export default function LandingPage() {
                   </a>
                   <div className="flex flex-col">
                     <div className="text-sm text-gray-400 dark:text-white/40">
-                      <span className="line-through opacity-60">€299</span>
+                      <span className="line-through opacity-60">€599</span>
                       <span className="mx-2 text-gray-700 dark:text-white/80 font-medium">
-                        €150
+                        €299
                       </span>
                       setup
                       <span className="mx-3 text-gray-300 dark:text-white/20">
                         ·
                       </span>
-                      <span className="line-through opacity-60">€29</span>
+                      <span className="line-through opacity-60">€59</span>
                       <span className="mx-2 text-gray-700 dark:text-white/80 font-medium">
-                        €15
+                        €29
                       </span>
                       /mo
                     </div>
@@ -1819,9 +1819,9 @@ export default function LandingPage() {
                       Setup:{' '}
                     </span>
                     <span className="text-gray-300 dark:text-white/20 line-through">
-                      €299
+                      €599
                     </span>
-                    <span className="text-2xl font-bold ml-2">€150</span>
+                    <span className="text-2xl font-bold ml-2">€299</span>
                     <span className="text-sm text-gray-400 dark:text-white/40 ml-1">
                       one-time
                     </span>
@@ -1831,15 +1831,15 @@ export default function LandingPage() {
                       Monthly:{' '}
                     </span>
                     <span className="text-gray-300 dark:text-white/20 line-through">
-                      €29
+                      €59
                     </span>
-                    <span className="text-2xl font-bold ml-2">€15</span>
+                    <span className="text-2xl font-bold ml-2">€29</span>
                     <span className="text-sm text-gray-400 dark:text-white/40 ml-1">
                       /month
                     </span>
                   </div>
                   <p className="text-xs text-gray-400 dark:text-white/30 mt-2">
-                    Beta pricing valid for 12 months. Then €29/month.
+                    Beta pricing valid for 12 months. Then €59/month.
                   </p>
                 </div>
 
@@ -2174,7 +2174,7 @@ export default function LandingPage() {
                   },
                   {
                     q: 'What happens when the beta ends?',
-                    a: "Your beta discount (50% off) is locked for 1 year from signup. After that, pricing moves to standard rates (€299 setup / €29/month). You'll get 30 days notice before anything changes.",
+                    a: "Your beta discount (50% off) is locked for 1 year from signup. After that, pricing moves to standard rates (€599 setup / €59/month). You'll get 30 days notice before anything changes.",
                   },
                   {
                     q: "What's included in the email?",

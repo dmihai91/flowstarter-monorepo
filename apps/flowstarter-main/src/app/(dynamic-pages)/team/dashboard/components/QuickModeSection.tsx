@@ -96,7 +96,7 @@ export function QuickModeSection() {
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
     if (textareaRef.current) {
-      textareaRef.current.style.height = '72px';
+      textareaRef.current.style.height = '80px';
       textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 150) + 'px';
     }
   };
@@ -107,8 +107,11 @@ export function QuickModeSection() {
     "Photography portfolio",
   ];
 
+  // 3D card style
+  const cardClass = "rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset]";
+
   return (
-    <div className="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04)] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2)] p-5">
+    <div className={`${cardClass} p-5`}>
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--purple)] to-[var(--purple)]/70 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20">
@@ -133,10 +136,10 @@ export function QuickModeSection() {
                 <img 
                   src={URL.createObjectURL(file)} 
                   alt={file.name}
-                  className="w-14 h-14 object-cover rounded-lg border border-gray-200 dark:border-white/10"
+                  className="w-14 h-14 object-cover rounded-xl border border-black/[0.08] dark:border-white/[0.08]"
                 />
               ) : (
-                <div className="w-14 h-14 flex items-center justify-center rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5">
+                <div className="w-14 h-14 flex items-center justify-center rounded-xl border border-black/[0.08] dark:border-white/[0.08] bg-gray-50 dark:bg-white/5">
                   <span className="text-[10px] text-gray-500 uppercase">{file.name.split('.').pop()}</span>
                 </div>
               )}
@@ -151,64 +154,76 @@ export function QuickModeSection() {
         </div>
       )}
 
-      {/* Input box */}
+      {/* Input container - glassmorphism style */}
       <div 
-        className={`flex items-end gap-3 p-3 rounded-xl border transition-all duration-200 ${
+        className={`relative rounded-xl transition-all duration-200 ${
           isFocused 
-            ? 'border-[var(--purple)] bg-white dark:bg-[#1f1f24] shadow-[0_0_0_3px_rgba(var(--purple-rgb),0.1)]' 
-            : 'border-gray-200 dark:border-white/10 bg-gray-50/50 dark:bg-white/[0.02]'
+            ? 'shadow-[0_0_0_2px_var(--purple),0_2px_8px_rgba(0,0,0,0.06)]' 
+            : 'shadow-[0_2px_4px_rgba(0,0,0,0.02),0_1px_0_rgba(255,255,255,0.6)_inset,0_0_0_1px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_1px_0_rgba(255,255,255,0.03)_inset,0_0_0_1px_rgba(255,255,255,0.08)]'
         }`}
       >
-        {/* Attach */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*,.pdf,.doc,.docx"
-          multiple
-          onChange={handleFileSelect}
-          className="hidden"
-        />
-        <button
-          onClick={() => fileInputRef.current?.click()}
-          className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
-        >
-          <Paperclip className="w-[18px] h-[18px]" />
-        </button>
-
-        {/* Textarea */}
-        <textarea
-          ref={textareaRef}
-          value={input}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          placeholder={`Describe your project, ${firstName}...`}
-          rows={3}
-          className="flex-1 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 text-[15px] leading-6 resize-none focus:outline-none min-h-[72px] max-h-[150px] py-1"
-        />
-
-        {/* Send */}
-        <button
-          onClick={handleSubmit}
-          disabled={!input.trim() || isClassifying}
-          className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
-            input.trim() && !isClassifying
-              ? 'bg-[var(--purple)] text-white hover:bg-[var(--purple)]/90 active:scale-95'
-              : 'bg-gray-200 dark:bg-white/10 text-gray-400 dark:text-white/30 cursor-not-allowed'
-          }`}
-        >
-          {isClassifying ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <ArrowUp className="w-4 h-4" />
-          )}
-        </button>
+        <div className="rounded-xl bg-white dark:bg-[#1f1f24] overflow-hidden">
+          {/* Textarea */}
+          <textarea
+            ref={textareaRef}
+            value={input}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            placeholder={`Describe your project, ${firstName}...`}
+            rows={3}
+            className="w-full px-4 pt-4 pb-2 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 text-[15px] leading-relaxed resize-none focus:outline-none"
+            style={{ minHeight: '80px', maxHeight: '150px' }}
+          />
+          
+          {/* Bottom bar */}
+          <div className="flex items-center justify-between px-3 pb-3">
+            <div className="flex items-center">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*,.pdf,.doc,.docx"
+                multiple
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="p-2 rounded-lg text-gray-400 hover:text-[var(--purple)] hover:bg-[var(--purple)]/10 transition-colors"
+              >
+                <Paperclip className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <button
+              onClick={handleSubmit}
+              disabled={!input.trim() || isClassifying}
+              className={`px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 transition-all ${
+                input.trim() && !isClassifying
+                  ? 'bg-[var(--purple)] text-white shadow-md shadow-[var(--purple)]/25 hover:shadow-lg hover:shadow-[var(--purple)]/30 active:scale-[0.98]'
+                  : 'bg-gray-100 dark:bg-white/[0.06] text-gray-400 dark:text-white/30 cursor-not-allowed'
+              }`}
+            >
+              {isClassifying ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Creating...</span>
+                </>
+              ) : (
+                <>
+                  <ArrowUp className="w-4 h-4" />
+                  <span>Create</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Suggestions */}
       {!input && (
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-wrap gap-2">
           {suggestions.map((suggestion, i) => (
             <button
               key={i}
@@ -216,7 +231,7 @@ export function QuickModeSection() {
                 setInput(suggestion);
                 textareaRef.current?.focus();
               }}
-              className="px-3 py-1.5 text-xs rounded-lg border border-gray-200 dark:border-white/10 text-gray-500 dark:text-white/50 hover:border-[var(--purple)]/50 hover:text-[var(--purple)] hover:bg-[var(--purple)]/5 transition-all"
+              className="px-3 py-1.5 text-xs rounded-lg bg-gray-50 dark:bg-white/[0.04] border border-black/[0.06] dark:border-white/[0.06] text-gray-600 dark:text-white/60 hover:border-[var(--purple)]/40 hover:text-[var(--purple)] hover:bg-[var(--purple)]/5 transition-all shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
             >
               {suggestion}
             </button>

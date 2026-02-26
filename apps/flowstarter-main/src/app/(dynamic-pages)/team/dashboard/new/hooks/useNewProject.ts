@@ -45,6 +45,7 @@ export function useNewProject() {
   const [isGenerating, setIsGenerating] = useState(true);
   const [generationStep, setGenerationStep] = useState<string>('classifying');
   const hasTriggeredGeneration = useRef(false);
+  const hasProcessedSuggestions = useRef(false);
 
   // Regeneration state
   const [regenField, setRegenField] = useState<string | null>(null);
@@ -167,6 +168,7 @@ export function useNewProject() {
   const triggerAIGeneration = useCallback(async () => {
     if (hasTriggeredGeneration.current) return;
     hasTriggeredGeneration.current = true;
+    hasProcessedSuggestions.current = false; // Reset for new generation
 
     const description = prefillData?.description || teamWizardData?.description;
     if (!description) {
@@ -220,8 +222,13 @@ export function useNewProject() {
   // Process AI suggestions when ready
   useEffect(() => {
     const { suggestions } = aiHook;
-    if (!suggestions || !isGenerating) return;
-
+    
+    // Only process if we have suggestions with actual content and haven't processed yet
+    const hasContent = suggestions?.names?.length > 0 || suggestions?.description;
+    if (!hasContent || hasProcessedSuggestions.current) return;
+    
+    // Mark as processed
+    hasProcessedSuggestions.current = true;
     setGenerationStep('finalizing');
 
     const processName = async (name: string): Promise<string> => {
@@ -273,14 +280,12 @@ export function useNewProject() {
         });
       }
 
-      setTimeout(() => {
-        setIsGenerating(false);
-        setIsLoading(false);
-      }, 500);
+      setIsGenerating(false);
+      setIsLoading(false);
     };
 
     finalize();
-  }, [aiHook.suggestions, isGenerating, projectId, prefillData, teamWizardData]);
+  }, [aiHook.suggestions, projectId, prefillData, teamWizardData]);
 
   // Regeneration handler
   const handleRegenerate = useCallback(async (field: string, customPrompt?: string) => {

@@ -12,6 +12,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState, useRef } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
 import { useProjectSuggestions } from '@/hooks/wizard/useProjectSuggestions';
+import { insertProjectAction } from '@/data/user/projects';
 import { toast } from 'sonner';
 import { 
   ArrowLeft,
@@ -256,14 +257,64 @@ function NewProjectPageContent() {
 
   const handleSubmit = async () => {
     setIsSaving(true);
-    // TODO: Save to database and create project
-    console.log('Project data:', projectData);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Redirect to dashboard or editor
-    router.push('/team/dashboard');
+    try {
+      // Build project data for database
+      const projectPayload = {
+        name: projectData.businessName,
+        description: projectData.description,
+        chat: JSON.stringify({
+          clientInfo: {
+            name: projectData.clientName,
+            email: projectData.clientEmail,
+            phone: projectData.clientPhone,
+          },
+          businessInfo: {
+            name: projectData.businessName,
+            industry: projectData.industry,
+            description: projectData.description,
+            targetAudience: projectData.targetAudience,
+            uvp: projectData.uvp,
+            goal: projectData.goal,
+            offerType: projectData.offerType,
+            brandTone: projectData.brandTone,
+          },
+          contactInfo: {
+            email: projectData.businessEmail,
+            phone: projectData.businessPhone,
+            address: projectData.businessAddress,
+            website: projectData.website,
+          },
+          generatedByAI: isAIMode,
+        }),
+      };
+
+      console.log('Creating project:', projectPayload);
+      
+      const result = await insertProjectAction(projectPayload);
+      
+      if (result?.serverError) {
+        throw new Error(result.serverError);
+      }
+      
+      if (result?.validationErrors) {
+        const errors = Object.values(result.validationErrors).flat().join(', ');
+        throw new Error(errors);
+      }
+
+      toast.success('Project created successfully!', {
+        description: 'Redirecting to dashboard...',
+      });
+      
+      // Redirect to dashboard
+      router.push('/team/dashboard');
+    } catch (error) {
+      console.error('Failed to create project:', error);
+      toast.error('Failed to create project', {
+        description: error instanceof Error ? error.message : 'Please try again',
+      });
+      setIsSaving(false);
+    }
   };
 
   const canProceed = () => {

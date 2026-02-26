@@ -190,7 +190,16 @@ export function useNewProject() {
 
       // Generate AI content
       setGenerationStep('generating');
-      await aiHook.generateSuggestions(description);
+      await aiHook.generateSuggestions({
+        businessType: prefillData?.platformType || 'business',
+        industry: prefillData?.industry || 'general',
+        targetAudience: '',
+        uniqueSellingPoint: description,
+        description: description,
+        goals: '',
+        domain: prefillData?.industry || 'general',
+        goal: [],
+      });
     } catch (error) {
       console.error('Generation error:', error);
       toast.error('Failed to generate project');

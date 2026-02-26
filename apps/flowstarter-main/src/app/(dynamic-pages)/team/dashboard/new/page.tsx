@@ -259,11 +259,28 @@ function NewProjectPageContent() {
         chat: JSON.stringify({ draft: true }),
       });
       
-      if (result?.data) {
-        setProjectId(result.data);
-        console.log('Draft project created:', result.data);
+      console.log('insertProjectAction result:', result);
+      
+      // safe-action returns { data, serverError, validationErrors }
+      if (result?.serverError) {
+        console.error('Server error:', result.serverError);
+        hasCreatedDraft.current = false;
+        return;
+      }
+      
+      if (result?.validationErrors) {
+        console.error('Validation errors:', result.validationErrors);
+        hasCreatedDraft.current = false;
+        return;
+      }
+      
+      // The action returns data.id directly, so result.data IS the ID
+      const newProjectId = result?.data;
+      if (newProjectId) {
+        setProjectId(newProjectId);
+        console.log('Draft project created:', newProjectId);
       } else {
-        console.error('No project ID returned from insertProjectAction');
+        console.error('No project ID returned from insertProjectAction', result);
         hasCreatedDraft.current = false; // Allow retry
       }
     } catch (error) {

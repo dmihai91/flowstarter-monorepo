@@ -154,70 +154,68 @@ export function QuickModeSection() {
         </div>
       )}
 
-      {/* Input container - glassmorphism style */}
+      {/* Input container - glassmorphism style matching other UI elements */}
       <div 
-        className={`relative rounded-2xl border backdrop-blur-xl transition-all duration-200 ${
+        className={`relative rounded-2xl border backdrop-blur-xl transition-all duration-200 overflow-hidden ${
           isFocused 
-            ? 'border-[var(--purple)]/50 bg-white/90 dark:bg-white/[0.08] shadow-[0_0_0_3px_rgba(var(--purple-rgb),0.1),0_4px_12px_rgba(0,0,0,0.05),0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[0_0_0_3px_rgba(var(--purple-rgb),0.2),0_4px_12px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.1)_inset]' 
-            : 'border-black/[0.08] dark:border-white/[0.08] bg-white/70 dark:bg-white/[0.04] shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.02)_inset] dark:shadow-[0_2px_8px_rgba(0,0,0,0.15),0_1px_0_rgba(255,255,255,0.06)_inset,0_-1px_0_rgba(0,0,0,0.1)_inset]'
+            ? 'border-[var(--purple)]/50 bg-white/95 dark:bg-white/[0.06] shadow-[0_0_0_3px_rgba(var(--purple-rgb),0.1),0_4px_16px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,1)_inset] dark:shadow-[0_0_0_3px_rgba(var(--purple-rgb),0.15),0_4px_16px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.08)_inset]' 
+            : 'border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-white/[0.03] shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.02)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset,0_-1px_0_rgba(0,0,0,0.2)_inset]'
         }`}
       >
-        <div className="rounded-2xl">
-          {/* Textarea */}
-          <textarea
-            ref={textareaRef}
-            value={input}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            placeholder={`Describe your project, ${firstName}...`}
-            rows={3}
-            className="w-full px-4 pt-4 pb-2 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/50 text-[15px] leading-relaxed resize-none focus:outline-none"
-            style={{ minHeight: '88px', maxHeight: '150px' }}
-          />
-          
-          {/* Bottom bar */}
-          <div className="flex items-center justify-between px-3 pb-3">
-            <div className="flex items-center">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*,.pdf,.doc,.docx"
-                multiple
-                onChange={handleFileSelect}
-                className="hidden"
-              />
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="p-2 rounded-lg text-gray-400 hover:text-[var(--purple)] hover:bg-[var(--purple)]/10 transition-colors"
-              >
-                <Paperclip className="w-5 h-5" />
-              </button>
-            </div>
-            
+        {/* Textarea */}
+        <textarea
+          ref={textareaRef}
+          value={input}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          placeholder={`Describe your project, ${firstName}...`}
+          rows={3}
+          className="w-full px-4 pt-4 pb-2 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/50 text-[15px] leading-relaxed resize-none focus:outline-none"
+          style={{ minHeight: '88px', maxHeight: '150px' }}
+        />
+        
+        {/* Bottom bar */}
+        <div className="flex items-center justify-between px-3 pb-3">
+          <div className="flex items-center">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,.pdf,.doc,.docx"
+              multiple
+              onChange={handleFileSelect}
+              className="hidden"
+            />
             <button
-              onClick={handleSubmit}
-              disabled={!input.trim() || isClassifying}
-              className={`px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 transition-all ${
-                input.trim() && !isClassifying
-                  ? 'bg-[var(--purple)] text-white shadow-md shadow-[var(--purple)]/25 hover:shadow-lg hover:shadow-[var(--purple)]/30 active:scale-[0.98]'
-                  : 'bg-gray-100 dark:bg-white/[0.06] text-gray-400 dark:text-white/30 cursor-not-allowed'
-              }`}
+              onClick={() => fileInputRef.current?.click()}
+              className="p-2 rounded-lg text-gray-400 hover:text-[var(--purple)] hover:bg-[var(--purple)]/10 transition-colors"
             >
-              {isClassifying ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Creating...</span>
-                </>
-              ) : (
-                <>
-                  <ArrowUp className="w-4 h-4" />
-                  <span>Create</span>
-                </>
-              )}
+              <Paperclip className="w-5 h-5" />
             </button>
           </div>
+          
+          <button
+            onClick={handleSubmit}
+            disabled={!input.trim() || isClassifying}
+            className={`px-4 py-2 rounded-xl font-medium text-sm flex items-center gap-2 transition-all ${
+              input.trim() && !isClassifying
+                ? 'bg-[var(--purple)] text-white shadow-md shadow-[var(--purple)]/25 hover:shadow-lg hover:shadow-[var(--purple)]/30 active:scale-[0.98]'
+                : 'bg-gray-100 dark:bg-white/[0.06] text-gray-400 dark:text-white/30 cursor-not-allowed'
+            }`}
+          >
+            {isClassifying ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Creating...</span>
+              </>
+            ) : (
+              <>
+                <ArrowUp className="w-4 h-4" />
+                <span>Create</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
 

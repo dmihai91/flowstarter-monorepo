@@ -120,8 +120,16 @@ function NewProjectPageContent() {
     loadingStates
   } = useProjectSuggestions('business');
   
-  // Check if we're in AI generation mode immediately
-  const isAIMode = searchParams?.get('mode') === 'ai-generated';
+  // Check if we're in AI generation mode - from URL or stored data
+  const isAIModeFromUrl = searchParams?.get('mode') === 'ai-generated';
+  const [isAIMode, setIsAIMode] = useState(() => isAIModeFromUrl || teamWizardData?.isAIMode || false);
+  
+  // Update AI mode when URL changes
+  useEffect(() => {
+    if (isAIModeFromUrl) {
+      setIsAIMode(true);
+    }
+  }, [isAIModeFromUrl]);
   
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -196,8 +204,9 @@ function NewProjectPageContent() {
     setTeamWizardData({
       ...projectData,
       step,
+      isAIMode,
     });
-  }, [projectData, step, setTeamWizardData]);
+  }, [projectData, step, isAIMode, setTeamWizardData]);
 
   // Check if user is team member
   useEffect(() => {

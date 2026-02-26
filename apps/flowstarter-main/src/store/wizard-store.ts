@@ -61,6 +61,7 @@ interface WizardStoreState {
     businessAddress: string;
     website: string;
     step: number;
+    isAIMode: boolean;
   } | null;
   // Wizard actions for navbar
   wizardActions: {

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState, useRef } from 'react';
+import { Suspense, useEffect, useState, useRef } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
 import { useProjectSuggestions } from '@/hooks/wizard/useProjectSuggestions';
 import { toast } from 'sonner';
@@ -94,7 +94,7 @@ const toneOptions: { value: BrandTone; label: string; emoji: string }[] = [
   { value: 'playful', label: 'Playful', emoji: '🎨' },
 ];
 
-export default function NewProjectPage() {
+function NewProjectPageContent() {
   const { user, isLoaded: userLoaded } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -108,7 +108,7 @@ export default function NewProjectPage() {
   const { generateSuggestions, isGeneratingWithAI } = useProjectSuggestions('business');
   
   // Check if we're in AI generation mode immediately
-  const isAIMode = searchParams.get('mode') === 'ai-generated';
+  const isAIMode = searchParams?.get('mode') === 'ai-generated';
   
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
@@ -742,5 +742,31 @@ export default function NewProjectPage() {
         </main>
       </div>
     </>
+  );
+}
+
+// Loading fallback component
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center gap-4 relative">
+      <GradientBackground variant="dashboard" className="fixed" />
+      <div className="relative z-10 flex flex-col items-center gap-4">
+        <div className="w-12 h-12 rounded-2xl bg-[var(--purple)]/10 flex items-center justify-center">
+          <Loader2 className="w-6 h-6 animate-spin text-[var(--purple)]" />
+        </div>
+        <div className="text-center">
+          <p className="text-gray-900 dark:text-white font-medium">Loading...</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Wrap in Suspense to show loading immediately
+export default function NewProjectPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <NewProjectPageContent />
+    </Suspense>
   );
 }

@@ -149,7 +149,7 @@ export function TeamUserMenu() {
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleSignOut}
-            className="bg-red-600 hover:bg-red-700 text-white"
+            variant="destructive"
           >
             Sign out
           </AlertDialogAction>

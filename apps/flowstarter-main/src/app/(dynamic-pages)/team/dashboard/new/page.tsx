@@ -172,9 +172,10 @@ export default function NewProjectPage() {
       goal: [],
     }).then((result) => {
       if (result) {
-        // Apply generated data to form
+        // Apply AI-generated data to form
         setProjectData(prev => ({
           ...prev,
+          // AI Generated fields:
           businessName: Array.isArray(result.names) && result.names.length > 0 
             ? result.names[Math.floor(Math.random() * result.names.length)] 
             : prev.businessName,
@@ -182,13 +183,15 @@ export default function NewProjectPage() {
           targetAudience: result.targetUsers || '',
           uvp: result.USP || '',
           industry: selectedIndustry || prefillData.industry || '',
+          // Brand tone from AI if available
+          brandTone: (result.brandTone?.toLowerCase() as BrandTone) || '',
         }));
         
-        // Skip to step 2 (business details)
+        // Skip to step 2 (business details) - AI generated, user can review
         setStep(2);
         
-        toast.success('AI generated project details', {
-          description: 'Review and complete the remaining fields',
+        toast.success('AI generated business details', {
+          description: 'Review the generated info, then set client info & preferences',
         });
       } else {
         // AI returned no result - use the description as fallback
@@ -394,15 +397,20 @@ export default function NewProjectPage() {
                   Business Details
                 </h1>
                 <p className="text-gray-500 dark:text-white/50">
-                  Tell us about the business
+                  {isAIMode ? 'Review AI-generated details and edit if needed' : 'Tell us about the business'}
                 </p>
               </div>
 
               <div className={`${cardClass} p-6 space-y-5`}>
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
-                    Business Name *
-                  </Label>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
+                      Business Name *
+                    </Label>
+                    {isAIMode && projectData.businessName && (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
+                    )}
+                  </div>
                   <Input
                     placeholder="Acme Consulting"
                     value={projectData.businessName}
@@ -428,39 +436,54 @@ export default function NewProjectPage() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
-                    Description *
-                  </Label>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
+                      Description *
+                    </Label>
+                    {isAIMode && projectData.description && (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
+                    )}
+                  </div>
                   <textarea
                     placeholder="What does this business do? Who do they serve?"
                     value={projectData.description}
                     onChange={(e) => updateField('description', e.target.value)}
                     rows={3}
-                    className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-400 resize-none"
+                    className="w-full px-4 py-3 rounded-lg bg-white/50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-400 resize-none"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
-                    Target Audience
-                  </Label>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
+                      Target Audience
+                    </Label>
+                    {isAIMode && projectData.targetAudience && (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
+                    )}
+                  </div>
                   <Input
                     placeholder="e.g., Small business owners in Berlin"
                     value={projectData.targetAudience}
                     onChange={(e) => updateField('targetAudience', e.target.value)}
-                    className="h-12 bg-gray-50 dark:bg-white/5 border-gray-200 dark:border-white/10"
+                    className="h-12 bg-white/50 dark:bg-white/5 border-gray-200 dark:border-white/10"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
-                    Unique Value Proposition
-                  </Label>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
+                      Unique Value Proposition
+                    </Label>
+                    {isAIMode && projectData.uvp && (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
+                    )}
+                  </div>
                   <Input
                     placeholder="What makes this business different?"
                     value={projectData.uvp}
                     onChange={(e) => updateField('uvp', e.target.value)}
-                    className="h-12 bg-gray-50 dark:bg-white/5 border-gray-200 dark:border-white/10"
+                    className="h-12 bg-white/50 dark:bg-white/5 border-gray-200 dark:border-white/10"
                   />
                 </div>
               </div>

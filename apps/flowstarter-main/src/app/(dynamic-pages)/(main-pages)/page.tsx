@@ -1777,6 +1777,7 @@ export default function LandingPage() {
             <p className="text-gray-500 dark:text-white/50 leading-relaxed mb-4">
               And when you want to make changes? Our AI editor lets you update 
               anything in seconds. Just describe what you want. No code. No complexity.
+              Need something bigger? The editor routes it to us and we'll take it from there.
             </p>
             <p className="text-gray-700 dark:text-white/70 font-medium">
               One call. One process. Full control.
@@ -1897,9 +1898,9 @@ export default function LandingPage() {
                     <ul className="space-y-1.5">
                       {[
                         'AI editor: update text, images, pages instantly',
+                        'Complex requests? Routed to our team automatically',
                         'Secure, always-online hosting',
                         'Analytics so you know what\'s working',
-                        'Priority support when you need a hand',
                       ].map((item, i) => (
                         <li
                           key={i}

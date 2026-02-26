@@ -15,12 +15,10 @@ const openrouter = createOpenRouter({
  * OpenRouter provides unified access to models from multiple providers
  */
 export const models = {
-  // Fast, cost-effective model for project details and content generation
-  // DeepSeek is excellent for structured output and creative tasks
-  projectDetails: openrouter.chat('deepseek/deepseek-chat'),
+  // Claude Sonnet 4 for project details - high quality generation
+  projectDetails: openrouter.chat('anthropic/claude-sonnet-4-20250514'),
 
   // High-quality model for template generation and complex tasks
-  // Claude Sonnet 4 excels at code generation and following instructions
   templateAgent: openrouter.chat('anthropic/claude-sonnet-4-20250514'),
 
   // Alternative high-performance models

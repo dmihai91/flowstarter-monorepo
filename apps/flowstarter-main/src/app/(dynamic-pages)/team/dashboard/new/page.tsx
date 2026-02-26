@@ -4,11 +4,12 @@ import { Button } from '@/components/ui/button';
 import { GradientBackground } from '@/components/ui/gradient-background';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useUser, useAuth } from '@clerk/nextjs';
+import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useWizardStore } from '@/store/wizard-store';
+import { useProjectSuggestions } from '@/hooks/wizard/useProjectSuggestions';
 import { toast } from 'sonner';
 import { 
   ArrowLeft,
@@ -102,10 +103,14 @@ export default function NewProjectPage() {
   const setPrefillData = useWizardStore((state) => state.setPrefillData);
   const selectedIndustry = useWizardStore((state) => state.selectedIndustry);
   
+  // AI generation hook (from old wizard)
+  const { generateSuggestions, isGeneratingWithAI } = useProjectSuggestions('business');
+  
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [hasAppliedPrefill, setHasAppliedPrefill] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const hasTriggeredGeneration = useRef(false);
   
   const [projectData, setProjectData] = useState<ProjectData>({
     clientName: '',
@@ -140,38 +145,57 @@ export default function NewProjectPage() {
     }
   }, [user, userLoaded, router]);
 
-  // Apply prefill data from Quick Mode AI generation
+  // Trigger AI generation when prefill data is present
   useEffect(() => {
-    if (hasAppliedPrefill || !prefillData) return;
+    if (hasTriggeredGeneration.current || !prefillData || isLoading) return;
     
     const isAIGenerated = searchParams.get('mode') === 'ai-generated';
+    if (!isAIGenerated) return;
     
-    if (prefillData) {
-      // Apply prefill data to form
-      setProjectData(prev => ({
-        ...prev,
-        description: prefillData.description || prefillData.userDescription || '',
-        targetAudience: prefillData.targetUsers || '',
-        uvp: prefillData.USP || '',
-        businessName: prefillData.name || '',
-        industry: selectedIndustry || prefillData.industry || '',
-      }));
-      
-      // Skip to step 2 (business details) since we have AI data
-      setStep(2);
-      setHasAppliedPrefill(true);
-      
-      // Show success toast
-      if (isAIGenerated) {
+    const userDescription = prefillData.description || prefillData.userDescription || '';
+    if (!userDescription) return;
+    
+    hasTriggeredGeneration.current = true;
+    setIsGenerating(true);
+    
+    // Call the SAME AI generation as old wizard
+    generateSuggestions({
+      businessType: prefillData.platformType || 'business',
+      industry: selectedIndustry || prefillData.industry || 'general',
+      targetAudience: '',
+      uniqueSellingPoint: userDescription,
+      description: userDescription,
+      goals: '',
+      domain: selectedIndustry || prefillData.industry || 'general',
+      goal: [],
+    }).then((result) => {
+      if (result) {
+        // Apply generated data to form
+        setProjectData(prev => ({
+          ...prev,
+          businessName: Array.isArray(result.names) && result.names.length > 0 
+            ? result.names[Math.floor(Math.random() * result.names.length)] 
+            : prev.businessName,
+          description: result.description || userDescription,
+          targetAudience: result.targetUsers || '',
+          uvp: result.USP || '',
+          industry: selectedIndustry || prefillData.industry || '',
+        }));
+        
+        // Skip to step 2 (business details)
+        setStep(2);
+        
         toast.success('AI generated project details', {
           description: 'Review and complete the remaining fields',
         });
       }
-      
-      // Clear prefill data after applying
+      setIsGenerating(false);
       setPrefillData(null);
-    }
-  }, [prefillData, hasAppliedPrefill, searchParams, selectedIndustry, setPrefillData]);
+    }).catch(() => {
+      setIsGenerating(false);
+      setPrefillData(null);
+    });
+  }, [prefillData, isLoading, searchParams, selectedIndustry, generateSuggestions, setPrefillData]);
 
   const updateField = (field: keyof ProjectData, value: string) => {
     setProjectData(prev => ({ ...prev, [field]: value }));
@@ -204,10 +228,16 @@ export default function NewProjectPage() {
     }
   };
 
-  if (isLoading || !userLoaded) {
+  if (isLoading || !userLoaded || isGenerating) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c]">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c] gap-4">
         <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)]" />
+        {isGenerating && (
+          <div className="text-center">
+            <p className="text-gray-900 dark:text-white font-medium">Generating project details...</p>
+            <p className="text-sm text-gray-500 dark:text-white/50">AI is analyzing your description</p>
+          </div>
+        )}
       </div>
     );
   }

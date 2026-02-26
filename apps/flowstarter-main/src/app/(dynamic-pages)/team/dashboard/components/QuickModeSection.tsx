@@ -70,8 +70,8 @@ export function QuickModeSection() {
         setSelectedIndustry(industry);
       }
 
-      // Navigate to OLD wizard that has full AI generation
-      router.push('/dashboard/new?mode=ai-generated');
+      // Navigate to team wizard with ai-generated flag
+      router.push('/team/dashboard/new?mode=ai-generated');
     } catch (error) {
       console.error('[QuickMode] Classification error:', error);
 
@@ -85,7 +85,7 @@ export function QuickModeSection() {
         USP: '',
       };
       setPrefillData(prefillData);
-      router.push('/dashboard/new?mode=ai-generated');
+      router.push('/team/dashboard/new?mode=ai-generated');
     } finally {
       setIsClassifying(false);
     }

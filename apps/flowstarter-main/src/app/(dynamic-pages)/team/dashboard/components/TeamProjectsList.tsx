@@ -40,6 +40,16 @@ import { toast } from 'sonner';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useFormatDate } from '@/hooks/useFormatDate';
 
+// Beta pricing feature flag - set to true to enable 50% discount
+const BETA_PRICING_ENABLED = process.env.NEXT_PUBLIC_BETA_PRICING === 'true';
+const BETA_DISCOUNT = 0.5; // 50% off
+
+// Apply beta discount to a price
+const applyBetaDiscount = (price: number): number => {
+  if (!BETA_PRICING_ENABLED) return price;
+  return Math.round(price * (1 - BETA_DISCOUNT));
+};
+
 interface ProjectWithOwner extends TableType<'projects'> {
   owner_email?: string | null;
   owner_name?: string | null;
@@ -107,11 +117,23 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
   const updatePricingMutation = useTeamUpdateProjectPricing();
 
   // Default pricing by project type (in EUR)
-  const PRICING_DEFAULTS: Record<string, { setup_fee: number; monthly_fee: number }> = {
+  // Base prices (before any discount)
+  const BASE_PRICING: Record<string, { setup_fee: number; monthly_fee: number }> = {
     standard: { setup_fee: 299, monthly_fee: 29 },
     pro: { setup_fee: 599, monthly_fee: 59 },
     business: { setup_fee: 1499, monthly_fee: 149 },
   };
+
+  // Apply beta discount if enabled
+  const PRICING_DEFAULTS: Record<string, { setup_fee: number; monthly_fee: number }> = Object.fromEntries(
+    Object.entries(BASE_PRICING).map(([key, val]) => [
+      key,
+      {
+        setup_fee: applyBetaDiscount(val.setup_fee),
+        monthly_fee: applyBetaDiscount(val.monthly_fee),
+      },
+    ])
+  );
 
   const openPricingDialog = (project: ProjectWithOwner) => {
     setProjectToPrice(project);
@@ -547,7 +569,14 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
       <Dialog open={pricingDialogOpen} onOpenChange={setPricingDialogOpen}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Project Pricing</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              Project Pricing
+              {BETA_PRICING_ENABLED && (
+                <span className="px-2 py-0.5 text-xs font-medium bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 rounded-full">
+                  Beta -50%
+                </span>
+              )}
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-5 py-4">
             {/* Project Type */}

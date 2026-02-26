@@ -282,54 +282,117 @@ function NewProjectPageContent() {
   const showLoading = isLoading || !userLoaded || isGenerating;
   
   if (showLoading) {
+    const currentIdx = generationSteps.findIndex(gs => gs.id === generationStep);
+    
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-6 relative">
+      <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
         <GradientBackground variant="dashboard" className="fixed" />
-        <div className="relative z-10 flex flex-col items-center gap-6">
-          <div className="w-14 h-14 rounded-2xl bg-[var(--purple)]/10 flex items-center justify-center">
-            <Loader2 className="w-7 h-7 animate-spin text-[var(--purple)]" />
-          </div>
-          
+        
+        {/* Animated background orbs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--purple)]/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
+        </div>
+        
+        <div className="relative z-10 flex flex-col items-center max-w-md mx-auto px-6">
           {isGenerating ? (
-            <div className="flex flex-col items-center gap-4">
-              <p className="text-lg font-medium text-gray-900 dark:text-white">
-                Creating your project
+            <>
+              {/* Animated icon */}
+              <div className="relative mb-8">
+                <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-[var(--purple)] to-[var(--purple)]/70 flex items-center justify-center shadow-2xl shadow-[var(--purple)]/30">
+                  <Sparkles className="w-10 h-10 text-white animate-pulse" />
+                </div>
+                {/* Spinning ring */}
+                <div className="absolute inset-0 -m-2">
+                  <svg className="w-24 h-24 animate-spin" style={{ animationDuration: '3s' }}>
+                    <circle
+                      cx="48"
+                      cy="48"
+                      r="44"
+                      fill="none"
+                      stroke="url(#gradient)"
+                      strokeWidth="2"
+                      strokeDasharray="80 200"
+                      strokeLinecap="round"
+                    />
+                    <defs>
+                      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="var(--purple)" />
+                        <stop offset="100%" stopColor="transparent" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+              </div>
+              
+              {/* Title with typing effect */}
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2 text-center">
+                Building your project
+              </h2>
+              <p className="text-gray-500 dark:text-white/60 mb-8 text-center">
+                AI is crafting the perfect foundation for your business
               </p>
               
-              {/* Steps indicator */}
-              <div className="flex flex-col gap-3 mt-2">
+              {/* Modern step indicator */}
+              <div className="w-full space-y-3">
                 {generationSteps.map((s, i) => {
-                  const currentIdx = generationSteps.findIndex(gs => gs.id === generationStep);
                   const isActive = s.id === generationStep;
                   const isComplete = i < currentIdx;
                   
                   return (
-                    <div key={s.id} className="flex items-center gap-3">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium transition-all ${
+                    <div 
+                      key={s.id} 
+                      className={`flex items-center gap-4 p-4 rounded-2xl transition-all duration-500 ${
+                        isActive 
+                          ? 'bg-[var(--purple)]/10 border border-[var(--purple)]/20' 
+                          : isComplete
+                            ? 'bg-green-500/5 border border-green-500/10'
+                            : 'bg-gray-100/50 dark:bg-white/5 border border-transparent'
+                      }`}
+                    >
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 ${
                         isComplete 
                           ? 'bg-green-500 text-white' 
                           : isActive 
                             ? 'bg-[var(--purple)] text-white' 
-                            : 'bg-gray-200 dark:bg-white/10 text-gray-500 dark:text-white/50'
+                            : 'bg-gray-200 dark:bg-white/10 text-gray-400 dark:text-white/30'
                       }`}>
-                        {isComplete ? '✓' : i + 1}
+                        {isComplete ? (
+                          <Check className="w-5 h-5" />
+                        ) : isActive ? (
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                          <span className="text-sm font-medium">{i + 1}</span>
+                        )}
                       </div>
-                      <span className={`text-sm transition-all ${
-                        isActive 
-                          ? 'text-gray-900 dark:text-white font-medium' 
-                          : isComplete
-                            ? 'text-green-600 dark:text-green-400'
-                            : 'text-gray-500 dark:text-white/50'
-                      }`}>
-                        {s.label}
-                      </span>
+                      <div className="flex-1">
+                        <p className={`font-medium transition-all ${
+                          isActive 
+                            ? 'text-gray-900 dark:text-white' 
+                            : isComplete
+                              ? 'text-green-600 dark:text-green-400'
+                              : 'text-gray-400 dark:text-white/40'
+                        }`}>
+                          {s.label}
+                        </p>
+                        {isActive && (
+                          <div className="mt-2 h-1 bg-gray-200 dark:bg-white/10 rounded-full overflow-hidden">
+                            <div className="h-full bg-[var(--purple)] rounded-full animate-pulse" style={{ width: '60%' }} />
+                          </div>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
               </div>
-            </div>
+            </>
           ) : (
-            <p className="text-gray-900 dark:text-white font-medium">Loading...</p>
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-[var(--purple)]/10 flex items-center justify-center">
+                <Loader2 className="w-7 h-7 animate-spin text-[var(--purple)]" />
+              </div>
+              <p className="text-gray-900 dark:text-white font-medium">Loading...</p>
+            </div>
           )}
         </div>
       </div>

@@ -27,7 +27,6 @@ export async function POST() {
       .insert({
         name: 'Untitled Project',
         description: '',
-        chat: JSON.stringify({ draft: true }),
         user_id: userId,
         status: 'draft',
         is_draft: true,

@@ -420,21 +420,13 @@ function NewProjectPageContent() {
         
         {/* Progress bar below header */}
         <div className="sticky top-16 z-50 bg-white/80 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">
-          <div className="max-w-2xl mx-auto px-6 py-3 flex items-center justify-between">
-            <Link 
-              href="/team/dashboard"
-              className="flex items-center gap-2 text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back
-            </Link>
-            
+          <div className="max-w-2xl mx-auto px-6 py-3 flex items-center justify-center gap-6">
             {/* Progress */}
             <div className="flex items-center gap-2">
               {[1, 2, 3, 4].map((s) => (
                 <div
                   key={s}
-                  className={`w-8 h-1.5 rounded-full transition-colors ${
+                  className={`w-10 h-1.5 rounded-full transition-colors ${
                     s <= step ? 'bg-[var(--purple)]' : 'bg-gray-200 dark:bg-white/10'
                   }`}
                 />
@@ -809,7 +801,7 @@ function NewProjectPageContent() {
 
           {/* Navigation */}
           <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200 dark:border-white/10">
-            {step > 1 ? (
+            {step > 2 ? (
               <Button
                 variant="ghost"
                 onClick={() => setStep(step - 1)}
@@ -819,7 +811,15 @@ function NewProjectPageContent() {
                 Back
               </Button>
             ) : (
-              <div />
+              <Link href="/team/dashboard">
+                <Button
+                  variant="ghost"
+                  className="text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Cancel
+                </Button>
+              </Link>
             )}
             
             {step < 4 ? (

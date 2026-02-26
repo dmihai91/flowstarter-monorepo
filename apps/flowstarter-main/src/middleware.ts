@@ -293,8 +293,10 @@ export default clerkMiddleware(async (auth, req) => {
     try {
       const { userId, sessionClaims } = await auth();
       if (userId) {
-        // Check if user is a team member
-        const role = (sessionClaims?.metadata as { role?: string })?.role?.toLowerCase();
+        // Check if user is a team member - check both metadata locations
+        const publicMetadata = sessionClaims?.publicMetadata as { role?: string } | undefined;
+        const unsafeMetadata = sessionClaims?.unsafeMetadata as { role?: string } | undefined;
+        const role = (publicMetadata?.role || unsafeMetadata?.role || '')?.toLowerCase();
         const isTeamMember = role === 'team' || role === 'admin';
         
         // Team users → /team/dashboard, Clients → /dashboard

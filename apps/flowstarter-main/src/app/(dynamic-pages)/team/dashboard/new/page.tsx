@@ -88,6 +88,40 @@ const industries = [
   'Other',
 ];
 
+// Auto-detect industry from description
+const detectIndustry = (description: string): string => {
+  const desc = description.toLowerCase();
+  
+  const patterns: [string, string[]][] = [
+    ['Photography & Videography', ['photo', 'photographer', 'videograph', 'wedding photo', 'portrait', 'headshot', 'film', 'cinema']],
+    ['Restaurant & Food', ['restaurant', 'cafe', 'coffee', 'bakery', 'catering', 'food', 'chef', 'cuisine', 'dining', 'bistro']],
+    ['Health & Wellness', ['health', 'wellness', 'therapy', 'therapist', 'clinic', 'medical', 'doctor', 'dentist', 'chiropractic', 'massage']],
+    ['Beauty & Spa', ['beauty', 'salon', 'spa', 'hair', 'nail', 'skincare', 'makeup', 'cosmetic', 'barber']],
+    ['Fitness & Sports', ['fitness', 'gym', 'personal trainer', 'yoga', 'pilates', 'crossfit', 'sports', 'athletic']],
+    ['Real Estate', ['real estate', 'realtor', 'property', 'homes', 'housing', 'apartment', 'rental']],
+    ['Legal Services', ['law', 'legal', 'attorney', 'lawyer', 'litigation', 'court']],
+    ['Financial Services', ['financial', 'accounting', 'tax', 'insurance', 'investment', 'mortgage', 'bank']],
+    ['Technology', ['tech', 'software', 'app', 'saas', 'startup', 'digital', 'web development', 'programming']],
+    ['Creative & Design', ['design', 'graphic', 'creative', 'branding', 'logo', 'illustration', 'art', 'artist']],
+    ['Education', ['education', 'school', 'tutor', 'learning', 'course', 'training', 'academy', 'teaching']],
+    ['Consulting', ['consult', 'advisor', 'strategy', 'management consulting', 'business consulting']],
+    ['Coaching & Training', ['coach', 'coaching', 'mentor', 'life coach', 'executive coach', 'career coach']],
+    ['Construction & Trades', ['construction', 'contractor', 'plumber', 'electrician', 'hvac', 'roofing', 'renovation']],
+    ['Automotive', ['auto', 'car', 'mechanic', 'dealership', 'vehicle', 'repair shop']],
+    ['Events & Entertainment', ['event', 'wedding', 'party', 'entertainment', 'dj', 'music', 'band', 'planner']],
+    ['Travel & Hospitality', ['travel', 'hotel', 'tourism', 'hospitality', 'vacation', 'resort', 'airbnb']],
+    ['Retail & E-commerce', ['shop', 'store', 'retail', 'ecommerce', 'boutique', 'online store', 'marketplace']],
+  ];
+  
+  for (const [industry, keywords] of patterns) {
+    if (keywords.some(keyword => desc.includes(keyword))) {
+      return industry;
+    }
+  }
+  
+  return '';
+};
+
 const goalOptions: { value: BusinessGoal; label: string; desc: string }[] = [
   {
     value: 'leads',
@@ -346,14 +380,18 @@ function NewProjectPageContent() {
             Array.isArray(result?.names) && result.names.length > 0
               ? result.names[Math.floor(Math.random() * result.names.length)]
               : '';
+          
+          // Auto-detect industry from description
+          const generatedDescription = result?.description || userDescription;
+          const detectedIndustry = detectIndustry(generatedDescription);
 
           setProjectData((prev) => ({
             ...prev,
             businessName: generatedName || prev.businessName,
-            description: result?.description || userDescription,
+            description: generatedDescription,
             targetAudience: result?.targetUsers || '',
             uvp: result?.USP || '',
-            industry: selectedIndustry || prefillData.industry || '',
+            industry: selectedIndustry || prefillData.industry || detectedIndustry || '',
             brandTone: (result?.brandTone?.toLowerCase() as BrandTone) || '',
           }));
 

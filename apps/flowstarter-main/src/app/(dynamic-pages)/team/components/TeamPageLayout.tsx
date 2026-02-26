@@ -1,9 +1,6 @@
 'use client';
 
-import { PageContainer } from '@/components/PageContainer';
-import { DashboardWrapper } from '@/app/(dynamic-pages)/(main-pages)/(logged-in-pages)/dashboard/components/DashboardWrapper';
 import { GlassCard } from '@/components/ui/glass-card';
-import { TeamHeader } from './TeamHeader';
 import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, ReactNode } from 'react';
@@ -49,53 +46,49 @@ export function TeamPageLayout({
 
   if (isLoading || !userLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c]">
+      <div className="flex-1 flex items-center justify-center p-12">
         <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)]" />
       </div>
     );
   }
 
   return (
-    <DashboardWrapper>
-      <TeamHeader />
+    <div className="p-6 lg:p-8 max-w-4xl mx-auto">
+      {/* Back button */}
+      {showBackButton && (
+        <Link
+          href={backHref}
+          className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Dashboard
+        </Link>
+      )}
 
-      <PageContainer gradientVariant="dashboard">
-        <GlassCard className="p-6 sm:p-8">
-          {/* Back button */}
-          {showBackButton && (
-            <Link
-              href={backHref}
-              className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Dashboard
-            </Link>
-          )}
-
-          {/* Page header */}
-          {(title || icon) && (
-            <div className="flex items-center gap-4 mb-8">
-              {icon && (
-                <div className="p-3 rounded-xl bg-[var(--purple)]/10 text-[var(--purple)]">
-                  {icon}
-                </div>
-              )}
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {title}
-                </h1>
-                {subtitle && (
-                  <p className="text-sm text-gray-500 dark:text-white/50 mt-1">
-                    {subtitle}
-                  </p>
-                )}
-              </div>
+      {/* Page header */}
+      {(title || icon) && (
+        <div className="flex items-center gap-4 mb-8">
+          {icon && (
+            <div className="p-3 rounded-xl bg-[var(--purple)]/10 text-[var(--purple)]">
+              {icon}
             </div>
           )}
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              {title}
+            </h1>
+            {subtitle && (
+              <p className="text-sm text-gray-500 dark:text-white/50 mt-1">
+                {subtitle}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
-          {children}
-        </GlassCard>
-      </PageContainer>
-    </DashboardWrapper>
+      <GlassCard className="p-6 sm:p-8">
+        {children}
+      </GlassCard>
+    </div>
   );
 }

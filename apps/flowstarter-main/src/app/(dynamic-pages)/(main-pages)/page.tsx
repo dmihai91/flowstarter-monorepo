@@ -2065,12 +2065,12 @@ export default function LandingPage() {
                       </span>
                     </div>
                     <p className="text-sm text-gray-500 dark:text-white/50 mb-4">
-                      €499 setup + €49/month
+                      €999 setup + €99/month
                     </p>
                     <ul className="space-y-2.5 text-sm text-gray-600 dark:text-white/50">
                       <li className="flex items-center gap-2.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)]/50" />
-                        Additional sites as add-ons
+                        Up to 15 pages
                       </li>
                       <li className="flex items-center gap-2.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)]/50" />
@@ -2094,31 +2094,31 @@ export default function LandingPage() {
                   <div className="relative">
                     <div className="flex items-center justify-between mb-4">
                       <h4 className="text-lg font-bold text-gray-700 dark:text-white/80">
-                        Business
+                        E-commerce
                       </h4>
                       <span className="px-3 py-1 text-[10px] font-medium bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 rounded-full">
                         Coming Soon
                       </span>
                     </div>
                     <p className="text-sm text-gray-500 dark:text-white/50 mb-4">
-                      From €799 setup + €79/month + commission
+                      €1399 setup + €139/month
                     </p>
                     <ul className="space-y-2.5 text-sm text-gray-600 dark:text-white/50">
                       <li className="flex items-center gap-2.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
-                        Sell digital products
+                        Full online store
                       </li>
                       <li className="flex items-center gap-2.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
-                        E-commerce integrations
+                        Product catalog & inventory
                       </li>
                       <li className="flex items-center gap-2.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
-                        Product catalog & payments
+                        Stripe/PayPal payments
                       </li>
                       <li className="flex items-center gap-2.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
-                        Full revenue tracking
+                        Order management
                       </li>
                     </ul>
                   </div>

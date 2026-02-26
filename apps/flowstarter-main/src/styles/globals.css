@@ -955,7 +955,8 @@ body {
     scroll-padding-top: 96px;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background: transparent;
     font-family: var(--font-inter), var(--font-poppins), ui-sans-serif,
       system-ui, -apple-system, Segoe UI, Roboto, Inter, 'Helvetica Neue', Arial,
       'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';

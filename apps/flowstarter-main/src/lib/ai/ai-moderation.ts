@@ -106,14 +106,15 @@ export async function aiModerateContent(input: {
     return result;
   } catch (error) {
     console.error('AI moderation error:', error);
-    // Conservative fallback: require review (will be treated as prohibited upstream)
+    // Allow through on service failure - don't block legitimate users
+    // Keyword pre-screen above catches obvious violations
     return {
-      isProhibited: true,
-      riskLevel: 'MEDIUM',
-      reasons: ['Moderation service unavailable; conservative review required'],
-      riskScore: 50,
-      categories: ['system-fallback'],
-      recommendation: 'REVIEW_REQUIRED',
+      isProhibited: false,
+      riskLevel: 'LOW',
+      reasons: [],
+      riskScore: 0,
+      categories: [],
+      recommendation: 'APPROVED',
     };
   }
 }

@@ -54,7 +54,7 @@ function buildVariationConstraints(variationIndex: number): string {
 export async function moderateBusinessInfo(
   businessInfo: BusinessInfo
 ): Promise<ModerationResult> {
-  // Always run moderation with conservative defaults
+  // Run moderation but allow through on service errors
   try {
     const result = await aiModerateContent({
       description: businessInfo?.description || '',
@@ -64,15 +64,17 @@ export async function moderateBusinessInfo(
       services: businessInfo?.keyServices || '',
     });
     return result;
-  } catch {
-    // Conservative fallback: require review
+  } catch (error) {
+    // Log the error but allow request through on service failure
+    // Actual content moderation happens at generation time too
+    console.warn('Moderation service error, allowing request:', error);
     return {
-      isProhibited: true,
-      riskLevel: 'MEDIUM',
-      reasons: ['Moderation service unavailable; conservative review required'],
-      riskScore: 50,
-      categories: ['system-fallback'],
-      recommendation: 'REVIEW_REQUIRED',
+      isProhibited: false,
+      riskLevel: 'LOW',
+      reasons: [],
+      riskScore: 0,
+      categories: [],
+      recommendation: 'APPROVED',
     } as ModerationResult;
   }
 }

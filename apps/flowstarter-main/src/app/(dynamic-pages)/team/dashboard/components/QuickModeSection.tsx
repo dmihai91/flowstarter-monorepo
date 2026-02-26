@@ -1,9 +1,99 @@
 'use client';
 
-import { Sparkles, Image as ImageIcon } from 'lucide-react';
-import Link from 'next/link';
+import { Sparkles, Image as ImageIcon, Loader2, Send, ChevronDown, ChevronUp } from 'lucide-react';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { useWizardStore } from '@/store/wizard-store';
+
+const SAMPLE_PROMPTS = [
+  'A minimalist landing page for a SaaS product in the IT industry that...',
+  'Build a website for my local coffee shop in Brooklyn with online ordering...',
+  'A consulting site for a business coach offering 1-on-1 sessions and...',
+];
 
 export function QuickModeSection() {
+  const router = useRouter();
+  const [input, setInput] = useState('');
+  const [isClassifying, setIsClassifying] = useState(false);
+  const [showMore, setShowMore] = useState(false);
+  const setPrefillData = useWizardStore((state) => state.setPrefillData);
+  const setSelectedIndustry = useWizardStore((state) => state.setSelectedIndustry);
+
+  const handleSubmit = async () => {
+    if (!input.trim()) return;
+
+    setIsClassifying(true);
+
+    try {
+      // Call classification API to detect project type and industry
+      const response = await fetch('/api/ai/classify-project', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: input }),
+      });
+
+      let platformType: string | undefined;
+      let industry: string | undefined;
+
+      if (response.ok) {
+        const classification = await response.json();
+        platformType = classification.platformType;
+        industry = classification.industry;
+      }
+
+      const prefillData = {
+        name: '',
+        description: input,
+        userDescription: input,
+        targetUsers: '',
+        businessGoals: '',
+        USP: '',
+        platformType,
+        industry,
+      };
+
+      // Store prefill data in wizard store
+      setPrefillData(prefillData);
+
+      // Also set industry in the store directly for immediate use
+      if (industry) {
+        setSelectedIndustry(industry);
+      }
+
+      // Navigate to wizard with ai-generated flag
+      router.push('/team/dashboard/new?mode=ai-generated');
+    } catch (error) {
+      console.error('[QuickMode] Classification error:', error);
+
+      // Fall back to original behavior without classification
+      const prefillData = {
+        name: '',
+        description: input,
+        userDescription: input,
+        targetUsers: '',
+        businessGoals: '',
+        USP: '',
+      };
+      setPrefillData(prefillData);
+      router.push('/team/dashboard/new?mode=ai-generated');
+    } finally {
+      setIsClassifying(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
+  const handlePromptClick = (prompt: string) => {
+    setInput(prompt);
+  };
+
   return (
     <div className="p-5 rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl">
       {/* Header */}
@@ -19,16 +109,61 @@ export function QuickModeSection() {
         Hi! Let&apos;s build the best site for your client. Tell us about the project and our AI will guide you to build it. Be specific and offer all details about the: industry, audience, goals, visual style.
       </p>
 
+      {/* Sample Prompts */}
+      <div className="mb-4">
+        <p className="text-xs text-gray-500 dark:text-white/40 mb-2">
+          We prepared some prompts for you: (click to use)
+        </p>
+        <div className="space-y-2">
+          {SAMPLE_PROMPTS.slice(0, showMore ? undefined : 2).map((prompt, i) => (
+            <button
+              key={i}
+              onClick={() => handlePromptClick(prompt)}
+              className="w-full text-left px-3 py-2 rounded-lg bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/10 text-xs text-gray-600 dark:text-white/50 hover:bg-gray-100 dark:hover:bg-white/[0.05] hover:border-[var(--purple)]/30 transition-colors truncate"
+            >
+              {prompt}
+            </button>
+          ))}
+        </div>
+        {SAMPLE_PROMPTS.length > 2 && (
+          <button
+            onClick={() => setShowMore(!showMore)}
+            className="flex items-center gap-1 mt-2 text-xs text-gray-500 dark:text-white/40 hover:text-[var(--purple)] transition-colors"
+          >
+            {showMore ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            {showMore ? 'Less' : 'More'}
+          </button>
+        )}
+      </div>
+
       {/* Input Area */}
-      <Link 
-        href="/team/dashboard/new"
-        className="flex items-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.02] hover:border-[var(--purple)]/50 hover:bg-gray-100 dark:hover:bg-white/[0.04] transition-colors group"
-      >
-        <ImageIcon className="w-5 h-5 text-gray-400 dark:text-white/40 group-hover:text-[var(--purple)] transition-colors" />
-        <span className="text-sm text-gray-500 dark:text-white/50 group-hover:text-gray-700 dark:group-hover:text-white/70 transition-colors">
-          Describe your project or paste a reference...
-        </span>
-      </Link>
+      <div className="space-y-3">
+        <Textarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Describe your project or paste a reference..."
+          className="min-h-[100px] resize-none border-gray-200 dark:border-white/10 bg-white/50 dark:bg-white/[0.02] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40"
+        />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <ImageIcon className="w-4 h-4 text-gray-400 dark:text-white/40" />
+            <span className="text-xs text-gray-400 dark:text-white/40">Supports images</span>
+          </div>
+          <Button
+            onClick={handleSubmit}
+            disabled={!input.trim() || isClassifying}
+            className="bg-[var(--purple)] hover:bg-[var(--purple)]/90 text-white"
+          >
+            {isClassifying ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Send className="w-4 h-4 mr-2" />
+            )}
+            {isClassifying ? 'Analyzing...' : 'Start Project'}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

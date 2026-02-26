@@ -147,6 +147,11 @@ function NewProjectPageContent() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [projectId, setProjectId] = useState<string | null>(() => {
+    // Check URL first, then stored data
+    const urlId = searchParams?.get('id');
+    return urlId || teamWizardData?.projectId || null;
+  });
   const [isGenerating, setIsGenerating] = useState(true); // Start true, will be set false after generation or if not AI mode
   const [generationStep, setGenerationStep] = useState<string>('classifying');
   const hasTriggeredGeneration = useRef(false);
@@ -219,10 +224,20 @@ function NewProjectPageContent() {
       ...projectData,
       step,
       isAIMode,
+      projectId,
     });
-  }, [projectData, step, isAIMode, setTeamWizardData]);
+  }, [projectData, step, isAIMode, projectId, setTeamWizardData]);
+  
+  // Update URL with project ID
+  useEffect(() => {
+    if (projectId && typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('id', projectId);
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, [projectId]);
 
-  // Check if user is team member
+  // Check if user is team member and create draft project
   useEffect(() => {
     if (userLoaded) {
       const metadata = user?.publicMetadata as { role?: string } | undefined;
@@ -233,9 +248,32 @@ function NewProjectPageContent() {
         router.push('/team/login');
       } else {
         setIsLoading(false);
+        
+        // Create draft project if none exists
+        if (!projectId) {
+          createDraftProject();
+        }
       }
     }
-  }, [user, userLoaded, router]);
+  }, [user, userLoaded, router, projectId]);
+  
+  // Create a draft project
+  const createDraftProject = async () => {
+    try {
+      const result = await insertProjectAction({
+        name: 'Untitled Project',
+        description: '',
+        chat: JSON.stringify({ draft: true }),
+      });
+      
+      if (result?.data) {
+        setProjectId(result.data);
+        console.log('Draft project created:', result.data);
+      }
+    } catch (error) {
+      console.error('Failed to create draft project:', error);
+    }
+  };
 
   // Trigger AI generation when prefill data is present
   useEffect(() => {
@@ -409,58 +447,81 @@ function NewProjectPageContent() {
 
     try {
       // Build project data for database
-      const projectPayload = {
-        name: projectData.businessName,
-        description: projectData.description,
-        chat: JSON.stringify({
-          clientInfo: {
-            name: projectData.clientName,
-            email: projectData.clientEmail,
-            phone: projectData.clientPhone,
-          },
-          businessInfo: {
-            name: projectData.businessName,
-            industry: projectData.industry,
-            description: projectData.description,
-            targetAudience: projectData.targetAudience,
-            uvp: projectData.uvp,
-            goal: projectData.goal,
-            offerType: projectData.offerType,
-            brandTone: projectData.brandTone,
-          },
-          contactInfo: {
-            email: projectData.businessEmail,
-            phone: projectData.businessPhone,
-            address: projectData.businessAddress,
-            website: projectData.website,
-          },
-          generatedByAI: isAIMode,
-        }),
+      const chatData = {
+        clientInfo: {
+          name: projectData.clientName,
+          email: projectData.clientEmail,
+          phone: projectData.clientPhone,
+        },
+        businessInfo: {
+          name: projectData.businessName,
+          industry: projectData.industry,
+          description: projectData.description,
+          targetAudience: projectData.targetAudience,
+          uvp: projectData.uvp,
+          goal: projectData.goal,
+          offerType: projectData.offerType,
+          brandTone: projectData.brandTone,
+        },
+        contactInfo: {
+          email: projectData.businessEmail,
+          phone: projectData.businessPhone,
+          address: projectData.businessAddress,
+          website: projectData.website,
+        },
+        generatedByAI: isAIMode,
       };
 
-      console.log('Creating project:', projectPayload);
-
-      const result = await insertProjectAction(projectPayload);
-
-      if (result?.serverError) {
-        throw new Error(result.serverError);
-      }
-
-      if (result?.validationErrors) {
-        const errors = Object.values(result.validationErrors).flat().join(', ');
-        throw new Error(errors);
-      }
-
-      const projectId = result?.data;
+      // If we have a project ID, update via API; otherwise create new
+      let finalProjectId = projectId;
       
-      if (!projectId) {
-        throw new Error('No project ID returned');
+      if (projectId) {
+        // Update existing project via API
+        console.log('Updating project:', projectId);
+        const response = await fetch(`/api/projects/${projectId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: projectData.businessName,
+            description: projectData.description,
+            chat: JSON.stringify(chatData),
+            is_draft: false,
+          }),
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to update project');
+        }
+      } else {
+        // Create new project
+        console.log('Creating new project');
+        const result = await insertProjectAction({
+          name: projectData.businessName,
+          description: projectData.description,
+          chat: JSON.stringify(chatData),
+        });
+
+        if (result?.serverError) {
+          throw new Error(result.serverError);
+        }
+
+        if (result?.validationErrors) {
+          const errors = Object.values(result.validationErrors).flat().join(', ');
+          throw new Error(errors);
+        }
+
+        finalProjectId = result?.data;
       }
       
-      console.log('Project created with ID:', projectId);
+      if (!finalProjectId) {
+        throw new Error('No project ID');
+      }
+      
+      console.log('Project saved with ID:', finalProjectId);
 
-      toast.success('Project created successfully!', {
-        description: `Project ID: ${projectId}`,
+      toast.success('Project saved!', {
+        description: `Project ID: ${finalProjectId}`,
       });
 
       // Clear stored wizard data
@@ -472,7 +533,7 @@ function NewProjectPageContent() {
       await queryClient.invalidateQueries({ queryKey: ['projects'] });
 
       // Redirect to project page with UID
-      router.push(`/team/dashboard/projects/${projectId}`);
+      router.push(`/team/dashboard/projects/${finalProjectId}`);
     } catch (error) {
       console.error('Failed to create project:', error);
       toast.error('Failed to create project', {
@@ -707,7 +768,7 @@ function NewProjectPageContent() {
         </div>
 
         {/* Main content - add bottom padding for fixed nav */}
-        <main className="flex-1 max-w-4xl mx-auto px-6 py-12 pb-32">
+        <main className="flex-1 min-w-[800px] max-w-5xl mx-auto px-6 py-12 pb-32">
           {/* Step 1: Client Info (or Step 2 in AI mode) */}
           {(isAIMode ? step === 2 : step === 1) && (
             <div className="space-y-8">

@@ -3,6 +3,76 @@ import { requireAuth } from '@/lib/api-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
+ * PATCH /api/projects/[id]
+ *
+ * Update a project by ID.
+ * Requires authentication - returns 401 if not authenticated.
+ */
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const authResult = await requireAuth();
+  if (!authResult.authenticated) {
+    return authResult.response;
+  }
+
+  try {
+    const { id } = await params;
+    const body = await request.json();
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Project ID required' },
+        { status: 400 }
+      );
+    }
+
+    console.info('[Projects] PATCH starting:', {
+      userId: authResult.userId,
+      projectId: id,
+      fields: Object.keys(body),
+    });
+
+    const supabase = await useServerSupabaseWithAuthStrict();
+
+    // Only allow updating certain fields
+    const allowedFields = ['name', 'description', 'chat', 'is_draft', 'status'];
+    const updateData: Record<string, unknown> = {};
+    for (const field of allowedFields) {
+      if (body[field] !== undefined) {
+        updateData[field] = body[field];
+      }
+    }
+
+    const { data, error } = await supabase
+      .from('projects')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('[Projects] PATCH database error:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    console.info('[Projects] PATCH success', {
+      userId: authResult.userId,
+      projectId: data.id,
+    });
+
+    return NextResponse.json({ project: data });
+  } catch (error) {
+    console.error('[Projects] PATCH error:', error);
+    return NextResponse.json(
+      { error: 'Failed to update project' },
+      { status: 500 }
+    );
+  }
+}
+
+/**
  * GET /api/projects/[id]
  *
  * Fetch a single project by ID.

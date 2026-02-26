@@ -81,7 +81,7 @@ export default function TeamDashboardPage() {
               <Link href="/team/dashboard/invite">
                 <Button variant="outline" size="lg">
                   <UserPlus className="w-4 h-4 mr-2" />
-                  Invite Team
+                  Invite Team Member
                 </Button>
               </Link>
             )}

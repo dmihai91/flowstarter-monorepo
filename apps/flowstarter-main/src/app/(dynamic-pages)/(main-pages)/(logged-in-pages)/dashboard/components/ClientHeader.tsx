@@ -1,10 +1,10 @@
 'use client';
 
-import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ClientUserMenu } from './ClientUserMenu';
 
 export function ClientHeader() {
   return (
@@ -36,15 +36,8 @@ export function ClientHeader() {
             <MessageSquare className="h-4 w-4" />
           </Button>
 
-          {/* User menu */}
-          <UserButton
-            afterSignOutUrl="/"
-            appearance={{
-              elements: {
-                avatarBox: 'w-9 h-9 ring-2 ring-gray-200 dark:ring-white/20',
-              },
-            }}
-          />
+          {/* Custom User menu */}
+          <ClientUserMenu />
         </div>
       </div>
     </header>

@@ -27,9 +27,9 @@ export function GradientBackground({
   className,
 }: GradientBackgroundProps) {
   const gradientClass = variantGradients[variant];
-  // Lines visibility - more visible now
-  const lineOpacity = 'opacity-[0.12]';
-  const lineOpacityDark = 'dark:opacity-[0.06]';
+  // Lines visibility - subtle in light, more visible in dark
+  const lineOpacity = 'opacity-[0.06]';
+  const lineOpacityDark = 'dark:opacity-[0.08]';
   
   return (
     <>
@@ -56,39 +56,27 @@ export function GradientBackground({
           className
         )}
       >
-        {/* Base - clean white for light, deep dark for dark */}
+        {/* Base - pure white for light, deep dark for dark */}
         <div className={cn(
-          'absolute inset-0 bg-[#FAFAFA]',
+          'absolute inset-0 bg-white',
           'dark:bg-[#07070a]'
         )} />
         
-        {/* Subtle top gradient wash - light mode only */}
+        {/* Dark mode only - purple ellipses */}
         <div 
-          className="absolute inset-0 opacity-100 dark:opacity-0"
-          style={{ 
-            background: 'linear-gradient(180deg, rgba(99, 102, 241, 0.03) 0%, transparent 40%)'
-          }}
-        />
-        
-        {/* Large purple ellipse - top center (like Figma Ellipse 14) */}
-        <div 
-          className="absolute -top-[400px] left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full opacity-[0.08] dark:opacity-[0.12]"
+          className="absolute -top-[400px] left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full opacity-0 dark:opacity-[0.12]"
           style={{ 
             background: 'radial-gradient(circle, rgba(99, 102, 241, 0.6) 0%, rgba(99, 102, 241, 0.2) 30%, transparent 70%)'
           }}
         />
-        
-        {/* Secondary purple ellipse - bottom left (like Figma Ellipse 12) */}
         <div 
-          className="absolute -bottom-[300px] -left-[200px] w-[810px] h-[810px] rounded-full opacity-[0.06] dark:opacity-[0.10]"
+          className="absolute -bottom-[300px] -left-[200px] w-[810px] h-[810px] rounded-full opacity-0 dark:opacity-[0.10]"
           style={{ 
             background: 'radial-gradient(circle, rgba(139, 92, 246, 0.5) 0%, rgba(139, 92, 246, 0.15) 40%, transparent 70%)'
           }}
         />
-        
-        {/* Accent ellipse - right side */}
         <div 
-          className="absolute top-1/3 -right-[200px] w-[600px] h-[600px] rounded-full opacity-[0.05] dark:opacity-[0.06]"
+          className="absolute top-1/3 -right-[200px] w-[600px] h-[600px] rounded-full opacity-0 dark:opacity-[0.06]"
           style={{ 
             background: 'radial-gradient(circle, rgba(79, 70, 229, 0.4) 0%, transparent 60%)'
           }}

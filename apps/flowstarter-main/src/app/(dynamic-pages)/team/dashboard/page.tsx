@@ -76,7 +76,7 @@ export default function TeamDashboardPage() {
             <Link href="/team/dashboard/invite" className="w-full sm:w-auto">
               <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 <UserPlus className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">Invite Team</span>
+                <span className="hidden sm:inline">Invite Member</span>
                 <span className="sm:hidden">Invite</span>
               </Button>
             </Link>

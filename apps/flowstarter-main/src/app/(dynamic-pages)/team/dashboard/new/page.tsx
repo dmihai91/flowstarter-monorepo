@@ -244,6 +244,34 @@ function NewProjectPageContent() {
     }
   }, [projectId]);
 
+  const hasCreatedDraft = useRef(false);
+  
+  // Create a draft project
+  const createDraftProject = async () => {
+    if (hasCreatedDraft.current || projectId) return;
+    hasCreatedDraft.current = true;
+    
+    try {
+      console.log('Creating draft project...');
+      const result = await insertProjectAction({
+        name: 'Untitled Project',
+        description: '',
+        chat: JSON.stringify({ draft: true }),
+      });
+      
+      if (result?.data) {
+        setProjectId(result.data);
+        console.log('Draft project created:', result.data);
+      } else {
+        console.error('No project ID returned from insertProjectAction');
+        hasCreatedDraft.current = false; // Allow retry
+      }
+    } catch (error) {
+      console.error('Failed to create draft project:', error);
+      hasCreatedDraft.current = false; // Allow retry
+    }
+  };
+
   // Check if user is team member and create draft project
   useEffect(() => {
     if (userLoaded) {
@@ -257,30 +285,12 @@ function NewProjectPageContent() {
         setIsLoading(false);
         
         // Create draft project if none exists
-        if (!projectId) {
+        if (!projectId && !hasCreatedDraft.current) {
           createDraftProject();
         }
       }
     }
   }, [user, userLoaded, router, projectId]);
-  
-  // Create a draft project
-  const createDraftProject = async () => {
-    try {
-      const result = await insertProjectAction({
-        name: 'Untitled Project',
-        description: '',
-        chat: JSON.stringify({ draft: true }),
-      });
-      
-      if (result?.data) {
-        setProjectId(result.data);
-        console.log('Draft project created:', result.data);
-      }
-    } catch (error) {
-      console.error('Failed to create draft project:', error);
-    }
-  };
 
   // Trigger AI generation when prefill data is present
   useEffect(() => {

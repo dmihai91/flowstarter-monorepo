@@ -2,6 +2,7 @@
 
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { I18nProvider } from '@/lib/i18n';
+import { Logo } from '@/components/ui/logo';
 import en from '@/locales/en';
 import Link from 'next/link';
 import { useEffect } from 'react';
@@ -66,13 +67,8 @@ function GlobalErrorContent({
         <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6">
           <div className="text-center max-w-lg">
             {/* Logo */}
-            <div className="flex items-center justify-center gap-3 mb-8">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#7B6AD8] to-blue-500 flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-lg">F</span>
-              </div>
-              <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                Flowstarter
-              </span>
+            <div className="flex items-center justify-center mb-8">
+              <Logo size="lg" />
             </div>
 
             {/* Error Icon */}

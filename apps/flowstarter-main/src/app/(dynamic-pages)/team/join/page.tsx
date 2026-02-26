@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Logo } from '@/components/ui/logo';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
@@ -181,12 +182,7 @@ function JoinPageContent() {
         {/* Header */}
         <header className="p-6">
           <Link href="/" className="flex items-center gap-3 w-fit">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20">
-              <span className="text-white font-bold text-sm">F</span>
-            </div>
-            <span className="text-lg font-semibold text-gray-900 dark:text-white">
-              Flowstarter
-            </span>
+            <Logo size="md" />
           </Link>
         </header>
 

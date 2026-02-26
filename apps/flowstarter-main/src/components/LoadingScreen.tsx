@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { Logo } from '@/components/ui/logo';
 
 interface LoadingScreenProps {
   message?: string;
@@ -82,14 +83,7 @@ export function LoadingScreen({ message = 'Loading...' }: LoadingScreenProps) {
       {/* Centered content */}
       <div className="relative flex flex-col items-center gap-8">
         {/* Logo */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20">
-            <span className="text-white font-bold text-lg">F</span>
-          </div>
-          <span className="text-xl font-semibold text-gray-900 dark:text-white">
-            Flowstarter
-          </span>
-        </div>
+        <Logo size="lg" />
 
         {/* Simple elegant spinner */}
         <div className="relative w-12 h-12">

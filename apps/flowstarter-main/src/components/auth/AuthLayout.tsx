@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Footer from '@/components/Footer';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { GradientBackground } from '@/components/ui/gradient-background';
+import { Logo } from '@/components/ui/logo';
 
 interface AuthLayoutProps {
   title?: string;
@@ -42,14 +43,7 @@ export default function AuthLayout({
         <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20 group-hover:shadow-[var(--purple)]/30 transition-shadow">
-                <span className="text-white font-bold text-xs sm:text-sm">
-                  F
-                </span>
-              </div>
-              <span className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
-                Flowstarter
-              </span>
+              <Logo size="md" />
               {showTeamBadge && (
                 <span className="px-2 py-0.5 text-[10px] font-medium bg-[var(--purple)]/10 text-[var(--purple)] rounded-full">
                   Team

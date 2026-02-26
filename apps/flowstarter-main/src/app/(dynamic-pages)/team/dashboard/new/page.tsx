@@ -548,7 +548,7 @@ function NewProjectPageContent() {
       {/* Dashboard gradient background with flow lines */}
       <GradientBackground variant="dashboard" className="fixed" />
 
-      <div className="min-h-screen font-display relative">
+      <div className="min-h-screen font-display relative flex flex-col">
         {/* Same header as dashboard */}
         <TeamHeader />
         
@@ -576,8 +576,8 @@ function NewProjectPageContent() {
           </div>
         </div>
 
-        {/* Main content */}
-        <main className="max-w-2xl mx-auto px-6 py-12">
+        {/* Main content - add bottom padding for fixed nav */}
+        <main className="flex-1 max-w-2xl mx-auto px-6 py-12 pb-32">
           {/* Step 1: Client Info */}
           {step === 1 && (
             <div className="space-y-8">
@@ -1119,8 +1119,11 @@ function NewProjectPageContent() {
             </div>
           )}
 
-          {/* Navigation */}
-          <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200 dark:border-white/10">
+        </main>
+
+        {/* Fixed Navigation */}
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-[#0a0a0c]/95 backdrop-blur-xl border-t border-gray-200 dark:border-white/10">
+          <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
             {step === 1 ? (
               <Link href="/team/dashboard">
                 <Button
@@ -1171,7 +1174,7 @@ function NewProjectPageContent() {
               </Button>
             )}
           </div>
-        </main>
+        </div>
       </div>
     </>
   );

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 
 /**
  * A hook for managing state that persists in localStorage.
- * 
+ *
  * @param key - The localStorage key
  * @param initialValue - The initial value if nothing is stored
  * @returns A tuple of [value, setValue, removeValue]
@@ -34,13 +34,19 @@ export function useLocalStorage<T>(
   const setValue = useCallback(
     (value: T | ((prev: T) => T)) => {
       try {
-        const valueToStore = value instanceof Function ? value(storedValue) : value;
+        const valueToStore =
+          value instanceof Function ? value(storedValue) : value;
         setStoredValue(valueToStore);
-        
+
         if (typeof window !== 'undefined') {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
           // Dispatch event so other tabs/components can sync
-          window.dispatchEvent(new StorageEvent('storage', { key, newValue: JSON.stringify(valueToStore) }));
+          window.dispatchEvent(
+            new StorageEvent('storage', {
+              key,
+              newValue: JSON.stringify(valueToStore),
+            })
+          );
         }
       } catch (error) {
         console.warn(`Error setting localStorage key "${key}":`, error);

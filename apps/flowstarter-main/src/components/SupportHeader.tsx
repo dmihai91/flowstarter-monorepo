@@ -11,7 +11,9 @@ export function SupportHeader() {
           <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20 group-hover:shadow-[var(--purple)]/30 transition-shadow">
             <span className="text-white font-bold text-xs sm:text-sm">F</span>
           </div>
-          <span className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">Flowstarter</span>
+          <span className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
+            Flowstarter
+          </span>
         </Link>
         <ThemeToggle />
       </div>

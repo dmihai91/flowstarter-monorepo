@@ -42,8 +42,8 @@ const steps = [
 ];
 
 function OnboardingStepper() {
-  const currentStepIndex = steps.findIndex(s => s.status === 'active');
-  
+  const currentStepIndex = steps.findIndex((s) => s.status === 'active');
+
   return (
     <div className="grid md:grid-cols-3 gap-4 mb-8">
       {steps.map((step, index) => {
@@ -51,44 +51,51 @@ function OnboardingStepper() {
         const isCompleted = step.status === 'completed';
         const isLocked = step.status === 'locked';
         const isPast = index < currentStepIndex;
-        
+
         return (
           <div
             key={step.number}
             className={`
               relative p-5 rounded-2xl border transition-all h-full flex flex-col
-              ${isActive 
-                ? 'border-[var(--purple)]/30 bg-white/80 dark:bg-[#1a1a1f]/80 shadow-lg shadow-[var(--purple)]/5' 
-                : isCompleted || isPast
-                ? 'border-green-500/30 bg-green-50/50 dark:bg-green-500/5'
-                : 'border-gray-200/60 dark:border-white/10 bg-white/60 dark:bg-white/[0.02]'
+              ${
+                isActive
+                  ? 'border-[var(--purple)]/30 bg-white/80 dark:bg-[#1a1a1f]/80 shadow-lg shadow-[var(--purple)]/5'
+                  : isCompleted || isPast
+                  ? 'border-green-500/30 bg-green-50/50 dark:bg-green-500/5'
+                  : 'border-gray-200/60 dark:border-white/10 bg-white/60 dark:bg-white/[0.02]'
               }
               backdrop-blur-xl
             `}
           >
             {/* Step badge */}
-            <span className={`
+            <span
+              className={`
               inline-flex self-start px-2.5 py-1 rounded-full text-xs font-semibold mb-3
-              ${isActive 
-                ? 'bg-[var(--purple)] text-white' 
-                : isCompleted || isPast
-                ? 'bg-green-500 text-white'
-                : 'bg-gray-200 dark:bg-white/10 text-gray-500 dark:text-white/50'
+              ${
+                isActive
+                  ? 'bg-[var(--purple)] text-white'
+                  : isCompleted || isPast
+                  ? 'bg-green-500 text-white'
+                  : 'bg-gray-200 dark:bg-white/10 text-gray-500 dark:text-white/50'
               }
-            `}>
+            `}
+            >
               Step {step.number}
             </span>
-            
+
             <div className="flex items-start gap-3 mb-3">
-              <div className={`
+              <div
+                className={`
                 w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0
-                ${isActive 
-                  ? 'bg-[var(--purple)]/10 text-[var(--purple)]' 
-                  : isCompleted || isPast
-                  ? 'bg-green-500/10 text-green-500'
-                  : 'bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-white/30'
+                ${
+                  isActive
+                    ? 'bg-[var(--purple)]/10 text-[var(--purple)]'
+                    : isCompleted || isPast
+                    ? 'bg-green-500/10 text-green-500'
+                    : 'bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-white/30'
                 }
-              `}>
+              `}
+              >
                 {isCompleted ? (
                   <CheckCircle2 className="w-5 h-5" />
                 ) : isLocked ? (
@@ -97,31 +104,37 @@ function OnboardingStepper() {
                   <step.icon className="w-5 h-5" />
                 )}
               </div>
-              
+
               <div className="flex-1">
-                <h3 className={`
+                <h3
+                  className={`
                   text-sm font-semibold
-                  ${isLocked 
-                    ? 'text-gray-400 dark:text-white/40' 
-                    : 'text-gray-900 dark:text-white'
+                  ${
+                    isLocked
+                      ? 'text-gray-400 dark:text-white/40'
+                      : 'text-gray-900 dark:text-white'
                   }
-                `}>
+                `}
+                >
                   {step.title}
                 </h3>
-                <p className={`
+                <p
+                  className={`
                   text-xs mt-0.5
-                  ${isLocked 
-                    ? 'text-gray-400 dark:text-white/30' 
-                    : 'text-gray-500 dark:text-white/50'
+                  ${
+                    isLocked
+                      ? 'text-gray-400 dark:text-white/30'
+                      : 'text-gray-500 dark:text-white/50'
                   }
-                `}>
+                `}
+                >
                   {step.description}
                 </p>
               </div>
             </div>
-            
+
             <div className="flex-1" />
-            
+
             {/* CTA for active step */}
             {isActive && (
               <a
@@ -144,10 +157,11 @@ function OnboardingStepper() {
 export default function DashboardPage() {
   const { t } = useTranslations();
   const { user } = useUser();
-  
+
   const firstName = user?.firstName || 'there';
   const hour = new Date().getHours();
-  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  const greeting =
+    hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
 
   return (
     <DashboardWrapper>
@@ -164,7 +178,10 @@ export default function DashboardPage() {
           {/* Welcome message */}
           <div className="mb-8">
             <p className="text-gray-500 dark:text-white/50 mb-1">
-              {greeting}, <span className="text-gray-700 dark:text-white/70 font-medium">{firstName}</span>
+              {greeting},{' '}
+              <span className="text-gray-700 dark:text-white/70 font-medium">
+                {firstName}
+              </span>
             </p>
             <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
               Dashboard

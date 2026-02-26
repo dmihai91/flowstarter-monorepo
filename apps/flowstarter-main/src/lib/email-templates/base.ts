@@ -46,7 +46,9 @@ export function baseEmailTemplate(content: string): string {
       display: inline-block;
       width: 48px;
       height: 48px;
-      background: linear-gradient(135deg, ${EMAIL_STYLES.primaryColor}, #3B82F6);
+      background: linear-gradient(135deg, ${
+        EMAIL_STYLES.primaryColor
+      }, #3B82F6);
       border-radius: 12px;
       color: white;
       font-size: 24px;
@@ -74,7 +76,9 @@ export function baseEmailTemplate(content: string): string {
     .button {
       display: inline-block;
       padding: 14px 32px;
-      background: linear-gradient(135deg, ${EMAIL_STYLES.primaryColor}, #3B82F6);
+      background: linear-gradient(135deg, ${
+        EMAIL_STYLES.primaryColor
+      }, #3B82F6);
       color: white !important;
       text-decoration: none;
       border-radius: 12px;

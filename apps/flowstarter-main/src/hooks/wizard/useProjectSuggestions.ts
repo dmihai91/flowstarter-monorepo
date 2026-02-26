@@ -328,8 +328,13 @@ export function useProjectSuggestions(templateId: string) {
         ctx.userInstructions = customPrompt;
         ctx.descriptionApproach = 'follow user instructions';
       } else {
-        const approaches = ['benefit-focused', 'story-driven', 'solution-focused'];
-        ctx.descriptionApproach = approaches[Math.floor(Math.random() * approaches.length)];
+        const approaches = [
+          'benefit-focused',
+          'story-driven',
+          'solution-focused',
+        ];
+        ctx.descriptionApproach =
+          approaches[Math.floor(Math.random() * approaches.length)];
       }
       return regenerateField('description', ctx);
     },
@@ -341,7 +346,11 @@ export function useProjectSuggestions(templateId: string) {
         ctx.userInstructions = customPrompt;
         ctx.uspAngle = 'follow user instructions';
       } else {
-        const angles = ['competitive differentiation', 'customer benefit focus', 'innovation'];
+        const angles = [
+          'competitive differentiation',
+          'customer benefit focus',
+          'innovation',
+        ];
         ctx.uspAngle = angles[Math.floor(Math.random() * angles.length)];
       }
       return regenerateField('USP', ctx);

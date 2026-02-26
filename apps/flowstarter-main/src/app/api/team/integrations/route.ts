@@ -5,15 +5,24 @@ import { NextRequest, NextResponse } from 'next/server';
 async function requireTeamAuth() {
   const { userId } = await auth();
   if (!userId) {
-    return { authorized: false, response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
+    return {
+      authorized: false,
+      response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }),
+    };
   }
 
   const user = await currentUser();
   const metadata = user?.publicMetadata as { role?: string } | undefined;
   const role = metadata?.role?.toLowerCase();
-  
+
   if (role !== 'team' && role !== 'admin') {
-    return { authorized: false, response: NextResponse.json({ error: 'Not a team member' }, { status: 403 }) };
+    return {
+      authorized: false,
+      response: NextResponse.json(
+        { error: 'Not a team member' },
+        { status: 403 }
+      ),
+    };
   }
 
   return { authorized: true, userId, role };
@@ -40,10 +49,12 @@ export async function GET(request: NextRequest) {
     const projectId = searchParams.get('projectId');
 
     const supabase = getSupabaseAdmin();
-    
+
     let query = supabase
       .from('team_integrations')
-      .select('id, project_id, integration_type, name, config, is_active, created_at, updated_at, created_by')
+      .select(
+        'id, project_id, integration_type, name, config, is_active, created_at, updated_at, created_by'
+      )
       .order('created_at', { ascending: false });
 
     if (projectId) {
@@ -60,7 +71,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ integrations: data ?? [] });
   } catch (error) {
     console.error('[Team Integrations] Error:', error);
-    return NextResponse.json({ error: 'Failed to fetch integrations' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch integrations' },
+      { status: 500 }
+    );
   }
 }
 
@@ -79,7 +93,9 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     if (!projectId || !integrationType || !apiKey) {
       return NextResponse.json(
-        { error: 'Missing required fields: projectId, integrationType, apiKey' },
+        {
+          error: 'Missing required fields: projectId, integrationType, apiKey',
+        },
         { status: 400 }
       );
     }
@@ -111,7 +127,9 @@ export async function POST(request: NextRequest) {
       // Check for duplicate
       if (insertError.code === '23505') {
         return NextResponse.json(
-          { error: `${integrationType} integration already exists for this project` },
+          {
+            error: `${integrationType} integration already exists for this project`,
+          },
           { status: 409 }
         );
       }
@@ -120,17 +138,26 @@ export async function POST(request: NextRequest) {
     }
 
     // Store the API key in Vault (encrypted)
-    const { error: vaultError } = await supabase.rpc('store_integration_secret', {
-      p_integration_id: integration.id,
-      p_api_key: apiKey,
-      p_key_name: 'api_key',
-    });
+    const { error: vaultError } = await supabase.rpc(
+      'store_integration_secret',
+      {
+        p_integration_id: integration.id,
+        p_api_key: apiKey,
+        p_key_name: 'api_key',
+      }
+    );
 
     if (vaultError) {
       // Rollback - delete the integration if vault storage fails
-      await supabase.from('team_integrations').delete().eq('id', integration.id);
+      await supabase
+        .from('team_integrations')
+        .delete()
+        .eq('id', integration.id);
       console.error('[Team Integrations] Vault error:', vaultError);
-      return NextResponse.json({ error: 'Failed to store API key securely' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to store API key securely' },
+        { status: 500 }
+      );
     }
 
     console.info('[Team Integrations] Created integration', {
@@ -140,8 +167,8 @@ export async function POST(request: NextRequest) {
       createdBy: authCheck.userId,
     });
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       integration: {
         id: integration.id,
         project_id: integration.project_id,
@@ -150,10 +177,13 @@ export async function POST(request: NextRequest) {
         config: integration.config,
         is_active: integration.is_active,
         created_at: integration.created_at,
-      }
+      },
     });
   } catch (error) {
     console.error('[Team Integrations] Error:', error);
-    return NextResponse.json({ error: 'Failed to create integration' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to create integration' },
+      { status: 500 }
+    );
   }
 }

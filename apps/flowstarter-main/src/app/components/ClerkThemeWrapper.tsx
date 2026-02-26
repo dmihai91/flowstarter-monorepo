@@ -159,11 +159,12 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
   }
 
   // Check if we're on flowstarter.dev domain for cross-subdomain session sharing
-  const isFlowstarterDomain = typeof window !== 'undefined' && 
+  const isFlowstarterDomain =
+    typeof window !== 'undefined' &&
     window.location.hostname.includes('flowstarter.dev');
 
   return (
-    <ClerkProvider 
+    <ClerkProvider
       appearance={appearance}
       // Share session across subdomains (flowstarter.dev, editor.flowstarter.dev)
       domain={isFlowstarterDomain ? '.flowstarter.dev' : undefined}

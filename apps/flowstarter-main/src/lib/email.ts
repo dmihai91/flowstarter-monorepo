@@ -1,9 +1,9 @@
 /**
  * Email Service
- * 
+ *
  * Uses Resend for transactional emails.
  * Set RESEND_API_KEY in environment variables.
- * 
+ *
  * @see https://resend.com/docs
  */
 
@@ -42,7 +42,7 @@ export async function sendEmail({
     const response = await fetch(RESEND_API_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -63,12 +63,11 @@ export async function sendEmail({
 
     console.info(`[Email] Sent to ${to}: ${subject}`);
     return { success: true, id: data.id };
-
   } catch (error) {
     console.error('[Email] Error:', error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Unknown error' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
     };
   }
 }

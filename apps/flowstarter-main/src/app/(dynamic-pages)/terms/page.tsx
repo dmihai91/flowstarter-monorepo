@@ -77,7 +77,7 @@ export default function TermsPage() {
         },
         {
           subtitle: 'Prohibited Content',
-          text: 'You may not use our service to host illegal content, malware, spam, or content that infringes on others\' intellectual property rights.',
+          text: "You may not use our service to host illegal content, malware, spam, or content that infringes on others' intellectual property rights.",
         },
       ],
     },
@@ -143,20 +143,28 @@ export default function TermsPage() {
     <>
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-        .font-display { font-family: 'Outfit', system-ui, sans-serif; }
+        .font-display {
+          font-family: 'Outfit', system-ui, sans-serif;
+        }
       `}</style>
-      
+
       <div className="min-h-screen font-display bg-[#FAFAFA] dark:bg-[#0a0a0c]">
         {/* Flow lines background */}
         <div className="fixed inset-0 pointer-events-none">
-          <svg 
+          <svg
             className="absolute inset-0 w-full h-full opacity-[0.08] dark:opacity-[0.06]"
-            viewBox="0 0 1200 800" 
+            viewBox="0 0 1200 800"
             preserveAspectRatio="xMidYMid slice"
             fill="none"
           >
             <defs>
-              <linearGradient id="termsFlowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <linearGradient
+                id="termsFlowGradient"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="0%"
+              >
                 <stop offset="0%" stopColor="var(--purple)" />
                 <stop offset="100%" stopColor="#3B82F6" />
               </linearGradient>
@@ -180,8 +188,18 @@ export default function TermsPage() {
           {/* Hero */}
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium mb-6">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
               </svg>
               Legal Agreement
             </div>
@@ -189,7 +207,8 @@ export default function TermsPage() {
               Terms of Service
             </h1>
             <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl mx-auto mb-4">
-              By using Flowstarter, you agree to these terms. Please read them carefully.
+              By using Flowstarter, you agree to these terms. Please read them
+              carefully.
             </p>
             <p className="text-sm text-gray-400 dark:text-white/30">
               Last updated: {lastUpdated}
@@ -199,16 +218,35 @@ export default function TermsPage() {
           {/* Quick Summary */}
           <div className="grid sm:grid-cols-3 gap-4 mb-16">
             {[
-              { Icon: Sparkles, title: 'Simple Pricing', desc: 'Setup fee + monthly subscription.' },
-              { Icon: Package, title: 'Your Content', desc: 'You own what you create.' },
-              { Icon: DoorOpen, title: 'Cancel Anytime', desc: 'No lock-in contracts.' },
+              {
+                Icon: Sparkles,
+                title: 'Simple Pricing',
+                desc: 'Setup fee + monthly subscription.',
+              },
+              {
+                Icon: Package,
+                title: 'Your Content',
+                desc: 'You own what you create.',
+              },
+              {
+                Icon: DoorOpen,
+                title: 'Cancel Anytime',
+                desc: 'No lock-in contracts.',
+              },
             ].map((item, i) => (
-              <div key={i} className="p-6 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 text-center">
+              <div
+                key={i}
+                className="p-6 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 text-center"
+              >
                 <div className="w-12 h-12 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center mx-auto mb-3">
                   <item.Icon className="w-6 h-6 text-[var(--purple)]" />
                 </div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{item.title}</h3>
-                <p className="text-sm text-gray-500 dark:text-white/50">{item.desc}</p>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-white/50">
+                  {item.desc}
+                </p>
               </div>
             ))}
           </div>
@@ -216,7 +254,10 @@ export default function TermsPage() {
           {/* Sections */}
           <div className="space-y-12">
             {sections.map((section, index) => (
-              <section key={index} className="p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+              <section
+                key={index}
+                className="p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5"
+              >
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
                   <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center text-sm font-bold text-[var(--purple)]">
                     {index + 1}
@@ -247,12 +288,22 @@ export default function TermsPage() {
             <p className="text-gray-500 dark:text-white/50 mb-4">
               We're happy to clarify anything.
             </p>
-            <a 
+            <a
               href="mailto:hello@flowstarter.app"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 font-semibold hover:shadow-lg transition-all duration-300"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
               </svg>
               hello@flowstarter.app
             </a>

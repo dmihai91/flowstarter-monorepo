@@ -34,7 +34,8 @@ export default function NotFound() {
 
         {/* Description */}
         <p className="text-gray-500 dark:text-white/50 mb-8 max-w-md mx-auto">
-          The page you're looking for doesn't exist or has been moved. Let's get you back on track.
+          The page you're looking for doesn't exist or has been moved. Let's get
+          you back on track.
         </p>
 
         {/* Actions */}
@@ -42,13 +43,26 @@ export default function NotFound() {
           <Link href="/">
             <Button className="bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-8 h-12 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300">
               Back to Home
-              <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              <svg
+                className="w-4 h-4 ml-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
               </svg>
             </Button>
           </Link>
           <Link href="/help">
-            <Button variant="outline" className="rounded-xl px-8 h-12 text-base font-semibold border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 transition-all duration-300">
+            <Button
+              variant="outline"
+              className="rounded-xl px-8 h-12 text-base font-semibold border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 transition-all duration-300"
+            >
               Get Help
             </Button>
           </Link>
@@ -64,10 +78,16 @@ export default function NotFound() {
             ].map((stat, i) => (
               <div key={i} className="flex items-center">
                 <div className="text-center px-3">
-                  <div className="text-lg font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">{stat.value}</div>
-                  <div className="text-[9px] text-gray-400 dark:text-white/30 uppercase tracking-wider">{stat.label}</div>
+                  <div className="text-lg font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
+                    {stat.value}
+                  </div>
+                  <div className="text-[9px] text-gray-400 dark:text-white/30 uppercase tracking-wider">
+                    {stat.label}
+                  </div>
                 </div>
-                {i < 2 && <div className="w-px h-6 bg-gray-200 dark:bg-white/10" />}
+                {i < 2 && (
+                  <div className="w-px h-6 bg-gray-200 dark:bg-white/10" />
+                )}
               </div>
             ))}
           </div>

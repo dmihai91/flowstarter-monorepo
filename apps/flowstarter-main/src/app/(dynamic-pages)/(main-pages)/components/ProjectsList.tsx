@@ -347,8 +347,10 @@ export const ProjectsList = ({
                 icon: LayoutDashboard,
                 bgGradient:
                   'from-[var(--purple)]/10 to-[var(--purple)]/10 dark:from-[var(--purple)]/20 dark:to-[var(--purple)]/20',
-                borderColor: 'border-[var(--purple)]/30 dark:border-[var(--purple)]/20',
-                iconColor: 'text-[var(--purple)]/70 dark:text-[var(--purple)]/70',
+                borderColor:
+                  'border-[var(--purple)]/30 dark:border-[var(--purple)]/20',
+                iconColor:
+                  'text-[var(--purple)]/70 dark:text-[var(--purple)]/70',
               };
             };
 

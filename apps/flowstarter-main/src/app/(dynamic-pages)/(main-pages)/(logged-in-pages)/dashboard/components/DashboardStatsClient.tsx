@@ -1,9 +1,21 @@
 'use client';
 
 import { GlassCard } from '@/components/ui/glass-card';
-import { useScrollAnimation, getStaggeredAnimation } from '@/hooks/useScrollAnimation';
+import {
+  useScrollAnimation,
+  getStaggeredAnimation,
+} from '@/hooks/useScrollAnimation';
 import { useTranslations } from '@/lib/i18n';
-import { BarChart3, Calendar, ExternalLink, Globe, Mail, Pencil, TrendingUp, Users } from 'lucide-react';
+import {
+  BarChart3,
+  Calendar,
+  ExternalLink,
+  Globe,
+  Mail,
+  Pencil,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
 import Link from 'next/link';
 
 export interface TemplateStat {
@@ -22,10 +34,10 @@ export interface UserEngagementStats {
 function GhostChart() {
   return (
     <svg className="w-full h-10 mt-2" viewBox="0 0 200 35" fill="none">
-      <path 
-        d="M0 30 Q40 28, 80 24 T160 16 T200 8" 
-        stroke="var(--purple)" 
-        strokeWidth="1" 
+      <path
+        d="M0 30 Q40 28, 80 24 T160 16 T200 8"
+        stroke="var(--purple)"
+        strokeWidth="1"
         strokeDasharray="4 4"
         strokeOpacity="0.15"
         strokeLinecap="round"
@@ -35,13 +47,21 @@ function GhostChart() {
 }
 
 // Integration logo with label - brand purple at 35% opacity
-function IntegrationLogo({ name, icon: Icon }: { name: string; icon: React.ComponentType<{ className?: string }> }) {
+function IntegrationLogo({
+  name,
+  icon: Icon,
+}: {
+  name: string;
+  icon: React.ComponentType<{ className?: string }>;
+}) {
   return (
     <div className="flex flex-col items-center gap-1.5 transition-opacity duration-300">
       <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
         <Icon className="w-5 h-5 text-[var(--purple)] opacity-35 group-hover:opacity-50 transition-opacity" />
       </div>
-      <span className="text-[10px] text-gray-400 dark:text-white/30 font-medium">{name}</span>
+      <span className="text-[10px] text-gray-400 dark:text-white/30 font-medium">
+        {name}
+      </span>
     </div>
   );
 }
@@ -97,7 +117,7 @@ export function DashboardStatsClient({
               <Globe className="w-4 h-4 text-[var(--purple)] opacity-80" />
             </div>
           </div>
-          
+
           {hasLiveProject && lastProject ? (
             <div className="flex flex-col gap-3 flex-1">
               <div>
@@ -106,7 +126,9 @@ export function DashboardStatsClient({
                 </p>
                 <span className="inline-flex items-center gap-1.5 mt-1">
                   <span className="w-2 h-2 rounded-full bg-[var(--green)] animate-pulse" />
-                  <span className="text-xs text-[var(--green)] font-medium">Live</span>
+                  <span className="text-xs text-[var(--green)] font-medium">
+                    Live
+                  </span>
                 </span>
               </div>
               <div className="flex gap-2 mt-auto">
@@ -118,7 +140,9 @@ export function DashboardStatsClient({
                   Edit
                 </Link>
                 <a
-                  href={`https://${lastProject.name.toLowerCase().replace(/\s+/g, '-')}.flowstarter.app`}
+                  href={`https://${lastProject.name
+                    .toLowerCase()
+                    .replace(/\s+/g, '-')}.flowstarter.app`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--purple)] text-sm font-medium text-white hover:opacity-90 transition-opacity"
@@ -136,7 +160,9 @@ export function DashboardStatsClient({
                 </p>
                 <span className="inline-flex items-center gap-1.5 mt-1">
                   <span className="w-2 h-2 rounded-full bg-amber-500" />
-                  <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">In Progress</span>
+                  <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+                    In Progress
+                  </span>
                 </span>
               </div>
               <p className="text-xs text-gray-500 dark:text-white/50 mt-auto">
@@ -173,7 +199,7 @@ export function DashboardStatsClient({
               </Link>
             )}
           </div>
-          
+
           {totalViews > 0 ? (
             <div className="flex-1 flex flex-col">
               <div className="flex items-center gap-3">
@@ -228,7 +254,7 @@ export function DashboardStatsClient({
               </Link>
             )}
           </div>
-          
+
           {totalLeads > 0 ? (
             <div className="flex-1 flex flex-col">
               <div className="flex items-center gap-3">
@@ -284,14 +310,13 @@ export function DashboardStatsClient({
               </span>
             )}
           </div>
-          
+
           <p className="text-sm text-gray-400 dark:text-white/40">
-            {hasLiveProject 
-              ? 'Connect analytics, email & more' 
-              : 'Connect your tools once your site is live'
-            }
+            {hasLiveProject
+              ? 'Connect analytics, email & more'
+              : 'Connect your tools once your site is live'}
           </p>
-          
+
           <div className="flex items-center justify-around flex-1 pt-2 group">
             <IntegrationLogo name="Analytics" icon={BarChart3} />
             <IntegrationLogo name="Email" icon={Mail} />
@@ -307,8 +332,8 @@ export function DashboardStatsClient({
       {cards.map((card, index) => {
         const animation = getStaggeredAnimation(index, isVisible);
         return (
-          <GlassCard 
-            key={index} 
+          <GlassCard
+            key={index}
             className="gap-3 min-h-[160px]"
             style={animation.style}
           >

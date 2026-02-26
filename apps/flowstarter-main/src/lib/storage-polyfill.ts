@@ -2,7 +2,7 @@
  * Polyfill localStorage and sessionStorage for Node.js 22+ environments.
  * Node.js 22+ exposes localStorage/sessionStorage as globals but they're empty objects
  * without the required Web Storage API methods.
- * 
+ *
  * This polyfill provides no-op implementations to prevent errors during SSR.
  */
 
@@ -42,13 +42,22 @@ class NoopStorage implements Storage {
 // Only polyfill in Node.js environment (not in browser)
 if (typeof window === 'undefined') {
   // Check if localStorage exists but doesn't have proper methods
-  const globalObj = globalThis as unknown as { localStorage?: Storage; sessionStorage?: Storage };
-  
-  if (!globalObj.localStorage || typeof globalObj.localStorage.getItem !== 'function') {
+  const globalObj = globalThis as unknown as {
+    localStorage?: Storage;
+    sessionStorage?: Storage;
+  };
+
+  if (
+    !globalObj.localStorage ||
+    typeof globalObj.localStorage.getItem !== 'function'
+  ) {
     globalObj.localStorage = new NoopStorage();
   }
-  
-  if (!globalObj.sessionStorage || typeof globalObj.sessionStorage.getItem !== 'function') {
+
+  if (
+    !globalObj.sessionStorage ||
+    typeof globalObj.sessionStorage.getItem !== 'function'
+  ) {
     globalObj.sessionStorage = new NoopStorage();
   }
 }

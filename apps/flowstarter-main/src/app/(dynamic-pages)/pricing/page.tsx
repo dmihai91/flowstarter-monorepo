@@ -93,17 +93,17 @@ export default function PricingPage() {
               <Sparkles className="w-4 h-4 mr-2" />
               Beta Pricing — 50% Off Everything
             </Badge>
-            
+
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-6">
               Simple, transparent{' '}
               <span className="bg-gradient-to-r from-[var(--purple)] to-cyan-500 bg-clip-text text-transparent">
                 pricing
               </span>
             </h1>
-            
+
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-4">
-              Get your professional website built by our team. 
-              50% off setup + 50% off subscription for your first year.
+              Get your professional website built by our team. 50% off setup +
+              50% off subscription for your first year.
             </p>
 
             <div className="inline-flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-4 py-2 rounded-full">
@@ -120,7 +120,7 @@ export default function PricingPage() {
           <div className="max-w-lg mx-auto">
             <Card className="relative bg-white dark:bg-gray-800 border-2 border-[var(--purple)]/30 shadow-xl shadow-[var(--purple)]/5 overflow-hidden">
               <div className="absolute -top-px left-0 right-0 h-1 bg-gradient-to-r from-[var(--purple)] to-cyan-500" />
-              
+
               <CardContent className="p-8">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
@@ -129,8 +129,12 @@ export default function PricingPage() {
                       <Rocket className="w-6 h-6 text-[var(--purple)]" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">Starter</h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Everything you need</p>
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                        Starter
+                      </h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Everything you need
+                      </p>
                     </div>
                   </div>
                   <Badge className="bg-[var(--purple)] text-white border-0">
@@ -143,24 +147,38 @@ export default function PricingPage() {
                   <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                     {/* Setup */}
                     <div>
-                      <p className="text-xs uppercase tracking-wider text-gray-400 dark:text-white/40 mb-1">One-time setup</p>
+                      <p className="text-xs uppercase tracking-wider text-gray-400 dark:text-white/40 mb-1">
+                        One-time setup
+                      </p>
                       <div className="flex items-baseline gap-2">
-                        <span className="text-lg text-gray-400 line-through">€299</span>
-                        <span className="text-3xl font-bold text-gray-900 dark:text-white">€150</span>
+                        <span className="text-lg text-gray-400 line-through">
+                          €299
+                        </span>
+                        <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                          €150
+                        </span>
                       </div>
                     </div>
-                    
+
                     {/* Monthly */}
                     <div>
-                      <p className="text-xs uppercase tracking-wider text-gray-400 dark:text-white/40 mb-1">Monthly</p>
+                      <p className="text-xs uppercase tracking-wider text-gray-400 dark:text-white/40 mb-1">
+                        Monthly
+                      </p>
                       <div className="flex items-baseline gap-2">
-                        <span className="text-lg text-gray-400 line-through">€29</span>
-                        <span className="text-3xl font-bold text-gray-900 dark:text-white">€15</span>
+                        <span className="text-lg text-gray-400 line-through">
+                          €29
+                        </span>
+                        <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                          €15
+                        </span>
                         <span className="text-gray-500">/mo</span>
                       </div>
                     </div>
                   </div>
-                  <p className="text-xs text-[var(--purple)] mt-3">Starts after your free first month</p>
+                  <p className="text-xs text-[var(--purple)] mt-3">
+                    Starts after your free first month
+                  </p>
                 </div>
 
                 {/* Quick Features */}
@@ -170,7 +188,9 @@ export default function PricingPage() {
                       <div className="w-5 h-5 rounded-full bg-[var(--green)]/10 flex items-center justify-center shrink-0 mt-0.5">
                         <Check className="w-3 h-3 text-[var(--green)]" />
                       </div>
-                      <span className="text-sm text-gray-600 dark:text-gray-300">{feature}</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                        {feature}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -182,15 +202,17 @@ export default function PricingPage() {
                   rel="noopener noreferrer"
                   className="block w-full text-center py-3.5 px-6 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
                   style={{
-                    background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+                    background:
+                      'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
                   }}
                 >
                   Book Free Discovery Call
                   <span className="ml-2">→</span>
                 </a>
-                
+
                 <p className="text-center text-xs text-gray-400 dark:text-white/40 mt-4">
-                  No lock-in. Cancel anytime. 50% setup fee refund if you share feedback.
+                  No lock-in. Cancel anytime. 50% setup fee refund if you share
+                  feedback.
                 </p>
               </CardContent>
             </Card>
@@ -206,7 +228,8 @@ export default function PricingPage() {
               Everything you need. Nothing you don't.
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Clear breakdown of what's included in setup vs. your monthly subscription
+              Clear breakdown of what's included in setup vs. your monthly
+              subscription
             </p>
           </div>
 
@@ -219,15 +242,25 @@ export default function PricingPage() {
                     <Rocket className="w-5 h-5 text-[var(--purple)]" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Setup (one-time)</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">What we build for you</p>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                      Setup (one-time)
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      What we build for you
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-baseline gap-2 mb-6 pb-6 border-b border-gray-200 dark:border-white/10">
-                  <span className="text-lg text-gray-400 line-through">€299</span>
-                  <span className="text-2xl font-bold text-gray-900 dark:text-white">€150</span>
-                  <span className="text-sm text-[var(--purple)]">beta price</span>
+                  <span className="text-lg text-gray-400 line-through">
+                    €299
+                  </span>
+                  <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                    €150
+                  </span>
+                  <span className="text-sm text-[var(--purple)]">
+                    beta price
+                  </span>
                 </div>
 
                 <div className="space-y-3">
@@ -236,7 +269,9 @@ export default function PricingPage() {
                       <div className="w-5 h-5 rounded-full bg-[var(--green)]/10 flex items-center justify-center shrink-0 mt-0.5">
                         <Check className="w-3 h-3 text-[var(--green)]" />
                       </div>
-                      <span className="text-sm text-gray-600 dark:text-gray-300">{feature}</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                        {feature}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -251,16 +286,26 @@ export default function PricingPage() {
                     <Sparkles className="w-5 h-5 text-cyan-500" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Monthly subscription</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">What stays active</p>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                      Monthly subscription
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      What stays active
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-baseline gap-2 mb-6 pb-6 border-b border-gray-200 dark:border-white/10">
-                  <span className="text-lg text-gray-400 line-through">€29</span>
-                  <span className="text-2xl font-bold text-gray-900 dark:text-white">€15</span>
+                  <span className="text-lg text-gray-400 line-through">
+                    €29
+                  </span>
+                  <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                    €15
+                  </span>
                   <span className="text-sm text-gray-500">/month</span>
-                  <span className="text-sm text-[var(--purple)]">beta price</span>
+                  <span className="text-sm text-[var(--purple)]">
+                    beta price
+                  </span>
                 </div>
 
                 <div className="space-y-3">
@@ -269,11 +314,13 @@ export default function PricingPage() {
                       <div className="w-5 h-5 rounded-full bg-[var(--green)]/10 flex items-center justify-center shrink-0 mt-0.5">
                         <Check className="w-3 h-3 text-[var(--green)]" />
                       </div>
-                      <span className="text-sm text-gray-600 dark:text-gray-300">{feature}</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                        {feature}
+                      </span>
                     </div>
                   ))}
                 </div>
-                
+
                 <p className="text-xs text-gray-400 dark:text-white/30 mt-6 pt-4 border-t border-gray-200 dark:border-white/10">
                   First month free — billing starts 30 days after launch
                 </p>
@@ -299,21 +346,26 @@ export default function PricingPage() {
             {/* Pro */}
             <Card className="relative bg-gray-50/50 dark:bg-gray-800/30 border border-gray-200/50 dark:border-white/5 overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-100/50 dark:to-gray-900/30 pointer-events-none" />
-              
+
               <CardContent className="p-6 relative">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <div className="w-9 h-9 rounded-xl bg-gray-200/50 dark:bg-white/5 flex items-center justify-center">
                       <Star className="w-4 h-4 text-gray-400" />
                     </div>
-                    <h3 className="text-lg font-bold text-gray-400 dark:text-gray-500">Pro</h3>
+                    <h3 className="text-lg font-bold text-gray-400 dark:text-gray-500">
+                      Pro
+                    </h3>
                   </div>
-                  <Badge variant="outline" className="text-gray-400 border-gray-300 dark:border-gray-600 text-xs">
+                  <Badge
+                    variant="outline"
+                    className="text-gray-400 border-gray-300 dark:border-gray-600 text-xs"
+                  >
                     <Lock className="w-3 h-3 mr-1" />
                     Coming Soon
                   </Badge>
                 </div>
-                
+
                 <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">
                   Starting at €499 setup + €49/month
                 </p>
@@ -324,12 +376,17 @@ export default function PricingPage() {
                       <div className="w-4 h-4 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center shrink-0 mt-0.5">
                         <Check className="w-2.5 h-2.5 text-gray-400" />
                       </div>
-                      <span className="text-xs text-gray-400 dark:text-gray-500">{feature}</span>
+                      <span className="text-xs text-gray-400 dark:text-gray-500">
+                        {feature}
+                      </span>
                     </div>
                   ))}
                 </div>
 
-                <Button disabled className="w-full mt-5 bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed">
+                <Button
+                  disabled
+                  className="w-full mt-5 bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed"
+                >
                   Coming Q2 2026
                 </Button>
               </CardContent>
@@ -338,21 +395,26 @@ export default function PricingPage() {
             {/* Business */}
             <Card className="relative bg-gray-50/50 dark:bg-gray-800/30 border border-gray-200/50 dark:border-white/5 overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-100/50 dark:to-gray-900/30 pointer-events-none" />
-              
+
               <CardContent className="p-6 relative">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <div className="w-9 h-9 rounded-xl bg-gray-200/50 dark:bg-white/5 flex items-center justify-center">
                       <Crown className="w-4 h-4 text-gray-400" />
                     </div>
-                    <h3 className="text-lg font-bold text-gray-400 dark:text-gray-500">Business</h3>
+                    <h3 className="text-lg font-bold text-gray-400 dark:text-gray-500">
+                      Business
+                    </h3>
                   </div>
-                  <Badge variant="outline" className="text-gray-400 border-gray-300 dark:border-gray-600 text-xs">
+                  <Badge
+                    variant="outline"
+                    className="text-gray-400 border-gray-300 dark:border-gray-600 text-xs"
+                  >
                     <Lock className="w-3 h-3 mr-1" />
                     Coming Soon
                   </Badge>
                 </div>
-                
+
                 <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">
                   Starting at €699 setup + €79/month
                 </p>
@@ -363,12 +425,17 @@ export default function PricingPage() {
                       <div className="w-4 h-4 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center shrink-0 mt-0.5">
                         <Check className="w-2.5 h-2.5 text-gray-400" />
                       </div>
-                      <span className="text-xs text-gray-400 dark:text-gray-500">{feature}</span>
+                      <span className="text-xs text-gray-400 dark:text-gray-500">
+                        {feature}
+                      </span>
                     </div>
                   ))}
                 </div>
 
-                <Button disabled className="w-full mt-5 bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed">
+                <Button
+                  disabled
+                  className="w-full mt-5 bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed"
+                >
                   Coming Q3 2026
                 </Button>
               </CardContent>
@@ -386,22 +453,23 @@ export default function PricingPage() {
                 <Sparkles className="w-3 h-3 mr-1" />
                 Early Access
               </Badge>
-              
+
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">
                 Launching beta — early adopters get 50% off
               </h2>
               <p className="text-gray-600 dark:text-gray-300 max-w-xl mx-auto mb-6">
-                Lock in beta pricing (€150 setup + €15/month) until v1.0. 
+                Lock in beta pricing (€150 setup + €15/month) until v1.0.
                 Regular pricing will be €299 setup + €29/month.
               </p>
-              
+
               <a
                 href={CALENDLY_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 py-3 px-8 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
                 style={{
-                  background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+                  background:
+                    'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
                 }}
               >
                 <Calendar className="w-5 h-5" />

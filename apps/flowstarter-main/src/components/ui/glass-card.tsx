@@ -16,13 +16,25 @@ interface GlassCardProps {
 }
 
 export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
-  ({ children, className, onClick, href, as = 'div', style, variant = 'default', noHover = false }, ref) => {
+  (
+    {
+      children,
+      className,
+      onClick,
+      href,
+      as = 'div',
+      style,
+      variant = 'default',
+      noHover = false,
+    },
+    ref
+  ) => {
     const baseClasses = cn(
       // Base structure
       'group relative overflow-hidden rounded-2xl',
       'px-6 py-5',
       // Glassmorphism effect
-      variant === 'elevated' 
+      variant === 'elevated'
         ? 'bg-white/80 dark:bg-white/[0.06]'
         : 'bg-white/70 dark:bg-white/[0.04]',
       'backdrop-blur-xl backdrop-saturate-150',

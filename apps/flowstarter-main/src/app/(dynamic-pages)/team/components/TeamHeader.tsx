@@ -13,7 +13,9 @@ export function TeamHeader() {
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20 group-hover:shadow-[var(--purple)]/30 transition-shadow">
             <span className="text-white font-bold text-sm">F</span>
           </div>
-          <span className="text-lg font-semibold text-gray-900 dark:text-white">Flowstarter</span>
+          <span className="text-lg font-semibold text-gray-900 dark:text-white">
+            Flowstarter
+          </span>
           <span className="px-2 py-0.5 text-[10px] font-medium bg-[var(--purple)]/10 text-[var(--purple)] rounded-full">
             Team
           </span>

@@ -9,10 +9,10 @@ interface WelcomeEmailProps {
   dashboardUrl: string;
 }
 
-export function welcomeEmail({
-  userName,
-  dashboardUrl,
-}: WelcomeEmailProps): { subject: string; html: string } {
+export function welcomeEmail({ userName, dashboardUrl }: WelcomeEmailProps): {
+  subject: string;
+  html: string;
+} {
   const subject = `Welcome to Flowstarter! 🎉`;
 
   const greeting = userName ? `Hi ${userName},` : 'Hi there,';

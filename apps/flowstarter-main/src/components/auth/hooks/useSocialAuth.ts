@@ -26,8 +26,10 @@ export function useSocialAuth(
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isAppleLoading, setIsAppleLoading] = useState(false);
 
-  const { redirectUrl = '/sso-callback', redirectUrlComplete = '/team/dashboard' } =
-    options;
+  const {
+    redirectUrl = '/sso-callback',
+    redirectUrlComplete = '/team/dashboard',
+  } = options;
 
   const handleGoogleAuth = useCallback(async () => {
     if (!client) return;

@@ -23,10 +23,10 @@ export function CustomSignIn() {
   const { handleError } = useClerkErrorHandler();
   const isEdgeBrowser = useEdgeBrowserDetection();
   const searchParams = useSearchParams();
-  
+
   // Team email domains - redirect to editor
   const TEAM_EMAIL_DOMAINS = ['flowstarter.app'];
-  
+
   // Get redirect URL based on user email or query params
   const getRedirectUrl = (userEmail?: string): string => {
     // Check if team member - redirect to editor
@@ -34,7 +34,8 @@ export function CustomSignIn() {
       const domain = userEmail.split('@')[1]?.toLowerCase();
       if (domain && TEAM_EMAIL_DOMAINS.includes(domain)) {
         // Get current hostname to determine environment
-        const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+        const hostname =
+          typeof window !== 'undefined' ? window.location.hostname : '';
         if (hostname === 'flowstarter.dev') {
           return 'https://editor.flowstarter.dev';
         } else if (hostname === 'flowstarter.app') {
@@ -43,15 +44,17 @@ export function CustomSignIn() {
         return 'https://editor.flowstarter.dev'; // default to dev
       }
     }
-    
+
     // Check for explicit redirect_url param
     const redirectUrl = searchParams.get('redirect_url');
     if (redirectUrl) {
       try {
         const url = new URL(redirectUrl);
-        if (url.hostname.endsWith('flowstarter.dev') || 
-            url.hostname.endsWith('flowstarter.app') ||
-            url.hostname === 'localhost') {
+        if (
+          url.hostname.endsWith('flowstarter.dev') ||
+          url.hostname.endsWith('flowstarter.app') ||
+          url.hostname === 'localhost'
+        ) {
           return redirectUrl;
         }
       } catch {
@@ -60,10 +63,10 @@ export function CustomSignIn() {
     }
     return '/dashboard';
   };
-  
+
   // Default redirect (social auth can't know email ahead of time)
   const defaultRedirect = getRedirectUrl();
-  
+
   const {
     isGoogleLoading,
     isAppleLoading,

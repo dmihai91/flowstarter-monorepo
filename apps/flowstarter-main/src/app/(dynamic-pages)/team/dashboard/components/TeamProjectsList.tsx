@@ -8,7 +8,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useTeamDeleteProject, useTeamRenameProject, useTeamUpdateProjectPricing } from '@/hooks/useTeamProjects';
+import {
+  useTeamDeleteProject,
+  useTeamRenameProject,
+  useTeamUpdateProjectPricing,
+} from '@/hooks/useTeamProjects';
 import type { ProjectPricingData } from '@/hooks/useTeamProjects';
 import { Input } from '@/components/ui/input';
 import {
@@ -60,11 +64,20 @@ interface TeamProjectsListProps {
 }
 
 export function TeamProjectsList({ projects }: TeamProjectsListProps) {
-  const [viewMode, setViewMode] = useLocalStorage<'grid' | 'list'>('team-projects-view', 'grid');
+  const [viewMode, setViewMode] = useLocalStorage<'grid' | 'list'>(
+    'team-projects-view',
+    'grid'
+  );
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [projectToDelete, setProjectToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [projectToDelete, setProjectToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
-  const [projectToRename, setProjectToRename] = useState<{ id: string; name: string } | null>(null);
+  const [projectToRename, setProjectToRename] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const [newName, setNewName] = useState('');
   const deleteProjectMutation = useTeamDeleteProject();
   const renameProjectMutation = useTeamRenameProject();
@@ -88,7 +101,10 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
     if (!projectToRename || !newName.trim()) return;
 
     try {
-      await renameProjectMutation.mutateAsync({ id: projectToRename.id, name: newName.trim() });
+      await renameProjectMutation.mutateAsync({
+        id: projectToRename.id,
+        name: newName.trim(),
+      });
       toast.success('Project renamed successfully');
       setRenameDialogOpen(false);
       setProjectToRename(null);
@@ -107,7 +123,8 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
 
   // Pricing dialog state
   const [pricingDialogOpen, setPricingDialogOpen] = useState(false);
-  const [projectToPricep, setProjectToPrice] = useState<ProjectWithOwner | null>(null);
+  const [projectToPricep, setProjectToPrice] =
+    useState<ProjectWithOwner | null>(null);
   const [pricingData, setPricingData] = useState<ProjectPricingData>({
     project_type: 'standard',
     setup_fee: 0,
@@ -118,14 +135,20 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
 
   // Default pricing by project type (in EUR)
   // Base prices (before any discount)
-  const BASE_PRICING: Record<string, { setup_fee: number; monthly_fee: number }> = {
+  const BASE_PRICING: Record<
+    string,
+    { setup_fee: number; monthly_fee: number }
+  > = {
     standard: { setup_fee: 299, monthly_fee: 29 },
     pro: { setup_fee: 599, monthly_fee: 59 },
     business: { setup_fee: 1499, monthly_fee: 149 },
   };
 
   // Apply beta discount if enabled
-  const PRICING_DEFAULTS: Record<string, { setup_fee: number; monthly_fee: number }> = Object.fromEntries(
+  const PRICING_DEFAULTS: Record<
+    string,
+    { setup_fee: number; monthly_fee: number }
+  > = Object.fromEntries(
     Object.entries(BASE_PRICING).map(([key, val]) => [
       key,
       {
@@ -142,8 +165,14 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
     // Use stored values only if > 0, otherwise use defaults
     setPricingData({
       project_type: projectType,
-      setup_fee: (project.setup_fee && project.setup_fee > 0) ? project.setup_fee : defaults.setup_fee,
-      monthly_fee: (project.monthly_fee && project.monthly_fee > 0) ? project.monthly_fee : defaults.monthly_fee,
+      setup_fee:
+        project.setup_fee && project.setup_fee > 0
+          ? project.setup_fee
+          : defaults.setup_fee,
+      monthly_fee:
+        project.monthly_fee && project.monthly_fee > 0
+          ? project.monthly_fee
+          : defaults.monthly_fee,
       is_paid: project.is_paid || false,
     });
     setPricingDialogOpen(true);
@@ -163,7 +192,10 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
     if (!projectToPricep) return;
 
     try {
-      await updatePricingMutation.mutateAsync({ id: projectToPricep.id, ...pricingData });
+      await updatePricingMutation.mutateAsync({
+        id: projectToPricep.id,
+        ...pricingData,
+      });
       toast.success('Pricing updated successfully');
       setPricingDialogOpen(false);
       setProjectToPrice(null);
@@ -183,7 +215,12 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
 
   const getStatusColor = (status: string) => {
     if (status === 'completed') return 'bg-emerald-500';
-    if (status === 'generating' || status === 'building' || status === 'in_progress') return 'bg-blue-500';
+    if (
+      status === 'generating' ||
+      status === 'building' ||
+      status === 'in_progress'
+    )
+      return 'bg-blue-500';
     return 'bg-gray-400';
   };
 
@@ -208,7 +245,9 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
           </div>
         </div>
         <div className="border border-gray-200 dark:border-white/10 rounded-lg bg-gray-50 dark:bg-white/[0.02] p-12 text-center">
-          <p className="text-gray-500 dark:text-white/50 text-sm">No projects yet</p>
+          <p className="text-gray-500 dark:text-white/50 text-sm">
+            No projects yet
+          </p>
         </div>
       </>
     );
@@ -230,8 +269,8 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
           <button
             onClick={() => setViewMode('list')}
             className={`p-2 rounded-md transition-colors ${
-              viewMode === 'list' 
-                ? 'bg-white dark:bg-white/10 shadow-sm text-gray-900 dark:text-white' 
+              viewMode === 'list'
+                ? 'bg-white dark:bg-white/10 shadow-sm text-gray-900 dark:text-white'
                 : 'text-gray-500 dark:text-white/50 hover:text-gray-700 dark:hover:text-white/70'
             }`}
           >
@@ -240,8 +279,8 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
           <button
             onClick={() => setViewMode('grid')}
             className={`p-2 rounded-md transition-colors ${
-              viewMode === 'grid' 
-                ? 'bg-white dark:bg-white/10 shadow-sm text-gray-900 dark:text-white' 
+              viewMode === 'grid'
+                ? 'bg-white dark:bg-white/10 shadow-sm text-gray-900 dark:text-white'
                 : 'text-gray-500 dark:text-white/50 hover:text-gray-700 dark:hover:text-white/70'
             }`}
           >
@@ -265,7 +304,8 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
           {/* Project Rows */}
           <div className="border border-white/20 dark:border-white/10 rounded-xl overflow-hidden divide-y divide-white/10 dark:divide-white/5 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl shadow-lg shadow-black/[0.03]">
             {projects.map((project) => {
-              const status = typeof project.status === 'string' ? project.status : 'draft';
+              const status =
+                typeof project.status === 'string' ? project.status : 'draft';
 
               return (
                 <div
@@ -273,8 +313,12 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                   className="bg-transparent hover:bg-white/30 dark:hover:bg-white/[0.03] transition-colors cursor-pointer"
                   onClick={(e) => {
                     // Don't navigate if clicking on dropdown
-                    if ((e.target as HTMLElement).closest('[data-radix-collection-item]') || 
-                        (e.target as HTMLElement).closest('button')) {
+                    if (
+                      (e.target as HTMLElement).closest(
+                        '[data-radix-collection-item]'
+                      ) ||
+                      (e.target as HTMLElement).closest('button')
+                    ) {
                       return;
                     }
                     window.location.href = `/team/dashboard/projects/${project.id}`;
@@ -293,8 +337,14 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                       )}
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <span className={`w-2 h-2 rounded-full ${getStatusColor(status)}`} />
-                      <span className="text-sm text-gray-600 dark:text-white/60">{getStatusLabel(status)}</span>
+                      <span
+                        className={`w-2 h-2 rounded-full ${getStatusColor(
+                          status
+                        )}`}
+                      />
+                      <span className="text-sm text-gray-600 dark:text-white/60">
+                        {getStatusLabel(status)}
+                      </span>
                     </div>
                     <div className="text-sm text-gray-600 dark:text-white/60 truncate">
                       {getOwnerDisplay(project)}
@@ -309,40 +359,81 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48">
-                        <DropdownMenuItem onClick={() => window.location.href = `/team/dashboard/projects/${project.id}`}>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            (window.location.href = `/team/dashboard/projects/${project.id}`)
+                          }
+                        >
                           <ExternalLink className="h-4 w-4" />
                           Open Project
                         </DropdownMenuItem>
                         {status === 'completed' && (
-                          <DropdownMenuItem onClick={() => window.open(`/projects/${project.id}`, '_blank')}>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              window.open(`/projects/${project.id}`, '_blank')
+                            }
+                          >
                             <ExternalLink className="h-4 w-4" />
                             View Site
                           </DropdownMenuItem>
                         )}
-                        <DropdownMenuItem onClick={() => window.open(`/team/dashboard/domains?project=${project.id}`, '_self')}>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            window.open(
+                              `/team/dashboard/domains?project=${project.id}`,
+                              '_self'
+                            )
+                          }
+                        >
                           <Globe className="h-4 w-4" />
                           Configure Domain
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => window.open(`/team/dashboard/email?project=${project.id}`, '_self')}>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            window.open(
+                              `/team/dashboard/email?project=${project.id}`,
+                              '_self'
+                            )
+                          }
+                        >
                           <Mail className="h-4 w-4" />
                           Setup Email
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => window.open(`/team/dashboard/analytics?project=${project.id}`, '_self')}>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            window.open(
+                              `/team/dashboard/analytics?project=${project.id}`,
+                              '_self'
+                            )
+                          }
+                        >
                           <BarChart3 className="h-4 w-4" />
                           Analytics
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => openRenameDialog({ id: project.id, name: project.name || 'Untitled' })}>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            openRenameDialog({
+                              id: project.id,
+                              name: project.name || 'Untitled',
+                            })
+                          }
+                        >
                           <Pencil className="h-4 w-4" />
                           Rename
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => openPricingDialog(project)}>
+                        <DropdownMenuItem
+                          onClick={() => openPricingDialog(project)}
+                        >
                           <DollarSign className="h-4 w-4" />
                           Pricing
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           variant="destructive"
                           onClick={() => {
-                            setProjectToDelete({ id: project.id, name: project.name || 'Untitled' });
+                            setProjectToDelete({
+                              id: project.id,
+                              name: project.name || 'Untitled',
+                            });
                             setDeleteDialogOpen(true);
                           }}
                         >
@@ -362,7 +453,11 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                         </p>
                         <div className="flex items-center gap-3 mt-2 text-xs text-gray-500 dark:text-white/40">
                           <span className="flex items-center gap-1">
-                            <span className={`w-2 h-2 rounded-full ${getStatusColor(status)}`} />
+                            <span
+                              className={`w-2 h-2 rounded-full ${getStatusColor(
+                                status
+                              )}`}
+                            />
                             {getStatusLabel(status)}
                           </span>
                           <span>{getOwnerDisplay(project)}</span>
@@ -370,45 +465,90 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                       </div>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 shrink-0"
+                          >
                             <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-40">
-                          <DropdownMenuItem onClick={() => window.location.href = `/team/dashboard/projects/${project.id}`}>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              (window.location.href = `/team/dashboard/projects/${project.id}`)
+                            }
+                          >
                             <ExternalLink className="h-4 w-4" />
                             Open Project
                           </DropdownMenuItem>
                           {status === 'completed' && (
-                            <DropdownMenuItem onClick={() => window.open(`/projects/${project.id}`, '_blank')}>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                window.open(`/projects/${project.id}`, '_blank')
+                              }
+                            >
                               <ExternalLink className="h-4 w-4" />
                               View Site
                             </DropdownMenuItem>
                           )}
-                          <DropdownMenuItem onClick={() => window.open(`/team/dashboard/domains?project=${project.id}`, '_self')}>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              window.open(
+                                `/team/dashboard/domains?project=${project.id}`,
+                                '_self'
+                              )
+                            }
+                          >
                             <Globe className="h-4 w-4" />
                             Configure Domain
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => window.open(`/team/dashboard/email?project=${project.id}`, '_self')}>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              window.open(
+                                `/team/dashboard/email?project=${project.id}`,
+                                '_self'
+                              )
+                            }
+                          >
                             <Mail className="h-4 w-4" />
                             Setup Email
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => window.open(`/team/dashboard/analytics?project=${project.id}`, '_self')}>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              window.open(
+                                `/team/dashboard/analytics?project=${project.id}`,
+                                '_self'
+                              )
+                            }
+                          >
                             <BarChart3 className="h-4 w-4" />
                             Analytics
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => openRenameDialog({ id: project.id, name: project.name || 'Untitled' })}>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              openRenameDialog({
+                                id: project.id,
+                                name: project.name || 'Untitled',
+                              })
+                            }
+                          >
                             <Pencil className="h-4 w-4" />
                             Rename
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => openPricingDialog(project)}>
+                          <DropdownMenuItem
+                            onClick={() => openPricingDialog(project)}
+                          >
                             <DollarSign className="h-4 w-4" />
                             Pricing
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             variant="destructive"
                             onClick={() => {
-                              setProjectToDelete({ id: project.id, name: project.name || 'Untitled' });
+                              setProjectToDelete({
+                                id: project.id,
+                                name: project.name || 'Untitled',
+                              });
                               setDeleteDialogOpen(true);
                             }}
                           >
@@ -430,13 +570,16 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
       {viewMode === 'grid' && (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {projects.map((project) => {
-            const status = typeof project.status === 'string' ? project.status : 'draft';
+            const status =
+              typeof project.status === 'string' ? project.status : 'draft';
 
             return (
               <div
                 key={project.id}
                 className="group relative p-5 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.02)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset,0_-1px_0_rgba(0,0,0,0.2)_inset] hover:shadow-[0_4px_8px_rgba(0,0,0,0.04),0_12px_24px_rgba(0,0,0,0.06),0_1px_0_rgba(255,255,255,0.9)_inset] dark:hover:shadow-[0_4px_8px_rgba(0,0,0,0.2),0_12px_24px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.08)_inset] hover:border-[var(--purple)]/30 transition-all cursor-pointer"
-                onClick={() => window.location.href = `/team/dashboard/projects/${project.id}`}
+                onClick={() =>
+                  (window.location.href = `/team/dashboard/projects/${project.id}`)
+                }
               >
                 <div className="flex items-start justify-between gap-3 mb-3">
                   {/* Project Icon */}
@@ -445,13 +588,15 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                   </div>
                   <div className="min-w-0 flex-1">
                     {/* Status Badge */}
-                    <span className={`inline-block px-2 py-0.5 text-xs font-medium rounded mb-1 ${
-                      status === 'completed' || status === 'live'
-                        ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400'
-                        : status === 'in_progress' || status === 'building'
-                        ? 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400'
-                        : 'bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-white/60'
-                    }`}>
+                    <span
+                      className={`inline-block px-2 py-0.5 text-xs font-medium rounded mb-1 ${
+                        status === 'completed' || status === 'live'
+                          ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400'
+                          : status === 'in_progress' || status === 'building'
+                          ? 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400'
+                          : 'bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-white/60'
+                      }`}
+                    >
                       {getStatusLabel(status)}
                     </span>
                     <p className="font-semibold text-gray-900 dark:text-white text-base truncate">
@@ -460,45 +605,94 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 shrink-0"
+                      >
                         <MoreVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48" onClick={(e) => e.stopPropagation()}>
-                      <DropdownMenuItem onClick={() => window.location.href = `/team/dashboard/projects/${project.id}`}>
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-48"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <DropdownMenuItem
+                        onClick={() =>
+                          (window.location.href = `/team/dashboard/projects/${project.id}`)
+                        }
+                      >
                         <ExternalLink className="h-4 w-4" />
                         Open Project
                       </DropdownMenuItem>
                       {status === 'completed' && (
-                        <DropdownMenuItem onClick={() => window.open(`/projects/${project.id}`, '_blank')}>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            window.open(`/projects/${project.id}`, '_blank')
+                          }
+                        >
                           <ExternalLink className="h-4 w-4" />
                           View Site
                         </DropdownMenuItem>
                       )}
-                      <DropdownMenuItem onClick={() => window.open(`/team/dashboard/domains?project=${project.id}`, '_self')}>
+                      <DropdownMenuItem
+                        onClick={() =>
+                          window.open(
+                            `/team/dashboard/domains?project=${project.id}`,
+                            '_self'
+                          )
+                        }
+                      >
                         <Globe className="h-4 w-4" />
                         Configure Domain
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => window.open(`/team/dashboard/email?project=${project.id}`, '_self')}>
+                      <DropdownMenuItem
+                        onClick={() =>
+                          window.open(
+                            `/team/dashboard/email?project=${project.id}`,
+                            '_self'
+                          )
+                        }
+                      >
                         <Mail className="h-4 w-4" />
                         Setup Email
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => window.open(`/team/dashboard/analytics?project=${project.id}`, '_self')}>
+                      <DropdownMenuItem
+                        onClick={() =>
+                          window.open(
+                            `/team/dashboard/analytics?project=${project.id}`,
+                            '_self'
+                          )
+                        }
+                      >
                         <BarChart3 className="h-4 w-4" />
                         Analytics
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => openRenameDialog({ id: project.id, name: project.name || 'Untitled' })}>
+                      <DropdownMenuItem
+                        onClick={() =>
+                          openRenameDialog({
+                            id: project.id,
+                            name: project.name || 'Untitled',
+                          })
+                        }
+                      >
                         <Pencil className="h-4 w-4" />
                         Rename
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => openPricingDialog(project)}>
+                      <DropdownMenuItem
+                        onClick={() => openPricingDialog(project)}
+                      >
                         <DollarSign className="h-4 w-4" />
                         Pricing
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         variant="destructive"
                         onClick={() => {
-                          setProjectToDelete({ id: project.id, name: project.name || 'Untitled' });
+                          setProjectToDelete({
+                            id: project.id,
+                            name: project.name || 'Untitled',
+                          });
                           setDeleteDialogOpen(true);
                         }}
                       >
@@ -516,27 +710,38 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                 )}
 
                 {/* Pricing info - show only if pricing has been set (not default 0) */}
-                {project.setup_fee !== null && project.setup_fee !== undefined && Number(project.setup_fee) > 0 && (
-                  <div className="flex items-center gap-3 mb-4 py-2 px-3 rounded-lg bg-gray-50 dark:bg-white/5 text-sm">
-                    <span className="text-gray-600 dark:text-white/60">
-                      €{project.setup_fee} setup
-                    </span>
-                    <span className="text-gray-300 dark:text-white/20">•</span>
-                    <span className="text-gray-600 dark:text-white/60">
-                      €{project.monthly_fee || 0}/mo
-                    </span>
-                    {project.is_paid && (
-                      <>
-                        <span className="text-gray-300 dark:text-white/20">•</span>
-                        <span className="text-emerald-600 dark:text-emerald-400 font-medium">Paid</span>
-                      </>
-                    )}
-                  </div>
-                )}
+                {project.setup_fee !== null &&
+                  project.setup_fee !== undefined &&
+                  Number(project.setup_fee) > 0 && (
+                    <div className="flex items-center gap-3 mb-4 py-2 px-3 rounded-lg bg-gray-50 dark:bg-white/5 text-sm">
+                      <span className="text-gray-600 dark:text-white/60">
+                        €{project.setup_fee} setup
+                      </span>
+                      <span className="text-gray-300 dark:text-white/20">
+                        •
+                      </span>
+                      <span className="text-gray-600 dark:text-white/60">
+                        €{project.monthly_fee || 0}/mo
+                      </span>
+                      {project.is_paid && (
+                        <>
+                          <span className="text-gray-300 dark:text-white/20">
+                            •
+                          </span>
+                          <span className="text-emerald-600 dark:text-emerald-400 font-medium">
+                            Paid
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  )}
 
                 <div className="flex items-center justify-between text-xs text-gray-500 dark:text-white/40 pt-3 border-t border-gray-100 dark:border-white/5">
                   <span>{getOwnerDisplay(project)}</span>
-                  <span>Last edit: {getTimeAgo(project.updated_at || project.created_at)}</span>
+                  <span>
+                    Last edit:{' '}
+                    {getTimeAgo(project.updated_at || project.created_at)}
+                  </span>
                 </div>
               </div>
             );
@@ -549,7 +754,9 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
         onOpenChangeAction={setDeleteDialogOpen}
         title="Delete Project"
         description={`Are you sure you want to delete "${projectToDelete?.name}"? This action cannot be undone.`}
-        confirmLabel={deleteProjectMutation.isPending ? 'Deleting...' : 'Delete'}
+        confirmLabel={
+          deleteProjectMutation.isPending ? 'Deleting...' : 'Delete'
+        }
         cancelLabel="Cancel"
         onConfirmAction={handleDeleteProject}
         confirmVariant="destructive"
@@ -572,11 +779,14 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setRenameDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setRenameDialogOpen(false)}
+            >
               Cancel
             </Button>
-            <Button 
-              variant="accent" 
+            <Button
+              variant="accent"
               onClick={handleRenameProject}
               disabled={renameProjectMutation.isPending || !newName.trim()}
             >
@@ -631,13 +841,17 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                 </button>
               </div>
             </div>
-            
+
             {/* Fees Row */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="setup_fee" className="text-sm font-medium">Setup Fee</Label>
+                <Label htmlFor="setup_fee" className="text-sm font-medium">
+                  Setup Fee
+                </Label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">€</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    €
+                  </span>
                   <Input
                     id="setup_fee"
                     type="text"
@@ -646,17 +860,24 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                     value={pricingData.setup_fee || ''}
                     onChange={(e) => {
                       const val = e.target.value.replace(/[^0-9]/g, '');
-                      setPricingData({ ...pricingData, setup_fee: val ? parseInt(val, 10) : 0 });
+                      setPricingData({
+                        ...pricingData,
+                        setup_fee: val ? parseInt(val, 10) : 0,
+                      });
                     }}
                     className="pl-7"
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
-                <Label htmlFor="monthly_fee" className="text-sm font-medium">Monthly Fee</Label>
+                <Label htmlFor="monthly_fee" className="text-sm font-medium">
+                  Monthly Fee
+                </Label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">€</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    €
+                  </span>
                   <Input
                     id="monthly_fee"
                     type="text"
@@ -665,18 +886,26 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                     value={pricingData.monthly_fee || ''}
                     onChange={(e) => {
                       const val = e.target.value.replace(/[^0-9]/g, '');
-                      setPricingData({ ...pricingData, monthly_fee: val ? parseInt(val, 10) : 0 });
+                      setPricingData({
+                        ...pricingData,
+                        monthly_fee: val ? parseInt(val, 10) : 0,
+                      });
                     }}
                     className="pl-7"
                   />
                 </div>
               </div>
             </div>
-            
+
             {/* Paid Toggle */}
             <button
               type="button"
-              onClick={() => setPricingData({ ...pricingData, is_paid: !pricingData.is_paid })}
+              onClick={() =>
+                setPricingData({
+                  ...pricingData,
+                  is_paid: !pricingData.is_paid,
+                })
+              }
               className={`flex items-center justify-between w-full py-3 px-4 rounded-lg border transition-colors ${
                 pricingData.is_paid
                   ? 'border-emerald-500 bg-emerald-500/10'
@@ -685,27 +914,44 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
             >
               <div className="text-left">
                 <p className="text-sm font-medium">Payment Received</p>
-                <p className="text-xs text-gray-500 dark:text-white/40">Mark as paid to count in revenue</p>
+                <p className="text-xs text-gray-500 dark:text-white/40">
+                  Mark as paid to count in revenue
+                </p>
               </div>
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                pricingData.is_paid
-                  ? 'border-emerald-500 bg-emerald-500'
-                  : 'border-gray-300 dark:border-white/30'
-              }`}>
+              <div
+                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                  pricingData.is_paid
+                    ? 'border-emerald-500 bg-emerald-500'
+                    : 'border-gray-300 dark:border-white/30'
+                }`}
+              >
                 {pricingData.is_paid && (
-                  <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  <svg
+                    className="w-3 h-3 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={3}
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                 )}
               </div>
             </button>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setPricingDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setPricingDialogOpen(false)}
+            >
               Cancel
             </Button>
-            <Button 
-              variant="accent" 
+            <Button
+              variant="accent"
               onClick={handleUpdatePricing}
               disabled={updatePricingMutation.isPending}
             >

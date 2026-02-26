@@ -6,14 +6,14 @@ import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
-import { 
+import {
   Loader2,
   CheckCircle2,
   AlertCircle,
   Eye,
   EyeOff,
   Lock,
-  Mail
+  Mail,
 } from 'lucide-react';
 
 function JoinPageContent() {
@@ -26,7 +26,7 @@ function JoinPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState('');
   const [inviterName, setInviterName] = useState('');
-  
+
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -117,7 +117,9 @@ function JoinPageContent() {
       <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c]">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)] mx-auto mb-4" />
-          <p className="text-gray-500 dark:text-white/50">Validating invitation...</p>
+          <p className="text-gray-500 dark:text-white/50">
+            Validating invitation...
+          </p>
         </div>
       </div>
     );
@@ -134,9 +136,7 @@ function JoinPageContent() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
             Invalid Invitation
           </h1>
-          <p className="text-gray-500 dark:text-white/50 mb-6">
-            {error}
-          </p>
+          <p className="text-gray-500 dark:text-white/50 mb-6">{error}</p>
           <Link href="/">
             <Button variant="outline" className="rounded-xl">
               Go to Homepage
@@ -172,7 +172,9 @@ function JoinPageContent() {
     <>
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-        .font-display { font-family: 'Outfit', system-ui, sans-serif; }
+        .font-display {
+          font-family: 'Outfit', system-ui, sans-serif;
+        }
       `}</style>
 
       <div className="min-h-screen flex flex-col bg-[#FAFAFA] dark:bg-[#0a0a0c] font-display">
@@ -182,7 +184,9 @@ function JoinPageContent() {
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20">
               <span className="text-white font-bold text-sm">F</span>
             </div>
-            <span className="text-lg font-semibold text-gray-900 dark:text-white">Flowstarter</span>
+            <span className="text-lg font-semibold text-gray-900 dark:text-white">
+              Flowstarter
+            </span>
           </Link>
         </header>
 
@@ -237,7 +241,11 @@ function JoinPageContent() {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -264,7 +272,9 @@ function JoinPageContent() {
                 {submitError && (
                   <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center gap-2">
                     <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
-                    <p className="text-sm text-red-600 dark:text-red-400">{submitError}</p>
+                    <p className="text-sm text-red-600 dark:text-red-400">
+                      {submitError}
+                    </p>
                   </div>
                 )}
 
@@ -288,9 +298,19 @@ function JoinPageContent() {
 
             <p className="text-center text-sm text-gray-400 dark:text-white/30 mt-6">
               By joining, you agree to our{' '}
-              <Link href="/terms" className="text-[var(--purple)] hover:underline">Terms</Link>
-              {' '}and{' '}
-              <Link href="/privacy" className="text-[var(--purple)] hover:underline">Privacy Policy</Link>
+              <Link
+                href="/terms"
+                className="text-[var(--purple)] hover:underline"
+              >
+                Terms
+              </Link>{' '}
+              and{' '}
+              <Link
+                href="/privacy"
+                className="text-[var(--purple)] hover:underline"
+              >
+                Privacy Policy
+              </Link>
             </p>
           </div>
         </main>
@@ -301,11 +321,13 @@ function JoinPageContent() {
 
 export default function TeamJoinPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c]">
-        <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)]" />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c]">
+          <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)]" />
+        </div>
+      }
+    >
       <JoinPageContent />
     </Suspense>
   );

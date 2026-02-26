@@ -26,7 +26,7 @@ import { TeamHeader } from '../../components/TeamHeader';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { 
+import {
   ArrowLeft,
   Settings,
   Loader2,
@@ -79,14 +79,16 @@ export default function ServicesPage() {
   const { user, isLoaded: userLoaded } = useUser();
   const router = useRouter();
   const { data: projects } = useTeamProjects();
-  
+
   const [isLoading, setIsLoading] = useState(true);
   const [integrations, setIntegrations] = useState<Integration[]>([]);
   const [loadingIntegrations, setLoadingIntegrations] = useState(true);
-  
+
   // Dialog state
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedType, setSelectedType] = useState<'calendly' | 'mailchimp' | null>(null);
+  const [selectedType, setSelectedType] = useState<
+    'calendly' | 'mailchimp' | null
+  >(null);
   const [selectedProject, setSelectedProject] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [integrationName, setIntegrationName] = useState('');
@@ -98,7 +100,7 @@ export default function ServicesPage() {
       const metadata = user?.publicMetadata as { role?: string } | undefined;
       const role = metadata?.role?.toLowerCase();
       const isTeam = role === 'team' || role === 'admin';
-      
+
       if (!user) {
         router.push('/team/login');
       } else if (!isTeam) {
@@ -147,7 +149,9 @@ export default function ServicesPage() {
         body: JSON.stringify({
           projectId: selectedProject,
           integrationType: selectedType,
-          name: integrationName || `${integrationInfo[selectedType].name} Integration`,
+          name:
+            integrationName ||
+            `${integrationInfo[selectedType].name} Integration`,
           apiKey,
           config: {},
         }),
@@ -162,7 +166,9 @@ export default function ServicesPage() {
       setDialogOpen(false);
       fetchIntegrations();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to save integration');
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to save integration'
+      );
     } finally {
       setSaving(false);
     }
@@ -172,18 +178,20 @@ export default function ServicesPage() {
     if (!confirm('Are you sure you want to delete this integration?')) return;
 
     try {
-      const res = await fetch(`/api/team/integrations/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/team/integrations/${id}`, {
+        method: 'DELETE',
+      });
       if (!res.ok) throw new Error('Failed to delete');
-      
+
       toast.success('Integration deleted');
-      setIntegrations(prev => prev.filter(i => i.id !== id));
+      setIntegrations((prev) => prev.filter((i) => i.id !== id));
     } catch (error) {
       toast.error('Failed to delete integration');
     }
   };
 
   const getProjectName = (projectId: string) => {
-    const project = projects?.find(p => p.id === projectId);
+    const project = projects?.find((p) => p.id === projectId);
     return project?.name || 'Unknown Project';
   };
 
@@ -202,7 +210,7 @@ export default function ServicesPage() {
       <PageContainer gradientVariant="dashboard">
         <GlassCard className="p-6 sm:p-8">
           {/* Back button */}
-          <Link 
+          <Link
             href="/team/dashboard"
             className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
           >
@@ -230,9 +238,12 @@ export default function ServicesPage() {
             <div className="flex items-start gap-3">
               <Lock className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-emerald-800 dark:text-emerald-300">API keys are encrypted at rest</p>
+                <p className="font-medium text-emerald-800 dark:text-emerald-300">
+                  API keys are encrypted at rest
+                </p>
                 <p className="text-sm text-emerald-600 dark:text-emerald-400 mt-1">
-                  All API keys are securely stored using Supabase Vault encryption.
+                  All API keys are securely stored using Supabase Vault
+                  encryption.
                 </p>
               </div>
             </div>
@@ -240,12 +251,14 @@ export default function ServicesPage() {
 
           {/* Available integrations */}
           <div className="mb-8">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Available Integrations</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
+              Available Integrations
+            </h3>
             <div className="grid sm:grid-cols-2 gap-4">
               {(['calendly', 'mailchimp'] as const).map((type) => {
                 const info = integrationInfo[type];
                 const Icon = info.icon;
-                
+
                 return (
                   <div
                     key={type}
@@ -253,12 +266,18 @@ export default function ServicesPage() {
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3">
-                        <div className={`w-10 h-10 rounded-lg ${info.bgColor} flex items-center justify-center`}>
+                        <div
+                          className={`w-10 h-10 rounded-lg ${info.bgColor} flex items-center justify-center`}
+                        >
                           <Icon className={`w-5 h-5 ${info.color}`} />
                         </div>
                         <div>
-                          <h4 className="font-semibold text-gray-900 dark:text-white">{info.name}</h4>
-                          <p className="text-sm text-gray-500 dark:text-white/50 mt-0.5">{info.description}</p>
+                          <h4 className="font-semibold text-gray-900 dark:text-white">
+                            {info.name}
+                          </h4>
+                          <p className="text-sm text-gray-500 dark:text-white/50 mt-0.5">
+                            {info.description}
+                          </p>
                         </div>
                       </div>
                       <Button size="sm" onClick={() => openAddDialog(type)}>
@@ -285,8 +304,10 @@ export default function ServicesPage() {
 
           {/* Configured integrations */}
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Configured Integrations</h3>
-            
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
+              Configured Integrations
+            </h3>
+
             {loadingIntegrations ? (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
@@ -295,21 +316,25 @@ export default function ServicesPage() {
               <div className="text-center py-8 text-gray-500 dark:text-white/50">
                 <Settings className="w-8 h-8 mx-auto mb-2 opacity-50" />
                 <p>No integrations configured yet</p>
-                <p className="text-sm mt-1">Add an integration to a project above</p>
+                <p className="text-sm mt-1">
+                  Add an integration to a project above
+                </p>
               </div>
             ) : (
               <div className="space-y-3">
                 {integrations.map((integration) => {
                   const info = integrationInfo[integration.integration_type];
                   const Icon = info.icon;
-                  
+
                   return (
                     <div
                       key={integration.id}
                       className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5"
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-lg ${info.bgColor} flex items-center justify-center`}>
+                        <div
+                          className={`w-8 h-8 rounded-lg ${info.bgColor} flex items-center justify-center`}
+                        >
                           <Icon className={`w-4 h-4 ${info.color}`} />
                         </div>
                         <div>
@@ -350,7 +375,8 @@ export default function ServicesPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              Add {selectedType && integrationInfo[selectedType].name} Integration
+              Add {selectedType && integrationInfo[selectedType].name}{' '}
+              Integration
             </DialogTitle>
             <DialogDescription>
               {selectedType && integrationInfo[selectedType].keyHelp}
@@ -360,7 +386,10 @@ export default function ServicesPage() {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="project">Project</Label>
-              <Select value={selectedProject} onValueChange={setSelectedProject}>
+              <Select
+                value={selectedProject}
+                onValueChange={setSelectedProject}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a project" />
                 </SelectTrigger>
@@ -378,7 +407,9 @@ export default function ServicesPage() {
               <Label htmlFor="name">Integration Name (optional)</Label>
               <Input
                 id="name"
-                placeholder={`My ${selectedType && integrationInfo[selectedType].name}`}
+                placeholder={`My ${
+                  selectedType && integrationInfo[selectedType].name
+                }`}
                 value={integrationName}
                 onChange={(e) => setIntegrationName(e.target.value)}
               />
@@ -400,7 +431,11 @@ export default function ServicesPage() {
                   onClick={() => setShowApiKey(!showApiKey)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showApiKey ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
                 </button>
               </div>
               <p className="text-xs text-gray-500 flex items-center gap-1">
@@ -414,8 +449,13 @@ export default function ServicesPage() {
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSaveIntegration} disabled={saving || !selectedProject || !apiKey}>
-              {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+            <Button
+              onClick={handleSaveIntegration}
+              disabled={saving || !selectedProject || !apiKey}
+            >
+              {saving ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : null}
               Save Integration
             </Button>
           </DialogFooter>

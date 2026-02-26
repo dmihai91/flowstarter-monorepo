@@ -1,6 +1,6 @@
 /**
  * Create Team Member Account
- * 
+ *
  * Creates a new Clerk user from a valid invitation token.
  */
 
@@ -32,10 +32,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const result = await validateInviteToken(token);
 
     if (!result.valid) {
-      return NextResponse.json(
-        { error: result.error },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: result.error }, { status: 400 });
     }
 
     const { payload } = result;
@@ -64,7 +61,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       skipPasswordChecks: false,
     });
 
-    console.info(`[Team Join] Created user ${newUser.id} for ${payload.email} with role ${payload.role}`);
+    console.info(
+      `[Team Join] Created user ${newUser.id} for ${payload.email} with role ${payload.role}`
+    );
 
     // Send welcome email
     try {
@@ -78,15 +77,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       success: true,
       message: 'Account created successfully',
     });
-
   } catch (error) {
     console.error('[Team Join] Error creating user:', error);
-    
+
     // Handle specific Clerk errors
     if (error instanceof Error) {
       if (error.message.includes('password')) {
         return NextResponse.json(
-          { error: 'Password does not meet requirements. Use at least 8 characters with a mix of letters and numbers.' },
+          {
+            error:
+              'Password does not meet requirements. Use at least 8 characters with a mix of letters and numbers.',
+          },
           { status: 400 }
         );
       }

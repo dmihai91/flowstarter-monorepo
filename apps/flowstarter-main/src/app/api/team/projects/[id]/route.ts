@@ -9,32 +9,46 @@ async function requireTeamAuth() {
   try {
     const { userId, sessionClaims } = await auth();
     if (!userId) {
-      return { authorized: false, response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
+      return {
+        authorized: false,
+        response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }),
+      };
     }
 
     // Check role from sessionClaims.metadata OR publicMetadata
-    let role = (sessionClaims?.metadata as { role?: string })?.role?.toLowerCase();
-    
+    let role = (
+      sessionClaims?.metadata as { role?: string }
+    )?.role?.toLowerCase();
+
     // Fallback to publicMetadata if not in session claims
     if (!role) {
       const user = await currentUser();
       role = (user?.publicMetadata as { role?: string })?.role?.toLowerCase();
     }
-    
+
     if (role !== 'team' && role !== 'admin') {
-      return { authorized: false, response: NextResponse.json({ error: 'Not a team member' }, { status: 403 }) };
+      return {
+        authorized: false,
+        response: NextResponse.json(
+          { error: 'Not a team member' },
+          { status: 403 }
+        ),
+      };
     }
 
     return { authorized: true, userId, role };
   } catch (error) {
     console.error('[Team Auth] Error:', error);
-    return { authorized: false, response: NextResponse.json({ error: 'Auth failed' }, { status: 500 }) };
+    return {
+      authorized: false,
+      response: NextResponse.json({ error: 'Auth failed' }, { status: 500 }),
+    };
   }
 }
 
 /**
  * DELETE /api/team/projects/[id]
- * 
+ *
  * Delete any project (team members bypass RLS)
  */
 export async function DELETE(
@@ -87,13 +101,16 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('[Team Projects] Delete error:', error);
-    return NextResponse.json({ error: 'Failed to delete project' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to delete project' },
+      { status: 500 }
+    );
   }
 }
 
 /**
  * PATCH /api/team/projects/[id]
- * 
+ *
  * Update project (rename, pricing, status, etc.)
  */
 export async function PATCH(
@@ -108,7 +125,8 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { name, project_type, setup_fee, monthly_fee, is_paid, status } = body;
+    const { name, project_type, setup_fee, monthly_fee, is_paid, status } =
+      body;
 
     // Build update object with only provided fields
     const updateData: Record<string, unknown> = {
@@ -117,7 +135,10 @@ export async function PATCH(
 
     if (name !== undefined) {
       if (typeof name !== 'string' || name.trim().length === 0) {
-        return NextResponse.json({ error: 'Name cannot be empty' }, { status: 400 });
+        return NextResponse.json(
+          { error: 'Name cannot be empty' },
+          { status: 400 }
+        );
       }
       updateData.name = name.trim();
     }
@@ -163,13 +184,16 @@ export async function PATCH(
     return NextResponse.json({ project });
   } catch (error) {
     console.error('[Team Projects] Update error:', error);
-    return NextResponse.json({ error: 'Failed to update project' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to update project' },
+      { status: 500 }
+    );
   }
 }
 
 /**
  * GET /api/team/projects/[id]
- * 
+ *
  * Get any project details (team members bypass RLS)
  */
 export async function GET(
@@ -203,6 +227,9 @@ export async function GET(
     return NextResponse.json({ project });
   } catch (error) {
     console.error('[Team Projects] Get error:', error);
-    return NextResponse.json({ error: 'Failed to fetch project' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch project' },
+      { status: 500 }
+    );
   }
 }

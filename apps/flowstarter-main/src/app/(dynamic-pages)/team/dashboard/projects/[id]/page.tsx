@@ -8,7 +8,7 @@ import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { 
+import {
   ArrowLeft,
   Building2,
   Users,
@@ -20,7 +20,7 @@ import {
   Loader2,
   Edit,
   ExternalLink,
-  Sparkles
+  Sparkles,
 } from 'lucide-react';
 
 interface ProjectData {
@@ -69,7 +69,7 @@ export default function ProjectDetailPage() {
 
   useEffect(() => {
     if (!id) return;
-    
+
     const fetchProject = async () => {
       try {
         const response = await fetch(`/api/projects/${id}`);
@@ -78,7 +78,7 @@ export default function ProjectDetailPage() {
         }
         const data = await response.json();
         setProject(data.project);
-        
+
         // Parse chat JSON if exists
         if (data.project.chat) {
           try {
@@ -94,15 +94,15 @@ export default function ProjectDetailPage() {
         setIsLoading(false);
       }
     };
-    
+
     fetchProject();
   }, [id]);
 
   const cardClass = [
-    "rounded-2xl border border-black/[0.08] dark:border-white/[0.08]",
-    "bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl",
-    "shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset]",
-    "dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset]"
+    'rounded-2xl border border-black/[0.08] dark:border-white/[0.08]',
+    'bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl',
+    'shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset]',
+    'dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset]',
   ].join(' ');
 
   if (isLoading) {
@@ -116,7 +116,9 @@ export default function ProjectDetailPage() {
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--purple)] to-[var(--purple)]/70 flex items-center justify-center">
                 <Loader2 className="w-6 h-6 animate-spin text-white" />
               </div>
-              <p className="text-gray-600 dark:text-white/70 font-medium">Loading project...</p>
+              <p className="text-gray-600 dark:text-white/70 font-medium">
+                Loading project...
+              </p>
             </div>
           </div>
         </div>
@@ -136,7 +138,7 @@ export default function ProjectDetailPage() {
               Project not found
             </h2>
             <p className="text-gray-500 dark:text-white/50 mb-4">
-              {error || 'The project you\'re looking for doesn\'t exist.'}
+              {error || "The project you're looking for doesn't exist."}
             </p>
             <Link href="/team/dashboard">
               <Button variant="outline">
@@ -155,16 +157,19 @@ export default function ProjectDetailPage() {
     <div className="min-h-screen flex flex-col">
       <TeamHeader />
       <div className="h-16" />
-      
+
       <GradientBackground variant="dashboard" className="fixed" />
-      
+
       <main className="flex-1 relative z-10 max-w-4xl mx-auto px-6 py-8 w-full">
         {/* Back button */}
-        <Link href="/team/dashboard" className="inline-flex items-center text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white mb-6 transition-colors">
+        <Link
+          href="/team/dashboard"
+          className="inline-flex items-center text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white mb-6 transition-colors"
+        >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Dashboard
         </Link>
-        
+
         {/* Project Header */}
         <div className={`${cardClass} p-6 mb-6`}>
           <div className="flex items-start justify-between">
@@ -190,11 +195,13 @@ export default function ProjectDetailPage() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                project.is_draft 
-                  ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
-                  : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-              }`}>
+              <span
+                className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  project.is_draft
+                    ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+                    : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                }`}
+              >
                 {project.is_draft ? 'Draft' : 'Active'}
               </span>
               <Button size="sm" variant="outline">
@@ -203,7 +210,7 @@ export default function ProjectDetailPage() {
               </Button>
             </div>
           </div>
-          
+
           {project.description && (
             <p className="text-gray-600 dark:text-white/70 mt-4">
               {project.description}
@@ -227,13 +234,18 @@ export default function ProjectDetailPage() {
                 {parsedChat.clientInfo.name && (
                   <div className="flex items-center gap-3 text-sm">
                     <Users className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-600 dark:text-white/70">{parsedChat.clientInfo.name}</span>
+                    <span className="text-gray-600 dark:text-white/70">
+                      {parsedChat.clientInfo.name}
+                    </span>
                   </div>
                 )}
                 {parsedChat.clientInfo.email && (
                   <div className="flex items-center gap-3 text-sm">
                     <Mail className="w-4 h-4 text-gray-400" />
-                    <a href={`mailto:${parsedChat.clientInfo.email}`} className="text-[var(--purple)] hover:underline">
+                    <a
+                      href={`mailto:${parsedChat.clientInfo.email}`}
+                      className="text-[var(--purple)] hover:underline"
+                    >
                       {parsedChat.clientInfo.email}
                     </a>
                   </div>
@@ -241,7 +253,9 @@ export default function ProjectDetailPage() {
                 {parsedChat.clientInfo.phone && (
                   <div className="flex items-center gap-3 text-sm">
                     <Phone className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-600 dark:text-white/70">{parsedChat.clientInfo.phone}</span>
+                    <span className="text-gray-600 dark:text-white/70">
+                      {parsedChat.clientInfo.phone}
+                    </span>
                   </div>
                 )}
               </div>
@@ -262,26 +276,42 @@ export default function ProjectDetailPage() {
               <div className="space-y-3 text-sm">
                 {parsedChat.businessInfo.industry && (
                   <div>
-                    <span className="text-gray-400 dark:text-white/40">Industry:</span>
-                    <span className="ml-2 text-gray-600 dark:text-white/70">{parsedChat.businessInfo.industry}</span>
+                    <span className="text-gray-400 dark:text-white/40">
+                      Industry:
+                    </span>
+                    <span className="ml-2 text-gray-600 dark:text-white/70">
+                      {parsedChat.businessInfo.industry}
+                    </span>
                   </div>
                 )}
                 {parsedChat.businessInfo.targetAudience && (
                   <div>
-                    <span className="text-gray-400 dark:text-white/40">Target Audience:</span>
-                    <span className="ml-2 text-gray-600 dark:text-white/70">{parsedChat.businessInfo.targetAudience}</span>
+                    <span className="text-gray-400 dark:text-white/40">
+                      Target Audience:
+                    </span>
+                    <span className="ml-2 text-gray-600 dark:text-white/70">
+                      {parsedChat.businessInfo.targetAudience}
+                    </span>
                   </div>
                 )}
                 {parsedChat.businessInfo.uvp && (
                   <div>
-                    <span className="text-gray-400 dark:text-white/40">UVP:</span>
-                    <span className="ml-2 text-gray-600 dark:text-white/70">{parsedChat.businessInfo.uvp}</span>
+                    <span className="text-gray-400 dark:text-white/40">
+                      UVP:
+                    </span>
+                    <span className="ml-2 text-gray-600 dark:text-white/70">
+                      {parsedChat.businessInfo.uvp}
+                    </span>
                   </div>
                 )}
                 {parsedChat.businessInfo.brandTone && (
                   <div>
-                    <span className="text-gray-400 dark:text-white/40">Brand Tone:</span>
-                    <span className="ml-2 text-gray-600 dark:text-white/70 capitalize">{parsedChat.businessInfo.brandTone}</span>
+                    <span className="text-gray-400 dark:text-white/40">
+                      Brand Tone:
+                    </span>
+                    <span className="ml-2 text-gray-600 dark:text-white/70 capitalize">
+                      {parsedChat.businessInfo.brandTone}
+                    </span>
                   </div>
                 )}
               </div>
@@ -289,49 +319,65 @@ export default function ProjectDetailPage() {
           )}
 
           {/* Contact Information */}
-          {parsedChat?.contactInfo && (parsedChat.contactInfo.email || parsedChat.contactInfo.phone || parsedChat.contactInfo.address || parsedChat.contactInfo.website) && (
-            <div className={`${cardClass} p-6`}>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
-                  <Globe className="w-5 h-5 text-green-500" />
+          {parsedChat?.contactInfo &&
+            (parsedChat.contactInfo.email ||
+              parsedChat.contactInfo.phone ||
+              parsedChat.contactInfo.address ||
+              parsedChat.contactInfo.website) && (
+              <div className={`${cardClass} p-6`}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                    <Globe className="w-5 h-5 text-green-500" />
+                  </div>
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Contact Information
+                  </h2>
                 </div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Contact Information
-                </h2>
+                <div className="space-y-3 text-sm">
+                  {parsedChat.contactInfo.email && (
+                    <div className="flex items-center gap-3">
+                      <Mail className="w-4 h-4 text-gray-400" />
+                      <a
+                        href={`mailto:${parsedChat.contactInfo.email}`}
+                        className="text-[var(--purple)] hover:underline"
+                      >
+                        {parsedChat.contactInfo.email}
+                      </a>
+                    </div>
+                  )}
+                  {parsedChat.contactInfo.phone && (
+                    <div className="flex items-center gap-3">
+                      <Phone className="w-4 h-4 text-gray-400" />
+                      <span className="text-gray-600 dark:text-white/70">
+                        {parsedChat.contactInfo.phone}
+                      </span>
+                    </div>
+                  )}
+                  {parsedChat.contactInfo.address && (
+                    <div className="flex items-center gap-3">
+                      <MapPin className="w-4 h-4 text-gray-400" />
+                      <span className="text-gray-600 dark:text-white/70">
+                        {parsedChat.contactInfo.address}
+                      </span>
+                    </div>
+                  )}
+                  {parsedChat.contactInfo.website && (
+                    <div className="flex items-center gap-3">
+                      <Globe className="w-4 h-4 text-gray-400" />
+                      <a
+                        href={parsedChat.contactInfo.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[var(--purple)] hover:underline inline-flex items-center gap-1"
+                      >
+                        {parsedChat.contactInfo.website}
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="space-y-3 text-sm">
-                {parsedChat.contactInfo.email && (
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-4 h-4 text-gray-400" />
-                    <a href={`mailto:${parsedChat.contactInfo.email}`} className="text-[var(--purple)] hover:underline">
-                      {parsedChat.contactInfo.email}
-                    </a>
-                  </div>
-                )}
-                {parsedChat.contactInfo.phone && (
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-600 dark:text-white/70">{parsedChat.contactInfo.phone}</span>
-                  </div>
-                )}
-                {parsedChat.contactInfo.address && (
-                  <div className="flex items-center gap-3">
-                    <MapPin className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-600 dark:text-white/70">{parsedChat.contactInfo.address}</span>
-                  </div>
-                )}
-                {parsedChat.contactInfo.website && (
-                  <div className="flex items-center gap-3">
-                    <Globe className="w-4 h-4 text-gray-400" />
-                    <a href={parsedChat.contactInfo.website} target="_blank" rel="noopener noreferrer" className="text-[var(--purple)] hover:underline inline-flex items-center gap-1">
-                      {parsedChat.contactInfo.website}
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+            )}
 
           {/* Quick Actions */}
           <div className={`${cardClass} p-6`}>
@@ -356,7 +402,7 @@ export default function ProjectDetailPage() {
           </div>
         </div>
       </main>
-      
+
       <FooterCompact />
     </div>
   );

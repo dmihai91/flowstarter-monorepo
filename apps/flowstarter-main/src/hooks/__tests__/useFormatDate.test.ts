@@ -25,7 +25,9 @@ describe('useFormatDate', () => {
 
     it('should format date with time when includeTime is true', () => {
       const { result } = renderHook(() => useFormatDate('en-US'));
-      const formatted = result.current.formatDate(testDate, { includeTime: true });
+      const formatted = result.current.formatDate(testDate, {
+        includeTime: true,
+      });
       expect(formatted).toMatch(/Nov|21|2025/);
       expect(formatted).toMatch(/\d{1,2}:\d{2}/); // Time pattern
     });
@@ -49,10 +51,14 @@ describe('useFormatDate', () => {
     it('should respect different locales', () => {
       const { result: usResult } = renderHook(() => useFormatDate('en-US'));
       const { result: deResult } = renderHook(() => useFormatDate('de-DE'));
-      
-      const usFormatted = usResult.current.formatDate(testDate, { style: 'short' });
-      const deFormatted = deResult.current.formatDate(testDate, { style: 'short' });
-      
+
+      const usFormatted = usResult.current.formatDate(testDate, {
+        style: 'short',
+      });
+      const deFormatted = deResult.current.formatDate(testDate, {
+        style: 'short',
+      });
+
       // US: MM/DD/YYYY, DE: DD.MM.YYYY
       expect(usFormatted).not.toBe(deFormatted);
     });
@@ -128,7 +134,10 @@ describe('formatDateString (standalone)', () => {
   });
 
   it('should format date with short style', () => {
-    const formatted = formatDateString(testDate, { locale: 'en-US', style: 'short' });
+    const formatted = formatDateString(testDate, {
+      locale: 'en-US',
+      style: 'short',
+    });
     expect(formatted).toMatch(/11\/21\/2025|11\/21\/25/);
   });
 

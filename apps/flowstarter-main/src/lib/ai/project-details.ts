@@ -254,7 +254,9 @@ Use this exact JSON structure:
 
   if (!process.env.OPENROUTER_API_KEY) {
     console.error('[generateProjectDetails] OPENROUTER_API_KEY is not set!');
-    throw new Error('AI service not configured. Please set OPENROUTER_API_KEY environment variable.');
+    throw new Error(
+      'AI service not configured. Please set OPENROUTER_API_KEY environment variable.'
+    );
   }
 
   console.log(

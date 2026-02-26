@@ -21,12 +21,18 @@ export async function GET(
 
   try {
     const { id } = await params;
-    
+
     if (!id) {
-      return NextResponse.json({ error: 'Project ID required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Project ID required' },
+        { status: 400 }
+      );
     }
 
-    console.info('[Projects] GET by ID starting:', { userId: authResult.userId, projectId: id });
+    console.info('[Projects] GET by ID starting:', {
+      userId: authResult.userId,
+      projectId: id,
+    });
 
     // Use strict auth client that throws if no JWT
     const supabase = await useServerSupabaseWithAuthStrict();
@@ -40,7 +46,10 @@ export async function GET(
     if (error) {
       console.error('[Projects] GET by ID database error:', error);
       if (error.code === 'PGRST116') {
-        return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+        return NextResponse.json(
+          { error: 'Project not found' },
+          { status: 404 }
+        );
       }
       return NextResponse.json({ error: error.message }, { status: 500 });
     }

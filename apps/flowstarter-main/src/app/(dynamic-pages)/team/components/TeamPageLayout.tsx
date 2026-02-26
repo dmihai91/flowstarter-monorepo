@@ -36,7 +36,7 @@ export function TeamPageLayout({
       const metadata = user?.publicMetadata as { role?: string } | undefined;
       const role = metadata?.role?.toLowerCase();
       const isTeam = role === 'team' || role === 'admin';
-      
+
       if (!user) {
         router.push('/team/login');
       } else if (!isTeam) {
@@ -63,7 +63,7 @@ export function TeamPageLayout({
         <GlassCard className="p-6 sm:p-8">
           {/* Back button */}
           {showBackButton && (
-            <Link 
+            <Link
               href={backHref}
               className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
             >

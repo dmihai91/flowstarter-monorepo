@@ -10,7 +10,7 @@ export default function FooterCompact() {
     <footer className="relative z-20">
       {/* Subtle top separator */}
       <div className="h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-white/10 to-transparent" />
-      
+
       <div className="bg-[rgba(243,243,243,0.30)] dark:bg-[rgba(58,58,74,0.30)] backdrop-blur-xl">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="flex flex-col lg:flex-row items-center lg:items-center justify-center lg:justify-between gap-3 lg:gap-2">
@@ -132,7 +132,13 @@ export default function FooterCompact() {
                   aria-hidden="true"
                 >
                   <defs>
-                    <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <linearGradient
+                      id="heartGradient"
+                      x1="0%"
+                      y1="0%"
+                      x2="100%"
+                      y2="100%"
+                    >
                       <stop offset="0%" stopColor="var(--purple)" />
                       <stop offset="100%" stopColor="#ef4444" />
                     </linearGradient>

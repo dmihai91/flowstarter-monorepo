@@ -14,7 +14,7 @@ type FlowStep = 'credentials' | 'totp' | 'email_code';
 export default function TeamLoginPage() {
   const { signIn, setActive, isLoaded } = useSignIn();
   const router = useRouter();
-  
+
   const [mounted, setMounted] = useState(false);
   const [step, setStep] = useState<FlowStep>('credentials');
   const [email, setEmail] = useState('');
@@ -31,7 +31,7 @@ export default function TeamLoginPage() {
   const handleCredentialsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!signIn || !email || !password) return;
-    
+
     setIsLoading(true);
     setError('');
 
@@ -51,13 +51,17 @@ export default function TeamLoginPage() {
         // Check what second factor is needed
         const supportedFactors = result.supportedSecondFactors;
         console.log('Second factors required:', supportedFactors);
-        
-        const totpFactor = supportedFactors?.find(f => f.strategy === 'totp');
-        
+
+        const totpFactor = supportedFactors?.find((f) => f.strategy === 'totp');
+
         if (totpFactor) {
           setStep('totp');
         } else if (supportedFactors && supportedFactors.length > 0) {
-          setError(`Second factor required: ${supportedFactors.map(f => f.strategy).join(', ')}`);
+          setError(
+            `Second factor required: ${supportedFactors
+              .map((f) => f.strategy)
+              .join(', ')}`
+          );
         } else {
           setError('Two-factor authentication required. Please contact admin.');
         }
@@ -70,8 +74,11 @@ export default function TeamLoginPage() {
         setError(`Sign in incomplete: ${result.status}`);
       }
     } catch (err: unknown) {
-      const clerkError = err as { errors?: Array<{ message?: string; code?: string }> };
-      const errorMessage = clerkError.errors?.[0]?.message || 'Invalid credentials';
+      const clerkError = err as {
+        errors?: Array<{ message?: string; code?: string }>;
+      };
+      const errorMessage =
+        clerkError.errors?.[0]?.message || 'Invalid credentials';
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -81,7 +88,7 @@ export default function TeamLoginPage() {
   const handleTotpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!signIn || !code) return;
-    
+
     setIsLoading(true);
     setError('');
 
@@ -113,7 +120,10 @@ export default function TeamLoginPage() {
 
   if (!mounted || !isLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c]" suppressHydrationWarning>
+      <div
+        className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c]"
+        suppressHydrationWarning
+      >
         <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)]" />
       </div>
     );
@@ -128,7 +138,6 @@ export default function TeamLoginPage() {
     >
       <div className="w-full max-w-[520px] mx-auto">
         <div className="bg-white/95 dark:bg-[var(--surface-2)]/90 backdrop-blur-2xl backdrop-saturate-150 rounded-2xl border border-gray-200/50 dark:border-white/10 p-8 shadow-lg dark:shadow-2xl">
-          
           {/* Credentials Step - Email + Password together */}
           {step === 'credentials' && (
             <>
@@ -143,7 +152,10 @@ export default function TeamLoginPage() {
 
               <form onSubmit={handleCredentialsSubmit} className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm text-gray-600 dark:text-white/60">
+                  <Label
+                    htmlFor="email"
+                    className="text-sm text-gray-600 dark:text-white/60"
+                  >
                     Email address
                   </Label>
                   <Input
@@ -159,7 +171,10 @@ export default function TeamLoginPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-sm text-gray-600 dark:text-white/60">
+                  <Label
+                    htmlFor="password"
+                    className="text-sm text-gray-600 dark:text-white/60"
+                  >
                     Password
                   </Label>
                   <div className="relative">
@@ -178,15 +193,17 @@ export default function TeamLoginPage() {
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-white/70 transition-colors"
                       >
-                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
                       </button>
                     )}
                   </div>
                 </div>
 
-                {error && (
-                  <div className="text-red-500 text-sm">{error}</div>
-                )}
+                {error && <div className="text-red-500 text-sm">{error}</div>}
 
                 <Button
                   type="submit"
@@ -196,7 +213,6 @@ export default function TeamLoginPage() {
                   {isLoading ? 'Signing in...' : 'Sign in'}
                 </Button>
               </form>
-
             </>
           )}
 
@@ -217,7 +233,10 @@ export default function TeamLoginPage() {
 
               <form onSubmit={handleTotpSubmit} className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="code" className="text-sm text-gray-600 dark:text-white/60">
+                  <Label
+                    htmlFor="code"
+                    className="text-sm text-gray-600 dark:text-white/60"
+                  >
                     Authentication code
                   </Label>
                   <Input
@@ -236,7 +255,9 @@ export default function TeamLoginPage() {
                 </div>
 
                 {error && (
-                  <div className="text-red-500 text-sm text-center">{error}</div>
+                  <div className="text-red-500 text-sm text-center">
+                    {error}
+                  </div>
                 )}
 
                 <Button

@@ -1,9 +1,9 @@
 /**
  * Flowstarter Email Templates
- * 
+ *
  * Custom email templates for Clerk events.
  * To use these, set up Clerk webhooks and send emails via Resend/SendGrid.
- * 
+ *
  * Setup:
  * 1. In Clerk Dashboard → Settings → Email, disable built-in emails
  * 2. Set up webhooks for: user.created, email.created, etc.

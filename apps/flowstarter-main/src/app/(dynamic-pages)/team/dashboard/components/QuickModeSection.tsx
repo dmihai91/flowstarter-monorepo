@@ -17,17 +17,19 @@ export function QuickModeSection() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const setPrefillData = useWizardStore((state) => state.setPrefillData);
-  const setSelectedIndustry = useWizardStore((state) => state.setSelectedIndustry);
-  
+  const setSelectedIndustry = useWizardStore(
+    (state) => state.setSelectedIndustry
+  );
+
   const firstName = user?.firstName || 'there';
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    setAttachments(prev => [...prev, ...files].slice(0, 5));
+    setAttachments((prev) => [...prev, ...files].slice(0, 5));
   };
 
   const removeAttachment = (index: number) => {
-    setAttachments(prev => prev.filter((_, i) => i !== index));
+    setAttachments((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async () => {
@@ -98,18 +100,20 @@ export function QuickModeSection() {
     setInput(e.target.value);
     if (textareaRef.current) {
       textareaRef.current.style.height = '80px';
-      textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 150) + 'px';
+      textareaRef.current.style.height =
+        Math.min(textareaRef.current.scrollHeight, 150) + 'px';
     }
   };
 
   const suggestions = [
-    "A modern bakery website with online ordering for cakes and pastries, targeting local customers",
-    "Landing page for a fitness coaching app with booking system and testimonials",
-    "Minimalist portfolio for a wedding photographer showcasing galleries and contact form",
+    'A modern bakery website with online ordering for cakes and pastries, targeting local customers',
+    'Landing page for a fitness coaching app with booking system and testimonials',
+    'Minimalist portfolio for a wedding photographer showcasing galleries and contact form',
   ];
 
   // 3D card style
-  const cardClass = "rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset]";
+  const cardClass =
+    'rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset]';
 
   return (
     <div className={`${cardClass} p-5`}>
@@ -134,14 +138,16 @@ export function QuickModeSection() {
           {attachments.map((file, i) => (
             <div key={i} className="relative group">
               {file.type.startsWith('image/') ? (
-                <img 
-                  src={URL.createObjectURL(file)} 
+                <img
+                  src={URL.createObjectURL(file)}
                   alt={file.name}
                   className="w-14 h-14 object-cover rounded-xl border border-black/[0.08] dark:border-white/[0.08]"
                 />
               ) : (
                 <div className="w-14 h-14 flex items-center justify-center rounded-xl border border-black/[0.08] dark:border-white/[0.08] bg-gray-50 dark:bg-white/5">
-                  <span className="text-[10px] text-gray-500 uppercase">{file.name.split('.').pop()}</span>
+                  <span className="text-[10px] text-gray-500 uppercase">
+                    {file.name.split('.').pop()}
+                  </span>
                 </div>
               )}
               <button
@@ -156,10 +162,10 @@ export function QuickModeSection() {
       )}
 
       {/* Input container - glassmorphism style matching other UI elements */}
-      <div 
+      <div
         className={`relative rounded-2xl border backdrop-blur-xl transition-all duration-200 overflow-hidden ${
-          isFocused 
-            ? 'border-[var(--purple)]/50 bg-white/95 dark:bg-white/[0.06] shadow-[0_0_0_3px_rgba(var(--purple-rgb),0.1),0_4px_16px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,1)_inset] dark:shadow-[0_0_0_3px_rgba(var(--purple-rgb),0.15),0_4px_16px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.08)_inset]' 
+          isFocused
+            ? 'border-[var(--purple)]/50 bg-white/95 dark:bg-white/[0.06] shadow-[0_0_0_3px_rgba(var(--purple-rgb),0.1),0_4px_16px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,1)_inset] dark:shadow-[0_0_0_3px_rgba(var(--purple-rgb),0.15),0_4px_16px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.08)_inset]'
             : 'border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-white/[0.03] shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.02)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset,0_-1px_0_rgba(0,0,0,0.2)_inset]'
         }`}
       >
@@ -174,9 +180,15 @@ export function QuickModeSection() {
           placeholder={`Describe your project, ${firstName}...`}
           rows={3}
           className="w-full px-4 pt-4 pb-2 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/50 text-[15px] leading-relaxed resize-none focus:outline-none border-0 border-none outline-none ring-0 shadow-none appearance-none"
-          style={{ minHeight: '88px', maxHeight: '150px', border: 'none', outline: 'none', boxShadow: 'none' }}
+          style={{
+            minHeight: '88px',
+            maxHeight: '150px',
+            border: 'none',
+            outline: 'none',
+            boxShadow: 'none',
+          }}
         />
-        
+
         {/* Bottom bar */}
         <div className="flex items-center justify-between px-3 pb-3">
           <div className="flex items-center">
@@ -195,7 +207,7 @@ export function QuickModeSection() {
               <Paperclip className="w-5 h-5" />
             </button>
           </div>
-          
+
           <Button
             onClick={handleSubmit}
             disabled={!input.trim() || isClassifying}

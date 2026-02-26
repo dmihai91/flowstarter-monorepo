@@ -1,6 +1,6 @@
 /**
  * Team Invitation API
- * 
+ *
  * Creates custom invitation tokens and sends branded emails.
  * Only accessible by admin users.
  */
@@ -15,19 +15,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     // Get the current user's auth
     const { userId } = await auth();
-    
+
     if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if user is admin
     const client = await clerkClient();
     const user = await client.users.getUser(userId);
-    const role = (user.publicMetadata as { role?: string })?.role?.toLowerCase();
-    
+    const role = (
+      user.publicMetadata as { role?: string }
+    )?.role?.toLowerCase();
+
     if (role !== 'admin') {
       return NextResponse.json(
         { error: 'Only admins can invite team members' },
@@ -40,10 +39,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const { email } = body;
 
     if (!email || typeof email !== 'string') {
-      return NextResponse.json(
-        { error: 'Email is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
     // Validate email format
@@ -68,7 +64,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Get inviter info
-    const inviterName = user.firstName 
+    const inviterName = user.firstName
       ? `${user.firstName} ${user.lastName || ''}`.trim()
       : user.primaryEmailAddress?.emailAddress || 'A team member';
     const inviterEmail = user.primaryEmailAddress?.emailAddress || '';
@@ -105,16 +101,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    console.info(`[Team Invite] Invitation sent to ${email} by ${inviterEmail}`);
+    console.info(
+      `[Team Invite] Invitation sent to ${email} by ${inviterEmail}`
+    );
 
     return NextResponse.json({
       success: true,
       message: `Invitation sent to ${email}`,
     });
-
   } catch (error) {
     console.error('[Team Invite] Error creating invitation:', error);
-    
+
     return NextResponse.json(
       { error: 'Failed to create invitation' },
       { status: 500 }

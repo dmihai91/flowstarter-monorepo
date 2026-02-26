@@ -21,21 +21,31 @@ function GlobalErrorContent({
     <>
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-        .font-display { font-family: 'Outfit', system-ui, sans-serif; }
-        :root { --purple: #7B6AD8; }
+        .font-display {
+          font-family: 'Outfit', system-ui, sans-serif;
+        }
+        :root {
+          --purple: #7b6ad8;
+        }
       `}</style>
-      
+
       <div className="min-h-screen font-display bg-[#FAFAFA] dark:bg-[#0a0a0c] relative overflow-hidden">
         {/* Flow lines background */}
         <div className="fixed inset-0 pointer-events-none">
-          <svg 
+          <svg
             className="absolute inset-0 w-full h-full opacity-[0.15] dark:opacity-[0.12]"
-            viewBox="0 0 1200 800" 
+            viewBox="0 0 1200 800"
             preserveAspectRatio="xMidYMid slice"
             fill="none"
           >
             <defs>
-              <linearGradient id="globalErrorGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <linearGradient
+                id="globalErrorGradient"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="0%"
+              >
                 <stop offset="0%" stopColor="#7B6AD8" />
                 <stop offset="100%" stopColor="#3B82F6" />
               </linearGradient>
@@ -67,8 +77,18 @@ function GlobalErrorContent({
 
             {/* Error Icon */}
             <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-red-500/20 flex items-center justify-center">
-              <svg className="w-10 h-10 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+              <svg
+                className="w-10 h-10 text-red-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                />
               </svg>
             </div>
 
@@ -79,7 +99,8 @@ function GlobalErrorContent({
 
             {/* Description */}
             <p className="text-gray-500 dark:text-white/50 mb-2">
-              Something went seriously wrong. We've been notified and are looking into it.
+              Something went seriously wrong. We've been notified and are
+              looking into it.
             </p>
             <p className="text-sm text-gray-400 dark:text-white/30 mb-8">
               Your data is safe. Try restarting the app.
@@ -87,16 +108,26 @@ function GlobalErrorContent({
 
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
-              <button 
+              <button
                 onClick={reset}
                 className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-8 h-12 text-base font-semibold shadow-lg transition-all duration-300"
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                  />
                 </svg>
                 Restart App
               </button>
-              <Link 
+              <Link
                 href="/"
                 className="inline-flex items-center justify-center gap-2 px-8 h-12 text-base font-semibold border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5 transition-all duration-300"
               >
@@ -109,7 +140,7 @@ function GlobalErrorContent({
               <p className="text-sm text-gray-400 dark:text-white/30 mb-3">
                 Need immediate help?
               </p>
-              <a 
+              <a
                 href="mailto:hello@flowstarter.app"
                 className="text-sm text-[#7B6AD8] hover:underline font-medium"
               >

@@ -9,7 +9,16 @@ export default function AuthTabs() {
         Sign in to your account
       </h1>
       <p className="text-sm text-center text-gray-500 dark:text-gray-400 mb-6 -mt-4">
-        New client? <a href="https://calendly.com/flowstarter-app/discovery" target="_blank" rel="noopener noreferrer" className="text-[#7B6AD8] hover:underline">Book a discovery call</a> to get started.
+        New client?{' '}
+        <a
+          href="https://calendly.com/flowstarter-app/discovery"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#7B6AD8] hover:underline"
+        >
+          Book a discovery call
+        </a>{' '}
+        to get started.
       </p>
       <CustomSignIn />
     </div>

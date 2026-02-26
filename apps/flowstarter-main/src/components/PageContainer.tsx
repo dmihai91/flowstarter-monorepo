@@ -25,7 +25,12 @@ export function PageContainer({
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
       `}</style>
-      <div className={cn('min-h-screen relative font-[Outfit,system-ui,sans-serif]', className)}>
+      <div
+        className={cn(
+          'min-h-screen relative font-[Outfit,system-ui,sans-serif]',
+          className
+        )}
+      >
         {/* Gradient background with flow lines */}
         <GradientBackground variant={gradientVariant} className="fixed" />
         <MaxWidthContainer

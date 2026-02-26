@@ -73,21 +73,23 @@ const baseHeaders = createSecureHeaders({
  */
 export function buildCSPHeader(nonce?: string): string {
   const isDev = process.env.NODE_ENV === 'development';
-  
+
   // In development, use relaxed CSP to allow Next.js hot reload and dev scripts
   // In production, use strict CSP with nonces
   const scriptSrc = isDev
     ? ["'self'", "'unsafe-inline'", "'unsafe-eval'", ...ALLOWED_SCRIPT_DOMAINS]
     : nonce
-      ? [`'nonce-${nonce}'`, "'strict-dynamic'", ...ALLOWED_SCRIPT_DOMAINS]
-      : ["'self'", "'unsafe-inline'", ...ALLOWED_SCRIPT_DOMAINS];
+    ? [`'nonce-${nonce}'`, "'strict-dynamic'", ...ALLOWED_SCRIPT_DOMAINS]
+    : ["'self'", "'unsafe-inline'", ...ALLOWED_SCRIPT_DOMAINS];
 
   const directives = [
     `default-src 'self'`,
     `script-src ${scriptSrc.join(' ')}`,
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`, // CSS-in-JS requires unsafe-inline
     `img-src ${ALLOWED_IMG_DOMAINS.join(' ')}`,
-    `connect-src ${ALLOWED_CONNECT_DOMAINS.join(' ')}${isDev ? ' ws://localhost:* http://localhost:*' : ''}`,
+    `connect-src ${ALLOWED_CONNECT_DOMAINS.join(' ')}${
+      isDev ? ' ws://localhost:* http://localhost:*' : ''
+    }`,
     `font-src ${ALLOWED_FONT_DOMAINS.join(' ')}`,
     `frame-src ${ALLOWED_FRAME_DOMAINS.join(' ')}`,
     `frame-ancestors 'none'`,

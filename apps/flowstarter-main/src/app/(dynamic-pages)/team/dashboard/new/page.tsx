@@ -14,7 +14,7 @@ import { useWizardStore } from '@/store/wizard-store';
 import { useProjectSuggestions } from '@/hooks/wizard/useProjectSuggestions';
 import { insertProjectAction } from '@/data/user/projects';
 import { toast } from 'sonner';
-import { 
+import {
   ArrowLeft,
   ArrowRight,
   Building2,
@@ -26,7 +26,7 @@ import {
   Globe,
   Loader2,
   Check,
-  RefreshCw
+  RefreshCw,
 } from 'lucide-react';
 
 type BusinessGoal = 'leads' | 'sales' | 'bookings';
@@ -38,19 +38,19 @@ interface ProjectData {
   clientName: string;
   clientEmail: string;
   clientPhone: string;
-  
+
   // Business info
   businessName: string;
   description: string;
   industry: string;
   targetAudience: string;
   uvp: string;
-  
+
   // Quick profile
   goal: BusinessGoal | '';
   offerType: OfferType | '';
   brandTone: BrandTone | '';
-  
+
   // Contact
   businessEmail: string;
   businessPhone: string;
@@ -77,9 +77,21 @@ const industries = [
 ];
 
 const goalOptions: { value: BusinessGoal; label: string; desc: string }[] = [
-  { value: 'leads', label: 'Get Leads', desc: 'Collect contact information from potential clients' },
-  { value: 'bookings', label: 'Get Bookings', desc: 'Allow clients to schedule appointments' },
-  { value: 'sales', label: 'Sell Products', desc: 'Sell products or services online' },
+  {
+    value: 'leads',
+    label: 'Get Leads',
+    desc: 'Collect contact information from potential clients',
+  },
+  {
+    value: 'bookings',
+    label: 'Get Bookings',
+    desc: 'Allow clients to schedule appointments',
+  },
+  {
+    value: 'sales',
+    label: 'Sell Products',
+    desc: 'Sell products or services online',
+  },
 ];
 
 const offerOptions: { value: OfferType; label: string }[] = [
@@ -101,61 +113,61 @@ function NewProjectPageContent() {
   const { user, isLoaded: userLoaded } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   // Get prefill data from wizard store (set by Quick Mode)
   const prefillData = useWizardStore((state) => state.prefillData);
   const setPrefillData = useWizardStore((state) => state.setPrefillData);
   const selectedIndustry = useWizardStore((state) => state.selectedIndustry);
   const teamWizardData = useWizardStore((state) => state.teamWizardData);
   const setTeamWizardData = useWizardStore((state) => state.setTeamWizardData);
-  
+
   // AI generation hook (from old wizard)
-  const { 
-    generateSuggestions, 
+  const {
+    generateSuggestions,
     isGeneratingWithAI,
     regenerateNames,
     regenerateDescription,
     regenerateUSP,
     suggestions,
-    loadingStates
+    loadingStates,
   } = useProjectSuggestions('business');
-  
+
   // Check if we're in AI generation mode - from URL or stored data
   const isAIModeFromUrl = searchParams?.get('mode') === 'ai-generated';
   const [isAIMode, setIsAIMode] = useState(false);
-  
+
   // Update AI mode when URL or stored data changes
   useEffect(() => {
     if (isAIModeFromUrl || teamWizardData?.isAIMode) {
       setIsAIMode(true);
     }
   }, [isAIModeFromUrl, teamWizardData?.isAIMode]);
-  
+
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isGenerating, setIsGenerating] = useState(true); // Start true, will be set false after generation or if not AI mode
   const [generationStep, setGenerationStep] = useState<string>('classifying');
   const hasTriggeredGeneration = useRef(false);
-  
+
   // Regeneration panel state
   const [regenField, setRegenField] = useState<string | null>(null);
   const [regenPrompt, setRegenPrompt] = useState('');
   const [isRegenerating, setIsRegenerating] = useState(false);
-  
+
   // If not AI mode, immediately set isGenerating to false
   useEffect(() => {
     if (!isAIMode) {
       setIsGenerating(false);
     }
   }, [isAIMode]);
-  
+
   // Generation steps for display
   const generationSteps = [
     { id: 'classifying', label: 'Analyzing your description...' },
     { id: 'generating', label: 'Generating business details...' },
     { id: 'finalizing', label: 'Preparing your project...' },
   ];
-  
+
   const [projectData, setProjectData] = useState<ProjectData>(() => {
     // Initialize from stored data if available
     if (teamWizardData) {
@@ -195,7 +207,7 @@ function NewProjectPageContent() {
       website: '',
     };
   });
-  
+
   // Restore step from stored data
   const [step, setStep] = useState(() => teamWizardData?.step || 1);
 
@@ -214,7 +226,7 @@ function NewProjectPageContent() {
       const metadata = user?.publicMetadata as { role?: string } | undefined;
       const role = metadata?.role?.toLowerCase();
       const isTeam = role === 'team' || role === 'admin';
-      
+
       if (!user || !isTeam) {
         router.push('/team/login');
       } else {
@@ -226,102 +238,121 @@ function NewProjectPageContent() {
   // Trigger AI generation when prefill data is present
   useEffect(() => {
     if (hasTriggeredGeneration.current || !prefillData || isLoading) return;
-    
+
     const isAIGenerated = searchParams?.get('mode') === 'ai-generated';
     if (!isAIGenerated) return;
-    
-    const userDescription = prefillData.description || prefillData.userDescription || '';
+
+    const userDescription =
+      prefillData.description || prefillData.userDescription || '';
     if (!userDescription) return;
-    
+
     hasTriggeredGeneration.current = true;
     setIsGenerating(true);
     setGenerationStep('classifying');
-    
+
     // Run async generation
     const runGeneration = async () => {
       // Small delay to show first step
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise((r) => setTimeout(r, 500));
       setGenerationStep('generating');
-      
+
       // Call the SAME AI generation as old wizard
       generateSuggestions({
-      businessType: prefillData.platformType || 'business',
-      industry: selectedIndustry || prefillData.industry || 'general',
-      targetAudience: '',
-      uniqueSellingPoint: userDescription,
-      description: userDescription,
-      goals: '',
-      domain: selectedIndustry || prefillData.industry || 'general',
-      goal: [],
-      }).then(async (result) => {
-        setGenerationStep('finalizing');
-        await new Promise(r => setTimeout(r, 300));
-        
-        console.log('[TeamWizard] AI generation result:', result);
-        
-        // Apply AI-generated data to form (use whatever we got, fall back to user input)
-        const generatedName = Array.isArray(result?.names) && result.names.length > 0 
-          ? result.names[Math.floor(Math.random() * result.names.length)] 
-          : '';
-        
-        setProjectData(prev => ({
-          ...prev,
-          businessName: generatedName || prev.businessName,
-          description: result?.description || userDescription,
-          targetAudience: result?.targetUsers || '',
-          uvp: result?.USP || '',
-          industry: selectedIndustry || prefillData.industry || '',
-          brandTone: (result?.brandTone?.toLowerCase() as BrandTone) || '',
-        }));
-        
-        // Start at step 1 (client info first, then business details with AI content)
-        setStep(1);
-        
-        if (result && (generatedName || result.description !== userDescription)) {
-          toast.success('AI generated business details', {
-            description: 'Review and edit the generated info',
+        businessType: prefillData.platformType || 'business',
+        industry: selectedIndustry || prefillData.industry || 'general',
+        targetAudience: '',
+        uniqueSellingPoint: userDescription,
+        description: userDescription,
+        goals: '',
+        domain: selectedIndustry || prefillData.industry || 'general',
+        goal: [],
+      })
+        .then(async (result) => {
+          setGenerationStep('finalizing');
+          await new Promise((r) => setTimeout(r, 300));
+
+          console.log('[TeamWizard] AI generation result:', result);
+
+          // Apply AI-generated data to form (use whatever we got, fall back to user input)
+          const generatedName =
+            Array.isArray(result?.names) && result.names.length > 0
+              ? result.names[Math.floor(Math.random() * result.names.length)]
+              : '';
+
+          setProjectData((prev) => ({
+            ...prev,
+            businessName: generatedName || prev.businessName,
+            description: result?.description || userDescription,
+            targetAudience: result?.targetUsers || '',
+            uvp: result?.USP || '',
+            industry: selectedIndustry || prefillData.industry || '',
+            brandTone: (result?.brandTone?.toLowerCase() as BrandTone) || '',
+          }));
+
+          // Start at step 1 (client info first, then business details with AI content)
+          setStep(1);
+
+          if (
+            result &&
+            (generatedName || result.description !== userDescription)
+          ) {
+            toast.success('AI generated business details', {
+              description: 'Review and edit the generated info',
+            });
+          } else {
+            toast.info('Using your description', {
+              description: 'Fill in the remaining details',
+            });
+          }
+          setIsGenerating(false);
+          setPrefillData(null);
+        })
+        .catch((error) => {
+          console.error('AI generation failed:', error);
+          // Fallback - use the description directly
+          setProjectData((prev) => ({
+            ...prev,
+            description: userDescription,
+            industry: selectedIndustry || prefillData.industry || '',
+          }));
+          setStep(2);
+          setIsGenerating(false);
+          setPrefillData(null);
+          toast.error('AI generation failed', {
+            description: 'Please fill in the business details manually',
           });
-        } else {
-          toast.info('Using your description', {
-            description: 'Fill in the remaining details',
-          });
-        }
-      setIsGenerating(false);
-      setPrefillData(null);
-      }).catch((error) => {
-        console.error('AI generation failed:', error);
-        // Fallback - use the description directly
-        setProjectData(prev => ({
-          ...prev,
-          description: userDescription,
-          industry: selectedIndustry || prefillData.industry || '',
-        }));
-        setStep(2);
-        setIsGenerating(false);
-        setPrefillData(null);
-        toast.error('AI generation failed', {
-          description: 'Please fill in the business details manually',
         });
-      });
     };
-    
+
     runGeneration();
-  }, [prefillData, isLoading, searchParams, selectedIndustry, generateSuggestions, setPrefillData]);
+  }, [
+    prefillData,
+    isLoading,
+    searchParams,
+    selectedIndustry,
+    generateSuggestions,
+    setPrefillData,
+  ]);
 
   const updateField = (field: keyof ProjectData, value: string) => {
-    setProjectData(prev => ({ ...prev, [field]: value }));
+    setProjectData((prev) => ({ ...prev, [field]: value }));
   };
 
   // Watch for suggestion updates and apply to form
   useEffect(() => {
-    if (suggestions?.names && suggestions.names.length > 0 && loadingStates?.names === false) {
-      const newName = suggestions.names[Math.floor(Math.random() * suggestions.names.length)];
+    if (
+      suggestions?.names &&
+      suggestions.names.length > 0 &&
+      loadingStates?.names === false
+    ) {
+      const newName =
+        suggestions.names[Math.floor(Math.random() * suggestions.names.length)];
       if (newName && newName !== projectData.businessName) {
         updateField('businessName', newName);
       }
     }
   }, [suggestions?.names, loadingStates?.names]);
-  
+
   useEffect(() => {
     if (suggestions?.description && loadingStates?.description === false) {
       if (suggestions.description !== projectData.description) {
@@ -329,7 +360,7 @@ function NewProjectPageContent() {
       }
     }
   }, [suggestions?.description, loadingStates?.description]);
-  
+
   useEffect(() => {
     if (suggestions?.USP && loadingStates?.USP === false) {
       if (suggestions.USP !== projectData.uvp) {
@@ -343,7 +374,7 @@ function NewProjectPageContent() {
     setIsRegenerating(true);
     try {
       const customPrompt = regenPrompt.trim();
-      
+
       if (field === 'businessName') {
         await regenerateNames(customPrompt || undefined);
       } else if (field === 'description') {
@@ -351,8 +382,16 @@ function NewProjectPageContent() {
       } else if (field === 'uvp') {
         await regenerateUSP(customPrompt || undefined);
       }
-      
-      toast.success(`${field === 'businessName' ? 'Name' : field === 'description' ? 'Description' : 'UVP'} regenerated`);
+
+      toast.success(
+        `${
+          field === 'businessName'
+            ? 'Name'
+            : field === 'description'
+            ? 'Description'
+            : 'UVP'
+        } regenerated`
+      );
       setRegenField(null);
       setRegenPrompt('');
     } catch (error) {
@@ -365,7 +404,7 @@ function NewProjectPageContent() {
 
   const handleSubmit = async () => {
     setIsSaving(true);
-    
+
     try {
       // Build project data for database
       const projectPayload = {
@@ -398,34 +437,35 @@ function NewProjectPageContent() {
       };
 
       console.log('Creating project:', projectPayload);
-      
+
       const result = await insertProjectAction(projectPayload);
-      
+
       if (result?.serverError) {
         throw new Error(result.serverError);
       }
-      
+
       if (result?.validationErrors) {
         const errors = Object.values(result.validationErrors).flat().join(', ');
         throw new Error(errors);
       }
 
       const projectId = result?.data;
-      
+
       toast.success('Project created successfully!', {
         description: 'Opening project...',
       });
-      
+
       // Clear stored wizard data
       setTeamWizardData(null);
       setPrefillData(null);
-      
+
       // Redirect to project page with UID
       router.push(`/team/dashboard/projects/${projectId}`);
     } catch (error) {
       console.error('Failed to create project:', error);
       toast.error('Failed to create project', {
-        description: error instanceof Error ? error.message : 'Please try again',
+        description:
+          error instanceof Error ? error.message : 'Please try again',
       });
       setIsSaving(false);
     }
@@ -436,9 +476,15 @@ function NewProjectPageContent() {
       case 1:
         return projectData.clientName && projectData.clientEmail;
       case 2:
-        return projectData.businessName && projectData.description && projectData.industry;
+        return (
+          projectData.businessName &&
+          projectData.description &&
+          projectData.industry
+        );
       case 3:
-        return projectData.goal && projectData.offerType && projectData.brandTone;
+        return (
+          projectData.goal && projectData.offerType && projectData.brandTone
+        );
       case 4:
         return true; // Contact info is optional
       default:
@@ -449,26 +495,28 @@ function NewProjectPageContent() {
   // Show generation screen while generating (AI mode starts with isGenerating=true)
   const showGenerationScreen = isGenerating && isAIMode;
   const showLoading = (isLoading || !userLoaded) && !showGenerationScreen;
-  
+
   // Generation screen - show immediately for AI mode
   if (showGenerationScreen) {
-    const currentIdx = generationSteps.findIndex(gs => gs.id === generationStep);
-    
+    const currentIdx = generationSteps.findIndex(
+      (gs) => gs.id === generationStep
+    );
+
     return (
       <div className="h-screen flex flex-col overflow-hidden">
         <TeamHeader />
         <div className="flex-1 flex flex-col items-center justify-center relative mt-16">
           <GradientBackground variant="dashboard" className="fixed inset-0" />
-          
+
           {/* Animated background orbs */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--purple)]/20 rounded-full blur-3xl animate-pulse" />
             <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
           </div>
-          
+
           <div className="relative z-10 flex flex-col items-center w-full max-w-xl mx-auto px-6">
-          {/* Glassmorphism card for generation */}
-          <div className="w-full rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset] p-6">
+            {/* Glassmorphism card for generation */}
+            <div className="w-full rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset] p-6">
               {/* Header */}
               <div className="flex items-center gap-4 mb-6">
                 <div className="relative">
@@ -477,7 +525,10 @@ function NewProjectPageContent() {
                   </div>
                   {/* Spinning ring */}
                   <div className="absolute inset-0 -m-1">
-                    <svg className="w-16 h-16 animate-spin" style={{ animationDuration: '3s' }}>
+                    <svg
+                      className="w-16 h-16 animate-spin"
+                      style={{ animationDuration: '3s' }}
+                    >
                       <circle
                         cx="32"
                         cy="32"
@@ -489,7 +540,13 @@ function NewProjectPageContent() {
                         strokeLinecap="round"
                       />
                       <defs>
-                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <linearGradient
+                          id="gradient"
+                          x1="0%"
+                          y1="0%"
+                          x2="100%"
+                          y2="100%"
+                        >
                           <stop offset="0%" stopColor="var(--purple)" />
                           <stop offset="100%" stopColor="transparent" />
                         </linearGradient>
@@ -506,31 +563,33 @@ function NewProjectPageContent() {
                   </p>
                 </div>
               </div>
-              
+
               {/* Steps */}
               <div className="space-y-2">
                 {generationSteps.map((s, i) => {
                   const isActive = s.id === generationStep;
                   const isComplete = i < currentIdx;
-                  
+
                   return (
-                    <div 
-                      key={s.id} 
+                    <div
+                      key={s.id}
                       className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${
-                        isActive 
-                          ? 'bg-[var(--purple)]/10' 
+                        isActive
+                          ? 'bg-[var(--purple)]/10'
                           : isComplete
-                            ? 'bg-green-500/5'
-                            : 'bg-gray-50 dark:bg-white/[0.02]'
+                          ? 'bg-green-500/5'
+                          : 'bg-gray-50 dark:bg-white/[0.02]'
                       }`}
                     >
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
-                        isComplete 
-                          ? 'bg-green-500 text-white' 
-                          : isActive 
-                            ? 'bg-[var(--purple)] text-white' 
+                      <div
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                          isComplete
+                            ? 'bg-green-500 text-white'
+                            : isActive
+                            ? 'bg-[var(--purple)] text-white'
                             : 'bg-gray-200 dark:bg-white/10 text-gray-400 dark:text-white/30'
-                      }`}>
+                        }`}
+                      >
                         {isComplete ? (
                           <Check className="w-4 h-4" />
                         ) : isActive ? (
@@ -539,13 +598,15 @@ function NewProjectPageContent() {
                           <span className="text-xs font-medium">{i + 1}</span>
                         )}
                       </div>
-                      <span className={`text-sm font-medium transition-all ${
-                        isActive 
-                          ? 'text-gray-900 dark:text-white' 
-                          : isComplete
+                      <span
+                        className={`text-sm font-medium transition-all ${
+                          isActive
+                            ? 'text-gray-900 dark:text-white'
+                            : isComplete
                             ? 'text-green-600 dark:text-green-400'
                             : 'text-gray-400 dark:text-white/40'
-                      }`}>
+                        }`}
+                      >
                         {s.label}
                       </span>
                     </div>
@@ -559,7 +620,7 @@ function NewProjectPageContent() {
       </div>
     );
   }
-  
+
   // Simple loading state for auth check (non-AI mode)
   if (showLoading) {
     return (
@@ -570,7 +631,9 @@ function NewProjectPageContent() {
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--purple)] to-[var(--purple)]/70 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20">
               <Loader2 className="w-6 h-6 animate-spin text-white" />
             </div>
-            <p className="text-gray-600 dark:text-white/70 font-medium">Loading...</p>
+            <p className="text-gray-600 dark:text-white/70 font-medium">
+              Loading...
+            </p>
           </div>
         </div>
       </div>
@@ -579,44 +642,48 @@ function NewProjectPageContent() {
 
   // 3D card style (same as dashboard)
   const cardClass = [
-    "rounded-2xl border border-black/[0.08] dark:border-white/[0.08]",
-    "bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl",
-    "shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.02)_inset]",
-    "dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset,0_-1px_0_rgba(0,0,0,0.2)_inset]",
-  ].join(" ");
+    'rounded-2xl border border-black/[0.08] dark:border-white/[0.08]',
+    'bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl',
+    'shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.02)_inset]',
+    'dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset,0_-1px_0_rgba(0,0,0,0.2)_inset]',
+  ].join(' ');
 
   return (
     <>
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-        .font-display { font-family: 'Outfit', system-ui, sans-serif; }
+        .font-display {
+          font-family: 'Outfit', system-ui, sans-serif;
+        }
       `}</style>
-      
+
       {/* Dashboard gradient background with flow lines */}
       <GradientBackground variant="dashboard" className="fixed" />
 
       <div className="min-h-screen font-display relative flex flex-col">
         {/* Same header as dashboard */}
         <TeamHeader />
-        
+
         {/* Spacer for fixed header */}
         <div className="h-16" />
-        
+
         {/* Progress bar below header */}
         <div className="sticky top-16 z-50 bg-white/80 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">
-          <div className="max-w-2xl mx-auto px-6 py-3 flex items-center justify-center gap-6">
+          <div className="max-w-6xl mx-auto px-8 py-3 flex items-center justify-center gap-6">
             {/* Progress */}
             <div className="flex items-center gap-2">
               {[1, 2, 3, 4].map((s) => (
                 <div
                   key={s}
                   className={`w-10 h-1.5 rounded-full transition-colors ${
-                    s <= step ? 'bg-[var(--purple)]' : 'bg-gray-200 dark:bg-white/10'
+                    s <= step
+                      ? 'bg-[var(--purple)]'
+                      : 'bg-gray-200 dark:bg-white/10'
                   }`}
                 />
               ))}
             </div>
-            
+
             <div className="text-sm text-gray-500 dark:text-white/50">
               Step {step} of 4
             </div>
@@ -624,7 +691,7 @@ function NewProjectPageContent() {
         </div>
 
         {/* Main content - add bottom padding for fixed nav */}
-        <main className="flex-1 max-w-5xl mx-auto px-6 py-12 pb-32">
+        <main className="flex-1 max-w-6xl mx-auto px-8 py-12 pb-32">
           {/* Step 1: Client Info */}
           {step === 1 && (
             <div className="space-y-8">
@@ -652,7 +719,7 @@ function NewProjectPageContent() {
                     className="h-12 bg-white/50 dark:bg-white/5 border-gray-200 dark:border-white/10"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
                     Client Email *
@@ -665,7 +732,7 @@ function NewProjectPageContent() {
                     className="h-12 bg-white/50 dark:bg-white/5 border-gray-200 dark:border-white/10"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
                     Client Phone
@@ -693,7 +760,9 @@ function NewProjectPageContent() {
                   Business Details
                 </h1>
                 <p className="text-gray-500 dark:text-white/50">
-                  {isAIMode ? 'Review AI-generated details and edit if needed' : 'Tell us about the business'}
+                  {isAIMode
+                    ? 'Review AI-generated details and edit if needed'
+                    : 'Tell us about the business'}
                 </p>
               </div>
 
@@ -707,11 +776,23 @@ function NewProjectPageContent() {
                     <div className="flex items-center gap-2">
                       {isAIMode && (
                         <>
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">
+                            AI Generated
+                          </span>
                           <button
                             type="button"
-                            onClick={() => setRegenField(regenField === 'businessName' ? null : 'businessName')}
-                            className={`p-1.5 rounded-lg transition-colors ${regenField === 'businessName' ? 'bg-[var(--purple)]/10 text-[var(--purple)]' : 'hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-[var(--purple)]'}`}
+                            onClick={() =>
+                              setRegenField(
+                                regenField === 'businessName'
+                                  ? null
+                                  : 'businessName'
+                              )
+                            }
+                            className={`p-1.5 rounded-lg transition-colors ${
+                              regenField === 'businessName'
+                                ? 'bg-[var(--purple)]/10 text-[var(--purple)]'
+                                : 'hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-[var(--purple)]'
+                            }`}
                             title="Regenerate with AI"
                           >
                             <Sparkles className="w-3.5 h-3.5" />
@@ -723,7 +804,9 @@ function NewProjectPageContent() {
                   <Input
                     placeholder="Acme Consulting"
                     value={projectData.businessName}
-                    onChange={(e) => updateField('businessName', e.target.value)}
+                    onChange={(e) =>
+                      updateField('businessName', e.target.value)
+                    }
                     className="h-12 bg-gray-50 dark:bg-white/5 border-gray-200 dark:border-white/10"
                   />
                   {/* Regeneration Card */}
@@ -765,7 +848,10 @@ function NewProjectPageContent() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              onClick={() => { setRegenField(null); setRegenPrompt(''); }}
+                              onClick={() => {
+                                setRegenField(null);
+                                setRegenPrompt('');
+                              }}
                             >
                               Cancel
                             </Button>
@@ -775,7 +861,7 @@ function NewProjectPageContent() {
                     </div>
                   )}
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
                     Industry *
@@ -787,11 +873,13 @@ function NewProjectPageContent() {
                   >
                     <option value="">Select industry...</option>
                     {industries.map((ind) => (
-                      <option key={ind} value={ind}>{ind}</option>
+                      <option key={ind} value={ind}>
+                        {ind}
+                      </option>
                     ))}
                   </select>
                 </div>
-                
+
                 {/* Description Field */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
@@ -801,11 +889,23 @@ function NewProjectPageContent() {
                     <div className="flex items-center gap-2">
                       {isAIMode && (
                         <>
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">
+                            AI Generated
+                          </span>
                           <button
                             type="button"
-                            onClick={() => setRegenField(regenField === 'description' ? null : 'description')}
-                            className={`p-1.5 rounded-lg transition-colors ${regenField === 'description' ? 'bg-[var(--purple)]/10 text-[var(--purple)]' : 'hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-[var(--purple)]'}`}
+                            onClick={() =>
+                              setRegenField(
+                                regenField === 'description'
+                                  ? null
+                                  : 'description'
+                              )
+                            }
+                            className={`p-1.5 rounded-lg transition-colors ${
+                              regenField === 'description'
+                                ? 'bg-[var(--purple)]/10 text-[var(--purple)]'
+                                : 'hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-[var(--purple)]'
+                            }`}
                             title="Regenerate with AI"
                           >
                             <Sparkles className="w-3.5 h-3.5" />
@@ -860,7 +960,10 @@ function NewProjectPageContent() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              onClick={() => { setRegenField(null); setRegenPrompt(''); }}
+                              onClick={() => {
+                                setRegenField(null);
+                                setRegenPrompt('');
+                              }}
                             >
                               Cancel
                             </Button>
@@ -870,24 +973,28 @@ function NewProjectPageContent() {
                     </div>
                   )}
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
                       Target Audience
                     </Label>
                     {isAIMode && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">
+                        AI Generated
+                      </span>
                     )}
                   </div>
                   <Input
                     placeholder="e.g., Small business owners in Berlin"
                     value={projectData.targetAudience}
-                    onChange={(e) => updateField('targetAudience', e.target.value)}
+                    onChange={(e) =>
+                      updateField('targetAudience', e.target.value)
+                    }
                     className="h-12 bg-white/50 dark:bg-white/5 border-gray-200 dark:border-white/10"
                   />
                 </div>
-                
+
                 {/* UVP Field */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
@@ -897,11 +1004,19 @@ function NewProjectPageContent() {
                     <div className="flex items-center gap-2">
                       {isAIMode && (
                         <>
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">
+                            AI Generated
+                          </span>
                           <button
                             type="button"
-                            onClick={() => setRegenField(regenField === 'uvp' ? null : 'uvp')}
-                            className={`p-1.5 rounded-lg transition-colors ${regenField === 'uvp' ? 'bg-[var(--purple)]/10 text-[var(--purple)]' : 'hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-[var(--purple)]'}`}
+                            onClick={() =>
+                              setRegenField(regenField === 'uvp' ? null : 'uvp')
+                            }
+                            className={`p-1.5 rounded-lg transition-colors ${
+                              regenField === 'uvp'
+                                ? 'bg-[var(--purple)]/10 text-[var(--purple)]'
+                                : 'hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-[var(--purple)]'
+                            }`}
                             title="Regenerate with AI"
                           >
                             <Sparkles className="w-3.5 h-3.5" />
@@ -955,7 +1070,10 @@ function NewProjectPageContent() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              onClick={() => { setRegenField(null); setRegenPrompt(''); }}
+                              onClick={() => {
+                                setRegenField(null);
+                                setRegenPrompt('');
+                              }}
                             >
                               Cancel
                             </Button>
@@ -1002,8 +1120,12 @@ function NewProjectPageContent() {
                             : 'border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20'
                         }`}
                       >
-                        <div className="font-medium text-gray-900 dark:text-white">{option.label}</div>
-                        <div className="text-sm text-gray-500 dark:text-white/50">{option.desc}</div>
+                        <div className="font-medium text-gray-900 dark:text-white">
+                          {option.label}
+                        </div>
+                        <div className="text-sm text-gray-500 dark:text-white/50">
+                          {option.desc}
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -1026,7 +1148,9 @@ function NewProjectPageContent() {
                             : 'border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20'
                         }`}
                       >
-                        <div className="font-medium text-gray-900 dark:text-white">{option.label}</div>
+                        <div className="font-medium text-gray-900 dark:text-white">
+                          {option.label}
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -1050,7 +1174,9 @@ function NewProjectPageContent() {
                         }`}
                       >
                         <span className="mr-2">{option.emoji}</span>
-                        <span className="font-medium text-gray-900 dark:text-white">{option.label}</span>
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          {option.label}
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -1086,12 +1212,14 @@ function NewProjectPageContent() {
                         type="email"
                         placeholder="info@business.com"
                         value={projectData.businessEmail}
-                        onChange={(e) => updateField('businessEmail', e.target.value)}
+                        onChange={(e) =>
+                          updateField('businessEmail', e.target.value)
+                        }
                         className="h-12 pl-11 bg-gray-50 dark:bg-white/5 border-gray-200 dark:border-white/10"
                       />
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
                       Business Phone
@@ -1102,13 +1230,15 @@ function NewProjectPageContent() {
                         type="tel"
                         placeholder="+49 123 456 7890"
                         value={projectData.businessPhone}
-                        onChange={(e) => updateField('businessPhone', e.target.value)}
+                        onChange={(e) =>
+                          updateField('businessPhone', e.target.value)
+                        }
                         className="h-12 pl-11 bg-gray-50 dark:bg-white/5 border-gray-200 dark:border-white/10"
                       />
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
                     Business Address
@@ -1116,11 +1246,13 @@ function NewProjectPageContent() {
                   <Input
                     placeholder="123 Main Street, Berlin, Germany"
                     value={projectData.businessAddress}
-                    onChange={(e) => updateField('businessAddress', e.target.value)}
+                    onChange={(e) =>
+                      updateField('businessAddress', e.target.value)
+                    }
                     className="h-12 bg-gray-50 dark:bg-white/5 border-gray-200 dark:border-white/10"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
                     Existing Website
@@ -1146,31 +1278,46 @@ function NewProjectPageContent() {
                 </h3>
                 <div className="grid sm:grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-gray-500 dark:text-white/50">Client:</span>
-                    <span className="ml-2 text-gray-900 dark:text-white">{projectData.clientName}</span>
+                    <span className="text-gray-500 dark:text-white/50">
+                      Client:
+                    </span>
+                    <span className="ml-2 text-gray-900 dark:text-white">
+                      {projectData.clientName}
+                    </span>
                   </div>
                   <div>
-                    <span className="text-gray-500 dark:text-white/50">Business:</span>
-                    <span className="ml-2 text-gray-900 dark:text-white">{projectData.businessName}</span>
+                    <span className="text-gray-500 dark:text-white/50">
+                      Business:
+                    </span>
+                    <span className="ml-2 text-gray-900 dark:text-white">
+                      {projectData.businessName}
+                    </span>
                   </div>
                   <div>
-                    <span className="text-gray-500 dark:text-white/50">Industry:</span>
-                    <span className="ml-2 text-gray-900 dark:text-white">{projectData.industry}</span>
+                    <span className="text-gray-500 dark:text-white/50">
+                      Industry:
+                    </span>
+                    <span className="ml-2 text-gray-900 dark:text-white">
+                      {projectData.industry}
+                    </span>
                   </div>
                   <div>
-                    <span className="text-gray-500 dark:text-white/50">Goal:</span>
-                    <span className="ml-2 text-gray-900 dark:text-white capitalize">{projectData.goal}</span>
+                    <span className="text-gray-500 dark:text-white/50">
+                      Goal:
+                    </span>
+                    <span className="ml-2 text-gray-900 dark:text-white capitalize">
+                      {projectData.goal}
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
           )}
-
         </main>
 
         {/* Fixed Navigation */}
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-[#0a0a0c]/95 backdrop-blur-xl border-t border-gray-200 dark:border-white/10">
-          <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="max-w-6xl mx-auto px-8 py-4 flex items-center justify-between">
             {/* Back/Cancel button */}
             {step === 1 ? (
               <Link href="/team/dashboard">
@@ -1192,7 +1339,7 @@ function NewProjectPageContent() {
                 Back
               </Button>
             )}
-            
+
             {/* Continue button */}
             {step < 4 ? (
               <Button
@@ -1234,17 +1381,21 @@ function NewProjectPageContent() {
 // Wrap in Suspense to show loading immediately
 export default function NewProjectPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 relative">
-        <GradientBackground variant="dashboard" className="fixed" />
-        <div className="relative z-10 flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[var(--purple)]/10 flex items-center justify-center">
-            <Loader2 className="w-6 h-6 animate-spin text-[var(--purple)]" />
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex flex-col items-center justify-center gap-4 relative">
+          <GradientBackground variant="dashboard" className="fixed" />
+          <div className="relative z-10 flex flex-col items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-[var(--purple)]/10 flex items-center justify-center">
+              <Loader2 className="w-6 h-6 animate-spin text-[var(--purple)]" />
+            </div>
+            <p className="text-gray-900 dark:text-white font-medium">
+              Loading...
+            </p>
           </div>
-          <p className="text-gray-900 dark:text-white font-medium">Loading...</p>
         </div>
-      </div>
-    }>
+      }
+    >
       <NewProjectPageContent />
     </Suspense>
   );

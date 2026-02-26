@@ -15,7 +15,7 @@ export function verificationEmail({
 }: VerificationEmailProps): { subject: string; html: string } {
   const subject = `Verify your email for Flowstarter`;
 
-  const actionContent = verificationCode 
+  const actionContent = verificationCode
     ? `
       <p>Enter this code to verify your email:</p>
       <div style="text-align: center; margin: 24px 0;">

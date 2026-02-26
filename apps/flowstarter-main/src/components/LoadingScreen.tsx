@@ -23,33 +23,46 @@ export function LoadingScreen({ message = 'Loading...' }: LoadingScreenProps) {
       aria-busy="true"
     >
       {/* Gradient overlay */}
-      <div 
+      <div
         className="absolute inset-0 pointer-events-none opacity-40 dark:opacity-20"
-        style={{ 
-          background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(59, 130, 246, 0.05) 50%, transparent 100%)'
+        style={{
+          background:
+            'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(59, 130, 246, 0.05) 50%, transparent 100%)',
         }}
       />
-      
+
       {/* Gradient orbs */}
-      <div 
+      <div
         className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full opacity-20 dark:opacity-10 blur-[100px] pointer-events-none"
-        style={{ background: 'radial-gradient(circle, hsl(233, 65%, 58%, 0.3) 0%, transparent 70%)' }}
+        style={{
+          background:
+            'radial-gradient(circle, hsl(233, 65%, 58%, 0.3) 0%, transparent 70%)',
+        }}
       />
-      <div 
+      <div
         className="absolute -bottom-40 -left-40 w-[600px] h-[600px] rounded-full opacity-15 dark:opacity-8 blur-[100px] pointer-events-none"
-        style={{ background: 'radial-gradient(circle, hsl(211, 93%, 61%, 0.25) 0%, transparent 70%)' }}
+        style={{
+          background:
+            'radial-gradient(circle, hsl(211, 93%, 61%, 0.25) 0%, transparent 70%)',
+        }}
       />
 
       {/* Flow lines background - subtle */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <svg 
+        <svg
           className="absolute inset-0 w-full h-full opacity-[0.04] dark:opacity-[0.03]"
-          viewBox="0 0 1200 800" 
+          viewBox="0 0 1200 800"
           preserveAspectRatio="xMidYMid slice"
           fill="none"
         >
           <defs>
-            <linearGradient id="loadingFlowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <linearGradient
+              id="loadingFlowGradient"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="0%"
+            >
               <stop offset="0%" stopColor="var(--purple)" />
               <stop offset="100%" stopColor="#3B82F6" />
             </linearGradient>
@@ -81,11 +94,9 @@ export function LoadingScreen({ message = 'Loading...' }: LoadingScreenProps) {
         {/* Simple elegant spinner */}
         <div className="relative w-12 h-12">
           {/* Outer ring */}
-          <div 
-            className="absolute inset-0 rounded-full border-2 border-gray-200 dark:border-white/10"
-          />
+          <div className="absolute inset-0 rounded-full border-2 border-gray-200 dark:border-white/10" />
           {/* Spinning arc */}
-          <div 
+          <div
             className="absolute inset-0 rounded-full border-2 border-transparent border-t-[var(--purple)] animate-spin"
             style={{ animationDuration: '0.8s' }}
           />
@@ -93,9 +104,7 @@ export function LoadingScreen({ message = 'Loading...' }: LoadingScreenProps) {
 
         {/* Message */}
         <div className="text-center">
-          <p className="text-sm text-gray-500 dark:text-white/50">
-            {message}
-          </p>
+          <p className="text-sm text-gray-500 dark:text-white/50">{message}</p>
         </div>
       </div>
     </div>

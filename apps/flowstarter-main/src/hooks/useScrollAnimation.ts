@@ -47,12 +47,10 @@ export function useScrollAnimation({
 // Animation classes for staggered fade-in-up
 export function getStaggeredAnimation(index: number, isVisible: boolean) {
   const baseDelay = index * 80; // 80ms stagger
-  
+
   return {
     className: `transition-all duration-500 ease-out ${
-      isVisible 
-        ? 'opacity-100 translate-y-0' 
-        : 'opacity-0 translate-y-4'
+      isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
     }`,
     style: {
       transitionDelay: isVisible ? `${baseDelay}ms` : '0ms',

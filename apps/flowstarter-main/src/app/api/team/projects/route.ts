@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 
 /**
  * GET /api/team/projects
- * 
+ *
  * Fetches ALL projects for team members with owner info.
  * Requires team/admin role.
  */
@@ -17,14 +17,16 @@ export async function GET() {
     }
 
     // Check role from sessionClaims.metadata OR publicMetadata
-    let role = (sessionClaims?.metadata as { role?: string })?.role?.toLowerCase();
-    
+    let role = (
+      sessionClaims?.metadata as { role?: string }
+    )?.role?.toLowerCase();
+
     // Fallback to publicMetadata if not in session claims
     if (!role) {
       const user = await currentUser();
       role = (user?.publicMetadata as { role?: string })?.role?.toLowerCase();
     }
-    
+
     if (role !== 'team' && role !== 'admin') {
       return NextResponse.json({ error: 'Not a team member' }, { status: 403 });
     }
@@ -47,17 +49,24 @@ export async function GET() {
     }
 
     // Get unique user IDs and fetch their info from Clerk
-    const userIds = [...new Set(projects?.map(p => p.user_id).filter(Boolean) || [])];
+    const userIds = [
+      ...new Set(projects?.map((p) => p.user_id).filter(Boolean) || []),
+    ];
     const userMap: Record<string, { email: string; name: string }> = {};
-    
+
     if (userIds.length > 0) {
       try {
         const clerk = await clerkClient();
-        const users = await clerk.users.getUserList({ userId: userIds, limit: 100 });
+        const users = await clerk.users.getUserList({
+          userId: userIds,
+          limit: 100,
+        });
         for (const u of users.data) {
           userMap[u.id] = {
             email: u.emailAddresses?.[0]?.emailAddress || '',
-            name: u.firstName ? `${u.firstName} ${u.lastName || ''}`.trim() : '',
+            name: u.firstName
+              ? `${u.firstName} ${u.lastName || ''}`.trim()
+              : '',
           };
         }
       } catch (e) {
@@ -66,11 +75,12 @@ export async function GET() {
     }
 
     // Enrich projects with owner info
-    const enrichedProjects = projects?.map(p => ({
-      ...p,
-      owner_email: userMap[p.user_id]?.email || null,
-      owner_name: userMap[p.user_id]?.name || null,
-    })) || [];
+    const enrichedProjects =
+      projects?.map((p) => ({
+        ...p,
+        owner_email: userMap[p.user_id]?.email || null,
+        owner_name: userMap[p.user_id]?.name || null,
+      })) || [];
 
     return NextResponse.json({ projects: enrichedProjects });
   } catch (error) {

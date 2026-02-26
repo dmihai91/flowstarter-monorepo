@@ -14,17 +14,30 @@ import { useEffect, useRef, useState } from 'react';
 import { ExternalNavigation, ExternalNavigationWithAuth } from './Navbar';
 
 // List of public routes that don't require authentication
-const publicRoutes = ['/', '/about', '/login', '/sign-up', '/team', '/team/login'];
+const publicRoutes = [
+  '/',
+  '/about',
+  '/login',
+  '/sign-up',
+  '/team',
+  '/team/login',
+];
 
 // Routes where we hide the default navbar (they have their own)
-const noNavbarRoutes = ['/', '/team', '/team/login', '/team/dashboard', '/team/dashboard/new'];
+const noNavbarRoutes = [
+  '/',
+  '/team',
+  '/team/login',
+  '/team/dashboard',
+  '/team/dashboard/new',
+];
 
 export function NavigationWrapper() {
   const pathname = usePathname() || '';
-  
+
   // Check for team routes early - they have their own layout
   const isTeamRoute = pathname.startsWith('/team');
-  
+
   const { isLoaded } = useAuth();
   const [isMounted, setIsMounted] = useState(false);
   const [isDraftLoading, setIsDraftLoading] = useState(false);
@@ -43,7 +56,8 @@ export function NavigationWrapper() {
   // Check synchronously during render to catch error pages immediately
   // This ensures the navbar is hidden even on the first render
   const errorPageFlag = getIsErrorPage();
-  const shouldHideNavbar = isTemplatePreview || errorPageFlag || isNoNavbarRoute;
+  const shouldHideNavbar =
+    isTemplatePreview || errorPageFlag || isNoNavbarRoute;
 
   // Sync state with flag for useEffect dependencies
   useEffect(() => {
@@ -144,18 +158,18 @@ export function NavigationWrapper() {
 
   // Show the general app loader once on the very first load of the app (public or protected)
   // Never show for team routes - they handle their own loading
-  const shouldShowInitial = !isTeamRoute && !hasSeenInitial && (!isMounted || !isLoaded);
+  const shouldShowInitial =
+    !isTeamRoute && !hasSeenInitial && (!isMounted || !isLoaded);
 
   // Consolidate all loading conditions to prevent duplicate loading screens
   // Never show for team routes
   const showLoading =
-    !isTeamRoute && (
-      shouldShowInitial ||
+    !isTeamRoute &&
+    (shouldShowInitial ||
       isDraftLoading ||
       isDraftDiscarding ||
       !isMounted ||
-      (!isPublicRoute && !isLoaded)
-    );
+      (!isPublicRoute && !isLoaded));
 
   // Don't render navigation for template previews, error pages, or team routes
   // Check this FIRST before any loading logic to prevent flicker

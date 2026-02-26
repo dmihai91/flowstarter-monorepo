@@ -3,7 +3,11 @@ import {
   createBlockedResponse,
   getRateLimitHeaders,
 } from '@/lib/arcjet';
-import { clerkClient, clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import {
+  clerkClient,
+  clerkMiddleware,
+  createRouteMatcher,
+} from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { applySecurityHeaders } from './utils/security-headers';
 
@@ -297,12 +301,14 @@ export default clerkMiddleware(async (auth, req) => {
         // Fetch user to get publicMetadata
         const client = await clerkClient();
         const user = await client.users.getUser(userId);
-        const role = (user.publicMetadata?.role as string || '').toLowerCase();
+        const role = (
+          (user.publicMetadata?.role as string) || ''
+        ).toLowerCase();
         const isTeamMember = role === 'team' || role === 'admin';
-        
+
         // Team users → /team/dashboard, Clients → /dashboard
         const targetPath = isTeamMember ? '/team/dashboard' : '/dashboard';
-        
+
         const url = req.nextUrl.clone();
         url.pathname = targetPath;
         return NextResponse.redirect(url);
@@ -337,7 +343,9 @@ export default clerkMiddleware(async (auth, req) => {
         if (userId) {
           const url = req.nextUrl.clone();
           // Check if user is a team member
-          const role = (sessionClaims?.metadata as { role?: string })?.role?.toLowerCase();
+          const role = (
+            sessionClaims?.metadata as { role?: string }
+          )?.role?.toLowerCase();
           const isTeamMember = role === 'team' || role === 'admin';
           url.pathname = isTeamMember ? '/team/dashboard' : '/dashboard';
           return NextResponse.redirect(url);

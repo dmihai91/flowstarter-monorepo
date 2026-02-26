@@ -16,10 +16,7 @@ import { TeamHeader } from '../components/TeamHeader';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { 
-  Plus, 
-  UserPlus,
-} from 'lucide-react';
+import { Plus, UserPlus } from 'lucide-react';
 import { LoadingScreen } from '@/components/LoadingScreen';
 
 export const dynamic = 'force-dynamic';
@@ -28,7 +25,7 @@ export default function TeamDashboardPage() {
   const { user, isLoaded: userLoaded } = useUser();
   const router = useRouter();
   const { data: projects, isLoading: projectsLoading } = useTeamProjects();
-  
+
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -38,7 +35,7 @@ export default function TeamDashboardPage() {
       const metadata = user?.publicMetadata as { role?: string } | undefined;
       const role = metadata?.role?.toLowerCase();
       const isTeam = role === 'team' || role === 'admin';
-      
+
       if (!user) {
         router.push('/login');
       } else {
@@ -55,7 +52,8 @@ export default function TeamDashboardPage() {
 
   const firstName = user?.firstName || 'there';
   const hour = new Date().getHours();
-  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  const greeting =
+    hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
 
   return (
     <DashboardWrapper>
@@ -69,7 +67,10 @@ export default function TeamDashboardPage() {
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
           <div>
             <p className="text-gray-500 dark:text-white/50 mb-1">
-              {greeting}, <span className="text-gray-700 dark:text-white/70 font-medium">{firstName}</span>
+              {greeting},{' '}
+              <span className="text-gray-700 dark:text-white/70 font-medium">
+                {firstName}
+              </span>
             </p>
             <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
               Team Dashboard

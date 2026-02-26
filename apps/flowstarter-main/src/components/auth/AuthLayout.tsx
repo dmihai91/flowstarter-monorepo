@@ -29,9 +29,11 @@ export default function AuthLayout({
     <>
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-        .font-display { font-family: 'Outfit', system-ui, sans-serif; }
+        .font-display {
+          font-family: 'Outfit', system-ui, sans-serif;
+        }
       `}</style>
-      
+
       <div className="min-h-screen w-full font-display relative overflow-hidden flex flex-col">
         {/* Gradient background with flow lines */}
         <GradientBackground variant="dashboard" className="fixed" />
@@ -41,9 +43,13 @@ export default function AuthLayout({
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
               <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20 group-hover:shadow-[var(--purple)]/30 transition-shadow">
-                <span className="text-white font-bold text-xs sm:text-sm">F</span>
+                <span className="text-white font-bold text-xs sm:text-sm">
+                  F
+                </span>
               </div>
-              <span className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">Flowstarter</span>
+              <span className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
+                Flowstarter
+              </span>
               {showTeamBadge && (
                 <span className="px-2 py-0.5 text-[10px] font-medium bg-[var(--purple)]/10 text-[var(--purple)] rounded-full">
                   Team
@@ -61,7 +67,9 @@ export default function AuthLayout({
             <div className="text-center mb-8">
               {title && (
                 <h1 className="text-3xl font-bold tracking-tight mb-3">
-                  <span className="text-gray-900 dark:text-white">{title.split(' ').slice(0, -1).join(' ')} </span>
+                  <span className="text-gray-900 dark:text-white">
+                    {title.split(' ').slice(0, -1).join(' ')}{' '}
+                  </span>
                   <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
                     {title.split(' ').slice(-1)}
                   </span>
@@ -73,11 +81,9 @@ export default function AuthLayout({
                 </p>
               )}
             </div>
-            
+
             {/* Auth content */}
-            <div className="relative">
-              {children}
-            </div>
+            <div className="relative">{children}</div>
 
             {/* Stats - for client login only */}
             {!hideFooterStats && (
@@ -90,10 +96,16 @@ export default function AuthLayout({
                   ].map((stat, i) => (
                     <div key={i} className="flex items-center">
                       <div className="text-center px-3">
-                        <div className="text-lg font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">{stat.value}</div>
-                        <div className="text-[9px] text-gray-400 dark:text-white/30 uppercase tracking-wider">{stat.label}</div>
+                        <div className="text-lg font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
+                          {stat.value}
+                        </div>
+                        <div className="text-[9px] text-gray-400 dark:text-white/30 uppercase tracking-wider">
+                          {stat.label}
+                        </div>
                       </div>
-                      {i < 2 && <div className="w-px h-6 bg-gray-200 dark:bg-white/10" />}
+                      {i < 2 && (
+                        <div className="w-px h-6 bg-gray-200 dark:bg-white/10" />
+                      )}
                     </div>
                   ))}
                 </div>

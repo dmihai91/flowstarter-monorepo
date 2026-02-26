@@ -24,7 +24,9 @@ export function passwordResetEmail({
       <a href="${resetUrl}" class="button">Reset Password</a>
     </div>
     <p class="muted" style="margin-top: 24px;">
-      This link will expire in ${expiresInHours} hour${expiresInHours > 1 ? 's' : ''}.
+      This link will expire in ${expiresInHours} hour${
+    expiresInHours > 1 ? 's' : ''
+  }.
     </p>
     <p class="muted">
       If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.

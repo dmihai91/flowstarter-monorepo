@@ -2,7 +2,13 @@
 
 import { cn } from '@/lib/utils';
 
-export type GradientVariant = 'dashboard' | 'integrations' | 'help' | 'wizard' | 'landing' | 'default';
+export type GradientVariant =
+  | 'dashboard'
+  | 'integrations'
+  | 'help'
+  | 'wizard'
+  | 'landing'
+  | 'default';
 
 interface GradientBackgroundProps {
   variant?: GradientVariant;
@@ -30,7 +36,7 @@ export function GradientBackground({
   // Lines visibility - subtle
   const lineOpacity = 'opacity-[0.08]';
   const lineOpacityDark = 'dark:opacity-[0.06]';
-  
+
   return (
     <>
       <div
@@ -41,52 +47,72 @@ export function GradientBackground({
       >
         {/* Base - clean white/dark */}
         <div className="absolute inset-0 bg-white dark:bg-[#07070a]" />
-        
+
         {/* Top purple/indigo glow */}
-        <div 
+        <div
           className="absolute -top-[200px] left-1/2 -translate-x-1/2 w-[1000px] h-[500px] rounded-full opacity-[0.5] dark:opacity-[0.15]"
-          style={{ 
-            background: 'radial-gradient(ellipse, rgba(99, 102, 241, 0.4) 0%, transparent 70%)'
+          style={{
+            background:
+              'radial-gradient(ellipse, rgba(99, 102, 241, 0.4) 0%, transparent 70%)',
           }}
         />
-        
+
         {/* Right violet glow */}
-        <div 
+        <div
           className="absolute top-1/4 -right-[100px] w-[500px] h-[500px] rounded-full opacity-[0.35] dark:opacity-[0.10]"
-          style={{ 
-            background: 'radial-gradient(ellipse, rgba(139, 92, 246, 0.3) 0%, transparent 70%)'
+          style={{
+            background:
+              'radial-gradient(ellipse, rgba(139, 92, 246, 0.3) 0%, transparent 70%)',
           }}
         />
-        
+
         {/* Bottom left - subtle warm/yellow tint */}
-        <div 
+        <div
           className="absolute -bottom-[100px] -left-[100px] w-[600px] h-[400px] rounded-full opacity-[0.25] dark:opacity-[0.08]"
-          style={{ 
-            background: 'radial-gradient(ellipse, rgba(251, 191, 36, 0.25) 0%, transparent 70%)'
+          style={{
+            background:
+              'radial-gradient(ellipse, rgba(251, 191, 36, 0.25) 0%, transparent 70%)',
           }}
         />
-        
+
         {/* Bottom right - violet accent */}
-        <div 
+        <div
           className="absolute -bottom-[150px] right-1/4 w-[500px] h-[400px] rounded-full opacity-[0.20] dark:opacity-[0.08]"
-          style={{ 
-            background: 'radial-gradient(ellipse, rgba(167, 139, 250, 0.25) 0%, transparent 70%)'
+          style={{
+            background:
+              'radial-gradient(ellipse, rgba(167, 139, 250, 0.25) 0%, transparent 70%)',
           }}
         />
-        
+
         {/* Animated Flow lines - very subtle for dashboard */}
-        <svg 
-          className={cn('absolute inset-0 w-full h-full', lineOpacity, lineOpacityDark)}
-          viewBox="0 0 1200 800" 
+        <svg
+          className={cn(
+            'absolute inset-0 w-full h-full',
+            lineOpacity,
+            lineOpacityDark
+          )}
+          viewBox="0 0 1200 800"
           preserveAspectRatio="xMidYMid slice"
           fill="none"
         >
           <defs>
-            <linearGradient id="flowGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <linearGradient
+              id="flowGradient1"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="0%"
+            >
               <stop offset="0%" stopColor="hsl(233, 65%, 58%)" />
               <stop offset="100%" stopColor="hsl(211, 93%, 61%)" />
             </linearGradient>
-            <linearGradient id="flowGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+            <linearGradient
+              id="flowGradient2"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="0%"
+            >
               <stop offset="0%" stopColor="hsl(211, 93%, 61%)" />
               <stop offset="100%" stopColor="hsl(233, 65%, 58%)" />
             </linearGradient>

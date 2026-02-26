@@ -11,7 +11,10 @@ import {
 import { GlassCard } from '@/components/ui/glass-card';
 import { useIntegrations, type Integration } from '@/hooks/useIntegrations';
 import { useProjects } from '@/hooks/useProjects';
-import { useScrollAnimation, getStaggeredAnimation } from '@/hooks/useScrollAnimation';
+import {
+  useScrollAnimation,
+  getStaggeredAnimation,
+} from '@/hooks/useScrollAnimation';
 import { useTranslations } from '@/lib/i18n';
 import {
   BarChart3,
@@ -37,16 +40,19 @@ export default function IntegrationsIndexPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [wizardOpen, setWizardOpen] = useState(false);
-  const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null);
+  const [selectedProvider, setSelectedProvider] = useState<Provider | null>(
+    null
+  );
   const [oauthStatus, setOauthStatus] = useState<string | null>(null);
-  
+
   const { ref: heroRef, isVisible: heroVisible } = useScrollAnimation();
   const { ref: cardsRef, isVisible: cardsVisible } = useScrollAnimation();
 
   // Check if user has any live (non-draft) projects
-  const hasLiveProject = projects.some(p => 
-    !(p as unknown as { is_draft?: boolean }).is_draft && 
-    (p.status === 'completed' || p.status === 'active')
+  const hasLiveProject = projects.some(
+    (p) =>
+      !(p as unknown as { is_draft?: boolean }).is_draft &&
+      (p.status === 'completed' || p.status === 'active')
   );
 
   // Handle OAuth callback from URL params
@@ -141,10 +147,12 @@ export default function IntegrationsIndexPage() {
   if (!isLoading && !hasLiveProject) {
     return (
       <PageContainer gradientVariant="integrations">
-        <section 
+        <section
           ref={heroRef}
           className={`relative transition-all duration-500 ease-out ${
-            heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            heroVisible
+              ? 'opacity-100 translate-y-0'
+              : 'opacity-0 translate-y-4'
           }`}
         >
           <div className="relative z-10">
@@ -171,9 +179,10 @@ export default function IntegrationsIndexPage() {
               Integrations unlock after your site is live
             </h2>
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto">
-              Once we build and launch your website, you'll be able to connect analytics, email marketing, scheduling tools, and more.
+              Once we build and launch your website, you'll be able to connect
+              analytics, email marketing, scheduling tools, and more.
             </p>
-            
+
             {/* Preview of integrations - grayed out */}
             <div className="flex items-center justify-center gap-6 mb-8 opacity-40">
               <div className="flex flex-col items-center gap-2">
@@ -197,9 +206,7 @@ export default function IntegrationsIndexPage() {
             </div>
 
             <Link href="/dashboard">
-              <Button>
-                ← Back to Dashboard
-              </Button>
+              <Button>← Back to Dashboard</Button>
             </Link>
           </GlassCard>
         </div>
@@ -210,7 +217,7 @@ export default function IntegrationsIndexPage() {
   return (
     <PageContainer gradientVariant="integrations">
       {/* Hero Section */}
-      <section 
+      <section
         ref={heroRef}
         className={`relative mb-10 transition-all duration-500 ease-out ${
           heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
@@ -255,7 +262,11 @@ export default function IntegrationsIndexPage() {
           {integrations.map((integration, index) => {
             const animation = getStaggeredAnimation(index, cardsVisible);
             return (
-              <div key={integration.id} className={animation.className} style={animation.style}>
+              <div
+                key={integration.id}
+                className={animation.className}
+                style={animation.style}
+              >
                 <IntegrationCard
                   integration={integration}
                   onConnect={() => handleConnect(integration.id as Provider)}
@@ -309,10 +320,7 @@ export default function IntegrationsIndexPage() {
               </p>
             </div>
           </div>
-          <Button
-            asChild
-            className="shrink-0"
-          >
+          <Button asChild className="shrink-0">
             <a href="/help" className="inline-flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
               {t('integrations.custom.requestButton')}

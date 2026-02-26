@@ -1,6 +1,6 @@
 /**
  * Invite Token Management
- * 
+ *
  * Creates and validates signed invitation tokens for team members.
  * Tokens are self-contained JWTs - no database required.
  */
@@ -8,7 +8,9 @@
 import { SignJWT, jwtVerify } from 'jose';
 
 const SECRET_KEY = new TextEncoder().encode(
-  process.env.INVITE_TOKEN_SECRET || process.env.CLERK_SECRET_KEY || 'fallback-secret-change-me'
+  process.env.INVITE_TOKEN_SECRET ||
+    process.env.CLERK_SECRET_KEY ||
+    'fallback-secret-change-me'
 );
 
 const ISSUER = 'flowstarter';
@@ -49,7 +51,9 @@ export async function createInviteToken(
  */
 export async function validateInviteToken(
   token: string
-): Promise<{ valid: true; payload: InviteToken } | { valid: false; error: string }> {
+): Promise<
+  { valid: true; payload: InviteToken } | { valid: false; error: string }
+> {
   try {
     const { payload } = await jwtVerify(token, SECRET_KEY, {
       issuer: ISSUER,

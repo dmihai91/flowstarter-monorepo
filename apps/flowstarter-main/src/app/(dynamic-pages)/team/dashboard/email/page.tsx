@@ -27,7 +27,11 @@ export default function EmailPage() {
 
   const txtRecords = [
     { name: '@', value: 'v=spf1 include:zoho.eu ~all', purpose: 'SPF' },
-    { name: 'zmail._domainkey', value: '[DKIM key from Zoho]', purpose: 'DKIM' },
+    {
+      name: 'zmail._domainkey',
+      value: '[DKIM key from Zoho]',
+      purpose: 'DKIM',
+    },
   ];
 
   return (
@@ -49,7 +53,11 @@ export default function EmailPage() {
               className="flex-1"
             />
             <Button asChild>
-              <a href="https://www.zoho.eu/mail/zohomail-pricing.html" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://www.zoho.eu/mail/zohomail-pricing.html"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Add to Zoho
               </a>
             </Button>
@@ -58,24 +66,36 @@ export default function EmailPage() {
 
         {/* MX Records */}
         <div className="space-y-4">
-          <h3 className="font-semibold text-gray-900 dark:text-white">MX Records</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-white">
+            MX Records
+          </h3>
           <div className="bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-200 dark:border-white/10 overflow-hidden">
             <table className="w-full text-sm">
               <thead className="bg-gray-100 dark:bg-white/5">
                 <tr>
-                  <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-white/60">Priority</th>
-                  <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-white/60">Value</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-white/60">
+                    Priority
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-white/60">
+                    Value
+                  </th>
                   <th className="px-4 py-3"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-white/10">
                 {mxRecords.map((record, i) => (
                   <tr key={i}>
-                    <td className="px-4 py-3 font-mono text-gray-900 dark:text-white">{record.priority}</td>
-                    <td className="px-4 py-3 font-mono text-gray-600 dark:text-white/70">{record.value}</td>
+                    <td className="px-4 py-3 font-mono text-gray-900 dark:text-white">
+                      {record.priority}
+                    </td>
+                    <td className="px-4 py-3 font-mono text-gray-600 dark:text-white/70">
+                      {record.value}
+                    </td>
                     <td className="px-4 py-3">
                       <button
-                        onClick={() => copyToClipboard(record.value, `MX-${record.priority}`)}
+                        onClick={() =>
+                          copyToClipboard(record.value, `MX-${record.priority}`)
+                        }
                         className="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-white/10 transition-colors"
                       >
                         {copied === `MX-${record.priority}` ? (
@@ -94,26 +114,42 @@ export default function EmailPage() {
 
         {/* TXT Records */}
         <div className="space-y-4">
-          <h3 className="font-semibold text-gray-900 dark:text-white">TXT Records (SPF & DKIM)</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-white">
+            TXT Records (SPF & DKIM)
+          </h3>
           <div className="bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-200 dark:border-white/10 overflow-hidden">
             <table className="w-full text-sm">
               <thead className="bg-gray-100 dark:bg-white/5">
                 <tr>
-                  <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-white/60">Purpose</th>
-                  <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-white/60">Name</th>
-                  <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-white/60">Value</th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-white/60">
+                    Purpose
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-white/60">
+                    Name
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-white/60">
+                    Value
+                  </th>
                   <th className="px-4 py-3"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-white/10">
                 {txtRecords.map((record, i) => (
                   <tr key={i}>
-                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{record.purpose}</td>
-                    <td className="px-4 py-3 font-mono text-gray-600 dark:text-white/70">{record.name}</td>
-                    <td className="px-4 py-3 font-mono text-gray-600 dark:text-white/70 max-w-xs truncate">{record.value}</td>
+                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
+                      {record.purpose}
+                    </td>
+                    <td className="px-4 py-3 font-mono text-gray-600 dark:text-white/70">
+                      {record.name}
+                    </td>
+                    <td className="px-4 py-3 font-mono text-gray-600 dark:text-white/70 max-w-xs truncate">
+                      {record.value}
+                    </td>
                     <td className="px-4 py-3">
                       <button
-                        onClick={() => copyToClipboard(record.value, record.purpose)}
+                        onClick={() =>
+                          copyToClipboard(record.value, record.purpose)
+                        }
                         className="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-white/10 transition-colors"
                       >
                         {copied === record.purpose ? (
@@ -133,7 +169,11 @@ export default function EmailPage() {
         {/* External links */}
         <div className="flex gap-3 pt-4">
           <Button variant="outline" asChild>
-            <a href="https://www.zoho.eu/mail/help/adminconsole/domain-verification.html" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://www.zoho.eu/mail/help/adminconsole/domain-verification.html"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <ExternalLink className="w-4 h-4 mr-2" />
               Zoho Setup Guide
             </a>

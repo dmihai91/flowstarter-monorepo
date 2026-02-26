@@ -323,7 +323,9 @@ export default function PersonalBrand2Preview() {
                   </div>
                   <div>
                     <div className="font-semibold">Email</div>
-                    <div className="text-[var(--purple)]/20">hello@example.com</div>
+                    <div className="text-[var(--purple)]/20">
+                      hello@example.com
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -332,7 +334,9 @@ export default function PersonalBrand2Preview() {
                   </div>
                   <div>
                     <div className="font-semibold">Phone</div>
-                    <div className="text-[var(--purple)]/20">+1 (555) 123-4567</div>
+                    <div className="text-[var(--purple)]/20">
+                      +1 (555) 123-4567
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -341,7 +345,9 @@ export default function PersonalBrand2Preview() {
                   </div>
                   <div>
                     <div className="font-semibold">Location</div>
-                    <div className="text-[var(--purple)]/20">Creative Studio, City</div>
+                    <div className="text-[var(--purple)]/20">
+                      Creative Studio, City
+                    </div>
                   </div>
                 </div>
               </div>

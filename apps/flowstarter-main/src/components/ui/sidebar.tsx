@@ -237,7 +237,9 @@ export function Sidebar() {
           )}
           {secondaryItems.map((item) => {
             const itemPath = item.href.split('#')[0];
-            const isActive = !item.external && (pathname === itemPath || pathname?.startsWith(itemPath));
+            const isActive =
+              !item.external &&
+              (pathname === itemPath || pathname?.startsWith(itemPath));
 
             return (
               <SidebarLink

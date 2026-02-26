@@ -1,6 +1,6 @@
 /**
  * Validate Team Invitation Token
- * 
+ *
  * Verifies the token and returns the invite details.
  */
 
@@ -39,7 +39,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     if (existingUsers.data.length > 0) {
       return NextResponse.json(
-        { valid: false, error: 'An account with this email already exists. Please sign in instead.' },
+        {
+          valid: false,
+          error:
+            'An account with this email already exists. Please sign in instead.',
+        },
         { status: 400 }
       );
     }
@@ -48,7 +52,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     let inviterName = 'Your team';
     try {
       const inviter = await client.users.getUser(payload.invitedBy);
-      inviterName = inviter.firstName 
+      inviterName = inviter.firstName
         ? `${inviter.firstName} ${inviter.lastName || ''}`.trim()
         : inviter.primaryEmailAddress?.emailAddress || 'Your team';
     } catch (e) {
@@ -61,7 +65,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       role: payload.role,
       inviterName,
     });
-
   } catch (error) {
     console.error('[Join Validate] Error:', error);
     return NextResponse.json(

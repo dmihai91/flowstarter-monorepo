@@ -18,13 +18,13 @@ export function TeamProjectsListSkeleton({ count = 3 }: { count?: number }) {
             </div>
             <Skeleton className="h-8 w-8 rounded" />
           </div>
-          
+
           {/* Description */}
           <div className="space-y-2 mb-4">
             <Skeleton className="h-3 w-full" />
             <Skeleton className="h-3 w-4/5" />
           </div>
-          
+
           {/* Quick Actions */}
           <div className="grid grid-cols-4 gap-2 mb-4">
             {Array.from({ length: 4 }).map((_, j) => (
@@ -34,7 +34,7 @@ export function TeamProjectsListSkeleton({ count = 3 }: { count?: number }) {
               </div>
             ))}
           </div>
-          
+
           {/* Footer */}
           <div className="flex items-center gap-5 pt-3 border-t border-gray-100 dark:border-white/5">
             <Skeleton className="h-3 w-24" />

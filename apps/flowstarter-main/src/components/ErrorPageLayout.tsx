@@ -13,20 +13,28 @@ export function ErrorPageLayout({ children }: ErrorPageLayoutProps) {
     <>
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-        .font-display { font-family: 'Outfit', system-ui, sans-serif; }
+        .font-display {
+          font-family: 'Outfit', system-ui, sans-serif;
+        }
       `}</style>
-      
+
       <div className="flex flex-col min-h-screen font-display bg-[#FAFAFA] dark:bg-[#0a0a0c]">
         {/* Flow lines background */}
         <div className="fixed inset-0 pointer-events-none">
-          <svg 
+          <svg
             className="absolute inset-0 w-full h-full opacity-[0.15] dark:opacity-[0.12]"
-            viewBox="0 0 1200 800" 
+            viewBox="0 0 1200 800"
             preserveAspectRatio="xMidYMid slice"
             fill="none"
           >
             <defs>
-              <linearGradient id="errorFlowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <linearGradient
+                id="errorFlowGradient"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="0%"
+              >
                 <stop offset="0%" stopColor="var(--purple)" />
                 <stop offset="100%" stopColor="#3B82F6" />
               </linearGradient>
@@ -50,9 +58,11 @@ export function ErrorPageLayout({ children }: ErrorPageLayoutProps) {
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center shadow-lg shadow-[var(--purple)]/20 group-hover:shadow-[var(--purple)]/30 transition-shadow">
                 <span className="text-white font-bold text-sm">F</span>
               </div>
-              <span className="text-lg font-semibold text-gray-900 dark:text-white">Flowstarter</span>
+              <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                Flowstarter
+              </span>
             </Link>
-            <Link 
+            <Link
               href="/"
               className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
@@ -63,9 +73,7 @@ export function ErrorPageLayout({ children }: ErrorPageLayoutProps) {
 
         {/* Content */}
         <div className="flex-1 flex items-center justify-center px-6 pt-24 pb-12 relative z-10">
-          <div className="w-full max-w-lg">
-            {children}
-          </div>
+          <div className="w-full max-w-lg">{children}</div>
         </div>
 
         <Footer />

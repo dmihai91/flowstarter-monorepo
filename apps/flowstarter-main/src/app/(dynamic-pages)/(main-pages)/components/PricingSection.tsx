@@ -47,7 +47,7 @@ export function PricingSection() {
       <div className="absolute inset-0 backdrop-blur-xl bg-[rgba(243,243,243,0.3)] dark:bg-[rgba(58,58,74,0.3)]" />
       <div className="absolute inset-0 border-t border-b border-white/40 dark:border-white/10" />
       <div className="absolute inset-0 bg-gradient-to-b from-[var(--purple)]/5 via-cyan-500/3 to-transparent pointer-events-none" />
-      
+
       {/* Animated orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-[var(--purple)]/10 to-cyan-500/10 blur-3xl animate-pulse" />
@@ -65,14 +65,14 @@ export function PricingSection() {
               <Sparkles className="w-4 h-4 mr-2" />
               Beta Pricing — 50% Off
             </Badge>
-            
+
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
               Simple, transparent pricing
             </h2>
-            
+
             <p className="text-muted-foreground tablet:text-lg md:text-xl max-w-2xl mx-auto">
-              Get your professional website built by our team. 
-              50% off setup + 50% off subscription for your first year.
+              Get your professional website built by our team. 50% off setup +
+              50% off subscription for your first year.
             </p>
 
             {/* Limited spots */}
@@ -84,11 +84,10 @@ export function PricingSection() {
 
           {/* Pricing Cards */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full max-w-5xl pt-8 px-2 sm:px-0">
-            
             {/* STARTER - Main Card */}
             <Card className="lg:col-span-1 relative bg-white/90 dark:bg-gray-800/90 border-2 border-[var(--purple)]/30 shadow-xl shadow-[var(--purple)]/5 overflow-hidden backdrop-blur-xl">
               <div className="absolute -top-px left-0 right-0 h-1 bg-gradient-to-r from-[var(--purple)] to-cyan-500" />
-              
+
               <CardContent className="p-6 sm:p-8">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
@@ -97,8 +96,12 @@ export function PricingSection() {
                       <Rocket className="w-5 h-5 text-[var(--purple)]" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">Starter</h3>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Perfect for launch</p>
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                        Starter
+                      </h3>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Perfect for launch
+                      </p>
                     </div>
                   </div>
                   <Badge className="bg-[var(--green)]/10 text-[var(--green)] border-[var(--green)]/20 text-xs">
@@ -108,22 +111,36 @@ export function PricingSection() {
 
                 {/* Setup Fee */}
                 <div className="mb-4 p-3 rounded-xl bg-gray-50 dark:bg-gray-900/50">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">One-time setup</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                    One-time setup
+                  </p>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-xl text-gray-400 line-through">€299</span>
-                    <span className="text-3xl font-bold text-gray-900 dark:text-white">€150</span>
+                    <span className="text-xl text-gray-400 line-through">
+                      €299
+                    </span>
+                    <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                      €150
+                    </span>
                   </div>
                 </div>
 
                 {/* Monthly */}
                 <div className="mb-6 p-3 rounded-xl bg-gradient-to-br from-[var(--purple)]/5 to-cyan-500/5 border border-[var(--purple)]/10">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Monthly subscription</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                    Monthly subscription
+                  </p>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-lg text-gray-400 line-through">€29</span>
-                    <span className="text-2xl font-bold text-gray-900 dark:text-white">€15</span>
+                    <span className="text-lg text-gray-400 line-through">
+                      €29
+                    </span>
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                      €15
+                    </span>
                     <span className="text-gray-500 text-sm">/mo</span>
                   </div>
-                  <p className="text-[10px] text-[var(--purple)] mt-1">50% off for 1 year</p>
+                  <p className="text-[10px] text-[var(--purple)] mt-1">
+                    50% off for 1 year
+                  </p>
                 </div>
 
                 {/* Features */}
@@ -133,7 +150,9 @@ export function PricingSection() {
                       <div className="w-4 h-4 rounded-full bg-[var(--green)]/10 flex items-center justify-center shrink-0 mt-0.5">
                         <Check className="w-2.5 h-2.5 text-[var(--green)]" />
                       </div>
-                      <span className="text-sm text-gray-600 dark:text-gray-300">{feature.text}</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                        {feature.text}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -145,7 +164,8 @@ export function PricingSection() {
                   rel="noopener noreferrer"
                   className="block w-full text-center py-3 px-6 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
                   style={{
-                    background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+                    background:
+                      'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
                   }}
                 >
                   <Calendar className="w-4 h-4 inline-block mr-2" />
@@ -164,13 +184,21 @@ export function PricingSection() {
                     </div>
                     <h3 className="text-lg font-bold text-gray-400">Pro</h3>
                   </div>
-                  <Badge variant="outline" className="text-gray-400 border-gray-300 dark:border-gray-600 text-xs">
+                  <Badge
+                    variant="outline"
+                    className="text-gray-400 border-gray-300 dark:border-gray-600 text-xs"
+                  >
                     <Lock className="w-3 h-3 mr-1" />
                     Soon
                   </Badge>
                 </div>
-                <p className="text-sm text-gray-400 mb-4">Multi-site, blog, booking, newsletter, multi-language</p>
-                <Button disabled className="w-full bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed">
+                <p className="text-sm text-gray-400 mb-4">
+                  Multi-site, blog, booking, newsletter, multi-language
+                </p>
+                <Button
+                  disabled
+                  className="w-full bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed"
+                >
                   Coming Q2 2026
                 </Button>
               </CardContent>
@@ -183,15 +211,25 @@ export function PricingSection() {
                     <div className="w-9 h-9 rounded-xl bg-gray-200/50 dark:bg-white/5 flex items-center justify-center">
                       <Crown className="w-4 h-4 text-gray-400" />
                     </div>
-                    <h3 className="text-lg font-bold text-gray-400">Business</h3>
+                    <h3 className="text-lg font-bold text-gray-400">
+                      Business
+                    </h3>
                   </div>
-                  <Badge variant="outline" className="text-gray-400 border-gray-300 dark:border-gray-600 text-xs">
+                  <Badge
+                    variant="outline"
+                    className="text-gray-400 border-gray-300 dark:border-gray-600 text-xs"
+                  >
                     <Lock className="w-3 h-3 mr-1" />
                     Soon
                   </Badge>
                 </div>
-                <p className="text-sm text-gray-400 mb-4">E-commerce, Stripe payments, advanced SEO, WhatsApp</p>
-                <Button disabled className="w-full bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed">
+                <p className="text-sm text-gray-400 mb-4">
+                  E-commerce, Stripe payments, advanced SEO, WhatsApp
+                </p>
+                <Button
+                  disabled
+                  className="w-full bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed"
+                >
                   Coming Q3 2026
                 </Button>
               </CardContent>
@@ -199,8 +237,8 @@ export function PricingSection() {
           </div>
 
           {/* View full pricing link */}
-          <Link 
-            href="/pricing" 
+          <Link
+            href="/pricing"
             className="text-sm text-[var(--purple)] hover:underline font-medium mt-4"
           >
             View full pricing details →

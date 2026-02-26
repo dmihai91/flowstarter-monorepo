@@ -125,20 +125,28 @@ export default function PrivacyPage() {
     <>
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-        .font-display { font-family: 'Outfit', system-ui, sans-serif; }
+        .font-display {
+          font-family: 'Outfit', system-ui, sans-serif;
+        }
       `}</style>
-      
+
       <div className="min-h-screen font-display bg-[#FAFAFA] dark:bg-[#0a0a0c]">
         {/* Flow lines background */}
         <div className="fixed inset-0 pointer-events-none">
-          <svg 
+          <svg
             className="absolute inset-0 w-full h-full opacity-[0.08] dark:opacity-[0.06]"
-            viewBox="0 0 1200 800" 
+            viewBox="0 0 1200 800"
             preserveAspectRatio="xMidYMid slice"
             fill="none"
           >
             <defs>
-              <linearGradient id="privacyFlowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <linearGradient
+                id="privacyFlowGradient"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="0%"
+              >
                 <stop offset="0%" stopColor="var(--purple)" />
                 <stop offset="100%" stopColor="#3B82F6" />
               </linearGradient>
@@ -162,8 +170,18 @@ export default function PrivacyPage() {
           {/* Hero */}
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium mb-6">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                />
               </svg>
               Your Privacy Matters
             </div>
@@ -171,7 +189,9 @@ export default function PrivacyPage() {
               Privacy Policy
             </h1>
             <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl mx-auto mb-4">
-              We respect your privacy and are committed to protecting your personal data. This policy explains how we collect, use, and safeguard your information.
+              We respect your privacy and are committed to protecting your
+              personal data. This policy explains how we collect, use, and
+              safeguard your information.
             </p>
             <p className="text-sm text-gray-400 dark:text-white/30">
               Last updated: {lastUpdated}
@@ -181,16 +201,35 @@ export default function PrivacyPage() {
           {/* Quick Summary */}
           <div className="grid sm:grid-cols-3 gap-4 mb-16">
             {[
-              { Icon: Shield, title: 'We Protect Your Data', desc: 'Enterprise-grade encryption and security.' },
-              { Icon: Settings, title: 'You Control Your Data', desc: 'Access, update, or delete anytime.' },
-              { Icon: Ban, title: 'No Data Sales', desc: 'We never sell your information.' },
+              {
+                Icon: Shield,
+                title: 'We Protect Your Data',
+                desc: 'Enterprise-grade encryption and security.',
+              },
+              {
+                Icon: Settings,
+                title: 'You Control Your Data',
+                desc: 'Access, update, or delete anytime.',
+              },
+              {
+                Icon: Ban,
+                title: 'No Data Sales',
+                desc: 'We never sell your information.',
+              },
             ].map((item, i) => (
-              <div key={i} className="p-6 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 text-center">
+              <div
+                key={i}
+                className="p-6 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 text-center"
+              >
                 <div className="w-12 h-12 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center mx-auto mb-3">
                   <item.Icon className="w-6 h-6 text-[var(--purple)]" />
                 </div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{item.title}</h3>
-                <p className="text-sm text-gray-500 dark:text-white/50">{item.desc}</p>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-white/50">
+                  {item.desc}
+                </p>
               </div>
             ))}
           </div>
@@ -198,7 +237,10 @@ export default function PrivacyPage() {
           {/* Sections */}
           <div className="space-y-12">
             {sections.map((section, index) => (
-              <section key={index} className="p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+              <section
+                key={index}
+                className="p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5"
+              >
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
                   <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center text-sm font-bold text-[var(--purple)]">
                     {index + 1}
@@ -229,12 +271,22 @@ export default function PrivacyPage() {
             <p className="text-gray-500 dark:text-white/50 mb-4">
               We're here to help. Reach out anytime.
             </p>
-            <a 
+            <a
               href="mailto:hello@flowstarter.app"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 font-semibold hover:shadow-lg transition-all duration-300"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
               </svg>
               hello@flowstarter.app
             </a>

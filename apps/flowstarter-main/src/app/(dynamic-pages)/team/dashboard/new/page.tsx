@@ -78,9 +78,13 @@ const industries = [
   'Financial Services',
   'Technology',
   'Creative & Design',
+  'Photography & Videography',
   'Education',
   'Construction & Trades',
   'Automotive',
+  'Events & Entertainment',
+  'Travel & Hospitality',
+  'Fitness & Sports',
   'Other',
 ];
 

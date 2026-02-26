@@ -658,7 +658,7 @@ function NewProjectPageContent() {
                       Business Name *
                     </Label>
                     <div className="flex items-center gap-2">
-                      {isAIMode && projectData.businessName && (
+                      {isAIMode && (
                         <>
                           <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
                           <button
@@ -752,7 +752,7 @@ function NewProjectPageContent() {
                       Description *
                     </Label>
                     <div className="flex items-center gap-2">
-                      {isAIMode && projectData.description && (
+                      {isAIMode && (
                         <>
                           <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
                           <button
@@ -829,7 +829,7 @@ function NewProjectPageContent() {
                     <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
                       Target Audience
                     </Label>
-                    {isAIMode && projectData.targetAudience && (
+                    {isAIMode && (
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
                     )}
                   </div>
@@ -848,7 +848,7 @@ function NewProjectPageContent() {
                       Unique Value Proposition
                     </Label>
                     <div className="flex items-center gap-2">
-                      {isAIMode && projectData.uvp && (
+                      {isAIMode && (
                         <>
                           <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
                           <button

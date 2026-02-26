@@ -831,7 +831,7 @@ export default function LandingPage() {
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/5 dark:bg-white/5 backdrop-blur-sm border border-gray-900/10 dark:border-white/10 mb-8">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="text-xs tracking-wide text-gray-600 dark:text-white/60">
-                    Founding client rate: 50% off for the first 10 experts
+                    Founding client rate — limited availability
                   </span>
                 </div>
 
@@ -1805,13 +1805,13 @@ export default function LandingPage() {
                 {/* Beta badge */}
                 <div className="absolute top-4 right-4">
                   <span className="px-3 py-1 text-xs font-medium bg-[var(--purple)] text-white rounded-full">
-                    Founding rate · 10 spots
+                    Limited availability
                   </span>
                 </div>
 
                 <h3 className="text-2xl font-bold mb-1">Founding Client Rate</h3>
                 <p className="text-sm text-gray-400 dark:text-white/40 mb-6">
-                  For the first 10 experts. Then it doubles.
+                  For early adopters only. Price increases soon.
                 </p>
 
                 {/* Pricing */}
@@ -2266,7 +2266,7 @@ export default function LandingPage() {
               </Button>
             </a>
             <p className="text-sm text-gray-400 dark:text-white/20 mt-4">
-              €599 setup · €39/month · Founding rate for first 10 experts
+              €599 setup · €39/month · Founding rate — limited availability
             </p>
           </div>
         </section>

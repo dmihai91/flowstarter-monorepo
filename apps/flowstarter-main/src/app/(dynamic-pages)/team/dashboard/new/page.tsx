@@ -265,8 +265,8 @@ function NewProjectPageContent() {
           brandTone: (result?.brandTone?.toLowerCase() as BrandTone) || '',
         }));
         
-        // Start at step 2 (business details with AI-generated content)
-        setStep(2);
+        // Start at step 1 (client info first, then business details with AI content)
+        setStep(1);
         
         if (result && (generatedName || result.description !== userDescription)) {
           toast.success('AI generated business details', {
@@ -615,7 +615,7 @@ function NewProjectPageContent() {
         </div>
 
         {/* Main content - add bottom padding for fixed nav */}
-        <main className="flex-1 max-w-4xl mx-auto px-6 py-12 pb-32">
+        <main className="flex-1 max-w-5xl mx-auto px-6 py-12 pb-32">
           {/* Step 1: Client Info */}
           {step === 1 && (
             <div className="space-y-8">
@@ -1163,7 +1163,7 @@ function NewProjectPageContent() {
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-[#0a0a0c]/95 backdrop-blur-xl border-t border-gray-200 dark:border-white/10">
           <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
             {/* Back/Cancel button */}
-            {(isAIMode && step === 2) || (!isAIMode && step === 1) ? (
+            {step === 1 ? (
               <Link href="/team/dashboard">
                 <Button
                   variant="ghost"
@@ -1176,16 +1176,7 @@ function NewProjectPageContent() {
             ) : (
               <Button
                 variant="ghost"
-                onClick={() => {
-                  // AI mode flow back: 1 → 2, 3 → 1, 4 → 3
-                  if (isAIMode) {
-                    if (step === 1) setStep(2);
-                    else if (step === 3) setStep(1);
-                    else setStep(step - 1);
-                  } else {
-                    setStep(step - 1);
-                  }
-                }}
+                onClick={() => setStep(step - 1)}
                 className="text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -1196,16 +1187,7 @@ function NewProjectPageContent() {
             {/* Continue button */}
             {step < 4 ? (
               <Button
-                onClick={() => {
-                  // AI mode flow: 2 → 1 → 3 → 4
-                  if (isAIMode) {
-                    if (step === 2) setStep(1);
-                    else if (step === 1) setStep(3);
-                    else setStep(step + 1);
-                  } else {
-                    setStep(step + 1);
-                  }
-                }}
+                onClick={() => setStep(step + 1)}
                 disabled={!canProceed()}
                 variant="accent"
                 size="lg"

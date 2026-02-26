@@ -270,7 +270,15 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
               return (
                 <div
                   key={project.id}
-                  className="bg-transparent hover:bg-white/30 dark:hover:bg-white/[0.03] transition-colors"
+                  className="bg-transparent hover:bg-white/30 dark:hover:bg-white/[0.03] transition-colors cursor-pointer"
+                  onClick={(e) => {
+                    // Don't navigate if clicking on dropdown
+                    if ((e.target as HTMLElement).closest('[data-radix-collection-item]') || 
+                        (e.target as HTMLElement).closest('button')) {
+                      return;
+                    }
+                    window.location.href = `/team/dashboard/projects/${project.id}`;
+                  }}
                 >
                   {/* Desktop Row */}
                   <div className="hidden md:grid md:grid-cols-[1fr_100px_150px_100px_40px] gap-4 px-4 py-3 items-center">
@@ -301,6 +309,10 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem onClick={() => window.location.href = `/team/dashboard/projects/${project.id}`}>
+                          <ExternalLink className="h-4 w-4" />
+                          Open Project
+                        </DropdownMenuItem>
                         {status === 'completed' && (
                           <DropdownMenuItem onClick={() => window.open(`/projects/${project.id}`, '_blank')}>
                             <ExternalLink className="h-4 w-4" />
@@ -363,6 +375,10 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-40">
+                          <DropdownMenuItem onClick={() => window.location.href = `/team/dashboard/projects/${project.id}`}>
+                            <ExternalLink className="h-4 w-4" />
+                            Open Project
+                          </DropdownMenuItem>
                           {status === 'completed' && (
                             <DropdownMenuItem onClick={() => window.open(`/projects/${project.id}`, '_blank')}>
                               <ExternalLink className="h-4 w-4" />
@@ -419,7 +435,8 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
             return (
               <div
                 key={project.id}
-                className="p-5 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.02)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset,0_-1px_0_rgba(0,0,0,0.2)_inset] hover:shadow-[0_4px_8px_rgba(0,0,0,0.04),0_12px_24px_rgba(0,0,0,0.06),0_1px_0_rgba(255,255,255,0.9)_inset] dark:hover:shadow-[0_4px_8px_rgba(0,0,0,0.2),0_12px_24px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.08)_inset] transition-all"
+                className="group relative p-5 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.02)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset,0_-1px_0_rgba(0,0,0,0.2)_inset] hover:shadow-[0_4px_8px_rgba(0,0,0,0.04),0_12px_24px_rgba(0,0,0,0.06),0_1px_0_rgba(255,255,255,0.9)_inset] dark:hover:shadow-[0_4px_8px_rgba(0,0,0,0.2),0_12px_24px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.08)_inset] hover:border-[var(--purple)]/30 transition-all cursor-pointer"
+                onClick={() => window.location.href = `/team/dashboard/projects/${project.id}`}
               >
                 <div className="flex items-start justify-between gap-3 mb-3">
                   {/* Project Icon */}
@@ -447,7 +464,11 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                         <MoreVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuContent align="end" className="w-48" onClick={(e) => e.stopPropagation()}>
+                      <DropdownMenuItem onClick={() => window.location.href = `/team/dashboard/projects/${project.id}`}>
+                        <ExternalLink className="h-4 w-4" />
+                        Open Project
+                      </DropdownMenuItem>
                       {status === 'completed' && (
                         <DropdownMenuItem onClick={() => window.open(`/projects/${project.id}`, '_blank')}>
                           <ExternalLink className="h-4 w-4" />

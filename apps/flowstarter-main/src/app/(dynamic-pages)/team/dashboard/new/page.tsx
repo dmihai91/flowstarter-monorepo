@@ -452,9 +452,15 @@ function NewProjectPageContent() {
       }
 
       const projectId = result?.data;
+      
+      if (!projectId) {
+        throw new Error('No project ID returned');
+      }
+      
+      console.log('Project created with ID:', projectId);
 
       toast.success('Project created successfully!', {
-        description: 'Opening project...',
+        description: `Project ID: ${projectId}`,
       });
 
       // Clear stored wizard data
@@ -462,8 +468,8 @@ function NewProjectPageContent() {
       setPrefillData(null);
       
       // Invalidate project queries so dashboard refreshes
-      queryClient.invalidateQueries({ queryKey: ['team-projects'] });
-      queryClient.invalidateQueries({ queryKey: ['projects'] });
+      await queryClient.invalidateQueries({ queryKey: ['team-projects'] });
+      await queryClient.invalidateQueries({ queryKey: ['projects'] });
 
       // Redirect to project page with UID
       router.push(`/team/dashboard/projects/${projectId}`);
@@ -679,7 +685,7 @@ function NewProjectPageContent() {
 
         {/* Progress bar below header */}
         <div className="sticky top-16 z-50 bg-white/80 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">
-          <div className="max-w-6xl mx-auto px-8 py-3 flex items-center justify-center gap-6">
+          <div className="w-full px-8 lg:px-16 xl:px-24 py-3 flex items-center justify-center gap-6">
             {/* Progress */}
             <div className="flex items-center gap-2">
               {[1, 2, 3, 4].map((s) => (
@@ -701,7 +707,7 @@ function NewProjectPageContent() {
         </div>
 
         {/* Main content - add bottom padding for fixed nav */}
-        <main className="flex-1 max-w-6xl mx-auto px-8 py-12 pb-32">
+        <main className="flex-1 w-full px-8 lg:px-16 xl:px-24 py-12 pb-32">
           {/* Step 1: Client Info (or Step 2 in AI mode) */}
           {(isAIMode ? step === 2 : step === 1) && (
             <div className="space-y-8">
@@ -1327,7 +1333,7 @@ function NewProjectPageContent() {
 
         {/* Fixed Navigation */}
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-[#0a0a0c]/95 backdrop-blur-xl border-t border-gray-200 dark:border-white/10">
-          <div className="max-w-6xl mx-auto px-8 py-4 flex items-center justify-between">
+          <div className="w-full px-8 lg:px-16 xl:px-24 py-4 flex items-center justify-between">
             {/* Back/Cancel button */}
             {step === 1 ? (
               <Link href="/team/dashboard">

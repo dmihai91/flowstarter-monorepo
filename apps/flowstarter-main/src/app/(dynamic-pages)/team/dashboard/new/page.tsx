@@ -24,7 +24,8 @@ import {
   Phone,
   Globe,
   Loader2,
-  Check
+  Check,
+  RefreshCw
 } from 'lucide-react';
 
 type BusinessGoal = 'leads' | 'sales' | 'bookings';
@@ -106,7 +107,13 @@ function NewProjectPageContent() {
   const selectedIndustry = useWizardStore((state) => state.selectedIndustry);
   
   // AI generation hook (from old wizard)
-  const { generateSuggestions, isGeneratingWithAI } = useProjectSuggestions('business');
+  const { 
+    generateSuggestions, 
+    isGeneratingWithAI,
+    regenerateNames,
+    regenerateDescription,
+    regenerateUSP 
+  } = useProjectSuggestions('business');
   
   // Check if we're in AI generation mode immediately
   const isAIMode = searchParams?.get('mode') === 'ai-generated';
@@ -532,9 +539,21 @@ function NewProjectPageContent() {
                     <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
                       Business Name *
                     </Label>
-                    {isAIMode && projectData.businessName && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {isAIMode && projectData.businessName && (
+                        <>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
+                          <button
+                            type="button"
+                            onClick={() => regenerateNames()}
+                            className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-[var(--purple)] transition-colors"
+                            title="Regenerate"
+                          >
+                            <RefreshCw className="w-3.5 h-3.5" />
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </div>
                   <Input
                     placeholder="Acme Consulting"
@@ -565,9 +584,21 @@ function NewProjectPageContent() {
                     <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
                       Description *
                     </Label>
-                    {isAIMode && projectData.description && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {isAIMode && projectData.description && (
+                        <>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
+                          <button
+                            type="button"
+                            onClick={() => regenerateDescription()}
+                            className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-[var(--purple)] transition-colors"
+                            title="Regenerate"
+                          >
+                            <RefreshCw className="w-3.5 h-3.5" />
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </div>
                   <textarea
                     placeholder="What does this business do? Who do they serve?"
@@ -600,9 +631,21 @@ function NewProjectPageContent() {
                     <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
                       Unique Value Proposition
                     </Label>
-                    {isAIMode && projectData.uvp && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {isAIMode && projectData.uvp && (
+                        <>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--purple)]/10 text-[var(--purple)]">AI Generated</span>
+                          <button
+                            type="button"
+                            onClick={() => regenerateUSP()}
+                            className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-[var(--purple)] transition-colors"
+                            title="Regenerate"
+                          >
+                            <RefreshCw className="w-3.5 h-3.5" />
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </div>
                   <Input
                     placeholder="What makes this business different?"
@@ -814,16 +857,7 @@ function NewProjectPageContent() {
 
           {/* Navigation */}
           <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200 dark:border-white/10">
-            {step > 2 ? (
-              <Button
-                variant="ghost"
-                onClick={() => setStep(step - 1)}
-                className="text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back
-              </Button>
-            ) : (
+            {(isAIMode && step === 2) || (!isAIMode && step === 1) ? (
               <Link href="/team/dashboard">
                 <Button
                   variant="ghost"
@@ -833,11 +867,38 @@ function NewProjectPageContent() {
                   Cancel
                 </Button>
               </Link>
+            ) : (
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  // AI mode flow back: 1 → 2, 3 → 1
+                  if (isAIMode && step === 1) {
+                    setStep(2);
+                  } else if (isAIMode && step === 3) {
+                    setStep(1);
+                  } else {
+                    setStep(step - 1);
+                  }
+                }}
+                className="text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back
+              </Button>
             )}
             
             {step < 4 ? (
               <Button
-                onClick={() => setStep(step + 1)}
+                onClick={() => {
+                  // AI mode flow: 2 → 1 → 3 → 4
+                  if (isAIMode && step === 2) {
+                    setStep(1); // Go to client info
+                  } else if (isAIMode && step === 1) {
+                    setStep(3); // Skip back to preferences
+                  } else {
+                    setStep(step + 1);
+                  }
+                }}
                 disabled={!canProceed()}
                 className="bg-gradient-to-r from-[var(--purple)] to-blue-500 hover:from-[var(--purple)]/90 hover:to-blue-500/90 text-white font-semibold rounded-xl shadow-lg shadow-[var(--purple)]/20 h-11 px-6"
               >

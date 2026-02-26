@@ -31,6 +31,14 @@ export {
   type UseStatePersistenceReturn,
 } from './useStatePersistence';
 
+// NEW: Focused flow hooks (extracted from useEditorChatState v4)
+export { useSyncCallbacks } from './useSyncCallbacks';
+export { useAdditionalState, type PreviewSource as AdditionalPreviewSource } from './useAdditionalState';
+export { useDescriptionFlow } from './useDescriptionFlow';
+export { useTemplateFlow } from './useTemplateFlow';
+export { usePersonalizationFlow } from './usePersonalizationFlow';
+export { useBusinessFlow } from './useBusinessFlow';
+
 // Handler hooks (extracted from useEditorChatState for better organization)
 export { useBuildHandlers, type UseBuildHandlersProps, type UseBuildHandlersReturn } from './useBuildHandlers';
 export { useSimpleBuildHandlers } from './useSimpleBuildHandlers';

@@ -4,7 +4,6 @@ import { Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import { GradientBackground } from '@/components/ui/gradient-background';
 import { TeamHeader } from '../../components/TeamHeader';
-import FooterCompact from '@/components/FooterCompact';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Loader2, Check } from 'lucide-react';
 
@@ -48,7 +47,6 @@ function NewProjectPageContent() {
           <GradientBackground variant="dashboard" className="fixed inset-0" />
           <GenerationScreen currentStep={generationStep} />
         </div>
-        <FooterCompact />
       </div>
     );
   }
@@ -173,7 +171,7 @@ function NewProjectPageContent() {
           </div>
         </div>
 
-        <FooterCompact />
+        {/* Footer hidden on wizard - fixed nav takes its place */}
       </div>
     </>
   );

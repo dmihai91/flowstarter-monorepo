@@ -274,8 +274,8 @@ function NewProjectPageContent() {
     }
   };
 
-  // Show generation screen for AI mode, regular loading for auth check
-  const showGenerationScreen = isGenerating || isAIMode;
+  // Show generation screen only while actively generating
+  const showGenerationScreen = isGenerating;
   const showLoading = (isLoading || !userLoaded) && !showGenerationScreen;
   
   // Generation screen - show immediately for AI mode

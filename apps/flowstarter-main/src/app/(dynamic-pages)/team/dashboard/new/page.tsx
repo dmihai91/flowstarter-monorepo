@@ -291,8 +291,8 @@ function NewProjectPageContent() {
             brandTone: (result?.brandTone?.toLowerCase() as BrandTone) || '',
           }));
 
-          // Start at step 1 (client info first, then business details with AI content)
-          setStep(1);
+          // Start at step 2 (business details first with AI content)
+          setStep(2);
 
           if (
             result &&
@@ -678,20 +678,24 @@ function NewProjectPageContent() {
           <div className="max-w-6xl mx-auto px-8 py-3 flex items-center justify-center gap-6">
             {/* Progress */}
             <div className="flex items-center gap-2">
-              {[1, 2, 3, 4].map((s) => (
-                <div
-                  key={s}
-                  className={`w-10 h-1.5 rounded-full transition-colors ${
-                    s <= step
-                      ? 'bg-[var(--purple)]'
-                      : 'bg-gray-200 dark:bg-white/10'
-                  }`}
-                />
-              ))}
+              {[1, 2, 3, 4].map((s) => {
+                // In AI mode, step order is 2 → 1 → 3 → 4, so adjust display
+                const displayStep = isAIMode ? (step === 2 ? 1 : step === 1 ? 2 : step) : step;
+                return (
+                  <div
+                    key={s}
+                    className={`w-10 h-1.5 rounded-full transition-colors ${
+                      s <= displayStep
+                        ? 'bg-[var(--purple)]'
+                        : 'bg-gray-200 dark:bg-white/10'
+                    }`}
+                  />
+                );
+              })}
             </div>
 
             <div className="text-sm text-gray-500 dark:text-white/50">
-              Step {step} of 4
+              Step {isAIMode ? (step === 2 ? 1 : step === 1 ? 2 : step) : step} of 4
             </div>
           </div>
         </div>
@@ -1325,7 +1329,7 @@ function NewProjectPageContent() {
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-[#0a0a0c]/95 backdrop-blur-xl border-t border-gray-200 dark:border-white/10">
           <div className="max-w-6xl mx-auto px-8 py-4 flex items-center justify-between">
             {/* Back/Cancel button */}
-            {step === 1 ? (
+            {(isAIMode && step === 2) || (!isAIMode && step === 1) ? (
               <Link href="/team/dashboard">
                 <Button
                   variant="ghost"
@@ -1338,7 +1342,16 @@ function NewProjectPageContent() {
             ) : (
               <Button
                 variant="ghost"
-                onClick={() => setStep(step - 1)}
+                onClick={() => {
+                  // AI mode: 2 → 1 → 3 → 4, so back is: 1 → 2, 3 → 1, 4 → 3
+                  if (isAIMode) {
+                    if (step === 1) setStep(2);
+                    else if (step === 3) setStep(1);
+                    else setStep(step - 1);
+                  } else {
+                    setStep(step - 1);
+                  }
+                }}
                 className="text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -1349,7 +1362,16 @@ function NewProjectPageContent() {
             {/* Continue button */}
             {step < 4 ? (
               <Button
-                onClick={() => setStep(step + 1)}
+                onClick={() => {
+                  // AI mode: 2 → 1 → 3 → 4
+                  if (isAIMode) {
+                    if (step === 2) setStep(1);
+                    else if (step === 1) setStep(3);
+                    else setStep(step + 1);
+                  } else {
+                    setStep(step + 1);
+                  }
+                }}
                 disabled={!canProceed()}
                 variant="accent"
                 size="lg"

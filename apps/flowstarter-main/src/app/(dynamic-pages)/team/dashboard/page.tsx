@@ -68,7 +68,7 @@ export default function TeamDashboardPage() {
             </span>
           </p>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
-            Delivery Pipeline
+            Dashboard
           </h1>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
@@ -90,7 +90,21 @@ export default function TeamDashboardPage() {
         </div>
       </div>
 
-      {/* PRIMARY: Active Projects Pipeline */}
+      {/* Quick Scaffold Tool */}
+      <div className="mb-8">
+        <QuickScaffold />
+      </div>
+
+      {/* Stats Row */}
+      <div className="mb-8">
+        {projectsLoading ? (
+          <TeamProjectsStatsSkeleton />
+        ) : (
+          <TeamProjectsStats projects={projects || []} />
+        )}
+      </div>
+
+      {/* All Projects */}
       <div className="mb-8">
         {projectsLoading ? (
           <TeamProjectsListSkeleton count={3} />
@@ -105,7 +119,7 @@ export default function TeamDashboardPage() {
               No projects yet
             </h3>
             <p className="text-gray-500 dark:text-white/50 mb-6 max-w-sm mx-auto">
-              Start a new project manually or use the scaffold generator below to create a quick draft.
+              Start a new project manually or use the scaffold generator above to create a quick draft.
             </p>
             <Link href="/team/dashboard/new">
               <Button variant="accent">
@@ -115,20 +129,6 @@ export default function TeamDashboardPage() {
             </Link>
           </div>
         )}
-      </div>
-
-      {/* SECONDARY: Stats Row */}
-      <div className="mb-8">
-        {projectsLoading ? (
-          <TeamProjectsStatsSkeleton />
-        ) : (
-          <TeamProjectsStats projects={projects || []} />
-        )}
-      </div>
-
-      {/* TERTIARY: Quick Scaffold Tool */}
-      <div className="mb-8">
-        <QuickScaffold />
       </div>
     </div>
   );

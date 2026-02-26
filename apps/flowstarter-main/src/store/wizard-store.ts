@@ -43,6 +43,25 @@ interface WizardStoreState {
   prefillData: (Partial<ProjectConfig> & { images?: string[] }) | null;
   // Store uploaded images separately for prefill
   prefillImages: Array<{ url: string; name: string }>;
+  // Team wizard data persistence
+  teamWizardData: {
+    clientName: string;
+    clientEmail: string;
+    clientPhone: string;
+    businessName: string;
+    description: string;
+    industry: string;
+    targetAudience: string;
+    uvp: string;
+    goal: string;
+    offerType: string;
+    brandTone: string;
+    businessEmail: string;
+    businessPhone: string;
+    businessAddress: string;
+    website: string;
+    step: number;
+  } | null;
   // Wizard actions for navbar
   wizardActions: {
     onCancel?: () => void;
@@ -71,6 +90,7 @@ interface WizardStoreState {
     data: (Partial<ProjectConfig> & { images?: string[] }) | null
   ) => void;
   setPrefillImages: (images: Array<{ url: string; name: string }>) => void;
+  setTeamWizardData: (data: WizardStoreState['teamWizardData']) => void;
   setWizardActions: (
     actions: Partial<WizardStoreState['wizardActions']>
   ) => void;
@@ -137,6 +157,7 @@ export const useWizardStore = create<WizardStoreState>()(
       reviewState: null,
       prefillData: null,
       prefillImages: [],
+      teamWizardData: null,
       hostedAvailability: {
         suggestedDomain: null,
         isAvailable: null,
@@ -187,6 +208,7 @@ export const useWizardStore = create<WizardStoreState>()(
         }),
       setPrefillData: (data) => set({ prefillData: data }),
       setPrefillImages: (images) => set({ prefillImages: images }),
+      setTeamWizardData: (data) => set({ teamWizardData: data }),
       setWizardActions: (actions) =>
         set((state) => ({
           wizardActions: { ...state.wizardActions, ...actions },
@@ -219,6 +241,7 @@ export const useWizardStore = create<WizardStoreState>()(
         prefillData: state.prefillData,
         prefillImages: state.prefillImages,
         skipLoadingScreen: state.skipLoadingScreen,
+        teamWizardData: state.teamWizardData,
       }),
     }
   )

@@ -106,6 +106,8 @@ function NewProjectPageContent() {
   const prefillData = useWizardStore((state) => state.prefillData);
   const setPrefillData = useWizardStore((state) => state.setPrefillData);
   const selectedIndustry = useWizardStore((state) => state.selectedIndustry);
+  const teamWizardData = useWizardStore((state) => state.teamWizardData);
+  const setTeamWizardData = useWizardStore((state) => state.setTeamWizardData);
   
   // AI generation hook (from old wizard)
   const { 
@@ -121,7 +123,6 @@ function NewProjectPageContent() {
   // Check if we're in AI generation mode immediately
   const isAIMode = searchParams?.get('mode') === 'ai-generated';
   
-  const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isGenerating, setIsGenerating] = useState(true); // Start true, will be set false after generation or if not AI mode
@@ -140,6 +141,14 @@ function NewProjectPageContent() {
     }
   }, [isAIMode]);
   
+  // Save wizard data to store whenever it changes
+  useEffect(() => {
+    setTeamWizardData({
+      ...projectData,
+      step,
+    });
+  }, [projectData, step, setTeamWizardData]);
+  
   // Generation steps for display
   const generationSteps = [
     { id: 'classifying', label: 'Analyzing your description...' },
@@ -147,23 +156,48 @@ function NewProjectPageContent() {
     { id: 'finalizing', label: 'Preparing your project...' },
   ];
   
-  const [projectData, setProjectData] = useState<ProjectData>({
-    clientName: '',
-    clientEmail: '',
-    clientPhone: '',
-    businessName: '',
-    description: '',
-    industry: '',
-    targetAudience: '',
-    uvp: '',
-    goal: '',
-    offerType: '',
-    brandTone: '',
-    businessEmail: '',
-    businessPhone: '',
-    businessAddress: '',
-    website: '',
+  const [projectData, setProjectData] = useState<ProjectData>(() => {
+    // Initialize from stored data if available
+    if (teamWizardData) {
+      return {
+        clientName: teamWizardData.clientName || '',
+        clientEmail: teamWizardData.clientEmail || '',
+        clientPhone: teamWizardData.clientPhone || '',
+        businessName: teamWizardData.businessName || '',
+        description: teamWizardData.description || '',
+        industry: teamWizardData.industry || '',
+        targetAudience: teamWizardData.targetAudience || '',
+        uvp: teamWizardData.uvp || '',
+        goal: teamWizardData.goal || '',
+        offerType: teamWizardData.offerType || '',
+        brandTone: teamWizardData.brandTone || '',
+        businessEmail: teamWizardData.businessEmail || '',
+        businessPhone: teamWizardData.businessPhone || '',
+        businessAddress: teamWizardData.businessAddress || '',
+        website: teamWizardData.website || '',
+      };
+    }
+    return {
+      clientName: '',
+      clientEmail: '',
+      clientPhone: '',
+      businessName: '',
+      description: '',
+      industry: '',
+      targetAudience: '',
+      uvp: '',
+      goal: '',
+      offerType: '',
+      brandTone: '',
+      businessEmail: '',
+      businessPhone: '',
+      businessAddress: '',
+      website: '',
+    };
   });
+  
+  // Restore step from stored data
+  const [step, setStep] = useState(() => teamWizardData?.step || 1);
 
   // Check if user is team member
   useEffect(() => {
@@ -372,6 +406,10 @@ function NewProjectPageContent() {
       toast.success('Project created successfully!', {
         description: 'Opening project...',
       });
+      
+      // Clear stored wizard data
+      setTeamWizardData(null);
+      setPrefillData(null);
       
       // Redirect to project page with UID
       router.push(`/team/dashboard/projects/${projectId}`);

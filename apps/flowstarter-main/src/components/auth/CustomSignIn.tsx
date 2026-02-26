@@ -24,24 +24,16 @@ export function CustomSignIn() {
   const isEdgeBrowser = useEdgeBrowserDetection();
   const searchParams = useSearchParams();
 
-  // Team email domains - redirect to editor
+  // Team email domains - redirect to team dashboard
   const TEAM_EMAIL_DOMAINS = ['flowstarter.app'];
 
   // Get redirect URL based on user email or query params
   const getRedirectUrl = (userEmail?: string): string => {
-    // Check if team member - redirect to editor
+    // Check if team member - redirect to team dashboard
     if (userEmail) {
       const domain = userEmail.split('@')[1]?.toLowerCase();
       if (domain && TEAM_EMAIL_DOMAINS.includes(domain)) {
-        // Get current hostname to determine environment
-        const hostname =
-          typeof window !== 'undefined' ? window.location.hostname : '';
-        if (hostname === 'flowstarter.dev') {
-          return 'https://editor.flowstarter.dev';
-        } else if (hostname === 'flowstarter.app') {
-          return 'https://editor.flowstarter.app';
-        }
-        return 'https://editor.flowstarter.dev'; // default to dev
+        return '/team/dashboard';
       }
     }
 

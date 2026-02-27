@@ -319,23 +319,15 @@ export default function App() {
     });
   }, []);
 
-  // Determine Clerk satellite configuration for cross-subdomain session sharing
-  const isSatellite = isSatelliteApp();
-  const domain = getSharedCookieDomain();
-  const mainPlatformUrl = getMainPlatformUrl();
-
-  // Type assertion needed because Clerk's types are complex discriminated unions
-  // but the runtime behavior works correctly with these props
-  const clerkProps = {
-    ...(loaderData || {}),
-    domain,
-    isSatellite,
-    signInUrl: isSatellite ? `${mainPlatformUrl}/login` : '/login',
-    signUpUrl: isSatellite ? `${mainPlatformUrl}/login` : '/login',
-  } as Parameters<typeof ClerkProvider>[0];
+  // Clerk satellite configuration is handled via environment variables:
+  // - CLERK_DOMAIN=.flowstarter.dev
+  // - CLERK_IS_SATELLITE=true  
+  // - CLERK_SIGN_IN_URL=https://flowstarter.dev/login
+  // - CLERK_SIGN_UP_URL=https://flowstarter.dev/login
+  // The rootAuthLoader reads these and passes them to ClerkProvider
 
   return (
-    <ClerkProvider {...clerkProps}>
+    <ClerkProvider {...(loaderData || {})}>
       <Layout>
         <Outlet />
       </Layout>

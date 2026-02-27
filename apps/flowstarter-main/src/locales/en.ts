@@ -2376,6 +2376,8 @@ const en = {
   'landing.pricing.badge': 'Simple pricing',
   'landing.pricing.title': 'No surprises.',
   'landing.pricing.subtitle': 'One fee to build. One fee to maintain. Cancel anytime.',
+  'landing.pricing.limitedBadge': 'Launch pricing',
+  'landing.pricing.limitedNote': 'Prices go up to €999 + €59/mo soon. Lock in current rates.',
   'landing.pricing.buildLabel': 'Setup:',
   'landing.pricing.buildPrice': '€599',
   'landing.pricing.buildPeriod': 'one-time',

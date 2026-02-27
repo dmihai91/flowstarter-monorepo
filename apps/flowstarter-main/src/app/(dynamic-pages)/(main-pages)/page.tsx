@@ -1559,7 +1559,7 @@ export default function LandingPage() {
 
             <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
               {/* Setup */}
-              <div className="group p-7 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200/80 dark:border-white/5 hover:border-[var(--purple)]/30 dark:hover:border-[var(--purple)]/20 hover:shadow-lg hover:shadow-[var(--purple)]/5 hover:-translate-y-1 transition-all duration-250 ease-out">
+              <div className="group p-7 rounded-2xl bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)] hover:shadow-[0_16px_48px_rgba(124,58,237,0.1),inset_0_1px_0_rgba(255,255,255,0.9)] dark:hover:shadow-[0_16px_48px_rgba(124,58,237,0.15),inset_0_1px_0_rgba(255,255,255,0.08)] hover:-translate-y-1 transition-all duration-300">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center">
                     <svg
@@ -1626,7 +1626,7 @@ export default function LandingPage() {
               </div>
 
               {/* Monthly subscription */}
-              <div className="group p-7 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200/80 dark:border-white/5 hover:border-[var(--purple)]/30 dark:hover:border-[var(--purple)]/20 hover:shadow-lg hover:shadow-[var(--purple)]/5 hover:-translate-y-1 transition-all duration-250 ease-out">
+              <div className="group p-7 rounded-2xl bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)] hover:shadow-[0_16px_48px_rgba(124,58,237,0.1),inset_0_1px_0_rgba(255,255,255,0.9)] dark:hover:shadow-[0_16px_48px_rgba(124,58,237,0.15),inset_0_1px_0_rgba(255,255,255,0.08)] hover:-translate-y-1 transition-all duration-300">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center">
                     <svg
@@ -1696,7 +1696,7 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {/* Tech Trust Badges */}
-              <div className="p-6 lg:p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+              <div className="p-6 lg:p-8 rounded-2xl bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)]">
                 <p className="text-xs uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-4 text-center">
                   Built on technology trusted by millions
                 </p>
@@ -1774,7 +1774,7 @@ export default function LandingPage() {
               </div>
 
               {/* First Month Free */}
-              <div className="p-6 lg:p-8 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 dark:from-emerald-500/5 dark:to-emerald-500/10 border border-emerald-500/20">
+              <div className="p-6 lg:p-8 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 dark:from-emerald-500/10 dark:to-emerald-500/5 backdrop-blur-xl border border-emerald-500/30 shadow-[0_8px_32px_rgba(16,185,129,0.08),inset_0_1px_0_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(16,185,129,0.15),inset_0_1px_0_rgba(255,255,255,0.05)]">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
                     <svg
@@ -1897,7 +1897,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* Limited time notice */}
-                <div className="mb-6 p-3 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
+                <div className="mb-6 p-3 rounded-xl bg-amber-500/10 dark:bg-amber-500/10 backdrop-blur-sm border border-amber-500/30 shadow-[0_4px_16px_rgba(245,158,11,0.08),inset_0_1px_0_rgba(255,255,255,0.5)] dark:shadow-[0_4px_16px_rgba(245,158,11,0.1),inset_0_1px_0_rgba(255,255,255,0.05)]">
                   <p className="text-xs text-amber-700 dark:text-amber-300 font-medium text-center">
                     ⏳ {t('landing.pricing.limitedNote')}
                   </p>
@@ -2018,7 +2018,7 @@ export default function LandingPage() {
               {/* Coming Soon Tiers */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
                 {/* Growth - Coming Soon */}
-                <div className="group p-6 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/50 dark:from-white/[0.04] dark:to-white/[0.02] border border-gray-200/80 dark:border-white/10 hover:border-[var(--purple)]/30 dark:hover:border-[var(--purple)]/30 relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-[var(--purple)]/5">
+                <div className="group p-6 rounded-2xl bg-white/50 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.05)] hover:shadow-[0_12px_40px_rgba(124,58,237,0.1)] relative overflow-hidden transition-all duration-300">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[var(--purple)]/10 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative">
                     <div className="flex items-center justify-between mb-4">
@@ -2054,7 +2054,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* Commerce - Coming Soon */}
-                <div className="group p-6 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/50 dark:from-white/[0.04] dark:to-white/[0.02] border border-gray-200/80 dark:border-white/10 hover:border-blue-500/30 dark:hover:border-blue-500/30 relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/5">
+                <div className="group p-6 rounded-2xl bg-white/50 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.05)] hover:shadow-[0_12px_40px_rgba(59,130,246,0.1)] relative overflow-hidden transition-all duration-300">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative">
                     <div className="flex items-center justify-between mb-4">
@@ -2096,7 +2096,7 @@ export default function LandingPage() {
               </p>
 
               {/* Perfect for you if */}
-              <div className="mt-12 p-6 rounded-2xl bg-[var(--purple)]/5 dark:bg-[var(--purple)]/10 border border-[var(--purple)]/20">
+              <div className="mt-12 p-6 rounded-2xl bg-[var(--purple)]/10 dark:bg-[var(--purple)]/10 backdrop-blur-xl border border-[var(--purple)]/30 shadow-[0_8px_32px_rgba(124,58,237,0.08),inset_0_1px_0_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(124,58,237,0.15),inset_0_1px_0_rgba(255,255,255,0.05)]">
                 <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
                   {t('landing.forYou.title')}
                 </h4>
@@ -2121,7 +2121,7 @@ export default function LandingPage() {
               </div>
 
               {/* Not the right fit */}
-              <div className="mt-4 p-6 rounded-2xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+              <div className="mt-4 p-6 rounded-2xl bg-white/50 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.05)]">
                 <h4 className="text-sm font-semibold text-gray-700 dark:text-white/70 mb-4">
                   {t('landing.notForYou.title')}
                 </h4>

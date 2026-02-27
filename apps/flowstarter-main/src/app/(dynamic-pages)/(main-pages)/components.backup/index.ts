@@ -1,9 +1,0 @@
-export { BenefitsSection } from './BenefitsSection';
-export { CTASection } from './CTASection';
-export { FeaturesSection } from './FeaturesSection';
-export { HeroSection } from './HeroSection';
-export { HowItWorksSection } from './HowItWorksSection';
-export { PricingSection } from './PricingSection';
-export { SmoothScrollLink } from './SmoothScrollLink';
-export { TemplatesSection } from './TemplatesSection';
-export { TestimonialsSection } from './TestimonialsSection';

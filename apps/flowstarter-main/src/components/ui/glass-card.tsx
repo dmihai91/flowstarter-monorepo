@@ -33,24 +33,24 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
       // Base structure
       'group relative overflow-hidden rounded-2xl',
       'px-6 py-5',
-      // Glassmorphism effect
+      // Glassmorphism effect - aligned with team dashboard
       variant === 'elevated'
         ? 'bg-white/80 dark:bg-white/[0.06]'
-        : 'bg-white/70 dark:bg-white/[0.04]',
-      'backdrop-blur-xl backdrop-saturate-150',
-      'border border-gray-200/60 dark:border-white/10',
-      // Shadow
+        : 'bg-white/60 dark:bg-white/[0.04]',
+      'backdrop-blur-2xl',
+      'border border-white/20 dark:border-white/10',
+      // Shadow with inner highlight
       variant === 'elevated'
-        ? 'shadow-[0_8px_32px_rgba(77,93,217,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)]'
-        : 'shadow-[0_4px_20px_rgba(0,0,0,0.04)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.2)]',
+        ? 'shadow-[0_8px_32px_rgba(0,0,0,0.1),0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.1)_inset]'
+        : 'shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.1)_inset]',
       // Hover effects - lift + shadow + border (unless noHover)
-      'transition-all duration-250 ease-out',
+      'transition-all duration-300 ease-out',
       !noHover && [
-        'hover:-translate-y-[3px]',
-        'hover:shadow-[0_8px_25px_rgba(0,0,0,0.06)]',
-        'hover:border-[rgba(124,58,237,0.12)]',
-        'dark:hover:shadow-[0_8px_25px_rgba(124,58,237,0.1)]',
-        'dark:hover:border-[rgba(124,58,237,0.25)]',
+        'hover:-translate-y-[2px]',
+        'hover:shadow-[0_12px_40px_rgba(0,0,0,0.1),0_1px_0_rgba(255,255,255,0.9)_inset]',
+        'hover:border-[var(--purple)]/20',
+        'dark:hover:shadow-[0_12px_40px_rgba(124,58,237,0.15),0_1px_0_rgba(255,255,255,0.1)_inset]',
+        'dark:hover:border-[var(--purple)]/30',
       ],
       // Active state
       'active:scale-[0.99]',

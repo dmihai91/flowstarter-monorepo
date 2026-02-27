@@ -40,11 +40,14 @@ const steps = [
   },
 ];
 
+// Glassmorphism card style - shared with team dashboard
+const glassCard = 'rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.1)_inset]';
+
 function OnboardingStepper() {
   const currentStepIndex = steps.findIndex((s) => s.status === 'active');
 
   return (
-    <div className="grid md:grid-cols-3 gap-4 mb-8">
+    <div className="grid md:grid-cols-3 gap-5 mb-8">
       {steps.map((step, index) => {
         const isActive = step.status === 'active';
         const isCompleted = step.status === 'completed';
@@ -55,15 +58,10 @@ function OnboardingStepper() {
           <div
             key={step.number}
             className={`
-              relative p-5 rounded-2xl border transition-all h-full flex flex-col
-              ${
-                isActive
-                  ? 'border-[var(--purple)]/30 bg-white/80 dark:bg-[#1a1a1f]/80 shadow-lg shadow-[var(--purple)]/5'
-                  : isCompleted || isPast
-                  ? 'border-green-500/30 bg-green-50/50 dark:bg-green-500/5'
-                  : 'border-gray-200/60 dark:border-white/10 bg-white/60 dark:bg-white/[0.02]'
-              }
-              backdrop-blur-xl
+              relative p-5 h-full flex flex-col transition-all duration-300
+              ${glassCard}
+              ${isActive ? 'border-[var(--purple)]/40 shadow-[0_8px_32px_rgba(124,58,237,0.12)]' : ''}
+              ${isCompleted || isPast ? 'border-green-500/30' : ''}
             `}
           >
             {/* Step badge */}
@@ -88,7 +86,7 @@ function OnboardingStepper() {
                 w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0
                 ${
                   isActive
-                    ? 'bg-[var(--purple)]/10 text-[var(--purple)]'
+                    ? 'bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 text-[var(--purple)]'
                     : isCompleted || isPast
                     ? 'bg-green-500/10 text-green-500'
                     : 'bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-white/30'
@@ -140,7 +138,7 @@ function OnboardingStepper() {
                 href={CALENDLY_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-3 w-full inline-flex items-center justify-center gap-2 h-10 px-4 rounded-lg bg-[var(--purple)] text-white text-sm font-medium transition-all hover:bg-[var(--purple)]/90 hover:shadow-lg hover:scale-[1.02]"
+                className="mt-3 w-full inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl bg-[var(--purple)] text-white text-sm font-medium transition-all hover:bg-[var(--purple)]/90 hover:shadow-lg hover:shadow-[var(--purple)]/25 hover:scale-[1.02]"
               >
                 <Calendar className="w-4 h-4" />
                 Book Free Call

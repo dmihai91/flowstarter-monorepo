@@ -47,7 +47,7 @@ function OnboardingStepper() {
   const currentStepIndex = steps.findIndex((s) => s.status === 'active');
 
   return (
-    <div className="grid md:grid-cols-3 gap-5 mb-8">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
       {steps.map((step, index) => {
         const isActive = step.status === 'active';
         const isCompleted = step.status === 'completed';

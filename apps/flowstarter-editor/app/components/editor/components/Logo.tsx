@@ -3,4 +3,4 @@
  * Ensures consistent branding across all Flowstarter apps
  */
 
-export { Logo, LogoIcon } from '@flowstarter/ui';
+export { Logo, LogoIcon } from '@flowstarter/flow';

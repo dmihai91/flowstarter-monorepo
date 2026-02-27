@@ -3,8 +3,8 @@
  * This ensures consistent loading screens across all Flowstarter apps
  */
 
-export { LoadingScreen } from '@flowstarter/ui';
+export { LoadingScreen } from '@flowstarter/flow';
 
 // Default export for convenience
-import { LoadingScreen as LS } from '@flowstarter/ui';
+import { LoadingScreen as LS } from '@flowstarter/flow';
 export default LS;

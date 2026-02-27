@@ -1,0 +1,77 @@
+/**
+ * @flowstarter/flow - Design System Styles
+ * Import this file to get all CSS variables and base styles.
+ */
+
+@import './brand.css';
+
+/* Glassmorphism utilities */
+.flow-glass {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+[data-theme='dark'] .flow-glass {
+  background: rgba(10, 10, 12, 0.5);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Gradient text */
+.flow-gradient-text {
+  background: linear-gradient(135deg, #8B5CF6 0%, #06B6D4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Focus ring */
+.flow-focus-ring:focus-visible {
+  outline: none;
+  ring: 2px solid var(--purple, hsl(233, 65%, 58%));
+  ring-offset: 2px;
+}
+
+/* Animations */
+@keyframes flow-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes flow-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes flow-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes flow-slide-up {
+  from { 
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.flow-animate-spin {
+  animation: flow-spin 0.8s linear infinite;
+}
+
+.flow-animate-pulse {
+  animation: flow-pulse 2s ease-in-out infinite;
+}
+
+.flow-animate-fade-in {
+  animation: flow-fade-in 0.2s ease-out;
+}
+
+.flow-animate-slide-up {
+  animation: flow-slide-up 0.3s ease-out;
+}

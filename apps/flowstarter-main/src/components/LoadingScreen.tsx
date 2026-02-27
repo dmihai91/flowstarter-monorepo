@@ -5,4 +5,4 @@
  * This ensures consistent loading screens across all Flowstarter apps
  */
 
-export { LoadingScreen } from '@flowstarter/ui';
+export { LoadingScreen } from '@flowstarter/flow';

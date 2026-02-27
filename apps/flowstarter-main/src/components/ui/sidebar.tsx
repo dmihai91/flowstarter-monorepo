@@ -51,7 +51,7 @@ export function Sidebar() {
 
   const supportItems: SidebarItem[] = [
     {
-      title: 'Book a Call',
+      title: 'Book Free Call',
       href: CALENDLY_URL,
       icon: Calendar,
       external: true,

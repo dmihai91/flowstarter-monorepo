@@ -704,7 +704,7 @@ export default function LandingPage() {
                   className="hidden sm:block"
                 >
                   <Button className="bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-6 h-10 text-sm font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300">
-                    Book a Call
+                    Book Free Call
                   </Button>
                 </a>
                 {/* Mobile menu button */}
@@ -807,7 +807,7 @@ export default function LandingPage() {
                   className="mt-2"
                 >
                   <Button className="w-full bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] rounded-xl h-10 text-sm font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300">
-                    Book a Call
+                    Book Free Call
                   </Button>
                 </a>
               </nav>

@@ -205,11 +205,12 @@ export default clerkMiddleware(async (auth, req) => {
       }
 
       // CSRF: rely on same-origin checks; block cross-origin unsafe methods
-      // Skip CSRF for team API routes and AI routes (protected by Clerk auth)
+      // Skip CSRF for team API routes, AI routes, and feedback (protected by Clerk auth)
       const isTeamApi = pathname.startsWith('/api/team/');
       const isAiApi = pathname.startsWith('/api/ai/');
+      const isFeedbackApi = pathname === '/api/feedback';
       const unsafe = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method);
-      if (unsafe && !isWebhook && !isTeamApi && !isAiApi) {
+      if (unsafe && !isWebhook && !isTeamApi && !isAiApi && !isFeedbackApi) {
         if (!isSameOrigin) {
           // Log CSRF block
           logSecurityEventEdge('security.csrf_blocked', {

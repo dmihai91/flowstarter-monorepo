@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useId } from 'react';
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -16,19 +17,21 @@ const sizes = {
 };
 
 export function Logo({ size = 'md', showText = true, className }: LogoProps) {
+  const gradientId = useId();
+  
   return (
     <div className={cn('flex items-center gap-3', className)}>
       <div className={cn(sizes[size], 'relative flex-shrink-0')}>
         <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
           <defs>
-            <linearGradient id="logoGrad" x1="0" y1="40" x2="40" y2="0" gradientUnits="userSpaceOnUse">
+            <linearGradient id={gradientId} x1="0" y1="40" x2="40" y2="0" gradientUnits="userSpaceOnUse">
               <stop stopColor="#8B5CF6" />
               <stop offset="1" stopColor="#06B6D4" />
             </linearGradient>
           </defs>
           
           {/* Rounded square background */}
-          <rect width="40" height="40" rx="10" fill="url(#logoGrad)" />
+          <rect width="40" height="40" rx="10" fill={`url(#${gradientId})`} />
           
           {/* Flowing wave - represents flow/movement */}
           <path 

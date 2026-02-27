@@ -1096,11 +1096,11 @@ export default function LandingPage() {
                       {/* Input area - stays at bottom */}
                       <div className="mt-auto">
                         {/* Input */}
-                        <div className="flex items-center gap-2 p-2 rounded-xl bg-white/50 dark:bg-white/[0.03] border border-white/60 dark:border-white/10">
+                        <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)] transition-all duration-300 hover:shadow-[0_6px_20px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.9)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.08)]">
                           <input
                             type="text"
                             placeholder="Try: Add form..."
-                            className="flex-1 bg-transparent text-[13px] outline-none px-2 placeholder:text-gray-400 dark:placeholder:text-white/20 text-gray-900 dark:text-white"
+                            className="flex-1 bg-transparent text-[13px] outline-none px-2 placeholder:text-gray-400 dark:placeholder:text-white/30 text-gray-900 dark:text-white"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                             onKeyDown={handleKeyDown}
@@ -1108,7 +1108,7 @@ export default function LandingPage() {
                           <button
                             onClick={() => handleSend()}
                             disabled={!inputValue.trim() || isTyping}
-                            className="w-8 h-8 rounded-lg bg-gradient-to-r from-[var(--purple)] to-blue-500 text-white flex items-center justify-center disabled:opacity-30 transition-all hover:shadow-lg"
+                            className="w-8 h-8 rounded-lg bg-gradient-to-r from-[var(--purple)] to-blue-500 text-white flex items-center justify-center disabled:opacity-30 transition-all hover:shadow-lg hover:scale-105 active:scale-95"
                           >
                             <svg
                               className="w-4 h-4"
@@ -1134,7 +1134,7 @@ export default function LandingPage() {
                                 key={prompt}
                                 onClick={() => handleSend(prompt)}
                                 disabled={isTyping}
-                                className="px-3 py-1.5 text-[11px] rounded-full bg-white/40 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 border border-gray-200/50 dark:border-white/10 text-gray-500 dark:text-white/50 transition-all disabled:opacity-50"
+                                className="px-3 py-1.5 text-[11px] rounded-full bg-white/50 dark:bg-white/[0.04] backdrop-blur-sm hover:bg-white/70 dark:hover:bg-white/[0.08] border border-white/60 dark:border-white/10 text-gray-600 dark:text-white/50 transition-all disabled:opacity-50 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)]"
                               >
                                 {prompt}
                               </button>

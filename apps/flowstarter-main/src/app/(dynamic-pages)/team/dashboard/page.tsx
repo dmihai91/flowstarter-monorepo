@@ -5,13 +5,14 @@ import { TeamProjectsListSkeleton } from './components/TeamProjectsListSkeleton'
 import { TeamProjectsStats } from './components/TeamProjectsStats';
 import { TeamProjectsStatsSkeleton } from './components/TeamProjectsStatsSkeleton';
 import { QuickScaffold } from './components/QuickScaffold';
+import { DashboardLoader } from './components/DashboardSkeleton';
 import { Button } from '@/components/ui/button';
 import { useTeamProjects } from '@/hooks/useTeamProjects';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Plus, UserPlus, Loader2, FolderOpen } from 'lucide-react';
+import { Plus, UserPlus, FolderOpen } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -39,11 +40,7 @@ export default function TeamDashboardPage() {
   }, [user, userLoaded, router]);
 
   if (isLoading || !userLoaded) {
-    return (
-      <div className="flex-1 flex items-center justify-center p-12">
-        <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)]" />
-      </div>
-    );
+    return <DashboardLoader />;
   }
 
   const firstName = user?.firstName || 'there';

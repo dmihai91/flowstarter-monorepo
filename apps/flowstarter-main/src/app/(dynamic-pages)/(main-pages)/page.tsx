@@ -406,8 +406,8 @@ export default function LandingPage() {
         @keyframes fade-in-up {
           0% {
             opacity: 0;
-            transform: translateY(24px) scale(0.96);
-            filter: blur(4px);
+            transform: translateY(40px) scale(0.92);
+            filter: blur(8px);
           }
           100% {
             opacity: 1;
@@ -416,13 +416,13 @@ export default function LandingPage() {
           }
         }
         .animate-fade-in-up {
-          animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         .animate-fade-in-up-delay-1 {
-          animation-delay: 100ms;
+          animation-delay: 0ms;
         }
         .animate-fade-in-up-delay-2 {
-          animation-delay: 200ms;
+          animation-delay: 150ms;
         }
         .animate-fade-in-up-delay-3 {
           animation-delay: 300ms;
@@ -1514,7 +1514,7 @@ export default function LandingPage() {
                   className={`group p-7 rounded-2xl bg-white/80 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200/80 dark:border-white/5 hover:border-[var(--purple)]/40 dark:hover:border-[var(--purple)]/30 hover:bg-white dark:hover:bg-white/[0.04] hover:shadow-xl hover:shadow-[var(--purple)]/10 hover:-translate-y-1 hover:scale-[1.02] transition-all duration-250 ease-out ${
                     visibleSections.has('process-cards')
                       ? `animate-fade-in-up animate-fade-in-up-delay-${i + 1}`
-                      : 'opacity-0 translate-y-6 scale-[0.96] blur-[4px]'
+                      : 'opacity-0 translate-y-10 scale-[0.92] blur-[8px]'
                   }`}
                   style={{ animationFillMode: 'forwards' }}
                 >

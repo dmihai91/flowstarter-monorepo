@@ -63,7 +63,7 @@ export function PricingSection() {
           <div className="space-y-4 max-w-[850px] mx-auto">
             <Badge className="bg-gradient-to-r from-[var(--purple)] to-cyan-500 text-white border-0 px-4 py-1.5 text-sm font-semibold">
               <Sparkles className="w-4 h-4 mr-2" />
-              Beta Pricing — 50% Off
+              Beta Pricing
             </Badge>
 
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
@@ -71,8 +71,8 @@ export function PricingSection() {
             </h2>
 
             <p className="text-muted-foreground tablet:text-lg md:text-xl max-w-2xl mx-auto">
-              Get your professional website built by our team. 50% off setup +
-              50% off subscription for your first year.
+              Get your professional website built by our team. Lock in beta
+              rates before prices go up.
             </p>
 
             {/* Limited spots */}
@@ -116,12 +116,15 @@ export function PricingSection() {
                   </p>
                   <div className="flex items-baseline gap-2">
                     <span className="text-xl text-gray-400 line-through">
-                      €299
+                      €599
                     </span>
                     <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                      €150
+                      €399
                     </span>
                   </div>
+                  <p className="text-[10px] text-[var(--purple)] mt-1">
+                    Beta pricing
+                  </p>
                 </div>
 
                 {/* Monthly */}
@@ -130,16 +133,13 @@ export function PricingSection() {
                     Monthly subscription
                   </p>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-lg text-gray-400 line-through">
-                      €29
-                    </span>
                     <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                      €15
+                      €39
                     </span>
                     <span className="text-gray-500 text-sm">/mo</span>
                   </div>
                   <p className="text-[10px] text-[var(--purple)] mt-1">
-                    50% off for 1 year
+                    Locked for 1 year, then €59/mo
                   </p>
                 </div>
 

@@ -103,6 +103,7 @@ const isPublicRoute = createRouteMatcher([
   '/privacy(.*)', // Public privacy policy
   '/terms(.*)', // Public terms of service
   '/pricing(.*)', // Public pricing page
+  '/cookies(.*)', // Public cookie policy
   '/blog(.*)', // Public blog
   '/guides(.*)',
   '/blogs(.*)',

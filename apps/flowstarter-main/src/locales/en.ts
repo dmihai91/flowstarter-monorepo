@@ -2386,10 +2386,10 @@ const en = {
 
   // Landing Page - Hero
   'landing.hero.badge': 'Early access - limited spots',
-  'landing.hero.headline1': 'A website that reflects',
-  'landing.hero.headline2': 'your expertise. And converts.',
-  'landing.hero.pain': "You're good at what you do. Your website should prove it.",
-  'landing.hero.subheadline': 'We build you a sharp, strategic website in about two weeks. One call. No templates. No DIY. Just done.',
+  'landing.hero.headline1': 'Your digital presence.',
+  'landing.hero.headline2': 'One place.',
+  'landing.hero.pain': 'Stop juggling tools.',
+  'landing.hero.subheadline': 'We set up and manage your website, bookings, analytics, and integrations — so you can focus on growing your business.',
   'landing.hero.support': '',
   'landing.hero.cta': 'Book Your Free Strategy Call',
   'landing.hero.ctaNote': 'Free. No obligation.',

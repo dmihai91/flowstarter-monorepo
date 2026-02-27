@@ -469,8 +469,34 @@ export default function LandingPage() {
           animation: shimmer 2s infinite;
         }
         .animate-gradient {
-          background-size: 200% 200%;
-          animation: gradient-shift 8s ease infinite;
+          background-size: 300% 300%;
+          animation: gradient-flow 6s ease-in-out infinite;
+        }
+        @keyframes gradient-flow {
+          0% { background-position: 0% 50%; }
+          25% { background-position: 50% 100%; }
+          50% { background-position: 100% 50%; }
+          75% { background-position: 50% 0%; }
+          100% { background-position: 0% 50%; }
+        }
+        .text-flow {
+          background: linear-gradient(
+            90deg,
+            var(--purple) 0%,
+            #3B82F6 25%,
+            #06B6D4 50%,
+            #3B82F6 75%,
+            var(--purple) 100%
+          );
+          background-size: 200% auto;
+          background-clip: text;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: text-flow-anim 4s linear infinite;
+        }
+        @keyframes text-flow-anim {
+          0% { background-position: 0% center; }
+          100% { background-position: 200% center; }
         }
 
         /* Flow field animations */
@@ -838,7 +864,7 @@ export default function LandingPage() {
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
                   Conversion infrastructure
                   <br />
-                  <span className="bg-gradient-to-r from-[var(--purple)] via-blue-500 to-cyan-400 bg-clip-text text-transparent animate-gradient">
+                  <span className="text-flow">
                     for experts with momentum.
                   </span>
                 </h1>

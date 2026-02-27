@@ -94,7 +94,6 @@ export function GradientBackground({
           animation-delay: 1s;
         }
         .flow-moving {
-          stroke-dasharray: 20 30;
           animation: gradientFlow 8s linear infinite;
         }
       `}</style>

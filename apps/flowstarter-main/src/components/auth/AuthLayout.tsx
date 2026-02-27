@@ -84,9 +84,9 @@ export default function AuthLayout({
               <div className="mt-10 pt-6 border-t border-gray-200 dark:border-white/10">
                 <div className="flex items-center justify-center gap-6">
                   {[
-                    { value: '1-2', label: 'Weeks' },
-                    { value: '~300', label: 'edits/mo' },
-                    { value: '0', label: 'Code' },
+                    { value: '1-2', label: 'Weeks to launch' },
+                    { value: '1', label: 'Call needed' },
+                    { value: '0', label: 'Tech skills required' },
                   ].map((stat, i) => (
                     <div key={i} className="flex items-center">
                       <div className="text-center px-3">

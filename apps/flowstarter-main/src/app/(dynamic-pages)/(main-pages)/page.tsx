@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Logo } from '@/components/ui/logo';
+import { useI18n } from '@/lib/i18n';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
@@ -10,6 +11,7 @@ import { useEffect, useState, useRef } from 'react';
 const CALENDLY_URL = 'https://calendly.com/flowstarter-app/discovery';
 
 export default function LandingPage() {
+  const { t } = useI18n();
   const [isLoaded, setIsLoaded] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [messages, setMessages] = useState<
@@ -859,28 +861,26 @@ export default function LandingPage() {
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/5 dark:bg-white/5 backdrop-blur-sm border border-gray-900/10 dark:border-white/10 mb-8">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="text-xs tracking-wide text-gray-600 dark:text-white/60">
-                    Early access — limited spots
+                    {t('landing.hero.badge')}
                   </span>
                 </div>
 
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
-                  A website that reflects
+                  {t('landing.hero.headline1')}
                   <br />
                   <span className="text-flow">
-                    your expertise. And converts.
+                    {t('landing.hero.headline2')}
                   </span>
                 </h1>
 
                 <p className="text-base text-gray-400 dark:text-white/40 mb-4">
-                  You've built something real — clients, reputation, results.
+                  {t('landing.hero.pain')}
                 </p>
                 <p className="text-lg lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed max-w-lg mb-3">
-                  Now you need an online presence that does it justice.
-                  We design and build a structured, professional platform
-                  that turns visitors into booked calls. Delivered in two weeks.
+                  {t('landing.hero.subheadline')}
                 </p>
                 <p className="text-sm text-gray-400 dark:text-white/30 mb-10">
-                  One conversation. We take it from there.
+                  {t('landing.hero.support')}
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10">
@@ -891,7 +891,7 @@ export default function LandingPage() {
                   >
                     <Button className="relative overflow-hidden bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-8 h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 hover:scale-[1.02] group">
                       <span className="absolute inset-0 animate-shimmer" />
-                      Request a Strategy Call
+                      {t('landing.hero.cta')}
                       <svg
                         className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
                         fill="none"
@@ -910,19 +910,19 @@ export default function LandingPage() {
                   <div className="flex flex-col">
                     <div className="text-sm text-gray-400 dark:text-white/40">
                       <span className="text-gray-700 dark:text-white/80 font-medium">
-                        €599
+                        {t('landing.hero.priceBuild')}
                       </span>
-                      <span className="ml-1">to build</span>
+                      <span className="ml-1">{t('landing.hero.priceBuildLabel')}</span>
                       <span className="mx-3 text-gray-300 dark:text-white/20">
                         ·
                       </span>
                       <span className="text-gray-700 dark:text-white/80 font-medium">
-                        €39
+                        {t('landing.hero.priceMonthly')}
                       </span>
-                      <span className="ml-1">/month to maintain</span>
+                      <span className="ml-1">{t('landing.hero.priceMonthlyLabel')}</span>
                     </div>
                     <div className="text-xs text-gray-400 dark:text-white/30 mt-1">
-                      Launch pricing. First month included.
+                      {t('landing.hero.priceNote')}
                     </div>
                   </div>
                 </div>
@@ -930,9 +930,9 @@ export default function LandingPage() {
                 {/* Stats */}
                 <div className="flex items-center justify-center lg:justify-start pt-6 border-t border-gray-200 dark:border-white/10">
                   {[
-                    { value: '1-2', label: 'Weeks to launch' },
-                    { value: '1', label: 'Call needed' },
-                    { value: '0', label: 'Tech skills required' },
+                    { value: t('landing.stats.weeks'), label: t('landing.stats.weeksLabel') },
+                    { value: t('landing.stats.calls'), label: t('landing.stats.callsLabel') },
+                    { value: t('landing.stats.techSkills'), label: t('landing.stats.techSkillsLabel') },
                   ].map((stat, i) => (
                     <div key={i} className="flex items-center">
                       <div className="text-center px-6 sm:px-10 lg:px-12">
@@ -962,10 +962,10 @@ export default function LandingPage() {
                 {/* Title above editor */}
                 <div className="text-center mb-6">
                   <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                    Update your site anytime
+                    {t('landing.editor.title')}
                   </h3>
                   <p className="text-sm text-gray-500 dark:text-white/50">
-                    Just type what you want to change. Our AI editor does the rest.
+                    {t('landing.editor.subtitle')}
                   </p>
                 </div>
 
@@ -1801,17 +1801,16 @@ export default function LandingPage() {
         <section className="py-8 lg:py-10">
           <div className="max-w-2xl mx-auto px-6 lg:px-12 text-center">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              How it works
+              {t('landing.howItWorks.title')}
             </h3>
             <p className="text-gray-500 dark:text-white/50 leading-relaxed mb-4">
-              You tell us about your business. We design and build your website.
+              {t('landing.howItWorks.text1')}
             </p>
             <p className="text-gray-500 dark:text-white/50 leading-relaxed mb-4">
-              No tech headaches. No confusing tools. No endless back-and-forth.
-              Just a polished, professional site that makes you proud to share your link.
+              {t('landing.howItWorks.text2')}
             </p>
             <p className="text-gray-700 dark:text-white/70 font-medium">
-              One call. We handle everything. You focus on your clients.
+              {t('landing.howItWorks.text3')}
             </p>
           </div>
         </section>
@@ -1834,40 +1833,40 @@ export default function LandingPage() {
             <div className="max-w-lg mx-auto">
               {/* Starter Plan Card - Premium Treatment */}
               <div className="group p-8 lg:p-10 rounded-2xl bg-gradient-to-br from-white via-white to-[var(--purple)]/5 dark:from-[#0f0f12] dark:via-[#0f0f12] dark:to-[#12101a] backdrop-blur-sm border-2 border-[var(--purple)]/30 dark:border-[var(--purple)]/40 shadow-xl shadow-[var(--purple)]/10 relative overflow-hidden transition-all duration-300 hover:border-[var(--purple)]/50 dark:hover:border-[var(--purple)]/60 hover:shadow-[0_8px_30px_rgba(124,58,237,0.15)]">
-                {/* Beta badge */}
+                {/* Badge */}
                 <div className="absolute top-4 right-4">
                   <span className="px-3 py-1 text-xs font-medium bg-[var(--purple)] text-white rounded-full">
-                    Limited capacity
+                    {t('landing.pricing.badge')}
                   </span>
                 </div>
 
-                <h3 className="text-2xl font-bold mb-1">Early Access Pricing</h3>
+                <h3 className="text-2xl font-bold mb-1">{t('landing.pricing.title')}</h3>
                 <p className="text-sm text-gray-400 dark:text-white/40 mb-6">
-                  By application only.
+                  {t('landing.pricing.subtitle')}
                 </p>
 
                 {/* Pricing */}
                 <div className="mb-6 pb-6 border-b border-gray-200 dark:border-white/10">
                   <div className="mb-2">
                     <span className="text-sm text-gray-400 dark:text-white/40">
-                      Your website:{' '}
+                      {t('landing.pricing.buildLabel')}{' '}
                     </span>
-                    <span className="text-2xl font-bold">€599</span>
+                    <span className="text-2xl font-bold">{t('landing.pricing.buildPrice')}</span>
                     <span className="text-sm text-gray-400 dark:text-white/40 ml-1">
-                      one-time
+                      {t('landing.pricing.buildPeriod')}
                     </span>
                   </div>
                   <div>
                     <span className="text-sm text-gray-400 dark:text-white/40">
-                      Ongoing care:{' '}
+                      {t('landing.pricing.careLabel')}{' '}
                     </span>
-                    <span className="text-2xl font-bold">€39</span>
+                    <span className="text-2xl font-bold">{t('landing.pricing.carePrice')}</span>
                     <span className="text-sm text-gray-400 dark:text-white/40 ml-1">
-                      /month
+                      {t('landing.pricing.carePeriod')}
                     </span>
                   </div>
                   <p className="text-xs text-gray-400 dark:text-white/30 mt-2">
-                    Launch rate. First month free. Cancel anytime.
+                    {t('landing.pricing.note')}
                   </p>
                 </div>
 
@@ -1876,18 +1875,18 @@ export default function LandingPage() {
                   {/* Your Website */}
                   <div>
                     <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-1">
-                      Your Website (€599)
+                      {t('landing.pricing.websiteTitle')}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-white/40 mb-3">
-                      A beautiful, professional website designed around your business. Not a template — custom-built for you.
+                      {t('landing.pricing.websiteDesc')}
                     </p>
                     <ul className="space-y-1.5">
                       {[
-                        'Discovery call to understand your business',
-                        'Up to 7 pages, designed to attract clients',
-                        'Your own domain and professional email',
-                        'Looks great on phones and computers',
-                        'Live in 1–2 weeks',
+                        t('landing.pricing.websiteFeature1'),
+                        t('landing.pricing.websiteFeature2'),
+                        t('landing.pricing.websiteFeature3'),
+                        t('landing.pricing.websiteFeature4'),
+                        t('landing.pricing.websiteFeature5'),
                       ].map((item, i) => (
                         <li
                           key={i}
@@ -1915,17 +1914,17 @@ export default function LandingPage() {
                   {/* Ongoing Care */}
                   <div>
                     <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-1">
-                      Ongoing Care (€39/month)
+                      {t('landing.pricing.careTitle')}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-white/40 mb-3">
-                      Your site is yours to customize. Use our AI editor to change text, colors, or add sections — just describe what you want. We handle the technical stuff.
+                      {t('landing.pricing.careDesc')}
                     </p>
                     <ul className="space-y-1.5">
                       {[
-                        'AI editor: update anything by just typing what you want',
-                        'Change colors, text, images — anytime you like',
-                        'Bigger changes? We handle them for you',
-                        'Your site stays fast, secure, and always online',
+                        t('landing.pricing.careFeature1'),
+                        t('landing.pricing.careFeature2'),
+                        t('landing.pricing.careFeature3'),
+                        t('landing.pricing.careFeature4'),
                       ].map((item, i) => (
                         <li
                           key={i}
@@ -2066,24 +2065,24 @@ export default function LandingPage() {
               {/* Perfect for you if */}
               <div className="mt-12 p-6 rounded-2xl bg-[var(--purple)]/5 dark:bg-[var(--purple)]/10 border border-[var(--purple)]/20">
                 <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
-                  Perfect for you if
+                  {t('landing.forYou.title')}
                 </h4>
                 <ul className="space-y-2 text-sm text-gray-600 dark:text-white/60">
                   <li className="flex items-start gap-2">
                     <span className="text-[var(--purple)]">→</span>
-                    You're a coach, consultant, or expert with paying clients
+                    {t('landing.forYou.item1')}
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[var(--purple)]">→</span>
-                    You have followers on Instagram, LinkedIn, or an email list
+                    {t('landing.forYou.item2')}
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[var(--purple)]">→</span>
-                    You want a website that looks as good as your work
+                    {t('landing.forYou.item3')}
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-[var(--purple)]">→</span>
-                    You'd rather focus on clients than learn web design
+                    {t('landing.forYou.item4')}
                   </li>
                 </ul>
               </div>
@@ -2091,24 +2090,24 @@ export default function LandingPage() {
               {/* Not the right fit */}
               <div className="mt-4 p-6 rounded-2xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
                 <h4 className="text-sm font-semibold text-gray-700 dark:text-white/70 mb-4">
-                  Probably not for you if
+                  {t('landing.notForYou.title')}
                 </h4>
                 <ul className="space-y-2 text-sm text-gray-500 dark:text-white/50">
                   <li className="flex items-start gap-2">
                     <span className="text-gray-400 dark:text-white/30">→</span>
-                    You're still figuring out what you offer
+                    {t('landing.notForYou.item1')}
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-gray-400 dark:text-white/30">→</span>
-                    You enjoy building websites yourself
+                    {t('landing.notForYou.item2')}
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-gray-400 dark:text-white/30">→</span>
-                    You need an online store or custom app
+                    {t('landing.notForYou.item3')}
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-gray-400 dark:text-white/30">→</span>
-                    You're looking for the cheapest option
+                    {t('landing.notForYou.item4')}
                   </li>
                 </ul>
               </div>
@@ -2259,17 +2258,14 @@ export default function LandingPage() {
 
           <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center relative">
             <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-5">
-              Ready to{' '}
-              <span className="bg-gradient-to-r from-[var(--purple)] via-blue-500 to-cyan-400 bg-clip-text text-transparent">
-                build your foundation?
-              </span>
+              {t('landing.cta.title')}
             </h2>
             <p className="text-lg text-gray-500 dark:text-white/40 mb-8 max-w-md mx-auto">
-              A structured launch. A calm process. Infrastructure that lasts.
+              {t('landing.cta.subtitle')}
             </p>
             <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
               <Button className="bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-10 h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 hover:scale-[1.02]">
-                Request a Strategy Call
+                {t('landing.cta.button')}
                 <svg
                   className="w-4 h-4 ml-2"
                   fill="none"
@@ -2286,7 +2282,7 @@ export default function LandingPage() {
               </Button>
             </a>
             <p className="text-sm text-gray-400 dark:text-white/20 mt-4">
-              €599 website · €39/month care · First month free
+              {t('landing.cta.pricing')}
             </p>
           </div>
         </section>

@@ -1518,7 +1518,7 @@ export default function LandingPage() {
                   }`}
                   style={{ animationFillMode: 'forwards' }}
                 >
-                  <div className="text-5xl font-bold text-[var(--purple)]/20 dark:text-white/5 group-hover:text-[var(--purple)]/50 dark:group-hover:text-[var(--purple)]/30 transition-colors mb-4">
+                  <div className="text-5xl font-bold text-[var(--purple)]/40 dark:text-[var(--purple)]/30 group-hover:text-[var(--purple)]/70 dark:group-hover:text-[var(--purple)]/50 transition-colors mb-4">
                     {feature.num}
                   </div>
                   <h3 className="text-xl font-semibold mb-2">

@@ -2341,7 +2341,7 @@ const en = {
   'waitlist.landing.privacy': 'No spam. Unsubscribe anytime.',
 
   // Landing Page - Hero
-  'landing.hero.badge': 'Early access — limited spots',
+  'landing.hero.badge': 'Early access - limited spots',
   'landing.hero.headline1': 'A website that reflects',
   'landing.hero.headline2': 'your expertise. And converts.',
   'landing.hero.pain': "You're good at what you do. Your website should prove it.",
@@ -2365,7 +2365,7 @@ const en = {
   // Landing Page - How it works
   'landing.howItWorks.title': 'How it works',
   'landing.howItWorks.text1': "This isn't another website builder.",
-  'landing.howItWorks.text2': "Most 'easy' solutions leave you with a generic site that looks like everyone else's — or worse, like a robot made it. We start with strategy: who you serve, what you offer, and how to position it. Then we design around that — not around a template.",
+  'landing.howItWorks.text2': "Most 'easy' solutions leave you with a generic site that looks like everyone else's. Or worse, like a robot made it. We start with strategy: who you serve, what you offer, and how to position it. Then we design around that. Not around a template.",
   'landing.howItWorks.text3': "You get a website that sounds like you, converts like it should, and doesn't make you cringe when you share the link.",
 
   // Landing Page - Editor
@@ -2386,11 +2386,11 @@ const en = {
   'landing.pricing.carePeriod': '/month',
   'landing.pricing.note': 'First month free. Cancel anytime.',
   'landing.pricing.refund': '50% setup refund if you change your mind',
-  'landing.pricing.assets': 'All your site assets downloadable — you own them',
+  'landing.pricing.assets': 'All your site assets downloadable. You own them.',
 
   // Landing Page - Pricing Features
   'landing.pricing.websiteTitle': 'Setup (€599)',
-  'landing.pricing.websiteDesc': 'Your website, built around your business. Strategy call, custom design, domain, email, analytics — all included.',
+  'landing.pricing.websiteDesc': 'Your website, built around your business. Strategy call, custom design, domain, email, analytics. All included.',
   'landing.pricing.websiteFeature1': 'Strategy call to clarify your offer',
   'landing.pricing.websiteFeature2': 'Up to 7 pages, designed to convert',
   'landing.pricing.websiteFeature3': 'Your domain and professional email',
@@ -2409,7 +2409,7 @@ const en = {
   'landing.forYou.item1': "You're a coach, consultant, or service provider",
   'landing.forYou.item2': 'You already have clients and know your offer',
   'landing.forYou.item3': "Your current site doesn't do you justice",
-  'landing.forYou.item4': "You want it done right — not done yourself",
+  'landing.forYou.item4': "You want it done right, not done yourself",
 
   'landing.notForYou.title': 'Probably not for you if',
   'landing.notForYou.item1': "You're still figuring out what you sell",

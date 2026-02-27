@@ -1,17 +1,17 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Wand2, Paperclip, Loader2, ArrowRight, X, ChevronDown, ChevronUp } from 'lucide-react';
-import { useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { useWizardStore } from '@/store/wizard-store';
+import { useAIClassify } from '@/hooks/useAI';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { cn } from '@/lib/utils';
+import { useWizardStore } from '@/store/wizard-store';
+import { Wand2, Paperclip, Loader2, ArrowRight, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState, useRef } from 'react';
 
 export function QuickScaffold() {
   const router = useRouter();
   const [input, setInput] = useState('');
-  const [isClassifying, setIsClassifying] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [attachments, setAttachments] = useState<File[]>([]);
   const [isExpanded, setIsExpanded] = useLocalStorage('scaffold-expanded', false);
@@ -19,6 +19,9 @@ export function QuickScaffold() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const setPrefillData = useWizardStore((state) => state.setPrefillData);
   const setSelectedIndustry = useWizardStore((state) => state.setSelectedIndustry);
+
+  // React Query mutation for classification
+  const classifyMutation = useAIClassify();
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -32,58 +35,45 @@ export function QuickScaffold() {
   const handleSubmit = async () => {
     if (!input.trim()) return;
 
-    setIsClassifying(true);
+    classifyMutation.mutate(
+      { description: input },
+      {
+        onSuccess: (classification) => {
+          const prefillData = {
+            name: '',
+            description: input,
+            userDescription: input,
+            targetUsers: '',
+            businessGoals: '',
+            USP: '',
+            platformType: classification.template,
+            industry: classification.industry,
+          };
 
-    try {
-      const response = await fetch('/api/ai/classify-project', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: input }),
-      });
+          setPrefillData(prefillData);
 
-      let platformType: string | undefined;
-      let industry: string | undefined;
+          if (classification.industry) {
+            setSelectedIndustry(classification.industry);
+          }
 
-      if (response.ok) {
-        const classification = await response.json();
-        platformType = classification.platformType;
-        industry = classification.industry;
+          router.push('/team/dashboard/new?mode=ai-generated');
+        },
+        onError: (error) => {
+          console.error('[QuickScaffold] Classification error:', error);
+
+          const prefillData = {
+            name: '',
+            description: input,
+            userDescription: input,
+            targetUsers: '',
+            businessGoals: '',
+            USP: '',
+          };
+          setPrefillData(prefillData);
+          router.push('/team/dashboard/new?mode=ai-generated');
+        },
       }
-
-      const prefillData = {
-        name: '',
-        description: input,
-        userDescription: input,
-        targetUsers: '',
-        businessGoals: '',
-        USP: '',
-        platformType,
-        industry,
-      };
-
-      setPrefillData(prefillData);
-
-      if (industry) {
-        setSelectedIndustry(industry);
-      }
-
-      router.push('/team/dashboard/new?mode=ai-generated');
-    } catch (error) {
-      console.error('[QuickScaffold] Classification error:', error);
-
-      const prefillData = {
-        name: '',
-        description: input,
-        userDescription: input,
-        targetUsers: '',
-        businessGoals: '',
-        USP: '',
-      };
-      setPrefillData(prefillData);
-      router.push('/team/dashboard/new?mode=ai-generated');
-    } finally {
-      setIsClassifying(false);
-    }
+    );
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -101,6 +91,8 @@ export function QuickScaffold() {
         Math.min(textareaRef.current.scrollHeight, 120) + 'px';
     }
   };
+
+  const isClassifying = classifyMutation.isPending;
 
   // Glassmorphism card style
   const glassCard = 'rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.1)_inset]';

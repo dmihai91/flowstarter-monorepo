@@ -1,37 +1,55 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import type { ExampleSite } from '@/data/example-sites';
 
-export interface ExampleSite {
-  id: string;
-  name: string;
-  description: string;
-  url: string;
-  thumbnail_url: string;
-  industry: string;
-  template: string;
-  features: string[];
-  created_at: string;
+export interface ExampleSitesFilters {
+  category?: string;
+  industry?: string;
+  search?: string;
+  featured?: boolean;
+}
+
+export interface ExampleSitesResponse {
+  sites: ExampleSite[];
+  categories: Array<{ value: string; label: string }>;
+  industries: string[];
 }
 
 const exampleSitesKeys = {
   all: ['example-sites'] as const,
-  filtered: (industry?: string, template?: string) => 
-    [...exampleSitesKeys.all, { industry, template }] as const,
+  filtered: (filters: ExampleSitesFilters) =>
+    [...exampleSitesKeys.all, filters] as const,
 };
 
-export function useExampleSites(industry?: string, template?: string) {
+export function useExampleSites(filters: ExampleSitesFilters = {}) {
   return useQuery({
-    queryKey: exampleSitesKeys.filtered(industry, template),
-    queryFn: async (): Promise<ExampleSite[]> => {
+    queryKey: exampleSitesKeys.filtered(filters),
+    queryFn: async (): Promise<ExampleSitesResponse> => {
       const params = new URLSearchParams();
-      if (industry) params.set('industry', industry);
-      if (template) params.set('template', template);
       
+      if (filters.category && filters.category !== 'all') {
+        params.set('category', filters.category);
+      }
+      if (filters.industry && filters.industry !== 'All Industries') {
+        params.set('industry', filters.industry);
+      }
+      if (filters.search?.trim()) {
+        params.set('search', filters.search.trim());
+      }
+      if (filters.featured) {
+        params.set('featured', 'true');
+      }
+
       const res = await fetch(`/api/example-sites?${params.toString()}`);
       if (!res.ok) throw new Error('Failed to load example sites');
-      const json = await res.json();
-      return json.sites ?? [];
+      
+      const data = await res.json();
+      return {
+        sites: data.sites ?? [],
+        categories: data.categories ?? [],
+        industries: data.industries ?? [],
+      };
     },
   });
 }

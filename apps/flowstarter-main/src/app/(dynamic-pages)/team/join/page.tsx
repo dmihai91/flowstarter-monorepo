@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Logo } from '@/components/ui/logo';
+import { useTeamJoinValidation, useTeamJoin } from '@/hooks/useTeamJoin';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import {
   Loader2,
   CheckCircle2,
@@ -22,53 +23,24 @@ function JoinPageContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
 
-  const [isValidating, setIsValidating] = useState(true);
-  const [isValid, setIsValid] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [email, setEmail] = useState('');
-  const [inviterName, setInviterName] = useState('');
+  // React Query hooks
+  const { data: validationData, isLoading: isValidating, error: validationError } = useTeamJoinValidation(token);
+  const joinMutation = useTeamJoin();
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
 
-  // Validate token on mount
+  // Redirect on success
   useEffect(() => {
-    if (!token) {
-      setError('Invalid invitation link');
-      setIsValidating(false);
-      return;
+    if (joinMutation.isSuccess) {
+      const timer = setTimeout(() => {
+        router.push('/team/login');
+      }, 2000);
+      return () => clearTimeout(timer);
     }
-
-    validateToken();
-  }, [token]);
-
-  const validateToken = async () => {
-    try {
-      const response = await fetch('/api/team/join/validate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.valid) {
-        setIsValid(true);
-        setEmail(data.email);
-        setInviterName(data.inviterName || 'Your team');
-      } else {
-        setError(data.error || 'Invalid invitation');
-      }
-    } catch (err) {
-      setError('Failed to validate invitation');
-    } finally {
-      setIsValidating(false);
-    }
-  };
+  }, [joinMutation.isSuccess, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,32 +57,32 @@ function JoinPageContent() {
       return;
     }
 
-    setIsSubmitting(true);
+    if (!token) return;
 
-    try {
-      const response = await fetch('/api/team/join', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setSuccess(true);
-        // Redirect to login after 2 seconds
-        setTimeout(() => {
-          router.push('/team/login');
-        }, 2000);
-      } else {
-        setSubmitError(data.error || 'Failed to create account');
-      }
-    } catch (err) {
-      setSubmitError('Network error. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
+    joinMutation.mutate(token);
   };
+
+  // Error state - no token
+  if (!token) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c] px-4">
+        <div className="max-w-md w-full text-center">
+          <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-6">
+            <AlertCircle className="w-8 h-8 text-red-500" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            Invalid Invitation
+          </h1>
+          <p className="text-gray-500 dark:text-white/50 mb-6">Invalid invitation link</p>
+          <Link href="/">
+            <Button variant="outline" className="rounded-xl">
+              Go to Homepage
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   // Loading state
   if (isValidating) {
@@ -126,8 +98,12 @@ function JoinPageContent() {
     );
   }
 
-  // Error state
-  if (error) {
+  // Validation error state
+  if (validationError || !validationData?.valid) {
+    const errorMessage = validationError instanceof Error 
+      ? validationError.message 
+      : validationData?.error || 'Invalid invitation';
+    
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c] px-4">
         <div className="max-w-md w-full text-center">
@@ -137,7 +113,7 @@ function JoinPageContent() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
             Invalid Invitation
           </h1>
-          <p className="text-gray-500 dark:text-white/50 mb-6">{error}</p>
+          <p className="text-gray-500 dark:text-white/50 mb-6">{errorMessage}</p>
           <Link href="/">
             <Button variant="outline" className="rounded-xl">
               Go to Homepage
@@ -149,7 +125,7 @@ function JoinPageContent() {
   }
 
   // Success state
-  if (success) {
+  if (joinMutation.isSuccess) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c] px-4">
         <div className="max-w-md w-full text-center">
@@ -167,6 +143,9 @@ function JoinPageContent() {
       </div>
     );
   }
+
+  const email = validationData.email || '';
+  const inviterName = 'Your team';
 
   // Form state
   return (
@@ -265,11 +244,11 @@ function JoinPageContent() {
                 </div>
 
                 {/* Error message */}
-                {submitError && (
+                {(submitError || joinMutation.error) && (
                   <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center gap-2">
                     <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
                     <p className="text-sm text-red-600 dark:text-red-400">
-                      {submitError}
+                      {submitError || joinMutation.error?.message}
                     </p>
                   </div>
                 )}
@@ -277,10 +256,10 @@ function JoinPageContent() {
                 {/* Submit */}
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={joinMutation.isPending}
                   className="w-full h-12 rounded-lg font-semibold bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 shadow-md transition-all disabled:opacity-50"
                 >
-                  {isSubmitting ? (
+                  {joinMutation.isPending ? (
                     <span className="flex items-center gap-2">
                       <Loader2 className="w-4 h-4 animate-spin" />
                       Creating account...

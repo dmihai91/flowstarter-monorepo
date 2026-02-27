@@ -2,6 +2,7 @@
 
 import { AssistantInput } from '@/components/AssistantInput';
 import { Button } from '@/components/ui/button';
+import { useAIClassify } from '@/hooks/useAI';
 import { useAssistantValidation } from '@/hooks/useAssistantValidation';
 import { useTranslations } from '@/lib/i18n';
 import { useWizardStore } from '@/store/wizard-store';
@@ -15,12 +16,14 @@ export function AssistantSearchBar() {
   const router = useRouter();
   const [value, setValue] = useState('');
   const [touched, setTouched] = useState(false);
-  const [isClassifying, setIsClassifying] = useState(false);
   const validation = useAssistantValidation(value);
   const setPrefillData = useWizardStore((state) => state.setPrefillData);
   const setSelectedIndustry = useWizardStore(
     (state) => state.setSelectedIndustry
   );
+
+  // React Query mutation for classification
+  const classifyMutation = useAIClassify();
 
   const handleSubmit = async () => {
     // Mark as touched to show validation
@@ -31,71 +34,54 @@ export function AssistantSearchBar() {
       return;
     }
 
-    setIsClassifying(true);
+    classifyMutation.mutate(
+      { description: value },
+      {
+        onSuccess: (classification) => {
+          console.log(
+            '[AssistantSearchBar] Classification result:',
+            classification
+          );
 
-    try {
-      // Call classification API to detect project type and industry
-      const response = await fetch('/api/ai/classify-project', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: value }),
-      });
+          const prefillData = {
+            name: '',
+            description: value,
+            userDescription: value,
+            targetUsers: '',
+            businessGoals: '',
+            USP: '',
+            platformType: classification.template,
+            industry: classification.industry,
+          };
 
-      let platformType: string | undefined;
-      let industry: string | undefined;
+          // Store prefill data in wizard store
+          setPrefillData(prefillData);
 
-      if (response.ok) {
-        const classification = await response.json();
-        platformType = classification.platformType;
-        industry = classification.industry;
-        console.log(
-          '[AssistantSearchBar] Classification result:',
-          classification
-        );
-      } else {
-        console.warn(
-          '[AssistantSearchBar] Classification failed, using defaults'
-        );
+          // Also set industry in the store directly for immediate use
+          if (classification.industry) {
+            setSelectedIndustry(classification.industry);
+          }
+
+          // Navigate to wizard with ai-generated flag
+          router.push('/dashboard/new?mode=ai-generated');
+        },
+        onError: (error) => {
+          console.error('[AssistantSearchBar] Classification error:', error);
+
+          // Fall back to original behavior without classification
+          const prefillData = {
+            name: '',
+            description: value,
+            userDescription: value,
+            targetUsers: '',
+            businessGoals: '',
+            USP: '',
+          };
+          setPrefillData(prefillData);
+          router.push('/dashboard/new?mode=ai-generated');
+        },
       }
-
-      const prefillData = {
-        name: '',
-        description: value,
-        userDescription: value,
-        targetUsers: '',
-        businessGoals: '',
-        USP: '',
-        platformType,
-        industry,
-      };
-
-      // Store prefill data in wizard store
-      setPrefillData(prefillData);
-
-      // Also set industry in the store directly for immediate use
-      if (industry) {
-        setSelectedIndustry(industry);
-      }
-
-      // Navigate to wizard with ai-generated flag
-      router.push('/dashboard/new?mode=ai-generated');
-    } catch (error) {
-      console.error('[AssistantSearchBar] Classification error:', error);
-
-      // Fall back to original behavior without classification
-      const prefillData = {
-        name: '',
-        description: value,
-        userDescription: value,
-        targetUsers: '',
-        businessGoals: '',
-        USP: '',
-      };
-      setPrefillData(prefillData);
-      router.push('/dashboard/new?mode=ai-generated');
-    } finally {
-      setIsClassifying(false);
-    }
+    );
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -104,6 +90,8 @@ export function AssistantSearchBar() {
       handleSubmit();
     }
   };
+
+  const isClassifying = classifyMutation.isPending;
 
   return (
     <div className="glass-3d mt-8 rounded-[16px] border border-gray-200/60 dark:border-white/15 bg-white/25 dark:bg-[rgba(58,58,74,0.2)] backdrop-blur-xl px-[24px] py-[16px] transition-all duration-500 hover:-translate-y-1 shadow-[0_12px_40px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05),inset_0_2px_0_rgba(255,255,255,0.8),inset_0_2px_6px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.05),inset_0_2px_6px_rgba(0,0,0,0.08)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.15),0_8px_24px_rgba(0,0,0,0.1),inset_0_2px_0_rgba(255,255,255,0.9),inset_0_2px_8px_rgba(0,0,0,0.05)]">

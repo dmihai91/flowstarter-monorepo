@@ -3,6 +3,7 @@
 import Footer from '@/components/Footer';
 import { SupportHeader } from '@/components/SupportHeader';
 import { Button } from '@/components/ui/button';
+import { useContactForm } from '@/hooks/useContactForm';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -15,39 +16,34 @@ export default function ContactPage() {
     subject: '',
     message: '',
   });
-  const [status, setStatus] = useState<
-    'idle' | 'loading' | 'success' | 'error'
-  >('idle');
-  const [errorMessage, setErrorMessage] = useState('');
+
+  const contactMutation = useContactForm();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus('loading');
-    setErrorMessage('');
-
-    try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+    contactMutation.mutate(
+      {
+        name: formData.name,
+        email: formData.email,
+        message: `[${formData.subject}] ${formData.message}`,
+      },
+      {
+        onSuccess: () => {
+          setFormData({ name: '', email: '', subject: '', message: '' });
         },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Something went wrong');
       }
-
-      setStatus('success');
-      setFormData({ name: '', email: '', subject: '', message: '' });
-    } catch (error) {
-      setStatus('error');
-      setErrorMessage(
-        error instanceof Error ? error.message : 'Something went wrong'
-      );
-    }
+    );
   };
+
+  const status = contactMutation.isPending
+    ? 'loading'
+    : contactMutation.isSuccess
+      ? 'success'
+      : contactMutation.isError
+        ? 'error'
+        : 'idle';
+
+  const errorMessage = contactMutation.error?.message || 'Something went wrong';
 
   return (
     <>
@@ -153,7 +149,7 @@ export default function ContactPage() {
                     We'll get back to you within 48 hours.
                   </p>
                   <Button
-                    onClick={() => setStatus('idle')}
+                    onClick={() => contactMutation.reset()}
                     variant="outline"
                     className="rounded-xl"
                   >

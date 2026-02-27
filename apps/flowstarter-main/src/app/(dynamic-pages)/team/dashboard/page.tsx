@@ -8,6 +8,7 @@ import { QuickScaffold } from './components/QuickScaffold';
 import { DashboardLoader } from './components/DashboardSkeleton';
 import { Button } from '@/components/ui/button';
 import { useTeamProjects } from '@/hooks/useTeamProjects';
+import { useTranslations } from '@/lib/i18n';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -18,6 +19,7 @@ export const dynamic = 'force-dynamic';
 
 export default function TeamDashboardPage() {
   const { user, isLoaded: userLoaded } = useUser();
+  const { t } = useTranslations();
   const router = useRouter();
   const { data: projects, isLoading: projectsLoading } = useTeamProjects();
 
@@ -46,7 +48,7 @@ export default function TeamDashboardPage() {
   const firstName = user?.firstName || 'there';
   const hour = new Date().getHours();
   const greeting =
-    hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+    hour < 12 ? t('dashboard.greeting.morning') : hour < 18 ? t('dashboard.greeting.afternoon') : t('dashboard.greeting.evening');
 
   // Count projects by status
   const activeProjects = projects?.filter(p => 
@@ -65,7 +67,7 @@ export default function TeamDashboardPage() {
             </span>
           </p>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
-            Dashboard
+            {t('dashboard.title')}
           </h1>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">

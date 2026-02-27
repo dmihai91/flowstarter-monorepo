@@ -1,7 +1,6 @@
 'use client';
 
 import { Skeleton } from '@/components/ui/skeleton';
-import { Logo } from '@/components/ui/logo';
 
 export function DashboardSkeleton() {
   return (
@@ -106,23 +105,13 @@ export function DashboardSkeleton() {
 
 export function DashboardLoader() {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-12 min-h-[60vh]">
-      {/* Centered Logo with pulse */}
-      <div className="relative mb-6">
-        <div className="absolute inset-0 bg-[var(--purple)]/20 rounded-full blur-xl animate-pulse" />
-        <div className="relative">
-          <Logo size="lg" showText={false} />
-        </div>
-      </div>
-      
-      {/* Loading text */}
-      <div className="flex items-center gap-2 text-gray-500 dark:text-white/50">
-        <div className="flex gap-1">
-          <span className="w-2 h-2 rounded-full bg-[var(--purple)] animate-bounce" style={{ animationDelay: '0ms' }} />
-          <span className="w-2 h-2 rounded-full bg-[var(--purple)] animate-bounce" style={{ animationDelay: '150ms' }} />
-          <span className="w-2 h-2 rounded-full bg-[var(--purple)] animate-bounce" style={{ animationDelay: '300ms' }} />
-        </div>
-        <span className="text-sm font-medium">Loading dashboard</span>
+    <div className="flex-1 flex items-center justify-center min-h-[60vh]">
+      <div className="relative w-10 h-10">
+        <div className="absolute inset-0 rounded-full border-2 border-gray-200 dark:border-white/10" />
+        <div
+          className="absolute inset-0 rounded-full border-2 border-transparent border-t-[var(--purple)] animate-spin"
+          style={{ animationDuration: '0.8s' }}
+        />
       </div>
     </div>
   );

@@ -13,8 +13,10 @@ import {
   Globe,
   Mail,
   Pencil,
+  Sparkles,
   TrendingUp,
   Users,
+  Zap,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -74,6 +76,7 @@ export function DashboardStatsClient({
   totalViews,
   avgSessionDuration,
   lastProject,
+  aiCredits,
 }: {
   liveProjects: number;
   totalProjects: number;
@@ -95,6 +98,11 @@ export function DashboardStatsClient({
     updated_at: string;
     thumbnail_url?: string | null;
   } | null;
+  aiCredits?: {
+    remaining: number;
+    total: number;
+    hasSubscription: boolean;
+  };
 }) {
   const { t } = useTranslations();
   const { ref, isVisible } = useScrollAnimation();
@@ -284,6 +292,66 @@ export function DashboardStatsClient({
                   Lead tracking activates when your site goes live
                 </p>
               </div>
+            </div>
+          )}
+        </>
+      ),
+    },
+    // AI Credits Card
+    {
+      content: (
+        <>
+          <div className="flex items-center justify-between w-full mb-3">
+            <span className="text-sm font-medium text-gray-500 dark:text-white/50">
+              AI Credits
+            </span>
+            {aiCredits?.hasSubscription && (
+              <span className="text-[10px] text-[var(--green)] bg-[var(--green)]/10 px-2 py-0.5 rounded-full font-medium">
+                Active
+              </span>
+            )}
+          </div>
+
+          {aiCredits?.hasSubscription ? (
+            <div className="flex-1 flex flex-col">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-[var(--purple)] opacity-80" />
+                </div>
+                <div>
+                  <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                    {aiCredits.remaining.toLocaleString()}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-white/50">
+                    of {aiCredits.total.toLocaleString()} remaining
+                  </p>
+                </div>
+              </div>
+              <div className="mt-3">
+                <div className="h-2 bg-gray-100 dark:bg-white/10 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-[var(--purple)] to-cyan-500 rounded-full transition-all duration-500"
+                    style={{ width: `${Math.min((aiCredits.remaining / aiCredits.total) * 100, 100)}%` }}
+                  />
+                </div>
+                <p className="text-[10px] text-gray-400 dark:text-white/30 mt-1.5">
+                  Resets monthly · 1,000 credits/month
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex-1 flex flex-col">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
+                  <Zap className="w-5 h-5 text-[var(--purple)] opacity-25" />
+                </div>
+                <p className="text-sm text-gray-400 dark:text-white/40 flex-1">
+                  1,000 monthly credits included with your subscription
+                </p>
+              </div>
+              <p className="text-xs text-gray-400 dark:text-white/30 mt-auto">
+                Edit your site with AI after setup
+              </p>
             </div>
           )}
         </>

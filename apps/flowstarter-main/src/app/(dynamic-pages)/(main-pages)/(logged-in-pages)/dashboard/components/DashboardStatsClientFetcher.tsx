@@ -27,6 +27,12 @@ export function DashboardStatsClientFetcher() {
     );
   }
 
+  // TODO: Fetch actual AI credits from subscription/billing system
+  // For now, show placeholder state based on whether user has a live project
+  const aiCredits = data.liveProjects > 0 
+    ? { remaining: 847, total: 1000, hasSubscription: true }
+    : undefined;
+
   return (
     <DashboardStatsClient
       totalProjects={data.totalProjects}
@@ -42,6 +48,7 @@ export function DashboardStatsClientFetcher() {
       inProgressProjects={data.inProgressProjects}
       draftProjects={data.draftProjects}
       lastProject={data.lastProject}
+      aiCredits={aiCredits}
     />
   );
 }

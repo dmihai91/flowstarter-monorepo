@@ -30,6 +30,14 @@ const noNavbarRoutes = [
   '/team/login',
   '/team/dashboard',
   '/team/dashboard/new',
+  // Support pages with SupportHeader
+  '/help',
+  '/contact',
+  '/about',
+  '/privacy',
+  '/terms',
+  '/cookies',
+  '/pricing',
 ];
 
 export function NavigationWrapper() {

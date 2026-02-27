@@ -2221,12 +2221,18 @@ export default function LandingPage() {
         </section>
 
         {/* Final CTA */}
-        <section className="py-12 lg:py-16 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-t from-[var(--purple)]/10 via-[var(--purple)]/50/5 to-transparent pointer-events-none" />
+        <section className="py-16 lg:py-24 relative overflow-hidden">
+          {/* Vibrant gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[var(--purple)]/20 via-blue-500/10 to-cyan-400/15 dark:from-[var(--purple)]/30 dark:via-blue-500/20 dark:to-cyan-400/25 pointer-events-none" />
+          
+          {/* Animated glow orbs */}
+          <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-[var(--purple)]/30 dark:bg-[var(--purple)]/40 blur-[100px] animate-pulse pointer-events-none" />
+          <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-blue-500/25 dark:bg-blue-500/35 blur-[80px] animate-pulse pointer-events-none" style={{ animationDelay: '1s' }} />
+          
           {/* Flow Field Background - Footer CTA */}
           <div className="absolute inset-0 pointer-events-none">
             <svg
-              className="absolute inset-0 w-full h-full opacity-[0.08] dark:opacity-[0.12]"
+              className="absolute inset-0 w-full h-full opacity-[0.15] dark:opacity-[0.25]"
               viewBox="0 0 1200 400"
               preserveAspectRatio="xMidYMid slice"
               fill="none"
@@ -2240,13 +2246,14 @@ export default function LandingPage() {
                   y2="0%"
                 >
                   <stop offset="0%" stopColor="#A855F7" />
-                  <stop offset="100%" stopColor="#3B82F6" />
+                  <stop offset="50%" stopColor="#3B82F6" />
+                  <stop offset="100%" stopColor="#06B6D4" />
                 </linearGradient>
               </defs>
               <g
-                className="flow-line-1"
+                className="flow-group-1"
                 stroke="url(#flowGradientF)"
-                strokeWidth="1.2"
+                strokeWidth="2"
               >
                 <path d="M-100,80 Q200,60 400,100 T800,70 T1300,110" />
                 <path d="M-100,160 Q250,180 450,140 T850,180 T1300,150" />
@@ -2258,16 +2265,18 @@ export default function LandingPage() {
 
           <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center relative">
             <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-5">
-              {t('landing.cta.title')}
+              <span className="bg-gradient-to-r from-gray-900 via-[var(--purple)] to-gray-900 dark:from-white dark:via-[var(--purple)] dark:to-white bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
+                {t('landing.cta.title')}
+              </span>
             </h2>
-            <p className="text-lg text-gray-500 dark:text-white/40 mb-8 max-w-md mx-auto">
+            <p className="text-lg text-gray-600 dark:text-white/60 mb-10 max-w-md mx-auto">
               {t('landing.cta.subtitle')}
             </p>
             <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-              <Button className="bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-10 h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 hover:scale-[1.02]">
+              <Button className="relative overflow-hidden bg-gradient-to-r from-[var(--purple)] via-blue-500 to-[var(--purple)] bg-[length:200%_auto] animate-gradient text-white hover:shadow-[0_0_40px_rgba(124,58,237,0.4)] dark:hover:shadow-[0_0_50px_rgba(124,58,237,0.5)] rounded-xl px-12 h-16 text-lg font-semibold shadow-xl shadow-[var(--purple)]/25 transition-all duration-300 hover:scale-105">
                 {t('landing.cta.button')}
                 <svg
-                  className="w-4 h-4 ml-2"
+                  className="w-5 h-5 ml-3"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -2281,7 +2290,7 @@ export default function LandingPage() {
                 </svg>
               </Button>
             </a>
-            <p className="text-sm text-gray-400 dark:text-white/20 mt-4">
+            <p className="text-sm text-gray-500 dark:text-white/40 mt-6 font-medium">
               {t('landing.cta.pricing')}
             </p>
           </div>

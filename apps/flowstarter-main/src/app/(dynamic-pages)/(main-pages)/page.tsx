@@ -882,29 +882,34 @@ export default function LandingPage() {
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10">
-                  <a
-                    href={CALENDLY_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button className="relative overflow-hidden bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-8 h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 hover:scale-[1.02] group">
-                      <span className="absolute inset-0 animate-shimmer" />
-                      {t('landing.hero.cta')}
-                      <svg
-                        className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M17 8l4 4m0 0l-4 4m4-4H3"
-                        />
-                      </svg>
-                    </Button>
-                  </a>
+                  <div className="flex flex-col items-start">
+                    <a
+                      href={CALENDLY_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Button className="relative overflow-hidden bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-8 h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 hover:scale-[1.02] group">
+                        <span className="absolute inset-0 animate-shimmer" />
+                        {t('landing.hero.cta')}
+                        <svg
+                          className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M17 8l4 4m0 0l-4 4m4-4H3"
+                          />
+                        </svg>
+                      </Button>
+                    </a>
+                    <span className="text-xs text-gray-500 dark:text-white/40 mt-2 ml-1">
+                      {t('landing.hero.ctaNote')}
+                    </span>
+                  </div>
                   <div className="flex flex-col">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="inline-block px-2 py-0.5 text-[10px] font-medium bg-amber-500/90 text-white rounded-full">

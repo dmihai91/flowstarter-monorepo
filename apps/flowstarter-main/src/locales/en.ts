@@ -2347,7 +2347,8 @@ const en = {
   'landing.hero.pain': "You're good at what you do. Your website should prove it.",
   'landing.hero.subheadline': 'We build you a sharp, strategic website in about two weeks. One call. No templates. No DIY. Just done.',
   'landing.hero.support': '',
-  'landing.hero.cta': 'Book Your Strategy Call',
+  'landing.hero.cta': 'Book Your Free Strategy Call',
+  'landing.hero.ctaNote': 'Free. No obligation.',
   'landing.hero.priceBuild': '€599',
   'landing.hero.priceBuildLabel': 'setup',
   'landing.hero.priceMonthly': '€39',
@@ -2420,7 +2421,7 @@ const en = {
   // Landing Page - CTA
   'landing.cta.title': "Your website shouldn't hold you back.",
   'landing.cta.subtitle': "Book a free strategy call. We'll talk through your business and see if Flowstarter is the right fit. No pressure. No pitch deck.",
-  'landing.cta.button': 'Book Your Strategy Call',
+  'landing.cta.button': 'Book Your Free Strategy Call',
   'landing.cta.pricing': '€599 setup · €39/month · 1,000 AI credits · First month free',
 
   // Landing Page - Footer CTA

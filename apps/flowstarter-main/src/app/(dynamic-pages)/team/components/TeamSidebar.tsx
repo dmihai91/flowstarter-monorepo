@@ -13,8 +13,8 @@ import {
   BarChart3,
   Wrench,
   UserPlus,
-  PanelLeftClose,
-  PanelLeft,
+  ChevronsLeft,
+  ChevronsRight,
   Menu,
   X,
 } from 'lucide-react';
@@ -71,18 +71,38 @@ export function TeamSidebar() {
         isActive(href, exact)
           ? 'bg-[var(--purple)] text-white shadow-lg shadow-[var(--purple)]/25'
           : 'text-gray-600 dark:text-white/60 hover:bg-white/60 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
-        collapsed && 'md:justify-center md:px-2'
+        collapsed && 'justify-center !px-2'
       )}
     >
       <Icon className="w-4 h-4 flex-shrink-0" />
-      <span className={cn('truncate', collapsed && 'md:hidden')}>{label}</span>
+      {!collapsed && <span className="truncate">{label}</span>}
     </Link>
   );
 
   const SidebarContent = ({ showToggle = false }: { showToggle?: boolean }) => (
-    <div className="p-4 space-y-6 h-full overflow-y-auto">
+    <div className={cn("p-4 space-y-6 h-full overflow-y-auto flex flex-col", collapsed && "items-center")}>
+      {/* Collapse Toggle - Top */}
+      {showToggle && (
+        <div className={cn("w-full", collapsed ? "flex justify-center" : "flex justify-end")}>
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            className={cn(
+              'p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:text-white/40 dark:hover:text-white/60',
+              'hover:bg-white/60 dark:hover:bg-white/5 transition-all'
+            )}
+          >
+            {collapsed ? (
+              <ChevronsRight className="w-4 h-4" />
+            ) : (
+              <ChevronsLeft className="w-4 h-4" />
+            )}
+          </button>
+        </div>
+      )}
+
       {/* Main Navigation */}
-      <div className="space-y-1">
+      <div className={cn("space-y-1", collapsed && "w-full")}>
         <NavLink 
           href="/team/dashboard" 
           icon={LayoutDashboard} 
@@ -92,13 +112,12 @@ export function TeamSidebar() {
       </div>
 
       {/* Configuration */}
-      <div>
-        <h3 className={cn(
-          'px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider',
-          collapsed && 'md:hidden'
-        )}>
-          Configuration
-        </h3>
+      <div className={cn(collapsed && "w-full")}>
+        {!collapsed && (
+          <h3 className="px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
+            Configuration
+          </h3>
+        )}
         <div className="space-y-1">
           {configItems.map((item) => (
             <NavLink key={item.href} {...item} />
@@ -108,13 +127,12 @@ export function TeamSidebar() {
 
       {/* Admin Only */}
       {isAdmin && (
-        <div>
-          <h3 className={cn(
-            'px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider',
-            collapsed && 'md:hidden'
-          )}>
-            Team
-          </h3>
+        <div className={cn(collapsed && "w-full")}>
+          {!collapsed && (
+            <h3 className="px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
+              Team
+            </h3>
+          )}
           <div className="space-y-1">
             {adminItems.map((item) => (
               <NavLink key={item.href} {...item} />
@@ -125,30 +143,6 @@ export function TeamSidebar() {
 
       {/* Spacer */}
       <div className="flex-1" />
-
-      {/* Collapse toggle at bottom - desktop/tablet only */}
-      {showToggle && (
-        <div className="pt-4 border-t border-white/10">
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            className={cn(
-              'flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all',
-              'text-gray-500 dark:text-white/40 hover:bg-white/60 dark:hover:bg-white/5 hover:text-gray-700 dark:hover:text-white/60',
-              collapsed && 'justify-center px-2'
-            )}
-          >
-            {collapsed ? (
-              <PanelLeft className="w-4 h-4" />
-            ) : (
-              <>
-                <PanelLeftClose className="w-4 h-4" />
-                <span>Collapse</span>
-              </>
-            )}
-          </button>
-        </div>
-      )}
     </div>
   );
 

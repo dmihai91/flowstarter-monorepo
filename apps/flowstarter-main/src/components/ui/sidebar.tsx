@@ -11,8 +11,8 @@ import {
   LayoutDashboard,
   MessageSquare,
   Puzzle,
-  PanelLeftClose,
-  PanelLeft,
+  ChevronsLeft,
+  ChevronsRight,
   Menu,
   X,
   type LucideIcon,
@@ -148,6 +148,26 @@ export function Sidebar() {
 
   const SidebarContent = ({ showToggle = false }: { showToggle?: boolean }) => (
     <div className={cn("p-4 space-y-6 h-full overflow-y-auto flex flex-col", isCollapsed && "items-center")}>
+      {/* Collapse Toggle - Top */}
+      {showToggle && (
+        <div className={cn("w-full", isCollapsed ? "flex justify-center" : "flex justify-end")}>
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            className={cn(
+              'p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:text-white/40 dark:hover:text-white/60',
+              'hover:bg-white/60 dark:hover:bg-white/5 transition-all'
+            )}
+          >
+            {isCollapsed ? (
+              <ChevronsRight className="w-4 h-4" />
+            ) : (
+              <ChevronsLeft className="w-4 h-4" />
+            )}
+          </button>
+        </div>
+      )}
+
       {/* Main Navigation */}
       <div className={cn(isCollapsed && "w-full")}>
         {!isCollapsed && (
@@ -209,28 +229,6 @@ export function Sidebar() {
         </button>
       </div>
 
-      {/* Collapse toggle at bottom - desktop only */}
-      {showToggle && (
-        <div className="pt-2">
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className={cn(
-              'flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all',
-              'text-gray-500 dark:text-white/40 hover:bg-white/60 dark:hover:bg-white/5 hover:text-gray-700 dark:hover:text-white/60',
-              isCollapsed && 'justify-center px-2'
-            )}
-          >
-            {isCollapsed ? (
-              <PanelLeft className="w-4 h-4" />
-            ) : (
-              <>
-                <PanelLeftClose className="w-4 h-4" />
-                <span>Collapse</span>
-              </>
-            )}
-          </button>
-        </div>
-      )}
     </div>
   );
 

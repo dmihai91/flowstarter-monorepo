@@ -277,6 +277,60 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 import { logStore } from './lib/stores/logs';
 
+// Determine if we're on a flowstarter domain for satellite mode
+// This enables shared Clerk session cookies across subdomains
+
+/**
+ * Get the main platform URL based on current hostname
+ * - Production: https://flowstarter.app
+ * - Development: https://flowstarter.dev
+ * - Local: http://localhost:3000
+ */
+function getMainPlatformUrl(): string {
+  if (typeof window === 'undefined') return 'https://flowstarter.dev';
+  const hostname = window.location.hostname;
+  
+  if (hostname.includes('flowstarter.app')) {
+    return 'https://flowstarter.app';
+  }
+  if (hostname.includes('flowstarter.dev')) {
+    return 'https://flowstarter.dev';
+  }
+  // Local development
+  return 'http://localhost:3000';
+}
+
+/**
+ * Get the shared cookie domain for cross-subdomain session sharing
+ */
+function getSharedCookieDomain(): string | undefined {
+  if (typeof window === 'undefined') return undefined;
+  const hostname = window.location.hostname;
+  
+  if (hostname.includes('flowstarter.app')) {
+    return '.flowstarter.app';
+  }
+  if (hostname.includes('flowstarter.dev')) {
+    return '.flowstarter.dev';
+  }
+  // Local development - no shared domain
+  return undefined;
+}
+
+/**
+ * Check if this app should run in Clerk satellite mode
+ * Editor is satellite when running on a subdomain (editor.*)
+ */
+function isSatelliteApp(): boolean {
+  if (typeof window === 'undefined') return false;
+  const hostname = window.location.hostname;
+  // Editor is satellite when running on editor subdomain
+  return (
+    hostname.startsWith('editor.') || 
+    hostname.includes('editor.flowstarter')
+  );
+}
+
 export default function App() {
   const theme = useStore(themeStore);
   const loaderData = useLoaderData<typeof loader>();
@@ -289,16 +343,23 @@ export default function App() {
     });
   }, []);
 
+  // Determine Clerk satellite configuration
+  const isSatellite = isSatelliteApp();
+  const domain = isFlowstarterDomain() ? SHARED_COOKIE_DOMAIN : undefined;
+
   return (
     <ClerkProvider 
       {...loaderData}
-      // Share session across subdomains (flowstarter.dev, editor.flowstarter.dev)
-      domain={typeof window !== 'undefined' && window.location.hostname.includes('flowstarter.dev') 
-        ? '.flowstarter.dev' 
-        : undefined}
-      isSatellite={typeof window !== 'undefined' && window.location.hostname.includes('editor.flowstarter')}
-      signInUrl="https://flowstarter.dev/login"
-      signUpUrl="https://flowstarter.dev/login"
+      // Satellite app configuration for cross-subdomain session sharing
+      // When on flowstarter.dev subdomains, share cookies via .flowstarter.dev
+      domain={domain}
+      isSatellite={isSatellite}
+      // Redirect to main platform for sign-in/sign-up when in satellite mode
+      signInUrl={isSatellite ? `${MAIN_PLATFORM_URL}/login` : '/login'}
+      signUpUrl={isSatellite ? `${MAIN_PLATFORM_URL}/login` : '/login'}
+      // Force redirect after sign-in back to editor
+      signInForceRedirectUrl={isSatellite ? undefined : undefined}
+      signUpForceRedirectUrl={isSatellite ? undefined : undefined}
     >
       <Layout>
         <Outlet />

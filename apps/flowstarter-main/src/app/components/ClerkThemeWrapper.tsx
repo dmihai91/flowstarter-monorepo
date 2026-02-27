@@ -158,16 +158,34 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
     return null;
   }
 
-  // Check if we're on flowstarter.dev domain for cross-subdomain session sharing
-  const isFlowstarterDomain =
-    typeof window !== 'undefined' &&
-    window.location.hostname.includes('flowstarter.dev');
+  // Determine shared cookie domain for cross-subdomain session sharing
+  // This allows the editor (editor.flowstarter.dev) to share the same Clerk session
+  const getSharedCookieDomain = (): string | undefined => {
+    if (typeof window === 'undefined') return undefined;
+    const hostname = window.location.hostname;
+    
+    // Production: flowstarter.app and subdomains
+    if (hostname.includes('flowstarter.app')) {
+      return '.flowstarter.app';
+    }
+    
+    // Development/Staging: flowstarter.dev and subdomains
+    if (hostname.includes('flowstarter.dev')) {
+      return '.flowstarter.dev';
+    }
+    
+    // Local development - no shared domain needed
+    return undefined;
+  };
+
+  const sharedCookieDomain = getSharedCookieDomain();
 
   return (
     <ClerkProvider
       appearance={appearance}
-      // Share session across subdomains (flowstarter.dev, editor.flowstarter.dev)
-      domain={isFlowstarterDomain ? '.flowstarter.dev' : undefined}
+      // Share session across subdomains (e.g., flowstarter.dev, editor.flowstarter.dev)
+      // This is the PRIMARY app - it does NOT use isSatellite
+      domain={sharedCookieDomain}
       signInUrl="/login"
       signUpUrl="/login"
       afterSignInUrl="/dashboard"

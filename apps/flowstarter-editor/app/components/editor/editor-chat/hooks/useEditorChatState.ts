@@ -166,7 +166,27 @@ export function useEditorChatState({
     setCurrentUrlId: additionalState.setCurrentUrlId,
   });
 
-  useWelcomeInit({ initialState, messageHook, flowHook, hasRestoredState });
+  /**
+   * Callback for internal flow (template-first) initialization.
+   * Triggers template recommendations fetch when business details are already known.
+   */
+  const handleInternalFlowStart = useCallback(
+    (businessInfo: import('../types').BusinessInfo, projectName: string, description: string) => {
+      // Update business hook with initial state
+      businessHook.setBusinessInfo(businessInfo);
+      // Trigger recommendations fetch
+      templateHook.fetchRecommendations(businessInfo, projectName, description);
+    },
+    [businessHook, templateHook],
+  );
+
+  useWelcomeInit({ 
+    initialState, 
+    messageHook, 
+    flowHook, 
+    hasRestoredState,
+    onInternalFlowStart: handleInternalFlowStart,
+  });
 
   // ═══════════════════════════════════════════════════════════════════════
   // Effects
@@ -301,6 +321,39 @@ export function useEditorChatState({
   });
 
   // ═══════════════════════════════════════════════════════════════════════
+  // Computed: Business Context (for display in UI)
+  // ═══════════════════════════════════════════════════════════════════════
+
+  /**
+   * Business context computed from initial state and business info.
+   * Used to display business details in the UI for the internal flow.
+   */
+  const businessContext = useMemo(() => {
+    const info = businessHook.businessInfo;
+    if (!info && !initialState?.businessInfo && !initialState?.projectDescription) {
+      return null;
+    }
+    
+    const source = info || initialState?.businessInfo;
+    return {
+      businessName: flowHook.projectName || source?.businessType || initialState?.projectName || undefined,
+      description: source?.description || initialState?.projectDescription || undefined,
+      targetAudience: source?.targetAudience || undefined,
+      goals: source?.businessGoals || undefined,
+      industry: source?.industry || undefined,
+      uvp: source?.uvp || undefined,
+    };
+  }, [businessHook.businessInfo, initialState, flowHook.projectName]);
+
+  /**
+   * Check if we're in internal flow (template-first) mode.
+   * This is true when business details were pre-populated from team dashboard.
+   */
+  const isInternalFlow = useMemo(() => {
+    return Boolean(businessContext?.description && businessContext.description.length > 10);
+  }, [businessContext]);
+
+  // ═══════════════════════════════════════════════════════════════════════
   // Return Public API
   // ═══════════════════════════════════════════════════════════════════════
 
@@ -405,5 +458,9 @@ export function useEditorChatState({
     // Selected items
     selectedFont: additionalState.selectedFont,
     selectedLogo: additionalState.selectedLogo,
+
+    // Internal flow (template-first) - business context display
+    businessContext,
+    isInternalFlow,
   };
 }

@@ -172,14 +172,17 @@ export async function runClaudeCode(
 async function executeClaudeCode(
   sandbox: Sandbox,
   command: string,
-  timeout: number,
+  _timeout: number,
   onProgress?: (event: GenerationProgressEvent) => void
 ): Promise<{ exitCode: number; output: string }> {
+  // Get workspace directory
+  const workDir = (await sandbox.getWorkDir()) || '/home/daytona';
+
   // Change to workspace directory first
   const fullCommand = `cd ${DEFAULTS.workDir} && ${command}`;
 
-  // Execute with timeout
-  const result = await sandbox.process.executeCommand(fullCommand, { timeout });
+  // Execute command (Daytona SDK handles timeout internally)
+  const result = await sandbox.process.executeCommand(fullCommand, workDir);
 
   // Parse and emit progress from output
   if (result.result && onProgress) {
@@ -287,8 +290,10 @@ export async function cancelGeneration(
       return false;
     }
 
+    const workDir = (await sandbox.getWorkDir()) || '/home/daytona';
+
     // Kill any running claude process
-    await sandbox.process.executeCommand('pkill -f "claude" || true', { timeout: 10 });
+    await sandbox.process.executeCommand('pkill -f "claude" || true', workDir);
 
     return true;
   } catch (error) {
@@ -310,7 +315,8 @@ export async function isClaudeCodeAvailable(
       return false;
     }
 
-    const result = await sandbox.process.executeCommand('which claude', { timeout: 10 });
+    const workDir = (await sandbox.getWorkDir()) || '/home/daytona';
+    const result = await sandbox.process.executeCommand('which claude', workDir);
     return result.exitCode === 0;
   } catch {
     return false;
@@ -330,7 +336,8 @@ export async function getClaudeCodeVersion(
       return null;
     }
 
-    const result = await sandbox.process.executeCommand('claude --version', { timeout: 10 });
+    const workDir = (await sandbox.getWorkDir()) || '/home/daytona';
+    const result = await sandbox.process.executeCommand('claude --version', workDir);
     if (result.exitCode === 0) {
       return result.result.trim();
     }

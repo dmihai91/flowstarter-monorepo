@@ -245,8 +245,8 @@ export async function writeContextFile(
 
   const content = buildContextMarkdown(data);
 
-  // Write file to workspace
-  await sandbox.fs.uploadFile(CONTEXT_FILE_PATH, Buffer.from(content, 'utf-8'));
+  // Write file to workspace (SDK signature: uploadFile(buffer, remotePath))
+  await sandbox.fs.uploadFile(Buffer.from(content, 'utf-8'), CONTEXT_FILE_PATH);
 
   log.debug(`Context file written to ${CONTEXT_FILE_PATH}`);
 
@@ -306,7 +306,8 @@ export async function updateContextFile(
 
   const updatedContent = existingContent + updateNote + JSON.stringify(updates, null, 2);
 
-  await sandbox.fs.uploadFile(CONTEXT_FILE_PATH, Buffer.from(updatedContent, 'utf-8'));
+  // SDK signature: uploadFile(buffer, remotePath)
+  await sandbox.fs.uploadFile(Buffer.from(updatedContent, 'utf-8'), CONTEXT_FILE_PATH);
 }
 
 /**

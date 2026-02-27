@@ -24,6 +24,7 @@ import {
   TypingIndicator,
   CreatingIndicator,
   QuickProfileSelector, // NEW: Streamlined onboarding component
+  BusinessContextCard,  // NEW: Displays business info for internal flow
 } from './components';
 import type { EditorChatPanelProps } from './types';
 
@@ -109,6 +110,10 @@ export function EditorChatPanel({
     quickProfile,
     suggestedQuickProfile,
     handleQuickProfileComplete,
+
+    // Internal flow (template-first) - business context
+    businessContext,
+    isInternalFlow,
 
     // Handlers
     handleTemplateSelect,
@@ -226,6 +231,19 @@ export function EditorChatPanel({
         ref={paginationScrollRef}
         className={`flex-1 overflow-y-auto pl-4 pr-4 py-6 space-y-6 scrollbar-thin scrollbar-track-transparent ${isDark ? 'scrollbar-thumb-white/10' : 'scrollbar-thumb-black/10'}`}
       >
+        {/* Business Context Card (for internal/template-first flow) */}
+        {isInternalFlow && businessContext && (
+          <BusinessContextCard
+            businessName={businessContext.businessName || 'Your Business'}
+            description={businessContext.description}
+            targetAudience={businessContext.targetAudience}
+            goals={businessContext.goals}
+            industry={businessContext.industry}
+            uvp={businessContext.uvp}
+            isDark={isDark}
+          />
+        )}
+        
         {/* Loading older messages indicator */}
         {isLoadingMoreMessages && (
           <div className="flex justify-center py-3">

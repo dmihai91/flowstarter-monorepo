@@ -88,7 +88,9 @@ interface CloudflareEnv {
  * Main generation endpoint
  */
 export async function action({ request, context }: ActionFunctionArgs) {
-  const env = (context?.cloudflare?.env || context?.env || {}) as CloudflareEnv;
+  // Get environment variables from context (Cloudflare Workers or Node.js)
+  const cfContext = context as { cloudflare?: { env?: CloudflareEnv }; env?: CloudflareEnv } | undefined;
+  const env = (cfContext?.cloudflare?.env || cfContext?.env || {}) as CloudflareEnv;
 
   try {
     const body = (await request.json()) as GenerateRequest;

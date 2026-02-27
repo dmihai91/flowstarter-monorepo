@@ -145,19 +145,20 @@ export async function createWorkspace(
 async function installClaudeCode(sandbox: Sandbox): Promise<void> {
   log.debug(`Installing Claude Code CLI in sandbox ${sandbox.id}`);
 
+  const workDir = (await sandbox.getWorkDir()) || '/home/daytona';
+
   // Install Claude Code via npm
-  const installResult = await sandbox.process.executeCommand('npm install -g @anthropic-ai/claude-code', {
-    timeout: 120,
-  });
+  const installResult = await sandbox.process.executeCommand(
+    'npm install -g @anthropic-ai/claude-code',
+    workDir
+  );
 
   if (installResult.exitCode !== 0) {
     throw new Error(`Failed to install Claude Code: ${installResult.result}`);
   }
 
   // Verify installation
-  const verifyResult = await sandbox.process.executeCommand('claude --version', {
-    timeout: 10,
-  });
+  const verifyResult = await sandbox.process.executeCommand('claude --version', workDir);
 
   if (verifyResult.exitCode !== 0) {
     throw new Error('Claude Code installation verification failed');
@@ -175,9 +176,13 @@ async function getPreviewUrl(sandbox: Sandbox): Promise<string | undefined> {
     const ports = [5173, 4321, 3000, 8080];
     for (const port of ports) {
       try {
-        const url = await sandbox.getPreviewLink(port);
-        if (url) {
-          return url;
+        const previewLink = await sandbox.getPreviewLink(port);
+        if (previewLink) {
+          // previewLink may be a PortPreviewUrl object with url property
+          const url = typeof previewLink === 'string' ? previewLink : previewLink.url;
+          if (url) {
+            return url;
+          }
         }
       } catch {
         // Port not exposed, try next

@@ -9,15 +9,21 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 // Allowed origins for CORS
+// These are the editor subdomains that can check the main platform's session
 const ALLOWED_ORIGINS = [
   // Local development
   'http://localhost:5173',
   'http://localhost:5174',
   'http://localhost:5175',
-  // Development
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:5174',
+  'http://127.0.0.1:5175',
+  // Development/Staging (flowstarter.dev)
   'https://editor.flowstarter.dev',
-  // Production
+  'https://flowstarter.dev',
+  // Production (flowstarter.app)
   'https://editor.flowstarter.app',
+  'https://flowstarter.app',
 ];
 
 // Team email domains

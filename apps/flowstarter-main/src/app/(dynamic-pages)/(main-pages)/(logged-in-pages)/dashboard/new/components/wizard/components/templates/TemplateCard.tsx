@@ -243,7 +243,7 @@ export function TemplateCard({
             <div className="w-full border-b border-border bg-background/80 backdrop-blur px-6 py-4 shrink-0">
               <div className="w-full">
                 <div className="text-sm font-medium text-foreground">
-                  {template.name} — {t('wizard.template.preview')}
+                  {template.name} - {t('wizard.template.preview')}
                 </div>
                 {template.description ? (
                   <div className="text-xs text-muted-foreground mt-1">

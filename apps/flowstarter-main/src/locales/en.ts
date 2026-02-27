@@ -658,6 +658,32 @@ const en = {
   'dashboard.placeholders.sessionZero':
     'Once visitors arrive, session time will appear here.',
 
+  // Client dashboard stats cards
+  'dashboard.stats.yourWebsite': 'Your Website',
+  'dashboard.stats.live': 'Live',
+  'dashboard.stats.inProgress': 'In Progress',
+  'dashboard.stats.notStarted': 'Not started yet',
+  'dashboard.stats.bookDiscovery': 'Book a discovery call to get your website built',
+  'dashboard.stats.buildingMessage': "We're building your website. You'll be notified when it's ready!",
+  'dashboard.stats.edit': 'Edit',
+  'dashboard.stats.view': 'View',
+  'dashboard.stats.trafficAppears': 'Traffic data appears once your site is live',
+  'dashboard.stats.leadsActivate': 'Lead tracking activates when your site goes live',
+  'dashboard.stats.aiCredits': 'AI Credits',
+  'dashboard.stats.aiCreditsActive': 'Active',
+  'dashboard.stats.aiCreditsRemaining': 'of {total} remaining',
+  'dashboard.stats.aiCreditsReset': 'Resets monthly',
+  'dashboard.stats.aiCreditsIncluded': '1,000 monthly credits included with your subscription',
+  'dashboard.stats.aiCreditsAfterSetup': 'Edit your site with AI after setup',
+  'dashboard.stats.integrations': 'Integrations',
+  'dashboard.stats.integrationsSetup': 'Set up',
+  'dashboard.stats.integrationsAfterLaunch': 'After launch',
+  'dashboard.stats.integrationsConnect': 'Connect analytics, email & more',
+  'dashboard.stats.integrationsConnectLater': 'Connect your tools once your site is live',
+  'dashboard.stats.analytics': 'Analytics',
+  'dashboard.stats.email': 'Email',
+  'dashboard.stats.calendar': 'Calendar',
+
   // Industries (translatable category keys - normalized to id-without-dashes)
   'industry.consultantscoaches': 'Coaching & Consulting',
   'industry.therapistspsychologists': 'Therapy & Counseling',

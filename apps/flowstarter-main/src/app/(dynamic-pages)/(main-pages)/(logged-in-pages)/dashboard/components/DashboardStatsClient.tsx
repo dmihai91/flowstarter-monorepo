@@ -119,7 +119,7 @@ export function DashboardStatsClient({
         <>
           <div className="flex items-center justify-between w-full mb-3">
             <span className="text-sm font-medium text-gray-500 dark:text-white/50">
-              Your Website
+              {t('dashboard.stats.yourWebsite')}
             </span>
             <div className="w-8 h-8 rounded-xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center">
               <Globe className="w-4 h-4 text-[var(--purple)] opacity-80" />
@@ -135,7 +135,7 @@ export function DashboardStatsClient({
                 <span className="inline-flex items-center gap-1.5 mt-1">
                   <span className="w-2 h-2 rounded-full bg-[var(--green)] animate-pulse" />
                   <span className="text-xs text-[var(--green)] font-medium">
-                    Live
+                    {t('dashboard.stats.live')}
                   </span>
                 </span>
               </div>
@@ -145,7 +145,7 @@ export function DashboardStatsClient({
                   className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-gray-100 dark:bg-white/10 text-sm font-medium text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-white/20 transition-colors"
                 >
                   <Pencil className="w-3.5 h-3.5" />
-                  Edit
+                  {t('dashboard.stats.edit')}
                 </Link>
                 <a
                   href={`https://${lastProject.name
@@ -156,7 +156,7 @@ export function DashboardStatsClient({
                   className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--purple)] text-sm font-medium text-white hover:opacity-90 transition-opacity"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
-                  View
+                  {t('dashboard.stats.view')}
                 </a>
               </div>
             </div>
@@ -169,21 +169,21 @@ export function DashboardStatsClient({
                 <span className="inline-flex items-center gap-1.5 mt-1">
                   <span className="w-2 h-2 rounded-full bg-amber-500" />
                   <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">
-                    In Progress
+                    {t('dashboard.stats.inProgress')}
                   </span>
                 </span>
               </div>
               <p className="text-xs text-gray-500 dark:text-white/50 mt-auto">
-                We're building your website. You'll be notified when it's ready!
+                {t('dashboard.stats.buildingMessage')}
               </p>
             </div>
           ) : (
             <div className="flex flex-col gap-2 flex-1">
               <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                Not started yet
+                {t('dashboard.stats.notStarted')}
               </p>
               <p className="text-xs text-gray-500 dark:text-white/50 mt-auto">
-                Book a discovery call to get your website built
+                {t('dashboard.stats.bookDiscovery')}
               </p>
             </div>
           )}
@@ -236,7 +236,7 @@ export function DashboardStatsClient({
                   <TrendingUp className="w-5 h-5 text-[var(--purple)] opacity-25" />
                 </div>
                 <p className="text-sm text-gray-400 dark:text-white/40 flex-1">
-                  Traffic data appears once your site is live
+                  {t('dashboard.stats.trafficAppears')}
                 </p>
               </div>
               <GhostChart />
@@ -289,7 +289,7 @@ export function DashboardStatsClient({
                   <Users className="w-5 h-5 text-[var(--purple)] opacity-25" />
                 </div>
                 <p className="text-sm text-gray-400 dark:text-white/40 flex-1">
-                  Lead tracking activates when your site goes live
+                  {t('dashboard.stats.leadsActivate')}
                 </p>
               </div>
             </div>
@@ -303,11 +303,11 @@ export function DashboardStatsClient({
         <>
           <div className="flex items-center justify-between w-full mb-3">
             <span className="text-sm font-medium text-gray-500 dark:text-white/50">
-              AI Credits
+              {t('dashboard.stats.aiCredits')}
             </span>
             {aiCredits?.hasSubscription && (
               <span className="text-[10px] text-[var(--green)] bg-[var(--green)]/10 px-2 py-0.5 rounded-full font-medium">
-                Active
+                {t('dashboard.stats.aiCreditsActive')}
               </span>
             )}
           </div>
@@ -323,7 +323,7 @@ export function DashboardStatsClient({
                     {aiCredits.remaining.toLocaleString()}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-white/50">
-                    of {aiCredits.total.toLocaleString()} remaining
+                    {t('dashboard.stats.aiCreditsRemaining', { total: aiCredits.total.toLocaleString() })}
                   </p>
                 </div>
               </div>
@@ -335,7 +335,7 @@ export function DashboardStatsClient({
                   />
                 </div>
                 <p className="text-[10px] text-gray-400 dark:text-white/30 mt-1.5">
-                  Resets monthly · 1,000 credits/month
+                  {t('dashboard.stats.aiCreditsReset')}
                 </p>
               </div>
             </div>
@@ -346,11 +346,11 @@ export function DashboardStatsClient({
                   <Zap className="w-5 h-5 text-[var(--purple)] opacity-25" />
                 </div>
                 <p className="text-sm text-gray-400 dark:text-white/40 flex-1">
-                  1,000 monthly credits included with your subscription
+                  {t('dashboard.stats.aiCreditsIncluded')}
                 </p>
               </div>
               <p className="text-xs text-gray-400 dark:text-white/30 mt-auto">
-                Edit your site with AI after setup
+                {t('dashboard.stats.aiCreditsAfterSetup')}
               </p>
             </div>
           )}
@@ -363,32 +363,32 @@ export function DashboardStatsClient({
         <>
           <div className="flex items-center justify-between w-full mb-3">
             <span className="text-sm font-medium text-gray-500 dark:text-white/50">
-              Integrations
+              {t('dashboard.stats.integrations')}
             </span>
             {hasLiveProject ? (
               <Link
                 href="/dashboard/integrations"
                 className="text-xs font-medium text-[var(--purple)] hover:underline"
               >
-                Set up →
+                {t('dashboard.stats.integrationsSetup')} →
               </Link>
             ) : (
               <span className="text-[10px] text-gray-400 dark:text-white/30 bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded-full font-medium">
-                After launch
+                {t('dashboard.stats.integrationsAfterLaunch')}
               </span>
             )}
           </div>
 
           <p className="text-sm text-gray-400 dark:text-white/40">
             {hasLiveProject
-              ? 'Connect analytics, email & more'
-              : 'Connect your tools once your site is live'}
+              ? t('dashboard.stats.integrationsConnect')
+              : t('dashboard.stats.integrationsConnectLater')}
           </p>
 
           <div className="flex items-center justify-around flex-1 pt-2 group">
-            <IntegrationLogo name="Analytics" icon={BarChart3} />
-            <IntegrationLogo name="Email" icon={Mail} />
-            <IntegrationLogo name="Calendar" icon={Calendar} />
+            <IntegrationLogo name={t('dashboard.stats.analytics')} icon={BarChart3} />
+            <IntegrationLogo name={t('dashboard.stats.email')} icon={Mail} />
+            <IntegrationLogo name={t('dashboard.stats.calendar')} icon={Calendar} />
           </div>
         </>
       ),

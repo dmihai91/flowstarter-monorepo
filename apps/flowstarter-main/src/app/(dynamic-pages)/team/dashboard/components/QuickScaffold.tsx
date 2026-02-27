@@ -116,7 +116,7 @@ export function QuickScaffold() {
           <Wand2 className="w-4 h-4 text-[var(--purple)]" />
         </div>
         <span className="text-sm text-gray-600 dark:text-white/60 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-          Quick scaffold — paste client brief to generate draft structure
+          Quick scaffold - paste client brief to generate draft structure
         </span>
         <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-[var(--purple)] ml-auto transition-colors" />
       </button>
@@ -244,7 +244,7 @@ export function QuickScaffold() {
       </div>
 
       <p className="text-[11px] text-gray-400 dark:text-white/30 mt-2 text-center">
-        AI creates a starting structure — you refine positioning and strategy
+        AI creates a starting structure - you refine positioning and strategy
       </p>
     </div>
   );

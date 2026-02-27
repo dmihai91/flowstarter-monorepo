@@ -930,7 +930,7 @@ export default function LandingPage() {
                       <span className="ml-1">{t('landing.hero.priceMonthlyLabel')}</span>
                     </div>
                     <div className="text-xs text-gray-400 dark:text-white/30 mt-1">
-                      {t('landing.hero.priceNote')} · <span className="text-amber-600 dark:text-amber-400">€999 + €59/mo soon</span>
+                      {t('landing.hero.priceNote')} · <span className="text-amber-600 dark:text-amber-400">€599 after beta</span>
                     </div>
                   </div>
                 </div>
@@ -2196,7 +2196,7 @@ export default function LandingPage() {
                   },
                   {
                     q: 'What happens when the beta ends?',
-                    a: "Your launch rate is locked for 12 months from signup. After that, pricing moves to standard rates (€999 setup / €59/month). You'll get 30 days notice before anything changes.",
+                    a: "Your €39/month rate is locked for 12 months from signup, then moves to €59/month. The setup fee goes from €399 to €599 after beta. You'll get 30 days notice before anything changes.",
                   },
                   {
                     q: "What's included in the email?",

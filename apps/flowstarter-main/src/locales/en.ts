@@ -2349,7 +2349,7 @@ const en = {
   'landing.hero.support': '',
   'landing.hero.cta': 'Book Your Free Strategy Call',
   'landing.hero.ctaNote': 'Free. No obligation.',
-  'landing.hero.priceBuild': '€599',
+  'landing.hero.priceBuild': '€399',
   'landing.hero.priceBuildLabel': 'setup',
   'landing.hero.priceMonthly': '€39',
   'landing.hero.priceMonthlyLabel': '/month',
@@ -2378,9 +2378,9 @@ const en = {
   'landing.pricing.title': 'No surprises.',
   'landing.pricing.subtitle': 'One fee to build. One fee to maintain. Cancel anytime.',
   'landing.pricing.limitedBadge': 'Launch pricing',
-  'landing.pricing.limitedNote': 'Prices go up to €999 + €59/mo soon. Lock in current rates.',
+  'landing.pricing.limitedNote': 'Setup goes to €599 after beta. Lock in current rates.',
   'landing.pricing.buildLabel': 'Setup:',
-  'landing.pricing.buildPrice': '€599',
+  'landing.pricing.buildPrice': '€399',
   'landing.pricing.buildPeriod': 'one-time',
   'landing.pricing.careLabel': 'Monthly:',
   'landing.pricing.carePrice': '€39',
@@ -2390,7 +2390,7 @@ const en = {
   'landing.pricing.assets': 'All your site assets downloadable. You own them.',
 
   // Landing Page - Pricing Features
-  'landing.pricing.websiteTitle': 'Setup (€599)',
+  'landing.pricing.websiteTitle': 'Setup (€399)',
   'landing.pricing.websiteDesc': 'Your website, built around your business. Strategy call, custom design, domain, email, analytics. All included.',
   'landing.pricing.websiteFeature1': 'Strategy call to clarify your offer',
   'landing.pricing.websiteFeature2': 'Up to 7 pages, designed to convert',
@@ -2422,10 +2422,10 @@ const en = {
   'landing.cta.title': "Your website shouldn't hold you back.",
   'landing.cta.subtitle': "Book a free strategy call. We'll talk through your business and see if Flowstarter is the right fit. No pressure. No pitch deck.",
   'landing.cta.button': 'Book Your Free Strategy Call',
-  'landing.cta.pricing': '€599 setup · €39/month · 1,000 AI credits · First month free',
+  'landing.cta.pricing': '€399 setup · €39/month · 1,000 AI credits · First month free',
 
   // Landing Page - Footer CTA
-  'landing.footer.pricing': '€599 website · €39/month care · First month free',
+  'landing.footer.pricing': '€399 website · €39/month care · First month free',
 } as const;
 
 export default en;

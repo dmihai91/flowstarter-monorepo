@@ -1,0 +1,25 @@
+/* Flowstarter Brand Colors - Shared across all apps */
+:root {
+  /* Primary brand color - indigo/blue */
+  --purple: hsl(233, 65%, 58%);
+  --purple-rgb: 77, 93, 217;
+  
+  /* Brand gradient */
+  --brand-gradient: linear-gradient(135deg, #8B5CF6 0%, #06B6D4 100%);
+  --brand-gradient-hover: linear-gradient(135deg, #7C3AED 0%, #0891B2 100%);
+  
+  /* Primary colors */
+  --primary: hsl(241, 93%, 61%);
+  --primary-light: hsl(241, 93%, 61%, 0.8);
+  --primary-lighter: hsl(241, 93%, 61%, 0.6);
+  --primary-lightest: hsl(241, 93%, 61%, 0.1);
+  
+  /* Accent */
+  --accent-blue: #3B82F6;
+  --accent-cyan: #06B6D4;
+}
+
+/* Dark mode overrides if needed */
+[data-theme='dark'] {
+  --purple: hsl(233, 65%, 58%);
+}

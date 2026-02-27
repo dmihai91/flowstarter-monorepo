@@ -4,10 +4,8 @@ import { useTranslations } from '@/lib/i18n';
 import { useUser } from '@clerk/nextjs';
 import { DashboardInit } from './components/DashboardInit';
 import { DashboardMessages } from './components/DashboardMessages';
-import { DashboardProjectsClient } from './components/DashboardProjects.client';
 import { DashboardStatsClientFetcher } from './components/DashboardStatsClientFetcher';
 import { DashboardWrapper } from './components/DashboardWrapper';
-import { PageSectionHeader } from './components/PageSectionHeader';
 import { Calendar, Sparkles, Globe, Lock, CheckCircle2 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -185,15 +183,6 @@ export default function DashboardPage() {
           {/* Stats Section */}
           <div className="mb-8">
             <DashboardStatsClientFetcher />
-          </div>
-
-          {/* Projects Section */}
-          <div className="mb-8">
-            <PageSectionHeader
-              title={t('projects.title')}
-              subtitle={t('projects.subtitle')}
-            />
-            <DashboardProjectsClient />
           </div>
         </DashboardInit>
       </div>

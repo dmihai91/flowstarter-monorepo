@@ -1,6 +1,7 @@
 export { SuggestedReplies } from './SuggestedReplies';
 export { TemplateGallery } from './TemplateGallery';
 export { TemplateRecommendationGallery } from './TemplateRecommendationGallery';
+export { FullTemplateGallery } from './FullTemplateGallery';
 export { PaletteSelector } from './PaletteSelector';
 export { CustomPaletteModal } from './CustomPaletteModal';
 export { FontSelector } from './FontSelector';

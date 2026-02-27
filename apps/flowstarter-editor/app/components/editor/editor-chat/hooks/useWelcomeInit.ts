@@ -64,7 +64,9 @@ interface UseWelcomeInitProps {
   messageHook: UseOnboardingMessagesReturn;
   flowHook: UseOnboardingFlowReturn;
   hasRestoredState: React.MutableRefObject<boolean>;
-  /** Callback to trigger template recommendations fetch */
+  /** Callback to fetch ALL templates for manual selection (internal flow) */
+  onFetchTemplates?: () => void;
+  /** Callback to trigger template recommendations fetch (self-serve flow) */
   onInternalFlowStart?: (businessInfo: BusinessInfo, projectName: string, description: string) => void;
 }
 
@@ -73,6 +75,7 @@ export function useWelcomeInit({
   messageHook, 
   flowHook, 
   hasRestoredState,
+  onFetchTemplates,
   onInternalFlowStart,
 }: UseWelcomeInitProps): void {
   const hasInitialized = useRef(false);
@@ -82,9 +85,11 @@ export function useWelcomeInit({
   const flowHookRef = useRef(flowHook);
   const messageHookRef = useRef(messageHook);
   const initialStateRef = useRef(initialState);
+  const onFetchTemplatesRef = useRef(onFetchTemplates);
   const onInternalFlowStartRef = useRef(onInternalFlowStart);
   flowHookRef.current = flowHook;
   messageHookRef.current = messageHook;
+  onFetchTemplatesRef.current = onFetchTemplates;
   onInternalFlowStartRef.current = onInternalFlowStart;
 
   // Only update initialStateRef if it's the first value (capture initial state once)
@@ -95,6 +100,7 @@ export function useWelcomeInit({
   /**
    * Initialize the INTERNAL FLOW (template-first).
    * Called when project already has business details from team dashboard.
+   * Shows ALL templates for manual selection instead of AI recommendations.
    */
   const initializeInternalFlow = useCallback(async () => {
     const flow = flowHookRef.current;
@@ -117,17 +123,24 @@ export function useWelcomeInit({
       ? getMessage(MESSAGE_KEYS.INTERNAL_WELCOME_WITH_NAME, { businessName })
       : getMessage(MESSAGE_KEYS.INTERNAL_WELCOME);
     
-    const templatePrompt = getMessage(MESSAGE_KEYS.INTERNAL_TEMPLATE_PROMPT);
+    // Updated prompt for manual template selection
+    const templatePrompt = "**Choose a template** from the gallery below. Click any template to preview it, then select the one that best fits your vision.";
 
     msg.addAssistantMessage(`${welcomeMessage}\n\n${templatePrompt}`);
     
     // Go directly to template step
     flow.setStep('template');
     
-    // Clear suggested replies - template gallery will be shown
+    // Clear suggested replies - full template gallery will be shown
     msg.setSuggestedReplies([]);
 
-    // Trigger template recommendations fetch if callback provided
+    // Fetch ALL templates for manual selection
+    if (onFetchTemplatesRef.current) {
+      console.log('[useWelcomeInit] Fetching all templates for manual selection...');
+      onFetchTemplatesRef.current();
+    }
+
+    // Also set business info if available (for build step later)
     if (onInternalFlowStartRef.current && state?.businessInfo) {
       onInternalFlowStartRef.current(
         state.businessInfo,
@@ -136,7 +149,7 @@ export function useWelcomeInit({
       );
     }
 
-    console.log('[useWelcomeInit] Internal flow started - skipping to template selection');
+    console.log('[useWelcomeInit] Internal flow started - showing full template gallery');
   }, []); // Empty deps - uses refs
 
   const initializeWelcome = useCallback(async () => {

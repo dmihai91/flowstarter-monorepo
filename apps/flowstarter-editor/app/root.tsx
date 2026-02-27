@@ -48,6 +48,11 @@ function getConvexClient(): ConvexReactClient | null {
 }
 
 // Clerk auth loader
+// Satellite configuration is handled via environment variables:
+// - CLERK_DOMAIN=.flowstarter.dev (or .flowstarter.app)
+// - CLERK_IS_SATELLITE=true
+// - CLERK_SIGN_IN_URL=https://flowstarter.dev/login
+// - CLERK_SIGN_UP_URL=https://flowstarter.dev/login
 export const loader = (args: LoaderFunctionArgs) => rootAuthLoader(args);
 
 export const links: LinksFunction = () => [
@@ -277,58 +282,29 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 import { logStore } from './lib/stores/logs';
 
-// Determine if we're on a flowstarter domain for satellite mode
-// This enables shared Clerk session cookies across subdomains
-
 /**
- * Get the main platform URL based on current hostname
- * - Production: https://flowstarter.app
- * - Development: https://flowstarter.dev
- * - Local: http://localhost:3000
+ * Helper functions for cross-subdomain auth configuration
  */
 function getMainPlatformUrl(): string {
   if (typeof window === 'undefined') return 'https://flowstarter.dev';
   const hostname = window.location.hostname;
-  
-  if (hostname.includes('flowstarter.app')) {
-    return 'https://flowstarter.app';
-  }
-  if (hostname.includes('flowstarter.dev')) {
-    return 'https://flowstarter.dev';
-  }
-  // Local development
+  if (hostname.includes('flowstarter.app')) return 'https://flowstarter.app';
+  if (hostname.includes('flowstarter.dev')) return 'https://flowstarter.dev';
   return 'http://localhost:3000';
 }
 
-/**
- * Get the shared cookie domain for cross-subdomain session sharing
- */
 function getSharedCookieDomain(): string | undefined {
   if (typeof window === 'undefined') return undefined;
   const hostname = window.location.hostname;
-  
-  if (hostname.includes('flowstarter.app')) {
-    return '.flowstarter.app';
-  }
-  if (hostname.includes('flowstarter.dev')) {
-    return '.flowstarter.dev';
-  }
-  // Local development - no shared domain
+  if (hostname.includes('flowstarter.app')) return '.flowstarter.app';
+  if (hostname.includes('flowstarter.dev')) return '.flowstarter.dev';
   return undefined;
 }
 
-/**
- * Check if this app should run in Clerk satellite mode
- * Editor is satellite when running on a subdomain (editor.*)
- */
 function isSatelliteApp(): boolean {
   if (typeof window === 'undefined') return false;
   const hostname = window.location.hostname;
-  // Editor is satellite when running on editor subdomain
-  return (
-    hostname.startsWith('editor.') || 
-    hostname.includes('editor.flowstarter')
-  );
+  return hostname.startsWith('editor.') || hostname.includes('editor.flowstarter');
 }
 
 export default function App() {
@@ -343,22 +319,23 @@ export default function App() {
     });
   }, []);
 
-  // Determine Clerk satellite configuration
+  // Determine Clerk satellite configuration for cross-subdomain session sharing
   const isSatellite = isSatelliteApp();
   const domain = getSharedCookieDomain();
   const mainPlatformUrl = getMainPlatformUrl();
 
+  // Type assertion needed because Clerk's types are complex discriminated unions
+  // but the runtime behavior works correctly with these props
+  const clerkProps = {
+    ...(loaderData || {}),
+    domain,
+    isSatellite,
+    signInUrl: isSatellite ? `${mainPlatformUrl}/login` : '/login',
+    signUpUrl: isSatellite ? `${mainPlatformUrl}/login` : '/login',
+  } as Parameters<typeof ClerkProvider>[0];
+
   return (
-    <ClerkProvider 
-      {...loaderData}
-      // Satellite app configuration for cross-subdomain session sharing
-      // When on flowstarter subdomains, share cookies via the root domain
-      domain={domain}
-      isSatellite={isSatellite}
-      // Redirect to main platform for sign-in/sign-up when in satellite mode
-      signInUrl={isSatellite ? `${mainPlatformUrl}/login` : '/login'}
-      signUpUrl={isSatellite ? `${mainPlatformUrl}/login` : '/login'}
-    >
+    <ClerkProvider {...clerkProps}>
       <Layout>
         <Outlet />
       </Layout>

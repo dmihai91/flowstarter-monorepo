@@ -167,17 +167,24 @@ export function useEditorChatState({
   });
 
   /**
+   * Callback to fetch ALL templates for manual selection (internal flow).
+   */
+  const handleFetchTemplates = useCallback(() => {
+    // Trigger template fetch via React Query
+    templateHook.refetchTemplates();
+  }, [templateHook]);
+
+  /**
    * Callback for internal flow (template-first) initialization.
-   * Triggers template recommendations fetch when business details are already known.
+   * Sets business info when business details are already known.
    */
   const handleInternalFlowStart = useCallback(
     (businessInfo: import('../types').BusinessInfo, projectName: string, description: string) => {
       // Update business hook with initial state
       businessHook.setBusinessInfo(businessInfo);
-      // Trigger recommendations fetch
-      templateHook.fetchRecommendations(businessInfo, projectName, description);
+      // Note: We no longer fetch recommendations here - user picks from all templates
     },
-    [businessHook, templateHook],
+    [businessHook],
   );
 
   useWelcomeInit({ 
@@ -185,6 +192,7 @@ export function useEditorChatState({
     messageHook, 
     flowHook, 
     hasRestoredState,
+    onFetchTemplates: handleFetchTemplates,
     onInternalFlowStart: handleInternalFlowStart,
   });
 

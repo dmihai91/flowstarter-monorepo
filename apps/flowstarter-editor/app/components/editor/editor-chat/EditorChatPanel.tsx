@@ -14,6 +14,7 @@ import {
   SuggestedReplies,
   TemplateGallery,
   TemplateRecommendationGallery,
+  FullTemplateGallery,  // NEW: Shows ALL templates for manual selection
   PaletteSelector,
   CustomPaletteModal,
   FontSelector,
@@ -308,8 +309,23 @@ export function EditorChatPanel({
           </motion.div>
         )}
 
-        {/* Template Recommendations - only show when loading or has recommendations */}
-        {step === 'template' && (recommendationsLoading || recommendations.length > 0) && (
+        {/* INTERNAL FLOW: Full Template Gallery - user manually picks from ALL templates */}
+        {step === 'template' && isInternalFlow && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="ml-10">
+            <FullTemplateGallery
+              templates={templates}
+              templatesLoading={templatesLoading}
+              templatesError={templatesError}
+              isDark={isDark}
+              onTemplateSelect={handleTemplateSelect}
+              onPreview={openPreview}
+              onRetry={refetchTemplates}
+            />
+          </motion.div>
+        )}
+
+        {/* SELF-SERVE FLOW: Template Recommendations - only show when loading or has recommendations */}
+        {step === 'template' && !isInternalFlow && (recommendationsLoading || recommendations.length > 0) && (
           <div className="ml-10">
             <TemplateRecommendationGallery
               recommendations={recommendations}
@@ -323,8 +339,8 @@ export function EditorChatPanel({
           </div>
         )}
 
-        {/* Template Gallery fallback - show when no recommendations after loading */}
-        {step === 'template' && recommendations.length === 0 && !recommendationsLoading && (
+        {/* SELF-SERVE FLOW: Template Gallery fallback - show when no recommendations after loading */}
+        {step === 'template' && !isInternalFlow && recommendations.length === 0 && !recommendationsLoading && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="ml-10">
             <TemplateGallery
               templates={templates}

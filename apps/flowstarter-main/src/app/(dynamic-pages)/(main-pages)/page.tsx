@@ -297,8 +297,9 @@ export default function LandingPage() {
 
   useEffect(() => {
     // Only auto-scroll after user has interacted (not on initial load)
-    if (hasInteracted) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Use block: 'nearest' to prevent page scroll, only scroll within container
+    if (hasInteracted && messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }, [messages, hasInteracted]);
 

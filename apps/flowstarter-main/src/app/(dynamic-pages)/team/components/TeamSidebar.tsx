@@ -172,8 +172,8 @@ export function TeamSidebar() {
       <aside
         className={cn(
           'md:hidden fixed inset-y-0 left-0 z-[160] w-72',
-          'bg-white/30 dark:bg-[#12121a]/30 backdrop-blur-xl',
-          'border-r border-white/30 dark:border-white/5',
+          'bg-white/70 dark:bg-[#12121a]/70 backdrop-blur-2xl backdrop-saturate-150',
+          'border-r border-white/60 dark:border-white/10',
           'shadow-2xl shadow-black/10 dark:shadow-black/30',
           'transform transition-transform duration-300 ease-in-out',
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
@@ -198,8 +198,8 @@ export function TeamSidebar() {
       <aside 
         className={cn(
           'hidden md:flex flex-col flex-shrink-0 transition-all duration-300',
-          'bg-white/20 dark:bg-[#12121a]/20 backdrop-blur-md',
-          'border-r border-white/30 dark:border-white/5',
+          'bg-white/50 dark:bg-[#12121a]/50 backdrop-blur-2xl backdrop-saturate-150',
+          'border-r border-white/60 dark:border-white/10 shadow-[1px_0_3px_rgba(0,0,0,0.05)]',
           collapsed ? 'w-[68px]' : 'w-64'
         )}
       >

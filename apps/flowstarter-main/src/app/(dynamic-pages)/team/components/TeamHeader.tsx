@@ -7,7 +7,7 @@ import { TeamUserMenu } from './TeamUserMenu';
 
 export function TeamHeader() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-[100] h-16 bg-white/20 dark:bg-[#0a0a0c]/20 backdrop-blur-md border-b border-white/30 dark:border-white/5">
+    <header className="fixed top-0 left-0 right-0 z-[100] h-16 bg-white/50 dark:bg-[#0a0a0c]/50 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/60 dark:border-white/10 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
       <div className="w-full h-full px-4 lg:px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/team/dashboard" className="flex items-center gap-3 group">

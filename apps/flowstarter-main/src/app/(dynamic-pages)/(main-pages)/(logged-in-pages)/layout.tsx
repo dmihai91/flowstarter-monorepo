@@ -6,6 +6,7 @@ import { SidebarProvider, useSidebar } from '@/contexts/SidebarContext';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { AuthCheck } from './AuthCheck';
+import { ClientHeader } from './dashboard/components/ClientHeader';
 
 function LayoutContent({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -19,6 +20,7 @@ function LayoutContent({ children }: { children: ReactNode }) {
     // Full-width layout for wizard pages
     return (
       <div className="min-h-screen flex flex-col">
+        <ClientHeader />
         <main className="flex-1 mt-16">{children}</main>
       </div>
     );
@@ -28,6 +30,9 @@ function LayoutContent({ children }: { children: ReactNode }) {
     <div className="min-h-screen flex flex-col">
       {/* Gradient background - behind everything */}
       <GradientBackground variant="dashboard" className="fixed inset-0 z-0" />
+      
+      {/* Header - always visible */}
+      <ClientHeader />
       
       <Sidebar />
       

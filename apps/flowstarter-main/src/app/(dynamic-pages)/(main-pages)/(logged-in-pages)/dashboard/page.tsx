@@ -2,7 +2,6 @@
 
 import { useTranslations } from '@/lib/i18n';
 import { useUser } from '@clerk/nextjs';
-import { ClientHeader } from './components/ClientHeader';
 import { DashboardInit } from './components/DashboardInit';
 import { DashboardMessages } from './components/DashboardMessages';
 import { DashboardProjectsClient } from './components/DashboardProjects.client';
@@ -162,8 +161,6 @@ export default function DashboardPage() {
 
   return (
     <DashboardWrapper>
-      <ClientHeader />
-
       <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
         {/* Messages */}
         <DashboardMessages />

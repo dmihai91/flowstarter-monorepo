@@ -102,35 +102,34 @@ export function QuickScaffold() {
     }
   };
 
+  // Glassmorphism card style
+  const glassCard = 'rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.1)_inset]';
+
   // Collapsed state - compact one-liner
   if (!isExpanded) {
     return (
       <button
         onClick={() => setIsExpanded(true)}
-        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-dashed border-gray-300 dark:border-white/10 bg-gray-50/50 dark:bg-white/[0.02] hover:border-[var(--purple)]/40 hover:bg-[var(--purple)]/5 transition-all group"
+        className={`w-full flex items-center gap-3 px-4 py-3.5 ${glassCard} hover:border-[var(--purple)]/30 hover:bg-white/80 dark:hover:bg-white/[0.06] hover:shadow-[0_8px_32px_rgba(124,58,237,0.1)] transition-all duration-300 group`}
       >
-        <div className="w-8 h-8 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center group-hover:bg-[var(--purple)]/20 transition-colors">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center group-hover:from-[var(--purple)]/30 group-hover:to-blue-500/30 transition-colors">
           <Wand2 className="w-4 h-4 text-[var(--purple)]" />
         </div>
-        <span className="text-sm text-gray-600 dark:text-white/60 group-hover:text-[var(--purple)] transition-colors">
+        <span className="text-sm text-gray-600 dark:text-white/60 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
           Quick scaffold — paste client brief to generate draft structure
         </span>
-        <ChevronDown className="w-4 h-4 text-gray-400 ml-auto" />
+        <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-[var(--purple)] ml-auto transition-colors" />
       </button>
     );
   }
 
-  // Expanded state
-  const cardClass =
-    'rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset]';
-
   return (
-    <div className={`${cardClass} p-4`}>
+    <div className={`${glassCard} p-5`}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center">
-            <Wand2 className="w-4 h-4 text-[var(--purple)]" />
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center">
+            <Wand2 className="w-5 h-5 text-[var(--purple)]" />
           </div>
           <div>
             <h3 className="font-medium text-gray-900 dark:text-white text-sm">

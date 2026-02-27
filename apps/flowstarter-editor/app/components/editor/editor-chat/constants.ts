@@ -281,6 +281,12 @@ export const MESSAGE_KEYS = {
   WELCOME_SHOWCASE: 'message.welcome.showcase',
   WELCOME_CTA: 'message.welcome.cta',
   
+  // ─── Internal Flow (Template-First) ────────────────────────────────────────
+  // When project already has business details from team dashboard
+  INTERNAL_WELCOME: 'message.internal.welcome',
+  INTERNAL_WELCOME_WITH_NAME: 'message.internal.welcome_with_name',
+  INTERNAL_TEMPLATE_PROMPT: 'message.internal.template_prompt',
+  
   // Describe step
   DESCRIBE_PROMPT: 'message.describe.prompt',
   DESCRIBE_ACK: 'message.describe.ack',
@@ -332,6 +338,17 @@ export const MESSAGE_LABELS: Record<MessageKey, string> = {
     '• **Trainers & Educators**\n' +
     '• **Local Services**',
   [MESSAGE_KEYS.WELCOME_CTA]: '**Tell me what you do** and I\'ll build your site.\n\nClick an example or type your own:',
+  
+  // ─── Internal Flow (Template-First) ────────────────────────────────────────
+  [MESSAGE_KEYS.INTERNAL_WELCOME]: 
+    "**Let's build your website!** 🚀\n\n" +
+    "I have all your business details. Now let's pick a template that matches your brand.",
+  [MESSAGE_KEYS.INTERNAL_WELCOME_WITH_NAME]: 
+    "**Let's build {{businessName}}'s website!** 🚀\n\n" +
+    "I have all your business details. Let's pick a template that matches your brand.",
+  [MESSAGE_KEYS.INTERNAL_TEMPLATE_PROMPT]: 
+    "I've selected **3 templates** that match your business profile.\n\n" +
+    "Click any template to preview it, or browse all options below.",
   
   // Describe step
   [MESSAGE_KEYS.DESCRIBE_PROMPT]: 

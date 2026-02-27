@@ -68,9 +68,10 @@ export function HistoryItem({
   return (
     <div
       className={classNames(
-        'group rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/10 overflow-hidden flex justify-between items-center px-3 py-2 transition-colors',
-        { 'text-gray-900 dark:text-white bg-white/50 dark:bg-white/10': isActiveChat },
+        'group rounded-xl text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/[0.08] overflow-hidden flex justify-between items-center px-3 py-2.5 transition-all duration-200',
+        { 'text-gray-900 dark:text-white bg-white/60 dark:bg-white/[0.06] shadow-sm': isActiveChat },
         { 'cursor-pointer': selectionMode },
+        { 'bg-purple-500/10 dark:bg-purple-500/10 border border-purple-500/20': isSelected },
       )}
       onClick={selectionMode ? handleItemClick : undefined}
     >
@@ -89,7 +90,7 @@ export function HistoryItem({
         <form onSubmit={handleSubmit} className="flex-1 flex items-center gap-2">
           <input
             type="text"
-            className="flex-1 bg-white/70 dark:bg-white/10 backdrop-blur-sm text-gray-900 dark:text-white rounded-md px-3 py-1.5 text-sm border border-white/30 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+            className="flex-1 bg-white/50 dark:bg-white/[0.06] backdrop-blur-xl text-gray-900 dark:text-white rounded-lg px-3 py-1.5 text-sm border border-white/30 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-purple-500/30 dark:focus:ring-purple-500/20 transition-all duration-200"
             autoFocus
             value={currentDescription}
             onChange={handleChange}
@@ -98,7 +99,7 @@ export function HistoryItem({
           />
           <button
             type="submit"
-            className="i-ph:check h-4 w-4 text-gray-500 hover:text-blue-500 transition-colors"
+            className="i-ph:check h-4 w-4 text-gray-500 hover:text-purple-500 transition-colors"
             onMouseDown={handleSubmit}
           />
         </form>

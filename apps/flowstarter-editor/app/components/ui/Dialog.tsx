@@ -108,7 +108,7 @@ export const Dialog = memo(({ children, className, showCloseButton = true, onClo
     <RadixDialog.Portal>
       <RadixDialog.Overlay asChild>
         <motion.div
-          className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm"
+          className="fixed inset-0 z-[10000] bg-black/60 backdrop-blur-md"
           initial="closed"
           animate="open"
           exit="closed"
@@ -119,7 +119,13 @@ export const Dialog = memo(({ children, className, showCloseButton = true, onClo
       <RadixDialog.Content asChild>
         <motion.div
           className={classNames(
-            'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl z-[9999] w-[520px] focus:outline-none',
+            'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
+            'bg-white/90 dark:bg-[#12121a]/90 backdrop-blur-2xl backdrop-saturate-150',
+            'border border-white/60 dark:border-white/10',
+            'rounded-2xl',
+            'shadow-[0_24px_80px_rgba(0,0,0,0.15),0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[0_24px_80px_rgba(0,0,0,0.5),0_1px_0_rgba(255,255,255,0.1)_inset]',
+            'z-[10001] w-[520px] max-w-[calc(100vw-2rem)]',
+            'focus:outline-none',
             className,
           )}
           initial="closed"
@@ -127,13 +133,13 @@ export const Dialog = memo(({ children, className, showCloseButton = true, onClo
           exit="closed"
           variants={dialogVariants}
         >
-          <div className="flex flex-col">
+          <div className="flex flex-col overflow-hidden rounded-2xl">
             {children}
             {showCloseButton && (
               <RadixDialog.Close asChild onClick={onClose}>
                 <IconButton
                   icon="i-ph:x"
-                  className="absolute top-3 right-3 text-muted-foreground hover:text-foreground"
+                  className="absolute top-3 right-3 text-gray-400 dark:text-white/40 hover:text-gray-600 dark:hover:text-white/60 hover:bg-white/60 dark:hover:bg-white/5 transition-all rounded-lg"
                 />
               </RadixDialog.Close>
             )}

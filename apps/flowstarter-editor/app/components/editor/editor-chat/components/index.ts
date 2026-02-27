@@ -12,3 +12,4 @@ export { BuildTimeline, createBuildSteps, type BuildStep } from './BuildTimeline
 export { IntegrationsPanel } from './IntegrationsPanel';
 export { ContactDetailsPanel } from './ContactDetailsPanel';
 export { QuickProfileSelector } from './QuickProfileSelector';
+export { BusinessContextCard } from './BusinessContextCard';

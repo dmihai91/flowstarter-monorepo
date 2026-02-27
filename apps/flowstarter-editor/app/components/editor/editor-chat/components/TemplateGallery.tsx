@@ -23,10 +23,15 @@ const SkeletonCard = ({ isDark, index }: { isDark: boolean; index: number }) => 
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.3, delay: index * 0.1 }}
-    className="rounded-xl overflow-hidden"
+    className="rounded-2xl overflow-hidden"
     style={{
-      background: isDark ? '#14141e' : '#ffffff',
-      border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.08)',
+      background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.6)',
+      backdropFilter: 'blur(24px)',
+      WebkitBackdropFilter: 'blur(24px)',
+      border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(255, 255, 255, 0.6)',
+      boxShadow: isDark
+        ? '0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
+        : '0 4px 20px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)',
     }}
   >
     <div className="aspect-[16/10] relative overflow-hidden">
@@ -199,29 +204,31 @@ export function TemplateGallery({
               transition={{ duration: 0.3, delay: index * 0.08 }}
               onMouseEnter={() => setHoveredId(template.id)}
               onMouseLeave={() => setHoveredId(null)}
-              className="group rounded-xl overflow-hidden cursor-pointer"
+              className="group rounded-2xl overflow-hidden cursor-pointer"
               style={{
-                background: isDark ? '#14141e' : '#ffffff',
+                background: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(255, 255, 255, 0.7)',
+                backdropFilter: 'blur(24px)',
+                WebkitBackdropFilter: 'blur(24px)',
                 border: isSelected
                   ? '2px solid rgba(99, 102, 241, 0.8)'
                   : isHovered
                     ? isDark
-                      ? '1px solid rgba(255, 255, 255, 0.2)'
-                      : '1px solid rgba(0, 0, 0, 0.15)'
+                      ? '1px solid rgba(255, 255, 255, 0.15)'
+                      : '1px solid rgba(255, 255, 255, 0.8)'
                     : isDark
                       ? '1px solid rgba(255, 255, 255, 0.08)'
-                      : '1px solid rgba(0, 0, 0, 0.06)',
+                      : '1px solid rgba(255, 255, 255, 0.6)',
                 boxShadow: isSelected
-                  ? '0 0 0 4px rgba(99, 102, 241, 0.15), 0 8px 32px rgba(0, 0, 0, 0.3)'
+                  ? '0 0 0 4px rgba(99, 102, 241, 0.15), 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
                   : isHovered
                     ? isDark
-                      ? '0 12px 40px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(99, 102, 241, 0.1)'
-                      : '0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(99, 102, 241, 0.08)'
+                      ? '0 12px 40px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(99, 102, 241, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                      : '0 12px 40px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(99, 102, 241, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9)'
                     : isDark
-                      ? '0 4px 24px rgba(0, 0, 0, 0.4)'
-                      : '0 4px 20px rgba(0, 0, 0, 0.08)',
+                      ? '0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
+                      : '0 4px 20px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)',
                 transform: isHovered && !isSelected ? 'translateY(-4px)' : 'translateY(0)',
-                transition: 'all 0.2s ease-out',
+                transition: 'all 0.25s ease-out',
               }}
               onClick={() => handleSelect(template)}
             >

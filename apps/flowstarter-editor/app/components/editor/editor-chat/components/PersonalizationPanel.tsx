@@ -219,11 +219,11 @@ export function PersonalizationPanel({
   const sections: PersonalizationSection[] = ['palette', 'font', 'logo'];
   const sectionIndex = sections.indexOf(currentSection);
 
-  // Theme colors
+  // Theme colors - glassmorphism palette
   const colors = {
-    cardBg: isDark ? '#252532' : '#ffffff',
-    inputBg: isDark ? '#1a1a24' : '#f3f4f6',
-    border: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+    cardBg: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(255, 255, 255, 0.7)',
+    inputBg: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.5)',
+    border: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
     text: isDark ? '#ffffff' : '#111827',
     textSecondary: isDark ? 'rgba(255, 255, 255, 0.6)' : '#6b7280',
   };
@@ -232,10 +232,16 @@ export function PersonalizationPanel({
     <div
       data-testid="personalization-panel"
       style={{
-        background: isDark ? '#1a1a24' : '#f9fafb',
-        borderRadius: '16px',
+        background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.6)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        borderRadius: '20px',
         padding: '24px',
         marginTop: '16px',
+        border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(255, 255, 255, 0.6)',
+        boxShadow: isDark
+          ? '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
+          : '0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9)',
       }}
     >
       {/* Progress indicator */}

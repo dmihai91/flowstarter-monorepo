@@ -13,6 +13,7 @@ export type GradientVariant =
 interface GradientBackgroundProps {
   variant?: GradientVariant;
   className?: string;
+  animated?: boolean;
 }
 
 // Different gradient washes for each page
@@ -31,6 +32,7 @@ const variantGradients: Record<GradientVariant, string> = {
 export function GradientBackground({
   variant = 'dashboard',
   className,
+  animated = true,
 }: GradientBackgroundProps) {
   const gradientClass = variantGradients[variant];
   // Lines visibility - subtle
@@ -39,6 +41,35 @@ export function GradientBackground({
 
   return (
     <>
+      {/* CSS for flow line animations */}
+      <style jsx global>{`
+        @keyframes flowDrift1 {
+          0%, 100% { transform: translateY(0px) translateX(0px); }
+          25% { transform: translateY(-8px) translateX(15px); }
+          50% { transform: translateY(5px) translateX(-10px); }
+          75% { transform: translateY(-3px) translateX(8px); }
+        }
+        @keyframes flowDrift2 {
+          0%, 100% { transform: translateY(0px) translateX(0px); }
+          25% { transform: translateY(10px) translateX(-12px); }
+          50% { transform: translateY(-6px) translateX(18px); }
+          75% { transform: translateY(4px) translateX(-5px); }
+        }
+        @keyframes flowDrift3 {
+          0%, 100% { transform: translateY(0px) translateX(0px); }
+          25% { transform: translateY(-12px) translateX(8px); }
+          50% { transform: translateY(8px) translateX(-15px); }
+          75% { transform: translateY(-5px) translateX(12px); }
+        }
+        @keyframes flowPulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.6; }
+        }
+        .flow-group-1 { animation: flowDrift1 20s ease-in-out infinite; }
+        .flow-group-2 { animation: flowDrift2 25s ease-in-out infinite; }
+        .flow-group-3 { animation: flowDrift3 30s ease-in-out infinite; }
+        .flow-pulse { animation: flowPulse 8s ease-in-out infinite; }
+      `}</style>
       <div
         className={cn(
           'pointer-events-none absolute inset-0 -z-10 overflow-hidden',
@@ -84,7 +115,7 @@ export function GradientBackground({
           }}
         />
 
-        {/* Animated Flow lines - very subtle for dashboard */}
+        {/* Animated Flow lines - dynamic movement */}
         <svg
           className={cn(
             'absolute inset-0 w-full h-full',
@@ -117,17 +148,17 @@ export function GradientBackground({
               <stop offset="100%" stopColor="hsl(233, 65%, 58%)" />
             </linearGradient>
           </defs>
-          <g stroke="url(#flowGradient1)" strokeWidth="1.5">
+          <g stroke="url(#flowGradient1)" strokeWidth="1.5" className={animated ? "flow-group-1" : ""}>
             <path d="M-100,150 Q200,120 400,180 T800,140 T1300,200" />
             <path d="M-100,300 Q300,270 500,330 T900,290 T1300,350" />
             <path d="M-100,450 Q250,420 450,480 T850,440 T1300,500" />
           </g>
-          <g stroke="url(#flowGradient2)" strokeWidth="1.2">
+          <g stroke="url(#flowGradient2)" strokeWidth="1.2" className={animated ? "flow-group-2 flow-pulse" : ""}>
             <path d="M-100,200 Q150,230 350,170 T750,230 T1300,190" />
             <path d="M-100,380 Q200,350 400,410 T800,370 T1300,430" />
             <path d="M-100,550 Q180,580 380,520 T780,580 T1300,540" />
           </g>
-          <g stroke="url(#flowGradient1)" strokeWidth="0.8">
+          <g stroke="url(#flowGradient1)" strokeWidth="0.8" className={animated ? "flow-group-3" : ""}>
             <path d="M-100,100 Q200,80 400,120 T800,100 T1300,140" />
             <path d="M-100,250 Q250,280 450,220 T850,280 T1300,240" />
             <path d="M-100,600 Q200,620 400,580 T800,620 T1300,600" />

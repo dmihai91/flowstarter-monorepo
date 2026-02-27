@@ -831,27 +831,27 @@ export default function LandingPage() {
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/5 dark:bg-white/5 backdrop-blur-sm border border-gray-900/10 dark:border-white/10 mb-8">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="text-xs tracking-wide text-gray-600 dark:text-white/60">
-                    Founding client access — limited capacity
+                    Founding client rate — limited availability
                   </span>
                 </div>
 
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
-                  Conversion infrastructure
+                  Turn your audience into clients.
                   <br />
                   <span className="bg-gradient-to-r from-[var(--purple)] via-blue-500 to-cyan-400 bg-clip-text text-transparent animate-gradient">
-                    for experts with momentum.
+                    We build the system.
                   </span>
                 </h1>
 
                 <p className="text-base text-gray-400 dark:text-white/40 mb-4">
-                  You have the audience. You have the offer.
+                  You've built the audience. Now you need a site that converts.
                 </p>
                 <p className="text-lg lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed max-w-lg mb-3">
-                  Now you need a system that turns attention into clients.
-                  Strategically built. Fully managed. Live in two weeks.
+                  A high-converting web presence for coaches, consultants, and experts.
+                  Strategically positioned. Built in 1–2 weeks. Fully managed.
                 </p>
                 <p className="text-sm text-gray-400 dark:text-white/30 mb-10">
-                  Not a template. Not DIY. A structured client acquisition system.
+                  Not a template. Not DIY. A conversion system built around your offer.
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10">
@@ -862,7 +862,7 @@ export default function LandingPage() {
                   >
                     <Button className="relative overflow-hidden bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-8 h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 hover:scale-[1.02] group">
                       <span className="absolute inset-0 animate-shimmer" />
-                      Request a Strategy Call
+                      Book Your Free Discovery Call
                       <svg
                         className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
                         fill="none"
@@ -880,20 +880,22 @@ export default function LandingPage() {
                   </a>
                   <div className="flex flex-col">
                     <div className="text-sm text-gray-400 dark:text-white/40">
-                      <span className="text-gray-700 dark:text-white/80 font-medium">
+                      <span className="line-through opacity-60">€999</span>
+                      <span className="mx-2 text-gray-700 dark:text-white/80 font-medium">
                         €599
                       </span>
-                      <span className="ml-1">build</span>
+                      setup
                       <span className="mx-3 text-gray-300 dark:text-white/20">
                         ·
                       </span>
-                      <span className="text-gray-700 dark:text-white/80 font-medium">
+                      <span className="line-through opacity-60">€59</span>
+                      <span className="mx-2 text-gray-700 dark:text-white/80 font-medium">
                         €39
                       </span>
-                      <span className="ml-1">/month</span>
+                      /mo
                     </div>
                     <div className="text-xs text-gray-400 dark:text-white/30 mt-1">
-                      Founding client access. Limited capacity.
+                      Founding rate locks for 12 months. First month free.
                     </div>
                   </div>
                 </div>
@@ -1758,21 +1760,26 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* What we build */}
+        {/* Why this exists */}
         <section className="py-8 lg:py-10">
           <div className="max-w-2xl mx-auto px-6 lg:px-12 text-center">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              What we build
+              Why this exists
             </h3>
             <p className="text-gray-500 dark:text-white/50 leading-relaxed mb-4">
-              A structured client acquisition system — not just a website.
+              You already have clients. You already have traffic. 
+              What you don't have is a website that does the work for you.
             </p>
             <p className="text-gray-500 dark:text-white/50 leading-relaxed mb-4">
-              We study your offer, your positioning, and your audience. 
-              Then we build the infrastructure that converts visitors into booked calls.
+              Most experts are still sending leads to an outdated page, a Linktree, 
+              or worse — nothing at all. That's leaving money on the table.
+            </p>
+            <p className="text-gray-500 dark:text-white/50 leading-relaxed mb-4">
+              Flowstarter builds conversion infrastructure for experts who are 
+              ready to upgrade. One strategy call. One build. Ongoing care.
             </p>
             <p className="text-gray-700 dark:text-white/70 font-medium">
-              One strategy session. One focused build. Ongoing care.
+              You focus on delivery. We handle your digital foundation.
             </p>
           </div>
         </section>
@@ -1798,49 +1805,55 @@ export default function LandingPage() {
                 {/* Beta badge */}
                 <div className="absolute top-4 right-4">
                   <span className="px-3 py-1 text-xs font-medium bg-[var(--purple)] text-white rounded-full">
-                    Limited capacity
+                    Limited availability
                   </span>
                 </div>
 
-                <h3 className="text-2xl font-bold mb-1">Founding Client Access</h3>
+                <h3 className="text-2xl font-bold mb-1">Founding Client Rate</h3>
                 <p className="text-sm text-gray-400 dark:text-white/40 mb-6">
-                  By application only.
+                  For early adopters only. Price increases soon.
                 </p>
 
                 {/* Pricing */}
                 <div className="mb-6 pb-6 border-b border-gray-200 dark:border-white/10">
                   <div className="mb-2">
                     <span className="text-sm text-gray-400 dark:text-white/40">
-                      Your Build:{' '}
+                      Your Launch:{' '}
                     </span>
-                    <span className="text-2xl font-bold">€599</span>
+                    <span className="text-gray-300 dark:text-white/20 line-through">
+                      €999
+                    </span>
+                    <span className="text-2xl font-bold ml-2">€599</span>
                     <span className="text-sm text-gray-400 dark:text-white/40 ml-1">
                       one-time
                     </span>
                   </div>
                   <div>
                     <span className="text-sm text-gray-400 dark:text-white/40">
-                      Ongoing Infrastructure:{' '}
+                      Ongoing Care:{' '}
                     </span>
-                    <span className="text-2xl font-bold">€39</span>
+                    <span className="text-gray-300 dark:text-white/20 line-through">
+                      €59
+                    </span>
+                    <span className="text-2xl font-bold ml-2">€39</span>
                     <span className="text-sm text-gray-400 dark:text-white/40 ml-1">
                       /month
                     </span>
                   </div>
                   <p className="text-xs text-gray-400 dark:text-white/30 mt-2">
-                    Founding rate holds for 12 months. Standard access: €999 + €59/month.
+                    Founding rate locks for 12 months. First month free. No contracts.
                   </p>
                 </div>
 
                 {/* Features - Two Categories */}
                 <div className="space-y-5 mb-8">
-                  {/* Your Build */}
+                  {/* Your Launch */}
                   <div>
                     <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-1">
-                      Your Build (€599)
+                      Your Launch (€599)
                     </p>
                     <p className="text-xs text-gray-500 dark:text-white/40 mb-3">
-                      A strategic buildout tailored to your positioning. Not a template. Not a rush job. A system built around your offer.
+                      A strategic buildout, not just a website. We learn your offer, your positioning, and your audience — then build a site designed to convert.
                     </p>
                     <ul className="space-y-1.5">
                       {[
@@ -1873,13 +1886,13 @@ export default function LandingPage() {
                     </ul>
                   </div>
 
-                  {/* Ongoing Infrastructure */}
+                  {/* Ongoing Care */}
                   <div>
                     <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-1">
-                      Ongoing Infrastructure (€39/month)
+                      Ongoing Care (€39/month)
                     </p>
                     <p className="text-xs text-gray-500 dark:text-white/40 mb-3">
-                      Hosting, security, updates, and access to our AI editor for content changes. Complex requests go directly to our team.
+                      Your site stays fast, secure, and conversion-ready. Need updates? Use the AI editor or route it to us. No dev. No tickets. Just results.
                     </p>
                     <ul className="space-y-1.5">
                       {[
@@ -2024,54 +2037,60 @@ export default function LandingPage() {
                 No contracts. Cancel anytime. First month free.
               </p>
 
-              {/* For professionals who */}
+              {/* Who this is for */}
               <div className="mt-12 p-6 rounded-2xl bg-[var(--purple)]/5 dark:bg-[var(--purple)]/10 border border-[var(--purple)]/20">
                 <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
-                  For professionals who
+                  Built for experts who are ready
                 </h4>
                 <ul className="space-y-2 text-sm text-gray-600 dark:text-white/60">
                   <li className="flex items-start gap-2">
-                    <span className="text-[var(--purple)]">→</span>
-                    Already generate revenue from their expertise
+                    <span className="text-[var(--purple)]">✓</span>
+                    Coaches and consultants already generating revenue
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[var(--purple)]">→</span>
-                    Have an audience (Instagram, LinkedIn, podcast, email)
+                    <span className="text-[var(--purple)]">✓</span>
+                    Experts with an audience (Instagram, podcast, email list)
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[var(--purple)]">→</span>
-                    Want their digital presence to match their credibility
+                    <span className="text-[var(--purple)]">✓</span>
+                    Professionals who want to look as good as they actually are
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[var(--purple)]">→</span>
-                    Are ready to delegate and move fast
+                    <span className="text-[var(--purple)]">✓</span>
+                    Service providers tired of sending leads to a Linktree
                   </li>
                 </ul>
+                <p className="mt-4 text-sm text-gray-700 dark:text-white/70 font-medium">
+                  If you already have an offer and traffic, this is the infrastructure upgrade.
+                </p>
               </div>
 
-              {/* Not the right fit */}
+              {/* Who this is NOT for */}
               <div className="mt-4 p-6 rounded-2xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
                 <h4 className="text-sm font-semibold text-gray-700 dark:text-white/70 mb-4">
-                  Not the right fit if
+                  This isn't the right fit if:
                 </h4>
                 <ul className="space-y-2 text-sm text-gray-500 dark:text-white/50">
                   <li className="flex items-start gap-2">
                     <span className="text-gray-400 dark:text-white/30">→</span>
-                    You're still validating your offer
+                    You're still figuring out your offer
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-gray-400 dark:text-white/30">→</span>
-                    You prefer to build it yourself
+                    You want to build it yourself
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-gray-400 dark:text-white/30">→</span>
-                    You need e-commerce or a custom application
+                    You need a complex app or e-commerce store
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-gray-400 dark:text-white/30">→</span>
-                    Price is your primary decision factor
+                    You're looking for the cheapest option
                   </li>
                 </ul>
+                <p className="mt-4 text-sm text-gray-600 dark:text-white/60">
+                  We work with experts who are ready to invest in their positioning.
+                </p>
               </div>
             </div>
           </div>
@@ -2230,7 +2249,7 @@ export default function LandingPage() {
             </p>
             <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
               <Button className="bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-10 h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 hover:scale-[1.02]">
-                Request a Strategy Call
+                Book Free Discovery Call
                 <svg
                   className="w-4 h-4 ml-2"
                   fill="none"
@@ -2247,7 +2266,7 @@ export default function LandingPage() {
               </Button>
             </a>
             <p className="text-sm text-gray-400 dark:text-white/20 mt-4">
-              €599 build · €39/month infrastructure · By application only
+              €599 setup · €39/month · Founding rate — limited availability
             </p>
           </div>
         </section>

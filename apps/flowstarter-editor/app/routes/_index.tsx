@@ -255,11 +255,7 @@ function IndexRedirector() {
 export default function Index() {
   return (
     <ClientOnly fallback={<LoadingFallback />}>
-      {() => (
-        <AuthGuard fallback={<LoadingFallback />}>
-          <IndexRedirector />
-        </AuthGuard>
-      )}
+      {() => <IndexRedirector />}
     </ClientOnly>
   );
 }

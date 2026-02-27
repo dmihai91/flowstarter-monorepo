@@ -13,7 +13,7 @@ export function ClientHeader() {
   const isWizardPage = pathname?.startsWith('/dashboard/new') || pathname?.startsWith('/wizard');
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-[100] h-16 bg-white/80 dark:bg-[#0a0a0c]/80 backdrop-blur-2xl backdrop-saturate-150 border-b border-gray-200/50 dark:border-white/10">
+    <header className="fixed top-0 left-0 right-0 z-[100] h-16 bg-white/20 dark:bg-[#0a0a0c]/20 backdrop-blur-md border-b border-white/30 dark:border-white/5">
       <div className="w-full h-full px-4 lg:px-6 flex items-center justify-between">
         {/* Logo or Back button */}
         {isWizardPage ? (

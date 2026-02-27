@@ -1,5 +1,5 @@
 {
-  "name": "flow-design-system",
+  "name": "@flowstarter/flow-design-system",
   "version": "0.1.0",
   "description": "Flowstarter Design System - Shared UI components and tokens",
   "private": true,

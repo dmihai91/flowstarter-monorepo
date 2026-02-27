@@ -105,7 +105,7 @@ export function Sidebar() {
     const active = !external && isActive(href, exact);
     
     const className = cn(
-      'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all',
+      'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
       active
         ? 'bg-[var(--purple)] text-white shadow-lg shadow-[var(--purple)]/25'
         : 'text-gray-600 dark:text-white/60 hover:bg-white/60 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
@@ -219,7 +219,7 @@ export function Sidebar() {
           onClick={() => setIsFeedbackOpen(true)}
           title={isCollapsed ? t('sidebar.feedback') : undefined}
           className={cn(
-            'flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all',
+            'flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
             'text-gray-600 dark:text-white/60 hover:bg-white/60 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
             isCollapsed && 'justify-center !px-2'
           )}

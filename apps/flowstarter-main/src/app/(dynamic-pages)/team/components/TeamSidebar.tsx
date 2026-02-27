@@ -69,7 +69,7 @@ export function TeamSidebar() {
       title={collapsed ? label : undefined}
       onClick={() => setMobileOpen(false)}
       className={cn(
-        'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all',
+        'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
         isActive(href, exact)
           ? 'bg-[var(--purple)] text-white shadow-lg shadow-[var(--purple)]/25'
           : 'text-gray-600 dark:text-white/60 hover:bg-white/60 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',

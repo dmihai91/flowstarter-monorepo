@@ -859,7 +859,7 @@ export default function LandingPage() {
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/5 dark:bg-white/5 backdrop-blur-sm border border-gray-900/10 dark:border-white/10 mb-8">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="text-xs tracking-wide text-gray-600 dark:text-white/60">
-                    Founding client access — limited capacity
+                    Early access — limited spots
                   </span>
                 </div>
 
@@ -921,7 +921,7 @@ export default function LandingPage() {
                       <span className="ml-1">/month care</span>
                     </div>
                     <div className="text-xs text-gray-400 dark:text-white/30 mt-1">
-                      Founding rate. First month free.
+                      Launch rate. First month free.
                     </div>
                   </div>
                 </div>
@@ -1830,7 +1830,7 @@ export default function LandingPage() {
                   </span>
                 </div>
 
-                <h3 className="text-2xl font-bold mb-1">Founding Client Access</h3>
+                <h3 className="text-2xl font-bold mb-1">Early Access Pricing</h3>
                 <p className="text-sm text-gray-400 dark:text-white/40 mb-6">
                   By application only.
                 </p>
@@ -1856,7 +1856,7 @@ export default function LandingPage() {
                     </span>
                   </div>
                   <p className="text-xs text-gray-400 dark:text-white/30 mt-2">
-                    Founding rate. First month free. Cancel anytime.
+                    Launch rate. First month free. Cancel anytime.
                   </p>
                 </div>
 
@@ -1907,14 +1907,14 @@ export default function LandingPage() {
                       Ongoing Care (€39/month)
                     </p>
                     <p className="text-xs text-gray-500 dark:text-white/40 mb-3">
-                      We keep your site running smoothly. Need changes? Just ask — or use our simple editor to update text yourself.
+                      Your site is yours to customize. Use our AI editor to change text, colors, or add sections — just describe what you want. We handle the technical stuff.
                     </p>
                     <ul className="space-y-1.5">
                       {[
-                        'Easy editor to update your own text',
+                        'AI editor: update anything by just typing what you want',
+                        'Change colors, text, images — anytime you like',
                         'Bigger changes? We handle them for you',
-                        'Your site stays fast and secure',
-                        'See how many people visit your site',
+                        'Your site stays fast, secure, and always online',
                       ].map((item, i) => (
                         <li
                           key={i}
@@ -2146,7 +2146,7 @@ export default function LandingPage() {
                   },
                   {
                     q: 'What happens when the beta ends?',
-                    a: "Your founding rate is locked for 12 months from signup. After that, pricing moves to standard rates (€999 setup / €59/month). You'll get 30 days notice before anything changes.",
+                    a: "Your launch rate is locked for 12 months from signup. After that, pricing moves to standard rates (€999 setup / €59/month). You'll get 30 days notice before anything changes.",
                   },
                   {
                     q: "What's included in the email?",

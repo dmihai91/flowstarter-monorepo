@@ -1,20 +1,34 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Logo } from '@/components/ui/logo';
-import { MessageSquare } from 'lucide-react';
+import { ArrowLeft, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ClientUserMenu } from './ClientUserMenu';
 
 export function ClientHeader() {
+  const pathname = usePathname();
+  const isWizardPage = pathname?.startsWith('/dashboard/new') || pathname?.startsWith('/wizard');
+
   return (
     <header className="fixed top-0 left-0 right-0 z-[100] h-16 bg-white/80 dark:bg-[#0a0a0c]/80 backdrop-blur-2xl backdrop-saturate-150 border-b border-gray-200/50 dark:border-white/10">
       <div className="w-full h-full px-4 lg:px-6 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/dashboard" className="group">
-          <Logo size="md" />
-        </Link>
+        {/* Logo or Back button */}
+        {isWizardPage ? (
+          <Link 
+            href="/dashboard" 
+            className="flex items-center gap-2 text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm font-medium">Back</span>
+          </Link>
+        ) : (
+          <Link href="/dashboard" className="group">
+            <Logo size="md" />
+          </Link>
+        )}
 
         {/* Right side - Theme switcher + User profile */}
         <div className="flex items-center gap-2 lg:gap-3">

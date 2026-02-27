@@ -5,6 +5,7 @@ import { ClientOnly } from 'remix-utils/client-only';
 import { useQuery, useMutation } from 'convex/react';
 // eslint-disable-next-line no-restricted-imports
 import { api } from '../../convex/_generated/api';
+import { AuthGuard } from '~/components/TeamAuthGuard';
 
 export const meta: MetaFunction = () => {
   return [
@@ -263,5 +264,13 @@ function IndexRedirector() {
 }
 
 export default function Index() {
-  return <ClientOnly fallback={<LoadingFallback />}>{() => <IndexRedirector />}</ClientOnly>;
+  return (
+    <ClientOnly fallback={<LoadingFallback />}>
+      {() => (
+        <AuthGuard fallback={<LoadingFallback />}>
+          <IndexRedirector />
+        </AuthGuard>
+      )}
+    </ClientOnly>
+  );
 }

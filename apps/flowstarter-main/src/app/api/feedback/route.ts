@@ -1,4 +1,4 @@
-import { useServerSupabase } from '@/hooks/useServerSupabase';
+import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import { sendEmail } from '@/lib/email';
 import { auth, clerkClient } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Use service role client (bypasses RLS since we verified auth via Clerk)
-    const supabase = useServerSupabase();
+    const supabase = createSupabaseServiceRoleClient();
 
     // Get user details from Clerk
     let userName = 'Unknown User';

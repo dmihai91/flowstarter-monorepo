@@ -2189,7 +2189,17 @@ export default function LandingPage() {
                 ].map((faq, i) => (
                   <div
                     key={i}
-                    className="rounded-2xl bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200 dark:border-white/5 overflow-hidden transition-all hover:bg-[#F9F9FB] dark:hover:bg-white/[0.03]"
+                    className={`rounded-2xl bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200 dark:border-white/5 overflow-hidden transition-all hover:bg-[#F9F9FB] dark:hover:bg-white/[0.03] ${
+                      visibleSections.has('faq-content')
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 translate-y-4'
+                    }`}
+                    style={{
+                      transitionProperty: 'opacity, transform',
+                      transitionDuration: '0.5s',
+                      transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                      transitionDelay: visibleSections.has('faq-content') ? `${i * 80}ms` : '0ms',
+                    }}
                   >
                     <button
                       onClick={() => setOpenFaq(openFaq === i ? null : i)}

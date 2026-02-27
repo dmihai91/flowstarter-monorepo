@@ -109,13 +109,13 @@ export function Sidebar() {
       active
         ? 'bg-[var(--purple)] text-white shadow-lg shadow-[var(--purple)]/25'
         : 'text-gray-600 dark:text-white/60 hover:bg-white/60 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
-      isCollapsed && 'lg:justify-center lg:px-2'
+      isCollapsed && 'justify-center !px-2'
     );
 
     const content = (
       <>
         <Icon className="w-4 h-4 flex-shrink-0" />
-        <span className={cn('truncate', isCollapsed && 'lg:hidden')}>{label}</span>
+        {!isCollapsed && <span className="truncate">{label}</span>}
       </>
     );
 
@@ -147,15 +147,14 @@ export function Sidebar() {
   };
 
   const SidebarContent = ({ showToggle = false }: { showToggle?: boolean }) => (
-    <div className="p-4 space-y-6 h-full overflow-y-auto flex flex-col">
+    <div className={cn("p-4 space-y-6 h-full overflow-y-auto flex flex-col", isCollapsed && "items-center")}>
       {/* Main Navigation */}
-      <div>
-        <h3 className={cn(
-          'px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider',
-          isCollapsed && 'lg:hidden'
-        )}>
-          Main
-        </h3>
+      <div className={cn(isCollapsed && "w-full")}>
+        {!isCollapsed && (
+          <h3 className="px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
+            Main
+          </h3>
+        )}
         <div className="space-y-1">
           {mainItems.map((item) => (
             <NavLink 
@@ -171,13 +170,12 @@ export function Sidebar() {
       </div>
 
       {/* Support */}
-      <div>
-        <h3 className={cn(
-          'px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider',
-          isCollapsed && 'lg:hidden'
-        )}>
-          Support
-        </h3>
+      <div className={cn(isCollapsed && "w-full")}>
+        {!isCollapsed && (
+          <h3 className="px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
+            Support
+          </h3>
+        )}
         <div className="space-y-1">
           {supportItems.map((item) => (
             <NavLink 
@@ -199,16 +197,15 @@ export function Sidebar() {
       <div className="border-t border-white/10 pt-4">
         <button
           onClick={() => setIsFeedbackOpen(true)}
+          title={isCollapsed ? t('sidebar.feedback') : undefined}
           className={cn(
             'flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all',
             'text-gray-600 dark:text-white/60 hover:bg-white/60 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
-            isCollapsed && 'lg:justify-center lg:px-2'
+            isCollapsed && 'justify-center !px-2'
           )}
         >
           <MessageSquare className="w-4 h-4 flex-shrink-0" />
-          <span className={cn('truncate', isCollapsed && 'lg:hidden')}>
-            {t('sidebar.feedback')}
-          </span>
+          {!isCollapsed && <span className="truncate">{t('sidebar.feedback')}</span>}
         </button>
       </div>
 

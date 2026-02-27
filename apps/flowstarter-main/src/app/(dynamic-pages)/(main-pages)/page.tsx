@@ -2121,7 +2121,15 @@ export default function LandingPage() {
           className="py-10 lg:py-14 bg-gradient-to-b from-white via-gray-50/50 to-white dark:from-transparent dark:via-white/[0.01] dark:to-transparent"
         >
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
-            <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
+            <div
+              id="faq-content"
+              data-animate
+              className={`grid lg:grid-cols-2 gap-10 lg:gap-16 transition-all duration-700 ${
+                visibleSections.has('faq-content')
+                  ? 'opacity-100 translate-y-0'
+                  : 'opacity-0 translate-y-8'
+              }`}
+            >
               <div>
                 <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-4 lg:sticky lg:top-32">
                   Questions?

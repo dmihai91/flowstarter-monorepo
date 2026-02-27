@@ -84,8 +84,11 @@ function AlertDialogContent({
       <AlertDialogPrimitive.Content
         data-slot="alert-dialog-content"
         className={cn(
-          'bg-white/95 backdrop-blur-xl border border-white/40 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-2xl py-6 px-6 duration-200 sm:max-w-lg',
-          'bg-[var(--surface-2)]/95 dark:border-white/10',
+          'bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-2xl backdrop-saturate-150',
+          'border border-white/60 dark:border-white/10',
+          'shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25),0_0_0_1px_rgba(255,255,255,0.1)_inset]',
+          'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+          'fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-2xl py-6 px-6 duration-200 sm:max-w-lg',
           className
         )}
         {...props}
@@ -115,7 +118,7 @@ function AlertDialogFooter({
     <div
       data-slot="alert-dialog-footer"
       className={cn(
-        'flex flex-col-reverse gap-2 sm:flex-row sm:justify-end border-t border-gray-400/30 dark:border-gray-600/30 py-4 mt-4 gap-6',
+        'flex flex-col-reverse gap-2 sm:flex-row sm:justify-end border-t border-gray-200/50 dark:border-white/10 pt-4 mt-4 sm:gap-3',
         className
       )}
       {...props}

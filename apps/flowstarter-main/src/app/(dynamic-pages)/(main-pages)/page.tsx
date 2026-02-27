@@ -1868,6 +1868,20 @@ export default function LandingPage() {
                   <p className="text-xs text-gray-400 dark:text-white/30 mt-2">
                     {t('landing.pricing.note')}
                   </p>
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-3 text-xs text-gray-500 dark:text-white/40">
+                    <span className="flex items-center gap-1.5">
+                      <svg className="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      {t('landing.pricing.refund')}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <svg className="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                      {t('landing.pricing.assets')}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Limited time notice */}

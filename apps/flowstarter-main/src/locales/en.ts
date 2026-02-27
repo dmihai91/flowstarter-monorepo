@@ -2385,6 +2385,8 @@ const en = {
   'landing.pricing.carePrice': '€39',
   'landing.pricing.carePeriod': '/month',
   'landing.pricing.note': 'First month free. Cancel anytime.',
+  'landing.pricing.refund': '50% setup refund if you change your mind',
+  'landing.pricing.assets': 'All your site assets downloadable — you own them',
 
   // Landing Page - Pricing Features
   'landing.pricing.websiteTitle': 'Setup (€599)',

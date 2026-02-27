@@ -47,13 +47,13 @@ function getConvexClient(): ConvexReactClient | null {
   return convexClientSingleton;
 }
 
-// Clerk auth loader
-// Satellite configuration is handled via environment variables:
-// - CLERK_DOMAIN=.flowstarter.dev (or .flowstarter.app)
-// - CLERK_IS_SATELLITE=true
-// - CLERK_SIGN_IN_URL=https://flowstarter.dev/login
-// - CLERK_SIGN_UP_URL=https://flowstarter.dev/login
-export const loader = (args: LoaderFunctionArgs) => rootAuthLoader(args);
+// Clerk auth loader with satellite configuration
+// The editor runs as a satellite app, sharing sessions with the main platform
+export const loader = (args: LoaderFunctionArgs) => rootAuthLoader(args, {
+  // Satellite app configuration
+  signInUrl: 'https://flowstarter.dev/login',
+  signUpUrl: 'https://flowstarter.dev/login',
+});
 
 export const links: LinksFunction = () => [
   // Favicons

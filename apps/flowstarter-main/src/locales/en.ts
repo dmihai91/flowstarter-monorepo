@@ -2385,7 +2385,7 @@ const en = {
   'landing.pricing.careLabel': 'Monthly:',
   'landing.pricing.carePrice': '€39',
   'landing.pricing.carePeriod': '/month',
-  'landing.pricing.note': 'First month free. Cancel anytime.',
+  'landing.pricing.note': 'First month free. €39/mo locked for 1 year, then €59/mo. Cancel anytime.',
   'landing.pricing.refund': '50% setup refund if you change your mind',
   'landing.pricing.assets': 'All your site assets downloadable. You own them.',
 

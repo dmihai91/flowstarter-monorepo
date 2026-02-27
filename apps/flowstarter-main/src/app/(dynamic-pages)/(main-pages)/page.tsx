@@ -5,6 +5,7 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Logo } from '@/components/ui/logo';
 import { useI18n } from '@/lib/i18n';
 import Footer from '@/components/Footer';
+import { CookieConsent } from '@/components/CookieConsent';
 import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
 
@@ -2342,6 +2343,9 @@ export default function LandingPage() {
 
         {/* Footer */}
         <Footer showClientLogin />
+
+        {/* Cookie Consent Banner */}
+        <CookieConsent />
       </div>
     </>
   );

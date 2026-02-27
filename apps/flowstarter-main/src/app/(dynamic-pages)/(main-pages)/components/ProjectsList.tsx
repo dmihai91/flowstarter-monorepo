@@ -227,7 +227,7 @@ export const ProjectsList = ({
 
   if (cards.length === 0) {
     return (
-      <div className="rounded-2xl border border-gray-200/60 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl p-6 text-center transition-all duration-250 ease-out hover:-translate-y-[3px] hover:shadow-[0_8px_25px_rgba(0,0,0,0.06)] hover:border-[rgba(124,58,237,0.12)]">
+      <GlassCard noHover className="p-6 text-center">
         <div className="max-w-sm mx-auto">
           <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 mb-3">
             <LayoutDashboard className="h-5 w-5 text-[var(--purple)] opacity-40" />
@@ -239,7 +239,7 @@ export const ProjectsList = ({
             Once we build your site, you'll manage it from here.
           </p>
         </div>
-      </div>
+      </GlassCard>
     );
   }
 

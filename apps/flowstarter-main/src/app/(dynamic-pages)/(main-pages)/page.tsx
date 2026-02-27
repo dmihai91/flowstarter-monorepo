@@ -905,6 +905,11 @@ export default function LandingPage() {
                     </Button>
                   </a>
                   <div className="flex flex-col">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="inline-block px-2 py-0.5 text-[10px] font-medium bg-amber-500/90 text-white rounded-full">
+                        {t('landing.pricing.limitedBadge')}
+                      </span>
+                    </div>
                     <div className="text-sm text-gray-400 dark:text-white/40">
                       <span className="text-gray-700 dark:text-white/80 font-medium">
                         {t('landing.hero.priceBuild')}
@@ -919,7 +924,7 @@ export default function LandingPage() {
                       <span className="ml-1">{t('landing.hero.priceMonthlyLabel')}</span>
                     </div>
                     <div className="text-xs text-gray-400 dark:text-white/30 mt-1">
-                      {t('landing.hero.priceNote')}
+                      {t('landing.hero.priceNote')} · <span className="text-amber-600 dark:text-amber-400">€999 + €59/mo soon</span>
                     </div>
                   </div>
                 </div>

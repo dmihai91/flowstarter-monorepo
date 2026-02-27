@@ -19,10 +19,10 @@ export function NavbarHeader({
 
   return (
     <header
-      className={`fixed top-0 z-50 w-full border-b transition-all duration-300 ${
+      className={`fixed top-0 z-50 w-full border-b transition-all duration-300 bg-white/50 dark:bg-[#0a0a0c]/50 backdrop-blur-2xl backdrop-saturate-150 ${
         isScrolled
-          ? 'border-gray-200 dark:border-white/40 bg-[rgba(243,243,243,0.3)] dark:bg-[rgba(58,58,74,0.3)] backdrop-blur-xl shadow-lg'
-          : 'border-gray-200/80 dark:border-white/40 bg-[rgba(243,243,243,0.3)] dark:bg-[rgba(58,58,74,0.3)] backdrop-blur-xl shadow-md'
+          ? 'border-white/60 dark:border-white/10 shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
+          : 'border-white/40 dark:border-white/5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
       }`}
       style={{
         paddingTop: 'calc(env(safe-area-inset-top, 0px))',

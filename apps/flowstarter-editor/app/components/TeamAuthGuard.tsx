@@ -19,8 +19,22 @@ interface AuthGuardProps {
   requireTeam?: boolean; // If true, only team members can access
 }
 
-// Main platform URL for redirects
-const MAIN_PLATFORM_URL = 'https://flowstarter.dev';
+/**
+ * Get the main platform URL based on current hostname
+ */
+function getMainPlatformUrl(): string {
+  if (typeof window === 'undefined') return 'https://flowstarter.dev';
+  const hostname = window.location.hostname;
+  
+  if (hostname.includes('flowstarter.app')) {
+    return 'https://flowstarter.app';
+  }
+  if (hostname.includes('flowstarter.dev')) {
+    return 'https://flowstarter.dev';
+  }
+  // Local development
+  return 'http://localhost:3000';
+}
 
 export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuardProps) {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -33,7 +47,8 @@ export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuard
     if (!isSignedIn) {
       // Redirect to main platform login with return URL
       const returnUrl = typeof window !== 'undefined' ? window.location.href : '';
-      window.location.href = `${MAIN_PLATFORM_URL}/login?redirect_url=${encodeURIComponent(returnUrl)}`;
+      const mainPlatformUrl = getMainPlatformUrl();
+      window.location.href = `${mainPlatformUrl}/login?redirect_url=${encodeURIComponent(returnUrl)}`;
       return;
     }
     
@@ -77,7 +92,7 @@ export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuard
             This area is restricted to team members only.
           </p>
           <a 
-            href={MAIN_PLATFORM_URL}
+            href={getMainPlatformUrl()}
             className="inline-block px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
           >
             Return to Dashboard

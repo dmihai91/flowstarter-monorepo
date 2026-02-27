@@ -345,21 +345,19 @@ export default function App() {
 
   // Determine Clerk satellite configuration
   const isSatellite = isSatelliteApp();
-  const domain = isFlowstarterDomain() ? SHARED_COOKIE_DOMAIN : undefined;
+  const domain = getSharedCookieDomain();
+  const mainPlatformUrl = getMainPlatformUrl();
 
   return (
     <ClerkProvider 
       {...loaderData}
       // Satellite app configuration for cross-subdomain session sharing
-      // When on flowstarter.dev subdomains, share cookies via .flowstarter.dev
+      // When on flowstarter subdomains, share cookies via the root domain
       domain={domain}
       isSatellite={isSatellite}
       // Redirect to main platform for sign-in/sign-up when in satellite mode
-      signInUrl={isSatellite ? `${MAIN_PLATFORM_URL}/login` : '/login'}
-      signUpUrl={isSatellite ? `${MAIN_PLATFORM_URL}/login` : '/login'}
-      // Force redirect after sign-in back to editor
-      signInForceRedirectUrl={isSatellite ? undefined : undefined}
-      signUpForceRedirectUrl={isSatellite ? undefined : undefined}
+      signInUrl={isSatellite ? `${mainPlatformUrl}/login` : '/login'}
+      signUpUrl={isSatellite ? `${mainPlatformUrl}/login` : '/login'}
     >
       <Layout>
         <Outlet />

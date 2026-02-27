@@ -282,14 +282,25 @@ export function useSimpleBuildHandlers({
         );
 
         // Build the request for the Claude Agent service
+        // Business info comes from either:
+        // 1. Internal flow: Pre-populated from team dashboard (businessHook.businessInfo)
+        // 2. Self-serve flow: Collected during onboarding
+        const businessData = businessHook.businessInfo;
         const siteGenerationInput = {
           projectId,
           siteName: flowHook.projectName || selectedTemplate.name || 'My Website',
           businessInfo: {
-            name: businessHook.businessInfo?.uvp || flowHook.projectName || 'My Business',
-            tagline: businessHook.businessInfo?.targetAudience || undefined,
-            description: flowHook.projectDescription || undefined,
-            services: businessHook.businessInfo?.businessGoals || undefined,
+            // Use businessType or projectName for the business name
+            name: businessData?.businessType || flowHook.projectName || 'My Business',
+            // Unique value proposition as tagline
+            tagline: businessData?.uvp || businessData?.targetAudience || undefined,
+            // Full description from business info or project description
+            description: businessData?.description || flowHook.projectDescription || undefined,
+            // Services/goals
+            services: businessData?.businessGoals || undefined,
+            // Additional context for better copy generation
+            targetAudience: businessData?.targetAudience || undefined,
+            industry: businessData?.industry || undefined,
           },
           template: {
             slug: selectedTemplate.id || 'default',

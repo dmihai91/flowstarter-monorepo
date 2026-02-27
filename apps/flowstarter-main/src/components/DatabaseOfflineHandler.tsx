@@ -87,119 +87,113 @@ export function DatabaseOfflineHandler({
     }
 
     return (
-      <div className="min-h-screen bg-white dark:bg-[#0a0a0b] flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
-        {/* Decorative background gradients */}
-        <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-[hsl(241,93%,61%)]/5 dark:bg-[hsl(241,93%,61%)]/10 blur-3xl animate-pulse" />
-          <div
-            className="absolute bottom-1/4 -right-32 w-96 h-96 rounded-full bg-[hsl(295,61%,65%)]/5 dark:bg-[hsl(295,61%,65%)]/10 blur-3xl animate-pulse"
-            style={{ animationDelay: '1.5s' }}
-          />
-          <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[hsl(211,93%,61%)]/3 dark:bg-[hsl(211,93%,61%)]/5 blur-3xl animate-pulse"
-            style={{ animationDelay: '3s' }}
-          />
+      <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#0a0a0c] flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+        {/* Flow lines background */}
+        <div className="fixed inset-0 pointer-events-none">
+          <svg
+            className="absolute inset-0 w-full h-full opacity-[0.15] dark:opacity-[0.08]"
+            viewBox="0 0 1200 800"
+            preserveAspectRatio="xMidYMid slice"
+            fill="none"
+          >
+            <defs>
+              <linearGradient id="offlineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="var(--purple)" />
+                <stop offset="100%" stopColor="#3B82F6" />
+              </linearGradient>
+            </defs>
+            <g stroke="url(#offlineGradient)" strokeWidth="1.5">
+              <path d="M-100,150 Q200,120 400,180 T800,140 T1300,200" />
+              <path d="M-100,300 Q150,340 350,280 T750,340 T1300,300" />
+              <path d="M-100,450 Q250,420 450,480 T850,440 T1300,500" />
+              <path d="M-100,600 Q180,640 380,580 T780,640 T1300,600" />
+            </g>
+          </svg>
         </div>
 
-        <div className="max-w-2xl w-full space-y-6 relative">
+        <div className="max-w-lg w-full space-y-8 relative">
           {/* Icon */}
           <div className="text-center">
-            <div className="relative w-24 h-24 mx-auto mb-8 rounded-[24px] bg-gradient-to-br from-[hsl(241,93%,61%)]/10 to-[hsl(295,61%,65%)]/10 backdrop-blur-sm flex items-center justify-center shadow-2xl ring-1 ring-[hsl(241,93%,61%)]/20 dark:ring-[hsl(241,93%,61%)]/30">
-              <div className="absolute inset-0 bg-gradient-to-br from-[hsl(241,93%,61%)]/5 to-[hsl(295,61%,65%)]/5 rounded-[24px] blur-xl"></div>
-              <WifiOff className="h-12 w-12 text-[hsl(241,93%,61%)] dark:text-[hsl(241,96%,63%)] relative z-10" />
+            <div className="relative w-20 h-20 mx-auto mb-6 rounded-2xl bg-white/60 dark:bg-white/[0.04] backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.08)] flex items-center justify-center">
+              <WifiOff className="h-10 w-10 text-[var(--purple)]" />
             </div>
           </div>
 
           {/* Main message */}
-          <div className="text-center space-y-4">
-            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+          <div className="text-center space-y-3">
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
               {t('database.offline.title')}
             </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto leading-relaxed">
+            <p className="text-base text-gray-500 dark:text-white/50 max-w-md mx-auto leading-relaxed">
               {t('database.offline.subtitle')}
             </p>
           </div>
 
-          {/* Status Alert */}
-          <Alert className="backdrop-blur-xl bg-[hsl(241,93%,61%)]/5 dark:bg-[hsl(241,93%,61%)]/10 border-2 border-[hsl(241,93%,61%)]/20 dark:border-[hsl(241,93%,61%)]/30 shadow-lg rounded-[20px]">
-            <AlertTriangle className="h-5 w-5 text-[hsl(241,93%,61%)] dark:text-[hsl(241,96%,63%)]" />
-            <AlertDescription className="text-gray-900 dark:text-gray-200">
-              <strong className="font-semibold">
-                {t('database.offline.connectionStatus')}
-              </strong>{' '}
-              {t('database.offline.offlineSince', {
-                time: dbStatus.lastChecked.toLocaleTimeString(),
-              })}
-              {dbStatus.error && (
-                <div className="mt-2 text-sm opacity-80">
-                  {t('database.offline.unableToConnect')}
-                </div>
-              )}
-            </AlertDescription>
-          </Alert>
-
-          {/* Actions */}
-          <div className="space-y-4 pt-2">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 justify-center">
-              <Button
-                onClick={checkDatabaseConnection}
-                disabled={isChecking}
-                variant="default"
-                className="w-full h-12 text-white shadow-md rounded-xl transition-all duration-200 font-semibold"
-                size="lg"
-              >
-                {isChecking ? (
-                  <>
-                    <RefreshCw className="h-5 w-5 mr-2 animate-spin" />
-                    {t('database.offline.checkingConnection')}
-                  </>
-                ) : (
-                  <>
-                    <Wifi className="h-5 w-5 mr-2" />
-                    {t('database.offline.retryConnection')}
-                  </>
-                )}
-              </Button>
+          {/* Status Card */}
+          <div className="rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] p-5">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center flex-shrink-0">
+                <AlertTriangle className="h-5 w-5 text-amber-500" />
+              </div>
+              <div>
+                <p className="font-medium text-gray-900 dark:text-white text-sm">
+                  {t('database.offline.connectionStatus')}
+                </p>
+                <p className="text-sm text-gray-500 dark:text-white/50 mt-0.5">
+                  {t('database.offline.offlineSince', {
+                    time: dbStatus.lastChecked.toLocaleTimeString(),
+                  })}
+                </p>
+              </div>
             </div>
           </div>
 
+          {/* Retry Button */}
+          <Button
+            onClick={checkDatabaseConnection}
+            disabled={isChecking}
+            className="w-full h-12 rounded-xl font-semibold shadow-lg shadow-[var(--purple)]/20 hover:shadow-[var(--purple)]/30 transition-all"
+            size="lg"
+          >
+            {isChecking ? (
+              <>
+                <RefreshCw className="h-5 w-5 mr-2 animate-spin" />
+                {t('database.offline.checkingConnection')}
+              </>
+            ) : (
+              <>
+                <Wifi className="h-5 w-5 mr-2" />
+                {t('database.offline.retryConnection')}
+              </>
+            )}
+          </Button>
+
           {/* What you can do */}
-          <Card className="backdrop-blur-xl bg-white/80 dark:bg-[#121318]/80 border border-gray-200/60 dark:border-gray-800/60 shadow-2xl rounded-[24px] overflow-hidden">
-            <CardContent className="p-8">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-5">
-                {t('database.offline.whatYouCanDo')}
-              </h3>
-              <ul className="space-y-3 text-sm text-gray-600 dark:text-gray-400">
-                <li className="flex items-start gap-3">
-                  <span
-                    className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0"
-                    style={{ backgroundColor: 'hsl(241, 93%, 61%)' }}
-                  />
-                  <span className="leading-relaxed">
-                    {t('database.offline.action1')}
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span
-                    className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0"
-                    style={{ backgroundColor: 'hsl(295, 61%, 65%)' }}
-                  />
-                  <span className="leading-relaxed">
-                    {t('database.offline.action2')}
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span
-                    className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0"
-                    style={{ backgroundColor: 'hsl(211, 93%, 61%)' }}
-                  />
-                  <span className="leading-relaxed">
-                    {t('database.offline.action3')}
-                  </span>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
+          <div className="rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] p-6">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
+              {t('database.offline.whatYouCanDo')}
+            </h3>
+            <ul className="space-y-3 text-sm text-gray-500 dark:text-white/50">
+              <li className="flex items-start gap-3">
+                <span className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0 bg-[var(--purple)]" />
+                <span className="leading-relaxed">
+                  {t('database.offline.action1')}
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0 bg-blue-500" />
+                <span className="leading-relaxed">
+                  {t('database.offline.action2')}
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0 bg-cyan-500" />
+                <span className="leading-relaxed">
+                  {t('database.offline.action3')}
+                </span>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     );

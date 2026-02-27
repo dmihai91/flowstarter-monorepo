@@ -1,5 +1,8 @@
 /* Color Tokens Light Theme - Modernized with improved contrast */
 :root[data-theme='light'] {
+  /* Shared brand color - matches main platform */
+  --purple: hsl(233, 65%, 58%);
+  
   /* Custom Brand Purple */
   --flowstarter-accent-purple: #4d5dd9;
   --flowstarter-accent-purple-rgb: 77, 93, 217;
@@ -177,6 +180,9 @@
 /* Color Tokens Dark Theme - Modernized */
 :root,
 :root[data-theme='dark'] {
+  /* Shared brand color - matches main platform */
+  --purple: hsl(233, 65%, 58%);
+  
   /* Custom Brand Purple */
   --flowstarter-accent-purple: #c1c8ff;
   --flowstarter-accent-purple-rgb: 193, 200, 255;

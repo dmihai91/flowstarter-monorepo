@@ -4,52 +4,10 @@
  */
 
 import { useEffect } from 'react';
+import { Logo } from '~/components/editor/components/Logo';
 
 interface LoadingScreenProps {
   message?: string;
-}
-
-function Logo() {
-  return (
-    <div className="flex items-center gap-3">
-      <div className="w-10 h-10 relative flex-shrink-0">
-        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-          <defs>
-            <linearGradient id="logoGradient" x1="0" y1="40" x2="40" y2="0" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#8B5CF6" />
-              <stop offset="1" stopColor="#06B6D4" />
-            </linearGradient>
-          </defs>
-          
-          {/* Rounded square background */}
-          <rect width="40" height="40" rx="10" fill="url(#logoGradient)" />
-          
-          {/* Flowing wave - represents flow/movement */}
-          <path 
-            d="M8 26 Q14 18, 20 22 Q26 26, 32 18" 
-            stroke="white" 
-            strokeWidth="3.5" 
-            strokeLinecap="round"
-            fill="none"
-          />
-          
-          {/* Second wave - depth/layers */}
-          <path 
-            d="M8 20 Q14 12, 20 16 Q26 20, 32 12" 
-            stroke="white" 
-            strokeWidth="3.5" 
-            strokeLinecap="round"
-            fill="none"
-            opacity="0.6"
-          />
-        </svg>
-      </div>
-      
-      <span className="font-semibold text-gray-900 dark:text-white text-lg">
-        Flowstarter
-      </span>
-    </div>
-  );
 }
 
 export function LoadingScreen({ message = 'Loading...' }: LoadingScreenProps) {
@@ -109,7 +67,7 @@ export function LoadingScreen({ message = 'Loading...' }: LoadingScreenProps) {
               x2="100%"
               y2="0%"
             >
-              <stop offset="0%" stopColor="#8B5CF6" />
+              <stop offset="0%" stopColor="var(--purple)" />
               <stop offset="100%" stopColor="#3B82F6" />
             </linearGradient>
           </defs>
@@ -136,7 +94,7 @@ export function LoadingScreen({ message = 'Loading...' }: LoadingScreenProps) {
           <div className="absolute inset-0 rounded-full border-2 border-gray-200 dark:border-white/10" />
           {/* Spinning arc */}
           <div
-            className="absolute inset-0 rounded-full border-2 border-transparent border-t-purple-500 animate-spin"
+            className="absolute inset-0 rounded-full border-2 border-transparent border-t-[var(--purple)] animate-spin"
             style={{ animationDuration: '0.8s' }}
           />
         </div>

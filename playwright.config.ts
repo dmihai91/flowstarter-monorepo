@@ -31,7 +31,7 @@ export default defineConfig({
     },
     {
       command: 'cd apps/flowstarter-editor && pnpm dev',
-      url: 'http://localhost:5173',
+      url: 'http://localhost:5175',
       reuseExistingServer: true,
       timeout: 120000,
     },

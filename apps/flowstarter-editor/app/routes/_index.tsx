@@ -6,6 +6,7 @@ import { useQuery, useMutation } from 'convex/react';
 // eslint-disable-next-line no-restricted-imports
 import { api } from '../../convex/_generated/api';
 import { AuthGuard } from '~/components/TeamAuthGuard';
+import { LoadingScreen } from '~/components/LoadingScreen';
 
 export const meta: MetaFunction = () => {
   return [
@@ -99,19 +100,7 @@ export function clearHandoffData(): void {
 }
 
 function LoadingFallback() {
-  return (
-    <div
-      className="flex items-center justify-center h-screen w-screen"
-      style={{ backgroundColor: 'var(--flowstarter-elements-bg-depth-1)' }}
-    >
-      <div className="flex flex-col items-center gap-4">
-        <div className="w-10 h-10 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-        <span className="text-sm" style={{ color: 'var(--flowstarter-elements-textSecondary)' }}>
-          Loading Flowstarter...
-        </span>
-      </div>
-    </div>
-  );
+  return <LoadingScreen message="Loading Flowstarter..." />;
 }
 
 interface HandoffProject {

@@ -72,7 +72,7 @@ test.describe('Concierge Flow E2E', () => {
     
     test('Editor redirects to signin when not authenticated', async ({ page }) => {
       // Try to access editor directly
-      await page.goto('http://localhost:5173');
+      await page.goto('http://localhost:5175');
       
       await page.waitForTimeout(3000);
       const url = page.url();

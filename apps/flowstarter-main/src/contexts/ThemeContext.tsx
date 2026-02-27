@@ -2,6 +2,11 @@
 
 import { safeGetItem, safeSetItem } from '@/lib/safe-storage';
 import {
+  getTheme as getSharedTheme,
+  setTheme as setSharedTheme,
+  type Theme as SharedTheme,
+} from '@flowstarter/flow-design-system';
+import {
   createContext,
   useCallback,
   useContext,
@@ -31,8 +36,18 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-// Safely access localStorage to avoid SSR issues
+// Get theme from shared cookie (works across subdomains)
 const getStoredTheme = (): Theme | null => {
+  // First try shared cookie (cross-subdomain)
+  const sharedTheme = getSharedTheme();
+  if (sharedTheme && sharedTheme !== 'system') {
+    // Map 'system' to 'auto' for compatibility
+    return sharedTheme as Theme;
+  }
+  if (sharedTheme === 'system') {
+    return 'auto';
+  }
+  // Fallback to localStorage for migration
   return safeGetItem('theme') as Theme | null;
 };
 
@@ -157,6 +172,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       if (!mounted) return;
 
       setTheme(newTheme);
+      
+      // Save to shared cookie (cross-subdomain) - map 'auto' to 'system'
+      const sharedTheme: SharedTheme = newTheme === 'auto' ? 'system' : newTheme;
+      setSharedTheme(sharedTheme);
+      
+      // Also save to localStorage for backwards compatibility
       safeSetItem('theme', newTheme);
 
       // Immediately update the resolved theme

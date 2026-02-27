@@ -30,3 +30,13 @@ export { Spinner } from './components/feedback/Spinner';
 
 // Design Tokens
 export * from './tokens';
+
+// Utilities
+export { 
+  getTheme, 
+  setTheme, 
+  getEffectiveTheme, 
+  applyTheme, 
+  initTheme,
+  type Theme,
+} from './utils/theme';

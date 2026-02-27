@@ -1,7 +1,14 @@
 import { atom } from 'nanostores';
 import { logStore } from './logs';
+import { 
+  getTheme as getSharedTheme, 
+  setTheme as setSharedTheme,
+  getEffectiveTheme as getSharedEffectiveTheme,
+  applyTheme,
+  type Theme,
+} from '@flowstarter/flow-design-system';
 
-export type Theme = 'dark' | 'light' | 'system';
+export type { Theme };
 
 export const kTheme = 'flowstarter_theme';
 
@@ -16,17 +23,7 @@ export function themeIsDark() {
 }
 
 export function getEffectiveTheme(): 'dark' | 'light' {
-  const theme = themeStore.get();
-
-  if (theme === 'system') {
-    if (typeof window !== 'undefined') {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-
-    return 'light';
-  }
-
-  return theme;
+  return getSharedEffectiveTheme();
 }
 
 export const DEFAULT_THEME: Theme = 'dark';
@@ -35,10 +32,8 @@ export const themeStore = atom<Theme>(initStore());
 
 function initStore(): Theme {
   if (!import.meta.env.SSR) {
-    const persistedTheme = localStorage.getItem(kTheme) as Theme | undefined;
-    const themeAttribute = document.querySelector('html')?.getAttribute('data-theme');
-
-    return persistedTheme ?? (themeAttribute as Theme) ?? DEFAULT_THEME;
+    // Use shared theme utility that reads from cookie (shared across subdomains)
+    return getSharedTheme();
   }
 
   return DEFAULT_THEME;
@@ -48,14 +43,11 @@ export function setTheme(newTheme: Theme) {
   // Update the theme store
   themeStore.set(newTheme);
 
-  // Update localStorage
-  localStorage.setItem(kTheme, newTheme);
+  // Use shared utility to persist to cookie (shared across subdomains)
+  setSharedTheme(newTheme);
 
-  // Get the effective theme for the HTML attribute
-  const effectiveTheme = newTheme === 'system' ? getEffectiveTheme() : newTheme;
-
-  // Update the HTML attribute
-  document.querySelector('html')?.setAttribute('data-theme', effectiveTheme);
+  // Apply theme to document
+  applyTheme(newTheme);
 
   // Update user profile if it exists
   try {
@@ -88,4 +80,3 @@ if (typeof window !== 'undefined') {
     }
   });
 }
-

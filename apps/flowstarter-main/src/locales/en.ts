@@ -2399,10 +2399,10 @@ const en = {
 
   'landing.pricing.careTitle': 'Monthly (€39)',
   'landing.pricing.careDesc': 'Hosting, security, updates, and AI editing tools. Need bigger changes? We handle those too.',
-  'landing.pricing.careFeature1': 'AI editor: update text, images, pages',
-  'landing.pricing.careFeature2': 'Hosting and security included',
-  'landing.pricing.careFeature3': 'Bigger changes handled by us',
-  'landing.pricing.careFeature4': 'Your site stays fast and online',
+  'landing.pricing.careFeature1': '1,000 AI credits for edits each month',
+  'landing.pricing.careFeature2': 'AI editor: update text, images, pages',
+  'landing.pricing.careFeature3': 'Hosting and security included',
+  'landing.pricing.careFeature4': 'Bigger changes handled by us',
 
   // Landing Page - For/Not For
   'landing.forYou.title': 'Built for you if',
@@ -2421,7 +2421,7 @@ const en = {
   'landing.cta.title': "Your website shouldn't hold you back.",
   'landing.cta.subtitle': "Book a free strategy call. We'll talk through your business and see if Flowstarter is the right fit. No pressure. No pitch deck.",
   'landing.cta.button': 'Book Your Strategy Call',
-  'landing.cta.pricing': '€599 setup · €39/month · First month free',
+  'landing.cta.pricing': '€599 setup · €39/month · 1,000 AI credits · First month free',
 
   // Landing Page - Footer CTA
   'landing.footer.pricing': '€599 website · €39/month care · First month free',

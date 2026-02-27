@@ -336,17 +336,17 @@ export default function LandingPage() {
     {
       num: '01',
       title: 'We talk',
-      desc: 'A 45-minute call. We define scope, timeline, and deliverables. Clear from day one.',
+      desc: '45 minutes. We learn your business, clarify your offer, and define what the site needs to do. No homework required.',
     },
     {
       num: '02',
       title: 'We build',
-      desc: 'We set up your site, domain, email, and analytics. You review before launch. No surprises.',
+      desc: 'Strategy, design, copy, tech — handled. You review once. We refine. No back-and-forth hell.',
     },
     {
       num: '03',
-      title: 'You own it',
-      desc: 'Your site goes live. A stable foundation you control. Edit anytime with AI. No code.',
+      title: 'You launch',
+      desc: "Live in around two weeks. A site you're proud to send clients to. Edit anytime with our AI tools — or let us handle updates.",
     },
   ];
 
@@ -873,14 +873,11 @@ export default function LandingPage() {
                   </span>
                 </h1>
 
-                <p className="text-base text-gray-400 dark:text-white/40 mb-4">
+                <p className="text-lg lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed max-w-lg mb-4">
                   {t('landing.hero.pain')}
                 </p>
-                <p className="text-lg lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed max-w-lg mb-3">
+                <p className="text-base text-gray-400 dark:text-white/40 leading-relaxed max-w-lg mb-10">
                   {t('landing.hero.subheadline')}
-                </p>
-                <p className="text-sm text-gray-400 dark:text-white/30 mb-10">
-                  {t('landing.hero.support')}
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10">

@@ -9,18 +9,18 @@ export function DashboardStatsClientFetcher() {
 
   if (isLoading || !data) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        {[0, 1, 2, 3].map((i) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {[0, 1, 2, 3, 4].map((i) => (
           <SkeletonCard
             key={`dashboard-stats-skeleton-${i}`}
-            className="p-4 rounded-2xl"
+            className="p-4 rounded-2xl min-h-[160px]"
           >
             <div className="flex items-center justify-between mb-4 w-full">
               <Skeleton className="h-3 w-20" />
-              <Skeleton className="h-5 w-16 rounded-md" />
+              <Skeleton className="h-8 w-8 rounded-xl" />
             </div>
-            <Skeleton className="h-7 w-14 mb-1.5" />
-            <Skeleton className="h-3 w-28" />
+            <Skeleton className="h-7 w-24 mb-2" />
+            <Skeleton className="h-3 w-32" />
           </SkeletonCard>
         ))}
       </div>

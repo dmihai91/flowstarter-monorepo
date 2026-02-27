@@ -684,6 +684,24 @@ const en = {
   'dashboard.stats.email': 'Email',
   'dashboard.stats.calendar': 'Calendar',
 
+  // Dashboard page
+  'dashboard.greeting.morning': 'Good morning',
+  'dashboard.greeting.afternoon': 'Good afternoon',
+  'dashboard.greeting.evening': 'Good evening',
+  'dashboard.title': 'Dashboard',
+  'dashboard.loading': 'Loading dashboard...',
+
+  // Team sidebar
+  'team.sidebar.dashboard': 'Dashboard',
+  'team.sidebar.configuration': 'Configuration',
+  'team.sidebar.domains': 'Domains',
+  'team.sidebar.email': 'Email',
+  'team.sidebar.analytics': 'Analytics',
+  'team.sidebar.services': 'Services',
+  'team.sidebar.security': 'Security',
+  'team.sidebar.team': 'Team',
+  'team.sidebar.invite': 'Invite Team Member',
+
   // Industries (translatable category keys - normalized to id-without-dashes)
   'industry.consultantscoaches': 'Coaching & Consulting',
   'industry.therapistspsychologists': 'Therapy & Counseling',

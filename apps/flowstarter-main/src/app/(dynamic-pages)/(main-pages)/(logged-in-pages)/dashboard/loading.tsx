@@ -1,8 +1,10 @@
 'use client';
 
-import { Logo } from '@/components/ui/logo';
+import { useTranslations } from '@/lib/i18n';
 
 export default function DashboardLoading() {
+  const { t } = useTranslations();
+  
   return (
     <div className="flex-1 flex items-center justify-center min-h-[60vh]">
       <div className="flex flex-col items-center gap-6">
@@ -18,7 +20,7 @@ export default function DashboardLoading() {
         </div>
 
         {/* Message */}
-        <p className="text-sm text-gray-500 dark:text-white/50">Loading dashboard...</p>
+        <p className="text-sm text-gray-500 dark:text-white/50">{t('dashboard.loading')}</p>
       </div>
     </div>
   );

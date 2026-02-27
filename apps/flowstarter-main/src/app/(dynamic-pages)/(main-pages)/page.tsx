@@ -342,12 +342,12 @@ export default function LandingPage() {
     {
       num: '02',
       title: 'We build',
-      desc: 'Strategy, design, copy, tech — handled. You review once. We refine. No back-and-forth hell.',
+      desc: 'Strategy, design, copy, tech - handled. You review once. We refine. No back-and-forth hell.',
     },
     {
       num: '03',
       title: 'You launch',
-      desc: "Live in around two weeks. A site you're proud to send clients to. Edit anytime with our AI tools — or let us handle updates.",
+      desc: "Live in around two weeks. A site you're proud to send clients to. Edit anytime with our AI tools - or let us handle updates.",
     },
   ];
 
@@ -2184,7 +2184,7 @@ export default function LandingPage() {
                   },
                   {
                     q: 'Can I make changes after the site is built?',
-                    a: "Absolutely! Your subscription includes 1,000 AI credits each month for our editor: update text, add pages, change your branding, improve your SEO. All without writing a single line of code — and more than enough for most businesses.",
+                    a: "Absolutely! Your subscription includes 1,000 AI credits each month for our editor: update text, add pages, change your branding, improve your SEO. All without writing a single line of code - and more than enough for most businesses.",
                   },
                   {
                     q: 'What if I want to cancel?',
@@ -2216,7 +2216,7 @@ export default function LandingPage() {
                   },
                   {
                     q: 'What are AI credits?',
-                    a: "Each AI credit lets you make one edit to your site: update text, change colors, add a section, tweak your layout, improve SEO, and more. Your subscription includes 1,000 credits per month — more than enough for most businesses (the average client uses about 30-50 per month). If you ever need more, you can top up anytime. Unused credits don't roll over.",
+                    a: "Each AI credit lets you make one edit to your site: update text, change colors, add a section, tweak your layout, improve SEO, and more. Your subscription includes 1,000 credits per month - more than enough for most businesses (the average client uses about 30-50 per month). If you ever need more, you can top up anytime. Unused credits don't roll over.",
                   },
                 ].map((faq, i) => (
                   <div

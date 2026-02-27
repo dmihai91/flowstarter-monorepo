@@ -157,7 +157,7 @@ export default function DashboardPage() {
   const firstName = user?.firstName || 'there';
   const hour = new Date().getHours();
   const greeting =
-    hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+    hour < 12 ? t('dashboard.greeting.morning') : hour < 18 ? t('dashboard.greeting.afternoon') : t('dashboard.greeting.evening');
 
   return (
     <DashboardWrapper>
@@ -175,7 +175,7 @@ export default function DashboardPage() {
               </span>
             </p>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
-              Dashboard
+              {t('dashboard.title')}
             </h1>
           </div>
 

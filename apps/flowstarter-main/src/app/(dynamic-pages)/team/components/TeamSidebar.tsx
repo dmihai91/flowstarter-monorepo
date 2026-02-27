@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { useTranslations } from '@/lib/i18n';
 import { Logo } from '@/components/ui/logo';
 import {
   LayoutDashboard,
@@ -21,26 +22,27 @@ import {
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
 
-const configItems = [
-  { label: 'Domains', href: '/team/dashboard/domains', icon: Globe },
-  { label: 'Email', href: '/team/dashboard/email', icon: Mail },
-  { label: 'Analytics', href: '/team/dashboard/analytics', icon: BarChart3 },
-  { label: 'Services', href: '/team/dashboard/services', icon: Wrench },
-  { label: 'Security', href: '/team/dashboard/security', icon: Shield },
-];
-
-const adminItems = [
-  { label: 'Invite Team Member', href: '/team/dashboard/invite', icon: UserPlus },
-];
-
 export function TeamSidebar() {
   const pathname = usePathname();
   const { user } = useUser();
+  const { t } = useTranslations();
   const [collapsed, setCollapsed] = useLocalStorage('team-sidebar-collapsed', false);
   const [mobileOpen, setMobileOpen] = useState(false);
   
   const metadata = user?.publicMetadata as { role?: string } | undefined;
   const isAdmin = metadata?.role?.toLowerCase() === 'admin';
+
+  const configItems = [
+    { label: t('team.sidebar.domains'), href: '/team/dashboard/domains', icon: Globe },
+    { label: t('team.sidebar.email'), href: '/team/dashboard/email', icon: Mail },
+    { label: t('team.sidebar.analytics'), href: '/team/dashboard/analytics', icon: BarChart3 },
+    { label: t('team.sidebar.services'), href: '/team/dashboard/services', icon: Wrench },
+    { label: t('team.sidebar.security'), href: '/team/dashboard/security', icon: Shield },
+  ];
+
+  const adminItems = [
+    { label: t('team.sidebar.invite'), href: '/team/dashboard/invite', icon: UserPlus },
+  ];
 
   // Close mobile sidebar on route change
   useEffect(() => {
@@ -106,7 +108,7 @@ export function TeamSidebar() {
         <NavLink 
           href="/team/dashboard" 
           icon={LayoutDashboard} 
-          label="Dashboard" 
+          label={t('team.sidebar.dashboard')} 
           exact 
         />
       </div>
@@ -115,7 +117,7 @@ export function TeamSidebar() {
       <div className={cn(collapsed && "w-full")}>
         {!collapsed && (
           <h3 className="px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
-            Configuration
+            {t('team.sidebar.configuration')}
           </h3>
         )}
         <div className="space-y-1">
@@ -130,7 +132,7 @@ export function TeamSidebar() {
         <div className={cn(collapsed && "w-full")}>
           {!collapsed && (
             <h3 className="px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
-              Team
+              {t('team.sidebar.team')}
             </h3>
           )}
           <div className="space-y-1">

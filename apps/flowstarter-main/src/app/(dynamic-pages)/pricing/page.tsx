@@ -57,7 +57,7 @@ export default function PricingPage() {
     'Professional email (1 mailbox)',
     '1 GB cloud storage for your files and assets',
     'Analytics dashboard (leads + page views)',
-    'AI-powered edits — content, pages, branding, SEO',
+    'AI-powered edits - content, pages, branding, SEO',
     'Platform updates and improvements',
     'Email support (48h response)',
   ];
@@ -91,7 +91,7 @@ export default function PricingPage() {
           <div className="text-center max-w-4xl mx-auto">
             <Badge className="mb-6 bg-gradient-to-r from-[var(--purple)] to-cyan-500 text-white border-0 px-4 py-1.5 text-sm font-semibold">
               <Sparkles className="w-4 h-4 mr-2" />
-              Beta Pricing — 50% Off Everything
+              Beta Pricing - 50% Off Everything
             </Badge>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-6">
@@ -322,7 +322,7 @@ export default function PricingPage() {
                 </div>
 
                 <p className="text-xs text-gray-400 dark:text-white/30 mt-6 pt-4 border-t border-gray-200 dark:border-white/10">
-                  First month free — billing starts 30 days after launch
+                  First month free - billing starts 30 days after launch
                 </p>
               </CardContent>
             </Card>
@@ -455,7 +455,7 @@ export default function PricingPage() {
               </Badge>
 
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                Launching beta — early adopters get 50% off
+                Launching beta - early adopters get 50% off
               </h2>
               <p className="text-gray-600 dark:text-gray-300 max-w-xl mx-auto mb-6">
                 Lock in beta pricing (€150 setup + €15/month) until v1.0.

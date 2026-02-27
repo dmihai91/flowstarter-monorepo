@@ -2339,6 +2339,88 @@ const en = {
   'waitlist.landing.successInline': "You're in! We'll be in touch soon.",
   'waitlist.landing.alreadyInline': "You're already on the list!",
   'waitlist.landing.privacy': 'No spam. Unsubscribe anytime.',
+
+  // Landing Page - Hero
+  'landing.hero.badge': 'Early access — limited spots',
+  'landing.hero.headline1': 'A website that reflects',
+  'landing.hero.headline2': 'your expertise. And converts.',
+  'landing.hero.pain': "You've built something real — clients, reputation, results.",
+  'landing.hero.subheadline': 'Now you need an online presence that does it justice. We design and build a structured, professional platform that turns visitors into booked calls. Delivered in two weeks.',
+  'landing.hero.support': 'One conversation. We take it from there.',
+  'landing.hero.cta': 'Request a Strategy Call',
+  'landing.hero.priceBuild': '€599',
+  'landing.hero.priceBuildLabel': 'to build',
+  'landing.hero.priceMonthly': '€39',
+  'landing.hero.priceMonthlyLabel': '/month to maintain',
+  'landing.hero.priceNote': 'Launch pricing. First month included.',
+
+  // Landing Page - Stats
+  'landing.stats.weeks': '1-2',
+  'landing.stats.weeksLabel': 'WEEKS TO LAUNCH',
+  'landing.stats.calls': '1',
+  'landing.stats.callsLabel': 'CALL NEEDED',
+  'landing.stats.techSkills': '0',
+  'landing.stats.techSkillsLabel': 'TECH SKILLS REQUIRED',
+
+  // Landing Page - How it works
+  'landing.howItWorks.title': 'How it works',
+  'landing.howItWorks.text1': 'You tell us about your business. We design and build your website.',
+  'landing.howItWorks.text2': "No tech headaches. No confusing tools. No endless back-and-forth. Just a polished, professional site that makes you proud to share your link.",
+  'landing.howItWorks.text3': 'One call. We handle everything. You focus on your clients.',
+
+  // Landing Page - Editor
+  'landing.editor.title': 'Update your site anytime',
+  'landing.editor.subtitle': 'Just type what you want to change. Our AI editor does the rest.',
+
+  // Landing Page - Pricing Card
+  'landing.pricing.badge': 'Limited capacity',
+  'landing.pricing.title': 'Early Access Pricing',
+  'landing.pricing.subtitle': 'By application only.',
+  'landing.pricing.buildLabel': 'Your website:',
+  'landing.pricing.buildPrice': '€599',
+  'landing.pricing.buildPeriod': 'one-time',
+  'landing.pricing.careLabel': 'Ongoing care:',
+  'landing.pricing.carePrice': '€39',
+  'landing.pricing.carePeriod': '/month',
+  'landing.pricing.note': 'Launch rate. First month free. Cancel anytime.',
+
+  // Landing Page - Pricing Features
+  'landing.pricing.websiteTitle': 'Your Website (€599)',
+  'landing.pricing.websiteDesc': 'A beautiful, professional website designed around your business. Not a template — custom-built for you.',
+  'landing.pricing.websiteFeature1': 'Discovery call to understand your business',
+  'landing.pricing.websiteFeature2': 'Up to 7 pages, designed to attract clients',
+  'landing.pricing.websiteFeature3': 'Your own domain and professional email',
+  'landing.pricing.websiteFeature4': 'Looks great on phones and computers',
+  'landing.pricing.websiteFeature5': 'Live in 1–2 weeks',
+
+  'landing.pricing.careTitle': 'Ongoing Care (€39/month)',
+  'landing.pricing.careDesc': 'Your site is yours to customize. Use our AI editor to change text, colors, or add sections — just describe what you want. We handle the technical stuff.',
+  'landing.pricing.careFeature1': 'AI editor: update anything by just typing what you want',
+  'landing.pricing.careFeature2': 'Change colors, text, images — anytime you like',
+  'landing.pricing.careFeature3': 'Bigger changes? We handle them for you',
+  'landing.pricing.careFeature4': 'Your site stays fast, secure, and always online',
+
+  // Landing Page - For/Not For
+  'landing.forYou.title': 'Perfect for you if',
+  'landing.forYou.item1': "You're a coach, consultant, or expert with paying clients",
+  'landing.forYou.item2': 'You have followers on Instagram, LinkedIn, or an email list',
+  'landing.forYou.item3': 'You want a website that looks as good as your work',
+  'landing.forYou.item4': "You'd rather focus on clients than learn web design",
+
+  'landing.notForYou.title': 'Probably not for you if',
+  'landing.notForYou.item1': "You're still figuring out what you offer",
+  'landing.notForYou.item2': 'You enjoy building websites yourself',
+  'landing.notForYou.item3': 'You need an online store or custom app',
+  'landing.notForYou.item4': "You're looking for the cheapest option",
+
+  // Landing Page - CTA
+  'landing.cta.title': 'Ready to upgrade your online presence?',
+  'landing.cta.subtitle': "Book a free strategy call. We'll discuss your business and see if we're a good fit.",
+  'landing.cta.button': 'Request a Strategy Call',
+  'landing.cta.pricing': '€599 website · €39/month care · First month free',
+
+  // Landing Page - Footer CTA
+  'landing.footer.pricing': '€599 website · €39/month care · First month free',
 } as const;
 
 export default en;

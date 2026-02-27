@@ -864,22 +864,23 @@ export default function LandingPage() {
                 </div>
 
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
-                  Your expertise deserves
+                  A website that reflects
                   <br />
                   <span className="text-flow">
-                    a website that works.
+                    your expertise. And converts.
                   </span>
                 </h1>
 
                 <p className="text-base text-gray-400 dark:text-white/40 mb-4">
-                  You're great at what you do. But your online presence doesn't show it yet.
+                  You've built something real — clients, reputation, results.
                 </p>
                 <p className="text-lg lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed max-w-lg mb-3">
-                  We build you a beautiful, professional website that turns visitors into clients.
-                  Done for you. Live in two weeks. No tech skills needed.
+                  Now you need an online presence that does it justice.
+                  We design and build a structured, professional platform
+                  that turns visitors into booked calls. Delivered in two weeks.
                 </p>
                 <p className="text-sm text-gray-400 dark:text-white/30 mb-10">
-                  Just one call. We handle everything else.
+                  One conversation. We take it from there.
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10">
@@ -911,17 +912,17 @@ export default function LandingPage() {
                       <span className="text-gray-700 dark:text-white/80 font-medium">
                         €599
                       </span>
-                      <span className="ml-1">website</span>
+                      <span className="ml-1">to build</span>
                       <span className="mx-3 text-gray-300 dark:text-white/20">
-                        +
+                        ·
                       </span>
                       <span className="text-gray-700 dark:text-white/80 font-medium">
                         €39
                       </span>
-                      <span className="ml-1">/month care</span>
+                      <span className="ml-1">/month to maintain</span>
                     </div>
                     <div className="text-xs text-gray-400 dark:text-white/30 mt-1">
-                      Launch rate. First month free.
+                      Launch pricing. First month included.
                     </div>
                   </div>
                 </div>

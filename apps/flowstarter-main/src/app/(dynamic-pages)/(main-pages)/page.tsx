@@ -1832,15 +1832,15 @@ export default function LandingPage() {
 
             <div className="max-w-lg mx-auto">
               {/* Starter Plan Card - Premium Treatment */}
-              <div className="group p-8 lg:p-10 rounded-2xl bg-gradient-to-br from-white via-white to-[var(--purple)]/5 dark:from-[#0f0f12] dark:via-[#0f0f12] dark:to-[#12101a] backdrop-blur-sm border-2 border-[var(--purple)]/30 dark:border-[var(--purple)]/40 shadow-xl shadow-[var(--purple)]/10 relative overflow-hidden transition-all duration-300 hover:border-[var(--purple)]/50 dark:hover:border-[var(--purple)]/60 hover:shadow-[0_8px_30px_rgba(124,58,237,0.15)]">
-                {/* Badge */}
-                <div className="absolute top-4 right-4">
-                  <span className="px-3 py-1 text-xs font-medium bg-[var(--purple)] text-white rounded-full">
+              <div className="group p-6 sm:p-8 lg:p-10 rounded-2xl bg-gradient-to-br from-white via-white to-[var(--purple)]/5 dark:from-[#0f0f12] dark:via-[#0f0f12] dark:to-[#12101a] backdrop-blur-sm border-2 border-[var(--purple)]/30 dark:border-[var(--purple)]/40 shadow-xl shadow-[var(--purple)]/10 relative overflow-hidden transition-all duration-300 hover:border-[var(--purple)]/50 dark:hover:border-[var(--purple)]/60 hover:shadow-[0_8px_30px_rgba(124,58,237,0.15)]">
+                {/* Badge - inline on mobile, absolute on desktop */}
+                <div className="sm:absolute sm:top-4 sm:right-4 mb-4 sm:mb-0">
+                  <span className="inline-block px-3 py-1 text-xs font-medium bg-[var(--purple)] text-white rounded-full">
                     {t('landing.pricing.badge')}
                   </span>
                 </div>
 
-                <h3 className="text-2xl font-bold mb-1">{t('landing.pricing.title')}</h3>
+                <h3 className="text-xl sm:text-2xl font-bold mb-1">{t('landing.pricing.title')}</h3>
                 <p className="text-sm text-gray-400 dark:text-white/40 mb-6">
                   {t('landing.pricing.subtitle')}
                 </p>

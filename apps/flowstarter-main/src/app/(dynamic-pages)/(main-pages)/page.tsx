@@ -958,8 +958,18 @@ export default function LandingPage() {
                     : 'opacity-0 translate-y-8'
                 }`}
               >
+                {/* Title above editor */}
+                <div className="text-center mb-6">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                    Update your site anytime
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-white/50">
+                    Just type what you want to change. Our AI editor does the rest.
+                  </p>
+                </div>
+
                 {/* Glow effect behind editor */}
-                <div className="absolute -inset-4 bg-gradient-to-r from-[var(--purple)]/20 via-blue-500/20 to-cyan-400/20 rounded-3xl blur-2xl animate-pulse-glow" />
+                <div className="absolute -inset-4 top-16 bg-gradient-to-r from-[var(--purple)]/20 via-blue-500/20 to-cyan-400/20 rounded-3xl blur-2xl animate-pulse-glow" />
 
                 {/* Editor window */}
                 <div className="relative bg-white/60 dark:bg-white/[0.05] backdrop-blur-2xl rounded-3xl border border-white/50 dark:border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden transition-all duration-300 hover:shadow-[0_25px_70px_rgba(0,0,0,0.12)] dark:hover:shadow-[0_25px_70px_rgba(0,0,0,0.5)] hover:scale-[1.01]">

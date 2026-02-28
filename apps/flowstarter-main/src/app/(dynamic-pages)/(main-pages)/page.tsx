@@ -867,7 +867,7 @@ export default function LandingPage() {
                   </span>
                 </div>
 
-                <h1 className="text-[2.2rem] sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-[1.15] tracking-tight mb-6 break-words text-center sm:text-left">
+                <h1 className="text-[2.2rem] sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold leading-[1.15] tracking-tight mb-6 break-words text-center sm:text-left">
                   {t('landing.hero.headline1')}
                   <br />
                   <span className="text-flow">

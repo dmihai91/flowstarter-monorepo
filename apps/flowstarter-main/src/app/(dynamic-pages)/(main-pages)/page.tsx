@@ -2135,14 +2135,14 @@ export default function LandingPage() {
             <div
               id="faq-content"
               data-animate
-              className={`grid lg:grid-cols-2 gap-10 lg:gap-16 transition-all duration-[350ms] ${
+              className={`grid lg:grid-cols-1 gap-10 transition-all duration-[350ms] ${
                 visibleSections.has('faq-content')
                   ? 'opacity-100 translate-y-0'
                   : 'opacity-0 translate-y-8'
               }`}
             >
-              <div>
-                <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-4 lg:sticky lg:top-32">
+              <div className="col-span-2 text-center mb-6">
+                <h2 className="text-5xl lg:text-6xl font-bold leading-tight mb-4">
                   Questions?
                   <br />
                   <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
@@ -2151,7 +2151,7 @@ export default function LandingPage() {
                 </h2>
               </div>
 
-              <div className="space-y-2">
+              <div className="col-span-2 space-y-2 max-w-3xl mx-auto w-full">
                 {[
                   { q: t('landing.faq.q1'), a: t('landing.faq.a1') },
                   { q: t('landing.faq.q2'), a: t('landing.faq.a2') },

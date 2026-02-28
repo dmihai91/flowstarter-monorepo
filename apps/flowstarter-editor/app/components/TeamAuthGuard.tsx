@@ -43,8 +43,11 @@ function LoginPrompt() {
 
       {/* Header — mirrors main platform */}
       <header style={{ position: 'relative', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 24px', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-        <a href={mainUrl} style={{ textDecoration: 'none' }}>
+        <a href={mainUrl} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px' }}>
           <Logo size="md" theme="dark" />
+          <span style={{ color: '#fff', fontWeight: 600, fontSize: '16px', letterSpacing: '-0.2px' }}>
+            Flowstarter <span style={{ color: 'rgba(255,255,255,0.45)', fontWeight: 400 }}>Editor</span>
+          </span>
         </a>
       </header>
 

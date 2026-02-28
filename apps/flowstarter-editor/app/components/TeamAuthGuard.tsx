@@ -6,6 +6,7 @@
  */
 
 import { useUser } from '@clerk/remix';
+import { FlowBackground, Logo } from '@flowstarter/flow-design-system';
 import { useEffect, useRef, useState } from 'react';
 import { initializeFromClerkUser } from '~/lib/team-auth';
 import { LoadingScreen } from '~/components/LoadingScreen';
@@ -26,34 +27,45 @@ function getMainPlatformUrl(): string {
 
 function LoginPrompt() {
   const mainUrl = getMainPlatformUrl();
+  const redirectUrl = typeof window !== 'undefined' ? window.location.href : '';
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0a0a0c]">
-      <div className="text-center max-w-md mx-auto p-8">
-        <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center">
-          <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
-            <path d="M8 26 Q14 18, 20 22 Q26 26, 32 18" stroke="white" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
-            <path d="M8 20 Q14 12, 20 16 Q26 20, 32 12" stroke="white" strokeWidth="3.5" strokeLinecap="round" fill="none" opacity="0.6"/>
-          </svg>
+    <div style={{ position: 'relative', width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0f', overflow: 'hidden' }}>
+      {/* Animated flow lines background */}
+      <FlowBackground style={{ position: 'fixed', inset: 0, zIndex: 0 }} variant="landing" />
+
+      {/* Ambient glow */}
+      <div style={{ position: 'fixed', top: '-15%', left: '50%', transform: 'translateX(-50%)', width: '700px', height: '500px', background: 'radial-gradient(ellipse, rgba(77,93,217,0.15) 0%, transparent 70%)', zIndex: 0, pointerEvents: 'none' }} />
+
+      {/* Glass card */}
+      <div style={{ position: 'relative', zIndex: 1, width: '90%', maxWidth: '420px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: '20px', padding: '44px 40px', backdropFilter: 'blur(24px)', textAlign: 'center', boxShadow: '0 24px 64px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.07)' }}>
+
+        {/* Logo */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px' }}>
+          <Logo size="md" />
         </div>
-        <h1 className="text-2xl font-semibold text-white mb-2">
+
+        <h1 style={{ color: '#fff', fontSize: '22px', fontWeight: 700, marginBottom: '10px', letterSpacing: '-0.3px' }}>
           Welcome to Flowstarter
         </h1>
-        <p className="text-zinc-400 mb-8">
-          Sign in to access the AI website builder and manage your projects.
+        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', lineHeight: 1.6, marginBottom: '32px' }}>
+          Sign in to access your website editor and manage your projects.
         </p>
+
+        {/* Primary CTA */}
         <a
-          href={`${mainUrl}/login?redirect_url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}`}
-          className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white text-zinc-900 font-medium hover:bg-zinc-100 transition-colors"
+          href={`${mainUrl}/login?redirect_url=${encodeURIComponent(redirectUrl)}`}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%', padding: '13px 24px', borderRadius: '12px', background: 'linear-gradient(135deg, #4D5DD9 0%, #6366f1 100%)', color: '#fff', fontWeight: 600, fontSize: '15px', textDecoration: 'none', boxShadow: '0 4px 16px rgba(77,93,217,0.35)', marginBottom: '16px' }}
         >
           Sign in to continue
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
           </svg>
         </a>
-        <p className="mt-6 text-sm text-zinc-500">
+
+        <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.35)' }}>
           Don't have an account?{' '}
-          <a href={`${mainUrl}/login`} className="text-purple-400 hover:text-purple-300">
+          <a href={`${mainUrl}/login`} style={{ color: 'rgba(193,200,255,0.7)', textDecoration: 'none' }}>
             Get started for free
           </a>
         </p>

@@ -8,6 +8,8 @@
 import { useUser } from '@clerk/remix';
 import { useEffect, useState } from 'react';
 import { FlowBackground, Logo, Footer, ThemeToggle } from '@flowstarter/flow-design-system';
+import { useStore } from '@nanostores/react';
+import { themeStore, setTheme } from '~/lib/stores/theme';
 import { initializeFromClerkUser } from '~/lib/team-auth';
 import { LoadingScreen } from '~/components/LoadingScreen';
 import { getMainPlatformUrl, getMainPlatformHomepage, getCalendlyUrl } from '~/lib/config/domains';
@@ -29,6 +31,8 @@ function LoginPrompt() {
     document.documentElement.setAttribute('data-theme', 'dark');
   }, []);
 
+  const currentTheme = useStore(themeStore);
+
   const btn: React.CSSProperties = {
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     width: '100%', padding: '12px 20px', borderRadius: '10px',
@@ -46,7 +50,7 @@ function LoginPrompt() {
         <a href={mainUrl} style={{ textDecoration: 'none' }}>
           <Logo size="md" theme="dark" />
         </a>
-        <ThemeToggle />
+        <ThemeToggle theme={currentTheme} onThemeChange={setTheme} />
       </header>
 
       {/* Main content */}

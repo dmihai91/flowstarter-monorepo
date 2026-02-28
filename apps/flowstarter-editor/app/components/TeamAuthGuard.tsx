@@ -29,20 +29,30 @@ function LoginPrompt() {
   const mainUrl = getMainPlatformUrl();
   const redirectUrl = typeof window !== 'undefined' ? window.location.href : '';
 
+  // Force dark theme so FlowBackground renders dark
+  useEffect(() => {
+    // Set cookie that getTheme() reads (cross-subdomain compatible)
+    document.cookie = 'theme=dark; path=/; max-age=31536000';
+    // Also set localStorage fallbacks
+    localStorage.setItem('theme', 'dark');
+    localStorage.setItem('flowstarter_theme', 'dark');
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }, []);
+
   return (
-    <div style={{ position: 'relative', width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0f', overflow: 'hidden' }}>
-      {/* Animated flow lines background */}
-      <FlowBackground style={{ position: 'fixed', inset: 0, zIndex: 0 }} variant="landing" />
+    <div style={{ position: 'relative', width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0f', overflow: 'hidden' }} data-theme="dark">
+      {/* Animated flow lines — always dark */}
+      <FlowBackground style={{ position: 'fixed', inset: 0, zIndex: 0 }} variant="landing" isDark={true} />
 
       {/* Ambient glow */}
-      <div style={{ position: 'fixed', top: '-15%', left: '50%', transform: 'translateX(-50%)', width: '700px', height: '500px', background: 'radial-gradient(ellipse, rgba(77,93,217,0.15) 0%, transparent 70%)', zIndex: 0, pointerEvents: 'none' }} />
+      <div style={{ position: 'fixed', top: '-15%', left: '50%', transform: 'translateX(-50%)', width: '700px', height: '500px', background: 'radial-gradient(ellipse, rgba(77,93,217,0.18) 0%, transparent 70%)', zIndex: 0, pointerEvents: 'none' }} />
 
       {/* Glass card */}
-      <div style={{ position: 'relative', zIndex: 1, width: '90%', maxWidth: '420px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: '20px', padding: '44px 40px', backdropFilter: 'blur(24px)', textAlign: 'center', boxShadow: '0 24px 64px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.07)' }}>
+      <div style={{ position: 'relative', zIndex: 1, width: '90%', maxWidth: '420px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: '20px', padding: '44px 40px', backdropFilter: 'blur(24px)', textAlign: 'center', boxShadow: '0 24px 64px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.07)' }}>
 
         {/* Logo */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px' }}>
-          <Logo size="md" />
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '28px' }}>
+          <Logo size="md" theme="dark" />
         </div>
 
         <h1 style={{ color: '#fff', fontSize: '22px', fontWeight: 700, marginBottom: '10px', letterSpacing: '-0.3px' }}>

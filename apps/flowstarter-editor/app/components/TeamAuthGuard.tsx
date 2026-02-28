@@ -7,7 +7,7 @@
 
 import { useUser } from '@clerk/remix';
 import { useEffect, useState } from 'react';
-import { FlowBackground, Logo, Footer } from '@flowstarter/flow-design-system';
+import { FlowBackground, Logo, Footer, ThemeToggle } from '@flowstarter/flow-design-system';
 import { initializeFromClerkUser } from '~/lib/team-auth';
 import { LoadingScreen } from '~/components/LoadingScreen';
 import { getMainPlatformUrl, getMainPlatformHomepage, getCalendlyUrl } from '~/lib/config/domains';
@@ -43,12 +43,10 @@ function LoginPrompt() {
 
       {/* Header — mirrors main platform */}
       <header style={{ position: 'relative', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 24px', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-        <a href={mainUrl} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <a href={mainUrl} style={{ textDecoration: 'none' }}>
           <Logo size="md" theme="dark" />
-          <span style={{ color: '#fff', fontWeight: 600, fontSize: '16px', letterSpacing: '-0.2px' }}>
-            Flowstarter <span style={{ color: 'rgba(255,255,255,0.45)', fontWeight: 400 }}>Editor</span>
-          </span>
         </a>
+        <ThemeToggle />
       </header>
 
       {/* Main content */}
@@ -57,8 +55,8 @@ function LoginPrompt() {
         {/* Title above card */}
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
           <h1 style={{ fontSize: '32px', fontWeight: 700, letterSpacing: '-0.5px', marginBottom: '10px', lineHeight: 1.2 }}>
-            <span style={{ color: '#fff' }}>Editor </span>
-            <span style={{ background: 'linear-gradient(135deg, #818cf8 0%, #4D5DD9 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Login</span>
+            <span style={{ color: '#fff' }}>Flowstarter </span>
+            <span style={{ background: 'linear-gradient(135deg, #818cf8 0%, #4D5DD9 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Editor</span>
           </h1>
           <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '15px' }}>
             Sign in to manage and edit your website.
@@ -68,7 +66,7 @@ function LoginPrompt() {
         {/* Glass card */}
         <div style={{ width: '100%', maxWidth: '440px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', padding: '32px', backdropFilter: 'blur(20px)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }}>
           <h2 style={{ color: '#fff', fontSize: '18px', fontWeight: 600, textAlign: 'center', marginBottom: '6px' }}>
-            Sign in to your account
+            Sign in to continue
           </h2>
           <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px', textAlign: 'center', marginBottom: '24px' }}>
             New client?{' '}

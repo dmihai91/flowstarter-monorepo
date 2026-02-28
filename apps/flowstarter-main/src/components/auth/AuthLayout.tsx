@@ -15,7 +15,6 @@ interface AuthLayoutProps {
   children: React.ReactNode;
   marketingKeys?: Array<TranslationKeys>;
   showTeamBadge?: boolean;
-  hideFooterStats?: boolean;
 }
 
 export default function AuthLayout({
@@ -23,7 +22,6 @@ export default function AuthLayout({
   subtitle,
   children,
   showTeamBadge = false,
-  hideFooterStats = false,
 }: AuthLayoutProps) {
   useTheme();
   return (
@@ -40,7 +38,7 @@ export default function AuthLayout({
         <FlowBackground variant="dashboard" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }} />
 
         {/* Header */}
-        <ScrollAwareHeader className="z-50">
+        <ScrollAwareHeader className="z-50" scrolledClass="bg-white/80 dark:bg-[#14141a]/85 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
               <Logo size="md" />
@@ -79,32 +77,7 @@ export default function AuthLayout({
             {/* Auth content */}
             <div className="relative">{children}</div>
 
-            {/* Stats - for client login only */}
-            {!hideFooterStats && (
-              <div className="mt-10 pt-6 border-t border-gray-200 dark:border-white/10">
-                <div className="flex items-center justify-center gap-6">
-                  {[
-                    { value: '1-2', label: 'Weeks to launch' },
-                    { value: '1', label: 'Call needed' },
-                    { value: '0', label: 'Tech skills required' },
-                  ].map((stat, i) => (
-                    <div key={i} className="flex items-center">
-                      <div className="text-center px-3">
-                        <div className="text-lg font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
-                          {stat.value}
-                        </div>
-                        <div className="text-[9px] text-gray-400 dark:text-white/30 uppercase tracking-wider">
-                          {stat.label}
-                        </div>
-                      </div>
-                      {i < 2 && (
-                        <div className="w-px h-6 bg-gray-200 dark:bg-white/10" />
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+
           </div>
         </div>
 

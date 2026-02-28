@@ -155,7 +155,6 @@ export default function TeamLoginPage() {
       title="Team Login"
       subtitle="Sign in to manage client projects and configure services."
       showTeamBadge={true}
-      hideFooterStats={true}
     >
       <div className="w-full max-w-[520px] mx-auto">
         <div className="bg-white/95 dark:bg-[var(--surface-2)]/90 backdrop-blur-2xl backdrop-saturate-150 rounded-2xl border border-gray-200/50 dark:border-white/10 p-8 shadow-lg dark:shadow-2xl">

@@ -6,7 +6,6 @@
  */
 
 import { useUser } from '@clerk/remix';
-import { FlowBackground, Logo } from '@flowstarter/flow-design-system';
 import { useEffect, useRef, useState } from 'react';
 import { initializeFromClerkUser } from '~/lib/team-auth';
 import { LoadingScreen } from '~/components/LoadingScreen';
@@ -26,63 +25,16 @@ function getMainPlatformUrl(): string {
 }
 
 function LoginPrompt() {
-  const mainUrl = getMainPlatformUrl();
-  const redirectUrl = typeof window !== 'undefined' ? window.location.href : '';
-
-  // Force dark theme so FlowBackground renders dark
   useEffect(() => {
-    // Set cookie that getTheme() reads (cross-subdomain compatible)
-    document.cookie = 'theme=dark; path=/; max-age=31536000';
-    // Also set localStorage fallbacks
-    localStorage.setItem('theme', 'dark');
-    localStorage.setItem('flowstarter_theme', 'dark');
-    document.documentElement.setAttribute('data-theme', 'dark');
+    const mainUrl = getMainPlatformUrl();
+    const redirectUrl = encodeURIComponent(window.location.href);
+    window.location.replace(`${mainUrl}/login?redirect_url=${redirectUrl}`);
   }, []);
 
-  return (
-    <div style={{ position: 'relative', width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0f', overflow: 'hidden' }} data-theme="dark">
-      {/* Animated flow lines — always dark */}
-      <FlowBackground style={{ position: 'fixed', inset: 0, zIndex: 0 }} variant="landing" isDark={true} />
-
-      {/* Ambient glow */}
-      <div style={{ position: 'fixed', top: '-15%', left: '50%', transform: 'translateX(-50%)', width: '700px', height: '500px', background: 'radial-gradient(ellipse, rgba(77,93,217,0.18) 0%, transparent 70%)', zIndex: 0, pointerEvents: 'none' }} />
-
-      {/* Glass card */}
-      <div style={{ position: 'relative', zIndex: 1, width: '90%', maxWidth: '420px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: '20px', padding: '44px 40px', backdropFilter: 'blur(24px)', textAlign: 'center', boxShadow: '0 24px 64px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.07)' }}>
-
-        {/* Logo */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '28px' }}>
-          <Logo size="md" theme="dark" />
-        </div>
-
-        <h1 style={{ color: '#fff', fontSize: '22px', fontWeight: 700, marginBottom: '10px', letterSpacing: '-0.3px' }}>
-          Welcome to Flowstarter
-        </h1>
-        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', lineHeight: 1.6, marginBottom: '32px' }}>
-          Sign in to access your website editor and manage your projects.
-        </p>
-
-        {/* Primary CTA */}
-        <a
-          href={`${mainUrl}/login?redirect_url=${encodeURIComponent(redirectUrl)}`}
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%', padding: '13px 24px', borderRadius: '12px', background: 'linear-gradient(135deg, #4D5DD9 0%, #6366f1 100%)', color: '#fff', fontWeight: 600, fontSize: '15px', textDecoration: 'none', boxShadow: '0 4px 16px rgba(77,93,217,0.35)', marginBottom: '16px' }}
-        >
-          Sign in to continue
-          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </a>
-
-        <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.35)' }}>
-          Don't have an account?{' '}
-          <a href={`${mainUrl}/login`} style={{ color: 'rgba(193,200,255,0.7)', textDecoration: 'none' }}>
-            Get started for free
-          </a>
-        </p>
-      </div>
-    </div>
-  );
+  // Show nothing while redirecting
+  return null;
 }
+
 
 export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuardProps) {
   const { isLoaded, isSignedIn, user } = useUser();

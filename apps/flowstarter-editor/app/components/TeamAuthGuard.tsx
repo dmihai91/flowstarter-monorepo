@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { FlowBackground, Logo, Footer, ThemeToggle } from '@flowstarter/flow-design-system';
 import { useStore } from '@nanostores/react';
 import { themeStore, setTheme } from '~/lib/stores/theme';
-import { getEffectiveTheme } from '~/lib/stores/theme';
 import { initializeFromClerkUser } from '~/lib/team-auth';
 import { LoadingScreen } from '~/components/LoadingScreen';
 import { getMainPlatformUrl, getCalendlyUrl } from '~/lib/config/domains';
@@ -18,11 +17,10 @@ function LoginPrompt() {
   const mainUrl = getMainPlatformUrl();
   const redirectUrl = typeof window !== 'undefined' ? encodeURIComponent(window.location.href) : '';
   const currentTheme = useStore(themeStore);
-  const [isDark, setIsDark] = useState(true);
-
-  useEffect(() => {
-    setIsDark(getEffectiveTheme() === 'dark');
-  }, [currentTheme]);
+  // Derive isDark synchronously so colors are always correct on first render
+  const isDark = currentTheme === 'dark' ||
+    (currentTheme === 'system' && typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches);
 
   const bg       = isDark ? '#0a0a0f'                    : '#f4f4f8';
   const cardBg   = isDark ? 'rgba(255,255,255,0.05)'     : 'rgba(255,255,255,0.85)';

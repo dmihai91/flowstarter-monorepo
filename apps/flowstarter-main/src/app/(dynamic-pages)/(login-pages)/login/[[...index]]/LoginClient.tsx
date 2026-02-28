@@ -92,7 +92,7 @@ export function LoginClient() {
     <AuthRedirectWrapper>
       <AuthLayout
         title="Client Login"
-        subtitle="Sign in to manage your website and access the AI Editor."
+        subtitle="Sign in to manage your website and access Flowstarter Editor."
         marketingKeys={[]}
       >
         {noticeContent ? (

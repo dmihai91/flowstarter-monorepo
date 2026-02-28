@@ -11,11 +11,13 @@ import { EditorChatPanel } from '~/components/editor/EditorChatPanel';
 import { useThemeStyles, getColors } from '~/components/editor/hooks';
 import type { OnboardingStep, InitialChatState, BusinessInfo, BuildPhase } from '~/components/editor/editor-chat/types';
 import type { OrchestratorStatusDTO } from '~/lib/hooks/types/orchestrator.dto';
+import { en } from '~/lib/i18n/locales/en';
+import { useTranslation } from '~/lib/i18n/useTranslation';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Project - Flowstarter' },
-    { name: 'description', content: 'Build stunning websites with AI-powered assistance' },
+    { title: en.pages.project },
+    { name: 'description', content: en.app.description },
   ];
 };
 
@@ -70,7 +72,7 @@ function LoadingFallback() {
             animation: 'spin 1s linear infinite',
           }}
         />
-        <span style={{ fontSize: '14px', color: colors.textSubtle }}>Loading project...</span>
+        <span style={{ fontSize: '14px', color: colors.textSubtle }}>{en.app.loadingProject}</span>
       </div>
       <style>{`
         @keyframes spin {
@@ -269,7 +271,7 @@ function ProjectEditorContent({ projectId }: ProjectEditorContentProps) {
   return (
     <ConversationProvider initialConversationId={projectId}>
       <EditorLayout
-        projectName={activeConversation?.projectName || 'New Project'}
+        projectName={activeConversation?.projectName || en.pages.createNewProject}
         projectId={convexProjectId}
         onboardingStep={onboardingStep}
         orchestrationStatus={orchestrationStatus}

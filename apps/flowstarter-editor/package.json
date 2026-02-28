@@ -5,7 +5,7 @@
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
-  "version": "1.2.3",
+  "version": "0.0.1",
   "author": {
     "name": "Flowstarter",
     "email": "contact@flowstarter.app"
@@ -136,7 +136,8 @@
     "unist-util-visit": "^5.0.0",
     "vite-plugin-node-polyfills": "^0.22.0",
     "zod": "^3.25.76",
-    "@flowstarter/flow-design-system": "workspace:*"
+    "@flowstarter/flow-design-system": "workspace:*",
+    "@flowstarter/editor-engine": "workspace:*"
   },
   "devDependencies": {
     "@blitz/eslint-plugin": "0.1.0",

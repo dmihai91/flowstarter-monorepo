@@ -2,7 +2,7 @@
 
 import { TeamHeader } from '../components/TeamHeader';
 import { TeamSidebar } from '../components/TeamSidebar';
-import { GradientBackground } from '@/components/ui/gradient-background';
+import { FlowBackground } from '@flowstarter/flow-design-system';
 import { usePathname } from 'next/navigation';
 
 // Pages that should NOT show sidebar (full-width layouts)
@@ -26,7 +26,7 @@ export default function TeamDashboardLayout({
   return (
     <div className="min-h-screen flex flex-col">
       {/* Gradient background - behind everything */}
-      <GradientBackground variant="dashboard" className="fixed inset-0 z-0" />
+      <FlowBackground variant="dashboard" style={{ position: "fixed", inset: 0, zIndex: 0 }} />
       
       <TeamHeader />
       <div className="h-16" />

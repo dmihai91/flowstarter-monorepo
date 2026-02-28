@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useSignIn } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Eye, EyeOff, Loader2, ShieldCheck } from 'lucide-react';
 
@@ -14,6 +14,27 @@ type FlowStep = 'credentials' | 'totp' | 'email_code';
 export default function TeamLoginPage() {
   const { signIn, setActive, isLoaded } = useSignIn();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Honor external redirect_url (e.g. from editor subdomain), else default to team dashboard
+  const getRedirectTarget = (): string => {
+    const redirectUrl = searchParams.get('redirect_url');
+    if (redirectUrl) {
+      try {
+        const url = new URL(redirectUrl);
+        if (
+          url.hostname.endsWith('flowstarter.dev') ||
+          url.hostname.endsWith('flowstarter.app') ||
+          url.hostname === 'localhost'
+        ) {
+          return redirectUrl;
+        }
+      } catch {
+        // Invalid URL, fall through
+      }
+    }
+    return '/team/dashboard';
+  };
 
   const [mounted, setMounted] = useState(false);
   const [step, setStep] = useState<FlowStep>('credentials');
@@ -46,7 +67,7 @@ export default function TeamLoginPage() {
 
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
-        router.push('/team/dashboard');
+        router.push(getRedirectTarget());
       } else if (result.status === 'needs_second_factor') {
         // Check what second factor is needed
         const supportedFactors = result.supportedSecondFactors;
@@ -100,7 +121,7 @@ export default function TeamLoginPage() {
 
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
-        router.push('/team/dashboard');
+        router.push(getRedirectTarget());
       } else {
         setError('Verification failed');
       }

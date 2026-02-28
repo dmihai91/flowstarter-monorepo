@@ -1,12 +1,13 @@
 'use client';
 
-import { LoadingScreen } from '@/components/LoadingScreen';
+import { LoadingScreen } from '@flowstarter/flow-design-system';
 import {
   getIsErrorPage,
   resetErrorPageFlag,
 } from '@/contexts/ErrorPageContext';
 import { I18nProvider, useTranslations } from '@/lib/i18n';
 import en from '@/locales/en';
+import ro from '@/locales/ro';
 import { useWizardStore } from '@/store/wizard-store';
 import { useAuth } from '@clerk/nextjs';
 import { usePathname } from 'next/navigation';
@@ -209,11 +210,11 @@ export function NavigationWrapper() {
   }
 
   return isPublicRoute ? (
-    <I18nProvider initialLocale="en" initialMessages={{ en }}>
+    <I18nProvider initialLocale="en" initialMessages={{ en, ro }}>
       <ExternalNavigation />
     </I18nProvider>
   ) : (
-    <I18nProvider initialLocale="en" initialMessages={{ en }}>
+    <I18nProvider initialLocale="en" initialMessages={{ en, ro }}>
       <ExternalNavigationWithAuth />
     </I18nProvider>
   );

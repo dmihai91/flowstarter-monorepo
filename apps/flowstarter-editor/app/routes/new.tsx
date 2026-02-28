@@ -6,6 +6,9 @@ import { useMutation } from 'convex/react';
 // eslint-disable-next-line no-restricted-imports
 import { api } from '../../convex/_generated/api';
 import { EditorChatPanel } from '~/components/editor/EditorChatPanel';
+import { AuthGuard } from '~/components/TeamAuthGuard';
+import { LoadingScreen } from '~/components/LoadingScreen';
+import { en } from '~/lib/i18n/locales/en';
 import { useThemeStyles, getColors } from '~/components/editor/hooks';
 import { EditorLayout, ConversationProvider } from '~/components/editor';
 import { useConversationContext } from '~/components/editor/ConversationContext';
@@ -15,8 +18,8 @@ import type { OnboardingStep } from '~/components/editor/editor-chat/types';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'New Project - Flowstarter' },
-    { name: 'description', content: 'Build stunning websites with AI-powered assistance' },
+    { title: en.pages.newProject },
+    { name: 'description', content: en.app.description },
   ];
 };
 
@@ -64,7 +67,7 @@ function LoadingFallback() {
             animation: 'spin 1s linear infinite',
           }}
         />
-        <span style={{ fontSize: '14px', color: colors.textSubtle }}>Loading project...</span>
+        <span style={{ fontSize: '14px', color: colors.textSubtle }}>{en.app.loadingProject}</span>
       </div>
       <style>{`
         @keyframes spin {
@@ -195,7 +198,7 @@ function NewProjectInner() {
 
   return (
     <EditorLayout
-      projectName="New Project"
+      projectName={en.pages.createNewProject}
       projectId={convexProjectId} // Pass null initially, then actual ID after creation
       onboardingStep={onboardingStep}
     >
@@ -217,5 +220,9 @@ function NewProjectContent() {
 }
 
 export default function NewProjectPage() {
-  return <ClientOnly fallback={<LoadingFallback />}>{() => <NewProjectContent />}</ClientOnly>;
+  return (
+    <AuthGuard fallback={<LoadingFallback />}>
+      <ClientOnly fallback={<LoadingFallback />}>{() => <NewProjectContent />}</ClientOnly>
+    </AuthGuard>
+  );
 }

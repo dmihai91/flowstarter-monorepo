@@ -24,20 +24,17 @@ export function CustomSignIn() {
   const isEdgeBrowser = useEdgeBrowserDetection();
   const searchParams = useSearchParams();
 
+  const navigateTo = (url: string) => {
+    window.location.href = url;
+  };
+
   // Team email domains - redirect to team dashboard
   const TEAM_EMAIL_DOMAINS = ['flowstarter.app'];
 
   // Get redirect URL based on user email or query params
   const getRedirectUrl = (userEmail?: string): string => {
-    // Check if team member - redirect to team dashboard
-    if (userEmail) {
-      const domain = userEmail.split('@')[1]?.toLowerCase();
-      if (domain && TEAM_EMAIL_DOMAINS.includes(domain)) {
-        return '/team/dashboard';
-      }
-    }
-
-    // Check for explicit redirect_url param
+    // Check for explicit redirect_url param first — if it's an external URL
+    // (e.g. from the editor subdomain), always honor it regardless of role.
     const redirectUrl = searchParams.get('redirect_url');
     if (redirectUrl) {
       try {
@@ -50,9 +47,18 @@ export function CustomSignIn() {
           return redirectUrl;
         }
       } catch {
-        // Invalid URL, fall through to default
+        // Invalid URL, fall through
       }
     }
+
+    // No external redirect — route team members to team dashboard
+    if (userEmail) {
+      const domain = userEmail.split('@')[1]?.toLowerCase();
+      if (domain && TEAM_EMAIL_DOMAINS.includes(domain)) {
+        return '/team/dashboard';
+      }
+    }
+
     return '/dashboard';
   };
 
@@ -102,13 +108,13 @@ export function CustomSignIn() {
         if (result.status === 'complete') {
           await setActive({ session: result.createdSessionId });
           // Redirect based on email - team members go to editor
-          window.location.href = getRedirectUrl(values.email);
+          navigateTo(getRedirectUrl(values.email));
         }
       } catch (err: unknown) {
         const message = handleError(err, 'signIn');
         // If session already exists, redirect
         if (message === '__SESSION_EXISTS__') {
-          window.location.href = getRedirectUrl(values.email);
+          navigateTo(getRedirectUrl(values.email));
           return;
         }
         setError(message);

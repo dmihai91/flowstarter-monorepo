@@ -1,40 +1,12 @@
 /**
  * Claude Code Service
  *
- * Main entry point for the Claude Code on Daytona integration.
- * Provides a unified API for workspace management, code generation,
- * and context building.
- *
- * Usage:
- * ```typescript
- * import {
- *   createWorkspace,
- *   runClaudeCode,
- *   writeContextFile,
- *   destroyWorkspace
- * } from '~/lib/services/claude-code';
- *
- * // Create workspace
- * const { workspace } = await createWorkspace({ projectId: 'abc123' });
- *
- * // Write context
- * await writeContextFile(workspace.workspaceId, contextData);
- *
- * // Run Claude Code
- * const result = await runClaudeCode({
- *   workspaceId: workspace.workspaceId,
- *   prompt: 'Update the hero section...',
- *   contextFile: '/workspace/CONTEXT.md'
- * });
- *
- * // Clean up
- * await destroyWorkspace(workspace.workspaceId);
- * ```
+ * Re-exports shared types and utilities from @flowstarter/editor-engine,
+ * plus app-specific workspace management from the local workspaceManager.
  */
 
-// Types
+// Shared types & utilities from editor-engine
 export type {
-  WorkspaceState,
   WorkspaceInfo,
   CreateWorkspaceOptions,
   CreateWorkspaceResult,
@@ -49,9 +21,31 @@ export type {
   WorkspaceLifecycleHooks,
   ClaudeCodeExecOptions,
   StreamChunk,
-} from './types';
+} from '@flowstarter/editor-engine';
 
-// Workspace Management
+export { WorkspaceState } from './types';
+
+export {
+  buildCommand,
+  runClaudeCodeInSandbox,
+  cancelClaudeCode,
+  isClaudeCodeAvailable,
+  getClaudeCodeVersion,
+  parseChangedFiles,
+  CONTEXT_FILE_PATH,
+  buildContextMarkdown,
+  writeContextFile,
+  readContextFile,
+  buildContextFromConvex,
+  FRONTEND_DESIGN_SKILL,
+  buildPromptWithContext,
+  encodeSSE,
+  encodeSSEDone,
+  sseHeaders,
+  streamOutput as streamSSEOutput,
+} from '@flowstarter/editor-engine';
+
+// App-specific workspace management (uses local logger + workspaceManager)
 export {
   createWorkspace,
   destroyWorkspace,
@@ -63,21 +57,14 @@ export {
   clearRegistry,
 } from './workspaceManager';
 
-// Claude Code CLI
+// Local CLI (uses local workspace manager)
 export {
   runClaudeCode,
   streamOutput,
   cancelGeneration,
-  isClaudeCodeAvailable,
-  getClaudeCodeVersion,
 } from './cliInterface';
 
-// Context Building
+// Local context builder (uses local workspace manager)
 export {
-  CONTEXT_FILE_PATH,
-  buildContextMarkdown,
-  writeContextFile,
-  readContextFile,
   updateContextFile,
-  buildContextFromConvex,
 } from './contextBuilder';

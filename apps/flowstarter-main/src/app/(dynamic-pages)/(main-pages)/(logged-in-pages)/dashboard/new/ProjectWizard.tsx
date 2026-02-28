@@ -1,5 +1,5 @@
 'use client';
-import { LoadingScreen } from '@/components/LoadingScreen';
+import { LoadingScreen } from '@flowstarter/flow-design-system';
 import { useCreateProjectFromConfig } from '@/hooks/useCreateProjectFromConfig';
 import { useInvalidateDashboardStats } from '@/hooks/useDashboardStats';
 import { useWizardDraft } from '@/hooks/wizard/useWizardDraft';

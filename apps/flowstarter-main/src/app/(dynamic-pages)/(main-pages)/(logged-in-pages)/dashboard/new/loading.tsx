@@ -1,6 +1,6 @@
 'use client';
 
-import { LoadingScreen } from '@/components/LoadingScreen';
+import { LoadingScreen } from '@flowstarter/flow-design-system';
 import { useTranslations } from '@/lib/i18n';
 import { useWizardStore } from '@/store/wizard-store';
 

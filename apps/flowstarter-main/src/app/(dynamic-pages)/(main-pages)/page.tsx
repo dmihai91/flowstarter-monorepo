@@ -336,19 +336,19 @@ export default function LandingPage() {
 
   const features = [
     {
-      num: '01',
-      title: 'We talk',
-      desc: '45 minutes. We learn your business, clarify your offer, and define what the site needs to do. No homework required.',
+      num: t('landing.steps.step1.num'),
+      title: t('landing.steps.step1.title'),
+      desc: t('landing.steps.step1.desc'),
     },
     {
-      num: '02',
-      title: 'We build',
-      desc: 'Strategy, design, copy, tech - handled. You review once. We refine. No back-and-forth hell.',
+      num: t('landing.steps.step2.num'),
+      title: t('landing.steps.step2.title'),
+      desc: t('landing.steps.step2.desc'),
     },
     {
-      num: '03',
-      title: 'You launch',
-      desc: "Live in around two weeks. A site you're proud to send clients to. Edit anytime with our AI tools - or let us handle updates.",
+      num: t('landing.steps.step3.num'),
+      title: t('landing.steps.step3.title'),
+      desc: t('landing.steps.step3.desc'),
     },
   ];
 
@@ -418,16 +418,16 @@ export default function LandingPage() {
           }
         }
         .animate-fade-in-up {
-          animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation: fade-in-up 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
         .animate-fade-in-up-delay-1 {
-          animation-delay: 0ms;
+          animation-delay: 50ms;
         }
         .animate-fade-in-up-delay-2 {
-          animation-delay: 150ms;
+          animation-delay: 250ms;
         }
         .animate-fade-in-up-delay-3 {
-          animation-delay: 300ms;
+          animation-delay: 450ms;
         }
 
         @keyframes morph {
@@ -562,7 +562,7 @@ export default function LandingPage() {
         }
       `}</style>
 
-      <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#0a0a0c] text-gray-900 dark:text-white font-display relative overflow-hidden transition-colors duration-300">
+      <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#0a0a0c] text-gray-900 dark:text-white font-display relative overflow-x-hidden transition-colors duration-300">
         {/* Flow Field Background - Hero Section */}
         <div
           className="absolute inset-0 pointer-events-none overflow-hidden"
@@ -686,7 +686,7 @@ export default function LandingPage() {
                   }}
                   className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
                 >
-                  FAQ
+                  {t('nav.faq')}
                 </a>
               </nav>
 
@@ -791,7 +791,7 @@ export default function LandingPage() {
                   }}
                   className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
                 >
-                  FAQ
+                  {t('nav.faq')}
                 </a>
                 <Link
                   href="/login"
@@ -817,11 +817,11 @@ export default function LandingPage() {
         </header>
 
         {/* Hero */}
-        <section className="relative pt-20 lg:pt-24 pb-12 lg:pb-16 bg-gradient-to-b from-white via-[#F8F7FF] to-[#EDE9FE] dark:from-transparent dark:via-transparent dark:to-transparent overflow-hidden">
+        <section className="relative pt-20 lg:pt-24 pb-12 lg:pb-16 bg-gradient-to-b from-white via-[#F3F0FF] to-white dark:from-[#0a0a0c] dark:via-[#0d0b14] dark:to-[#0a0a0c] overflow-hidden">
           {/* Flow lines INSIDE hero so they appear on top of background */}
           <div className="absolute inset-0 pointer-events-none">
             <svg
-              className="absolute inset-0 w-full h-full opacity-[0.15] dark:opacity-[0.12]"
+              className="absolute inset-0 w-full h-full opacity-[0.10] dark:opacity-[0.06]"
               viewBox="0 0 1200 800"
               preserveAspectRatio="xMidYMid slice"
               fill="none"
@@ -850,24 +850,24 @@ export default function LandingPage() {
               </g>
             </svg>
           </div>
-          <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
-            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 relative z-10 overflow-hidden w-full">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center min-w-0">
               {/* Left: Copy */}
               <div
-                className={`transition-all duration-1000 ${
+                className={`transition-all duration-1000 min-w-0 ${
                   isLoaded
                     ? 'opacity-100 translate-y-0'
                     : 'opacity-0 translate-y-8'
                 }`}
               >
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/5 dark:bg-white/5 backdrop-blur-sm border border-gray-900/10 dark:border-white/10 mb-8">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/5 dark:bg-white/5 backdrop-blur-sm border border-gray-900/10 dark:border-white/10 mb-10">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-xs tracking-wide text-gray-600 dark:text-white/60">
+                  <span className="text-sm font-semibold tracking-wide text-gray-700 dark:text-white/80">
                     {t('landing.hero.badge')}
                   </span>
                 </div>
 
-                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
+                <h1 className="text-[2.2rem] sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-[1.15] tracking-tight mb-6 break-words text-center sm:text-left">
                   {t('landing.hero.headline1')}
                   <br />
                   <span className="text-flow">
@@ -875,63 +875,60 @@ export default function LandingPage() {
                   </span>
                 </h1>
 
-                <p className="text-lg lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed max-w-lg mb-4">
+                <p className="text-base lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed mb-5 text-center sm:text-left">
                   {t('landing.hero.pain')}
                 </p>
-                <p className="text-base text-gray-400 dark:text-white/40 leading-relaxed max-w-lg mb-10">
+                <p className="text-base text-gray-400 dark:text-white/40 leading-relaxed mb-8 text-center sm:text-left">
                   {t('landing.hero.subheadline')}
                 </p>
 
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10">
-                  <div className="flex flex-col items-start">
-                    <a
-                      href={CALENDLY_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Button className="relative overflow-hidden bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-lg px-8 h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 hover:scale-[1.02] group">
-                        <span className="absolute inset-0 animate-shimmer" />
-                        {t('landing.hero.cta')}
-                        <svg
-                          className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth={2}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M17 8l4 4m0 0l-4 4m4-4H3"
-                          />
-                        </svg>
-                      </Button>
-                    </a>
-                    <span className="text-xs text-gray-500 dark:text-white/40 mt-2 ml-1">
-                      {t('landing.hero.ctaNote')}
-                    </span>
-                  </div>
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="inline-block px-2 py-0.5 text-[10px] font-medium bg-amber-500/90 text-white rounded-full">
-                        {t('landing.pricing.limitedBadge')}
+                <div className="mb-6">
+                  <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-y-6 gap-x-4">
+                    {/* Left: button + note stacked tightly */}
+                    <div className="flex flex-col items-center sm:items-start gap-1.5 pt-2 sm:pt-0 sm:-mt-3">
+                      <a
+                        href={CALENDLY_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Button className="relative bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-lg px-8 h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 hover:scale-[1.02] group">
+                          <span className="absolute inset-0 animate-shimmer" />
+                          {t('landing.hero.cta')}
+                          <svg
+                            className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M17 8l4 4m0 0l-4 4m4-4H3"
+                            />
+                          </svg>
+                        </Button>
+                      </a>
+                      <span className="text-sm font-medium text-gray-500 dark:text-white/50 text-center sm:text-left mt-2">
+                        {t('landing.hero.ctaNote')}
                       </span>
                     </div>
-                    <div className="text-sm text-gray-400 dark:text-white/40">
-                      <span className="text-gray-700 dark:text-white/80 font-medium">
-                        {t('landing.hero.priceBuild')}
-                      </span>
-                      <span className="ml-1">{t('landing.hero.priceBuildLabel')}</span>
-                      <span className="mx-3 text-gray-300 dark:text-white/20">
-                        ·
-                      </span>
-                      <span className="text-gray-700 dark:text-white/80 font-medium">
-                        {t('landing.hero.priceMonthly')}
-                      </span>
-                      <span className="ml-1">{t('landing.hero.priceMonthlyLabel')}</span>
-                    </div>
-                    <div className="text-xs text-gray-400 dark:text-white/30 mt-1">
-                      {t('landing.hero.priceNote')} · <span className="text-amber-600 dark:text-amber-400">€599 after beta</span>
+                    {/* Right: pricing card */}
+                    <div className="flex flex-col items-center px-5 py-4 rounded-2xl bg-amber-500/10 border-2 border-amber-500/30 shadow-md w-full sm:w-[220px] sm:ml-auto">
+                      <span className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-3">🔥 Launch price</span>
+                      <div className="flex flex-col gap-0.5 w-full items-center">
+                        <div className="flex items-baseline gap-2 justify-center">
+                          <span className="text-sm line-through text-gray-400 dark:text-white/30 font-medium">€599</span>
+                          <span className="text-lg font-extrabold text-gray-800 dark:text-white/90">{t('landing.hero.priceBuild')}</span>
+                          <span className="text-xs text-gray-400 dark:text-white/40">setup</span>
+                        </div>
+                        <div className="w-full h-px bg-amber-500/25 my-3" />
+                        <div className="flex items-baseline gap-2 justify-center">
+                          <span className="text-sm line-through text-gray-400 dark:text-white/30 font-medium">€59</span>
+                          <span className="text-lg font-extrabold text-gray-800 dark:text-white/90">{t('landing.hero.priceMonthly')}</span>
+                          <span className="text-xs text-gray-400 dark:text-white/40">/ month</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -962,7 +959,7 @@ export default function LandingPage() {
 
               {/* Right: Interactive Editor */}
               <div
-                className={`relative transition-all duration-1000 delay-200 ${
+                className={`relative transition-all duration-1000 delay-200 mb-6 ${
                   isLoaded
                     ? 'opacity-100 translate-y-0'
                     : 'opacity-0 translate-y-8'
@@ -970,19 +967,19 @@ export default function LandingPage() {
               >
                 {/* Title above editor */}
                 <div className="text-center mb-6">
-                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                  <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
                     {t('landing.editor.title')}
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-white/50">
+                  <p className="text-base text-gray-500 dark:text-white/50">
                     {t('landing.editor.subtitle')}
                   </p>
                 </div>
 
                 {/* Glow effect behind editor */}
-                <div className="absolute -inset-4 top-16 bg-gradient-to-r from-[var(--purple)]/20 via-blue-500/20 to-cyan-400/20 rounded-3xl blur-2xl animate-pulse-glow" />
+
 
                 {/* Editor window */}
-                <div className="relative bg-white/60 dark:bg-white/[0.05] backdrop-blur-2xl rounded-3xl border border-white/50 dark:border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden transition-all duration-300 hover:shadow-[0_25px_70px_rgba(0,0,0,0.12)] dark:hover:shadow-[0_25px_70px_rgba(0,0,0,0.5)] hover:scale-[1.01]">
+                <div className="relative bg-white dark:bg-[#141418] rounded-3xl border border-gray-200/60 dark:border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden transition-all duration-300 hover:shadow-[0_25px_70px_rgba(0,0,0,0.12)] dark:hover:shadow-[0_25px_70px_rgba(0,0,0,0.5)] hover:scale-[1.01]">
                   {/* Browser chrome */}
                   <div className="flex items-center justify-between px-4 py-3 bg-[#F5F5F7] dark:bg-white/[0.03] border-b border-gray-200/50 dark:border-white/5">
                     <div className="flex items-center gap-2">
@@ -1020,8 +1017,8 @@ export default function LandingPage() {
                   <div className="flex flex-col sm:flex-row sm:divide-x divide-gray-200/30 dark:divide-white/5 min-h-[280px] sm:min-h-[320px]">
                     {/* Chat Panel */}
                     <div className="w-full sm:w-1/2 p-3 sm:p-4 flex flex-col border-b sm:border-b-0 border-gray-200/30 dark:border-white/5">
-                      <div className="text-[10px] tracking-[0.15em] uppercase text-gray-400 dark:text-white/20 font-medium mb-2 sm:mb-3">
-                        AI Editor
+                      <div className="text-[11px] tracking-[0.12em] uppercase font-bold mb-2 sm:mb-3 bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
+                        Flowstarter Editor
                       </div>
 
                       {/* Messages - grows to fill space */}
@@ -1146,7 +1143,9 @@ export default function LandingPage() {
                     </div>
 
                     {/* Mock Site Preview */}
-                    <div className="w-full sm:w-1/2 bg-white dark:bg-[#0f0f12] min-h-[200px] sm:min-h-[260px] overflow-hidden">
+                    <div className="w-full sm:w-1/2 bg-white dark:bg-[#0f0f12] min-h-[200px] sm:min-h-[260px] overflow-hidden relative">
+                      {/* Right edge mask */}
+                      <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white dark:from-[#0f0f12] to-transparent pointer-events-none z-10" />
                       {/* Realistic site header */}
                       <div
                         className={`flex items-center justify-between px-4 py-2.5 border-b transition-all duration-500 ${
@@ -1547,13 +1546,10 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="text-center mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight">
-                What's{' '}
-                <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
-                  included
-                </span>
+                {t('landing.included.title')}
               </h2>
               <p className="text-gray-500 dark:text-white/40 mt-2 max-w-xl mx-auto">
-                One-time setup. Ongoing infrastructure.
+                {t('landing.included.subtitle')}
               </p>
             </div>
 
@@ -1578,30 +1574,27 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold">
-                      Setup{' '}
+                      {t('landing.included.setup.title')}{' '}
                       <span className="text-sm font-normal text-gray-400 dark:text-white/30">
-                        (one-time)
+                        {t('landing.included.setup.label')}
                       </span>
                     </h3>
                     <p className="text-xs text-gray-400 dark:text-white/30">
-                      What we build for you
+                      {t('landing.included.setup.desc')}
                     </p>
                   </div>
                 </div>
                 <ul className="space-y-2">
-                  {[
-                    'Discovery call to understand your business',
-                    'Website designed from premium templates',
-                    'Up to 7 pages, built to your needs',
-                    'Looks great on phone, tablet, and desktop',
-                    'Your domain, connected and configured',
-                    'Professional email with your domain',
-                    'Google Analytics configured from day one',
-                    'Google-ready (SEO basics handled)',
-                    'Fast-loading site that keeps visitors',
-                    'Contact form to capture leads',
-                    'Live and ready to share',
-                  ].map((item, i) => (
+                  {([
+                    t('landing.included.setup.item1'),
+                    t('landing.included.setup.item2'),
+                    t('landing.included.setup.item3'),
+                    t('landing.included.setup.item4'),
+                    t('landing.included.setup.item5'),
+                    t('landing.included.setup.item6'),
+                    t('landing.included.setup.item7'),
+                    t('landing.included.setup.item8'),
+                  ] as string[]).map((item, i) => (
                     <li
                       key={i}
                       className="flex items-start gap-2.5 text-sm text-gray-600 dark:text-white/50"
@@ -1645,23 +1638,26 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold">
-                      Monthly subscription
+                      {t('landing.included.monthly.title')}{' '}
+                      <span className="text-sm font-normal text-gray-400 dark:text-white/30">
+                        {t('landing.included.monthly.label')}
+                      </span>
                     </h3>
                     <p className="text-xs text-gray-400 dark:text-white/30">
-                      What stays active
+                      {t('landing.included.monthly.desc')}
                     </p>
                   </div>
                 </div>
                 <ul className="space-y-2">
-                  {[
-                    'Your site stays online, fast, and secure',
-                    'Professional email keeps working',
-                    'Storage for images and files',
-                    'Business-ready analytics dashboard',
-                    'Edit text, add pages, improve SEO with AI',
-                    'Automatic updates and improvements',
-                    'Support when you need it',
-                  ].map((item, i) => (
+                  {([
+                    t('landing.included.monthly.item1'),
+                    t('landing.included.monthly.item2'),
+                    t('landing.included.monthly.item3'),
+                    t('landing.included.monthly.item4'),
+                    t('landing.included.monthly.item5'),
+                    t('landing.included.monthly.item6'),
+                    t('landing.included.monthly.item7'),
+                  ] as string[]).map((item, i) => (
                     <li
                       key={i}
                       className="flex items-start gap-2.5 text-sm text-gray-600 dark:text-white/50"
@@ -1852,35 +1848,37 @@ export default function LandingPage() {
                   </span>
                 </div>
 
-                <h3 className="text-xl sm:text-2xl font-bold mb-1">{t('landing.pricing.title')}</h3>
-                <p className="text-sm text-gray-400 dark:text-white/40 mb-6">
+                <h3 className="text-2xl sm:text-3xl font-bold mb-1">{t('landing.pricing.title')}</h3>
+                <p className="text-base text-gray-400 dark:text-white/40 mb-6">
                   {t('landing.pricing.subtitle')}
                 </p>
 
                 {/* Pricing */}
                 <div className="mb-4 pb-4 border-b border-gray-200 dark:border-white/10">
                   <div className="mb-2">
-                    <span className="text-sm text-gray-400 dark:text-white/40">
+                    <span className="text-base text-gray-400 dark:text-white/40">
                       {t('landing.pricing.buildLabel')}{' '}
                     </span>
-                    <span className="text-2xl font-bold">{t('landing.pricing.buildPrice')}</span>
-                    <span className="text-sm text-gray-400 dark:text-white/40 ml-1">
+                    <span className="text-lg line-through text-gray-400 dark:text-white/30 font-medium mr-1">€599</span>
+                    <span className="text-3xl font-bold">{t('landing.pricing.buildPrice')}</span>
+                    <span className="text-base text-gray-400 dark:text-white/40 ml-1">
                       {t('landing.pricing.buildPeriod')}
                     </span>
                   </div>
                   <div>
-                    <span className="text-sm text-gray-400 dark:text-white/40">
+                    <span className="text-base text-gray-400 dark:text-white/40">
                       {t('landing.pricing.careLabel')}{' '}
                     </span>
-                    <span className="text-2xl font-bold">{t('landing.pricing.carePrice')}</span>
-                    <span className="text-sm text-gray-400 dark:text-white/40 ml-1">
+                    <span className="text-lg line-through text-gray-400 dark:text-white/30 font-medium mr-1">€59</span>
+                    <span className="text-3xl font-bold">{t('landing.pricing.carePrice')}</span>
+                    <span className="text-base text-gray-400 dark:text-white/40 ml-1">
                       {t('landing.pricing.carePeriod')}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-400 dark:text-white/30 mt-2">
+                  <p className="text-sm text-gray-400 dark:text-white/30 mt-2">
                     {t('landing.pricing.note')}
                   </p>
-                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-3 text-xs text-gray-500 dark:text-white/40">
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-3 text-sm text-gray-500 dark:text-white/40">
                     <span className="flex items-center gap-1.5">
                       <svg className="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -1898,7 +1896,7 @@ export default function LandingPage() {
 
                 {/* Limited time notice */}
                 <div className="mb-6 p-3 rounded-xl bg-amber-500/10 dark:bg-amber-500/10 backdrop-blur-sm border border-amber-500/30 shadow-[0_4px_16px_rgba(245,158,11,0.08),inset_0_1px_0_rgba(255,255,255,0.5)] dark:shadow-[0_4px_16px_rgba(245,158,11,0.1),inset_0_1px_0_rgba(255,255,255,0.05)]">
-                  <p className="text-xs text-amber-700 dark:text-amber-300 font-medium text-center">
+                  <p className="text-sm text-amber-700 dark:text-amber-300 font-medium text-center">
                     ⏳ {t('landing.pricing.limitedNote')}
                   </p>
                 </div>
@@ -1907,10 +1905,10 @@ export default function LandingPage() {
                 <div className="space-y-5 mb-8">
                   {/* Your Website */}
                   <div>
-                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-1">
+                    <p className="text-xs uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-1">
                       {t('landing.pricing.websiteTitle')}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-white/40 mb-3">
+                    <p className="text-sm text-gray-500 dark:text-white/40 mb-3">
                       {t('landing.pricing.websiteDesc')}
                     </p>
                     <ul className="space-y-1.5">
@@ -1923,7 +1921,7 @@ export default function LandingPage() {
                       ].map((item, i) => (
                         <li
                           key={i}
-                          className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60"
+                          className="flex items-start gap-2 text-base text-gray-600 dark:text-white/60"
                         >
                           <svg
                             className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"
@@ -1946,10 +1944,10 @@ export default function LandingPage() {
 
                   {/* Ongoing Care */}
                   <div>
-                    <p className="text-[10px] uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-1">
+                    <p className="text-xs uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-1">
                       {t('landing.pricing.careTitle')}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-white/40 mb-3">
+                    <p className="text-sm text-gray-500 dark:text-white/40 mb-3">
                       {t('landing.pricing.careDesc')}
                     </p>
                     <ul className="space-y-1.5">
@@ -1961,7 +1959,7 @@ export default function LandingPage() {
                       ].map((item, i) => (
                         <li
                           key={i}
-                          className="flex items-start gap-2 text-sm text-gray-600 dark:text-white/60"
+                          className="flex items-start gap-2 text-base text-gray-600 dark:text-white/60"
                         >
                           <svg
                             className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"
@@ -2022,33 +2020,23 @@ export default function LandingPage() {
                   <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[var(--purple)]/10 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative">
                     <div className="flex items-center justify-between mb-4">
-                      <h4 className="text-lg font-bold text-gray-700 dark:text-white/80">
-                        Pro
+                      <h4 className="text-xl font-bold text-gray-700 dark:text-white/80">
+                        {t('landing.tiers.pro.name')}
                       </h4>
                       <span className="px-3 py-1 text-[10px] font-medium bg-[var(--purple)]/10 text-[var(--purple)] dark:bg-[var(--purple)]/20 dark:text-[var(--purple)] rounded-full">
                         Coming Soon
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500 dark:text-white/50 mb-4">
-                      €1499 setup + €99/month
+                    <p className="text-base font-medium text-gray-600 dark:text-white/60 mb-4">
+                      {t('landing.tiers.pro.price')}
                     </p>
-                    <ul className="space-y-2.5 text-sm text-gray-600 dark:text-white/50">
-                      <li className="flex items-center gap-2.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)]/50" />
-                        Up to 15 pages
-                      </li>
-                      <li className="flex items-center gap-2.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)]/50" />
-                        Advanced booking system
-                      </li>
-                      <li className="flex items-center gap-2.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)]/50" />
-                        Blog & newsletter integrations
-                      </li>
-                      <li className="flex items-center gap-2.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)]/50" />
-                        Multi-language support
-                      </li>
+                    <ul className="space-y-2.5 text-base text-gray-600 dark:text-white/50">
+                      {[t('landing.tiers.pro.f1'), t('landing.tiers.pro.f2'), t('landing.tiers.pro.f3'), t('landing.tiers.pro.f4'), t('landing.tiers.pro.f5')].map((f, i) => (
+                        <li key={i} className="flex items-center gap-2.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)]/50 shrink-0" />
+                          {f}
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </div>
@@ -2058,49 +2046,39 @@ export default function LandingPage() {
                   <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative">
                     <div className="flex items-center justify-between mb-4">
-                      <h4 className="text-lg font-bold text-gray-700 dark:text-white/80">
-                        E-commerce
+                      <h4 className="text-xl font-bold text-gray-700 dark:text-white/80">
+                        {t('landing.tiers.ecom.name')}
                       </h4>
                       <span className="px-3 py-1 text-[10px] font-medium bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 rounded-full">
                         Coming Soon
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500 dark:text-white/50 mb-4">
-                      €1999 setup + €149/month
+                    <p className="text-base font-medium text-gray-600 dark:text-white/60 mb-4">
+                      {t('landing.tiers.ecom.price')}
                     </p>
-                    <ul className="space-y-2.5 text-sm text-gray-600 dark:text-white/50">
-                      <li className="flex items-center gap-2.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
-                        Full online store
-                      </li>
-                      <li className="flex items-center gap-2.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
-                        Product catalog & inventory
-                      </li>
-                      <li className="flex items-center gap-2.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
-                        Stripe/PayPal payments
-                      </li>
-                      <li className="flex items-center gap-2.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
-                        Order management
-                      </li>
+                    <ul className="space-y-2.5 text-base text-gray-600 dark:text-white/50">
+                      {[t('landing.tiers.ecom.f1'), t('landing.tiers.ecom.f2'), t('landing.tiers.ecom.f3'), t('landing.tiers.ecom.f4')].map((f, i) => (
+                        <li key={i} className="flex items-center gap-2.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50 shrink-0" />
+                          {f}
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </div>
               </div>
 
               {/* Fine print */}
-              <p className="text-center text-sm text-gray-400 dark:text-white/30 mt-6">
+              <p className="text-center text-base text-gray-400 dark:text-white/30 mt-6">
                 No contracts. Cancel anytime. First month free.
               </p>
 
               {/* Perfect for you if */}
               <div className="mt-12 p-6 rounded-2xl bg-[var(--purple)]/10 dark:bg-[var(--purple)]/10 backdrop-blur-xl border border-[var(--purple)]/30 shadow-[0_8px_32px_rgba(124,58,237,0.08),inset_0_1px_0_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(124,58,237,0.15),inset_0_1px_0_rgba(255,255,255,0.05)]">
-                <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
+                <h4 className="text-base font-semibold text-gray-900 dark:text-white mb-4">
                   {t('landing.forYou.title')}
                 </h4>
-                <ul className="space-y-2 text-sm text-gray-600 dark:text-white/60">
+                <ul className="space-y-2 text-base text-gray-600 dark:text-white/60">
                   <li className="flex items-start gap-2">
                     <span className="text-[var(--purple)]">→</span>
                     {t('landing.forYou.item1')}
@@ -2122,10 +2100,10 @@ export default function LandingPage() {
 
               {/* Not the right fit */}
               <div className="mt-4 p-6 rounded-2xl bg-white/50 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.05)]">
-                <h4 className="text-sm font-semibold text-gray-700 dark:text-white/70 mb-4">
+                <h4 className="text-base font-semibold text-gray-700 dark:text-white/70 mb-4">
                   {t('landing.notForYou.title')}
                 </h4>
-                <ul className="space-y-2 text-sm text-gray-500 dark:text-white/50">
+                <ul className="space-y-2 text-base text-gray-500 dark:text-white/50">
                   <li className="flex items-start gap-2">
                     <span className="text-gray-400 dark:text-white/30">→</span>
                     {t('landing.notForYou.item1')}
@@ -2157,7 +2135,7 @@ export default function LandingPage() {
             <div
               id="faq-content"
               data-animate
-              className={`grid lg:grid-cols-2 gap-10 lg:gap-16 transition-all duration-700 ${
+              className={`grid lg:grid-cols-2 gap-10 lg:gap-16 transition-all duration-[350ms] ${
                 visibleSections.has('faq-content')
                   ? 'opacity-100 translate-y-0'
                   : 'opacity-0 translate-y-8'
@@ -2175,50 +2153,16 @@ export default function LandingPage() {
 
               <div className="space-y-2">
                 {[
-                  {
-                    q: 'What happens on the discovery call?',
-                    a: "We spend up to 45 minutes learning about your business, your goals, and your brand. You don't need to prepare anything, just show up and tell us about what you do. After the call, we'll send you a summary of what we discussed and start building your site within 24 hours.",
-                  },
-                  {
-                    q: 'How long until my site is live?',
-                    a: "Most sites go live within 1–2 weeks after the discovery call. We'll keep you updated throughout the process.",
-                  },
-                  {
-                    q: 'Can I make changes after the site is built?',
-                    a: "Absolutely! Your subscription includes 1,000 AI credits each month for our editor: update text, add pages, change your branding, improve your SEO. All without writing a single line of code - and more than enough for most businesses.",
-                  },
-                  {
-                    q: 'What if I want to cancel?',
-                    a: "No lock-in. Cancel your subscription anytime. If you share feedback with us, we'll refund 50% of your setup fee. Either way, you can download all your site assets to use elsewhere.",
-                  },
-                  {
-                    q: 'Do I need any technical skills?',
-                    a: "Zero. We handle the technical setup. The AI editor is built for people who've never touched code.",
-                  },
-                  {
-                    q: 'What happens when the beta ends?',
-                    a: "Your €39/month rate is locked for 12 months from signup, then moves to €59/month. The setup fee goes from €399 to €599 after beta. You'll get 30 days notice before anything changes.",
-                  },
-                  {
-                    q: "What's included in the email?",
-                    a: 'One professional email address with your domain (e.g., you@yourbusiness.com). Need more? We can add additional mailboxes.',
-                  },
-                  {
-                    q: 'What kind of websites can you build?',
-                    a: "We specialize in professional websites for freelancers, consultants, small businesses, restaurants, agencies, coaches, and creators. Whether you need a portfolio, a service page, a landing page, or a multi-page business site, we've got you covered. E-commerce support is coming soon with our Business tier.",
-                  },
-                  {
-                    q: 'Can I use my existing domain?',
-                    a: "Absolutely. We'll help you connect your existing domain to your new site at no extra cost. If you don't have a domain yet, we can help you pick and set one up during the discovery call.",
-                  },
-                  {
-                    q: 'What if I need more than 7 pages?',
-                    a: 'The Starter plan includes up to 7 pages, which covers most business websites. If you need more, we can discuss options during the discovery call, or you can add pages later using the AI editor.',
-                  },
-                  {
-                    q: 'What are AI credits?',
-                    a: "Each AI credit lets you make one edit to your site: update text, change colors, add a section, tweak your layout, improve SEO, and more. Your subscription includes 1,000 credits per month - more than enough for most businesses (the average client uses about 30-50 per month). If you ever need more, you can top up anytime. Unused credits don't roll over.",
-                  },
+                  { q: t('landing.faq.q1'), a: t('landing.faq.a1') },
+                  { q: t('landing.faq.q2'), a: t('landing.faq.a2') },
+                  { q: t('landing.faq.q3'), a: t('landing.faq.a3') },
+                  { q: t('landing.faq.q4'), a: t('landing.faq.a4') },
+                  { q: t('landing.faq.q5'), a: t('landing.faq.a5') },
+                  { q: t('landing.faq.q6'), a: t('landing.faq.a6') },
+                  { q: t('landing.faq.q7'), a: t('landing.faq.a7') },
+                  { q: t('landing.faq.q8'), a: t('landing.faq.a8') },
+                  { q: t('landing.faq.q9'), a: t('landing.faq.a9') },
+                  { q: t('landing.faq.q10'), a: t('landing.faq.a10') },
                 ].map((faq, i) => (
                   <div
                     key={i}
@@ -2272,59 +2216,47 @@ export default function LandingPage() {
         </section>
 
         {/* Final CTA */}
-        <section className="py-16 lg:py-24 relative overflow-hidden">
-          {/* Vibrant gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[var(--purple)]/20 via-blue-500/10 to-cyan-400/15 dark:from-[var(--purple)]/30 dark:via-blue-500/20 dark:to-cyan-400/25 pointer-events-none" />
-          
-          {/* Animated glow orbs */}
-          <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-[var(--purple)]/30 dark:bg-[var(--purple)]/40 blur-[100px] animate-pulse pointer-events-none" />
-          <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-blue-500/25 dark:bg-blue-500/35 blur-[80px] animate-pulse pointer-events-none" style={{ animationDelay: '1s' }} />
-          
-          {/* Flow Field Background - Footer CTA */}
+        <section className="py-16 lg:py-24 relative overflow-hidden bg-gradient-to-br from-white via-blue-50 to-blue-200 dark:from-[#02060f] dark:via-[#040e22] dark:to-[#061530]">
+          {/* Top border */}
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-400/50 to-transparent" />
+
+          {/* Centered radial glow */}
+          <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+            <div className="w-[700px] h-[500px] rounded-full bg-blue-400/10 dark:bg-blue-500/20 blur-[130px]" />
+          </div>
+
+          {/* Flow lines pattern */}
           <div className="absolute inset-0 pointer-events-none">
-            <svg
-              className="absolute inset-0 w-full h-full opacity-[0.15] dark:opacity-[0.25]"
-              viewBox="0 0 1200 400"
-              preserveAspectRatio="xMidYMid slice"
-              fill="none"
-            >
+            <svg className="absolute inset-0 w-full h-full opacity-[0.06] dark:opacity-[0.08]" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice" fill="none">
               <defs>
-                <linearGradient
-                  id="flowGradientF"
-                  x1="0%"
-                  y1="0%"
-                  x2="100%"
-                  y2="0%"
-                >
-                  <stop offset="0%" stopColor="#A855F7" />
-                  <stop offset="50%" stopColor="#3B82F6" />
-                  <stop offset="100%" stopColor="#06B6D4" />
+                <linearGradient id="ctaFlowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="transparent" />
+                  <stop offset="25%" stopColor="#3b82f6" />
+                  <stop offset="75%" stopColor="#60a5fa" />
+                  <stop offset="100%" stopColor="transparent" />
                 </linearGradient>
               </defs>
-              <g
-                className="flow-group-1"
-                stroke="url(#flowGradientF)"
-                strokeWidth="2"
-              >
-                <path d="M-100,80 Q200,60 400,100 T800,70 T1300,110" />
-                <path d="M-100,160 Q250,180 450,140 T850,180 T1300,150" />
-                <path d="M-100,240 Q200,220 400,260 T800,230 T1300,270" />
-                <path d="M-100,320 Q250,340 450,300 T850,340 T1300,310" />
-              </g>
+              <path d="M-100,60 Q200,40 400,80 T800,50 T1300,90" stroke="url(#ctaFlowGrad)" strokeWidth="1.5" />
+              <path d="M-100,140 Q250,160 450,120 T850,160 T1300,130" stroke="url(#ctaFlowGrad)" strokeWidth="1.5" />
+              <path d="M-100,220 Q200,200 400,240 T800,210 T1300,250" stroke="url(#ctaFlowGrad)" strokeWidth="1.5" />
+              <path d="M-100,300 Q250,320 450,280 T850,320 T1300,290" stroke="url(#ctaFlowGrad)" strokeWidth="1.5" />
+              <path d="M-100,100 Q200,80 400,120 T800,90 T1300,130" stroke="url(#ctaFlowGrad)" strokeWidth="1" opacity="0.5" />
+              <path d="M-100,180 Q250,200 450,160 T850,200 T1300,170" stroke="url(#ctaFlowGrad)" strokeWidth="1" opacity="0.5" />
+              <path d="M-100,260 Q200,240 400,280 T800,250 T1300,290" stroke="url(#ctaFlowGrad)" strokeWidth="1" opacity="0.5" />
             </svg>
           </div>
 
           <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center relative">
             <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-5">
-              <span className="bg-gradient-to-r from-gray-900 via-[var(--purple)] to-gray-900 dark:from-white dark:via-[var(--purple)] dark:to-white bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
+              <span className="bg-gradient-to-r from-gray-900 via-blue-600 to-gray-900 dark:from-white dark:via-blue-300 dark:to-white bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
                 {t('landing.cta.title')}
               </span>
             </h2>
-            <p className="text-lg text-gray-600 dark:text-white/60 mb-10 max-w-md mx-auto">
+            <p className="text-lg text-gray-600 dark:text-white/50 mb-10 max-w-md mx-auto">
               {t('landing.cta.subtitle')}
             </p>
-            <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-              <Button className="relative overflow-hidden bg-gradient-to-r from-[var(--purple)] via-blue-500 to-[var(--purple)] bg-[length:200%_auto] animate-gradient text-white hover:shadow-[0_0_40px_rgba(124,58,237,0.4)] dark:hover:shadow-[0_0_50px_rgba(124,58,237,0.5)] rounded-lg px-12 h-16 text-lg font-semibold shadow-xl shadow-[var(--purple)]/25 transition-all duration-300 hover:scale-105">
+            <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="inline-flex justify-center w-full sm:w-auto">
+              <Button className="relative overflow-hidden w-full sm:w-auto bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700 bg-[length:200%_auto] animate-gradient text-white hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] dark:hover:shadow-[0_0_50px_rgba(59,130,246,0.6)] rounded-lg px-12 h-16 text-lg font-semibold shadow-xl shadow-blue-500/30 transition-all duration-300 hover:scale-105">
                 {t('landing.cta.button')}
                 <svg
                   className="w-5 h-5 ml-3"
@@ -2341,9 +2273,13 @@ export default function LandingPage() {
                 </svg>
               </Button>
             </a>
-            <p className="text-sm text-gray-500 dark:text-white/40 mt-6 font-medium">
-              {t('landing.cta.pricing')}
-            </p>
+            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 mt-4 text-sm text-gray-500 dark:text-white/40 font-medium">
+              <span className="text-gray-500 dark:text-white/40">€399 setup</span>
+              <span className="text-gray-300 dark:text-white/20">·</span>
+              <span className="text-gray-500 dark:text-white/40">€39/month</span>
+              <span className="text-gray-300 dark:text-white/20">·</span>
+              <span className="text-gray-500 dark:text-white/40">First month free</span>
+            </div>
           </div>
         </section>
 

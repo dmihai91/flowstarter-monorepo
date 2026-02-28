@@ -1,6 +1,6 @@
 'use client';
 
-import { GradientBackground } from '@/components/ui/gradient-background';
+import { FlowBackground } from '@flowstarter/flow-design-system';
 import { Sidebar } from '@/components/ui/sidebar';
 import { SidebarProvider, useSidebar } from '@/contexts/SidebarContext';
 import { usePathname } from 'next/navigation';
@@ -29,7 +29,7 @@ function LayoutContent({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Gradient background - behind everything */}
-      <GradientBackground variant="dashboard" className="fixed inset-0 z-0" />
+      <FlowBackground variant="dashboard" style={{ position: "fixed", inset: 0, zIndex: 0 }} />
       
       {/* Header - always visible */}
       <ClientHeader />

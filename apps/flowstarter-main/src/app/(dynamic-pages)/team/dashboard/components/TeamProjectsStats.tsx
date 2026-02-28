@@ -2,6 +2,7 @@
 
 import { ProjectWithOwner } from '@/hooks/useTeamProjects';
 import { useFormatDate } from '@/hooks/useFormatDate';
+import { GlassPanel } from '@flowstarter/flow-design-system';
 
 interface TeamProjectsStatsProps {
   projects: ProjectWithOwner[];
@@ -63,7 +64,7 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Total Projects Card */}
-      <div className="p-5 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.02)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset,0_-1px_0_rgba(0,0,0,0.2)_inset]">
+      <GlassPanel shadow="glass" padding="md">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm text-gray-500 dark:text-white/50">
             Total Projects
@@ -130,10 +131,10 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
             </div>
           </div>
         )}
-      </div>
+      </GlassPanel>
 
       {/* Revenue Card */}
-      <div className="p-5 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.02)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset,0_-1px_0_rgba(0,0,0,0.2)_inset]">
+      <GlassPanel shadow="glass" padding="md">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm text-gray-500 dark:text-white/50">
             Revenue
@@ -165,7 +166,7 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
             </span>
           </span>
         </div>
-      </div>
+      </GlassPanel>
     </div>
   );
 }

@@ -1,4 +1,6 @@
 'use client';
+import { ScrollAwareHeader } from '@flowstarter/flow-design-system';
+
 
 import Link from 'next/link';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -7,7 +9,7 @@ import { TeamUserMenu } from './TeamUserMenu';
 
 export function TeamHeader() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-[100] h-16 bg-white/50 dark:bg-[#0a0a0c]/50 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/60 dark:border-white/10 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
+    <ScrollAwareHeader className="z-[100] h-16" transparentClass="bg-white/80 dark:bg-[#14141a]/80 backdrop-blur-xl border-b border-gray-200/40 dark:border-white/10" scrolledClass="bg-white/90 dark:bg-[#14141a]/95 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/15 shadow-sm">
       <div className="w-full h-full px-4 lg:px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/team/dashboard" className="flex items-center gap-3 group">
@@ -24,6 +26,6 @@ export function TeamHeader() {
           <TeamUserMenu />
         </div>
       </div>
-    </header>
+    </ScrollAwareHeader>
   );
 }

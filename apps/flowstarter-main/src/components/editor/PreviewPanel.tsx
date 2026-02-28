@@ -1,6 +1,6 @@
 'use client';
 
-import { GradientBackground } from '@/components/ui/gradient-background';
+import { FlowBackground } from '@flowstarter/flow-design-system';
 import { PreviewLoading } from './PreviewLoading';
 
 interface PreviewPanelProps {
@@ -25,7 +25,7 @@ export function PreviewPanel({
       {/* Preview Content */}
       <div className="flex-1 relative overflow-hidden backdrop-blur-xl dark:bg-[#1b1b25]/80 bg-white/80">
         {/* Background gradient - Figma-style blurred ellipses */}
-        <GradientBackground variant="dashboard" includeBackground={false} />
+        <FlowBackground variant="dashboard" />
 
         {hasPreview ? (
           <div className="absolute inset-0 w-full h-full">

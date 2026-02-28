@@ -46,6 +46,13 @@ export default function FooterCompact() {
               >
                 {t('footer.links.termsOfService')}
               </CustomNavLink>
+              <span className="text-gray-300 dark:text-gray-700">•</span>
+              <a
+                href={process.env.NEXT_PUBLIC_EDITOR_URL || 'https://editor.flowstarter.dev'}
+                className="hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
+              >
+                Editor
+              </a>
             </nav>
 
             <div className="flex items-center justify-center lg:justify-end gap-4 text-xs text-gray-500 dark:text-gray-400 w-full lg:w-auto flex-wrap">

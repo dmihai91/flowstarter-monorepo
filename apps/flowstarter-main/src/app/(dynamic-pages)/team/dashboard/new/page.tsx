@@ -2,7 +2,7 @@
 
 import { Suspense } from 'react';
 import { Button } from '@/components/ui/button';
-import { GradientBackground } from '@/components/ui/gradient-background';
+import { FlowBackground } from '@flowstarter/flow-design-system';
 import { TeamHeader } from '../../components/TeamHeader';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Loader2, Check } from 'lucide-react';
@@ -44,7 +44,7 @@ function NewProjectPageContent() {
       <div className="h-screen flex flex-col overflow-hidden">
         <TeamHeader />
         <div className="flex-1 flex flex-col items-center justify-center relative mt-16">
-          <GradientBackground variant="dashboard" className="fixed inset-0" />
+          <FlowBackground variant="dashboard" style={{ position: "fixed", inset: 0, zIndex: 0 }} />
           <GenerationScreen currentStep={generationStep} />
         </div>
       </div>
@@ -55,7 +55,7 @@ function NewProjectPageContent() {
   if (showLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <GradientBackground variant="dashboard" className="fixed" />
+        <FlowBackground variant="dashboard" style={{ position: "fixed", inset: 0, zIndex: 0 }} />
         <div className="relative z-10">
           <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)]" />
         </div>
@@ -65,7 +65,7 @@ function NewProjectPageContent() {
 
   return (
     <>
-      <GradientBackground variant="dashboard" className="fixed" />
+      <FlowBackground variant="dashboard" style={{ position: "fixed", inset: 0, zIndex: 0 }} />
 
       <div className="min-h-screen font-display relative flex flex-col">
         <TeamHeader />
@@ -181,7 +181,7 @@ export default function NewProjectPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
-        <GradientBackground variant="dashboard" className="fixed" />
+        <FlowBackground variant="dashboard" style={{ position: "fixed", inset: 0, zIndex: 0 }} />
         <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)]" />
       </div>
     }>

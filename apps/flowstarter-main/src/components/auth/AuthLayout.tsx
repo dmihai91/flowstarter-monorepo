@@ -5,7 +5,8 @@ import { TranslationKeys, useTranslations } from '@/lib/i18n';
 import Link from 'next/link';
 import Footer from '@/components/Footer';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { GradientBackground } from '@/components/ui/gradient-background';
+import { FlowBackground, ScrollAwareHeader } from '@flowstarter/flow-design-system';
+
 import { Logo } from '@/components/ui/logo';
 
 interface AuthLayoutProps {
@@ -25,7 +26,6 @@ export default function AuthLayout({
   hideFooterStats = false,
 }: AuthLayoutProps) {
   useTheme();
-
   return (
     <>
       <style jsx global>{`
@@ -37,10 +37,10 @@ export default function AuthLayout({
 
       <div className="min-h-screen w-full font-display relative overflow-hidden flex flex-col">
         {/* Gradient background with flow lines */}
-        <GradientBackground variant="dashboard" className="fixed" />
+        <FlowBackground variant="dashboard" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }} />
 
         {/* Header */}
-        <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">
+        <ScrollAwareHeader className="z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
               <Logo size="md" />
@@ -52,7 +52,7 @@ export default function AuthLayout({
             </Link>
             <ThemeToggle />
           </div>
-        </header>
+        </ScrollAwareHeader>
 
         {/* Main content */}
         <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-8 mt-14">

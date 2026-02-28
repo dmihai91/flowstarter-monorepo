@@ -1,14 +1,21 @@
 // Export all UI components for easier imports
 
+// Shared design system components
+export { Button } from '@flowstarter/flow-design-system';
+export { Card } from '@flowstarter/flow-design-system';
+export { Input } from '@flowstarter/flow-design-system';
+export { GlassCard } from '@flowstarter/flow-design-system';
+export { GlassPanel } from '@flowstarter/flow-design-system';
+export { Spinner } from '@flowstarter/flow-design-system';
+export { StatusDot } from '@flowstarter/flow-design-system';
+export { FlowBackground } from '@flowstarter/flow-design-system';
+
 // Core components
 export * from './Badge';
-export * from './Button';
-export * from './Card';
 export * from './Checkbox';
 export * from './Collapsible';
 export * from './Dialog';
 export * from './IconButton';
-export * from './Input';
 export * from './Label';
 export * from './ScrollArea';
 export * from './Switch';

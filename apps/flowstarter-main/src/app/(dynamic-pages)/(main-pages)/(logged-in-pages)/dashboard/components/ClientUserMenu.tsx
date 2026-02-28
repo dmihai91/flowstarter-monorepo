@@ -21,7 +21,6 @@ import {
 import { useClerk, useUser } from '@clerk/nextjs';
 import { LogOut, Settings, User } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -115,19 +114,15 @@ export function ClientUserMenu() {
           </div>
         </div>
 
-        <Link href="/profile">
-          <DropdownMenuItem>
-            <User className="h-4 w-4" />
-            Profile
-          </DropdownMenuItem>
-        </Link>
+        <DropdownMenuItem onSelect={() => router.push('/profile')}>
+          <User className="h-4 w-4" />
+          Profile
+        </DropdownMenuItem>
 
-        <Link href="/dashboard/integrations">
-          <DropdownMenuItem>
-            <Settings className="h-4 w-4" />
-            Settings
-          </DropdownMenuItem>
-        </Link>
+        <DropdownMenuItem onSelect={() => router.push('/dashboard/integrations')}>
+          <Settings className="h-4 w-4" />
+          Settings
+        </DropdownMenuItem>
 
         <DropdownMenuSeparator className="bg-gray-200 dark:bg-white/10" />
 

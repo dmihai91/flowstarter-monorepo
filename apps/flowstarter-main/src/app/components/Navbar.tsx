@@ -63,7 +63,9 @@ export const ExternalNavigationWithAuth = () => {
 export const ExternalNavigation = () => {
   const isScrolled = useScrolled();
   const pathname = usePathname();
-  const isAuthRoute = pathname === '/login' || pathname === '/sign-up';
+  const isAuthRoute = pathname === '/login' || pathname === '/sign-up' || pathname?.startsWith('/login') || pathname?.startsWith('/sign-up') || pathname?.startsWith('/sign-in') || pathname?.startsWith('/editor');
+
+  if (isAuthRoute) return null;
 
   return (
     <NavbarHeader isScrolled={isScrolled} maxWidth="6xl">

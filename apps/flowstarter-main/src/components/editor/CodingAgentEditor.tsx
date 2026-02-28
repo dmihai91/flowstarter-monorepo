@@ -2,7 +2,7 @@
 
 import TemplatePreview from '@/components/template-preview/TemplatePreview';
 import { Button } from '@/components/ui/button';
-import { GradientBackground } from '@/components/ui/gradient-background';
+import { FlowBackground } from '@flowstarter/flow-design-system';
 import { useImageAttachment } from '@/hooks/useImageAttachment';
 // Panel resize removed - using fixed width
 import type {
@@ -98,7 +98,7 @@ export function CodingAgentEditor({
         }}
       >
         {/* Background gradient - Figma-style blurred ellipses */}
-        <GradientBackground variant="dashboard" includeBackground={false} />
+        <FlowBackground variant="dashboard" />
 
         {/* Two-pane: Chat (left) + Preview (right) */}
         <div className="flex flex-1 overflow-hidden relative z-10">

@@ -190,6 +190,12 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
       signUpUrl="/login"
       afterSignInUrl="/dashboard"
       afterSignUpUrl="/dashboard"
+      // Allow the satellite editor to redirect back after sign-in
+      allowedRedirectOrigins={[
+        'https://editor.flowstarter.dev',
+        'https://editor.flowstarter.app',
+        'http://localhost:5173',
+      ]}
     >
       {children}
     </ClerkProvider>

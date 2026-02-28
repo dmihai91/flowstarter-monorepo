@@ -2,17 +2,27 @@
 
 import MaxWidthContainer from '@/components/MaxWidthContainer';
 import {
-  GradientBackground,
-  type GradientVariant,
-} from '@/components/ui/gradient-background';
+  FlowBackground,
+  type FlowBackgroundVariant,
+} from '@flowstarter/flow-design-system';
 import { cn } from '@/lib/utils';
 import React from 'react';
 
 interface PageContainerProps extends React.PropsWithChildren {
-  gradientVariant?: GradientVariant;
+  gradientVariant?: FlowBackgroundVariant | 'integrations' | 'help' | 'default';
   className?: string;
   contentClassName?: string;
 }
+
+// Map legacy variant names to FlowBackground variants
+const variantMap: Record<string, FlowBackgroundVariant> = {
+  dashboard: 'dashboard',
+  integrations: 'dashboard',
+  help: 'dashboard',
+  wizard: 'wizard',
+  landing: 'landing',
+  default: 'dashboard',
+};
 
 export function PageContainer({
   children,
@@ -20,6 +30,8 @@ export function PageContainer({
   className,
   contentClassName,
 }: PageContainerProps) {
+  const flowVariant = variantMap[gradientVariant] ?? 'dashboard';
+
   return (
     <>
       <style jsx global>{`
@@ -31,8 +43,8 @@ export function PageContainer({
           className
         )}
       >
-        {/* Gradient background with flow lines */}
-        <GradientBackground variant={gradientVariant} className="fixed" />
+        {/* Flow background with animated lines */}
+        <FlowBackground variant={flowVariant} style={{ position: "fixed", inset: 0, zIndex: 0 }} />
         <MaxWidthContainer
           className={cn('p-4 sm:p-6 lg:p-8 pt-6', contentClassName)}
         >

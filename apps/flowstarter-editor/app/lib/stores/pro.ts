@@ -1,4 +1,5 @@
 import { map } from 'nanostores';
+import { getApiBaseUrl } from '~/lib/config/domains';
 
 export interface ProState {
   isPro: boolean;
@@ -41,9 +42,11 @@ export const toggleFeature = (feature: keyof ProState['features']) => {
   });
 };
 
-export const verifyProKey = async (apiKey: string, baseUrl: string = 'https://api.flowstarter.app/v1') => {
+export const verifyProKey = async (apiKey: string, baseUrl?: string) => {
+  const apiUrl = baseUrl || getApiBaseUrl();
+
   try {
-    const response = await fetch(`${baseUrl}/user/info`, {
+    const response = await fetch(`${apiUrl}/user/info`, {
       headers: {
         Authorization: `Bearer ${apiKey}`,
       },
@@ -75,4 +78,3 @@ export const verifyProKey = async (apiKey: string, baseUrl: string = 'https://ap
     throw error;
   }
 };
-

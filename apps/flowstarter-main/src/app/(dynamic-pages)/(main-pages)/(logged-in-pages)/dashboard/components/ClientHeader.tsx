@@ -1,4 +1,6 @@
 'use client';
+import { ScrollAwareHeader } from '@flowstarter/flow-design-system';
+
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -13,7 +15,7 @@ export function ClientHeader() {
   const isWizardPage = pathname?.startsWith('/dashboard/new') || pathname?.startsWith('/wizard');
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-[100] h-16 bg-white/50 dark:bg-[#0a0a0c]/50 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/60 dark:border-white/10 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
+    <ScrollAwareHeader className="z-[100] h-16 bg-white dark:bg-[#111118] border-b border-gray-200 dark:border-white/10 shadow-sm dark:shadow-none" transparentClass="" scrolledClass="">
       <div className="w-full h-full px-4 lg:px-6 flex items-center justify-between">
         {/* Logo or Back button */}
         {isWizardPage ? (
@@ -50,6 +52,6 @@ export function ClientHeader() {
           <ClientUserMenu />
         </div>
       </div>
-    </header>
+    </ScrollAwareHeader>
   );
 }

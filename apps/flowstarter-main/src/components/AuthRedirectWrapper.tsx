@@ -4,7 +4,7 @@ import { useTranslations } from '@/lib/i18n';
 import { useUser } from '@clerk/nextjs';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { LoadingScreen } from './LoadingScreen';
+import { LoadingScreen } from '@flowstarter/flow-design-system';
 
 interface AuthRedirectWrapperProps {
   children: React.ReactNode;
@@ -60,9 +60,29 @@ export function AuthRedirectWrapper({ children }: AuthRedirectWrapperProps) {
       const targetUrl = redirectUrl || nextUrl;
       
       // Add a small delay to ensure loading state is visible and smooth transition
-      const redirectTimer = setTimeout(() => {
+      const redirectTimer = setTimeout(async () => {
         if (targetUrl && isSafeRedirectUrl(targetUrl)) {
-          // Redirect to the requested URL (e.g., back to editor)
+          // For cross-domain redirects (e.g. editor subdomain), use
+          // a server-generated sign-in token (__clerk_ticket) so the
+          // satellite can establish a session without a registered handshake.
+          try {
+            const parsed = new URL(targetUrl);
+            const isCrossDomain = parsed.hostname !== window.location.hostname;
+            if (isCrossDomain) {
+              const res = await fetch('/api/auth/transfer-token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ redirectUrl: targetUrl }),
+              });
+              if (res.ok) {
+                const { url } = await res.json();
+                window.location.href = url;
+                return;
+              }
+            }
+          } catch {
+            // fall through to plain redirect
+          }
           window.location.href = targetUrl;
         } else {
           // Default: go to team dashboard

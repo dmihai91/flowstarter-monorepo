@@ -55,7 +55,7 @@ function DropdownMenuContent({
         sideOffset={sideOffset}
         align={align}
         className={cn(
-          'glass-3d bg-white/30 dark:bg-[var(--surface-2)]/30 backdrop-blur-xl text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 z-[60] max-h-(--radix-dropdown-menu-content-available-height) min-w-40 origin-(--radix-dropdown-menu-content-transform-origin) overflow-visible rounded-xl md:rounded-xl border border-white/60 dark:border-white/15 p-2 shadow-[0_8px_32px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.4),inset_0_2px_6px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.05),inset_0_2px_6px_rgba(0,0,0,0.08)]',
+          'glass-3d bg-white/30 dark:bg-[var(--surface-2)]/30 backdrop-blur-xl text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 z-[200] max-h-(--radix-dropdown-menu-content-available-height) min-w-40 origin-(--radix-dropdown-menu-content-transform-origin) overflow-visible rounded-xl md:rounded-xl border border-white/60 dark:border-white/15 p-2 shadow-[0_8px_32px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.4),inset_0_2px_6px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.05),inset_0_2px_6px_rgba(0,0,0,0.08)]',
           className
         )}
         {...props}
@@ -276,7 +276,7 @@ function DropdownMenuSubContent({
     <DropdownMenuPrimitive.SubContent
       data-slot="dropdown-menu-sub-content"
       className={cn(
-        'glass-3d bg-white/30 dark:bg-[var(--surface-2)]/30 backdrop-blur-xl text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 top-0 z-[60] min-w-40 origin-(--radix-dropdown-menu-content-transform-origin) overflow-hidden rounded-xl md:rounded-xl border border-white/60 dark:border-white/15 p-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.4),inset_0_2px_6px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.05),inset_0_2px_6px_rgba(0,0,0,0.08)]',
+        'glass-3d bg-white/30 dark:bg-[var(--surface-2)]/30 backdrop-blur-xl text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 top-0 z-[200] min-w-40 origin-(--radix-dropdown-menu-content-transform-origin) overflow-hidden rounded-xl md:rounded-xl border border-white/60 dark:border-white/15 p-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.4),inset_0_2px_6px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.05),inset_0_2px_6px_rgba(0,0,0,0.08)]',
         className
       )}
       {...props}

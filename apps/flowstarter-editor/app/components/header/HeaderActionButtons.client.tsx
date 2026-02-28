@@ -16,21 +16,6 @@ export function HeaderActionButtons({}: HeaderActionButtonsProps) {
   return (
     <div className={classNames('flex gap-2 items-center', { 'gap-1': showChat })}>
       <div className="flex items-center gap-1">
-        <IconButton
-          title="View on GitHub"
-          onClick={() => window.open('https://github.com/flowstarter/Flowstarter', '_blank')}
-        >
-          <img
-            className="w-5 h-5"
-            height="20"
-            width="20"
-            crossOrigin="anonymous"
-            src="https://cdn.simpleicons.org/github"
-            alt="github"
-          />
-        </IconButton>
-      </div>
-      <div className="flex items-center gap-1">
         <Button
           active={showChat}
           disabled={!canHideChat || isSmallViewport} // expand button is disabled on mobile as it's not needed
@@ -87,41 +72,6 @@ function Button({ active = false, disabled = false, children, onClick, className
         className,
       )}
       onClick={onClick}
-    >
-      {children}
-    </button>
-  );
-}
-
-interface IconButtonProps {
-  active?: boolean;
-  disabled?: boolean;
-  children?: React.ReactNode;
-  onClick?: VoidFunction;
-  title?: string;
-}
-
-function IconButton({ active = false, disabled = false, children, onClick, title }: IconButtonProps) {
-  const { showChat } = useStore(chatStore);
-
-  return (
-    <button
-      title={title}
-      className={classNames(
-        'flex items-center justify-center relative transition-all duration-200 ease-in-out',
-        'rounded-lg border',
-        {
-          'p-2 h-9 w-9': !showChat,
-          'p-1.5 h-8 w-8': showChat,
-          'border-transparent bg-transparent hover:bg-flowstarter-elements-item-backgroundHover text-flowstarter-elements-textTertiary hover:text-flowstarter-elements-textPrimary':
-            !active,
-          'border-flowstarter-elements-borderColor bg-flowstarter-elements-item-backgroundAccent/10 text-flowstarter-elements-item-contentAccent':
-            active && !disabled,
-          'opacity-50 cursor-not-allowed': disabled,
-        },
-      )}
-      onClick={onClick}
-      disabled={disabled}
     >
       {children}
     </button>

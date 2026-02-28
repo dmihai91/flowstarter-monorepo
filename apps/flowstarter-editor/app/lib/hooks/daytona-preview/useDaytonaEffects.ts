@@ -5,6 +5,7 @@
 import { useEffect } from 'react';
 import type { DaytonaPreviewState, ProjectData, ProjectFileData } from './types';
 import { generateProxyUrl, generateDisplayUrl, generateProjectSlug } from './utils';
+import { generatePreviewUrl } from '~/lib/config/domains';
 
 /** Preview state from workbench store */
 export interface WorkbenchPreviewState {
@@ -138,7 +139,10 @@ function useReconnectToCachedPreview({
       fetch(proxyUrl, { method: 'GET', signal: controller.signal })
         .then(async (res) => {
           clearTimeout(timeoutId);
-          if (!isMountedRef.current) return;
+
+          if (!isMountedRef.current) {
+            return;
+          }
 
           if (res.ok) {
             // Check response body — Daytona returns 200 with "Preview Server Starting" when workspace is waking up
@@ -164,7 +168,11 @@ function useReconnectToCachedPreview({
         })
         .catch(() => {
           clearTimeout(timeoutId);
-          if (!isMountedRef.current) return;
+
+          if (!isMountedRef.current) {
+            return;
+          }
+
           console.log('[useDaytonaPreview] Health check failed (network error), restarting preview');
           hasAutoStartedRef.current = false;
           safeSetState((prev) => ({ ...prev, status: 'idle' }));
@@ -269,7 +277,8 @@ function useUpdateDisplayUrl({
   useEffect(() => {
     if (status === 'ready' && project?.name && projectId) {
       const nameSlug = generateProjectSlug(project, projectId);
-      const expectedDisplayUrl = `https://${nameSlug}.flowstarter.app`;
+      const expectedDisplayUrl = generatePreviewUrl(nameSlug);
+
       if (displayUrl !== expectedDisplayUrl) {
         console.log('[useDaytonaPreview] Updating displayUrl with project name:', nameSlug);
         safeSetState((prev) => ({ ...prev, displayUrl: expectedDisplayUrl }));

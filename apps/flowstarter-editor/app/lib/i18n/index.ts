@@ -10,3 +10,8 @@ export { API_MESSAGE_KEYS, API_MESSAGE_LABELS, getApiMessage, type ApiMessageKey
 // Editor UI Labels (client-side)
 export { EDITOR_LABEL_KEYS, EDITOR_LABELS, getEditorLabel, t, type EditorLabelKey } from './editor-labels';
 
+// i18n Provider & Hook
+export { I18nProvider } from './provider';
+export { useTranslation, interpolate } from './useTranslation';
+export type { Translations } from './locales/en';
+

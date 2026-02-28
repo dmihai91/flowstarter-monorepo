@@ -1,8 +1,8 @@
 const en = {
   // General
   'app.name': 'Flowstarter',
-  'app.title': 'Flowstarter | Build your business with flow',
-  'app.description': 'Start your business journey with Flowstarter',
+  'app.title': 'Flowstarter | Your website. Your bookings. Done.',
+  'app.description': 'We build your website and set up online booking for coaches, therapists, clinics, and service businesses. Get found. Get booked. No tech skills needed.',
   'app.back': 'Back',
   'app.saveContinue': 'Continue',
   'app.createProject': 'Create Project',
@@ -2386,18 +2386,88 @@ const en = {
 
   // Landing Page - Hero
   'landing.hero.badge': 'Early access - limited spots',
-  'landing.hero.headline1': 'Your digital presence.',
-  'landing.hero.headline2': 'One place.',
-  'landing.hero.pain': 'Stop juggling tools.',
-  'landing.hero.subheadline': 'We set up and manage your website, bookings, analytics, and integrations — so you can focus on growing your business.',
+  'landing.hero.headline1': 'You built your skills over years.',
+  'landing.hero.headline2': 'Now let your website fill your calendar.',
+  'landing.hero.pain': 'We build your website and set up online booking for you, so new clients can find you, trust you, and schedule an appointment without picking up the phone.',
+  'landing.hero.subheadline': 'Most coaches, therapists, and clinics lose clients to competitors with better websites, not better skills. We handle everything from start to finish: your site, your booking setup, and connecting it all. You show up to your appointments. We make sure they keep coming.',
   'landing.hero.support': '',
-  'landing.hero.cta': 'Book Your Free Strategy Call',
-  'landing.hero.ctaNote': 'Free. No obligation.',
+  'landing.hero.cta': 'Start Growing Your Business',
+  'landing.hero.ctaNote': 'No tech skills needed. Fully set up for you in days.',
   'landing.hero.priceBuild': '€399',
   'landing.hero.priceBuildLabel': 'setup',
   'landing.hero.priceMonthly': '€39',
   'landing.hero.priceMonthlyLabel': '/month',
-  'landing.hero.priceNote': 'First month free',
+  'landing.hero.priceNote': 'Early adopters: €39/mo · New users: €59/mo after 6 months',
+
+
+  // What's Included section
+  'landing.included.title': "Everything you need to get found and get booked.",
+  'landing.included.subtitle': "One setup. No subscriptions to manage. No tech to figure out.",
+  'landing.included.setup.title': 'Setup',
+  'landing.included.setup.label': '(one-time)',
+  'landing.included.setup.desc': 'What we build for you',
+  'landing.included.setup.item1': 'A professional website built around your business and your clients',
+  'landing.included.setup.item2': 'Online booking set up and connected so clients can schedule without calling you',
+  'landing.included.setup.item3': 'A WhatsApp button so clients can reach you in one tap',
+  'landing.included.setup.item4': 'Your site works perfectly on phones, tablets, and desktops',
+  'landing.included.setup.item5': 'A professional email address that matches your domain',
+  'landing.included.setup.item6': 'You can see how many people visit your site and where they come from',
+  'landing.included.setup.item7': 'Your site is ready to be found on Google from day one',
+  'landing.included.setup.item8': 'You own everything. The website files are yours to keep.',
+  'landing.included.monthly.title': 'Monthly care',
+  'landing.included.monthly.label': '(ongoing)',
+  'landing.included.monthly.desc': 'What stays active',
+  'landing.included.monthly.item1': 'Your site stays online, fast, and secure every month',
+  'landing.included.monthly.item2': 'Your professional email keeps working without interruption',
+  'landing.included.monthly.item3': 'Storage for your photos and content',
+  'landing.included.monthly.item4': 'Monthly visitor report so you can see how your site performs',
+  'landing.included.monthly.item5': 'Updates and improvements handled for you',
+  'landing.included.monthly.item6': 'Support when you need it',
+  'landing.included.monthly.item7': 'Your booking system stays connected and working',
+
+
+  // FAQ Section
+  'landing.faq.title': 'Questions answered.',
+  'landing.faq.q1': 'What happens on the discovery call?',
+  'landing.faq.a1': "We spend up to 45 minutes learning about your business, your goals, and your clients. You don't need to prepare anything, just show up and tell us about what you do. After the call, we start building your site within 24 hours.",
+  'landing.faq.q2': 'How long until my site is live?',
+  'landing.faq.a2': "Most sites go live within 1 to 2 weeks after the discovery call. We keep you updated throughout the process.",
+  'landing.faq.q3': 'Can I make changes after the site is built?',
+  'landing.faq.a3': "Yes. Your subscription includes updates handled for you. Get in touch and we'll take care of it.",
+  'landing.faq.q4': 'What if I want to cancel?',
+  'landing.faq.a4': "No lock-in. Cancel anytime. If you share feedback, we'll refund 50% of your setup fee. Either way, you get all your site files to keep.",
+  'landing.faq.q5': 'Do I need any technical skills?',
+  'landing.faq.a5': "Zero. We handle the entire setup. You just review and approve.",
+  'landing.faq.q6': 'What happens when the beta ends?',
+  'landing.faq.a6': "Your €39/month rate is locked in for as long as you stay subscribed. After 6 months, new users will pay €59/month — your price never changes. The setup fee goes from €399 to €599 after beta. You get 30 days notice before anything changes.",
+  'landing.faq.q7': "What's included in the email?",
+  'landing.faq.a7': "One professional email address with your domain (e.g. you@yourbusiness.com). Need more? We can add additional mailboxes.",
+  'landing.faq.q8': 'What kind of businesses do you work with?',
+  'landing.faq.a8': "We specialize in websites for service businesses: coaches, therapists, consultants, clinics, barbers, beauty salons, and similar. If you rely on appointments and local clients, we are the right fit.",
+  'landing.faq.q9': 'Can I use my existing domain?',
+  'landing.faq.a9': "Yes. We connect your existing domain to your new site at no extra cost. If you don't have one yet, we help you set it up during the discovery call.",
+  'landing.faq.q10': 'What if I need more than 7 pages?',
+  'landing.faq.a10': "The Starter plan includes up to 7 pages, which covers most service business websites. If you need more, we discuss options during the discovery call.",
+
+  // Nav
+  'nav.faq': 'FAQ',
+
+
+  // Coming soon tiers
+  'landing.tiers.pro.name': 'Pro',
+  'landing.tiers.pro.price': '€999 setup · €79/month',
+  'landing.tiers.pro.f1': 'Up to 15 pages',
+  'landing.tiers.pro.f2': 'Multiple staff calendars',
+  'landing.tiers.pro.f3': 'Email list integration',
+  'landing.tiers.pro.f4': 'Advanced analytics',
+  'landing.tiers.pro.f5': 'Priority support',
+
+  'landing.tiers.ecom.name': 'Shop',
+  'landing.tiers.ecom.price': '€1499 setup · €119/month',
+  'landing.tiers.ecom.f1': 'Sell products or gift vouchers',
+  'landing.tiers.ecom.f2': 'Stripe & PayPal built-in',
+  'landing.tiers.ecom.f3': 'Inventory & order management',
+  'landing.tiers.ecom.f4': 'Everything in Pro included',
 
   // Landing Page - Stats
   'landing.stats.weeks': '1-2',
@@ -2408,10 +2478,21 @@ const en = {
   'landing.stats.techSkillsLabel': 'TECH SKILLS REQUIRED',
 
   // Landing Page - How it works
-  'landing.howItWorks.title': 'How it works',
-  'landing.howItWorks.text1': "This isn't another website builder.",
-  'landing.howItWorks.text2': "Most 'easy' solutions leave you with a generic site that looks like everyone else's. Or worse, like a robot made it. We start with strategy: who you serve, what you offer, and how to position it. Then we design around that. Not around a template.",
-  'landing.howItWorks.text3': "You get a website that sounds like you, converts like it should, and doesn't make you cringe when you share the link.",
+  'landing.howItWorks.title': 'Three steps to a website that gets you booked.',
+  'landing.howItWorks.text1': '',
+  'landing.howItWorks.text2': '',
+  'landing.howItWorks.text3': '',
+
+  // How it works - 3 steps
+  'landing.steps.step1.num': '01',
+  'landing.steps.step1.title': 'We talk',
+  'landing.steps.step1.desc': 'One 45-minute call. You tell us about your business and your clients. We handle everything from there.',
+  'landing.steps.step2.num': '02',
+  'landing.steps.step2.title': 'We build',
+  'landing.steps.step2.desc': 'We create your website and set up your booking system, fully connected and ready to take appointments. You review once and we refine.',
+  'landing.steps.step3.num': '03',
+  'landing.steps.step3.title': 'Clients find you and book',
+  'landing.steps.step3.desc': 'Your site goes live. New clients can find you, see what you do, and book directly. No calls needed to schedule.',
 
   // Landing Page - Editor
   'landing.editor.title': 'Update your site anytime',
@@ -2429,7 +2510,7 @@ const en = {
   'landing.pricing.careLabel': 'Monthly:',
   'landing.pricing.carePrice': '€39',
   'landing.pricing.carePeriod': '/month',
-  'landing.pricing.note': 'First month free. €39/mo locked for 1 year, then €59/mo. Cancel anytime.',
+  'landing.pricing.note': 'First month free. Early adopters locked at €39/mo for life. New users pay €59/mo after 6 months. Cancel anytime.',
   'landing.pricing.refund': '50% setup refund if you change your mind',
   'landing.pricing.assets': 'All your site assets downloadable. You own them.',
 
@@ -2443,11 +2524,11 @@ const en = {
   'landing.pricing.websiteFeature5': 'Live in about 2 weeks',
 
   'landing.pricing.careTitle': 'Monthly (€39)',
-  'landing.pricing.careDesc': 'Hosting, security, updates, and AI editing tools. Need bigger changes? We handle those too.',
+  'landing.pricing.careDesc': 'Hosting, security, updates, and small edits. Bigger changes are quoted separately.',
   'landing.pricing.careFeature1': '1,000 AI credits for edits each month',
   'landing.pricing.careFeature2': 'AI editor: update text, images, pages',
   'landing.pricing.careFeature3': 'Hosting and security included',
-  'landing.pricing.careFeature4': 'Bigger changes handled by us',
+  'landing.pricing.careFeature4': 'Bigger changes quoted separately',
 
   // Landing Page - For/Not For
   'landing.forYou.title': 'Built for you if',
@@ -2466,10 +2547,10 @@ const en = {
   'landing.cta.title': "Your website shouldn't hold you back.",
   'landing.cta.subtitle': "Book a free strategy call. We'll talk through your business and see if Flowstarter is the right fit. No pressure. No pitch deck.",
   'landing.cta.button': 'Book Your Free Strategy Call',
-  'landing.cta.pricing': '€399 setup · €39/month · 1,000 AI credits · First month free',
+  'landing.cta.pricing': '€399 setup · €39/month for early adopters · First month free',
 
   // Landing Page - Footer CTA
-  'landing.footer.pricing': '€399 website · €39/month care · First month free',
+  'landing.footer.pricing': '€399 website · €39/month (early adopters) · First month free',
 } as const;
 
 export default en;

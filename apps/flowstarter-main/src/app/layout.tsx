@@ -6,6 +6,7 @@ import { ErrorBoundaryWrapper } from '@/components/ErrorBoundary';
 import { GoogleAnalytics } from '@/components/GoogleAnalytics';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { I18nProvider } from '@/lib/i18n';
+import ro from '@/locales/ro';
 import { getServerT } from '@/lib/i18n-server';
 import en from '@/locales/en';
 import '@/styles/globals.css';
@@ -99,7 +100,7 @@ export default async function RootLayout({
         />
         <ErrorBoundaryWrapper>
           <ThemeProvider>
-            <I18nProvider initialLocale="en" initialMessages={{ en }}>
+            <I18nProvider initialLocale="en" initialMessages={{ en, ro }}>
               <ClerkThemeWrapper>
                 <DatabaseOfflineHandler>
                   <ClientLayout>

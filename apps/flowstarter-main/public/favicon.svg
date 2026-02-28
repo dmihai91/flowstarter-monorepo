@@ -4,27 +4,32 @@
       <stop stop-color="#8B5CF6" />
       <stop offset="1" stop-color="#06B6D4" />
     </linearGradient>
+    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.5)" />
+      <stop offset="50%" stop-color="rgba(255,255,255,1)" />
+      <stop offset="100%" stop-color="rgba(255,255,255,0.5)" />
+    </linearGradient>
   </defs>
-  
+
   <!-- Rounded square background -->
   <rect width="40" height="40" rx="10" fill="url(#logoGrad)" />
-  
-  <!-- Flowing wave - represents flow/movement -->
-  <path 
-    d="M8 26 Q14 18, 20 22 Q26 26, 32 18" 
-    stroke="white" 
-    stroke-width="3.5" 
+
+  <!-- Wave 1 -->
+  <path
+    d="M8 26 Q14 20, 20 23 Q26 26, 32 20"
+    stroke="url(#lineGrad)"
+    stroke-width="2.5"
     stroke-linecap="round"
     fill="none"
   />
-  
-  <!-- Second wave - depth/layers -->
-  <path 
-    d="M8 20 Q14 12, 20 16 Q26 20, 32 12" 
-    stroke="white" 
-    stroke-width="3.5" 
+
+  <!-- Wave 2 -->
+  <path
+    d="M8 20 Q14 14, 20 17 Q26 20, 32 14"
+    stroke="url(#lineGrad)"
+    stroke-width="2.5"
     stroke-linecap="round"
     fill="none"
-    opacity="0.6"
+    opacity="0.55"
   />
 </svg>

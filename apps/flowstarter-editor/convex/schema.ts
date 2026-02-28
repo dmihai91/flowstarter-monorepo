@@ -480,6 +480,33 @@ export default defineSchema({
     .index('by_fingerprint', ['queryFingerprint']),
 
   // ═══════════════════════════════════════════════════════════════════════════
+  // EDITOR SESSIONS - Persistent editor state for session restore
+  // ═══════════════════════════════════════════════════════════════════════════
+  editorSessions: defineTable({
+    projectId: v.id('projects'),
+    conversationId: v.optional(v.id('conversations')),
+    daytonaWorkspaceId: v.optional(v.string()),
+    sandboxId: v.optional(v.string()),
+    previewUrl: v.optional(v.string()),
+    status: v.union(
+      v.literal('idle'),
+      v.literal('active'),
+      v.literal('generating'),
+      v.literal('paused'),
+      v.literal('expired'),
+    ),
+    lastPrompt: v.optional(v.string()),
+    lastActiveAt: v.number(),
+    locale: v.optional(v.string()),
+    sessionData: v.optional(v.string()), // JSON blob for additional state
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index('by_project', ['projectId'])
+    .index('by_workspace', ['daytonaWorkspaceId'])
+    .index('by_status', ['status']),
+
+  // ═══════════════════════════════════════════════════════════════════════════
   // UNSUPPORTED REQUESTS - Track requests for features we don't support yet
   // ═══════════════════════════════════════════════════════════════════════════
   unsupportedRequests: defineTable({

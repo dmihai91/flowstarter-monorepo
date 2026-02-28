@@ -134,3 +134,9 @@
     margin-right: auto;
   }
 }
+
+/* Prevent horizontal overflow on mobile */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}

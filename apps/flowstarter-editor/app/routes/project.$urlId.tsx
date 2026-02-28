@@ -2,6 +2,8 @@ import { json, type MetaFunction, type LoaderFunctionArgs } from '@remix-run/clo
 import { useParams, useNavigate } from '@remix-run/react';
 import { ClientOnly } from 'remix-utils/client-only';
 import { useCallback, lazy, Suspense } from 'react';
+import { en } from '~/lib/i18n/locales/en';
+import { useTranslation } from '~/lib/i18n/useTranslation';
 import { useQuery } from 'convex/react';
 // eslint-disable-next-line no-restricted-imports
 import { api } from '../../convex/_generated/api';
@@ -13,8 +15,8 @@ const SimpleProjectEditor = lazy(() =>
 
 export const meta: MetaFunction<typeof loader> = ({ params }) => {
   return [
-    { title: `Editing ${params.urlId} - Flowstarter` },
-    { name: 'description', content: 'Edit your website with AI-powered assistance' },
+    { title: en.pages.editing.replace('{{name}}', params.urlId || '') },
+    { name: 'description', content: en.app.description },
   ];
 };
 
@@ -26,6 +28,7 @@ export const loader = ({ params }: LoaderFunctionArgs) => {
 function ProjectEditorContent() {
   const { urlId } = useParams<{ urlId: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   // Fetch project data from Convex
   const project = useQuery(api.projects.getByUrlId, urlId ? { urlId } : 'skip');
@@ -42,7 +45,7 @@ function ProjectEditorContent() {
       <div className="flex flex-col items-center justify-center min-h-screen bg-[#0f0f1a]">
         <div className="flex flex-col items-center gap-4">
           <div className="i-svg-spinners:90-ring-with-bg text-4xl text-primary" />
-          <p className="text-secondary">Loading project...</p>
+          <p className="text-secondary">{t.app.loadingProject}</p>
         </div>
       </div>
     );
@@ -56,13 +59,13 @@ function ProjectEditorContent() {
           <div className="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-4">
             <div className="i-ph:warning-circle-duotone text-3xl text-red-500" />
           </div>
-          <h2 className="text-xl font-semibold text-white mb-2">Project not found</h2>
-          <p className="text-secondary mb-6">The project you're looking for doesn't exist or has been deleted.</p>
+          <h2 className="text-xl font-semibold text-white mb-2">{t.pages.projectNotFound}</h2>
+          <p className="text-secondary mb-6">{t.pages.projectNotFoundDescription}</p>
           <button
             onClick={() => navigate('/')}
             className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
           >
-            Create New Project
+            {t.pages.createNewProject}
           </button>
         </div>
       </div>
@@ -76,12 +79,12 @@ function ProjectEditorContent() {
         <div className="flex flex-col items-center justify-center min-h-screen bg-[#0f0f1a]">
           <div className="flex flex-col items-center gap-4">
             <div className="i-svg-spinners:90-ring-with-bg text-4xl text-primary" />
-            <p className="text-secondary">Loading editor...</p>
+            <p className="text-secondary">{t.app.loadingEditor}</p>
           </div>
         </div>
       }
     >
-      <SimpleProjectEditor projectId={project._id} projectName={project.name} onPublish={handlePublish} />
+      <SimpleProjectEditor projectId={project._id} projectName={project.name || en.pages.createNewProject} onPublish={handlePublish} />
     </Suspense>
   );
 }
@@ -94,7 +97,7 @@ function ProjectEditorFallback() {
         <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
           <div className="i-ph:rocket-launch-duotone text-3xl text-white" />
         </div>
-        <h1 className="text-2xl font-bold text-white">Flowstarter</h1>
+        <h1 className="text-2xl font-bold text-white">{en.editor.title}</h1>
         <div className="i-svg-spinners:90-ring-with-bg text-2xl text-primary" />
       </div>
     </div>

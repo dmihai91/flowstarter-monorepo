@@ -63,19 +63,19 @@ export function PublicNavLinks() {
 
       {/* Desktop navigation links */}
       <CustomNavLink
-        className="text-sm hidden lg:block font-medium underline-offset-4"
+        className="text-base hidden lg:block font-medium underline-offset-4"
         href="/#features"
       >
         {t('nav.features')}
       </CustomNavLink>
       <CustomNavLink
-        className="text-sm hidden lg:block font-medium underline-offset-4"
+        className="text-base hidden lg:block font-medium underline-offset-4"
         href="/#pricing"
       >
         {t('nav.pricing')}
       </CustomNavLink>
       <CustomNavLink
-        className="text-sm hidden lg:block font-medium underline-offset-4"
+        className="text-base hidden lg:block font-medium underline-offset-4"
         href="/#benefits"
       >
         {t('nav.benefits')}

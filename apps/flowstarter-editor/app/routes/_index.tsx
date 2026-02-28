@@ -6,12 +6,15 @@ import { useQuery, useMutation } from 'convex/react';
 // eslint-disable-next-line no-restricted-imports
 import { api } from '../../convex/_generated/api';
 import { AuthGuard } from '~/components/TeamAuthGuard';
+import { ClientNoProjectScreen } from '~/components/ClientNoProjectScreen';
+import { getUserMode } from '~/lib/team-auth';
 import { LoadingScreen } from '~/components/LoadingScreen';
+import { en } from '~/lib/i18n/locales/en';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Flowstarter - AI Website Builder' },
-    { name: 'description', content: 'Build stunning websites with AI-powered assistance' },
+    { title: en.app.title },
+    { name: 'description', content: en.app.description },
   ];
 };
 
@@ -100,7 +103,7 @@ export function clearHandoffData(): void {
 }
 
 function LoadingFallback() {
-  return <LoadingScreen message="Loading Flowstarter..." />;
+  return <LoadingScreen message={en.app.loadingFlowstarterEditor} />;
 }
 
 interface HandoffProject {
@@ -123,6 +126,7 @@ function IndexRedirector() {
   const [searchParams] = useSearchParams();
   const [sessionId] = useState(getOrCreateSessionId);
   const hasRedirected = useRef(false);
+  const [showBookingScreen, setShowBookingScreen] = useState(false);
   const [isValidatingHandoff, setIsValidatingHandoff] = useState(hasHandoff);
 
   // Query for existing conversations
@@ -197,7 +201,7 @@ function IndexRedirector() {
 
         const newConversationId = await createConversation({
           sessionId,
-          title: 'New Project',
+          title: en.pages.createNewProject,
         });
 
         // Clear URL params and redirect
@@ -241,21 +245,39 @@ function IndexRedirector() {
         return;
       }
 
-      // No conversations - redirect to /new (conversation will be created on first message)
-      console.log('[Index] No conversations, redirecting to /new');
-      navigate('/new', { replace: true });
+      // No conversations — route based on user role
+      const userMode = getUserMode();
+      if (userMode === 'team') {
+        // Team: redirect to main dashboard to create a project
+        console.log('[Index] Team user, no projects — redirecting to dashboard');
+        const mainUrl = window.location.hostname.includes('flowstarter.dev')
+          ? 'https://flowstarter.dev'
+          : 'http://localhost:3000';
+        window.location.href = mainUrl + '/dashboard?editor=true';
+      } else {
+        // Client: show booking screen (don't redirect — render inline)
+        console.log('[Index] Client user, no projects — showing booking screen');
+        hasRedirected.current = false; // allow re-render
+        setShowBookingScreen(true);
+      }
     };
 
     redirectToConversation();
   }, [conversations, navigate, isValidatingHandoff]);
+
+  if (showBookingScreen) {
+    return <ClientNoProjectScreen />;
+  }
 
   return <LoadingFallback />;
 }
 
 export default function Index() {
   return (
-    <ClientOnly fallback={<LoadingFallback />}>
-      {() => <IndexRedirector />}
-    </ClientOnly>
+    <AuthGuard fallback={<LoadingFallback />}>
+      <ClientOnly fallback={<LoadingFallback />}>
+        {() => <IndexRedirector />}
+      </ClientOnly>
+    </AuthGuard>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { GradientBackground } from '@/components/ui/gradient-background';
+import { FlowBackground } from '@flowstarter/flow-design-system';
 import { TeamHeader } from '../../../components/TeamHeader';
 import FooterCompact from '@/components/FooterCompact';
 import Link from 'next/link';
@@ -21,13 +21,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { useProject } from './hooks/useProject';
-
-const cardClass = [
-  'rounded-2xl border border-black/[0.08] dark:border-white/[0.08]',
-  'bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl',
-  'shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset]',
-  'dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset]',
-].join(' ');
+import { GlassPanel } from '@flowstarter/flow-design-system';
 
 // Loading state component
 function LoadingState() {
@@ -35,7 +29,7 @@ function LoadingState() {
     <div className="min-h-screen flex flex-col">
       <TeamHeader />
       <div className="h-16" />
-      <GradientBackground variant="dashboard" className="fixed" />
+      <FlowBackground variant="dashboard" style={{ position: "fixed", inset: 0, zIndex: 0 }} />
       <div className="flex-1 flex items-center justify-center relative z-10">
         <div className={`${cardClass} p-8`}>
           <div className="flex flex-col items-center gap-4">
@@ -57,7 +51,7 @@ function ErrorState({ error }: { error: string | null }) {
     <div className="min-h-screen flex flex-col">
       <TeamHeader />
       <div className="h-16" />
-      <GradientBackground variant="dashboard" className="fixed" />
+      <FlowBackground variant="dashboard" style={{ position: "fixed", inset: 0, zIndex: 0 }} />
       <div className="flex-1 flex items-center justify-center relative z-10">
         <div className={`${cardClass} p-8 max-w-md mx-auto text-center`}>
           <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center mx-auto mb-4">
@@ -90,7 +84,7 @@ export default function ProjectDetailPage() {
     <div className="min-h-screen flex flex-col">
       <TeamHeader />
       <div className="h-16" />
-      <GradientBackground variant="dashboard" className="fixed" />
+      <FlowBackground variant="dashboard" style={{ position: "fixed", inset: 0, zIndex: 0 }} />
 
       <main className="flex-1 relative z-10 max-w-5xl mx-auto px-6 py-8 w-full">
         {/* Back button */}

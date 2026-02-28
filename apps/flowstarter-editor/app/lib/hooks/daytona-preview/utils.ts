@@ -3,6 +3,7 @@
  */
 
 import type { BuildError, ProjectFileData, ProjectData } from './types';
+import { generatePreviewUrl } from '~/lib/config/domains';
 
 export const PREVIEW_API = '/api/daytona/preview';
 
@@ -32,7 +33,10 @@ export function convertFilesToRecord(projectFiles: ProjectFileData[] | null | un
  */
 export function generateProjectSlug(project: ProjectData | null | undefined, projectId: string): string {
   return (
-    project?.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '') ||
+    project?.name
+      ?.toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/-+$/, '') ||
     project?.urlId ||
     projectId.slice(-8)
   );
@@ -50,7 +54,7 @@ export function generateProxyUrl(projectId: string): string {
  */
 export function generateDisplayUrl(project: ProjectData | null | undefined, projectId: string): string {
   const slug = generateProjectSlug(project, projectId);
-  return `https://${slug}.flowstarter.app`;
+  return generatePreviewUrl(slug);
 }
 
 /**

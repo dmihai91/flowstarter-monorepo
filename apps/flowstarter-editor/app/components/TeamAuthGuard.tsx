@@ -42,8 +42,8 @@ function LoginPrompt() {
 
       {/* Header */}
       <header style={{ position: 'relative', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 24px', borderBottom: `1px solid ${hdrBord}` }}>
-        <a href={mainUrl} style={{ textDecoration: 'none' }}>
-          <Logo size="md" theme={isDark ? 'dark' : 'light'} />
+        <a href={mainUrl} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', ['--text-primary' as string]: isDark ? '#ffffff' : '#09090b' }}>
+          <Logo size="md" />
         </a>
         <ThemeToggle theme={currentTheme} onThemeChange={setTheme} />
       </header>

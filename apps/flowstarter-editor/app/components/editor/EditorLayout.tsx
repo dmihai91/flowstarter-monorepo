@@ -59,7 +59,7 @@ export function EditorLayout({
 
   useEffect(() => {
     const check = () => {
-      const mobile = window.innerWidth < 768;
+      const mobile = window.innerWidth < 1024;
       setIsMobile(mobile);
       if (mobile) setViewMode(prev => prev === 'preview' ? 'chat' : prev);
     };

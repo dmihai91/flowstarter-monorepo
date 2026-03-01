@@ -56,11 +56,14 @@ export function EditorLayout({
   const colors = getColors(isDark);
   const [viewMode, setViewMode] = useState<ViewMode>('preview');
   const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
 
   useEffect(() => {
     const check = () => {
       const mobile = window.innerWidth < 640;
+      const tablet = window.innerWidth >= 640 && window.innerWidth < 1024;
       setIsMobile(mobile);
+      setIsTablet(tablet);
       if (mobile) setViewMode(prev => prev === 'preview' ? 'chat' : prev);
     };
     check();
@@ -212,16 +215,16 @@ export function EditorLayout({
         {/* LEFT: Chat Panel (Resizable on desktop, full-width on mobile) */}
         <div
           style={{
-            width: isMobile ? (viewMode === 'chat' || viewMode === 'preview' ? '100%' : `${chatWidth}px`) : `${chatWidth}px`,
-            minWidth: isMobile ? '100%' : `${PANEL_CONFIG.minWidth}px`,
-            maxWidth: isMobile ? '100%' : `${PANEL_CONFIG.maxWidth}px`,
+            width: isMobile ? '100%' : isTablet ? '360px' : `${chatWidth}px`,
+            minWidth: isMobile ? '100%' : isTablet ? '320px' : `${PANEL_CONFIG.minWidth}px`,
+            maxWidth: isMobile ? '100%' : isTablet ? '400px' : `${PANEL_CONFIG.maxWidth}px`,
             display: isMobile && viewMode === 'preview' ? 'none' : 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
-            background: colors.bgSecondary,
+            background: 'transparent',
             position: 'relative',
             zIndex: 5,
-            borderRight: isMobile ? 'none' : `1px solid rgba(255,255,255,0.06)`,
+            borderRight: isMobile ? 'none' : `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)'}`,
           }}
         >
           {children}
@@ -236,7 +239,7 @@ export function EditorLayout({
         />}
 
         {/* RIGHT: Editor/Preview Panel (hidden on mobile when in chat mode) */}
-        <div style={{ flex: 1, background: colors.bgTertiary, overflow: 'hidden', display: isMobile && viewMode !== 'preview' ? 'none' : 'flex', flexDirection: 'column' }}>
+        <div style={{ flex: 1, background: isDark ? colors.bgTertiary : 'rgba(248,248,250,0.6)', overflow: 'hidden', display: isMobile && viewMode !== 'preview' ? 'none' : 'flex', flexDirection: 'column' }}>
           {projectId &&
           onboardingStep &&
           ![
@@ -268,7 +271,7 @@ export function EditorLayout({
               )}
             </ClientOnly>
           ) : (
-            <EmptyState type={viewMode} step={onboardingStep} />
+            <EmptyState type={viewMode === 'editor' ? 'editor' : 'preview'} step={onboardingStep} />
           )}
         </div>
       </div>

@@ -61,6 +61,9 @@ export function ChatInput({
     <div
       className="px-3 sm:px-4 pt-2 sm:pt-3 pb-3 sm:pb-4 relative z-[1]"
       style={{
+        paddingBottom: 'max(12px, env(safe-area-inset-bottom, 12px))',
+      }}
+      style={{
         background: 'transparent',
       }}
     >

@@ -93,8 +93,8 @@ export function EditorHeader({
         }}
       >
         <MenuButton onClick={onMenuClick} />
-        {!isMobile && (isCompact ? <LogoIcon size="xs" /> : <Logo size="xs" />)}
-        {isTeam && !isCompact && (
+        {!isMobile && <Logo size="xs" />}
+        {isTeam && !isMobile && (
           <span
             style={{
               padding: '3px 8px',
@@ -143,7 +143,7 @@ export function EditorHeader({
 
         {!isCompact && <PublishButton isEnabled={isPublishEnabled} onClick={onPublish} />}
         {!isCompact && <Separator />}
-        {!isMobile && <ThemeToggle />}
+        {!isMobile && <div style={{ marginLeft: '4px' }}><ThemeToggle /></div>}
         <EditorUserMenu />
       </div>
     </header>

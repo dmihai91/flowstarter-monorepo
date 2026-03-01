@@ -43,12 +43,12 @@ export function BusinessContextCard({
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <div
-            className={`p-1.5 rounded-lg ${
-              isDark ? 'bg-purple-500/20' : 'bg-purple-100'
-            }`}
+            className="p-1.5 rounded-lg"
+            style={{ background: isDark ? 'rgba(var(--purple-rgb, 77, 93, 217), 0.2)' : 'rgba(var(--purple-rgb, 77, 93, 217), 0.1)' }}
           >
             <Building2
-              className={`w-4 h-4 ${isDark ? 'text-purple-400' : 'text-purple-600'}`}
+              className="w-4 h-4"
+              style={{ color: 'var(--purple)' }}
             />
           </div>
           <h3

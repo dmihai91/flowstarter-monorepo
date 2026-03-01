@@ -405,7 +405,7 @@ export const EDITOR_LABELS: Record<EditorLabelKey, string> = {
   [EDITOR_LABEL_KEYS.CHAT_WEB_SEARCH]: 'Web Search',
   [EDITOR_LABEL_KEYS.CHAT_MODEL_SETTINGS]: 'Model Settings',
   [EDITOR_LABEL_KEYS.CHAT_ENHANCED]: 'Prompt enhanced!',
-  [EDITOR_LABEL_KEYS.CHAT_PLACEHOLDER]: 'Type a message...',
+  [EDITOR_LABEL_KEYS.CHAT_PLACEHOLDER]: 'Tell me about your business...',
   [EDITOR_LABEL_KEYS.CHAT_ELEMENT_SELECTED]: 'selected for inspection',
   [EDITOR_LABEL_KEYS.CHAT_COPY_CODE]: 'Copy Code',
 
@@ -467,8 +467,8 @@ export const EDITOR_LABELS: Record<EditorLabelKey, string> = {
   [EDITOR_LABEL_KEYS.A11Y_CLEAR_SEARCH]: 'Clear search',
 
   // Chat Input
-  [EDITOR_LABEL_KEYS.CHAT_PLACEHOLDER_DESCRIBE]: 'Describe your business...',
-  [EDITOR_LABEL_KEYS.CHAT_PLACEHOLDER_CHANGES]: 'Type a message...',
+  [EDITOR_LABEL_KEYS.CHAT_PLACEHOLDER_DESCRIBE]: 'What does your business do?',
+  [EDITOR_LABEL_KEYS.CHAT_PLACEHOLDER_CHANGES]: 'Ask for changes or new ideas...',
   [EDITOR_LABEL_KEYS.CHAT_UPLOAD_IMAGE]: 'Upload Image',
   [EDITOR_LABEL_KEYS.CHAT_TAKE_SCREENSHOT]: 'Take Screenshot',
   [EDITOR_LABEL_KEYS.CHAT_ATTACHMENT]: 'Attachment',

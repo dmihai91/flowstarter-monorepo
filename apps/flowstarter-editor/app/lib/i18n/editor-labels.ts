@@ -405,7 +405,7 @@ export const EDITOR_LABELS: Record<EditorLabelKey, string> = {
   [EDITOR_LABEL_KEYS.CHAT_WEB_SEARCH]: 'Web Search',
   [EDITOR_LABEL_KEYS.CHAT_MODEL_SETTINGS]: 'Model Settings',
   [EDITOR_LABEL_KEYS.CHAT_ENHANCED]: 'Prompt enhanced!',
-  [EDITOR_LABEL_KEYS.CHAT_PLACEHOLDER]: 'Ask a question or request changes...',
+  [EDITOR_LABEL_KEYS.CHAT_PLACEHOLDER]: 'Type a message...',
   [EDITOR_LABEL_KEYS.CHAT_ELEMENT_SELECTED]: 'selected for inspection',
   [EDITOR_LABEL_KEYS.CHAT_COPY_CODE]: 'Copy Code',
 
@@ -467,8 +467,8 @@ export const EDITOR_LABELS: Record<EditorLabelKey, string> = {
   [EDITOR_LABEL_KEYS.A11Y_CLEAR_SEARCH]: 'Clear search',
 
   // Chat Input
-  [EDITOR_LABEL_KEYS.CHAT_PLACEHOLDER_DESCRIBE]: 'Describe your service business...',
-  [EDITOR_LABEL_KEYS.CHAT_PLACEHOLDER_CHANGES]: 'Ask a question or request changes...',
+  [EDITOR_LABEL_KEYS.CHAT_PLACEHOLDER_DESCRIBE]: 'Describe your business...',
+  [EDITOR_LABEL_KEYS.CHAT_PLACEHOLDER_CHANGES]: 'Type a message...',
   [EDITOR_LABEL_KEYS.CHAT_UPLOAD_IMAGE]: 'Upload Image',
   [EDITOR_LABEL_KEYS.CHAT_TAKE_SCREENSHOT]: 'Take Screenshot',
   [EDITOR_LABEL_KEYS.CHAT_ATTACHMENT]: 'Attachment',
@@ -476,12 +476,12 @@ export const EDITOR_LABELS: Record<EditorLabelKey, string> = {
   // Empty State
   [EDITOR_LABEL_KEYS.EMPTY_CODE_EDITOR]: 'Code Editor',
   [EDITOR_LABEL_KEYS.EMPTY_CODE_SUBTITLE]: 'Once your site generates, you can edit the code here',
-  [EDITOR_LABEL_KEYS.EMPTY_DESCRIBE_TITLE]: 'Tell me about your service',
-  [EDITOR_LABEL_KEYS.EMPTY_DESCRIBE_SUBTITLE]: "Describe your service in the chat - I'll build you a site that gets clients",
+  [EDITOR_LABEL_KEYS.EMPTY_DESCRIBE_TITLE]: "Describe the client's business",
+  [EDITOR_LABEL_KEYS.EMPTY_DESCRIBE_SUBTITLE]: "Tell me about their service in the chat and I'll build a site that gets them clients",
   [EDITOR_LABEL_KEYS.EMPTY_NAME_TITLE]: 'Name your project',
   [EDITOR_LABEL_KEYS.EMPTY_NAME_SUBTITLE]: 'Give your website a memorable name',
-  [EDITOR_LABEL_KEYS.EMPTY_BUSINESS_TITLE]: 'Tell me about your business',
-  [EDITOR_LABEL_KEYS.EMPTY_BUSINESS_SUBTITLE]: 'Share details about your practice to personalize your site',
+  [EDITOR_LABEL_KEYS.EMPTY_BUSINESS_TITLE]: "Tell me about the client's business",
+  [EDITOR_LABEL_KEYS.EMPTY_BUSINESS_SUBTITLE]: "Share details about their practice to personalize the site",
   [EDITOR_LABEL_KEYS.EMPTY_TEMPLATE_TITLE]: 'Pick a template',
   [EDITOR_LABEL_KEYS.EMPTY_TEMPLATE_SUBTITLE]: 'Choose a starting point and see it preview here',
   [EDITOR_LABEL_KEYS.EMPTY_PERSONALIZE_TITLE]: 'Personalize your site',

@@ -124,9 +124,14 @@ export function useConvexSync({
     }
 
     try {
+      // Filter out welcome/greeting messages — they're generated fresh each session
+      const persistMessages = messages.filter(
+        (m) => !(m.role === 'assistant' && m.content.includes('Welcome to Flowstarter Editor'))
+      );
+
       await saveMessages({
         conversationId,
-        messages: messages.map((m) => ({
+        messages: persistMessages.map((m) => ({
           id: m.id,
           role: m.role,
           content: m.content,

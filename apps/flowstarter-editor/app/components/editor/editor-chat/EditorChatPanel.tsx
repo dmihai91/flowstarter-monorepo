@@ -250,13 +250,12 @@ export function EditorChatPanel({
         {/* Business Context Card (for internal/template-first flow) */}
         {isInternalFlow && businessContext && (
           <BusinessContextCard
-            businessName={businessContext.businessName || 'Your Business'}
-            description={businessContext.description}
-            targetAudience={businessContext.targetAudience}
-            goals={businessContext.goals}
-            industry={businessContext.industry}
-            uvp={businessContext.uvp}
+            businessName={projectName || businessContext.businessName || 'Your Business'}
+            description={projectDescription || businessContext.description}
             isDark={isDark}
+            onNameChange={(name) => {
+              if (onStateChange) onStateChange({ projectName: name });
+            }}
           />
         )}
         

@@ -13,7 +13,9 @@ import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Plus, UserPlus, FolderOpen } from 'lucide-react';
+import { Plus, UserPlus, FolderOpen, X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 
 export const dynamic = 'force-dynamic';
@@ -27,6 +29,9 @@ export default function TeamDashboardPage() {
   const { data: projects, isLoading: projectsLoading } = useTeamProjects();
 
   const [isLoading, setIsLoading] = useState(true);
+  const [showClientModal, setShowClientModal] = useState(false);
+  const [clientInfo, setClientInfo] = useState({ name: '', email: '', phone: '' });
+  const [isSendingToEditor, setIsSendingToEditor] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
   // Check if user is team member
@@ -103,6 +108,76 @@ export default function TeamDashboardPage() {
           <TeamProjectsStats projects={projects || []} />
         )}
       </div>
+
+      {/* Client Info Modal */}
+      {showClientModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowClientModal(false)}>
+          <div
+            className="w-full max-w-md mx-4 rounded-2xl p-6 relative"
+            style={{
+              background: 'var(--flow-bg-primary, #ffffff)',
+              border: '1px solid var(--flow-border-default, #e4e4e7)',
+              boxShadow: '0 25px 50px rgba(0,0,0,0.15)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowClientModal(false)}
+              className="absolute top-4 right-4 p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+            >
+              <X className="w-4 h-4 text-gray-500" />
+            </button>
+
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">New Project</h2>
+            <p className="text-sm text-gray-500 dark:text-white/50 mb-5">Client details for this project</p>
+
+            <div className="space-y-4">
+              <div>
+                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">Client Name *</Label>
+                <Input
+                  placeholder="John Smith"
+                  value={clientInfo.name}
+                  onChange={(e) => setClientInfo(prev => ({ ...prev, name: e.target.value }))}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">Client Email *</Label>
+                <Input
+                  type="email"
+                  placeholder="john@example.com"
+                  value={clientInfo.email}
+                  onChange={(e) => setClientInfo(prev => ({ ...prev, email: e.target.value }))}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">Client Phone</Label>
+                <Input
+                  placeholder="+40 712 345 678"
+                  value={clientInfo.phone}
+                  onChange={(e) => setClientInfo(prev => ({ ...prev, phone: e.target.value }))}
+                  className="mt-1"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <Button variant="outline" className="flex-1" onClick={() => setShowClientModal(false)}>
+                Cancel
+              </Button>
+              <Button
+                variant="accent"
+                className="flex-1"
+                onClick={handleClientSubmit}
+                disabled={!clientInfo.name.trim() || !clientInfo.email.trim() || isSendingToEditor}
+              >
+                {isSendingToEditor ? 'Opening Editor...' : 'Continue in Editor'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* All Projects */}
       <div className="mb-8">

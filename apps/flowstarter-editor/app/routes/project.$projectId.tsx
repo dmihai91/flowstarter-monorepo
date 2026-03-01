@@ -11,6 +11,7 @@ import { EditorLayout, ConversationProvider } from '~/components/editor';
 import { EditorChatPanel } from '~/components/editor/EditorChatPanel';
 import { useThemeStyles, getColors } from '~/components/editor/hooks';
 import type { OnboardingStep, InitialChatState, BusinessInfo, BuildPhase } from '~/components/editor/editor-chat/types';
+
 import type { OrchestratorStatusDTO } from '~/lib/hooks/types/orchestrator.dto';
 import { en } from '~/lib/i18n/locales/en';
 import { useTranslation } from '~/lib/i18n/useTranslation';
@@ -162,11 +163,68 @@ function ProjectEditorContent({ projectId }: ProjectEditorContentProps) {
    * IMPORTANT: This callback must have stable identity to prevent infinite loops
    */
   const handleStateChange = useCallback(
-    async (_state: Partial<InitialChatState>) => {
-      // Completely disabled for debugging
-      return;
+    async (state: Partial<InitialChatState>) => {
+      // Save to Convex
+      try {
+        const convexUpdate: Record<string, unknown> = {};
+        if (state.step) convexUpdate.step = state.step;
+        if (state.projectDescription) convexUpdate.projectDescription = state.projectDescription;
+        if (state.projectName) convexUpdate.projectName = state.projectName;
+        if (state.selectedTemplateId) convexUpdate.selectedTemplateId = state.selectedTemplateId;
+        if (state.selectedTemplateName) convexUpdate.selectedTemplateName = state.selectedTemplateName;
+        if (state.selectedPalette) convexUpdate.selectedPalette = state.selectedPalette;
+        if (state.selectedFont) convexUpdate.selectedFont = state.selectedFont;
+        if (state.selectedLogo) convexUpdate.selectedLogo = state.selectedLogo;
+        if (state.buildPhase) convexUpdate.buildPhase = state.buildPhase;
+        if (state.businessInfo) convexUpdate.businessInfo = state.businessInfo;
+
+        if (Object.keys(convexUpdate).length > 0) {
+          await updateStateMutationRef.current({
+            id: projectId,
+            ...convexUpdate,
+          });
+        }
+      } catch (e) {
+        console.error('[handleStateChange] Convex update failed:', e);
+      }
+
+      // Sync to Supabase via editor API (uses Clerk auth, no handoff token needed)
+      // First try handoff-based sync, fallback to editor API
+      const supabaseId = projectByUrlId?.supabaseProjectId;
+      if (supabaseId) {
+        fetch('/api/project/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'update',
+            projectData: {
+              supabaseProjectId: supabaseId,
+              name: state.projectName || undefined,
+              description: state.projectDescription || undefined,
+              templateId: state.selectedTemplateId || undefined,
+              businessInfo: state.businessInfo || undefined,
+            },
+          }),
+        }).catch(e => console.warn('[handleStateChange] Supabase sync failed:', e));
+      } else if (state.projectName && convexProjectId) {
+        // No Supabase project yet — create one
+        fetch('/api/project/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'create',
+            projectData: {
+              convexProjectId: String(convexProjectId),
+              name: state.projectName,
+              description: state.projectDescription || '',
+              templateId: state.selectedTemplateId || undefined,
+              businessInfo: state.businessInfo || undefined,
+            },
+          }),
+        }).catch(e => console.warn('[handleStateChange] Supabase create failed:', e));
+      }
     },
-    [], // No dependencies
+    [projectId],
   );
 
   // Cleanup debounce on unmount

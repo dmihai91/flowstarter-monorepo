@@ -542,17 +542,17 @@ export function SuggestedReplies({ suggestions, step, isDark, onAccept, onRefres
                 className="px-3 py-1.5 rounded-full text-sm font-medium transition-colors duration-100"
                 style={{
                   background: isPrimary
-                    ? 'linear-gradient(135deg, rgba(77, 93, 217, 0.8) 0%, rgba(6, 182, 212, 0.6) 100%)'
+                    ? (isDark ? 'rgba(77, 93, 217, 0.25)' : 'rgba(77, 93, 217, 0.12)')
                     : isDark
                       ? 'rgba(255, 255, 255, 0.08)'
                       : 'rgba(0, 0, 0, 0.06)',
                   border: isPrimary
-                    ? 'none'
+                    ? (isDark ? '1px solid rgba(77, 93, 217, 0.4)' : '1px solid rgba(77, 93, 217, 0.3)')
                     : isDark
                       ? '1px solid rgba(255, 255, 255, 0.12)'
                       : '1px solid rgba(0, 0, 0, 0.1)',
-                  color: isPrimary ? '#fff' : isDark ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.7)',
-                  boxShadow: isPrimary ? '0 2px 8px rgba(77, 93, 217, 0.15)' : 'none',
+                  color: isPrimary ? (isDark ? '#8B9FFF' : '#4D5DD9') : isDark ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.7)',
+                  boxShadow: 'none',
                 }}
               >
                 {suggestion.text}

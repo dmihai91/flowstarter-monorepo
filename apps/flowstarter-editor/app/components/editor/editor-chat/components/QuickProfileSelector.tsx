@@ -159,13 +159,6 @@ export function QuickProfileSelector({ initialProfile, onComplete, onChange, isD
         ))}
       </QuestionSection>
 
-      <div className="flex items-center justify-center gap-2 mb-3">
-        {[goal, offerType, tone].map((val, i) => (
-          <div key={i} className="w-2 h-2 rounded-full transition-colors"
-            style={{ background: val ? 'var(--purple, #4D5DD9)' : isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }} />
-        ))}
-      </div>
-
       <button type="button" onClick={handleContinue} disabled={!isComplete}
         className="w-full py-2.5 px-6 rounded-xl font-semibold text-sm transition-all duration-200"
         style={{

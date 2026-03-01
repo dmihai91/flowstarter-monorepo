@@ -2,7 +2,6 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useThemeStyles, getColors } from '~/components/editor/hooks';
 import { SidebarHeader } from './SidebarHeader';
-import { NewProjectButton } from './NewProjectButton';
 import { ConversationList } from './ConversationList';
 import type { ConversationSidebarProps } from './types';
 
@@ -15,7 +14,6 @@ export function ConversationSidebar({
   isLoading,
   onClose,
   onSelectConversation,
-  onNewConversation,
   onRenameConversation,
   onProjectNameChange,
   onDeleteConversation,
@@ -71,7 +69,6 @@ export function ConversationSidebar({
             }}
           >
             <SidebarHeader onClose={onClose} />
-            <NewProjectButton onClick={onNewConversation} />
             <ConversationList
               conversations={conversations}
               activeConversationId={activeConversationId}

@@ -275,15 +275,18 @@ export const remove = mutation({
     // Track workspace IDs to return
     const daytonaWorkspaceIds: string[] = [];
     
+    let supabaseProjectId: string | undefined;
+
     if (conversation && conversation.projectId) {
       const projectId = conversation.projectId;
       
-      // Get the project to find the workspace ID
+      // Get the project to find the workspace ID and supabase link
       const project = await ctx.db.get(projectId);
       if (project) {
         if (project.daytonaWorkspaceId) {
           daytonaWorkspaceIds.push(project.daytonaWorkspaceId);
         }
+        supabaseProjectId = project.supabaseProjectId;
       }
       
       // 2. Delete all files for this project
@@ -317,7 +320,7 @@ export const remove = mutation({
       await ctx.db.delete(args.id);
     }
     
-    return { success: true, daytonaWorkspaceIds };
+    return { success: true, daytonaWorkspaceIds, supabaseProjectId };
   },
 });
 

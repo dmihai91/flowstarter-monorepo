@@ -238,8 +238,24 @@ export function useConversations(initialConversationId?: Id<'conversations'>): U
   // Delete conversation
   const deleteConversation = useCallback(
     async (id: Id<'conversations'>) => {
+      // Look up conversation to get supabaseProjectId before deleting
+      const convo = conversations?.find(c => c._id === id);
+      const project = convo?.projectId ? await null : null; // project info comes from Convex mutation
+
       // The mutation returns any associated workspace IDs that need cleanup
       const result = await deleteMutation({ id });
+
+      // Also delete from Supabase if linked
+      if (result && typeof result === 'object' && 'supabaseProjectId' in result) {
+        const supabaseId = (result as { supabaseProjectId?: string }).supabaseProjectId;
+        if (supabaseId) {
+          fetch('/api/project/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ supabaseProjectId: supabaseId }),
+          }).catch(e => console.error('Failed to delete from Supabase:', e));
+        }
+      }
 
       /*
        * If there are associated Daytona workspaces, delete them

@@ -30,8 +30,7 @@ export interface ConversationSidebarProps {
   isLoading?: boolean;
   onClose: () => void;
   onSelectConversation: (id: Id<'conversations'>) => void;
-  onNewConversation: () => void;
-  onRenameConversation: (id: Id<'conversations'>, title: string) => void;
+    onRenameConversation: (id: Id<'conversations'>, title: string) => void;
   onProjectNameChange?: (id: Id<'conversations'>, name: string) => void;
   onDeleteConversation: (id: Id<'conversations'>) => void | Promise<void>;
 }

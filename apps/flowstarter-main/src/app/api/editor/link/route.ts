@@ -156,3 +156,36 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+/**
+ * DELETE /api/editor/link
+ * Delete a project from Supabase (called from editor after Convex deletion)
+ */
+export async function DELETE(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { projectId } = body;
+
+    if (!projectId) {
+      return NextResponse.json({ error: 'Missing projectId' }, { status: 400 });
+    }
+
+    const supabase = createSupabaseServiceRoleClient();
+
+    const { error } = await supabase
+      .from('projects')
+      .delete()
+      .eq('id', projectId);
+
+    if (error) {
+      console.error('[Editor Link DELETE] Supabase error:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    console.log('[Editor Link DELETE] Deleted project:', projectId);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('[Editor Link DELETE] Error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}

@@ -78,7 +78,20 @@ export function ConversationItem({
       exit={{ opacity: 0, x: -10 }}
       onMouseEnter={() => setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
-      onClick={() => !isEditing && onSelect()}
+      onTouchStart={() => {
+        // On touch, toggle actions visibility instead of immediately selecting
+        if (!isEditing) setShowActions(prev => !prev);
+      }}
+      onClick={(e) => {
+        if (isEditing) return;
+        // On touch devices, first tap shows actions, second tap selects
+        if ('ontouchstart' in window && !showActions) {
+          e.preventDefault();
+          setShowActions(true);
+          return;
+        }
+        onSelect();
+      }}
       style={{
         padding: '10px 12px',
         marginBottom: '4px',

@@ -132,7 +132,7 @@ export default function TeamInvitePage() {
       </div>
 
       {/* Invite Form */}
-      <div className="p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+      <div className="p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
         <form onSubmit={handleInvite} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="email" className="text-sm text-gray-600 dark:text-white/60">

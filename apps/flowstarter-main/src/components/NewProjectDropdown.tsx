@@ -19,7 +19,7 @@ interface NewProjectDropdownProps {
 }
 
 const DROPDOWN_CONTENT_CLASSES =
-  'w-72 border border-black/5 dark:border-white/10 bg-white/50 dark:bg-white/[0.05] backdrop-blur-xl shadow-[0_8px_32px_0_rgba(31,38,135,0.12)] cursor-pointer';
+  'w-72 border border-black/5 dark:border-white/10 bg-white/55 dark:bg-white/[0.05] backdrop-blur-xl shadow-[0_8px_32px_0_rgba(31,38,135,0.12)] cursor-pointer';
 
 export function NewProjectDropdown({
   variant = 'button',

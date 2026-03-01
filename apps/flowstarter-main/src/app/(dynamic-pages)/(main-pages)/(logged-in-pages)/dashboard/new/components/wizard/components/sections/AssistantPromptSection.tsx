@@ -192,7 +192,7 @@ export const AssistantPromptSection = forwardRef<
                       ))}
                     </motion.div>
                   </CollapsibleContent>
-                  <CollapsibleTrigger className="border border-gray-200/50 dark:border-white/10 flex gap-2 items-center px-3 py-2 rounded-xl bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl hover:bg-white/80 dark:hover:bg-gray-800/80 active:bg-white dark:active:bg-gray-800 transition-all duration-200 w-fit touch-manipulation">
+                  <CollapsibleTrigger className="border border-gray-200/50 dark:border-white/10 flex gap-2 items-center px-3 py-2 rounded-xl bg-white/55 dark:bg-gray-800/60 backdrop-blur-xl hover:bg-white/80 dark:hover:bg-gray-800/80 active:bg-white dark:active:bg-gray-800 transition-all duration-200 w-fit touch-manipulation">
                     {isExamplesOpen ? (
                       <Minus className="h-4 w-4 text-gray-700 dark:text-white" />
                     ) : (

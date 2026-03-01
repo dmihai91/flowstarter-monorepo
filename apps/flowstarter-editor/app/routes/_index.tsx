@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { json, type MetaFunction, type LoaderFunctionArgs } from '@remix-run/cloudflare';
 import { useNavigate, useLoaderData, useSearchParams } from '@remix-run/react';
 import { ClientOnly } from 'remix-utils/client-only';
-import { useQuery, useMutation } from 'convex/react';
+import { useQuery, useMutation, useConvex } from 'convex/react';
 // eslint-disable-next-line no-restricted-imports
 import { api } from '../../convex/_generated/api';
 import { AuthGuard } from '~/components/TeamAuthGuard';
@@ -110,6 +110,10 @@ interface HandoffProject {
   id: string;
   name: string;
   description: string;
+  templateId?: string;
+  status?: string;
+  domainName?: string;
+  projectType?: string;
   config?: {
     userDescription?: string;
     targetUsers?: string;
@@ -135,6 +139,13 @@ function IndexRedirector() {
   // Mutation to create new conversation
   const createConversation = useMutation(api.conversations.create);
 
+  // Convex client for one-off queries
+  const convex = useConvex();
+
+  // Mutations for project cross-linking
+  const createEmptyProject = useMutation(api.projects.createEmpty);
+  const createConversationWithProject = useMutation(api.conversations.createWithProject);
+
   // Handle handoff token validation
   useEffect(() => {
     if (!handoffToken || !hasHandoff || hasRedirected.current) {
@@ -158,55 +169,125 @@ function IndexRedirector() {
         const data = (await response.json()) as { valid?: boolean; projectId?: string; userId?: string };
         console.log('[Index] Handoff validated:', data);
 
-        // If we need full project data, fetch it
-        if (data.valid && data.projectId) {
-          // Store the handoff token for sync operations
-          storeHandoffToken(handoffToken);
-
-          // Store minimal handoff info for the onboarding flow
-          storeHandoffData({
-            projectId: data.projectId,
-            userId: data.userId,
-            fromMainPlatform: true,
-          });
-
-          // Also try to fetch full project data from main platform
-          const fullDataResponse = await fetch('/api/handoff/validate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: handoffToken }),
-          });
-
-          if (fullDataResponse.ok) {
-            const fullData = (await fullDataResponse.json()) as {
-              project?: HandoffProject;
-              userId?: string;
-            };
-
-            if (fullData.project) {
-              storeHandoffData({
-                projectId: fullData.project.id,
-                userId: fullData.userId,
-                name: fullData.project.name,
-                description: fullData.project.description,
-                config: fullData.project.config,
-                fromMainPlatform: true,
-              });
-            }
-          }
+        if (!data.valid || !data.projectId) {
+          setIsValidatingHandoff(false);
+          return;
         }
 
-        // Create new conversation with handoff data
-        hasRedirected.current = true;
+        // Store the handoff token for sync operations
+        storeHandoffToken(handoffToken);
 
-        const newConversationId = await createConversation({
-          sessionId,
-          title: en.pages.createNewProject,
+        // Fetch full project data from main platform
+        let handoffProject: HandoffProject | null = null;
+        const fullDataResponse = await fetch('/api/handoff/validate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: handoffToken }),
         });
 
-        // Clear URL params and redirect
-        console.log('[Index] Created conversation from handoff, redirecting:', newConversationId);
-        navigate(`/project/${newConversationId}`, { replace: true });
+        if (fullDataResponse.ok) {
+          const fullData = (await fullDataResponse.json()) as {
+            project?: HandoffProject;
+            userId?: string;
+          };
+          handoffProject = fullData.project || null;
+        }
+
+        const supabaseProjectId = data.projectId;
+        const projectName = handoffProject?.name || 'Untitled Project';
+        const projectDescription = handoffProject?.description || '';
+        const config = handoffProject?.config;
+
+        // Build businessInfo from handoff config (if dashboard collected business data)
+        const hasBusinessData = !!(
+          config?.userDescription ||
+          projectDescription.length > 10
+        );
+        const businessInfo = hasBusinessData
+          ? {
+              uvp: config?.USP || undefined,
+              targetAudience: config?.targetUsers || undefined,
+              businessGoals: config?.businessGoals ? [config.businessGoals] : undefined,
+              industry: config?.industry || undefined,
+            }
+          : undefined;
+
+        // Store handoff data for downstream use
+        storeHandoffData({
+          projectId: supabaseProjectId,
+          userId: data.userId,
+          name: projectName,
+          description: projectDescription,
+          config,
+          fromMainPlatform: true,
+        });
+
+        hasRedirected.current = true;
+
+        // Check if a Convex project already exists for this Supabase UUID
+        const existingConvexProject = await convex.query(
+          api.projects.getBySupabaseId,
+          { supabaseProjectId }
+        );
+
+        if (existingConvexProject) {
+          // Project already linked — find its conversation or create one
+          console.log('[Index] Found existing Convex project for Supabase UUID:', existingConvexProject._id);
+
+          // Look for existing conversation linked to this project
+          const existingConvos = conversations || [];
+          const linkedConvo = existingConvos.find(
+            (c) => c.projectId === existingConvexProject!._id
+          );
+
+          if (linkedConvo) {
+            console.log('[Index] Redirecting to existing conversation:', linkedConvo._id);
+            navigate(`/project/${linkedConvo._id}`, { replace: true });
+          } else {
+            const newConversationId = await createConversation({
+              sessionId,
+              title: projectName,
+            });
+            console.log('[Index] Created new conversation for existing project:', newConversationId);
+            navigate(`/project/${newConversationId}`, { replace: true });
+          }
+        } else {
+          // Create new Convex project linked to Supabase
+          console.log('[Index] Creating new Convex project for Supabase UUID:', supabaseProjectId);
+
+          const { projectId: convexProjectId, urlId } = await createEmptyProject({
+            name: projectName,
+            description: config?.userDescription || projectDescription,
+            templateId: handoffProject?.templateId || '',
+            supabaseProjectId,
+            ...(hasBusinessData
+              ? {
+                  businessDetails: {
+                    businessName: projectName,
+                    description: config?.userDescription || projectDescription,
+                    targetAudience: config?.targetUsers,
+                    goals: config?.businessGoals ? [config.businessGoals] : undefined,
+                  },
+                }
+              : {}),
+          });
+
+          // Create conversation linked to the new project
+          // If business data exists, set step to 'welcome' so useWelcomeInit
+          // detects businessInfo/projectDescription and skips to template selection
+          const conversationId = await createConversationWithProject({
+            sessionId,
+            projectId: convexProjectId,
+            projectUrlId: urlId,
+            projectName,
+            projectDescription: config?.userDescription || projectDescription,
+            step: hasBusinessData ? 'welcome' : 'describe',
+            businessInfo,
+          });
+
+          console.log('[Index] Created project + conversation from handoff:', convexProjectId, conversationId);
+          navigate(`/project/${conversationId}`, { replace: true });
+        }
       } catch (error) {
         console.error('[Index] Handoff validation error:', error);
         setIsValidatingHandoff(false);
@@ -214,7 +295,7 @@ function IndexRedirector() {
     };
 
     validateAndRedirect();
-  }, [handoffToken, hasHandoff, sessionId, createConversation, navigate]);
+  }, [handoffToken, hasHandoff, sessionId, createConversation, createEmptyProject, createConversationWithProject, convex, conversations, navigate]);
 
   // Normal flow (no handoff or handoff failed)
   useEffect(() => {

@@ -120,7 +120,7 @@ export default function ContactPage() {
 
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Contact Form */}
-            <div className="p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+            <div className="p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                 Send us a message
               </h2>
@@ -321,7 +321,7 @@ export default function ContactPage() {
               </div>
 
               {/* Contact Methods */}
-              <div className="p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+              <div className="p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
                   Other ways to reach us
                 </h2>

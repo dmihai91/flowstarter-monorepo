@@ -138,7 +138,7 @@ export function WizardNavigation({
           <Button
             onClick={() => (onSubmitForReview ? onSubmitForReview() : onNext())}
             disabled={!allowSubmit}
-            className="text-sm sm:text-base !h-10 px-5 bg-black text-white hover:bg-black/90 dark:bg-white dark:text-black dark:hover:bg-gray-200 shadow-md disabled:bg-black/60 disabled:text-white/75 dark:disabled:bg-white/60 dark:disabled:text-black/75"
+            className="text-sm sm:text-base !h-10 px-5 bg-black text-white hover:bg-black/90 dark:bg-white dark:text-black dark:hover:bg-gray-200 shadow-md disabled:bg-black/60 disabled:text-white/75 dark:disabled:bg-white/55 dark:disabled:text-black/75"
           >
             <Check className="h-4 w-4 mr-2 stroke-current" />
             {t('app.publish')}

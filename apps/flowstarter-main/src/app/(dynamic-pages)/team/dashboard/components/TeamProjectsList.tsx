@@ -36,6 +36,7 @@ import {
   Mail,
   BarChart3,
   DollarSign,
+  Code,
 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
@@ -219,6 +220,24 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
 
   const { t } = useTranslations();
 
+  const editorUrl = process.env.NEXT_PUBLIC_EDITOR_URL || 'http://localhost:5173';
+
+  const openInEditor = async (projectId: string) => {
+    try {
+      const res = await fetch('/api/editor/handoff', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId }),
+      });
+      if (!res.ok) throw new Error('Handoff failed');
+      const data = await res.json();
+      window.open(`${editorUrl}?handoff=${data.token}`, '_blank');
+    } catch (error) {
+      console.error('Failed to open in editor:', error);
+      toast.error('Failed to open project in editor');
+    }
+  };
+
   const getStatusColor = (status: string) => {
     if (isLive(status)) return 'bg-emerald-500';
     if (isBuilding(status)) return 'bg-blue-500';
@@ -309,7 +328,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
           </div>
 
           {/* Project Rows */}
-          <div className="border border-white/20 dark:border-white/10 rounded-xl overflow-hidden divide-y divide-white/10 dark:divide-white/5 bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl shadow-lg shadow-black/[0.03]">
+          <div className="border-t border-l border-white/40 dark:border-white/[0.08] border-b border-r border-black/[0.04] dark:border-black/[0.2] rounded-xl overflow-hidden divide-y divide-white/10 dark:divide-white/5 bg-white/55 dark:bg-white/[0.03] backdrop-blur-xl shadow-lg shadow-black/[0.03]">
             {projects.map((project) => {
               const status =
                 typeof project.status === 'string' ? project.status : 'draft';
@@ -373,6 +392,12 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                         >
                           <ExternalLink className="h-4 w-4" />
                           Open Project
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => openInEditor(project.id)}
+                        >
+                          <Code className="h-4 w-4" />
+                          Open in Editor
                         </DropdownMenuItem>
                         {status === 'completed' && (
                           <DropdownMenuItem
@@ -489,6 +514,12 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                             <ExternalLink className="h-4 w-4" />
                             Open Project
                           </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => openInEditor(project.id)}
+                          >
+                            <Code className="h-4 w-4" />
+                            Open in Editor
+                          </DropdownMenuItem>
                           {status === 'completed' && (
                             <DropdownMenuItem
                               onClick={() =>
@@ -583,7 +614,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
             return (
               <div
                 key={project.id}
-                className="group relative p-5 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.02)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset,0_-1px_0_rgba(0,0,0,0.2)_inset] hover:shadow-[0_4px_8px_rgba(0,0,0,0.04),0_12px_24px_rgba(0,0,0,0.06),0_1px_0_rgba(255,255,255,0.9)_inset] dark:hover:shadow-[0_4px_8px_rgba(0,0,0,0.2),0_12px_24px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.08)_inset] hover:border-[var(--purple)]/30 transition-all cursor-pointer"
+                className="group relative p-5 rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl shadow-[0_2px_4px_rgba(0,0,0,0.02),0_8px_16px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.02)_inset] dark:shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.05)_inset,0_-1px_0_rgba(0,0,0,0.2)_inset] hover:shadow-[0_4px_8px_rgba(0,0,0,0.04),0_12px_24px_rgba(0,0,0,0.06),1px_1px_0_rgba(0,0,0,0.03)_inset,-1px_-1px_0_rgba(255,255,255,1)_inset,0_1px_0_rgba(255,255,255,0.9)_inset] dark:hover:shadow-[0_4px_8px_rgba(0,0,0,0.2),0_12px_24px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.08)_inset] hover:border-[var(--purple)]/30 transition-all cursor-pointer"
                 onClick={() =>
                   (window.location.href = `/team/dashboard/projects/${project.id}`)
                 }
@@ -626,6 +657,12 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                       >
                         <ExternalLink className="h-4 w-4" />
                         Open Project
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => openInEditor(project.id)}
+                      >
+                        <Code className="h-4 w-4" />
+                        Open in Editor
                       </DropdownMenuItem>
                       {status === 'completed' && (
                         <DropdownMenuItem

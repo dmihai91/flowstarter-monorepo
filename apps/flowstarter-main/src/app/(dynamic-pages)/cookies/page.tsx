@@ -124,7 +124,7 @@ export default function CookiePolicyPage() {
           </div>
 
           {/* What Are Cookies */}
-          <section className="mb-10 p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+          <section className="mb-10 p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
               What Are Cookies?
             </h2>
@@ -144,7 +144,7 @@ export default function CookiePolicyPage() {
             {cookieTypes.map((type, index) => (
               <section
                 key={index}
-                className="p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5"
+                className="p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5"
               >
                 <div className="flex items-start gap-4 mb-6">
                   <div className="w-12 h-12 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center flex-shrink-0">
@@ -197,7 +197,7 @@ export default function CookiePolicyPage() {
           </div>
 
           {/* Third-Party Cookies */}
-          <section className="mb-10 p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+          <section className="mb-10 p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
               Third-Party Cookies
             </h2>
@@ -225,7 +225,7 @@ export default function CookiePolicyPage() {
           </section>
 
           {/* Managing Cookies */}
-          <section className="mb-10 p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+          <section className="mb-10 p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
               Managing Your Cookie Preferences
             </h2>
@@ -244,7 +244,7 @@ export default function CookiePolicyPage() {
           </section>
 
           {/* Updates */}
-          <section className="mb-10 p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+          <section className="mb-10 p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
               Changes to This Policy
             </h2>

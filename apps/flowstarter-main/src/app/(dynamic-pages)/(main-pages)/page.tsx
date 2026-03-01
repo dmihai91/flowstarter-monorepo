@@ -1047,7 +1047,7 @@ export default function LandingPage() {
                                   />
                                 </svg>
                               </div>
-                              <div className="flex-1 px-3 py-2 rounded-xl rounded-tl-sm bg-white/60 dark:bg-white/[0.05] border border-white/50 dark:border-white/10 text-[13px] text-gray-600 dark:text-white/70">
+                              <div className="flex-1 px-3 py-2 rounded-xl rounded-tl-sm bg-white/55 dark:bg-white/[0.05] border border-white/50 dark:border-white/10 text-[13px] text-gray-600 dark:text-white/70">
                                 {msg.text}
                               </div>
                             </div>
@@ -1070,7 +1070,7 @@ export default function LandingPage() {
                                 />
                               </svg>
                             </div>
-                            <div className="px-3 py-2 rounded-xl rounded-tl-sm bg-white/60 dark:bg-white/[0.05] border border-white/50 dark:border-white/10">
+                            <div className="px-3 py-2 rounded-xl rounded-tl-sm bg-white/55 dark:bg-white/[0.05] border border-white/50 dark:border-white/10">
                               <div className="flex gap-1.5">
                                 <span
                                   className="w-2 h-2 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce"
@@ -1132,7 +1132,7 @@ export default function LandingPage() {
                                 key={prompt}
                                 onClick={() => handleSend(prompt)}
                                 disabled={isTyping}
-                                className="px-3 py-1.5 text-[11px] rounded-full bg-white/50 dark:bg-white/[0.04] backdrop-blur-sm hover:bg-white/70 dark:hover:bg-white/[0.08] border border-white/60 dark:border-white/10 text-gray-600 dark:text-white/50 transition-all disabled:opacity-50 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)]"
+                                className="px-3 py-1.5 text-[11px] rounded-full bg-white/55 dark:bg-white/[0.04] backdrop-blur-sm hover:bg-white/70 dark:hover:bg-white/[0.08] border border-white/60 dark:border-white/10 text-gray-600 dark:text-white/50 transition-all disabled:opacity-50 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)]"
                               >
                                 {prompt}
                               </button>
@@ -1427,7 +1427,7 @@ export default function LandingPage() {
                 </div>
 
                 <div
-                  className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 lg:-top-6 lg:-left-6 w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/60 dark:bg-white/[0.08] backdrop-blur-xl border border-white/50 dark:border-white/10 hidden xs:flex items-center justify-center animate-float shadow-xl"
+                  className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 lg:-top-6 lg:-left-6 w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/55 dark:bg-white/[0.08] backdrop-blur-xl border border-white/50 dark:border-white/10 hidden xs:flex items-center justify-center animate-float shadow-xl"
                   style={{ animationDelay: '0s' }}
                 >
                   <div className="text-base sm:text-lg lg:text-2xl font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
@@ -1555,7 +1555,7 @@ export default function LandingPage() {
 
             <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
               {/* Setup */}
-              <div className="group p-7 rounded-2xl bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)] hover:shadow-[0_16px_48px_rgba(124,58,237,0.1),inset_0_1px_0_rgba(255,255,255,0.9)] dark:hover:shadow-[0_16px_48px_rgba(124,58,237,0.15),inset_0_1px_0_rgba(255,255,255,0.08)] hover:-translate-y-1 transition-all duration-300">
+              <div className="group p-7 rounded-2xl bg-white/55 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)] hover:shadow-[0_16px_48px_rgba(124,58,237,0.1),inset_0_1px_0_rgba(255,255,255,0.9)] dark:hover:shadow-[0_16px_48px_rgba(124,58,237,0.15),inset_0_1px_0_rgba(255,255,255,0.08)] hover:-translate-y-1 transition-all duration-300">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center">
                     <svg
@@ -1619,7 +1619,7 @@ export default function LandingPage() {
               </div>
 
               {/* Monthly subscription */}
-              <div className="group p-7 rounded-2xl bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)] hover:shadow-[0_16px_48px_rgba(124,58,237,0.1),inset_0_1px_0_rgba(255,255,255,0.9)] dark:hover:shadow-[0_16px_48px_rgba(124,58,237,0.15),inset_0_1px_0_rgba(255,255,255,0.08)] hover:-translate-y-1 transition-all duration-300">
+              <div className="group p-7 rounded-2xl bg-white/55 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)] hover:shadow-[0_16px_48px_rgba(124,58,237,0.1),inset_0_1px_0_rgba(255,255,255,0.9)] dark:hover:shadow-[0_16px_48px_rgba(124,58,237,0.15),inset_0_1px_0_rgba(255,255,255,0.08)] hover:-translate-y-1 transition-all duration-300">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center">
                     <svg
@@ -1692,7 +1692,7 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {/* Tech Trust Badges */}
-              <div className="p-6 lg:p-8 rounded-2xl bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)]">
+              <div className="p-6 lg:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)]">
                 <p className="text-xs uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-4 text-center">
                   Built on technology trusted by millions
                 </p>
@@ -2016,7 +2016,7 @@ export default function LandingPage() {
               {/* Coming Soon Tiers */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
                 {/* Growth - Coming Soon */}
-                <div className="group p-6 rounded-2xl bg-white/50 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.05)] hover:shadow-[0_12px_40px_rgba(124,58,237,0.1)] relative overflow-hidden transition-all duration-300">
+                <div className="group p-6 rounded-2xl bg-white/55 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.05)] hover:shadow-[0_12px_40px_rgba(124,58,237,0.1)] relative overflow-hidden transition-all duration-300">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[var(--purple)]/10 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative">
                     <div className="flex items-center justify-between mb-4">
@@ -2042,7 +2042,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* Commerce - Coming Soon */}
-                <div className="group p-6 rounded-2xl bg-white/50 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.05)] hover:shadow-[0_12px_40px_rgba(59,130,246,0.1)] relative overflow-hidden transition-all duration-300">
+                <div className="group p-6 rounded-2xl bg-white/55 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.05)] hover:shadow-[0_12px_40px_rgba(59,130,246,0.1)] relative overflow-hidden transition-all duration-300">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative">
                     <div className="flex items-center justify-between mb-4">
@@ -2099,7 +2099,7 @@ export default function LandingPage() {
               </div>
 
               {/* Not the right fit */}
-              <div className="mt-4 p-6 rounded-2xl bg-white/50 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.05)]">
+              <div className="mt-4 p-6 rounded-2xl bg-white/55 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.05)]">
                 <h4 className="text-base font-semibold text-gray-700 dark:text-white/70 mb-4">
                   {t('landing.notForYou.title')}
                 </h4>
@@ -2166,7 +2166,7 @@ export default function LandingPage() {
                 ].map((faq, i) => (
                   <div
                     key={i}
-                    className={`rounded-2xl bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200 dark:border-white/5 overflow-hidden transition-all hover:bg-[#F9F9FB] dark:hover:bg-white/[0.03] ${
+                    className={`rounded-2xl bg-white/55 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200 dark:border-white/5 overflow-hidden transition-all hover:bg-[#F9F9FB] dark:hover:bg-white/[0.03] ${
                       visibleSections.has('faq-content')
                         ? 'opacity-100 translate-y-0'
                         : 'opacity-0 translate-y-4'

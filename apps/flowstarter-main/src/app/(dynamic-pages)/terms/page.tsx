@@ -236,7 +236,7 @@ export default function TermsPage() {
             ].map((item, i) => (
               <div
                 key={i}
-                className="p-6 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 text-center"
+                className="p-6 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 text-center"
               >
                 <div className="w-12 h-12 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center mx-auto mb-3">
                   <item.Icon className="w-6 h-6 text-[var(--purple)]" />
@@ -256,7 +256,7 @@ export default function TermsPage() {
             {sections.map((section, index) => (
               <section
                 key={index}
-                className="p-8 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5"
+                className="p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5"
               >
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
                   <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center text-sm font-bold text-[var(--purple)]">

@@ -108,7 +108,7 @@ export function Sidebar() {
       'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
       active
         ? 'bg-[var(--purple)] text-white shadow-lg shadow-[var(--purple)]/25'
-        : 'text-gray-600 dark:text-white/60 hover:bg-white/60 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
+        : 'text-gray-600 dark:text-white/60 hover:bg-white/55 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
       isCollapsed && 'justify-center !px-2'
     );
 
@@ -156,7 +156,7 @@ export function Sidebar() {
             title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             className={cn(
               'p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:text-white/40 dark:hover:text-white/60',
-              'hover:bg-white/60 dark:hover:bg-white/5 transition-all'
+              'hover:bg-white/55 dark:hover:bg-white/5 transition-all'
             )}
           >
             {isCollapsed ? (
@@ -220,7 +220,7 @@ export function Sidebar() {
           title={isCollapsed ? t('sidebar.feedback') : undefined}
           className={cn(
             'flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
-            'text-gray-600 dark:text-white/60 hover:bg-white/60 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
+            'text-gray-600 dark:text-white/60 hover:bg-white/55 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
             isCollapsed && 'justify-center !px-2'
           )}
         >
@@ -282,7 +282,7 @@ export function Sidebar() {
       <aside 
         className={cn(
           'hidden md:flex flex-col flex-shrink-0 fixed left-0 top-16 bottom-0 transition-all duration-300 z-40',
-          'bg-white/50 dark:bg-[#12121a]/50 backdrop-blur-2xl backdrop-saturate-150',
+          'bg-white/55 dark:bg-[#12121a]/50 backdrop-blur-2xl backdrop-saturate-150',
           'border-r border-white/60 dark:border-white/10 shadow-[1px_0_3px_rgba(0,0,0,0.05)]',
           isCollapsed ? 'w-[68px]' : 'w-64'
         )}

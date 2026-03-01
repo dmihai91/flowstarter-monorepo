@@ -1,14 +1,14 @@
 import { useId } from 'react';
 
 interface LogoProps {
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   showText?: boolean;
   className?: string;
 }
 
 // Must match main platform's logo.tsx sizes
-const iconSizes = { sm: 28, md: 32, lg: 40, xl: 48 };
-const textSizes = { sm: 20, md: 24, lg: 30, xl: 36 };
+const iconSizes = { xs: 24, sm: 28, md: 32, lg: 40, xl: 48 };
+const textSizes = { xs: 16, sm: 20, md: 24, lg: 30, xl: 36 };
 
 function LogoMark({ size = 'md', className }: { size?: LogoProps['size']; className?: string }) {
   const gradientId = useId();

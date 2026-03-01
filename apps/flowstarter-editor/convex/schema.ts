@@ -242,6 +242,9 @@ export default defineSchema({
     publishedAt: v.optional(v.number()),    // When it was published
     lastPublishedBy: v.optional(v.string()), // Clerk user ID
 
+    // Cross-platform linking
+    supabaseProjectId: v.optional(v.string()), // UUID from Supabase projects table
+
     // Timestamps
     createdAt: v.number(),
     updatedAt: v.number(),
@@ -250,7 +253,8 @@ export default defineSchema({
     .index('by_updatedAt', ['updatedAt'])
     .index('by_workspace', ['daytonaWorkspaceId'])
     .index('by_client', ['clientId'])
-    .index('by_status', ['status']),
+    .index('by_status', ['status'])
+    .index('by_supabaseProjectId', ['supabaseProjectId']),
 
   // Files - editor file contents
   files: defineTable({

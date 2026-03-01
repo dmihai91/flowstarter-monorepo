@@ -54,11 +54,16 @@ export function ConversationSidebar({
               bottom: 0,
               width: '280px',
               background: isDark
-                ? 'rgba(16, 16, 18, 0.92)'
-                : 'rgba(244, 244, 245, 0.95)',
-              backdropFilter: 'blur(24px) saturate(180%)',
-              WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-              borderRight: `1px solid ${colors.borderMedium}`,
+                ? 'linear-gradient(180deg, rgba(16, 16, 18, 0.75) 0%, rgba(10, 10, 12, 0.85) 100%)'
+                : 'linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(248, 248, 250, 0.72) 100%)',
+              backdropFilter: 'blur(32px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+              borderRight: isDark
+                ? '1px solid rgba(255, 255, 255, 0.06)'
+                : '1px solid rgba(255, 255, 255, 0.5)',
+              boxShadow: isDark
+                ? '4px 0 24px rgba(0, 0, 0, 0.3), inset -1px 0 0 rgba(255, 255, 255, 0.04)'
+                : '4px 0 24px rgba(0, 0, 0, 0.06), inset -1px 0 0 rgba(255, 255, 255, 0.8)',
               zIndex: 50,
               display: 'flex',
               flexDirection: 'column',

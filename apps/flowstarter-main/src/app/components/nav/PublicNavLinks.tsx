@@ -24,7 +24,7 @@ export function PublicNavLinks() {
             <Button
               variant="outline"
               size="sm"
-              className="h-9 w-9 rounded-xl px-0 border-gray-200 dark:border-white/40 bg-white/50 dark:bg-white/5 backdrop-blur-sm hover:bg-white/80 dark:hover:bg-white/10 transition-all"
+              className="h-9 w-9 rounded-xl px-0 border-gray-200 dark:border-white/40 bg-white/55 dark:bg-white/5 backdrop-blur-sm hover:bg-white/80 dark:hover:bg-white/10 transition-all"
               aria-label="Navigation menu"
             >
               <MoreVertical className="h-4 w-4" />

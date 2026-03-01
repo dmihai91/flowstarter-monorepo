@@ -182,7 +182,7 @@ export default function HelpPage() {
             </a>
             <a
               href="mailto:hello@flowstarter.app"
-              className="p-6 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 hover:border-[var(--purple)]/40 transition-all group"
+              className="p-6 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 hover:border-[var(--purple)]/40 transition-all group"
             >
               <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-3 group-hover:bg-[var(--purple)]/10 transition-colors">
                 <Mail className="w-6 h-6 text-gray-600 dark:text-white/60 group-hover:text-[var(--purple)] transition-colors" />
@@ -205,7 +205,7 @@ export default function HelpPage() {
               {steps.map((step, i) => (
                 <div
                   key={i}
-                  className="p-6 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5"
+                  className="p-6 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5"
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center">
@@ -235,7 +235,7 @@ export default function HelpPage() {
               {faqs.map((faq, i) => (
                 <div
                   key={i}
-                  className="rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 overflow-hidden"
+                  className="rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 overflow-hidden"
                 >
                   <button
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}

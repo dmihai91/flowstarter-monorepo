@@ -24,7 +24,7 @@ export function DomainPreviewBanner({
     <div className="p-3 rounded-xl bg-linear-to-r from-blue-50/80 to-green-50/60 dark:from-blue-900/20 dark:to-green-900/20 border border-blue-200/30 dark:border-blue-700/30 backdrop-blur-sm">
       <div className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
         <span className="font-semibold">{t('domain.preview.availableAt')}</span>{' '}
-        <span className="font-mono bg-white/60 dark:bg-gray-800/60 px-2 py-1 rounded-xl border border-gray-200/50 dark:border-gray-600/50 text-gray-800 dark:text-gray-200">
+        <span className="font-mono bg-white/55 dark:bg-gray-800/60 px-2 py-1 rounded-xl border border-gray-200/50 dark:border-gray-600/50 text-gray-800 dark:text-gray-200">
           {displayDomain}
         </span>
         <div

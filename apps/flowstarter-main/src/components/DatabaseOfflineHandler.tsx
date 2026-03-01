@@ -114,7 +114,7 @@ export function DatabaseOfflineHandler({
         <div className="max-w-lg w-full space-y-8 relative">
           {/* Icon */}
           <div className="text-center">
-            <div className="relative w-20 h-20 mx-auto mb-6 rounded-2xl bg-white/60 dark:bg-white/[0.04] backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.08)] flex items-center justify-center">
+            <div className="relative w-20 h-20 mx-auto mb-6 rounded-2xl bg-white/55 dark:bg-white/[0.04] backdrop-blur-2xl border-t border-l border-white/40 dark:border-white/[0.08] border-b border-r border-black/[0.04] dark:border-black/[0.2] shadow-[0_8px_32px_rgba(0,0,0,0.08)] flex items-center justify-center">
               <WifiOff className="h-10 w-10 text-[var(--purple)]" />
             </div>
           </div>
@@ -130,7 +130,7 @@ export function DatabaseOfflineHandler({
           </div>
 
           {/* Status Card */}
-          <div className="rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] p-5">
+          <div className="rounded-2xl border-t border-l border-white/40 dark:border-white/[0.08] border-b border-r border-black/[0.04] dark:border-black/[0.2] bg-white/55 dark:bg-white/[0.04] backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] p-5">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center flex-shrink-0">
                 <AlertTriangle className="h-5 w-5 text-amber-500" />
@@ -169,7 +169,7 @@ export function DatabaseOfflineHandler({
           </Button>
 
           {/* What you can do */}
-          <div className="rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] p-6">
+          <div className="rounded-2xl border-t border-l border-white/40 dark:border-white/[0.08] border-b border-r border-black/[0.04] dark:border-black/[0.2] bg-white/55 dark:bg-white/[0.04] backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] p-6">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
               {t('database.offline.whatYouCanDo')}
             </h3>

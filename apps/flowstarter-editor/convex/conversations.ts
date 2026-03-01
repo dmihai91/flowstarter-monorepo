@@ -181,8 +181,21 @@ export const createWithProject = mutation({
     projectId: v.id("projects"),
     projectUrlId: v.string(),
     projectDescription: v.optional(v.string()),
+    projectName: v.optional(v.string()),
     step: v.optional(v.string()),
     messages: v.optional(v.array(messageSchema)),
+    businessInfo: v.optional(
+      v.object({
+        uvp: v.optional(v.string()),
+        targetAudience: v.optional(v.string()),
+        businessGoals: v.optional(v.array(v.string())),
+        brandTone: v.optional(v.string()),
+        sellingMethod: v.optional(v.string()),
+        sellingMethodDetails: v.optional(v.string()),
+        pricingOffers: v.optional(v.string()),
+        industry: v.optional(v.string()),
+      })
+    ),
   },
   handler: async (ctx, args) => {
     const now = Date.now();
@@ -199,11 +212,13 @@ export const createWithProject = mutation({
 
     return await ctx.db.insert("conversations", {
       sessionId: args.sessionId,
-      title: "", // Empty title - will be set when project name is generated
+      title: args.projectName || "", // Use project name if available
       isActive: true,
       projectId: args.projectId,
+      projectName: args.projectName,
       projectUrlId: args.projectUrlId,
       projectDescription: args.projectDescription,
+      businessInfo: args.businessInfo,
       step: args.step || "describe",
       messages: args.messages || [],
       createdAt: now,

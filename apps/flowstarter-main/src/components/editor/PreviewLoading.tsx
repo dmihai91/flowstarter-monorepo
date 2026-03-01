@@ -29,7 +29,7 @@ export function PreviewLoading({
       {/* Main content */}
       <div className="relative flex flex-col items-center justify-center px-6 animate-fade-in z-10">
         {/* Glassmorphic card container */}
-        <div className="glass-3d relative overflow-hidden rounded-[16px] px-8 py-10 backdrop-blur-xl border border-gray-300/60 dark:border-white/15 bg-white/50 dark:bg-[rgba(58,58,74,0.25)] shadow-[0_8px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.5),inset_0_2px_6px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.05),inset_0_2px_6px_rgba(0,0,0,0.08)]">
+        <div className="glass-3d relative overflow-hidden rounded-[16px] px-8 py-10 backdrop-blur-xl border border-gray-300/60 dark:border-white/15 bg-white/55 dark:bg-[rgba(58,58,74,0.25)] shadow-[0_8px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.5),inset_0_2px_6px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.05),inset_0_2px_6px_rgba(0,0,0,0.08)]">
           <div className="relative z-10 flex flex-col items-center">
             {/* Animated spinner with assistant icon */}
             <div className="relative w-20 h-20 mb-8">

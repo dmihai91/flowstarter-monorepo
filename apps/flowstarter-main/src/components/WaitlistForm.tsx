@@ -92,7 +92,7 @@ export function WaitlistForm({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t('waitlist.landing.emailPlaceholder')}
-                  className="h-14 pl-12 text-base rounded-xl backdrop-blur-xl border-white/60 dark:border-white/30 bg-white/60 dark:bg-white/10 focus:border-[var(--purple)]/40 dark:focus:border-[var(--purple)]"
+                  className="h-14 pl-12 text-base rounded-xl backdrop-blur-xl border-white/60 dark:border-white/30 bg-white/55 dark:bg-white/10 focus:border-[var(--purple)]/40 dark:focus:border-[var(--purple)]"
                   required
                   disabled={state === 'submitting'}
                 />

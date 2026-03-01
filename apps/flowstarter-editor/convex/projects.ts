@@ -379,6 +379,8 @@ export const createEmpty = mutation({
     // Client and team member linking (for internal flow)
     clientId: v.optional(v.id('clients')),
     createdBy: v.optional(v.string()), // Clerk user ID
+    // Cross-platform linking
+    supabaseProjectId: v.optional(v.string()), // UUID from Supabase
   },
   handler: async (ctx, args) => {
     const now = Date.now();
@@ -429,6 +431,7 @@ export const createEmpty = mutation({
       // New fields for client/team flow
       clientId: args.clientId,
       createdBy: args.createdBy,
+      supabaseProjectId: args.supabaseProjectId,
       status: args.clientId ? 'draft' : undefined, // Set status if client-linked
       createdAt: now,
       updatedAt: now,
@@ -559,6 +562,34 @@ export const getPreviewUrl = query({
       sandboxId: project.daytonaWorkspaceId,  
     };  
   },  
+});
+
+// Link an existing Convex project to a Supabase project
+export const linkToSupabase = mutation({
+  args: {
+    projectId: v.id('projects'),
+    supabaseProjectId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.projectId, {
+      supabaseProjectId: args.supabaseProjectId,
+      updatedAt: Date.now(),
+    });
+    return { success: true };
+  },
+});
+
+// Look up a Convex project by its Supabase UUID (for dedup)
+export const getBySupabaseId = query({
+  args: { supabaseProjectId: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query('projects')
+      .withIndex('by_supabaseProjectId', (q) =>
+        q.eq('supabaseProjectId', args.supabaseProjectId)
+      )
+      .first();
+  },
 });
 
 // Check if a project name or slug is already taken

@@ -51,7 +51,7 @@ export function ChatInput({
 
   return (
     <div
-      className="flex flex-col items-start shrink-0 w-full backdrop-blur-xl border border-white/60 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)] transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.9)] dark:hover:shadow-[0_12px_40px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.08)]"
+      className="flex flex-col items-start shrink-0 w-full backdrop-blur-xl border border-white/60 dark:border-white/10 bg-white/55 dark:bg-white/[0.04] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)] transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.9)] dark:hover:shadow-[0_12px_40px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.08)]"
       style={{
         padding: '20px 20px 20px 28px',
         gap: '12px',

@@ -37,7 +37,7 @@ export interface BusinessCategory {
   /** Template category IDs that best match this business type */
   preferredTemplateCategories: string[];
   /** Quick idea prompts for onboarding (shown as starter suggestions) */
-  quickIdeas: Array<{ id: string; text: string }>;
+  quickIdeas: Array<{ id: string; textKey: string }>;
   /** Example goals relevant to this category */
   exampleGoals: string[];
   /** Common selling methods for this category */
@@ -56,9 +56,9 @@ export const SUPPORTED_CATEGORIES: BusinessCategory[] = [
     keywords: ['coach', 'coaching', 'consultant', 'consulting', 'mentor', 'mentoring', 'advisor', 'strategist'],
     preferredTemplateCategories: ['business', 'health'],
     quickIdeas: [
-      { id: 'life-coach', text: 'A life coach website with transformation packages, testimonials, and booking calendar' },
-      { id: 'business-coach', text: 'A business coach site with programs, success stories, and free discovery call booking' },
-      { id: 'career-coach', text: 'A career coaching site with resume services, testimonials, and session booking' },
+      { id: 'life-coach', textKey: 'quickIdeas.life-coach' },
+      { id: 'business-coach', textKey: 'quickIdeas.business-coach' },
+      { id: 'career-coach', textKey: 'quickIdeas.career-coach' },
     ],
     exampleGoals: ['get more bookings', 'attract ideal clients', 'build authority'],
     commonSellingMethods: ['bookings', 'subscriptions', 'content'],
@@ -72,9 +72,9 @@ export const SUPPORTED_CATEGORIES: BusinessCategory[] = [
     keywords: ['psycholog', 'therap', 'counselor', 'counselling', 'counseling', 'mental health', 'psychotherapy', 'CBT', 'EMDR'],
     preferredTemplateCategories: ['health', 'healthcare'],
     quickIdeas: [
-      { id: 'psychologist', text: 'A psychologist practice site with services, credentials, and appointment booking' },
-      { id: 'therapist', text: 'A therapist website with specializations, session types, and online booking' },
-      { id: 'counselor', text: 'A counseling practice site with services, approach, and contact form' },
+      { id: 'psychologist', textKey: 'quickIdeas.psychologist' },
+      { id: 'therapist', textKey: 'quickIdeas.therapist' },
+      { id: 'counselor', textKey: 'quickIdeas.counselor' },
     ],
     exampleGoals: ['fill appointment slots', 'reach new clients', 'establish credibility'],
     commonSellingMethods: ['bookings', 'leads'],
@@ -88,9 +88,9 @@ export const SUPPORTED_CATEGORIES: BusinessCategory[] = [
     keywords: ['fitness', 'trainer', 'training', 'yoga', 'pilates', 'workout', 'exercise', 'strength', 'crossfit', 'HIIT'],
     preferredTemplateCategories: ['fitness', 'health'],
     quickIdeas: [
-      { id: 'personal-trainer', text: 'A personal trainer site with programs, transformation gallery, and session booking' },
-      { id: 'yoga-instructor', text: 'A yoga instructor website with class schedule, online sessions, and memberships' },
-      { id: 'online-coach', text: 'An online fitness coach site with programs, client results, and coaching packages' },
+      { id: 'personal-trainer', textKey: 'quickIdeas.personal-trainer' },
+      { id: 'yoga-instructor', textKey: 'quickIdeas.yoga-instructor' },
+      { id: 'online-coach', textKey: 'quickIdeas.online-coach' },
     ],
     exampleGoals: ['get more clients', 'sell training packages', 'fill class spots'],
     commonSellingMethods: ['bookings', 'subscriptions', 'ecommerce'],
@@ -104,9 +104,9 @@ export const SUPPORTED_CATEGORIES: BusinessCategory[] = [
     keywords: ['nutrition', 'dietitian', 'massage', 'acupunctur', 'naturopath', 'holistic', 'wellness', 'healing', 'reiki', 'chiropract'],
     preferredTemplateCategories: ['health', 'healthcare'],
     quickIdeas: [
-      { id: 'nutritionist', text: 'A nutritionist site with meal plans, consultation packages, and booking' },
-      { id: 'massage-therapist', text: 'A massage therapist site with services, pricing, and appointment booking' },
-      { id: 'wellness-coach', text: 'A wellness practitioner site with services, approach, and online booking' },
+      { id: 'nutritionist', textKey: 'quickIdeas.nutritionist' },
+      { id: 'massage-therapist', textKey: 'quickIdeas.massage-therapist' },
+      { id: 'wellness-coach', textKey: 'quickIdeas.wellness-coach' },
     ],
     exampleGoals: ['book more appointments', 'attract local clients', 'build recurring clientele'],
     commonSellingMethods: ['bookings', 'subscriptions'],
@@ -120,9 +120,9 @@ export const SUPPORTED_CATEGORIES: BusinessCategory[] = [
     keywords: ['stylist', 'styling', 'hair', 'makeup', 'beauty', 'nails', 'salon', 'barber', 'aesthet', 'lash', 'brow', 'skincare'],
     preferredTemplateCategories: ['personal-brand', 'health'],
     quickIdeas: [
-      { id: 'stylist', text: 'An independent stylist site with portfolio, services, and appointment booking' },
-      { id: 'makeup-artist', text: 'A makeup artist site with portfolio, packages, and booking form' },
-      { id: 'esthetician', text: 'An esthetician site with treatment menu, pricing, and online booking' },
+      { id: 'stylist', textKey: 'quickIdeas.stylist' },
+      { id: 'makeup-artist', textKey: 'quickIdeas.makeup-artist' },
+      { id: 'esthetician', textKey: 'quickIdeas.esthetician' },
     ],
     exampleGoals: ['book more appointments', 'showcase portfolio', 'attract local clients'],
     commonSellingMethods: ['bookings', 'ecommerce'],
@@ -136,9 +136,9 @@ export const SUPPORTED_CATEGORIES: BusinessCategory[] = [
     keywords: ['photographer', 'photography', 'videograph', 'designer', 'design', 'illustrat', 'creative', 'freelance', 'brand'],
     preferredTemplateCategories: ['personal-brand', 'creative'],
     quickIdeas: [
-      { id: 'photographer', text: 'A freelance photographer portfolio with galleries, packages, and booking' },
-      { id: 'designer', text: 'A freelance designer portfolio with case studies, services, and inquiry form' },
-      { id: 'videographer', text: 'A videographer site with showreel, packages, and project inquiry form' },
+      { id: 'photographer', textKey: 'quickIdeas.photographer' },
+      { id: 'designer', textKey: 'quickIdeas.designer' },
+      { id: 'videographer', textKey: 'quickIdeas.videographer' },
     ],
     exampleGoals: ['get hired for projects', 'showcase work', 'attract ideal clients'],
     commonSellingMethods: ['leads', 'bookings'],
@@ -152,9 +152,9 @@ export const SUPPORTED_CATEGORIES: BusinessCategory[] = [
     keywords: ['tutor', 'tutoring', 'teacher', 'teaching', 'instructor', 'lesson', 'education', 'music teacher', 'language'],
     preferredTemplateCategories: ['business', 'education'],
     quickIdeas: [
-      { id: 'private-tutor', text: 'A private tutor site with subjects, rates, testimonials, and booking' },
-      { id: 'music-teacher', text: 'A music teacher site with lesson types, student showcases, and scheduling' },
-      { id: 'language-tutor', text: 'A language tutor site with programs, pricing, and trial lesson booking' },
+      { id: 'private-tutor', textKey: 'quickIdeas.private-tutor' },
+      { id: 'music-teacher', textKey: 'quickIdeas.music-teacher' },
+      { id: 'language-tutor', textKey: 'quickIdeas.language-tutor' },
     ],
     exampleGoals: ['fill lesson schedule', 'attract new students', 'build reputation'],
     commonSellingMethods: ['bookings', 'subscriptions'],
@@ -290,7 +290,7 @@ export function isSupportedBusinessType(description: string): boolean {
 /**
  * Get all quick ideas across all categories, shuffled.
  */
-export function getAllQuickIdeas(count = 4): Array<{ id: string; text: string }> {
+export function getAllQuickIdeas(count = 4): Array<{ id: string; textKey: string }> {
   const all = SUPPORTED_CATEGORIES.flatMap((c) => c.quickIdeas);
   const shuffled = [...all].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, count);

@@ -1,4 +1,5 @@
 import type { SystemFont, SuggestedReply, CategoryColors } from './types';
+import { en } from '~/lib/i18n/locales/en';
 
 /*
  * ─── Translation Keys for Suggested Replies ──────────────────────────────────
@@ -70,13 +71,13 @@ export type ReplyKey = (typeof REPLY_KEYS)[keyof typeof REPLY_KEYS];
  */
 export const REPLY_LABELS: Record<ReplyKey, string> = {
   // Welcome step - example prompts (these go directly to describe flow)
-  [REPLY_KEYS.WELCOME_LETS_GO]: "I'm a life coach helping busy professionals find balance",
-  
+  [REPLY_KEYS.WELCOME_LETS_GO]: en.quickIdeas['life-coach'],
+
   // More welcome examples
-  [REPLY_KEYS.DESCRIBE_COACH]: "I'm a business coach for entrepreneurs",
-  [REPLY_KEYS.DESCRIBE_THERAPIST]: "I'm a therapist specializing in anxiety and stress",
-  [REPLY_KEYS.DESCRIBE_PHOTOGRAPHER]: "I'm a wedding photographer based in NYC",
-  [REPLY_KEYS.DESCRIBE_TRAINER]: "I'm a personal trainer for women over 40",
+  [REPLY_KEYS.DESCRIBE_COACH]: en.quickIdeas['business-coach'],
+  [REPLY_KEYS.DESCRIBE_THERAPIST]: en.quickIdeas['therapist'],
+  [REPLY_KEYS.DESCRIBE_PHOTOGRAPHER]: en.quickIdeas['photographer'],
+  [REPLY_KEYS.DESCRIBE_TRAINER]: en.quickIdeas['personal-trainer'],
 
   // UVP step
   [REPLY_KEYS.UVP_SKIP]: "Skip for now",
@@ -444,36 +445,36 @@ export const GOOGLE_FONTS_URL =
 /** Service business prompts with brief descriptions */
 export const SERVICE_PROMPTS: SuggestedReply[] = [
   // Coaches & Consultants
-  { id: 'example-coach', text: "I'm a life coach — I help professionals find work-life balance" },
-  { id: 'example-business-coach', text: "I'm a business coach — I help entrepreneurs grow their companies" },
-  { id: 'example-career-coach', text: "I'm a career coach — I help people land their dream jobs" },
+  { id: 'example-coach', text: en.quickIdeas['life-coach'] },
+  { id: 'example-business-coach', text: en.quickIdeas['business-coach'] },
+  { id: 'example-career-coach', text: en.quickIdeas['career-coach'] },
 
   // Fitness & Wellness
-  { id: 'example-trainer', text: "I'm a personal trainer — I help clients get fit and lose weight" },
-  { id: 'example-yoga', text: "I'm a yoga instructor — I teach vinyasa and meditation classes" },
-  { id: 'example-nutritionist', text: "I'm a nutritionist — I create personalized meal plans" },
+  { id: 'example-trainer', text: en.quickIdeas['personal-trainer'] },
+  { id: 'example-yoga', text: en.quickIdeas['yoga-instructor'] },
+  { id: 'example-nutritionist', text: en.quickIdeas['nutritionist'] },
 
   // Mental Health & Therapy
-  { id: 'example-therapist', text: "I'm a therapist — I specialize in anxiety and stress management" },
-  { id: 'example-counselor', text: "I'm a counselor — I help couples improve their relationships" },
+  { id: 'example-therapist', text: en.quickIdeas['therapist'] },
+  { id: 'example-counselor', text: en.quickIdeas['counselor'] },
 
   // Creative
-  { id: 'example-photographer', text: "I'm a photographer — I capture weddings and special events" },
-  { id: 'example-designer', text: "I'm a graphic designer — I create brands and marketing materials" },
-  { id: 'example-videographer', text: "I'm a videographer — I produce videos for businesses" },
+  { id: 'example-photographer', text: en.quickIdeas['photographer'] },
+  { id: 'example-designer', text: en.quickIdeas['designer'] },
+  { id: 'example-videographer', text: en.quickIdeas['videographer'] },
 
   // Beauty & Styling
-  { id: 'example-stylist', text: "I'm a personal stylist — I help clients upgrade their wardrobe" },
-  { id: 'example-makeup', text: "I'm a makeup artist — I do bridal and event makeup" },
-  { id: 'example-hair', text: "I'm a hair stylist — I specialize in cuts and coloring" },
+  { id: 'example-stylist', text: en.quickIdeas['stylist'] },
+  { id: 'example-makeup', text: en.quickIdeas['makeup-artist'] },
+  { id: 'example-esthetician', text: en.quickIdeas['esthetician'] },
 
   // Education
-  { id: 'example-tutor', text: "I'm a tutor — I teach math and science to high schoolers" },
-  { id: 'example-music', text: "I'm a music teacher — I give piano lessons to all ages" },
+  { id: 'example-tutor', text: en.quickIdeas['private-tutor'] },
+  { id: 'example-music', text: en.quickIdeas['music-teacher'] },
 
-  // Local Services
-  { id: 'example-massage', text: "I'm a massage therapist — I offer relaxation and sports massage" },
-  { id: 'example-consultant', text: "I'm a consultant — I help small businesses with marketing" },
+  // Wellness & Local Services
+  { id: 'example-massage', text: en.quickIdeas['massage-therapist'] },
+  { id: 'example-wellness', text: en.quickIdeas['wellness-coach'] },
 ];
 
 export function getRandomServicePrompts(count = 5): SuggestedReply[] {

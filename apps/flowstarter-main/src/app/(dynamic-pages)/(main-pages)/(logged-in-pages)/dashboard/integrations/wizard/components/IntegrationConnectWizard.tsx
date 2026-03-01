@@ -124,7 +124,7 @@ export default function IntegrationConnectWizard({
 
       <div className="grid gap-6">
         {step === 1 && (
-          <div className="rounded-xl border border-black/5 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.06)]">
+          <div className="rounded-xl border border-black/5 dark:border-white/10 bg-white/55 dark:bg-white/5 backdrop-blur-xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.06)]">
             {loading && (
               <div className="text-center py-8">
                 <p className="text-gray-700 dark:text-gray-300 mb-4">
@@ -150,7 +150,7 @@ export default function IntegrationConnectWizard({
         )}
 
         {step === 2 && provider === 'google-analytics' && (
-          <div className="rounded-xl border border-black/5 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.06)] space-y-4">
+          <div className="rounded-xl border border-black/5 dark:border-white/10 bg-white/55 dark:bg-white/5 backdrop-blur-xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.06)] space-y-4">
             <h2 className="font-semibold text-gray-900 dark:text-gray-100">
               Select GA4 resources
             </h2>
@@ -254,7 +254,7 @@ export default function IntegrationConnectWizard({
         )}
 
         {step === 3 && (
-          <div className="rounded-xl border border-black/5 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.06)]">
+          <div className="rounded-xl border border-black/5 dark:border-white/10 bg-white/55 dark:bg-white/5 backdrop-blur-xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.06)]">
             <p className="text-green-700 dark:text-green-400 font-medium">
               Connected successfully. You can manage this integration from the
               Integrations page.

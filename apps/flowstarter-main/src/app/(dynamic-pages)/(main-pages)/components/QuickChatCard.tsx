@@ -52,7 +52,7 @@ export default function QuickChatCard() {
         </Badge>
       </div>
 
-      <div className="rounded-2xl border border-gray-200/70 dark:border-gray-800 bg-white/60 dark:bg-gray-900/50 p-4">
+      <div className="rounded-2xl border border-gray-200/70 dark:border-gray-800 bg-white/55 dark:bg-gray-900/50 p-4">
         <div className="flex items-start gap-3">
           <div className="mt-1 rounded-xl bg-[var(--purple)]/10 p-2 text-[var(--purple)] dark:text-[var(--purple)]">
             <Bot className="h-5 w-5" />

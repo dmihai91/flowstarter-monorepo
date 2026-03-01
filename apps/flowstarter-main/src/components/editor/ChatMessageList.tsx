@@ -591,7 +591,7 @@ export function ChatMessageList({
 
                     {/* Message bubble */}
                     <div
-                      className="glass-3d flex flex-col items-start rounded-[16px] shrink-0 w-full backdrop-blur-xl border border-gray-300/60 dark:border-white/15 bg-white/50 dark:bg-[rgba(58,58,74,0.25)] shadow-[0_8px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.5),inset_0_2px_6px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.05),inset_0_2px_6px_rgba(0,0,0,0.08)]"
+                      className="glass-3d flex flex-col items-start rounded-[16px] shrink-0 w-full backdrop-blur-xl border border-gray-300/60 dark:border-white/15 bg-white/55 dark:bg-[rgba(58,58,74,0.25)] shadow-[0_8px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.5),inset_0_2px_6px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.05),inset_0_2px_6px_rgba(0,0,0,0.08)]"
                       style={{
                         padding: '12px 16px',
                         gap: '12px',
@@ -683,7 +683,7 @@ export function ChatMessageList({
 
                     {/* Message bubble */}
                     <div
-                      className="glass-3d flex flex-col items-start rounded-[16px] shrink-0 w-full whitespace-pre-wrap backdrop-blur-xl border border-gray-300/60 dark:border-white/15 dark:text-white text-gray-900 bg-white/50 dark:bg-[rgba(58,58,74,0.25)] shadow-[0_8px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.5),inset_0_2px_6px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.05),inset_0_2px_6px_rgba(0,0,0,0.08)]"
+                      className="glass-3d flex flex-col items-start rounded-[16px] shrink-0 w-full whitespace-pre-wrap backdrop-blur-xl border border-gray-300/60 dark:border-white/15 dark:text-white text-gray-900 bg-white/55 dark:bg-[rgba(58,58,74,0.25)] shadow-[0_8px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.5),inset_0_2px_6px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.05),inset_0_2px_6px_rgba(0,0,0,0.08)]"
                       style={{
                         fontFamily: 'Inter, sans-serif',
                         fontSize: '16px',

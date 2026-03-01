@@ -23,7 +23,7 @@ export function ClientInfoStep({ projectData, updateField }: ClientInfoStepProps
             placeholder="John Smith"
             value={projectData.clientName}
             onChange={(e) => updateField('clientName', e.target.value)}
-            className="h-12 bg-white/50 dark:bg-white/5 border-gray-200 dark:border-white/10"
+            className="h-12 bg-white/55 dark:bg-white/5 border-gray-200 dark:border-white/10"
           />
         </div>
 
@@ -34,7 +34,7 @@ export function ClientInfoStep({ projectData, updateField }: ClientInfoStepProps
             placeholder="john@example.com"
             value={projectData.clientEmail}
             onChange={(e) => updateField('clientEmail', e.target.value)}
-            className="h-12 bg-white/50 dark:bg-white/5 border-gray-200 dark:border-white/10"
+            className="h-12 bg-white/55 dark:bg-white/5 border-gray-200 dark:border-white/10"
           />
         </div>
 
@@ -45,7 +45,7 @@ export function ClientInfoStep({ projectData, updateField }: ClientInfoStepProps
             placeholder="+49 123 456 7890"
             value={projectData.clientPhone}
             onChange={(e) => updateField('clientPhone', e.target.value)}
-            className="h-12 bg-white/50 dark:bg-white/5 border-gray-200 dark:border-white/10"
+            className="h-12 bg-white/55 dark:bg-white/5 border-gray-200 dark:border-white/10"
           />
         </div>
       </div>

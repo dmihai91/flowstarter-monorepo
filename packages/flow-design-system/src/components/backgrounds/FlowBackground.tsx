@@ -18,10 +18,10 @@ interface VariantConfig {
 }
 
 const variants: Record<FlowBackgroundVariant, VariantConfig> = {
-  dashboard: { bgLight: '#ffffff', bgDark: '#07070a', glowLight: 0.4, glowDark: 0.12, lineLight: 0.05, lineDark: 0.06 },
-  editor:    { bgLight: '#0a0a0c', bgDark: '#0a0a0c', glowLight: 0.15, glowDark: 0.15, lineLight: 0.07, lineDark: 0.07 },
-  landing:   { bgLight: '#ffffff', bgDark: '#07070a', glowLight: 0.5, glowDark: 0.15, lineLight: 0.06, lineDark: 0.07 },
-  wizard:    { bgLight: '#ffffff', bgDark: '#07070a', glowLight: 0.35, glowDark: 0.1, lineLight: 0.04, lineDark: 0.05 },
+  dashboard: { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.5, glowDark: 0.12, lineLight: 0.05, lineDark: 0.06 },
+  editor:    { bgLight: '#f8f8fa', bgDark: '#0a0a0c', glowLight: 0.5, glowDark: 0.15, lineLight: 0.06, lineDark: 0.07 },
+  landing:   { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.55, glowDark: 0.15, lineLight: 0.06, lineDark: 0.07 },
+  wizard:    { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.45, glowDark: 0.1, lineLight: 0.05, lineDark: 0.05 },
 };
 
 const animationCSS = `
@@ -65,8 +65,8 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
     const bg = isDark ? config.bgDark : config.bgLight;
     const glowOpacity = isDark ? config.glowDark : config.glowLight;
     const lineOpacity = isDark ? config.lineDark : config.lineLight;
-    const warmOpacity = isDark ? 0.06 : 0.2;
-    const violetAccentOpacity = isDark ? 0.06 : 0.15;
+    const warmOpacity = isDark ? 0.06 : 0.25;
+    const violetAccentOpacity = isDark ? 0.06 : 0.2;
 
     return (
       <div
@@ -80,39 +80,57 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
         {/* Base background */}
         <div style={{ position: 'absolute', inset: 0, background: bg }} />
 
-        {/* Top purple/indigo glow */}
+        {/* Top-center indigo/purple glow — large, dominant */}
         <div
           style={{
-            position: 'absolute', top: '-200px', left: '50%', transform: 'translateX(-50%)',
-            width: '1000px', height: '500px', borderRadius: '9999px', opacity: glowOpacity,
-            background: 'radial-gradient(ellipse, rgba(99, 102, 241, 0.4) 0%, transparent 70%)',
+            position: 'absolute', top: '-180px', left: '50%', transform: 'translateX(-50%)',
+            width: '1100px', height: '550px', borderRadius: '9999px', opacity: glowOpacity,
+            background: 'radial-gradient(ellipse, rgba(99, 102, 241, 0.5) 0%, rgba(99, 102, 241, 0.15) 40%, transparent 70%)',
+          }}
+        />
+
+        {/* Top-left blue accent */}
+        <div
+          style={{
+            position: 'absolute', top: '-50px', left: '-150px',
+            width: '600px', height: '400px', borderRadius: '9999px', opacity: glowOpacity * 0.7,
+            background: 'radial-gradient(ellipse, rgba(59, 130, 246, 0.35) 0%, transparent 65%)',
           }}
         />
 
         {/* Right violet glow */}
         <div
           style={{
-            position: 'absolute', top: '25%', right: '-100px',
-            width: '500px', height: '500px', borderRadius: '9999px', opacity: glowOpacity,
-            background: 'radial-gradient(ellipse, rgba(139, 92, 246, 0.3) 0%, transparent 70%)',
+            position: 'absolute', top: '20%', right: '-80px',
+            width: '550px', height: '550px', borderRadius: '9999px', opacity: glowOpacity,
+            background: 'radial-gradient(ellipse, rgba(139, 92, 246, 0.4) 0%, rgba(139, 92, 246, 0.1) 45%, transparent 70%)',
+          }}
+        />
+
+        {/* Center-left cyan/teal accent */}
+        <div
+          style={{
+            position: 'absolute', top: '45%', left: '-50px',
+            width: '450px', height: '350px', borderRadius: '9999px', opacity: glowOpacity * 0.6,
+            background: 'radial-gradient(ellipse, rgba(6, 182, 212, 0.3) 0%, transparent 65%)',
           }}
         />
 
         {/* Bottom left warm accent */}
         <div
           style={{
-            position: 'absolute', bottom: '-100px', left: '-100px',
+            position: 'absolute', bottom: '-80px', left: '-80px',
             width: '600px', height: '400px', borderRadius: '9999px', opacity: warmOpacity,
-            background: 'radial-gradient(ellipse, rgba(251, 191, 36, 0.25) 0%, transparent 70%)',
+            background: 'radial-gradient(ellipse, rgba(251, 191, 36, 0.3) 0%, rgba(251, 146, 60, 0.1) 40%, transparent 70%)',
           }}
         />
 
         {/* Bottom right violet accent */}
         <div
           style={{
-            position: 'absolute', bottom: '-150px', right: '25%',
-            width: '500px', height: '400px', borderRadius: '9999px', opacity: violetAccentOpacity,
-            background: 'radial-gradient(ellipse, rgba(167, 139, 250, 0.25) 0%, transparent 70%)',
+            position: 'absolute', bottom: '-120px', right: '20%',
+            width: '550px', height: '450px', borderRadius: '9999px', opacity: violetAccentOpacity,
+            background: 'radial-gradient(ellipse, rgba(167, 139, 250, 0.35) 0%, rgba(139, 92, 246, 0.1) 45%, transparent 70%)',
           }}
         />
 

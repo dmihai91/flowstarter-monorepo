@@ -3,8 +3,10 @@ import { type MetaFunction } from '@remix-run/cloudflare';
 import { useNavigate } from '@remix-run/react';
 import { ClientOnly } from 'remix-utils/client-only';
 import { useMutation } from 'convex/react';
+import { useSession } from '@clerk/remix';
 // eslint-disable-next-line no-restricted-imports
 import { api } from '../../convex/_generated/api';
+import { linkProjectToSupabase } from '~/lib/services/projectLinkService';
 import { EditorChatPanel } from '~/components/editor/EditorChatPanel';
 import { AuthGuard } from '~/components/TeamAuthGuard';
 import { LoadingScreen } from '~/components/LoadingScreen';
@@ -60,10 +62,12 @@ function NewProjectInner() {
 
   const { selectConversation, activeConversation } = useConversationContext();
   const convexProjectId = activeConversation?.projectId;
+  const { session } = useSession();
 
   // Mutations
   const createEmptyProject = useMutation(api.projects.createEmpty);
   const createConversationWithProject = useMutation(api.conversations.createWithProject);
+  const linkToSupabase = useMutation(api.projects.linkToSupabase);
 
   // Session ID needed for creation
   const [sessionId] = useState(getOrCreateSessionId);
@@ -101,8 +105,31 @@ function NewProjectInner() {
 
         try {
           // 1. Create empty project first
-          const { projectId, urlId } = await createEmptyProject();
+          const { projectId, urlId } = await createEmptyProject({});
           console.log('[New] Created project:', projectId, urlId);
+
+          // 1b. Fire-and-forget: sync to Supabase for dashboard visibility
+          (async () => {
+            try {
+              const token = await session?.getToken();
+              if (!token) return;
+              const result = await linkProjectToSupabase({
+                convexProjectId: projectId,
+                projectName: descriptionRef.current || 'New Project',
+                projectDescription: descriptionRef.current,
+                clerkToken: token,
+              });
+              if (result?.supabaseProjectId) {
+                await linkToSupabase({
+                  projectId,
+                  supabaseProjectId: result.supabaseProjectId,
+                });
+                console.log('[New] Linked to Supabase:', result.supabaseProjectId);
+              }
+            } catch (e) {
+              console.warn('[New] Supabase sync failed (non-blocking):', e);
+            }
+          })();
 
           // 2. Create conversation linked to project with initial state AND messages
           const conversationId = await createConversationWithProject({
@@ -157,7 +184,7 @@ function NewProjectInner() {
         }
       }
     },
-    [sessionId, createEmptyProject, createConversationWithProject, selectConversation],
+    [sessionId, session, createEmptyProject, createConversationWithProject, linkToSupabase, selectConversation],
   );
 
   return (

@@ -236,6 +236,8 @@ export async function GET(request: NextRequest) {
         templateId: project.template_id,
         isDraft: project.is_draft,
         status: project.status,
+        domainName: project.domain_name,
+        projectType: project.project_type,
       },
       userId,
     });

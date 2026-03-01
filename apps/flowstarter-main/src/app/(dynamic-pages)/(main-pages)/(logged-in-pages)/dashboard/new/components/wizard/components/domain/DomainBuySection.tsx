@@ -242,7 +242,7 @@ export function DomainBuySection({ baseName }: DomainBuySectionProps) {
             .map((s) => (
               <div
                 key={s.domain}
-                className="p-4 rounded-xl border border-gray-200 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 hover:shadow-md transition-all duration-200 cursor-pointer"
+                className="p-4 rounded-xl border border-gray-200 dark:border-gray-600 bg-white/55 dark:bg-gray-700/50 hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 hover:shadow-md transition-all duration-200 cursor-pointer"
                 onClick={() =>
                   window.open(getRegistrarUrl(String(s.domain)), '_blank')
                 }

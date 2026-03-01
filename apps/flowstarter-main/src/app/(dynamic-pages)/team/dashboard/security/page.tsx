@@ -194,7 +194,7 @@ export default function TeamSecurityPage() {
           )}
 
           {/* 2FA Card */}
-          <div className="p-6 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+          <div className="p-6 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
             <div className="flex items-start justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div

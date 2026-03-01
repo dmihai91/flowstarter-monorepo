@@ -456,7 +456,7 @@ export default function PrivacyPage() {
               {glanceSummary.map((item, i) => (
                 <div
                   key={i}
-                  className="p-4 rounded-xl bg-white/60 dark:bg-white/[0.03] border border-gray-200/50 dark:border-white/5"
+                  className="p-4 rounded-xl bg-white/55 dark:bg-white/[0.03] border border-gray-200/50 dark:border-white/5"
                 >
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center flex-shrink-0">
@@ -477,7 +477,7 @@ export default function PrivacyPage() {
           </div>
 
           {/* Table of Contents */}
-          <div className="mb-12 p-6 rounded-2xl bg-white/60 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+          <div className="mb-12 p-6 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
               Contents
             </h2>
@@ -529,7 +529,7 @@ export default function PrivacyPage() {
                 className={`p-8 rounded-2xl border ${
                   section.highlight
                     ? 'bg-[var(--purple)]/5 dark:bg-[var(--purple)]/10 border-[var(--purple)]/20'
-                    : 'bg-white/60 dark:bg-white/[0.02] border-gray-200/50 dark:border-white/5'
+                    : 'bg-white/55 dark:bg-white/[0.02] border-gray-200/50 dark:border-white/5'
                 }`}
               >
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">

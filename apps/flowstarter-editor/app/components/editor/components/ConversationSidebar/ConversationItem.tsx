@@ -84,9 +84,9 @@ export function ConversationItem({
         marginBottom: '4px',
         borderRadius: '8px',
         cursor: isEditing ? 'default' : 'pointer',
-        background: isActive ? (isDark ? 'rgba(139, 92, 246, 0.15)' : 'rgba(139, 92, 246, 0.1)') : 'transparent',
+        background: isActive ? (isDark ? 'rgba(77, 93, 217, 0.1)' : 'rgba(77, 93, 217, 0.08)') : 'transparent',
         border: isActive
-          ? `1px solid ${isDark ? 'rgba(139, 92, 246, 0.3)' : 'rgba(139, 92, 246, 0.2)'}`
+          ? `1px solid ${isDark ? 'rgba(77, 93, 217, 0.15)' : 'rgba(77, 93, 217, 0.12)'}`
           : '1px solid transparent',
         transition: 'all 0.15s ease',
       }}
@@ -94,7 +94,7 @@ export function ConversationItem({
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
         <div
           style={{
-            color: isActive ? (isDark ? '#8b5cf6' : '#6366f1') : colors.textMuted,
+            color: isActive ? (isDark ? 'rgba(77, 93, 217, 0.8)' : 'rgba(77, 93, 217, 0.7)') : colors.textMuted,
             marginTop: '2px',
             flexShrink: 0,
           }}
@@ -201,7 +201,7 @@ function EditInput({ inputRef, editValue, setEditValue, isDark, colors, onSave, 
         style={{
           background: 'transparent',
           border: 'none',
-          color: isDark ? '#8b5cf6' : '#6366f1',
+          color: isDark ? 'rgba(77, 93, 217, 0.8)' : 'rgba(77, 93, 217, 0.7)',
           cursor: 'pointer',
           padding: '4px',
           borderRadius: '4px',

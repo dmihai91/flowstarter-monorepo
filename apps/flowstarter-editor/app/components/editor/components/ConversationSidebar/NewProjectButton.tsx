@@ -20,9 +20,11 @@ export function NewProjectButton({ onClick }: NewProjectButtonProps) {
           padding: '10px 14px',
           borderRadius: '8px',
           background: isDark
-            ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(165, 90, 172, 0.2) 100%)'
-            : 'linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(165, 90, 172, 0.15) 100%)',
-          border: `1px solid ${isDark ? 'rgba(139, 92, 246, 0.3)' : 'rgba(139, 92, 246, 0.25)'}`,
+            ? 'rgba(255, 255, 255, 0.05)'
+            : 'rgba(0, 0, 0, 0.04)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.08)',
           color: colors.textPrimary,
           cursor: 'pointer',
           display: 'flex',

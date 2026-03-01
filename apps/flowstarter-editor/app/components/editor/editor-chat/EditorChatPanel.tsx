@@ -229,12 +229,14 @@ export function EditorChatPanel({
         background: isDark
           ? `radial-gradient(ellipse at 0% 0%, rgba(77, 93, 217, 0.08) 0%, transparent 50%),
              radial-gradient(ellipse at 100% 30%, rgba(59, 68, 168, 0.06) 0%, transparent 50%),
-             radial-gradient(ellipse at 50% 100%, rgba(77, 93, 217, 0.04) 0%, transparent 60%),
-             linear-gradient(170deg, #08080c 0%, #0c0b14 40%, #0e0d18 70%, #0a0a0f 100%)`
+             radial-gradient(ellipse 120% 60% at 50% 100%, rgba(180, 160, 60, 0.06) 0%, transparent 55%),
+             radial-gradient(ellipse at 50% 100%, rgba(77, 93, 217, 0.03) 0%, transparent 60%),
+             linear-gradient(170deg, #08080c 0%, #0c0b14 40%, #0e0d18 70%, #0b0a0e 100%)`
           : `radial-gradient(ellipse at 0% 0%, rgba(77, 93, 217, 0.06) 0%, transparent 50%),
              radial-gradient(ellipse at 100% 30%, rgba(59, 68, 168, 0.04) 0%, transparent 50%),
-             radial-gradient(ellipse at 50% 100%, rgba(77, 93, 217, 0.03) 0%, transparent 60%),
-             linear-gradient(170deg, #fafafa 0%, #f6f5f8 40%, #f4f3f7 70%, #fafafa 100%)`,
+             radial-gradient(ellipse 120% 60% at 50% 100%, rgba(180, 160, 60, 0.04) 0%, transparent 55%),
+             radial-gradient(ellipse at 50% 100%, rgba(77, 93, 217, 0.02) 0%, transparent 60%),
+             linear-gradient(170deg, #fafafa 0%, #f6f5f8 40%, #f4f3f7 70%, #fafaf8 100%)`,
         backdropFilter: 'blur(20px) saturate(150%)',
         WebkitBackdropFilter: 'blur(20px) saturate(150%)',
         pointerEvents: 'none',

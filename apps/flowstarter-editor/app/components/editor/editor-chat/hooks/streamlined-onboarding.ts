@@ -200,6 +200,8 @@ export function getNextStepFromCurrent(
   hasUvp: boolean,
   hasTemplate: boolean,
   hasPersonalization: boolean,
+  hasOffering?: boolean,
+  hasContact?: boolean,
 ): OnboardingStep {
   switch (currentStep) {
     case 'welcome':
@@ -209,7 +211,11 @@ export function getNextStepFromCurrent(
     case 'quick-profile':
       return hasQuickProfile ? 'business-uvp' : 'quick-profile';
     case 'business-uvp':
-      return hasUvp ? 'template' : 'business-uvp';
+      return hasUvp ? 'business-offering' : 'business-uvp';
+    case 'business-offering':
+      return hasOffering ? 'business-contact' : 'business-offering';
+    case 'business-contact':
+      return hasContact ? 'template' : 'business-contact';
     case 'template':
       return hasTemplate ? 'personalization' : 'template';
     case 'personalization':
@@ -229,6 +235,8 @@ function migrateFromLegacyStep(legacyStep: OnboardingStep): OnboardingStep {
   const legacyMap: Record<string, OnboardingStep> = {
     'name': 'describe',
     'business-uvp': 'quick-profile',
+    'business-offering': 'business-uvp',
+    'business-contact': 'business-offering',
     'business-audience': 'quick-profile',
     'business-goals': 'quick-profile',
     'business-tone': 'quick-profile',
@@ -290,6 +298,26 @@ export function generateOnboardingResponse(context: OnboardingContext): Onboardi
         return getUvpAckMessage(uvp || '', uvpSkipped || false);
       }
       return getUvpPromptMessage();
+
+    case 'business-offering':
+      if (offerings) {
+        return {
+          content: `Got it! I'll make sure your site highlights your offering clearly.\n\nNow, how should visitors reach you?`,
+        };
+      }
+      return {
+        content: `**What do you offer?** 📦\n\nDescribe your main packages, services, or products. Include pricing if you'd like it on the site.\n\nFor example: "1-hour coaching session (€120), 3-session package (€300), VIP day (€800)"`,
+      };
+      
+    case 'business-contact':
+      if (contactInfo) {
+        return {
+          content: `Perfect, I have your contact details! Let\'s pick a template for your site.`,
+        };
+      }
+      return {
+        content: `**How can clients reach you?** 📬\n\nShare your business contact details (we\'ll add these to your site):\n- Email\n- Phone number\n- Address (optional)\n- Website (optional)`,
+      };
       
     case 'template':
       if (templateName) {

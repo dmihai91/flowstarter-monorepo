@@ -451,6 +451,11 @@ export const updateState = mutation({
         sellingMethodDetails: v.optional(v.string()),
         pricingOffers: v.optional(v.string()),
         industry: v.optional(v.string()),
+        offerings: v.optional(v.string()),
+        contactEmail: v.optional(v.string()),
+        contactPhone: v.optional(v.string()),
+        contactAddress: v.optional(v.string()),
+        website: v.optional(v.string()),
       })
     ),
     pipelineState: v.optional(

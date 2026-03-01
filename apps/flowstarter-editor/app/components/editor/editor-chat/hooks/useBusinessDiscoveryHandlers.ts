@@ -241,10 +241,47 @@ export function useBusinessDiscoveryHandlers({
           businessInfoRef.current.uvp = answer;
           onStateChange?.({ businessInfo: { ...businessInfoRef.current } as BusinessInfo });
 
-          // Streamlined flow: UVP → template (skip old business discovery steps)
-          await messageHook.addStepTransitionMessage('business-uvp', 'template', { uvp: answer });
+          // UVP → offering details
+          await messageHook.addAssistantMessage(
+            'Great UVP! Now tell me about your offering.\n\n**What packages or services do you offer?** 📦\n\nInclude pricing if you\'d like it on the site. For example:\n"1-hour session (€120), 3-session package (€300)"'
+          );
+          flowHook.setStep('business-offering');
+          break;
+
+        case 'business-offering':
+          businessInfoRef.current.offerings = answer;
+          onStateChange?.({ businessInfo: { ...businessInfoRef.current } as BusinessInfo });
+
+          await messageHook.addAssistantMessage(
+            'Got it! I\'ll highlight your offering on the site.\n\n**How can clients reach you?** 📬\n\nShare your business contact info:\n- Email\n- Phone\n- Address (optional)\n- Website (optional)'
+          );
+          flowHook.setStep('business-contact');
+          break;
+
+        case 'business-contact': {
+          // Parse contact info from free text
+          const lines = answer.split(/[\n,;]+/).map(l => l.trim()).filter(Boolean);
+          const emailMatch = answer.match(/[\w.+-]+@[\w.-]+\.[a-z]{2,}/i);
+          const phoneMatch = answer.match(/(?:\+?\d[\d\s\-().]{6,})/);
+          const websiteMatch = answer.match(/(?:https?:\/\/)?(?:www\.)?[\w.-]+\.[a-z]{2,}(?:\/\S*)?/i);
+          
+          businessInfoRef.current.contactEmail = emailMatch?.[0] || '';
+          businessInfoRef.current.contactPhone = phoneMatch?.[0]?.trim() || '';
+          // Address: anything that's not email/phone/website
+          const addressParts = lines.filter(l => 
+            !l.match(/[@]/) && !l.match(/^\+?\d[\d\s\-().]{6,}$/) && !l.match(/(?:www\.|https?:)/)
+          );
+          businessInfoRef.current.contactAddress = addressParts.join(', ') || '';
+          businessInfoRef.current.website = websiteMatch?.[0] || '';
+          
+          onStateChange?.({ businessInfo: { ...businessInfoRef.current } as BusinessInfo });
+
+          await messageHook.addAssistantMessage(
+            'Perfect! I have all your details. Let\'s pick the right template for your site.'
+          );
           flowHook.setStep('template');
           break;
+        }
 
         case 'business-audience':
           businessInfoRef.current.targetAudience = answer;

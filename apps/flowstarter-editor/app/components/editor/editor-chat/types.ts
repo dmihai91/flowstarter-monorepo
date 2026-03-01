@@ -56,6 +56,8 @@ export type OnboardingStep =
   | 'name'             // Project/business name
   | 'quick-profile'    // Goal + Offer + Tone - 3 multiple choice
   | 'business-uvp'     // What makes you different? (UVP)
+  | 'business-offering' // Package/offering details + selling method
+  | 'business-contact'  // Business contact info (email, phone, address, website)
   | 'template'         // Pick from recommended templates
   | 'personalization'  // Logo + Colors + Font
   | 'creating'         // Build in progress
@@ -136,6 +138,11 @@ export interface BusinessInfo {
   /** @deprecated Use quickProfile.goal to determine selling method */
   sellingMethod?: 'ecommerce' | 'bookings' | 'leads' | 'subscriptions' | 'content' | 'other';
   sellingMethodDetails?: string;
+  offerings?: string;           // Package/offering description
+  contactEmail?: string;
+  contactPhone?: string;
+  contactAddress?: string;
+  website?: string;
   pricingOffers?: string;
 }
 
@@ -245,6 +252,9 @@ export const STREAMLINED_STEPS: OnboardingStep[] = [
   'welcome',
   'describe', 
   'quick-profile',
+  'business-uvp',
+  'business-offering',
+  'business-contact',
   'template',
   'personalization',
   'creating',

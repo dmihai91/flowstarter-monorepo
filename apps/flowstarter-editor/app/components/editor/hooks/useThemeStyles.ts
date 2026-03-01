@@ -21,9 +21,9 @@ export const getColors = (isDark: boolean) => ({
 
   // Backgrounds - improved light mode contrast
   bgPrimary: isDark ? '#0a0a0f' : '#f8f8fa',
-  bgSecondary: isDark ? '#0c0c12' : '#f0f0f4',
-  bgTertiary: isDark ? '#0f0f14' : '#ffffff',
-  bgHeader: isDark ? 'rgba(15, 15, 22, 0.75)' : 'rgba(255, 255, 255, 0.6)',
+  bgSecondary: isDark ? 'rgba(10, 10, 20, 0.75)' : '#f0f0f4',
+  bgTertiary: isDark ? 'rgba(5, 5, 12, 0.6)' : '#ffffff',
+  bgHeader: isDark ? 'rgba(10, 10, 15, 0.9)' : 'rgba(255, 255, 255, 0.6)',
   bgGradient: isDark
     ? 'linear-gradient(180deg, #0f0f14 0%, #141420 100%)'
     : `radial-gradient(ellipse at 0% 0%, rgba(165, 90, 172, 0.15) 0%, transparent 50%),

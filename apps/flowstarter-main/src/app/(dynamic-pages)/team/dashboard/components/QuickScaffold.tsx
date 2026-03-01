@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { useAIClassify } from '@/hooks/useAI';
+import { useMutation } from '@tanstack/react-query';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { cn } from '@/lib/utils';
 import { useWizardStore } from '@/store/wizard-store';
@@ -22,8 +22,18 @@ export function QuickScaffold() {
   const setPrefillData = useWizardStore((state) => state.setPrefillData);
   const setSelectedIndustry = useWizardStore((state) => state.setSelectedIndustry);
 
-  // React Query mutation for classification
-  const classifyMutation = useAIClassify();
+  // React Query mutation for AI enrichment
+  const enrichMutation = useMutation({
+    mutationFn: async ({ description }: { description: string }) => {
+      const res = await fetch('/api/ai/enrich-project', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description }),
+      });
+      if (!res.ok) throw new Error('Enrichment failed');
+      return res.json();
+    },
+  });
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -37,44 +47,58 @@ export function QuickScaffold() {
   const handleSubmit = async () => {
     if (!input.trim()) return;
 
-    classifyMutation.mutate(
+    enrichMutation.mutate(
       { description: input },
       {
-        onSuccess: (classification) => {
-          const prefillData = {
-            name: '',
-            description: input,
+        onSuccess: async (enriched) => {
+          setPrefillData({
+            name: enriched.businessName || '',
+            description: enriched.description || input,
             userDescription: input,
-            targetUsers: '',
-            businessGoals: '',
-            USP: '',
-            platformType: classification.template,
-            industry: classification.industry,
-          };
+            targetUsers: enriched.targetAudience || '',
+            businessGoals: enriched.goal || '',
+            USP: enriched.uvp || '',
+            industry: enriched.industry || '',
+          });
 
-          setPrefillData(prefillData);
-
-          if (classification.industry) {
-            setSelectedIndustry(classification.industry);
+          if (enriched.industry) {
+            setSelectedIndustry(enriched.industry);
           }
 
-          // Create project in Supabase and handoff to editor
+          // Create project with ALL enriched data and handoff to editor
           try {
             const res = await fetch('/api/editor/handoff', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 projectConfig: {
-                  description: input,
+                  name: enriched.businessName,
+                  description: enriched.description || input,
                   userDescription: input,
-                  industry: classification.industry,
+                  industry: enriched.industry,
+                  businessInfo: {
+                    description: enriched.description || input,
+                    uvp: enriched.uvp,
+                    targetAudience: enriched.targetAudience,
+                    industry: enriched.industry,
+                    goal: enriched.goal,
+                    offerType: enriched.offerType,
+                    brandTone: enriched.brandTone,
+                    offerings: enriched.offerings,
+                  },
+                  contactInfo: {
+                    email: enriched.contactEmail || '',
+                    phone: enriched.contactPhone || '',
+                    address: enriched.contactAddress || '',
+                    website: enriched.website || '',
+                  },
                 },
                 mode: 'interactive',
               }),
             });
             if (res.ok) {
               const data = await res.json();
-              window.open(`${EDITOR_URL}?handoff=${data.token}`, '_blank');
+              window.open(\`\${EDITOR_URL}?handoff=\${data.token}\`, '_blank');
             } else {
               window.open(EDITOR_URL, '_blank');
             }
@@ -82,20 +106,9 @@ export function QuickScaffold() {
             window.open(EDITOR_URL, '_blank');
           }
         },
-        onError: (error) => {
-          console.error('[QuickScaffold] Classification error:', error);
-
-          const prefillData = {
-            name: '',
-            description: input,
-            userDescription: input,
-            targetUsers: '',
-            businessGoals: '',
-            USP: '',
-          };
-          setPrefillData(prefillData);
-          
-          // Fallback: open editor with description
+        onError: async (error) => {
+          console.error('[QuickScaffold] Enrichment error:', error);
+          // Fallback: handoff with just the description
           try {
             const res = await fetch('/api/editor/handoff', {
               method: 'POST',
@@ -107,7 +120,7 @@ export function QuickScaffold() {
             });
             if (res.ok) {
               const data = await res.json();
-              window.open(`${EDITOR_URL}?handoff=${data.token}`, '_blank');
+              window.open(\`\${EDITOR_URL}?handoff=\${data.token}\`, '_blank');
             } else {
               window.open(EDITOR_URL, '_blank');
             }
@@ -135,7 +148,7 @@ export function QuickScaffold() {
     }
   };
 
-  const isClassifying = classifyMutation.isPending;
+  const isClassifying = enrichMutation.isPending;
 
   // Glassmorphism card style
   const glassCard = 'rounded-2xl border-t border-l border-white/40 dark:border-white/[0.08] border-b border-r border-black/[0.04] dark:border-black/[0.2] bg-white/55 dark:bg-white/[0.03] backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.04),1px_1px_0_rgba(0,0,0,0.03)_inset,-1px_-1px_0_rgba(255,255,255,1)_inset,1px_1px_0_rgba(0,0,0,0.03)_inset,-1px_-1px_0_rgba(255,255,255,1)_inset,0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[0_8px_32px_rgba(0,0,0,0.35),0_2px_8px_rgba(0,0,0,0.2),1px_1px_0_rgba(0,0,0,0.3)_inset,-1px_-1px_0_rgba(255,255,255,0.08)_inset,0_1px_0_rgba(255,255,255,0.06)_inset]';
@@ -266,7 +279,7 @@ export function QuickScaffold() {
             {isClassifying ? (
               <>
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                Generating...
+                Analyzing...
               </>
             ) : (
               <>

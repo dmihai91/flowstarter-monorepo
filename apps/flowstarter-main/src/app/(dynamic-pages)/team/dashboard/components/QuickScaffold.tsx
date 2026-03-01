@@ -6,7 +6,7 @@ import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { cn } from '@/lib/utils';
 import { Wand2, Paperclip, Loader2, ArrowRight, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 const EDITOR_URL = process.env.NEXT_PUBLIC_EDITOR_URL || 'http://localhost:5173';
 
@@ -131,6 +131,58 @@ export function QuickScaffold() {
     }
   };
 
+
+  // Typewriter placeholder
+  const examples = [
+    'Dental clinic in Bucharest, cosmetic dentistry & implants, premium pricing...',
+    'Yoga studio offering group classes, private sessions, and retreat packages...',
+    'Family law firm specializing in divorce mediation and custody agreements...',
+    'Hair salon with bridal packages, color specialists, walk-ins welcome...',
+    'Personal trainer, online coaching programs, meal plans, €49-199/mo...',
+    'Real estate agent, luxury apartments in Cluj, virtual tours available...',
+  ];
+  const [placeholderText, setPlaceholderText] = useState('');
+  const [exampleIndex, setExampleIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const pauseRef = useRef(false);
+
+  useEffect(() => {
+    if (input) return; // Stop animation when user is typing
+    const example = examples[exampleIndex];
+
+    const timeout = setTimeout(() => {
+      if (pauseRef.current) {
+        pauseRef.current = false;
+        setIsDeleting(true);
+        return;
+      }
+
+      if (!isDeleting) {
+        // Typing
+        if (charIndex < example.length) {
+          setPlaceholderText(example.slice(0, charIndex + 1));
+          setCharIndex(charIndex + 1);
+        } else {
+          // Pause at end
+          pauseRef.current = true;
+        }
+      } else {
+        // Deleting
+        if (charIndex > 0) {
+          setPlaceholderText(example.slice(0, charIndex - 1));
+          setCharIndex(charIndex - 1);
+        } else {
+          // Move to next example
+          setIsDeleting(false);
+          setExampleIndex((exampleIndex + 1) % examples.length);
+        }
+      }
+    }, pauseRef.current ? 2000 : isDeleting ? 20 : 40 + Math.random() * 30);
+
+    return () => clearTimeout(timeout);
+  }, [charIndex, isDeleting, exampleIndex, input]);
+
   const isClassifying = enrichMutation.isPending;
 
   // Glassmorphism card style
@@ -224,7 +276,7 @@ export function QuickScaffold() {
           onKeyDown={handleKeyDown}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          placeholder="Paste client brief or describe project..."
+          placeholder={input ? "" : placeholderText || "Describe your client's business..."}
           rows={2}
           className="w-full px-3 pt-3 pb-2 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 text-sm leading-relaxed resize-none focus:outline-none border-0"
           style={{

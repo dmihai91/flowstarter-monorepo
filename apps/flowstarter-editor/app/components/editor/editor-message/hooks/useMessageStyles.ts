@@ -42,26 +42,28 @@ export interface BubbleStyles {
  */
 export function useBubbleStyles({ isDark, variant }: BubbleStyleConfig): BubbleStyles {
   return useMemo(() => {
-    // Unified glassmorphism base with subtle variant differences
     const isUser = variant === 'user';
 
     if (isDark) {
       return {
         background: isUser
-          ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)'
-          : 'rgba(77, 93, 217, 0.04)',
-        border: isUser ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(77, 93, 217, 0.1)',
-        boxShadow: 'none',
+          ? 'rgba(255, 255, 255, 0.06)'
+          : 'rgba(77, 93, 217, 0.08)',
+        border: isUser
+          ? '1px solid rgba(255, 255, 255, 0.08)'
+          : '1px solid rgba(77, 93, 217, 0.12)',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
       };
     }
 
     return {
       background: isUser
-        ? 'rgba(255, 255, 255, 0.75)'
-        : 'rgba(77, 93, 217, 0.04)',
-      border: isUser ? '1px solid rgba(0, 0, 0, 0.06)' : '1px solid rgba(77, 93, 217, 0.08)',
-      boxShadow: 'none',
+        ? 'rgba(255, 255, 255, 0.85)'
+        : 'rgba(245, 245, 248, 0.9)',
+      border: isUser
+        ? '1px solid rgba(0, 0, 0, 0.06)'
+        : '1px solid rgba(77, 93, 217, 0.08)',
+      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
     };
   }, [isDark, variant]);
 }
-

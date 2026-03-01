@@ -13,11 +13,11 @@ export const MessageBubble = memo(({ children, isDark, variant }: MessageBubbleP
 
   return (
     <div
-      className="max-w-full backdrop-blur-xl rounded-2xl rounded-tl-md px-4 py-3 transition-all duration-200"
+      className="max-w-full rounded-2xl rounded-tl-md px-4 py-3 transition-all duration-200"
       style={{
         ...styles,
-        backdropFilter: 'blur(20px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        backdropFilter: 'blur(12px) saturate(150%)',
+        WebkitBackdropFilter: 'blur(12px) saturate(150%)',
       }}
     >
       {children}

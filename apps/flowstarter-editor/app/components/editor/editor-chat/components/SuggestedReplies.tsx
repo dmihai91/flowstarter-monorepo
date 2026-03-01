@@ -414,12 +414,15 @@ export function SuggestedReplies({ suggestions, step, isDark, onAccept, onRefres
               className="group px-4 py-3 rounded-xl text-sm flex items-start gap-3 text-left"
               style={{
                 background: isDark
-                  ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%)'
-                  : 'rgba(255, 255, 255, 0.7)',
+                  ? 'rgba(255, 255, 255, 0.05)'
+                  : 'rgba(255, 255, 255, 0.8)',
                 border: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.06)',
-                boxShadow: isDark ? '0 2px 8px rgba(0, 0, 0, 0.15)' : '0 2px 8px rgba(0, 0, 0, 0.06)',
+                boxShadow: isDark
+                  ? '0 1px 4px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.04)'
+                  : '0 1px 4px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.03)',
                 color: isDark ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.8)',
-                backdropFilter: 'blur(8px)',
+                backdropFilter: 'blur(16px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(16px) saturate(180%)',
               }}
             >
               <span

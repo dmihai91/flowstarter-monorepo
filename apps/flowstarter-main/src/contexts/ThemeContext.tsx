@@ -125,10 +125,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     const root = window.document.documentElement;
 
-    // Directly set dark class based on resolved theme
+    // Directly set dark class and data-theme attribute based on resolved theme
     if (resolvedTheme === 'dark') {
       root.classList.add('dark');
       root.classList.remove('light');
+      root.setAttribute('data-theme', 'dark');
       // Try to update Clerk theme if available
       try {
         if (window.__clerk_frontend_api?.elements?.updateTheme) {
@@ -146,6 +147,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     } else {
       root.classList.remove('dark');
       root.classList.add('light');
+      root.setAttribute('data-theme', 'light');
       // Try to update Clerk theme if available
       try {
         if (window.__clerk_frontend_api?.elements?.updateTheme) {

@@ -63,8 +63,8 @@ export function EditorHeader({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        height: '64px',
-        padding: '0 20px',
+        height: isMobile ? '52px' : '64px',
+        padding: isMobile ? '0 12px' : '0 20px',
         flexShrink: 0,
         background: colors.bgHeader,
         borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(255, 255, 255, 0.5)',
@@ -112,7 +112,7 @@ export function EditorHeader({
       </div>
 
       {/* RIGHT: Actions */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '8px' : '12px' }}>
         {/* Team mode indicator - hide text on mobile */}
         {isTeam && !isMobile && (
           <span
@@ -131,14 +131,14 @@ export function EditorHeader({
           </span>
         )}
 
-        {/* Magic Link button - Team only */}
-        {canGenerateMagicLink && (
+        {/* Magic Link button - Team only, hide on mobile */}
+        {canGenerateMagicLink && !isMobile && (
           <MagicLinkButton projectId={projectId ?? null} />
         )}
 
-        <PublishButton isEnabled={isPublishEnabled} onClick={onPublish} />
-        <Separator />
-        <ThemeToggle />
+        {!isMobile && <PublishButton isEnabled={isPublishEnabled} onClick={onPublish} />}
+        {!isMobile && <Separator />}
+        {!isMobile && <ThemeToggle />}
         <UserAvatar />
       </div>
     </header>

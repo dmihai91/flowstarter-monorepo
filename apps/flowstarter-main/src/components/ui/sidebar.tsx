@@ -51,7 +51,7 @@ export function Sidebar() {
 
   const supportItems: SidebarItem[] = [
     {
-      title: 'Book Free Call',
+      title: t('sidebar.bookFreeCall'),
       href: CALENDLY_URL,
       icon: Calendar,
       external: true,
@@ -172,7 +172,7 @@ export function Sidebar() {
       <div className={cn(isCollapsed && "w-full")}>
         {!isCollapsed && (
           <h3 className="px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
-            Main
+            {t('sidebar.main')}
           </h3>
         )}
         <div className="space-y-1">
@@ -193,7 +193,7 @@ export function Sidebar() {
       <div className={cn(isCollapsed && "w-full")}>
         {!isCollapsed && (
           <h3 className="px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
-            Support
+            {t('sidebar.support')}
           </h3>
         )}
         <div className="space-y-1">

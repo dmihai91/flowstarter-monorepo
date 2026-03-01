@@ -81,6 +81,7 @@ export default async function RootLayout({
                   const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
                   const resolvedTheme = theme === 'auto' ? systemTheme : theme;
                   document.documentElement.classList.add(resolvedTheme);
+                  document.documentElement.setAttribute('data-theme', resolvedTheme);
                   if (resolvedTheme === 'dark') {
                     document.documentElement.classList.remove('light');
                   }

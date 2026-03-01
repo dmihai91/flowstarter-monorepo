@@ -158,6 +158,9 @@ export default defineConfig({
     ['b', {}],
   ],
   theme: {
+    fontFamily: {
+      display: "'Outfit', system-ui, sans-serif",
+    },
     colors: {
       ...COLOR_PRIMITIVES,
       flowstarter: {

@@ -328,16 +328,10 @@ export type MessageKey = (typeof MESSAGE_KEYS)[keyof typeof MESSAGE_KEYS];
 export const MESSAGE_LABELS: Record<MessageKey, string> = {
   // ─── Streamlined Flow ──────────────────────────────────────────────────────
   // Welcome step
-  [MESSAGE_KEYS.WELCOME_GREETING]: '**Welcome to Flowstarter!** 👋',
+  [MESSAGE_KEYS.WELCOME_GREETING]: '**Welcome to Flowstarter Editor** 👋\n\nHow can I help you build today?',
   [MESSAGE_KEYS.WELCOME_GREETING_USER]: '**Hey {{username}}!** 👋',
-  [MESSAGE_KEYS.WELCOME_SHOWCASE]: 
-    "I create professional websites for service businesses:\n\n" +
-    '• **Coaches & Consultants**\n' +
-    '• **Therapists & Wellness**\n' +
-    '• **Photographers & Creatives**\n' +
-    '• **Trainers & Educators**\n' +
-    '• **Local Services**',
-  [MESSAGE_KEYS.WELCOME_CTA]: '**Tell me what you do** and I\'ll build your site.\n\nClick an example or type your own:',
+  [MESSAGE_KEYS.WELCOME_SHOWCASE]: '',
+  [MESSAGE_KEYS.WELCOME_CTA]: 'Tell me what you do and I\'ll build your site.',
   
   // ─── Internal Flow (Template-First) ────────────────────────────────────────
   [MESSAGE_KEYS.INTERNAL_WELCOME]: 

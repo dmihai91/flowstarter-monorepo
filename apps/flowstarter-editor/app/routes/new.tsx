@@ -9,11 +9,8 @@ import { EditorChatPanel } from '~/components/editor/EditorChatPanel';
 import { AuthGuard } from '~/components/TeamAuthGuard';
 import { LoadingScreen } from '~/components/LoadingScreen';
 import { en } from '~/lib/i18n/locales/en';
-import { useThemeStyles, getColors } from '~/components/editor/hooks';
 import { EditorLayout, ConversationProvider } from '~/components/editor';
 import { useConversationContext } from '~/components/editor/ConversationContext';
-import { useResizablePanel } from '~/components/editor/hooks';
-import { EditorHeader, EmptyState, ResizeHandle } from '~/components/editor/components';
 import type { OnboardingStep } from '~/components/editor/editor-chat/types';
 
 export const meta: MetaFunction = () => {
@@ -42,40 +39,7 @@ function getOrCreateSessionId(): string {
 }
 
 function LoadingFallback() {
-  const { isDark } = useThemeStyles();
-  const colors = getColors(isDark);
-
-  return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        width: '100vw',
-        background: colors.bgGradient,
-      }}
-    >
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-        <div
-          style={{
-            width: '40px',
-            height: '40px',
-            border: `2px solid ${colors.spinnerColor}`,
-            borderTopColor: 'transparent',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite',
-          }}
-        />
-        <span style={{ fontSize: '14px', color: colors.textSubtle }}>{en.app.loadingProject}</span>
-      </div>
-      <style>{`
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
-    </div>
-  );
+  return <LoadingScreen message={en.app.loadingProject} />;
 }
 
 const PANEL_CONFIG = {

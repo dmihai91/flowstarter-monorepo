@@ -212,10 +212,9 @@ export function useWelcomeInit({
       ? getMessage(MESSAGE_KEYS.WELCOME_GREETING_USER, { username })
       : getMessage(MESSAGE_KEYS.WELCOME_GREETING);
     
-    const showcase = getMessage(MESSAGE_KEYS.WELCOME_SHOWCASE);
     const cta = getMessage(MESSAGE_KEYS.WELCOME_CTA);
-    
-    msg.addAssistantMessage(`${greeting}\n\n${showcase}\n\n${cta}`);
+
+    msg.addAssistantMessage(`${greeting}\n\n${cta}`);
     
     // Stay on welcome step with "Let's go" button
     flow.setStep('welcome');

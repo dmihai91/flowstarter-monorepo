@@ -43,6 +43,8 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useFormatDate } from '@/hooks/useFormatDate';
+import { useTranslations } from '@/lib/i18n';
+import { isLive, isBuilding, STATUS_BADGE_CLASS } from './TeamProjectsStats';
 
 // Beta pricing feature flag - set to true to enable 50% discount
 const BETA_PRICING_ENABLED = process.env.NEXT_PUBLIC_BETA_PRICING === 'true';
@@ -215,21 +217,24 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
     return 'Unknown';
   };
 
+  const { t } = useTranslations();
+
   const getStatusColor = (status: string) => {
-    if (status === 'completed') return 'bg-emerald-500';
-    if (
-      status === 'generating' ||
-      status === 'building' ||
-      status === 'in_progress'
-    )
-      return 'bg-blue-500';
+    if (isLive(status)) return 'bg-emerald-500';
+    if (isBuilding(status)) return 'bg-blue-500';
     return 'bg-gray-400';
   };
 
   const getStatusLabel = (status: string) => {
-    if (status === 'completed') return 'Live';
-    if (status === 'generating') return 'Building';
-    return 'Draft';
+    if (isLive(status)) return t('status.live');
+    if (isBuilding(status)) return t('status.building');
+    return t('status.draft');
+  };
+
+  const getStatusBadgeClass = (status: string) => {
+    if (isLive(status)) return STATUS_BADGE_CLASS.live;
+    if (isBuilding(status)) return STATUS_BADGE_CLASS.building;
+    return STATUS_BADGE_CLASS.draft;
   };
 
   if (projects.length === 0) {
@@ -239,16 +244,16 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
         <div className="flex items-end justify-between mb-4">
           <div>
             <h2 className="text-xl sm:text-2xl font-medium text-gray-900 dark:text-gray-100 tracking-tight">
-              All Projects
+              {t('team.dashboard.allProjects')}
             </h2>
             <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm">
-              View and manage all client projects
+              {t('team.dashboard.allProjectsDescription')}
             </p>
           </div>
         </div>
         <div className="border border-gray-200 dark:border-white/10 rounded-lg bg-gray-50 dark:bg-white/[0.02] p-12 text-center">
           <p className="text-gray-500 dark:text-white/50 text-sm">
-            No projects yet
+            {t('team.dashboard.noProjects')}
           </p>
         </div>
       </>
@@ -261,10 +266,10 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
       <div className="flex items-end justify-between">
         <div>
           <h2 className="text-xl sm:text-2xl font-medium text-gray-900 dark:text-gray-100 tracking-tight">
-            All Projects
+            {t('team.dashboard.allProjects')}
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm">
-            View and manage all client projects
+            {t('team.dashboard.allProjectsDescription')}
           </p>
         </div>
         <div className="inline-flex items-center rounded-lg border border-gray-200 dark:border-white/10 p-1 bg-gray-50 dark:bg-white/[0.02]">
@@ -591,13 +596,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                   <div className="min-w-0 flex-1">
                     {/* Status Badge */}
                     <span
-                      className={`inline-block px-2 py-0.5 text-xs font-medium rounded mb-1 ${
-                        status === 'completed' || status === 'live'
-                          ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400'
-                          : status === 'in_progress' || status === 'building'
-                          ? 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400'
-                          : 'bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-white/60'
-                      }`}
+                      className={`inline-block px-2 py-0.5 text-xs font-medium rounded mb-1 ${getStatusBadgeClass(status)}`}
                     >
                       {getStatusLabel(status)}
                     </span>

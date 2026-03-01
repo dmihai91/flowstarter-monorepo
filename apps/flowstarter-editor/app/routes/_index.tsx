@@ -248,12 +248,23 @@ function IndexRedirector() {
       // No conversations — route based on user role
       const userMode = getUserMode();
       if (userMode === 'team') {
-        // Team: redirect to main dashboard to create a project
-        console.log('[Index] Team user, no projects — redirecting to dashboard');
-        const mainUrl = window.location.hostname.includes('flowstarter.dev')
-          ? 'https://flowstarter.dev'
-          : 'http://localhost:3000';
-        window.location.href = mainUrl + '/dashboard?editor=true';
+        // Team: create a new conversation so they can start building
+        console.log('[Index] Team user, no projects — creating new conversation');
+        try {
+          const newConversationId = await createConversation({
+            sessionId,
+            title: en.pages.createNewProject,
+          });
+          console.log('[Index] Created new conversation for team user:', newConversationId);
+          navigate(`/project/${newConversationId}`, { replace: true });
+        } catch (error) {
+          console.error('[Index] Failed to create conversation:', error);
+          // Fallback: redirect to main dashboard
+          const mainUrl = window.location.hostname.includes('flowstarter.dev')
+            ? 'https://flowstarter.dev'
+            : 'http://localhost:3000';
+          window.location.href = mainUrl + '/team/dashboard';
+        }
       } else {
         // Client: show booking screen (don't redirect — render inline)
         console.log('[Index] Client user, no projects — showing booking screen');

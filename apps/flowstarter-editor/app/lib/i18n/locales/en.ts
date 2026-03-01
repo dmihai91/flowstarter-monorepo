@@ -27,6 +27,27 @@ export const en = {
       techSkillsRequired: 'Tech skills required',
     },
   },
+  client: {
+    siteBeingBuilt: 'Your site is being built',
+    siteBeingBuiltDescription:
+      'We build your website for you \u2014 no guesswork, no templates to wrestle with. Book a discovery call and our team will have your site ready in 1\u20132 weeks.',
+    notifyWhenReady: 'We\u2019ll notify you by email as soon as your site is ready to preview.',
+    bookDiscoveryCall: 'Book your discovery call',
+    backToFlowstarter: 'Back to Flowstarter',
+    progressLabel: '{{percent}}% complete',
+  },
+  footer: {
+    help: 'Help',
+    blog: 'Blog',
+    privacy: 'Privacy',
+    terms: 'Terms',
+    contact: 'Contact',
+    teamDashboard: 'Team Dashboard',
+    editor: 'Editor',
+    clientLogin: 'Client Login',
+    builtWith: 'Built with',
+    byTeam: 'by the Flowstarter team',
+  },
   header: {},
   pages: {
     newProject: 'New Project | Flowstarter Editor',
@@ -50,6 +71,19 @@ export const en = {
       addTestimonials: 'Add testimonials',
       updateHero: 'Update hero',
       addGallery: 'Add gallery',
+    },
+    greeting: {
+      morning: 'Good morning',
+      afternoon: 'Good afternoon',
+      evening: 'Good evening',
+      night: 'Good night',
+    },
+    team: {
+      badge: 'TEAM',
+      welcomeSubtitle: 'Welcome to Flowstarter Editor',
+      emptyPrompt: "Describe your client's business and I'll build their site.",
+      previewEmpty: 'Preview will appear here once you start building',
+      previewEmptySubtitle: "Describe the client's business in the chat to get started",
     },
     header: {
       publish: 'Publish',
@@ -104,7 +138,8 @@ export const en = {
       retry: 'Retry',
     },
     messages: {
-      siteReady: 'Your site is ready! I\'ve set up {{templateName}} for {{businessName}} with your brand colors and fonts. What would you like to change?',
+      siteReady:
+        "Your site is ready! I've set up {{templateName}} for {{businessName}} with your brand colors and fonts. What would you like to change?",
       done: 'Done!',
       thinking: 'Thinking...',
       generating: 'Generating changes...',

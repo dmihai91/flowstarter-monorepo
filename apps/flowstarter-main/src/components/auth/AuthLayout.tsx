@@ -24,6 +24,7 @@ export default function AuthLayout({
   showTeamBadge = false,
 }: AuthLayoutProps) {
   useTheme();
+  const { t } = useTranslations();
   return (
     <>
       <style jsx global>{`
@@ -77,7 +78,30 @@ export default function AuthLayout({
             {/* Auth content */}
             <div className="relative">{children}</div>
 
-
+            {/* Stats */}
+            <div className="mt-10 pt-6 border-t border-gray-200 dark:border-white/10">
+              <div className="flex items-center justify-center">
+                {[
+                  { value: t('landing.stats.weeks'), label: t('landing.stats.weeksLabel') },
+                  { value: t('landing.stats.calls'), label: t('landing.stats.callsLabel') },
+                  { value: t('landing.stats.techSkills'), label: t('landing.stats.techSkillsLabel') },
+                ].map((stat, i) => (
+                  <div key={i} className="flex items-center">
+                    <div className="text-center px-4">
+                      <div className="text-lg font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
+                        {stat.value}
+                      </div>
+                      <div className="text-[9px] text-gray-400 dark:text-white/30 uppercase tracking-wide font-medium">
+                        {stat.label}
+                      </div>
+                    </div>
+                    {i < 2 && (
+                      <div className="w-px h-6 bg-gray-200 dark:bg-white/10" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 

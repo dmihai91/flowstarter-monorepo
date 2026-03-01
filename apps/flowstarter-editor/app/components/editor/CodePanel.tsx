@@ -7,6 +7,7 @@
 
 import { File, Folder, ChevronRight, ChevronDown } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
+import { Spinner } from '@flowstarter/flow-design-system';
 import { BrowserChrome } from './BrowserChrome';
 
 interface FileNode {
@@ -35,7 +36,7 @@ export function CodePanel({ projectId, files, activeFile, onFileSelect }: CodePa
         `/api/files/read?projectId=${projectId}&path=${encodeURIComponent(filePath)}`,
       );
       if (response.ok) {
-        const data = await response.json();
+        const data = (await response.json()) as { content?: string };
         setFileContent(data.content || '');
       }
     } catch {
@@ -94,7 +95,7 @@ export function CodePanel({ projectId, files, activeFile, onFileSelect }: CodePa
         <div className="flex-1 overflow-auto">
           {isLoading ? (
             <div className="flex items-center justify-center h-full">
-              <div className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+              <Spinner size="sm" />
             </div>
           ) : (
             <pre className="p-4 text-sm text-gray-800 dark:text-zinc-200 font-mono leading-relaxed whitespace-pre overflow-x-auto">

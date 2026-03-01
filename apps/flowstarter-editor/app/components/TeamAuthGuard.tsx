@@ -1,11 +1,20 @@
+/**
+ * Auth Guard for Editor
+ *
+ * Shows a login prompt for unauthenticated users.
+ * Mirrors the main platform's AuthLayout + AuthTabs design exactly.
+ * Uses flow-design-system components throughout.
+ */
+
 import { useUser } from '@clerk/remix';
-import { useEffect, useState } from 'react';
-import { FlowBackground, Logo, Footer, ThemeToggle } from '@flowstarter/flow-design-system';
+import { useEffect, useRef, useState } from 'react';
 import { useStore } from '@nanostores/react';
-import { themeStore, setTheme } from '~/lib/stores/theme';
+import { Logo, LoadingScreen, ScrollAwareHeader, Footer, ThemeToggle, FlowBackground, GlassPanel, type FooterLink } from '@flowstarter/flow-design-system';
 import { initializeFromClerkUser } from '~/lib/team-auth';
-import { LoadingScreen } from '~/components/LoadingScreen';
-import { getMainPlatformUrl, getCalendlyUrl } from '~/lib/config/domains';
+import { getMainPlatformHomepage, getCalendlyUrl } from '~/lib/config/domains';
+import { themeStore, setTheme, getEffectiveTheme } from '~/lib/stores/theme';
+import { useTranslation } from '~/lib/i18n/useTranslation';
+import { en } from '~/lib/i18n/locales/en';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -13,82 +22,199 @@ interface AuthGuardProps {
   requireTeam?: boolean;
 }
 
-function LoginPrompt() {
-  const mainUrl = getMainPlatformUrl();
-  const redirectUrl = typeof window !== 'undefined' ? encodeURIComponent(window.location.href) : '';
-  const currentTheme = useStore(themeStore);
-  // Derive isDark synchronously so colors are always correct on first render
-  const isDark = currentTheme === 'dark' ||
-    (currentTheme === 'system' && typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches);
+function LoadingFallback() {
+  return <LoadingScreen message={en.app.loadingFlowstarterEditor} />;
+}
 
-  const bg       = isDark ? '#0a0a0f'                    : '#f4f4f8';
-  const cardBg   = isDark ? 'rgba(255,255,255,0.05)'     : 'rgba(255,255,255,0.85)';
-  const cardBord = isDark ? 'rgba(255,255,255,0.1)'      : 'rgba(0,0,0,0.08)';
-  const titleCol = isDark ? '#fff'                       : '#0f0f14';
-  const subtCol  = isDark ? 'rgba(255,255,255,0.5)'      : 'rgba(0,0,0,0.5)';
-  const cardH2   = isDark ? '#fff'                       : '#0f0f14';
-  const noteCol  = isDark ? 'rgba(255,255,255,0.4)'      : 'rgba(0,0,0,0.45)';
-  const divBg    = isDark ? 'rgba(255,255,255,0.1)'      : 'rgba(0,0,0,0.1)';
-  const divTxt   = isDark ? 'rgba(255,255,255,0.3)'      : 'rgba(0,0,0,0.35)';
-  const teamBg   = isDark ? 'rgba(255,255,255,0.07)'     : 'rgba(0,0,0,0.06)';
-  const teamBord = isDark ? 'rgba(255,255,255,0.12)'     : 'rgba(0,0,0,0.12)';
-  const teamCol  = isDark ? 'rgba(255,255,255,0.75)'     : 'rgba(0,0,0,0.7)';
-  const hdrBord  = isDark ? 'rgba(255,255,255,0.07)'     : 'rgba(0,0,0,0.08)';
+/**
+ * LoginPrompt - Uses flow-design-system components exclusively.
+ */
+function useFooterLinks(): FooterLink[] {
+  const { t } = useTranslation();
+  return [
+    { label: t.footer.help, href: '/help' },
+    { label: t.footer.blog, href: '/blog' },
+    { label: t.footer.privacy, href: '/privacy' },
+    { label: t.footer.terms, href: '/terms' },
+    { label: t.footer.contact, href: '/contact' },
+    { label: t.footer.teamDashboard, href: '/team/dashboard' },
+    { label: t.footer.editor, href: 'https://editor.flowstarter.dev', external: true },
+  ];
+}
+
+function LoginPrompt() {
+  const homepageUrl = getMainPlatformHomepage();
+  const { t } = useTranslation();
+  const theme = useStore(themeStore);
+  const [isDark, setIsDark] = useState(true);
+  const footerLinks = useFooterLinks();
+
+  useEffect(() => {
+    setIsDark(getEffectiveTheme() === 'dark');
+  }, [theme]);
+
+  const redirectUrl = typeof window !== 'undefined' ? encodeURIComponent(window.location.href) : '';
 
   return (
-    <div style={{ minHeight: '100vh', width: '100%', display: 'flex', flexDirection: 'column', background: bg, color: titleCol, fontFamily: 'system-ui, sans-serif', position: 'relative', overflow: 'hidden', transition: 'background 0.3s' }}>
-      <FlowBackground style={{ position: 'fixed', inset: 0, zIndex: 0 }} variant="dashboard" />
+    <div className="min-h-screen w-full font-display relative overflow-hidden flex flex-col">
+      <FlowBackground variant="dashboard" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }} />
 
-      {/* Header */}
-      <header style={{ position: 'relative', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 24px', borderBottom: `1px solid ${hdrBord}` }}>
-        <a href={mainUrl} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', ['--text-primary' as string]: isDark ? '#ffffff' : '#09090b' }}>
-          <Logo size="md" />
-        </a>
-        <ThemeToggle theme={currentTheme} onThemeChange={setTheme} />
-      </header>
-
-      {/* Main content */}
-      <main style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 16px', position: 'relative', zIndex: 1 }}>
-
-        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-          <h1 style={{ fontSize: '32px', fontWeight: 700, letterSpacing: '-0.5px', marginBottom: '10px', lineHeight: 1.2, color: titleCol }}>
-            <span>Flowstarter </span>
-            <span style={{ background: 'linear-gradient(135deg, #818cf8 0%, #4D5DD9 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Editor</span>
-          </h1>
-          <p style={{ color: subtCol, fontSize: '15px' }}>Sign in to manage and edit your website.</p>
-        </div>
-
-        {/* Glass card */}
-        <div style={{ width: '100%', maxWidth: '440px', background: cardBg, border: `1px solid ${cardBord}`, borderRadius: '16px', padding: '32px', backdropFilter: 'blur(20px)', boxShadow: '0 20px 40px rgba(0,0,0,0.15)', transition: 'background 0.3s, border-color 0.3s' }}>
-          <h2 style={{ color: cardH2, fontSize: '18px', fontWeight: 600, textAlign: 'center', marginBottom: '6px' }}>Sign in to continue</h2>
-          <p style={{ color: noteCol, fontSize: '13px', textAlign: 'center', marginBottom: '24px' }}>
-            New client?{' '}
-            <a href={getCalendlyUrl()} target="_blank" rel="noopener noreferrer" style={{ color: '#818cf8', textDecoration: 'none' }}>Book a discovery call</a>
-            {' '}to get started.
-          </p>
-
-          <a href={`${mainUrl}/login?redirect_url=${redirectUrl}`}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', padding: '12px 20px', borderRadius: '10px', background: 'linear-gradient(135deg, #4D5DD9 0%, #6366f1 100%)', color: '#fff', fontWeight: 600, fontSize: '15px', textDecoration: 'none', boxShadow: '0 4px 14px rgba(77,93,217,0.4)', marginBottom: '12px', boxSizing: 'border-box' }}>
-            Login with Flowstarter
+      {/* Header — matches main platform AuthLayout */}
+      <ScrollAwareHeader className="z-50" scrolledClass="bg-white/80 dark:bg-[#14141a]/85 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+          <a href={homepageUrl} className="flex items-center gap-2 sm:gap-3 no-underline">
+            <Logo size="md" />
           </a>
+          <ThemeToggle theme={theme} onThemeChange={setTheme} />
+        </div>
+      </ScrollAwareHeader>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '8px 0 12px' }}>
-            <div style={{ flex: 1, height: '1px', background: divBg }} />
-            <span style={{ color: divTxt, fontSize: '12px' }}>or</span>
-            <div style={{ flex: 1, height: '1px', background: divBg }} />
+      {/* Content — matches main platform AuthLayout structure */}
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-8 mt-14">
+        <div className="w-full max-w-md">
+
+          {/* Title block — gradient on last word, same as main platform */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold tracking-tight mb-3">
+              <span className="text-gray-900 dark:text-white">Flowstarter </span>
+              <span className="bg-gradient-to-r from-[var(--purple,#4d5dd9)] to-blue-500 bg-clip-text text-transparent">
+                Editor
+              </span>
+            </h1>
+            <p className="text-gray-500 dark:text-white/50 text-sm">
+              {t.auth.pageSubtitle}
+            </p>
           </div>
 
-          <a href={`${mainUrl}/team/login?redirect_url=${redirectUrl}`}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', padding: '12px 20px', borderRadius: '10px', background: teamBg, border: `1px solid ${teamBord}`, color: teamCol, fontWeight: 500, fontSize: '15px', textDecoration: 'none', boxSizing: 'border-box' }}>
-            Team login
-          </a>
-        </div>
-      </main>
+          {/* Auth card */}
+          <div className="relative">
+            <GlassPanel padding="lg" shadow="glass">
+              <h2 className="text-xl font-semibold text-center text-gray-900 dark:text-white mb-1.5">
+                {t.auth.cardTitle}
+              </h2>
+              <p className="text-sm text-center text-gray-500 dark:text-white/40 mb-6">
+                {t.auth.newClient}{' '}
+                <a
+                  href={getCalendlyUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[var(--purple,#7B6AD8)] no-underline font-medium hover:underline"
+                >
+                  {t.auth.bookDiscovery}
+                </a>{' '}
+                {t.auth.toGetStarted}
+              </p>
 
-      <div style={{ position: 'relative', zIndex: 1 }}>
-        <Footer baseUrl={mainUrl} renderLink={(href, children, props) => <a href={href} {...props}>{children}</a>} />
+              {/* Sign in button */}
+              <a
+                href={`${homepageUrl}/login?redirect_url=${redirectUrl}`}
+                className={`flex items-center justify-center gap-2.5 w-full px-6 py-3.5 rounded-xl font-semibold text-[15px] no-underline transition-all duration-200 hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] ${isDark ? 'bg-white text-gray-900 hover:bg-gray-100' : 'bg-gray-900 text-white hover:bg-gray-800'}`}
+              >
+                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                </svg>
+                {t.auth.signInWithFlowstarter}
+              </a>
+
+              {/* Divider */}
+              <div className="flex items-center gap-3 my-5">
+                <div className="flex-1 h-px bg-gray-200 dark:bg-white/10" />
+                <span className="text-[11px] text-gray-400 dark:text-white/30 uppercase tracking-wider font-medium">{t.auth.or}</span>
+                <div className="flex-1 h-px bg-gray-200 dark:bg-white/10" />
+              </div>
+
+              {/* Team login link */}
+              <a
+                href={`${homepageUrl}/team/login?redirect_url=${redirectUrl}`}
+                className={`flex items-center justify-center gap-2 w-full px-6 py-3 rounded-xl font-medium text-sm no-underline transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${isDark ? 'bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10' : 'bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100'}`}
+              >
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                </svg>
+                {t.auth.teamLogin}
+              </a>
+            </GlassPanel>
+          </div>
+
+          {/* Stats */}
+          <div className="mt-10 pt-6 border-t border-gray-200 dark:border-white/10">
+            <div className="flex items-center justify-center">
+              {[
+                { value: '1-2', label: t.auth.stats.weeksToLaunch },
+                { value: '1', label: t.auth.stats.callNeeded },
+                { value: '0', label: t.auth.stats.techSkillsRequired },
+              ].map((stat, i) => (
+                <div key={i} className="flex items-center">
+                  <div className="text-center px-4">
+                    <div className="text-lg font-bold bg-gradient-to-r from-[var(--purple,#4d5dd9)] to-blue-500 bg-clip-text text-transparent">
+                      {stat.value}
+                    </div>
+                    <div className="text-[9px] text-gray-400 dark:text-white/30 uppercase tracking-wide font-medium">
+                      {stat.label}
+                    </div>
+                  </div>
+                  {i < 2 && (
+                    <div className="w-px h-6 bg-gray-200 dark:bg-white/10" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Footer */}
+      <Footer baseUrl={homepageUrl} links={footerLinks} builtWithLabel={t.footer.builtWith} byTeamLabel={t.footer.byTeam} />
+    </div>
+  );
+}
+
+function TeamAccessDenied() {
+  const homepageUrl = getMainPlatformHomepage();
+  const { t } = useTranslation();
+  const theme = useStore(themeStore);
+  const footerLinks = useFooterLinks();
+
+  return (
+    <div className="min-h-screen w-full font-display relative overflow-hidden flex flex-col">
+      <FlowBackground variant="dashboard" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }} />
+
+      <ScrollAwareHeader className="z-50" scrolledClass="bg-white/80 dark:bg-[#14141a]/85 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+          <a href={homepageUrl} className="flex items-center gap-2 sm:gap-3 no-underline">
+            <Logo size="md" />
+          </a>
+          <ThemeToggle theme={theme} onThemeChange={setTheme} />
+        </div>
+      </ScrollAwareHeader>
+
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-8 mt-14">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold tracking-tight mb-3">
+              <span className="text-gray-900 dark:text-white">{t.auth.teamAccessRequired.split(' ').slice(0, -1).join(' ')} </span>
+              <span className="bg-gradient-to-r from-[var(--purple,#4d5dd9)] to-blue-500 bg-clip-text text-transparent">
+                {t.auth.teamAccessRequired.split(' ').slice(-1)}
+              </span>
+            </h1>
+          </div>
+
+          <div className="relative">
+            <GlassPanel padding="lg" shadow="glass" className="text-center">
+              <div className="mb-5">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="mx-auto text-gray-400 dark:text-gray-500">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                </svg>
+              </div>
+              <p className="text-gray-500 dark:text-white/50 text-sm leading-relaxed">
+                {t.auth.teamAccessDescription}
+              </p>
+            </GlassPanel>
+          </div>
+        </div>
+      </div>
+
+      <Footer baseUrl={homepageUrl} links={footerLinks} builtWithLabel={t.footer.builtWith} byTeamLabel={t.footer.byTeam} />
     </div>
   );
 }
@@ -96,26 +222,55 @@ function LoginPrompt() {
 export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuardProps) {
   const { isLoaded, isSignedIn, user } = useUser();
   const [userMode, setUserMode] = useState<'guest' | 'team' | 'client'>('guest');
+  const [loadingTimedOut, setLoadingTimedOut] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
     if (isLoaded && isSignedIn && user) {
-      setUserMode(initializeFromClerkUser(user));
+      const mode = initializeFromClerkUser(user);
+      setUserMode(mode);
     }
   }, [isLoaded, isSignedIn, user]);
 
-  if (!isLoaded) return fallback || <LoadingScreen message="Loading..." />;
-  if (!isSignedIn) return <LoginPrompt />;
+  // Timeout: if Clerk hasn't loaded after 15s, show login prompt instead of infinite loading
+  useEffect(() => {
+    if (isLoaded) {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      return;
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      console.warn('[AuthGuard] Clerk loading timed out after 15s, showing login prompt');
+      setLoadingTimedOut(true);
+    }, 15_000);
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [isLoaded]);
+
+  // Clerk still loading — show loading fallback, not the login prompt
+  // Unless we've timed out, in which case show the login prompt
+  if (!isLoaded) {
+    if (loadingTimedOut) {
+      return <LoginPrompt />;
+    }
+
+    return <>{fallback ?? <LoadingFallback />}</>;
+  }
+
+  // Loaded but not signed in — show login prompt
+  if (!isSignedIn) {
+    return <LoginPrompt />;
+  }
 
   if (requireTeam && userMode !== 'team') {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0f' }}>
-        <div style={{ textAlign: 'center', maxWidth: '400px', padding: '32px' }}>
-          <div style={{ fontSize: '40px', marginBottom: '16px' }}>🔒</div>
-          <h1 style={{ color: '#fff', fontSize: '20px', fontWeight: 600, marginBottom: '8px' }}>Team Access Required</h1>
-          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}>This area is restricted to Flowstarter team members.</p>
-        </div>
-      </div>
-    );
+    return <TeamAccessDenied />;
   }
 
   return <>{children}</>;

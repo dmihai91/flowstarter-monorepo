@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Spinner } from '@flowstarter/flow-design-system';
 import type { ViewportType } from '~/components/editor/template-preview/types';
 import { VIEWPORT_CONFIG } from '~/components/editor/template-preview/constants';
 
@@ -75,8 +76,8 @@ export function PreviewArea({
               style={{ background: isDark ? 'rgba(10,10,14,0.95)' : 'rgba(255,255,255,0.95)' }}
             >
               <div className="flex flex-col items-center gap-3">
-                <div className="w-8 h-8 border-2 border-[#4D5DD9] border-t-transparent rounded-full animate-spin" />
-                <span className="text-sm text-white/50">Loading preview...</span>
+                <Spinner size="md" />
+                <span className="text-sm text-zinc-400 dark:text-white/50">Loading preview...</span>
               </div>
             </div>
           )}

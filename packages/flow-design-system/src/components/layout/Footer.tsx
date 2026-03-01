@@ -12,6 +12,9 @@ export interface FooterProps {
   copyright?: string;
   links?: FooterLink[];
   showClientLogin?: boolean;
+  clientLoginLabel?: string;
+  builtWithLabel?: string;
+  byTeamLabel?: string;
   baseUrl?: string;
   renderLink?: (href: string, children: ReactNode, className?: string) => ReactNode;
 }
@@ -22,13 +25,13 @@ const defaultLinks: FooterLink[] = [
   { label: 'Privacy', href: '/privacy' },
   { label: 'Terms', href: '/terms' },
   { label: 'Contact', href: '/contact' },
-  { label: 'Team Login', href: '/team/login' },
+  { label: 'Team Dashboard', href: '/team/dashboard' },
   { label: 'Editor', href: 'https://editor.flowstarter.dev', external: true },
 ];
 
 const Dot = () => <span className="text-gray-300 dark:text-white/10">•</span>;
 
-export function Footer({ copyright, links = defaultLinks, showClientLogin = false, baseUrl = '', renderLink }: FooterProps) {
+export function Footer({ copyright, links = defaultLinks, showClientLogin = false, clientLoginLabel = 'Client Login', builtWithLabel = 'Built with', byTeamLabel = 'by the Flowstarter team', baseUrl = '', renderLink }: FooterProps) {
   const year = new Date().getFullYear();
   const lc = 'hover:text-gray-900 dark:hover:text-white transition-colors';
 
@@ -70,14 +73,14 @@ export function Footer({ copyright, links = defaultLinks, showClientLogin = fals
               {showClientLogin && (
                 <>
                   <span className="w-px h-5 bg-gray-200 dark:bg-white/10 mx-1" />
-                  {makeLink('/login', 'Client Login', 'text-sm text-gray-400 dark:text-white/30 hover:text-[var(--purple)] transition-colors font-medium')}
+                  {makeLink('/login', clientLoginLabel, 'text-sm text-gray-400 dark:text-white/30 hover:text-[var(--purple)] transition-colors font-medium')}
                 </>
               )}
             </div>
           </div>
           <div className="flex justify-center">
             <p className="text-xs text-gray-400 dark:text-white/20 flex items-center gap-1.5">
-              Built with
+              {builtWithLabel}
               <svg className="w-3.5 h-3.5" viewBox="0 0 20 20">
                 <defs>
                   <linearGradient id="footerHeartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -87,7 +90,7 @@ export function Footer({ copyright, links = defaultLinks, showClientLogin = fals
                 </defs>
                 <path fill="url(#footerHeartGrad)" fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd"/>
               </svg>
-              by the Flowstarter team
+              {byTeamLabel}
             </p>
           </div>
         </div>

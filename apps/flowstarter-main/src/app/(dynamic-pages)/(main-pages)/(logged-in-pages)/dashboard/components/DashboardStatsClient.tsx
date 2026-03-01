@@ -167,11 +167,20 @@ export function DashboardStatsClient({
                   {lastProject.name}
                 </p>
                 <span className="inline-flex items-center gap-1.5 mt-1">
-                  <span className="w-2 h-2 rounded-full bg-amber-500" />
-                  <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+                  <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                  <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">
                     {t('dashboard.stats.inProgress')}
                   </span>
                 </span>
+              </div>
+              {/* Minimal progress bar */}
+              <div className="mt-1">
+                <div className="h-1.5 bg-gray-100 dark:bg-white/10 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-blue-500 to-[var(--purple)] rounded-full transition-all duration-1000"
+                    style={{ width: '35%' }}
+                  />
+                </div>
               </div>
               <p className="text-xs text-gray-500 dark:text-white/50 mt-auto">
                 {t('dashboard.stats.buildingMessage')}
@@ -203,7 +212,7 @@ export function DashboardStatsClient({
                 href="/dashboard/analytics/traffic"
                 className="text-xs font-medium text-[var(--purple)] hover:underline"
               >
-                Details →
+                {t('dashboard.details')} →
               </Link>
             )}
           </div>
@@ -224,9 +233,9 @@ export function DashboardStatsClient({
                 </div>
               </div>
               <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-white/50 flex-wrap mt-auto">
-                <span>{uniqueVisitors.toLocaleString()} visitors</span>
+                <span>{t('dashboard.analytics.visitors', { count: uniqueVisitors.toLocaleString() })}</span>
                 <span className="text-gray-300 dark:text-white/20">•</span>
-                <span>{Math.round(avgSessionDuration / 60)}min avg</span>
+                <span>{t('dashboard.analytics.avgSession', { minutes: Math.round(avgSessionDuration / 60) })}</span>
               </div>
             </div>
           ) : (
@@ -258,7 +267,7 @@ export function DashboardStatsClient({
                 href="/dashboard/analytics/leads"
                 className="text-xs font-medium text-[var(--purple)] hover:underline"
               >
-                Details →
+                {t('dashboard.details')} →
               </Link>
             )}
           </div>
@@ -274,12 +283,12 @@ export function DashboardStatsClient({
                     {totalLeads.toLocaleString()}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-white/50">
-                    {totalLeads === 1 ? 'prospect' : 'prospects'}
+                    {totalLeads === 1 ? t('dashboard.analytics.prospectSingular') : t('dashboard.analytics.prospectPlural')}
                   </p>
                 </div>
               </div>
               <p className="text-xs text-gray-500 dark:text-white/50 mt-auto">
-                {conversionRate.toFixed(1)}% conversion rate
+                {t('dashboard.analytics.conversionRateValue', { rate: conversionRate.toFixed(1) })}
               </p>
             </div>
           ) : (

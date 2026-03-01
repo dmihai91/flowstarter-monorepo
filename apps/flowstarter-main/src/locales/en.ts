@@ -2,7 +2,8 @@ const en = {
   // General
   'app.name': 'Flowstarter',
   'app.title': 'Flowstarter | Your website. Your bookings. Done.',
-  'app.description': 'We build your website and set up online booking for coaches, therapists, clinics, and service businesses. Get found. Get booked. No tech skills needed.',
+  'app.description':
+    'We build your website and set up online booking for coaches, therapists, clinics, and service businesses. Get found. Get booked. No tech skills needed.',
   'app.back': 'Back',
   'app.saveContinue': 'Continue',
   'app.createProject': 'Create Project',
@@ -24,6 +25,8 @@ const en = {
   'app.continue': 'Continue',
   'app.edit': 'Edit details',
   'app.looksGood': 'Looks good, continue',
+  'app.profile': 'Profile',
+  'app.settings': 'Settings',
   'app.signOut': 'Sign out',
   'app.sigOutTitle': 'Are you sure you want to sign out?',
   'app.signOutDescription':
@@ -663,23 +666,29 @@ const en = {
   'dashboard.stats.live': 'Live',
   'dashboard.stats.inProgress': 'In Progress',
   'dashboard.stats.notStarted': 'Not started yet',
-  'dashboard.stats.bookDiscovery': 'Book a discovery call to get your website built',
-  'dashboard.stats.buildingMessage': "We're building your website. You'll be notified when it's ready!",
+  'dashboard.stats.bookDiscovery':
+    'Book a discovery call to get your website built',
+  'dashboard.stats.buildingMessage':
+    "We're building your website. You'll be notified when it's ready!",
   'dashboard.stats.edit': 'Edit',
   'dashboard.stats.view': 'View',
-  'dashboard.stats.trafficAppears': 'Traffic data appears once your site is live',
-  'dashboard.stats.leadsActivate': 'Lead tracking activates when your site goes live',
+  'dashboard.stats.trafficAppears':
+    'Traffic data appears once your site is live',
+  'dashboard.stats.leadsActivate':
+    'Lead tracking activates when your site goes live',
   'dashboard.stats.aiCredits': 'AI Credits',
   'dashboard.stats.aiCreditsActive': 'Active',
   'dashboard.stats.aiCreditsRemaining': 'of {total} remaining',
   'dashboard.stats.aiCreditsReset': 'Resets monthly',
-  'dashboard.stats.aiCreditsIncluded': '1,000 monthly credits included with your subscription',
+  'dashboard.stats.aiCreditsIncluded':
+    '1,000 monthly credits included with your subscription',
   'dashboard.stats.aiCreditsAfterSetup': 'Edit your site with AI after setup',
   'dashboard.stats.integrations': 'Integrations',
   'dashboard.stats.integrationsSetup': 'Set up',
   'dashboard.stats.integrationsAfterLaunch': 'After launch',
   'dashboard.stats.integrationsConnect': 'Connect analytics, email & more',
-  'dashboard.stats.integrationsConnectLater': 'Connect your tools once your site is live',
+  'dashboard.stats.integrationsConnectLater':
+    'Connect your tools once your site is live',
   'dashboard.stats.analytics': 'Analytics',
   'dashboard.stats.email': 'Email',
   'dashboard.stats.calendar': 'Calendar',
@@ -688,8 +697,49 @@ const en = {
   'dashboard.greeting.morning': 'Good morning',
   'dashboard.greeting.afternoon': 'Good afternoon',
   'dashboard.greeting.evening': 'Good evening',
+  'dashboard.greeting.night': 'Good night',
   'dashboard.title': 'Dashboard',
   'dashboard.loading': 'Loading dashboard...',
+
+  // Onboarding stepper
+  'dashboard.stepper.step': 'Step {number}',
+  'dashboard.stepper.bookCall': 'Book Discovery Call',
+  'dashboard.stepper.bookCallDescription': 'Schedule a free call with our team',
+  'dashboard.stepper.bookCallButton': 'Book Free Call',
+  'dashboard.stepper.weBuild': 'We Build Your Site',
+  'dashboard.stepper.weBuildDescription': 'Professional website in 1-2 weeks',
+  'dashboard.stepper.goLive': 'Go Live & Manage',
+  'dashboard.stepper.goLiveDescription': 'Edit and track from your dashboard',
+
+  // Dashboard details link
+  'dashboard.details': 'Details',
+
+  // Dashboard traffic stats
+  'dashboard.analytics.visitors': '{count} visitors',
+  'dashboard.analytics.avgSession': '{minutes}min avg',
+  'dashboard.analytics.prospectCount':
+    '{count, plural, one {prospect} other {prospects}}',
+  'dashboard.analytics.conversionRateValue': '{rate}% conversion rate',
+
+  // Team login
+  'team.login.title': 'Team Login',
+  'team.login.subtitle':
+    'Sign in to manage client projects and configure services.',
+  'team.login.signInTitle': 'Sign in to your account',
+  'team.login.signInSubtitle':
+    'Team access only. Contact admin for credentials.',
+  'team.login.emailLabel': 'Email address',
+  'team.login.emailPlaceholder': 'you@flowstarter.app',
+  'team.login.passwordLabel': 'Password',
+  'team.login.passwordPlaceholder': 'Enter your password',
+  'team.login.signingIn': 'Signing in...',
+  'team.login.signIn': 'Sign in',
+  'team.login.twoFactorTitle': 'Two-factor authentication',
+  'team.login.twoFactorSubtitle': 'Enter the code from your authenticator app',
+  'team.login.codeLabel': 'Authentication code',
+  'team.login.verifying': 'Verifying...',
+  'team.login.verify': 'Verify',
+  'team.login.back': 'Back',
 
   // Team sidebar
   'team.sidebar.dashboard': 'Dashboard',
@@ -715,7 +765,28 @@ const en = {
   'industry.healthwellness': 'Health & Wellness',
   'industry.other': 'Other Business',
 
-  // Dashboard cards
+  // Project status labels (shared across team + client dashboards)
+  'status.live': 'Live',
+  'status.building': 'Building',
+  'status.draft': 'Draft',
+
+  // Team dashboard
+  'team.dashboard.totalProjects': 'Total Projects',
+  'team.dashboard.revenue': 'Revenue',
+  'team.dashboard.details': 'Details',
+  'team.dashboard.allProjects': 'All Projects',
+  'team.dashboard.allProjectsDescription':
+    'View and manage all client projects',
+  'team.dashboard.noProjects': 'No projects yet',
+  'team.dashboard.lastEdit': 'Last edit: {time}',
+  'team.dashboard.countLive': '{count} live',
+  'team.dashboard.countBuilding': '{count} building',
+  'team.dashboard.countDraft': '{count} draft',
+  'team.dashboard.countPaid': '{count} paid',
+  'team.dashboard.setupFees': '{amount} setup',
+  'team.dashboard.monthlyRevenue': '{amount}/mo',
+
+  // Dashboard cards (legacy keys)
   'dashboard.cards.totalProjects': 'Total Projects',
   'dashboard.cards.details': 'Details',
   'dashboard.cards.progressWithLive':
@@ -1551,8 +1622,11 @@ const en = {
   'help.cta.backToGettingStarted': 'Back to Getting Started',
 
   // Sidebar
+  'sidebar.main': 'Main',
+  'sidebar.support': 'Support',
   'sidebar.dashboard': 'Dashboard',
   'sidebar.integrations': 'Integrations',
+  'sidebar.bookFreeCall': 'Book Free Call',
   'sidebar.helpGuide': 'Help Guide',
   'sidebar.help': 'Need Help?',
 
@@ -1589,11 +1663,18 @@ const en = {
   'footer.social.githubAria': 'Follow us on GitHub',
   'footer.social.discordAria': 'Join our Discord',
   'footer.copyright': '© {year} Flowstarter, Inc. All rights reserved.',
-  'footer.buildWith': 'Build with',
+  'footer.buildWith': 'Built with',
   'footer.byTeam': 'by the Flowstarter team',
+  'footer.nav.help': 'Help',
+  'footer.nav.blog': 'Blog',
+  'footer.nav.privacy': 'Privacy',
+  'footer.nav.terms': 'Terms',
+  'footer.nav.contact': 'Contact',
+  'footer.nav.teamDashboard': 'Team Dashboard',
+  'footer.nav.editor': 'Editor',
+  'footer.nav.clientLogin': 'Client Login',
 
   // Landing page
-  'landing.hero.badge': 'Flowstarter',
   'landing.hero.badgeTagline': 'From idea to live website in minutes',
   'landing.hero.title': 'Build your business with',
   'landing.hero.titleHighlight': 'Flowstarter',
@@ -2386,72 +2467,96 @@ const en = {
 
   // Landing Page - Hero
   'landing.hero.badge': 'Early access - limited spots',
-  'landing.hero.headline1': 'You built your skills over years.',
-  'landing.hero.headline2': 'Now let your website fill your calendar.',
-  'landing.hero.pain': 'We build your website and set up online booking for you, so new clients can find you, trust you, and schedule an appointment without picking up the phone.',
-  'landing.hero.subheadline': 'Most coaches, therapists, and clinics lose clients to competitors with better websites, not better skills. We handle everything from start to finish: your site, your booking setup, and connecting it all. You show up to your appointments. We make sure they keep coming.',
+  'landing.hero.headline1': 'You built your skills over the years',
+  'landing.hero.headline2': 'Now let your website attract clients',
+  'landing.hero.pain':
+    'We create your website and set up online booking for you, so new clients can find you, trust you, and schedule an appointment without picking up the phone.',
+  'landing.hero.subheadline':
+    'Most coaches, therapists, salons and clinics lose clients to competitors with better websites, not better skills. We handle everything from start to finish: your site, your booking setup, and connecting it all. You show up to your appointments. We make sure they keep coming.',
   'landing.hero.support': '',
   'landing.hero.cta': 'Start Growing Your Business',
-  'landing.hero.ctaNote': 'No tech skills needed. Fully set up for you in days.',
+  'landing.hero.ctaNote':
+    'No tech skills needed. Fully set up for you in days.',
   'landing.hero.priceBuild': '€399',
   'landing.hero.priceBuildLabel': 'setup',
   'landing.hero.priceMonthly': '€39',
   'landing.hero.priceMonthlyLabel': '/month',
-  'landing.hero.priceNote': 'Early adopters: €39/mo · New users: €59/mo after 6 months',
-
+  'landing.hero.priceNote':
+    'Early adopters: €39/mo · New users: €59/mo after 6 months',
 
   // What's Included section
-  'landing.included.title': "Everything you need to get found and get booked.",
-  'landing.included.subtitle': "One setup. No subscriptions to manage. No tech to figure out.",
+  'landing.included.title': 'Everything you need to get found and get booked.',
+  'landing.included.subtitle':
+    'One setup. No subscriptions to manage. No tech to figure out.',
   'landing.included.setup.title': 'Setup',
   'landing.included.setup.label': '(one-time)',
   'landing.included.setup.desc': 'What we build for you',
-  'landing.included.setup.item1': 'A professional website built around your business and your clients',
-  'landing.included.setup.item2': 'Online booking set up and connected so clients can schedule without calling you',
-  'landing.included.setup.item3': 'A WhatsApp button so clients can reach you in one tap',
-  'landing.included.setup.item4': 'Your site works perfectly on phones, tablets, and desktops',
-  'landing.included.setup.item5': 'A professional email address that matches your domain',
-  'landing.included.setup.item6': 'You can see how many people visit your site and where they come from',
-  'landing.included.setup.item7': 'Your site is ready to be found on Google from day one',
-  'landing.included.setup.item8': 'You own everything. The website files are yours to keep.',
+  'landing.included.setup.item1':
+    'A professional website built around your business and your clients',
+  'landing.included.setup.item2':
+    'Online booking set up and connected so clients can schedule without calling you',
+  'landing.included.setup.item3':
+    'A WhatsApp button so clients can reach you in one tap',
+  'landing.included.setup.item4':
+    'Your site works perfectly on phones, tablets, and desktops',
+  'landing.included.setup.item5':
+    'A professional email address that matches your domain',
+  'landing.included.setup.item6':
+    'You can see how many people visit your site and where they come from',
+  'landing.included.setup.item7':
+    'Your site is ready to be found on Google from day one',
+  'landing.included.setup.item8':
+    'You own everything. The website files are yours to keep.',
   'landing.included.monthly.title': 'Monthly care',
   'landing.included.monthly.label': '(ongoing)',
   'landing.included.monthly.desc': 'What stays active',
-  'landing.included.monthly.item1': 'Your site stays online, fast, and secure every month',
-  'landing.included.monthly.item2': 'Your professional email keeps working without interruption',
+  'landing.included.monthly.item1':
+    'Your site stays online, fast, and secure every month',
+  'landing.included.monthly.item2':
+    'Your professional email keeps working without interruption',
   'landing.included.monthly.item3': 'Storage for your photos and content',
-  'landing.included.monthly.item4': 'Monthly visitor report so you can see how your site performs',
+  'landing.included.monthly.item4':
+    'Monthly visitor report so you can see how your site performs',
   'landing.included.monthly.item5': 'Updates and improvements handled for you',
   'landing.included.monthly.item6': 'Support when you need it',
-  'landing.included.monthly.item7': 'Your booking system stays connected and working',
-
+  'landing.included.monthly.item7':
+    'Your booking system stays connected and working',
 
   // FAQ Section
   'landing.faq.title': 'Questions answered.',
   'landing.faq.q1': 'What happens on the discovery call?',
-  'landing.faq.a1': "We spend up to 45 minutes learning about your business, your goals, and your clients. You don't need to prepare anything, just show up and tell us about what you do. After the call, we start building your site within 24 hours.",
+  'landing.faq.a1':
+    "We spend up to 45 minutes learning about your business, your goals, and your clients. You don't need to prepare anything, just show up and tell us about what you do. After the call, we start building your site within 24 hours.",
   'landing.faq.q2': 'How long until my site is live?',
-  'landing.faq.a2': "Most sites go live within 1 to 2 weeks after the discovery call. We keep you updated throughout the process.",
+  'landing.faq.a2':
+    'Most sites go live within 1 to 2 weeks after the discovery call. We keep you updated throughout the process.',
   'landing.faq.q3': 'Can I make changes after the site is built?',
-  'landing.faq.a3': "Yes. Your subscription includes updates handled for you. Get in touch and we'll take care of it.",
+  'landing.faq.a3':
+    "Yes. Your subscription includes updates handled for you. Get in touch and we'll take care of it.",
   'landing.faq.q4': 'What if I want to cancel?',
-  'landing.faq.a4': "No lock-in. Cancel anytime. If you share feedback, we'll refund 50% of your setup fee. Either way, you get all your site files to keep.",
+  'landing.faq.a4':
+    "No lock-in. Cancel anytime. If you share feedback, we'll refund 50% of your setup fee. Either way, you get all your site files to keep.",
   'landing.faq.q5': 'Do I need any technical skills?',
-  'landing.faq.a5': "Zero. We handle the entire setup. You just review and approve.",
+  'landing.faq.a5':
+    'Zero. We handle the entire setup. You just review and approve.',
   'landing.faq.q6': 'What happens when the beta ends?',
-  'landing.faq.a6': "Your €39/month rate is locked in for as long as you stay subscribed. After 6 months, new users will pay €59/month — your price never changes. The setup fee goes from €399 to €599 after beta. You get 30 days notice before anything changes.",
+  'landing.faq.a6':
+    'Your €39/month rate is locked in for as long as you stay subscribed. After 6 months, new users will pay €59/month — your price never changes. The setup fee goes from €399 to €599 after beta. You get 30 days notice before anything changes.',
   'landing.faq.q7': "What's included in the email?",
-  'landing.faq.a7': "One professional email address with your domain (e.g. you@yourbusiness.com). Need more? We can add additional mailboxes.",
+  'landing.faq.a7':
+    'One professional email address with your domain (e.g. you@yourbusiness.com). Need more? We can add additional mailboxes.',
   'landing.faq.q8': 'What kind of businesses do you work with?',
-  'landing.faq.a8': "We specialize in websites for service businesses: coaches, therapists, consultants, clinics, barbers, beauty salons, and similar. If you rely on appointments and local clients, we are the right fit.",
+  'landing.faq.a8':
+    'We specialize in websites for service businesses: coaches, therapists, consultants, clinics, barbers, beauty salons, and similar. If you rely on appointments and local clients, we are the right fit.',
   'landing.faq.q9': 'Can I use my existing domain?',
-  'landing.faq.a9': "Yes. We connect your existing domain to your new site at no extra cost. If you don't have one yet, we help you set it up during the discovery call.",
+  'landing.faq.a9':
+    "Yes. We connect your existing domain to your new site at no extra cost. If you don't have one yet, we help you set it up during the discovery call.",
   'landing.faq.q10': 'What if I need more than 7 pages?',
-  'landing.faq.a10': "The Starter plan includes up to 7 pages, which covers most service business websites. If you need more, we discuss options during the discovery call.",
+  'landing.faq.a10':
+    'The Starter plan includes up to 7 pages, which covers most service business websites. If you need more, we discuss options during the discovery call.',
 
   // Nav
   'nav.faq': 'FAQ',
-
 
   // Coming soon tiers
   'landing.tiers.pro.name': 'Pro',
@@ -2486,37 +2591,45 @@ const en = {
   // How it works - 3 steps
   'landing.steps.step1.num': '01',
   'landing.steps.step1.title': 'We talk',
-  'landing.steps.step1.desc': 'One 45-minute call. You tell us about your business and your clients. We handle everything from there.',
+  'landing.steps.step1.desc':
+    'One 45-minute call. You tell us about your business and your clients. We handle everything from there.',
   'landing.steps.step2.num': '02',
   'landing.steps.step2.title': 'We build',
-  'landing.steps.step2.desc': 'We create your website and set up your booking system, fully connected and ready to take appointments. You review once and we refine.',
+  'landing.steps.step2.desc':
+    'We create your website and set up your booking system, fully connected and ready to take appointments. You review once and we refine.',
   'landing.steps.step3.num': '03',
   'landing.steps.step3.title': 'Clients find you and book',
-  'landing.steps.step3.desc': 'Your site goes live. New clients can find you, see what you do, and book directly. No calls needed to schedule.',
+  'landing.steps.step3.desc':
+    'Your site goes live. New clients can find you, see what you do, and book directly. No calls needed to schedule.',
 
   // Landing Page - Editor
   'landing.editor.title': 'Update your site anytime',
-  'landing.editor.subtitle': 'Just type what you want to change. Our AI editor does the rest.',
+  'landing.editor.subtitle':
+    'Just type what you want to change. Our AI editor does the rest.',
 
   // Landing Page - Pricing Card
   'landing.pricing.badge': 'Simple pricing',
   'landing.pricing.title': 'No surprises.',
-  'landing.pricing.subtitle': 'One fee to build. One fee to maintain. Cancel anytime.',
+  'landing.pricing.subtitle':
+    'One fee to build. One fee to maintain. Cancel anytime.',
   'landing.pricing.limitedBadge': 'Launch pricing',
-  'landing.pricing.limitedNote': 'Setup goes to €599 after beta. Lock in current rates.',
+  'landing.pricing.limitedNote':
+    'Setup goes to €599 after beta. Lock in current rates.',
   'landing.pricing.buildLabel': 'Setup:',
   'landing.pricing.buildPrice': '€399',
   'landing.pricing.buildPeriod': 'one-time',
   'landing.pricing.careLabel': 'Monthly:',
   'landing.pricing.carePrice': '€39',
   'landing.pricing.carePeriod': '/month',
-  'landing.pricing.note': 'First month free. Early adopters locked at €39/mo for life. New users pay €59/mo after 6 months. Cancel anytime.',
+  'landing.pricing.note':
+    'First month free. Early adopters locked at €39/mo for life. New users pay €59/mo after 6 months. Cancel anytime.',
   'landing.pricing.refund': '50% setup refund if you change your mind',
   'landing.pricing.assets': 'All your site assets downloadable. You own them.',
 
   // Landing Page - Pricing Features
   'landing.pricing.websiteTitle': 'Setup (€399)',
-  'landing.pricing.websiteDesc': 'Your website, built around your business. Strategy call, custom design, domain, email, analytics. All included.',
+  'landing.pricing.websiteDesc':
+    'Your website, built around your business. Strategy call, custom design, domain, email, analytics. All included.',
   'landing.pricing.websiteFeature1': 'Strategy call to clarify your offer',
   'landing.pricing.websiteFeature2': 'Up to 7 pages, designed to convert',
   'landing.pricing.websiteFeature3': 'Your domain and professional email',
@@ -2524,7 +2637,8 @@ const en = {
   'landing.pricing.websiteFeature5': 'Live in about 2 weeks',
 
   'landing.pricing.careTitle': 'Monthly (€39)',
-  'landing.pricing.careDesc': 'Hosting, security, updates, and small edits. Bigger changes are quoted separately.',
+  'landing.pricing.careDesc':
+    'Hosting, security, updates, and small edits. Bigger changes are quoted separately.',
   'landing.pricing.careFeature1': '1,000 AI credits for edits each month',
   'landing.pricing.careFeature2': 'AI editor: update text, images, pages',
   'landing.pricing.careFeature3': 'Hosting and security included',
@@ -2535,7 +2649,7 @@ const en = {
   'landing.forYou.item1': "You're a coach, consultant, or service provider",
   'landing.forYou.item2': 'You already have clients and know your offer',
   'landing.forYou.item3': "Your current site doesn't do you justice",
-  'landing.forYou.item4': "You want it done right, not done yourself",
+  'landing.forYou.item4': 'You want it done right, not done yourself',
 
   'landing.notForYou.title': 'Probably not for you if',
   'landing.notForYou.item1': "You're still figuring out what you sell",
@@ -2545,12 +2659,15 @@ const en = {
 
   // Landing Page - CTA
   'landing.cta.title': "Your website shouldn't hold you back.",
-  'landing.cta.subtitle': "Book a free strategy call. We'll talk through your business and see if Flowstarter is the right fit. No pressure. No pitch deck.",
+  'landing.cta.subtitle':
+    "Book a free strategy call. We'll talk through your business and see if Flowstarter is the right fit. No pressure. No pitch deck.",
   'landing.cta.button': 'Book Your Free Strategy Call',
-  'landing.cta.pricing': '€399 setup · €39/month for early adopters · First month free',
+  'landing.cta.pricing':
+    '€399 setup · €39/month for early adopters · First month free',
 
   // Landing Page - Footer CTA
-  'landing.footer.pricing': '€399 website · €39/month (early adopters) · First month free',
+  'landing.footer.pricing':
+    '€399 website · €39/month (early adopters) · First month free',
 } as const;
 
 export default en;

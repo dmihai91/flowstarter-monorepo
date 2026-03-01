@@ -1,19 +1,16 @@
-/* Design System Bridge - maps legacy vars to flow-design-system vars */
+/* Design System Bridge - maps legacy editor vars to design system tokens */
 
 :root {
-  /* Design system Logo component needs this */
-  --text-primary: #09090b;
-
-  /* Legacy → Design System mapping */
-  --flowstarter-elements-bg-depth-1: var(--flow-bg-primary);
-  --flowstarter-elements-bg-depth-2: var(--flow-bg-secondary);
-  --flowstarter-elements-bg-depth-3: var(--flow-bg-tertiary);
-  --flowstarter-elements-bg-depth-4: var(--flow-bg-elevated);
-  --flowstarter-elements-textPrimary: var(--flow-text-primary);
-  --flowstarter-elements-textSecondary: var(--flow-text-secondary);
-  --flowstarter-elements-textTertiary: var(--flow-text-tertiary);
-  --flowstarter-elements-borderColor: var(--flow-border-default);
-  --flowstarter-elements-borderColorActive: var(--flow-border-light);
+  /* Legacy → Design System mapping (uses tokens from brand.css) */
+  --flowstarter-elements-bg-depth-1: var(--bg-primary);
+  --flowstarter-elements-bg-depth-2: var(--bg-secondary);
+  --flowstarter-elements-bg-depth-3: var(--bg-tertiary);
+  --flowstarter-elements-bg-depth-4: var(--bg-elevated);
+  --flowstarter-elements-textPrimary: var(--text-primary);
+  --flowstarter-elements-textSecondary: var(--text-secondary);
+  --flowstarter-elements-textTertiary: var(--text-tertiary);
+  --flowstarter-elements-borderColor: var(--border-default);
+  --flowstarter-elements-borderColorActive: var(--border-light);
 
   /* Editor-specific colors */
   --editor-green: #2d8a6e;
@@ -25,27 +22,9 @@
   --editor-text: #374151;
   --editor-text-muted: #9ca3af;
   --editor-border: #e5e7eb;
-
-  /* Auth page / glassmorphism tokens */
-  --auth-header-bg: rgba(255, 255, 255, 0.8);
-  --auth-header-border: rgba(0, 0, 0, 0.05);
-  --auth-glass-bg: rgba(255, 255, 255, 0.5);
-  --auth-glass-border: rgba(255, 255, 255, 0.2);
-  --auth-glass-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.02),
-    0 8px 16px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.02);
-  --auth-text-heading: #18181b;
-  --auth-text-body: #71717a;
-  --auth-text-footnote: #9ca3af;
-  --auth-divider: rgba(0, 0, 0, 0.08);
-  --auth-stats-border: rgba(0, 0, 0, 0.06);
-  --auth-footer-text: #9ca3af;
 }
 
 [data-theme='dark'] {
-  --text-primary: #ffffff;
   --editor-green: #34a07e;
   --editor-green-hover: #3db88e;
   --editor-green-light: rgba(52, 160, 126, 0.1);
@@ -55,21 +34,4 @@
   --editor-text: #e5e7eb;
   --editor-text-muted: #6b7280;
   --editor-border: #27272a;
-
-  /* Auth page / glassmorphism tokens - dark */
-  --auth-header-bg: rgba(10, 10, 12, 0.9);
-  --auth-header-border: rgba(255, 255, 255, 0.1);
-  --auth-glass-bg: rgba(255, 255, 255, 0.03);
-  --auth-glass-border: rgba(255, 255, 255, 0.06);
-  --auth-glass-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.1),
-    0 8px 16px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
-  --auth-text-heading: #ffffff;
-  --auth-text-body: rgba(255, 255, 255, 0.4);
-  --auth-text-footnote: rgba(255, 255, 255, 0.3);
-  --auth-divider: rgba(255, 255, 255, 0.08);
-  --auth-stats-border: rgba(255, 255, 255, 0.08);
-  --auth-footer-text: rgba(255, 255, 255, 0.2);
 }

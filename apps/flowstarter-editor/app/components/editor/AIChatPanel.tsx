@@ -3,10 +3,12 @@
  *
  * Matching the landing page design: green pills for user messages,
  * plain text with sparkle for assistant, suggestion chips, green send button.
+ * Personalized team greeting when chat is empty.
  */
 
 import { ArrowRight } from 'lucide-react';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { LogoIcon, GlassPanel } from '@flowstarter/flow-design-system';
 import type { ChatMessage } from '~/lib/hooks/useSandboxChat';
 
 interface AIChatPanelProps {
@@ -15,6 +17,8 @@ interface AIChatPanelProps {
   suggestions: string[];
   onSendMessage: (message: string) => void;
   onSuggestionClick: (suggestion: string) => void;
+  userName?: string;
+  isTeam?: boolean;
 }
 
 const PLACEHOLDER_SUGGESTIONS = [
@@ -24,17 +28,29 @@ const PLACEHOLDER_SUGGESTIONS = [
   'Try: Update the hero section...',
 ];
 
+function getTimeGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return 'Good morning';
+  if (hour >= 12 && hour < 17) return 'Good afternoon';
+  if (hour >= 17 && hour < 21) return 'Good evening';
+  return 'Good night';
+}
+
 export function AIChatPanel({
   messages,
   isGenerating,
   suggestions,
   onSendMessage,
   onSuggestionClick,
+  userName,
+  isTeam,
 }: AIChatPanelProps) {
   const [input, setInput] = useState('');
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const greeting = useMemo(() => getTimeGreeting(), []);
 
   // Rotate placeholder
   useEffect(() => {
@@ -73,8 +89,8 @@ export function AIChatPanel({
     <div className="flex flex-col h-full bg-white dark:bg-zinc-950">
       {/* Header */}
       <div className="px-5 py-4 border-b border-gray-100 dark:border-zinc-800">
-        <div className="flex items-center gap-2">
-          <span className="text-emerald-600 dark:text-emerald-400 text-lg font-bold">f</span>
+        <div className="flex items-center gap-2.5">
+          <LogoIcon size="sm" />
           <span className="text-xs font-medium tracking-widest uppercase text-gray-400 dark:text-zinc-500">
             Flowstarter Editor
           </span>
@@ -84,11 +100,21 @@ export function AIChatPanel({
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full text-center px-4">
-            <div className="text-5xl mb-4">&#10024;</div>
-            <p className="text-gray-500 dark:text-zinc-400 text-sm">
-              Start building your website by typing a message below or clicking a suggestion.
-            </p>
+          <div className="flex flex-col items-center justify-center h-full px-4">
+            <GlassPanel shadow="subtle" padding="lg" className="w-full max-w-sm text-center">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-zinc-100 mb-1">
+                {greeting}{userName ? `, ${userName}` : ''}
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-zinc-400 flex items-center justify-center gap-1.5 mb-4">
+                <span className="text-emerald-500">&#10024;</span>
+                Welcome to Flowstarter Editor
+              </p>
+              <p className="text-sm text-gray-600 dark:text-zinc-300">
+                {isTeam
+                  ? "Describe your client's business and I'll build their site."
+                  : 'Start building your website by typing a message below or clicking a suggestion.'}
+              </p>
+            </GlassPanel>
           </div>
         )}
 
@@ -144,7 +170,7 @@ export function AIChatPanel({
               <button
                 key={suggestion}
                 onClick={() => onSuggestionClick(suggestion)}
-                className="px-4 py-1.5 rounded-full border border-gray-300 dark:border-zinc-600 text-sm text-gray-600 dark:text-zinc-300 hover:bg-emerald-50 hover:border-emerald-300 dark:hover:bg-emerald-950 dark:hover:border-emerald-700 transition-colors"
+                className="px-4 py-1.5 rounded-full border border-gray-200 dark:border-zinc-700 text-sm text-gray-600 dark:text-zinc-300 hover:bg-emerald-50 hover:border-emerald-300 dark:hover:bg-emerald-950 dark:hover:border-emerald-700 transition-colors"
               >
                 {suggestion}
               </button>

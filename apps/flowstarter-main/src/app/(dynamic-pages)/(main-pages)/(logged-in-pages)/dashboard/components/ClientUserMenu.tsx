@@ -18,6 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useTranslations } from '@/lib/i18n';
 import { useClerk, useUser } from '@clerk/nextjs';
 import { LogOut, Settings, User } from 'lucide-react';
 import Image from 'next/image';
@@ -29,6 +30,7 @@ export function ClientUserMenu() {
   const [showSignOutDialog, setShowSignOutDialog] = useState(false);
   const { signOut } = useClerk();
   const { user } = useUser();
+  const { t } = useTranslations();
   const router = useRouter();
 
   useEffect(() => {
@@ -116,12 +118,12 @@ export function ClientUserMenu() {
 
         <DropdownMenuItem onSelect={() => router.push('/profile')}>
           <User className="h-4 w-4" />
-          Profile
+          {t('app.profile')}
         </DropdownMenuItem>
 
         <DropdownMenuItem onSelect={() => router.push('/dashboard/integrations')}>
           <Settings className="h-4 w-4" />
-          Settings
+          {t('app.settings')}
         </DropdownMenuItem>
 
         <DropdownMenuSeparator className="bg-gray-200 dark:bg-white/10" />
@@ -131,7 +133,7 @@ export function ClientUserMenu() {
           className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 focus:bg-red-50 dark:focus:bg-red-900/20"
         >
           <LogOut className="h-4 w-4" />
-          Sign out
+          {t('app.signOut')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -140,20 +142,20 @@ export function ClientUserMenu() {
     <AlertDialog open={showSignOutDialog} onOpenChange={setShowSignOutDialog}>
       <AlertDialogContent className="bg-white dark:bg-[#1a1a1f] border-gray-200 dark:border-white/10">
         <AlertDialogHeader>
-          <AlertDialogTitle>Sign out?</AlertDialogTitle>
+          <AlertDialogTitle>{t('app.sigOutTitle')}</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to sign out of your account?
+            {t('app.signOutDescription')}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel className="border-gray-200 dark:border-white/10">
-            Cancel
+            {t('app.cancel')}
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleSignOut}
-            className="bg-red-600 hover:bg-red-700 text-white"
+            variant="destructive"
           >
-            Sign out
+            {t('app.signOut')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

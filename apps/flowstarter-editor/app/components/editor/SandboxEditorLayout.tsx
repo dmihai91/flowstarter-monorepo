@@ -9,6 +9,7 @@
 import { Eye } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import { useUser } from '@clerk/remix';
 import { EditorHeader } from './EditorHeader';
 import { AIChatPanel } from './AIChatPanel';
 import { LivePreview } from './LivePreview';
@@ -33,6 +34,9 @@ export function SandboxEditorLayout({
   onPublish,
 }: SandboxEditorLayoutProps) {
   const permissions = useEditorRole();
+  const { user } = useUser();
+  const userName = user?.firstName || undefined;
+  const isTeam = permissions.role === 'team';
   const [activePanel, setActivePanel] = useState<'preview' | 'code'>('preview');
   const [isChatVisible, setIsChatVisible] = useState(true);
   const [isMobilePreviewOpen, setIsMobilePreviewOpen] = useState(false);
@@ -86,6 +90,8 @@ export function SandboxEditorLayout({
                     suggestions={suggestions}
                     onSendMessage={chat.sendMessage}
                     onSuggestionClick={handleSuggestionClick}
+                    userName={userName}
+                    isTeam={isTeam}
                   />
                 </Panel>
                 <PanelResizeHandle className="w-px bg-gray-200 dark:bg-zinc-800 hover:bg-emerald-400 transition-colors" />
@@ -122,6 +128,8 @@ export function SandboxEditorLayout({
             suggestions={suggestions}
             onSendMessage={chat.sendMessage}
             onSuggestionClick={handleSuggestionClick}
+            userName={userName}
+            isTeam={isTeam}
           />
         </div>
       </div>

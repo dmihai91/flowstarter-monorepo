@@ -5,7 +5,8 @@
  * Includes BrowserChrome bar at top.
  */
 
-import { RefreshCw } from 'lucide-react';
+import { Globe, RefreshCw } from 'lucide-react';
+import { Spinner } from '@flowstarter/flow-design-system';
 import { BrowserChrome } from './BrowserChrome';
 
 interface LivePreviewProps {
@@ -43,8 +44,8 @@ export function LivePreview({
         {/* Loading state */}
         {isLoading && !error && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 dark:bg-zinc-900">
-            <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mb-3" />
-            <p className="text-sm text-gray-500 dark:text-zinc-400">Starting preview...</p>
+            <Spinner size="md" />
+            <p className="text-sm text-gray-500 dark:text-zinc-400 mt-3">Starting preview...</p>
           </div>
         )}
 
@@ -59,6 +60,21 @@ export function LivePreview({
               <RefreshCw size={14} />
               Retry
             </button>
+          </div>
+        )}
+
+        {/* Empty state — no URL yet, not loading, no error */}
+        {!previewUrl && !isLoading && !error && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 dark:bg-zinc-900">
+            <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center justify-center mb-4">
+              <Globe size={24} className="text-gray-400 dark:text-zinc-500" />
+            </div>
+            <p className="text-sm font-medium text-gray-600 dark:text-zinc-300 mb-1">
+              Preview will appear here once you start building
+            </p>
+            <p className="text-xs text-gray-400 dark:text-zinc-500">
+              Describe the client&apos;s business in the chat to get started
+            </p>
           </div>
         )}
 

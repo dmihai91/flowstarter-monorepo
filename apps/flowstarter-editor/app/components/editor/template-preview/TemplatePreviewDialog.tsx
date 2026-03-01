@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Check } from 'lucide-react';
+import { Spinner } from '@flowstarter/flow-design-system';
 import { getTemplateLiveUrl } from '~/lib/config/templates';
 import { getAllPalettes, type ColorPalette } from '~/lib/stores/palettes';
 import { useThemeStyles, getColors } from '~/components/editor/hooks/useThemeStyles';
@@ -223,7 +224,7 @@ export function TemplatePreviewDialog({
                 style={{ background: 'rgba(10,10,14,0.95)' }}
               >
                 <div className="flex flex-col items-center gap-3">
-                  <div className="w-8 h-8 border-2 border-[#4D5DD9] border-t-transparent rounded-full animate-spin" />
+                  <Spinner size="md" />
                   <span className="text-sm text-white/50">Loading preview...</span>
                 </div>
               </div>

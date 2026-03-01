@@ -188,8 +188,8 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
       domain={sharedCookieDomain}
       signInUrl="/login"
       signUpUrl="/login"
-      afterSignInUrl="/dashboard"
-      afterSignUpUrl="/dashboard"
+      signInFallbackRedirectUrl="/dashboard"
+      signUpFallbackRedirectUrl="/dashboard"
       // Allow the satellite editor to redirect back after sign-in
       allowedRedirectOrigins={[
         'https://editor.flowstarter.dev',

@@ -18,6 +18,8 @@ import { rootAuthLoader } from '@clerk/remix/ssr.server';
 
 // Core styles - loaded immediately (critical for initial render)
 import globalStyles from './styles/index.scss?url';
+import designSystemStyles from '@flowstarter/flow-design-system/styles?url';
+import bridgeStyles from './styles/design-system-bridge.css?url';
 
 /*
  * Non-critical styles - URLs for deferred loading
@@ -77,6 +79,8 @@ export const links: LinksFunction = () => [
 
   // Critical CSS - loaded immediately (render-blocking)
   { rel: 'stylesheet', href: tailwindReset },
+  { rel: 'stylesheet', href: designSystemStyles },
+  { rel: 'stylesheet', href: bridgeStyles },
   { rel: 'stylesheet', href: globalStyles },
 
   /*
@@ -106,7 +110,7 @@ export const links: LinksFunction = () => [
   },
   {
     rel: 'stylesheet',
-    href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
+    href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap',
   },
 ];
 

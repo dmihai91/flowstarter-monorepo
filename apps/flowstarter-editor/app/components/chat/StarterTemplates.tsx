@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Spinner } from '@flowstarter/flow-design-system';
 import { useTemplates } from '~/lib/hooks/useTemplates';
 import { getTemplateThumbnailUrl } from '~/lib/config/templates';
 import type { Template } from '~/components/onboarding';
@@ -38,7 +39,7 @@ const StarterTemplates: React.FC<StarterTemplatesProps> = ({ onSelectTemplate })
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <div className="w-8 h-8 border-2 border-[var(--flowstarter-accent-purple)] border-t-transparent rounded-full animate-spin mb-4" />
+        <Spinner size="md" className="mb-4" />
         <p className="text-sm text-flowstarter-elements-textSecondary">Loading templates...</p>
       </div>
     );

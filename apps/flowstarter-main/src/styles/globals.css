@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import './theme-colors.css';
+@import '@flowstarter/flow-design-system/styles';
 
 /* Font family CSS variables */
 :root {

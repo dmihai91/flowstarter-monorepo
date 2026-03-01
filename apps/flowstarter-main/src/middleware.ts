@@ -340,7 +340,7 @@ export default clerkMiddleware(async (auth, req) => {
   if (isPublicRoute(req)) {
     // If user is already authenticated and trying to access auth pages, redirect to dashboard
     const pathname = req.nextUrl.pathname;
-    if (pathname.startsWith('/login') || pathname.startsWith('/sign-up')) {
+    if (pathname.startsWith('/login') || pathname.startsWith('/sign-up') || pathname.startsWith('/team/login')) {
       try {
         const { userId, sessionClaims } = await auth();
         if (userId) {
@@ -393,9 +393,10 @@ export default clerkMiddleware(async (auth, req) => {
       }
 
       // For page routes, redirect to login with explanatory message and return path
+      // Team routes → team login, everything else → client login
       const url = req.nextUrl.clone();
       const next = req.nextUrl.pathname + (req.nextUrl.search || '');
-      url.pathname = '/login';
+      url.pathname = req.nextUrl.pathname.startsWith('/team/') ? '/team/login' : '/login';
       url.searchParams.set('reason', 'unauthenticated');
       url.searchParams.set('next', next);
       return NextResponse.redirect(url);

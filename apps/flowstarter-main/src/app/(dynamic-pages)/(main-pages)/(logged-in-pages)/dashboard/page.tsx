@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from '@/lib/i18n';
+import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useUser } from '@clerk/nextjs';
 import { DashboardInit } from './components/DashboardInit';
 import { DashboardMessages } from './components/DashboardMessages';
@@ -12,35 +13,53 @@ export const dynamic = 'force-dynamic';
 
 const CALENDLY_URL = 'https://calendly.com/flowstarter-app/discovery';
 
-// Onboarding steps
-const steps = [
-  {
-    number: 1,
-    title: 'Book Discovery Call',
-    description: 'Schedule a free call with our team',
-    icon: Calendar,
-    status: 'active' as const,
-  },
-  {
-    number: 2,
-    title: 'We Build Your Site',
-    description: 'Professional website in 1-2 weeks',
-    icon: Sparkles,
-    status: 'locked' as const,
-  },
-  {
-    number: 3,
-    title: 'Go Live & Manage',
-    description: 'Edit and track from your dashboard',
-    icon: Globe,
-    status: 'locked' as const,
-  },
-];
-
 // Glassmorphism card style - shared with team dashboard
 const glassCard = 'rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.1)_inset]';
 
-function OnboardingStepper() {
+type StepStatus = 'completed' | 'active' | 'locked';
+
+function getStepStatuses(hasAnyProject: boolean, hasLiveProject: boolean): [StepStatus, StepStatus, StepStatus] {
+  if (hasLiveProject) return ['completed', 'completed', 'active'];
+  if (hasAnyProject) return ['completed', 'active', 'locked'];
+  return ['active', 'locked', 'locked'];
+}
+
+function getTimeGreetingKey(hour: number): string {
+  // 5-11: morning, 12-17: afternoon, 18-21: evening, 22-4: night
+  if (hour >= 5 && hour < 12) return 'dashboard.greeting.morning';
+  if (hour >= 12 && hour < 18) return 'dashboard.greeting.afternoon';
+  if (hour >= 18 && hour < 22) return 'dashboard.greeting.evening';
+  return 'dashboard.greeting.night';
+}
+
+function OnboardingStepper({ hasAnyProject, hasLiveProject }: { hasAnyProject: boolean; hasLiveProject: boolean }) {
+  const { t } = useTranslations();
+  const statuses = getStepStatuses(hasAnyProject, hasLiveProject);
+
+  const steps = [
+    {
+      number: 1,
+      title: t('dashboard.stepper.bookCall'),
+      description: t('dashboard.stepper.bookCallDescription'),
+      icon: Calendar,
+      status: statuses[0],
+    },
+    {
+      number: 2,
+      title: t('dashboard.stepper.weBuild'),
+      description: t('dashboard.stepper.weBuildDescription'),
+      icon: Sparkles,
+      status: statuses[1],
+    },
+    {
+      number: 3,
+      title: t('dashboard.stepper.goLive'),
+      description: t('dashboard.stepper.goLiveDescription'),
+      icon: Globe,
+      status: statuses[2],
+    },
+  ];
+
   const currentStepIndex = steps.findIndex((s) => s.status === 'active');
 
   return (
@@ -74,7 +93,7 @@ function OnboardingStepper() {
               }
             `}
             >
-              Step {step.number}
+              {t('dashboard.stepper.step', { number: step.number })}
             </span>
 
             <div className="flex items-start gap-3 mb-3">
@@ -129,8 +148,8 @@ function OnboardingStepper() {
 
             <div className="flex-1" />
 
-            {/* CTA for active step */}
-            {isActive && (
+            {/* CTA for active step (only step 1) */}
+            {isActive && step.number === 1 && (
               <a
                 href={CALENDLY_URL}
                 target="_blank"
@@ -138,7 +157,7 @@ function OnboardingStepper() {
                 className="mt-3 w-full inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl bg-[var(--purple)] text-white text-sm font-medium transition-all hover:bg-[var(--purple)]/90 hover:shadow-lg hover:shadow-[var(--purple)]/25 hover:scale-[1.02]"
               >
                 <Calendar className="w-4 h-4" />
-                Book Free Call
+                {t('dashboard.stepper.bookCallButton')}
               </a>
             )}
           </div>
@@ -151,11 +170,14 @@ function OnboardingStepper() {
 export default function DashboardPage() {
   const { t } = useTranslations();
   const { user } = useUser();
+  const { data } = useDashboardStats();
 
   const firstName = user?.firstName || 'there';
   const hour = new Date().getHours();
-  const greeting =
-    hour < 12 ? t('dashboard.greeting.morning') : hour < 18 ? t('dashboard.greeting.afternoon') : t('dashboard.greeting.evening');
+  const greeting = t(getTimeGreetingKey(hour));
+
+  const hasAnyProject = (data?.totalProjects ?? 0) > 0;
+  const hasLiveProject = (data?.liveProjects ?? 0) > 0;
 
   return (
     <DashboardWrapper>
@@ -178,7 +200,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Onboarding Stepper */}
-          <OnboardingStepper />
+          <OnboardingStepper hasAnyProject={hasAnyProject} hasLiveProject={hasLiveProject} />
 
           {/* Stats Section */}
           <div className="mb-8">

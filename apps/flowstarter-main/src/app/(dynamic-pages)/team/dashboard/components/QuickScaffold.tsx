@@ -81,7 +81,7 @@ export function QuickScaffold() {
             });
             if (res.ok) {
               const data = await res.json();
-              window.open(\`\${EDITOR_URL}?handoff=\${data.token}\`, '_blank');
+              window.open(`${EDITOR_URL}?handoff=${data.token}`, '_blank');
             } else {
               window.open(EDITOR_URL, '_blank');
             }
@@ -103,7 +103,7 @@ export function QuickScaffold() {
             });
             if (res.ok) {
               const data = await res.json();
-              window.open(\`\${EDITOR_URL}?handoff=\${data.token}\`, '_blank');
+              window.open(`${EDITOR_URL}?handoff=${data.token}`, '_blank');
             } else {
               window.open(EDITOR_URL, '_blank');
             }

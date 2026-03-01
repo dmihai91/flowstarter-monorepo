@@ -349,6 +349,11 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                     }
                     window.location.href = `/team/dashboard/projects/${project.id}`;
                   }}
+                  onDoubleClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openInEditor(project.id);
+                  }}
                 >
                   {/* Desktop Row */}
                   <div className="hidden md:grid md:grid-cols-[1fr_100px_150px_100px_40px] gap-4 px-4 py-3 items-center">

@@ -366,14 +366,34 @@ export function useNewProject() {
 
       if (!finalProjectId) throw new Error('No project ID');
 
-      toast.success('Project saved!');
+      toast.success('Project saved! Opening editor...');
       setTeamWizardData(null);
       setPrefillData(null);
 
       await queryClient.invalidateQueries({ queryKey: ['team-projects'] });
       await queryClient.invalidateQueries({ queryKey: ['projects'] });
 
-      router.push(`/team/dashboard/projects/${finalProjectId}`);
+      // Handoff to editor with all collected business data
+      const editorUrl = process.env.NEXT_PUBLIC_EDITOR_URL || 'http://localhost:5173';
+      try {
+        const handoffRes = await fetch('/api/editor/handoff', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            projectId: finalProjectId,
+            mode: 'interactive',
+          }),
+        });
+        if (handoffRes.ok) {
+          const handoffData = await handoffRes.json();
+          window.open(`${editorUrl}?handoff=${handoffData.token}`, '_blank');
+          router.push('/team/dashboard');
+        } else {
+          router.push('/team/dashboard');
+        }
+      } catch {
+        router.push('/team/dashboard');
+      }
     } catch (error) {
       console.error('Failed to save project:', error);
       toast.error('Failed to save project', {

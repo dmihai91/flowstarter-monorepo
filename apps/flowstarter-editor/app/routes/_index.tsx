@@ -199,16 +199,28 @@ function IndexRedirector() {
         const config = handoffProject?.config;
 
         // Build businessInfo from handoff config (if dashboard collected business data)
+        // Check both top-level fields and nested businessInfo/contactInfo from buildChatData
+        const bi = config?.businessInfo || {};
+        const ci = config?.contactInfo || {};
         const hasBusinessData = !!(
           config?.userDescription ||
+          bi?.description ||
           projectDescription.length > 10
         );
         const businessInfo = hasBusinessData
           ? {
-              uvp: config?.USP || undefined,
-              targetAudience: config?.targetUsers || undefined,
-              businessGoals: config?.businessGoals ? [config.businessGoals] : undefined,
-              industry: config?.industry || undefined,
+              description: bi?.description || config?.userDescription || projectDescription || undefined,
+              uvp: bi?.uvp || config?.USP || undefined,
+              targetAudience: bi?.targetAudience || config?.targetUsers || undefined,
+              businessGoals: bi?.goal ? [bi.goal] : config?.businessGoals ? [config.businessGoals] : undefined,
+              brandTone: bi?.brandTone || undefined,
+              industry: bi?.industry || config?.industry || undefined,
+              offerings: bi?.offerType || undefined,
+              contactEmail: ci?.email || undefined,
+              contactPhone: ci?.phone || undefined,
+              contactAddress: ci?.address || undefined,
+              website: ci?.website || undefined,
+              sellingMethod: bi?.goal || undefined,
             }
           : undefined;
 

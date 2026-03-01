@@ -14,10 +14,13 @@ const ro: typeof en = {
   'landing.hero.badge': 'Pentru experții care merită să fie găsiți online',
   'landing.hero.headline1': 'Expertiza ta e reală.',
   'landing.hero.headline2': 'Prezența ta online ar trebui să fie la fel.',
-  'landing.hero.pain': 'Construim site-ul tău și configurăm programările online pentru tine, astfel încât clienții noi te pot găsi, pot avea încredere în tine și pot programa o întâlnire fără să ridice telefonul.',
-  'landing.hero.subheadline': 'Majoritatea coachilor, terapeuților și clinicilor pierd clienți în favoarea concurenților cu site-uri mai bune, nu cu abilități mai bune. Ne ocupăm de tot de la început până la sfârșit: site-ul tău, configurarea programărilor și conectarea tuturor. Tu apari la programări. Noi ne asigurăm că acestea continuă să vină.',
+  'landing.hero.pain':
+    'Oricine cu ChatGPT poate acum să scrie ca un profesionist, să facă design ca un studio și să promoveze ca o agenție. Cei 10 ani de practică ai tăi arată la fel ca 10 minute de prompting ale altcuiva. Noi construim prezența online pe care expertiza ta chiar o merită.', astfel încât clienții noi te pot găsi, pot avea încredere în tine și pot programa o întâlnire fără să ridice telefonul.',
+  'landing.hero.subheadline':
+    'Website, booking și tot ce le conectează — construite pentru tine în zile, nu luni. Tu te concentrezi pe clienții tăi. Noi ne asigurăm că alții noi te găsesc în continuare.', terapeuților și clinicilor pierd clienți în favoarea concurenților cu site-uri mai bune, nu cu abilități mai bune. Ne ocupăm de tot de la început până la sfârșit: site-ul tău, configurarea programărilor și conectarea tuturor. Tu apari la programări. Noi ne asigurăm că acestea continuă să vină.',
   'landing.hero.cta': 'Programează un apel gratuit',
-  'landing.hero.ctaNote': 'Nu ai nevoie de cunoștințe tehnice. Complet configurat în câteva zile.',
+  'landing.hero.ctaNote':
+    'Un singur apel. Fără jargon tehnic. Vei fi online în câteva zile.',
   'landing.hero.priceBuild': '€399',
   'landing.hero.priceBuildLabel': 'setup',
   'landing.hero.priceMonthly': '€39',
@@ -25,12 +28,12 @@ const ro: typeof en = {
   'landing.hero.priceNote': 'Early adopters: €39/lună · Utilizatori noi: €59/lună după 6 luni',
 
   // ─── Stats ────────────────────────────────────────────────────────────
-  'landing.stats.weeks': '1-2',
-  'landing.stats.weeksLabel': 'SĂPTĂMÂNI PÂNĂ LA LANSARE',
+  'landing.stats.weeks': 'Zile',
+  'landing.stats.weeksLabel': 'NU LUNI, PÂNĂ LA LANSARE',
   'landing.stats.calls': '1',
-  'landing.stats.callsLabel': 'APEL NECESAR',
+  'landing.stats.callsLabel': 'UN SINGUR APEL PENTRU A ÎNCEPE',
   'landing.stats.techSkills': '0',
-  'landing.stats.techSkillsLabel': 'ABILITĂȚI TEHNICE NECESARE',
+  'landing.stats.techSkillsLabel': 'MUNCĂ TEHNICĂ DIN PARTEA TA',
 
   // ─── How it works ─────────────────────────────────────────────────────
   'landing.howItWorks.title': 'Cum funcționează',

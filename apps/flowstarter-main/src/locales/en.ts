@@ -2466,17 +2466,17 @@ const en = {
   'waitlist.landing.privacy': 'No spam. Unsubscribe anytime.',
 
   // Landing Page - Hero
-  'landing.hero.badge': 'For experts who are done being invisible online',
+  'landing.hero.badge': 'The expert\'s unfair advantage',
   'landing.hero.headline1': 'Your expertise is real.',
   'landing.hero.headline2': 'Your online presence should be too.',
   'landing.hero.pain':
-    'You didn\'t spend years mastering your craft to lose clients to someone with a better website. We build the online presence your expertise actually deserves.',
+    'Anyone with ChatGPT can now write like a professional, design like a studio, and market like an agency. Your 10 years of practice looks the same as someone\'s 10 minutes of prompting. We build the online presence your expertise actually deserves.',
   'landing.hero.subheadline':
-    'Website, booking, and everything that connects them. You focus on your clients. We make sure new ones keep finding you.',
+    'Website, booking, and everything that connects them \u2014 built for you in days, not months. You focus on your clients. We make sure new ones keep finding you.',
   'landing.hero.support': '',
-  'landing.hero.cta': 'Book Your Free Strategy Call',
+  'landing.hero.cta': 'Get the Website Your Expertise Deserves',
   'landing.hero.ctaNote':
-    'One call. No tech talk. Just results.',
+    'One call. No tech talk. You\'ll be live in days.',
   'landing.hero.priceBuild': '€399',
   'landing.hero.priceBuildLabel': 'setup',
   'landing.hero.priceMonthly': '€39',
@@ -2575,12 +2575,12 @@ const en = {
   'landing.tiers.ecom.f4': 'Everything in Pro included',
 
   // Landing Page - Stats
-  'landing.stats.weeks': '1-2',
-  'landing.stats.weeksLabel': 'WEEKS TO LAUNCH',
+  'landing.stats.weeks': 'Days',
+  'landing.stats.weeksLabel': 'NOT MONTHS, TO LAUNCH',
   'landing.stats.calls': '1',
-  'landing.stats.callsLabel': 'CALL NEEDED',
+  'landing.stats.callsLabel': 'ONE CALL TO START',
   'landing.stats.techSkills': '0',
-  'landing.stats.techSkillsLabel': 'TECH SKILLS REQUIRED',
+  'landing.stats.techSkillsLabel': 'TECH WORK ON YOUR SIDE',
 
   // Landing Page - How it works
   'landing.howItWorks.title': 'Three steps to a website that gets you booked.',

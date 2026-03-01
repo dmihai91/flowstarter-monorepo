@@ -1439,6 +1439,44 @@ export default function LandingPage() {
           </div>
         </section>
 
+
+        {/* Three Pillars Section */}
+        <section className="py-16 lg:py-24 relative">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                {t('landing.pillars.title')}
+              </h2>
+              <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl mx-auto">
+                {t('landing.pillars.subtitle')}
+              </p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                { key: 'differentiate', icon: '✦', gradient: 'from-violet-500/10 to-indigo-500/10 dark:from-violet-500/5 dark:to-indigo-500/5' },
+                { key: 'attract', icon: '◎', gradient: 'from-cyan-500/10 to-blue-500/10 dark:from-cyan-500/5 dark:to-blue-500/5' },
+                { key: 'convert', icon: '→', gradient: 'from-amber-500/10 to-orange-500/10 dark:from-amber-500/5 dark:to-orange-500/5' },
+              ].map(({ key, icon, gradient }) => (
+                <div
+                  key={key}
+                  className={`rounded-2xl p-8 bg-gradient-to-br ${gradient} border border-gray-200/50 dark:border-white/5 backdrop-blur-sm`}
+                >
+                  <div className="text-3xl mb-4">{icon}</div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                    {t(`landing.pillars.${key}.title`)}
+                  </h3>
+                  <p className="text-sm font-medium text-[var(--purple)] mb-3">
+                    {t(`landing.pillars.${key}.subtitle`)}
+                  </p>
+                  <p className="text-gray-600 dark:text-white/60 leading-relaxed">
+                    {t(`landing.pillars.${key}.body`)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Process Section */}
         <section
           id="process"
@@ -2122,6 +2160,30 @@ export default function LandingPage() {
                   </li>
                 </ul>
               </div>
+            </div>
+          </div>
+        </section>
+
+
+        {/* Manifesto Section */}
+        <section className="py-16 lg:py-24 relative">
+          <div className="max-w-3xl mx-auto px-6">
+            <div className="text-center mb-8">
+              <span className="inline-block text-sm font-semibold tracking-widest uppercase text-[var(--purple)] mb-4">
+                {t('landing.manifesto.title')}
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white italic">
+                {t('landing.manifesto.headline')}
+              </h2>
+            </div>
+            <div className="space-y-6 text-lg text-gray-600 dark:text-white/60 leading-relaxed">
+              <p>{t('landing.manifesto.p1')}</p>
+              <p>{t('landing.manifesto.p2')}</p>
+              <p>{t('landing.manifesto.p3')}</p>
+              <p>{t('landing.manifesto.p4')}</p>
+              <p className="text-xl font-semibold text-gray-900 dark:text-white pt-4">
+                {t('landing.manifesto.closing')}
+              </p>
             </div>
           </div>
         </section>

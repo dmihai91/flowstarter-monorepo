@@ -231,12 +231,12 @@ export function EditorChatPanel({
              radial-gradient(ellipse at 100% 30%, rgba(59, 68, 168, 0.06) 0%, transparent 50%),
              radial-gradient(ellipse 120% 60% at 50% 100%, rgba(180, 160, 60, 0.06) 0%, transparent 55%),
              radial-gradient(ellipse at 50% 100%, rgba(77, 93, 217, 0.03) 0%, transparent 60%),
-             linear-gradient(170deg, #08080c 0%, #0c0b14 40%, #0e0d18 70%, #0b0a0e 100%)`
+             linear-gradient(170deg, rgba(8,8,12,0.85) 0%, rgba(12,11,20,0.8) 40%, rgba(14,13,24,0.82) 70%, rgba(11,10,14,0.85) 100%)`
           : `radial-gradient(ellipse at 0% 0%, rgba(77, 93, 217, 0.06) 0%, transparent 50%),
              radial-gradient(ellipse at 100% 30%, rgba(59, 68, 168, 0.04) 0%, transparent 50%),
              radial-gradient(ellipse 120% 60% at 50% 100%, rgba(180, 160, 60, 0.04) 0%, transparent 55%),
              radial-gradient(ellipse at 50% 100%, rgba(77, 93, 217, 0.02) 0%, transparent 60%),
-             linear-gradient(170deg, #fafafa 0%, #f6f5f8 40%, #f4f3f7 70%, #fafaf8 100%)`,
+             linear-gradient(170deg, rgba(250,250,250,0.82) 0%, rgba(246,245,248,0.78) 40%, rgba(244,243,247,0.8) 70%, rgba(250,250,248,0.82) 100%)`,
         backdropFilter: 'blur(20px) saturate(150%)',
         WebkitBackdropFilter: 'blur(20px) saturate(150%)',
         pointerEvents: 'none',

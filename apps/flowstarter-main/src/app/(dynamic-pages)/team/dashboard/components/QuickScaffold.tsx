@@ -9,6 +9,8 @@ import { Wand2, Paperclip, Loader2, ArrowRight, X, ChevronDown, ChevronUp } from
 import { useRouter } from 'next/navigation';
 import { useState, useRef } from 'react';
 
+const EDITOR_URL = process.env.NEXT_PUBLIC_EDITOR_URL || 'http://localhost:5173';
+
 export function QuickScaffold() {
   const router = useRouter();
   const [input, setInput] = useState('');
@@ -56,7 +58,29 @@ export function QuickScaffold() {
             setSelectedIndustry(classification.industry);
           }
 
-          router.push('/team/dashboard/new?mode=ai-generated');
+          // Create project in Supabase and handoff to editor
+          try {
+            const res = await fetch('/api/editor/handoff', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                projectConfig: {
+                  description: input,
+                  userDescription: input,
+                  industry: classification.industry,
+                },
+                mode: 'interactive',
+              }),
+            });
+            if (res.ok) {
+              const data = await res.json();
+              window.open(`${EDITOR_URL}?handoff=${data.token}`, '_blank');
+            } else {
+              window.open(EDITOR_URL, '_blank');
+            }
+          } catch {
+            window.open(EDITOR_URL, '_blank');
+          }
         },
         onError: (error) => {
           console.error('[QuickScaffold] Classification error:', error);
@@ -70,7 +94,26 @@ export function QuickScaffold() {
             USP: '',
           };
           setPrefillData(prefillData);
-          router.push('/team/dashboard/new?mode=ai-generated');
+          
+          // Fallback: open editor with description
+          try {
+            const res = await fetch('/api/editor/handoff', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                projectConfig: { description: input, userDescription: input },
+                mode: 'interactive',
+              }),
+            });
+            if (res.ok) {
+              const data = await res.json();
+              window.open(`${EDITOR_URL}?handoff=${data.token}`, '_blank');
+            } else {
+              window.open(EDITOR_URL, '_blank');
+            }
+          } catch {
+            window.open(EDITOR_URL, '_blank');
+          }
         },
       }
     );

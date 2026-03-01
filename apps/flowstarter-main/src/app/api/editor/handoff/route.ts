@@ -119,11 +119,32 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // If no projectId yet, create an empty draft
     if (!finalProjectId) {
-      return NextResponse.json(
-        { error: 'Either projectId or projectConfig is required' },
-        { status: 400 }
-      );
+      const payload = {
+        name: 'Untitled Project',
+        description: '',
+        data: JSON.stringify({
+          handoffMode: mode,
+          handoffTimestamp: Date.now(),
+        }),
+        status: 'draft',
+        is_draft: true,
+        user_id: userId,
+      };
+
+      const { data: draft, error } = await supabase
+        .from('projects')
+        .insert(payload)
+        .select('id')
+        .single();
+
+      if (error) {
+        console.error('[Handoff API] Failed to create draft:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+
+      finalProjectId = draft.id;
     }
 
     // Create handoff token (15 min expiry)

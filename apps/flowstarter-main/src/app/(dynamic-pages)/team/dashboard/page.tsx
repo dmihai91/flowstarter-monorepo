@@ -14,8 +14,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Plus, UserPlus, FolderOpen } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const dynamic = 'force-dynamic';
+
+const EDITOR_URL = process.env.NEXT_PUBLIC_EDITOR_URL || 'http://localhost:5173';
 
 export default function TeamDashboardPage() {
   const { user, isLoaded: userLoaded } = useUser();
@@ -80,12 +83,10 @@ export default function TeamDashboardPage() {
               </Button>
             </Link>
           )}
-          <Link href="/team/dashboard/new" className="w-full sm:w-auto">
-            <Button variant="accent" size="lg" className="w-full sm:w-auto">
+          <Button variant="accent" size="lg" className="w-full sm:w-auto" onClick={createNewInEditor}>
               <Plus className="w-4 h-4 mr-2" />
               New Project
             </Button>
-          </Link>
         </div>
       </div>
 
@@ -120,12 +121,10 @@ export default function TeamDashboardPage() {
             <p className="text-gray-500 dark:text-white/50 mb-6 max-w-sm mx-auto">
               Start a new project manually or use the scaffold generator above to create a quick draft.
             </p>
-            <Link href="/team/dashboard/new">
-              <Button variant="accent">
-                <Plus className="w-4 h-4 mr-2" />
-                Create First Project
-              </Button>
-            </Link>
+            <Button variant="accent" onClick={createNewInEditor}>
+              <Plus className="w-4 h-4 mr-2" />
+              Create First Project
+            </Button>
           </div>
         )}
       </div>

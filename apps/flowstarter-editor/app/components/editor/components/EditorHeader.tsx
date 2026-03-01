@@ -143,7 +143,7 @@ export function EditorHeader({
 
         {!isCompact && <PublishButton isEnabled={isPublishEnabled} onClick={onPublish} />}
         {!isCompact && <Separator />}
-        {!isCompact && <ThemeToggle />}
+        {!isMobile && <ThemeToggle />}
         <EditorUserMenu />
       </div>
     </header>

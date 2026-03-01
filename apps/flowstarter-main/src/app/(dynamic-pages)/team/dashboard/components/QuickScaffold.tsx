@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { useMutation } from '@tanstack/react-query';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { cn } from '@/lib/utils';
-import { useWizardStore } from '@/store/wizard-store';
 import { Wand2, Paperclip, Loader2, ArrowRight, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useRef } from 'react';
@@ -19,8 +18,6 @@ export function QuickScaffold() {
   const [isExpanded, setIsExpanded] = useLocalStorage('scaffold-expanded', false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const setPrefillData = useWizardStore((state) => state.setPrefillData);
-  const setSelectedIndustry = useWizardStore((state) => state.setSelectedIndustry);
 
   // React Query mutation for AI enrichment
   const enrichMutation = useMutation({
@@ -51,21 +48,7 @@ export function QuickScaffold() {
       { description: input },
       {
         onSuccess: async (enriched) => {
-          setPrefillData({
-            name: enriched.businessName || '',
-            description: enriched.description || input,
-            userDescription: input,
-            targetUsers: enriched.targetAudience || '',
-            businessGoals: enriched.goal || '',
-            USP: enriched.uvp || '',
-            industry: enriched.industry || '',
-          });
-
-          if (enriched.industry) {
-            setSelectedIndustry(enriched.industry);
-          }
-
-          // Create project with ALL enriched data and handoff to editor
+// Create project with ALL enriched data and handoff to editor
           try {
             const res = await fetch('/api/editor/handoff', {
               method: 'POST',

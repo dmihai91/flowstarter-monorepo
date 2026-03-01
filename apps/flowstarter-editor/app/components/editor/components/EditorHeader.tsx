@@ -90,7 +90,7 @@ export function EditorHeader({
           overflow: 'hidden',
         }}
       >
-        {!isMobile && <MenuButton onClick={onMenuClick} />}
+        <MenuButton onClick={onMenuClick} />
         {!isMobile && (isCompact ? <LogoIcon size={28} /> : <Logo size="xs" />)}
         {isTeam && (
           <span

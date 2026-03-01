@@ -135,7 +135,7 @@ export function EditorHeader({
       </div>
 
       {/* RIGHT: Actions */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '4px' : isCompact ? '8px' : '12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '4px' : isCompact ? '12px' : '12px' }}>
         {/* Magic Link button - Team only, hide on mobile */}
         {canGenerateMagicLink && !isCompact && (
           <MagicLinkButton projectId={projectId ?? null} />
@@ -143,7 +143,7 @@ export function EditorHeader({
 
         {!isCompact && <PublishButton isEnabled={isPublishEnabled} onClick={onPublish} />}
         {!isCompact && <Separator />}
-        {!isMobile && <div style={{ marginLeft: '4px' }}><ThemeToggle /></div>}
+        {!isMobile && <div style={{ marginLeft: '8px' }}><ThemeToggle /></div>}
         <EditorUserMenu />
       </div>
     </header>

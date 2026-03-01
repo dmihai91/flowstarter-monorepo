@@ -59,7 +59,7 @@ export function ChatInput({
 
   return (
     <div
-      className="p-4 relative z-[1]"
+      className="px-4 pt-3 pb-4 relative z-[1]"
       style={{
         background: 'transparent',
       }}
@@ -77,17 +77,19 @@ export function ChatInput({
       {/* Glassmorphism prompt box */}
       <div
         style={{
-          maxWidth: '800px',
+          maxWidth: '100%',
           margin: '0 auto',
-          background: isDark ? 'rgba(39, 39, 42, 0.3)' : '#ffffff',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          borderRadius: '20px',
-          border: isDark ? '1px solid #3f3f46' : '1px solid #e4e4e7',
+          background: isDark
+            ? 'linear-gradient(135deg, rgba(39, 39, 42, 0.35) 0%, rgba(39, 39, 42, 0.2) 100%)'
+            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%)',
+          backdropFilter: 'blur(24px) saturate(150%)',
+          WebkitBackdropFilter: 'blur(24px) saturate(150%)',
+          borderRadius: '16px',
+          border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(255, 255, 255, 0.7)',
           boxShadow: isDark
-            ? '0 2px 4px rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.05) inset'
-            : '0 2px 4px rgba(0,0,0,0.02), 0 8px 16px rgba(0,0,0,0.04), 0 1px 0 rgba(255,255,255,0.8) inset',
-          padding: '12px 16px',
+            ? '0 2px 4px rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.06)'
+            : '0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.9)',
+          padding: '10px 14px',
         }}
       >
         {/* Attached images preview */}
@@ -207,7 +209,7 @@ export function ChatInput({
                       display: 'flex',
                       alignItems: 'center',
                       gap: '12px',
-                      padding: '12px 16px',
+                      padding: '10px 14px',
                       background: 'transparent',
                       border: 'none',
                       color: isDark ? '#fff' : '#000',
@@ -248,7 +250,7 @@ export function ChatInput({
                       display: 'flex',
                       alignItems: 'center',
                       gap: '12px',
-                      padding: '12px 16px',
+                      padding: '10px 14px',
                       background: 'transparent',
                       border: 'none',
                       color: isDark ? '#fff' : '#000',

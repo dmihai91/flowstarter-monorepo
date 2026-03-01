@@ -1,4 +1,5 @@
 import { memo, type ReactNode } from 'react';
+
 import { MessageAvatar, MessageBubble, MessageTimestamp, MessageContent, StreamingIndicator } from './components';
 import { useMessageStyles } from './hooks';
 

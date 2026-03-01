@@ -5,7 +5,6 @@ import { Logo } from './Logo';
 import { ProjectNameEditor } from './ProjectNameEditor';
 import { ViewToggle, type ViewMode } from './ViewToggle';
 import { PublishButton } from './PublishButton';
-import { ThemeToggle } from './ThemeToggle';
 import { UserAvatar } from './UserAvatar';
 import { Separator } from './Separator';
 import { MagicLinkButton } from './MagicLinkButton';
@@ -138,7 +137,6 @@ export function EditorHeader({
 
         {!isMobile && <PublishButton isEnabled={isPublishEnabled} onClick={onPublish} />}
         {!isMobile && <Separator />}
-        {!isMobile && <ThemeToggle />}
         <UserAvatar />
       </div>
     </header>

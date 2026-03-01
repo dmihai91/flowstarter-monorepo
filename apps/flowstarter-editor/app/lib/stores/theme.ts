@@ -31,15 +31,14 @@ export const DEFAULT_THEME: Theme = 'dark';
 export const themeStore = atom<Theme>(initStore());
 
 function initStore(): Theme {
-  if (!import.meta.env.SSR) {
-    return getSharedTheme();
-  }
-  return DEFAULT_THEME;
+  // Editor is always dark mode
+  return 'dark';
 }
 
 export function setTheme(newTheme: Theme) {
-  // Update the theme store
-  themeStore.set(newTheme);
+  // Editor is always dark — ignore theme changes
+  // Still persist to cookie for main platform
+  themeStore.set('dark');
 
   // Use shared utility to persist to cookie (shared across subdomains)
   setSharedTheme(newTheme);

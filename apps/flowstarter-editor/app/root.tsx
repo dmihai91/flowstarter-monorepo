@@ -118,14 +118,10 @@ const inlineThemeCode = stripIndents`
   setTutorialKitTheme();
 
   function setTutorialKitTheme() {
-    let theme = localStorage.getItem('flowstarter_theme');
+    // Editor is always dark mode
+    let theme = 'dark';
 
-    // Resolve 'system' or missing theme to actual light/dark value
-    if (!theme || theme === 'system') {
-      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-
-    document.querySelector('html')?.setAttribute('data-theme', theme);
+    document.querySelector('html')?.setAttribute('data-theme', 'dark');
     updateFavicon(theme);
   }
 
@@ -258,11 +254,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const theme = useStore(themeStore);
 
   useEffect(() => {
-    // Resolve 'system' to actual light/dark value for CSS
-    const effectiveTheme =
-      theme === 'system' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme;
-
-    document.querySelector('html')?.setAttribute('data-theme', effectiveTheme);
+    // Editor is always dark
+    const effectiveTheme = 'dark';
+    document.querySelector('html')?.setAttribute('data-theme', 'dark');
 
     const iconLink = document.querySelector('link[rel="icon"]:not([media])') as HTMLLinkElement;
 

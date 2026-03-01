@@ -2472,7 +2472,7 @@ const en = {
   'landing.hero.pain':
     'Anyone with ChatGPT can now write like a professional, design like a studio, and market like an agency. Your 10 years of practice looks the same as someone\'s 10 minutes of prompting. We build the online presence your expertise actually deserves.',
   'landing.hero.subheadline':
-    'Website, booking, and everything that connects them \u2014 built for you in days, not months. You focus on your clients. We make sure new ones keep finding you.',
+    'Website, booking, and everything that connects them. Built for you in days, not months. You focus on your clients. We make sure new ones keep finding you.',
   'landing.hero.support': '',
   'landing.hero.cta': 'Get the Website Your Expertise Deserves',
   'landing.hero.ctaNote':
@@ -2541,7 +2541,7 @@ const en = {
     'Zero. We handle the entire setup. You just review and approve.',
   'landing.faq.q6': 'What happens when the beta ends?',
   'landing.faq.a6':
-    'Your €39/month rate is locked in for as long as you stay subscribed. After 6 months, new users will pay €59/month — your price never changes. The setup fee goes from €399 to €599 after beta. You get 30 days notice before anything changes.',
+    'Your €39/month rate is locked in for as long as you stay subscribed. After 6 months, new users will pay €59/month but your price never changes. The setup fee goes from €399 to €599 after beta. You get 30 days notice before anything changes.',
   'landing.faq.q7': "What's included in the email?",
   'landing.faq.a7':
     'One professional email address with your domain (e.g. you@yourbusiness.com). Need more? We can add additional mailboxes.',

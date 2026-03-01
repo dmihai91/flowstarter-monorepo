@@ -221,20 +221,23 @@ export function EditorChatPanel({
     >
       {/* Flow design system background */}
       <FlowBackground variant="editor" style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
+      {/* Gradient overlay — frosted glass with visible background depth */}
       <div style={{
         position: 'absolute',
         inset: 0,
         zIndex: 0,
         background: isDark
-          ? 'linear-gradient(180deg, rgba(10, 10, 12, 0.78) 0%, rgba(10, 10, 12, 0.92) 100%)'
-          : 'linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.92) 100%)',
+          ? 'linear-gradient(180deg, rgba(10, 10, 12, 0.6) 0%, rgba(16, 16, 18, 0.72) 60%, rgba(10, 10, 12, 0.82) 100%)'
+          : 'linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(248, 248, 250, 0.65) 60%, rgba(255, 255, 255, 0.78) 100%)',
+        backdropFilter: 'blur(20px) saturate(150%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(150%)',
         pointerEvents: 'none',
       }} />
 
       {/* Messages area */}
       <div
         ref={paginationScrollRef}
-        className={`flex-1 overflow-y-auto pl-4 pr-4 py-6 space-y-6 relative z-[1] scrollbar-thin scrollbar-track-transparent ${isDark ? 'scrollbar-thumb-white/10' : 'scrollbar-thumb-black/10'}`}
+        className={`flex-1 overflow-y-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6 relative z-[1] scrollbar-thin scrollbar-track-transparent ${isDark ? 'scrollbar-thumb-white/10' : 'scrollbar-thumb-black/10'}`}
       >
         {/* Business Context Card (for internal/template-first flow) */}
         {isInternalFlow && businessContext && (

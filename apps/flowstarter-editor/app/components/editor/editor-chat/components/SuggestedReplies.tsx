@@ -367,7 +367,7 @@ export function SuggestedReplies({ suggestions, step, isDark, onAccept, onRefres
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.15 }}
-        className="ml-10 mt-4"
+        className="ml-0 sm:ml-10 mt-3 sm:mt-4"
         data-testid="suggested-replies"
       >
         <div className="flex items-center justify-between mb-3">
@@ -414,15 +414,15 @@ export function SuggestedReplies({ suggestions, step, isDark, onAccept, onRefres
               className="group px-4 py-3 rounded-xl text-sm flex items-start gap-3 text-left"
               style={{
                 background: isDark
-                  ? 'rgba(255, 255, 255, 0.05)'
-                  : 'rgba(255, 255, 255, 0.8)',
-                border: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.06)',
+                  ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%)'
+                  : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.65) 100%)',
+                border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(255, 255, 255, 0.7)',
                 boxShadow: isDark
-                  ? '0 1px 4px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.04)'
-                  : '0 1px 4px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.03)',
+                  ? '0 2px 8px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.06)'
+                  : '0 2px 8px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9)',
                 color: isDark ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.8)',
-                backdropFilter: 'blur(16px) saturate(180%)',
-                WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+                backdropFilter: 'blur(20px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(20px) saturate(180%)',
               }}
             >
               <span
@@ -445,7 +445,7 @@ export function SuggestedReplies({ suggestions, step, isDark, onAccept, onRefres
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.15 }}
-        className="ml-10 mt-4"
+        className="ml-0 sm:ml-10 mt-3 sm:mt-4"
       >
         <div className="flex items-center gap-2 mb-3">
           <div
@@ -486,11 +486,15 @@ export function SuggestedReplies({ suggestions, step, isDark, onAccept, onRefres
               className="group px-3 py-2.5 rounded-xl text-sm flex items-center gap-2.5 text-left"
               style={{
                 background: isDark
-                  ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.015) 100%)'
-                  : 'rgba(255, 255, 255, 0.6)',
-                border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.06)',
-                boxShadow: isDark ? '0 2px 8px rgba(0, 0, 0, 0.2)' : '0 2px 8px rgba(0, 0, 0, 0.04)',
+                  ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)'
+                  : 'linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.6) 100%)',
+                border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(255, 255, 255, 0.6)',
+                boxShadow: isDark
+                  ? '0 2px 8px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
+                  : '0 2px 8px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
                 color: isDark ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.75)',
+                backdropFilter: 'blur(16px) saturate(150%)',
+                WebkitBackdropFilter: 'blur(16px) saturate(150%)',
               }}
             >
               <span
@@ -519,7 +523,7 @@ export function SuggestedReplies({ suggestions, step, isDark, onAccept, onRefres
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.15 }}
-        className="ml-10 mt-4"
+        className="ml-0 sm:ml-10 mt-3 sm:mt-4"
       >
         <div className="flex flex-wrap gap-2">
           {suggestions.map((suggestion, index) => {

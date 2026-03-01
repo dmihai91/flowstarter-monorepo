@@ -18,7 +18,7 @@ export const EditorAssistantMessage = memo(
     return (
       <div className="flex gap-3">
         <MessageAvatar variant="assistant" isDark={isDark} />
-        <div className="flex flex-col flex-1 min-w-[250px]">
+        <div className="flex flex-col flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1.5">
             <span
               className="text-sm font-semibold"

@@ -5,7 +5,7 @@ import { Logo, LogoIcon } from './Logo';
 import { ProjectNameEditor } from './ProjectNameEditor';
 import { ViewToggle, type ViewMode } from './ViewToggle';
 import { PublishButton } from './PublishButton';
-import { UserAvatar } from './UserAvatar';
+import { EditorUserMenu } from './EditorUserMenu';
 import { ThemeToggle } from './ThemeToggle';
 import { Separator } from './Separator';
 import { MagicLinkButton } from './MagicLinkButton';
@@ -67,8 +67,8 @@ export function EditorHeader({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        height: isCompact ? '52px' : '64px',
-        padding: isCompact ? '0 12px' : '0 20px',
+        height: isMobile ? '44px' : isCompact ? '52px' : '64px',
+        padding: isMobile ? '0 8px' : isCompact ? '0 12px' : '0 20px',
         flexShrink: 0,
         background: colors.bgHeader,
         borderBottom: isDark ? '1px solid #27272a' : '1px solid #e4e4e7',
@@ -79,19 +79,36 @@ export function EditorHeader({
           : '0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02)',
       }}
     >
-      {/* LEFT: Menu + Logo + Project Name */}
+      {/* LEFT: Menu + Logo + Team Badge + Project Name */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '12px',
+          gap: isMobile ? '6px' : isCompact ? '8px' : '12px',
           flexShrink: 1,
           minWidth: 0,
           overflow: 'hidden',
         }}
       >
-        <MenuButton onClick={onMenuClick} />
-        {isCompact ? <LogoIcon size={28} /> : <Logo />}
+        {!isMobile && <MenuButton onClick={onMenuClick} />}
+        {isCompact ? <LogoIcon size={isMobile ? 24 : 28} /> : <Logo size="xs" />}
+        {isTeam && (
+          <span
+            style={{
+              padding: '3px 8px',
+              backgroundColor: isDark ? 'rgba(77, 93, 217, 0.15)' : 'rgba(77, 93, 217, 0.1)',
+              borderRadius: '6px',
+              fontSize: '10px',
+              fontWeight: 600,
+              color: 'rgba(77, 93, 217, 0.8)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+              flexShrink: 0,
+            }}
+          >
+            Team
+          </span>
+        )}
         {!isCompact && (
           <>
             <Separator />
@@ -116,34 +133,16 @@ export function EditorHeader({
       </div>
 
       {/* RIGHT: Actions */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: isCompact ? '8px' : '12px' }}>
-        {/* Team mode indicator - hide text on mobile */}
-        {isTeam && !isCompact && (
-          <span
-            style={{
-              padding: '4px 10px',
-              backgroundColor: isDark ? 'rgba(77, 93, 217, 0.15)' : 'rgba(77, 93, 217, 0.1)',
-              borderRadius: '6px',
-              fontSize: '11px',
-              fontWeight: 600,
-              color: 'rgba(77, 93, 217, 0.8)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-            }}
-          >
-            Team
-          </span>
-        )}
-
+      <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '4px' : isCompact ? '8px' : '12px' }}>
         {/* Magic Link button - Team only, hide on mobile */}
         {canGenerateMagicLink && !isCompact && (
           <MagicLinkButton projectId={projectId ?? null} />
         )}
 
-        <PublishButton isEnabled={isPublishEnabled} onClick={onPublish} />
+        {!isMobile && <PublishButton isEnabled={isPublishEnabled} onClick={onPublish} />}
         {!isMobile && <Separator />}
-        <ThemeToggle />
-        <UserAvatar />
+        {!isMobile && <ThemeToggle />}
+        <EditorUserMenu />
       </div>
     </header>
   );

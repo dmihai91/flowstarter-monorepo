@@ -1,4 +1,5 @@
 import React from 'react';
+import { FlowBackground } from '@flowstarter/flow-design-system';
 import { motion } from 'framer-motion';
 import { useThemeStyles, getColors } from '~/components/editor/hooks';
 import type { OnboardingStep } from '~/components/editor/editor-chat/types';
@@ -368,29 +369,13 @@ export function EmptyState({ type, step }: EmptyStateProps) {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        background: colors.bgGradient,
         padding: '40px',
         position: 'relative',
         overflow: 'hidden',
       }}
     >
-      {/* Animated background elements */}
-      <GridPattern isDark={isDark} />
-      <FloatingOrb delay={0} size={300} x="10%" y="20%" color={config.accentColor} />
-      <FloatingOrb
-        delay={2}
-        size={200}
-        x="70%"
-        y="60%"
-        color={isDark ? 'rgba(99, 102, 241, 0.3)' : 'rgba(99, 102, 241, 0.2)'}
-      />
-      <FloatingOrb
-        delay={4}
-        size={150}
-        x="80%"
-        y="15%"
-        color={isDark ? 'rgba(236, 72, 153, 0.2)' : 'rgba(236, 72, 153, 0.15)'}
-      />
+      <FlowBackground variant="editor" style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
+
 
       {/* Main content */}
       <motion.div

@@ -54,6 +54,18 @@ export function EditorLayout({
   const { isDark } = useThemeStyles();
   const colors = getColors(isDark);
   const [viewMode, setViewMode] = useState<ViewMode>('preview');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (mobile) setViewMode(prev => prev === 'preview' ? 'chat' : prev);
+    };
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   // Track if preview has been triggered (deferred until user switches to preview tab)
   const [previewTriggered, setPreviewTriggered] = useState(false);
@@ -193,33 +205,34 @@ export function EditorLayout({
       />
 
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        {/* LEFT: Chat Panel (Resizable) */}
+        {/* LEFT: Chat Panel (Resizable on desktop, full-width on mobile) */}
         <div
           style={{
-            width: `${chatWidth}px`,
-            minWidth: `${PANEL_CONFIG.minWidth}px`,
-            maxWidth: `${PANEL_CONFIG.maxWidth}px`,
-            display: 'flex',
+            width: isMobile ? (viewMode === 'chat' || viewMode === 'preview' ? '100%' : `${chatWidth}px`) : `${chatWidth}px`,
+            minWidth: isMobile ? '100%' : `${PANEL_CONFIG.minWidth}px`,
+            maxWidth: isMobile ? '100%' : `${PANEL_CONFIG.maxWidth}px`,
+            display: isMobile && viewMode === 'preview' ? 'none' : 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
             background: colors.bgSecondary,
             position: 'relative',
             zIndex: 5,
+            borderRight: isMobile ? 'none' : `1px solid rgba(255,255,255,0.06)`,
           }}
         >
           {children}
         </div>
 
-        <ResizeHandle
+        {!isMobile && <ResizeHandle
           isResizing={isResizing}
           isHovered={isHandleHovered}
           onMouseDown={handleMouseDown}
           onMouseEnter={() => setIsHandleHovered(true)}
           onMouseLeave={() => setIsHandleHovered(false)}
-        />
+        />}
 
-        {/* RIGHT: Editor/Preview Panel */}
-        <div style={{ flex: 1, background: colors.bgTertiary, overflow: 'hidden' }}>
+        {/* RIGHT: Editor/Preview Panel (hidden on mobile when in chat mode) */}
+        <div style={{ flex: 1, background: colors.bgTertiary, overflow: 'hidden', display: isMobile && viewMode !== 'preview' ? 'none' : 'flex', flexDirection: 'column' }}>
           {projectId &&
           onboardingStep &&
           ![

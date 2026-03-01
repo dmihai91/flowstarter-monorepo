@@ -35,16 +35,26 @@ export function EditorHeader({
 }: EditorHeaderProps) {
   const { isDark } = useThemeStyles();
   const colors = getColors(isDark);
-  
+
   // Client-side only mode detection
   const [isTeam, setIsTeam] = useState(false);
   const [canGenerateMagicLink, setCanGenerateMagicLink] = useState(false);
-  
+
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
     const mode = getUserMode();
     setIsTeam(mode === 'team');
     const caps = getModeCapabilities(mode);
     setCanGenerateMagicLink(caps.canGenerateMagicLink);
+  }, []);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   return (
@@ -78,29 +88,33 @@ export function EditorHeader({
       >
         <MenuButton onClick={onMenuClick} />
         <Logo />
-        <Separator />
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            minWidth: 0,
-            overflow: 'hidden',
-          }}
-        >
-          <ProjectNameEditor projectName={projectName} onNameChange={onProjectNameChange} />
-        </div>
+        {!isMobile && (
+          <>
+            <Separator />
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                minWidth: 0,
+                overflow: 'hidden',
+              }}
+            >
+              <ProjectNameEditor projectName={projectName} onNameChange={onProjectNameChange} />
+            </div>
+          </>
+        )}
       </div>
 
       {/* CENTER: View toggle */}
       <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-        <ViewToggle viewMode={viewMode} onViewModeChange={onViewModeChange} />
+        <ViewToggle viewMode={viewMode} onViewModeChange={onViewModeChange} isMobile={isMobile} />
       </div>
 
       {/* RIGHT: Actions */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        {/* Team mode indicator */}
-        {isTeam && (
+        {/* Team mode indicator - hide text on mobile */}
+        {isTeam && !isMobile && (
           <span
             style={{
               padding: '4px 10px',
@@ -116,12 +130,12 @@ export function EditorHeader({
             Team
           </span>
         )}
-        
+
         {/* Magic Link button - Team only */}
         {canGenerateMagicLink && (
           <MagicLinkButton projectId={projectId ?? null} />
         )}
-        
+
         <PublishButton isEnabled={isPublishEnabled} onClick={onPublish} />
         <Separator />
         <ThemeToggle />

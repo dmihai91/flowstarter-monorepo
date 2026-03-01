@@ -59,7 +59,7 @@ export function ChatInput({
 
   return (
     <div
-      className="p-4"
+      className="p-4 relative z-[1]"
       style={{
         background: 'transparent',
       }}

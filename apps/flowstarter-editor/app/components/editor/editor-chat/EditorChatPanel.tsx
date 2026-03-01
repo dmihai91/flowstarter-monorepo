@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { motion } from 'framer-motion';
 import { themeStore, getEffectiveTheme } from '~/lib/stores/theme';
+import { FlowBackground } from '@flowstarter/flow-design-system';
 import { EditorUserMessage, EditorAssistantMessage, EditorMessageWrapper } from '../EditorMessage';
 import { TemplatePreviewDialog } from '../TemplatePreviewDialog';
 import { useOptionalConversationContext } from '../ConversationContext';
@@ -218,10 +219,22 @@ export function EditorChatPanel({
         background: 'transparent',
       }}
     >
+      {/* Flow design system background */}
+      <FlowBackground variant="editor" style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        zIndex: 0,
+        background: isDark
+          ? 'linear-gradient(180deg, rgba(10, 10, 14, 0.7) 0%, rgba(10, 10, 14, 0.85) 100%)'
+          : 'linear-gradient(180deg, rgba(250, 250, 252, 0.75) 0%, rgba(250, 250, 252, 0.88) 100%)',
+        pointerEvents: 'none',
+      }} />
+
       {/* Messages area */}
       <div
         ref={paginationScrollRef}
-        className={`flex-1 overflow-y-auto pl-4 pr-4 py-6 space-y-6 scrollbar-thin scrollbar-track-transparent ${isDark ? 'scrollbar-thumb-white/10' : 'scrollbar-thumb-black/10'}`}
+        className={`flex-1 overflow-y-auto pl-4 pr-4 py-6 space-y-6 relative z-[1] scrollbar-thin scrollbar-track-transparent ${isDark ? 'scrollbar-thumb-white/10' : 'scrollbar-thumb-black/10'}`}
       >
         {/* Business Context Card (for internal/template-first flow) */}
         {isInternalFlow && businessContext && (

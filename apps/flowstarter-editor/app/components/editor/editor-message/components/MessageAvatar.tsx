@@ -42,8 +42,8 @@ export const MessageAvatar = memo((props: MessageAvatarProps) => {
         style={{
           width: size,
           height: size,
-          background: 'linear-gradient(135deg, hsl(233, 65%, 58%) 0%, hsl(187, 96%, 42%) 100%)',
-          boxShadow: '0 2px 8px rgba(77, 93, 217, 0.25)',
+          background: 'linear-gradient(135deg, #8B5CF6 0%, #06B6D4 100%)',
+          boxShadow: '0 2px 8px rgba(139, 92, 246, 0.3)',
         }}
       >
         {/* Subtle glass overlay */}

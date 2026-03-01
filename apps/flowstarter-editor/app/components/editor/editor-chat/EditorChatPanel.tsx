@@ -226,8 +226,8 @@ export function EditorChatPanel({
         inset: 0,
         zIndex: 0,
         background: isDark
-          ? 'linear-gradient(180deg, rgba(11, 11, 16, 0.75) 0%, rgba(11, 11, 16, 0.9) 100%)'
-          : 'linear-gradient(180deg, rgba(250, 249, 247, 0.82) 0%, rgba(250, 249, 247, 0.94) 100%)',
+          ? 'linear-gradient(180deg, rgba(10, 10, 12, 0.78) 0%, rgba(10, 10, 12, 0.92) 100%)'
+          : 'linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.92) 100%)',
         pointerEvents: 'none',
       }} />
 

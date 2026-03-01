@@ -71,12 +71,12 @@ export function EditorHeader({
         padding: isCompact ? '0 12px' : '0 20px',
         flexShrink: 0,
         background: colors.bgHeader,
-        borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.06)',
+        borderBottom: isDark ? '1px solid #27272a' : '1px solid #e4e4e7',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
         boxShadow: isDark
-          ? '0 1px 3px rgba(0, 0, 0, 0.12)'
-          : '0 1px 3px rgba(0, 0, 0, 0.04)',
+          ? '0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02)'
+          : '0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02)',
       }}
     >
       {/* LEFT: Menu + Logo + Project Name */}

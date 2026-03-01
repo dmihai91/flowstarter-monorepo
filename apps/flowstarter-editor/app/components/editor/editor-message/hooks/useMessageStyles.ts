@@ -46,24 +46,26 @@ export function useBubbleStyles({ isDark, variant }: BubbleStyleConfig): BubbleS
 
     if (isDark) {
       return {
+        // dark.bg.elevated (#27272a) as base reference
         background: isUser
-          ? 'rgba(255, 255, 255, 0.06)'
-          : 'rgba(77, 93, 217, 0.08)',
+          ? 'rgba(39, 39, 42, 0.4)'   // zinc-800 alpha
+          : 'rgba(24, 24, 27, 0.6)',   // zinc-900 alpha + accent tint
         border: isUser
-          ? '1px solid rgba(255, 255, 255, 0.08)'
-          : '1px solid rgba(77, 93, 217, 0.12)',
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
+          ? '1px solid #3f3f46'        // dark.border.light
+          : '1px solid rgba(139, 92, 246, 0.15)', // accent.purple alpha
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02)', // glassShadows.subtle
       };
     }
 
     return {
+      // light.bg.elevated (#ffffff) as base reference
       background: isUser
-        ? 'rgba(255, 255, 255, 0.85)'
-        : 'rgba(245, 245, 248, 0.9)',
+        ? '#ffffff'                    // light.bg.elevated
+        : '#f4f4f5',                   // light.bg.secondary
       border: isUser
-        ? '1px solid rgba(0, 0, 0, 0.06)'
-        : '1px solid rgba(77, 93, 217, 0.08)',
-      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
+        ? '1px solid #e4e4e7'         // light.border.light
+        : '1px solid rgba(139, 92, 246, 0.1)', // accent.purple alpha
+      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02)', // glassShadows.subtle
     };
   }, [isDark, variant]);
 }

@@ -54,8 +54,8 @@ export function ConversationSidebar({
               bottom: 0,
               width: '280px',
               background: isDark
-                ? 'rgba(12, 12, 18, 0.85)'
-                : 'rgba(255, 255, 255, 0.85)',
+                ? 'rgba(16, 16, 18, 0.92)'
+                : 'rgba(244, 244, 245, 0.95)',
               backdropFilter: 'blur(24px) saturate(180%)',
               WebkitBackdropFilter: 'blur(24px) saturate(180%)',
               borderRight: `1px solid ${colors.borderMedium}`,

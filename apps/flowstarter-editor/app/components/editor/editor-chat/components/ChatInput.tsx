@@ -79,14 +79,14 @@ export function ChatInput({
         style={{
           maxWidth: '800px',
           margin: '0 auto',
-          background: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(255, 255, 255, 0.7)',
+          background: isDark ? 'rgba(39, 39, 42, 0.3)' : '#ffffff',
           backdropFilter: 'blur(24px)',
           WebkitBackdropFilter: 'blur(24px)',
           borderRadius: '20px',
-          border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.06)',
+          border: isDark ? '1px solid #3f3f46' : '1px solid #e4e4e7',
           boxShadow: isDark
-            ? '0 2px 8px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.04)'
-            : '0 2px 8px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.03)',
+            ? '0 2px 4px rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.05) inset'
+            : '0 2px 4px rgba(0,0,0,0.02), 0 8px 16px rgba(0,0,0,0.04), 0 1px 0 rgba(255,255,255,0.8) inset',
           padding: '12px 16px',
         }}
       >

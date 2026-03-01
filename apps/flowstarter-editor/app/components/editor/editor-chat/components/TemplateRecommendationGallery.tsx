@@ -26,7 +26,7 @@ const SkeletonCard = ({ isDark, index }: { isDark: boolean; index: number }) => 
       border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.08)',
     }}
   >
-    <div className="aspect-[16/10] relative overflow-hidden">
+    <div className="aspect-[16/10] sm:aspect-[16/10] relative overflow-hidden" style={{ maxHeight: "160px" }}>
       <div
         className="absolute inset-0 animate-pulse"
         style={{
@@ -245,7 +245,7 @@ export function TemplateRecommendationGallery({
                 onClick={() => handleSelect(rec)}
               >
                 {/* Thumbnail */}
-                <div className="aspect-[16/10] relative overflow-hidden">
+                <div className="aspect-[16/10] sm:aspect-[16/10] relative overflow-hidden" style={{ maxHeight: "160px" }}>
                   <div
                     className={`absolute inset-0 bg-gradient-to-br ${colors.gradient}`}
                     style={{ opacity: hasThumbnailError ? 1 : 0.1 }}

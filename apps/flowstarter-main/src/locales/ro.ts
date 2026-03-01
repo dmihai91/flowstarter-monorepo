@@ -15,9 +15,9 @@ const ro: typeof en = {
   'landing.hero.headline1': 'Expertiza ta e reală.',
   'landing.hero.headline2': 'Prezența ta online ar trebui să fie la fel.',
   'landing.hero.pain':
-    'Oricine cu ChatGPT poate acum să scrie ca un profesionist, să facă design ca un studio și să promoveze ca o agenție. Cei 10 ani de practică ai tăi arată la fel ca 10 minute de prompting ale altcuiva. Noi construim prezența online pe care expertiza ta chiar o merită.', astfel încât clienții noi te pot găsi, pot avea încredere în tine și pot programa o întâlnire fără să ridice telefonul.',
+    'Oricine cu ChatGPT poate acum să scrie ca un profesionist, să facă design ca un studio și să promoveze ca o agenție. Cei 10 ani de practică ai tăi arată la fel ca 10 minute de prompting ale altcuiva. Noi construim prezența online pe care expertiza ta chiar o merită.',
   'landing.hero.subheadline':
-    'Website, booking și tot ce le conectează. Construite pentru tine în zile, nu luni. Tu te concentrezi pe clienții tăi. Noi ne asigurăm că alții noi te găsesc în continuare.', terapeuților și clinicilor pierd clienți în favoarea concurenților cu site-uri mai bune, nu cu abilități mai bune. Ne ocupăm de tot de la început până la sfârșit: site-ul tău, configurarea programărilor și conectarea tuturor. Tu apari la programări. Noi ne asigurăm că acestea continuă să vină.',
+    'Website, booking și tot ce le conectează. Construite pentru tine în zile, nu luni. Tu te concentrezi pe clienții tăi. Noi ne asigurăm că alții noi te găsesc în continuare.',
   'landing.hero.cta': 'Programează un apel gratuit',
   'landing.hero.ctaNote':
     'Un singur apel. Fără jargon tehnic. Vei fi online în câteva zile.',

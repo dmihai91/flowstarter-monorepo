@@ -102,8 +102,8 @@ export const QUICK_PROFILE_OPTIONS = {
     bookings: { label: 'Get Bookings', description: 'Schedule appointments & sessions', icon: 'calendar' },
   },
   offerType: {
-    'high-ticket': { label: 'Premium', description: '$500+ per client', icon: 'gem' },
-    'low-ticket': { label: 'Accessible', description: 'Under $500 per client', icon: 'tag' },
+    'high-ticket': { label: 'Premium', description: '€500+ per client', icon: 'gem' },
+    'low-ticket': { label: 'Accessible', description: 'Under €500 per client', icon: 'tag' },
     free: { label: 'Free First', description: 'Free consultation or trial', icon: 'gift' },
   },
   tone: {

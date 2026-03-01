@@ -1,10 +1,12 @@
 /**
- * QuickProfileSelector Component (Updated with Lucide Icons)
+ * QuickProfileSelector Component
  * 
- * A single-step component that collects the 3 essential business choices:
+ * Collects 3 essential business choices:
  * 1. Goal (leads / sales / bookings)
- * 2. Offer Type (high-ticket / low-ticket / free)
- * 3. Tone (professional / bold / friendly)
+ * 2. Price point (premium / accessible / free-first)
+ * 3. Brand tone (professional / bold / friendly)
+ * 
+ * Adapts copy for team vs client context.
  */
 
 import { useState, useCallback } from 'react';
@@ -17,17 +19,10 @@ import {
 import type { QuickProfile, BusinessGoal, OfferType, BrandTone } from '../types';
 import { QUICK_PROFILE_OPTIONS } from '../types';
 
-// Icon mapping
-const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-  mail: Mail,
-  'credit-card': CreditCard,
-  calendar: Calendar,
-  gem: Gem,
-  tag: Tag,
-  gift: Gift,
-  briefcase: Briefcase,
-  zap: Zap,
-  smile: Smile,
+const ICONS: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
+  mail: Mail, 'credit-card': CreditCard, calendar: Calendar,
+  gem: Gem, tag: Tag, gift: Gift,
+  briefcase: Briefcase, zap: Zap, smile: Smile,
 };
 
 interface QuickProfileSelectorProps {
@@ -35,6 +30,7 @@ interface QuickProfileSelectorProps {
   onComplete: (profile: QuickProfile) => void;
   onChange?: (profile: Partial<QuickProfile>) => void;
   isDark?: boolean;
+  isTeam?: boolean;
 }
 
 interface OptionCardProps<T extends string> {
@@ -45,216 +41,140 @@ interface OptionCardProps<T extends string> {
   isDark?: boolean;
 }
 
-function OptionCard<T extends string>({ 
-  value, 
-  selected, 
-  option, 
-  onClick,
-  isDark = false 
-}: OptionCardProps<T>) {
+function OptionCard<T extends string>({ value, selected, option, onClick, isDark = false }: OptionCardProps<T>) {
   const IconComponent = ICONS[option.icon];
-  
   return (
     <button
       type="button"
       onClick={() => onClick(value)}
-      className={`
-        relative flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-200
-        ${selected 
-          ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 shadow-md scale-[1.02]' 
-          : isDark 
-            ? 'border-gray-700 hover:border-gray-600 bg-gray-800 hover:shadow-sm'
-            : 'border-gray-200 hover:border-gray-300 bg-white hover:shadow-sm'
-        }
-      `}
+      className="relative flex items-center gap-3 rounded-xl transition-all duration-200 text-left"
+      style={{
+        padding: '12px 14px',
+        border: selected 
+          ? '2px solid var(--purple, #4D5DD9)' 
+          : isDark ? '2px solid rgba(255,255,255,0.08)' : '2px solid rgba(0,0,0,0.08)',
+        background: selected
+          ? isDark ? 'rgba(77, 93, 217, 0.12)' : 'rgba(77, 93, 217, 0.06)'
+          : isDark ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.7)',
+        backdropFilter: 'blur(12px)',
+        transform: selected ? 'scale(1.01)' : 'scale(1)',
+      }}
     >
-      {/* Selection indicator */}
       {selected && (
-        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-indigo-500 flex items-center justify-center">
+        <div className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full flex items-center justify-center"
+          style={{ background: 'var(--purple, #4D5DD9)' }}>
           <Check className="w-3 h-3 text-white" strokeWidth={3} />
         </div>
       )}
-      
-      {/* Icon */}
-      <div className={`
-        w-10 h-10 rounded-lg flex items-center justify-center mb-2
-        ${selected 
-          ? 'bg-indigo-100 dark:bg-indigo-800' 
-          : isDark ? 'bg-gray-700' : 'bg-gray-100'
-        }
-      `}>
+      <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+        style={{
+          background: selected 
+            ? isDark ? 'rgba(77, 93, 217, 0.2)' : 'rgba(77, 93, 217, 0.1)'
+            : isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
+        }}>
         {IconComponent && (
-          <IconComponent className={`w-5 h-5 ${selected ? 'text-indigo-600 dark:text-indigo-300' : isDark ? 'text-gray-300' : 'text-gray-600'}`} />
+          <IconComponent className="w-4 h-4" 
+            style={{ color: selected ? 'var(--purple, #4D5DD9)' : isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.45)' }} />
         )}
       </div>
-      
-      {/* Label */}
-      <span className={`font-semibold text-sm ${isDark ? 'text-white' : 'text-gray-900'}`}>
-        {option.label}
-      </span>
-      
-      {/* Description */}
-      <span className={`text-xs mt-1 text-center ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-        {option.description}
-      </span>
+      <div className="min-w-0">
+        <div className="font-semibold text-sm leading-tight"
+          style={{ color: isDark ? '#fafafa' : '#09090b' }}>{option.label}</div>
+        <div className="text-xs mt-0.5 leading-snug"
+          style={{ color: isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)' }}>{option.description}</div>
+      </div>
     </button>
   );
 }
 
-interface QuestionSectionProps {
-  title: string;
-  subtitle?: string;
-  children: React.ReactNode;
-  isDark?: boolean;
-}
-
-function QuestionSection({ title, subtitle, children, isDark = false }: QuestionSectionProps) {
+function QuestionSection({ title, subtitle, children, isDark = false }: {
+  title: string; subtitle?: string; children: React.ReactNode; isDark?: boolean;
+}) {
   return (
-    <div className="mb-6">
-      <h3 className={`text-lg font-semibold mb-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-        {title}
-      </h3>
-      {subtitle && (
-        <p className={`text-sm mb-3 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-          {subtitle}
-        </p>
-      )}
-      <div className="grid grid-cols-3 gap-3">
-        {children}
-      </div>
+    <div className="mb-5">
+      <h3 className="text-sm font-semibold mb-0.5" style={{ color: isDark ? '#fafafa' : '#09090b' }}>{title}</h3>
+      {subtitle && <p className="text-xs mb-2.5" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)' }}>{subtitle}</p>}
+      <div className="flex flex-col gap-2">{children}</div>
     </div>
   );
 }
 
-export function QuickProfileSelector({
-  initialProfile,
-  onComplete,
-  onChange,
-  isDark = false,
-}: QuickProfileSelectorProps) {
+export function QuickProfileSelector({ initialProfile, onComplete, onChange, isDark = false, isTeam = false }: QuickProfileSelectorProps) {
   const [goal, setGoal] = useState<BusinessGoal | null>(initialProfile?.goal ?? null);
   const [offerType, setOfferType] = useState<OfferType | null>(initialProfile?.offerType ?? null);
   const [tone, setTone] = useState<BrandTone | null>(initialProfile?.tone ?? null);
 
   const handleGoalChange = useCallback((value: BusinessGoal) => {
     setGoal(value);
-    const partial = { goal: value, offerType, tone };
-    onChange?.(partial as Partial<QuickProfile>);
+    onChange?.({ goal: value, offerType, tone } as Partial<QuickProfile>);
   }, [offerType, tone, onChange]);
 
   const handleOfferTypeChange = useCallback((value: OfferType) => {
     setOfferType(value);
-    const partial = { goal, offerType: value, tone };
-    onChange?.(partial as Partial<QuickProfile>);
+    onChange?.({ goal, offerType: value, tone } as Partial<QuickProfile>);
   }, [goal, tone, onChange]);
 
   const handleToneChange = useCallback((value: BrandTone) => {
     setTone(value);
-    const partial = { goal, offerType, tone: value };
-    onChange?.(partial as Partial<QuickProfile>);
+    onChange?.({ goal, offerType, tone: value } as Partial<QuickProfile>);
   }, [goal, offerType, onChange]);
 
   const isComplete = goal && offerType && tone;
 
   const handleContinue = useCallback(() => {
-    if (isComplete) {
-      onComplete({ goal, offerType, tone });
-    }
+    if (isComplete) onComplete({ goal, offerType, tone });
   }, [goal, offerType, tone, isComplete, onComplete]);
 
   return (
-    <div className={`p-6 rounded-2xl ${isDark ? 'bg-gray-900/50' : 'bg-gray-50'}`}>
-      {/* Header */}
-      <div className="mb-6 text-center">
-        <h2 className={`text-xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-          Quick Profile
+    <div className="rounded-2xl" style={{
+      padding: '20px',
+      background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.6)',
+      border: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(0,0,0,0.06)',
+      backdropFilter: 'blur(16px)',
+    }}>
+      <div className="mb-5">
+        <h2 className="text-base font-bold mb-1" style={{ color: isDark ? '#fafafa' : '#09090b' }}>
+          {isTeam ? 'Client Profile' : 'Quick Profile'}
         </h2>
-        <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-          3 quick choices to personalize your site
+        <p className="text-xs" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.45)' }}>
+          {isTeam ? '3 quick choices to personalize their site' : '3 quick choices to personalize your site'}
         </p>
       </div>
 
-      {/* Question 1: Goal */}
-      <QuestionSection 
-        title="What's your main goal?" 
-        subtitle="This shapes your call-to-action"
-        isDark={isDark}
-      >
-        {(Object.entries(QUICK_PROFILE_OPTIONS.goal) as [BusinessGoal, typeof QUICK_PROFILE_OPTIONS.goal.leads][]).map(
-          ([value, option]) => (
-            <OptionCard
-              key={value}
-              value={value}
-              selected={goal === value}
-              option={option}
-              onClick={handleGoalChange}
-              isDark={isDark}
-            />
-          )
-        )}
+      <QuestionSection title={isTeam ? "Client's main goal?" : "What's your main goal?"} subtitle={isTeam ? "Shapes their call-to-action" : "Shapes your call-to-action"} isDark={isDark}>
+        {(Object.entries(QUICK_PROFILE_OPTIONS.goal) as [BusinessGoal, typeof QUICK_PROFILE_OPTIONS.goal.leads][]).map(([value, option]) => (
+          <OptionCard key={value} value={value} selected={goal === value} option={option} onClick={handleGoalChange} isDark={isDark} />
+        ))}
       </QuestionSection>
 
-      {/* Question 2: Offer Type */}
-      <QuestionSection 
-        title="What's your price point?" 
-        subtitle="This affects your messaging strategy"
-        isDark={isDark}
-      >
-        {(Object.entries(QUICK_PROFILE_OPTIONS.offerType) as [OfferType, typeof QUICK_PROFILE_OPTIONS.offerType['high-ticket']][]).map(
-          ([value, option]) => (
-            <OptionCard
-              key={value}
-              value={value}
-              selected={offerType === value}
-              option={option}
-              onClick={handleOfferTypeChange}
-              isDark={isDark}
-            />
-          )
-        )}
+      <QuestionSection title={isTeam ? "Client's price point?" : "What's your price point?"} subtitle={isTeam ? "Affects their messaging" : "Affects your messaging"} isDark={isDark}>
+        {(Object.entries(QUICK_PROFILE_OPTIONS.offerType) as [OfferType, typeof QUICK_PROFILE_OPTIONS.offerType['high-ticket']][]).map(([value, option]) => (
+          <OptionCard key={value} value={value} selected={offerType === value} option={option} onClick={handleOfferTypeChange} isDark={isDark} />
+        ))}
       </QuestionSection>
 
-      {/* Question 3: Tone */}
-      <QuestionSection 
-        title="What's your brand vibe?" 
-        subtitle="This sets your site's personality"
-        isDark={isDark}
-      >
-        {(Object.entries(QUICK_PROFILE_OPTIONS.tone) as [BrandTone, typeof QUICK_PROFILE_OPTIONS.tone.professional][]).map(
-          ([value, option]) => (
-            <OptionCard
-              key={value}
-              value={value}
-              selected={tone === value}
-              option={option}
-              onClick={handleToneChange}
-              isDark={isDark}
-            />
-          )
-        )}
+      <QuestionSection title={isTeam ? "Brand vibe?" : "What's your brand vibe?"} subtitle={isTeam ? "Sets the site's personality" : "Sets your site's personality"} isDark={isDark}>
+        {(Object.entries(QUICK_PROFILE_OPTIONS.tone) as [BrandTone, typeof QUICK_PROFILE_OPTIONS.tone.professional][]).map(([value, option]) => (
+          <OptionCard key={value} value={value} selected={tone === value} option={option} onClick={handleToneChange} isDark={isDark} />
+        ))}
       </QuestionSection>
 
-      {/* Progress indicator */}
-      <div className="flex items-center justify-center gap-2 mb-4">
-        <div className={`w-2.5 h-2.5 rounded-full transition-colors ${goal ? 'bg-indigo-500' : isDark ? 'bg-gray-700' : 'bg-gray-300'}`} />
-        <div className={`w-2.5 h-2.5 rounded-full transition-colors ${offerType ? 'bg-indigo-500' : isDark ? 'bg-gray-700' : 'bg-gray-300'}`} />
-        <div className={`w-2.5 h-2.5 rounded-full transition-colors ${tone ? 'bg-indigo-500' : isDark ? 'bg-gray-700' : 'bg-gray-300'}`} />
+      <div className="flex items-center justify-center gap-2 mb-3">
+        {[goal, offerType, tone].map((val, i) => (
+          <div key={i} className="w-2 h-2 rounded-full transition-colors"
+            style={{ background: val ? 'var(--purple, #4D5DD9)' : isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }} />
+        ))}
       </div>
 
-      {/* Continue button */}
-      <button
-        type="button"
-        onClick={handleContinue}
-        disabled={!isComplete}
-        className={`
-          w-full py-3 px-6 rounded-xl font-semibold text-white transition-all duration-200
-          ${isComplete
-            ? 'bg-indigo-500 hover:bg-indigo-600 shadow-lg hover:shadow-xl cursor-pointer'
-            : 'bg-gray-400 cursor-not-allowed opacity-50'
-          }
-        `}
-      >
-        Continue →
+      <button type="button" onClick={handleContinue} disabled={!isComplete}
+        className="w-full py-2.5 px-6 rounded-xl font-semibold text-sm transition-all duration-200"
+        style={{
+          background: isComplete ? 'var(--purple, #4D5DD9)' : isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)',
+          color: isComplete ? '#fff' : isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)',
+          cursor: isComplete ? 'pointer' : 'not-allowed',
+          boxShadow: isComplete ? '0 4px 12px rgba(77, 93, 217, 0.25)' : 'none',
+        }}>
+        Continue
       </button>
     </div>
   );

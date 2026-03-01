@@ -6,6 +6,7 @@ import { ProjectNameEditor } from './ProjectNameEditor';
 import { ViewToggle, type ViewMode } from './ViewToggle';
 import { PublishButton } from './PublishButton';
 import { UserAvatar } from './UserAvatar';
+import { ThemeToggle } from './ThemeToggle';
 import { Separator } from './Separator';
 import { MagicLinkButton } from './MagicLinkButton';
 import { isTeamMode, getModeCapabilities, getUserMode } from '~/lib/team-auth';
@@ -137,6 +138,7 @@ export function EditorHeader({
 
         {!isMobile && <PublishButton isEnabled={isPublishEnabled} onClick={onPublish} />}
         {!isMobile && <Separator />}
+        <ThemeToggle />
         <UserAvatar />
       </div>
     </header>

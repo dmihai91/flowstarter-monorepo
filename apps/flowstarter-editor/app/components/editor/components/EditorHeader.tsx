@@ -70,6 +70,8 @@ export function EditorHeader({
         height: isMobile ? '44px' : isCompact ? '52px' : '64px',
         padding: isMobile ? '0 8px' : isCompact ? '0 12px' : '0 20px',
         flexShrink: 0,
+        position: 'relative' as const,
+        zIndex: 10,
         background: isCompact ? (isDark ? '#0a0a0c' : '#ffffff') : colors.bgHeader,
         borderBottom: isDark ? '1px solid #27272a' : '1px solid #e4e4e7',
         backdropFilter: 'blur(24px)',
@@ -92,7 +94,7 @@ export function EditorHeader({
       >
         <MenuButton onClick={onMenuClick} />
         {!isMobile && (isCompact ? <LogoIcon size={28} /> : <Logo size="xs" />)}
-        {isTeam && (
+        {isTeam && !isCompact && (
           <span
             style={{
               padding: '3px 8px',
@@ -139,9 +141,9 @@ export function EditorHeader({
           <MagicLinkButton projectId={projectId ?? null} />
         )}
 
-        {!isMobile && <PublishButton isEnabled={isPublishEnabled} onClick={onPublish} />}
-        {!isMobile && <Separator />}
-        {!isMobile && <ThemeToggle />}
+        {!isCompact && <PublishButton isEnabled={isPublishEnabled} onClick={onPublish} />}
+        {!isCompact && <Separator />}
+        {!isCompact && <ThemeToggle />}
         <EditorUserMenu />
       </div>
     </header>

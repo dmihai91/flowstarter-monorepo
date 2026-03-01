@@ -70,7 +70,7 @@ export function EditorHeader({
         height: isMobile ? '44px' : isCompact ? '52px' : '64px',
         padding: isMobile ? '0 8px' : isCompact ? '0 12px' : '0 20px',
         flexShrink: 0,
-        background: isMobile ? (isDark ? '#0a0a0c' : '#ffffff') : colors.bgHeader,
+        background: isCompact ? (isDark ? '#0a0a0c' : '#ffffff') : colors.bgHeader,
         borderBottom: isDark ? '1px solid #27272a' : '1px solid #e4e4e7',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',

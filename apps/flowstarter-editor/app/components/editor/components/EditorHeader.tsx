@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useThemeStyles, getColors } from '~/components/editor/hooks';
 import { MenuButton } from './MenuButton';
-import { Logo } from './Logo';
+import { Logo, LogoIcon } from './Logo';
 import { ProjectNameEditor } from './ProjectNameEditor';
 import { ViewToggle, type ViewMode } from './ViewToggle';
 import { PublishButton } from './PublishButton';
@@ -91,7 +91,7 @@ export function EditorHeader({
         }}
       >
         <MenuButton onClick={onMenuClick} />
-        <Logo />
+        {isCompact ? <LogoIcon size={28} /> : <Logo />}
         {!isCompact && (
           <>
             <Separator />

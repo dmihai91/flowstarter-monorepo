@@ -40,8 +40,9 @@ export function EditorHeader({
   const [isTeam, setIsTeam] = useState(false);
   const [canGenerateMagicLink, setCanGenerateMagicLink] = useState(false);
 
-  // Mobile detection
+  // Responsive detection
   const [isMobile, setIsMobile] = useState(false);
+  const [isCompact, setIsCompact] = useState(false);
 
   useEffect(() => {
     const mode = getUserMode();
@@ -51,10 +52,13 @@ export function EditorHeader({
   }, []);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    const check = () => {
+      setIsMobile(window.innerWidth < 640);
+      setIsCompact(window.innerWidth < 1024);
+    };
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
   }, []);
 
   return (
@@ -63,8 +67,8 @@ export function EditorHeader({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        height: isMobile ? '52px' : '64px',
-        padding: isMobile ? '0 12px' : '0 20px',
+        height: isCompact ? '52px' : '64px',
+        padding: isCompact ? '0 12px' : '0 20px',
         flexShrink: 0,
         background: colors.bgHeader,
         borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(255, 255, 255, 0.5)',
@@ -88,7 +92,7 @@ export function EditorHeader({
       >
         <MenuButton onClick={onMenuClick} />
         <Logo />
-        {!isMobile && (
+        {!isCompact && (
           <>
             <Separator />
             <div
@@ -112,9 +116,9 @@ export function EditorHeader({
       </div>
 
       {/* RIGHT: Actions */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '8px' : '12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: isCompact ? '8px' : '12px' }}>
         {/* Team mode indicator - hide text on mobile */}
-        {isTeam && !isMobile && (
+        {isTeam && !isCompact && (
           <span
             style={{
               padding: '4px 10px',
@@ -132,11 +136,11 @@ export function EditorHeader({
         )}
 
         {/* Magic Link button - Team only, hide on mobile */}
-        {canGenerateMagicLink && !isMobile && (
+        {canGenerateMagicLink && !isCompact && (
           <MagicLinkButton projectId={projectId ?? null} />
         )}
 
-        {!isMobile && <PublishButton isEnabled={isPublishEnabled} onClick={onPublish} />}
+        <PublishButton isEnabled={isPublishEnabled} onClick={onPublish} />
         {!isMobile && <Separator />}
         <ThemeToggle />
         <UserAvatar />

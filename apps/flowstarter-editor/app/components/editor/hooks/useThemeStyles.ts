@@ -21,9 +21,9 @@ export const getColors = (isDark: boolean) => ({
 
   // Backgrounds — transparent for FlowBackground to show through
   bgPrimary: isDark ? '#0a0a0c' : '#ffffff',
-  bgSecondary: isDark ? 'rgba(10, 10, 14, 0.65)' : 'rgba(244, 244, 245, 0.85)',
+  bgSecondary: isDark ? 'rgba(10, 10, 14, 0.65)' : 'rgba(250, 250, 252, 0.8)',
   bgTertiary: isDark ? 'rgba(8, 8, 12, 0.5)' : '#ffffff',
-  bgHeader: isDark ? 'rgba(10, 10, 14, 0.8)' : 'rgba(255, 255, 255, 0.7)',
+  bgHeader: isDark ? 'rgba(10, 10, 14, 0.8)' : 'rgba(255, 255, 255, 0.85)',
   bgGradient: isDark
     ? 'transparent'
     : 'transparent',

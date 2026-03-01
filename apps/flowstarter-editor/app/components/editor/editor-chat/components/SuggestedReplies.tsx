@@ -411,7 +411,7 @@ export function SuggestedReplies({ suggestions, step, isDark, onAccept, onRefres
               whileTap={{ scale: 0.99 }}
               onClick={() => onAccept(suggestion)}
               data-testid={`suggestion-${suggestion.id}`}
-              className="group px-4 py-3 rounded-xl text-sm flex items-start gap-3 text-left"
+              className="group px-3 py-2.5 rounded-xl text-xs sm:text-sm flex items-start gap-2.5 text-left"
               style={{
                 background: isDark
                   ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%)'
@@ -431,7 +431,7 @@ export function SuggestedReplies({ suggestions, step, isDark, onAccept, onRefres
               >
                 {getSuggestionIcon(suggestion)}
               </span>
-              <span className="leading-relaxed">{suggestion.text}</span>
+              <span className="leading-snug line-clamp-2">{suggestion.text}</span>
             </motion.button>
           ))}
         </div>

@@ -4,6 +4,7 @@ import AuthLayout from '@/components/auth/AuthLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslations } from '@/lib/i18n';
 import { useSignIn } from '@clerk/nextjs';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
@@ -15,9 +16,11 @@ export default function TeamLoginPage() {
   const { signIn, setActive, isLoaded } = useSignIn();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useTranslations();
 
   // Honor external redirect_url (e.g. from editor subdomain), else default to team dashboard
-  const getRedirectTarget = (): string => {
+  const getRedirectTarget = (): { url: string; external: boolean } => {
+    // Check for explicit redirect_url (e.g. from editor subdomain)
     const redirectUrl = searchParams.get('redirect_url');
     if (redirectUrl) {
       try {
@@ -27,13 +30,25 @@ export default function TeamLoginPage() {
           url.hostname.endsWith('flowstarter.app') ||
           url.hostname === 'localhost'
         ) {
-          return redirectUrl;
+          const isCrossDomain = typeof window !== 'undefined' && url.hostname !== window.location.hostname;
+          return { url: redirectUrl, external: isCrossDomain };
         }
       } catch {
         // Invalid URL, fall through
       }
     }
-    return '/team/dashboard';
+    // Check for 'next' param (set by middleware when redirecting unauthenticated users)
+    const nextUrl = searchParams.get('next');
+    if (nextUrl && nextUrl.startsWith('/')) {
+      return { url: nextUrl, external: false };
+    }
+    return { url: '/team/dashboard', external: false };
+  };
+
+  const navigateToTarget = () => {
+    const target = getRedirectTarget();
+    // Always use full page reload after login to ensure Clerk session cookie is propagated
+    window.location.href = target.url;
   };
 
   const [mounted, setMounted] = useState(false);
@@ -57,21 +72,16 @@ export default function TeamLoginPage() {
     setError('');
 
     try {
-      // Sign in with email and password directly
       const result = await signIn.create({
         identifier: email,
         password,
       });
 
-      console.log('Sign in result:', result.status, result);
-
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
-        router.push(getRedirectTarget());
+        navigateToTarget();
       } else if (result.status === 'needs_second_factor') {
-        // Check what second factor is needed
         const supportedFactors = result.supportedSecondFactors;
-        console.log('Second factors required:', supportedFactors);
 
         const totpFactor = supportedFactors?.find((f) => f.strategy === 'totp');
 
@@ -87,9 +97,6 @@ export default function TeamLoginPage() {
           setError('Two-factor authentication required. Please contact admin.');
         }
       } else if (result.status === 'needs_first_factor') {
-        // Password might not be set - check what's available
-        const supportedFactors = result.supportedFirstFactors;
-        console.log('First factors:', supportedFactors);
         setError('Password sign-in not available for this account');
       } else {
         setError(`Sign in incomplete: ${result.status}`);
@@ -121,7 +128,7 @@ export default function TeamLoginPage() {
 
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
-        router.push(getRedirectTarget());
+        navigateToTarget();
       } else {
         setError('Verification failed');
       }
@@ -152,21 +159,32 @@ export default function TeamLoginPage() {
 
   return (
     <AuthLayout
-      title="Team Login"
-      subtitle="Sign in to manage client projects and configure services."
+      title={t('team.login.title')}
+      subtitle={t('team.login.subtitle')}
       showTeamBadge={true}
     >
       <div className="w-full max-w-[520px] mx-auto">
+        {/* Show notice when redirected from a protected route */}
+ === 'unauthenticated' && (
+          <div className="mb-4 p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/30 text-center">
+            <p className="text-sm font-semibold text-amber-800 dark:text-amber-200">
+              {t('auth.notice.unauthenticated.title')}
+            </p>
+            <p className="text-xs text-amber-700 dark:text-amber-300 mt-0.5">
+              {t('auth.notice.unauthenticated.description')}
+            </p>
+          </div>
+        )}
         <div className="bg-white/95 dark:bg-[var(--surface-2)]/90 backdrop-blur-2xl backdrop-saturate-150 rounded-2xl border border-gray-200/50 dark:border-white/10 p-8 shadow-lg dark:shadow-2xl">
-          {/* Credentials Step - Email + Password together */}
+          {/* Credentials Step */}
           {step === 'credentials' && (
             <>
               <div className="text-center mb-6">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Sign in to your account
+                  {t('team.login.signInTitle')}
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-white/50 mt-1">
-                  Team access only. Contact admin for credentials.
+                  {t('team.login.signInSubtitle')}
                 </p>
               </div>
 
@@ -176,12 +194,12 @@ export default function TeamLoginPage() {
                     htmlFor="email"
                     className="text-sm text-gray-600 dark:text-white/60"
                   >
-                    Email address
+                    {t('team.login.emailLabel')}
                   </Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="you@flowstarter.app"
+                    placeholder={t('team.login.emailPlaceholder')}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="h-12 rounded-lg bg-white/80 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/30 dark:bg-[var(--surface-2)]/80"
@@ -195,13 +213,13 @@ export default function TeamLoginPage() {
                     htmlFor="password"
                     className="text-sm text-gray-600 dark:text-white/60"
                   >
-                    Password
+                    {t('team.login.passwordLabel')}
                   </Label>
                   <div className="relative">
                     <Input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
-                      placeholder="Enter your password"
+                      placeholder={t('team.login.passwordPlaceholder')}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="h-12 rounded-lg bg-white/80 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/30 dark:bg-[var(--surface-2)]/80 pr-12"
@@ -230,7 +248,7 @@ export default function TeamLoginPage() {
                   disabled={isLoading || !email || !password}
                   className="w-full h-12 rounded-lg font-semibold bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 shadow-md transition-all disabled:opacity-50"
                 >
-                  {isLoading ? 'Signing in...' : 'Sign in'}
+                  {isLoading ? t('team.login.signingIn') : t('team.login.signIn')}
                 </Button>
               </form>
             </>
@@ -244,10 +262,10 @@ export default function TeamLoginPage() {
                   <ShieldCheck className="w-6 h-6 text-[var(--purple)]" />
                 </div>
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Two-factor authentication
+                  {t('team.login.twoFactorTitle')}
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-white/50 mt-1">
-                  Enter the code from your authenticator app
+                  {t('team.login.twoFactorSubtitle')}
                 </p>
               </div>
 
@@ -257,7 +275,7 @@ export default function TeamLoginPage() {
                     htmlFor="code"
                     className="text-sm text-gray-600 dark:text-white/60"
                   >
-                    Authentication code
+                    {t('team.login.codeLabel')}
                   </Label>
                   <Input
                     id="code"
@@ -285,7 +303,7 @@ export default function TeamLoginPage() {
                   disabled={isLoading || code.length !== 6}
                   className="w-full h-12 rounded-lg font-semibold bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 shadow-md transition-all disabled:opacity-50"
                 >
-                  {isLoading ? 'Verifying...' : 'Verify'}
+                  {isLoading ? t('team.login.verifying') : t('team.login.verify')}
                 </Button>
 
                 <button
@@ -293,7 +311,7 @@ export default function TeamLoginPage() {
                   onClick={goBack}
                   className="w-full text-sm text-gray-500 dark:text-white/50 hover:text-gray-700 dark:hover:text-white/70 transition-colors"
                 >
-                  ← Back
+                  &larr; {t('team.login.back')}
                 </button>
               </form>
             </>

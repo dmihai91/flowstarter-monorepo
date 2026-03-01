@@ -277,7 +277,7 @@ const getStepConfig = (step: OnboardingStep | undefined, type: 'preview' | 'edit
       icon: EditorIcon,
       title: t(EDITOR_LABEL_KEYS.EMPTY_CODE_EDITOR),
       subtitle: t(EDITOR_LABEL_KEYS.EMPTY_CODE_SUBTITLE),
-      accentColor: 'rgba(99, 102, 241, 0.5)',
+      accentColor: 'rgba(6, 182, 212, 0.3)',
     };
   }
 
@@ -288,14 +288,14 @@ const getStepConfig = (step: OnboardingStep | undefined, type: 'preview' | 'edit
         icon: WelcomeIcon,
         title: t(EDITOR_LABEL_KEYS.EMPTY_DESCRIBE_TITLE),
         subtitle: t(EDITOR_LABEL_KEYS.EMPTY_DESCRIBE_SUBTITLE),
-        accentColor: 'rgba(139, 92, 246, 0.5)',
+        accentColor: 'rgba(77, 93, 217, 0.3)',
       };
     case 'name':
       return {
         icon: WelcomeIcon,
         title: t(EDITOR_LABEL_KEYS.EMPTY_NAME_TITLE),
         subtitle: t(EDITOR_LABEL_KEYS.EMPTY_NAME_SUBTITLE),
-        accentColor: 'rgba(139, 92, 246, 0.5)',
+        accentColor: 'rgba(77, 93, 217, 0.3)',
       };
     case 'business-uvp':
     case 'business-audience':
@@ -308,14 +308,14 @@ const getStepConfig = (step: OnboardingStep | undefined, type: 'preview' | 'edit
         icon: WelcomeIcon,
         title: t(EDITOR_LABEL_KEYS.EMPTY_BUSINESS_TITLE),
         subtitle: t(EDITOR_LABEL_KEYS.EMPTY_BUSINESS_SUBTITLE),
-        accentColor: 'rgba(139, 92, 246, 0.5)',
+        accentColor: 'rgba(77, 93, 217, 0.3)',
       };
     case 'template':
       return {
         icon: TemplateIcon,
         title: t(EDITOR_LABEL_KEYS.EMPTY_TEMPLATE_TITLE),
         subtitle: t(EDITOR_LABEL_KEYS.EMPTY_TEMPLATE_SUBTITLE),
-        accentColor: 'rgba(99, 102, 241, 0.5)',
+        accentColor: 'rgba(6, 182, 212, 0.3)',
       };
     case 'personalization':
       return {
@@ -350,7 +350,7 @@ const getStepConfig = (step: OnboardingStep | undefined, type: 'preview' | 'edit
         icon: WelcomeIcon,
         title: t(EDITOR_LABEL_KEYS.EMPTY_DESCRIBE_TITLE),
         subtitle: t(EDITOR_LABEL_KEYS.EMPTY_DESCRIBE_SUBTITLE),
-        accentColor: 'rgba(139, 92, 246, 0.5)',
+        accentColor: 'rgba(77, 93, 217, 0.3)',
       };
   }
 };
@@ -414,7 +414,7 @@ export function EmptyState({ type, step }: EmptyStateProps) {
             position: 'relative',
           }}
         >
-          <PulsingRings color={isDark ? 'rgba(139, 92, 246, 0.15)' : 'rgba(99, 102, 241, 0.12)'} />
+          <PulsingRings color={isDark ? 'rgba(77, 93, 217, 0.08)' : 'rgba(6, 182, 212, 0.06)'} />
           <IconComponent color={isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)'} />
         </motion.div>
 
@@ -480,8 +480,8 @@ export function EmptyState({ type, step }: EmptyStateProps) {
                     scale: isCurrent ? 1.2 : 1,
                     backgroundColor: isActive
                       ? isDark
-                        ? '#C1C8FF'
-                        : 'rgba(99, 102, 241, 0.8)'
+                        ? 'rgba(77, 93, 217, 0.7)'
+                        : 'rgba(77, 93, 217, 0.6)'
                       : isDark
                         ? 'rgba(255,255,255,0.15)'
                         : 'rgba(0,0,0,0.1)',

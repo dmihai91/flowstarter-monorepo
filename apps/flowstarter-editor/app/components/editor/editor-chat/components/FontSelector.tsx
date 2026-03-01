@@ -100,7 +100,7 @@ export function FontSelector({ isDark, fontsLoaded, onSelect, templateFonts }: F
                   transition={{ delay: 0.2 }}
                   className="absolute -top-2 -right-2 px-2 py-0.5 rounded-full text-[10px] font-semibold"
                   style={{
-                    background: 'linear-gradient(135deg, #6366F1, #8B5CF6)',
+                    background: 'linear-gradient(135deg, rgba(77, 93, 217, 0.8), rgba(6, 182, 212, 0.6))',
                     color: '#fff',
                     boxShadow: '0 2px 8px rgba(99, 102, 241, 0.4)',
                   }}

@@ -58,8 +58,8 @@ const SkeletonCard = ({ isDark, index }: { isDark: boolean; index: number }) => 
         className="absolute inset-0 animate-pulse"
         style={{
           background: isDark
-            ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)'
-            : 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%)',
+            ? 'linear-gradient(135deg, rgba(77, 93, 217, 0.06) 0%, rgba(6, 182, 212, 0.04) 100%)'
+            : 'linear-gradient(135deg, rgba(77, 93, 217, 0.05) 0%, rgba(6, 182, 212, 0.04) 100%)',
         }}
       />
     </div>

@@ -26,7 +26,7 @@ export function BusinessSummary({ businessInfo, onConfirm, onEdit }: BusinessSum
   return (
     <div
       style={{
-        background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%)',
+        background: 'linear-gradient(135deg, rgba(77, 93, 217, 0.04) 0%, rgba(6, 182, 212, 0.03) 100%)',
         border: '1px solid rgba(99, 102, 241, 0.2)',
         borderRadius: '16px',
         padding: '24px',
@@ -103,7 +103,7 @@ export function BusinessSummary({ businessInfo, onConfirm, onEdit }: BusinessSum
           style={{
             flex: 1,
             padding: '12px',
-            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+            background: 'linear-gradient(135deg, rgba(77, 93, 217, 0.8) 0%, rgba(6, 182, 212, 0.6) 100%)',
             color: '#fff',
             border: 'none',
             borderRadius: '10px',

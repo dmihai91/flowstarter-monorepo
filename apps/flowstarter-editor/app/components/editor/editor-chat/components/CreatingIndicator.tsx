@@ -44,8 +44,8 @@ export function CreatingIndicator({
             className="h-full rounded-full"
             style={{
               background: isDark
-                ? 'linear-gradient(90deg, #C1C8FF 0%, #A78BFA 100%)'
-                : 'linear-gradient(90deg, #4D5DD9 0%, #7C3AED 100%)',
+                ? 'linear-gradient(90deg, rgba(77, 93, 217, 0.7) 0%, rgba(6, 182, 212, 0.5) 100%)'
+                : 'linear-gradient(90deg, rgba(77, 93, 217, 0.6) 0%, rgba(6, 182, 212, 0.4) 100%)',
             }}
             initial={{ width: 0 }}
             animate={{ width: `${progressPercent}%` }}

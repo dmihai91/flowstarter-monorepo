@@ -424,7 +424,7 @@ export function SuggestedReplies({ suggestions, step, isDark, onAccept, onRefres
             >
               <span
                 className="flex-shrink-0 opacity-50 group-hover:opacity-100 transition-opacity mt-0.5"
-                style={{ color: isDark ? '#C1C8FF' : '#4D5DD9' }}
+                style={{ color: isDark ? 'rgba(77, 93, 217, 0.7)' : 'rgba(77, 93, 217, 0.8)' }}
               >
                 {getSuggestionIcon(suggestion)}
               </span>
@@ -449,15 +449,15 @@ export function SuggestedReplies({ suggestions, step, isDark, onAccept, onRefres
             className="w-5 h-5 rounded-full flex items-center justify-center"
             style={{
               background: isDark
-                ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(139, 92, 246, 0.2) 100%)'
-                : 'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.1) 100%)',
+                ? 'linear-gradient(135deg, rgba(77, 93, 217, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%)'
+                : 'linear-gradient(135deg, rgba(77, 93, 217, 0.1) 0%, rgba(6, 182, 212, 0.06) 100%)',
             }}
           >
             <svg
               className="w-3 h-3"
               viewBox="0 0 24 24"
               fill="none"
-              stroke={isDark ? '#C1C8FF' : '#4D5DD9'}
+              stroke={isDark ? 'rgba(77, 93, 217, 0.7)' : 'rgba(77, 93, 217, 0.8)'}
               strokeWidth="2"
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -494,9 +494,9 @@ export function SuggestedReplies({ suggestions, step, isDark, onAccept, onRefres
                 className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-150"
                 style={{
                   background: isDark
-                    ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.15) 100%)'
-                    : 'linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(139, 92, 246, 0.08) 100%)',
-                  color: isDark ? '#C1C8FF' : '#4D5DD9',
+                    ? 'linear-gradient(135deg, rgba(77, 93, 217, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%)'
+                    : 'linear-gradient(135deg, rgba(77, 93, 217, 0.08) 0%, rgba(6, 182, 212, 0.05) 100%)',
+                  color: isDark ? 'rgba(77, 93, 217, 0.7)' : 'rgba(77, 93, 217, 0.8)',
                 }}
               >
                 {getSuggestionIcon(suggestion)}
@@ -535,7 +535,7 @@ export function SuggestedReplies({ suggestions, step, isDark, onAccept, onRefres
                 className="px-3 py-1.5 rounded-full text-sm font-medium transition-colors duration-100"
                 style={{
                   background: isPrimary
-                    ? 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)'
+                    ? 'linear-gradient(135deg, rgba(77, 93, 217, 0.8) 0%, rgba(6, 182, 212, 0.6) 100%)'
                     : isDark
                       ? 'rgba(255, 255, 255, 0.08)'
                       : 'rgba(0, 0, 0, 0.06)',
@@ -545,7 +545,7 @@ export function SuggestedReplies({ suggestions, step, isDark, onAccept, onRefres
                       ? '1px solid rgba(255, 255, 255, 0.12)'
                       : '1px solid rgba(0, 0, 0, 0.1)',
                   color: isPrimary ? '#fff' : isDark ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.7)',
-                  boxShadow: isPrimary ? '0 2px 8px rgba(99, 102, 241, 0.3)' : 'none',
+                  boxShadow: isPrimary ? '0 2px 8px rgba(77, 93, 217, 0.15)' : 'none',
                 }}
               >
                 {suggestion.text}

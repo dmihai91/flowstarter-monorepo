@@ -117,11 +117,11 @@ export function EditorHeader({
           <span
             style={{
               padding: '4px 10px',
-              backgroundColor: isDark ? 'rgba(124, 58, 237, 0.2)' : 'rgba(124, 58, 237, 0.1)',
+              backgroundColor: isDark ? 'rgba(77, 93, 217, 0.15)' : 'rgba(77, 93, 217, 0.1)',
               borderRadius: '6px',
               fontSize: '11px',
               fontWeight: 600,
-              color: '#a78bfa',
+              color: 'rgba(77, 93, 217, 0.8)',
               textTransform: 'uppercase',
               letterSpacing: '0.5px',
             }}

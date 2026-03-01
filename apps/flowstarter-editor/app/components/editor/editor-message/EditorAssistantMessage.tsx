@@ -22,7 +22,7 @@ export const EditorAssistantMessage = memo(
             <span
               className="text-sm font-semibold"
               style={{
-                color: isDark ? 'rgba(139, 92, 246, 0.9)' : 'rgba(99, 102, 241, 0.85)',
+                color: isDark ? 'rgba(77, 93, 217, 0.85)' : 'rgba(77, 93, 217, 0.7)',
               }}
             >
               Flowstarter Assistant

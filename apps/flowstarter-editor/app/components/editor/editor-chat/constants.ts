@@ -354,7 +354,7 @@ export const MESSAGE_LABELS: Record<MessageKey, string> = {
     '• "I\'m a therapist specializing in anxiety and stress management"\n' +
     '• "I\'m a wedding photographer in Chicago"\n' +
     '• "I\'m a personal trainer for women over 40"',
-  [MESSAGE_KEYS.DESCRIBE_ACK]: 'A **{{businessType}}** — I love it! {{audienceNote}}Let\'s find the perfect name for your site.',
+  [MESSAGE_KEYS.DESCRIBE_ACK]: 'A **{{businessType}}**, I love it! {{audienceNote}}Let\'s find the perfect name for your site.',
   
   // Quick Profile step
   [MESSAGE_KEYS.QUICK_PROFILE_INTRO]: 'Choose the options that best describe your business:',

@@ -93,7 +93,7 @@ export function EditorHeader({
         }}
       >
         <MenuButton onClick={onMenuClick} />
-        {!isMobile && (isCompact ? <LogoIcon size={22} /> : <Logo size="xs" />)}
+        {!isMobile && (isCompact ? <LogoIcon size="xs" /> : <Logo size="xs" />)}
         {isTeam && !isCompact && (
           <span
             style={{

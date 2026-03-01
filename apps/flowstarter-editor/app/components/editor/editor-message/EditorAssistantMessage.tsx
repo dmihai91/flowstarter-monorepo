@@ -23,7 +23,7 @@ export const EditorAssistantMessage = memo(
             <span
               className="text-sm font-semibold"
               style={{
-                color: isDark ? '#8B5CF6' : '#7C3AED',
+                color: 'var(--purple)',
               }}
             >
               Flowstarter Assistant

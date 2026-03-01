@@ -78,8 +78,15 @@ export default function TeamLoginPage() {
       });
 
       if (result.status === 'complete') {
-        await setActive({ session: result.createdSessionId });
-        navigateToTarget();
+        const target = getRedirectTarget();
+        // Navigate first, then set active — avoids brief dashboard flash on cross-domain redirect
+        if (target.external) {
+          window.location.href = target.url;
+          await setActive({ session: result.createdSessionId });
+        } else {
+          await setActive({ session: result.createdSessionId });
+          navigateToTarget();
+        }
       } else if (result.status === 'needs_second_factor') {
         const supportedFactors = result.supportedSecondFactors;
 
@@ -127,8 +134,15 @@ export default function TeamLoginPage() {
       });
 
       if (result.status === 'complete') {
-        await setActive({ session: result.createdSessionId });
-        navigateToTarget();
+        const target = getRedirectTarget();
+        // Navigate first, then set active — avoids brief dashboard flash on cross-domain redirect
+        if (target.external) {
+          window.location.href = target.url;
+          await setActive({ session: result.createdSessionId });
+        } else {
+          await setActive({ session: result.createdSessionId });
+          navigateToTarget();
+        }
       } else {
         setError('Verification failed');
       }

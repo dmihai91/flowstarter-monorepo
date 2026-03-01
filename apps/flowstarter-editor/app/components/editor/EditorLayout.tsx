@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy, useCallback } from 'react';
+import { FlowBackground } from '@flowstarter/flow-design-system';
 import { useNavigate } from '@remix-run/react';
 import { ClientOnly } from 'remix-utils/client-only';
 import { useResizablePanel, useThemeStyles, getColors } from './hooks';
@@ -175,10 +176,13 @@ export function EditorLayout({
         height: '100vh',
         width: '100vw',
         overflow: 'hidden',
-        background: colors.bgPrimary,
+        background: 'transparent',
         color: colors.textPrimary,
       }}
     >
+      {/* Flow design system animated background */}
+      <FlowBackground variant="editor" style={{ position: 'fixed', inset: 0, zIndex: 0 }} />
+
       {/* Project History Sidebar */}
       <ConversationSidebar
         isOpen={isSidebarOpen}

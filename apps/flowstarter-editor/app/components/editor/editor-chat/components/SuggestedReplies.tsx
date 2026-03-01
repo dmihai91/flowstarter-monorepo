@@ -414,10 +414,10 @@ export function SuggestedReplies({ suggestions, step, isDark, onAccept, onRefres
               className="group px-4 py-3 rounded-xl text-sm flex items-start gap-3 text-left"
               style={{
                 background: isDark
-                  ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.03) 100%)'
+                  ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%)'
                   : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%)',
                 border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.08)',
-                boxShadow: isDark ? '0 2px 8px rgba(0, 0, 0, 0.2)' : '0 2px 8px rgba(0, 0, 0, 0.06)',
+                boxShadow: isDark ? '0 2px 8px rgba(0, 0, 0, 0.15)' : '0 2px 8px rgba(0, 0, 0, 0.06)',
                 color: isDark ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.8)',
                 backdropFilter: 'blur(8px)',
               }}
@@ -483,7 +483,7 @@ export function SuggestedReplies({ suggestions, step, isDark, onAccept, onRefres
               className="group px-3 py-2.5 rounded-xl text-sm flex items-center gap-2.5 text-left"
               style={{
                 background: isDark
-                  ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)'
+                  ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.015) 100%)'
                   : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%)',
                 border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.06)',
                 boxShadow: isDark ? '0 2px 8px rgba(0, 0, 0, 0.2)' : '0 2px 8px rgba(0, 0, 0, 0.04)',

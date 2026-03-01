@@ -54,8 +54,10 @@ export function ConversationSidebar({
               bottom: 0,
               width: '280px',
               background: isDark
-                ? 'linear-gradient(180deg, #1a1625 0%, #13111c 100%)'
-                : 'linear-gradient(180deg, #ffffff 0%, #fafafa 100%)',
+                ? 'rgba(12, 12, 18, 0.85)'
+                : 'rgba(255, 255, 255, 0.85)',
+              backdropFilter: 'blur(24px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(24px) saturate(180%)',
               borderRight: `1px solid ${colors.borderMedium}`,
               zIndex: 50,
               display: 'flex',

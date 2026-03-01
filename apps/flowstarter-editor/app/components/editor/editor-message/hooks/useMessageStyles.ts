@@ -48,9 +48,9 @@ export function useBubbleStyles({ isDark, variant }: BubbleStyleConfig): BubbleS
     if (isDark) {
       return {
         background: isUser
-          ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%)'
-          : 'linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(99, 102, 241, 0.06) 100%)',
-        border: isUser ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(139, 92, 246, 0.2)',
+          ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)'
+          : 'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(99, 102, 241, 0.04) 100%)',
+        border: isUser ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(139, 92, 246, 0.12)',
         boxShadow: 'none',
       };
     }

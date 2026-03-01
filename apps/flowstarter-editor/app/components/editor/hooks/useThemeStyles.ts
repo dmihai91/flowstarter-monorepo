@@ -14,18 +14,18 @@ export function useThemeStyles() {
 export const getColors = (isDark: boolean) => ({
   // Primary gradient
   primaryGradient: isDark
-    ? 'linear-gradient(135deg, #C1C8FF 0%, #4D5DD9 100%)'
-    : 'linear-gradient(135deg, #4D5DD9 0%, #6366f1 100%)',
-  primaryShadow: isDark ? '0 2px 8px rgba(193, 200, 255, 0.35)' : '0 2px 8px rgba(77, 93, 217, 0.25)',
-  primaryShadowLarge: isDark ? '0 2px 12px rgba(193, 200, 255, 0.4)' : '0 2px 12px rgba(77, 93, 217, 0.3)',
+    ? 'linear-gradient(135deg, rgba(193, 200, 255, 0.8) 0%, rgba(77, 93, 217, 0.6) 100%)'
+    : 'linear-gradient(135deg, rgba(77, 93, 217, 0.7) 0%, rgba(99, 102, 241, 0.5) 100%)',
+  primaryShadow: isDark ? '0 2px 8px rgba(193, 200, 255, 0.15)' : '0 2px 8px rgba(77, 93, 217, 0.12)',
+  primaryShadowLarge: isDark ? '0 2px 12px rgba(193, 200, 255, 0.2)' : '0 2px 12px rgba(77, 93, 217, 0.15)',
 
   // Backgrounds - improved light mode contrast
   bgPrimary: isDark ? '#0a0a0f' : '#f8f8fa',
-  bgSecondary: isDark ? 'rgba(10, 10, 20, 0.75)' : '#f0f0f4',
+  bgSecondary: isDark ? 'rgba(10, 10, 20, 0.6)' : '#f0f0f4',
   bgTertiary: isDark ? 'rgba(5, 5, 12, 0.6)' : '#ffffff',
-  bgHeader: isDark ? 'rgba(10, 10, 15, 0.9)' : 'rgba(255, 255, 255, 0.6)',
+  bgHeader: isDark ? 'rgba(10, 10, 15, 0.75)' : 'rgba(255, 255, 255, 0.6)',
   bgGradient: isDark
-    ? 'linear-gradient(180deg, #0f0f14 0%, #141420 100%)'
+    ? 'linear-gradient(180deg, rgba(10, 10, 15, 0.85) 0%, rgba(15, 15, 25, 0.7) 100%)'
     : `radial-gradient(ellipse at 0% 0%, rgba(165, 90, 172, 0.15) 0%, transparent 50%),
     radial-gradient(ellipse at 100% 0%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
     radial-gradient(ellipse 120% 80% at 50% 100%, rgba(145, 140, 69, 0.22) 0%, transparent 70%),

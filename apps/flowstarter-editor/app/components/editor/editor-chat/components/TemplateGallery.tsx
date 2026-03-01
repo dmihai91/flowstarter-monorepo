@@ -39,8 +39,8 @@ const SkeletonCard = ({ isDark, index }: { isDark: boolean; index: number }) => 
         className="absolute inset-0 animate-pulse"
         style={{
           background: isDark
-            ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)'
-            : 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%)',
+            ? 'linear-gradient(135deg, rgba(77, 93, 217, 0.06) 0%, rgba(77, 93, 217, 0.06) 100%)'
+            : 'linear-gradient(135deg, rgba(77, 93, 217, 0.05) 0%, rgba(139, 92, 246, 0.08) 100%)',
         }}
       />
       <div
@@ -223,7 +223,7 @@ export function TemplateGallery({
                   : isHovered
                     ? isDark
                       ? '0 12px 40px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(99, 102, 241, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-                      : '0 12px 40px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(99, 102, 241, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9)'
+                      : '0 12px 40px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(77, 93, 217, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)'
                     : isDark
                       ? '0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
                       : '0 4px 20px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)',

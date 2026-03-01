@@ -257,7 +257,7 @@ export function PersonalizationPanel({
                 height: '4px',
                 borderRadius: '2px',
                 background: isActive
-                  ? 'linear-gradient(135deg, #6366f1, #8b5cf6)'
+                  ? 'linear-gradient(135deg, rgba(77, 93, 217, 0.8), rgba(6, 182, 212, 0.6))'
                   : isDark
                     ? 'rgba(255, 255, 255, 0.1)'
                     : 'rgba(0, 0, 0, 0.1)',
@@ -407,7 +407,7 @@ export function PersonalizationPanel({
                       width: '48px',
                       height: '48px',
                       borderRadius: '8px',
-                      background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                      background: 'linear-gradient(135deg, rgba(77, 93, 217, 0.8), rgba(6, 182, 212, 0.6))',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -526,7 +526,7 @@ export function PersonalizationPanel({
                         ? isDark
                           ? 'rgba(99, 102, 241, 0.3)'
                           : 'rgba(99, 102, 241, 0.2)'
-                        : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                        : 'linear-gradient(135deg, rgba(77, 93, 217, 0.8), rgba(6, 182, 212, 0.6))',
                     color: '#fff',
                     border: 'none',
                     borderRadius: '8px',

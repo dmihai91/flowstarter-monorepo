@@ -27,7 +27,7 @@ const stepConfig = {
     bgLight: 'rgba(77, 93, 217, 0.1)',
     bgDark: 'rgba(193, 200, 255, 0.15)',
     textLight: '#4D5DD9',
-    textDark: '#C1C8FF',
+    textDark: 'rgba(77, 93, 217, 0.7)',
   },
   completed: {
     icon: '✓',
@@ -142,7 +142,7 @@ export function BuildTimeline({ steps, isDark, isVisible }: BuildTimelineProps) 
                           className="w-3 h-3 rounded-full border-2"
                           style={{
                             borderColor: isDark ? 'rgba(193, 200, 255, 0.3)' : 'rgba(77, 93, 217, 0.2)',
-                            borderTopColor: isDark ? '#C1C8FF' : '#4D5DD9',
+                            borderTopColor: isDark ? 'rgba(77, 93, 217, 0.7)' : '#4D5DD9',
                           }}
                           animate={{ rotate: 360 }}
                           transition={{ repeat: Infinity, duration: 0.8, ease: 'linear' }}

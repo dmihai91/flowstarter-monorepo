@@ -67,11 +67,11 @@ export function ContactDetailsPanel({
     textSecondary: isDark ? 'rgba(255, 255, 255, 0.6)' : '#6b7280',
     textTertiary: isDark ? 'rgba(255, 255, 255, 0.4)' : '#9ca3af',
     inputBg: isDark ? '#1a1a24' : '#f3f4f6',
-    accent: isDark ? '#C1C8FF' : '#4D5DD9',
+    accent: isDark ? 'rgba(77, 93, 217, 0.7)' : '#4D5DD9',
     accentHover: isDark ? '#D4D9FF' : '#3D4BC9',
     buttonSecondaryBg: isDark ? '#252532' : '#f3f4f6',
     buttonSecondaryHover: isDark ? '#2f2f3d' : '#e5e7eb',
-    contactBg: isDark ? 'rgba(99, 102, 241, 0.1)' : 'rgba(99, 102, 241, 0.05)',
+    contactBg: isDark ? 'rgba(77, 93, 217, 0.06)' : 'rgba(99, 102, 241, 0.05)',
     contactBorder: isDark ? 'rgba(99, 102, 241, 0.3)' : 'rgba(99, 102, 241, 0.2)',
   };
 
@@ -265,7 +265,7 @@ export function ContactDetailsPanel({
             gap: '8px',
             width: '100%',
             padding: '12px 16px',
-            background: hasSocialLinks ? 'rgba(99, 102, 241, 0.1)' : colors.cardBg,
+            background: hasSocialLinks ? 'rgba(77, 93, 217, 0.06)' : colors.cardBg,
             border: `1px solid ${hasSocialLinks ? 'rgba(99, 102, 241, 0.3)' : colors.border}`,
             borderRadius: '12px',
             cursor: 'pointer',

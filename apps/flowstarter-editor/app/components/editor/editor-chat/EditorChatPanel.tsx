@@ -215,16 +215,7 @@ export function EditorChatPanel({
     <div
       className="relative flex flex-col h-full overflow-hidden"
       style={{
-        background: isDark
-          ? `radial-gradient(ellipse at 0% 0%, rgba(165, 90, 172, 0.06) 0%, transparent 50%),
-          radial-gradient(ellipse at 100% 0%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
-          radial-gradient(ellipse 80% 60% at 0% 100%, rgba(145, 140, 69, 0.14) 0%, transparent 60%),
-          radial-gradient(ellipse 130% 70% at 50% 100%, rgba(145, 140, 69, 0.10) 0%, transparent 65%),
-          linear-gradient(165deg, #0d0d14 0%, #13111c 35%, #1a1625 65%, #1e1a24 85%, #181614 100%)`
-          : `radial-gradient(ellipse at 0% 0%, rgba(165, 90, 172, 0.15) 0%, transparent 50%),
-          radial-gradient(ellipse at 100% 0%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
-          radial-gradient(ellipse 120% 80% at 50% 100%, rgba(145, 140, 69, 0.22) 0%, transparent 70%),
-          #ffffff`,
+        background: 'transparent',
       }}
     >
       {/* Messages area */}

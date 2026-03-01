@@ -2166,22 +2166,22 @@ export default function LandingPage() {
 
 
         {/* Manifesto Section */}
-        <section className="py-16 lg:py-24 relative">
+        <section className="py-20 lg:py-32 relative border-t border-gray-100 dark:border-white/5">
           <div className="max-w-3xl mx-auto px-6">
-            <div className="text-center mb-8">
-              <span className="inline-block text-sm font-semibold tracking-widest uppercase text-[var(--purple)] mb-4">
+            <div className="text-center mb-12">
+              <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase text-[var(--purple)] mb-6">
                 {t('landing.manifesto.title')}
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white italic">
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white italic leading-tight">
                 {t('landing.manifesto.headline')}
               </h2>
             </div>
-            <div className="space-y-6 text-lg text-gray-600 dark:text-white/60 leading-relaxed">
+            <div className="space-y-8 text-xl md:text-[1.35rem] text-gray-500 dark:text-white/50 leading-[1.8] tracking-[-0.01em]">
               <p>{t('landing.manifesto.p1')}</p>
               <p>{t('landing.manifesto.p2')}</p>
-              <p>{t('landing.manifesto.p3')}</p>
+              <p className="text-gray-700 dark:text-white/70">{t('landing.manifesto.p3')}</p>
               <p>{t('landing.manifesto.p4')}</p>
-              <p className="text-xl font-semibold text-gray-900 dark:text-white pt-4">
+              <p className="text-2xl md:text-[1.6rem] font-bold text-gray-900 dark:text-white pt-6 leading-snug">
                 {t('landing.manifesto.closing')}
               </p>
             </div>

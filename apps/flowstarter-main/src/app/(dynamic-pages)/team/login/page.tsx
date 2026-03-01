@@ -164,17 +164,7 @@ export default function TeamLoginPage() {
       showTeamBadge={true}
     >
       <div className="w-full max-w-[520px] mx-auto">
-        {/* Show notice when redirected from a protected route */}
- === 'unauthenticated' && (
-          <div className="mb-4 p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/30 text-center">
-            <p className="text-sm font-semibold text-amber-800 dark:text-amber-200">
-              {t('auth.notice.unauthenticated.title')}
-            </p>
-            <p className="text-xs text-amber-700 dark:text-amber-300 mt-0.5">
-              {t('auth.notice.unauthenticated.description')}
-            </p>
-          </div>
-        )}
+
         <div className="bg-white/95 dark:bg-[var(--surface-2)]/90 backdrop-blur-2xl backdrop-saturate-150 rounded-2xl border border-gray-200/50 dark:border-white/10 p-8 shadow-lg dark:shadow-2xl">
           {/* Credentials Step */}
           {step === 'credentials' && (

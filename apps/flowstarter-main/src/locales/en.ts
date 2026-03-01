@@ -2466,17 +2466,17 @@ const en = {
   'waitlist.landing.privacy': 'No spam. Unsubscribe anytime.',
 
   // Landing Page - Hero
-  'landing.hero.badge': 'Early access - limited spots',
-  'landing.hero.headline1': 'You built your skills over the years',
-  'landing.hero.headline2': 'Now let your website attract clients',
+  'landing.hero.badge': 'For experts who are done being invisible online',
+  'landing.hero.headline1': 'Your expertise is real.',
+  'landing.hero.headline2': 'Your online presence should be too.',
   'landing.hero.pain':
-    'We create your website and set up online booking for you, so new clients can find you, trust you, and schedule an appointment without picking up the phone.',
+    'You didn\'t spend years mastering your craft to lose clients to someone with a better website. We build the online presence your expertise actually deserves.',
   'landing.hero.subheadline':
-    'Most coaches, therapists, salons and clinics lose clients to competitors with better websites, not better skills. We handle everything from start to finish: your site, your booking setup, and connecting it all. You show up to your appointments. We make sure they keep coming.',
+    'Website, booking, and everything that connects them. You focus on your clients. We make sure new ones keep finding you.',
   'landing.hero.support': '',
-  'landing.hero.cta': 'Start Growing Your Business',
+  'landing.hero.cta': 'Book Your Free Strategy Call',
   'landing.hero.ctaNote':
-    'No tech skills needed. Fully set up for you in days.',
+    'One call. No tech talk. Just results.',
   'landing.hero.priceBuild': '€399',
   'landing.hero.priceBuildLabel': 'setup',
   'landing.hero.priceMonthly': '€39',
@@ -2658,7 +2658,7 @@ const en = {
   'landing.notForYou.item4': "You're optimizing purely for lowest cost",
 
   // Landing Page - CTA
-  'landing.cta.title': "Your website shouldn't hold you back.",
+  'landing.cta.title': "Your skills deserve clients. Let's make that happen.",
   'landing.cta.subtitle':
     "Book a free strategy call. We'll talk through your business and see if Flowstarter is the right fit. No pressure. No pitch deck.",
   'landing.cta.button': 'Book Your Free Strategy Call',

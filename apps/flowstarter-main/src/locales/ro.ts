@@ -11,12 +11,12 @@ const ro: typeof en = {
   ...en,
 
   // ─── Landing Page Hero ───────────────────────────────────────────────
-  'landing.hero.badge': 'Acces limitat - locuri disponibile',
-  'landing.hero.headline1': 'Ți-ai construit abilitățile de-a lungul anilor.',
-  'landing.hero.headline2': 'Acum lasă site-ul tău să-ți umple calendarul.',
+  'landing.hero.badge': 'Pentru experții care merită să fie găsiți online',
+  'landing.hero.headline1': 'Expertiza ta e reală.',
+  'landing.hero.headline2': 'Prezența ta online ar trebui să fie la fel.',
   'landing.hero.pain': 'Construim site-ul tău și configurăm programările online pentru tine, astfel încât clienții noi te pot găsi, pot avea încredere în tine și pot programa o întâlnire fără să ridice telefonul.',
   'landing.hero.subheadline': 'Majoritatea coachilor, terapeuților și clinicilor pierd clienți în favoarea concurenților cu site-uri mai bune, nu cu abilități mai bune. Ne ocupăm de tot de la început până la sfârșit: site-ul tău, configurarea programărilor și conectarea tuturor. Tu apari la programări. Noi ne asigurăm că acestea continuă să vină.',
-  'landing.hero.cta': 'Începe să Primești Rezervări',
+  'landing.hero.cta': 'Programează un apel gratuit',
   'landing.hero.ctaNote': 'Nu ai nevoie de cunoștințe tehnice. Complet configurat în câteva zile.',
   'landing.hero.priceBuild': '€399',
   'landing.hero.priceBuildLabel': 'setup',

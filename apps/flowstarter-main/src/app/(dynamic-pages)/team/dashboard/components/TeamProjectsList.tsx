@@ -347,7 +347,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                     ) {
                       return;
                     }
-                    window.location.href = `/team/dashboard/projects/${project.id}`;
+                    openInEditor(project.id);
                   }}
                   onDoubleClick={(e) => {
                     e.preventDefault();
@@ -390,14 +390,6 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48">
-                        <DropdownMenuItem
-                          onClick={() =>
-                            (window.location.href = `/team/dashboard/projects/${project.id}`)
-                          }
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                          Open Project
-                        </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => openInEditor(project.id)}
                         >
@@ -511,15 +503,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-40">
-                          <DropdownMenuItem
-                            onClick={() =>
-                              (window.location.href = `/team/dashboard/projects/${project.id}`)
-                            }
-                          >
-                            <ExternalLink className="h-4 w-4" />
-                            Open Project
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
+<DropdownMenuItem
                             onClick={() => openInEditor(project.id)}
                           >
                             <Code className="h-4 w-4" />
@@ -655,15 +639,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                       className="w-48"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <DropdownMenuItem
-                        onClick={() =>
-                          (window.location.href = `/team/dashboard/projects/${project.id}`)
-                        }
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                        Open Project
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
+<DropdownMenuItem
                         onClick={() => openInEditor(project.id)}
                       >
                         <Code className="h-4 w-4" />

@@ -29,6 +29,7 @@ const insertProjectSchema = z.object({
     .optional(),
   preview_html: z.string().optional(),
   quality_metrics: z.any().optional(),
+  data: z.string().optional(),
 });
 
 export const insertProjectAction = authActionClient

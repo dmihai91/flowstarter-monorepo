@@ -343,6 +343,29 @@ export function useNewProject() {
             description: projectData.description,
             chat: JSON.stringify(chatData),
             is_draft: false,
+            data: JSON.stringify({
+              businessInfo: {
+                description: projectData.description,
+                uvp: projectData.uvp,
+                targetAudience: projectData.targetAudience,
+                industry: projectData.industry,
+                goal: projectData.goal,
+                offerType: projectData.offerType,
+                brandTone: projectData.brandTone,
+              },
+              clientInfo: {
+                name: projectData.clientName,
+                email: projectData.clientEmail,
+                phone: projectData.clientPhone,
+              },
+              contactInfo: {
+                email: projectData.businessEmail,
+                phone: projectData.businessPhone,
+                address: projectData.businessAddress,
+                website: projectData.website,
+              },
+              generatedByAI: isAIMode,
+            }),
           }),
         });
 
@@ -355,6 +378,29 @@ export function useNewProject() {
           name: projectData.businessName,
           description: projectData.description,
           chat: JSON.stringify(chatData),
+          data: JSON.stringify({
+            businessInfo: {
+              description: projectData.description,
+              uvp: projectData.uvp,
+              targetAudience: projectData.targetAudience,
+              industry: projectData.industry,
+              goal: projectData.goal,
+              offerType: projectData.offerType,
+              brandTone: projectData.brandTone,
+            },
+            clientInfo: {
+              name: projectData.clientName,
+              email: projectData.clientEmail,
+              phone: projectData.clientPhone,
+            },
+            contactInfo: {
+              email: projectData.businessEmail,
+              phone: projectData.businessPhone,
+              address: projectData.businessAddress,
+              website: projectData.website,
+            },
+            generatedByAI: isAIMode,
+          }),
         });
 
         if (result?.serverError) throw new Error(result.serverError);

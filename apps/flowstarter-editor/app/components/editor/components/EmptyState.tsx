@@ -467,10 +467,10 @@ export function EmptyState({ type, step }: EmptyStateProps) {
               marginTop: '32px',
             }}
           >
-            {['describe', 'name', 'business-summary', 'template', 'personalization', 'integrations'].map((s, i) => {
-              const steps = ['describe', 'name', 'business-summary', 'template', 'personalization', 'integrations'];
-              // Map business-* steps to business-summary, welcome to describe, and creating to integrations (last step before build)
-              const mappedStep = step === 'welcome' ? 'describe' : step?.startsWith('business-') ? 'business-summary' : step === 'creating' ? 'integrations' : step;
+            {['describe', 'name', 'quick-profile', 'template', 'personalization', 'creating'].map((s, i) => {
+              const steps = ['describe', 'name', 'quick-profile', 'template', 'personalization', 'creating'];
+              // Map welcome to describe, business-uvp to quick-profile
+              const mappedStep = step === 'welcome' ? 'describe' : step === 'business-uvp' ? 'quick-profile' : step?.startsWith('business-') ? 'quick-profile' : step;
               const currentIndex = steps.indexOf(mappedStep || 'describe');
               const isActive = i <= currentIndex;
               const isCurrent = s === mappedStep;

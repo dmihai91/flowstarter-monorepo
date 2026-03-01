@@ -35,9 +35,9 @@ function LayoutContent({ children }: { children: ReactNode }) {
         className="fixed inset-0 z-[1] pointer-events-none"
         style={{
           background: `
-            radial-gradient(ellipse at 0% 0%, rgba(77, 93, 217, 0.07) 0%, transparent 50%),
-            radial-gradient(ellipse at 100% 20%, rgba(59, 68, 168, 0.05) 0%, transparent 50%),
-            radial-gradient(ellipse 130% 70% at 40% 100%, rgba(160, 145, 50, 0.06) 0%, transparent 60%)
+            radial-gradient(ellipse at 0% 0%, rgba(77, 93, 217, 0.03) 0%, transparent 45%),
+            radial-gradient(ellipse at 100% 20%, rgba(59, 68, 168, 0.02) 0%, transparent 45%),
+            radial-gradient(ellipse 130% 70% at 40% 100%, rgba(160, 145, 50, 0.025) 0%, transparent 55%)
           `,
         }}
       />

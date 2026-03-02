@@ -1,104 +1,14 @@
 import { aiAgentService } from '@/lib/ai/ai-agent-service';
-import { TemplateInfo, WebsiteProjectDetails } from '@/lib/ai/types';
 import { useCallback, useState } from 'react';
+import { useGenerationState } from './generation/useGenerationState';
+import type {
+  GenerationStep, GenerationProgress, GenerationResult,
+  StepData, QualityMetrics, ProjectDetails,
+} from './generation/types';
 
-// Type definitions
-export interface StepData {
-  plan?: string;
-  files?: number;
-  tested?: boolean;
-  score?: number;
-  issues?: number;
-  coverage?: number;
-  test_files?: number;
-  passed?: boolean;
-  docs?: number;
-  auto_fixed?: boolean;
-  workspace_id?: string;
-  [key: string]: unknown;
-}
+// Re-export types for consumers
+export type { GenerationStep, GenerationProgress, GenerationResult, StepData, QualityMetrics };
 
-export interface GenerationStep {
-  id: string;
-  name: string;
-  status: 'pending' | 'in-progress' | 'completed' | 'skipped' | 'error';
-  message?: string;
-  data?: StepData;
-}
-
-export interface GenerationProgress {
-  stage: string;
-  step?: number;
-  name?: string;
-  message?: string;
-  data?: StepData;
-  html?: string; // Preview HTML from preview_updated events
-  type?: string; // Event type (e.g., 'preview_updated')
-  preview_url?: string; // Live preview URL from dev server
-}
-
-export interface QualityMetrics {
-  code_review?: {
-    passed: boolean;
-    score: number;
-    issues: Array<{
-      severity: string;
-      category: string;
-      file: string;
-      line: number;
-      message: string;
-    }>;
-    metrics: {
-      total_issues: number;
-      critical: number;
-      high: number;
-      medium: number;
-      low: number;
-    };
-  };
-  validation?: {
-    passed: boolean;
-    coverage: number;
-    met_requirements: string[];
-    missing_requirements: string[];
-  };
-  performance?: {
-    lighthouse_score: {
-      performance: number;
-      accessibility: number;
-      best_practices: number;
-      seo: number;
-    };
-    bundle_size: {
-      total: number;
-      js: number;
-      css: number;
-      status: string;
-    };
-  };
-}
-
-export interface GeneratedFile {
-  path: string;
-  content: string;
-}
-
-export interface GenerationResult {
-  siteId: string;
-  generatedCode: string;
-  files: GeneratedFile[];
-  architecture?: string;
-  tested: boolean;
-  orchestrated: boolean;
-  qualityMetrics?: QualityMetrics;
-  daytonaWorkspace?: string;
-  timestamp?: string;
-}
-
-// Re-export from shared types for convenience
-export type { TemplateInfo, WebsiteProjectDetails };
-// Keep ProjectDetails as alias for backward compatibility
-export type ProjectDetails = WebsiteProjectDetails;
 
 export interface UseStreamingWebsiteGenerationOptions {
   sessionId?: string | null; // Convex session ID for real-time sync
@@ -128,79 +38,23 @@ export function useStreamingWebsiteGeneration(
 ): UseStreamingWebsiteGenerationResult {
   const sessionId = options?.sessionId;
 
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [progress, setProgress] = useState<GenerationProgress | null>(null);
-  const [steps, setSteps] = useState<GenerationStep[]>([]);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<GenerationResult | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const {
+    isGenerating, setIsGenerating,
+    progress, setProgress,
+    steps, setSteps,
+    currentStep, setCurrentStep,
+    error, setError,
+    result, setResult,
+    previewUrl, setPreviewUrl,
+    updateStep, updateStepMessage, reset: resetState,
+  } = useGenerationState();
   const [lastGenerateParams, setLastGenerateParams] = useState<{
     projectDetails: ProjectDetails;
     templateInfo: TemplateInfo;
     templateCode?: string;
   } | null>(null);
 
-  const updateStep = useCallback(
-    (
-      stepNumber: number,
-      stepName: string,
-      status: GenerationStep['status'],
-      message?: string,
-      data?: StepData
-    ) => {
-      setSteps((prev) => {
-        // Find existing step or create new one
-        const existingIndex = prev.findIndex(
-          (s) => s.id === String(stepNumber)
-        );
 
-        if (existingIndex >= 0) {
-          // Update existing step
-          return prev.map((step, idx) => {
-            if (idx === existingIndex) {
-              return { ...step, status, message, data };
-            }
-            return step;
-          });
-        } else {
-          // Add new step in correct position
-          const newStep: GenerationStep = {
-            id: String(stepNumber),
-            name: stepName,
-            status,
-            message,
-            data,
-          };
-
-          // Insert in order
-          const newSteps = [...prev, newStep].sort(
-            (a, b) => parseInt(a.id) - parseInt(b.id)
-          );
-          return newSteps;
-        }
-      });
-    },
-    []
-  );
-
-  const updateStepMessage = useCallback(
-    (stepNumber: number, message: string) => {
-      console.log(`🔄 Updating step ${stepNumber} message to:`, message);
-      setSteps((prev) => {
-        const updated = prev.map((step) => {
-          if (step.id === String(stepNumber)) {
-            console.log(`✅ Found and updating step ${stepNumber}`);
-            return { ...step, message };
-          }
-          return step;
-        });
-        console.log(`📊 Steps after update:`, updated);
-        return updated;
-      });
-    },
-    []
-  );
 
   const generate = useCallback(
     async (
@@ -579,16 +433,7 @@ export function useStreamingWebsiteGeneration(
     }
   }, [lastGenerateParams, generate]);
 
-  const reset = useCallback(() => {
-    setIsGenerating(false);
-    setProgress(null);
-    setSteps([]);
-    setCurrentStep(0);
-    setError(null);
-    setResult(null);
-    setPreviewUrl(null);
-    setLastGenerateParams(null);
-  }, []);
+  const reset = resetState;
 
   return {
     isGenerating,

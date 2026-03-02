@@ -942,7 +942,7 @@ export default function LandingPage() {
                       </span>
                     </div>
                     {/* Right: pricing card */}
-                    <div className="flex flex-col items-center px-5 py-4 rounded-2xl bg-amber-500/10 border-2 border-amber-500/30 shadow-md w-full sm:w-[220px] sm:ml-auto">
+                    <div className="flex flex-col items-center px-5 py-4 rounded-2xl bg-amber-50/70 dark:bg-amber-500/[0.06] backdrop-blur-2xl border border-amber-400/20 dark:border-amber-500/15 shadow-[0_1px_0_rgba(255,255,255,0.9)_inset,0_-1px_0_rgba(180,130,0,0.06)_inset,0_8px_24px_rgba(245,158,11,0.1),0_2px_6px_rgba(0,0,0,0.03)] dark:shadow-[0_1px_0_rgba(255,200,50,0.08)_inset,0_-1px_0_rgba(0,0,0,0.2)_inset,0_8px_24px_rgba(245,158,11,0.08),0_2px_6px_rgba(0,0,0,0.15)] w-full sm:w-[220px] sm:ml-auto">
                       <span className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-3">🔥 Launch price</span>
                       <div className="flex flex-col gap-0.5 w-full items-center">
                         <div className="flex items-baseline gap-2 justify-center">

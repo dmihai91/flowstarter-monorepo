@@ -141,18 +141,18 @@ export function Sidebar() {
     const effectiveCollapsed = !showLabel;
     return (
     <div className={cn("p-4 space-y-6 h-full overflow-y-auto flex flex-col", effectiveCollapsed && "items-center")}>
-      {/* Collapse Toggle - Desktop only, hidden when collapsed */}
-      {showToggle && showLabel && (
-        <div className="w-full flex justify-end">
+      {/* Collapse/Expand Toggle - Desktop only */}
+      {showToggle && (
+        <div className={cn("w-full", effectiveCollapsed ? "flex justify-center" : "flex justify-end")}>
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            title="Collapse sidebar"
+            title={effectiveCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             className={cn(
               'p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:text-white/40 dark:hover:text-white/60',
               'hover:bg-white/55 dark:hover:bg-white/5 transition-all'
             )}
           >
-            <ChevronsLeft className="w-4 h-4" />
+            {effectiveCollapsed ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}
           </button>
         </div>
       )}

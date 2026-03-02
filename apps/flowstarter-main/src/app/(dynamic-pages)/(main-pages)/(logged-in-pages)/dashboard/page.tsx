@@ -62,8 +62,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
                 ? 'bg-white/70 dark:bg-white/[0.05] ring-1 ring-[var(--purple)]/20 shadow-[0_4px_16px_rgba(77,93,217,0.1)]' 
                 : isCompleted 
                 ? 'bg-white/60 dark:bg-white/[0.04] ring-1 ring-green-500/15 shadow-[0_4px_12px_rgba(0,0,0,0.04)]'
-                : 'bg-white/30 dark:bg-white/[0.015]'}
-              ${isLocked ? 'opacity-50' : ''}
+                : 'bg-white/40 dark:bg-white/[0.025] shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.1)]'}
             `}>
               <div className={`
                 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all
@@ -132,8 +131,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
                       ? 'bg-white/70 dark:bg-white/[0.05] ring-1 ring-[var(--purple)]/20 shadow-[0_4px_16px_rgba(77,93,217,0.1)]' 
                       : isCompleted 
                       ? 'bg-white/60 dark:bg-white/[0.04] ring-1 ring-green-500/15 shadow-[0_4px_12px_rgba(0,0,0,0.04)]'
-                      : 'bg-white/30 dark:bg-white/[0.015]'}
-                    ${isLocked ? 'opacity-50' : ''}
+                      : 'bg-white/40 dark:bg-white/[0.025] shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.1)]'}
                   `}>
                     <span className={`text-[10px] font-semibold uppercase tracking-wider ${
                       isActive ? 'text-[var(--purple)]' : isCompleted ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-white/40'

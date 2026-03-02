@@ -172,18 +172,18 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
             <div key={i} className={`
               flex items-center gap-3 p-3 rounded-xl transition-all
               ${isActive 
-                ? 'bg-white/70 dark:bg-white/[0.05] ring-1 ring-[var(--purple)]/30' 
+                ? 'bg-white/80 dark:bg-white/[0.06] ring-2 ring-[var(--purple)]/30 shadow-[0_4px_16px_rgba(77,93,217,0.12)]' 
                 : isCompleted 
-                ? 'bg-white/40 dark:bg-white/[0.02]'
-                : 'opacity-40'}
+                ? 'bg-green-50/90 dark:bg-green-500/[0.08] ring-1 ring-green-500/40 shadow-[0_4px_12px_rgba(34,197,94,0.1)]'
+                : 'bg-white/50 dark:bg-white/[0.03] ring-1 ring-gray-200/40 dark:ring-white/5'}
             `}>
               <div className={`
-                w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0
+                w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0
                 ${isActive 
-                  ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white' 
+                  ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white shadow-md shadow-[var(--purple)]/25 ring-3 ring-[var(--purple)]/15 animate-pulse' 
                   : isCompleted 
-                  ? 'bg-green-500/15 text-green-600 dark:text-green-400' 
-                  : 'bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-white/30'}
+                  ? 'bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-md shadow-green-500/25 ring-3 ring-green-400/15' 
+                  : 'bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-white/15 text-gray-400 dark:text-white/30'}
               `}>
                 {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : isLocked ? <Lock className="w-3.5 h-3.5" /> : <Icon className="w-4 h-4" />}
               </div>

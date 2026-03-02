@@ -59,7 +59,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
             <div key={i} className={`
               relative p-4 flex items-center gap-3 transition-all duration-300 rounded-xl
               ${isActive 
-                ? 'bg-white/70 dark:bg-white/[0.05] ring-1 ring-[var(--purple)]/20 shadow-[0_4px_16px_rgba(77,93,217,0.1)]' 
+                ? 'bg-white/80 dark:bg-white/[0.06] ring-2 ring-[var(--purple)]/30 shadow-[0_4px_20px_rgba(77,93,217,0.15)]' 
                 : isCompleted 
                 ? 'bg-green-50/80 dark:bg-green-500/[0.06] ring-1 ring-green-500/30 shadow-[0_4px_16px_rgba(34,197,94,0.12)]'
                 : 'bg-white/50 dark:bg-white/[0.03] ring-1 ring-gray-200/40 dark:ring-white/5 shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.1)]'}
@@ -67,7 +67,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
               <div className={`
                 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all
                 ${isActive 
-                  ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white shadow-md shadow-[var(--purple)]/25' 
+                  ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white shadow-md shadow-[var(--purple)]/25 ring-4 ring-[var(--purple)]/15 animate-pulse' 
                   : isCompleted 
                   ? 'bg-green-500 text-white shadow-md shadow-green-500/25 ring-4 ring-green-500/10' 
                   : 'bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-white/15 text-gray-400 dark:text-white/30'}
@@ -118,7 +118,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
                   <div className={`
                     w-10 h-10 rounded-full flex items-center justify-center mb-3 transition-all duration-300
                     ${isActive 
-                      ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white shadow-lg shadow-[var(--purple)]/30 ring-4 ring-[var(--purple)]/10' 
+                      ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white shadow-lg shadow-[var(--purple)]/30 ring-[5px] ring-[var(--purple)]/15 animate-pulse' 
                       : isCompleted 
                       ? 'bg-green-500 text-white shadow-md shadow-green-500/25 ring-4 ring-green-500/10' 
                       : 'bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-white/15 text-gray-400 dark:text-white/30'}
@@ -128,7 +128,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
                   <div className={`
                     w-full max-w-[180px] p-3 rounded-xl text-center transition-all duration-300
                     ${isActive 
-                      ? 'bg-white/70 dark:bg-white/[0.05] ring-1 ring-[var(--purple)]/20 shadow-[0_4px_16px_rgba(77,93,217,0.1)]' 
+                      ? 'bg-white/80 dark:bg-white/[0.06] ring-2 ring-[var(--purple)]/30 shadow-[0_4px_20px_rgba(77,93,217,0.15)]' 
                       : isCompleted 
                       ? 'bg-green-50/80 dark:bg-green-500/[0.06] ring-1 ring-green-500/30 shadow-[0_4px_16px_rgba(34,197,94,0.12)]'
                       : 'bg-white/50 dark:bg-white/[0.03] ring-1 ring-gray-200/40 dark:ring-white/5 shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.1)]'}

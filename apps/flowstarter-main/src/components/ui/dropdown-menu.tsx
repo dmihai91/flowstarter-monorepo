@@ -42,7 +42,7 @@ function DropdownMenuTrigger({
 function DropdownMenuContent({
   className,
   sideOffset = 4,
-  hideArrow = true,
+  hideArrow = false,
   align = 'center',
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Content> & {
@@ -55,7 +55,7 @@ function DropdownMenuContent({
         sideOffset={sideOffset}
         align={align}
         className={cn(
-          'bg-white/75 dark:bg-[#2a2a35]/75 backdrop-blur-2xl backdrop-saturate-[1.8] text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 z-[200] max-h-(--radix-dropdown-menu-content-available-height) min-w-40 origin-(--radix-dropdown-menu-content-transform-origin) overflow-hidden rounded-2xl border border-white/50 dark:border-white/[0.08] p-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.3),0_4px_12px_rgba(0,0,0,0.15)]',
+          'bg-white/75 dark:bg-[#2a2a35]/75 backdrop-blur-2xl backdrop-saturate-[1.8] text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 z-[200] max-h-(--radix-dropdown-menu-content-available-height) min-w-40 origin-(--radix-dropdown-menu-content-transform-origin) overflow-visible rounded-2xl border border-white/50 dark:border-white/[0.08] p-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.3),0_4px_12px_rgba(0,0,0,0.15)]',
           className
         )}
         {...props}
@@ -63,14 +63,14 @@ function DropdownMenuContent({
         {!hideArrow && (
           <svg
             className={cn(
-              'absolute -top-[6px] w-3 h-[6px]',
-              align === 'end' && 'right-3.5',
-              align === 'start' && 'left-3.5',
+              'absolute -top-[6px] w-[14px] h-[7px] drop-shadow-sm',
+              align === 'end' && 'right-3',
+              align === 'start' && 'left-3',
               align === 'center' && 'left-1/2 -translate-x-1/2'
             )}
-            viewBox="0 0 12 6"
+            viewBox="0 0 14 7"
           >
-            <path d="M6 0L12 6H0Z" className="fill-white/80 dark:fill-white/[0.08]" />
+            <path d="M7 0C7 0 8.5 4 14 7H0C5.5 4 7 0 7 0Z" className="fill-white/75 dark:fill-[#2a2a35]/75" />
           </svg>
         )}
         {props.children}

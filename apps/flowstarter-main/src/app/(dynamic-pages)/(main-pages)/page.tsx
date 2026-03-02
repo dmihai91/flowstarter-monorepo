@@ -505,6 +505,27 @@ export default function LandingPage() {
           100% { background-position: 300% 50%; }
         }
 
+
+        @keyframes heroFadeUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .hero-fade {
+          opacity: 0;
+          animation: heroFadeUp 0.8s ease-out forwards;
+        }
+        .hero-fade-1 { animation-delay: 0.1s; }
+        .hero-fade-2 { animation-delay: 0.3s; }
+        .hero-fade-3 { animation-delay: 0.5s; }
+        .hero-fade-4 { animation-delay: 0.7s; }
+        .hero-fade-5 { animation-delay: 0.9s; }
+
         /* Flow field animations */
         @keyframes flow-drift-1 {
           0%,
@@ -867,7 +888,7 @@ export default function LandingPage() {
                   </span>
                 </div>
 
-                <h1 className="text-[2.2rem] sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold leading-[1.15] tracking-tight mb-6 break-words text-center sm:text-left">
+                <h1 className="hero-fade hero-fade-2 text-[2.2rem] sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold leading-[1.15] tracking-tight mb-6 break-words text-center sm:text-left">
                   {t('landing.hero.headline1')}
                   <br />
                   <span className="text-flow">
@@ -875,10 +896,10 @@ export default function LandingPage() {
                   </span>
                 </h1>
 
-                <p className="text-base lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed mb-5 text-center sm:text-left">
+                <p className="hero-fade hero-fade-3 text-base lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed mb-5 text-center sm:text-left">
                   {t('landing.hero.pain')}
                 </p>
-                <p className="text-base text-gray-400 dark:text-white/40 leading-relaxed mb-8 text-center sm:text-left">
+                <p className="hero-fade hero-fade-4 text-base text-gray-400 dark:text-white/40 leading-relaxed mb-8 text-center sm:text-left">
                   {t('landing.hero.subheadline')}
                 </p>
 

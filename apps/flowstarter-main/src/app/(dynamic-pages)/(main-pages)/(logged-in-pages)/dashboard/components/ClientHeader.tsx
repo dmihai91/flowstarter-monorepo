@@ -28,14 +28,16 @@ export function ClientHeader() {
           </Link>
         ) : (
           <Link href="/dashboard" className="group">
-            <Logo size="md" />
+            <><span className="sm:hidden"><Logo size="sm" /></span><span className="hidden sm:block"><Logo size="md" /></span></>
           </Link>
         )}
 
         {/* Right side - Theme switcher + User profile */}
-        <div className="flex items-center gap-2 lg:gap-3">
-          {/* Theme toggle */}
-          <ThemeToggle />
+        <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3">
+          {/* Theme toggle - hidden on phone */}
+          <div className="hidden sm:block">
+            <ThemeToggle />
+          </div>
 
           <div className="w-px h-6 bg-gray-200 dark:bg-white/10 hidden sm:block" />
 
@@ -43,7 +45,7 @@ export function ClientHeader() {
           <Button
             variant="ghost"
             size="icon"
-            className="w-9 h-9 text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white"
+            className="w-8 h-8 sm:w-9 sm:h-9 text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white"
           >
             <MessageSquare className="h-4 w-4" />
           </Button>

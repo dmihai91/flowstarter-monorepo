@@ -8,8 +8,8 @@ import { DashboardInit } from './components/DashboardInit';
 import { DashboardMessages } from './components/DashboardMessages';
 import { DashboardStatsClientFetcher } from './components/DashboardStatsClientFetcher';
 import { DashboardWrapper } from './components/DashboardWrapper';
-import { 
 import { EXTERNAL_URLS } from '@/lib/constants';
+import {
   Compass, Palette, Code2, Rocket, 
   CheckCircle2, Lock, ArrowRight,
   Sparkles, MessageSquarePlus, Upload

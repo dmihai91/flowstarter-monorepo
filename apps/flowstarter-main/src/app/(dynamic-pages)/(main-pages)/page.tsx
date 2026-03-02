@@ -308,6 +308,13 @@ export default function LandingPage() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          
+          const sectionId = entry.target.getAttribute('data-section');
+          if (sectionId) {
+            if (entry.isIntersecting) {
+              newVisible.add(sectionId);
+            }
+          }
           if (entry.isIntersecting) {
             setVisibleSections((prev) => new Set(prev).add(entry.target.id));
           }
@@ -318,6 +325,8 @@ export default function LandingPage() {
 
     const sections = document.querySelectorAll('[data-animate]');
     sections.forEach((section) => observer.observe(section));
+
+        document.querySelectorAll('[data-section]').forEach(el => observer.observe(el));
 
     return () => observer.disconnect();
   }, []);
@@ -1462,8 +1471,10 @@ export default function LandingPage() {
 
 
         {/* Three Pillars Section */}
-        <section className="py-16 lg:py-24 relative">
-          <div className="max-w-6xl mx-auto px-6">
+        <section data-section="pillars" className="py-16 lg:py-24 relative">
+          <div className={`max-w-6xl mx-auto px-6 transition-all duration-500 ${
+            visibleSections.has('pillars') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}>
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
                 {t('landing.pillars.title')}
@@ -1499,7 +1510,7 @@ export default function LandingPage() {
         </section>
 
         {/* Process Section */}
-        <section
+        <section data-section="process"
           id="process"
           className="py-12 lg:py-16 relative overflow-hidden bg-gradient-to-b from-white via-[#F8F9FB] to-[#F1F3F7] dark:from-transparent dark:via-white/[0.01] dark:to-white/[0.02]"
         >
@@ -1601,7 +1612,7 @@ export default function LandingPage() {
         </section>
 
         {/* What's Included Section */}
-        <section className="py-8 lg:py-10 bg-white dark:bg-transparent">
+        <section data-section="included" className="py-8 lg:py-10 bg-white dark:bg-transparent">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="text-center mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight">
@@ -1880,7 +1891,7 @@ export default function LandingPage() {
         </section>
 
         {/* Pricing Section */}
-        <section id="pricing" className="py-8 lg:py-10 relative">
+        <section data-section="pricing" id="pricing" className="py-8 lg:py-10 relative">
           {/* Gradient accent - lavender tint */}
           <div className="absolute inset-0 bg-gradient-to-b from-[var(--purple)]/[0.03] via-[var(--purple)]/50/[0.05] to-[var(--purple)]/[0.02] dark:from-[var(--purple)]/[0.02] dark:via-[var(--purple)]/50/[0.04] dark:to-transparent pointer-events-none" />
 
@@ -2187,8 +2198,10 @@ export default function LandingPage() {
 
 
         {/* Manifesto Section */}
-        <section className="py-20 lg:py-32 relative border-t border-gray-100 dark:border-white/5">
-          <div className="max-w-3xl mx-auto px-6">
+        <section data-section="manifesto" className="py-20 lg:py-32 relative border-t border-gray-100 dark:border-white/5">
+          <div className={`max-w-3xl mx-auto px-6 transition-all duration-500 ${
+            visibleSections.has('manifesto') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}>
             <div className="text-center mb-12">
               <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase text-[var(--purple)] mb-6">
                 {t('landing.manifesto.title')}

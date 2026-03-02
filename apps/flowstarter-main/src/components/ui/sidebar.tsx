@@ -62,7 +62,7 @@ export function Sidebar() {
     },
     {
       title: t('sidebar.helpGuide'),
-      href: '/help',
+      href: '/dashboard/help',
       icon: HelpCircle,
     },
     {

@@ -1905,7 +1905,7 @@ export default function LandingPage() {
 
             <div className="max-w-lg lg:max-w-2xl mx-auto">
               {/* Starter Plan Card - Premium Treatment */}
-              <div className="group p-6 sm:p-8 lg:p-10 rounded-2xl bg-gradient-to-br from-white via-white to-[var(--purple)]/5 dark:from-[#0f0f12] dark:via-[#0f0f12] dark:to-[#12101a] backdrop-blur-sm border-2 border-[var(--purple)]/30 dark:border-[var(--purple)]/40 shadow-xl shadow-[var(--purple)]/10 relative overflow-hidden transition-all duration-300 hover:border-[var(--purple)]/50 dark:hover:border-[var(--purple)]/60 hover:shadow-[0_8px_30px_rgba(124,58,237,0.15)]">
+              <div className="group p-6 sm:p-8 lg:p-10 rounded-2xl bg-white/60 dark:bg-white/[0.04] backdrop-blur-2xl border border-[var(--purple)]/20 dark:border-[var(--purple)]/15 shadow-[0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.04)_inset,0_8px_32px_rgba(77,93,217,0.1),0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-[0_1px_0_rgba(255,255,255,0.06)_inset,0_-1px_0_rgba(0,0,0,0.2)_inset,0_8px_32px_rgba(77,93,217,0.15),0_2px_8px_rgba(0,0,0,0.15)] relative overflow-hidden transition-all duration-300 hover:border-[var(--purple)]/40 hover:shadow-[0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.04)_inset,0_12px_40px_rgba(77,93,217,0.15),0_4px_12px_rgba(0,0,0,0.06)]">
                 {/* Badge - inline on mobile, absolute on desktop */}
                 <div className="sm:absolute sm:top-4 sm:right-4 mb-4 sm:mb-0 flex items-center gap-2">
                   <span className="inline-block px-3 py-1 text-xs font-medium bg-[var(--purple)] text-white rounded-full">

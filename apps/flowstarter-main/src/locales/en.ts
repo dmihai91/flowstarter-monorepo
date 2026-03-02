@@ -161,7 +161,6 @@ const en = {
   'dashboard.empty.createFirstSiteSubtitle':
     'Start with a template and our assistant will help you customize content, pages, and branding in minutes.',
   'dashboard.badge.dashboard': 'Dashboard',
-  'dashboard.loading': 'Loading your dashboard...',
   'dashboard.projects.createYourFirstSite': 'Create your first site',
 
   // Auth notices
@@ -642,7 +641,6 @@ const en = {
   'dashboard.analytics.websiteTraffic': 'Website Traffic',
   'dashboard.analytics.uniqueVisitors': 'Unique Visitors',
   'dashboard.analytics.views': 'Views',
-  'dashboard.analytics.avgSession': 'Avg. Session',
   'dashboard.analytics.setup.title': 'Set up Google Analytics',
   'dashboard.analytics.setup.description':
     'Connect Google Analytics to track visitor behavior and traffic.',
@@ -982,11 +980,9 @@ const en = {
     'Account → Admin Management → Single Sign-On → Personal Access Tokens',
   'integrations.calendly.eventUrl': 'Event URL',
   'integrations.calendly.eventUrlPlaceholder':
-    'https://calendly.com/your-username/meeting',
   'integrations.calendly.eventUrlHelp':
     'Copy an event scheduling link, e.g., https://calendly.com/your-username/30min',
   'integrations.calendly.tutorialUrl':
-    'https://www.youtube.com/watch?v=calendly-tutorial',
   // Calendly setup guide
   'integrations.calendly.setup.title': 'Setup Calendly',
   'integrations.calendly.setup.steps':
@@ -1721,7 +1717,6 @@ const en = {
 
   // How it works section
   'landing.howItWorks.badge': 'How Flowstarter Works',
-  'landing.howItWorks.title': 'From Idea to Website in Minutes',
   'landing.howItWorks.subtitle':
     "Start with a professional template and customize it to match your unique brand. No coding required - just describe your vision, and we'll make it happen.",
   'landing.howItWorks.step1': 'Sign Up - Create your Flowstarter account',
@@ -1917,8 +1912,6 @@ const en = {
   'database.offline.action3': 'Contact support if the issue persists',
 
   // CTA section
-  'landing.cta.title': 'Ready to get started?',
-  'landing.cta.subtitle':
     'Join thousands of successful small businesses who trust Flowstarter to build and grow their digital presence. Start your journey today and transform your business with our powerful platform.',
   'landing.cta.getStarted': 'Get Started',
   'landing.cta.learnMore': 'Learn More',

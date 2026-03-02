@@ -1453,23 +1453,23 @@ export default function LandingPage() {
             </div>
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { key: 'differentiate', icon: '✦', gradient: 'from-violet-500/10 to-indigo-500/10 dark:from-violet-500/5 dark:to-indigo-500/5' },
-                { key: 'attract', icon: '◎', gradient: 'from-cyan-500/10 to-blue-500/10 dark:from-cyan-500/5 dark:to-blue-500/5' },
-                { key: 'convert', icon: '→', gradient: 'from-amber-500/10 to-orange-500/10 dark:from-amber-500/5 dark:to-orange-500/5' },
-              ].map(({ key, icon, gradient }) => (
+                { title: 'landing.pillars.differentiate.title' as const, subtitle: 'landing.pillars.differentiate.subtitle' as const, body: 'landing.pillars.differentiate.body' as const, icon: '✦', gradient: 'from-violet-500/10 to-indigo-500/10 dark:from-violet-500/5 dark:to-indigo-500/5' },
+                { title: 'landing.pillars.attract.title' as const, subtitle: 'landing.pillars.attract.subtitle' as const, body: 'landing.pillars.attract.body' as const, icon: '◎', gradient: 'from-cyan-500/10 to-blue-500/10 dark:from-cyan-500/5 dark:to-blue-500/5' },
+                { title: 'landing.pillars.convert.title' as const, subtitle: 'landing.pillars.convert.subtitle' as const, body: 'landing.pillars.convert.body' as const, icon: '→', gradient: 'from-amber-500/10 to-orange-500/10 dark:from-amber-500/5 dark:to-orange-500/5' },
+              ].map(({ title, subtitle, body, icon, gradient }) => (
                 <div
-                  key={key}
+                  key={title}
                   className={`rounded-2xl p-8 bg-gradient-to-br ${gradient} border border-gray-200/50 dark:border-white/5 backdrop-blur-sm`}
                 >
                   <div className="text-3xl mb-4">{icon}</div>
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
-                    {t(`landing.pillars.${key}.title`)}
+                    {t(title)}
                   </h3>
                   <p className="text-sm font-medium text-[var(--purple)] mb-3">
-                    {t(`landing.pillars.${key}.subtitle`)}
+                    {t(subtitle)}
                   </p>
                   <p className="text-gray-600 dark:text-white/60 leading-relaxed">
-                    {t(`landing.pillars.${key}.body`)}
+                    {t(body)}
                   </p>
                 </div>
               ))}

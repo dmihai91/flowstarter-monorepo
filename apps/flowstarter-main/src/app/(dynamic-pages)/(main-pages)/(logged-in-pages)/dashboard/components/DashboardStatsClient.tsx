@@ -365,13 +365,24 @@ export function DashboardStatsClient({
             </div>
           ) : (
             <div className="flex-1 flex flex-col">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-[var(--purple)] opacity-25" />
                 </div>
-                <p className="text-sm text-gray-400 dark:text-white/40 flex-1">
-                  {t('dashboard.stats.aiUnlocked')}
-                </p>
+                <div>
+                  <p className="text-lg font-semibold text-gray-300 dark:text-white/20">
+                    1,000
+                  </p>
+                  <p className="text-xs text-gray-400 dark:text-white/30">
+                    edits included in your plan
+                  </p>
+                </div>
+              </div>
+              {/* Locked progress bar */}
+              <div className="mb-2">
+                <div className="h-1.5 bg-gray-100 dark:bg-white/5 rounded-full overflow-hidden">
+                  <div className="h-full w-full bg-gray-200 dark:bg-white/10 rounded-full" />
+                </div>
               </div>
               <p className="text-xs text-gray-400 dark:text-white/30 mt-auto">
                 {t('dashboard.stats.aiUnlockedAfterSetup')}

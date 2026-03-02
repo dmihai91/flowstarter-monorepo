@@ -1914,6 +1914,7 @@ const en = {
   'database.offline.action3': 'Contact support if the issue persists',
 
   // CTA section
+  'landing.cta.subtitle':
     'Join thousands of successful small businesses who trust Flowstarter to build and grow their digital presence. Start your journey today and transform your business with our powerful platform.',
   'landing.cta.getStarted': 'Get Started',
   'landing.cta.learnMore': 'Learn More',

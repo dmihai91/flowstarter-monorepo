@@ -2498,17 +2498,17 @@ const en = {
   'waitlist.landing.privacy': 'No spam. Unsubscribe anytime.',
 
   // Landing Page - Hero
-  'landing.hero.badge': 'Built for real experts',
-  'landing.hero.headline1': 'Your expertise is real.',
-  'landing.hero.headline2': 'Your online presence should be too.',
+  'landing.hero.badge': 'We launch it. You own it.',
+  'landing.hero.headline1': 'We build your website.',
+  'landing.hero.headline2': 'You control it forever.',
   'landing.hero.pain':
-    'You\'ve spent years building real expertise, real client relationships, and real results. Your online presence should reflect that. We build the website and booking system your work actually deserves.',
+    'We design, build, and launch a professional website for your business. After launch, update anything yourself with a smart editor. No developers, no delays, no dependencies.',
   'landing.hero.subheadline':
-    'Website, booking, and everything that connects them. Built for you in days, not months. You focus on your clients. We make sure new ones keep finding you.',
+    'Website, booking, and everything that connects them. Done for you in days, not months. Then the keys are yours.',
   'landing.hero.support': '',
-  'landing.hero.cta': 'Get the Website Your Expertise Deserves',
+  'landing.hero.cta': 'Get Your Website Launched',
   'landing.hero.ctaNote':
-    'One call. No tech talk. You\'ll be live in days.',
+    'One call. We handle everything. You\'ll be live in days.',
   'landing.hero.priceBuild': '€399',
   'landing.hero.priceBuildLabel': 'setup',
   'landing.hero.priceMonthly': '€39',

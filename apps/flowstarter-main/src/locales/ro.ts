@@ -128,6 +128,28 @@ const ro: typeof en = {
   'landing.included.monthly.item6': 'Suport când ai nevoie',
   'landing.included.monthly.item7': 'Sistemul de rezervări rămâne conectat și funcțional',
 
+  // Three Pillars
+  'landing.pillars.title': 'De ce expertii aleg Flowstarter',
+  'landing.pillars.subtitle': 'Trei lucruri de care fiecare profesionist real are nevoie online.',
+  'landing.pillars.differentiate.title': 'Diferentiaza-te',
+  'landing.pillars.differentiate.subtitle': 'Iesi din multime',
+  'landing.pillars.differentiate.body': 'Internetul recompenseaza ambalajul, nu substanta. Noi construim site-ul in jurul a ceea ce te face cu adevarat diferit: experienta ta reala, rezultatele tale reale, abordarea ta reala. Nu poze stock si cuvinte goale.',
+  'landing.pillars.attract.title': 'Atrage',
+  'landing.pillars.attract.subtitle': 'Fii gasit de clientii care apreciaza expertiza',
+  'landing.pillars.attract.body': 'Clientii potriviti cauta pe cineva in care pot avea incredere. Noi ne asiguram ca te gasesc pe tine primul, cu un site care le vorbeste pe limba lor si le raspunde la intrebari inainte sa le puna.',
+  'landing.pillars.convert.title': 'Converteste',
+  'landing.pillars.convert.subtitle': 'Transforma vizitatorii in programari confirmate',
+  'landing.pillars.convert.body': 'Fara formulare care nu duc nicaieri. Fara "contactati-ne" fara raspuns. Vizitatorii iti vad munca, inteleg valoarea ta si isi fac o programare. Totul intr-un singur flux, totul configurat pentru tine.',
+
+  // Manifesto
+  'landing.manifesto.title': 'De ce Flowstarter',
+  'landing.manifesto.headline': 'Informatia e gratuita. Expertiza nu.',
+  'landing.manifesto.p1': 'Oricine poate cauta pe Google un raspuns. Oricine poate intreba un AI. Dar nimeni nu poate cauta pe Google 15 ani in care ai vazut pacienti vindecandu-se, clienti depasind-si limitele, sau momentul exact in care trebuie sa insisti si cand sa te opresti.',
+  'landing.manifesto.p2': 'Cunoasterea asta traieste in oameni, nu pe internet. Si totusi, internetul trateaza pe toata lumea la fel. Terapeutul cu un deceniu de practica clinica arata identic cu cineva care a citit trei articole si si-a cumparat un template.',
+  'landing.manifesto.p3': 'Am creat Flowstarter pentru ca noi credem ca expertii reali merita sa fie gasiti. Nu ingropati sub trucuri SEO si continut generat de AI. Nu in competitie pe cine are un homepage mai stralucitor.',
+  'landing.manifesto.p4': 'Construim prezente online care reflecta expertiza reala. Un profesionist pe rand. Fara template-uri. Fara DIY. Doar povestea ta, spusa cum trebuie, cu un drum clar de la "te-am gasit" la "am rezervat."',
+  'landing.manifesto.closing': 'Lumea are destui experti falsi. Hai sa ne asiguram ca cei reali sunt imposibil de ratat.',
+
 };
 
 export default ro;

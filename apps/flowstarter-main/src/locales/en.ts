@@ -2668,6 +2668,28 @@ const en = {
   // Landing Page - Footer CTA
   'landing.footer.pricing':
     '€399 website · €39/month (early adopters) · First month free',
+
+  // Three Pillars
+  'landing.pillars.title': 'Why experts choose Flowstarter',
+  'landing.pillars.subtitle': 'Three things every real professional needs online.',
+  'landing.pillars.differentiate.title': 'Differentiate',
+  'landing.pillars.differentiate.subtitle': 'Stand out from the noise',
+  'landing.pillars.differentiate.body': 'The internet rewards packaging, not substance. We build your site around what actually makes you different: your real experience, your real results, your real approach. Not stock photos and buzzwords.',
+  'landing.pillars.attract.title': 'Attract',
+  'landing.pillars.attract.subtitle': 'Get found by clients who value expertise',
+  'landing.pillars.attract.body': 'The right clients are searching for someone they can trust. We make sure they find you first, with a site that speaks their language and answers their questions before they even ask.',
+  'landing.pillars.convert.title': 'Convert',
+  'landing.pillars.convert.subtitle': 'Turn visitors into booked appointments',
+  'landing.pillars.convert.body': 'No forms that go nowhere. No "contact us" black holes. Visitors see your work, understand your value, and book an appointment. All in one flow, all set up for you.',
+
+  // Manifesto
+  'landing.manifesto.title': 'Why Flowstarter',
+  'landing.manifesto.headline': 'Information is free. Expertise is not.',
+  'landing.manifesto.p1': 'Anyone can Google an answer. Anyone can ask an AI. But nobody can Google 15 years of watching patients heal, of coaching clients through breakthroughs, of knowing exactly when to push and when to pause.',
+  'landing.manifesto.p2': 'That knowledge lives in people, not on the internet. And yet, the internet treats everyone the same. The therapist with a decade of clinical work looks identical to someone who read three blog posts and bought a template.',
+  'landing.manifesto.p3': 'We started Flowstarter because we believe real experts deserve to be found. Not buried under SEO tricks and AI-generated content. Not competing on who has a flashier homepage.',
+  'landing.manifesto.p4': 'We build online presences that reflect actual expertise. One professional at a time. No templates. No DIY. Just your story, told properly, with a clear path from "I found you" to "I booked you."',
+  'landing.manifesto.closing': "The world has enough fake experts. Let's make sure the real ones are impossible to miss.",
 } as const;
 
 export default en;

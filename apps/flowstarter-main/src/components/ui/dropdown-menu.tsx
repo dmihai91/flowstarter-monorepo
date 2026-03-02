@@ -41,7 +41,7 @@ function DropdownMenuTrigger({
 
 function DropdownMenuContent({
   className,
-  sideOffset = 4,
+  sideOffset = 8,
   hideArrow = false,
   align = 'center',
   ...props
@@ -63,7 +63,7 @@ function DropdownMenuContent({
         {!hideArrow && (
           <svg
             className={cn(
-              'absolute -top-[6px] w-[14px] h-[7px] drop-shadow-sm',
+              'absolute -top-[7px] w-[14px] h-[7px] drop-shadow-sm',
               align === 'end' && 'right-3',
               align === 'start' && 'left-3',
               align === 'center' && 'left-1/2 -translate-x-1/2'

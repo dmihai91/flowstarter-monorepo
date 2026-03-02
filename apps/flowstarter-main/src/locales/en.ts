@@ -692,7 +692,40 @@ const en = {
   'dashboard.stats.calendar': 'Calendar',
 
   // Dashboard page
-  'dashboard.greeting.morning': 'Good morning',
+
+  // Premium dashboard - milestones
+  'dashboard.stepper.strategy': 'Strategy',
+  'dashboard.stepper.strategyDescription': 'We map your goals, audience, and positioning',
+  'dashboard.stepper.design': 'Design',
+  'dashboard.stepper.designDescription': 'Your brand identity comes to life',
+  'dashboard.stepper.development': 'Development',
+  'dashboard.stepper.developmentDescription': 'Every page, optimized for results',
+  'dashboard.stepper.launch': 'Launch',
+  'dashboard.stepper.launchDescription': 'Go live and start converting',
+  'dashboard.stepper.milestone': 'Phase {number}',
+  
+  // Premium dashboard - AI capabilities
+  'dashboard.stats.aiCapabilities': 'AI Assistant',
+  'dashboard.stats.aiCapabilitiesActive': 'Ready',
+  'dashboard.stats.aiEditsAvailable': '{count} edits this month',
+  'dashboard.stats.aiCapability.copy': 'Refine your copy',
+  'dashboard.stats.aiCapability.sections': 'Optimize sections',
+  'dashboard.stats.aiCapability.seo': 'Improve SEO',
+  'dashboard.stats.aiCapability.images': 'Enhance visuals',
+  'dashboard.stats.aiUnlocked': 'Included with your plan',
+  'dashboard.stats.aiUnlockedAfterSetup': 'Available once your site is live',
+  
+  // Premium dashboard - primary action
+  'dashboard.action.requestChange': 'Request a Change',
+  'dashboard.action.requestChangeSub': 'Our team will implement it within 24h',
+  'dashboard.action.askAI': 'Ask AI',
+  'dashboard.action.uploadAssets': 'Upload Assets',
+  
+  // Premium dashboard - build phase
+  'dashboard.stats.buildPhase': 'Your site is being crafted',
+  'dashboard.stats.buildPhaseActive': 'In progress',
+  'dashboard.stats.currentMilestone': 'Currently in {phase}',
+    'dashboard.greeting.morning': 'Good morning',
   'dashboard.greeting.afternoon': 'Good afternoon',
   'dashboard.greeting.evening': 'Good evening',
   'dashboard.greeting.night': 'Good night',

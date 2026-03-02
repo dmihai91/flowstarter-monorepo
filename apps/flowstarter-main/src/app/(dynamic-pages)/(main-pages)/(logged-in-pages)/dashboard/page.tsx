@@ -7,195 +7,273 @@ import { DashboardInit } from './components/DashboardInit';
 import { DashboardMessages } from './components/DashboardMessages';
 import { DashboardStatsClientFetcher } from './components/DashboardStatsClientFetcher';
 import { DashboardWrapper } from './components/DashboardWrapper';
-import { Calendar, Sparkles, Globe, Lock, CheckCircle2 } from 'lucide-react';
+import { 
+  Compass, Palette, Code2, Rocket, 
+  CheckCircle2, Lock, ArrowRight,
+  Sparkles, MessageSquarePlus, Upload
+} from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 const CALENDLY_URL = 'https://calendly.com/flowstarter-app/discovery';
 
-// Glassmorphism card style - shared with team dashboard
 const glassCard = 'rounded-2xl border border-transparent bg-white/60 dark:bg-white/[0.03] backdrop-blur-2xl shadow-[0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.04)_inset,0_4px_16px_rgba(0,0,0,0.05),0_1px_3px_rgba(0,0,0,0.03)] dark:shadow-[0_1px_0_rgba(255,255,255,0.06)_inset,0_-1px_0_rgba(0,0,0,0.2)_inset,0_4px_16px_rgba(0,0,0,0.25),0_1px_3px_rgba(0,0,0,0.15)]';
 
-type StepStatus = 'completed' | 'active' | 'locked';
+type MilestoneStatus = 'completed' | 'active' | 'locked';
 
-function getStepStatuses(hasAnyProject: boolean, hasLiveProject: boolean): [StepStatus, StepStatus, StepStatus] {
-  if (hasLiveProject) return ['completed', 'completed', 'active'];
-  if (hasAnyProject) return ['completed', 'active', 'locked'];
-  return ['active', 'locked', 'locked'];
+function getMilestoneStatuses(hasAnyProject: boolean, hasLiveProject: boolean): [MilestoneStatus, MilestoneStatus, MilestoneStatus, MilestoneStatus] {
+  if (hasLiveProject) return ['completed', 'completed', 'completed', 'completed'];
+  if (hasAnyProject) return ['completed', 'active', 'locked', 'locked'];
+  return ['active', 'locked', 'locked', 'locked'];
 }
 
 function getTimeGreetingKey(hour: number): string {
-  // 5-11: morning, 12-17: afternoon, 18-21: evening, 22-4: night
   if (hour >= 5 && hour < 12) return 'dashboard.greeting.morning';
   if (hour >= 12 && hour < 18) return 'dashboard.greeting.afternoon';
   if (hour >= 18 && hour < 22) return 'dashboard.greeting.evening';
   return 'dashboard.greeting.night';
 }
 
-function OnboardingStepper({ hasAnyProject, hasLiveProject }: { hasAnyProject: boolean; hasLiveProject: boolean }) {
+/* ─── Milestones Timeline ─── */
+function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: boolean; hasLiveProject: boolean }) {
   const { t } = useTranslations();
-  const statuses = getStepStatuses(hasAnyProject, hasLiveProject);
+  const statuses = getMilestoneStatuses(hasAnyProject, hasLiveProject);
 
-  const steps = [
-    {
-      number: 1,
-      title: t('dashboard.stepper.bookCall'),
-      description: t('dashboard.stepper.bookCallDescription'),
-      icon: Calendar,
-      status: statuses[0],
-    },
-    {
-      number: 2,
-      title: t('dashboard.stepper.weBuild'),
-      description: t('dashboard.stepper.weBuildDescription'),
-      icon: Sparkles,
-      status: statuses[1],
-    },
-    {
-      number: 3,
-      title: t('dashboard.stepper.goLive'),
-      description: t('dashboard.stepper.goLiveDescription'),
-      icon: Globe,
-      status: statuses[2],
-    },
+  const milestones = [
+    { icon: Compass,  title: t('dashboard.stepper.strategy'),    desc: t('dashboard.stepper.strategyDescription'),    status: statuses[0] },
+    { icon: Palette,  title: t('dashboard.stepper.design'),      desc: t('dashboard.stepper.designDescription'),      status: statuses[1] },
+    { icon: Code2,    title: t('dashboard.stepper.development'), desc: t('dashboard.stepper.developmentDescription'), status: statuses[2] },
+    { icon: Rocket,   title: t('dashboard.stepper.launch'),      desc: t('dashboard.stepper.launchDescription'),      status: statuses[3] },
   ];
 
-  const currentStepIndex = steps.findIndex((s) => s.status === 'active');
-
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
-      {steps.map((step, index) => {
-        const isActive = step.status === 'active';
-        const isCompleted = step.status === 'completed';
-        const isLocked = step.status === 'locked';
-        const isPast = index < currentStepIndex;
+    <div className="mb-8">
+      {/* Desktop: horizontal timeline */}
+      <div className="hidden sm:grid sm:grid-cols-4 gap-3">
+        {milestones.map((m, i) => {
+          const isActive = m.status === 'active';
+          const isCompleted = m.status === 'completed';
+          const isLocked = m.status === 'locked';
+          const Icon = m.icon;
 
-        return (
-          <div
-            key={step.number}
-            className={`
-              relative p-5 h-full flex flex-col transition-all duration-300
-              rounded-2xl backdrop-blur-2xl
-              ${isActive 
-                ? 'bg-white/70 dark:bg-white/[0.05] ring-2 ring-[var(--purple)]/40 shadow-[0_8px_32px_rgba(77,93,217,0.15),0_2px_8px_rgba(77,93,217,0.08)]' 
-                : isCompleted || isPast
-                ? 'bg-white/60 dark:bg-white/[0.03] ring-1 ring-green-500/20 shadow-[0_4px_16px_rgba(0,0,0,0.04)]'
-                : `${glassCard} opacity-60`}
-            `}
-          >
-            {/* Step badge */}
-            <span
-              className={`
-              inline-flex self-start px-2.5 py-1 rounded-full text-xs font-semibold mb-3
-              ${
-                isActive
-                  ? 'bg-[var(--purple)] text-white'
-                  : isCompleted || isPast
-                  ? 'bg-green-500 text-white'
-                  : 'bg-gray-200 dark:bg-white/10 text-gray-500 dark:text-white/50'
-              }
-            `}
-            >
-              {t('dashboard.stepper.step', { number: step.number })}
-            </span>
-
-            <div className="flex items-start gap-3 mb-3">
-              <div
-                className={`
-                w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0
-                ${
-                  isActive
-                    ? 'bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 text-[var(--purple)]'
-                    : isCompleted || isPast
-                    ? 'bg-green-500/10 text-green-500'
-                    : 'bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-white/30'
-                }
-              `}
-              >
-                {isCompleted ? (
-                  <CheckCircle2 className="w-5 h-5" />
-                ) : isLocked ? (
-                  <Lock className="w-4 h-4" />
-                ) : (
-                  <step.icon className="w-5 h-5" />
-                )}
-              </div>
-
-              <div className="flex-1">
-                <h3
-                  className={`
-                  text-sm font-semibold
-                  ${
-                    isLocked
-                      ? 'text-gray-400 dark:text-white/40'
-                      : 'text-gray-900 dark:text-white'
-                  }
-                `}
-                >
-                  {step.title}
+          return (
+            <div key={i} className="relative">
+              {/* Connector line */}
+              {i < milestones.length - 1 && (
+                <div className="absolute top-5 left-[calc(50%+20px)] right-[-12px] h-px">
+                  <div className={`h-full ${isCompleted ? 'bg-green-400/50' : 'bg-gray-200/60 dark:bg-white/10'}`} />
+                </div>
+              )}
+              
+              <div className={`
+                relative p-4 flex flex-col items-center text-center transition-all duration-300 rounded-2xl
+                ${isActive 
+                  ? 'bg-white/70 dark:bg-white/[0.05] ring-2 ring-[var(--purple)]/30 shadow-[0_8px_24px_rgba(77,93,217,0.12)]' 
+                  : isCompleted 
+                  ? 'bg-white/50 dark:bg-white/[0.02]'
+                  : 'opacity-50'}
+              `}>
+                <div className={`
+                  w-10 h-10 rounded-xl flex items-center justify-center mb-2.5 transition-all
+                  ${isActive 
+                    ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white shadow-lg shadow-[var(--purple)]/25' 
+                    : isCompleted 
+                    ? 'bg-green-500/15 text-green-600 dark:text-green-400' 
+                    : 'bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-white/30'}
+                `}>
+                  {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : isLocked ? <Lock className="w-4 h-4" /> : <Icon className="w-5 h-5" />}
+                </div>
+                <span className={`text-[10px] font-semibold uppercase tracking-wider mb-1 ${
+                  isActive ? 'text-[var(--purple)]' : isCompleted ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-white/40'
+                }`}>
+                  {t('dashboard.stepper.milestone', { number: i + 1 })}
+                </span>
+                <h3 className={`text-sm font-semibold mb-0.5 ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
+                  {m.title}
                 </h3>
-                <p
-                  className={`
-                  text-xs mt-0.5
-                  ${
-                    isLocked
-                      ? 'text-gray-400 dark:text-white/30'
-                      : 'text-gray-500 dark:text-white/50'
-                  }
-                `}
-                >
-                  {step.description}
+                <p className={`text-[11px] leading-relaxed ${isLocked ? 'text-gray-400 dark:text-white/30' : 'text-gray-500 dark:text-white/50'}`}>
+                  {m.desc}
                 </p>
               </div>
             </div>
+          );
+        })}
+      </div>
 
-            <div className="flex-1" />
+      {/* Mobile: vertical compact list */}
+      <div className="sm:hidden space-y-2">
+        {milestones.map((m, i) => {
+          const isActive = m.status === 'active';
+          const isCompleted = m.status === 'completed';
+          const isLocked = m.status === 'locked';
+          const Icon = m.icon;
 
-            {/* CTA for active step (only step 1) */}
-            {isActive && step.number === 1 && (
-              <a
-                href={CALENDLY_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 w-full inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl bg-[var(--purple)] text-white text-sm font-medium transition-all hover:bg-[var(--purple)]/90 hover:shadow-lg hover:shadow-[var(--purple)]/25 hover:scale-[1.02]"
-              >
-                <Calendar className="w-4 h-4" />
-                {t('dashboard.stepper.bookCallButton')}
-              </a>
-            )}
-          </div>
-        );
-      })}
+          return (
+            <div key={i} className={`
+              flex items-center gap-3 p-3 rounded-xl transition-all
+              ${isActive 
+                ? 'bg-white/70 dark:bg-white/[0.05] ring-1 ring-[var(--purple)]/30' 
+                : isCompleted 
+                ? 'bg-white/40 dark:bg-white/[0.02]'
+                : 'opacity-40'}
+            `}>
+              <div className={`
+                w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0
+                ${isActive 
+                  ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white' 
+                  : isCompleted 
+                  ? 'bg-green-500/15 text-green-600 dark:text-green-400' 
+                  : 'bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-white/30'}
+              `}>
+                {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : isLocked ? <Lock className="w-3.5 h-3.5" /> : <Icon className="w-4 h-4" />}
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className={`text-sm font-semibold ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
+                  {m.title}
+                </h3>
+                <p className={`text-[11px] ${isLocked ? 'text-gray-400 dark:text-white/30' : 'text-gray-500 dark:text-white/50'}`}>
+                  {m.desc}
+                </p>
+              </div>
+              {isActive && (
+                <span className="text-[10px] font-semibold text-[var(--purple)] bg-[var(--purple)]/10 px-2 py-0.5 rounded-full whitespace-nowrap">
+                  Current
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
 
+/* ─── Primary Action Banner ─── */
+function PrimaryAction({ hasAnyProject, hasLiveProject }: { hasAnyProject: boolean; hasLiveProject: boolean }) {
+  const { t } = useTranslations();
+
+  if (!hasAnyProject) {
+    return (
+      <div className={`${glassCard} p-5 sm:p-6 mb-8`}>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-[var(--purple)]/20">
+            <Sparkles className="w-6 h-6 text-white" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-0.5">
+              Ready to stand out online?
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-white/50">
+              Book a free discovery call. We'll map your goals and build a site that works for your business.
+            </p>
+          </div>
+          <a
+            href={CALENDLY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--purple)] text-white text-sm font-semibold transition-all hover:shadow-lg hover:shadow-[var(--purple)]/25 hover:scale-[1.02] whitespace-nowrap"
+          >
+            {t('dashboard.stepper.bookCallButton')}
+            <ArrowRight className="w-4 h-4" />
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  if (hasLiveProject) {
+    return (
+      <div className={`${glassCard} p-5 sm:p-6 mb-8`}>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-[var(--purple)]/20">
+            <MessageSquarePlus className="w-6 h-6 text-white" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-0.5">
+              {t('dashboard.action.requestChange')}
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-white/50">
+              {t('dashboard.action.requestChangeSub')}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white text-sm font-medium hover:bg-gray-200 dark:hover:bg-white/15 transition-all">
+              <Upload className="w-4 h-4" />
+              {t('dashboard.action.uploadAssets')}
+            </button>
+            <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--purple)] text-white text-sm font-semibold transition-all hover:shadow-lg hover:shadow-[var(--purple)]/25 hover:scale-[1.02]">
+              {t('dashboard.action.requestChange')}
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Building phase - active, not passive
+  return (
+    <div className={`${glassCard} p-5 sm:p-6 mb-8 ring-1 ring-[var(--purple)]/20`}>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-[var(--purple)]/20">
+          <Sparkles className="w-6 h-6 text-white" />
+          <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-blue-500 border-2 border-white dark:border-gray-900 animate-pulse" />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-0.5">
+            {t('dashboard.stats.buildPhase')}
+          </h3>
+          <p className="text-sm text-gray-500 dark:text-white/50">
+            {t('dashboard.stats.currentMilestone', { phase: t('dashboard.stepper.design') })}
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 px-3 py-1.5 rounded-full">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+            {t('dashboard.stats.buildPhaseActive')}
+          </span>
+          <a
+            href={CALENDLY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white text-sm font-medium hover:bg-gray-200 dark:hover:bg-white/15 transition-all whitespace-nowrap"
+          >
+            Schedule Check-in
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Skeleton ─── */
 function DashboardSkeleton() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto animate-pulse">
-      {/* Greeting skeleton */}
       <div className="mt-8 mb-8">
         <div className="h-4 w-40 bg-gray-200 dark:bg-white/10 rounded-lg mb-3" />
         <div className="h-9 w-56 bg-gray-200 dark:bg-white/10 rounded-lg" />
       </div>
-
-      {/* Stepper skeleton */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
-        {[0, 1, 2].map((i) => (
-          <div key={i} className={`p-5 ${glassCard}`}>
-            <div className="h-6 w-16 bg-gray-200 dark:bg-white/10 rounded-full mb-3" />
-            <div className="flex items-start gap-3 mb-3">
-              <div className="w-10 h-10 rounded-xl bg-gray-200 dark:bg-white/10" />
-              <div className="flex-1">
-                <div className="h-4 w-28 bg-gray-200 dark:bg-white/10 rounded mb-2" />
-                <div className="h-3 w-40 bg-gray-100 dark:bg-white/5 rounded" />
-              </div>
-            </div>
+      <div className="hidden sm:grid sm:grid-cols-4 gap-3 mb-8">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className={`p-4 flex flex-col items-center ${glassCard}`}>
+            <div className="w-10 h-10 rounded-xl bg-gray-200 dark:bg-white/10 mb-2.5" />
+            <div className="h-3 w-12 bg-gray-200 dark:bg-white/10 rounded mb-1" />
+            <div className="h-4 w-20 bg-gray-200 dark:bg-white/10 rounded mb-1" />
+            <div className="h-3 w-28 bg-gray-100 dark:bg-white/5 rounded" />
           </div>
         ))}
       </div>
-
-      {/* Stats skeleton */}
+      <div className={`${glassCard} p-5 mb-8`}>
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-gray-200 dark:bg-white/10" />
+          <div className="flex-1">
+            <div className="h-4 w-40 bg-gray-200 dark:bg-white/10 rounded mb-2" />
+            <div className="h-3 w-60 bg-gray-100 dark:bg-white/5 rounded" />
+          </div>
+          <div className="h-10 w-32 bg-gray-200 dark:bg-white/10 rounded-xl" />
+        </div>
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {[0, 1, 2, 3].map((i) => (
           <div key={i} className={`p-5 min-h-[140px] ${glassCard}`}>
@@ -212,6 +290,7 @@ function DashboardSkeleton() {
   );
 }
 
+/* ─── Main Page ─── */
 export default function DashboardPage() {
   const { t } = useTranslations();
   const { user, isLoaded: isUserLoaded } = useUser();
@@ -232,27 +311,27 @@ export default function DashboardPage() {
         <DashboardSkeleton />
       ) : (
       <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
-        {/* Messages */}
         <DashboardMessages />
 
         <DashboardInit>
-          {/* Welcome message */}
+          {/* Greeting */}
           <div className="mt-8 mb-8">
             <p className="text-base sm:text-lg text-gray-500 dark:text-white/50 mb-1">
               {greeting},{' '}
-              <span className="text-gray-700 dark:text-white/70 font-medium">
-                {firstName}
-              </span>
+              <span className="text-gray-700 dark:text-white/70 font-medium">{firstName}</span>
             </p>
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
               {t('dashboard.title')}
             </h1>
           </div>
 
-          {/* Onboarding Stepper */}
-          <OnboardingStepper hasAnyProject={hasAnyProject} hasLiveProject={hasLiveProject} />
+          {/* Milestones Timeline */}
+          <MilestonesTimeline hasAnyProject={hasAnyProject} hasLiveProject={hasLiveProject} />
 
-          {/* Stats Section */}
+          {/* Primary Action Banner */}
+          <PrimaryAction hasAnyProject={hasAnyProject} hasLiveProject={hasLiveProject} />
+
+          {/* Stats */}
           <div className="mb-8">
             <DashboardStatsClientFetcher />
           </div>

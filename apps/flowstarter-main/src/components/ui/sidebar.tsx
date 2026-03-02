@@ -5,6 +5,7 @@ import { useSidebar } from '@/contexts/SidebarContext';
 import { useTranslations } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/ui/logo';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import {
   Calendar,
   HelpCircle,

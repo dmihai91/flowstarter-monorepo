@@ -882,10 +882,10 @@ export default function LandingPage() {
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center min-w-0">
               {/* Left: Copy */}
               <div
-                className={`transition-all duration-500 min-w-0 ${
+                className={`transition-all duration-1000 ease-out min-w-0 ${
                   isLoaded
                     ? 'opacity-100 translate-y-0'
-                    : 'opacity-0 translate-y-8'
+                    : 'opacity-0 translate-y-4'
                 }`}
               >
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/5 dark:bg-white/5 backdrop-blur-sm border border-gray-900/10 dark:border-white/10 mb-10">

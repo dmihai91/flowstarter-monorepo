@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { FlowBackground } from '@flowstarter/flow-design-system';
-import { TeamHeader } from '../../../components/TeamHeader';
+import { AppHeader } from '@/components/ui/app-header';
 import FooterCompact from '@/components/FooterCompact';
 import Link from 'next/link';
 import {
@@ -27,7 +27,7 @@ import { GlassPanel } from '@flowstarter/flow-design-system';
 function LoadingState() {
   return (
     <div className="min-h-screen flex flex-col">
-      <TeamHeader />
+      <AppHeader />
       <div className="h-16" />
       <FlowBackground variant="dashboard" style={{ position: "fixed", inset: 0, zIndex: 0 }} />
       <div className="flex-1 flex items-center justify-center relative z-10">
@@ -49,7 +49,7 @@ function LoadingState() {
 function ErrorState({ error }: { error: string | null }) {
   return (
     <div className="min-h-screen flex flex-col">
-      <TeamHeader />
+      <AppHeader />
       <div className="h-16" />
       <FlowBackground variant="dashboard" style={{ position: "fixed", inset: 0, zIndex: 0 }} />
       <div className="flex-1 flex items-center justify-center relative z-10">
@@ -82,7 +82,7 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <TeamHeader />
+      <AppHeader />
       <div className="h-16" />
       <FlowBackground variant="dashboard" style={{ position: "fixed", inset: 0, zIndex: 0 }} />
 

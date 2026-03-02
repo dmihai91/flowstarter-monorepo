@@ -3,7 +3,6 @@
 import { PageContainer } from '@/components/PageContainer';
 import { DashboardWrapper } from '@/app/(dynamic-pages)/(main-pages)/(logged-in-pages)/dashboard/components/DashboardWrapper';
 import { GlassCard } from '@/components/ui/glass-card';
-import { TeamHeader } from '../../components/TeamHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -155,7 +154,6 @@ export default function TeamSecurityPage() {
 
   return (
     <DashboardWrapper>
-      <TeamHeader />
 
       <PageContainer gradientVariant="dashboard">
         <GlassCard className="p-6 sm:p-8 max-w-2xl mx-auto">

@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
+import { AppLoader } from '@/components/ui/app-loading';
 import { useTranslations } from '@/lib/i18n';
 import { useUser } from '@clerk/nextjs';
 import { Pencil, Check, X, Mail, User, Calendar, Shield, Camera } from 'lucide-react';
@@ -19,12 +19,7 @@ export function ProfileContent() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!isLoaded) {
-    return (
-      <div className="max-w-2xl mx-auto px-4 py-10">
-        <Skeleton className="h-8 w-48 mb-8" />
-        <Skeleton className="h-64 w-full rounded-2xl" />
-      </div>
-    );
+    return <AppLoader />;
   }
 
   if (!user) {

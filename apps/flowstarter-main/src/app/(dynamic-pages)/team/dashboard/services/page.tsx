@@ -22,7 +22,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useUser } from '@clerk/nextjs';
-import { TeamHeader } from '../../components/TeamHeader';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -205,7 +204,6 @@ export default function ServicesPage() {
 
   return (
     <DashboardWrapper>
-      <TeamHeader />
 
       <PageContainer gradientVariant="dashboard">
         <GlassCard className="p-6 sm:p-8">

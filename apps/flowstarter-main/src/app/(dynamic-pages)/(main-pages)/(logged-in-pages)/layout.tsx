@@ -49,7 +49,7 @@ function LayoutContent({ children }: { children: ReactNode }) {
       
       <main
         className={`flex-1 mt-16 relative z-10 ${
-          isCollapsed ? 'md:ml-[68px]' : 'md:ml-64'
+          isCollapsed ? 'md:ml-[68px]' : 'md:ml-52 lg:ml-60'
         }`}
       >
         {children}

@@ -25,6 +25,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { getInitials } from '@/lib/user-utils';
 
 export function UserMenu() {
   const [mounted, setMounted] = useState(false);
@@ -52,18 +53,7 @@ export function UserMenu() {
     router.push(isTeam ? '/team/login' : '/');
   };
 
-  const getInitials = () => {
-    const firstName = user.firstName || '';
-    const lastName = user.lastName || '';
-    if (firstName && lastName) {
-      return `${firstName[0]}${lastName[0]}`.toUpperCase();
-    }
-    if (firstName) return firstName[0].toUpperCase();
-    if (user.emailAddresses?.[0]?.emailAddress) {
-      return user.emailAddresses[0].emailAddress[0].toUpperCase();
-    }
-    return 'U';
-  };
+
 
   return (
     <>
@@ -83,7 +73,7 @@ export function UserMenu() {
             />
           ) : (
             <div className="h-9 w-9 rounded-full border-2 border-gray-200 dark:border-white/20 bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center text-white text-sm font-semibold">
-              {getInitials()}
+              {getInitials(user)}
             </div>
           )}
         </Button>
@@ -106,7 +96,7 @@ export function UserMenu() {
               />
             ) : (
               <div className="h-10 w-10 rounded-full border-2 border-gray-200 dark:border-white/20 bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center text-white text-sm font-semibold shrink-0">
-                {getInitials()}
+                {getInitials(user)}
               </div>
             )}
             <div className="min-w-0">

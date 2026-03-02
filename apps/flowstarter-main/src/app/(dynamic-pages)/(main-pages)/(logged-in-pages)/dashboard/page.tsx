@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from '@/lib/i18n';
+import { glassCard } from '@/lib/styles';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useUser } from '@clerk/nextjs';
 import { DashboardInit } from './components/DashboardInit';

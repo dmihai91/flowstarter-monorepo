@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AppLoader } from '@/components/ui/app-loading';
+import { getInitials } from '@/lib/user-utils';
 import { useTranslations } from '@/lib/i18n';
 import { useUser } from '@clerk/nextjs';
 import { Pencil, Check, X, Mail, User, Calendar, Shield, Camera } from 'lucide-react';
@@ -185,7 +186,7 @@ export function ProfileContent() {
             />
           ) : (
             <div className="h-12 w-12 rounded-full border-2 border-gray-200/50 dark:border-white/10 bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center text-white text-sm font-bold">
-              {getInitials()}
+              {getInitials(user)}
             </div>
           )}
           <button

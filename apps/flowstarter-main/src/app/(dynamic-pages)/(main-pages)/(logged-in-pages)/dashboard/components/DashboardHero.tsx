@@ -22,7 +22,7 @@ function getGreeting(): string {
 }
 
 // Onboarding steps
-const steps = [
+const steps: Array<{number: number; title: string; description: string; icon: any; status: 'active' | 'locked' | 'completed'}> = [
   {
     number: 1,
     title: 'Book Discovery Call',

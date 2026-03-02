@@ -235,13 +235,13 @@ export default function DashboardPage() {
         <DashboardInit>
           {/* Welcome message */}
           <div className="mt-8 mb-8">
-            <p className="text-lg text-gray-500 dark:text-white/50 mb-2">
+            <p className="text-sm sm:text-base text-gray-500 dark:text-white/50 mb-1">
               {greeting},{' '}
               <span className="text-gray-700 dark:text-white/70 font-medium">
                 {firstName}
               </span>
             </p>
-            <h1 className="text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 dark:text-white">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
               {t('dashboard.title')}
             </h1>
           </div>

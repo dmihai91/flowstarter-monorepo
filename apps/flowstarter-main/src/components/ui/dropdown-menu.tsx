@@ -64,7 +64,7 @@ function DropdownMenuContent({
           <div
             className={cn(
               'absolute -top-[6px] w-3 h-3 rotate-45 rounded-tl-[2px]',
-              'bg-white dark:bg-[#2b2b3a] border-l border-t border-white/60 dark:border-white/[0.06]',
+              'bg-white dark:bg-[#2b2b3a] shadow-[0_-1px_2px_rgba(0,0,0,0.04)]',
               align === 'end' && 'right-3.5',
               align === 'start' && 'left-3.5',
               align === 'center' && 'left-1/2 -translate-x-1/2'

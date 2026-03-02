@@ -61,7 +61,7 @@ function IntegrationLogo({
       <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
         <Icon className="w-5 h-5 text-[var(--purple)] opacity-35 group-hover:opacity-50 transition-opacity" />
       </div>
-      <span className="text-[10px] text-gray-400 dark:text-white/30 font-medium">
+      <span className="text-[10px] sm:text-xs sm:text-sm sm:text-base text-gray-400 dark:text-white/30 font-medium">
         {name}
       </span>
     </div>
@@ -118,7 +118,7 @@ export function DashboardStatsClient({
       content: (
         <>
           <div className="flex items-center justify-between w-full mb-3">
-            <span className="text-sm font-medium text-gray-500 dark:text-white/50">
+            <span className="text-sm sm:text-base font-medium text-gray-500 dark:text-white/50">
               {t('dashboard.stats.yourWebsite')}
             </span>
             <div className="w-8 h-8 rounded-xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center">
@@ -134,7 +134,7 @@ export function DashboardStatsClient({
                 </p>
                 <span className="inline-flex items-center gap-1.5 mt-1">
                   <span className="w-2 h-2 rounded-full bg-[var(--green)] animate-pulse" />
-                  <span className="text-xs text-[var(--green)] font-medium">
+                  <span className="text-xs sm:text-sm text-[var(--green)] font-medium">
                     {t('dashboard.stats.live')}
                   </span>
                 </span>
@@ -168,7 +168,7 @@ export function DashboardStatsClient({
                 </p>
                 <span className="inline-flex items-center gap-1.5 mt-1">
                   <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                  <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                  <span className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 font-medium">
                     {t('dashboard.stats.inProgress')}
                   </span>
                 </span>
@@ -182,7 +182,7 @@ export function DashboardStatsClient({
                   />
                 </div>
               </div>
-              <p className="text-xs text-gray-500 dark:text-white/50 mt-auto">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-white/50 mt-auto">
                 {t('dashboard.stats.buildingMessage')}
               </p>
             </div>
@@ -191,7 +191,7 @@ export function DashboardStatsClient({
               <p className="text-lg font-semibold text-gray-900 dark:text-white">
                 {t('dashboard.stats.notStarted')}
               </p>
-              <p className="text-xs text-gray-500 dark:text-white/50 mt-auto">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-white/50 mt-auto">
                 {t('dashboard.stats.bookDiscovery')}
               </p>
             </div>
@@ -204,13 +204,13 @@ export function DashboardStatsClient({
       content: (
         <>
           <div className="flex items-center justify-between w-full mb-3">
-            <span className="text-sm font-medium text-gray-500 dark:text-white/50">
+            <span className="text-sm sm:text-base font-medium text-gray-500 dark:text-white/50">
               {t('dashboard.analytics.websiteTraffic')}
             </span>
             {totalViews > 0 && (
               <Link
                 href="/dashboard/analytics/traffic"
-                className="text-xs font-medium text-[var(--purple)] hover:underline"
+                className="text-xs sm:text-sm font-medium text-[var(--purple)] hover:underline"
               >
                 {t('dashboard.details')} →
               </Link>
@@ -227,12 +227,12 @@ export function DashboardStatsClient({
                   <p className="text-2xl font-semibold text-gray-900 dark:text-white">
                     {totalViews.toLocaleString()}
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-white/50">
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-white/50">
                     {t('dashboard.analytics.views')}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-white/50 flex-wrap mt-auto">
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500 dark:text-white/50 flex-wrap mt-auto">
                 <span>{t('dashboard.analytics.visitors', { count: uniqueVisitors.toLocaleString() })}</span>
                 <span className="text-gray-300 dark:text-white/20">•</span>
                 <span>{t('dashboard.analytics.avgSession', { minutes: Math.round(avgSessionDuration / 60) })}</span>
@@ -244,7 +244,7 @@ export function DashboardStatsClient({
                 <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
                   <TrendingUp className="w-5 h-5 text-[var(--purple)] opacity-25" />
                 </div>
-                <p className="text-sm text-gray-400 dark:text-white/40 flex-1">
+                <p className="text-sm sm:text-base text-gray-400 dark:text-white/40 flex-1">
                   {t('dashboard.stats.trafficAppears')}
                 </p>
               </div>
@@ -259,13 +259,13 @@ export function DashboardStatsClient({
       content: (
         <>
           <div className="flex items-center justify-between w-full mb-3">
-            <span className="text-sm font-medium text-gray-500 dark:text-white/50">
+            <span className="text-sm sm:text-base font-medium text-gray-500 dark:text-white/50">
               {t('dashboard.analytics.businessLeads')}
             </span>
             {totalLeads > 0 && (
               <Link
                 href="/dashboard/analytics/leads"
-                className="text-xs font-medium text-[var(--purple)] hover:underline"
+                className="text-xs sm:text-sm font-medium text-[var(--purple)] hover:underline"
               >
                 {t('dashboard.details')} →
               </Link>
@@ -282,12 +282,12 @@ export function DashboardStatsClient({
                   <p className="text-2xl font-semibold text-gray-900 dark:text-white">
                     {totalLeads.toLocaleString()}
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-white/50">
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-white/50">
                     {totalLeads === 1 ? t('dashboard.analytics.prospectSingular') : t('dashboard.analytics.prospectPlural')}
                   </p>
                 </div>
               </div>
-              <p className="text-xs text-gray-500 dark:text-white/50 mt-auto">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-white/50 mt-auto">
                 {t('dashboard.analytics.conversionRateValue', { rate: conversionRate.toFixed(1) })}
               </p>
             </div>
@@ -297,7 +297,7 @@ export function DashboardStatsClient({
                 <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
                   <Users className="w-5 h-5 text-[var(--purple)] opacity-25" />
                 </div>
-                <p className="text-sm text-gray-400 dark:text-white/40 flex-1">
+                <p className="text-sm sm:text-base text-gray-400 dark:text-white/40 flex-1">
                   {t('dashboard.stats.leadsActivate')}
                 </p>
               </div>
@@ -311,11 +311,11 @@ export function DashboardStatsClient({
       content: (
         <>
           <div className="flex items-center justify-between w-full mb-3">
-            <span className="text-sm font-medium text-gray-500 dark:text-white/50">
+            <span className="text-sm sm:text-base font-medium text-gray-500 dark:text-white/50">
               {t('dashboard.stats.aiCapabilities')}
             </span>
             {aiCredits?.hasSubscription && (
-              <span className="text-[10px] text-[var(--green)] bg-[var(--green)]/10 px-2 py-0.5 rounded-full font-medium">
+              <span className="text-[10px] sm:text-xs sm:text-sm text-[var(--green)] bg-[var(--green)]/10 px-2 py-0.5 rounded-full font-medium">
                 {t('dashboard.stats.aiCapabilitiesActive')}
               </span>
             )}
@@ -331,7 +331,7 @@ export function DashboardStatsClient({
                   <p className="text-2xl font-semibold text-gray-900 dark:text-white">
                     {aiCredits.remaining.toLocaleString()}
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-white/50">
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-white/50">
                     {t('dashboard.stats.aiEditsAvailable', { count: aiCredits.total.toLocaleString() })}
                   </p>
                 </div>
@@ -344,7 +344,7 @@ export function DashboardStatsClient({
                     style={{ width: `${Math.min((aiCredits.remaining / aiCredits.total) * 100, 100)}%` }}
                   />
                 </div>
-                <p className="text-[10px] text-gray-400 dark:text-white/30 mt-1">
+                <p className="text-[10px] sm:text-xs sm:text-sm sm:text-base text-gray-400 dark:text-white/30 mt-1">
                   {t('dashboard.stats.aiCreditsReset')}
                 </p>
               </div>
@@ -356,7 +356,7 @@ export function DashboardStatsClient({
                   t('dashboard.stats.aiCapability.seo'),
                   t('dashboard.stats.aiCapability.images'),
                 ].map((cap) => (
-                  <span key={cap} className="text-[11px] text-gray-500 dark:text-white/40 flex items-center gap-1">
+                  <span key={cap} className="text-[11px] sm:text-xs sm:text-sm text-gray-500 dark:text-white/40 flex items-center gap-1">
                     <span className="w-1 h-1 rounded-full bg-[var(--purple)]/40" />
                     {cap}
                   </span>
@@ -373,7 +373,7 @@ export function DashboardStatsClient({
                   <p className="text-lg font-semibold text-gray-300 dark:text-white/20">
                     1,000
                   </p>
-                  <p className="text-xs text-gray-400 dark:text-white/30">
+                  <p className="text-xs sm:text-sm sm:text-base text-gray-400 dark:text-white/30">
                     edits included in your plan
                   </p>
                 </div>
@@ -384,7 +384,7 @@ export function DashboardStatsClient({
                   <div className="h-full w-full bg-gray-200 dark:bg-white/10 rounded-full" />
                 </div>
               </div>
-              <p className="text-xs text-gray-400 dark:text-white/30 mt-auto">
+              <p className="text-xs sm:text-sm sm:text-base text-gray-400 dark:text-white/30 mt-auto">
                 {t('dashboard.stats.aiUnlockedAfterSetup')}
               </p>
             </div>
@@ -397,24 +397,24 @@ export function DashboardStatsClient({
       content: (
         <>
           <div className="flex items-center justify-between w-full mb-3">
-            <span className="text-sm font-medium text-gray-500 dark:text-white/50">
+            <span className="text-sm sm:text-base font-medium text-gray-500 dark:text-white/50">
               {t('dashboard.stats.integrations')}
             </span>
             {hasLiveProject ? (
               <Link
                 href="/dashboard/integrations"
-                className="text-xs font-medium text-[var(--purple)] hover:underline"
+                className="text-xs sm:text-sm font-medium text-[var(--purple)] hover:underline"
               >
                 {t('dashboard.stats.integrationsSetup')} →
               </Link>
             ) : (
-              <span className="text-[10px] text-gray-400 dark:text-white/30 bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded-full font-medium">
+              <span className="text-[10px] sm:text-xs sm:text-sm sm:text-base text-gray-400 dark:text-white/30 bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded-full font-medium">
                 {t('dashboard.stats.integrationsAfterLaunch')}
               </span>
             )}
           </div>
 
-          <p className="text-sm text-gray-400 dark:text-white/40">
+          <p className="text-sm sm:text-base text-gray-400 dark:text-white/40">
             {hasLiveProject
               ? t('dashboard.stats.integrationsConnect')
               : t('dashboard.stats.integrationsConnectLater')}

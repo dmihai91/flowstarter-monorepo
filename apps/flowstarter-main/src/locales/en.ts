@@ -2081,6 +2081,7 @@ const en = {
   'profile.personalInformation.title': 'Personal Information',
   'profile.personalInformation.fullName': 'Full Name',
   'profile.personalInformation.primaryEmail': 'Primary Email',
+  'profile.personalInformation.email': 'Email',
   'profile.personalInformation.userId': 'User ID',
   'profile.personalInformation.noEmail': 'No email',
   'profile.accountDetails.title': 'Account Details',

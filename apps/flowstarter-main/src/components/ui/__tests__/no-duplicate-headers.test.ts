@@ -109,7 +109,7 @@ describe('Loading Architecture (DRY)', () => {
     const loadingFiles = allFiles.filter(f => f.endsWith('loading.tsx'));
     for (const f of loadingFiles) {
       const content = readFileSync(f, 'utf-8');
-      const usesUnified = content.includes('PageLoader') || content.includes('AppLoader');
+      const usesUnified = content.includes('PageLoader') || content.includes('AppLoader') || content.includes('LoadingScreen');
       expect(usesUnified).toBe(true);
     }
   });

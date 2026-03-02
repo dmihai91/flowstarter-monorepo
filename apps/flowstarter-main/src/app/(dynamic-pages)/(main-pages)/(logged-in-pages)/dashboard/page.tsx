@@ -48,56 +48,69 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
 
   return (
     <div className="mb-8">
-      {/* Desktop: horizontal timeline */}
-      <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {milestones.map((m, i) => {
-          const isActive = m.status === 'active';
-          const isCompleted = m.status === 'completed';
-          const isLocked = m.status === 'locked';
-          const Icon = m.icon;
+      {/* Desktop/Tablet: horizontal timeline */}
+      <div className="hidden sm:block">
+        {/* Timeline track */}
+        <div className="relative flex items-start">
+          {/* Background line */}
+          <div className="absolute top-5 left-[calc(12.5%+16px)] right-[calc(12.5%+16px)] h-[2px] bg-gray-200/80 dark:bg-white/10 rounded-full" />
+          {/* Completed progress line */}
+          {milestones.filter(m => m.status === 'completed').length > 0 && (
+            <div 
+              className="absolute top-5 left-[calc(12.5%+16px)] h-[2px] bg-gradient-to-r from-green-400 to-green-400/60 rounded-full z-[1] transition-all duration-700"
+              style={{ width: `${(milestones.filter(m => m.status === 'completed').length / milestones.length) * 75}%` }}
+            />
+          )}
 
-          return (
-            <div key={i} className="relative">
-              {/* Connector line - only on desktop 4-col layout */}
-              {i < milestones.length - 1 && (
-                <div className="hidden lg:block absolute top-[28px] left-[calc(50%+20px)] -right-4 h-[2px] z-10">
-                  <div className={`h-full rounded-full ${isCompleted ? 'bg-gradient-to-r from-green-400/50 to-green-400/30' : 'bg-gray-200 dark:bg-white/10'}`} />
+          {/* Steps */}
+          <div className="relative z-[2] grid grid-cols-4 w-full">
+            {milestones.map((m, i) => {
+              const isActive = m.status === 'active';
+              const isCompleted = m.status === 'completed';
+              const isLocked = m.status === 'locked';
+              const Icon = m.icon;
+
+              return (
+                <div key={i} className="flex flex-col items-center">
+                  {/* Node */}
+                  <div className={`
+                    w-10 h-10 rounded-full flex items-center justify-center mb-3 transition-all duration-300
+                    ${isActive 
+                      ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white shadow-lg shadow-[var(--purple)]/30 ring-4 ring-[var(--purple)]/10' 
+                      : isCompleted 
+                      ? 'bg-green-500 text-white shadow-md shadow-green-500/20' 
+                      : 'bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-white/15 text-gray-400 dark:text-white/30'}
+                  `}>
+                    {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : isLocked ? <Lock className="w-4 h-4" /> : <Icon className="w-5 h-5" />}
+                  </div>
+
+                  {/* Card below */}
+                  <div className={`
+                    w-full max-w-[180px] p-3 rounded-xl text-center transition-all duration-300
+                    ${isActive 
+                      ? 'bg-white/70 dark:bg-white/[0.05] ring-1 ring-[var(--purple)]/20 shadow-[0_4px_16px_rgba(77,93,217,0.1)]' 
+                      : isCompleted 
+                      ? 'bg-white/60 dark:bg-white/[0.04] ring-1 ring-green-500/15 shadow-[0_4px_12px_rgba(0,0,0,0.04)]'
+                      : 'bg-white/30 dark:bg-white/[0.015]'}
+                    ${isLocked ? 'opacity-50' : ''}
+                  `}>
+                    <span className={`text-[10px] font-semibold uppercase tracking-wider ${
+                      isActive ? 'text-[var(--purple)]' : isCompleted ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-white/40'
+                    }`}>
+                      {t('dashboard.stepper.milestone', { number: i + 1 })}
+                    </span>
+                    <h3 className={`text-sm font-semibold mt-0.5 ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
+                      {m.title}
+                    </h3>
+                    <p className={`text-[11px] leading-snug mt-0.5 ${isLocked ? 'text-gray-400 dark:text-white/30' : 'text-gray-500 dark:text-white/50'}`}>
+                      {m.desc}
+                    </p>
+                  </div>
                 </div>
-              )}
-              
-              <div className={`
-                relative p-3 flex flex-col items-center text-center transition-all duration-300 rounded-xl
-                ${isActive 
-                  ? 'bg-white/70 dark:bg-white/[0.05] ring-2 ring-[var(--purple)]/30 shadow-[0_8px_24px_rgba(77,93,217,0.12)]' 
-                  : isCompleted 
-                  ? 'bg-white/50 dark:bg-white/[0.03] shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.15)]'
-                  : 'bg-white/35 dark:bg-white/[0.015] shadow-[0_2px_8px_rgba(0,0,0,0.02)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.1)] opacity-70'}
-              `}>
-                <div className={`
-                  w-8 h-8 rounded-lg flex items-center justify-center mb-2 transition-all
-                  ${isActive 
-                    ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white shadow-md shadow-[var(--purple)]/25' 
-                    : isCompleted 
-                    ? 'bg-green-500/15 text-green-600 dark:text-green-400' 
-                    : 'bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-white/30'}
-                `}>
-                  {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : isLocked ? <Lock className="w-3.5 h-3.5" /> : <Icon className="w-4 h-4" />}
-                </div>
-                <span className={`text-[9px] font-semibold uppercase tracking-wider mb-0.5 ${
-                  isActive ? 'text-[var(--purple)]' : isCompleted ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-white/40'
-                }`}>
-                  {t('dashboard.stepper.milestone', { number: i + 1 })}
-                </span>
-                <h3 className={`text-xs font-semibold mb-0.5 ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
-                  {m.title}
-                </h3>
-                <p className={`text-[10px] leading-snug ${isLocked ? 'text-gray-400 dark:text-white/30' : 'text-gray-500 dark:text-white/50'}`}>
-                  {m.desc}
-                </p>
-              </div>
-            </div>
-          );
-        })}
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Mobile: vertical compact list */}

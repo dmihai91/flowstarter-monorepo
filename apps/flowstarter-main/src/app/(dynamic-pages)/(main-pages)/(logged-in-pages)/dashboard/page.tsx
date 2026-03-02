@@ -61,15 +61,15 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
               ${isActive 
                 ? 'bg-white/70 dark:bg-white/[0.05] ring-1 ring-[var(--purple)]/20 shadow-[0_4px_16px_rgba(77,93,217,0.1)]' 
                 : isCompleted 
-                ? 'bg-green-50/70 dark:bg-green-500/[0.04] ring-1 ring-green-500/25 shadow-[0_4px_12px_rgba(34,197,94,0.08)]'
-                : 'bg-white/40 dark:bg-white/[0.025] shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.1)]'}
+                ? 'bg-green-50/80 dark:bg-green-500/[0.06] ring-1 ring-green-500/30 shadow-[0_4px_16px_rgba(34,197,94,0.12)]'
+                : 'bg-white/50 dark:bg-white/[0.03] ring-1 ring-gray-200/40 dark:ring-white/5 shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.1)]'}
             `}>
               <div className={`
                 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all
                 ${isActive 
                   ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white shadow-md shadow-[var(--purple)]/25' 
                   : isCompleted 
-                  ? 'bg-green-500 text-white shadow-md shadow-green-500/20' 
+                  ? 'bg-green-500 text-white shadow-md shadow-green-500/25 ring-4 ring-green-500/10' 
                   : 'bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-white/15 text-gray-400 dark:text-white/30'}
               `}>
                 {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : isLocked ? <Lock className="w-4 h-4" /> : <Icon className="w-5 h-5" />}
@@ -120,7 +120,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
                     ${isActive 
                       ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white shadow-lg shadow-[var(--purple)]/30 ring-4 ring-[var(--purple)]/10' 
                       : isCompleted 
-                      ? 'bg-green-500 text-white shadow-md shadow-green-500/20' 
+                      ? 'bg-green-500 text-white shadow-md shadow-green-500/25 ring-4 ring-green-500/10' 
                       : 'bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-white/15 text-gray-400 dark:text-white/30'}
                   `}>
                     {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : isLocked ? <Lock className="w-4 h-4" /> : <Icon className="w-5 h-5" />}
@@ -130,8 +130,8 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
                     ${isActive 
                       ? 'bg-white/70 dark:bg-white/[0.05] ring-1 ring-[var(--purple)]/20 shadow-[0_4px_16px_rgba(77,93,217,0.1)]' 
                       : isCompleted 
-                      ? 'bg-green-50/70 dark:bg-green-500/[0.04] ring-1 ring-green-500/25 shadow-[0_4px_12px_rgba(34,197,94,0.08)]'
-                      : 'bg-white/40 dark:bg-white/[0.025] shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.1)]'}
+                      ? 'bg-green-50/80 dark:bg-green-500/[0.06] ring-1 ring-green-500/30 shadow-[0_4px_16px_rgba(34,197,94,0.12)]'
+                      : 'bg-white/50 dark:bg-white/[0.03] ring-1 ring-gray-200/40 dark:ring-white/5 shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.1)]'}
                   `}>
                     <span className={`text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider ${
                       isActive ? 'text-[var(--purple)]' : isCompleted ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-white/40'

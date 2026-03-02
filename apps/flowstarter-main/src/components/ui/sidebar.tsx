@@ -207,10 +207,10 @@ export function Sidebar() {
       </div>
 
       {/* Spacer */}
-      <div className="flex-1" />
+      <div className="flex-1 min-h-0" />
 
       {/* Feedback */}
-      <div className="border-t border-white/10 pt-4">
+      <div className="border-t border-white/10 pt-3 pb-2">
         <button
           onClick={() => setIsFeedbackOpen(true)}
           title={effectiveCollapsed ? t('sidebar.feedback') : undefined}

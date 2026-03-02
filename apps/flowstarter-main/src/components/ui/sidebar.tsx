@@ -260,7 +260,7 @@ export function Sidebar() {
       <aside
         className={cn(
           'md:hidden fixed inset-y-0 left-0 z-[160] w-72',
-          'bg-white/85 dark:bg-[#12121a]/80 backdrop-blur-2xl backdrop-saturate-150',
+          'bg-white/92 dark:bg-[#12121a]/88 backdrop-blur-2xl backdrop-saturate-150',
           'border-r border-white/60 dark:border-white/10',
           'shadow-2xl shadow-black/10 dark:shadow-black/30',
           'transform transition-transform duration-300 ease-in-out',
@@ -289,7 +289,7 @@ export function Sidebar() {
       <aside 
         className={cn(
           'hidden md:flex flex-col flex-shrink-0 fixed left-0 top-16 bottom-0 transition-all duration-300 z-40',
-          'bg-white/75 dark:bg-[#12121a]/70 backdrop-blur-2xl backdrop-saturate-150',
+          'bg-white/90 dark:bg-[#12121a]/85 backdrop-blur-2xl backdrop-saturate-150',
           'border-r border-white/60 dark:border-white/10 shadow-[1px_0_3px_rgba(0,0,0,0.05)]',
           isCollapsed ? 'w-[68px]' : 'w-64'
         )}

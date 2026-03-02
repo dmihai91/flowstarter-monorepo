@@ -663,30 +663,30 @@ const en = {
   'dashboard.stats.yourWebsite': 'Your Website',
   'dashboard.stats.live': 'Live',
   'dashboard.stats.inProgress': 'In Progress',
-  'dashboard.stats.notStarted': 'Not started yet',
+  'dashboard.stats.notStarted': 'Awaiting kickoff',
   'dashboard.stats.bookDiscovery':
-    'Book a discovery call to get your website built',
+    'Schedule your kickoff call to begin',
   'dashboard.stats.buildingMessage':
-    "We're building your website. You'll be notified when it's ready!",
+    'Your website is being built. We\'ll notify you at each milestone.',
   'dashboard.stats.edit': 'Edit',
   'dashboard.stats.view': 'View',
   'dashboard.stats.trafficAppears':
-    'Traffic data appears once your site is live',
+    'Traffic data activates at launch',
   'dashboard.stats.leadsActivate':
-    'Lead tracking activates when your site goes live',
+    'Lead tracking activates at launch',
   'dashboard.stats.aiCredits': 'AI Credits',
   'dashboard.stats.aiCreditsActive': 'Active',
   'dashboard.stats.aiCreditsRemaining': 'of {total} remaining',
   'dashboard.stats.aiCreditsReset': 'Resets monthly',
   'dashboard.stats.aiCreditsIncluded':
     '1,000 monthly credits included with your subscription',
-  'dashboard.stats.aiCreditsAfterSetup': 'Edit your site with AI after setup',
+  'dashboard.stats.aiCreditsAfterSetup': 'Full editor access after launch',
   'dashboard.stats.integrations': 'Integrations',
   'dashboard.stats.integrationsSetup': 'Set up',
   'dashboard.stats.integrationsAfterLaunch': 'After launch',
-  'dashboard.stats.integrationsConnect': 'Connect analytics, email & more',
+  'dashboard.stats.integrationsConnect': 'Analytics, email, calendar',
   'dashboard.stats.integrationsConnectLater':
-    'Connect your tools once your site is live',
+    'Available after launch',
   'dashboard.stats.analytics': 'Analytics',
   'dashboard.stats.email': 'Email',
   'dashboard.stats.calendar': 'Calendar',
@@ -695,15 +695,15 @@ const en = {
 
   // Premium dashboard - milestones
   'dashboard.stepper.strategy': 'Strategy',
-  'dashboard.stepper.strategyDescription': 'We map your goals, audience, and positioning',
+  'dashboard.stepper.strategyDescription': 'Goals, audience, and positioning defined',
   'dashboard.stepper.design': 'Design',
-  'dashboard.stepper.designDescription': 'Your brand identity comes to life',
+  'dashboard.stepper.designDescription': 'Brand, layout, and visual identity finalized',
   'dashboard.stepper.development': 'Development',
-  'dashboard.stepper.developmentDescription': 'Every page, optimized for results',
+  'dashboard.stepper.developmentDescription': 'Pages built, content placed, SEO configured',
   'dashboard.stepper.launch': 'Launch',
-  'dashboard.stepper.launchDescription': 'Go live and start converting',
+  'dashboard.stepper.launchDescription': 'Live site + smart editor access',
   'dashboard.stepper.milestone': 'Phase {number}',
-  'dashboard.stepper.done': 'Done',
+  'dashboard.stepper.done': 'Complete',
   
   // Premium dashboard - AI capabilities
   'dashboard.stats.aiCapabilities': 'AI Assistant',
@@ -723,20 +723,22 @@ const en = {
   'dashboard.action.uploadAssets': 'Upload Assets',
   
   // Premium dashboard - build phase
-  'dashboard.stats.buildPhase': 'Your site is being crafted',
+  'dashboard.action.kickoffTitle': 'Let\'s get your website started',
+  'dashboard.action.kickoffDesc': 'A 15-minute call to define your goals. We handle the rest.',
+  'dashboard.stats.buildPhase': 'Build in progress',
   'dashboard.stats.buildPhaseActive': 'In progress',
-  'dashboard.stats.currentMilestone': 'Currently in {phase}',
+  'dashboard.stats.currentMilestone': 'Current phase: {phase}',
     'dashboard.greeting.morning': 'Good morning',
   'dashboard.greeting.afternoon': 'Good afternoon',
   'dashboard.greeting.evening': 'Good evening',
   'dashboard.greeting.night': 'Good night',
-  'dashboard.title': 'Dashboard',
-  'dashboard.loading': 'Loading dashboard...',
+  'dashboard.title': 'Project Overview',
+  'dashboard.loading': 'Loading your workspace...',
 
   // Onboarding stepper
   'dashboard.stepper.step': 'Step {number}',
   'dashboard.stepper.bookCall': 'Book Discovery Call',
-  'dashboard.stepper.bookCallDescription': 'Schedule a free call with our team',
+  'dashboard.stepper.bookCallDescription': 'A 15-minute call to define your project scope',
   'dashboard.stepper.bookCallButton': 'Book Free Call',
   'dashboard.stepper.weBuild': 'We Build Your Site',
   'dashboard.stepper.weBuildDescription': 'Professional website in 1-2 weeks',

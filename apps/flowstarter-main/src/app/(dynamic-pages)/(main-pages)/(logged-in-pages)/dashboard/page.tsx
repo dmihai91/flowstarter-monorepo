@@ -228,10 +228,10 @@ function PrimaryAction({ hasAnyProject, hasLiveProject }: { hasAnyProject: boole
           </div>
           <div className="flex-1">
             <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-0.5">
-              Ready to stand out online?
+              {t('dashboard.action.kickoffTitle')}
             </h3>
             <p className="text-sm text-gray-500 dark:text-white/50">
-              Book a free discovery call. We'll map your goals and build a site that works for your business.
+              {t('dashboard.action.kickoffDesc')}
             </p>
           </div>
           <a
@@ -305,7 +305,7 @@ function PrimaryAction({ hasAnyProject, hasLiveProject }: { hasAnyProject: boole
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white text-sm font-medium hover:bg-gray-200 dark:hover:bg-white/15 transition-all whitespace-nowrap"
           >
-            Schedule Check-in
+            {t('sidebar.scheduleCheckin')}
           </a>
         </div>
       </div>

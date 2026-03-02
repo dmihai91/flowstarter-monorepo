@@ -110,13 +110,13 @@ export function Sidebar() {
       active
         ? 'bg-[var(--purple)] text-white shadow-lg shadow-[var(--purple)]/25'
         : 'text-gray-600 dark:text-white/60 hover:bg-white/55 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
-      effectiveCollapsed && 'justify-center !px-2'
+      isCollapsed && 'justify-center !px-2'
     );
 
     const content = (
       <>
         <Icon className="w-4 h-4 flex-shrink-0" />
-        {!effectiveCollapsed && <span className="truncate">{label}</span>}
+        {!isCollapsed && <span className="truncate">{label}</span>}
       </>
     );
 
@@ -126,7 +126,7 @@ export function Sidebar() {
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          title={effectiveCollapsed ? label : undefined}
+          title={isCollapsed ? label : undefined}
           onClick={onClick}
           className={className}
         >
@@ -138,7 +138,7 @@ export function Sidebar() {
     return (
       <Link
         href={href}
-        title={effectiveCollapsed ? label : undefined}
+        title={isCollapsed ? label : undefined}
         onClick={onClick}
         className={className}
       >

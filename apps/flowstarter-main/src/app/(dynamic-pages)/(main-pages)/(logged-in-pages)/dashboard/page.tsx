@@ -167,10 +167,54 @@ function OnboardingStepper({ hasAnyProject, hasLiveProject }: { hasAnyProject: b
   );
 }
 
+function DashboardSkeleton() {
+  return (
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto animate-pulse">
+      {/* Greeting skeleton */}
+      <div className="mt-8 mb-8">
+        <div className="h-4 w-40 bg-gray-200 dark:bg-white/10 rounded-lg mb-3" />
+        <div className="h-9 w-56 bg-gray-200 dark:bg-white/10 rounded-lg" />
+      </div>
+
+      {/* Stepper skeleton */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className={`p-5 ${glassCard}`}>
+            <div className="h-6 w-16 bg-gray-200 dark:bg-white/10 rounded-full mb-3" />
+            <div className="flex items-start gap-3 mb-3">
+              <div className="w-10 h-10 rounded-xl bg-gray-200 dark:bg-white/10" />
+              <div className="flex-1">
+                <div className="h-4 w-28 bg-gray-200 dark:bg-white/10 rounded mb-2" />
+                <div className="h-3 w-40 bg-gray-100 dark:bg-white/5 rounded" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Stats skeleton */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className={`p-5 min-h-[140px] ${glassCard}`}>
+            <div className="flex items-center justify-between mb-4">
+              <div className="h-3 w-20 bg-gray-200 dark:bg-white/10 rounded" />
+              <div className="h-8 w-8 bg-gray-200 dark:bg-white/10 rounded-xl" />
+            </div>
+            <div className="h-7 w-24 bg-gray-200 dark:bg-white/10 rounded mb-2" />
+            <div className="h-3 w-32 bg-gray-100 dark:bg-white/5 rounded" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const { t } = useTranslations();
-  const { user } = useUser();
-  const { data } = useDashboardStats();
+  const { user, isLoaded: isUserLoaded } = useUser();
+  const { data, isLoading } = useDashboardStats();
+
+  const loading = !isUserLoaded || isLoading;
 
   const firstName = user?.firstName || 'there';
   const hour = new Date().getHours();
@@ -181,20 +225,23 @@ export default function DashboardPage() {
 
   return (
     <DashboardWrapper>
+      {loading ? (
+        <DashboardSkeleton />
+      ) : (
       <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
         {/* Messages */}
         <DashboardMessages />
 
         <DashboardInit>
           {/* Welcome message */}
-          <div className="mb-8">
-            <p className="text-gray-500 dark:text-white/50 mb-1 text-sm sm:text-base">
+          <div className="mt-8 mb-8">
+            <p className="text-lg text-gray-500 dark:text-white/50 mb-2">
               {greeting},{' '}
               <span className="text-gray-700 dark:text-white/70 font-medium">
                 {firstName}
               </span>
             </p>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
+            <h1 className="text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 dark:text-white">
               {t('dashboard.title')}
             </h1>
           </div>
@@ -208,6 +255,7 @@ export default function DashboardPage() {
           </div>
         </DashboardInit>
       </div>
+      )}
     </DashboardWrapper>
   );
 }

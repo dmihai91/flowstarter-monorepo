@@ -381,17 +381,17 @@ export function DashboardHero({ children }: { children?: React.ReactNode }) {
         {/* Welcome message with time-based greeting */}
         <div
           ref={ref}
-          className={`mb-6 transition-all duration-500 ease-out ${
+          className={`mt-8 mb-8 transition-all duration-500 ease-out ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
-          <p className="text-gray-500 dark:text-white/50 mb-1">
+          <p className="text-lg text-gray-500 dark:text-white/50 mb-2">
             {greeting},{' '}
             <span className="text-gray-700 dark:text-white/70 font-medium">
               {firstName}
             </span>
           </p>
-          <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
+          <h1 className="text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 dark:text-white">
             Dashboard
           </h1>
         </div>

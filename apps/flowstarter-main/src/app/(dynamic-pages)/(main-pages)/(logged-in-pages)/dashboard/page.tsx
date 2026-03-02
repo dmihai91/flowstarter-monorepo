@@ -48,9 +48,53 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
 
   return (
     <div className="mb-8">
-      {/* Desktop/Tablet: horizontal timeline */}
-      <div className="hidden sm:block">
-        {/* Timeline track */}
+      {/* Tablet: 2x2 grid */}
+      <div className="hidden sm:grid lg:hidden grid-cols-2 gap-4">
+        {milestones.map((m, i) => {
+          const isActive = m.status === 'active';
+          const isCompleted = m.status === 'completed';
+          const isLocked = m.status === 'locked';
+          const Icon = m.icon;
+          return (
+            <div key={i} className={`
+              relative p-4 flex items-center gap-3 transition-all duration-300 rounded-xl
+              ${isActive 
+                ? 'bg-white/70 dark:bg-white/[0.05] ring-1 ring-[var(--purple)]/20 shadow-[0_4px_16px_rgba(77,93,217,0.1)]' 
+                : isCompleted 
+                ? 'bg-white/60 dark:bg-white/[0.04] ring-1 ring-green-500/15 shadow-[0_4px_12px_rgba(0,0,0,0.04)]'
+                : 'bg-white/30 dark:bg-white/[0.015]'}
+              ${isLocked ? 'opacity-50' : ''}
+            `}>
+              <div className={`
+                w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all
+                ${isActive 
+                  ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white shadow-md shadow-[var(--purple)]/25' 
+                  : isCompleted 
+                  ? 'bg-green-500 text-white shadow-md shadow-green-500/20' 
+                  : 'bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-white/15 text-gray-400 dark:text-white/30'}
+              `}>
+                {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : isLocked ? <Lock className="w-4 h-4" /> : <Icon className="w-5 h-5" />}
+              </div>
+              <div className="flex-1 min-w-0">
+                <span className={`text-[10px] font-semibold uppercase tracking-wider ${
+                  isActive ? 'text-[var(--purple)]' : isCompleted ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-white/40'
+                }`}>
+                  {t('dashboard.stepper.milestone', { number: i + 1 })}
+                </span>
+                <h3 className={`text-sm font-semibold ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
+                  {m.title}
+                </h3>
+                <p className={`text-[11px] leading-snug text-gray-500 dark:text-white/50 ${isLocked ? 'opacity-60' : ''}`}>
+                  {m.desc}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop: horizontal timeline */}
+      <div className="hidden lg:block">
         <div className="relative flex items-start">
           {/* Background line */}
           <div className="absolute top-5 left-[calc(12.5%+16px)] right-[calc(12.5%+16px)] h-[2px] bg-gray-200/80 dark:bg-white/10 rounded-full" />
@@ -72,7 +116,6 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
 
               return (
                 <div key={i} className="flex flex-col items-center">
-                  {/* Node */}
                   <div className={`
                     w-10 h-10 rounded-full flex items-center justify-center mb-3 transition-all duration-300
                     ${isActive 
@@ -83,8 +126,6 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
                   `}>
                     {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : isLocked ? <Lock className="w-4 h-4" /> : <Icon className="w-5 h-5" />}
                   </div>
-
-                  {/* Card below */}
                   <div className={`
                     w-full max-w-[180px] p-3 rounded-xl text-center transition-all duration-300
                     ${isActive 
@@ -282,10 +323,23 @@ function DashboardSkeleton() {
         ))}
       </div>
 
-      {/* Milestones - tablet/desktop: timeline with nodes */}
-      <div className="hidden sm:block mb-8">
+      {/* Milestones - tablet: 2x2 grid */}
+      <div className="hidden sm:grid lg:hidden grid-cols-2 gap-4 mb-8">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-white/30 dark:bg-white/[0.015]">
+            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-white/10 flex-shrink-0" />
+            <div className="flex-1">
+              <div className="h-2.5 w-10 bg-gray-200 dark:bg-white/10 rounded mb-1" />
+              <div className="h-3.5 w-20 bg-gray-200 dark:bg-white/10 rounded mb-1" />
+              <div className="h-2.5 w-32 bg-gray-100 dark:bg-white/5 rounded" />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Milestones - desktop: timeline with nodes */}
+      <div className="hidden lg:block mb-8">
         <div className="relative flex items-start">
-          {/* Track line */}
           <div className="absolute top-5 left-[calc(12.5%+16px)] right-[calc(12.5%+16px)] h-[2px] bg-gray-200/60 dark:bg-white/5 rounded-full" />
           <div className="relative z-[2] grid grid-cols-4 w-full">
             {[0, 1, 2, 3].map((i) => (

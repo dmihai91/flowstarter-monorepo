@@ -17,7 +17,7 @@ export function ClientHeader() {
   const isWizardPage = pathname?.startsWith('/dashboard/new') || pathname?.startsWith('/wizard');
 
   return (
-    <ScrollAwareHeader className="z-[100] h-16 border-b border-gray-200/30 dark:border-white/10" transparentClass="bg-white/95 dark:bg-[var(--flow-bg-secondary)] backdrop-blur-sm border-b border-gray-200/40 dark:border-white/10" scrolledClass="bg-white/60 dark:bg-[var(--flow-bg-secondary)]/95 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_1px_2px_rgba(0,0,0,0.03)] border-b border-gray-200/30 dark:border-white/10">
+    <ScrollAwareHeader className="z-[100] h-16" transparentClass="bg-white/95 dark:bg-[var(--flow-bg-secondary)] backdrop-blur-sm border-b border-gray-200/40 dark:border-white/[0.06]" scrolledClass="bg-white/60 dark:bg-[var(--flow-bg-secondary)]/95 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_1px_2px_rgba(0,0,0,0.03)] border-b border-gray-200/30 dark:border-white/[0.06]">
       <div className="w-full h-full px-4 lg:px-6 flex items-center justify-between">
         {/* Left side - hamburger + logo */}
         <div className="flex items-center gap-2">

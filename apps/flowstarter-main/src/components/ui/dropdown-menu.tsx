@@ -63,9 +63,9 @@ function DropdownMenuContent({
         {!hideArrow && (
           <svg
             className={cn(
-              'absolute -top-2 w-4 h-2',
-              align === 'end' && 'right-4',
-              align === 'start' && 'left-4',
+              'absolute -top-[7px] w-4 h-2 drop-shadow-sm',
+              align === 'end' && 'right-3',
+              align === 'start' && 'left-3',
               align === 'center' && 'left-1/2 -translate-x-1/2'
             )}
             viewBox="0 0 16 8"
@@ -73,8 +73,9 @@ function DropdownMenuContent({
           >
             <path
               d="M8 0L16 8H0L8 0Z"
-              fill="rgba(255, 255, 255, 0.3)"
-              className="dark:fill-white/[0.05]"
+              className="fill-white/90 dark:fill-[#2a2a35]/90"
+              stroke="rgba(0,0,0,0.08)"
+              strokeWidth="0.5"
             />
           </svg>
         )}

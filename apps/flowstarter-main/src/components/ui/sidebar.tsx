@@ -151,9 +151,9 @@ export function Sidebar() {
     const effectiveCollapsed = forceExpanded ? false : isCollapsed;
     return (
     <div className={cn("p-4 space-y-6 h-full overflow-y-auto flex flex-col", effectiveCollapsed && "items-center")}>
-      {/* Collapse Toggle - Top */}
-      {showToggle && (
-        <div className={cn("w-full", effectiveCollapsed ? "flex justify-center" : "flex justify-end")}>
+      {/* Collapse Toggle - Top (hidden when collapsed) */}
+      {showToggle && !effectiveCollapsed && (
+        <div className="w-full flex justify-end">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             title={effectiveCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}

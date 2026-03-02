@@ -49,7 +49,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
   return (
     <div className="mb-8">
       {/* Desktop: horizontal timeline */}
-      <div className="hidden sm:grid sm:grid-cols-4 gap-3">
+      <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {milestones.map((m, i) => {
           const isActive = m.status === 'active';
           const isCompleted = m.status === 'completed';
@@ -58,9 +58,9 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
 
           return (
             <div key={i} className="relative">
-              {/* Connector line */}
+              {/* Connector line - only on desktop 4-col layout */}
               {i < milestones.length - 1 && (
-                <div className="absolute top-[36px] left-[calc(50%+28px)] -right-3 h-[2px] z-10">
+                <div className="hidden lg:block absolute top-[36px] left-[calc(50%+28px)] -right-3 h-[2px] z-10">
                   <div className={`h-full rounded-full ${isCompleted ? 'bg-gradient-to-r from-green-400/50 to-green-400/30' : 'bg-gray-200 dark:bg-white/10'}`} />
                 </div>
               )}

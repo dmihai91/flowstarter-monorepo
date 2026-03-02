@@ -1,3 +1,4 @@
+import 'server-only';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { aiModerateContent, ModerationResult } from '@/lib/ai/ai-moderation';
 import { models } from '@/lib/ai/openrouter-client';

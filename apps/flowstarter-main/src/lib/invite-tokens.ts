@@ -1,3 +1,4 @@
+import 'server-only';
 /**
  * Invite Token Management
  *

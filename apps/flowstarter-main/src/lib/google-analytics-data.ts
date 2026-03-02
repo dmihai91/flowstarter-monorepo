@@ -1,3 +1,4 @@
+import 'server-only';
 /**
  * Google Analytics Data API Integration
  * Fetches analytics data from Google Analytics for user projects

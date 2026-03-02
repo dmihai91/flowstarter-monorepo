@@ -1,3 +1,4 @@
+import 'server-only';
 /**
  * Token Encryption Utility
  *

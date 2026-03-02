@@ -1,3 +1,4 @@
+import 'server-only';
 /**
  * OpenRouter AI Client
  * Unified AI provider using OpenRouter for simplified model access

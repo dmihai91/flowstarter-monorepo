@@ -20,7 +20,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { useTranslations } from '@/lib/i18n';
 import { Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { useFeedback } from '@/hooks/useFeedback';
 import { toast } from 'sonner';
 
 interface FeedbackDialogProps {
@@ -30,52 +30,16 @@ interface FeedbackDialogProps {
 
 export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
   const { t } = useTranslations();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
-    category: '',
-    message: '',
-    email: '',
-  });
+  const { formData, updateField, submit, validate, isPending: isSubmitting } = useFeedback(
+    () => { toast.success(t('feedback.success')); onOpenChange(false); }
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!formData.category || !formData.message.trim()) {
-      toast.error(t('feedback.error.required'));
-      return;
-    }
-
-    if (formData.message.trim().length < 10) {
-      toast.error(t('feedback.error.tooShort'));
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const response = await fetch('/api/feedback', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to submit feedback');
-      }
-
-      toast.success(t('feedback.success'));
-      setFormData({ category: '', message: '', email: '' });
-      onOpenChange(false);
-    } catch (error) {
-      console.error('Feedback submission error:', error);
-      toast.error(t('feedback.error.submit'));
-    } finally {
-      setIsSubmitting(false);
-    }
+    const error = validate();
+    if (error) { toast.error(t(error === 'Category is required' || error === 'Message is required' ? 'feedback.error.required' : 'feedback.error.tooShort')); return; }
+    const result = await submit();
+    if (!result) toast.error(t('feedback.error.submit'));
   };
 
   return (
@@ -96,7 +60,7 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
             <Select
               value={formData.category}
               onValueChange={(value) =>
-                setFormData({ ...formData, category: value })
+                updateField('category', value)
               }
               disabled={isSubmitting}
             >
@@ -128,7 +92,7 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
               id="message"
               value={formData.message}
               onChange={(e) =>
-                setFormData({ ...formData, message: e.target.value })
+                updateField('message', e.target.value)
               }
               placeholder={t('feedback.message.placeholder')}
               className="min-h-[140px] resize-none"
@@ -152,7 +116,7 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
               type="email"
               value={formData.email}
               onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
+                updateField('email', e.target.value)
               }
               placeholder={t('feedback.email.placeholder')}
               disabled={isSubmitting}

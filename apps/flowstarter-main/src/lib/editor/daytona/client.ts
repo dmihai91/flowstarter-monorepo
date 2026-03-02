@@ -1,3 +1,4 @@
+import 'server-only';
 import { Daytona, type DaytonaConfig } from '@daytonaio/sdk';
 
 let daytonaClient: Daytona | null = null;

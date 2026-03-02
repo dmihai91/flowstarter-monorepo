@@ -1,3 +1,4 @@
+import 'server-only';
 interface GoDaddyDomainAvailability {
   domain: string;
   available: boolean;

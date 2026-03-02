@@ -1,3 +1,4 @@
+import 'server-only';
 import { type Sandbox, SandboxState } from '@daytonaio/sdk';
 import { getClient, getCachedSandbox, setCachedSandbox } from './client';
 

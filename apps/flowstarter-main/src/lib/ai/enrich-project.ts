@@ -1,3 +1,4 @@
+import 'server-only';
 import { models } from '@/lib/ai/openrouter-client';
 import { generateText } from 'ai';
 

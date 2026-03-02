@@ -42,7 +42,7 @@ function DropdownMenuTrigger({
 function DropdownMenuContent({
   className,
   sideOffset = 4,
-  hideArrow,
+  hideArrow = true,
   align = 'center',
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Content> & {

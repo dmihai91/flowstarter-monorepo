@@ -309,13 +309,11 @@ export default function LandingPage() {
       (entries) => {
         entries.forEach((entry) => {
           
-          const sectionId = entry.target.getAttribute('data-section');
-          if (sectionId) {
-            if (entry.isIntersecting) {
-              newVisible.add(sectionId);
-            }
-          }
           if (entry.isIntersecting) {
+            const sectionId = entry.target.getAttribute('data-section');
+            if (sectionId) {
+              setVisibleSections((prev) => new Set(prev).add(sectionId));
+            }
             setVisibleSections((prev) => new Set(prev).add(entry.target.id));
           }
         });

@@ -703,6 +703,7 @@ const en = {
   'dashboard.stepper.launch': 'Launch',
   'dashboard.stepper.launchDescription': 'Go live and start converting',
   'dashboard.stepper.milestone': 'Phase {number}',
+  'dashboard.stepper.done': 'Done',
   
   // Premium dashboard - AI capabilities
   'dashboard.stats.aiCapabilities': 'AI Assistant',

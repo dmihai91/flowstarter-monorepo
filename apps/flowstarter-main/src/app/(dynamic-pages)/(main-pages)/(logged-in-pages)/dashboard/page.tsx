@@ -62,7 +62,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
               ${isActive 
                 ? 'bg-white/80 dark:bg-white/[0.06] ring-2 ring-[var(--purple)]/30 shadow-[0_4px_20px_rgba(77,93,217,0.15)]' 
                 : isCompleted 
-                ? 'bg-green-50/80 dark:bg-green-500/[0.06] ring-1 ring-green-500/30 shadow-[0_4px_16px_rgba(34,197,94,0.12)]'
+                ? 'bg-green-50/90 dark:bg-green-500/[0.08] ring-1 ring-green-500/40 shadow-[0_4px_16px_rgba(34,197,94,0.15)]'
                 : 'bg-white/50 dark:bg-white/[0.03] ring-1 ring-gray-200/40 dark:ring-white/5 shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.1)]'}
             `}>
               <div className={`
@@ -70,7 +70,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
                 ${isActive 
                   ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white shadow-md shadow-[var(--purple)]/25 ring-4 ring-[var(--purple)]/15 animate-pulse' 
                   : isCompleted 
-                  ? 'bg-green-500 text-white shadow-md shadow-green-500/25 ring-4 ring-green-500/10' 
+                  ? 'bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/30 ring-4 ring-green-400/20' 
                   : 'bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-white/15 text-gray-400 dark:text-white/30'}
               `}>
                 {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : isLocked ? <Lock className="w-4 h-4" /> : <Icon className="w-5 h-5" />}
@@ -81,9 +81,16 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
                 }`}>
                   {t('dashboard.stepper.milestone', { number: i + 1 })}
                 </span>
-                <h3 className={`text-sm font-semibold ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
-                  {m.title}
-                </h3>
+                <div className="flex items-center gap-2">
+                  <h3 className={`text-sm font-semibold ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
+                    {m.title}
+                  </h3>
+                  {isCompleted && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400">
+                      ✓ {t('dashboard.stepper.done')}
+                    </span>
+                  )}
+                </div>
                 <p className={`text-[11px] sm:text-xs leading-snug text-gray-500 dark:text-white/50 ${isLocked ? 'opacity-60' : ''}`}>
                   {m.desc}
                 </p>
@@ -121,7 +128,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
                     ${isActive 
                       ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white shadow-lg shadow-[var(--purple)]/30 ring-[5px] ring-[var(--purple)]/15 animate-pulse' 
                       : isCompleted 
-                      ? 'bg-green-500 text-white shadow-md shadow-green-500/25 ring-4 ring-green-500/10' 
+                      ? 'bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/30 ring-4 ring-green-400/20' 
                       : 'bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-white/15 text-gray-400 dark:text-white/30'}
                   `}>
                     {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : isLocked ? <Lock className="w-4 h-4" /> : <Icon className="w-5 h-5" />}
@@ -131,7 +138,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
                     ${isActive 
                       ? 'bg-white/80 dark:bg-white/[0.06] ring-2 ring-[var(--purple)]/30 shadow-[0_4px_20px_rgba(77,93,217,0.15)]' 
                       : isCompleted 
-                      ? 'bg-green-50/80 dark:bg-green-500/[0.06] ring-1 ring-green-500/30 shadow-[0_4px_16px_rgba(34,197,94,0.12)]'
+                      ? 'bg-green-50/90 dark:bg-green-500/[0.08] ring-1 ring-green-500/40 shadow-[0_4px_16px_rgba(34,197,94,0.15)]'
                       : 'bg-white/50 dark:bg-white/[0.03] ring-1 ring-gray-200/40 dark:ring-white/5 shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.1)]'}
                   `}>
                     <span className={`text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider ${
@@ -181,9 +188,16 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
                 {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : isLocked ? <Lock className="w-3.5 h-3.5" /> : <Icon className="w-4 h-4" />}
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className={`text-sm font-semibold ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
-                  {m.title}
-                </h3>
+                <div className="flex items-center gap-2">
+                  <h3 className={`text-sm font-semibold ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
+                    {m.title}
+                  </h3>
+                  {isCompleted && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400">
+                      ✓ {t('dashboard.stepper.done')}
+                    </span>
+                  )}
+                </div>
                 <p className={`text-[11px] ${isLocked ? 'text-gray-400 dark:text-white/30' : 'text-gray-500 dark:text-white/50'}`}>
                   {m.desc}
                 </p>

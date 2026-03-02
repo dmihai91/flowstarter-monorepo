@@ -18,9 +18,9 @@ interface VariantConfig {
 }
 
 const variants: Record<FlowBackgroundVariant, VariantConfig> = {
-  dashboard: { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.25, glowDark: 0.12, lineLight: 0.03, lineDark: 0.06 },
-  editor:    { bgLight: '#f8f8fa', bgDark: '#0a0a0c', glowLight: 0.3, glowDark: 0.15, lineLight: 0.04, lineDark: 0.07 },
-  landing:   { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.3, glowDark: 0.15, lineLight: 0.04, lineDark: 0.07 },
+  dashboard: { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.25, glowDark: 0.12, lineLight: 0.08, lineDark: 0.06 },
+  editor:    { bgLight: '#f8f8fa', bgDark: '#0a0a0c', glowLight: 0.3, glowDark: 0.15, lineLight: 0.09, lineDark: 0.07 },
+  landing:   { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.3, glowDark: 0.15, lineLight: 0.09, lineDark: 0.07 },
   wizard:    { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.45, glowDark: 0.1, lineLight: 0.05, lineDark: 0.05 },
 };
 

@@ -278,7 +278,7 @@ export function Sidebar() {
           'hidden md:flex flex-col flex-shrink-0 fixed left-0 top-16 bottom-0 transition-all duration-300 z-40',
           'bg-white/90 dark:bg-[#12121a]/85 backdrop-blur-2xl backdrop-saturate-150',
           'border-r border-white/60 dark:border-white/10 shadow-[1px_0_3px_rgba(0,0,0,0.05)]',
-          isCollapsed ? 'w-[68px]' : 'w-64'
+          isCollapsed ? 'w-[68px]' : 'w-52 lg:w-60'
         )}
       >
         <SidebarContent showToggle />

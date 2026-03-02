@@ -61,7 +61,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
               ${isActive 
                 ? 'bg-white/70 dark:bg-white/[0.05] ring-1 ring-[var(--purple)]/20 shadow-[0_4px_16px_rgba(77,93,217,0.1)]' 
                 : isCompleted 
-                ? 'bg-white/60 dark:bg-white/[0.04] ring-1 ring-green-500/15 shadow-[0_4px_12px_rgba(0,0,0,0.04)]'
+                ? 'bg-green-50/70 dark:bg-green-500/[0.04] ring-1 ring-green-500/25 shadow-[0_4px_12px_rgba(34,197,94,0.08)]'
                 : 'bg-white/40 dark:bg-white/[0.025] shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.1)]'}
             `}>
               <div className={`
@@ -130,7 +130,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
                     ${isActive 
                       ? 'bg-white/70 dark:bg-white/[0.05] ring-1 ring-[var(--purple)]/20 shadow-[0_4px_16px_rgba(77,93,217,0.1)]' 
                       : isCompleted 
-                      ? 'bg-white/60 dark:bg-white/[0.04] ring-1 ring-green-500/15 shadow-[0_4px_12px_rgba(0,0,0,0.04)]'
+                      ? 'bg-green-50/70 dark:bg-green-500/[0.04] ring-1 ring-green-500/25 shadow-[0_4px_12px_rgba(34,197,94,0.08)]'
                       : 'bg-white/40 dark:bg-white/[0.025] shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.1)]'}
                   `}>
                     <span className={`text-[10px] font-semibold uppercase tracking-wider ${

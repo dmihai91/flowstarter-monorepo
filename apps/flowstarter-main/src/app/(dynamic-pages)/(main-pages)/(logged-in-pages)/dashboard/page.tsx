@@ -75,9 +75,12 @@ function OnboardingStepper({ hasAnyProject, hasLiveProject }: { hasAnyProject: b
             key={step.number}
             className={`
               relative p-5 h-full flex flex-col transition-all duration-300
-              ${glassCard}
-              ${isActive ? 'border-[var(--purple)]/40 shadow-[0_8px_32px_rgba(124,58,237,0.12)]' : ''}
-              ${isCompleted || isPast ? 'border-green-500/30' : ''}
+              rounded-2xl backdrop-blur-2xl
+              ${isActive 
+                ? 'bg-white/70 dark:bg-white/[0.05] ring-2 ring-[var(--purple)]/40 shadow-[0_8px_32px_rgba(77,93,217,0.15),0_2px_8px_rgba(77,93,217,0.08)]' 
+                : isCompleted || isPast
+                ? 'bg-white/60 dark:bg-white/[0.03] ring-1 ring-green-500/20 shadow-[0_4px_16px_rgba(0,0,0,0.04)]'
+                : `${glassCard} opacity-60`}
             `}
           >
             {/* Step badge */}

@@ -142,13 +142,13 @@ const ro: typeof en = {
   'landing.pillars.convert.body': 'Fara formulare care nu duc nicaieri. Fara "contactati-ne" fara raspuns. Vizitatorii iti vad munca, inteleg valoarea ta si isi fac o programare. Totul intr-un singur flux, totul configurat pentru tine.',
 
   // Manifesto
-  'landing.manifesto.title': 'De ce Flowstarter',
-  'landing.manifesto.headline': 'Informatia e gratuita. Expertiza nu.',
-  'landing.manifesto.p1': 'Oricine poate cauta pe Google un raspuns. Oricine poate intreba un AI. Dar nimeni nu poate cauta pe Google 15 ani in care ai vazut pacienti vindecandu-se, clienti depasind-si limitele, sau momentul exact in care trebuie sa insisti si cand sa te opresti.',
-  'landing.manifesto.p2': 'Cunoasterea asta traieste in oameni, nu pe internet. Si totusi, internetul trateaza pe toata lumea la fel. Terapeutul cu un deceniu de practica clinica arata identic cu cineva care a citit trei articole si si-a cumparat un template.',
-  'landing.manifesto.p3': 'Am creat Flowstarter pentru ca noi credem ca expertii reali merita sa fie gasiti. Nu ingropati sub trucuri SEO si continut generat de AI. Nu in competitie pe cine are un homepage mai stralucitor.',
-  'landing.manifesto.p4': 'Construim prezente online care reflecta expertiza reala. Un profesionist pe rand. Fara template-uri. Fara DIY. Doar povestea ta, spusa cum trebuie, cu un drum clar de la "te-am gasit" la "am rezervat."',
-  'landing.manifesto.closing': 'Lumea are destui experti falsi. Hai sa ne asiguram ca cei reali sunt imposibil de ratat.',
+  'landing.manifesto.title': 'Misiunea noastra',
+  'landing.manifesto.headline': 'Fiecare expert real merita sa fie gasit.',
+  'landing.manifesto.p1': 'Ai petrecut ani invatand lucruri care nu se gasesc pe Google. Cum sa citesti o situatie. Cand sa insisti si cand sa asculti. Diferenta dintre sfatul din manual si ceea ce functioneaza cu adevarat. Genul asta de cunoastere vine doar din munca, zi de zi, client dupa client.',
+  'landing.manifesto.p2': 'Dar online, nimic din asta nu se vede. Internetul nu rasplateste profunzimea. Rasplateste pe cine posteaza cel mai mult, promoveaza cel mai tare si arata cel mai bine. Oamenii care chiar au nevoie de ajutorul tau? Trec pe langa tine fara sa te observe.',
+  'landing.manifesto.p3': 'Am construit Flowstarter pentru ca noi credem ca prezenta ta online ar trebui sa reflecte expertiza ta reala. Nu un template completat la miezul noptii. Nu un placeholder pe care tot vrei sa-l schimbi. O reprezentare reala a cine esti, ce faci si de ce conteaza.',
+  'landing.manifesto.p4': 'Un singur apel si ne ocupam de tot. Website-ul tau, sistemul de programari, tot setup-ul. Ca tu sa te intorci la ceea ce faci cu adevarat bine: sa ajuti oameni. Prezenta ta online continua sa lucreze in timp ce tu faci acelasi lucru.',
+  'landing.manifesto.closing': 'Expertiza ta a schimbat vieti. Acum lasa oamenii sa te gaseasca.',
 
 };
 

@@ -49,7 +49,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
   return (
     <div className="mb-8">
       {/* Desktop: horizontal timeline */}
-      <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {milestones.map((m, i) => {
           const isActive = m.status === 'active';
           const isCompleted = m.status === 'completed';
@@ -60,13 +60,13 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
             <div key={i} className="relative">
               {/* Connector line - only on desktop 4-col layout */}
               {i < milestones.length - 1 && (
-                <div className="hidden lg:block absolute top-[36px] left-[calc(50%+28px)] -right-3 h-[2px] z-10">
+                <div className="hidden lg:block absolute top-[28px] left-[calc(50%+20px)] -right-4 h-[2px] z-10">
                   <div className={`h-full rounded-full ${isCompleted ? 'bg-gradient-to-r from-green-400/50 to-green-400/30' : 'bg-gray-200 dark:bg-white/10'}`} />
                 </div>
               )}
               
               <div className={`
-                relative p-4 flex flex-col items-center text-center transition-all duration-300 rounded-2xl
+                relative p-3 flex flex-col items-center text-center transition-all duration-300 rounded-xl
                 ${isActive 
                   ? 'bg-white/70 dark:bg-white/[0.05] ring-2 ring-[var(--purple)]/30 shadow-[0_8px_24px_rgba(77,93,217,0.12)]' 
                   : isCompleted 
@@ -74,24 +74,24 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
                   : 'bg-white/35 dark:bg-white/[0.015] shadow-[0_2px_8px_rgba(0,0,0,0.02)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.1)] opacity-70'}
               `}>
                 <div className={`
-                  w-10 h-10 rounded-xl flex items-center justify-center mb-2.5 transition-all
+                  w-8 h-8 rounded-lg flex items-center justify-center mb-2 transition-all
                   ${isActive 
-                    ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white shadow-lg shadow-[var(--purple)]/25' 
+                    ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white shadow-md shadow-[var(--purple)]/25' 
                     : isCompleted 
                     ? 'bg-green-500/15 text-green-600 dark:text-green-400' 
                     : 'bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-white/30'}
                 `}>
-                  {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : isLocked ? <Lock className="w-4 h-4" /> : <Icon className="w-5 h-5" />}
+                  {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : isLocked ? <Lock className="w-3.5 h-3.5" /> : <Icon className="w-4 h-4" />}
                 </div>
-                <span className={`text-[10px] font-semibold uppercase tracking-wider mb-1 ${
+                <span className={`text-[9px] font-semibold uppercase tracking-wider mb-0.5 ${
                   isActive ? 'text-[var(--purple)]' : isCompleted ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-white/40'
                 }`}>
                   {t('dashboard.stepper.milestone', { number: i + 1 })}
                 </span>
-                <h3 className={`text-sm font-semibold mb-0.5 ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
+                <h3 className={`text-xs font-semibold mb-0.5 ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
                   {m.title}
                 </h3>
-                <p className={`text-[11px] leading-relaxed ${isLocked ? 'text-gray-400 dark:text-white/30' : 'text-gray-500 dark:text-white/50'}`}>
+                <p className={`text-[10px] leading-snug ${isLocked ? 'text-gray-400 dark:text-white/30' : 'text-gray-500 dark:text-white/50'}`}>
                   {m.desc}
                 </p>
               </div>

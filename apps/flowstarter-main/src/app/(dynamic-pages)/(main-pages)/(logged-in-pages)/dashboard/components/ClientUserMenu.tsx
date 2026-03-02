@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useTranslations } from '@/lib/i18n';
 import { useClerk, useUser } from '@clerk/nextjs';
-import { LogOut, Settings, User } from 'lucide-react';
+import { ChevronDown, LogOut, Settings, User } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -67,7 +67,7 @@ export function ClientUserMenu() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="relative h-9 w-9 rounded-full p-0 hover:opacity-90 transition-opacity focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="relative h-9 rounded-full p-0 pl-0 pr-1 flex items-center gap-1 hover:opacity-90 transition-opacity focus-visible:ring-0 focus-visible:ring-offset-0"
         >
           {user.imageUrl ? (
             <Image
@@ -82,6 +82,7 @@ export function ClientUserMenu() {
               {getInitials()}
             </div>
           )}
+          <ChevronDown className="w-3.5 h-3.5 text-gray-400 dark:text-white/40" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent

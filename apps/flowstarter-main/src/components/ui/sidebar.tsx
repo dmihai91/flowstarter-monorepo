@@ -6,7 +6,6 @@ import { useTranslations } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/ui/logo';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { ClientUserMenu } from '@/app/(dynamic-pages)/(main-pages)/(logged-in-pages)/dashboard/components/ClientUserMenu';
 import {
   Calendar,
   HelpCircle,
@@ -267,10 +266,6 @@ export function Sidebar() {
         {/* Always show labels on mobile */}
         <SidebarContent forceExpanded />
 
-        {/* Profile at bottom */}
-        <div className="px-4 py-3 border-t border-gray-200/50 dark:border-white/5">
-          <ClientUserMenu />
-        </div>
       </aside>
 
       {/* Desktop/Tablet sidebar - Glassmorphism */}

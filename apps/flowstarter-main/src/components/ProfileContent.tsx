@@ -176,9 +176,9 @@ export function ProfileContent() {
   };
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-6">
+    <div className="max-w-xl mx-auto px-4 py-4">
       {/* Header with avatar */}
-      <div className="flex items-center gap-5 mb-8">
+      <div className="flex items-center gap-5 mb-5">
         <div className="relative group">
           {user.imageUrl ? (
             <Image
@@ -213,7 +213,7 @@ export function ProfileContent() {
 
       {/* Status message */}
       {message && (
-        <div className={`mb-6 px-4 py-3 rounded-xl text-sm font-medium ${
+        <div className={`mb-4 px-4 py-3 rounded-xl text-sm font-medium ${
           message.type === 'success' 
             ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800/30' 
             : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800/30'
@@ -223,7 +223,7 @@ export function ProfileContent() {
       )}
 
       {/* Personal Info Card */}
-      <div className="rounded-2xl bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl border border-gray-200/50 dark:border-white/10 shadow-sm p-5 sm:p-6 mb-4">
+      <div className="rounded-2xl bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl border border-gray-200/50 dark:border-white/10 shadow-sm p-4 sm:p-5 mb-3">
         <h2 className="text-xs font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider mb-1">
           {t('profile.personalInformation.title')}
         </h2>

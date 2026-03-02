@@ -1,9 +1,3 @@
-export { BenefitsSection } from './BenefitsSection';
-export { CTASection } from './CTASection';
-export { FeaturesSection } from './FeaturesSection';
-export { HeroSection } from './HeroSection';
-export { HowItWorksSection } from './HowItWorksSection';
+// Landing page section components
 export { PricingSection } from './PricingSection';
-export { SmoothScrollLink } from './SmoothScrollLink';
-export { TemplatesSection } from './TemplatesSection';
-export { TestimonialsSection } from './TestimonialsSection';
+export { ProjectsList } from './ProjectsList';

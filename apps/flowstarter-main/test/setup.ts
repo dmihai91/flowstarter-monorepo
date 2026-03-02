@@ -1,4 +1,4 @@
-import { expect, afterEach } from 'vitest';
+import { expect, afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import * as matchers from '@testing-library/jest-dom/matchers';
 import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
@@ -15,3 +15,6 @@ declare module 'vitest' {
 afterEach(() => {
   cleanup();
 });
+
+// Mock server-only for tests (it throws in client environments)
+vi.mock('server-only', () => ({}));

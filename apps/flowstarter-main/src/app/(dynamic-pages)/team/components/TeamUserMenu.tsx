@@ -88,8 +88,7 @@ export function TeamUserMenu() {
       <DropdownMenuContent
         align="end"
         sideOffset={8}
-        hideArrow={false}
-        className="min-w-56 bg-white/70 dark:bg-[rgba(40,40,55,0.65)] backdrop-blur-2xl backdrop-saturate-150 border-white/50 dark:border-white/15"
+        className="min-w-56"
       >
         {/* Profile Header */}
         <div className="px-3 py-3 border-b border-gray-200 dark:border-white/10">

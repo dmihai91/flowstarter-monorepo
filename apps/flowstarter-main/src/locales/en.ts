@@ -980,9 +980,11 @@ const en = {
     'Account → Admin Management → Single Sign-On → Personal Access Tokens',
   'integrations.calendly.eventUrl': 'Event URL',
   'integrations.calendly.eventUrlPlaceholder':
+    'https://calendly.com/your-username/meeting',
   'integrations.calendly.eventUrlHelp':
     'Copy an event scheduling link, e.g., https://calendly.com/your-username/30min',
   'integrations.calendly.tutorialUrl':
+    'https://www.youtube.com/watch?v=calendly-tutorial',
   // Calendly setup guide
   'integrations.calendly.setup.title': 'Setup Calendly',
   'integrations.calendly.setup.steps':

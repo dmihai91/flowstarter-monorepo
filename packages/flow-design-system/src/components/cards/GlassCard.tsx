@@ -14,9 +14,9 @@ export interface GlassCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'ch
 }
 
 const bgByVariant = {
-  default: 'bg-white/85 dark:bg-white/[0.04]',
-  elevated: 'bg-white/92 dark:bg-white/[0.06]',
-  subtle: 'bg-white/70 dark:bg-white/[0.02]',
+  default: 'bg-white/95 dark:bg-white/[0.04]',
+  elevated: 'bg-white/[0.98] dark:bg-white/[0.06]',
+  subtle: 'bg-white/90 dark:bg-white/[0.02]',
 } as const;
 
 const shadowByVariant = {
@@ -58,7 +58,7 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
       // Glassmorphism
       bgByVariant[variant],
       'backdrop-blur-2xl',
-      'border border-white/20 dark:border-white/10',
+      'border border-gray-200/60 dark:border-white/10',
       // Shadow
       shadowByVariant[variant],
       // Transitions

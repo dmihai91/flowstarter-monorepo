@@ -3,6 +3,7 @@
 import { FeedbackDialog } from '@/components/FeedbackDialog';
 import { useSidebar } from '@/contexts/SidebarContext';
 import { useTranslations } from '@/lib/i18n';
+import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/ui/logo';
 import { ThemeToggle } from '@/components/ui/theme-toggle';

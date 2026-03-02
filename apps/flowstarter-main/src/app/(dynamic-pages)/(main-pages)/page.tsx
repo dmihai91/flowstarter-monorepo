@@ -942,19 +942,19 @@ export default function LandingPage() {
                       </span>
                     </div>
                     {/* Right: pricing card */}
-                    <div className="flex flex-col items-center px-5 py-4 rounded-2xl bg-amber-50/70 dark:bg-amber-500/[0.06] backdrop-blur-2xl border border-amber-400/20 dark:border-amber-500/15 shadow-[0_1px_0_rgba(255,255,255,0.9)_inset,0_-1px_0_rgba(180,130,0,0.06)_inset,0_8px_24px_rgba(245,158,11,0.1),0_2px_6px_rgba(0,0,0,0.03)] dark:shadow-[0_1px_0_rgba(255,200,50,0.08)_inset,0_-1px_0_rgba(0,0,0,0.2)_inset,0_8px_24px_rgba(245,158,11,0.08),0_2px_6px_rgba(0,0,0,0.15)] w-full sm:w-[220px] sm:ml-auto">
-                      <span className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-3">🔥 Launch price</span>
+                    <div className="flex flex-col items-center px-6 py-5 rounded-2xl bg-gradient-to-b from-amber-50/80 to-amber-100/40 dark:from-amber-500/[0.08] dark:to-amber-600/[0.03] backdrop-blur-2xl backdrop-saturate-150 border border-amber-300/25 dark:border-amber-500/10 shadow-[0_1px_0_rgba(255,255,255,1)_inset,0_-1px_0_rgba(180,130,0,0.05)_inset,0_8px_28px_rgba(245,158,11,0.08),0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_1px_0_rgba(255,200,50,0.06)_inset,0_-1px_0_rgba(0,0,0,0.15)_inset,0_8px_28px_rgba(245,158,11,0.06),0_2px_8px_rgba(0,0,0,0.12)] w-full sm:w-[230px] sm:ml-auto transition-all duration-300 hover:shadow-[0_1px_0_rgba(255,255,255,1)_inset,0_-1px_0_rgba(180,130,0,0.05)_inset,0_12px_36px_rgba(245,158,11,0.12),0_4px_12px_rgba(0,0,0,0.04)]">
+                      <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-[0.15em] mb-3 opacity-80">🔥 Launch price</span>
                       <div className="flex flex-col gap-0.5 w-full items-center">
                         <div className="flex items-baseline gap-2 justify-center">
-                          <span className="text-sm line-through text-gray-400 dark:text-white/30 font-medium">€599</span>
-                          <span className="text-lg font-extrabold text-gray-800 dark:text-white/90">{t('landing.hero.priceBuild')}</span>
-                          <span className="text-xs text-gray-400 dark:text-white/40">setup</span>
+                          <span className="text-xs line-through text-gray-400/70 dark:text-white/25 font-medium">€599</span>
+                          <span className="text-xl font-extrabold text-gray-900 dark:text-white">{t('landing.hero.priceBuild')}</span>
+                          <span className="text-[10px] text-gray-400 dark:text-white/35 font-medium uppercase tracking-wide">setup</span>
                         </div>
-                        <div className="w-full h-px bg-amber-500/25 my-3" />
+                        <div className="w-3/4 h-px bg-gradient-to-r from-transparent via-amber-400/30 to-transparent my-3" />
                         <div className="flex items-baseline gap-2 justify-center">
-                          <span className="text-sm line-through text-gray-400 dark:text-white/30 font-medium">€59</span>
-                          <span className="text-lg font-extrabold text-gray-800 dark:text-white/90">{t('landing.hero.priceMonthly')}</span>
-                          <span className="text-xs text-gray-400 dark:text-white/40">/ month</span>
+                          <span className="text-xs line-through text-gray-400/70 dark:text-white/25 font-medium">€59</span>
+                          <span className="text-xl font-extrabold text-gray-900 dark:text-white">{t('landing.hero.priceMonthly')}</span>
+                          <span className="text-[10px] text-gray-400 dark:text-white/35 font-medium">/ mo</span>
                         </div>
                       </div>
                     </div>

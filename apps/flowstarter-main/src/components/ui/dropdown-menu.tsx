@@ -63,13 +63,14 @@ function DropdownMenuContent({
         {!hideArrow && (
           <div
             className={cn(
-              'absolute -top-[6px] w-3 h-3 rotate-45 rounded-tl-[2px]',
-              'bg-white dark:bg-[#2b2b3a] shadow-[0_-1px_2px_rgba(0,0,0,0.04)]',
-              align === 'end' && 'right-3.5',
-              align === 'start' && 'left-3.5',
+              'absolute -top-[5px] w-4 h-[6px] overflow-hidden',
+              align === 'end' && 'right-3',
+              align === 'start' && 'left-3',
               align === 'center' && 'left-1/2 -translate-x-1/2'
             )}
-          />
+          >
+            <div className="w-3 h-3 mx-auto rotate-45 -mt-[6px] bg-white/70 dark:bg-[#2b2b3a]/90 backdrop-blur-xl border-t border-l border-white/60 dark:border-white/10" />
+          </div>
         )}
         {props.children}
       </DropdownMenuPrimitive.Content>

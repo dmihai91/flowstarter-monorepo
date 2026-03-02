@@ -264,7 +264,7 @@ function DashboardSkeleton() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto animate-pulse">
       {/* Greeting */}
-      <div className="mt-8 mb-8">
+      <div className="mt-4 mb-6">
         <div className="h-4 w-40 bg-gray-200 dark:bg-white/10 rounded-lg mb-3" />
         <div className="h-9 w-56 bg-gray-200 dark:bg-white/10 rounded-lg" />
       </div>
@@ -348,7 +348,7 @@ export default function DashboardPage() {
 
         <DashboardInit>
           {/* Greeting */}
-          <div className="mt-8 mb-8">
+          <div className="mt-4 mb-6">
             <p className="text-base sm:text-lg text-gray-500 dark:text-white/50 mb-1">
               {greeting},{' '}
               <span className="text-gray-700 dark:text-white/70 font-medium">{firstName}</span>

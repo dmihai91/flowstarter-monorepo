@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, type ReactNode, type HTMLAttributes } from 'react';
+import { useState, useEffect, useRef, type ReactNode, type HTMLAttributes } from 'react';
 
 export interface ScrollAwareHeaderProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode;
@@ -18,17 +18,25 @@ export function ScrollAwareHeader({
   ...props
 }: ScrollAwareHeaderProps) {
   const [scrolled, setScrolled] = useState(false);
+  const ticking = useRef(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > threshold);
-    onScroll(); // check on mount
+    const onScroll = () => {
+      if (ticking.current) return;
+      ticking.current = true;
+      requestAnimationFrame(() => {
+        setScrolled(window.scrollY > threshold);
+        ticking.current = false;
+      });
+    };
+    onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, [threshold]);
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? scrolledClass : transparentClass} ${className}`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,box-shadow] duration-300 ease-out ${scrolled ? scrolledClass : transparentClass} ${className}`}
       {...props}
     >
       {children}

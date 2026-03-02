@@ -228,7 +228,8 @@ export function ProfileContent() {
           {t('profile.personalInformation.title')}
         </h2>
         <div className="divide-y divide-gray-100 dark:divide-white/5">
-          <InfoRow icon={User} label={t('profile.personalInformation.fullName')} value={`${user.firstName || ''} ${user.lastName || ''}`.trim() || '—'} field="firstName" editable />
+          <InfoRow icon={User} label="First Name" value={user.firstName || '—'} field="firstName" editable />
+          <InfoRow icon={User} label="Last Name" value={user.lastName || '—'} field="lastName" editable />
           <InfoRow icon={Mail} label={t('profile.personalInformation.primaryEmail')} value={primaryEmail || '—'} field="email" editable />
           <InfoRow icon={Shield} label={t('profile.personalInformation.userId')} value={user.id} />
         </div>

@@ -2499,8 +2499,8 @@ const en = {
 
   // Landing Page - Hero
   'landing.hero.badge': 'We launch it. You own it.',
-  'landing.hero.headline1': 'We build your website.',
-  'landing.hero.headline2': 'You control it forever.',
+  'landing.hero.headline1': 'Your expertise is real.',
+  'landing.hero.headline2': 'Your online presence should be too.',
   'landing.hero.pain':
     'We design, build, and launch a professional website for your business. After launch, update anything yourself with a smart editor. No developers, no delays, no dependencies.',
   'landing.hero.subheadline':

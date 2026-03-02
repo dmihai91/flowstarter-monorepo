@@ -14,9 +14,9 @@ export interface GlassCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'ch
 }
 
 const bgByVariant = {
-  default: 'bg-white/60 dark:bg-white/[0.04]',
-  elevated: 'bg-white/80 dark:bg-white/[0.06]',
-  subtle: 'bg-white/40 dark:bg-white/[0.02]',
+  default: 'bg-white/85 dark:bg-white/[0.04]',
+  elevated: 'bg-white/92 dark:bg-white/[0.06]',
+  subtle: 'bg-white/70 dark:bg-white/[0.02]',
 } as const;
 
 const shadowByVariant = {

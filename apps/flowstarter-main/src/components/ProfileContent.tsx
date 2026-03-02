@@ -176,7 +176,7 @@ export function ProfileContent() {
   };
 
   return (
-    <div className="max-w-xl mx-auto px-4 min-h-[calc(100vh-4rem)] flex flex-col justify-center">
+    <div className="max-w-xl mx-auto px-4 py-6">
       {/* Header with avatar */}
       <div className="flex items-center gap-5 mb-8">
         <div className="relative group">

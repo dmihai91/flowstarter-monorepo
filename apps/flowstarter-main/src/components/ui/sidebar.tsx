@@ -200,35 +200,23 @@ export function Sidebar() {
           {supportItems.map((item) => (
             <NavLink 
               key={item.href} 
-              href={item.href}
+              href={item.href === '#feedback' ? '#' : item.href}
               icon={item.icon}
               label={item.title}
               external={item.external}
-              onClick={() => setIsMobileOpen(false)}
+              onClick={() => {
+                if (item.href === '#feedback') {
+                  setIsFeedbackOpen(true);
+                }
+                setIsMobileOpen(false);
+              }}
               showLabel={showLabel}
             />
           ))}
         </div>
       </div>
 
-      {/* Spacer */}
-      <div className="flex-1 min-h-0" />
 
-      {/* Feedback */}
-      <div className="border-t border-white/10 pt-3 pb-2">
-        <button
-          onClick={() => setIsFeedbackOpen(true)}
-          title={effectiveCollapsed ? t('sidebar.feedback') : undefined}
-          className={cn(
-            'flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
-            'text-gray-600 dark:text-white/60 hover:bg-white/55 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
-            effectiveCollapsed && 'justify-center !px-2'
-          )}
-        >
-          <MessageSquare className="w-4 h-4 flex-shrink-0" />
-          {showLabel && <span className="truncate">{t('sidebar.feedback')}</span>}
-        </button>
-      </div>
 
     </div>
     );

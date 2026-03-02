@@ -1,7 +1,5 @@
 'use client';
 
-import Footer from '@/components/Footer';
-import { SupportHeader } from '@/components/SupportHeader';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, Wrench, Rocket, Phone, Mail } from 'lucide-react';
 import Link from 'next/link';
@@ -131,8 +129,7 @@ export default function HelpPage() {
           </svg>
         </div>
 
-        <SupportHeader />
-
+  
         {/* Content */}
         <main className="relative z-10 max-w-5xl mx-auto px-6 py-16">
           {/* Hero */}
@@ -301,8 +298,7 @@ export default function HelpPage() {
           </div>
         </main>
 
-        <Footer />
-      </div>
+        </div>
     </>
   );
 }

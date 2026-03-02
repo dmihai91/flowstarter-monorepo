@@ -516,7 +516,7 @@ export default function LandingPage() {
         @keyframes heroFadeUp {
           from {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(12px);
           }
           to {
             opacity: 1;
@@ -525,7 +525,7 @@ export default function LandingPage() {
         }
         .hero-fade {
           opacity: 0;
-          animation: heroFadeUp 0.8s ease-out forwards;
+          animation: heroFadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         .hero-fade-1 { animation-delay: 0.1s; }
         .hero-fade-2 { animation-delay: 0.3s; }
@@ -1470,8 +1470,8 @@ export default function LandingPage() {
 
         {/* Three Pillars Section */}
         <section data-section="pillars" className="py-16 lg:py-24 relative">
-          <div className={`max-w-6xl mx-auto px-6 transition-all duration-500 ${
-            visibleSections.has('pillars') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          <div className={`max-w-6xl mx-auto px-6 transition-all duration-1000 ease-out ${
+            visibleSections.has('pillars') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}>
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -2197,8 +2197,8 @@ export default function LandingPage() {
 
         {/* Manifesto Section */}
         <section data-section="manifesto" className="py-20 lg:py-32 relative border-t border-gray-100 dark:border-white/5">
-          <div className={`max-w-3xl mx-auto px-6 transition-all duration-500 ${
-            visibleSections.has('manifesto') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          <div className={`max-w-3xl mx-auto px-6 transition-all duration-1000 ease-out ${
+            visibleSections.has('manifesto') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}>
             <div className="text-center mb-12">
               <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase text-[var(--purple)] mb-6">

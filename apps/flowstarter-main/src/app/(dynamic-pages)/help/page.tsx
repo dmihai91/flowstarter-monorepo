@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { MessageCircle, Wrench, Rocket, Phone, Mail } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { EXTERNAL_URLS } from '@/lib/constants';
 
-const CALENDLY_URL = 'https://calendly.com/flowstarter-app/discovery';
 
 const faqs = [
   {
@@ -165,7 +165,7 @@ export default function HelpPage() {
           {/* Quick Actions */}
           <div className="grid sm:grid-cols-2 gap-4 mb-16">
             <a
-              href={CALENDLY_URL}
+              href={EXTERNAL_URLS.calendly.discovery}
               target="_blank"
               rel="noopener noreferrer"
               className="p-6 rounded-2xl bg-gradient-to-br from-[var(--purple)]/10 to-blue-500/10 border border-[var(--purple)]/20 hover:border-[var(--purple)]/40 transition-all group"
@@ -280,7 +280,7 @@ export default function HelpPage() {
             <p className="text-gray-500 dark:text-white/50 mb-6">
               Book a free discovery call and let's build your website together.
             </p>
-            <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
+            <a href={EXTERNAL_URLS.calendly.discovery} target="_blank" rel="noopener noreferrer">
               <Button className="bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-xl px-8 h-12 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300">
                 Book Free Discovery Call
                 <svg

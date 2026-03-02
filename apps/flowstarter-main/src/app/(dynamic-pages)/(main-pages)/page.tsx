@@ -8,8 +8,8 @@ import Footer from '@/components/Footer';
 import { CookieConsent } from '@/components/CookieConsent';
 import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
+import { EXTERNAL_URLS } from '@/lib/constants';
 
-const CALENDLY_URL = 'https://calendly.com/flowstarter-app/discovery';
 
 export default function LandingPage() {
   const { t } = useI18n();
@@ -125,7 +125,7 @@ export default function LandingPage() {
           },
         ]);
         setTimeout(() => {
-          window.open(CALENDLY_URL, '_blank');
+          window.open(EXTERNAL_URLS.calendly.discovery, '_blank');
         }, 1500);
       }, 800);
       return;
@@ -727,7 +727,7 @@ export default function LandingPage() {
                   Sign In
                 </Link>
                 <a
-                  href={CALENDLY_URL}
+                  href={EXTERNAL_URLS.calendly.discovery}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hidden sm:block"
@@ -829,7 +829,7 @@ export default function LandingPage() {
                   Sign In
                 </Link>
                 <a
-                  href={CALENDLY_URL}
+                  href={EXTERNAL_URLS.calendly.discovery}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileMenuOpen(false)}
@@ -915,7 +915,7 @@ export default function LandingPage() {
                     {/* Left: button + note stacked tightly */}
                     <div className="flex flex-col items-center sm:items-start gap-1.5 pt-2 sm:pt-0 sm:-mt-3">
                       <a
-                        href={CALENDLY_URL}
+                        href={EXTERNAL_URLS.calendly.discovery}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -2052,7 +2052,7 @@ export default function LandingPage() {
 
                 {/* CTA */}
                 <a
-                  href={CALENDLY_URL}
+                  href={EXTERNAL_URLS.calendly.discovery}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block"
@@ -2349,7 +2349,7 @@ export default function LandingPage() {
             <p className="text-lg text-gray-600 dark:text-white/50 mb-10 max-w-md mx-auto">
               {t('landing.cta.subtitle')}
             </p>
-            <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="inline-flex justify-center w-full sm:w-auto">
+            <a href={EXTERNAL_URLS.calendly.discovery} target="_blank" rel="noopener noreferrer" className="inline-flex justify-center w-full sm:w-auto">
               <Button className="relative overflow-hidden w-full sm:w-auto bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700 bg-[length:200%_auto] animate-gradient text-white hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] dark:hover:shadow-[0_0_50px_rgba(59,130,246,0.6)] rounded-lg px-12 h-16 text-lg font-semibold shadow-xl shadow-blue-500/30 transition-all duration-300 hover:scale-105">
                 {t('landing.cta.button')}
                 <svg

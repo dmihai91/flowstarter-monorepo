@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
+import { EXTERNAL_URLS } from '@/lib/constants';
   BarChart3,
   Calendar,
   Check,
@@ -24,7 +25,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-const CALENDLY_URL = 'https://calendly.com/flowstarter-app/discovery';
 
 export function PricingSection() {
   const starterFeatures = [
@@ -159,7 +159,7 @@ export function PricingSection() {
 
                 {/* CTA */}
                 <a
-                  href={CALENDLY_URL}
+                  href={EXTERNAL_URLS.calendly.discovery}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block w-full text-center py-3 px-6 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"

@@ -9,6 +9,7 @@ import { DashboardMessages } from './components/DashboardMessages';
 import { DashboardStatsClientFetcher } from './components/DashboardStatsClientFetcher';
 import { DashboardWrapper } from './components/DashboardWrapper';
 import { 
+import { EXTERNAL_URLS } from '@/lib/constants';
   Compass, Palette, Code2, Rocket, 
   CheckCircle2, Lock, ArrowRight,
   Sparkles, MessageSquarePlus, Upload
@@ -16,7 +17,6 @@ import {
 
 export const dynamic = 'force-dynamic';
 
-const CALENDLY_URL = 'https://calendly.com/flowstarter-app/discovery';
 
 const glassCard = 'rounded-2xl border border-transparent bg-white/60 dark:bg-white/[0.03] backdrop-blur-2xl shadow-[0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.04)_inset,0_4px_16px_rgba(0,0,0,0.05),0_1px_3px_rgba(0,0,0,0.03)] dark:shadow-[0_1px_0_rgba(255,255,255,0.06)_inset,0_-1px_0_rgba(0,0,0,0.2)_inset,0_4px_16px_rgba(0,0,0,0.25),0_1px_3px_rgba(0,0,0,0.15)]';
 
@@ -221,7 +221,7 @@ function PrimaryAction({ hasAnyProject, hasLiveProject }: { hasAnyProject: boole
             </p>
           </div>
           <a
-            href={CALENDLY_URL}
+            href={EXTERNAL_URLS.calendly.discovery}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--purple)] text-white text-sm font-semibold transition-all hover:shadow-lg hover:shadow-[var(--purple)]/25 hover:scale-[1.02] whitespace-nowrap"
@@ -286,7 +286,7 @@ function PrimaryAction({ hasAnyProject, hasLiveProject }: { hasAnyProject: boole
             {t('dashboard.stats.buildPhaseActive')}
           </span>
           <a
-            href={CALENDLY_URL}
+            href={EXTERNAL_URLS.calendly.discovery}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white text-sm font-medium hover:bg-gray-200 dark:hover:bg-white/15 transition-all whitespace-nowrap"

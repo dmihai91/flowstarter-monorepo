@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AppLoader } from '@/components/ui/app-loading';
 import { getInitials } from '@/lib/user-utils';
+import { formatDate } from '@/lib/format-utils';
 import { useTranslations } from '@/lib/i18n';
 import { useUser } from '@clerk/nextjs';
 import { Pencil, Check, X, Mail, User, Calendar, Shield, Camera } from 'lucide-react';

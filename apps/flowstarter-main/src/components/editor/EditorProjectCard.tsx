@@ -1,3 +1,4 @@
+import { formatDate } from '@/lib/format-utils';
 'use client';
 
 import { Card, StatusDot } from '@flowstarter/flow-design-system';
@@ -44,7 +45,7 @@ export function EditorProjectCard({ project }: { project: EditorProject }) {
             </p>
           )}
           <p className="text-xs text-[var(--flow-text-muted)]">
-            {new Date(project.createdAt).toLocaleDateString()}
+            {formatDate(project.createdAt)}
           </p>
         </div>
       </Card>

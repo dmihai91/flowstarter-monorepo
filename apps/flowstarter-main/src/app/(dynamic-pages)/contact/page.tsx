@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { useContactForm } from '@/hooks/useContactForm';
 import Link from 'next/link';
 import { useState } from 'react';
+import { EXTERNAL_URLS } from '@/lib/constants';
 
-const CALENDLY_URL = 'https://calendly.com/flowstarter-app/discovery';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -297,7 +297,7 @@ export default function ContactPage() {
                   person.
                 </p>
                 <a
-                  href={CALENDLY_URL}
+                  href={EXTERNAL_URLS.calendly.discovery}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

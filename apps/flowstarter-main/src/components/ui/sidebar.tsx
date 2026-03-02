@@ -2,6 +2,7 @@
 
 import { FeedbackDialog } from '@/components/FeedbackDialog';
 import { useSidebar } from '@/contexts/SidebarContext';
+import { EXTERNAL_URLS } from '@/lib/constants';
 import { useTranslations } from '@/lib/i18n';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { cn } from '@/lib/utils';
@@ -22,8 +23,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
-const CALENDLY_DISCOVERY_URL = 'https://calendly.com/flowstarter-app/discovery';
-const CALENDLY_CHECKIN_URL = 'https://calendly.com/flowstarter-app/check-in';
 
 interface SidebarItem {
   title: string;
@@ -57,7 +56,7 @@ export function Sidebar() {
   const supportItems: SidebarItem[] = [
     {
       title: hasProject ? t('sidebar.scheduleCheckin') : t('sidebar.bookFreeCall'),
-      href: hasProject ? CALENDLY_CHECKIN_URL : CALENDLY_DISCOVERY_URL,
+      href: hasProject ? EXTERNAL_URLS.calendly.checkIn : EXTERNAL_URLS.calendly.discovery,
       icon: Calendar,
       external: true,
     },

@@ -2,13 +2,13 @@
 
 import { useUser } from '@clerk/nextjs';
 import {
+import { EXTERNAL_URLS } from '@/lib/constants';
   useScrollAnimation,
   getStaggeredAnimation,
 } from '@/hooks/useScrollAnimation';
 import { Calendar, CheckCircle2, Globe, Lock, Sparkles } from 'lucide-react';
 import React from 'react';
 
-const CALENDLY_URL = 'https://calendly.com/flowstarter-app/discovery';
 
 // Feature flag
 const SHOW_CREATE_FEATURES = false;
@@ -189,7 +189,7 @@ function OnboardingStepper() {
                   {/* Active step CTA - Navy gradient */}
                   {isActive ? (
                     <a
-                      href={CALENDLY_URL}
+                      href={EXTERNAL_URLS.calendly.discovery}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-white text-sm font-semibold transition-all duration-300 hover:scale-[1.02]"
@@ -345,7 +345,7 @@ function OnboardingStepper() {
                   {/* Mobile CTA */}
                   {isActive && (
                     <a
-                      href={CALENDLY_URL}
+                      href={EXTERNAL_URLS.calendly.discovery}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="shrink-0 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-white text-xs font-semibold transition-all duration-300"

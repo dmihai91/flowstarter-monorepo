@@ -181,7 +181,6 @@ export function Sidebar() {
               icon={item.icon}
               label={item.title}
               exact={item.href === '/dashboard'}
-              onClick={() => setIsMobileOpen(false)}
               showLabel={showLabel}
             />
           ))}
@@ -203,12 +202,10 @@ export function Sidebar() {
               icon={item.icon}
               label={item.title}
               external={item.external}
-              onClick={() => {
-                if (item.href === '#feedback') {
-                  setIsFeedbackOpen(true);
-                }
+              onClick={item.href === '#feedback' ? () => {
+                setIsFeedbackOpen(true);
                 setIsMobileOpen(false);
-              }}
+              } : undefined}
               showLabel={showLabel}
             />
           ))}
@@ -244,7 +241,7 @@ export function Sidebar() {
       >
         {/* Mobile header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200/50 dark:border-white/5">
-          <Link href="/dashboard" onClick={() => setIsMobileOpen(false)}>
+          <Link href="/dashboard">
             <Logo size="sm" />
           </Link>
           <button

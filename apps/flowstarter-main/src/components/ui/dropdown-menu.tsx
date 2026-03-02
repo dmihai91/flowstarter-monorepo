@@ -61,23 +61,15 @@ function DropdownMenuContent({
         {...props}
       >
         {!hideArrow && (
-          <svg
+          <div
             className={cn(
-              'absolute -top-[7px] w-4 h-2 drop-shadow-sm',
-              align === 'end' && 'right-3',
-              align === 'start' && 'left-3',
+              'absolute -top-[6px] w-3 h-3 rotate-45 rounded-tl-[2px]',
+              'bg-white/95 dark:bg-[#2a2a35] border-l border-t border-gray-200/40 dark:border-white/10',
+              align === 'end' && 'right-3.5',
+              align === 'start' && 'left-3.5',
               align === 'center' && 'left-1/2 -translate-x-1/2'
             )}
-            viewBox="0 0 16 8"
-            fill="none"
-          >
-            <path
-              d="M8 0L16 8H0L8 0Z"
-              className="fill-white/90 dark:fill-[#2a2a35]/90"
-              stroke="rgba(0,0,0,0.08)"
-              strokeWidth="0.5"
-            />
-          </svg>
+          />
         )}
         {props.children}
       </DropdownMenuPrimitive.Content>

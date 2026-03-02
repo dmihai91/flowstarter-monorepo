@@ -14,7 +14,7 @@ export const dynamic = 'force-dynamic';
 const CALENDLY_URL = 'https://calendly.com/flowstarter-app/discovery';
 
 // Glassmorphism card style - shared with team dashboard
-const glassCard = 'rounded-2xl border-t border-l border-white/40 dark:border-white/[0.08] border-b border-r border-black/[0.04] dark:border-black/[0.2] bg-white/55 dark:bg-white/[0.03] backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.04),1px_1px_0_rgba(0,0,0,0.03)_inset,-1px_-1px_0_rgba(255,255,255,1)_inset,1px_1px_0_rgba(0,0,0,0.03)_inset,-1px_-1px_0_rgba(255,255,255,1)_inset,0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[0_8px_32px_rgba(0,0,0,0.35),0_2px_8px_rgba(0,0,0,0.2),1px_1px_0_rgba(0,0,0,0.3)_inset,-1px_-1px_0_rgba(255,255,255,0.08)_inset,0_1px_0_rgba(255,255,255,0.06)_inset]';
+const glassCard = 'rounded-2xl border border-gray-200/30 dark:border-white/[0.06] bg-white/60 dark:bg-white/[0.03] backdrop-blur-2xl shadow-[0_4px_16px_rgba(0,0,0,0.04),0_1px_4px_rgba(0,0,0,0.02)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.2),0_1px_4px_rgba(0,0,0,0.1)]';
 
 type StepStatus = 'completed' | 'active' | 'locked';
 

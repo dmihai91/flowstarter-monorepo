@@ -63,6 +63,41 @@ export default function TeamDashboardPage() {
     p.status === 'in_progress' || p.status === 'building' || p.status === 'draft'
   ).length || 0;
 
+
+  const createNewInEditor = () => {
+    setClientInfo({ name: '', email: '', phone: '' });
+    setShowClientModal(true);
+  };
+
+  const handleClientSubmit = async () => {
+    if (!clientInfo.name.trim() || !clientInfo.email.trim()) return;
+    setIsSendingToEditor(true);
+    try {
+      const res = await fetch('/api/editor/handoff', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectConfig: {
+            clientName: clientInfo.name,
+            clientEmail: clientInfo.email,
+            clientPhone: clientInfo.phone,
+          },
+          mode: 'interactive',
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        window.open(`${EDITOR_URL}?handoff=${data.token}`, '_blank');
+      } else {
+        window.open(EDITOR_URL, '_blank');
+      }
+    } catch {
+      window.open(EDITOR_URL, '_blank');
+    }
+    setIsSendingToEditor(false);
+    setShowClientModal(false);
+  };
+
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
       {/* Header Row */}

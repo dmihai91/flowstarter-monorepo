@@ -14,7 +14,6 @@ import {
   Puzzle,
   ChevronsLeft,
   ChevronsRight,
-  Menu,
   X,
   type LucideIcon,
 } from 'lucide-react';
@@ -95,6 +94,7 @@ export function Sidebar() {
     exact,
     external,
     onClick,
+    showLabel,
   }: { 
     href: string; 
     icon: LucideIcon; 
@@ -102,78 +102,64 @@ export function Sidebar() {
     exact?: boolean;
     external?: boolean;
     onClick?: () => void;
+    showLabel: boolean;
   }) => {
     const active = !external && isActive(href, exact);
     
-    const className = cn(
+    const cls = cn(
       'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
       active
         ? 'bg-[var(--purple)] text-white shadow-lg shadow-[var(--purple)]/25'
         : 'text-gray-600 dark:text-white/60 hover:bg-white/55 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
-      isCollapsed && 'justify-center !px-2'
+      !showLabel && 'justify-center !px-2'
     );
 
     const content = (
       <>
         <Icon className="w-4 h-4 flex-shrink-0" />
-        {!isCollapsed && <span className="truncate">{label}</span>}
+        {showLabel && <span className="truncate">{label}</span>}
       </>
     );
 
     if (external) {
       return (
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          title={isCollapsed ? label : undefined}
-          onClick={onClick}
-          className={className}
-        >
+        <a href={href} target="_blank" rel="noopener noreferrer" title={!showLabel ? label : undefined} onClick={onClick} className={cls}>
           {content}
         </a>
       );
     }
 
     return (
-      <Link
-        href={href}
-        title={isCollapsed ? label : undefined}
-        onClick={onClick}
-        className={className}
-      >
+      <Link href={href} title={!showLabel ? label : undefined} onClick={onClick} className={cls}>
         {content}
       </Link>
     );
   };
 
   const SidebarContent = ({ showToggle = false, forceExpanded = false }: { showToggle?: boolean; forceExpanded?: boolean }) => {
-    const effectiveCollapsed = forceExpanded ? false : isCollapsed;
+    const showLabel = forceExpanded ? true : !isCollapsed;
+    const effectiveCollapsed = !showLabel;
     return (
     <div className={cn("p-4 space-y-6 h-full overflow-y-auto flex flex-col", effectiveCollapsed && "items-center")}>
-      {/* Collapse Toggle - Top (hidden when collapsed) */}
-      {showToggle && !effectiveCollapsed && (
+      {/* Collapse Toggle - Desktop only, hidden when collapsed */}
+      {showToggle && showLabel && (
         <div className="w-full flex justify-end">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            title={effectiveCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            title="Collapse sidebar"
             className={cn(
               'p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:text-white/40 dark:hover:text-white/60',
               'hover:bg-white/55 dark:hover:bg-white/5 transition-all'
             )}
           >
-            {effectiveCollapsed ? (
-              <ChevronsRight className="w-4 h-4" />
-            ) : (
-              <ChevronsLeft className="w-4 h-4" />
-            )}
+            <ChevronsLeft className="w-4 h-4" />
           </button>
         </div>
       )}
 
       {/* Main Navigation */}
-      <div className={cn(isCollapsed && "w-full")}>
-        {!isCollapsed && (
+      <div className={cn(effectiveCollapsed && "w-full")}>
+        {showLabel && (
           <h3 className="px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
             {t('sidebar.main')}
           </h3>
@@ -187,14 +173,15 @@ export function Sidebar() {
               label={item.title}
               exact={item.href === '/dashboard'}
               onClick={() => setIsMobileOpen(false)}
+              showLabel={showLabel}
             />
           ))}
         </div>
       </div>
 
       {/* Support */}
-      <div className={cn(isCollapsed && "w-full")}>
-        {!isCollapsed && (
+      <div className={cn(effectiveCollapsed && "w-full")}>
+        {showLabel && (
           <h3 className="px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
             {t('sidebar.support')}
           </h3>
@@ -208,6 +195,7 @@ export function Sidebar() {
               label={item.title}
               external={item.external}
               onClick={() => setIsMobileOpen(false)}
+              showLabel={showLabel}
             />
           ))}
         </div>
@@ -220,7 +208,7 @@ export function Sidebar() {
       <div className="border-t border-white/10 pt-4">
         <button
           onClick={() => setIsFeedbackOpen(true)}
-          title={isCollapsed ? t('sidebar.feedback') : undefined}
+          title={effectiveCollapsed ? t('sidebar.feedback') : undefined}
           className={cn(
             'flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
             'text-gray-600 dark:text-white/60 hover:bg-white/55 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
@@ -228,7 +216,7 @@ export function Sidebar() {
           )}
         >
           <MessageSquare className="w-4 h-4 flex-shrink-0" />
-          {!effectiveCollapsed && <span className="truncate">{t('sidebar.feedback')}</span>}
+          {showLabel && <span className="truncate">{t('sidebar.feedback')}</span>}
         </button>
       </div>
 
@@ -238,16 +226,6 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Mobile menu button - shows on phones only */}
-      <button
-        onClick={() => setIsMobileOpen(true)}
-        className="hidden"
-        aria-label="Open menu"
-        style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
-      >
-        <Menu className="w-6 h-6" />
-      </button>
-
       {/* Mobile overlay */}
       {isMobileOpen && (
         <div
@@ -272,16 +250,20 @@ export function Sidebar() {
           <Link href="/dashboard" onClick={() => setIsMobileOpen(false)}>
             <Logo size="sm" />
           </Link>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <button
-              onClick={() => setIsMobileOpen(false)}
-              className="p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
+          <button
+            onClick={() => setIsMobileOpen(false)}
+            className="p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
+
+        {/* ThemeToggle on its own row */}
+        <div className="px-4 py-3 border-b border-gray-200/50 dark:border-white/5">
+          <ThemeToggle />
+        </div>
+
+        {/* Always show labels on mobile */}
         <SidebarContent forceExpanded />
       </aside>
 

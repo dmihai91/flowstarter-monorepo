@@ -68,7 +68,7 @@ export function TeamUserMenu() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="relative h-9 rounded-full p-0 pl-0 pr-1 flex items-center gap-1 hover:opacity-90 transition-opacity focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="relative h-9 w-9 rounded-full p-0 hover:opacity-90 transition-opacity focus-visible:ring-0 focus-visible:ring-offset-0"
         >
           {user.imageUrl ? (
             <Image
@@ -83,7 +83,6 @@ export function TeamUserMenu() {
               {getInitials()}
             </div>
           )}
-          <ChevronDown className="w-3.5 h-3.5 text-gray-400 dark:text-white/40" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent

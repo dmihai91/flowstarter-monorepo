@@ -171,11 +171,39 @@ export function ProfileContent() {
   };
 
   return (
-    <div className="max-w-xl mx-auto px-4 pt-10 pb-4 h-[calc(100vh-4rem)] overflow-hidden">
-      {/* Page title */}
-      <h1 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-        {t('profile.personalInformation.title')}
-      </h1>
+    <div className="max-w-xl mx-auto px-4 pt-8 pb-4 max-h-[calc(100vh-4rem)] overflow-y-auto">
+      {/* Profile header */}
+      <div className="flex items-center gap-3 mb-5">
+        <div className="relative group">
+          {user.imageUrl ? (
+            <Image
+              src={user.imageUrl}
+              alt={user.fullName || 'User'}
+              width={48}
+              height={48}
+              className="h-12 w-12 rounded-full border-2 border-gray-200/50 dark:border-white/10 object-cover"
+            />
+          ) : (
+            <div className="h-12 w-12 rounded-full border-2 border-gray-200/50 dark:border-white/10 bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center text-white text-sm font-bold">
+              {getInitials()}
+            </div>
+          )}
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
+          >
+            <Camera className="w-3.5 h-3.5 text-white" />
+          </button>
+        </div>
+        <div>
+          <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+            {user.fullName || 'Your Profile'}
+          </h1>
+          <p className="text-xs text-gray-500 dark:text-white/50">
+            {user.emailAddresses?.[0]?.emailAddress}
+          </p>
+        </div>
+      </div>
       <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
 
       {/* Status message */}

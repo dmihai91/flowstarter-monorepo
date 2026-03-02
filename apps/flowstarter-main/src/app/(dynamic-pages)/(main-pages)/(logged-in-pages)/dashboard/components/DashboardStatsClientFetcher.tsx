@@ -27,11 +27,9 @@ export function DashboardStatsClientFetcher() {
     );
   }
 
-  // TODO: Fetch actual AI credits from subscription/billing system
-  // Show credits for any active project (in progress or live)
-  const aiCredits = data.totalProjects > 0 
-    ? { remaining: 847, total: 1000, hasSubscription: true }
-    : undefined;
+  // AI credits - not yet tracked in DB
+  // Will be implemented when billing/subscription system is ready
+  const aiCredits = undefined;
 
   return (
     <DashboardStatsClient

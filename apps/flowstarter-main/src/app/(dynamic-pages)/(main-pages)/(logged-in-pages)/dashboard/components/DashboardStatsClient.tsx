@@ -365,18 +365,10 @@ export function DashboardStatsClient({
             </div>
           ) : (
             <div className="flex-1 flex flex-col">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-[var(--purple)] opacity-25" />
-                </div>
-                <div>
-                  <p className="text-lg font-semibold text-gray-300 dark:text-white/20">
-                    1,000
-                  </p>
-                  <p className="text-xs sm:text-sm sm:text-base text-gray-400 dark:text-white/30">
-                    credits included in your plan
-                  </p>
-                </div>
+              <div className="flex items-center gap-2 mb-3 flex-wrap">
+                <Sparkles className="w-4 h-4 text-[var(--purple)] opacity-30" />
+                <span className="text-lg font-semibold text-gray-300 dark:text-white/20">1,000</span>
+                <span className="text-sm text-gray-400 dark:text-white/30">AI AI credits included in your plan</span>
               </div>
               {/* Locked progress bar */}
               <div className="mb-2">

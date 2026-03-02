@@ -82,7 +82,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
                   {t('dashboard.stepper.milestone', { number: i + 1 })}
                 </span>
                 <div className="flex items-center gap-2">
-                  <h3 className={`text-sm font-semibold ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
+                  <h3 className={`text-[15px] font-semibold ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
                     {m.title}
                   </h3>
                   {isCompleted && (
@@ -161,7 +161,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
       </div>
 
       {/* Mobile: vertical compact list */}
-      <div className="sm:hidden space-y-2">
+      <div className="sm:hidden space-y-3">
         {milestones.map((m, i) => {
           const isActive = m.status === 'active';
           const isCompleted = m.status === 'completed';
@@ -170,7 +170,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
 
           return (
             <div key={i} className={`
-              flex items-center gap-3 p-3 rounded-xl transition-all
+              flex items-center gap-4 p-4 rounded-xl transition-all
               ${isActive 
                 ? 'bg-white/80 dark:bg-white/[0.06] ring-2 ring-[var(--purple)]/30 shadow-[0_4px_16px_rgba(77,93,217,0.12)]' 
                 : isCompleted 
@@ -189,7 +189,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <h3 className={`text-sm font-semibold ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
+                  <h3 className={`text-[15px] font-semibold ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
                     {m.title}
                   </h3>
                   {isCompleted && (
@@ -198,7 +198,7 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
                     </span>
                   )}
                 </div>
-                <p className={`text-[11px] ${isLocked ? 'text-gray-400 dark:text-white/30' : 'text-gray-500 dark:text-white/50'}`}>
+                <p className={`text-xs ${isLocked ? 'text-gray-400 dark:text-white/30' : 'text-gray-500 dark:text-white/50'}`}>
                   {m.desc}
                 </p>
               </div>

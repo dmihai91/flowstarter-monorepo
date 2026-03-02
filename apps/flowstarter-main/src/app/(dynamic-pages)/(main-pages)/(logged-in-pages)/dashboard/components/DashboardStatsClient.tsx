@@ -332,7 +332,7 @@ export function DashboardStatsClient({
                     {aiCredits.remaining.toLocaleString()}
                   </p>
                   <p className="text-xs sm:text-sm text-gray-500 dark:text-white/50">
-                    {t('dashboard.stats.aiEditsAvailable', { count: aiCredits.total.toLocaleString() })}
+                    {t('dashboard.stats.aiCreditsAvailable', { count: aiCredits.total.toLocaleString() })}
                   </p>
                 </div>
               </div>
@@ -374,7 +374,7 @@ export function DashboardStatsClient({
                     1,000
                   </p>
                   <p className="text-xs sm:text-sm sm:text-base text-gray-400 dark:text-white/30">
-                    edits included in your plan
+                    credits included in your plan
                   </p>
                 </div>
               </div>

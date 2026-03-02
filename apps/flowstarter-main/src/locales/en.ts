@@ -707,7 +707,7 @@ const en = {
   // Premium dashboard - AI capabilities
   'dashboard.stats.aiCapabilities': 'AI Assistant',
   'dashboard.stats.aiCapabilitiesActive': 'Ready',
-  'dashboard.stats.aiEditsAvailable': '{count} edits this month',
+  'dashboard.stats.aiCreditsAvailable': '{count} credits this month',
   'dashboard.stats.aiCapability.copy': 'Refine your copy',
   'dashboard.stats.aiCapability.sections': 'Optimize sections',
   'dashboard.stats.aiCapability.seo': 'Improve SEO',

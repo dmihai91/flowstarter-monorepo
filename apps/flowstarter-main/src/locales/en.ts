@@ -1658,6 +1658,7 @@ const en = {
   'sidebar.dashboard': 'Dashboard',
   'sidebar.integrations': 'Integrations',
   'sidebar.bookFreeCall': 'Book Free Call',
+  'sidebar.scheduleCheckin': 'Schedule Check-in',
   'sidebar.helpGuide': 'Help Guide',
   'sidebar.help': 'Need Help?',
 

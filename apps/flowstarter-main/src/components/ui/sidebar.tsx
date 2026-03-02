@@ -21,7 +21,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
-const CALENDLY_URL = 'https://calendly.com/flowstarter-app/discovery';
+const CALENDLY_DISCOVERY_URL = 'https://calendly.com/flowstarter-app/discovery';
+const CALENDLY_CHECKIN_URL = 'https://calendly.com/flowstarter-app/check-in';
 
 interface SidebarItem {
   title: string;
@@ -49,10 +50,13 @@ export function Sidebar() {
     },
   ];
 
+  const { data: dashData } = useDashboardStats();
+  const hasProject = (dashData?.totalProjects ?? 0) > 0;
+
   const supportItems: SidebarItem[] = [
     {
-      title: t('sidebar.bookFreeCall'),
-      href: CALENDLY_URL,
+      title: hasProject ? t('sidebar.scheduleCheckin') : t('sidebar.bookFreeCall'),
+      href: hasProject ? CALENDLY_CHECKIN_URL : CALENDLY_DISCOVERY_URL,
       icon: Calendar,
       external: true,
     },

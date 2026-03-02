@@ -1708,14 +1708,14 @@ const en = {
   'footer.nav.clientLogin': 'Client Login',
 
   // Landing page
-  'landing.hero.badgeTagline': 'From idea to live website in minutes',
-  'landing.hero.title': 'Build your business with',
+  'landing.hero.badgeTagline': 'We launch it. You own it.',
+  'landing.hero.title': 'Your website, launched by',
   'landing.hero.titleHighlight': 'Flowstarter',
   'landing.hero.subtitle':
-    'Skip the complexity of traditional CMS platforms. Beautiful, professional websites designed for small businesses and freelancers. Customize, launch, and grow - no coding required.',
-  'landing.hero.feature1': 'No coding needed',
-  'landing.hero.feature2': 'Professional templates',
-  'landing.hero.feature3': 'Launch in minutes',
+    'We build and launch your website for you. After launch, update anything yourself with a smart editor. No developers, no delays, no dependencies.',
+  'landing.hero.feature1': 'Done-for-you launch',
+  'landing.hero.feature2': 'You control it after',
+  'landing.hero.feature3': 'No tech skills needed',
   'landing.hero.animatedPrompt1':
     'Build a consulting site for a business coach offering 1-on-1 sessions',
   'landing.hero.animatedPrompt2':
@@ -1753,24 +1753,24 @@ const en = {
   'landing.features.visualAlt': 'Flowstarter features showcase',
 
   // How it works section
-  'landing.howItWorks.badge': 'How Flowstarter Works',
+  'landing.howItWorks.badge': 'Two Phases, Zero Hassle',
   'landing.howItWorks.subtitle':
-    "Start with a professional template and customize it to match your unique brand. No coding required - just describe your vision, and we'll make it happen.",
-  'landing.howItWorks.step1': 'Sign Up - Create your Flowstarter account',
+    'Phase one: we handle everything. Phase two: you take the wheel.',
+  'landing.howItWorks.step1': 'Tell us about your business in a short call',
   'landing.howItWorks.step2':
-    'Project Details - Define Audience, Goals and more',
+    'We design, build, and launch your website',
   'landing.howItWorks.step3':
-    'Choose Site Structure - Pick how you want to build your website',
+    'You get full control with a smart editor',
   'landing.howItWorks.step4':
-    'Design & Branding - Customize the look and feel of your site',
+    'Update text, images, and pages anytime you want',
   'landing.howItWorks.step5':
-    'Review & Launch - Review your website before launching it',
+    'No developer needed for changes, ever',
   'landing.howItWorks.step6':
-    'Track - Monitor performance with real-time analytics',
-  'landing.howItWorks.animated.step1': 'Complete Project Details',
-  'landing.howItWorks.animated.step2': 'Choose Template',
-  'landing.howItWorks.animated.step3': 'Choose Branding',
-  'landing.howItWorks.animated.step4': 'Launch',
+    'Track performance and grow with built-in analytics',
+  'landing.howItWorks.animated.step1': 'Discovery Call',
+  'landing.howItWorks.animated.step2': 'We Build It',
+  'landing.howItWorks.animated.step3': 'You Review',
+  'landing.howItWorks.animated.step4': 'Launch + Handoff',
   'landing.howItWorks.imageAlt': 'Smart customization workflow',
 
   // Templates section
@@ -1866,21 +1866,21 @@ const en = {
   'landing.pricing.custom.cta': 'Schedule a Call',
 
   // Benefits section
-  'landing.benefits.sectionTitle': 'Why Choose Flowstarter?',
+  'landing.benefits.sectionTitle': 'Built for You, Controlled by You',
   'landing.benefits.sectionSubtitle':
-    'Join thousands of small businesses who have transformed their online presence with our platform.',
-  'landing.benefits.savesTime.title': 'Save Time & Money',
+    'We handle the hard part so you never have to. Then we hand you the keys.',
+  'landing.benefits.savesTime.title': 'Zero Setup on Your Side',
   'landing.benefits.savesTime.description':
-    'Launch your website quickly and easily with our AI-powered tools.',
-  'landing.benefits.aiPowered.title': 'Smart Customization',
+    'We handle design, content, and tech. You show up to one call and approve the result.',
+  'landing.benefits.aiPowered.title': 'Update Without Developers',
   'landing.benefits.aiPowered.description':
-    'Our intelligent assistant helps you create unique content and designs tailored to your business.',
-  'landing.benefits.noCode.title': 'No Coding Required',
+    'After launch, change anything through a smart editor. Describe what you want in plain words.',
+  'landing.benefits.noCode.title': 'No Coding, No Complexity',
   'landing.benefits.noCode.description':
-    'Build professional websites without writing a single line of code. Simple, visual tools for everyone.',
+    'No logins to five platforms. No watching tutorials. Everything in one place, in plain language.',
   'landing.benefits.scalable.title': 'Grows With You',
   'landing.benefits.scalable.description':
-    'Start small and scale as your business grows. Our platform adapts to your changing needs.',
+    'Add pages, features, and integrations as your business evolves. No rebuilds, no migrations.',
   'landing.benefits.support.title': '24/7 Support',
   'landing.benefits.support.description':
     'Get help whenever you need it. Our dedicated support team is always ready to assist you.',

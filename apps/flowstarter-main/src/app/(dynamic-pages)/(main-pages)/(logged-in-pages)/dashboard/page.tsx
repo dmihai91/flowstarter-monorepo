@@ -250,39 +250,59 @@ function PrimaryAction({ hasAnyProject, hasLiveProject }: { hasAnyProject: boole
 function DashboardSkeleton() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto animate-pulse">
+      {/* Greeting */}
       <div className="mt-8 mb-8">
         <div className="h-4 w-40 bg-gray-200 dark:bg-white/10 rounded-lg mb-3" />
         <div className="h-9 w-56 bg-gray-200 dark:bg-white/10 rounded-lg" />
       </div>
-      <div className="hidden sm:grid sm:grid-cols-4 gap-3 mb-8">
+
+      {/* Milestones - mobile */}
+      <div className="sm:hidden space-y-2 mb-8">
         {[0, 1, 2, 3].map((i) => (
-          <div key={i} className={`p-4 flex flex-col items-center ${glassCard}`}>
-            <div className="w-10 h-10 rounded-xl bg-gray-200 dark:bg-white/10 mb-2.5" />
-            <div className="h-3 w-12 bg-gray-200 dark:bg-white/10 rounded mb-1" />
-            <div className="h-4 w-20 bg-gray-200 dark:bg-white/10 rounded mb-1" />
-            <div className="h-3 w-28 bg-gray-100 dark:bg-white/5 rounded" />
+          <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/40 dark:bg-white/[0.02]">
+            <div className="w-9 h-9 rounded-lg bg-gray-200 dark:bg-white/10 flex-shrink-0" />
+            <div className="flex-1">
+              <div className="h-3.5 w-20 bg-gray-200 dark:bg-white/10 rounded mb-1.5" />
+              <div className="h-2.5 w-36 bg-gray-100 dark:bg-white/5 rounded" />
+            </div>
           </div>
         ))}
       </div>
-      <div className={`${glassCard} p-5 mb-8`}>
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-gray-200 dark:bg-white/10" />
-          <div className="flex-1">
-            <div className="h-4 w-40 bg-gray-200 dark:bg-white/10 rounded mb-2" />
-            <div className="h-3 w-60 bg-gray-100 dark:bg-white/5 rounded" />
+
+      {/* Milestones - tablet (2-col) + desktop (4-col) */}
+      <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="p-3 flex flex-col items-center rounded-xl bg-white/40 dark:bg-white/[0.02]">
+            <div className="w-8 h-8 rounded-lg bg-gray-200 dark:bg-white/10 mb-2" />
+            <div className="h-2.5 w-10 bg-gray-200 dark:bg-white/10 rounded mb-1" />
+            <div className="h-3 w-16 bg-gray-200 dark:bg-white/10 rounded mb-1" />
+            <div className="h-2.5 w-24 bg-gray-100 dark:bg-white/5 rounded" />
           </div>
-          <div className="h-10 w-32 bg-gray-200 dark:bg-white/10 rounded-xl" />
+        ))}
+      </div>
+
+      {/* Primary Action Banner */}
+      <div className={`${glassCard} p-5 mb-8`}>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-gray-200 dark:bg-white/10 flex-shrink-0" />
+          <div className="flex-1">
+            <div className="h-4 w-44 bg-gray-200 dark:bg-white/10 rounded mb-2" />
+            <div className="h-3 w-64 bg-gray-100 dark:bg-white/5 rounded" />
+          </div>
+          <div className="h-10 w-36 bg-gray-200 dark:bg-white/10 rounded-xl" />
         </div>
       </div>
+
+      {/* Stats grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {[0, 1, 2, 3].map((i) => (
+        {[0, 1, 2, 3, 4].map((i) => (
           <div key={i} className={`p-5 min-h-[140px] ${glassCard}`}>
             <div className="flex items-center justify-between mb-4">
-              <div className="h-3 w-20 bg-gray-200 dark:bg-white/10 rounded" />
+              <div className="h-3 w-24 bg-gray-200 dark:bg-white/10 rounded" />
               <div className="h-8 w-8 bg-gray-200 dark:bg-white/10 rounded-xl" />
             </div>
-            <div className="h-7 w-24 bg-gray-200 dark:bg-white/10 rounded mb-2" />
-            <div className="h-3 w-32 bg-gray-100 dark:bg-white/5 rounded" />
+            <div className="h-7 w-20 bg-gray-200 dark:bg-white/10 rounded mb-2" />
+            <div className="h-3 w-36 bg-gray-100 dark:bg-white/5 rounded" />
           </div>
         ))}
       </div>

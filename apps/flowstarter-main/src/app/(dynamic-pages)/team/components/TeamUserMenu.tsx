@@ -131,7 +131,7 @@ export function TeamUserMenu() {
           onClick={() => setShowSignOutDialog(true)}
           className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 focus:bg-red-50 dark:focus:bg-red-900/20"
         >
-          <LogOut className="h-4 w-4" />
+          <LogOut className="h-4 w-4 text-red-500 dark:text-red-400" />
           {t('app.signOut')}
         </DropdownMenuItem>
       </DropdownMenuContent>

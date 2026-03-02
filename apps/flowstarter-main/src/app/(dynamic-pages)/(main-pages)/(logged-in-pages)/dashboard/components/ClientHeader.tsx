@@ -15,7 +15,7 @@ export function ClientHeader() {
   const isWizardPage = pathname?.startsWith('/dashboard/new') || pathname?.startsWith('/wizard');
 
   return (
-    <ScrollAwareHeader className="z-[100] h-16 bg-white dark:bg-[#111118] border-b border-gray-200 dark:border-white/10 shadow-sm dark:shadow-none" transparentClass="" scrolledClass="">
+    <ScrollAwareHeader className="z-[100] h-16 border-b border-gray-200/30 dark:border-white/10" transparentClass="bg-white/30 dark:bg-[#0a0a0c]/30 backdrop-blur-xl" scrolledClass="bg-white/60 dark:bg-[#0a0a0c]/60 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
       <div className="w-full h-full px-4 lg:px-6 flex items-center justify-between">
         {/* Logo or Back button */}
         {isWizardPage ? (

@@ -1,6 +1,6 @@
 'use client';
 
-import { TeamHeader } from '../components/TeamHeader';
+import { AppHeader } from '@/components/ui/app-header';
 import { TeamSidebar } from '../components/TeamSidebar';
 import { FlowBackground } from '@flowstarter/flow-design-system';
 import { SidebarProvider } from '@/contexts/SidebarContext';
@@ -40,7 +40,7 @@ export default function TeamDashboardLayout({
           }}
         />
         
-        <TeamHeader />
+        <AppHeader />
         <div className="h-16" />
         
         <div className="flex-1 flex relative z-10">

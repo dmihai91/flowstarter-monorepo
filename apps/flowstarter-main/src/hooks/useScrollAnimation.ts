@@ -1,3 +1,4 @@
+import type React from 'react';
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
@@ -31,4 +32,22 @@ export function useScrollAnimation(threshold = 0.05, rootMargin = '0px 0px 100px
   }, [threshold, rootMargin]);
 
   return { ref, isVisible };
+}
+
+/**
+ * Get staggered animation styles for items in a list.
+ * @param index - Item index in the list
+ * @param isVisible - Whether the parent container is visible
+ * @param baseDelay - Base delay in ms between items (default 80)
+ */
+export function getStaggeredAnimation(
+  index: number,
+  isVisible: boolean,
+  baseDelay = 80
+): React.CSSProperties {
+  return {
+    opacity: isVisible ? 1 : 0,
+    transform: isVisible ? 'translateY(0)' : 'translateY(4px)',
+    transition: `opacity 0.5s ease-out ${index * baseDelay}ms, transform 0.5s ease-out ${index * baseDelay}ms`,
+  };
 }

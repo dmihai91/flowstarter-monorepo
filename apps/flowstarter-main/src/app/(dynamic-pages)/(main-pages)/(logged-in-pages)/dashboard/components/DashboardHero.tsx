@@ -1,8 +1,8 @@
 'use client';
 
 import { useUser } from '@clerk/nextjs';
-import {
 import { EXTERNAL_URLS } from '@/lib/constants';
+import {
   useScrollAnimation,
   getStaggeredAnimation,
 } from '@/hooks/useScrollAnimation';

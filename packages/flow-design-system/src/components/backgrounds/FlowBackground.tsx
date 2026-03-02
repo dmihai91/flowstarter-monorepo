@@ -18,9 +18,9 @@ interface VariantConfig {
 }
 
 const variants: Record<FlowBackgroundVariant, VariantConfig> = {
-  dashboard: { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.5, glowDark: 0.12, lineLight: 0.05, lineDark: 0.06 },
-  editor:    { bgLight: '#f8f8fa', bgDark: '#0a0a0c', glowLight: 0.5, glowDark: 0.15, lineLight: 0.06, lineDark: 0.07 },
-  landing:   { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.55, glowDark: 0.15, lineLight: 0.06, lineDark: 0.07 },
+  dashboard: { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.25, glowDark: 0.12, lineLight: 0.03, lineDark: 0.06 },
+  editor:    { bgLight: '#f8f8fa', bgDark: '#0a0a0c', glowLight: 0.3, glowDark: 0.15, lineLight: 0.04, lineDark: 0.07 },
+  landing:   { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.3, glowDark: 0.15, lineLight: 0.04, lineDark: 0.07 },
   wizard:    { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.45, glowDark: 0.1, lineLight: 0.05, lineDark: 0.05 },
 };
 
@@ -65,8 +65,8 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
     const bg = isDark ? config.bgDark : config.bgLight;
     const glowOpacity = isDark ? config.glowDark : config.glowLight;
     const lineOpacity = isDark ? config.lineDark : config.lineLight;
-    const warmOpacity = isDark ? 0.06 : 0.25;
-    const violetAccentOpacity = isDark ? 0.06 : 0.2;
+    const warmOpacity = isDark ? 0.06 : 0.12;
+    const violetAccentOpacity = isDark ? 0.06 : 0.1;
 
     return (
       <div

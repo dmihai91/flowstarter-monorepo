@@ -60,8 +60,8 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
             <div key={i} className="relative">
               {/* Connector line */}
               {i < milestones.length - 1 && (
-                <div className="absolute top-[36px] left-[calc(50%+24px)] right-[-12px] h-px">
-                  <div className={`h-full ${isCompleted ? 'bg-green-400/50' : 'bg-gray-200/60 dark:bg-white/10'}`} />
+                <div className="absolute top-[36px] left-[calc(50%+28px)] -right-3 h-[2px] z-10">
+                  <div className={`h-full rounded-full ${isCompleted ? 'bg-gradient-to-r from-green-400/50 to-green-400/30' : 'bg-gray-200 dark:bg-white/10'}`} />
                 </div>
               )}
               

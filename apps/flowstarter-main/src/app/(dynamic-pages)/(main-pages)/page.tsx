@@ -313,7 +313,7 @@ export default function LandingPage() {
           }
         });
       },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      { threshold: 0.05, rootMargin: '0px 0px 100px 0px' }
     );
 
     const sections = document.querySelectorAll('[data-animate]');
@@ -854,7 +854,7 @@ export default function LandingPage() {
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center min-w-0">
               {/* Left: Copy */}
               <div
-                className={`transition-all duration-1000 min-w-0 ${
+                className={`transition-all duration-500 min-w-0 ${
                   isLoaded
                     ? 'opacity-100 translate-y-0'
                     : 'opacity-0 translate-y-8'
@@ -959,7 +959,7 @@ export default function LandingPage() {
 
               {/* Right: Interactive Editor */}
               <div
-                className={`relative transition-all duration-1000 delay-200 mb-6 ${
+                className={`relative transition-all duration-500 delay-200 mb-6 ${
                   isLoaded
                     ? 'opacity-100 translate-y-0'
                     : 'opacity-0 translate-y-8'

@@ -2462,11 +2462,11 @@ const en = {
   'waitlist.landing.privacy': 'No spam. Unsubscribe anytime.',
 
   // Landing Page - Hero
-  'landing.hero.badge': 'The expert\'s unfair advantage',
+  'landing.hero.badge': 'Built for real experts',
   'landing.hero.headline1': 'Your expertise is real.',
   'landing.hero.headline2': 'Your online presence should be too.',
   'landing.hero.pain':
-    'Anyone with ChatGPT can now write like a professional, design like a studio, and market like an agency. Your 10 years of practice looks the same as someone\'s 10 minutes of prompting. We build the online presence your expertise actually deserves.',
+    'You\'ve spent years building real expertise, real client relationships, and real results. Your online presence should reflect that. We build the website and booking system your work actually deserves.',
   'landing.hero.subheadline':
     'Website, booking, and everything that connects them. Built for you in days, not months. You focus on your clients. We make sure new ones keep finding you.',
   'landing.hero.support': '',

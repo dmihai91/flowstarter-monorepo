@@ -11,11 +11,11 @@ const ro: typeof en = {
   ...en,
 
   // ─── Landing Page Hero ───────────────────────────────────────────────
-  'landing.hero.badge': 'Pentru experții care merită să fie găsiți online',
+  'landing.hero.badge': 'Creat pentru expertii reali',
   'landing.hero.headline1': 'Expertiza ta e reală.',
   'landing.hero.headline2': 'Prezența ta online ar trebui să fie la fel.',
   'landing.hero.pain':
-    'Oricine cu ChatGPT poate acum să scrie ca un profesionist, să facă design ca un studio și să promoveze ca o agenție. Cei 10 ani de practică ai tăi arată la fel ca 10 minute de prompting ale altcuiva. Noi construim prezența online pe care expertiza ta chiar o merită.',
+    'Ai petrecut ani construind expertiza reala, relatii reale cu clientii si rezultate reale. Prezenta ta online ar trebui sa reflecte asta. Noi construim website-ul si sistemul de programari pe care munca ta chiar le merita.',
   'landing.hero.subheadline':
     'Website, booking și tot ce le conectează. Construite pentru tine în zile, nu luni. Tu te concentrezi pe clienții tăi. Noi ne asigurăm că alții noi te găsesc în continuare.',
   'landing.hero.cta': 'Programează un apel gratuit',

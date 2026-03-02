@@ -110,13 +110,13 @@ export function Sidebar() {
       active
         ? 'bg-[var(--purple)] text-white shadow-lg shadow-[var(--purple)]/25'
         : 'text-gray-600 dark:text-white/60 hover:bg-white/55 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
-      isCollapsed && 'justify-center !px-2'
+      effectiveCollapsed && 'justify-center !px-2'
     );
 
     const content = (
       <>
         <Icon className="w-4 h-4 flex-shrink-0" />
-        {!isCollapsed && <span className="truncate">{label}</span>}
+        {!effectiveCollapsed && <span className="truncate">{label}</span>}
       </>
     );
 
@@ -126,7 +126,7 @@ export function Sidebar() {
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          title={isCollapsed ? label : undefined}
+          title={effectiveCollapsed ? label : undefined}
           onClick={onClick}
           className={className}
         >
@@ -138,7 +138,7 @@ export function Sidebar() {
     return (
       <Link
         href={href}
-        title={isCollapsed ? label : undefined}
+        title={effectiveCollapsed ? label : undefined}
         onClick={onClick}
         className={className}
       >
@@ -147,20 +147,22 @@ export function Sidebar() {
     );
   };
 
-  const SidebarContent = ({ showToggle = false }: { showToggle?: boolean }) => (
-    <div className={cn("p-4 space-y-6 h-full overflow-y-auto flex flex-col", isCollapsed && "items-center")}>
+  const SidebarContent = ({ showToggle = false, forceExpanded = false }: { showToggle?: boolean; forceExpanded?: boolean }) => {
+    const effectiveCollapsed = forceExpanded ? false : isCollapsed;
+    return (
+    <div className={cn("p-4 space-y-6 h-full overflow-y-auto flex flex-col", effectiveCollapsed && "items-center")}>
       {/* Collapse Toggle - Top */}
       {showToggle && (
-        <div className={cn("w-full", isCollapsed ? "flex justify-center" : "flex justify-end")}>
+        <div className={cn("w-full", effectiveCollapsed ? "flex justify-center" : "flex justify-end")}>
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            title={effectiveCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             className={cn(
               'p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:text-white/40 dark:hover:text-white/60',
               'hover:bg-white/55 dark:hover:bg-white/5 transition-all'
             )}
           >
-            {isCollapsed ? (
+            {effectiveCollapsed ? (
               <ChevronsRight className="w-4 h-4" />
             ) : (
               <ChevronsLeft className="w-4 h-4" />
@@ -222,16 +224,17 @@ export function Sidebar() {
           className={cn(
             'flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
             'text-gray-600 dark:text-white/60 hover:bg-white/55 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
-            isCollapsed && 'justify-center !px-2'
+            effectiveCollapsed && 'justify-center !px-2'
           )}
         >
           <MessageSquare className="w-4 h-4 flex-shrink-0" />
-          {!isCollapsed && <span className="truncate">{t('sidebar.feedback')}</span>}
+          {!effectiveCollapsed && <span className="truncate">{t('sidebar.feedback')}</span>}
         </button>
       </div>
 
     </div>
-  );
+    );
+  };
 
   return (
     <>
@@ -279,7 +282,7 @@ export function Sidebar() {
             </button>
           </div>
         </div>
-        <SidebarContent />
+        <SidebarContent forceExpanded />
       </aside>
 
       {/* Desktop/Tablet sidebar - Glassmorphism */}

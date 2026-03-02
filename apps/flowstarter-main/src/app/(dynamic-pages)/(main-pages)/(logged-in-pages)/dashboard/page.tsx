@@ -70,8 +70,8 @@ function MilestonesTimeline({ hasAnyProject, hasLiveProject }: { hasAnyProject: 
                 ${isActive 
                   ? 'bg-white/70 dark:bg-white/[0.05] ring-2 ring-[var(--purple)]/30 shadow-[0_8px_24px_rgba(77,93,217,0.12)]' 
                   : isCompleted 
-                  ? 'bg-white/50 dark:bg-white/[0.02]'
-                  : 'opacity-50'}
+                  ? 'bg-white/50 dark:bg-white/[0.03] shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.15)]'
+                  : 'bg-white/35 dark:bg-white/[0.015] shadow-[0_2px_8px_rgba(0,0,0,0.02)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.1)] opacity-70'}
               `}>
                 <div className={`
                   w-10 h-10 rounded-xl flex items-center justify-center mb-2.5 transition-all

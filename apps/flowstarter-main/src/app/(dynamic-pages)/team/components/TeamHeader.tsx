@@ -12,7 +12,7 @@ export function TeamHeader() {
   const { setIsMobileOpen } = useSidebar();
 
   return (
-    <ScrollAwareHeader className="z-[100] h-16" transparentClass="bg-white/95 dark:bg-[var(--flow-bg-secondary)]/90 backdrop-blur-sm border-b border-gray-200/40 dark:border-white/10" scrolledClass="bg-white/60 dark:bg-[var(--flow-bg-secondary)]/85 backdrop-blur-2xl backdrop-saturate-150 border-b border-gray-200/30 dark:border-white/10 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+    <ScrollAwareHeader className="z-[100] h-16" transparentClass="bg-white/95 dark:bg-[var(--flow-bg-secondary)] backdrop-blur-sm border-b border-gray-200/40 dark:border-white/10" scrolledClass="bg-white/60 dark:bg-[var(--flow-bg-secondary)]/95 backdrop-blur-2xl backdrop-saturate-150 border-b border-gray-200/30 dark:border-white/10 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
       <div className="w-full h-full px-4 lg:px-6 flex items-center justify-between">
         {/* Left: hamburger + logo */}
         <div className="flex items-center gap-3">

@@ -243,7 +243,7 @@ export function Sidebar() {
       <aside
         className={cn(
           'md:hidden fixed inset-y-0 left-0 z-[160] w-72',
-          'bg-white/92 dark:bg-[#12121a]/88 backdrop-blur-2xl backdrop-saturate-150',
+          'bg-white dark:bg-[var(--flow-bg-secondary)] backdrop-blur-2xl backdrop-saturate-150',
           'border-r border-white/60 dark:border-white/10',
           'shadow-2xl shadow-black/10 dark:shadow-black/30',
           'transform transition-transform duration-300 ease-in-out',

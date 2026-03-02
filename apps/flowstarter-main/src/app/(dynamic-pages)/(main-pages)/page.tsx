@@ -2172,16 +2172,16 @@ export default function LandingPage() {
               <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase text-[var(--purple)] mb-6">
                 {t('landing.manifesto.title')}
               </span>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white italic leading-tight">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white italic leading-tight">
                 {t('landing.manifesto.headline')}
               </h2>
             </div>
-            <div className="space-y-8 text-xl md:text-[1.35rem] text-gray-500 dark:text-white/50 leading-[1.8] tracking-[-0.01em]">
+            <div className="space-y-6 text-base md:text-lg text-gray-500 dark:text-white/50 leading-relaxed">
               <p>{t('landing.manifesto.p1')}</p>
               <p>{t('landing.manifesto.p2')}</p>
               <p className="text-gray-700 dark:text-white/70">{t('landing.manifesto.p3')}</p>
               <p>{t('landing.manifesto.p4')}</p>
-              <p className="text-2xl md:text-[1.6rem] font-bold text-gray-900 dark:text-white pt-6 leading-snug">
+              <p className="text-lg md:text-xl font-bold text-gray-900 dark:text-white pt-4 leading-snug">
                 {t('landing.manifesto.closing')}
               </p>
             </div>

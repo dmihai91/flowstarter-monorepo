@@ -177,39 +177,11 @@ export function ProfileContent() {
 
   return (
     <div className="max-w-xl mx-auto px-4 pt-10 pb-4 h-[calc(100vh-4rem)] overflow-hidden">
-      {/* Header with avatar */}
-      <div className="flex items-center gap-4 mb-4">
-        <div className="relative group">
-          {user.imageUrl ? (
-            <Image
-              src={user.imageUrl}
-              alt={user.fullName || 'User'}
-              width={72}
-              height={72}
-              className="h-[72px] w-[72px] rounded-2xl border-2 border-white/60 dark:border-white/10 object-cover shadow-lg"
-            />
-          ) : (
-            <div className="h-[72px] w-[72px] rounded-2xl border-2 border-white/60 dark:border-white/10 bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center text-white text-xl font-bold shadow-lg">
-              {getInitials()}
-            </div>
-          )}
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="absolute inset-0 rounded-2xl bg-black/0 group-hover:bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
-          >
-            <Camera className="w-5 h-5 text-white" />
-          </button>
-          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
-        </div>
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-            {user.fullName || 'Your Profile'}
-          </h1>
-          <p className="text-sm text-gray-500 dark:text-white/50 mt-0.5">
-            {t('profile.personalInformation.title')}
-          </p>
-        </div>
-      </div>
+      {/* Page title */}
+      <h1 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+        {t('profile.personalInformation.title')}
+      </h1>
+      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
 
       {/* Status message */}
       {message && (

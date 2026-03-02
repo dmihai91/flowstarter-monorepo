@@ -66,6 +66,11 @@ export function Sidebar() {
       href: '/help',
       icon: HelpCircle,
     },
+    {
+      title: t('sidebar.feedback'),
+      href: '#feedback',
+      icon: MessageSquare,
+    },
   ];
 
   // Close mobile sidebar on route change

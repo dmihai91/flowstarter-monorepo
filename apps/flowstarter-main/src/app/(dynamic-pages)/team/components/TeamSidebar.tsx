@@ -6,6 +6,8 @@ import { useUser } from '@clerk/nextjs';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useTranslations } from '@/lib/i18n';
 import { Logo } from '@/components/ui/logo';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { useSidebar } from '@/contexts/SidebarContext';
 import {
   LayoutDashboard,
   Globe,
@@ -16,18 +18,17 @@ import {
   UserPlus,
   ChevronsLeft,
   ChevronsRight,
-  Menu,
   X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 export function TeamSidebar() {
   const pathname = usePathname();
   const { user } = useUser();
   const { t } = useTranslations();
   const [collapsed, setCollapsed] = useLocalStorage('team-sidebar-collapsed', false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const { isMobileOpen, setIsMobileOpen } = useSidebar();
   
   const metadata = user?.publicMetadata as { role?: string } | undefined;
   const isAdmin = metadata?.role?.toLowerCase() === 'admin';
@@ -46,46 +47,46 @@ export function TeamSidebar() {
 
   // Close mobile sidebar on route change
   useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
+    setIsMobileOpen(false);
+  }, [pathname, setIsMobileOpen]);
 
   // Close mobile sidebar on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMobileOpen(false);
+      if (e.key === 'Escape') setIsMobileOpen(false);
     };
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
-  }, []);
+  }, [setIsMobileOpen]);
 
   const isActive = (href: string, exact?: boolean) => {
     if (exact) return pathname === href;
     return pathname?.startsWith(href);
   };
 
-  const NavLink = ({ href, icon: Icon, label, exact }: { href: string; icon: any; label: string; exact?: boolean }) => (
+  const NavLink = ({ href, icon: Icon, label, exact, showLabel = true }: { href: string; icon: any; label: string; exact?: boolean; showLabel?: boolean }) => (
     <Link
       href={href}
-      title={collapsed ? label : undefined}
-      onClick={() => setMobileOpen(false)}
+      title={!showLabel ? label : undefined}
+      onClick={() => setIsMobileOpen(false)}
       className={cn(
         'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
         isActive(href, exact)
           ? 'bg-[var(--purple)] text-white shadow-lg shadow-[var(--purple)]/25'
           : 'text-gray-600 dark:text-white/60 hover:bg-white/55 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
-        collapsed && 'justify-center !px-2'
+        !showLabel && 'justify-center !px-2'
       )}
     >
       <Icon className="w-4 h-4 flex-shrink-0" />
-      {!collapsed && <span className="truncate">{label}</span>}
+      {showLabel && <span className="truncate">{label}</span>}
     </Link>
   );
 
-  const SidebarContent = ({ showToggle = false }: { showToggle?: boolean }) => (
-    <div className={cn("p-4 space-y-6 h-full overflow-y-auto flex flex-col", collapsed && "items-center")}>
-      {/* Collapse Toggle - Top */}
-      {showToggle && (
-        <div className={cn("w-full", collapsed ? "flex justify-center" : "flex justify-end")}>
+  const SidebarContent = ({ showLabel, showCollapseToggle = false }: { showLabel: boolean; showCollapseToggle?: boolean }) => (
+    <div className={cn("p-4 space-y-6 h-full overflow-y-auto flex flex-col", !showLabel && "items-center")}>
+      {/* Collapse Toggle - Desktop only */}
+      {showCollapseToggle && (
+        <div className={cn("w-full", !showLabel ? "flex justify-center" : "flex justify-end")}>
           <button
             onClick={() => setCollapsed(!collapsed)}
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
@@ -104,40 +105,41 @@ export function TeamSidebar() {
       )}
 
       {/* Main Navigation */}
-      <div className={cn("space-y-1", collapsed && "w-full")}>
+      <div className={cn("space-y-1", !showLabel && "w-full")}>
         <NavLink 
           href="/team/dashboard" 
           icon={LayoutDashboard} 
           label={t('team.sidebar.dashboard')} 
           exact 
+          showLabel={showLabel}
         />
       </div>
 
       {/* Configuration */}
-      <div className={cn(collapsed && "w-full")}>
-        {!collapsed && (
+      <div className={cn(!showLabel && "w-full")}>
+        {showLabel && (
           <h3 className="px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
             {t('team.sidebar.configuration')}
           </h3>
         )}
         <div className="space-y-1">
           {configItems.map((item) => (
-            <NavLink key={item.href} {...item} />
+            <NavLink key={item.href} {...item} showLabel={showLabel} />
           ))}
         </div>
       </div>
 
       {/* Admin Only */}
       {isAdmin && (
-        <div className={cn(collapsed && "w-full")}>
-          {!collapsed && (
+        <div className={cn(!showLabel && "w-full")}>
+          {showLabel && (
             <h3 className="px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
               {t('team.sidebar.team')}
             </h3>
           )}
           <div className="space-y-1">
             {adminItems.map((item) => (
-              <NavLink key={item.href} {...item} />
+              <NavLink key={item.href} {...item} showLabel={showLabel} />
             ))}
           </div>
         </div>
@@ -150,21 +152,11 @@ export function TeamSidebar() {
 
   return (
     <>
-      {/* Mobile menu button - shows on phones only */}
-      <button
-        onClick={() => setMobileOpen(true)}
-        className="md:hidden fixed bottom-6 left-6 z-[200] p-4 rounded-2xl bg-[var(--purple)] text-white shadow-xl shadow-[var(--purple)]/30 hover:bg-[var(--purple)]/90 active:scale-95 transition-all"
-        aria-label="Open menu"
-        style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
-      >
-        <Menu className="w-6 h-6" />
-      </button>
-
       {/* Mobile overlay */}
-      {mobileOpen && (
+      {isMobileOpen && (
         <div
           className="md:hidden fixed inset-0 z-[150] bg-black/50 backdrop-blur-sm"
-          onClick={() => setMobileOpen(false)}
+          onClick={() => setIsMobileOpen(false)}
         />
       )}
 
@@ -172,26 +164,33 @@ export function TeamSidebar() {
       <aside
         className={cn(
           'md:hidden fixed inset-y-0 left-0 z-[160] w-72',
-          'bg-white/70 dark:bg-[#12121a]/70 backdrop-blur-2xl backdrop-saturate-150',
+          'bg-white/92 dark:bg-[#12121a]/92 backdrop-blur-2xl backdrop-saturate-150',
           'border-r border-white/60 dark:border-white/10',
           'shadow-2xl shadow-black/10 dark:shadow-black/30',
           'transform transition-transform duration-300 ease-in-out',
-          mobileOpen ? 'translate-x-0' : '-translate-x-full'
+          isMobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
         {/* Mobile header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200/50 dark:border-white/5">
-          <Link href="/team/dashboard" onClick={() => setMobileOpen(false)}>
+          <Link href="/team/dashboard" onClick={() => setIsMobileOpen(false)}>
             <Logo size="sm" />
           </Link>
           <button
-            onClick={() => setMobileOpen(false)}
+            onClick={() => setIsMobileOpen(false)}
             className="p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
-        <SidebarContent />
+
+        {/* ThemeToggle on its own row */}
+        <div className="px-4 py-3 border-b border-gray-200/50 dark:border-white/5">
+          <ThemeToggle />
+        </div>
+
+        {/* Always show labels on mobile */}
+        <SidebarContent showLabel />
       </aside>
 
       {/* Desktop/Tablet sidebar - Glassmorphism */}
@@ -204,7 +203,7 @@ export function TeamSidebar() {
         )}
       >
         <div className="sticky top-16 h-[calc(100vh-4rem)] flex flex-col">
-          <SidebarContent showToggle />
+          <SidebarContent showLabel={!collapsed} showCollapseToggle />
         </div>
       </aside>
     </>

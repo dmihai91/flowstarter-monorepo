@@ -42,7 +42,7 @@ export function MockEditorPreview({
               <div
                 className={`relative transition-all duration-500 delay-200 mb-6 ${
                   isLoaded
-                    ? 'opacity-100 translate-y-0'
+                    ? 'opacity-100'
                     : 'opacity-0'
                 }`}
               >

@@ -28,7 +28,7 @@ export function LandingHeader() {
         {/* Header */}
         <header
           className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-            isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+            isLoaded ? 'opacity-100' : 'opacity-0'
           } ${
             scrolled || mobileMenuOpen
               ? 'bg-white/60 dark:bg-[#0a0a0c]/60 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/40 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.04)]'

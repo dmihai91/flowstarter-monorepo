@@ -23,7 +23,7 @@ export function FAQSection() {
               data-animate
               className={`grid lg:grid-cols-1 gap-10 transition-all duration-[350ms] ${
                 isVisible
-                  ? 'opacity-100 translate-y-0'
+                  ? 'opacity-100'
                   : 'opacity-0'
               }`}
             >
@@ -56,7 +56,7 @@ export function FAQSection() {
                     noHover
                     className={`overflow-hidden !p-0 ${
                       isVisible
-                        ? 'opacity-100 translate-y-0'
+                        ? 'opacity-100'
                         : 'opacity-0'
                     }`}
                     style={{

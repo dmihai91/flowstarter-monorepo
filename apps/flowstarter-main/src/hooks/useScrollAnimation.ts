@@ -54,7 +54,7 @@ export function getStaggeredAnimation(
 ): React.CSSProperties {
   return {
     opacity: isVisible ? 1 : 0,
-    transform: isVisible ? 'translateY(0)' : 'translateY(4px)',
-    transition: `opacity 0.5s ease-out ${index * baseDelay}ms, transform 0.5s ease-out ${index * baseDelay}ms`,
+    
+    transition: `opacity 0.5s ease-out ${index * baseDelay}ms`,
   };
 }

@@ -17,15 +17,15 @@ export function LandingHero() {
   return (
     <section className="relative pt-24 sm:pt-28 lg:pt-32 pb-6 lg:pb-10 overflow-hidden">
       {/* Multi-layer gradient background */}
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none overflow-visible">
         {/* Base warm tint */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#faf8ff] to-white dark:from-[#0a0810] dark:to-[#08080c]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#f5f0ff] to-[#fdf8ff] dark:from-[#0c0814] dark:to-[#08080c]" />
         {/* Violet blob — top left */}
-        <div className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full bg-[#e0d0ff] dark:bg-[#1a0d30] opacity-60 dark:opacity-50 blur-[120px]" />
+        <div className="absolute top-0 left-0 w-full sm:w-[70%] h-[60%] rounded-full bg-[#d8c4ff] dark:bg-[#1e1040] opacity-70 dark:opacity-60 blur-[80px] sm:blur-[120px]" />
         {/* Pink blob — bottom right */}
-        <div className="absolute -bottom-[10%] -right-[10%] w-[60%] h-[60%] rounded-full bg-[#fdd5e8] dark:bg-[#25081c] opacity-50 dark:opacity-40 blur-[120px]" />
-        {/* Blue accent — center right */}
-        <div className="absolute top-[30%] right-[20%] w-[30%] h-[40%] rounded-full bg-[#dbeafe] dark:bg-[#0c1a2e] opacity-40 dark:opacity-30 blur-[100px]" />
+        <div className="absolute bottom-0 right-0 w-full sm:w-[65%] h-[55%] rounded-full bg-[#fcc8e0] dark:bg-[#2a0c20] opacity-50 dark:opacity-45 blur-[80px] sm:blur-[120px]" />
+        {/* Blue accent — center */}
+        <div className="absolute top-[40%] left-[30%] w-[50%] h-[30%] rounded-full bg-[#d4e4ff] dark:bg-[#0e1a30] opacity-35 dark:opacity-30 blur-[80px] sm:blur-[100px]" />
       </div>
 
       {/* Subtle animated flow lines */}

@@ -189,19 +189,19 @@ export function QuickScaffold() {
   // Collapsed state - compact one-liner
   if (!isExpanded) {
     return (
-      <GlassCard
-        as="button"
+      <button
         onClick={() => setIsExpanded(true)}
-        className="w-full flex items-center gap-2.5 !px-3 !py-3 sm:!px-4 sm:!py-3.5 overflow-hidden min-w-0"
+        className="group w-full flex items-center gap-2.5 px-3 py-3 sm:px-4 sm:py-3.5 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl border border-gray-200/60 dark:border-white/10 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
+        type="button"
       >
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center group-hover:from-[var(--purple)]/30 group-hover:to-blue-500/30 transition-colors flex-shrink-0">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center flex-shrink-0">
           <Wand2 className="w-4 h-4 text-[var(--purple)]" />
         </div>
-        <span className="text-sm text-gray-600 dark:text-white/60 group-hover:text-gray-900 dark:group-hover:text-white transition-colors truncate min-w-0 flex-1">
+        <span className="text-sm text-gray-600 dark:text-white/60 group-hover:text-gray-900 dark:group-hover:text-white transition-colors truncate min-w-0 flex-1 text-left">
           Describe a business to generate a draft
         </span>
-        <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-[var(--purple)] ml-auto transition-colors" />
-      </GlassCard>
+        <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-[var(--purple)] flex-shrink-0 transition-colors" />
+      </button>
     );
   }
 

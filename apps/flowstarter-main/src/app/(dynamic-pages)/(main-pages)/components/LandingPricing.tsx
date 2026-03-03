@@ -16,7 +16,7 @@ export function LandingPricing() {
   return (
     <div ref={sectionRef}>
         {/* Pricing Section */}
-        <section data-section="pricing" id="pricing" className="py-20 lg:py-28 relative">
+        <section data-section="pricing" id="pricing" className="py-8 lg:py-28 relative">
           {/* Gradient accent - lavender tint */}
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--landing-bg-tint)] to-transparent dark:via-[var(--landing-dark-surface-tint)] pointer-events-none" />
 

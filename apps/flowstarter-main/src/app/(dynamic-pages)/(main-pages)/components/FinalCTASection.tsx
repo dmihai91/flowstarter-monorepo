@@ -11,7 +11,7 @@ export function FinalCTASection() {
   return (
     <>
         {/* Final CTA */}
-        <section className="py-20 lg:py-28 relative overflow-hidden bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#3730a3] dark:from-[#0c0a1d] dark:via-[#14103a] dark:to-[#1e1b4b]">
+        <section className="py-8 lg:py-28 relative overflow-hidden bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#3730a3] dark:from-[#0c0a1d] dark:via-[#14103a] dark:to-[#1e1b4b]">
           {/* Subtle radial glow */}
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
             <div className="w-[700px] h-[450px] rounded-full bg-indigo-500/15 blur-[160px]" />

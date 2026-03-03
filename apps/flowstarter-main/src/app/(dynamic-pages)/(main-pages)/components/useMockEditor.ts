@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useI18n } from '@/lib/i18n';
 
 interface MockSite {
   hasContactForm: boolean;
@@ -21,6 +22,7 @@ interface Message {
  * Manages mock site state, AI response simulation, typing animation.
  */
 export function useMockEditor() {
+  const { t } = useI18n();
   const [isLoaded, setIsLoaded] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [messages, setMessages] = useState<

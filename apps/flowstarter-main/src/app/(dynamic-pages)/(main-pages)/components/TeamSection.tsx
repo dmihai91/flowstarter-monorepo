@@ -9,14 +9,16 @@ export function TeamSection() {
     {
       name: 'Darius',
       role: 'Co-founder & Engineer',
-      bio: '10+ years building software. Now building the platform he wished existed.',
+      bio: '10+ years building software for companies big and small.',
+      quote: 'I build what I wished existed.',
       initials: 'D',
       gradient: 'from-[var(--purple)] to-blue-500',
     },
     {
       name: 'Dorin',
       role: 'Co-founder & Designer',
-      bio: 'Obsessed with design that converts, not just looks pretty.',
+      bio: 'Turns complexity into clarity, one pixel at a time.',
+      quote: 'Good design is invisible.',
       initials: 'D',
       gradient: 'from-pink-500 to-[var(--purple)]',
     },
@@ -37,7 +39,7 @@ export function TeamSection() {
         </div>
 
         <div className="grid sm:grid-cols-2 gap-6 lg:gap-8">
-          {team.map(({ name, role, bio, initials, gradient }) => (
+          {team.map(({ name, role, bio, quote, initials, gradient }) => (
             <div
               key={name}
               className="flex flex-col items-center text-center p-8 rounded-2xl bg-white/40 dark:bg-white/[0.03] backdrop-blur-sm border border-gray-200/30 dark:border-white/[0.06]"
@@ -50,6 +52,9 @@ export function TeamSection() {
               <p className="text-sm font-medium text-[var(--purple)] mb-3">{role}</p>
               <p className="text-sm text-gray-500 dark:text-white/45 leading-relaxed max-w-[30ch]">
                 {bio}
+              </p>
+              <p className="text-xs italic text-gray-400 dark:text-white/30 mt-2">
+                &ldquo;{quote}&rdquo;
               </p>
             </div>
           ))}

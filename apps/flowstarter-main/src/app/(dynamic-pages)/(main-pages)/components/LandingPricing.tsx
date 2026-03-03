@@ -112,8 +112,6 @@ export function LandingPricing() {
                         t('landing.pricing.websiteFeature1'),
                         t('landing.pricing.websiteFeature2'),
                         t('landing.pricing.websiteFeature3'),
-                        t('landing.pricing.websiteFeature4'),
-                        t('landing.pricing.websiteFeature5'),
                       ].map((item, i) => (
                         <li
                           key={i}
@@ -151,7 +149,6 @@ export function LandingPricing() {
                         t('landing.pricing.careFeature1'),
                         t('landing.pricing.careFeature2'),
                         t('landing.pricing.careFeature3'),
-                        t('landing.pricing.careFeature4'),
                       ].map((item, i) => (
                         <li
                           key={i}

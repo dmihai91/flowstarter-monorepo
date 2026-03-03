@@ -1,9 +1,9 @@
 const en = {
   // General
   'app.name': 'Flowstarter',
-  'app.title': 'Flowstarter | Your website. Your bookings. Done.',
+  'app.title': 'Flowstarter — Professional websites for coaches, consultants & therapists',
   'app.description':
-    'We build your website and set up online booking for coaches, therapists, clinics, and service businesses. Get found. Get booked. No tech skills needed.',
+    'We design, build, and launch your professional website in days. Update it yourself with AI. Starting at €499.',
   'app.back': 'Back',
   'app.saveContinue': 'Continue',
   'app.createProject': 'Create Project',

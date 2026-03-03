@@ -40,7 +40,7 @@ export function PillarsSection() {
                   <p className="text-sm font-medium text-[var(--purple)] mb-3">
                     {t(subtitle)}
                   </p>
-                  <p className="text-gray-600 dark:text-white/60 leading-relaxed">
+                  <p className="text-gray-600 dark:text-white/60 leading-relaxed max-w-[55ch]">
                     {t(body)}
                   </p>
                 </div>

@@ -92,7 +92,7 @@ export function FAQSection() {
                         openFaq === i ? 'max-h-48 pb-5' : 'max-h-0'
                       }`}
                     >
-                      <p className="px-6 text-gray-500 dark:text-white/40 leading-relaxed text-sm">
+                      <p className="px-6 text-gray-500 dark:text-white/40 leading-relaxed text-sm max-w-[60ch]">
                         {faq.a}
                       </p>
                     </div>

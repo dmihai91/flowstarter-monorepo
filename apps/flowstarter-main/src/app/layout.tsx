@@ -42,6 +42,18 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t('app.title'),
     description: t('app.description'),
+    openGraph: {
+      title: t('app.title'),
+      description: t('app.description'),
+      siteName: 'Flowstarter',
+      type: 'website',
+      url: 'https://flowstarter.dev',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: t('app.title'),
+      description: t('app.description'),
+    },
     icons: {
       icon: [
         { url: '/favicon.svg', type: 'image/svg+xml' },

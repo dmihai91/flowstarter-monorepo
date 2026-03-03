@@ -102,7 +102,7 @@ export function LandingHero() {
           </div>
 
           {/* Limited spots indicator */}
-          <div className="hero-fade hero-fade-5 flex items-center justify-center gap-2 mt-6 text-sm text-gray-500 dark:text-white/40">
+          <div className="hero-fade hero-fade-5 flex items-center justify-center gap-2 mt-8 text-sm sm:text-base text-gray-500 dark:text-white/40">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />

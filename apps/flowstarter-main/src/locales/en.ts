@@ -2500,7 +2500,7 @@ const en = {
   'waitlist.landing.privacy': 'No spam. Unsubscribe anytime.',
 
   // Landing Page - Hero
-  'landing.hero.badge': 'Done-for-you websites for service professionals',
+  'landing.hero.badge': 'We build it. You refine it with AI.',
   'landing.hero.headline1': 'Your expertise is real.',
   'landing.hero.headline2': 'Your online presence should be too.',
   'landing.hero.pain':

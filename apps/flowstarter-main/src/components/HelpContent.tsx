@@ -6,21 +6,21 @@ import { MessageCircle, Wrench, Rocket, Phone, Mail, HelpCircle, ChevronDown } f
 import { EXTERNAL_URLS } from '@/lib/constants';
 
 const faqs = [
-  { question: 'How does the process work?', answer: "It's simple! Book a free discovery call with our team. We'll learn about your business, goals, and design preferences. Then we build your professional website in 1-2 weeks. Once it's live, you can customize it anytime using our AI editor." },
-  { question: 'How long does it take to build my website?', answer: "Most websites are completed within 1-2 weeks after your discovery call. We'll keep you updated throughout the process and let you know when it's ready for review." },
-  { question: 'What happens during the discovery call?', answer: "We spend 30 minutes learning about your business, your goals, and your brand. You don't need to prepare anything, just show up and tell us about what you do. After the call, we'll send you a summary and start building within 24 hours." },
+  { question: 'How does the process work?', answer: "It's simple! Book a free discovery call with our team. We'll learn about your business, goals, and design preferences. Then we design and build your professional website in about 2 weeks. Once it's live, you can customize it anytime using our AI editor." },
+  { question: 'How long does it take to build my website?', answer: "Most websites are completed within 2 weeks after your discovery call. We'll keep you updated throughout the process and send you a preview link when it's ready for your review." },
+  { question: 'What happens during the discovery call?', answer: "We spend 45 minutes learning about your business, your goals, and your brand. You don't need to prepare anything, just show up and tell us about what you do. After the call, we'll send you a summary and get started on your site." },
   { question: 'Can I make changes after my site is live?', answer: "That's the whole point! Your subscription includes our AI editor: update text, add pages, change your branding, improve your SEO. All without writing a single line of code." },
-  { question: "What's included in my website?", answer: 'Every Starter plan includes: up to 7 professionally designed pages, custom domain setup, mobile-responsive design, hosting on global CDN, SSL certificate, 1 professional email, contact form, analytics dashboard, Google Analytics integration, and 300 AI credits per month for ongoing customization.' },
+  { question: "What's included in my website?", answer: 'Every website includes: professionally designed pages tailored to your business, custom domain setup, mobile-responsive design, fast hosting, SSL certificate, professional email, contact form, analytics, and AI credits each month so you can keep your site fresh.' },
   { question: 'Do I need any technical skills?', answer: "Zero. We handle the technical setup. The AI editor is built for people who've never touched code. Just describe what you want to change, and the AI handles the rest." },
-  { question: 'What are AI credits?', answer: 'Each AI credit lets you make one edit to your site: update text, change colors, add a section, tweak your layout, improve SEO, and more. Your Starter plan includes 300 credits per month, which is more than enough for most businesses (the average client uses about 30-50 per month). If you ever need more, you can top up with 100 extra credits for €5.' },
-  { question: 'What if I want to cancel?', answer: "No lock-in. Cancel your subscription anytime. If you share feedback with us, we'll refund 50% of your setup fee. Either way, you can download all your site assets to use elsewhere." },
+  { question: 'What are AI credits?', answer: 'AI credits let you make changes to your live site through the AI editor: update text, swap images, add sections, tweak layouts, and more. Your plan includes credits each month, which is more than enough for regular updates.' },
+  { question: 'What if I want to cancel?', answer: "No lock-in contracts. You can cancel your monthly subscription anytime. You keep your domain and we can help you export your content if needed." },
   { question: 'Can I use my existing domain?', answer: "Absolutely. We'll help you connect your existing domain to your new site at no extra cost. If you don't have a domain yet, we can help you pick and set one up during the discovery call." },
   { question: 'What kind of websites can you build?', answer: "We specialize in professional websites for freelancers, consultants, small businesses, restaurants, agencies, coaches, and creators. Whether you need a portfolio, a service page, a landing page, or a multi-page business site, we've got you covered." },
 ];
 
 const steps = [
-  { number: '01', title: 'We talk', description: 'Book a free 30-minute discovery call. We learn about your business, your brand, and your goals.', Icon: MessageCircle },
-  { number: '02', title: 'We build', description: 'Our AI engine generates your site from premium templates, tailored to your brand. Ready in 1-2 weeks.', Icon: Wrench },
+  { number: '01', title: 'We talk', description: 'Book a free 45-minute discovery call. We learn about your business, your brand, and your goals.', Icon: MessageCircle },
+  { number: '02', title: 'We build', description: 'Our team designs and builds your site from scratch, tailored to your brand. Ready in about 2 weeks.', Icon: Wrench },
   { number: '03', title: 'You own it', description: 'Your site goes live. Use the AI editor to update content, add pages, and tweak your design anytime.', Icon: Rocket },
 ];
 
@@ -64,7 +64,7 @@ export function HelpContent({ showHero = true, showCta = true }: { showHero?: bo
             <Phone className="w-5 h-5 text-[var(--purple)]" />
           </div>
           <h3 className="font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-[var(--purple)] transition-colors">Book a Discovery Call</h3>
-          <p className="text-sm text-gray-500 dark:text-white/50">Free 30-minute call to discuss your project</p>
+          <p className="text-sm text-gray-500 dark:text-white/50">Free 45-minute call to discuss your project</p>
         </a>
         <a href="mailto:hello@flowstarter.app" className="p-5 sm:p-6 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 hover:border-[var(--purple)]/40 transition-all group">
           <div className="w-11 h-11 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-3 group-hover:bg-[var(--purple)]/10 transition-colors">

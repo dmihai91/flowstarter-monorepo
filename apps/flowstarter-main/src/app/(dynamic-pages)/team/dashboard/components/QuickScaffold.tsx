@@ -198,7 +198,7 @@ export function QuickScaffold() {
           <Wand2 className="w-4 h-4 text-[var(--purple)]" />
         </div>
         <span className="text-sm text-gray-600 dark:text-white/60 group-hover:text-gray-900 dark:group-hover:text-white transition-colors truncate min-w-0 flex-1">
-          Quick scaffold — paste brief to generate draft
+          Describe a business to generate a draft
         </span>
         <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-[var(--purple)] ml-auto transition-colors" />
       </GlassCard>

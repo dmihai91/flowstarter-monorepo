@@ -36,34 +36,42 @@ function LogoMark({ size = 'md', className }: { size?: LogoProps['size']; classN
             <stop offset="0.5" stopColor="#7C3AED" />
             <stop offset="1" stopColor="#06B6D4" />
           </linearGradient>
-          <linearGradient id={`${id}-flow`} x1="0%" y1="50%" x2="100%" y2="50%">
-            <stop offset="0%" stopColor="rgba(255,255,255,0.3)" />
-            <stop offset="40%" stopColor="rgba(255,255,255,1)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0.6)" />
-          </linearGradient>
         </defs>
-        {/* Background: rounded square with premium gradient */}
+        {/* Background */}
         <rect width="40" height="40" rx="11" fill={`url(#${id}-bg)`} />
-        {/* Subtle inner glow */}
         <rect x="1" y="1" width="38" height="38" rx="10" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
-        {/* Main flow line — the "F" stroke that flows upward like a launch */}
+        {/* Stylized "F" — vertical stem + two horizontal arms with flowing curves */}
+        {/* Vertical stem */}
         <path
-          d="M10 28 C14 28, 16 20, 20 20 S26 12, 30 12"
-          stroke={`url(#${id}-flow)`}
+          d="M14 10 L14 30"
+          stroke="white"
           strokeWidth="3"
           strokeLinecap="round"
-          fill="none"
         />
-        {/* Secondary flow — parallel momentum line */}
+        {/* Top arm — flows right with a gentle wave */}
         <path
-          d="M10 22 C14 22, 17 16, 21 16 S27 10, 30 10"
-          stroke="rgba(255,255,255,0.35)"
-          strokeWidth="2"
+          d="M14 12 C18 12, 22 10, 27 12"
+          stroke="white"
+          strokeWidth="2.5"
           strokeLinecap="round"
           fill="none"
         />
-        {/* Spark dot — the "starter" at the peak */}
-        <circle cx="30" cy="11" r="2" fill="white" opacity="0.9" />
+        {/* Middle arm — shorter, flows right */}
+        <path
+          d="M14 20 C17 20, 20 18, 24 20"
+          stroke="white"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          fill="none"
+        />
+        {/* Accent: small flowing trail off the bottom of the stem */}
+        <path
+          d="M14 30 C18 30, 22 28, 28 26"
+          stroke="rgba(255,255,255,0.4)"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          fill="none"
+        />
       </svg>
     </div>
   );

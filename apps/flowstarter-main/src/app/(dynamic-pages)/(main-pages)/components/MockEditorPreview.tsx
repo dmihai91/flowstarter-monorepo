@@ -99,7 +99,7 @@ export function MockEditorPreview({
                     {/* Chat Panel */}
                     <div className="w-full sm:w-1/2 p-3 sm:p-4 flex flex-col border-b sm:border-b-0 border-gray-200/30 dark:border-white/5">
                       <div className="text-[11px] tracking-[0.12em] uppercase font-bold mb-2 sm:mb-3 bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
-                        ✨ Flowstarter Assistant
+                        ✨ Flowstarter Editor
                       </div>
 
                       {/* Messages - grows to fill space */}
@@ -112,8 +112,8 @@ export function MockEditorPreview({
                               </div>
                             </div>
                           ) : (
-                            <div key={i} className="flex gap-2">
-                              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center flex-shrink-0 shadow-sm">
+                            <div key={i} className="flex gap-2 items-start">
+                              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5">
                                 <svg
                                   className="w-3 h-3 text-white"
                                   fill="none"
@@ -128,8 +128,9 @@ export function MockEditorPreview({
                                   />
                                 </svg>
                               </div>
-                              <div className="flex-1 px-3 py-2 rounded-xl rounded-tl-sm bg-white/55 dark:bg-white/[0.05] border border-white/50 dark:border-white/10 text-[13px] text-gray-600 dark:text-white/70">
-                                {msg.text}
+                              <div className="flex-1 px-3 py-2 rounded-xl rounded-tl-sm bg-white/55 dark:bg-white/[0.05] border border-white/50 dark:border-white/10">
+                                <div className="text-[9px] font-bold text-[var(--purple)] uppercase tracking-wider mb-1">Flowstarter Editor</div>
+                                <div className="text-[13px] text-gray-600 dark:text-white/70">{msg.text}</div>
                               </div>
                             </div>
                           )

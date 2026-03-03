@@ -1,7 +1,7 @@
 const en = {
   // General
   'app.name': 'Flowstarter',
-  'app.title': 'Flowstarter — Professional websites for coaches, consultants & therapists',
+  'app.title': 'Flowstarter | Professional websites for coaches, consultants & therapists',
   'app.description':
     'We design, build, and launch your professional website in days. Update it yourself with AI. Starting at €499.',
   'app.back': 'Back',
@@ -1146,7 +1146,7 @@ const en = {
   'landing.hero.headline1': 'Your expertise is real.',
   'landing.hero.headline2': 'Your online presence should be too.',
   'landing.hero.pain':
-    'We design, build, and launch a professional website for your business — ready in days, not months.',
+    'We design, build, and launch a professional website for your business. Ready in days, not months.',
   'landing.hero.subheadline': '',
   'landing.hero.cta': 'Get Your Website Launched',
   'landing.hero.ctaNote':

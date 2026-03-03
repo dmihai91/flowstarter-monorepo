@@ -103,7 +103,7 @@ export default function TeamDashboardPage() {
       {/* Header Row */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
         <div>
-          <p className="text-gray-500 dark:text-white/50 mb-1 text-sm sm:text-base">
+          <p className="text-gray-500 dark:text-white/50 mb-1 text-base sm:text-lg">
             {greeting},{' '}
             <span className="text-gray-700 dark:text-white/70 font-medium">
               {firstName}

@@ -70,7 +70,7 @@ export function LandingHero() {
         </div>
 
         {/* Headline */}
-        <h1 className={`hero-fade hero-fade-2 text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.08] tracking-tight mb-8 text-gray-900 dark:text-white`}>
+        <h1 className={`hero-fade hero-fade-2 text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.08] tracking-tight mb-8 text-gray-900 dark:text-white`}>
           {t('landing.hero.headline1')}
           <br />
           <span className="text-flow">{t('landing.hero.headline2')}</span>

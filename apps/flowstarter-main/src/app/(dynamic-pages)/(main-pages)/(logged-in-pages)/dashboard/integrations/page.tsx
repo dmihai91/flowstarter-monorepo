@@ -143,8 +143,19 @@ export default function IntegrationsIndexPage() {
   const activeCount = integrations.filter((i) => isConnected(i.id)).length;
   const availableCount = integrations.length;
 
+  // Show loading state while fetching projects
+  if (isLoading) {
+    return (
+      <PageContainer gradientVariant="integrations">
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="w-8 h-8 border-2 border-[var(--purple)]/30 border-t-[var(--purple)] rounded-full animate-spin" />
+        </div>
+      </PageContainer>
+    );
+  }
+
   // Show locked state if no live project
-  if (!isLoading && !hasLiveProject) {
+  if (!hasLiveProject) {
     return (
       <PageContainer gradientVariant="integrations">
         <section

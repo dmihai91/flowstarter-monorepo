@@ -5,7 +5,7 @@ import { FlowBackground } from '@flowstarter/flow-design-system';
 
 export function ClientLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="relative grid w-full h-full bg-[radial-gradient(circle_at_20%_30%,#e4d4ff_0%,transparent_55%),radial-gradient(circle_at_80%_70%,#fbd5ea_0%,transparent_55%),linear-gradient(to_bottom,#f8f5ff,#faf8ff)] dark:bg-[radial-gradient(circle_at_20%_30%,#1a0d2e_0%,transparent_55%),radial-gradient(circle_at_80%_70%,#200a1a_0%,transparent_55%),linear-gradient(to_bottom,#0a0810,#0a0a0c)]">
+    <div className="relative grid w-full h-full bg-[radial-gradient(circle_at_0%_0%,#e4d4ff_0%,transparent_80%),radial-gradient(circle_at_100%_100%,#fbd5ea_0%,transparent_80%),linear-gradient(to_bottom,#f8f5ff,#faf8ff)] dark:bg-[radial-gradient(circle_at_0%_0%,#1a0d2e_0%,transparent_80%),radial-gradient(circle_at_100%_100%,#200a1a_0%,transparent_80%),linear-gradient(to_bottom,#0a0810,#0a0a0c)]">
       <FlowBackground variant="landing" style={{ position: 'fixed', inset: 0, zIndex: 0 }} />
       <div className="relative z-10 flex flex-col items-stretch justify-center min-h-screen min-w-full">
         <div className="w-full">{children}</div>

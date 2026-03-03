@@ -34,7 +34,7 @@ export default function AuthLayout({
         }
       `}</style>
 
-      <div className="min-h-screen w-full font-display relative overflow-hidden flex flex-col bg-[radial-gradient(circle_at_20%_30%,#e4d4ff_0%,transparent_55%),radial-gradient(circle_at_80%_70%,#fbd5ea_0%,transparent_55%),linear-gradient(to_bottom,#f8f5ff,#faf8ff)] dark:bg-[radial-gradient(circle_at_20%_30%,#1a0d2e_0%,transparent_55%),radial-gradient(circle_at_80%_70%,#200a1a_0%,transparent_55%),linear-gradient(to_bottom,#0a0810,#0a0a0c)]">
+      <div className="min-h-screen w-full font-display relative overflow-hidden flex flex-col bg-[radial-gradient(circle_at_0%_0%,#e4d4ff_0%,transparent_80%),radial-gradient(circle_at_100%_100%,#fbd5ea_0%,transparent_80%),linear-gradient(to_bottom,#f8f5ff,#faf8ff)] dark:bg-[radial-gradient(circle_at_0%_0%,#1a0d2e_0%,transparent_80%),radial-gradient(circle_at_100%_100%,#200a1a_0%,transparent_80%),linear-gradient(to_bottom,#0a0810,#0a0a0c)]">
         {/* Gradient background with flow lines */}
         <FlowBackground variant="landing" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }} />
 

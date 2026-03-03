@@ -278,7 +278,7 @@ export function useMockEditor() {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasInteracted]);
+  }, []);
 
   useEffect(() => {
     // Only auto-scroll after user has interacted (not on initial load)
@@ -286,21 +286,9 @@ export function useMockEditor() {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
-  }, [messages, hasInteracted]);
+  }, [messages]);
 
   // Scroll animation observer
-
-  const mouseParallax = (factor: number) => ({
-    transform: `translate(${
-      (mousePos.x -
-        (typeof window !== 'undefined' ? window.innerWidth / 2 : 0)) *
-      factor
-    }px, ${
-      (mousePos.y -
-        (typeof window !== 'undefined' ? window.innerHeight / 2 : 0)) *
-      factor
-    }px)`,
-  });
 
   const features = [
     {

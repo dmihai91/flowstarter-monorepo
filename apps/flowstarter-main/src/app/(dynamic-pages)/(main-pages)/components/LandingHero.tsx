@@ -19,7 +19,7 @@ export function LandingHero() {
           {/* Flow lines INSIDE hero so they appear on top of background */}
           <div className="absolute inset-0 pointer-events-none">
             <svg
-              className="absolute inset-0 w-full h-full opacity-[0.10] dark:opacity-[0.06]"
+              className="absolute inset-0 w-full h-full opacity-[0.10] dark:opacity-[0.12]"
               viewBox="0 0 1200 800"
               preserveAspectRatio="xMidYMid slice"
               fill="none"

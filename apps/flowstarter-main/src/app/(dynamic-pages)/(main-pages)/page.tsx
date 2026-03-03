@@ -30,13 +30,13 @@ export default function LandingPage() {
         }
         .hero-fade {
           opacity: 0;
-          animation: heroFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation: heroFadeUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
-        .hero-fade-1 { animation-delay: 0.05s; }
-        .hero-fade-2 { animation-delay: 0.1s; }
-        .hero-fade-3 { animation-delay: 0.15s; }
-        .hero-fade-4 { animation-delay: 0.2s; }
-        .hero-fade-5 { animation-delay: 0.25s; }
+        .hero-fade-1 { animation-delay: 0.1s; }
+        .hero-fade-2 { animation-delay: 0.25s; }
+        .hero-fade-3 { animation-delay: 0.4s; }
+        .hero-fade-4 { animation-delay: 0.55s; }
+        .hero-fade-5 { animation-delay: 0.7s; }
         @keyframes flowDrift { 0% { transform: translateX(0); } 100% { transform: translateX(40px); } }
         @keyframes flowDrift2 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(-30px) translateY(15px); } }
         @keyframes flowDrift3 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(20px) translateY(-10px); } }

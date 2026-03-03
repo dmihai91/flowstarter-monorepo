@@ -39,6 +39,7 @@ export default function LandingPage() {
         @keyframes flowDrift { 0% { transform: translateX(0); } 100% { transform: translateX(40px); } }
         @keyframes flowDrift2 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(-30px) translateY(15px); } }
         @keyframes flowDrift3 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(20px) translateY(-10px); } }
+        @keyframes shimmerBtn { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
         @keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
         .animate-cursor-blink { animation: cursorBlink 1s step-end infinite; }
         @keyframes textFlow { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }

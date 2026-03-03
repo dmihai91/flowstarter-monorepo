@@ -56,7 +56,7 @@ export function LandingHero() {
               >
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/5 dark:bg-white/5 backdrop-blur-sm border border-gray-900/10 dark:border-white/10 mb-10">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-sm font-semibold tracking-wide text-gray-700 dark:text-white/80">
+                  <span className="text-sm font-semibold tracking-wide text-gray-800 dark:text-white/90">
                     {t('landing.hero.badge')}
                   </span>
                 </div>
@@ -69,10 +69,10 @@ export function LandingHero() {
                   </span>
                 </h1>
 
-                <p className="hero-fade hero-fade-3 text-base lg:text-xl text-gray-500 dark:text-white/50 leading-relaxed mb-5 text-center sm:text-left">
+                <p className="hero-fade hero-fade-3 text-base lg:text-xl text-gray-700 dark:text-white/70 leading-relaxed mb-5 text-center sm:text-left">
                   {t('landing.hero.pain')}
                 </p>
-                <p className="hero-fade hero-fade-4 text-base text-gray-400 dark:text-white/40 leading-relaxed mb-8 text-center sm:text-left">
+                <p className="hero-fade hero-fade-4 text-base text-gray-600 dark:text-white/60 leading-relaxed mb-8 text-center sm:text-left">
                   {t('landing.hero.subheadline')}
                 </p>
 

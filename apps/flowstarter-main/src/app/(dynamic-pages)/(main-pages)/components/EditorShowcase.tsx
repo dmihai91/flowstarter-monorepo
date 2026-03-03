@@ -24,7 +24,7 @@ export function EditorShowcase() {
               {/* Glow behind editor */}
               <div className="absolute -inset-6 sm:-inset-10 rounded-[2rem] bg-gradient-to-br from-[var(--purple)]/8 via-blue-500/4 to-pink-500/8 dark:from-[var(--purple)]/12 dark:via-blue-500/6 dark:to-pink-500/12 blur-2xl opacity-60 pointer-events-none" />
               {/* Fixed height prevents internal animations from pushing page content */}
-              <div className="h-[480px] sm:h-[520px] lg:h-[560px] overflow-hidden rounded-2xl">
+              <div className="h-[600px] sm:h-[620px] lg:h-[640px] overflow-hidden rounded-2xl">
                 <MockEditorPreview {...editor} />
               </div>
             </div>

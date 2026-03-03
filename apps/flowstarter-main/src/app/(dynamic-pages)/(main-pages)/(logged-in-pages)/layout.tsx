@@ -30,9 +30,19 @@ function LayoutContent({ children }: { children: ReactNode }) {
     <div className="min-h-screen flex flex-col">
       {/* Gradient background - behind everything */}
       <FlowBackground variant="dashboard" style={{ position: "fixed", inset: 0, zIndex: 0 }} />
-      {/* Gradient overlay with indigo + amber glows */}
+      {/* Gradient overlay — light: soft pastels, dark: rich purples */}
       <div
-        className="fixed inset-0 z-[1] pointer-events-none"
+        className="fixed inset-0 z-[1] pointer-events-none dark:hidden"
+        style={{
+          background: `
+            radial-gradient(ellipse 80% 60% at 0% 0%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+            radial-gradient(ellipse 70% 50% at 100% 20%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
+            radial-gradient(ellipse 120% 60% at 50% 100%, rgba(236, 72, 153, 0.04) 0%, transparent 55%)
+          `,
+        }}
+      />
+      <div
+        className="fixed inset-0 z-[1] pointer-events-none hidden dark:block"
         style={{
           background: `
             radial-gradient(ellipse 80% 60% at 0% 0%, rgba(99, 70, 200, 0.12) 0%, transparent 50%),

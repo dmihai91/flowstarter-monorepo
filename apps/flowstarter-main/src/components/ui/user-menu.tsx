@@ -111,12 +111,18 @@ export function UserMenu() {
         </div>
 
         {isTeam ? (
-          <Link href="/team/dashboard/security">
-            <DropdownMenuItem>
-              <Shield className="h-4 w-4" />
-              {t('team.sidebar.security')}
+          <>
+            <DropdownMenuItem onSelect={() => router.push('/profile')}>
+              <User className="h-4 w-4" />
+              {t('app.profile')}
             </DropdownMenuItem>
-          </Link>
+            <Link href="/team/dashboard/security">
+              <DropdownMenuItem>
+                <Shield className="h-4 w-4" />
+                {t('team.sidebar.security')}
+              </DropdownMenuItem>
+            </Link>
+          </>
         ) : (
           <>
             <DropdownMenuItem onSelect={() => router.push('/profile')}>

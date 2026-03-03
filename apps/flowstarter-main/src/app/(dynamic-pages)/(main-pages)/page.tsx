@@ -12,6 +12,7 @@ import { IncludedSection } from './components/IncludedSection';
 import { TrustSection } from './components/TrustSection';
 import { LandingPricing } from './components/LandingPricing';
 import { ManifestoSection } from './components/ManifestoSection';
+import { TeamSection } from './components/TeamSection';
 import { FAQSection } from './components/FAQSection';
 import { FinalCTASection } from './components/FinalCTASection';
 
@@ -84,7 +85,10 @@ export default function LandingPage() {
         {/* 8. Manifesto — emotional/mission */}
         <ManifestoSection />
 
-        {/* 9. FAQ */}
+        {/* 9. Who's behind Flowstarter */}
+        <TeamSection />
+
+        {/* 10. FAQ */}
         <FAQSection />
 
         {/* 10. Final CTA + footer */}

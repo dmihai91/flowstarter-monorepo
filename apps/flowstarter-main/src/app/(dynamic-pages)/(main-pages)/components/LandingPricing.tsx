@@ -178,6 +178,28 @@ export function LandingPricing() {
 
                 </div>
 
+                {/* Guarantee callout */}
+                <div className="mb-6 p-4 rounded-xl bg-emerald-50/60 dark:bg-emerald-500/[0.04] border border-emerald-200/40 dark:border-emerald-500/10">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800 dark:text-white/80 mb-1">
+                        Pay only when you&apos;re happy
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-white/45 leading-relaxed">
+                        We collect 50% upfront to start your project. You only pay the remaining 50% when you&apos;re happy with the result.
+                      </p>
+                      <p className="text-[10px] text-gray-400 dark:text-white/25 mt-1.5">
+                        The initial 50% deposit is non-refundable and covers design, setup, and infrastructure costs.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 {/* CTA */}
                 <a
                   href={EXTERNAL_URLS.calendly.discovery}

@@ -148,23 +148,18 @@ export default function TeamDashboardPage() {
       {showClientModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowClientModal(false)}>
           <div
-            className="w-full max-w-md mx-4 rounded-2xl p-6 relative"
-            style={{
-              background: 'var(--flow-bg-primary, #ffffff)',
-              border: '1px solid var(--flow-border-default, #e4e4e7)',
-              boxShadow: '0 25px 50px rgba(0,0,0,0.15)',
-            }}
+            className="w-full max-w-md mx-4 rounded-2xl p-6 relative bg-white/95 dark:bg-[#1a1a1f]/95 backdrop-blur-2xl border border-gray-200/60 dark:border-white/10 shadow-[0_25px_50px_rgba(0,0,0,0.15),0_1px_0_rgba(255,255,255,0.8)_inset] dark:shadow-[0_25px_50px_rgba(0,0,0,0.5),0_1px_0_rgba(255,255,255,0.06)_inset]"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setShowClientModal(false)}
-              className="absolute top-4 right-4 p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+              className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
             >
-              <X className="w-4 h-4 text-gray-500" />
+              <X className="w-4 h-4 text-gray-400 dark:text-white/50" />
             </button>
 
             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">New Project</h2>
-            <p className="text-sm text-gray-500 dark:text-white/50 mb-5">Client details for this project</p>
+            <p className="text-sm text-gray-500 dark:text-white/50 mb-5">Enter client details for this project</p>
 
             <div className="space-y-4">
               <div>

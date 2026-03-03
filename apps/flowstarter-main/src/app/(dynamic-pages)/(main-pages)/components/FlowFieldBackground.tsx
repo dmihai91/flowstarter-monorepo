@@ -8,7 +8,7 @@ export function FlowFieldBackground() {
     <>
         {/* Flow Field Background - Hero Section */}
         <div
-          className="fixed inset-0 pointer-events-none overflow-hidden z-0"
+          className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ maskImage: "linear-gradient(to bottom, black 0%, black 25%, transparent 55%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 25%, transparent 55%)" }}
         >
           <svg
             className="absolute inset-0 w-full h-full opacity-[0.35] dark:opacity-[0.15]"

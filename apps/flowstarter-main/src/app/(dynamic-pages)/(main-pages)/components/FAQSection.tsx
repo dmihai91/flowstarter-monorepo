@@ -15,7 +15,7 @@ export function FAQSection() {
         {/* FAQ Section */}
         <section
           ref={sectionRef} id="faq"
-          className="py-8 lg:py-28"
+          className="pt-16 pb-8 lg:pt-28 lg:pb-28"
         >
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div
@@ -27,7 +27,7 @@ export function FAQSection() {
                   : 'opacity-0'
               }`}
             >
-              <div className="col-span-2 text-center mb-10 lg:mb-14">
+              <div className="col-span-2 text-center mb-6 lg:mb-8">
                 <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4">
                   Questions?
                   <br />

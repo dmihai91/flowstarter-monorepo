@@ -20,7 +20,7 @@ interface VariantConfig {
 const variants: Record<FlowBackgroundVariant, VariantConfig> = {
   dashboard: { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.12, glowDark: 0.08, lineLight: 0.04, lineDark: 0.04 },
   editor:    { bgLight: '#f8f8fa', bgDark: '#0a0a0c', glowLight: 0.14, glowDark: 0.10, lineLight: 0.04, lineDark: 0.05 },
-  landing:   { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.45, glowDark: 0.28, lineLight: 0.14, lineDark: 0.16 },
+  landing:   { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.65, glowDark: 0.35, lineLight: 0.25, lineDark: 0.22 },
   wizard:    { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.20, glowDark: 0.08, lineLight: 0.03, lineDark: 0.03 },
 };
 
@@ -155,7 +155,7 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
           </defs>
           <g
             stroke="url(#flow-bg-grad-1)"
-            strokeWidth="1.2"
+            strokeWidth="1.8"
             style={animated ? { animation: 'flow-drift-1 20s ease-in-out infinite', willChange: 'transform' } : undefined}
           >
             <path d="M-100,150 Q200,120 400,180 T800,140 T1300,200" />
@@ -164,7 +164,7 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
           </g>
           <g
             stroke="url(#flow-bg-grad-2)"
-            strokeWidth="0.9"
+            strokeWidth="1.3"
             style={animated ? { animation: 'flow-drift-2 25s ease-in-out infinite', willChange: 'transform' } : undefined}
           >
             <path d="M-100,200 Q150,230 350,170 T750,230 T1300,190" />
@@ -173,7 +173,7 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
           </g>
           <g
             stroke="url(#flow-bg-grad-1)"
-            strokeWidth="0.6"
+            strokeWidth="0.9"
             style={animated ? { animation: 'flow-drift-3 30s ease-in-out infinite', willChange: 'transform' } : undefined}
           >
             <path d="M-100,100 Q200,80 400,120 T800,100 T1300,140" />

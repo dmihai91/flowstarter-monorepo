@@ -11,7 +11,7 @@ export function FinalCTASection() {
   return (
     <>
         {/* Final CTA */}
-        <section className="py-12 lg:py-20 relative overflow-hidden bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#3730a3] dark:from-[#0c0a1d] dark:via-[#14103a] dark:to-[#1e1b4b]">
+        <section className="py-8 lg:py-20 relative overflow-hidden bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#3730a3] dark:from-[#0c0a1d] dark:via-[#14103a] dark:to-[#1e1b4b]">
           {/* Subtle radial glow */}
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
             <div className="w-[700px] h-[450px] rounded-full bg-indigo-500/15 blur-[160px]" />
@@ -35,16 +35,16 @@ export function FinalCTASection() {
           </div>
 
           <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center relative">
-            <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-5">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-5">
               <span className="bg-gradient-to-r from-white via-blue-300 to-white bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
                 {t('landing.cta.title')}
               </span>
             </h2>
-            <p className="text-lg text-white/50 mb-10 max-w-md mx-auto">
+            <p className="text-base text-white/50 mb-6 sm:mb-10 max-w-md mx-auto">
               {t('landing.cta.subtitle')}
             </p>
             <a href={EXTERNAL_URLS.calendly.discovery} target="_blank" rel="noopener noreferrer" className="inline-flex justify-center w-full sm:w-auto">
-              <Button className="relative overflow-hidden w-full sm:w-auto bg-white text-[#0f0c29] hover:bg-white/90 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] rounded-lg px-12 h-16 text-lg font-semibold shadow-xl shadow-white/10 transition-all duration-300 hover:scale-105">
+              <Button className="relative overflow-hidden w-full sm:w-auto bg-white text-[#0f0c29] hover:bg-white/90 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] rounded-lg px-8 h-12 text-base sm:px-12 sm:h-16 sm:text-lg font-semibold shadow-xl shadow-white/10 transition-all duration-300 hover:scale-105">
                 {t('landing.cta.button')}
                 <svg
                   className="w-5 h-5 ml-3"

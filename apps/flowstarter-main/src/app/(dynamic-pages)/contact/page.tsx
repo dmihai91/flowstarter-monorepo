@@ -70,11 +70,10 @@ export default function ContactPage() {
               Get in Touch
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-              Let's talk about your project
+              We'd love to hear from you
             </h1>
             <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl mx-auto">
-              Have a question or ready to get started? We'd love to hear from
-              you.
+              Whether you have a question about our service or want to discuss your project, we're here to help.
             </p>
           </div>
 
@@ -94,7 +93,7 @@ export default function ContactPage() {
                     Message sent!
                   </h3>
                   <p className="text-gray-500 dark:text-white/50 mb-6">
-                    We'll get back to you within 48 hours.
+                    We'll get back to you within 24 hours.
                   </p>
                   <Button
                     onClick={() => contactMutation.reset()}
@@ -152,10 +151,10 @@ export default function ContactPage() {
                     >
                       <option value="">Select a topic</option>
                       <option value="general">General inquiry</option>
-                      <option value="quote">Get a quote</option>
-                      <option value="support">Support question</option>
+                      <option value="project">I want a website built</option>
+                      <option value="support">Support with my site</option>
+                      <option value="billing">Billing question</option>
                       <option value="feedback">Feedback</option>
-                      <option value="partnership">Partnership</option>
                       <option value="other">Other</option>
                     </select>
                   </div>
@@ -211,8 +210,7 @@ export default function ContactPage() {
                   Prefer to talk?
                 </h2>
                 <p className="text-gray-500 dark:text-white/50 mb-6">
-                  Book a free discovery call and let's discuss your project in
-                  person.
+                  Book a free 45-minute discovery call. We'll learn about your business and figure out the best approach together.
                 </p>
                 <a
                   href={EXTERNAL_URLS.calendly.discovery}
@@ -294,7 +292,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="font-medium text-gray-900 dark:text-white">
-                    Response within 48 hours
+                    Response within 24 hours
                   </p>
                   <p className="text-sm text-gray-500 dark:text-white/50">
                     Usually much faster!

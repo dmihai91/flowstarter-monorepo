@@ -19,13 +19,11 @@ export function LandingHero() {
       {/* Multi-layer gradient background */}
       <div className="absolute inset-0 pointer-events-none overflow-visible">
         {/* Base warm tint */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#f5f0ff] to-[#fdf8ff] dark:from-[#0c0814] dark:to-[#08080c]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#faf8ff] to-white dark:from-[#0a0810] dark:to-[#08080c]" />
         {/* Violet blob — top left */}
-        <div className="absolute top-0 left-0 w-full sm:w-[70%] h-[60%] rounded-full bg-[#d8c4ff] dark:bg-[#1e1040] opacity-70 dark:opacity-60 blur-[80px] sm:blur-[120px]" />
+        <div className="absolute top-0 left-0 w-[70%] sm:w-[55%] h-[50%] rounded-full bg-[#e0d4ff] dark:bg-[#180c2c] opacity-50 dark:opacity-50 blur-[80px] sm:blur-[120px]" />
         {/* Pink blob — bottom right */}
-        <div className="absolute bottom-0 right-0 w-full sm:w-[65%] h-[55%] rounded-full bg-[#fcc8e0] dark:bg-[#2a0c20] opacity-50 dark:opacity-45 blur-[80px] sm:blur-[120px]" />
-        {/* Blue accent — center */}
-        <div className="absolute top-[40%] left-[30%] w-[50%] h-[30%] rounded-full bg-[#d4e4ff] dark:bg-[#0e1a30] opacity-35 dark:opacity-30 blur-[80px] sm:blur-[100px]" />
+        <div className="absolute bottom-[5%] right-0 w-[70%] sm:w-[55%] h-[50%] rounded-full bg-[#fdd0e8] dark:bg-[#260c1e] opacity-50 dark:opacity-45 blur-[80px] sm:blur-[120px]" />
       </div>
 
       {/* Subtle animated flow lines */}

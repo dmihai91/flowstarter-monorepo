@@ -93,13 +93,13 @@ export function LandingHero() {
             <span className="text-[10px] sm:text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">🔥 Limited launch price</span>
             <span className="w-px h-5 bg-amber-300/30 dark:bg-amber-500/20" />
             <div className="flex items-baseline gap-1.5">
-              <span className="text-sm sm:text-base text-gray-400 dark:text-white/30 line-through">€599</span>
+              <span className="text-sm sm:text-base text-gray-400 dark:text-white/30 line-through">€699</span>
               <span className="text-lg sm:text-xl font-extrabold text-gray-900 dark:text-white">€499</span>
               <span className="text-xs sm:text-sm text-gray-400 dark:text-white/35">setup</span>
             </div>
             <span className="text-gray-300 dark:text-white/15">+</span>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-lg sm:text-xl font-extrabold text-gray-900 dark:text-white">€39</span>
+              <span className="text-lg sm:text-xl font-extrabold text-gray-900 dark:text-white">€49</span>
               <span className="text-xs sm:text-sm text-gray-400 dark:text-white/35">/mo</span>
             </div>
           </div>

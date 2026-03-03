@@ -54,7 +54,7 @@ export function LandingPricing() {
                     <span className="text-base text-gray-400 dark:text-white/40">
                       {t('landing.pricing.buildLabel')}{' '}
                     </span>
-                    <span className="text-lg line-through text-gray-400 dark:text-white/30 font-medium mr-1">€599</span>
+                    <span className="text-lg line-through text-gray-400 dark:text-white/30 font-medium mr-1">€699</span>
                     <span className="text-3xl font-bold">{t('landing.pricing.buildPrice')}</span>
                     <span className="text-base text-gray-400 dark:text-white/40 ml-1">
                       {t('landing.pricing.buildPeriod')}

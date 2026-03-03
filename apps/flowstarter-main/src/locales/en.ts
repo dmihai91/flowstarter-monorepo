@@ -1152,7 +1152,7 @@ const en = {
   'landing.hero.ctaNote':
     'One call. We handle everything. You\'ll be live in days.',
   'landing.hero.priceBuild': '€499',
-  'landing.hero.priceMonthly': '€39',
+  'landing.hero.priceMonthly': '€49',
 
   // What's Included section
   'landing.included.title': 'Everything you need to get found and get booked.',
@@ -1206,7 +1206,7 @@ const en = {
     'Zero. We handle the entire setup. You just review and approve.',
   'landing.faq.q6': 'What happens when the beta ends?',
   'landing.faq.a6':
-    'Your €39/month rate is locked in for as long as you stay subscribed. The setup fee goes from €499 to €599 after beta. You get 30 days notice before anything changes.',
+    'Your €49/month rate is locked in for as long as you stay subscribed. The setup fee goes from €499 to €699 after beta. You get 30 days notice before anything changes.',
   'landing.faq.q7': "What's included in the email?",
   'landing.faq.a7':
     'One professional email address with your domain (e.g. you@yourbusiness.com). Need more? We can add additional mailboxes.',
@@ -1263,12 +1263,12 @@ const en = {
     'One fee to build. One fee to maintain. Cancel anytime.',
   'landing.pricing.limitedBadge': 'Launch pricing',
   'landing.pricing.limitedNote':
-    'Setup goes to €599 after beta. Lock in current rates.',
+    'Setup goes to €699 after beta. Lock in current rates.',
   'landing.pricing.buildLabel': 'Setup:',
   'landing.pricing.buildPrice': '€499',
   'landing.pricing.buildPeriod': 'one-time',
   'landing.pricing.careLabel': 'Monthly:',
-  'landing.pricing.carePrice': '€39',
+  'landing.pricing.carePrice': '€49',
   'landing.pricing.carePeriod': '/month',
   'landing.pricing.note':
     'First month free. Cancel anytime.',
@@ -1285,7 +1285,7 @@ const en = {
   'landing.pricing.websiteFeature4': 'Mobile-ready, fast, SEO basics handled',
   'landing.pricing.websiteFeature5': 'Live in about 2 weeks',
 
-  'landing.pricing.careTitle': 'Monthly (€39)',
+  'landing.pricing.careTitle': 'Monthly (€49)',
   'landing.pricing.careDesc':
     'Hosting, security, updates, and small edits. Bigger changes are quoted separately.',
   'landing.pricing.careFeature1': '1,000 AI credits for edits each month',

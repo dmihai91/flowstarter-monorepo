@@ -64,7 +64,7 @@ export function FinalCTASection() {
             <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 mt-4 text-sm text-white/40 font-medium">
               <span>€499 setup</span>
               <span className="text-white/20">·</span>
-              <span>€39/month</span>
+              <span>€49/month</span>
               <span className="text-white/20">·</span>
               <span>First month free</span>
             </div>

@@ -13,7 +13,7 @@ export function FAQSection() {
     <>
         {/* FAQ Section */}
         <section
-          id="faq"
+          ref={sectionRef} id="faq"
           className="py-10 lg:py-14 bg-gradient-to-b from-white via-gray-50/50 to-white dark:from-transparent dark:via-white/[0.01] dark:to-transparent"
         >
           <div className="max-w-7xl mx-auto px-6 lg:px-12">

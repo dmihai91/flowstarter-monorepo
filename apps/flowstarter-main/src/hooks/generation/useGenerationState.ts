@@ -17,23 +17,32 @@ export function useGenerationState() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const updateStep = useCallback(
-    (stepId: string, updates: Partial<GenerationStep>) => {
+    (stepId: number | string, name: string | undefined, status: GenerationStep['status'], message?: string, data?: StepData) => {
+      const id = String(stepId);
       setSteps((prev) => {
-        const existing = prev.find((s) => s.id === stepId);
+        const existing = prev.find((s) => s.id === id);
+        const updates = {
+          ...(name ? { name } : {}),
+          status,
+          ...(message ? { message } : {}),
+          ...(data ? { data } : {}),
+        };
         if (existing) {
-          return prev.map((s) => (s.id === stepId ? { ...s, ...updates } : s));
+          return prev.map((s) => (s.id === id ? { ...s, ...updates } : s));
         }
-        // Auto-create step if it doesn't exist
-        return [...prev, { id: stepId, name: stepId, status: 'pending' as const, ...updates }];
+        return [...prev, { id, name: name || `Step ${stepId}`, status, ...(message ? { message } : {}), ...(data ? { data } : {}) }].sort(
+          (a, b) => Number(a.id) - Number(b.id)
+        );
       });
     },
     []
   );
 
   const updateStepMessage = useCallback(
-    (stepId: string, message: string) => {
+    (stepId: number | string, message: string) => {
+      const id = String(stepId);
       setSteps((prev) =>
-        prev.map((s) => (s.id === stepId ? { ...s, message } : s))
+        prev.map((s) => (s.id === id ? { ...s, message } : s))
       );
     },
     []

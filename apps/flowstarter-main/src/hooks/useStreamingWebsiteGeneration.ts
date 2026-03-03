@@ -228,18 +228,18 @@ export function useStreamingWebsiteGeneration(
                 const stepName =
                   'name' in event && typeof event.name === 'string'
                     ? event.name
-                    : steps.find((s) => s.id === String(event.step))?.name ||
-                      `Step ${event.step}`;
+                    : undefined;
                 const message =
                   'message' in event && typeof event.message === 'string'
                     ? event.message
                     : undefined;
+                const stepData = event as unknown as StepData;
                 updateStep(
                   event.step,
                   stepName,
                   'completed',
                   message,
-                  event as StepData
+                  stepData
                 );
               } else if (
                 'stage' in event &&
@@ -250,8 +250,7 @@ export function useStreamingWebsiteGeneration(
                 const stepName =
                   'name' in event && typeof event.name === 'string'
                     ? event.name
-                    : steps.find((s) => s.id === String(event.step))?.name ||
-                      `Step ${event.step}`;
+                    : undefined;
                 const message =
                   'message' in event && typeof event.message === 'string'
                     ? event.message

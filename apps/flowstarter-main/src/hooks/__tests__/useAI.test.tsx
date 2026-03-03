@@ -1,10 +1,11 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAIClassify, useAIModerate } from '../useAI';
 import React from 'react';
 
 // Mock fetch
-global.fetch = jest.fn();
+global.fetch = vi.fn();
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
@@ -20,7 +21,7 @@ const createWrapper = () => {
 
 describe('useAIClassify', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should classify project successfully', async () => {
@@ -64,7 +65,7 @@ describe('useAIClassify', () => {
 
 describe('useAIModerate', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should moderate content successfully', async () => {

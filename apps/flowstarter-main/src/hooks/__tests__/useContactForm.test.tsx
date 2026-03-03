@@ -1,9 +1,10 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useContactForm } from '../useContactForm';
 import React from 'react';
 
-global.fetch = jest.fn();
+global.fetch = vi.fn();
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
@@ -19,7 +20,7 @@ const createWrapper = () => {
 
 describe('useContactForm', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should submit contact form successfully', async () => {

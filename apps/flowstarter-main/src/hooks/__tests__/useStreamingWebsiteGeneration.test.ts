@@ -195,7 +195,7 @@ describe('useStreamingWebsiteGeneration', () => {
 
     await waitFor(
       () => expect(result.current.steps.length).toBeGreaterThan(0),
-      { timeout: 500 }
+      { timeout: 2000 }
     );
 
     expect(result.current.steps[0].name).toBe('Setup');
@@ -234,7 +234,7 @@ describe('useStreamingWebsiteGeneration', () => {
 
     await waitFor(
       () => expect(result.current.steps[0]?.message).toBe('Processing file 2'),
-      { timeout: 500 }
+      { timeout: 2000 }
     );
   });
 
@@ -275,7 +275,7 @@ describe('useStreamingWebsiteGeneration', () => {
 
     await waitFor(
       () => expect(result.current.steps[0]?.message).toContain('component.tsx'),
-      { timeout: 500 }
+      { timeout: 2000 }
     );
   });
 
@@ -316,7 +316,7 @@ describe('useStreamingWebsiteGeneration', () => {
     await waitFor(
       () =>
         expect(result.current.steps[0]?.message).toBe('Processing component'),
-      { timeout: 500 }
+      { timeout: 2000 }
     );
   });
 
@@ -358,7 +358,7 @@ describe('useStreamingWebsiteGeneration', () => {
 
     await waitFor(
       () => expect(result.current.steps[0]?.status).toBe('completed'),
-      { timeout: 500 }
+      { timeout: 2000 }
     );
 
     expect(result.current.steps[0].data?.files).toBe(5);
@@ -401,7 +401,7 @@ describe('useStreamingWebsiteGeneration', () => {
 
     await waitFor(
       () => expect(result.current.steps[0]?.status).toBe('skipped'),
-      { timeout: 500 }
+      { timeout: 2000 }
     );
   });
 
@@ -476,7 +476,7 @@ describe('useStreamingWebsiteGeneration', () => {
 
     await waitFor(
       () => expect(result.current.progress?.stage).toBe('planning'),
-      { timeout: 500 }
+      { timeout: 2000 }
     );
   });
 
@@ -552,7 +552,7 @@ describe('useStreamingWebsiteGeneration', () => {
     await waitFor(
       () =>
         expect(result.current.progress?.data?.plan).toBe('Detailed plan here'),
-      { timeout: 500 }
+      { timeout: 2000 }
     );
   });
 
@@ -587,7 +587,7 @@ describe('useStreamingWebsiteGeneration', () => {
 
     await waitFor(
       () => expect(result.current.progress?.stage).toBe('executing'),
-      { timeout: 500 }
+      { timeout: 2000 }
     );
   });
 

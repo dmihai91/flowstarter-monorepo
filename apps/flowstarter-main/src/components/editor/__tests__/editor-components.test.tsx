@@ -6,6 +6,17 @@ import { ChatInput } from '../ChatInput';
 import { PreviewControls } from '../PreviewControls';
 import { PreviewPanel } from '../PreviewPanel';
 
+// Mock design system components (avoid duplicate React instances)
+vi.mock('@flowstarter/flow-design-system', () => ({
+  FlowBackground: () => null,
+  LoadingScreen: () => null,
+}));
+
+// Mock PreviewLoading which may also use design system
+vi.mock('../PreviewLoading', () => ({
+  PreviewLoading: ({ message }: { message?: string }) => <div data-testid="preview-loading">{message || 'Loading...'}</div>,
+}));
+
 // Mock the translations
 vi.mock('@/lib/i18n', () => ({
   useTranslations: () => ({

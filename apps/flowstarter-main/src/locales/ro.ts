@@ -11,7 +11,7 @@ const ro: typeof en = {
   ...en,
 
   // ─── Landing Page Hero ───────────────────────────────────────────────
-  'landing.hero.badge': 'Creat pentru expertii reali',
+  'landing.hero.badge': 'Site-uri profesionale create pentru tine',
   'landing.hero.headline1': 'Expertiza ta e reală.',
   'landing.hero.headline2': 'Prezența ta online ar trebui să fie la fel.',
   'landing.hero.pain':

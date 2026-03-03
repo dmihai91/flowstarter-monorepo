@@ -108,7 +108,7 @@ export function LandingHero() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
             </span>
             <span>Launch batch: accepting only 10 clients</span>
-            <span className="font-semibold text-gray-700 dark:text-white/70">· 7 spots remaining</span>
+            <span className="font-semibold text-gray-700 dark:text-white/70">· 10 spots remaining</span>
           </div>
         </div>
       </div>

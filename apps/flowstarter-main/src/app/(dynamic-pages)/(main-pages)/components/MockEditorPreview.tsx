@@ -112,12 +112,12 @@ export function MockEditorPreview({
                               </div>
                             </div>
                           ) : (
-                            <div key={i} className="flex gap-2 items-start">
-                              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 inline-flex items-center justify-center flex-shrink-0 shadow-sm">
+                            <div key={i} className="flex gap-2.5 items-start">
+                              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center flex-shrink-0 shadow-sm mt-2">
                                 <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>
                               </div>
                               <div className="flex-1 px-3 py-2 rounded-xl rounded-tl-sm bg-white/55 dark:bg-white/[0.05] border border-white/50 dark:border-white/10">
-                                <div className="text-[9px] font-bold text-[var(--purple)] uppercase tracking-wider mb-0.5 leading-none">Flowstarter Assistant</div>
+                                <div className="text-[9px] font-bold text-[var(--purple)] uppercase tracking-wider mb-1">Flowstarter Assistant</div>
                                 <div className="text-[13px] text-gray-600 dark:text-white/70">{msg.text}</div>
                               </div>
                             </div>

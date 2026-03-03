@@ -84,6 +84,16 @@ export function LandingHero() {
           <p className="hero-fade hero-fade-5 text-sm text-gray-400 dark:text-white/35 mt-4">
             {t('landing.hero.ctaNote')}
           </p>
+
+          {/* Compact price anchor */}
+          <div className="hero-fade hero-fade-5 inline-flex items-center gap-3 mt-6 px-5 py-2.5 rounded-full bg-white/50 dark:bg-white/[0.04] backdrop-blur-sm border border-gray-200/30 dark:border-white/[0.06]">
+            <span className="text-sm text-gray-400 dark:text-white/30 line-through">€599</span>
+            <span className="text-sm font-bold text-gray-900 dark:text-white">€499</span>
+            <span className="text-xs text-gray-400 dark:text-white/35">setup</span>
+            <span className="w-px h-4 bg-gray-200 dark:bg-white/10" />
+            <span className="text-sm font-bold text-gray-900 dark:text-white">€39</span>
+            <span className="text-xs text-gray-400 dark:text-white/35">/mo</span>
+          </div>
         </div>
       </div>
     </section>

@@ -60,23 +60,23 @@ export default function LandingPage() {
         <FlowFieldBackground />
         <LandingHeader />
 
-        {/* 1. Hero — headline + paragraph + CTA */}
+        {/* 1. Hero — headline + paragraph + CTA + price pill */}
         <LandingHero />
 
-        {/* 2. How it works — 3 steps */}
-        <ProcessSection />
+        {/* 2. Social proof / trust indicators */}
+        <TrustSection />
 
-        {/* 3. Editor demo — standalone showcase */}
+        {/* 3. Editor demo showcase */}
         <EditorShowcase />
 
-        {/* 4. Why experts choose Flowstarter — 3 pillars */}
+        {/* 4. How it works — 3 steps */}
+        <ProcessSection />
+
+        {/* 5. Why experts choose Flowstarter — 3 pillars */}
         <PillarsSection />
 
-        {/* 5. Everything you need — features */}
+        {/* 6. Everything you need — features */}
         <IncludedSection />
-
-        {/* 6. Trust indicators */}
-        <TrustSection />
 
         {/* 7. Clear pricing */}
         <LandingPricing />

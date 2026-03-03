@@ -60,7 +60,7 @@ export function MockEditorPreview({
 
 
                 {/* Editor window */}
-                <div className="relative bg-white/90 dark:bg-[#141418]/90 backdrop-blur-xl rounded-3xl border border-white/60 dark:border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden transition-all duration-300 hover:shadow-[0_25px_70px_rgba(0,0,0,0.12)] dark:hover:shadow-[0_25px_70px_rgba(0,0,0,0.5)] hover:scale-[1.01]">
+                <div className="relative bg-white/90 dark:bg-[#141418]/90 backdrop-blur-xl rounded-3xl border border-gray-200/30 dark:border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden transition-all duration-300 hover:shadow-[0_25px_70px_rgba(0,0,0,0.12)] dark:hover:shadow-[0_25px_70px_rgba(0,0,0,0.5)] hover:scale-[1.01]">
                   {/* Browser chrome */}
                   <div className="flex items-center justify-between px-4 py-3 bg-white/80 dark:bg-white/[0.05] backdrop-blur-sm border-b border-gray-200/50 dark:border-white/5">
                     <div className="flex items-center gap-2">
@@ -214,7 +214,7 @@ export function MockEditorPreview({
                                 key={prompt}
                                 onClick={() => handleSend(prompt)}
                                 disabled={isTyping}
-                                className="px-3 py-1.5 text-[11px] rounded-full bg-white/55 dark:bg-white/[0.04] backdrop-blur-sm hover:bg-white/70 dark:hover:bg-white/[0.08] border border-white/60 dark:border-white/10 text-gray-600 dark:text-white/50 transition-all disabled:opacity-50 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)]"
+                                className="px-3 py-1.5 text-[11px] rounded-full bg-white/55 dark:bg-white/[0.04] backdrop-blur-sm hover:bg-white/70 dark:hover:bg-white/[0.08] border border-gray-200/30 dark:border-white/10 text-gray-600 dark:text-white/50 transition-all disabled:opacity-50 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)]"
                               >
                                 {prompt}
                               </button>

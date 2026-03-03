@@ -27,7 +27,7 @@ export function FAQSection() {
                   : 'opacity-0 translate-y-8'
               }`}
             >
-              <div className="col-span-2 text-center mb-6">
+              <div className="col-span-2 text-center mb-10 lg:mb-14">
                 <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4">
                   Questions?
                   <br />
@@ -37,7 +37,7 @@ export function FAQSection() {
                 </h2>
               </div>
 
-              <div className="col-span-2 space-y-2 max-w-3xl mx-auto w-full">
+              <div className="col-span-2 space-y-3 max-w-3xl mx-auto w-full">
                 {[
                   { q: t('landing.faq.q1'), a: t('landing.faq.a1') },
                   { q: t('landing.faq.q2'), a: t('landing.faq.a2') },
@@ -68,7 +68,7 @@ export function FAQSection() {
                   >
                     <button
                       onClick={() => toggleFaq(i)}
-                      className="group/faq w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors"
+                      className="group/faq w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors"
                     >
                       <h3 className="text-base font-semibold pr-4">{faq.q}</h3>
                       <svg

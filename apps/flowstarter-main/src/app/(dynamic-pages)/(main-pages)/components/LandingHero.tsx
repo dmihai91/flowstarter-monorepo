@@ -85,14 +85,20 @@ export function LandingHero() {
             {t('landing.hero.ctaNote')}
           </p>
 
-          {/* Compact price anchor */}
-          <div className="hero-fade hero-fade-5 inline-flex items-center gap-3 mt-6 px-5 py-2.5 rounded-full bg-white/50 dark:bg-white/[0.04] backdrop-blur-sm border border-gray-200/30 dark:border-white/[0.06]">
-            <span className="text-sm text-gray-400 dark:text-white/30 line-through">€599</span>
-            <span className="text-sm font-bold text-gray-900 dark:text-white">€499</span>
-            <span className="text-xs text-gray-400 dark:text-white/35">setup</span>
-            <span className="w-px h-4 bg-gray-200 dark:bg-white/10" />
-            <span className="text-sm font-bold text-gray-900 dark:text-white">€39</span>
-            <span className="text-xs text-gray-400 dark:text-white/35">/mo</span>
+          {/* Launch price anchor */}
+          <div className="hero-fade hero-fade-5 inline-flex items-center gap-4 mt-8 px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl bg-gradient-to-r from-amber-50/80 to-orange-50/60 dark:from-amber-500/[0.06] dark:to-orange-500/[0.03] backdrop-blur-sm border border-amber-200/40 dark:border-amber-500/15 shadow-[0_2px_16px_rgba(245,158,11,0.08)]">
+            <span className="text-[10px] sm:text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">🔥 Launch price</span>
+            <span className="w-px h-5 bg-amber-300/30 dark:bg-amber-500/20" />
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-sm sm:text-base text-gray-400 dark:text-white/30 line-through">€599</span>
+              <span className="text-lg sm:text-xl font-extrabold text-gray-900 dark:text-white">€499</span>
+              <span className="text-xs sm:text-sm text-gray-400 dark:text-white/35">setup</span>
+            </div>
+            <span className="text-gray-300 dark:text-white/15">+</span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-lg sm:text-xl font-extrabold text-gray-900 dark:text-white">€39</span>
+              <span className="text-xs sm:text-sm text-gray-400 dark:text-white/35">/mo</span>
+            </div>
           </div>
         </div>
       </div>

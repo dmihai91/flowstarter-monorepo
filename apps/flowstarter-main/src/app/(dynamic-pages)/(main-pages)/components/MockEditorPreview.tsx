@@ -280,8 +280,8 @@ export function MockEditorPreview({
                       <div
                         className={`overflow-hidden transition-all duration-500 ${
                           mockSite.hasContactForm
-                            ? 'max-h-32 opacity-100'
-                            : 'max-h-0 opacity-0'
+                            ? 'opacity-100'
+                            : 'opacity-0'
                         }`}
                       >
                         <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900/30">
@@ -346,8 +346,8 @@ export function MockEditorPreview({
                       <div
                         className={`overflow-hidden transition-all duration-500 ${
                           mockSite.hasTestimonials
-                            ? 'max-h-28 opacity-100'
-                            : 'max-h-0 opacity-0'
+                            ? 'opacity-100'
+                            : 'opacity-0'
                         }`}
                       >
                         <div className="px-4 py-3">
@@ -390,8 +390,8 @@ export function MockEditorPreview({
                       <div
                         className={`overflow-hidden transition-all duration-500 ${
                           mockSite.hasPricingSection
-                            ? 'max-h-32 opacity-100'
-                            : 'max-h-0 opacity-0'
+                            ? 'opacity-100'
+                            : 'opacity-0'
                         }`}
                       >
                         <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900/30">

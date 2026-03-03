@@ -15,7 +15,9 @@ export function LandingHero() {
 
   return (
     <>
-        <section className="relative pt-24 lg:pt-28 pb-2 lg:pb-4 overflow-hidden bg-[radial-gradient(circle_at_20%_30%,rgba(237,230,255,0.6)_0%,transparent_55%),radial-gradient(circle_at_80%_70%,rgba(253,233,240,0.6)_0%,transparent_55%),linear-gradient(to_bottom,rgba(251,249,255,0.7),rgba(253,252,255,0.5))] dark:bg-[radial-gradient(circle_at_20%_30%,rgba(26,13,46,0.7)_0%,transparent_55%),radial-gradient(circle_at_80%_70%,rgba(32,10,26,0.7)_0%,transparent_55%),linear-gradient(to_bottom,rgba(10,8,16,0.7),rgba(10,10,12,0.5))]">
+        <section className="relative pt-24 lg:pt-28 pb-2 lg:pb-4 overflow-hidden">
+          {/* Gradient overlay - semi-transparent so flow lines show through */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(237,230,255,0.5)_0%,transparent_55%),radial-gradient(circle_at_80%_70%,rgba(253,233,240,0.5)_0%,transparent_55%)] dark:bg-[radial-gradient(circle_at_20%_30%,rgba(26,13,46,0.6)_0%,transparent_55%),radial-gradient(circle_at_80%_70%,rgba(32,10,26,0.6)_0%,transparent_55%)] pointer-events-none z-[1]" />
           {/* Flow lines INSIDE hero so they appear on top of background */}
           <div className="absolute inset-0 pointer-events-none">
             <svg

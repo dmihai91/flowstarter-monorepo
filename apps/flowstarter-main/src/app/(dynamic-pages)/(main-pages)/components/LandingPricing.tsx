@@ -64,7 +64,7 @@ export function LandingPricing() {
                     <span className="text-base text-gray-400 dark:text-white/40">
                       {t('landing.pricing.careLabel')}{' '}
                     </span>
-                    <span className="text-lg line-through text-gray-400 dark:text-white/30 font-medium mr-1">€59</span>
+                    <span className="text-lg line-through text-gray-400 dark:text-white/30 font-medium mr-1">€49</span>
                     <span className="text-3xl font-bold">{t('landing.pricing.carePrice')}</span>
                     <span className="text-base text-gray-400 dark:text-white/40 ml-1">
                       {t('landing.pricing.carePeriod')}

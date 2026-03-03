@@ -24,7 +24,7 @@ export function FAQSection() {
               className={`grid lg:grid-cols-1 gap-10 transition-all duration-[350ms] ${
                 isVisible
                   ? 'opacity-100 translate-y-0'
-                  : 'opacity-0 translate-y-8'
+                  : 'opacity-0'
               }`}
             >
               <div className="col-span-2 text-center mb-10 lg:mb-14">
@@ -57,7 +57,7 @@ export function FAQSection() {
                     className={`overflow-hidden !p-0 ${
                       isVisible
                         ? 'opacity-100 translate-y-0'
-                        : 'opacity-0 translate-y-4'
+                        : 'opacity-0'
                     }`}
                     style={{
                       transitionProperty: 'opacity, transform',

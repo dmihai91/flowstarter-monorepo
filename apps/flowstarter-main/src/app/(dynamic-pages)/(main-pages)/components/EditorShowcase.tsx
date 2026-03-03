@@ -16,7 +16,7 @@ export function EditorShowcase() {
   return (
     <section ref={sectionRef} className="py-20 lg:py-28 relative overflow-hidden">
       <div className={`max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 transition-all duration-1000 ease-out ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0'
       }`}>
         {/* Editor preview with glow */}
         <div className="relative max-w-4xl mx-auto">

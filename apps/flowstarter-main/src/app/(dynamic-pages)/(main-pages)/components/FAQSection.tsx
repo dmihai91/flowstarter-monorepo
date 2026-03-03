@@ -15,7 +15,7 @@ export function FAQSection() {
         {/* FAQ Section */}
         <section
           ref={sectionRef} id="faq"
-          className="py-12 lg:py-16"
+          className="py-20 lg:py-28"
         >
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div
@@ -28,7 +28,7 @@ export function FAQSection() {
               }`}
             >
               <div className="col-span-2 text-center mb-6">
-                <h2 className="text-5xl lg:text-6xl font-bold leading-tight mb-4">
+                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4">
                   Questions?
                   <br />
                   <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">

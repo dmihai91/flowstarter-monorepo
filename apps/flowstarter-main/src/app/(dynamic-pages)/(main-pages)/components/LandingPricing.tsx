@@ -16,12 +16,12 @@ export function LandingPricing() {
   return (
     <div ref={sectionRef}>
         {/* Pricing Section */}
-        <section data-section="pricing" id="pricing" className="py-8 lg:py-12 relative">
+        <section data-section="pricing" id="pricing" className="py-20 lg:py-28 relative">
           {/* Gradient accent - lavender tint */}
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--landing-bg-tint)] to-transparent dark:via-[var(--landing-dark-surface-tint)] pointer-events-none" />
 
           <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
-            <div className="text-center mb-8">
+            <div className="text-center mb-12 lg:mb-16">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight">
                 Clear{' '}
                 <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
@@ -97,7 +97,7 @@ export function LandingPricing() {
                 </div>
 
                 {/* Features - Two Categories */}
-                <div className="space-y-5 mb-8">
+                <div className="space-y-5 mb-12 lg:mb-16">
                   {/* Your Website */}
                   <div>
                     <p className="text-xs uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-1">

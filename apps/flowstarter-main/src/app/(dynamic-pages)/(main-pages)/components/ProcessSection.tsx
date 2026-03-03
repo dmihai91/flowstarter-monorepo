@@ -21,11 +21,11 @@ export function ProcessSection() {
         {/* Process Section */}
         <section ref={sectionRef} data-section="process"
           id="process"
-          className="pt-6 pb-12 lg:pt-8 lg:pb-16 relative overflow-hidden"
+          className="py-20 lg:py-28 relative overflow-hidden"
         >
           <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
-            <div className="max-w-xl mb-8">
-              <h2 className="text-3xl lg:text-4xl font-bold leading-tight mb-3">
+            <div className="text-center mb-12 lg:mb-16">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-3">
                 How it{' '}
                 <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
                   works
@@ -36,13 +36,13 @@ export function ProcessSection() {
             <div
               id="process-cards"
               data-animate
-              className="grid md:grid-cols-3 gap-5"
+              className="grid md:grid-cols-3 gap-6 lg:gap-8"
             >
               {features.map((feature, i) => (
                 <GlassCard
                   key={i}
                   variant="subtle"
-                  className={`group p-7 ${
+                  className={`group p-8 lg:p-10 ${
                     isVisible
                       ? `animate-fade-in-up animate-fade-in-up-delay-${i + 1}`
                       : 'opacity-0 translate-y-10 scale-[0.92] blur-[8px]'
@@ -55,7 +55,7 @@ export function ProcessSection() {
                   <h3 className="text-xl font-semibold mb-2">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-white/40 leading-relaxed">
+                  <p className="text-sm text-gray-500 dark:text-white/40 leading-relaxed max-w-[55ch]">
                     {feature.desc}
                   </p>
                 </GlassCard>

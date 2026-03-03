@@ -5,11 +5,11 @@ import { CookieConsent } from '@/components/CookieConsent';
 import { FlowFieldBackground } from './components/FlowFieldBackground';
 import { LandingHeader } from './components/LandingHeader';
 import { LandingHero } from './components/LandingHero';
-import { PillarsSection } from './components/PillarsSection';
+import { EditorShowcase } from './components/EditorShowcase';
 import { ProcessSection } from './components/ProcessSection';
+import { PillarsSection } from './components/PillarsSection';
 import { IncludedSection } from './components/IncludedSection';
 import { TrustSection } from './components/TrustSection';
-import { HowItWorksPreview } from './components/HowItWorksPreview';
 import { LandingPricing } from './components/LandingPricing';
 import { ManifestoSection } from './components/ManifestoSection';
 import { FAQSection } from './components/FAQSection';
@@ -59,15 +59,35 @@ export default function LandingPage() {
       <div className="min-h-screen bg-[var(--landing-bg)] dark:bg-[var(--landing-dark-surface)] text-gray-900 dark:text-white font-display relative overflow-x-hidden transition-colors duration-300">
         <FlowFieldBackground />
         <LandingHeader />
+
+        {/* 1. Hero — headline + paragraph + CTA */}
         <LandingHero />
+
+        {/* 2. How it works — 3 steps */}
         <ProcessSection />
+
+        {/* 3. Editor demo — standalone showcase */}
+        <EditorShowcase />
+
+        {/* 4. Why experts choose Flowstarter — 3 pillars */}
         <PillarsSection />
+
+        {/* 5. Everything you need — features */}
         <IncludedSection />
+
+        {/* 6. Trust indicators */}
         <TrustSection />
-        <HowItWorksPreview />
+
+        {/* 7. Clear pricing */}
         <LandingPricing />
+
+        {/* 8. Manifesto — emotional/mission */}
         <ManifestoSection />
+
+        {/* 9. FAQ */}
         <FAQSection />
+
+        {/* 10. Final CTA + footer */}
         <FinalCTASection />
         <Footer />
         <CookieConsent />

@@ -10,7 +10,6 @@ export default function Footer(props: FooterProps) {
 
   const translatedLinks: FooterLink[] = [
     { label: t('footer.nav.help'), href: '/help' },
-    { label: t('footer.nav.blog'), href: '/blog' },
     { label: t('footer.nav.privacy'), href: '/privacy' },
     { label: t('footer.nav.terms'), href: '/terms' },
     { label: t('footer.nav.contact'), href: '/contact' },

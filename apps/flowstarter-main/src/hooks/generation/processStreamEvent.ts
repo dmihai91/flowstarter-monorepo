@@ -11,7 +11,7 @@ interface StreamHandlers {
 
 /**
  * Process a single stream event from the website generation pipeline.
- * Pure function — no React dependencies, fully testable.
+ * Pure function - no React dependencies, fully testable.
  * 
  * @returns 'done' if generation is complete, 'continue' otherwise
  */

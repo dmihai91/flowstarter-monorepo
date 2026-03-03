@@ -43,7 +43,7 @@ export default function LandingPage() {
         .animate-cursor-blink { animation: cursorBlink 1s step-end infinite; }
         @keyframes textFlow { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
         .text-flow {
-          background: linear-gradient(90deg, #7C3AED 0%, #3B82F6 20%, #06B6D4 40%, #3B82F6 60%, #7C3AED 80%, #3B82F6 100%);
+          background: linear-gradient(90deg, var(--landing-text-accent) 0%, var(--landing-flow-end) 20%, var(--landing-flow-alt-end) 40%, var(--landing-flow-end) 60%, var(--landing-text-accent) 80%, var(--landing-flow-end) 100%);
           background-size: 300% 100%;
           -webkit-background-clip: text;
           background-clip: text;
@@ -55,12 +55,12 @@ export default function LandingPage() {
         .typing-container { overflow: hidden; white-space: nowrap; border-right: 2px solid var(--purple, #4D5DD9); animation: typing 2s steps(30) forwards, cursorBlink 1s step-end infinite; will-change: transform; }
       `}</style>
 
-      <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#0a0a0c] text-gray-900 dark:text-white font-display relative overflow-x-hidden transition-colors duration-300">
+      <div className="min-h-screen bg-[var(--landing-bg)] dark:bg-[var(--landing-dark-surface)] text-gray-900 dark:text-white font-display relative overflow-x-hidden transition-colors duration-300">
         <FlowFieldBackground />
         <LandingHeader />
         <LandingHero />
-        <PillarsSection />
         <ProcessSection />
+        <PillarsSection />
         <IncludedSection />
         <TrustSection />
         <HowItWorksPreview />

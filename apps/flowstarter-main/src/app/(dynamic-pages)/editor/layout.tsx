@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 
 export const metadata = {
-  title: 'Editor | Build & edit your website — Flowstarter',
+  title: 'Editor | Build & edit your website - Flowstarter',
   description: 'Build, customize, and publish your website with AI-powered editing. No coding required.',
 };
 
@@ -10,7 +10,7 @@ export const metadata = {
  * Editor Layout
  * 
  * Full-screen, immersive dark environment.
- * No chrome from the main platform — this is a focused workspace.
+ * No chrome from the main platform - this is a focused workspace.
  */
 export default async function EditorLayout({
   children,

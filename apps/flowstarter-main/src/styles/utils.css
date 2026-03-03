@@ -1,8 +1,3 @@
-.hide-dialog-close > .absolute.right-4.top-4 {
-  /* Adjust selector based on actual rendered classes of DialogClose */
-  display: none; /* This assumes you know the classes applied to DialogClose, adjust selector accordingly */
-}
-
 /* onboarding page */
 .light .onboarding-page {
   position: relative;
@@ -109,14 +104,6 @@
     a.peer {
       text-decoration: none;
     }
-  }
-}
-
-.border-grid {
-  border-style: dashed;
-  border-color: var(--color-border) / 0.5;
-  &:is(.dark *) {
-    border-color: var(--color-border);
   }
 }
 

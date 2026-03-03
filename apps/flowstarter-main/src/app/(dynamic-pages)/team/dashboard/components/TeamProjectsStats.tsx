@@ -5,7 +5,7 @@ import { useFormatDate } from '@/hooks/useFormatDate';
 import { useTranslations } from '@/lib/i18n';
 import { GlassPanel } from '@flowstarter/flow-design-system';
 
-// Status groupings — single source of truth
+// Status groupings - single source of truth
 const LIVE_STATUSES = ['completed', 'live'] as const;
 const BUILDING_STATUSES = ['in_progress', 'building', 'generating'] as const;
 

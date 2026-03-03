@@ -1,38 +1,37 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Logo } from '@/components/ui/logo';
 import { useI18n } from '@/lib/i18n';
 import { EXTERNAL_URLS } from '@/lib/constants';
 import Link from 'next/link';
+import { useHeaderState } from './hooks/useHeaderState';
 
 /**
  * Landing page header with scroll-aware styling and mobile menu.
  */
 export function LandingHeader() {
   const { t } = useI18n();
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    setIsLoaded(true);
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  const { isLoaded, scrolled, mobileMenuOpen, setMobileMenuOpen } = useHeaderState();
 
   return (
     <>
+        {/* Backdrop overlay when mobile menu is open */}
+        {mobileMenuOpen && (
+          <div
+            className="fixed inset-0 z-40 bg-black/20 dark:bg-black/50 backdrop-blur-sm md:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        )}
+
         {/* Header */}
         <header
           className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
             isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
           } ${
             scrolled || mobileMenuOpen
-              ? 'bg-white/80 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-white/50 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.05)]'
+              ? 'bg-white/95 dark:bg-[var(--landing-dark-surface)]/95 backdrop-blur-xl border-b border-white/50 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.05)]'
               : ''
           }`}
         >
@@ -82,7 +81,9 @@ export function LandingHeader() {
               </nav>
 
               <div className="flex items-center gap-2 sm:gap-4">
-                <ThemeToggle />
+                <div className="hidden md:block">
+                  <ThemeToggle />
+                </div>
                 <Link
                   href="/login"
                   className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors hidden md:block"
@@ -95,8 +96,8 @@ export function LandingHeader() {
                   rel="noopener noreferrer"
                   className="hidden sm:block"
                 >
-                  <Button className="bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-lg px-6 h-10 text-sm font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300">
-                    Book Free Call
+                  <Button className="bg-gradient-to-r from-[var(--landing-btn-from)] via-[var(--landing-btn-via)] to-[var(--landing-btn-from)] text-white hover:from-[var(--landing-btn-hover-from)] hover:via-[var(--landing-btn-hover-via)] hover:to-[var(--landing-btn-hover-from)] rounded-lg px-6 h-10 text-sm font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300">
+                    {t('landing.header.cta')}
                   </Button>
                 </a>
                 {/* Mobile menu button */}
@@ -141,10 +142,14 @@ export function LandingHeader() {
             {/* Mobile menu dropdown */}
             <div
               className={`md:hidden overflow-hidden transition-all duration-300 ${
-                mobileMenuOpen ? 'max-h-64 pb-4' : 'max-h-0'
+                mobileMenuOpen ? 'max-h-96 pb-4' : 'max-h-0'
               }`}
             >
-              <nav className="flex flex-col gap-1 pt-3 mt-2 border-t border-gray-200/50 dark:border-white/10 bg-white/95 dark:bg-[#0a0a0c]/95 backdrop-blur-xl -mx-4 px-4 sm:-mx-6 sm:px-6">
+              <nav className="flex flex-col gap-1 pt-3 mt-2 border-t border-gray-200/50 dark:border-white/10">
+                <div className="flex items-center justify-between px-3 py-2">
+                  <span className="text-sm text-gray-600 dark:text-white/70">Theme</span>
+                  <ThemeToggle />
+                </div>
                 <a
                   href="#process"
                   onClick={(e) => {
@@ -198,8 +203,8 @@ export function LandingHeader() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="mt-2"
                 >
-                  <Button className="w-full bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] rounded-lg h-10 text-sm font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300">
-                    Book Free Call
+                  <Button className="w-full bg-gradient-to-r from-[var(--landing-btn-from)] via-[var(--landing-btn-via)] to-[var(--landing-btn-from)] text-white hover:from-[var(--landing-btn-hover-from)] hover:via-[var(--landing-btn-hover-via)] hover:to-[var(--landing-btn-hover-from)] rounded-lg h-10 text-sm font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300">
+                    {t('landing.header.cta')}
                   </Button>
                 </a>
               </nav>

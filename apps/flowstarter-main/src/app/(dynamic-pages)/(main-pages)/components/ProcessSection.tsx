@@ -3,6 +3,7 @@
 import { useI18n } from '@/lib/i18n';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { EXTERNAL_URLS } from '@/lib/constants';
+import { GlassCard } from '@flowstarter/flow-design-system';
 
 export function ProcessSection() {
   const { t } = useI18n();
@@ -20,7 +21,7 @@ export function ProcessSection() {
         {/* Process Section */}
         <section ref={sectionRef} data-section="process"
           id="process"
-          className="py-12 lg:py-16 relative overflow-hidden "
+          className="py-12 lg:py-16 relative overflow-hidden"
         >
           <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
             <div className="max-w-xl mb-8">
@@ -38,9 +39,10 @@ export function ProcessSection() {
               className="grid md:grid-cols-3 gap-5"
             >
               {features.map((feature, i) => (
-                <div
+                <GlassCard
                   key={i}
-                  className={`group p-7 rounded-2xl bg-white/80 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200/80 dark:border-white/5 hover:border-[var(--purple)]/40 dark:hover:border-[var(--purple)]/30 hover:bg-white dark:hover:bg-white/[0.04] hover:shadow-xl hover:shadow-[var(--purple)]/10 hover:-translate-y-1 hover:scale-[1.02] transition-all duration-250 ease-out ${
+                  variant="subtle"
+                  className={`group p-7 ${
                     isVisible
                       ? `animate-fade-in-up animate-fade-in-up-delay-${i + 1}`
                       : 'opacity-0 translate-y-10 scale-[0.92] blur-[8px]'
@@ -56,7 +58,7 @@ export function ProcessSection() {
                   <p className="text-sm text-gray-500 dark:text-white/40 leading-relaxed">
                     {feature.desc}
                   </p>
-                </div>
+                </GlassCard>
               ))}
             </div>
           </div>

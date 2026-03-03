@@ -33,7 +33,7 @@ export function CustomSignIn() {
 
   // Get redirect URL based on user email or query params
   const getRedirectUrl = (userEmail?: string): string => {
-    // Check for explicit redirect_url param first — if it's an external URL
+    // Check for explicit redirect_url param first - if it's an external URL
     // (e.g. from the editor subdomain), always honor it regardless of role.
     const redirectUrl = searchParams.get('redirect_url');
     if (redirectUrl) {
@@ -51,7 +51,7 @@ export function CustomSignIn() {
       }
     }
 
-    // No external redirect — route team members to team dashboard
+    // No external redirect - route team members to team dashboard
     if (userEmail) {
       const domain = userEmail.split('@')[1]?.toLowerCase();
       if (domain && TEAM_EMAIL_DOMAINS.includes(domain)) {

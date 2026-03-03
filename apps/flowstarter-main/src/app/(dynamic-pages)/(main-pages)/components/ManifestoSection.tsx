@@ -11,7 +11,7 @@ export function ManifestoSection() {
   return (
     <>
         {/* Manifesto Section */}
-        <section ref={sectionRef} data-section="manifesto" className="py-20 lg:py-32 relative">
+        <section ref={sectionRef} data-section="manifesto" className="py-10 lg:py-16 relative">
           <div className={`max-w-3xl mx-auto px-6 transition-all duration-1000 ease-out ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}>

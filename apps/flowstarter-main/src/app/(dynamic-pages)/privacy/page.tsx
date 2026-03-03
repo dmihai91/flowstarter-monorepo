@@ -2,7 +2,8 @@
 
 import Footer from '@/components/Footer';
 import { SupportHeader } from '@/components/SupportHeader';
-import { Shield, Bot, Download, Eye, Clock, Users, Cookie, Globe, Lock, Mail } from 'lucide-react';
+import { Shield, Bot, Download, Eye, Clock, Lock, Mail } from 'lucide-react';
+import { FlowBackground } from '@flowstarter/flow-design-system';
 
 export default function PrivacyPage() {
   const effectiveDate = 'February 27, 2026';
@@ -389,43 +390,13 @@ export default function PrivacyPage() {
         }
       `}</style>
 
-      <div className="min-h-screen font-display bg-[#FAFAFA] dark:bg-[#0a0a0c]">
-        {/* Flow lines background */}
-        <div className="fixed inset-0 pointer-events-none">
-          <svg
-            className="absolute inset-0 w-full h-full opacity-[0.08] dark:opacity-[0.06]"
-            viewBox="0 0 1200 800"
-            preserveAspectRatio="xMidYMid slice"
-            fill="none"
-          >
-            <defs>
-              <linearGradient
-                id="privacyFlowGradient"
-                x1="0%"
-                y1="0%"
-                x2="100%"
-                y2="0%"
-              >
-                <stop offset="0%" stopColor="var(--purple)" />
-                <stop offset="100%" stopColor="#3B82F6" />
-              </linearGradient>
-            </defs>
-            <g stroke="url(#privacyFlowGradient)" strokeWidth="1">
-              <path d="M-100,100 Q200,80 400,120 T800,100 T1300,140" />
-              <path d="M-100,200 Q150,220 350,180 T750,220 T1300,200" />
-              <path d="M-100,300 Q250,280 450,320 T850,290 T1300,330" />
-              <path d="M-100,400 Q180,420 380,380 T780,420 T1300,400" />
-              <path d="M-100,500 Q220,480 420,520 T820,490 T1300,530" />
-              <path d="M-100,600 Q200,620 400,580 T800,620 T1300,600" />
-              <path d="M-100,700 Q250,680 450,720 T850,690 T1300,730" />
-            </g>
-          </svg>
-        </div>
+      <div className="min-h-screen font-display page-gradient">
+        <FlowBackground variant="dashboard" style={{ position: 'fixed', inset: 0, zIndex: 0 }} />
 
         <SupportHeader />
 
         {/* Content */}
-        <main className="relative z-10 max-w-4xl mx-auto px-6 py-16">
+        <main className="relative z-10 max-w-4xl mx-auto px-6 pt-28 pb-16">
           {/* Hero */}
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium mb-6">
@@ -449,8 +420,9 @@ export default function PrivacyPage() {
 
           {/* Privacy at a Glance */}
           <div className="mb-16 p-8 rounded-2xl bg-gradient-to-br from-[var(--purple)]/5 via-white to-blue-500/5 dark:from-[var(--purple)]/10 dark:via-[#0f0f12] dark:to-blue-500/10 border border-[var(--purple)]/20">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 text-center">
-              🔒 Privacy at a Glance
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 text-center flex items-center justify-center gap-2">
+              <Lock className="w-5 h-5 text-[var(--purple)]" />
+              Privacy at a Glance
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {glanceSummary.map((item, i) => (
@@ -573,7 +545,7 @@ export default function PrivacyPage() {
             </p>
             <a
               href={`mailto:${privacyEmail}`}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 font-semibold hover:shadow-lg transition-all duration-300"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--landing-btn-from)] via-[var(--landing-btn-via)] to-[var(--landing-btn-from)] text-white font-semibold hover:shadow-lg transition-all duration-300"
             >
               {privacyEmail}
             </a>

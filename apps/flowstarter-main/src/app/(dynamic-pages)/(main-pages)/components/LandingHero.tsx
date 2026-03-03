@@ -15,11 +15,11 @@ export function LandingHero() {
 
   return (
     <>
-        <section className="relative pt-20 lg:pt-24 pb-4 lg:pb-6 bg-gradient-to-b from-white via-[#F3F0FF] to-white dark:from-transparent dark:via-transparent dark:to-transparent overflow-hidden">
+        <section className="relative pt-24 lg:pt-28 pb-8 lg:pb-12 overflow-hidden bg-gradient-to-b from-white via-[var(--landing-bg-tint)] to-transparent dark:from-[var(--landing-dark-surface)] dark:via-[var(--landing-dark-surface-tint)] dark:to-transparent">
           {/* Flow lines INSIDE hero so they appear on top of background */}
           <div className="absolute inset-0 pointer-events-none">
             <svg
-              className="absolute inset-0 w-full h-full opacity-[0.12] dark:opacity-[0.25]"
+              className="absolute inset-0 w-full h-full opacity-[0.10] dark:opacity-[0.12]"
               viewBox="0 0 1200 800"
               preserveAspectRatio="xMidYMid slice"
               fill="none"
@@ -33,18 +33,14 @@ export function LandingHero() {
                   y2="0%"
                 >
                   <stop offset="0%" stopColor="var(--purple)" />
-                  <stop offset="100%" stopColor="#3B82F6" />
+                  <stop offset="100%" stopColor="var(--landing-flow-end)" />
                 </linearGradient>
               </defs>
-              <g stroke="url(#heroFlowGradient1)" strokeWidth="1.2">
-                <path d="M-100,80 Q200,60 400,100 T800,80 T1300,120" />
-                <path d="M-100,160 Q150,180 350,140 T750,180 T1300,160" />
-                <path d="M-100,240 Q250,220 450,260 T850,230 T1300,270" />
-                <path d="M-100,320 Q180,340 380,300 T780,340 T1300,320" />
-                <path d="M-100,400 Q220,380 420,420 T820,390 T1300,430" />
-                <path d="M-100,480 Q200,500 400,460 T800,500 T1300,480" />
-                <path d="M-100,560 Q250,540 450,580 T850,550 T1300,590" />
-                <path d="M-100,640 Q180,660 380,620 T780,660 T1300,640" />
+              <g stroke="url(#heroFlowGradient1)" strokeWidth="0.6">
+                <path d="M-100,120 Q200,100 400,140 T800,110 T1300,150" />
+                <path d="M-100,280 Q250,260 450,300 T850,270 T1300,310" />
+                <path d="M-100,440 Q220,420 420,460 T820,430 T1300,470" />
+                <path d="M-100,600 Q180,620 380,580 T780,620 T1300,600" />
               </g>
             </svg>
           </div>
@@ -65,7 +61,7 @@ export function LandingHero() {
                   </span>
                 </div>
 
-                <h1 className="hero-fade hero-fade-2 text-[2.2rem] sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold leading-[1.15] tracking-tight mb-6 break-words text-center sm:text-left">
+                <h1 className="hero-fade hero-fade-2 text-[2.5rem] sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold leading-[1.1] tracking-tight mb-6 break-words text-center sm:text-left">
                   {t('landing.hero.headline1')}
                   <br />
                   <span className="text-flow">
@@ -89,7 +85,7 @@ export function LandingHero() {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <Button className="relative bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 hover:from-[#232342] hover:via-[#1e2a4a] hover:to-[#232342] dark:hover:from-gray-100 dark:hover:via-white dark:hover:to-gray-100 rounded-lg px-5 sm:px-6 lg:px-8 h-11 sm:h-12 lg:h-14 text-sm sm:text-sm lg:text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 hover:scale-[1.02] group">
+                        <Button className="relative bg-gradient-to-r from-[var(--landing-btn-from)] via-[var(--landing-btn-via)] to-[var(--landing-btn-from)] text-white hover:from-[var(--landing-btn-hover-from)] hover:via-[var(--landing-btn-hover-via)] hover:to-[var(--landing-btn-hover-from)] rounded-lg px-5 sm:px-6 lg:px-8 h-11 sm:h-12 lg:h-14 text-sm sm:text-sm lg:text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 hover:scale-[1.02] group">
                           <span className="absolute inset-0 animate-shimmer" />
                           {t('landing.hero.cta')}
                           <svg
@@ -112,7 +108,7 @@ export function LandingHero() {
                       </span>
                     </div>
                     {/* Right: pricing card */}
-                    <div className="flex flex-col items-center px-6 py-5 rounded-2xl bg-gradient-to-b from-amber-50/80 to-amber-100/40 dark:from-amber-500/[0.08] dark:to-amber-600/[0.03] backdrop-blur-2xl backdrop-saturate-150 border border-amber-300/25 dark:border-amber-500/10 shadow-[0_1px_0_rgba(255,255,255,1)_inset,0_-1px_0_rgba(180,130,0,0.05)_inset,0_8px_28px_rgba(245,158,11,0.08),0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_1px_0_rgba(255,200,50,0.06)_inset,0_-1px_0_rgba(0,0,0,0.15)_inset,0_8px_28px_rgba(245,158,11,0.06),0_2px_8px_rgba(0,0,0,0.12)] w-full sm:w-[280px] lg:w-[230px] sm:ml-auto transition-all duration-300 hover:shadow-[0_1px_0_rgba(255,255,255,1)_inset,0_-1px_0_rgba(180,130,0,0.05)_inset,0_12px_36px_rgba(245,158,11,0.12),0_4px_12px_rgba(0,0,0,0.04)]">
+                    <div className="flex flex-col items-center px-6 py-5 rounded-2xl bg-gradient-to-b from-amber-50/80 to-amber-100/40 dark:from-amber-500/[0.08] dark:to-amber-600/[0.03] backdrop-blur-sm border border-amber-300/20 dark:border-amber-500/10 shadow-sm hover:shadow-md w-full sm:w-[280px] lg:w-[230px] sm:ml-auto transition-all duration-300">
                       <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-[0.15em] mb-3 opacity-80">🔥 Launch price</span>
                       <div className="flex flex-col gap-0.5 w-full items-center">
                         <div className="flex items-baseline gap-2 justify-center">

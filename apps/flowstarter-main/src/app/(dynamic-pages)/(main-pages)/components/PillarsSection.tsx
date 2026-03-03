@@ -11,11 +11,11 @@ export function PillarsSection() {
   return (
     <>
         {/* Three Pillars Section */}
-        <section ref={sectionRef} data-section="pillars" className="pt-8 pb-16 lg:pt-12 lg:pb-24 relative">
-          <div className={`max-w-6xl mx-auto px-6 transition-all duration-1000 ease-out ${
+        <section ref={sectionRef} data-section="pillars" className="py-8 lg:py-12 relative">
+          <div className={`max-w-7xl mx-auto px-6 transition-all duration-1000 ease-out ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}>
-            <div className="text-center mb-16">
+            <div className="text-center mb-10">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
                 {t('landing.pillars.title')}
               </h2>
@@ -31,7 +31,7 @@ export function PillarsSection() {
               ].map(({ title, subtitle, body, icon, gradient }) => (
                 <div
                   key={title}
-                  className={`rounded-2xl p-8 bg-gradient-to-br ${gradient} border border-gray-200/50 dark:border-white/5 backdrop-blur-sm`}
+                  className={`rounded-2xl p-8 bg-gradient-to-br ${gradient} border border-[var(--landing-card-border)] backdrop-blur-sm`}
                 >
                   <div className="text-3xl mb-4">{icon}</div>
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">

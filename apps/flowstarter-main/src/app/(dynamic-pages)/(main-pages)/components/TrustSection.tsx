@@ -1,6 +1,7 @@
 'use client';
 
 import { useI18n } from '@/lib/i18n';
+import { GlassCard } from '@flowstarter/flow-design-system';
 
 export function TrustSection() {
   const { t } = useI18n();
@@ -9,11 +10,11 @@ export function TrustSection() {
   return (
     <>
         {/* Trust Section - Tech Badges + Guarantee */}
-        <section className="py-8 lg:py-12">
+        <section className="py-12 lg:py-16">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {/* Tech Trust Badges */}
-              <div className="p-6 lg:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)]">
+              <GlassCard variant="subtle" noHover className="p-6 lg:p-8">
                 <p className="text-xs uppercase tracking-wider text-gray-400 dark:text-white/30 font-medium mb-4 text-center">
                   Built on technology trusted by millions
                 </p>
@@ -86,10 +87,10 @@ export function TrustSection() {
                     </span>
                   </div>
                 </div>
-              </div>
+              </GlassCard>
 
               {/* First Month Free */}
-              <div className="p-6 lg:p-8 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 dark:from-emerald-500/10 dark:to-emerald-500/5 backdrop-blur-xl border border-emerald-500/30 shadow-[0_8px_32px_rgba(16,185,129,0.08),inset_0_1px_0_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(16,185,129,0.15),inset_0_1px_0_rgba(255,255,255,0.05)]">
+              <div className="p-6 lg:p-8 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-emerald-500/[0.02] dark:from-emerald-500/5 dark:to-emerald-500/[0.02] backdrop-blur-sm border border-emerald-500/15 dark:border-emerald-500/10 shadow-sm">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
                     <svg

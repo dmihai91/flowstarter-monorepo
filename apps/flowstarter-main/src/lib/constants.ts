@@ -1,5 +1,5 @@
 /**
- * External URLs — single source of truth.
+ * External URLs - single source of truth.
  * Never hardcode these in components.
  */
 export const EXTERNAL_URLS = {
@@ -10,7 +10,7 @@ export const EXTERNAL_URLS = {
 } as const;
 
 /**
- * App routes — internal navigation paths.
+ * App routes - internal navigation paths.
  */
 export const ROUTES = {
   dashboard: '/dashboard',

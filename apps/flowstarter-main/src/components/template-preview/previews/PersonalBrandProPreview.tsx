@@ -860,7 +860,7 @@ function FAQ() {
     },
     {
       q: 'Do you offer custom packages?',
-      a: 'Yes—engagements are tailored to your goals, scope, and timeline.',
+      a: 'Yes - engagements are tailored to your goals, scope, and timeline.',
     },
     {
       q: 'How do we get started?',

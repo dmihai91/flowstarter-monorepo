@@ -35,7 +35,7 @@ export function welcomeEmail({ userName, dashboardUrl }: WelcomeEmailProps): {
       <li>Use AI to customize your content</li>
     </ul>
     <p class="muted" style="margin-top: 24px;">
-      Questions? Just reply to this email — we're happy to help!
+      Questions? Just reply to this email - we're happy to help!
     </p>
   `);
 

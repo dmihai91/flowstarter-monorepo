@@ -1,6 +1,6 @@
 /**
  * Get user initials from Clerk user object or name parts.
- * Single source of truth — used by UserMenu, ProfileContent, etc.
+ * Single source of truth - used by UserMenu, ProfileContent, etc.
  */
 export function getInitials(user: {
   firstName?: string | null;

@@ -458,6 +458,41 @@ pnpm test       # Unit tests
 
 ---
 
+## Component Architecture (SRP + DRY)
+
+### Presentational Components
+- Components MUST be purely presentational — rendering UI only
+- All business logic (state, effects, data transformation) goes in custom hooks
+- Max 250 lines per component file; split into sub-components if larger
+
+### Hooks
+- Custom hooks handle all state management, side effects, and data transformation
+- Each hook should have a single responsibility
+- All hooks must have unit tests in `__tests__/` sibling directory
+- Hook test pattern: `vitest` + `@testing-library/react` `renderHook`
+
+### Design System
+- Use `@flowstarter/flow-design-system` components (`GlassCard`, `FlowBackground`, `GlassPanel`, etc.)
+- Do NOT hand-roll glassmorphism or flow line patterns — use the design system
+- Available variants for `FlowBackground`: `dashboard`, `editor`, `landing`, `wizard`
+
+### Styling Conventions
+- Use CSS custom properties from `theme-colors.css` for gradients and brand colors
+- Page backgrounds: use the `.page-gradient` utility class (not hardcoded Tailwind gradients)
+- Button gradients: `from-[var(--landing-btn-from)] via-[var(--landing-btn-via)]` (not hardcoded hex values)
+- Icons: always use Lucide React — never inline SVGs or emoji for UI icons
+- No em dashes in user-facing text — use commas or ` - ` instead
+
+### DRY Patterns
+- Extract repeated card/list patterns into reusable components
+- Reuse existing hooks (`useScrollAnimation`, `useI18n`, `useLocalStorage`) rather than duplicating logic
+
+### No Dead Code
+- Remove unused translation keys, CSS classes, and components
+- No backwards-compatibility shims for removed code
+
+---
+
 ## Summary: Non-negotiable Requirements
 
 **All AI-generated code must:**

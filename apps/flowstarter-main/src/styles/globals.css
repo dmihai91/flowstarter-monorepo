@@ -596,6 +596,16 @@ body {
     linear-gradient(to bottom, rgba(128, 128, 128, 0.05) 1px, transparent 1px);
 }
 
+/* Page gradient utility - consistent gradient for marketing/auth/support pages */
+.page-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--page-gradient-from) 0%,
+    var(--page-gradient-via) 50%,
+    var(--page-gradient-to) 100%
+  );
+}
+
 /* Radial gradient utility - enhanced for smoother transitions */
 .bg-gradient-radial {
   background-image: radial-gradient(
@@ -1059,7 +1069,6 @@ body {
 }
 
 @import './utils.css';
-@import './gradients.css';
 
 @custom-variant dark (&:is(.dark *));
 @custom-variant hover (&:hover);

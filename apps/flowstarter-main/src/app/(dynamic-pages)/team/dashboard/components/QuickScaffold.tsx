@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { Wand2, Paperclip, Loader2, ArrowRight, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { GlassCard } from '@flowstarter/flow-design-system';
 
 const EDITOR_URL = process.env.NEXT_PUBLIC_EDITOR_URL || 'http://localhost:5173';
 
@@ -185,15 +186,13 @@ export function QuickScaffold() {
 
   const isClassifying = enrichMutation.isPending;
 
-  // Glassmorphism card style
-  const glassCard = 'rounded-2xl border-t border-l border-white/40 dark:border-white/[0.08] border-b border-r border-black/[0.04] dark:border-black/[0.2] bg-white/55 dark:bg-white/[0.03] backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.04),1px_1px_0_rgba(0,0,0,0.03)_inset,-1px_-1px_0_rgba(255,255,255,1)_inset,1px_1px_0_rgba(0,0,0,0.03)_inset,-1px_-1px_0_rgba(255,255,255,1)_inset,0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[0_8px_32px_rgba(0,0,0,0.35),0_2px_8px_rgba(0,0,0,0.2),1px_1px_0_rgba(0,0,0,0.3)_inset,-1px_-1px_0_rgba(255,255,255,0.08)_inset,0_1px_0_rgba(255,255,255,0.06)_inset]';
-
   // Collapsed state - compact one-liner
   if (!isExpanded) {
     return (
-      <button
+      <GlassCard
+        as="button"
         onClick={() => setIsExpanded(true)}
-        className={`w-full flex items-center gap-3 px-4 py-3.5 ${glassCard} hover:border-[var(--purple)]/30 hover:bg-white/80 dark:hover:bg-white/[0.06] hover:shadow-[0_8px_32px_rgba(124,58,237,0.1)] transition-all duration-300 group`}
+        className="w-full flex items-center gap-3 px-4 py-3.5"
       >
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center group-hover:from-[var(--purple)]/30 group-hover:to-blue-500/30 transition-colors">
           <Wand2 className="w-4 h-4 text-[var(--purple)]" />
@@ -202,12 +201,12 @@ export function QuickScaffold() {
           Quick scaffold - paste client brief to generate draft structure
         </span>
         <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-[var(--purple)] ml-auto transition-colors" />
-      </button>
+      </GlassCard>
     );
   }
 
   return (
-    <div className={`${glassCard} p-5`}>
+    <GlassCard noHover>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -329,6 +328,6 @@ export function QuickScaffold() {
       <p className="text-[11px] text-gray-400 dark:text-white/30 mt-2 text-center">
         AI creates a starting structure - you refine positioning and strategy
       </p>
-    </div>
+    </GlassCard>
   );
 }

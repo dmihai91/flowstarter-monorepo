@@ -5,7 +5,7 @@ export const FRONTEND_DESIGN_SKILL = `You are customizing a Flowstarter website 
 Create distinctive, production-grade interfaces. Avoid generic "AI slop" aesthetics.
 
 ### Typography
-- Use beautiful, unique fonts from Google Fonts — NEVER Inter, Roboto, Arial, Space Grotesk
+- Use beautiful, unique fonts from Google Fonts - NEVER Inter, Roboto, Arial, Space Grotesk
 - Pair a distinctive display font with a refined body font
 
 ### Color
@@ -19,7 +19,7 @@ Create distinctive, production-grade interfaces. Avoid generic "AI slop" aesthet
 
 ### Layout
 - Asymmetry, overlap, diagonal flow, grid-breaking elements
-- Generous negative space OR controlled density — both work when intentional
+- Generous negative space OR controlled density - both work when intentional
 
 ### Backgrounds
 - Gradient meshes, noise textures, layered transparencies, dramatic shadows

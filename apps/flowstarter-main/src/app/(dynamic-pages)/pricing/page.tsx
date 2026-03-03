@@ -14,6 +14,9 @@ import {
   Sparkles,
   Star,
 } from 'lucide-react';
+import { FlowBackground } from '@flowstarter/flow-design-system';
+import { SupportHeader } from '@/components/SupportHeader';
+import Footer from '@/components/Footer';
 
 
 export default function PricingPage() {
@@ -79,15 +82,13 @@ export default function PricingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-900">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-[var(--purple)]/10 to-cyan-500/10 blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-cyan-500/10 to-[var(--purple)]/10 blur-3xl" />
-        </div>
+    <div className="relative min-h-screen page-gradient">
+      <FlowBackground variant="dashboard" style={{ position: 'fixed', inset: 0, zIndex: 0 }} />
+      <SupportHeader />
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative">
+      {/* Hero Section */}
+      <div className="relative z-10 overflow-hidden">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-36 pb-16 sm:pb-24 relative">
           <div className="text-center max-w-4xl mx-auto">
             <Badge className="mb-6 bg-gradient-to-r from-[var(--purple)] to-cyan-500 text-white border-0 px-4 py-1.5 text-sm font-semibold">
               <Sparkles className="w-4 h-4 mr-2" />
@@ -115,7 +116,7 @@ export default function PricingPage() {
       </div>
 
       {/* Starter Plan Card */}
-      <section className="py-8 sm:py-12">
+      <section className="relative z-10 py-8 sm:py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-lg mx-auto">
             <Card className="relative bg-white dark:bg-gray-800 border-2 border-[var(--purple)]/30 shadow-xl shadow-[var(--purple)]/5 overflow-hidden">
@@ -203,7 +204,7 @@ export default function PricingPage() {
                   className="block w-full text-center py-3.5 px-6 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
                   style={{
                     background:
-                      'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+                      'linear-gradient(135deg, var(--landing-btn-from) 0%, var(--landing-btn-via) 100%)',
                   }}
                 >
                   Book Free Discovery Call
@@ -221,7 +222,7 @@ export default function PricingPage() {
       </section>
 
       {/* Everything You Need Section */}
-      <section className="py-16 bg-white dark:bg-gray-800/50">
+      <section className="relative z-10 py-16 bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -331,7 +332,7 @@ export default function PricingPage() {
       </section>
 
       {/* Coming Soon Tiers */}
-      <section className="py-16">
+      <section className="relative z-10 py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
@@ -445,7 +446,7 @@ export default function PricingPage() {
       </section>
 
       {/* Early Access Banner */}
-      <section className="py-12">
+      <section className="relative z-10 py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="max-w-4xl mx-auto bg-gradient-to-r from-[var(--purple)]/10 via-cyan-500/10 to-[var(--purple)]/10 border-[var(--purple)]/20">
             <CardContent className="p-8 sm:p-12 text-center">
@@ -494,6 +495,8 @@ export default function PricingPage() {
           </Card>
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 }

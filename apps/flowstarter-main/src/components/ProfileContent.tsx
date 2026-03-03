@@ -10,6 +10,7 @@ import { useUser } from '@clerk/nextjs';
 import { Pencil, Check, X, Mail, User, Calendar, Shield, Camera } from 'lucide-react';
 import Image from 'next/image';
 import { useState, useRef } from 'react';
+import { GlassCard } from '@flowstarter/flow-design-system';
 
 export function ProfileContent() {
   const { user, isLoaded } = useUser();
@@ -94,8 +95,8 @@ export function ProfileContent() {
   };
 
   const formatDate = (date: Date | null | undefined) => {
-    if (!date) return '—';
-    return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    if (!date) return '-';
+    return new Date(date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
   };
 
   const InfoRow = ({ 
@@ -220,19 +221,19 @@ export function ProfileContent() {
       )}
 
       {/* Personal Info Card */}
-      <div className="rounded-2xl bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl border border-gray-200/50 dark:border-white/10 shadow-sm p-3 sm:p-4 mb-3">
+      <GlassCard noHover className="p-3 sm:p-4 mb-3">
         <h2 className="text-xs font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider mb-1">
           {t('profile.personalInformation.title')}
         </h2>
         <div className="divide-y divide-gray-100 dark:divide-white/5">
-          <InfoRow icon={User} label="First Name" value={user.firstName || '—'} field="firstName" editable />
-          <InfoRow icon={User} label="Last Name" value={user.lastName || '—'} field="lastName" editable />
-          <InfoRow icon={Mail} label={t('profile.personalInformation.email')} value={primaryEmail || '—'} field="email" editable />
+          <InfoRow icon={User} label={t('profile.personalInformation.firstName')} value={user.firstName || '-'} field="firstName" editable />
+          <InfoRow icon={User} label={t('profile.personalInformation.lastName')} value={user.lastName || '-'} field="lastName" editable />
+          <InfoRow icon={Mail} label={t('profile.personalInformation.email')} value={primaryEmail || '-'} field="email" editable />
         </div>
-      </div>
+      </GlassCard>
 
       {/* Account Details Card */}
-      <div className="rounded-2xl bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl border border-gray-200/50 dark:border-white/10 shadow-sm p-3 sm:p-4">
+      <GlassCard noHover className="p-3 sm:p-4">
         <h2 className="text-xs font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider mb-1">
           {t('profile.accountDetails.title')}
         </h2>
@@ -240,7 +241,7 @@ export function ProfileContent() {
           <InfoRow icon={Calendar} label={t('profile.accountDetails.created')} value={formatDate(user.createdAt)} />
           <InfoRow icon={Calendar} label={t('profile.accountDetails.lastUpdated')} value={formatDate(user.updatedAt)} />
         </div>
-      </div>
+      </GlassCard>
     </div>
   );
 }

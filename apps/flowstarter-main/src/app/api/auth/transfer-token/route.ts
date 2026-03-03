@@ -20,10 +20,10 @@ export async function POST(req: Request) {
     const clerk = await clerkClient();
     const token = await clerk.signInTokens.createSignInToken({
       userId,
-      expiresInSeconds: 60, // 1 minute — short-lived
+      expiresInSeconds: 60, // 1 minute - short-lived
     });
 
-    // Append as __clerk_ticket — Clerk reads this on the satellite
+    // Append as __clerk_ticket - Clerk reads this on the satellite
     const url = new URL(redirectUrl);
     url.searchParams.set('__clerk_ticket', token.token);
 

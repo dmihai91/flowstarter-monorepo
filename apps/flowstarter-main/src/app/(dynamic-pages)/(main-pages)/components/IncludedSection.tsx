@@ -1,6 +1,7 @@
 'use client';
 
 import { useI18n } from '@/lib/i18n';
+import { GlassCard } from '@flowstarter/flow-design-system';
 
 export function IncludedSection() {
   const { t } = useI18n();
@@ -9,7 +10,7 @@ export function IncludedSection() {
   return (
     <>
         {/* What's Included Section */}
-        <section data-section="included" className="py-8 lg:py-10 ">
+        <section data-section="included" className="py-8 lg:py-12">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="text-center mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight">
@@ -22,7 +23,7 @@ export function IncludedSection() {
 
             <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
               {/* Setup */}
-              <div className="group p-7 rounded-2xl bg-white/55 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)] hover:shadow-[0_16px_48px_rgba(124,58,237,0.1),inset_0_1px_0_rgba(255,255,255,0.9)] dark:hover:shadow-[0_16px_48px_rgba(124,58,237,0.15),inset_0_1px_0_rgba(255,255,255,0.08)] hover:-translate-y-1 transition-all duration-300">
+              <GlassCard variant="subtle" className="group p-7">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center">
                     <svg
@@ -83,10 +84,10 @@ export function IncludedSection() {
                     </li>
                   ))}
                 </ul>
-              </div>
+              </GlassCard>
 
               {/* Monthly subscription */}
-              <div className="group p-7 rounded-2xl bg-white/55 dark:bg-white/[0.03] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.05)] hover:shadow-[0_16px_48px_rgba(124,58,237,0.1),inset_0_1px_0_rgba(255,255,255,0.9)] dark:hover:shadow-[0_16px_48px_rgba(124,58,237,0.15),inset_0_1px_0_rgba(255,255,255,0.08)] hover:-translate-y-1 transition-all duration-300">
+              <GlassCard variant="subtle" className="group p-7">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center">
                     <svg
@@ -149,7 +150,7 @@ export function IncludedSection() {
                 <p className="text-xs text-gray-400 dark:text-white/30 mt-4 pt-3 border-t border-gray-200 dark:border-white/5">
                   First month free. Billing starts 30 days after launch
                 </p>
-              </div>
+              </GlassCard>
             </div>
           </div>
         </section>

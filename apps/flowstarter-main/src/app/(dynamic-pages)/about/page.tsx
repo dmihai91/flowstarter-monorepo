@@ -1,13 +1,21 @@
+'use client';
+
 import { Rocket, Sparkles, Target } from 'lucide-react';
 import Image from 'next/image';
+import { FlowBackground } from '@flowstarter/flow-design-system';
+import { SupportHeader } from '@/components/SupportHeader';
+import Footer from '@/components/Footer';
 
 export default function AboutPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <main className="flex-1 w-full mx-auto">
-        {/* Hero Section with Subtle Gradient */}
-        <section className="pt-20 pb-16 md:pt-32 md:pb-24 text-center bg-[linear-gradient(135deg,#f8f8ff_0%,#f3f0ff_100%)] dark:bg-[linear-gradient(135deg,#181825_0%,#232136_100%)]">
-          <div className="max-w-5xl mx-auto">
+    <div className="relative flex min-h-screen flex-col page-gradient">
+      <FlowBackground variant="dashboard" style={{ position: 'fixed', inset: 0, zIndex: 0 }} />
+      <SupportHeader />
+
+      <main className="relative z-10 flex-1 w-full mx-auto">
+        {/* Hero Section */}
+        <section className="pt-28 pb-16 md:pt-36 md:pb-24 text-center">
+          <div className="max-w-5xl mx-auto px-4">
             <div className="flex flex-col items-center">
               <div className="w-24 h-2 bg-[--purple-primary] rounded-full mb-6" />
               <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl mb-4 text-foreground">
@@ -22,8 +30,8 @@ export default function AboutPage() {
         </section>
 
         {/* Mission Section as Card */}
-        <section className="py-16 flex justify-center bg-background">
-          <div className="w-full max-w-5xl bg-white dark:bg-zinc-900 rounded-2xl border-2 border-[--purple-primary] shadow-2xl p-8 md:p-14 grid gap-10 lg:grid-cols-2 items-center">
+        <section className="py-16 flex justify-center px-4">
+          <div className="w-full max-w-5xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm rounded-2xl border border-[--purple-primary]/30 shadow-xl p-8 md:p-14 grid gap-10 lg:grid-cols-2 items-center">
             <div className="space-y-6 text-left">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-2 h-8 bg-[--purple-primary] rounded-full" />
@@ -83,7 +91,7 @@ export default function AboutPage() {
         </section>
 
         {/* Values Section with Elevated Cards */}
-        <section className="py-16 bg-linear-to-br from-[var(--purple)]/10/40 via-transparent to-blue-100/40 dark:from-[var(--purple)]/20 dark:to-blue-900/20">
+        <section className="py-16 px-4">
           <div className="max-w-5xl mx-auto">
             <div className="flex flex-col items-center mb-10">
               <div className="w-2 h-8 bg-[--purple-primary] rounded-full mb-2" />
@@ -95,7 +103,7 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
-              <div className="flex flex-col items-center space-y-4 rounded-xl border-2 border-[--purple-primary] bg-white dark:bg-zinc-900 p-6 shadow-xl [@media(hover:hover)]:hover:shadow-2xl transition-shadow duration-300">
+              <div className="flex flex-col items-center space-y-4 rounded-xl border border-[--purple-primary]/30 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm p-6 shadow-lg [@media(hover:hover)]:hover:shadow-xl transition-shadow duration-300">
                 <Sparkles className="w-10 h-10 text-(--purple-primary) mb-2" />
                 <h3 className="text-xl font-bold">Innovation</h3>
                 <p className="text-muted-foreground text-center">
@@ -103,7 +111,7 @@ export default function AboutPage() {
                   technology to provide the best solutions for our customers.
                 </p>
               </div>
-              <div className="flex flex-col items-center space-y-4 rounded-xl border-2 border-blue-500 bg-white dark:bg-zinc-900 p-6 shadow-xl [@media(hover:hover)]:hover:shadow-2xl transition-shadow duration-300">
+              <div className="flex flex-col items-center space-y-4 rounded-xl border border-blue-500/30 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm p-6 shadow-lg [@media(hover:hover)]:hover:shadow-xl transition-shadow duration-300">
                 <Target
                   className="w-10 h-10 mb-2"
                   style={{ color: 'var(--blue)' }}
@@ -114,7 +122,7 @@ export default function AboutPage() {
                   businesses of all sizes, regardless of technical expertise.
                 </p>
               </div>
-              <div className="flex flex-col items-center space-y-4 rounded-xl border-2 border-pink-500 bg-white dark:bg-zinc-900 p-6 shadow-xl [@media(hover:hover)]:hover:shadow-2xl transition-shadow duration-300">
+              <div className="flex flex-col items-center space-y-4 rounded-xl border border-pink-500/30 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm p-6 shadow-lg [@media(hover:hover)]:hover:shadow-xl transition-shadow duration-300">
                 <Rocket className="w-10 h-10 text-pink-500 mb-2" />
                 <h3 className="text-xl font-bold">Customer Success</h3>
                 <p className="text-muted-foreground text-center">
@@ -127,8 +135,8 @@ export default function AboutPage() {
         </section>
 
         {/* Join Our Team Section as Card */}
-        <section className="py-16 flex justify-center bg-background">
-          <div className="w-full max-w-5xl bg-white dark:bg-zinc-900 rounded-2xl border-2 border-[--purple-primary] shadow-2xl p-10 md:p-16 text-center">
+        <section className="py-16 flex justify-center px-4">
+          <div className="w-full max-w-5xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm rounded-2xl border border-[--purple-primary]/30 shadow-xl p-10 md:p-16 text-center">
             <div className="flex flex-col items-center mb-6">
               <div className="w-2 h-8 bg-[--purple-primary] rounded-full mb-2" />
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-2">
@@ -148,6 +156,8 @@ export default function AboutPage() {
           </div>
         </section>
       </main>
+
+      <Footer />
     </div>
   );
 }

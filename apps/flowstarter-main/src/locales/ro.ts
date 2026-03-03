@@ -21,11 +21,8 @@ const ro: typeof en = {
   'landing.hero.cta': 'Programează un apel gratuit',
   'landing.hero.ctaNote':
     'Un singur apel. Fără jargon tehnic. Vei fi online în câteva zile.',
-  'landing.hero.priceBuild': '€399',
-  'landing.hero.priceBuildLabel': 'setup',
+  'landing.hero.priceBuild': '€499',
   'landing.hero.priceMonthly': '€39',
-  'landing.hero.priceMonthlyLabel': '/lună',
-  'landing.hero.priceNote': 'Early adopters: €39/lună · Utilizatori noi: €59/lună după 6 luni',
 
   // ─── Stats ────────────────────────────────────────────────────────────
   'landing.stats.weeks': 'Zile',
@@ -37,9 +34,6 @@ const ro: typeof en = {
 
   // ─── How it works ─────────────────────────────────────────────────────
   'landing.howItWorks.title': 'Cum funcționează',
-  'landing.howItWorks.text1': 'Acesta nu este un alt constructor de site-uri.',
-  'landing.howItWorks.text2': 'Începem cu strategia: cine servești, ce oferi și cum să te poziționezi. Apoi designul este construit în jurul acesteia, nu în jurul unui template.',
-  'landing.howItWorks.text3': 'Primești un site care sună ca tine, convertește cum ar trebui și nu te face să te jenezi când trimiți link-ul.',
 
   // ─── Editor ───────────────────────────────────────────────────────────
   'landing.editor.title': 'Actualizează site-ul oricând',
@@ -51,7 +45,7 @@ const ro: typeof en = {
   'landing.pricing.title': 'Starter',
   'landing.pricing.subtitle': 'Tot ce ai nevoie pentru a fi găsit online și a primi rezervări.',
   'landing.pricing.buildLabel': 'Setup',
-  'landing.pricing.buildPrice': '€399',
+  'landing.pricing.buildPrice': '€499',
   'landing.pricing.buildPeriod': 'o dată',
   'landing.pricing.careLabel': 'Îngrijire lunară',
   'landing.pricing.carePrice': '€39',
@@ -59,7 +53,7 @@ const ro: typeof en = {
   'landing.pricing.note': 'Prima lună gratuită. Facturarea începe la 30 de zile după lansare.',
   'landing.pricing.refund': '50% rambursare dacă nu ești mulțumit',
   'landing.pricing.assets': 'Primești toate fișierele site-ului',
-  'landing.pricing.limitedNote': 'Prețul beta de €399 setup + €39/lună crește la €599 + €59/lună după beta',
+  'landing.pricing.limitedNote': 'Prețul beta de €499 setup + €39/lună crește la €599 + €59/lună după beta',
   'landing.pricing.websiteTitle': 'Site-ul tău',
   'landing.pricing.websiteDesc': 'Construit o dată. Al tău pentru totdeauna.',
   'landing.pricing.websiteFeature1': 'Apel de descoperire pentru a înțelege afacerea ta',
@@ -75,22 +69,11 @@ const ro: typeof en = {
   'landing.pricing.careFeature4': 'Editează conținut cu AI oricând',
 
   // ─── For you / Not for you ────────────────────────────────────────────
-  'landing.forYou.title': 'Perfect pentru tine dacă...',
-  'landing.forYou.item1': 'Ești un coach, terapeut, consultant, clinică, frizer sau salon de frumusețe',
-  'landing.forYou.item2': 'Depinzi de programări și clienți locali',
-  'landing.forYou.item3': 'Vrei să fii găsit online fără să înveți tehnologie',
-  'landing.forYou.item4': 'Vrei să lași pe altcineva să gestioneze configurarea',
-  'landing.notForYou.title': 'Nu potrivit dacă...',
-  'landing.notForYou.item1': 'Vrei să construiești singur și să controlezi fiecare detaliu',
-  'landing.notForYou.item2': 'Ai nevoie de funcționalitate complexă de e-commerce',
-  'landing.notForYou.item3': 'Ai deja un web developer dedicat',
-  'landing.notForYou.item4': 'Cauți cel mai ieftin option posibil',
 
   // ─── Final CTA ────────────────────────────────────────────────────────
   'landing.cta.title': 'Clienții tăi te caută acum.',
   'landing.cta.subtitle': 'Asigură-te că te găsesc.',
   'landing.cta.button': 'Rezervă Apelul Gratuit',
-  'landing.cta.pricing': '€399 setup · €39/lună · Prima lună gratuită',
   // ─── How it works - 3 steps ───────────────────────────────────────────
   'landing.howItWorks.title': 'Trei pași pentru un site care îți aduce rezervări.',
   'landing.steps.step1.num': '01',
@@ -98,7 +81,7 @@ const ro: typeof en = {
   'landing.steps.step1.desc': 'Un apel de 45 de minute. Ne spui despre afacerea ta și clienții tăi. Noi ne ocupăm de tot de acolo încolo.',
   'landing.steps.step2.num': '02',
   'landing.steps.step2.title': 'Construim',
-  'landing.steps.step2.desc': 'Creăm site-ul tău și configurăm sistemul de rezervări, complet conectat și gata să primească programări. Verifici o dată și rafinăm.',
+  'landing.steps.step2.desc': 'Din descrierea ta, configurăm totul: website, rezervări, email, analitice. Primești o primă versiune gata de utilizare. Apoi o personalizezi exact cum vrei, oricând, folosind editorul nostru AI.',
   'landing.steps.step3.num': '03',
   'landing.steps.step3.title': 'Clienții te găsesc și rezervă',
   'landing.steps.step3.desc': 'Site-ul tău intră live. Clienții noi te pot găsi, văd ce faci și rezervă direct. Nu mai sunt necesare apeluri pentru programări.',

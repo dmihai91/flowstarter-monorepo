@@ -2,19 +2,20 @@
 
 import { useI18n } from '@/lib/i18n';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
-import { useState } from 'react';
+import { GlassCard } from '@flowstarter/flow-design-system';
+import { useFAQAccordion } from './hooks/useFAQAccordion';
 
 export function FAQSection() {
   const { t } = useI18n();
   const { ref: sectionRef, isVisible } = useScrollAnimation();
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const { openIndex: openFaq, toggle: toggleFaq } = useFAQAccordion(0);
 
   return (
     <>
         {/* FAQ Section */}
         <section
           ref={sectionRef} id="faq"
-          className="py-10 lg:py-14 "
+          className="py-12 lg:py-16"
         >
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div
@@ -49,9 +50,11 @@ export function FAQSection() {
                   { q: t('landing.faq.q9'), a: t('landing.faq.a9') },
                   { q: t('landing.faq.q10'), a: t('landing.faq.a10') },
                 ].map((faq, i) => (
-                  <div
+                  <GlassCard
                     key={i}
-                    className={`rounded-2xl bg-white/55 dark:bg-white/[0.02] backdrop-blur-sm border border-gray-200 dark:border-white/5 overflow-hidden transition-all hover:bg-[#F9F9FB] dark:hover:bg-white/[0.03] ${
+                    variant="subtle"
+                    noHover
+                    className={`overflow-hidden !p-0 ${
                       isVisible
                         ? 'opacity-100 translate-y-0'
                         : 'opacity-0 translate-y-4'
@@ -64,7 +67,7 @@ export function FAQSection() {
                     }}
                   >
                     <button
-                      onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                      onClick={() => toggleFaq(i)}
                       className="group/faq w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors"
                     >
                       <h3 className="text-base font-semibold pr-4">{faq.q}</h3>
@@ -93,7 +96,7 @@ export function FAQSection() {
                         {faq.a}
                       </p>
                     </div>
-                  </div>
+                  </GlassCard>
                 ))}
               </div>
             </div>

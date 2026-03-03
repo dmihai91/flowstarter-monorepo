@@ -1,6 +1,6 @@
 /**
  * Pure formatting utilities.
- * No React dependencies — usable anywhere (components, API routes, tests).
+ * No React dependencies - usable anywhere (components, API routes, tests).
  */
 
 /**

@@ -34,7 +34,7 @@ export default function AuthLayout({
         }
       `}</style>
 
-      <div className="min-h-screen w-full font-display relative overflow-hidden flex flex-col">
+      <div className="min-h-screen w-full font-display relative overflow-hidden flex flex-col page-gradient">
         {/* Gradient background with flow lines */}
         <FlowBackground variant="dashboard" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }} />
 

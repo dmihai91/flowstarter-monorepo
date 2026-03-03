@@ -52,6 +52,41 @@
   --status-success: hsl(119 100% 89.41%);
   --status-warning: hsl(23 93% 59.41%);
   --status-error: hsl(0 84% 60%);
+
+  /* ── Landing page tokens ── */
+  /* Page backgrounds */
+  --landing-bg: #fafafa;
+  --landing-bg-tint: #f7f5ff;
+  --landing-dark-surface: #0a0a0c;
+  --landing-dark-surface-tint: #0d0d14;
+
+  /* Flow-line SVG gradient stops */
+  --landing-flow-start: #a855f7;
+  --landing-flow-end: #3b82f6;
+  --landing-flow-alt-start: #8b5cf6;
+  --landing-flow-alt-end: #06b6d4;
+  --landing-flow-end-light: #60a5fa;
+
+  /* Hero text-flow accent */
+  --landing-text-accent: #7c3aed;
+
+  /* CTA button gradient (deep indigo, Stripe-style) */
+  --landing-btn-from: #4338CA;
+  --landing-btn-via: #4F46E5;
+  --landing-btn-hover-from: #3730A3;
+  --landing-btn-hover-via: #4338CA;
+
+  /* Card surfaces */
+  --landing-card-bg: rgba(255, 255, 255, 0.50);
+  --landing-card-border: rgba(229, 231, 235, 0.40);
+
+  /* Glow */
+  --landing-glow: rgba(96, 165, 250, 0.05);
+
+  /* Page gradient (used on marketing, auth, support pages) */
+  --page-gradient-from: hsl(226 100% 97% / 0.8);
+  --page-gradient-via: hsl(0 0% 100%);
+  --page-gradient-to: hsl(270 100% 97% / 0.6);
 }
 
 /* Dark mode adjustments */
@@ -108,4 +143,19 @@
   --status-success: hsl(119 100% 89.41%);
   --status-warning: hsl(23 93% 59.41%);
   --status-error: hsl(0 84% 60%);
+
+  /* ── Landing page tokens (dark overrides) ── */
+  --landing-btn-from: #6366F1;
+  --landing-btn-via: #818CF8;
+  --landing-btn-hover-from: #4F46E5;
+  --landing-btn-hover-via: #6366F1;
+
+  --landing-card-bg: rgba(255, 255, 255, 0.02);
+  --landing-card-border: rgba(255, 255, 255, 0.05);
+  --landing-glow: rgba(96, 165, 250, 0.08);
+
+  /* Page gradient (dark overrides) */
+  --page-gradient-from: #0a0a12;
+  --page-gradient-via: #0d0d18;
+  --page-gradient-to: #10081a;
 }

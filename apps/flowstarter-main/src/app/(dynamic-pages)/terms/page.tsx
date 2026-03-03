@@ -2,7 +2,8 @@
 
 import Footer from '@/components/Footer';
 import { SupportHeader } from '@/components/SupportHeader';
-import { Sparkles, Package, DoorOpen } from 'lucide-react';
+import { Sparkles, Package, DoorOpen, FileText, Mail } from 'lucide-react';
+import { FlowBackground } from '@flowstarter/flow-design-system';
 import Link from 'next/link';
 
 export default function TermsPage() {
@@ -148,59 +149,17 @@ export default function TermsPage() {
         }
       `}</style>
 
-      <div className="min-h-screen font-display bg-[#FAFAFA] dark:bg-[#0a0a0c]">
-        {/* Flow lines background */}
-        <div className="fixed inset-0 pointer-events-none">
-          <svg
-            className="absolute inset-0 w-full h-full opacity-[0.08] dark:opacity-[0.06]"
-            viewBox="0 0 1200 800"
-            preserveAspectRatio="xMidYMid slice"
-            fill="none"
-          >
-            <defs>
-              <linearGradient
-                id="termsFlowGradient"
-                x1="0%"
-                y1="0%"
-                x2="100%"
-                y2="0%"
-              >
-                <stop offset="0%" stopColor="var(--purple)" />
-                <stop offset="100%" stopColor="#3B82F6" />
-              </linearGradient>
-            </defs>
-            <g stroke="url(#termsFlowGradient)" strokeWidth="1">
-              <path d="M-100,100 Q200,80 400,120 T800,100 T1300,140" />
-              <path d="M-100,200 Q150,220 350,180 T750,220 T1300,200" />
-              <path d="M-100,300 Q250,280 450,320 T850,290 T1300,330" />
-              <path d="M-100,400 Q180,420 380,380 T780,420 T1300,400" />
-              <path d="M-100,500 Q220,480 420,520 T820,490 T1300,530" />
-              <path d="M-100,600 Q200,620 400,580 T800,620 T1300,600" />
-              <path d="M-100,700 Q250,680 450,720 T850,690 T1300,730" />
-            </g>
-          </svg>
-        </div>
+      <div className="min-h-screen font-display page-gradient">
+        <FlowBackground variant="dashboard" style={{ position: 'fixed', inset: 0, zIndex: 0 }} />
 
         <SupportHeader />
 
         {/* Content */}
-        <main className="relative z-10 max-w-4xl mx-auto px-6 py-16">
+        <main className="relative z-10 max-w-4xl mx-auto px-6 pt-28 pb-16">
           {/* Hero */}
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium mb-6">
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
+              <FileText className="w-4 h-4" />
               Legal Agreement
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
@@ -290,21 +249,9 @@ export default function TermsPage() {
             </p>
             <a
               href="mailto:hello@flowstarter.app"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#1a1a2e] dark:from-white dark:via-gray-100 dark:to-white text-white dark:text-gray-900 font-semibold hover:shadow-lg transition-all duration-300"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--landing-btn-from)] via-[var(--landing-btn-via)] to-[var(--landing-btn-from)] text-white font-semibold hover:shadow-lg transition-all duration-300"
             >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
+              <Mail className="w-4 h-4" />
               hello@flowstarter.app
             </a>
           </div>

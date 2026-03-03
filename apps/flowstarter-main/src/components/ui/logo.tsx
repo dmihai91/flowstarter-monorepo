@@ -26,37 +26,44 @@ const textSizes = {
 };
 
 function LogoMark({ size = 'md', className }: { size?: LogoProps['size']; className?: string }) {
-  const gradientId = useId();
+  const id = useId();
   return (
     <div className={cn(iconSizes[size!], 'relative flex-shrink-0', className)}>
       <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
         <defs>
-          <linearGradient id={gradientId} x1="0" y1="40" x2="40" y2="0" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#8B5CF6" />
+          <linearGradient id={`${id}-bg`} x1="0" y1="40" x2="40" y2="0" gradientUnits="userSpaceOnUse">
+            <stop stopColor="var(--purple, #4D5DD9)" />
+            <stop offset="0.5" stopColor="#7C3AED" />
             <stop offset="1" stopColor="#06B6D4" />
           </linearGradient>
-          <linearGradient id={`${gradientId}-lines`} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="rgba(255,255,255,0.5)" />
-            <stop offset="50%" stopColor="rgba(255,255,255,1)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0.5)" />
+          <linearGradient id={`${id}-flow`} x1="0%" y1="50%" x2="100%" y2="50%">
+            <stop offset="0%" stopColor="rgba(255,255,255,0.3)" />
+            <stop offset="40%" stopColor="rgba(255,255,255,1)" />
+            <stop offset="100%" stopColor="rgba(255,255,255,0.6)" />
           </linearGradient>
         </defs>
-        <rect width="40" height="40" rx="10" fill={`url(#${gradientId})`} />
+        {/* Background: rounded square with premium gradient */}
+        <rect width="40" height="40" rx="11" fill={`url(#${id}-bg)`} />
+        {/* Subtle inner glow */}
+        <rect x="1" y="1" width="38" height="38" rx="10" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
+        {/* Main flow line — the "F" stroke that flows upward like a launch */}
         <path
-          d="M8 26 Q14 20, 20 23 Q26 26, 32 20"
-          stroke={`url(#${gradientId}-lines)`}
-          strokeWidth="2.5"
+          d="M10 28 C14 28, 16 20, 20 20 S26 12, 30 12"
+          stroke={`url(#${id}-flow)`}
+          strokeWidth="3"
           strokeLinecap="round"
           fill="none"
         />
+        {/* Secondary flow — parallel momentum line */}
         <path
-          d="M8 20 Q14 14, 20 17 Q26 20, 32 14"
-          stroke={`url(#${gradientId}-lines)`}
-          strokeWidth="2.5"
+          d="M10 22 C14 22, 17 16, 21 16 S27 10, 30 10"
+          stroke="rgba(255,255,255,0.35)"
+          strokeWidth="2"
           strokeLinecap="round"
           fill="none"
-          opacity="0.55"
         />
+        {/* Spark dot — the "starter" at the peak */}
+        <circle cx="30" cy="11" r="2" fill="white" opacity="0.9" />
       </svg>
     </div>
   );
@@ -68,7 +75,7 @@ export function Logo({ size = 'md', showText = true, className, href }: LogoProp
       <LogoMark size={size} />
       {showText && (
         <span className={cn('font-bold tracking-tight text-gray-900 dark:text-white', textSizes[size!])}>
-          Flowstarter
+          Flow<span className="bg-gradient-to-r from-[var(--purple,#4D5DD9)] to-cyan-500 bg-clip-text text-transparent">starter</span>
         </span>
       )}
     </div>

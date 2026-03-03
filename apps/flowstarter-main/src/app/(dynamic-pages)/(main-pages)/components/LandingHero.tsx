@@ -19,7 +19,7 @@ export function LandingHero() {
   }, []);
 
   return (
-    <section className="relative pt-32 sm:pt-36 lg:pt-44 pb-20 lg:pb-28 overflow-hidden">
+    <section className="relative pt-20 sm:pt-28 lg:pt-44 pb-20 lg:pb-28 overflow-hidden">
       {/* Background gradient blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-visible">
         <div className="absolute inset-0 bg-gradient-to-b from-[#faf8ff] to-white dark:from-[#0a0810] dark:to-[#08080c]" />

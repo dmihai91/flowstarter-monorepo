@@ -20,7 +20,7 @@ interface VariantConfig {
 const variants: Record<FlowBackgroundVariant, VariantConfig> = {
   dashboard: { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.12, glowDark: 0.08, lineLight: 0.04, lineDark: 0.04 },
   editor:    { bgLight: '#f8f8fa', bgDark: '#0a0a0c', glowLight: 0.14, glowDark: 0.10, lineLight: 0.04, lineDark: 0.05 },
-  landing:   { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.65, glowDark: 0.35, lineLight: 0.25, lineDark: 0.22 },
+  landing:   { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.65, glowDark: 0.15, lineLight: 0.25, lineDark: 0.08 },
   wizard:    { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.20, glowDark: 0.08, lineLight: 0.03, lineDark: 0.03 },
 };
 

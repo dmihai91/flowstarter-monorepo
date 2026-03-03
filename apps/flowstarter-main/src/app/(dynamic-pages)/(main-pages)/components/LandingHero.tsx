@@ -29,7 +29,7 @@ export function LandingHero() {
 
       {/* Subtle flow lines */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <svg className="absolute inset-0 w-full h-full opacity-[0.12] dark:opacity-[0.14]" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" fill="none">
+        <svg className="absolute inset-0 w-full h-full opacity-[0.12] dark:opacity-[0.05]" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" fill="none">
           <defs>
             <linearGradient id="heroLine1" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="var(--purple)" stopOpacity="0" />

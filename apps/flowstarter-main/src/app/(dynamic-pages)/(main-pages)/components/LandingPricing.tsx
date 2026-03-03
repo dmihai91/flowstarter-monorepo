@@ -69,6 +69,7 @@ export function LandingPricing() {
                     <span className="text-base text-gray-400 dark:text-white/40 ml-1">
                       {t('landing.pricing.carePeriod')}
                     </span>
+                    <span className="inline-flex items-center ml-3 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-semibold text-emerald-600 dark:text-emerald-400">First month free</span>
                   </div>
                   <p className="text-sm text-gray-400 dark:text-white/30 mt-2">
                     {t('landing.pricing.note')}

@@ -184,8 +184,9 @@ export function TeamSidebar() {
           </button>
         </div>
 
-        {/* ThemeToggle on its own row */}
-        <div className="px-4 py-3 border-b border-gray-200/50 dark:border-white/5">
+        {/* ThemeToggle with label */}
+        <div className="px-4 py-3 border-b border-gray-200/50 dark:border-white/5 flex items-center justify-between">
+          <span className="text-sm text-gray-600 dark:text-white/70">Theme</span>
           <ThemeToggle />
         </div>
 

@@ -64,6 +64,12 @@ export function SupportHeader() {
                     </p>
                   </div>
                   <DropdownMenuItem asChild>
+                    <Link href="/profile" className="cursor-pointer">
+                      <User className="w-4 h-4 mr-2" />
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
                     <Link href="/dashboard" className="cursor-pointer">
                       <LayoutDashboard className="w-4 h-4 mr-2" />
                       Dashboard
@@ -72,9 +78,9 @@ export function SupportHeader() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={() => signOut({ redirectUrl: '/' })}
-                    className="text-red-600 dark:text-red-400 cursor-pointer"
+                    className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 focus:bg-red-50 dark:focus:bg-red-900/20 cursor-pointer"
                   >
-                    <LogOut className="w-4 h-4 mr-2" />
+                    <LogOut className="w-4 h-4 mr-2 text-red-500 dark:text-red-400" />
                     Sign out
                   </DropdownMenuItem>
                 </DropdownMenuContent>

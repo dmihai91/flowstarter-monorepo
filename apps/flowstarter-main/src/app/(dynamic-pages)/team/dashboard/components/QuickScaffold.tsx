@@ -192,12 +192,12 @@ export function QuickScaffold() {
       <GlassCard
         as="button"
         onClick={() => setIsExpanded(true)}
-        className="w-full flex items-center gap-3 px-4 py-3.5"
+        className="w-full flex items-center gap-3 px-4 py-3.5 overflow-hidden min-w-0"
       >
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center group-hover:from-[var(--purple)]/30 group-hover:to-blue-500/30 transition-colors">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center group-hover:from-[var(--purple)]/30 group-hover:to-blue-500/30 transition-colors flex-shrink-0">
           <Wand2 className="w-4 h-4 text-[var(--purple)]" />
         </div>
-        <span className="text-sm text-gray-600 dark:text-white/60 group-hover:text-gray-900 dark:group-hover:text-white transition-colors truncate">
+        <span className="text-sm text-gray-600 dark:text-white/60 group-hover:text-gray-900 dark:group-hover:text-white transition-colors truncate min-w-0 flex-1">
           Quick scaffold - paste client brief to generate draft structure
         </span>
         <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-[var(--purple)] ml-auto transition-colors" />

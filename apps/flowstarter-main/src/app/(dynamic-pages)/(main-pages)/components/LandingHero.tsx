@@ -90,7 +90,7 @@ export function LandingHero() {
 
           {/* Launch price anchor */}
           <div className="hero-fade hero-fade-5 inline-flex items-center gap-4 mt-8 px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl bg-gradient-to-r from-amber-50/80 to-orange-50/60 dark:from-amber-500/[0.06] dark:to-orange-500/[0.03] backdrop-blur-sm border border-amber-200/40 dark:border-amber-500/15 shadow-[0_2px_16px_rgba(245,158,11,0.08)]">
-            <span className="text-[10px] sm:text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">🔥 Launch price</span>
+            <span className="text-[10px] sm:text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">🔥 Limited launch price</span>
             <span className="w-px h-5 bg-amber-300/30 dark:bg-amber-500/20" />
             <div className="flex items-baseline gap-1.5">
               <span className="text-sm sm:text-base text-gray-400 dark:text-white/30 line-through">€599</span>
@@ -103,6 +103,7 @@ export function LandingHero() {
               <span className="text-xs sm:text-sm text-gray-400 dark:text-white/35">/mo</span>
             </div>
           </div>
+          <p className="hero-fade hero-fade-5 text-xs sm:text-sm text-amber-600/70 dark:text-amber-400/50 mt-3">This price won't last. Lock it in before it goes up.</p>
 
           {/* Limited spots indicator — hidden for now, uncomment when ready
           <div className="hero-fade hero-fade-5 flex items-center justify-center gap-2 mt-8 text-sm sm:text-base text-gray-500 dark:text-white/40">

@@ -16,8 +16,8 @@ export function EditorShowcase() {
   return (
     <section ref={sectionRef} className="relative overflow-hidden">
       {/* Tall container — editor sticks while you scroll through */}
-      <div className="h-[150vh] lg:h-[180vh] relative">
-        <div className="sticky top-24 py-12 lg:py-16">
+      <div className="h-auto lg:h-[150vh] relative">
+        <div className="lg:sticky lg:top-24 py-6 lg:py-16">
           <div className={`max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 transition-all duration-1000 ease-out ${
             isVisible ? 'opacity-100' : 'opacity-0'
           }`}>

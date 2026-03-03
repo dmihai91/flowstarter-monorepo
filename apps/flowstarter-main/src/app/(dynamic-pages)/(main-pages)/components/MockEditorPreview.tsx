@@ -99,7 +99,7 @@ export function MockEditorPreview({
                     {/* Chat Panel */}
                     <div className="w-full sm:w-1/2 p-3 sm:p-4 flex flex-col border-b sm:border-b-0 border-gray-200/30 dark:border-white/5">
                       <div className="text-[11px] tracking-[0.12em] uppercase font-bold mb-2 sm:mb-3 bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
-                        Flowstarter Editor
+                        ✨ Flowstarter Assistant
                       </div>
 
                       {/* Messages - grows to fill space */}
@@ -113,9 +113,9 @@ export function MockEditorPreview({
                             </div>
                           ) : (
                             <div key={i} className="flex gap-2">
-                              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 border border-[var(--purple)]/20 flex items-center justify-center flex-shrink-0">
+                              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center flex-shrink-0 shadow-sm">
                                 <svg
-                                  className="w-3 h-3 text-[var(--purple)]"
+                                  className="w-3 h-3 text-white"
                                   fill="none"
                                   viewBox="0 0 24 24"
                                   stroke="currentColor"
@@ -136,9 +136,9 @@ export function MockEditorPreview({
                         )}
                         {isTyping && (
                           <div className="flex gap-2">
-                            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 border border-[var(--purple)]/20 flex items-center justify-center flex-shrink-0">
+                            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center flex-shrink-0 shadow-sm">
                               <svg
-                                className="w-3 h-3 text-[var(--purple)]"
+                                className="w-3 h-3 text-white"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"

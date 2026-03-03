@@ -63,17 +63,17 @@ export default function LandingPage() {
         {/* 1. Hero — headline + paragraph + CTA + price pill */}
         <LandingHero />
 
-        {/* 2. Social proof / trust indicators */}
-        <TrustSection />
-
-        {/* 3. Editor demo showcase */}
+        {/* 2. Editor demo showcase */}
         <EditorShowcase />
 
-        {/* 4. How it works — 3 steps */}
+        {/* 3. How it works — 3 steps */}
         <ProcessSection />
 
-        {/* 5. Why experts choose Flowstarter — 3 pillars */}
+        {/* 4. Why experts choose Flowstarter — 3 pillars */}
         <PillarsSection />
+
+        {/* 5. Social proof / trust indicators */}
+        <TrustSection />
 
         {/* 6. Everything you need — features */}
         <IncludedSection />

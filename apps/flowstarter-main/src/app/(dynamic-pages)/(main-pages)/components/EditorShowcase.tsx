@@ -18,16 +18,6 @@ export function EditorShowcase() {
       <div className={`max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 transition-all duration-1000 ease-out ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
       }`}>
-        {/* Section header */}
-        <div className="text-center mb-12 lg:mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
-            {t('landing.editor.title')}
-          </h2>
-          <p className="text-lg text-gray-500 dark:text-white/50 max-w-xl mx-auto">
-            {t('landing.editor.subtitle')}
-          </p>
-        </div>
-
         {/* Editor preview with glow */}
         <div className="relative max-w-4xl mx-auto">
           {/* Glow behind editor */}

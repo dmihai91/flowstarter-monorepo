@@ -20,65 +20,8 @@ export function ProcessSection() {
         {/* Process Section */}
         <section ref={sectionRef} data-section="process"
           id="process"
-          className="py-12 lg:py-16 relative overflow-hidden bg-gradient-to-b from-white via-[#F8F9FB] to-[#F1F3F7] dark:from-transparent dark:via-white/[0.01] dark:to-white/[0.02]"
+          className="py-12 lg:py-16 relative overflow-hidden "
         >
-          {/* Flow Field Background - Process Section (different direction) */}
-          <div className="absolute inset-0 pointer-events-none">
-            <svg
-              className="absolute inset-0 w-full h-full opacity-[0.08] dark:opacity-[0.12]"
-              viewBox="0 0 1200 600"
-              preserveAspectRatio="xMidYMid slice"
-              fill="none"
-            >
-              <defs>
-                <linearGradient
-                  id="flowGradientV1"
-                  x1="0%"
-                  y1="0%"
-                  x2="0%"
-                  y2="100%"
-                >
-                  <stop offset="0%" stopColor="#A855F7" />
-                  <stop offset="100%" stopColor="#3B82F6" />
-                </linearGradient>
-                <linearGradient
-                  id="flowGradientV2"
-                  x1="0%"
-                  y1="0%"
-                  x2="0%"
-                  y2="100%"
-                >
-                  <stop offset="0%" stopColor="#8B5CF6" />
-                  <stop offset="100%" stopColor="#06B6D4" />
-                </linearGradient>
-              </defs>
-              {/* Vertical-ish flow lines */}
-              <g
-                className="flow-line-2"
-                stroke="url(#flowGradientV1)"
-                strokeWidth="1.5"
-              >
-                <path d="M100,-50 Q80,150 120,300 T100,500 T140,700" />
-                <path d="M250,-50 Q270,100 230,250 T270,450 T230,700" />
-                <path d="M400,-50 Q380,180 420,330 T380,530 T420,700" />
-                <path d="M550,-50 Q570,120 530,270 T570,470 T530,700" />
-                <path d="M700,-50 Q680,160 720,310 T680,510 T720,700" />
-                <path d="M850,-50 Q870,140 830,290 T870,490 T830,700" />
-                <path d="M1000,-50 Q980,180 1020,330 T980,530 T1020,700" />
-                <path d="M1150,-50 Q1170,120 1130,270 T1170,470 T1130,700" />
-              </g>
-              {/* Cross-flow curves */}
-              <g
-                className="flow-line-3"
-                stroke="url(#flowGradientV2)"
-                strokeWidth="1"
-              >
-                <path d="M-50,150 Q400,130 600,170 T1000,140 T1300,180" />
-                <path d="M-50,300 Q350,320 550,280 T950,320 T1300,300" />
-                <path d="M-50,450 Q400,430 600,470 T1000,440 T1300,480" />
-              </g>
-            </svg>
-          </div>
           <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
             <div className="max-w-xl mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight mb-3">

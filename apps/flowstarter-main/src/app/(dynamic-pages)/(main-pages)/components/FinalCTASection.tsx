@@ -11,7 +11,7 @@ export function FinalCTASection() {
   return (
     <>
         {/* Final CTA */}
-        <section className="py-16 lg:py-24 relative overflow-hidden bg-gradient-to-br from-white via-blue-50 to-blue-200 dark:from-[#02060f] dark:via-[#040e22] dark:to-[#061530]">
+        <section className="py-16 lg:py-24 relative overflow-hidden bg-gradient-to-b from-transparent via-[var(--purple)]/[0.03] to-transparent dark:via-[var(--purple)]/[0.05]">
           {/* Top border */}
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-400/50 to-transparent" />
 

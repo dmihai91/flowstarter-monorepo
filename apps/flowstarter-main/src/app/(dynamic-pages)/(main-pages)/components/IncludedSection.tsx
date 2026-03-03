@@ -9,7 +9,7 @@ export function IncludedSection() {
   return (
     <>
         {/* What's Included Section */}
-        <section data-section="included" className="py-8 lg:py-10 bg-white dark:bg-transparent">
+        <section data-section="included" className="py-8 lg:py-10 ">
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="text-center mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight">

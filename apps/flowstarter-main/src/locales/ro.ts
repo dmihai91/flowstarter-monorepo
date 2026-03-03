@@ -15,9 +15,8 @@ const ro: typeof en = {
   'landing.hero.headline1': 'Expertiza ta e reală.',
   'landing.hero.headline2': 'Prezența ta online ar trebui să fie la fel.',
   'landing.hero.pain':
-    'Ai petrecut ani construind expertiza reala, relatii reale cu clientii si rezultate reale. Prezenta ta online ar trebui sa reflecte asta. Noi construim website-ul si sistemul de programari pe care munca ta chiar le merita.',
-  'landing.hero.subheadline':
-    'Website, booking și tot ce le conectează. Construite pentru tine în zile, nu luni. Tu te concentrezi pe clienții tăi. Noi ne asigurăm că alții noi te găsesc în continuare.',
+    'Noi proiectam, construim si lansam un site profesional pentru afacerea ta — gata in zile, nu luni.',
+  'landing.hero.subheadline': '',
   'landing.hero.cta': 'Programează un apel gratuit',
   'landing.hero.ctaNote':
     'Un singur apel. Fără jargon tehnic. Vei fi online în câteva zile.',
@@ -127,10 +126,10 @@ const ro: typeof en = {
   // Manifesto
   'landing.manifesto.title': 'Misiunea noastra',
   'landing.manifesto.headline': 'Fiecare expert real merita sa fie gasit.',
-  'landing.manifesto.p1': 'Ai petrecut ani invatand lucruri care nu se gasesc pe Google. Cum sa citesti o situatie. Cand sa insisti si cand sa asculti. Diferenta dintre sfatul din manual si ceea ce functioneaza cu adevarat. Genul asta de cunoastere vine doar din munca, zi de zi, client dupa client.',
-  'landing.manifesto.p2': 'Dar online, nimic din asta nu se vede. Internetul nu rasplateste profunzimea. Rasplateste pe cine posteaza cel mai mult, promoveaza cel mai tare si arata cel mai bine. Oamenii care chiar au nevoie de ajutorul tau? Trec pe langa tine fara sa te observe.',
-  'landing.manifesto.p3': 'Am construit Flowstarter pentru ca noi credem ca prezenta ta online ar trebui sa reflecte expertiza ta reala. Nu un template completat la miezul noptii. Nu un placeholder pe care tot vrei sa-l schimbi. O reprezentare reala a cine esti, ce faci si de ce conteaza.',
-  'landing.manifesto.p4': 'Un singur apel si ne ocupam de tot. Website-ul tau, sistemul de programari, tot setup-ul. Ca tu sa te intorci la ceea ce faci cu adevarat bine: sa ajuti oameni. Prezenta ta online continua sa lucreze in timp ce tu faci acelasi lucru.',
+  'landing.manifesto.p1': 'Internetul rasplateste volumul, nu profunzimea. Expertiza reala e ingropata sub voci mai puternice si ambalaje mai stralucitoare. Flowstarter exista pentru a schimba asta.',
+  'landing.manifesto.p2': '',
+  'landing.manifesto.p3': '',
+  'landing.manifesto.p4': '',
   'landing.manifesto.closing': 'Expertiza ta a schimbat vieti. Acum lasa oamenii sa te gaseasca.',
 
 };

@@ -1146,9 +1146,8 @@ const en = {
   'landing.hero.headline1': 'Your expertise is real.',
   'landing.hero.headline2': 'Your online presence should be too.',
   'landing.hero.pain':
-    'We design, build, and launch a professional website for your business. After launch, update anything yourself with a smart editor. No developers, no delays, no dependencies.',
-  'landing.hero.subheadline':
-    'Website, booking, and everything that connects them. Done for you in days, not months. Then the keys are yours.',
+    'We design, build, and launch a professional website for your business — ready in days, not months.',
+  'landing.hero.subheadline': '',
   'landing.hero.cta': 'Get Your Website Launched',
   'landing.hero.ctaNote':
     'One call. We handle everything. You\'ll be live in days.',
@@ -1163,35 +1162,31 @@ const en = {
   'landing.included.setup.label': '(one-time)',
   'landing.included.setup.desc': 'What we build for you',
   'landing.included.setup.item1':
-    'A professional website built around your business and your clients',
+    'A website that turns visitors into clients',
   'landing.included.setup.item2':
-    'Online booking set up and connected so clients can schedule without calling you',
+    'Online booking so clients schedule without calling',
   'landing.included.setup.item3':
-    'A WhatsApp button so clients can reach you in one tap',
+    'WhatsApp button for instant contact',
   'landing.included.setup.item4':
-    'Your site works perfectly on phones, tablets, and desktops',
+    'Professional email at your own domain',
   'landing.included.setup.item5':
-    'A professional email address that matches your domain',
-  'landing.included.setup.item6':
-    'You can see how many people visit your site and where they come from',
-  'landing.included.setup.item7':
-    'Your site is ready to be found on Google from day one',
-  'landing.included.setup.item8':
-    'You own everything. The website files are yours to keep.',
+    'Found on Google from day one',
+  'landing.included.setup.item6': '',
+  'landing.included.setup.item7': '',
+  'landing.included.setup.item8': '',
   'landing.included.monthly.title': 'Monthly care',
   'landing.included.monthly.label': '(ongoing)',
   'landing.included.monthly.desc': 'What stays active',
   'landing.included.monthly.item1':
-    'Your site stays online, fast, and secure every month',
+    'Fast, secure hosting every month',
   'landing.included.monthly.item2':
-    'Your professional email keeps working without interruption',
+    'Professional email included',
   'landing.included.monthly.item3': 'Storage for your photos and content',
   'landing.included.monthly.item4':
-    'Monthly visitor report so you can see how your site performs',
+    'Monthly visitor reports',
   'landing.included.monthly.item5': 'Updates and improvements handled for you',
   'landing.included.monthly.item6': 'Support when you need it',
-  'landing.included.monthly.item7':
-    'Your booking system stays connected and working',
+  'landing.included.monthly.item7': '',
 
   // FAQ Section
   'landing.faq.q1': 'What happens on the discovery call?',
@@ -1246,11 +1241,11 @@ const en = {
   'landing.steps.step1.num': '01',
   'landing.steps.step1.title': 'We talk',
   'landing.steps.step1.desc':
-    'One 45-minute call. You tell us about your business and your clients. We handle everything from there.',
+    'One call. You tell us about your business. We handle everything from there.',
   'landing.steps.step2.num': '02',
   'landing.steps.step2.title': 'We build',
   'landing.steps.step2.desc':
-    'From your description, we set up everything: website, booking, email, analytics. You get a polished first version ready to go. Then you customize it further to your liking using our AI editor, anytime you want.',
+    'We build your website, set up booking, email, and analytics. You get a polished site ready to customize with our AI editor.',
   'landing.steps.step3.num': '03',
   'landing.steps.step3.title': 'Clients find you and book',
   'landing.steps.step3.desc':
@@ -1316,21 +1311,21 @@ const en = {
   'landing.pillars.subtitle': 'Three things every real professional needs online.',
   'landing.pillars.differentiate.title': 'Differentiate',
   'landing.pillars.differentiate.subtitle': 'Stand out from the noise',
-  'landing.pillars.differentiate.body': 'The internet rewards packaging, not substance. We build your site around what actually makes you different: your real experience, your real results, your real approach. Not stock photos and buzzwords.',
+  'landing.pillars.differentiate.body': 'We build your site around what actually makes you different: your real experience, your results, your approach. Not stock photos and buzzwords.',
   'landing.pillars.attract.title': 'Attract',
   'landing.pillars.attract.subtitle': 'Get found by clients who value expertise',
-  'landing.pillars.attract.body': 'The right clients are searching for someone they can trust. We make sure they find you first, with a site that speaks their language and answers their questions before they even ask.',
+  'landing.pillars.attract.body': 'The right clients are searching for someone they can trust. We make sure they find you first.',
   'landing.pillars.convert.title': 'Convert',
   'landing.pillars.convert.subtitle': 'Turn visitors into booked appointments',
-  'landing.pillars.convert.body': 'No forms that go nowhere. No "contact us" black holes. Visitors see your work, understand your value, and book an appointment. All in one flow, all set up for you.',
+  'landing.pillars.convert.body': 'Visitors see your work, understand your value, and book directly. No forms that go nowhere. All set up for you.',
 
   // Manifesto
   'landing.manifesto.title': 'Our mission',
   'landing.manifesto.headline': 'Every real expert deserves to be found.',
-  'landing.manifesto.p1': 'You spent years learning things that can\'t be Googled. How to read a room. When to push and when to listen. The difference between textbook advice and what actually works. That kind of knowledge only comes from doing the work, day after day, client after client.',
-  'landing.manifesto.p2': 'But online, none of that shows. The internet doesn\'t reward depth. It rewards whoever posts the most, markets the loudest, and looks the shiniest. The people who actually need your help? They\'re scrolling right past you.',
-  'landing.manifesto.p3': 'We built Flowstarter because we believe your online presence should reflect your real expertise. Not a template you filled in at midnight. Not a placeholder you\'ve been meaning to fix. A proper representation of who you are, what you do, and why it matters.',
-  'landing.manifesto.p4': 'One call, and we handle everything. Your website, your booking system, the full setup. So you can go back to doing what you\'re actually great at: helping people. Your online presence keeps working while you do.',
+  'landing.manifesto.p1': 'The internet rewards volume over depth. Real expertise gets buried under louder voices and shinier packaging. Flowstarter exists to fix that.',
+  'landing.manifesto.p2': '',
+  'landing.manifesto.p3': '',
+  'landing.manifesto.p4': '',
   'landing.manifesto.closing': 'Your expertise changed lives. Now let people find you.',
 } as const;
 

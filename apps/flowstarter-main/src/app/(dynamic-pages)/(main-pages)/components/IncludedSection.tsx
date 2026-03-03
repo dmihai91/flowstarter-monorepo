@@ -62,7 +62,7 @@ export function IncludedSection() {
                     t('landing.included.setup.item6'),
                     t('landing.included.setup.item7'),
                     t('landing.included.setup.item8'),
-                  ] as string[]).map((item, i) => (
+                  ] as string[]).filter(Boolean).map((item, i) => (
                     <li
                       key={i}
                       className="flex items-start gap-2.5 text-sm text-gray-600 dark:text-white/50"
@@ -125,7 +125,7 @@ export function IncludedSection() {
                     t('landing.included.monthly.item5'),
                     t('landing.included.monthly.item6'),
                     t('landing.included.monthly.item7'),
-                  ] as string[]).map((item, i) => (
+                  ] as string[]).filter(Boolean).map((item, i) => (
                     <li
                       key={i}
                       className="flex items-start gap-2.5 text-sm text-gray-600 dark:text-white/50"

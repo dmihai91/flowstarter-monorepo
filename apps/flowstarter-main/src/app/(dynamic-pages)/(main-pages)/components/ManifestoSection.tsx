@@ -22,15 +22,12 @@ export function ManifestoSection() {
           </h2>
         </div>
 
-        {/* Body — broken into digestible chunks with breathing room */}
+        {/* Body */}
         <div className="space-y-8 text-base md:text-lg text-gray-500 dark:text-white/50 leading-relaxed max-w-[60ch] mx-auto">
-          <p>{t('landing.manifesto.p1')}</p>
-          
-          <p>{t('landing.manifesto.p2')}</p>
-
-          <p className="text-gray-600 dark:text-white/60">{t('landing.manifesto.p3')}</p>
-
-          <p>{t('landing.manifesto.p4')}</p>
+          {t('landing.manifesto.p1') && <p>{t('landing.manifesto.p1')}</p>}
+          {t('landing.manifesto.p2') && <p>{t('landing.manifesto.p2')}</p>}
+          {t('landing.manifesto.p3') && <p className="text-gray-600 dark:text-white/60">{t('landing.manifesto.p3')}</p>}
+          {t('landing.manifesto.p4') && <p>{t('landing.manifesto.p4')}</p>}
         </div>
 
         {/* Pull quote — visually distinct */}

@@ -11,7 +11,7 @@ export function FlowFieldBackground() {
           className="absolute inset-0 pointer-events-none overflow-hidden"
         >
           <svg
-            className="absolute inset-0 w-full h-full opacity-[0.25] dark:opacity-[0.20]"
+            className="absolute inset-0 w-full h-full opacity-[0.08] dark:opacity-[0.10]"
             viewBox="0 0 1200 800"
             preserveAspectRatio="xMidYMid slice"
             fill="none"
@@ -42,7 +42,7 @@ export function FlowFieldBackground() {
             <g
               className="flow-line-1"
               stroke="url(#flowGradient1)"
-              strokeWidth="1.2"
+              strokeWidth="0.8"
             >
               <path d="M-100,80 Q200,60 400,100 T800,80 T1300,120" />
               <path d="M-100,200 Q250,180 450,220 T850,190 T1300,230" />
@@ -53,7 +53,7 @@ export function FlowFieldBackground() {
             <g
               className="flow-line-2"
               stroke="url(#flowGradient2)"
-              strokeWidth="1.2"
+              strokeWidth="0.8"
             >
               <path d="M-50,460 Q300,440 500,480 T900,450 T1350,490" />
               <path d="M-50,580 Q350,560 550,600 T950,570 T1350,610" />
@@ -64,7 +64,7 @@ export function FlowFieldBackground() {
             <g
               className="flow-line-3"
               stroke="url(#flowGradient1)"
-              strokeWidth="1.0"
+              strokeWidth="0.6"
             >
               <path d="M0,50 Q400,30 600,70 T1000,40 T1200,80" />
               <path d="M0,380 Q400,360 600,400 T1000,370 T1200,410" />

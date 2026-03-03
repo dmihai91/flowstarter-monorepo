@@ -1133,7 +1133,7 @@ const en = {
   // Landing page waitlist
   'waitlist.landing.title': 'Be the First to Know',
   'waitlist.landing.description':
-    'Join our early access list and be among the first to experience AI-powered website creation.',
+    'Join our early access list and be among the first to experience AI-powered website editing.',
   'waitlist.landing.emailPlaceholder': 'Enter your email',
   'waitlist.landing.cta': 'Get Early Access',
   'waitlist.landing.submitting': 'Joining...',
@@ -1301,7 +1301,7 @@ const en = {
   // Landing Page - CTA
   'landing.cta.title': "Your skills deserve clients. Let's make that happen.",
   'landing.cta.subtitle':
-    "Book a free strategy call. We'll talk through your business and see if Flowstarter is the right fit. No pressure. No pitch deck.",
+    "Book a free discovery call. We'll talk through your business and see if Flowstarter is the right fit. No pressure. No pitch deck.",
   'landing.cta.button': 'Book Your Free Strategy Call',
 
   // Landing Page - Footer CTA

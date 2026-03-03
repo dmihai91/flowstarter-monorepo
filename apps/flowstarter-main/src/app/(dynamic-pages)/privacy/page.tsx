@@ -27,7 +27,7 @@ export default function PrivacyPage() {
       content: [
         {
           subtitle: '1.1 About Flowstarter',
-          text: 'Flowstarter is a premium website building service operated from Romania, European Union. We combine human expertise with AI technology to build professional websites for freelancers, small businesses, and creators. Our registered address and company details are available upon request.',
+          text: 'Flowstarter is a premium website building service operated from Romania, European Union. We design and build professional websites for coaches, consultants, therapists, and small businesses. After launch, clients can update their sites using our AI-powered editor. Our registered address and company details are available upon request.',
         },
         {
           subtitle: '1.2 Data Controller',
@@ -66,8 +66,8 @@ export default function PrivacyPage() {
       title: '3. Information We Collect',
       content: [
         {
-          subtitle: '3.1 Strategy Call & Onboarding Data',
-          text: 'When you book a strategy call, we collect: business name, industry/niche, branding preferences (colors, fonts, tone of voice), content you provide (text, images, logos), contact information (name, email, phone), target audience description, and competitor references.',
+          subtitle: '3.1 Discovery Call & Onboarding Data',
+          text: 'When you book a discovery call, we collect: business name, industry/niche, branding preferences (colors, fonts, tone of voice), content you provide (text, images, logos), contact information (name, email, phone), target audience description, and competitor references.',
         },
         {
           subtitle: '3.2 Account & Platform Data',

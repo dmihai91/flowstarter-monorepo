@@ -32,11 +32,11 @@ export default function TermsPage() {
       items: [
         {
           subtitle: 'Website Building',
-          text: 'Flowstarter provides AI-powered website building and hosting services. We build your initial website based on your discovery call, and you can customize it using our AI editor.',
+          text: 'Flowstarter provides website design, development, and hosting services. Our team builds your website based on a discovery call, and after launch you can customize it using our AI editor.',
         },
         {
           subtitle: 'Hosting and Email',
-          text: 'Your subscription includes website hosting on our global CDN and professional email services. These are provided as part of your monthly plan.',
+          text: 'Your subscription includes website hosting, SSL certificate, and professional email. These are provided as part of your monthly plan.',
         },
         {
           subtitle: 'Service Availability',
@@ -49,11 +49,11 @@ export default function TermsPage() {
       items: [
         {
           subtitle: 'Setup Fee',
-          text: 'A one-time setup fee is charged for the initial website build. This covers the discovery call, site creation, and domain/email setup. The setup fee is partially refundable (50%) if you provide feedback within 30 days.',
+          text: 'A one-time setup fee is charged for the initial website build. 50% is due upfront to start the project (non-refundable deposit), and 50% is due upon your approval of the final site. This covers the discovery call, design, development, and domain/email setup.',
         },
         {
           subtitle: 'Monthly Subscription',
-          text: 'Your subscription is billed monthly after the first free month. You can cancel anytime, and your site will remain active until the end of your billing period.',
+          text: 'Your first month is free. After that, your subscription is billed monthly. You can cancel anytime, and your site will remain active until the end of your billing period.',
         },
         {
           subtitle: 'AI Credits',
@@ -61,7 +61,7 @@ export default function TermsPage() {
         },
         {
           subtitle: 'Price Changes',
-          text: 'We may change our prices with 30 days notice. Beta pricing is locked for 1 year from your signup date.',
+          text: 'We may change our prices with 30 days notice. Early adopter pricing is locked for the duration of your subscription, as long as it remains active.',
         },
       ],
     },
@@ -108,7 +108,7 @@ export default function TermsPage() {
         },
         {
           subtitle: 'Effect of Termination',
-          text: 'Upon termination, you can download your site assets for 30 days. After that, your data will be deleted.',
+          text: 'Upon termination, you can download your site assets for 90 days. After that, your data will be deleted.',
         },
       ],
     },

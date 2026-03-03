@@ -480,7 +480,7 @@ export function MockEditorPreview({
                     Draft
                   </div>
                   <div className="text-[8px] sm:text-[10px] lg:text-xs text-white/70">
-                    1-2 weeks
+                    ~2 weeks
                   </div>
                 </div>
 

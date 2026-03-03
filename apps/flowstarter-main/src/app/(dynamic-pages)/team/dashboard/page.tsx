@@ -110,7 +110,7 @@ export default function TeamDashboardPage() {
             </span>
           </p>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
-            {t('dashboard.title')}
+            Dashboard
           </h1>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">

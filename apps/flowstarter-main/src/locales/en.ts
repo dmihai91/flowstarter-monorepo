@@ -3,7 +3,7 @@ const en = {
   'app.name': 'Flowstarter',
   'app.title': 'Flowstarter | Professional websites for coaches, consultants & therapists',
   'app.description':
-    'We design, build, and launch your professional website in days. Update it yourself with AI. Starting at €399.',
+    'We design, build, and launch your professional website in days. Update it yourself with AI. Starting at €499.',
   'app.back': 'Back',
   'app.saveContinue': 'Continue',
   'app.createProject': 'Create Project',
@@ -1151,7 +1151,7 @@ const en = {
   'landing.hero.cta': 'Get Your Website Launched',
   'landing.hero.ctaNote':
     'One call. We handle everything. You\'ll be live in days.',
-  'landing.hero.priceBuild': '€399',
+  'landing.hero.priceBuild': '€499',
   'landing.hero.priceMonthly': '€39',
 
   // What's Included section
@@ -1206,7 +1206,7 @@ const en = {
     'Zero. We handle the entire setup. You just review and approve.',
   'landing.faq.q6': 'What happens when the beta ends?',
   'landing.faq.a6':
-    'Your €39/month rate is locked in for as long as you stay subscribed. After launch, new clients pay €499 setup + €49/month. You get 30 days notice before anything changes.',
+    'Your €39/month rate is locked in for as long as you stay subscribed. After launch, new clients pay €699 setup + €49/month. You get 30 days notice before anything changes.',
   'landing.faq.q7': "What's included in the email?",
   'landing.faq.a7':
     'One professional email address with your domain (e.g. you@yourbusiness.com). Need more? We can add additional mailboxes.',
@@ -1263,9 +1263,9 @@ const en = {
     'One fee to build. One fee to maintain. Cancel anytime.',
   'landing.pricing.limitedBadge': 'Launch pricing',
   'landing.pricing.limitedNote':
-    'Prices go up after launch (€499 + €49/mo). Lock in current rates.',
+    'Prices go up after launch (€699 + €49/mo). Lock in current rates.',
   'landing.pricing.buildLabel': 'Setup:',
-  'landing.pricing.buildPrice': '€399',
+  'landing.pricing.buildPrice': '€499',
   'landing.pricing.buildPeriod': 'one-time',
   'landing.pricing.careLabel': 'Monthly:',
   'landing.pricing.carePrice': '€39',
@@ -1276,7 +1276,7 @@ const en = {
   'landing.pricing.assets': 'All your site assets downloadable. You own them.',
 
   // Landing Page - Pricing Features
-  'landing.pricing.websiteTitle': 'Setup (€399)',
+  'landing.pricing.websiteTitle': 'Setup (€499)',
   'landing.pricing.websiteDesc':
     'Your website, built around your business. Strategy call, custom design, domain, email, analytics. All included.',
   'landing.pricing.websiteFeature1': 'Strategy call to clarify your offer',

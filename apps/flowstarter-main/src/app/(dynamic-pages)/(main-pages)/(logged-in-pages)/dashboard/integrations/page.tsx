@@ -264,8 +264,8 @@ export default function IntegrationsIndexPage() {
             return (
               <div
                 key={integration.id}
-                className={animation.className}
-                style={animation.style}
+                
+                style={animation}
               >
                 <IntegrationCard
                   integration={integration}

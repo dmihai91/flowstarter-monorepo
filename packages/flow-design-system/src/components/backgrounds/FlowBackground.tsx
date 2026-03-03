@@ -155,7 +155,7 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
           </defs>
           <g
             stroke="url(#flow-bg-grad-1)"
-            strokeWidth="1"
+            strokeWidth="0.8"
             style={animated ? { animation: 'flow-drift-1 20s ease-in-out infinite', willChange: 'transform' } : undefined}
           >
             <path d="M-100,150 Q200,120 400,180 T800,140 T1300,200" />
@@ -164,7 +164,7 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
           </g>
           <g
             stroke="url(#flow-bg-grad-2)"
-            strokeWidth="0.5"
+            strokeWidth="0.6"
             style={animated ? { animation: 'flow-drift-2 25s ease-in-out infinite', willChange: 'transform' } : undefined}
           >
             <path d="M-100,200 Q150,230 350,170 T750,230 T1300,190" />
@@ -173,7 +173,7 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
           </g>
           <g
             stroke="url(#flow-bg-grad-1)"
-            strokeWidth="0.5"
+            strokeWidth="0.4"
             style={animated ? { animation: 'flow-drift-3 30s ease-in-out infinite', willChange: 'transform' } : undefined}
           >
             <path d="M-100,100 Q200,80 400,120 T800,100 T1300,140" />

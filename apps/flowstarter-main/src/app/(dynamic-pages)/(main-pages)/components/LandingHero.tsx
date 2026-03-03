@@ -19,7 +19,7 @@ export function LandingHero() {
           {/* Flow lines INSIDE hero so they appear on top of background */}
           <div className="absolute inset-0 pointer-events-none">
             <svg
-              className="absolute inset-0 w-full h-full opacity-[0.10] dark:opacity-[0.06]"
+              className="absolute inset-0 w-full h-full opacity-[0.06] dark:opacity-[0.04]"
               viewBox="0 0 1200 800"
               preserveAspectRatio="xMidYMid slice"
               fill="none"
@@ -36,7 +36,7 @@ export function LandingHero() {
                   <stop offset="100%" stopColor="#3B82F6" />
                 </linearGradient>
               </defs>
-              <g stroke="url(#heroFlowGradient1)" strokeWidth="1.5">
+              <g stroke="url(#heroFlowGradient1)" strokeWidth="0.8">
                 <path d="M-100,80 Q200,60 400,100 T800,80 T1300,120" />
                 <path d="M-100,160 Q150,180 350,140 T750,180 T1300,160" />
                 <path d="M-100,240 Q250,220 450,260 T850,230 T1300,270" />

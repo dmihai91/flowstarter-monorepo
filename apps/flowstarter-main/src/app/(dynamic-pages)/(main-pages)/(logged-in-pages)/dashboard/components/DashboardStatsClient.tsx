@@ -430,9 +430,9 @@ export function DashboardStatsClient({
           <GlassCard
             key={index}
             className="gap-3 min-h-[160px]"
-            style={animation.style}
+            style={animation}
           >
-            <div className={`${animation.className} h-full flex flex-col`}>
+            <div className={`h-full flex flex-col`}>
               {card.content}
             </div>
           </GlassCard>

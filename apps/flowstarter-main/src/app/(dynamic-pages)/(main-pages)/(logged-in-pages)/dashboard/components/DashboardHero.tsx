@@ -103,8 +103,8 @@ function OnboardingStepper() {
             return (
               <div
                 key={step.number}
-                className={animation.className}
-                style={animation.style}
+                
+                style={animation}
               >
                 <div
                   className={`
@@ -273,8 +273,8 @@ function OnboardingStepper() {
             return (
               <div
                 key={step.number}
-                className={animation.className}
-                style={animation.style}
+                
+                style={animation}
               >
                 <div
                   className={`

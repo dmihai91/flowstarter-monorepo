@@ -50,8 +50,8 @@ export function Sidebar() {
     },
   ];
 
-  const { data: dashData } = useDashboardStats();
-  const hasProject = (dashData?.totalProjects ?? 0) > 0;
+  const { data: dashData, isLoading: statsLoading } = useDashboardStats();
+  const hasProject = !statsLoading && (dashData?.totalProjects ?? 0) > 0;
 
   const supportItems: SidebarItem[] = [
     {

@@ -3,6 +3,7 @@
 import { useI18n } from '@/lib/i18n';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { GlassCard } from '@flowstarter/flow-design-system';
+import { Shield, Triangle, BarChart3, Mail } from 'lucide-react';
 
 export function TrustSection() {
   const { t } = useI18n();
@@ -31,13 +32,15 @@ export function TrustSection() {
             </p>
             <div className="grid grid-cols-2 gap-6">
               {[
-                { name: 'Cloudflare', desc: 'Global CDN & security', icon: '🛡️' },
-                { name: 'Next.js', desc: 'React framework', icon: '▲' },
-                { name: 'Analytics', desc: 'Traffic insights', icon: '📊' },
-                { name: 'Zoho Mail', desc: 'Professional email', icon: '✉️' },
-              ].map(({ name, desc, icon }) => (
+                { name: 'Cloudflare', desc: 'Global CDN & security', icon: Shield },
+                { name: 'Next.js', desc: 'React framework', icon: Triangle },
+                { name: 'Analytics', desc: 'Traffic insights', icon: BarChart3 },
+                { name: 'Zoho Mail', desc: 'Professional email', icon: Mail },
+              ].map(({ name, desc, icon: Icon }) => (
                 <div key={name} className="flex items-start gap-3">
-                  <span className="text-lg">{icon}</span>
+                  <div className="w-8 h-8 rounded-lg bg-[var(--purple)]/5 dark:bg-white/5 flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-4 h-4 text-[var(--purple)] dark:text-white/50" strokeWidth={1.5} />
+                  </div>
                   <div>
                     <div className="text-sm font-semibold text-gray-800 dark:text-white/80">{name}</div>
                     <div className="text-xs text-gray-400 dark:text-white/30">{desc}</div>

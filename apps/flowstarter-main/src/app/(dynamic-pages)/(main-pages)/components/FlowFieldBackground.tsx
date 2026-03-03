@@ -11,7 +11,7 @@ export function FlowFieldBackground() {
           className="absolute inset-0 pointer-events-none overflow-hidden"
         >
           <svg
-            className="absolute inset-0 w-full h-full opacity-[0.08] dark:opacity-[0.10]"
+            className="absolute inset-0 w-full h-full opacity-[0.15] dark:opacity-[0.14]"
             viewBox="0 0 1200 800"
             preserveAspectRatio="xMidYMid slice"
             fill="none"

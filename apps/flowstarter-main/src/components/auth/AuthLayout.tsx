@@ -15,6 +15,7 @@ interface AuthLayoutProps {
   children: React.ReactNode;
   marketingKeys?: Array<TranslationKeys>;
   showTeamBadge?: boolean;
+  showStats?: boolean;
 }
 
 export default function AuthLayout({
@@ -22,6 +23,7 @@ export default function AuthLayout({
   subtitle,
   children,
   showTeamBadge = false,
+  showStats = true,
 }: AuthLayoutProps) {
   useTheme();
   const { t } = useTranslations();
@@ -79,7 +81,7 @@ export default function AuthLayout({
             <div className="relative">{children}</div>
 
             {/* Stats */}
-            <div className="mt-10 pt-6 border-t border-gray-200 dark:border-white/10">
+            {showStats && <div className="mt-10 pt-6 border-t border-gray-200 dark:border-white/10">
               <div className="flex items-center justify-center">
                 {[
                   { value: t('landing.stats.weeks'), label: t('landing.stats.weeksLabel') },
@@ -101,7 +103,7 @@ export default function AuthLayout({
                   </div>
                 ))}
               </div>
-            </div>
+            </div>}
           </div>
         </div>
 

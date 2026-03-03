@@ -175,7 +175,7 @@ export default function TeamLoginPage() {
     <AuthLayout
       title={t('team.login.title')}
       subtitle={t('team.login.subtitle')}
-      showTeamBadge={true}
+      showTeamBadge={true} showStats={false}
     >
       <div className="w-full max-w-[520px] mx-auto">
 

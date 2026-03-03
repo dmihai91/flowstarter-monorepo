@@ -27,6 +27,9 @@ export function LandingHero() {
         <div className="absolute bottom-[5%] right-0 w-[70%] sm:w-[55%] h-[50%] rounded-full bg-[#fdd0e8] dark:bg-[#3a1230] opacity-35 dark:opacity-50 blur-[80px] sm:blur-[120px]" />
       </div>
 
+      {/* Bottom fade — smooth transition to next section */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-[var(--landing-bg)] dark:to-[var(--landing-dark-surface)] pointer-events-none z-[1]" />
+
       {/* Subtle flow lines */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <svg className="absolute inset-0 w-full h-full opacity-[0.12] dark:opacity-[0.05]" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" fill="none">

@@ -43,7 +43,7 @@ export function MockEditorPreview({
                 className={`relative transition-all duration-500 delay-200 mb-6 ${
                   isLoaded
                     ? 'opacity-100 translate-y-0'
-                    : 'opacity-0 translate-y-8'
+                    : 'opacity-0'
                 }`}
               >
                 {/* Title above editor */}

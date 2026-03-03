@@ -17,6 +17,13 @@ export function useScrollAnimation(threshold = 0.05, rootMargin = '0px 0px 100px
     const el = ref.current;
     if (!el) return;
 
+    // If already in viewport on mount, show immediately (no animation jump)
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      setIsVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {

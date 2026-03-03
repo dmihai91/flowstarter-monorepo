@@ -34,9 +34,9 @@ export default function AuthLayout({
         }
       `}</style>
 
-      <div className="min-h-screen w-full font-display relative overflow-hidden flex flex-col page-gradient">
+      <div className="min-h-screen w-full font-display relative overflow-hidden flex flex-col bg-gradient-to-br from-[#f7f3ff] via-[#f0e8ff] via-60% to-[#fdf2f8] dark:from-[#110b1e] dark:via-[#160e28] dark:to-[#1a0c1e]">
         {/* Gradient background with flow lines */}
-        <FlowBackground variant="dashboard" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }} />
+        <FlowBackground variant="landing" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }} />
 
         {/* Header */}
         <ScrollAwareHeader className="z-50" scrolledClass="bg-white/80 dark:bg-[#14141a]/85 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">

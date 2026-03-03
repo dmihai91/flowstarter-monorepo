@@ -8,7 +8,7 @@ export function ManifestoSection() {
   const { ref: sectionRef, isVisible } = useScrollAnimation();
 
   return (
-    <section ref={sectionRef} data-section="manifesto" className="py-8 lg:py-28 relative">
+    <section ref={sectionRef} data-section="manifesto" className="py-16 lg:py-28 relative">
       <div className={`max-w-3xl mx-auto px-6 sm:px-8 transition-all duration-1000 ease-out ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0'
       }`}>

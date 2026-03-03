@@ -25,7 +25,7 @@ export function TeamSection() {
   ];
 
   return (
-    <section ref={sectionRef} className="py-8 lg:py-24">
+    <section ref={sectionRef} className="py-16 lg:py-28">
       <div className={`max-w-3xl mx-auto px-6 sm:px-8 transition-all duration-1000 ease-out ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0'
       }`}>

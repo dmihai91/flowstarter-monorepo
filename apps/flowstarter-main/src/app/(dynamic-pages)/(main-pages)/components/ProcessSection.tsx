@@ -21,7 +21,7 @@ export function ProcessSection() {
         {/* Process Section */}
         <section ref={sectionRef} data-section="process"
           id="process"
-          className="py-6 lg:py-16 relative overflow-hidden"
+          className="py-16 lg:py-24 relative overflow-hidden"
         >
           <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
             <div className="text-center mb-12 lg:mb-16">

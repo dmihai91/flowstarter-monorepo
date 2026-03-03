@@ -1,4 +1,5 @@
 'use client';
+const cardClass = "rounded-2xl border border-gray-200/50 dark:border-white/5 bg-white/80 dark:bg-white/[0.03] backdrop-blur-xl shadow-lg";
 
 import { Button } from '@/components/ui/button';
 import { FlowBackground } from '@flowstarter/flow-design-system';

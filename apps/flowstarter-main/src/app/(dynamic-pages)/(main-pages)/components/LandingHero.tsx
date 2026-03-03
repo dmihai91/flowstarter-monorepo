@@ -155,7 +155,7 @@ export function LandingHero() {
                 </div>
               </div>
 
-              <MockEditorPreview isLoaded={isLoaded} {...editor} />
+              <MockEditorPreview {...editor} />
             </div>
           </div>
         </section>

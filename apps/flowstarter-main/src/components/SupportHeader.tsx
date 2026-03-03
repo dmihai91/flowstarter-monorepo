@@ -23,20 +23,21 @@ export function SupportHeader() {
 
   return (
     <header className="sticky top-0 z-50 bg-white/55 dark:bg-[#0a0a0c]/50 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/60 dark:border-white/10 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
-          <Logo size="md" />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
+        <Link href="/" className="flex items-center gap-2 sm:gap-3 group shrink-0">
+          <Logo size="sm" className="sm:hidden" />
+          <Logo size="md" className="hidden sm:flex" />
         </Link>
         
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
           <ThemeToggle />
           
           {isLoaded && isSignedIn && user && (
             <>
-              <div className="w-px h-6 bg-gray-200 dark:bg-white/10" />
+              <div className="hidden sm:block w-px h-6 bg-gray-200 dark:bg-white/10" />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-white/50 dark:ring-white/10 hover:ring-[var(--purple)]/30 transition-all">
+                  <button className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden ring-2 ring-white/50 dark:ring-white/10 hover:ring-[var(--purple)]/30 transition-all shrink-0">
                     {user.imageUrl ? (
                       <Image
                         src={user.imageUrl}
@@ -82,7 +83,7 @@ export function SupportHeader() {
           
           {isLoaded && !isSignedIn && (
             <Link href="/login">
-              <Button variant="outline" size="sm" className="rounded-lg">
+              <Button variant="outline" size="sm" className="rounded-lg text-xs sm:text-sm px-3 sm:px-4">
                 Sign in
               </Button>
             </Link>

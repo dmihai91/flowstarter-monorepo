@@ -11,7 +11,7 @@ export function PillarsSection() {
   return (
     <>
         {/* Three Pillars Section */}
-        <section ref={sectionRef} data-section="pillars" className="py-20 lg:py-28 relative">
+        <section ref={sectionRef} data-section="pillars" className="py-14 lg:py-20 relative">
           <div className={`max-w-7xl mx-auto px-6 transition-all duration-1000 ease-out ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}>

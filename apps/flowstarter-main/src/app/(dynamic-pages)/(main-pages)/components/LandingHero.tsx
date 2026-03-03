@@ -22,9 +22,9 @@ export function LandingHero() {
     <section className="relative pt-20 sm:pt-28 lg:pt-44 pb-8 lg:pb-28 overflow-hidden">
       {/* Background gradient blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-visible">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#faf8ff] to-white dark:from-[#0a0810] dark:to-[#08080c]" />
-        <div className="absolute top-0 left-0 w-[70%] sm:w-[55%] h-[50%] rounded-full bg-[#e0d4ff] dark:bg-[#180c2c] opacity-50 dark:opacity-50 blur-[80px] sm:blur-[120px]" />
-        <div className="absolute bottom-[5%] right-0 w-[70%] sm:w-[55%] h-[50%] rounded-full bg-[#fdd0e8] dark:bg-[#260c1e] opacity-50 dark:opacity-45 blur-[80px] sm:blur-[120px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#faf8ff]/80 to-white/70 dark:from-[#0a0810]/80 dark:to-[#08080c]/70" />
+        <div className="absolute top-0 left-0 w-[70%] sm:w-[55%] h-[50%] rounded-full bg-[#e0d4ff] dark:bg-[#180c2c] opacity-35 dark:opacity-40 blur-[80px] sm:blur-[120px]" />
+        <div className="absolute bottom-[5%] right-0 w-[70%] sm:w-[55%] h-[50%] rounded-full bg-[#fdd0e8] dark:bg-[#260c1e] opacity-35 dark:opacity-35 blur-[80px] sm:blur-[120px]" />
       </div>
 
       {/* Subtle flow lines */}

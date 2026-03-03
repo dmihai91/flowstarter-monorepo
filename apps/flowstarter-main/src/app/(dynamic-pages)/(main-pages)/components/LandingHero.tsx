@@ -23,8 +23,8 @@ export function LandingHero() {
       {/* Background gradient blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-visible">
         <div className="absolute inset-0 bg-gradient-to-b from-[#f0e8ff]/70 to-[#fff5f9]/50 dark:from-[#0a0810]/85 dark:to-[#08080c]/80" />
-        <div className="absolute top-0 left-0 w-[70%] sm:w-[55%] h-[50%] rounded-full bg-[#d4c4ff] dark:bg-[#2d1654] opacity-60 dark:opacity-60 blur-[80px] sm:blur-[120px]" />
-        <div className="absolute bottom-[5%] right-0 w-[70%] sm:w-[55%] h-[50%] rounded-full bg-[#fcc0e0] dark:bg-[#3a1230] opacity-55 dark:opacity-50 blur-[80px] sm:blur-[120px]" />
+        <div className="absolute top-0 left-0 w-[70%] sm:w-[55%] h-[50%] rounded-full bg-[#d4c4ff] dark:bg-[#3d1d6e] opacity-60 dark:opacity-70 blur-[80px] sm:blur-[120px]" />
+        <div className="absolute bottom-[5%] right-0 w-[70%] sm:w-[55%] h-[50%] rounded-full bg-[#fcc0e0] dark:bg-[#4a1840] opacity-55 dark:opacity-60 blur-[80px] sm:blur-[120px]" />
       </div>
 
       {/* Bottom fade — smooth transition to next section */}

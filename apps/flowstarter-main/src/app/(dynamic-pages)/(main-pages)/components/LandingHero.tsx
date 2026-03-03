@@ -104,7 +104,7 @@ export function LandingHero() {
             </div>
           </div>
 
-          {/* Limited spots indicator */}
+          {/* Limited spots indicator — hidden for now, uncomment when ready
           <div className="hero-fade hero-fade-5 flex items-center justify-center gap-2 mt-8 text-sm sm:text-base text-gray-500 dark:text-white/40">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
@@ -113,6 +113,7 @@ export function LandingHero() {
             <span>Launch batch: accepting only 10 clients</span>
             <span className="font-semibold text-gray-700 dark:text-white/70">· 10 spots remaining</span>
           </div>
+          */}
         </div>
       </div>
     </section>

@@ -34,7 +34,7 @@ const paddings = {
 const baseStyles = `
   rounded-2xl
   backdrop-blur-2xl backdrop-saturate-150
-  bg-white/55 dark:bg-white/[0.03]
+  bg-white/80 dark:bg-[#1a1a1f]/80
   border-t border-l border-white/40 dark:border-white/[0.08]
   border-b border-r border-black/[0.04] dark:border-black/[0.2]
 `;

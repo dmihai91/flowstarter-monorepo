@@ -23,6 +23,19 @@ export default function LandingPage() {
         .font-display { font-family: 'Outfit', system-ui, sans-serif; }
         @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
         .animate-float { animation: float 3s ease-in-out infinite; }
+        @keyframes heroFadeUp {
+          from { opacity: 0; transform: translateY(12px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .hero-fade {
+          opacity: 0;
+          animation: heroFadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .hero-fade-1 { animation-delay: 0.1s; }
+        .hero-fade-2 { animation-delay: 0.3s; }
+        .hero-fade-3 { animation-delay: 0.5s; }
+        .hero-fade-4 { animation-delay: 0.7s; }
+        .hero-fade-5 { animation-delay: 0.9s; }
         @keyframes flowDrift { 0% { transform: translateX(0); } 100% { transform: translateX(40px); } }
         @keyframes flowDrift2 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(-30px) translateY(15px); } }
         @keyframes flowDrift3 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(20px) translateY(-10px); } }

@@ -1,7 +1,6 @@
 'use client';
 
 import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { LogoIcon } from '@/components/ui/logo-icon';
 import { Logo } from '@/components/ui/logo';
 import { Button } from '@/components/ui/button';
 import { useAuth, useUser } from '@clerk/nextjs';
@@ -25,18 +24,14 @@ export function SupportHeader() {
   return (
     <header className="sticky top-0 z-50 bg-white/55 dark:bg-[#0a0a0c]/50 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/60 dark:border-white/10 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
-        {/* Logo: icon-only on narrow screens, full on wider */}
         <Link href="/" className="flex items-center shrink-0">
-          <span className="xs:hidden">
-            <LogoIcon size="sm" />
-          </span>
-          <span className="hidden xs:flex">
-            <Logo size="md" />
-          </span>
+          <Logo size="md" />
         </Link>
         
         <div className="flex items-center gap-1.5 sm:gap-3">
-          <ThemeToggle />
+          <div className="hidden sm:block">
+            <ThemeToggle />
+          </div>
           
           {isLoaded && isSignedIn && user && (
             <>
@@ -89,7 +84,7 @@ export function SupportHeader() {
           
           {isLoaded && !isSignedIn && (
             <Link href="/login">
-              <Button variant="outline" size="sm" className="rounded-lg text-xs sm:text-sm px-3 sm:px-4">
+              <Button variant="outline" size="sm" className="rounded-lg text-xs sm:text-sm">
                 Sign in
               </Button>
             </Link>

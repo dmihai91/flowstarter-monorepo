@@ -114,12 +114,10 @@ export function MockEditorPreview({
                           ) : (
                             <div key={i} className="flex gap-2 items-start">
                               <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center flex-shrink-0 shadow-sm">
-                                <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" />
-                                </svg>
+                                <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M7.5 5.6L5 7l1.4-2.5L5 2l2.5 1.4L10 2 8.6 4.5 10 7 7.5 5.6zm12 9.8L22 14l-1.4 2.5L22 19l-2.5-1.4L17 19l1.4-2.5L17 14l2.5 1.4zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5L22 2zM13.34 12.78l-2.12-2.12L2 19.88 4.12 22l9.22-9.22z"/></svg>
                               </div>
                               <div className="flex-1 px-3 py-2 rounded-xl rounded-tl-sm bg-white/55 dark:bg-white/[0.05] border border-white/50 dark:border-white/10">
-                                <div className="text-[9px] font-bold text-[var(--purple)] uppercase tracking-wider mb-0.5 -mt-0.5">Flowstarter Assistant</div>
+                                <div className="text-[9px] font-bold text-[var(--purple)] uppercase tracking-wider mb-0.5 -mt-1">Flowstarter Assistant</div>
                                 <div className="text-[13px] text-gray-600 dark:text-white/70">{msg.text}</div>
                               </div>
                             </div>
@@ -128,9 +126,7 @@ export function MockEditorPreview({
                         {isTyping && (
                           <div className="flex gap-2">
                             <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center flex-shrink-0 shadow-sm">
-                              <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" />
-                              </svg>
+                              <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M7.5 5.6L5 7l1.4-2.5L5 2l2.5 1.4L10 2 8.6 4.5 10 7 7.5 5.6zm12 9.8L22 14l-1.4 2.5L22 19l-2.5-1.4L17 19l1.4-2.5L17 14l2.5 1.4zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5L22 2zM13.34 12.78l-2.12-2.12L2 19.88 4.12 22l9.22-9.22z"/></svg>
                             </div>
                             <div className="px-3 py-2 rounded-xl rounded-tl-sm bg-white/55 dark:bg-white/[0.05] border border-white/50 dark:border-white/10">
                               <div className="flex gap-1.5">

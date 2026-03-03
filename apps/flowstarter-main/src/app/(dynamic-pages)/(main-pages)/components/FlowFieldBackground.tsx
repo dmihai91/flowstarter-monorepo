@@ -12,7 +12,7 @@ export function FlowFieldBackground() {
           style={{ height: '100vh' }}
         >
           <svg
-            className="absolute inset-0 w-full h-full opacity-[0.15] dark:opacity-[0.08]"
+            className="absolute inset-0 w-full h-full opacity-[0.25] dark:opacity-[0.12]"
             viewBox="0 0 1200 800"
             preserveAspectRatio="xMidYMid slice"
             fill="none"

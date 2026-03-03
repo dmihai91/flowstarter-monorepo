@@ -191,7 +191,7 @@ export function QuickScaffold() {
     return (
       <button
         onClick={() => setIsExpanded(true)}
-        className="group w-full flex items-center gap-2.5 px-3 py-3 sm:px-4 sm:py-3.5 rounded-2xl bg-white/70 dark:bg-white/[0.06] backdrop-blur-2xl border border-gray-200/60 dark:border-white/10 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
+        className="group w-full flex items-center gap-2.5 px-3 py-3 sm:px-4 sm:py-3.5 rounded-2xl bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-2xl border-t border-l border-white/40 dark:border-white/[0.08] border-b border-r border-black/[0.04] dark:border-black/[0.2] shadow-[0_8px_32px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.04),0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.02)_inset] dark:shadow-[0_8px_32px_rgba(0,0,0,0.35),0_2px_8px_rgba(0,0,0,0.2),0_1px_0_rgba(255,255,255,0.06)_inset,0_-1px_0_rgba(0,0,0,0.3)_inset] hover:shadow-[0_12px_40px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:hover:shadow-[0_12px_40px_rgba(124,58,237,0.15),0_1px_0_rgba(255,255,255,0.08)_inset] hover:border-[var(--purple)]/20 transition-all duration-300 overflow-hidden"
         type="button"
       >
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center flex-shrink-0">

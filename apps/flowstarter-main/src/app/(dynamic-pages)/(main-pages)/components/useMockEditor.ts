@@ -222,31 +222,11 @@ export function useMockEditor() {
       currentIndex = (currentIndex + 1) % demoSequence.length;
       const demo = demoSequence[currentIndex];
 
-      // If cycling back to start, reset everything
+      // Stop cycling after completing the sequence
       if (currentIndex === 0) {
-        setMessages([]);
-        setMockSite({
-          hasContactForm: false,
-          hasTestimonials: false,
-          hasPricingSection: false,
-          primaryColor: 'violet',
-          hasAboutPage: false,
-          headerStyle: 'default',
-        });
-        // Show first message after brief pause
-        setTimeout(() => {
-          const firstDemo = demoSequence[0];
-          setMessages([{ role: 'user', text: firstDemo.prompt }]);
-          setIsTyping(true);
-          setTimeout(() => {
-            setIsTyping(false);
-            setMessages([
-              { role: 'user', text: firstDemo.prompt },
-              { role: 'ai', text: firstDemo.response },
-            ]);
-            setMockSite((s) => ({ ...s, ...firstDemo.siteState }));
-          }, 800);
-        }, 300);
+        if ((window as any).__demoInterval) {
+          clearInterval((window as any).__demoInterval);
+        }
         return;
       }
 

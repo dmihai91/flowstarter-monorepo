@@ -15,7 +15,7 @@ export function LandingHero() {
 
   return (
     <>
-        <section className="relative pt-24 lg:pt-28 pb-8 lg:pb-12 overflow-hidden bg-gradient-to-br from-[#f7f3ff] via-[#f0e8ff] via-60% to-[#fdf2f8] dark:from-[#110b1e] dark:via-[#160e28] dark:to-[#1a0c1e]">
+        <section className="relative pt-24 lg:pt-28 pb-8 lg:pb-12 overflow-hidden bg-[radial-gradient(ellipse_at_top_left,#ede9fe_0%,transparent_50%),radial-gradient(ellipse_at_top_right,#dbeafe_0%,transparent_50%),radial-gradient(ellipse_at_bottom_right,#fce7f3_0%,transparent_50%),radial-gradient(ellipse_at_center,#f5f3ff_0%,#fafafa_70%)] dark:bg-[radial-gradient(ellipse_at_top_left,#1a1035_0%,transparent_50%),radial-gradient(ellipse_at_top_right,#0c1a2e_0%,transparent_50%),radial-gradient(ellipse_at_bottom_right,#1f0a1e_0%,transparent_50%),radial-gradient(ellipse_at_center,#0a0a0c_0%,#0a0a0c_70%)]">
           {/* Flow lines INSIDE hero so they appear on top of background */}
           <div className="absolute inset-0 pointer-events-none">
             <svg

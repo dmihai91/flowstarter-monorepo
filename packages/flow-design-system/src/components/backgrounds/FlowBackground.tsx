@@ -18,10 +18,10 @@ interface VariantConfig {
 }
 
 const variants: Record<FlowBackgroundVariant, VariantConfig> = {
-  dashboard: { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.25, glowDark: 0.12, lineLight: 0.08, lineDark: 0.06 },
-  editor:    { bgLight: '#f8f8fa', bgDark: '#0a0a0c', glowLight: 0.3, glowDark: 0.15, lineLight: 0.09, lineDark: 0.07 },
-  landing:   { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.3, glowDark: 0.15, lineLight: 0.09, lineDark: 0.07 },
-  wizard:    { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.45, glowDark: 0.1, lineLight: 0.05, lineDark: 0.05 },
+  dashboard: { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.12, glowDark: 0.08, lineLight: 0.04, lineDark: 0.04 },
+  editor:    { bgLight: '#f8f8fa', bgDark: '#0a0a0c', glowLight: 0.14, glowDark: 0.10, lineLight: 0.04, lineDark: 0.05 },
+  landing:   { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.18, glowDark: 0.10, lineLight: 0.05, lineDark: 0.05 },
+  wizard:    { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.20, glowDark: 0.08, lineLight: 0.03, lineDark: 0.03 },
 };
 
 const animationCSS = `
@@ -65,8 +65,8 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
     const bg = isDark ? config.bgDark : config.bgLight;
     const glowOpacity = isDark ? config.glowDark : config.glowLight;
     const lineOpacity = isDark ? config.lineDark : config.lineLight;
-    const warmOpacity = isDark ? 0.06 : 0.12;
-    const violetAccentOpacity = isDark ? 0.06 : 0.1;
+    const warmOpacity = isDark ? 0.04 : 0.06;
+    const violetAccentOpacity = isDark ? 0.04 : 0.05;
 
     return (
       <div
@@ -155,7 +155,7 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
           </defs>
           <g
             stroke="url(#flow-bg-grad-1)"
-            strokeWidth="1.5"
+            strokeWidth="1"
             style={animated ? { animation: 'flow-drift-1 20s ease-in-out infinite', willChange: 'transform' } : undefined}
           >
             <path d="M-100,150 Q200,120 400,180 T800,140 T1300,200" />
@@ -164,7 +164,7 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
           </g>
           <g
             stroke="url(#flow-bg-grad-2)"
-            strokeWidth="1.2"
+            strokeWidth="0.5"
             style={animated ? { animation: 'flow-drift-2 25s ease-in-out infinite', willChange: 'transform' } : undefined}
           >
             <path d="M-100,200 Q150,230 350,170 T750,230 T1300,190" />
@@ -173,7 +173,7 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
           </g>
           <g
             stroke="url(#flow-bg-grad-1)"
-            strokeWidth="0.8"
+            strokeWidth="0.5"
             style={animated ? { animation: 'flow-drift-3 30s ease-in-out infinite', willChange: 'transform' } : undefined}
           >
             <path d="M-100,100 Q200,80 400,120 T800,100 T1300,140" />

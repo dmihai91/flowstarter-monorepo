@@ -28,6 +28,16 @@ export default function LandingPage() {
         @keyframes flowDrift3 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(20px) translateY(-10px); } }
         @keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
         .animate-cursor-blink { animation: cursorBlink 1s step-end infinite; }
+        @keyframes textFlow { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
+        .text-flow {
+          background: linear-gradient(90deg, #7C3AED 0%, #3B82F6 20%, #06B6D4 40%, #3B82F6 60%, #7C3AED 80%, #3B82F6 100%);
+          background-size: 300% 100%;
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+          -webkit-text-fill-color: transparent;
+          animation: textFlow 5s linear infinite;
+        }
         @keyframes typing { from { width: 0; } to { width: 100%; } }
         .typing-container { overflow: hidden; white-space: nowrap; border-right: 2px solid var(--purple, #4D5DD9); animation: typing 2s steps(30) forwards, cursorBlink 1s step-end infinite; will-change: transform; }
       `}</style>

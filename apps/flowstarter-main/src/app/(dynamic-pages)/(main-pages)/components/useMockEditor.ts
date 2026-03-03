@@ -287,7 +287,8 @@ export function useMockEditor() {
     // Only auto-scroll after user has interacted (not on initial load)
     // Use block: 'nearest' to prevent page scroll, only scroll within container
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      const parent = messagesEndRef.current.parentElement;
+      if (parent) parent.scrollTop = parent.scrollHeight;
     }
   }, [messages]);
 

@@ -18,7 +18,6 @@ import {
 export const dynamic = 'force-dynamic';
 
 
-const glassCard = 'rounded-2xl border border-transparent bg-white/60 dark:bg-white/[0.03] backdrop-blur-2xl shadow-[0_1px_0_rgba(255,255,255,0.8)_inset,0_-1px_0_rgba(0,0,0,0.04)_inset,0_4px_16px_rgba(0,0,0,0.05),0_1px_3px_rgba(0,0,0,0.03)] dark:shadow-[0_1px_0_rgba(255,255,255,0.06)_inset,0_-1px_0_rgba(0,0,0,0.2)_inset,0_4px_16px_rgba(0,0,0,0.25),0_1px_3px_rgba(0,0,0,0.15)]';
 
 type MilestoneStatus = 'completed' | 'active' | 'locked';
 
@@ -408,7 +407,7 @@ export default function DashboardPage() {
 
   const firstName = user?.firstName || 'there';
   const hour = new Date().getHours();
-  const greeting = t(getTimeGreetingKey(hour));
+  const greeting = t(getTimeGreetingKey(hour) as any);
 
   const hasAnyProject = (data?.totalProjects ?? 0) > 0;
   const hasLiveProject = (data?.liveProjects ?? 0) > 0;

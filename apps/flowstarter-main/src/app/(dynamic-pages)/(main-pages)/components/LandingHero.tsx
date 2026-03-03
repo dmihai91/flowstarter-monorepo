@@ -53,7 +53,7 @@ export function LandingHero() {
               {/* Left: Copy */}
               <div
                 className={`transition-all duration-1000 ease-out min-w-0 ${
-                  isLoaded
+                  editor.isLoaded
                     ? 'opacity-100 translate-y-0'
                     : 'opacity-0 translate-y-4'
                 }`}
@@ -155,7 +155,7 @@ export function LandingHero() {
                 </div>
               </div>
 
-              <MockEditorPreview {...editor} />
+              <MockEditorPreview isLoaded={isLoaded} {...editor} />
             </div>
           </div>
         </section>

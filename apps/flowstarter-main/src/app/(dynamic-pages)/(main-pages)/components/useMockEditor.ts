@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useI18n } from '@/lib/i18n';
+import { EXTERNAL_URLS } from '@/lib/constants';
 
 interface MockSite {
   hasContactForm: boolean;

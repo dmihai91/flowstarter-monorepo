@@ -62,10 +62,9 @@ export function TrustSection() {
                   {/* Google Analytics */}
                   <div className="flex flex-col items-center gap-1.5 opacity-50 hover:opacity-80 transition-opacity">
                     <svg
-                      className="w-8 h-8"
+                      className="w-8 h-8 text-gray-400 dark:text-white/40"
                       viewBox="0 0 24 24"
                       fill="currentColor"
-                      className="text-gray-400 dark:text-white/40"
                     >
                       <path d="M22.84 2.998v17.997c-.005 1.103-.9 1.998-2.003 2.003H3.164A2.006 2.006 0 011.16 20.995V2.998A2.006 2.006 0 013.164.995h17.673c1.103.005 1.998.9 2.003 2.003zM19.5 18.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0zm-5.25-4.5a1.5 1.5 0 10-3 0v4.5a1.5 1.5 0 003 0V14zm-5.25-6a1.5 1.5 0 10-3 0v10.5a1.5 1.5 0 003 0V8z" />
                     </svg>
@@ -76,10 +75,9 @@ export function TrustSection() {
                   {/* Zoho */}
                   <div className="flex flex-col items-center gap-1.5 opacity-50 hover:opacity-80 transition-opacity">
                     <svg
-                      className="w-8 h-8"
+                      className="w-8 h-8 text-gray-400 dark:text-white/40"
                       viewBox="0 0 24 24"
                       fill="currentColor"
-                      className="text-gray-400 dark:text-white/40"
                     >
                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" />
                     </svg>

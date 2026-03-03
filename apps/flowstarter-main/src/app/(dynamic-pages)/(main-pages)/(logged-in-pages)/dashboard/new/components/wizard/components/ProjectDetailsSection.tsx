@@ -1,4 +1,4 @@
-import type { GenerationStep } from '@/app/(dynamic-pages)/(main-pages)/components/FlowstarterAssistant';
+import type { GenerationStep } from '@/hooks/generation/types';
 import { InputArea } from '@/components/assistant/InputArea';
 import { ProjectDetailsPromptSuggestions } from '@/components/assistant/ProjectDetailsPromptSuggestions';
 import { Button } from '@/components/ui/button';

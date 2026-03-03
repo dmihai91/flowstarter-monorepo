@@ -8,6 +8,12 @@ export function ProcessSection() {
   const { t } = useI18n();
   const { ref: sectionRef, isVisible } = useScrollAnimation();
 
+  const features = [
+    { num: t('landing.steps.step1.num'), title: t('landing.steps.step1.title'), desc: t('landing.steps.step1.desc') },
+    { num: t('landing.steps.step2.num'), title: t('landing.steps.step2.title'), desc: t('landing.steps.step2.desc') },
+    { num: t('landing.steps.step3.num'), title: t('landing.steps.step3.title'), desc: t('landing.steps.step3.desc') },
+  ];
+
 
   return (
     <>

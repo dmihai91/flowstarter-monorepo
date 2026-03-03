@@ -58,6 +58,10 @@ const applyBetaDiscount = (price: number): number => {
 };
 
 interface ProjectWithOwner extends TableType<'projects'> {
+  project_type?: string;
+  setup_fee?: number;
+  monthly_fee?: number;
+  is_paid?: boolean;
   owner_email?: string | null;
   owner_name?: string | null;
 }

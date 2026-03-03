@@ -24,7 +24,7 @@ interface MockEditorPreviewProps {
   isTyping: boolean;
   mockSite: MockSite;
   messagesEndRef: React.RefObject<HTMLDivElement | null>;
-  handleSend: () => void;
+  handleSend: (msg?: string) => void;
 }
 
 /**
@@ -182,7 +182,7 @@ export function MockEditorPreview({
                             className="flex-1 bg-transparent text-[13px] outline-none border-none focus:outline-none focus:ring-0 px-2 placeholder:text-gray-400 dark:placeholder:text-white/30 text-gray-900 dark:text-white"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
-                            onKeyDown={handleKeyDown}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                           />
                           <button
                             onClick={() => handleSend()}

@@ -15,7 +15,7 @@ export function LandingHero() {
 
   return (
     <>
-        <section className="relative pt-24 lg:pt-28 pb-2 lg:pb-4 overflow-hidden bg-gradient-to-br from-[#f6f2ff] to-[#fdf0f6] dark:from-[#1a0d30] dark:to-[#280a20]">
+        <section className="relative pt-24 lg:pt-28 pb-2 lg:pb-4 overflow-hidden bg-gradient-to-br from-[#f6f2ff] to-[#fdf0f6] dark:from-[#0f0a1a] dark:to-[#150812]">
           {/* Flow lines INSIDE hero so they appear on top of background */}
           <div className="absolute inset-0 pointer-events-none">
             <svg

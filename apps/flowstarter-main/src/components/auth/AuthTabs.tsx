@@ -21,6 +21,14 @@ export default function AuthTabs() {
         to get started.
       </p>
       <CustomSignIn />
+      <div className="mt-6 pt-4 border-t border-gray-200/50 dark:border-white/10 text-center">
+        <a
+          href="/team/login"
+          className="text-sm text-gray-500 dark:text-white/50 hover:text-[var(--purple)] transition-colors"
+        >
+          Team member? Sign in here →
+        </a>
+      </div>
     </div>
   );
 }

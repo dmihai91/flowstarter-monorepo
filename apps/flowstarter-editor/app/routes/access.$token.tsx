@@ -18,8 +18,8 @@ import { api } from '../../convex/_generated/api';
 
 // Main platform URL for Clerk auth
 const MAIN_PLATFORM_URL = typeof window !== 'undefined' 
-  ? (window as any).__ENV__?.MAIN_PLATFORM_URL || 'http://localhost:3000'
-  : 'http://localhost:3000';
+  ? (window as any).__ENV__?.MAIN_PLATFORM_URL || (process.env.NODE_ENV === 'production' ? 'https://flowstarter.app' : 'https://flowstarter.dev')
+  : 'https://flowstarter.dev';
 
 export default function MagicLinkAccess() {
   return (

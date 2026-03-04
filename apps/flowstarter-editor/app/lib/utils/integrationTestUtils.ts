@@ -11,7 +11,7 @@
  * ```
  */
 
-const MAIN_PLATFORM_URL = import.meta.env.VITE_MAIN_PLATFORM_URL || 'http://localhost:3000';
+const MAIN_PLATFORM_URL = import.meta.env.VITE_MAIN_PLATFORM_URL || (process.env.NODE_ENV === 'production' ? 'https://flowstarter.app' : 'https://flowstarter.dev');
 
 export const testIntegration = {
   /**

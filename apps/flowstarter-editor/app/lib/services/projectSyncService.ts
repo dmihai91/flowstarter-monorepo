@@ -6,7 +6,8 @@
  */
 
 // Main platform URL - configure via environment
-const MAIN_PLATFORM_URL = import.meta.env.VITE_MAIN_PLATFORM_URL || 'http://localhost:3000';
+const MAIN_PLATFORM_URL = import.meta.env.VITE_MAIN_PLATFORM_URL || 
+  (import.meta.env.PROD ? 'https://flowstarter.app' : 'https://flowstarter.dev');
 
 // Storage keys
 const HANDOFF_TOKEN_KEY = 'flowstarter_handoff_token';

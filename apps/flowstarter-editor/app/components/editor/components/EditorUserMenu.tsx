@@ -10,7 +10,7 @@ import { en } from '~/lib/i18n/locales/en';
 const MAIN_PLATFORM_URL =
   typeof window !== 'undefined' && window.location.hostname.includes('flowstarter.dev')
     ? 'https://flowstarter.dev'
-    : 'http://localhost:3000';
+    : 'https://flowstarter.dev';
 
 export function EditorUserMenu() {
   const { user } = useUser();

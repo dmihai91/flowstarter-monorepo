@@ -18,7 +18,7 @@ export function getMainPlatformUrl(): string {
 
   // Fallback: derive from current domain
   if (typeof window === 'undefined') {
-    return 'http://localhost:3000';
+    return 'https://flowstarter.dev';
   }
 
   const hostname = window.location.hostname;
@@ -34,7 +34,7 @@ export function getMainPlatformUrl(): string {
   }
 
   // Default to localhost for local development
-  return 'http://localhost:3000';
+  return 'https://flowstarter.dev';
 }
 
 /**

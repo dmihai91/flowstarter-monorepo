@@ -8,7 +8,7 @@
 import { json, type ActionFunctionArgs } from '@remix-run/node';
 import { getAuth } from '@clerk/remix/ssr.server';
 
-const MAIN_PLATFORM_URL = process.env.MAIN_PLATFORM_URL || 'http://localhost:3000';
+const MAIN_PLATFORM_URL = process.env.MAIN_PLATFORM_URL || (process.env.NODE_ENV === 'production' ? 'https://flowstarter.app' : 'https://flowstarter.dev');
 
 /**
  * POST /api/project/sync

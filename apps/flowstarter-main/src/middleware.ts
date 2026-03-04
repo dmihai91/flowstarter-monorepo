@@ -174,6 +174,7 @@ export default clerkMiddleware(async (auth, req) => {
           ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
           : undefined,
         'https://editor.flowstarter.dev',
+        'https://editor.flowstarter.app',
       ].filter(Boolean) as string[];
       const isAllowedOrigin = !!origin && allowedOrigins.includes(origin);
       const isSameOrigin =

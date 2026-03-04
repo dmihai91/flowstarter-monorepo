@@ -9,7 +9,7 @@
 import { json, type LoaderFunctionArgs, type ActionFunctionArgs } from '@remix-run/node';
 
 const MAIN_PLATFORM_URL = process.env.MAIN_PLATFORM_URL || 
-  (process.env.NODE_ENV === 'production' ? 'https://flowstarter.dev' : 'http://localhost:3000');
+  (process.env.NODE_ENV === 'production' ? 'https://flowstarter.app' : 'https://flowstarter.dev');
 
 /**
  * GET /api/handoff/validate?token=xxx

@@ -14,7 +14,7 @@ export async function action({ request }: ActionFunctionArgs) {
       return Response.json({ error: 'Missing supabaseProjectId' }, { status: 400 });
     }
 
-    const mainPlatformUrl = process.env.MAIN_PLATFORM_URL || process.env.VITE_MAIN_PLATFORM_URL || 'http://localhost:3000';
+    const mainPlatformUrl = process.env.MAIN_PLATFORM_URL || process.env.VITE_MAIN_PLATFORM_URL || (process.env.NODE_ENV === 'production' ? 'https://flowstarter.app' : 'https://flowstarter.dev');
 
     // Call the main platform API to delete the project
     const res = await fetch(`${mainPlatformUrl}/api/editor/link`, {

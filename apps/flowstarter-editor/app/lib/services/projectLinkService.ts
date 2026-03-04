@@ -9,7 +9,7 @@
 const MAIN_PLATFORM_URL =
   typeof window !== 'undefined' && window.location.hostname.includes('flowstarter.dev')
     ? 'https://flowstarter.dev'
-    : 'http://localhost:3000';
+    : 'https://flowstarter.dev';
 
 interface LinkProjectParams {
   convexProjectId: string;

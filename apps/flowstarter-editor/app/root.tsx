@@ -291,7 +291,7 @@ function getMainPlatformUrl(): string {
   const hostname = window.location.hostname;
   if (hostname.includes('flowstarter.app')) return 'https://flowstarter.app';
   if (hostname.includes('flowstarter.dev')) return 'https://flowstarter.dev';
-  return 'http://localhost:3000';
+  return 'https://flowstarter.dev';
 }
 
 function getSharedCookieDomain(): string | undefined {

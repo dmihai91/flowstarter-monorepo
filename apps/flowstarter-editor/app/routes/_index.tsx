@@ -355,7 +355,7 @@ function IndexRedirector() {
           // Fallback: redirect to main dashboard
           const mainUrl = window.location.hostname.includes('flowstarter.dev')
             ? 'https://flowstarter.dev'
-            : 'http://localhost:3000';
+            : 'https://flowstarter.dev';
           window.location.href = mainUrl + '/team/dashboard';
         }
       } else {

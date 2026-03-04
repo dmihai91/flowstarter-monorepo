@@ -176,7 +176,7 @@ export function EditorLayout({
       style={{
         display: 'flex',
         flexDirection: 'column',
-        height: '100vh',
+        height: '100dvh',
         width: '100vw',
         overflow: 'hidden',
         background: 'transparent',

@@ -169,9 +169,11 @@ export default clerkMiddleware(async (auth, req) => {
       const siteOrigin = req.nextUrl.origin;
       const allowedOrigins = [
         process.env.NEXT_PUBLIC_SITE_URL,
+        process.env.NEXT_PUBLIC_EDITOR_URL,
         process.env.NEXT_PUBLIC_VERCEL_URL
           ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
           : undefined,
+        'https://editor.flowstarter.dev',
       ].filter(Boolean) as string[];
       const isAllowedOrigin = !!origin && allowedOrigins.includes(origin);
       const isSameOrigin =

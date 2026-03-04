@@ -19,7 +19,7 @@ export function LandingHero() {
   }, []);
 
   return (
-    <section className="relative pt-28 sm:pt-32 lg:pt-36 pb-2 lg:pb-6 overflow-hidden">
+    <section className="relative pt-20 sm:pt-24 lg:pt-28 pb-2 lg:pb-6 overflow-hidden">
       {/* Background gradient — premium multi-layer */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Base wash — warm to cool */}

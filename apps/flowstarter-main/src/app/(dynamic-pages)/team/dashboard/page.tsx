@@ -199,6 +199,7 @@ export default function TeamDashboardPage() {
                   placeholder="John Smith"
                   value={clientInfo.name}
                   onChange={(e) => { setClientInfo(prev => ({ ...prev, name: e.target.value })); setClientErrors(prev => ({ ...prev, name: undefined })); }}
+                  onBlur={() => { if (clientInfo.name.trim().length > 0 && clientInfo.name.trim().length < 2) setClientErrors(prev => ({ ...prev, name: 'Name must be at least 2 characters' })); }}
                   className={`mt-1 ${clientErrors.name ? 'border-red-400 dark:border-red-500/50' : ''}`}
                 />
                 {clientErrors.name && <p className="text-xs text-red-500 mt-1">{clientErrors.name}</p>}
@@ -210,6 +211,7 @@ export default function TeamDashboardPage() {
                   placeholder="john@example.com"
                   value={clientInfo.email}
                   onChange={(e) => { setClientInfo(prev => ({ ...prev, email: e.target.value })); setClientErrors(prev => ({ ...prev, email: undefined })); }}
+                  onBlur={() => { if (clientInfo.email.trim() && !clientInfo.email.includes('@')) setClientErrors(prev => ({ ...prev, email: 'Please enter a valid email address' })); }}
                   className={`mt-1 ${clientErrors.email ? 'border-red-400 dark:border-red-500/50' : ''}`}
                 />
                 {clientErrors.email && <p className="text-xs text-red-500 mt-1">{clientErrors.email}</p>}
@@ -234,7 +236,7 @@ export default function TeamDashboardPage() {
                 variant="accent"
                 className="flex-1"
                 onClick={handleClientSubmit}
-                disabled={!clientInfo.name.trim() || !clientInfo.email.trim() || isSendingToEditor}
+                disabled={clientInfo.name.trim().length < 2 || !clientInfo.email.includes('@') || isSendingToEditor}
               >
                 {isSendingToEditor ? 'Opening Editor...' : 'Continue in Editor'}
               </Button>

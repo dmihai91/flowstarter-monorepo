@@ -56,7 +56,7 @@ export default function AuthLayout({
         </ScrollAwareHeader>
 
         {/* Main content */}
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-8 mt-14">
+        <div className="relative z-10 flex-1 flex flex-col items-center px-4 pt-24 sm:pt-28 pb-8">
           <div className="w-full max-w-md">
             {/* Title */}
             <div className="text-center mb-8">
@@ -107,10 +107,8 @@ export default function AuthLayout({
           </div>
         </div>
 
-        {/* Footer - hidden on mobile to prevent scroll */}
-        <div className="hidden sm:block">
-          <Footer />
-        </div>
+        {/* Footer */}
+        <Footer />
       </div>
     </>
   );

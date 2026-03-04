@@ -94,6 +94,7 @@ export function LoginClient() {
         title="Client Login"
         subtitle="Sign in to manage your website and access Flowstarter Editor."
         marketingKeys={[]}
+        showStats={false}
       >
         {noticeContent ? (
           <div

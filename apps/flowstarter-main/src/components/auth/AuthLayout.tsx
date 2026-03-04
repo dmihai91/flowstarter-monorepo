@@ -53,7 +53,7 @@ export default function AuthLayout({
         </header>
 
         {/* Main — centers card vertically in remaining space */}
-        <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-8">
+        <main className="relative z-10 flex-1 flex flex-col items-center px-4 py-6 sm:py-10">
           <div className="w-full max-w-md">
             {title && (
               <div className="text-center mb-6">

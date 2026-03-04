@@ -231,11 +231,12 @@ export async function GET(request: NextRequest) {
 
     // Fetch project data
     const supabase = createSupabaseServiceRoleClient();
+    // Token is HMAC-signed so projectId is trusted
+    // Don't filter by user_id — team members may open projects they didn't create
     const { data: project, error } = await supabase
       .from('projects')
       .select('*')
       .eq('id', projectId)
-      .eq('user_id', userId)
       .single();
 
     if (error || !project) {

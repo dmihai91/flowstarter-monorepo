@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
       .from('projects')
       .select('id, data, user_id')
       .eq('id', projectId)
-      .eq('user_id', tokenPayload.userId)
+      
       .single();
 
     if (fetchError || !existingProject) {
@@ -261,7 +261,7 @@ export async function POST(request: NextRequest) {
       .from('projects')
       .update(updatePayload)
       .eq('id', projectId)
-      .eq('user_id', tokenPayload.userId);
+      ;
 
     if (updateError) {
       console.error('[Editor Sync] Update failed:', updateError);
@@ -331,7 +331,7 @@ export async function GET(request: NextRequest) {
       .from('projects')
       .select('*')
       .eq('id', projectId)
-      .eq('user_id', tokenPayload.userId)
+      
       .single();
 
     if (error || !project) {

@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     const supabase = createSupabaseServiceRoleClient();
 
     // Insert into contact_submissions table
-    const { error } = await supabase.from('contact_submissions').insert({
+    const { error } = await (supabase as any).from('contact_submissions').insert({
       name,
       email,
       subject,

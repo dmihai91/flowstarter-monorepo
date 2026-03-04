@@ -135,7 +135,7 @@ export function CustomSignIn() {
         identifier: resetEmail,
       });
       setResetStep('code');
-      toast.success(t('auth.forgotPassword.codeSuccess'));
+      // toast removed - no toast lib imported
     } catch (err: any) {
       setError(
         err?.errors?.[0]?.message || t('auth.errors.somethingWentWrong')
@@ -165,7 +165,6 @@ export function CustomSignIn() {
 
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
-        toast.success(t('auth.forgotPassword.success'));
         window.location.href = getRedirectUrl(resetEmail);
       }
     } catch (err: any) {
@@ -187,7 +186,7 @@ export function CustomSignIn() {
         strategy: 'reset_password_email_code',
         identifier: resetEmail,
       });
-      toast.success(t('auth.forgotPassword.codeSuccess'));
+      // toast removed - no toast lib imported
     } catch (err: any) {
       setError(
         err?.errors?.[0]?.message || t('auth.errors.somethingWentWrong')

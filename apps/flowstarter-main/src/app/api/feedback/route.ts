@@ -253,7 +253,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const supabase = await useServerSupabaseWithAuth();
+    const supabase = createSupabaseServiceRoleClient();
 
     const { data, error } = await supabase
       .from('user_feedback')

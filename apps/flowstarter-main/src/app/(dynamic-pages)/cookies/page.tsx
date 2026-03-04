@@ -4,40 +4,42 @@ import Footer from '@/components/Footer';
 import { SupportHeader } from '@/components/SupportHeader';
 import { Cookie, Shield, BarChart3, Settings, Check } from 'lucide-react';
 import { FlowBackground } from '@flowstarter/flow-design-system';
+import { useTranslations } from '@/lib/i18n';
 
 export default function CookiePolicyPage() {
+  const { t } = useTranslations();
   const lastUpdated = 'February 27, 2026';
 
   const cookieTypes = [
     {
       icon: Shield,
-      name: 'Essential Cookies',
+      name: t('cookies.type.essential.name'),
       required: true,
-      description: 'These cookies are necessary for the website to function and cannot be switched off. They are usually set in response to actions you take, such as setting your privacy preferences, logging in, or filling in forms.',
+      description: t('cookies.type.essential.description'),
       examples: [
-        { name: 'session_id', purpose: 'Maintains your login session', duration: 'Session' },
-        { name: 'csrf_token', purpose: 'Security token to prevent cross-site attacks', duration: 'Session' },
-        { name: 'cookie_consent', purpose: 'Remembers your cookie preferences', duration: '1 year' },
-        { name: 'theme', purpose: 'Remembers your light/dark mode preference', duration: '1 year' },
+        { name: 'session_id', purpose: t('cookies.cookie.sessionId.purpose'), duration: t('cookies.cookie.sessionId.duration') },
+        { name: 'csrf_token', purpose: t('cookies.cookie.csrfToken.purpose'), duration: t('cookies.cookie.csrfToken.duration') },
+        { name: 'cookie_consent', purpose: t('cookies.cookie.cookieConsent.purpose'), duration: t('cookies.cookie.cookieConsent.duration') },
+        { name: 'theme', purpose: t('cookies.cookie.theme.purpose'), duration: t('cookies.cookie.theme.duration') },
       ],
     },
     {
       icon: BarChart3,
-      name: 'Analytics Cookies',
+      name: t('cookies.type.analytics.name'),
       required: false,
-      description: 'These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously. This helps us improve our service.',
+      description: t('cookies.type.analytics.description'),
       examples: [
-        { name: 'plausible_*', purpose: 'Privacy-focused analytics (no personal data)', duration: 'Session' },
+        { name: 'plausible_*', purpose: t('cookies.cookie.plausible.purpose'), duration: t('cookies.cookie.plausible.duration') },
       ],
     },
     {
       icon: Settings,
-      name: 'Functional Cookies',
+      name: t('cookies.type.functional.name'),
       required: false,
-      description: 'These cookies enable enhanced functionality and personalization, such as remembering your preferences and settings.',
+      description: t('cookies.type.functional.description'),
       examples: [
-        { name: 'language', purpose: 'Remembers your language preference', duration: '1 year' },
-        { name: 'sidebar_collapsed', purpose: 'Remembers dashboard sidebar state', duration: '1 year' },
+        { name: 'language', purpose: t('cookies.cookie.language.purpose'), duration: t('cookies.cookie.language.duration') },
+        { name: 'sidebar_collapsed', purpose: t('cookies.cookie.sidebar.purpose'), duration: t('cookies.cookie.sidebar.duration') },
       ],
     },
   ];
@@ -62,17 +64,16 @@ export default function CookiePolicyPage() {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium mb-6">
               <Cookie className="w-4 h-4" />
-              Transparency First
+              {t('cookies.badge')}
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-              Cookie Policy
+              {t('cookies.title')}
             </h1>
             <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl mx-auto mb-4">
-              We use cookies to make Flowstarter work and to understand how you use it. 
-              Here's exactly what we use and why.
+              {t('cookies.description')}
             </p>
             <p className="text-sm text-gray-400 dark:text-white/30">
-              Last updated: {lastUpdated}
+              {t('cookies.lastUpdated', { date: lastUpdated })}
             </p>
           </div>
 
@@ -80,24 +81,24 @@ export default function CookiePolicyPage() {
           <div className="mb-12 p-6 rounded-2xl bg-gradient-to-br from-[var(--purple)]/5 via-white to-blue-500/5 dark:from-[var(--purple)]/10 dark:via-[#0f0f12] dark:to-blue-500/10 border border-[var(--purple)]/20">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <Cookie className="w-5 h-5 text-[var(--purple)]" />
-              The Short Version
+              {t('cookies.shortVersion.title')}
             </h2>
             <ul className="space-y-2 text-sm text-gray-600 dark:text-white/60">
               <li className="flex items-start gap-2">
                 <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-                <span><strong>Essential cookies</strong> keep you logged in and the site working. Can't be disabled.</span>
+                <span><strong>{t('cookies.shortVersion.essential')}</strong>{t('cookies.shortVersion.essentialDesc')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-                <span><strong>Analytics cookies</strong> help us improve. Privacy-focused, no personal tracking.</span>
+                <span><strong>{t('cookies.shortVersion.analytics')}</strong>{t('cookies.shortVersion.analyticsDesc')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-                <span><strong>No advertising cookies.</strong> We don't serve ads or track you across sites.</span>
+                <span><strong>{t('cookies.shortVersion.noAds')}</strong>{t('cookies.shortVersion.noAdsDesc')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-                <span><strong>You're in control.</strong> Manage preferences anytime via browser settings.</span>
+                <span><strong>{t('cookies.shortVersion.control')}</strong>{t('cookies.shortVersion.controlDesc')}</span>
               </li>
             </ul>
           </div>
@@ -105,16 +106,13 @@ export default function CookiePolicyPage() {
           {/* What Are Cookies */}
           <section className="mb-10 p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-              What Are Cookies?
+              {t('cookies.whatAreCookies.title')}
             </h2>
             <p className="text-gray-600 dark:text-white/60 leading-relaxed mb-4">
-              Cookies are small text files stored on your device when you visit a website. 
-              They help websites remember your preferences, keep you logged in, and understand 
-              how you use the site.
+              {t('cookies.whatAreCookies.p1')}
             </p>
             <p className="text-gray-600 dark:text-white/60 leading-relaxed">
-              We use cookies to provide you with a better experience on Flowstarter. 
-              We don't use cookies to track you across other websites or serve you advertisements.
+              {t('cookies.whatAreCookies.p2')}
             </p>
           </section>
 
@@ -136,11 +134,11 @@ export default function CookiePolicyPage() {
                       </h2>
                       {type.required ? (
                         <span className="px-2 py-0.5 text-xs font-medium bg-gray-200 dark:bg-white/10 text-gray-600 dark:text-white/60 rounded">
-                          Required
+                          {t('cookies.label.required')}
                         </span>
                       ) : (
                         <span className="px-2 py-0.5 text-xs font-medium bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 rounded">
-                          Optional
+                          {t('cookies.label.optional')}
                         </span>
                       )}
                     </div>
@@ -155,9 +153,9 @@ export default function CookiePolicyPage() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-gray-200 dark:border-white/10">
-                        <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">Cookie</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">Purpose</th>
-                        <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">Duration</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">{t('cookies.table.cookie')}</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">{t('cookies.table.purpose')}</th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">{t('cookies.table.duration')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -178,69 +176,66 @@ export default function CookiePolicyPage() {
           {/* Third-Party Cookies */}
           <section className="mb-10 p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-              Third-Party Cookies
+              {t('cookies.thirdParty.title')}
             </h2>
             <p className="text-gray-600 dark:text-white/60 leading-relaxed mb-4">
-              Some features may involve third-party services that set their own cookies:
+              {t('cookies.thirdParty.description')}
             </p>
             <ul className="space-y-3 text-sm text-gray-600 dark:text-white/60">
               <li className="flex items-start gap-2">
                 <span className="text-[var(--purple)]">•</span>
-                <span><strong>Stripe</strong> (payments) - Sets cookies for fraud prevention and secure checkout.</span>
+                <span><strong>{t('cookies.thirdParty.stripe')}</strong>{t('cookies.thirdParty.stripeDesc')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-[var(--purple)]">•</span>
-                <span><strong>Supabase</strong> (authentication) - Sets cookies to maintain your login session.</span>
+                <span><strong>{t('cookies.thirdParty.supabase')}</strong>{t('cookies.thirdParty.supabaseDesc')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-[var(--purple)]">•</span>
-                <span><strong>Cloudflare</strong> (security) - May set cookies for bot protection and performance.</span>
+                <span><strong>{t('cookies.thirdParty.cloudflare')}</strong>{t('cookies.thirdParty.cloudflareDesc')}</span>
               </li>
             </ul>
             <p className="text-gray-500 dark:text-white/40 text-sm mt-4">
-              These providers have their own cookie policies. We only work with trusted, 
-              privacy-respecting services.
+              {t('cookies.thirdParty.footer')}
             </p>
           </section>
 
           {/* Managing Cookies */}
           <section className="mb-10 p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-              Managing Your Cookie Preferences
+              {t('cookies.managing.title')}
             </h2>
             <p className="text-gray-600 dark:text-white/60 leading-relaxed mb-4">
-              You can control cookies through your browser settings:
+              {t('cookies.managing.description')}
             </p>
             <ul className="space-y-2 text-sm text-gray-600 dark:text-white/60 mb-4">
-              <li>• <strong>Chrome:</strong> Settings → Privacy and Security → Cookies</li>
-              <li>• <strong>Firefox:</strong> Settings → Privacy & Security → Cookies</li>
-              <li>• <strong>Safari:</strong> Preferences → Privacy → Cookies</li>
-              <li>• <strong>Edge:</strong> Settings → Cookies and Site Permissions</li>
+              <li>• <strong>{t('cookies.managing.chrome')}</strong>{t('cookies.managing.chromeDesc')}</li>
+              <li>• <strong>{t('cookies.managing.firefox')}</strong>{t('cookies.managing.firefoxDesc')}</li>
+              <li>• <strong>{t('cookies.managing.safari')}</strong>{t('cookies.managing.safariDesc')}</li>
+              <li>• <strong>{t('cookies.managing.edge')}</strong>{t('cookies.managing.edgeDesc')}</li>
             </ul>
             <p className="text-amber-600 dark:text-amber-400 text-sm">
-              Note: Blocking essential cookies may prevent you from using Flowstarter properly.
+              {t('cookies.managing.warning')}
             </p>
           </section>
 
           {/* Updates */}
           <section className="mb-10 p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-              Changes to This Policy
+              {t('cookies.changes.title')}
             </h2>
             <p className="text-gray-600 dark:text-white/60 leading-relaxed">
-              We may update this Cookie Policy from time to time. We'll notify you of significant 
-              changes by updating the date at the top of this page. For major changes, we may also 
-              show you a new consent banner.
+              {t('cookies.changes.description')}
             </p>
           </section>
 
           {/* Contact */}
           <div className="p-8 rounded-2xl bg-gradient-to-r from-[var(--purple)]/5 via-blue-500/5 to-cyan-500/5 border border-[var(--purple)]/10 dark:border-[var(--purple)]/20 text-center">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-              Questions about cookies?
+              {t('cookies.contact.title')}
             </h2>
             <p className="text-gray-500 dark:text-white/50 mb-4">
-              Read our full <a href="/privacy" className="text-[var(--purple)] hover:underline">Privacy Policy</a> or contact us.
+              {t('cookies.contact.description', { link: '' })}<a href="/privacy" className="text-[var(--purple)] hover:underline">{t('cookies.contact.privacyLink')}</a>
             </p>
             <a
               href="mailto:privacy@flowstarter.dev"

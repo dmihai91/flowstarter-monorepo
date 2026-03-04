@@ -1,4 +1,4 @@
-import type { GenerationStep } from '@/app/(dynamic-pages)/(main-pages)/components/FlowstarterAssistant';
+import type { GenerationStep } from '@/components/assistant/GenerationProgress';
 import { useTranslations } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { AssistantInput } from './AssistantInput';

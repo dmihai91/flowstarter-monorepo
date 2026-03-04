@@ -1,19 +1,21 @@
 'use client';
 
+import { useI18n } from '@/lib/i18n';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { GlassCard } from '@flowstarter/flow-design-system';
 import { Globe, Mail, BarChart3, CreditCard, ShieldCheck, Wrench } from 'lucide-react';
 
 export function TrustSection() {
+  const { t } = useI18n();
   const { ref: sectionRef, isVisible } = useScrollAnimation();
 
   const items = [
-    { icon: Globe, label: 'Fast & secure hosting', desc: 'Global CDN, lightning-fast pages' },
-    { icon: Mail, label: 'Professional email', desc: '@yourdomain.com included' },
-    { icon: BarChart3, label: 'Visitor analytics', desc: 'See who visits and when' },
-    { icon: CreditCard, label: 'Secure payments', desc: 'Accept bookings and payments' },
-    { icon: ShieldCheck, label: 'SSL & daily backups', desc: 'Protected and always recoverable' },
-    { icon: Wrench, label: 'No maintenance headaches', desc: 'We handle updates and security' },
+    { icon: Globe, label: t('landing.trust.hosting.label'), desc: t('landing.trust.hosting.desc') },
+    { icon: Mail, label: t('landing.trust.email.label'), desc: t('landing.trust.email.desc') },
+    { icon: BarChart3, label: t('landing.trust.analytics.label'), desc: t('landing.trust.analytics.desc') },
+    { icon: CreditCard, label: t('landing.trust.payments.label'), desc: t('landing.trust.payments.desc') },
+    { icon: ShieldCheck, label: t('landing.trust.ssl.label'), desc: t('landing.trust.ssl.desc') },
+    { icon: Wrench, label: t('landing.trust.maintenance.label'), desc: t('landing.trust.maintenance.desc') },
   ];
 
   return (
@@ -23,10 +25,10 @@ export function TrustSection() {
       }`}>
         <div className="text-center mb-12 lg:mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-3">
-            Everything&apos;s included. No hidden extras.
+            {t('landing.trust.title')}
           </h2>
           <p className="text-base text-gray-500 dark:text-white/40 max-w-lg mx-auto">
-            Every website comes with everything you need to look professional and get found.
+            {t('landing.trust.subtitle')}
           </p>
         </div>
 

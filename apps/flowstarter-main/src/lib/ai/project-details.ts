@@ -286,13 +286,14 @@ Use this exact JSON structure:
 
   const runOnce = async (temp: number): Promise<any> => {
     try {
+      // @ts-expect-error - deeply nested schema causes excessive type instantiation
       const result = await generateObject({
         model: models.projectDetails,
         schema: detailsSchema,
         system: systemPrompt,
         prompt: enhancedPrompt,
         temperature: temp,
-        maxTokens: 8192,
+        maxOutputTokens: 8192,
       });
 
       return result.object;

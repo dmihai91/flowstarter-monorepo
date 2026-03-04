@@ -9,9 +9,11 @@ import { useState } from 'react';
 import { EXTERNAL_URLS } from '@/lib/constants';
 import { FlowBackground, GlassCard, GlassPanel } from '@flowstarter/flow-design-system';
 import { MessageCircle, Check, Loader2, Send, Calendar, Mail, Twitter, Linkedin, Clock } from 'lucide-react';
+import { useTranslations } from '@/lib/i18n';
 
 
 export default function ContactPage() {
+  const { t } = useTranslations();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -45,7 +47,7 @@ export default function ContactPage() {
         ? 'error'
         : 'idle';
 
-  const errorMessage = contactMutation.error?.message || 'Something went wrong';
+  const errorMessage = contactMutation.error?.message || t('contact.form.defaultError');
 
   return (
     <>
@@ -67,13 +69,13 @@ export default function ContactPage() {
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium mb-6">
               <MessageCircle className="w-4 h-4" />
-              Get in Touch
+              {t('contact.badge')}
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-              We'd love to hear from you
+              {t('contact.title')}
             </h1>
             <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl mx-auto">
-              Whether you have a question about our service or want to discuss your project, we're here to help.
+              {t('contact.description')}
             </p>
           </div>
 
@@ -81,7 +83,7 @@ export default function ContactPage() {
             {/* Contact Form */}
             <GlassPanel padding="lg">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                Send us a message
+                {t('contact.form.title')}
               </h2>
 
               {status === 'success' ? (
@@ -90,24 +92,24 @@ export default function ContactPage() {
                     <Check className="w-8 h-8 text-emerald-500" />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                    Message sent!
+                    {t('contact.form.successTitle')}
                   </h3>
                   <p className="text-gray-500 dark:text-white/50 mb-6">
-                    We'll get back to you within 24 hours.
+                    {t('contact.form.successDesc')}
                   </p>
                   <Button
                     onClick={() => contactMutation.reset()}
                     variant="outline"
                     className="rounded-xl"
                   >
-                    Send another message
+                    {t('contact.form.sendAnother')}
                   </Button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
-                      Your name
+                      {t('contact.form.nameLabel')}
                     </label>
                     <input
                       type="text"
@@ -116,14 +118,14 @@ export default function ContactPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
                       }
-                      placeholder="John Doe"
+                      placeholder={t('contact.form.namePlaceholder')}
                       className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
                     />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
-                      Email address
+                      {t('contact.form.emailLabel')}
                     </label>
                     <input
                       type="email"
@@ -132,14 +134,14 @@ export default function ContactPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, email: e.target.value })
                       }
-                      placeholder="john@example.com"
+                      placeholder={t('contact.form.emailPlaceholder')}
                       className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
                     />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
-                      Subject
+                      {t('contact.form.subjectLabel')}
                     </label>
                     <select
                       required
@@ -149,19 +151,19 @@ export default function ContactPage() {
                       }
                       className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
                     >
-                      <option value="">Select a topic</option>
-                      <option value="general">General inquiry</option>
-                      <option value="project">I want a website built</option>
-                      <option value="support">Support with my site</option>
-                      <option value="billing">Billing question</option>
-                      <option value="feedback">Feedback</option>
-                      <option value="other">Other</option>
+                      <option value="">{t('contact.form.subjectDefault')}</option>
+                      <option value="general">{t('contact.form.subjectGeneral')}</option>
+                      <option value="project">{t('contact.form.subjectProject')}</option>
+                      <option value="support">{t('contact.form.subjectSupport')}</option>
+                      <option value="billing">{t('contact.form.subjectBilling')}</option>
+                      <option value="feedback">{t('contact.form.subjectFeedback')}</option>
+                      <option value="other">{t('contact.form.subjectOther')}</option>
                     </select>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
-                      Message
+                      {t('contact.form.messageLabel')}
                     </label>
                     <textarea
                       required
@@ -170,7 +172,7 @@ export default function ContactPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, message: e.target.value })
                       }
-                      placeholder="Tell us about your project or question..."
+                      placeholder={t('contact.form.messagePlaceholder')}
                       className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all resize-none"
                     />
                   </div>
@@ -189,11 +191,11 @@ export default function ContactPage() {
                     {status === 'loading' ? (
                       <span className="flex items-center gap-2">
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        Sending...
+                        {t('contact.form.sending')}
                       </span>
                     ) : (
                       <span className="flex items-center gap-2">
-                        Send Message
+                        {t('contact.form.sendButton')}
                         <Send className="w-4 h-4" />
                       </span>
                     )}
@@ -207,10 +209,10 @@ export default function ContactPage() {
               {/* Quick Contact */}
               <div className="p-8 rounded-2xl bg-gradient-to-br from-[var(--purple)]/10 to-blue-500/10 border border-[var(--purple)]/20">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
-                  Prefer to talk?
+                  {t('contact.talk.title')}
                 </h2>
                 <p className="text-gray-500 dark:text-white/50 mb-6">
-                  Book a free 45-minute discovery call. We'll learn about your business and figure out the best approach together.
+                  {t('contact.talk.description')}
                 </p>
                 <a
                   href={EXTERNAL_URLS.calendly.discovery}
@@ -219,7 +221,7 @@ export default function ContactPage() {
                 >
                   <Button className="w-full bg-gradient-to-r from-[var(--landing-btn-from)] via-[var(--landing-btn-via)] to-[var(--landing-btn-from)] text-white rounded-xl h-12 text-base font-semibold shadow-lg transition-all duration-300">
                     <Calendar className="w-4 h-4 mr-2" />
-                    Book Free Discovery Call
+                    {t('contact.talk.button')}
                   </Button>
                 </a>
               </div>
@@ -227,7 +229,7 @@ export default function ContactPage() {
               {/* Contact Methods */}
               <GlassPanel padding="lg">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
-                  Other ways to reach us
+                  {t('contact.other.title')}
                 </h2>
                 <div className="space-y-4">
                   <a
@@ -239,10 +241,10 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white group-hover:text-[var(--purple)] transition-colors">
-                        Email
+                        {t('contact.other.emailLabel')}
                       </p>
                       <p className="text-sm text-gray-500 dark:text-white/50">
-                        hello@flowstarter.app
+                        {t('contact.other.emailValue')}
                       </p>
                     </div>
                   </a>
@@ -257,10 +259,10 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white group-hover:text-[var(--purple)] transition-colors">
-                        Twitter
+                        {t('contact.other.twitterLabel')}
                       </p>
                       <p className="text-sm text-gray-500 dark:text-white/50">
-                        @flowstarter
+                        {t('contact.other.twitterValue')}
                       </p>
                     </div>
                   </a>
@@ -275,10 +277,10 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white group-hover:text-[var(--purple)] transition-colors">
-                        LinkedIn
+                        {t('contact.other.linkedinLabel')}
                       </p>
                       <p className="text-sm text-gray-500 dark:text-white/50">
-                        Flowstarter
+                        {t('contact.other.linkedinValue')}
                       </p>
                     </div>
                   </a>
@@ -292,10 +294,10 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="font-medium text-gray-900 dark:text-white">
-                    Response within 24 hours
+                    {t('contact.response.title')}
                   </p>
                   <p className="text-sm text-gray-500 dark:text-white/50">
-                    Usually much faster!
+                    {t('contact.response.description')}
                   </p>
                 </div>
               </div>

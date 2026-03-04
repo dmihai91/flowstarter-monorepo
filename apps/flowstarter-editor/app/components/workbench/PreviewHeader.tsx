@@ -1,6 +1,7 @@
 import { memo, useRef, useState } from 'react';
 import { useStore } from '@nanostores/react';
 import { IconButton } from '~/components/ui/IconButton';
+import { useTranslation } from '~/lib/i18n/useTranslation';
 import { PortDropdown } from './PortDropdown';
 import { workbenchStore, type WorkbenchViewType } from '~/lib/stores/workbench';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
@@ -51,6 +52,7 @@ export const PreviewHeader = memo(
     isLandscape,
     setIsLandscape,
   }: PreviewHeaderProps) => {
+    const { t } = useTranslation();
     const inputRef = useRef<HTMLInputElement>(null);
     const [isPortDropdownOpen, setIsPortDropdownOpen] = useState(false);
 
@@ -71,13 +73,13 @@ export const PreviewHeader = memo(
                 ? 'bg-flowstarter-elements-item-backgroundAccent/10 text-flowstarter-elements-item-contentAccent'
                 : 'bg-transparent text-flowstarter-elements-textTertiary hover:text-flowstarter-elements-textPrimary',
             )}
-            title="Preview"
+            title={t.workbench.previewHeader.preview}
             onClick={() => setSelectedView('preview')}
           />
           <IconButton
             icon="i-lucide:code"
             className="w-7 h-7 rounded-full transition-all icon-scale-90 bg-transparent text-flowstarter-elements-textTertiary hover:text-flowstarter-elements-textPrimary"
-            title="Code"
+            title={t.workbench.previewHeader.code}
             onClick={() => setSelectedView('code')}
           />
           <DropdownMenu.Root>
@@ -85,7 +87,7 @@ export const PreviewHeader = memo(
               <IconButton
                 icon="i-lucide:settings"
                 className="w-7 h-7 rounded-full transition-all icon-scale-90 bg-transparent text-flowstarter-elements-textTertiary hover:text-flowstarter-elements-textPrimary"
-                title="More Options"
+                title={t.workbench.previewHeader.moreOptions}
               />
             </DropdownMenu.Trigger>
             <DropdownMenu.Content
@@ -102,7 +104,7 @@ export const PreviewHeader = memo(
               >
                 <div className="flex items-center gap-2">
                   <span className="i-lucide:rotate-cw text-current" />
-                  <span>Reload Preview</span>
+                  <span>{t.workbench.previewHeader.reloadPreview}</span>
                 </div>
               </DropdownMenu.Item>
             </DropdownMenu.Content>
@@ -160,14 +162,14 @@ export const PreviewHeader = memo(
                 onClick={reloadPreview}
                 className="h-full px-2.5 text-flowstarter-elements-textTertiary hover:text-flowstarter-elements-textPrimary hover:bg-flowstarter-elements-item-backgroundHover transition-colors"
                 disabled={!activePreview}
-                title="Reload"
+                title={t.workbench.previewHeader.reload}
               >
                 <div className="i-lucide:rotate-cw text-xs" />
               </button>
               <button
                 onClick={() => setIsWindowSizeDropdownOpen(!isWindowSizeDropdownOpen)}
                 className="h-full px-2.5 text-flowstarter-elements-textTertiary hover:text-flowstarter-elements-textPrimary hover:bg-flowstarter-elements-item-backgroundHover transition-colors"
-                title="Window Size"
+                title={t.workbench.previewHeader.windowSize}
               >
                 <div className="i-lucide:more-horizontal text-xs" />
               </button>
@@ -180,7 +182,7 @@ export const PreviewHeader = memo(
           <IconButton
             icon="i-lucide:external-link"
             onClick={openInNewTab}
-            title="Open in new tab"
+            title={t.workbench.previewHeader.openInNewTab}
             className="w-7 h-7 rounded-full transition-all icon-scale-90 bg-transparent text-flowstarter-elements-textTertiary hover:text-flowstarter-elements-textPrimary"
           />
         </div>
@@ -192,7 +194,7 @@ export const PreviewHeader = memo(
             <div className="absolute right-0 top-full mt-2 z-[999] min-w-[240px] max-h-[400px] overflow-y-auto bg-flowstarter-elements-background-depth-1 rounded-xl shadow-2xl border border-flowstarter-elements-borderColor overflow-hidden">
               <div className="p-3 border-b border-flowstarter-elements-borderColor">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-flowstarter-elements-textPrimary">Window Options</span>
+                  <span className="text-sm font-medium text-flowstarter-elements-textPrimary">{t.workbench.previewHeader.windowOptions}</span>
                 </div>
                 <div className="flex flex-col gap-2">
                   <button
@@ -201,11 +203,11 @@ export const PreviewHeader = memo(
                       openInNewTab();
                     }}
                   >
-                    <span>Open in new tab</span>
+                    <span>{t.workbench.previewHeader.openInNewTab}</span>
                     <span className="i-lucide:external-link h-5 w-4 text-current"></span>
                   </button>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-flowstarter-elements-textTertiary">Show Device Frame</span>
+                    <span className="text-xs text-flowstarter-elements-textTertiary">{t.workbench.previewHeader.showDeviceFrame}</span>
                     <button
                       className={`w-10 h-5 rounded-full transition-colors duration-200 ${
                         showDeviceFrame
@@ -225,7 +227,7 @@ export const PreviewHeader = memo(
                     </button>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-flowstarter-elements-textTertiary">Landscape Mode</span>
+                    <span className="text-xs text-flowstarter-elements-textTertiary">{t.workbench.previewHeader.landscapeMode}</span>
                     <button
                       className={`w-10 h-5 rounded-full transition-colors duration-200 ${
                         isLandscape
@@ -267,7 +269,7 @@ export const PreviewHeader = memo(
                       {isLandscape && (size.frameType === 'mobile' || size.frameType === 'tablet')
                         ? `${size.height} × ${size.width}`
                         : `${size.width} × ${size.height}`}
-                      {size.hasFrame && showDeviceFrame ? ' (with frame)' : ''}
+                      {size.hasFrame && showDeviceFrame ? ` ${t.workbench.previewHeader.withFrame}` : ''}
                     </span>
                   </div>
                   {selectedWindowSize.name === size.name && (

@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from '@/lib/i18n';
 
 import { TeamPageLayout } from '../../components/TeamPageLayout';
 import { Button } from '@/components/ui/button';
@@ -9,6 +10,7 @@ import { Mail, Copy, CheckCircle2, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function EmailPage() {
+  const { t } = useTranslations();
   const [domain, setDomain] = useState('');
   const [copied, setCopied] = useState<string | null>(null);
 
@@ -43,7 +45,7 @@ export default function EmailPage() {
       {/* Domain input */}
       <div className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="domain">Client Domain</Label>
+          <Label htmlFor="domain">{t('team.email.clientDomain')}</Label>
           <div className="flex gap-3">
             <Input
               id="domain"

@@ -46,7 +46,6 @@ export async function evaluateDescriptionSufficiency(input: {
       { role: 'user', content: userContent },
     ],
     schema: sufficiencySchema as any,
-    mode: 'json',
     temperature: 0,
   });
 

@@ -78,8 +78,8 @@ export default function TeamSecurityPage() {
 
     try {
       const totp = await user.createTOTP();
-      setQrCodeUrl(totp.uri);
-      setSecret(totp.secret);
+      setQrCodeUrl(totp.uri ?? null);
+      setSecret(totp.secret ?? null);
     } catch (error) {
       console.error('Error starting TOTP setup:', error);
       setSetupError('Failed to start authenticator setup. Please try again.');
@@ -116,7 +116,7 @@ export default function TeamSecurityPage() {
     setSetupError(null);
 
     try {
-      await user.disableTOTP({ code: disableCode });
+      await user.disableTOTP();
       setTotpEnabled(false);
       setShowDisableConfirm(false);
       setDisableCode('');

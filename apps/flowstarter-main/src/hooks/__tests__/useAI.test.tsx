@@ -31,7 +31,7 @@ describe('useAIClassify', () => {
       confidence: 0.95,
     };
     
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: true,
       json: async () => mockResponse,
     });
@@ -47,7 +47,7 @@ describe('useAIClassify', () => {
   });
 
   it('should handle classification error', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: false,
       json: async () => ({ error: 'Classification failed' }),
     });
@@ -74,7 +74,7 @@ describe('useAIModerate', () => {
       flagged_categories: [],
     };
     
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: true,
       json: async () => mockResponse,
     });
@@ -96,7 +96,7 @@ describe('useAIModerate', () => {
       flagged_categories: ['inappropriate'],
     };
     
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: true,
       json: async () => mockResponse,
     });

@@ -261,7 +261,7 @@ export const ProjectsList = ({
                             }}
                           >
                             <Pencil className="h-4 w-4" />
-                            {t('projects.rename') || 'Rename'}
+                            {t('projects.rename')}
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             variant="destructive"

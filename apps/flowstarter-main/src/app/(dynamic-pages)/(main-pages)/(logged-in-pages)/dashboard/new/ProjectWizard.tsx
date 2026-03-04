@@ -22,7 +22,7 @@ const useWizardSteps = (templateFirst: boolean = false) => {
 
   return useMemo(() => {
     const reviewDescription =
-      t('wizard.review.desc') || 'Review your website before launching it';
+      t('wizard.review.desc');
 
     // Default flow: details → template → review
     // Template-first flow: template → details → review
@@ -32,11 +32,11 @@ const useWizardSteps = (templateFirst: boolean = false) => {
         id: 'details' as const,
         title: t('wizard.details.title') || "Let's get to know your project",
         description:
-          t('wizard.details.desc') || 'Define Audience, Goals and more',
+          t('wizard.details.desc'),
       },
       {
         id: 'template' as const,
-        title: t('wizard.template.title') || 'Choose Site Structure',
+        title: t('wizard.template.title'),
         description:
           t('wizard.template.descStructure') ||
           'Pick how you want to build your website',
@@ -49,7 +49,7 @@ const useWizardSteps = (templateFirst: boolean = false) => {
       // },
       {
         id: 'review' as const,
-        title: t('wizard.review.title') || 'Review & Launch',
+        title: t('wizard.review.title'),
         description: reviewDescription,
       },
     ].filter((step) => step && step.id && step.title && step.description);
@@ -719,7 +719,7 @@ export default function ProjectWizard({
     } else if (saveStatus === 'error') {
       return <span>{t('app.saveFailed')}</span>;
     } else if (saveStatus === 'idle') {
-      return <span>Draft</span>;
+      return <span>{t('app.draft')}</span>;
     }
     return null;
   }, [isOffline, saveStatus, lastSavedAt, t]);

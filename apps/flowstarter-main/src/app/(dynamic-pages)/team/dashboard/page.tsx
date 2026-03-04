@@ -224,7 +224,7 @@ export default function TeamDashboardPage() {
               <div>
                 <Label className="text-sm font-medium text-gray-700 dark:text-white/70">Client Name *</Label>
                 <Input
-                  placeholder="John Smith"
+                  placeholder={t('team.dashboard.namePlaceholder')}
                   value={clientInfo.name}
                   onChange={(e) => { const v = e.target.value; setClientInfo(prev => ({ ...prev, name: v })); validateField('name', v); }}
                   onBlur={() => validateFieldImmediate('name', clientInfo.name)}

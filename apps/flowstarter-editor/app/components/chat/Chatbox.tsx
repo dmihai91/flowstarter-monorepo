@@ -20,6 +20,7 @@ import { ColorSchemeDialog } from '~/components/chat/ColorSchemeDialog';
 import type { DesignScheme } from '~/types/design-scheme';
 import type { ElementInfo } from '~/components/workbench/Inspector';
 
+import { useTranslation } from '~/lib/i18n/useTranslation';
 import { useToolMentionAutocomplete } from '~/lib/hooks/useToolMentionAutocomplete';
 import { ToolMentionAutocomplete } from './ToolMentionAutocomplete';
 import { insertToolMention, insertFileReference } from '~/utils/toolMentionParser';
@@ -82,6 +83,7 @@ interface ChatBoxProps {
 }
 
 export const ChatBox: React.FC<ChatBoxProps> = (props) => {
+  const { t } = useTranslation();
   const [placeholderText, setPlaceholderText] = useState('');
   const [showPlaceholder, setShowPlaceholder] = useState(true);
   const [providerDropdownOpen, setProviderDropdownOpen] = useState(false);
@@ -151,7 +153,7 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
 
   useEffect(() => {
     if (!props.chatStarted && props.input.length === 0 && showPlaceholder) {
-      const tipText = 'Ask a question or request changes...';
+      const tipText = t.chat.chatbox.askOrRequest;
       let i = 0;
       const timer = setInterval(() => {
         if (i < tipText.length) {
@@ -275,13 +277,13 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
               <code className="bg-accent-500 rounded-4px px-1.5 py-1 mr-0.5 text-white">
                 {props?.selectedElement?.tagName}
               </code>
-              selected for inspection
+              {t.chat.chatbox.selectedForInspection}
             </div>
             <button
               className="bg-transparent text-accent-500 pointer-auto"
               onClick={() => props.setSelectedElement?.(null)}
             >
-              Clear
+              {t.chat.chatbox.clear}
             </button>
           </div>
         )}
@@ -373,23 +375,23 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
             
             {/* Integrations Button */}
             <IconButton 
-              title="Integrations" 
+              title={t.chat.chatbox.integrations} 
               className="transition-all" 
               onClick={() => {}}
             >
               <div className="i-ph:plug text-xl"></div>
             </IconButton>
             
-            <IconButton title="Upload file" className="transition-all" onClick={() => props.handleFileUpload()}>
+            <IconButton title={t.chat.chatbox.uploadFile} className="transition-all" onClick={() => props.handleFileUpload()}>
               <div className="i-ph:paperclip text-xl"></div>
             </IconButton>
             <IconButton
-              title="Enhance prompt"
+              title={t.chat.chatbox.enhancePrompt}
               disabled={props.input.length === 0 || props.enhancingPrompt}
               className={classNames('transition-all', props.enhancingPrompt ? 'opacity-100' : '')}
               onClick={() => {
                 props.enhancePrompt?.();
-                toast.success('Prompt enhanced!');
+                toast.success(t.chat.chatbox.promptEnhanced);
               }}
             >
               {props.enhancingPrompt ? (
@@ -406,7 +408,7 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
               disabled={props.isStreaming}
             />
             <IconButton
-              title="Discuss"
+              title={t.chat.chatbox.discuss}
               className={classNames(
                 'transition-all flex items-center gap-1 px-1.5',
                 props.chatMode === 'discuss'
@@ -418,10 +420,10 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
               }}
             >
               <div className={`i-ph:chats text-xl`} />
-              {props.chatMode === 'discuss' ? <span>Discuss</span> : <span />}
+              {props.chatMode === 'discuss' ? <span>{t.chat.chatbox.discuss}</span> : <span />}
             </IconButton>
             <IconButton
-              title="Web Search"
+              title={t.chat.chatbox.webSearch}
               className={classNames(
                 'transition-all flex items-center gap-1 px-1.5',
                 props.provider?.name !== 'Flowstarter' ? 'opacity-50 grayscale' : '',
@@ -431,7 +433,7 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
               )}
               onClick={() => {
                 if (props.provider?.name !== 'Flowstarter') {
-                  toast.info('Web Search is a Pro feature coming soon...');
+                  toast.info(t.chat.chatbox.webSearchPro);
                   return;
                 }
 
@@ -446,7 +448,7 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
                   <DropdownMenu.Root open={providerDropdownOpen} onOpenChange={setProviderDropdownOpen}>
                     <DropdownMenu.Trigger asChild>
                       <button
-                        title="Model Settings"
+                        title={t.chat.chatbox.modelSettings}
                         type="button"
                         className={classNames(
                           'flex items-center justify-center text-flowstarter-elements-item-contentDefault bg-transparent enabled:hover:text-flowstarter-elements-item-contentActive rounded-md enabled:hover:bg-flowstarter-elements-item-backgroundActive disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-accent-500/50 p-1',
@@ -477,7 +479,7 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
                   </DropdownMenu.Root>
                 ) : (
                   <IconButton
-                    title="Model Settings"
+                    title={t.chat.chatbox.modelSettings}
                     className={classNames(
                       'transition-all flex items-center gap-1',
                       'bg-flowstarter-elements-item-backgroundDefault text-flowstarter-elements-item-contentDefault',

@@ -32,7 +32,7 @@ describe('useExampleSites', () => {
       industries: ['Technology', 'Healthcare'],
     };
 
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: true,
       json: async () => mockResponse,
     });
@@ -48,7 +48,7 @@ describe('useExampleSites', () => {
   });
 
   it('should apply category filter', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ sites: [], categories: [], industries: [] }),
     });
@@ -65,7 +65,7 @@ describe('useExampleSites', () => {
   });
 
   it('should apply industry filter', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ sites: [], categories: [], industries: [] }),
     });
@@ -82,7 +82,7 @@ describe('useExampleSites', () => {
   });
 
   it('should apply search filter', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ sites: [], categories: [], industries: [] }),
     });
@@ -99,7 +99,7 @@ describe('useExampleSites', () => {
   });
 
   it('should apply featured filter', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ sites: [], categories: [], industries: [] }),
     });
@@ -116,7 +116,7 @@ describe('useExampleSites', () => {
   });
 
   it('should handle fetch error', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: false,
     });
 
@@ -129,7 +129,7 @@ describe('useExampleSites', () => {
   });
 
   it('should not include "all" category in request', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ sites: [], categories: [], industries: [] }),
     });

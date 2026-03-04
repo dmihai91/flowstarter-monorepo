@@ -1,15 +1,19 @@
 'use client';
 
+'use client';
+
 import Link from 'next/link';
 import { ReactNode } from 'react';
 import Footer from './Footer';
 import { Logo } from '@/components/ui/logo';
+import { useTranslations } from '@/lib/i18n';
 
 interface ErrorPageLayoutProps {
   children: ReactNode;
 }
 
 export function ErrorPageLayout({ children }: ErrorPageLayoutProps) {
+  const { t } = useTranslations();
   return (
     <>
       <style jsx global>{`
@@ -62,7 +66,7 @@ export function ErrorPageLayout({ children }: ErrorPageLayoutProps) {
               href="/"
               className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
-              ← Back to home
+              {t('error.backToHome')}
             </Link>
           </div>
         </header>

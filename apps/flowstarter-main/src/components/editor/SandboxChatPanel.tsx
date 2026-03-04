@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from '@/lib/i18n';
 
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Button, Input, Spinner } from '@flowstarter/flow-design-system';
@@ -12,6 +13,7 @@ interface SandboxChatPanelProps {
 }
 
 export function SandboxChatPanel({ projectId, workspaceId, templateName, onFilesChanged }: SandboxChatPanelProps) {
+  const { t } = useTranslations();
   const [input, setInput] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingContent, setStreamingContent] = useState('');
@@ -181,7 +183,7 @@ export function SandboxChatPanel({ projectId, workspaceId, templateName, onFiles
           <Input
             ref={inputRef}
             variant="filled"
-            placeholder="Describe what you want to build..."
+            placeholder={t('app.chatPlaceholder')}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}

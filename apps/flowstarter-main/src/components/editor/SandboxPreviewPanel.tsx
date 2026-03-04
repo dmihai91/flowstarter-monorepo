@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from '@/lib/i18n';
 
 import { useState, useRef } from 'react';
 import { Button, Spinner, StatusDot } from '@flowstarter/flow-design-system';
@@ -17,6 +18,7 @@ const deviceWidths: Record<DeviceMode, string> = {
 };
 
 export function SandboxPreviewPanel({ previewUrl, workspaceStatus = 'creating' }: SandboxPreviewPanelProps) {
+  const { t } = useTranslations();
   const [url, setUrl] = useState(previewUrl || '');
   const [device, setDevice] = useState<DeviceMode>('desktop');
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -42,7 +44,7 @@ export function SandboxPreviewPanel({ previewUrl, workspaceStatus = 'creating' }
 
         {/* URL bar */}
         <div className="flex-1 flex items-center bg-[var(--flow-bg-tertiary)] rounded-md px-3 py-1.5 text-sm font-mono text-[var(--flow-text-tertiary)]">
-          <span className="truncate">{url || 'No preview available'}</span>
+          <span className="truncate">{url || t('app.noPreviewAvailable')}</span>
         </div>
 
         {/* Refresh */}

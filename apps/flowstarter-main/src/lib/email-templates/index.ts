@@ -13,5 +13,4 @@
 export { baseEmailTemplate, EMAIL_STYLES } from './base';
 export { invitationEmail } from './invitation';
 export { welcomeEmail } from './welcome';
-export { passwordResetEmail } from './password-reset';
 export { verificationEmail } from './verification';

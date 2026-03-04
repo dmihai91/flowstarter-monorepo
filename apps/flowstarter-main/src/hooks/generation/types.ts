@@ -97,8 +97,6 @@ export interface GenerationResult {
 
 // Re-export from shared types for convenience
 export type { TemplateInfo, WebsiteProjectDetails };
-// Keep ProjectDetails as alias for backward compatibility
-export type ProjectDetails = WebsiteProjectDetails;
 
 export interface UseStreamingWebsiteGenerationOptions {
   sessionId?: string | null; // Convex session ID for real-time sync

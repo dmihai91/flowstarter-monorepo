@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
+import { useTranslation } from '~/lib/i18n/useTranslation';
 import type { ActionAlert } from '~/types/actions';
 import { classNames } from '~/utils/classNames';
 
@@ -42,6 +43,7 @@ function copyToClipboard(text: string) {
 }
 
 export default function ChatAlert({ alert, clearAlert, postMessage }: Props) {
+  const { t } = useTranslation();
   const { description, content, source, stackTrace, affectedFiles, errorType, timestamp, command, exitCode } = alert;
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -129,7 +131,7 @@ ${content}
               <button
                 onClick={handleCopyError}
                 className="text-flowstarter-elements-textSecondary hover:text-flowstarter-elements-textPrimary transition-colors"
-                title="Copy error details"
+                title={t.chat.chatAlert.copyError}
               >
                 <div className="i-ph:copy text-base"></div>
               </button>
@@ -164,7 +166,7 @@ ${content}
                   <button
                     onClick={() => copyToClipboard(command)}
                     className="text-flowstarter-elements-textSecondary hover:text-flowstarter-elements-textPrimary"
-                    title="Copy command"
+                    title={t.chat.chatAlert.copyCommand}
                   >
                     <div className="i-ph:copy text-sm"></div>
                   </button>

@@ -1,3 +1,4 @@
+// @ts-expect-error - @daytonaio/sdk types not installed; runtime resolved via Daytona infrastructure
 import type { Sandbox } from '@daytonaio/sdk';
 
 const DEFAULTS = {

@@ -24,7 +24,7 @@ describe('useContactForm', () => {
   });
 
   it('should submit contact form successfully', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ success: true }),
     });
@@ -54,7 +54,7 @@ describe('useContactForm', () => {
   });
 
   it('should handle submission error', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: false,
       json: async () => ({ error: 'Invalid email' }),
     });
@@ -74,7 +74,7 @@ describe('useContactForm', () => {
   });
 
   it('should include optional company field', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ success: true }),
     });

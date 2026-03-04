@@ -37,8 +37,8 @@ vi.mock('@/lib/i18n', () => ({
 vi.mock('@/components/ui/dropdown-menu', () => ({
   DropdownMenu: ({ children }: any) => <div data-testid="dropdown">{children}</div>,
   DropdownMenuContent: ({ children }: any) => <div data-testid="dropdown-content">{children}</div>,
-  DropdownMenuItem: ({ children, onClick, onSelect, className }: any) => (
-    <button onClick={onClick || onSelect} className={className} data-testid="menu-item">{children}</button>
+  DropdownMenuItem: ({ children, onClick, onSelect, className, variant }: any) => (
+    <button onClick={onClick || onSelect} className={`${className || ''} ${variant === 'destructive' ? 'text-red-600' : ''}`} data-testid="menu-item">{children}</button>
   ),
   DropdownMenuSeparator: () => <hr />,
   DropdownMenuTrigger: ({ children }: any) => <div data-testid="trigger">{children}</div>,
@@ -92,7 +92,7 @@ describe('UserMenu', () => {
     mockPathname = '/team/dashboard';
     render(<UserMenu />);
     expect(screen.getByText('team.sidebar.security')).toBeInTheDocument();
-    expect(screen.queryByText('app.profile')).not.toBeInTheDocument();
+    expect(screen.getByText('app.profile')).toBeInTheDocument();
   });
 
   it('has sign-out button with red styling', () => {

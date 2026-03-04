@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from '@/lib/i18n';
 
 import { TeamPageLayout } from '../../components/TeamPageLayout';
 import { Button } from '@/components/ui/button';
@@ -17,6 +18,7 @@ import {
 import { toast } from 'sonner';
 
 export default function DomainsPage() {
+  const { t } = useTranslations();
   const [domain, setDomain] = useState('');
   const [copied, setCopied] = useState<string | null>(null);
 
@@ -63,7 +65,7 @@ export default function DomainsPage() {
       <div className="space-y-8">
         {/* Domain lookup */}
         <div className="space-y-2">
-          <Label htmlFor="domain">Client Domain</Label>
+          <Label htmlFor="domain">{t('team.domains.clientDomain')}</Label>
           <div className="flex gap-3">
             <Input
               id="domain"

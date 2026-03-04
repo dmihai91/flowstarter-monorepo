@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from '~/lib/i18n/useTranslation';
 import type { Message } from 'ai';
 import { toast } from 'react-toastify';
 import { MAX_FILES, isBinaryFile, shouldIncludeFile } from '~/utils/fileUtils';
@@ -10,6 +11,7 @@ interface ImportFolderButtonProps {
 }
 
 export const ImportFolderButton: React.FC<ImportFolderButtonProps> = ({ importChat }) => {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,7 +118,7 @@ export const ImportFolderButton: React.FC<ImportFolderButtonProps> = ({ importCh
           const input = document.getElementById('folder-import');
           input?.click();
         }}
-        title="Import Folder"
+        title={t.chat.importFolder.title}
         aria-label="Import Folder"
         className="flex items-center gap-1.5 border border-flowstarter-elements-borderColor rounded-full px-3 py-1.5 text-xs transition-theme text-flowstarter-elements-textSecondary hover:text-flowstarter-elements-textPrimary bg-gray-50 dark:bg-gray-950 hover:bg-gray-100 dark:hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
         disabled={isLoading}

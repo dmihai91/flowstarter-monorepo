@@ -66,7 +66,7 @@ export function UserMenu() {
           {user.imageUrl ? (
             <Image
               src={user.imageUrl}
-              alt={user.fullName || 'User'}
+              alt={user.fullName || t('app.userFallback')}
               width={36}
               height={36}
               className="h-9 w-9 rounded-full border-2 border-gray-200 dark:border-white/20 object-cover"
@@ -89,7 +89,7 @@ export function UserMenu() {
             {user.imageUrl ? (
               <Image
                 src={user.imageUrl}
-                alt={user.fullName || 'User'}
+                alt={user.fullName || t('app.userFallback')}
                 width={40}
                 height={40}
                 className="h-10 w-10 rounded-full border-2 border-gray-200 dark:border-white/20 object-cover shrink-0"

@@ -24,10 +24,10 @@ interface TeamProjectActionMenuProject {
   id: string;
   name: string | null;
   status: string | null;
-  project_type?: string;
-  setup_fee?: number;
-  monthly_fee?: number;
-  is_paid?: boolean;
+  project_type?: string | null;
+  setup_fee?: number | null;
+  monthly_fee?: number | null;
+  is_paid?: boolean | null;
 }
 
 interface TeamProjectActionMenuProps {

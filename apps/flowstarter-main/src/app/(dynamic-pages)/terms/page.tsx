@@ -5,139 +5,51 @@ import { SupportHeader } from '@/components/SupportHeader';
 import { Sparkles, Package, DoorOpen, FileText, Mail } from 'lucide-react';
 import { FlowBackground } from '@flowstarter/flow-design-system';
 import Link from 'next/link';
+import { useTranslations } from '@/lib/i18n';
 
 export default function TermsPage() {
+  const { t } = useTranslations();
   const lastUpdated = 'February 25, 2026';
 
   const sections = [
-    {
-      title: 'Agreement to Terms',
-      items: [
-        {
-          subtitle: 'Acceptance',
-          text: 'By accessing or using Flowstarter, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access the service.',
-        },
-        {
-          subtitle: 'Eligibility',
-          text: 'You must be at least 18 years old to use our services. By using Flowstarter, you represent that you meet this requirement.',
-        },
-        {
-          subtitle: 'Account Responsibility',
-          text: 'You are responsible for maintaining the confidentiality of your account and password. You agree to accept responsibility for all activities that occur under your account.',
-        },
-      ],
-    },
-    {
-      title: 'Our Services',
-      items: [
-        {
-          subtitle: 'Website Building',
-          text: 'Flowstarter provides website design, development, and hosting services. Our team builds your website based on a discovery call, and after launch you can customize it using our AI editor.',
-        },
-        {
-          subtitle: 'Hosting and Email',
-          text: 'Your subscription includes website hosting, SSL certificate, and professional email. These are provided as part of your monthly plan.',
-        },
-        {
-          subtitle: 'Service Availability',
-          text: 'We strive for 99.9% uptime but cannot guarantee uninterrupted service. We will notify you of planned maintenance when possible.',
-        },
-      ],
-    },
-    {
-      title: 'Payments and Billing',
-      items: [
-        {
-          subtitle: 'Setup Fee',
-          text: 'A one-time setup fee is charged for the initial website build. 50% is due upfront to start the project (non-refundable deposit), and 50% is due upon your approval of the final site. This covers the discovery call, design, development, and domain/email setup.',
-        },
-        {
-          subtitle: 'Monthly Subscription',
-          text: 'Your first month is free. After that, your subscription is billed monthly. You can cancel anytime, and your site will remain active until the end of your billing period.',
-        },
-        {
-          subtitle: 'AI Credits',
-          text: 'Your plan includes monthly AI credits for site customization. Additional credits can be purchased as needed. Unused credits do not roll over to the next month.',
-        },
-        {
-          subtitle: 'Price Changes',
-          text: 'We may change our prices with 30 days notice. Early adopter pricing is locked for the duration of your subscription, as long as it remains active.',
-        },
-      ],
-    },
-    {
-      title: 'Your Content',
-      items: [
-        {
-          subtitle: 'Ownership',
-          text: 'You retain all rights to the content you create and upload to your website. You can download your site assets at any time.',
-        },
-        {
-          subtitle: 'License to Us',
-          text: 'You grant us a license to host, display, and transmit your content as necessary to provide our services. This license ends when you delete your content or close your account.',
-        },
-        {
-          subtitle: 'Prohibited Content',
-          text: "You may not use our service to host illegal content, malware, spam, or content that infringes on others' intellectual property rights.",
-        },
-      ],
-    },
-    {
-      title: 'Intellectual Property',
-      items: [
-        {
-          subtitle: 'Our Platform',
-          text: 'Flowstarter, our logo, and our platform are protected by intellectual property laws. You may not copy, modify, or distribute our software or branding.',
-        },
-        {
-          subtitle: 'Templates',
-          text: 'Our website templates are licensed for use within Flowstarter. You may not extract, resell, or redistribute template code.',
-        },
-      ],
-    },
-    {
-      title: 'Termination',
-      items: [
-        {
-          subtitle: 'By You',
-          text: 'You can cancel your subscription at any time from your account settings. Your site will remain active until the end of your current billing period.',
-        },
-        {
-          subtitle: 'By Us',
-          text: 'We may suspend or terminate your account if you violate these terms, engage in fraudulent activity, or fail to pay for services.',
-        },
-        {
-          subtitle: 'Effect of Termination',
-          text: 'Upon termination, you can download your site assets for 90 days. After that, your data will be deleted.',
-        },
-      ],
-    },
-    {
-      title: 'Limitation of Liability',
-      items: [
-        {
-          subtitle: 'No Warranty',
-          text: 'Our services are provided "as is" without warranties of any kind. We do not guarantee that our service will meet your specific requirements.',
-        },
-        {
-          subtitle: 'Liability Cap',
-          text: 'Our total liability to you for any claims arising from our services is limited to the amount you paid us in the 12 months before the claim.',
-        },
-      ],
-    },
-    {
-      title: 'Changes to Terms',
-      items: [
-        {
-          subtitle: 'Updates',
-          text: 'We may update these terms from time to time. We will notify you of significant changes via email or through our platform.',
-        },
-        {
-          subtitle: 'Continued Use',
-          text: 'Your continued use of Flowstarter after changes to the terms constitutes acceptance of the new terms.',
-        },
-      ],
-    },
+    { title: t('terms.s1.title'), items: [
+      { subtitle: t('terms.s1.i1.subtitle'), text: t('terms.s1.i1.text') },
+      { subtitle: t('terms.s1.i2.subtitle'), text: t('terms.s1.i2.text') },
+      { subtitle: t('terms.s1.i3.subtitle'), text: t('terms.s1.i3.text') },
+    ] },
+    { title: t('terms.s2.title'), items: [
+      { subtitle: t('terms.s2.i1.subtitle'), text: t('terms.s2.i1.text') },
+      { subtitle: t('terms.s2.i2.subtitle'), text: t('terms.s2.i2.text') },
+      { subtitle: t('terms.s2.i3.subtitle'), text: t('terms.s2.i3.text') },
+    ] },
+    { title: t('terms.s3.title'), items: [
+      { subtitle: t('terms.s3.i1.subtitle'), text: t('terms.s3.i1.text') },
+      { subtitle: t('terms.s3.i2.subtitle'), text: t('terms.s3.i2.text') },
+      { subtitle: t('terms.s3.i3.subtitle'), text: t('terms.s3.i3.text') },
+      { subtitle: t('terms.s3.i4.subtitle'), text: t('terms.s3.i4.text') },
+    ] },
+    { title: t('terms.s4.title'), items: [
+      { subtitle: t('terms.s4.i1.subtitle'), text: t('terms.s4.i1.text') },
+      { subtitle: t('terms.s4.i2.subtitle'), text: t('terms.s4.i2.text') },
+      { subtitle: t('terms.s4.i3.subtitle'), text: t('terms.s4.i3.text') },
+    ] },
+    { title: t('terms.s5.title'), items: [
+      { subtitle: t('terms.s5.i1.subtitle'), text: t('terms.s5.i1.text') },
+      { subtitle: t('terms.s5.i2.subtitle'), text: t('terms.s5.i2.text') },
+    ] },
+    { title: t('terms.s6.title'), items: [
+      { subtitle: t('terms.s6.i1.subtitle'), text: t('terms.s6.i1.text') },
+      { subtitle: t('terms.s6.i2.subtitle'), text: t('terms.s6.i2.text') },
+      { subtitle: t('terms.s6.i3.subtitle'), text: t('terms.s6.i3.text') },
+    ] },
+    { title: t('terms.s7.title'), items: [
+      { subtitle: t('terms.s7.i1.subtitle'), text: t('terms.s7.i1.text') },
+      { subtitle: t('terms.s7.i2.subtitle'), text: t('terms.s7.i2.text') },
+    ] },
+    { title: t('terms.s8.title'), items: [
+      { subtitle: t('terms.s8.i1.subtitle'), text: t('terms.s8.i1.text') },
+      { subtitle: t('terms.s8.i2.subtitle'), text: t('terms.s8.i2.text') },
+    ] },
   ];
 
   return (
@@ -160,17 +72,16 @@ export default function TermsPage() {
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium mb-6">
               <FileText className="w-4 h-4" />
-              Legal Agreement
+              {t('terms.badge')}
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-              Terms of Service
+              {t('terms.title')}
             </h1>
             <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl mx-auto mb-4">
-              By using Flowstarter, you agree to these terms. Please read them
-              carefully.
+              {t('terms.description')}
             </p>
             <p className="text-sm text-gray-400 dark:text-white/30">
-              Last updated: {lastUpdated}
+              {t('terms.lastUpdated', { date: lastUpdated })}
             </p>
           </div>
 
@@ -179,18 +90,18 @@ export default function TermsPage() {
             {[
               {
                 Icon: Sparkles,
-                title: 'Simple Pricing',
-                desc: 'Setup fee + monthly subscription.',
+                title: t('terms.summary.pricing.title'),
+                desc: t('terms.summary.pricing.desc'),
               },
               {
                 Icon: Package,
-                title: 'Your Content',
-                desc: 'You own what you create.',
+                title: t('terms.summary.content.title'),
+                desc: t('terms.summary.content.desc'),
               },
               {
                 Icon: DoorOpen,
-                title: 'Cancel Anytime',
-                desc: 'No lock-in contracts.',
+                title: t('terms.summary.cancel.title'),
+                desc: t('terms.summary.cancel.desc'),
               },
             ].map((item, i) => (
               <div
@@ -242,10 +153,10 @@ export default function TermsPage() {
           {/* Contact */}
           <div className="mt-16 p-8 rounded-2xl bg-gradient-to-r from-[var(--purple)]/5 via-blue-500/5 to-cyan-500/5 border border-[var(--purple)]/10 dark:border-[var(--purple)]/20 text-center">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-              Questions about our terms?
+              {t('terms.contact.title')}
             </h2>
             <p className="text-gray-500 dark:text-white/50 mb-4">
-              We're happy to clarify anything.
+              {t('terms.contact.description')}
             </p>
             <a
               href="mailto:hello@flowstarter.app"

@@ -1,4 +1,4 @@
-import type { GenerationStep } from '@/hooks/generation/types';
+import type { GenerationStep as ProgressGenerationStep } from '@/components/assistant/GenerationProgress';
 import { InputArea } from '@/components/assistant/InputArea';
 import { ProjectDetailsPromptSuggestions } from '@/components/assistant/ProjectDetailsPromptSuggestions';
 import { Button } from '@/components/ui/button';
@@ -324,7 +324,7 @@ export function ProjectDetailsSection({
                   streamingText={''}
                   currentStep={currentStep}
                   generationSteps={
-                    generationSteps as unknown as GenerationStep[]
+                    generationSteps as unknown as ProgressGenerationStep[]
                   }
                   placeholderText={promptExamples[currentIndex]}
                   placeholderKey={placeholderKey}

@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/lib/i18n';
 import { useEffect, useState } from 'react';
 
 type Provider = 'google-analytics' | 'calendly' | 'mailchimp';
@@ -24,6 +25,7 @@ export function IntegrationWizardContent({
   onComplete,
   onClose,
 }: Props) {
+  const { t } = useTranslations();
   const [step, setStep] = useState<1 | 2 | 3>(
     initialStatus === 'success' ? 2 : 1
   );
@@ -270,7 +272,7 @@ export function IntegrationWizardContent({
             </p>
             {onClose && (
               <div className="pt-4">
-                <Button onClick={onClose}>Close</Button>
+                <Button onClick={onClose}>{t('app.close')}</Button>
               </div>
             )}
           </div>

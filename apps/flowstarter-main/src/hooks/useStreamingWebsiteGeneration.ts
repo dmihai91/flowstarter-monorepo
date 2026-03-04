@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import { useGenerationState } from './generation/useGenerationState';
 import type {
   GenerationStep, GenerationProgress, GenerationResult,
-  StepData, QualityMetrics, ProjectDetails,
+  StepData, QualityMetrics, ProjectDetails, TemplateInfo,
 } from './generation/types';
 
 // Re-export types for consumers

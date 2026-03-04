@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from '@/lib/i18n';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,6 +20,7 @@ import {
 } from 'lucide-react';
 
 function JoinPageContent() {
+  const { t } = useTranslations();
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
@@ -102,7 +104,7 @@ function JoinPageContent() {
   if (validationError || !validationData?.valid) {
     const errorMessage = validationError instanceof Error 
       ? validationError.message 
-      : validationData?.error || 'Invalid invitation';
+      : validationData?.error || t('team.join.invalidInvitation');
     
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c] px-4">
@@ -206,7 +208,7 @@ function JoinPageContent() {
                       type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="At least 8 characters"
+                      placeholder={t('team.join.passwordPlaceholder')}
                       className="h-12 pl-11 pr-11 rounded-lg bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10"
                       required
                       minLength={8}
@@ -236,7 +238,7 @@ function JoinPageContent() {
                       type={showPassword ? 'text' : 'password'}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Repeat your password"
+                      placeholder={t('team.join.repeatPassword')}
                       className="h-12 pl-11 rounded-lg bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10"
                       required
                     />

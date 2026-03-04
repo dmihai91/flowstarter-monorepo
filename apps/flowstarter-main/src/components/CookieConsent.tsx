@@ -4,10 +4,12 @@ import { useState, useEffect } from 'react';
 import { X, Cookie } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/lib/i18n';
 
 const COOKIE_CONSENT_KEY = 'flowstarter_cookie_consent';
 
 export function CookieConsent() {
+  const { t } = useTranslations();
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
@@ -65,13 +67,12 @@ export function CookieConsent() {
               {/* Content */}
               <div className="flex-1 min-w-0 pr-6">
                 <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
-                  We use cookies
+                  {t('cookie.title')}
                 </h3>
                 <p className="text-xs sm:text-sm text-gray-500 dark:text-white/50 leading-relaxed mb-4">
-                  Essential cookies to make Flowstarter work, plus analytics to improve your experience. 
-                  No advertising or cross-site tracking.{' '}
+                  {t('cookie.description')}{' '}
                   <Link href="/cookies" className="text-[var(--purple)] hover:underline">
-                    Learn more
+                    {t('cookie.learnMore')}
                   </Link>
                 </p>
 
@@ -82,20 +83,20 @@ export function CookieConsent() {
                     variant="accent"
                     size="sm"
                   >
-                    Accept all
+                    {t('cookie.acceptAll')}
                   </Button>
                   <Button
                     onClick={handleEssentialOnly}
                     variant="outline"
                     size="sm"
                   >
-                    Essential only
+                    {t('cookie.essentialOnly')}
                   </Button>
                   <Link
                     href="/cookies"
                     className="px-4 py-2 text-gray-400 dark:text-white/40 text-sm hover:text-gray-600 dark:hover:text-white/60 transition-colors"
                   >
-                    Settings
+                    {t('cookie.settings')}
                   </Link>
                 </div>
               </div>

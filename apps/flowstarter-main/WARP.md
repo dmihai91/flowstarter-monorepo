@@ -456,6 +456,31 @@ pnpm test       # Unit tests
   - Dark mode: `rgba(58, 58, 74, 0.30)`
 - Prefer shadcn/ui autocomplete component over custom implementations
 
+### Internationalization (i18n) Requirements
+
+- **All user-facing strings MUST use the `t()` translation function** - no hardcoded text in components
+- Import translations via `useTranslations` from `@/lib/i18n` (aliased from `useI18n`)
+- Translation file: `src/locales/en.ts` (English), `src/locales/ro.ts` (Romanian)
+- Use dot-notation keys organized by feature: `'section.subsection.key'`
+- Support interpolation with `{placeholder}` syntax: `t('greeting', { name: 'John' })`
+- **Exceptions** (do NOT translate):
+  - Technical identifiers, URLs, code snippets
+  - Third-party brand names (e.g. "GitHub", "Vercel")
+  - `aria-label` values that are already descriptive English strings for accessibility
+
+```typescript
+import { useTranslations } from '@/lib/i18n';
+
+// ✅ Good - Using translations
+const { t } = useTranslations();
+<h1>{t('dashboard.welcome')}</h1>
+<p>{t('dashboard.projectCount', { count: projects.length })}</p>
+
+// ❌ Bad - Hardcoded strings
+<h1>Welcome to your dashboard</h1>
+<p>You have {projects.length} projects</p>
+```
+
 ---
 
 ## Component Architecture (SRP + DRY)

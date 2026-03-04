@@ -62,11 +62,11 @@ export function FinalCTASection() {
               </Button>
             </a>
             <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 mt-4 text-sm text-white/40 font-medium">
-              <span>€399 setup</span>
+              <span>{t('landing.cta.setupPrice')}</span>
               <span className="text-white/20">·</span>
-              <span>€39/month</span>
+              <span>{t('landing.cta.monthlyPrice')}</span>
               <span className="text-white/20">·</span>
-              <span>First month free</span>
+              <span>{t('landing.cta.firstMonthFree')}</span>
             </div>
           </div>
         </section>

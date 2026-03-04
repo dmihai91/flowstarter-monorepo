@@ -6,6 +6,7 @@
  */
 
 import React, { useState } from 'react';
+import { useTranslation } from '~/lib/i18n/useTranslation';
 import { motion } from 'framer-motion';
 import { 
   Mail, Phone, MapPin, Globe, ChevronRight, ChevronDown,
@@ -33,6 +34,7 @@ export function ContactDetailsPanel({
   onComplete,
   onSkip,
 }: ContactDetailsPanelProps) {
+  const { t } = useTranslation();
   const [contactDetails, setContactDetails] = useState<ContactDetails>({
     email: initialData?.email || '',
     phone: initialData?.phone || '',
@@ -142,7 +144,7 @@ export function ContactDetailsPanel({
             />
             <input
               type="email"
-              placeholder="Email address *"
+              placeholder={t.setup.contactDetails.emailPlaceholder}
               value={contactDetails.email}
               onChange={(e) => updateField('email', e.target.value)}
               data-testid="contact-email-input"
@@ -173,7 +175,7 @@ export function ContactDetailsPanel({
             />
             <input
               type="tel"
-              placeholder="Phone number (optional)"
+              placeholder={t.setup.contactDetails.phonePlaceholder}
               value={contactDetails.phone || ''}
               onChange={(e) => updateField('phone', e.target.value)}
               data-testid="contact-phone-input"
@@ -202,7 +204,7 @@ export function ContactDetailsPanel({
               }} 
             />
             <textarea
-              placeholder="Business address (optional)"
+              placeholder={t.setup.contactDetails.addressPlaceholder}
               value={contactDetails.address || ''}
               onChange={(e) => updateField('address', e.target.value)}
               rows={2}
@@ -236,7 +238,7 @@ export function ContactDetailsPanel({
             />
             <input
               type="url"
-              placeholder="Website URL (optional)"
+              placeholder={t.setup.contactDetails.websitePlaceholder}
               value={contactDetails.website || ''}
               onChange={(e) => updateField('website', e.target.value)}
               data-testid="contact-website-input"

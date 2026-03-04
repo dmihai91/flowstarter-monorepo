@@ -82,13 +82,13 @@ export function ProfileContent() {
       await user.setProfileImage({ file });
       setMessage({ type: 'success', text: 'Profile photo updated.' });
     } catch (err: any) {
-      setMessage({ type: 'error', text: err?.message || 'Failed to update photo.' });
+      setMessage({ type: 'error', text: err?.message || t('app.failedToUpdatePhoto') });
     } finally {
       setSaving(false);
     }
   };
 
-  const getInitials = () => {
+  const getUserInitials = () => {
     const f = user.firstName?.[0] || '';
     const l = user.lastName?.[0] || '';
     return (f + l).toUpperCase() || 'U';
@@ -181,14 +181,14 @@ export function ProfileContent() {
           {user.imageUrl ? (
             <Image
               src={user.imageUrl}
-              alt={user.fullName || 'User'}
+              alt={user.fullName || t('app.userFallback')}
               width={48}
               height={48}
               className="h-12 w-12 rounded-full border-2 border-gray-200/50 dark:border-white/10 object-cover"
             />
           ) : (
             <div className="h-12 w-12 rounded-full border-2 border-gray-200/50 dark:border-white/10 bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center text-white text-sm font-bold">
-              {getInitials(user)}
+              {getUserInitials()}
             </div>
           )}
           <button
@@ -200,7 +200,7 @@ export function ProfileContent() {
         </div>
         <div>
           <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {user.fullName || 'Your Profile'}
+            {user.fullName || t('app.yourProfile')}
           </h1>
           <p className="text-xs text-gray-500 dark:text-white/50">
             {user.emailAddresses?.[0]?.emailAddress}

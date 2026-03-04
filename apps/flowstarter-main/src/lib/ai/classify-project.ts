@@ -81,7 +81,7 @@ async function callOpenRouter(prompt: string): Promise<ClassificationResult> {
       },
     ],
     temperature: 0.1, // Low temperature for consistent classification
-    maxTokens: 150,
+    maxOutputTokens: 150,
   });
 
   if (!content) {

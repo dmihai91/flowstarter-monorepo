@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChevronDown, Check } from 'lucide-react';
+import { useTranslation } from '../i18n';
 
 interface Category {
   name: string;
@@ -16,13 +17,13 @@ interface SidebarProps {
   darkMode: boolean;
 }
 
-const categoryLabels: Record<string, string> = {
-  education: 'Education',
-  coaching: 'Coaching',
-  health: 'Health & Wellness',
-  creative: 'Creative',
-  business: 'Business',
-  other: 'Other',
+const categoryKeys: Record<string, string> = {
+  education: 'categories.education',
+  coaching: 'categories.coaching',
+  health: 'categories.health',
+  creative: 'categories.creative',
+  business: 'categories.business',
+  other: 'categories.other',
 };
 
 const categoryIcons: Record<string, string> = {
@@ -43,6 +44,8 @@ export function Sidebar({
   toggleFeature,
   darkMode,
 }: SidebarProps) {
+  const { t } = useTranslation();
+
   return (
     <aside className="hidden lg:block w-64 shrink-0">
       <div className="sticky top-24 space-y-6">
@@ -52,7 +55,7 @@ export function Sidebar({
             className="flex items-center justify-between w-full text-left mb-3"
           >
             <h3 className="text-sm font-semibold text-surface-900 dark:text-white">
-              Categories
+              {t('sidebar.categories')}
             </h3>
             <ChevronDown className="w-4 h-4 text-surface-400" />
           </button>
@@ -68,7 +71,7 @@ export function Sidebar({
             >
               <span className="flex items-center gap-2">
                 <span>🌟</span>
-                <span>All Templates</span>
+                <span>{t('sidebar.allTemplates')}</span>
               </span>
               <span className={`text-xs px-2 py-0.5 rounded-full ${
                 selectedCategory === null
@@ -91,7 +94,7 @@ export function Sidebar({
               >
                 <span className="flex items-center gap-2">
                   <span>{categoryIcons[category.name] || '📁'}</span>
-                  <span>{categoryLabels[category.name] || category.name}</span>
+                  <span>{categoryKeys[category.name] ? t(categoryKeys[category.name]) : category.name}</span>
                 </span>
                 <span className={`text-xs px-2 py-0.5 rounded-full ${
                   selectedCategory === category.name
@@ -108,7 +111,7 @@ export function Sidebar({
         {/* Features */}
         <div className="bg-white dark:bg-surface-800/50 rounded-2xl border border-surface-200 dark:border-surface-700/50 p-4">
           <h3 className="text-sm font-semibold text-surface-900 dark:text-white mb-3">
-            Features
+            {t('sidebar.features')}
           </h3>
           
           <div className="space-y-2">
@@ -146,10 +149,10 @@ export function Sidebar({
             </div>
             <div>
               <p className="text-sm font-medium text-brand-900 dark:text-brand-100">
-                Pro tip
+                {t('sidebar.proTip')}
               </p>
               <p className="text-xs text-brand-700 dark:text-brand-300 mt-1">
-                Click any template to preview it with different color palettes and fonts!
+                {t('sidebar.proTipDescription')}
               </p>
             </div>
           </div>

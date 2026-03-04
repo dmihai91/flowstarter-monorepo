@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Play, ExternalLink } from 'lucide-react';
+import { useTranslation } from '../i18n';
 
 export interface Palette {
   id: string;
@@ -43,6 +44,7 @@ const categoryColors: Record<string, { bg: string; text: string; darkBg: string;
 };
 
 export function TemplateCard({ template, darkMode, onPreview }: TemplateCardProps) {
+  const { t } = useTranslation();
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -125,7 +127,7 @@ export function TemplateCard({ template, darkMode, onPreview }: TemplateCardProp
         {/* Color palette swatches */}
         {palettes.length > 0 && (
           <div className="flex items-center gap-2 mb-4">
-            <span className="text-xs text-surface-400 dark:text-surface-500">Palettes:</span>
+            <span className="text-xs text-surface-400 dark:text-surface-500">{t('card.palettes')}</span>
             <div className="flex gap-1.5">
               {palettes.slice(0, 4).map((palette) => (
                 <div
@@ -173,7 +175,7 @@ export function TemplateCard({ template, darkMode, onPreview }: TemplateCardProp
           }}
           className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-surface-900 dark:bg-white text-white dark:text-surface-900 font-medium text-sm hover:bg-surface-800 dark:hover:bg-surface-100 transition-all duration-200 group/btn"
         >
-          <span>View Demo</span>
+          <span>{t('card.viewDemo')}</span>
           <ExternalLink className="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5" />
         </button>
       </div>

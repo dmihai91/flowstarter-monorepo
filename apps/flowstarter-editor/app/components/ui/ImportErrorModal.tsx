@@ -1,5 +1,6 @@
 import * as RadixDialog from '@radix-ui/react-dialog';
 import { memo, useState, useMemo } from 'react';
+import { useTranslation } from '~/lib/i18n/useTranslation';
 import { Dialog, DialogTitle, DialogDescription } from './Dialog';
 import { Button } from './Button';
 import { classNames } from '~/utils/classNames';
@@ -89,6 +90,7 @@ export const ImportErrorModal = memo(
     onAskAI,
     postMessage,
   }: ImportErrorModalProps) => {
+    const { t } = useTranslation();
     const [selectedForExclusion, setSelectedForExclusion] = useState<Set<string>>(new Set());
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -222,7 +224,7 @@ Please analyze these errors and suggest how to resolve the import issues.
                     <button
                       onClick={handleCopyErrorReport}
                       className="text-flowstarter-elements-textSecondary hover:text-flowstarter-elements-textPrimary transition-colors"
-                      title="Copy error report"
+                      title={t.ui.importError.copyReport}
                     >
                       <div className="i-ph:copy text-base"></div>
                     </button>
@@ -297,7 +299,7 @@ Please analyze these errors and suggest how to resolve the import issues.
                                       checked={selectedForExclusion.has(file.path)}
                                       onChange={() => handleToggleExclusion(file.path)}
                                       className="mt-0.5 flex-shrink-0"
-                                      title="Exclude from retry"
+                                      title={t.ui.importError.excludeFromRetry}
                                     />
                                   )}
                                   <div className="flex-1 min-w-0">

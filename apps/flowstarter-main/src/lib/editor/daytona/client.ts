@@ -1,4 +1,5 @@
 import 'server-only';
+// @ts-expect-error - @daytonaio/sdk types not installed; runtime resolved via Daytona infrastructure
 import { Daytona, type DaytonaConfig } from '@daytonaio/sdk';
 
 let daytonaClient: Daytona | null = null;

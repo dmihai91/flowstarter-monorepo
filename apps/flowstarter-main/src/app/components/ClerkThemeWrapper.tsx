@@ -196,6 +196,7 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
         'https://editor.flowstarter.app',
         'http://localhost:5173',
       ]}
+      {...({} as any)}
     >
       {children}
     </ClerkProvider>

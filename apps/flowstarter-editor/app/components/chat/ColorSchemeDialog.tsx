@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import { useTranslation } from '~/lib/i18n/useTranslation';
 import * as RadixDialog from '@radix-ui/react-dialog';
 import { motion } from 'framer-motion';
 import { Button } from '~/components/ui/Button';
@@ -35,11 +36,12 @@ const SECTION_TABS = [
 ] as const;
 
 export const ColorSchemeDialog: React.FC<ColorSchemeDialogProps> = ({ setDesignScheme, designScheme }) => {
+  const { t } = useTranslation();
   const state = useDesignSchemeState({ designScheme, setDesignScheme });
 
   return (
     <>
-      <IconButton title="Design System" className="transition-all" onClick={() => state.setIsDialogOpen(true)}>
+      <IconButton title={t.chat.colorScheme.title} className="transition-all" onClick={() => state.setIsDialogOpen(true)}>
         <div className="i-ph:palette text-xl"></div>
       </IconButton>
 
@@ -216,7 +218,9 @@ interface ModeToggleProps {
   setMode: (mode: 'light' | 'dark') => void;
 }
 
-const ModeToggle: React.FC<ModeToggleProps> = ({ mode, setMode }) => (
+const ModeToggle: React.FC<ModeToggleProps> = ({ mode, setMode }) => {
+  const { t } = useTranslation();
+  return (
   <div className="flex items-center gap-1 p-1 bg-flowstarter-elements-background-depth-1 dark:bg-flowstarter-elements-background-depth-1-dark border border-flowstarter-elements-borderColor dark:border-flowstarter-elements-borderColor-dark rounded-lg">
     <button
       onClick={() => setMode('light')}
@@ -226,7 +230,7 @@ const ModeToggle: React.FC<ModeToggleProps> = ({ mode, setMode }) => (
           ? 'bg-flowstarter-elements-item-backgroundAccent border-flowstarter-elements-borderColorActive text-white shadow-sm'
           : 'bg-flowstarter-elements-background-depth-3 dark:bg-flowstarter-elements-background-depth-3-dark text-flowstarter-elements-textSecondary dark:text-flowstarter-elements-textSecondary-dark hover:text-flowstarter-elements-textPrimary dark:hover:text-flowstarter-elements-textPrimary-dark hover:bg-flowstarter-elements-background-depth-2 dark:hover:bg-flowstarter-elements-background-depth-2-dark',
       )}
-      title="Light mode"
+      title={t.chat.colorScheme.lightMode}
     >
       <span className="i-ph:sun text-base" />
     </button>
@@ -238,12 +242,13 @@ const ModeToggle: React.FC<ModeToggleProps> = ({ mode, setMode }) => (
           ? 'bg-flowstarter-elements-item-backgroundAccent border-flowstarter-elements-borderColorActive text-white shadow-sm'
           : 'bg-flowstarter-elements-background-depth-3 dark:bg-flowstarter-elements-background-depth-3-dark text-flowstarter-elements-textSecondary dark:text-flowstarter-elements-textSecondary-dark hover:text-flowstarter-elements-textPrimary dark:hover:text-flowstarter-elements-textPrimary-dark hover:bg-flowstarter-elements-background-depth-2 dark:hover:bg-flowstarter-elements-background-depth-2-dark',
       )}
-      title="Dark mode"
+      title={t.chat.colorScheme.darkMode}
     >
       <span className="i-ph:moon text-base" />
     </button>
   </div>
-);
+  );
+};
 
 interface DialogFooterProps {
   onCancel: () => void;

@@ -16,14 +16,14 @@ export function PlatformTypeSection({
   const platformTypes = [
     {
       id: 'business-site',
-      label: t('platformType.businessSite') || 'Business Site',
+      label: t('platformType.businessSite'),
       description:
-        t('platformType.businessSiteDesc') || 'Professional business website',
+        t('platformType.businessSiteDesc'),
       icon: <AppWindow className="w-6 h-6" />,
     },
     {
       id: 'personal-brand',
-      label: t('platformType.personalBrand') || 'Personal Brand',
+      label: t('platformType.personalBrand'),
       description:
         t('platformType.personalBrandDesc') ||
         'Personal brand or professional profile',
@@ -31,8 +31,8 @@ export function PlatformTypeSection({
     },
     {
       id: 'portfolio',
-      label: t('platformType.portfolio') || 'Portfolio',
-      description: t('platformType.portfolioDesc') || 'Showcase your work',
+      label: t('platformType.portfolio'),
+      description: t('platformType.portfolioDesc'),
       icon: <ImageIcon className="w-6 h-6" />,
     },
   ];
@@ -48,7 +48,7 @@ export function PlatformTypeSection({
     <div className="space-y-4">
       <div className="space-y-[8px]">
         <label className="block text-md font-medium leading-normal text-gray-900 dark:text-white">
-          {t('platformType.label') || 'Platform Type'}
+          {t('platformType.label')}
         </label>
       </div>
 

@@ -113,7 +113,7 @@ export default function TeamLoginPage() {
         errors?: Array<{ message?: string; code?: string }>;
       };
       const errorMessage =
-        clerkError.errors?.[0]?.message || 'Invalid credentials';
+        clerkError.errors?.[0]?.message || t('team.login.invalidCredentials');
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -148,7 +148,7 @@ export default function TeamLoginPage() {
       }
     } catch (err: unknown) {
       const clerkError = err as { errors?: Array<{ message?: string }> };
-      setError(clerkError.errors?.[0]?.message || 'Invalid code');
+      setError(clerkError.errors?.[0]?.message || t('team.login.invalidCode'));
     } finally {
       setIsLoading(false);
     }

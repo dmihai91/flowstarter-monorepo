@@ -5,8 +5,10 @@ import Image from 'next/image';
 import { FlowBackground } from '@flowstarter/flow-design-system';
 import { SupportHeader } from '@/components/SupportHeader';
 import Footer from '@/components/Footer';
+import { useTranslations } from '@/lib/i18n';
 
 export default function AboutPage() {
+  const { t } = useTranslations();
   return (
     <div className="relative flex min-h-screen flex-col page-gradient">
       <FlowBackground variant="dashboard" style={{ position: 'fixed', inset: 0, zIndex: 0 }} />
@@ -19,11 +21,10 @@ export default function AboutPage() {
             <div className="flex flex-col items-center">
               <div className="w-24 h-2 bg-[--purple-primary] rounded-full mb-6" />
               <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl mb-4 text-foreground">
-                About Flowstarter
+                {t('about.title')}
               </h1>
               <p className="text-lg md:text-2xl text-muted-foreground font-medium max-w-2xl mx-auto">
-                Empowering small businesses to build their digital presence with
-                AI-powered solutions
+                {t('about.description')}
               </p>
             </div>
           </div>
@@ -36,14 +37,11 @@ export default function AboutPage() {
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-2 h-8 bg-[--purple-primary] rounded-full" />
                 <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-                  Our Mission
+                  {t('about.mission.heading')}
                 </h2>
               </div>
               <p className="text-muted-foreground md:text-lg">
-                We believe that every small business deserves a professional
-                digital presence. Our mission is to make it easy and affordable
-                for entrepreneurs to establish and grow their online business
-                with cutting-edge AI technology.
+                {t('about.mission.description')}
               </p>
               <ul className="space-y-4 mt-6">
                 <li className="flex items-center gap-3">
@@ -51,7 +49,7 @@ export default function AboutPage() {
                     <Target className="w-6 h-6 text-(--purple-primary)" />
                   </span>
                   <span className="text-muted-foreground">
-                    Simplify digital presence creation for small businesses
+                    {t('about.mission.simplify')}
                   </span>
                 </li>
                 <li className="flex items-center gap-3">
@@ -62,7 +60,7 @@ export default function AboutPage() {
                     />
                   </span>
                   <span className="text-muted-foreground">
-                    Leverage AI to make professional design accessible
+                    {t('about.mission.leverage')}
                   </span>
                 </li>
                 <li className="flex items-center gap-3">
@@ -70,7 +68,7 @@ export default function AboutPage() {
                     <Rocket className="w-6 h-6 text-pink-500" />
                   </span>
                   <span className="text-muted-foreground">
-                    Help businesses grow and succeed online
+                    {t('about.mission.grow')}
                   </span>
                 </li>
               </ul>
@@ -79,7 +77,7 @@ export default function AboutPage() {
               <div className="rounded-xl overflow-hidden border border-border shadow-lg">
                 <Image
                   src="https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=1600&auto=format&fit=crop"
-                  alt="Team collaboration"
+                  alt={t('about.mission.imageAlt')}
                   className="object-cover w-full h-full"
                   width={500}
                   height={350}
@@ -96,19 +94,18 @@ export default function AboutPage() {
             <div className="flex flex-col items-center mb-10">
               <div className="w-2 h-8 bg-[--purple-primary] rounded-full mb-2" />
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-2">
-                Our Values
+                {t('about.values.heading')}
               </h2>
               <p className="text-muted-foreground md:text-lg max-w-2xl mx-auto">
-                These core values guide everything we do at Flowstarter
+                {t('about.values.description')}
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
               <div className="flex flex-col items-center space-y-4 rounded-xl border border-[--purple-primary]/30 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm p-6 shadow-lg [@media(hover:hover)]:hover:shadow-xl transition-shadow duration-300">
                 <Sparkles className="w-10 h-10 text-(--purple-primary) mb-2" />
-                <h3 className="text-xl font-bold">Innovation</h3>
+                <h3 className="text-xl font-bold">{t('about.values.innovation.title')}</h3>
                 <p className="text-muted-foreground text-center">
-                  We constantly push the boundaries of what's possible with AI
-                  technology to provide the best solutions for our customers.
+                  {t('about.values.innovation.description')}
                 </p>
               </div>
               <div className="flex flex-col items-center space-y-4 rounded-xl border border-blue-500/30 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm p-6 shadow-lg [@media(hover:hover)]:hover:shadow-xl transition-shadow duration-300">
@@ -116,18 +113,16 @@ export default function AboutPage() {
                   className="w-10 h-10 mb-2"
                   style={{ color: 'var(--blue)' }}
                 />
-                <h3 className="text-xl font-bold">Accessibility</h3>
+                <h3 className="text-xl font-bold">{t('about.values.accessibility.title')}</h3>
                 <p className="text-muted-foreground text-center">
-                  We believe in making professional digital tools accessible to
-                  businesses of all sizes, regardless of technical expertise.
+                  {t('about.values.accessibility.description')}
                 </p>
               </div>
               <div className="flex flex-col items-center space-y-4 rounded-xl border border-pink-500/30 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm p-6 shadow-lg [@media(hover:hover)]:hover:shadow-xl transition-shadow duration-300">
                 <Rocket className="w-10 h-10 text-pink-500 mb-2" />
-                <h3 className="text-xl font-bold">Customer Success</h3>
+                <h3 className="text-xl font-bold">{t('about.values.customerSuccess.title')}</h3>
                 <p className="text-muted-foreground text-center">
-                  Your success is our success. We're committed to helping you
-                  achieve your business goals through our platform and support.
+                  {t('about.values.customerSuccess.description')}
                 </p>
               </div>
             </div>
@@ -140,18 +135,17 @@ export default function AboutPage() {
             <div className="flex flex-col items-center mb-6">
               <div className="w-2 h-8 bg-[--purple-primary] rounded-full mb-2" />
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-2">
-                Join Our Team
+                {t('about.joinTeam.heading')}
               </h2>
             </div>
             <p className="text-muted-foreground md:text-lg mb-8 max-w-2xl mx-auto">
-              We're always looking for talented individuals who share our
-              passion for helping small businesses succeed.
+              {t('about.joinTeam.description')}
             </p>
             <a
               href="/careers"
               className="inline-flex h-12 items-center justify-center rounded-md bg-[--purple-primary] px-8 text-base font-semibold text-white shadow transition-colors duration-200 [@media(hover:hover)]:hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--purple-primary) focus-visible:ring-offset-2"
             >
-              View Open Positions
+              {t('about.joinTeam.button')}
             </a>
           </div>
         </section>

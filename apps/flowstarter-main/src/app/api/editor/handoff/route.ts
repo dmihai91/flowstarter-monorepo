@@ -243,7 +243,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Parse the data field if it's JSON
-    let projectConfig = null;
+    let projectConfig: unknown = null;
     if (project.data) {
       try {
         projectConfig = JSON.parse(project.data);
@@ -264,7 +264,7 @@ export async function GET(request: NextRequest) {
         isDraft: project.is_draft,
         status: project.status,
         domainName: project.domain_name,
-        projectType: project.project_type,
+        projectType: (project as Record<string, unknown>).project_type ?? null,
       },
       userId,
     });

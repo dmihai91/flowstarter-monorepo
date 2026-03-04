@@ -28,9 +28,12 @@
   },
   "sidebar": {
     "categories": "Categories",
+    "allTemplates": "All Templates",
     "technologies": "Technologies",
     "features": "Features",
-    "filters": "Filters"
+    "filters": "Filters",
+    "proTip": "Pro tip",
+    "proTipDescription": "Click any template to preview it with different color palettes and fonts!"
   },
   "categories": {
     "all": "All Templates",
@@ -38,7 +41,12 @@
     "portfolio": "Portfolio",
     "landing": "Landing Pages",
     "saas": "SaaS",
-    "services": "Services"
+    "services": "Services",
+    "education": "Education",
+    "coaching": "Coaching",
+    "health": "Health & Wellness",
+    "creative": "Creative",
+    "other": "Other"
   },
   "tech": {
     "astro": "Astro",
@@ -58,7 +66,8 @@
   "card": {
     "free": "Free",
     "preview": "Preview",
-    "viewDemo": "View Demo"
+    "viewDemo": "View Demo",
+    "palettes": "Palettes:"
   },
   "footer": {
     "about": "About",

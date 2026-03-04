@@ -339,7 +339,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Parse the data field
-    let config = null;
+    let config: unknown = null;
     if (project.data) {
       try {
         config = JSON.parse(project.data);

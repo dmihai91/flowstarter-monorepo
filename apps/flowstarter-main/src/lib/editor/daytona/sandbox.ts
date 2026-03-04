@@ -1,9 +1,12 @@
 import 'server-only';
-import { type Sandbox, SandboxState } from '@daytonaio/sdk';
 import { getClient, getCachedSandbox, setCachedSandbox } from './client';
 
+// Daytona SDK types - package not installed locally, resolved at runtime
+type Sandbox = any;
+const SandboxState = { STARTED: 'started', STOPPED: 'stopped', ARCHIVED: 'archived' } as const;
+
 export async function getOrCreateSandbox(projectId: string): Promise<{ sandbox: Sandbox; isNew: boolean }> {
-  const client = getClient();
+  const client: any = getClient();
 
   const cached = getCachedSandbox(projectId);
   if (cached) {
@@ -20,7 +23,7 @@ export async function getOrCreateSandbox(projectId: string): Promise<{ sandbox: 
 
   try {
     const { items } = await client.list({ source: 'flowstarter-editor' });
-    const match = items.find((s) => s.labels?.project === projectId);
+    const match = items.find((s: any) => s.labels?.project === projectId);
     if (match) {
       await match.refreshData();
       if (match.state !== SandboxState.STARTED) await match.start(60);
@@ -41,8 +44,8 @@ export async function getOrCreateSandbox(projectId: string): Promise<{ sandbox: 
     labels: { project: projectId, source: 'flowstarter-editor' },
   }, { timeout: 120 });
 
-  const workDir = (await sandbox.getWorkDir()) || '/home/daytona';
-  await sandbox.process.executeCommand('npm install -g @anthropic-ai/claude-code', workDir);
+  const workDir = (await sandbox.getWorkDir?.()) || '/home/daytona';
+  await sandbox.process.executeCommand?.('npm install -g @anthropic-ai/claude-code', workDir);
 
   setCachedSandbox(projectId, { sandboxId: sandbox.id });
   return { sandbox, isNew: true };

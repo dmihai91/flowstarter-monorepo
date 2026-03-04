@@ -25,7 +25,7 @@ export async function GET(
 
   try {
     const data = await fs.readFile(thumbnailPath);
-    return new NextResponse(data, {
+    return new NextResponse(data as unknown as BodyInit, {
       headers: {
         'Content-Type': 'image/png',
         'Cache-Control': 'public, max-age=3600, immutable',

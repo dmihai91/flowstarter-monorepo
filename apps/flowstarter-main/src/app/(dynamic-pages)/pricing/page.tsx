@@ -17,68 +17,42 @@ import {
 import { FlowBackground } from '@flowstarter/flow-design-system';
 import { SupportHeader } from '@/components/SupportHeader';
 import Footer from '@/components/Footer';
+import { useTranslations } from '@/lib/i18n';
 
 
 export default function PricingPage() {
-  // Quick features for the main card
+  const { t } = useTranslations();
+
   const quickFeatures = [
-    'Discovery call + done-for-you site build',
-    'Up to 7 professionally designed pages',
-    'Hosting on global CDN',
-    'Professional email (1 mailbox)',
-    'Analytics dashboard (leads + page views)',
-    'AI-powered site customization',
-    'First month free',
+    t('pricing.starter.feature1'), t('pricing.starter.feature2'), t('pricing.starter.feature3'),
+    t('pricing.starter.feature4'), t('pricing.starter.feature5'), t('pricing.starter.feature6'),
+    t('pricing.starter.feature7'),
   ];
 
-  // Setup features (one-time) - everything we build
   const setupFeatures = [
-    'Personal discovery call with our team',
-    'AI-generated website from premium templates',
-    'Up to 7 professionally designed pages',
-    'Mobile-responsive design (looks great on any device)',
-    'Custom domain setup and configuration',
-    'Professional email setup (1 mailbox)',
-    'SSL certificate (HTTPS security)',
-    'Contact form with lead capture',
-    'Google Analytics integration',
-    'Basic SEO setup (meta tags, sitemap, robots.txt)',
-    'Open Graph tags for social sharing',
-    'Performance optimization (90+ Lighthouse score)',
-    'Image optimization and lazy loading',
-    'Cloudflare CDN configuration',
-    'DNS setup and domain verification',
-    'Cookie consent banner (GDPR compliant)',
-    'Privacy policy and terms pages (templates)',
-    'Favicon and brand assets setup',
-    'Your site, live and ready',
+    t('pricing.setup.feature1'), t('pricing.setup.feature2'), t('pricing.setup.feature3'),
+    t('pricing.setup.feature4'), t('pricing.setup.feature5'), t('pricing.setup.feature6'),
+    t('pricing.setup.feature7'), t('pricing.setup.feature8'), t('pricing.setup.feature9'),
+    t('pricing.setup.feature10'), t('pricing.setup.feature11'), t('pricing.setup.feature12'),
+    t('pricing.setup.feature13'), t('pricing.setup.feature14'), t('pricing.setup.feature15'),
+    t('pricing.setup.feature16'), t('pricing.setup.feature17'), t('pricing.setup.feature18'),
+    t('pricing.setup.feature19'),
   ];
 
-  // Monthly features (subscription)
   const monthlyFeatures = [
-    'Website hosting (global CDN, automatic SSL)',
-    'Professional email (1 mailbox)',
-    '1 GB cloud storage for your files and assets',
-    'Analytics dashboard (leads + page views)',
-    'AI-powered edits - content, pages, branding, SEO',
-    'Platform updates and improvements',
-    'Email support (48h response)',
+    t('pricing.monthly.feature1'), t('pricing.monthly.feature2'), t('pricing.monthly.feature3'),
+    t('pricing.monthly.feature4'), t('pricing.monthly.feature5'), t('pricing.monthly.feature6'),
+    t('pricing.monthly.feature7'),
   ];
 
-  // Pro features
   const proFeatures = [
-    'Up to 3 sites, 1 subscription',
-    'Blog, booking & newsletter integrations',
-    'Multi-language support',
-    'Enhanced dashboard with potential revenue tracking',
+    t('pricing.pro.feature1'), t('pricing.pro.feature2'),
+    t('pricing.pro.feature3'), t('pricing.pro.feature4'),
   ];
 
-  // Business features
   const businessFeatures = [
-    'E-commerce integrations (Shopify, Gumroad)',
-    'Product catalog & Stripe payments',
-    'Advanced SEO & WhatsApp Business',
-    'Full revenue tracking in dashboard',
+    t('pricing.business.feature1'), t('pricing.business.feature2'),
+    t('pricing.business.feature3'), t('pricing.business.feature4'),
   ];
 
   return (
@@ -92,24 +66,23 @@ export default function PricingPage() {
           <div className="text-center max-w-4xl mx-auto">
             <Badge className="mb-6 bg-gradient-to-r from-[var(--purple)] to-cyan-500 text-white border-0 px-4 py-1.5 text-sm font-semibold">
               <Sparkles className="w-4 h-4 mr-2" />
-              Beta Pricing - 50% Off Everything
+              {t('pricing.badge')}
             </Badge>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-6">
-              Simple, transparent{' '}
+              {t('pricing.title1')}
               <span className="bg-gradient-to-r from-[var(--purple)] to-cyan-500 bg-clip-text text-transparent">
-                pricing
+                {t('pricing.title2')}
               </span>
             </h1>
 
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-4">
-              Get your professional website built by our team. 50% off setup +
-              50% off subscription for your first year.
+              {t('pricing.description')}
             </p>
 
             <div className="inline-flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-4 py-2 rounded-full">
               <Clock className="w-4 h-4" />
-              <span className="font-medium">Limited beta spots available</span>
+              <span className="font-medium">{t('pricing.betaSpots')}</span>
             </div>
           </div>
         </div>
@@ -130,16 +103,16 @@ export default function PricingPage() {
                       <Rocket className="w-6 h-6 text-[var(--purple)]" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                        Starter
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                        {t('pricing.starter.name')}
                       </h3>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Everything you need
+                        {t('pricing.starter.subtitle')}
                       </p>
                     </div>
                   </div>
                   <Badge className="bg-[var(--purple)] text-white border-0">
-                    50% off during beta
+                    {t('pricing.starter.badge')}
                   </Badge>
                 </div>
 
@@ -149,14 +122,14 @@ export default function PricingPage() {
                     {/* Setup */}
                     <div>
                       <p className="text-xs uppercase tracking-wider text-gray-400 dark:text-white/40 mb-1">
-                        One-time setup
+                        {t('pricing.starter.setupLabel')}
                       </p>
                       <div className="flex items-baseline gap-2">
                         <span className="text-lg text-gray-400 line-through">
-                          €299
+                          {t('pricing.starter.setupOriginal')}
                         </span>
                         <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                          €150
+                          {t('pricing.starter.setupPrice')}
                         </span>
                       </div>
                     </div>
@@ -164,21 +137,21 @@ export default function PricingPage() {
                     {/* Monthly */}
                     <div>
                       <p className="text-xs uppercase tracking-wider text-gray-400 dark:text-white/40 mb-1">
-                        Monthly
+                        {t('pricing.starter.monthlyLabel')}
                       </p>
                       <div className="flex items-baseline gap-2">
                         <span className="text-lg text-gray-400 line-through">
-                          €29
+                          {t('pricing.starter.monthlyOriginal')}
                         </span>
                         <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                          €15
+                          {t('pricing.starter.monthlyPrice')}
                         </span>
-                        <span className="text-gray-500">/mo</span>
+                        <span className="text-gray-500">{t('pricing.starter.monthlySuffix')}</span>
                       </div>
                     </div>
                   </div>
                   <p className="text-xs text-[var(--purple)] mt-3">
-                    Starts after your free first month
+                    {t('pricing.starter.subscriptionNote')}
                   </p>
                 </div>
 
@@ -207,13 +180,12 @@ export default function PricingPage() {
                       'linear-gradient(135deg, var(--landing-btn-from) 0%, var(--landing-btn-via) 100%)',
                   }}
                 >
-                  Book Free Discovery Call
-                  <span className="ml-2">→</span>
+                  {t('pricing.starter.cta')}
+                  <span className="ml-2">{"\u2192"}</span>
                 </a>
 
                 <p className="text-center text-xs text-gray-400 dark:text-white/40 mt-4">
-                  No lock-in. Cancel anytime. 50% setup fee refund if you share
-                  feedback.
+                  {t('pricing.starter.disclaimer')}
                 </p>
               </CardContent>
             </Card>
@@ -226,11 +198,10 @@ export default function PricingPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Everything you need. Nothing you don't.
+              {t('pricing.details.heading')}
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Clear breakdown of what's included in setup vs. your monthly
-              subscription
+              {t('pricing.details.description')}
             </p>
           </div>
 
@@ -244,23 +215,23 @@ export default function PricingPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                      Setup (one-time)
+                      {t('pricing.setup.title')}
                     </h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      What we build for you
+                      {t('pricing.setup.subtitle')}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-baseline gap-2 mb-6 pb-6 border-b border-gray-200 dark:border-white/10">
                   <span className="text-lg text-gray-400 line-through">
-                    €299
+                    {t('pricing.setup.originalPrice')}
                   </span>
                   <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                    €150
+                    {t('pricing.setup.price')}
                   </span>
                   <span className="text-sm text-[var(--purple)]">
-                    beta price
+                    {t('pricing.setup.badge')}
                   </span>
                 </div>
 
@@ -288,24 +259,24 @@ export default function PricingPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                      Monthly subscription
+                      {t('pricing.monthly.title')}
                     </h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      What stays active
+                      {t('pricing.monthly.subtitle')}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-baseline gap-2 mb-6 pb-6 border-b border-gray-200 dark:border-white/10">
                   <span className="text-lg text-gray-400 line-through">
-                    €29
+                    {t('pricing.monthly.originalPrice')}
                   </span>
                   <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                    €15
+                    {t('pricing.monthly.price')}
                   </span>
-                  <span className="text-sm text-gray-500">/month</span>
+                  <span className="text-sm text-gray-500">{t('pricing.monthly.suffix')}</span>
                   <span className="text-sm text-[var(--purple)]">
-                    beta price
+                    {t('pricing.monthly.badge')}
                   </span>
                 </div>
 
@@ -323,7 +294,7 @@ export default function PricingPage() {
                 </div>
 
                 <p className="text-xs text-gray-400 dark:text-white/30 mt-6 pt-4 border-t border-gray-200 dark:border-white/10">
-                  First month free - billing starts 30 days after launch
+                  {t('pricing.monthly.note')}
                 </p>
               </CardContent>
             </Card>
@@ -336,10 +307,10 @@ export default function PricingPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-              More plans coming soon
+              {t('pricing.comingSoon.heading')}
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
-              Growing? We'll grow with you.
+              {t('pricing.comingSoon.description')}
             </p>
           </div>
 
@@ -355,7 +326,7 @@ export default function PricingPage() {
                       <Star className="w-4 h-4 text-gray-400" />
                     </div>
                     <h3 className="text-lg font-bold text-gray-400 dark:text-gray-500">
-                      Pro
+                      {t('pricing.pro.name')}
                     </h3>
                   </div>
                   <Badge
@@ -363,12 +334,12 @@ export default function PricingPage() {
                     className="text-gray-400 border-gray-300 dark:border-gray-600 text-xs"
                   >
                     <Lock className="w-3 h-3 mr-1" />
-                    Coming Soon
+                    {t('pricing.pro.badge')}
                   </Badge>
                 </div>
 
                 <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">
-                  Starting at €499 setup + €49/month
+                  {t('pricing.pro.price')}
                 </p>
 
                 <div className="space-y-2">
@@ -388,7 +359,7 @@ export default function PricingPage() {
                   disabled
                   className="w-full mt-5 bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed"
                 >
-                  Coming Q2 2026
+                  {t('pricing.pro.cta')}
                 </Button>
               </CardContent>
             </Card>
@@ -404,7 +375,7 @@ export default function PricingPage() {
                       <Crown className="w-4 h-4 text-gray-400" />
                     </div>
                     <h3 className="text-lg font-bold text-gray-400 dark:text-gray-500">
-                      Business
+                      {t('pricing.business.name')}
                     </h3>
                   </div>
                   <Badge
@@ -412,12 +383,12 @@ export default function PricingPage() {
                     className="text-gray-400 border-gray-300 dark:border-gray-600 text-xs"
                   >
                     <Lock className="w-3 h-3 mr-1" />
-                    Coming Soon
+                    {t('pricing.business.badge')}
                   </Badge>
                 </div>
 
                 <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">
-                  Starting at €699 setup + €79/month
+                  {t('pricing.business.price')}
                 </p>
 
                 <div className="space-y-2">
@@ -437,7 +408,7 @@ export default function PricingPage() {
                   disabled
                   className="w-full mt-5 bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed"
                 >
-                  Coming Q3 2026
+                  {t('pricing.business.cta')}
                 </Button>
               </CardContent>
             </Card>
@@ -452,15 +423,14 @@ export default function PricingPage() {
             <CardContent className="p-8 sm:p-12 text-center">
               <Badge className="mb-4 bg-[var(--purple)]/10 text-[var(--purple)] border-[var(--purple)]/20">
                 <Sparkles className="w-3 h-3 mr-1" />
-                Early Access
+                {t('pricing.earlyAccess.badge')}
               </Badge>
 
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                Launching beta - early adopters get 50% off
+                {t('pricing.earlyAccess.title')}
               </h2>
               <p className="text-gray-600 dark:text-gray-300 max-w-xl mx-auto mb-6">
-                Lock in beta pricing (€150 setup + €15/month) until v1.0.
-                Regular pricing will be €299 setup + €29/month.
+                {t('pricing.earlyAccess.description')}
               </p>
 
               <a
@@ -474,21 +444,21 @@ export default function PricingPage() {
                 }}
               >
                 <Calendar className="w-5 h-5" />
-                Book Free Discovery Call
+                {t('pricing.earlyAccess.cta')}
               </a>
 
               <div className="flex items-center justify-center gap-6 mt-6 text-sm text-gray-500 dark:text-gray-400 flex-wrap">
                 <span className="flex items-center gap-1.5">
                   <Check className="w-4 h-4 text-[var(--green)]" />
-                  No credit card required
+                  {t('pricing.earlyAccess.noCreditCard')}
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Check className="w-4 h-4 text-[var(--green)]" />
-                  30-min consultation
+                  {t('pricing.earlyAccess.consultation')}
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Check className="w-4 h-4 text-[var(--green)]" />
-                  Cancel anytime
+                  {t('pricing.earlyAccess.cancelAnytime')}
                 </span>
               </div>
             </CardContent>

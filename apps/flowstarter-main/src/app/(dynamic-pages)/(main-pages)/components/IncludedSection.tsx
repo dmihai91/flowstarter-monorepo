@@ -148,7 +148,7 @@ export function IncludedSection() {
                   ))}
                 </ul>
                 <p className="text-xs text-gray-400 dark:text-white/30 mt-4 pt-3 border-t border-gray-200 dark:border-white/5">
-                  First month free. Billing starts 30 days after launch
+                  {t('landing.included.monthly.note')}
                 </p>
               </GlassCard>
             </div>

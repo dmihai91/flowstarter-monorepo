@@ -3,6 +3,7 @@
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Logo } from '@/components/ui/logo';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from '@/lib/i18n';
 import { useAuth, useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -17,6 +18,7 @@ import { LayoutDashboard, LogOut, User } from 'lucide-react';
 import { useClerk } from '@clerk/nextjs';
 
 export function SupportHeader() {
+  const { t } = useTranslations();
   const { isSignedIn, isLoaded } = useAuth();
   const { user } = useUser();
   const { signOut } = useClerk();
@@ -42,7 +44,7 @@ export function SupportHeader() {
                     {user.imageUrl ? (
                       <Image
                         src={user.imageUrl}
-                        alt={user.firstName || 'User'}
+                        alt={user.firstName || t('app.userFallback')}
                         width={36}
                         height={36}
                         className="w-full h-full object-cover"
@@ -66,13 +68,13 @@ export function SupportHeader() {
                   <DropdownMenuItem asChild>
                     <Link href="/profile" className="cursor-pointer">
                       <User className="w-4 h-4 mr-2" />
-                      Profile
+                      {t('header.profile')}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/dashboard" className="cursor-pointer">
                       <LayoutDashboard className="w-4 h-4 mr-2" />
-                      Dashboard
+                      {t('header.dashboard')}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -81,7 +83,7 @@ export function SupportHeader() {
                     className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 focus:bg-red-50 dark:focus:bg-red-900/20 cursor-pointer"
                   >
                     <LogOut className="w-4 h-4 mr-2 text-red-500 dark:text-red-400" />
-                    Sign out
+                    {t('header.signOut')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -91,7 +93,7 @@ export function SupportHeader() {
           {isLoaded && !isSignedIn && (
             <Link href="/login">
               <Button variant="outline" size="sm" className="rounded-lg text-xs sm:text-sm">
-                Sign in
+                {t('header.signIn')}
               </Button>
             </Link>
           )}

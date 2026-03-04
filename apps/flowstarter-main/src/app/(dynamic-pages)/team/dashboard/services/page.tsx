@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from '@/lib/i18n';
 
 import { PageContainer } from '@/components/PageContainer';
 import { DashboardWrapper } from '@/app/(dynamic-pages)/(main-pages)/(logged-in-pages)/dashboard/components/DashboardWrapper';
@@ -75,6 +76,7 @@ const integrationInfo = {
 };
 
 export default function ServicesPage() {
+  const { t } = useTranslations();
   const { user, isLoaded: userLoaded } = useUser();
   const router = useRouter();
   const { data: projects } = useTeamProjects();
@@ -158,7 +160,7 @@ export default function ServicesPage() {
 
       if (!res.ok) {
         const error = await res.json();
-        throw new Error(error.error || 'Failed to save integration');
+        throw new Error(error.error || t('team.services.failedToSave'));
       }
 
       toast.success('Integration added successfully');
@@ -191,7 +193,7 @@ export default function ServicesPage() {
 
   const getProjectName = (projectId: string) => {
     const project = projects?.find((p) => p.id === projectId);
-    return project?.name || 'Unknown Project';
+    return project?.name || t('app.unknownProject');
   };
 
   if (isLoading || !userLoaded) {
@@ -313,7 +315,7 @@ export default function ServicesPage() {
             ) : integrations.length === 0 ? (
               <div className="text-center py-8 text-gray-500 dark:text-white/50">
                 <Settings className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                <p>No integrations configured yet</p>
+                <p>{t('team.services.noIntegrations')}</p>
                 <p className="text-sm mt-1">
                   Add an integration to a project above
                 </p>
@@ -383,18 +385,18 @@ export default function ServicesPage() {
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="project">Project</Label>
+              <Label htmlFor="project">{t('app.projectLabel')}</Label>
               <Select
                 value={selectedProject}
                 onValueChange={setSelectedProject}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a project" />
+                  <SelectValue placeholder={t('team.services.selectProject')} />
                 </SelectTrigger>
                 <SelectContent>
                   {projects?.map((project) => (
                     <SelectItem key={project.id} value={project.id}>
-                      {project.name || 'Untitled Project'}
+                      {project.name || t('app.untitledProject')}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -419,7 +421,7 @@ export default function ServicesPage() {
                 <Input
                   id="apiKey"
                   type={showApiKey ? 'text' : 'password'}
-                  placeholder="Enter your API key"
+                  placeholder={t('team.services.enterApiKey')}
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
                   className="pr-10"

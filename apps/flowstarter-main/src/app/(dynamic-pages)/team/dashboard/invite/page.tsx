@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from '@/lib/i18n';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +27,7 @@ interface InvitationResult {
 }
 
 export default function TeamInvitePage() {
+  const { t } = useTranslations();
   const { user, isLoaded: userLoaded } = useUser();
   const router = useRouter();
 
@@ -80,9 +82,9 @@ export default function TeamInvitePage() {
       } else {
         setResult({
           success: false,
-          message: data.error || 'Failed to send invitation',
+          message: data.error || t('team.invite.failedToSend'),
         });
-        toast.error(data.error || 'Failed to send invitation');
+        toast.error(data.error || t('team.invite.failedToSend'));
       }
     } catch (error) {
       setResult({

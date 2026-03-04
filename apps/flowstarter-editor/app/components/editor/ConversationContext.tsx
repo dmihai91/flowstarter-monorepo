@@ -7,6 +7,7 @@
 
 import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import { useConversations, type Conversation, type ConversationMessage } from '~/lib/hooks/useConversations';
+import { useProjectNameSync } from './hooks/useProjectNameSync';
 import type { Id } from '~/convex/_generated/dataModel';
 
 interface ConversationContextValue {

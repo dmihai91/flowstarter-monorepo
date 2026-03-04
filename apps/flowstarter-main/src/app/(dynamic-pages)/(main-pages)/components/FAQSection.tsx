@@ -29,10 +29,10 @@ export function FAQSection() {
             >
               <div className="col-span-2 text-center mb-6 lg:mb-8">
                 <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4">
-                  Questions?
+                  {t('landing.faq.heading1')}
                   <br />
                   <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
-                    Answered.
+                    {t('landing.faq.heading2')}
                   </span>
                 </h2>
               </div>

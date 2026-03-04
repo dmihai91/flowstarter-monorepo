@@ -52,7 +52,7 @@ export function LandingHeader() {
                   }}
                   className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
                 >
-                  Process
+                  {t('nav.process')}
                 </a>
                 <a
                   href="#pricing"
@@ -64,7 +64,7 @@ export function LandingHeader() {
                   }}
                   className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
                 >
-                  Pricing
+                  {t('nav.pricing')}
                 </a>
                 <a
                   href="#faq"
@@ -88,7 +88,7 @@ export function LandingHeader() {
                   href="/login"
                   className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors hidden md:block"
                 >
-                  Sign In
+                  {t('nav.signIn')}
                 </Link>
                 <a
                   href={EXTERNAL_URLS.calendly.discovery}
@@ -147,7 +147,7 @@ export function LandingHeader() {
             >
               <nav className="flex flex-col gap-1 pt-3 mt-2 border-t border-gray-200/50 dark:border-white/10">
                 <div className="flex items-center justify-between px-3 py-2">
-                  <span className="text-sm text-gray-600 dark:text-white/70">Theme</span>
+                  <span className="text-sm text-gray-600 dark:text-white/70">{t('nav.theme')}</span>
                   <ThemeToggle />
                 </div>
                 <a
@@ -161,7 +161,7 @@ export function LandingHeader() {
                   }}
                   className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
                 >
-                  Process
+                  {t('nav.process')}
                 </a>
                 <a
                   href="#pricing"
@@ -174,7 +174,7 @@ export function LandingHeader() {
                   }}
                   className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
                 >
-                  Pricing
+                  {t('nav.pricing')}
                 </a>
                 <a
                   href="#faq"
@@ -194,7 +194,7 @@ export function LandingHeader() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors"
                 >
-                  Sign In
+                  {t('nav.signIn')}
                 </Link>
                 <a
                   href={EXTERNAL_URLS.calendly.discovery}

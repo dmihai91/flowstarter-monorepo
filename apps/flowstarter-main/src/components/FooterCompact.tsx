@@ -51,7 +51,7 @@ export default function FooterCompact() {
                 href={process.env.NEXT_PUBLIC_EDITOR_URL || 'https://editor.flowstarter.dev'}
                 className="hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
               >
-                Editor
+                {t('footer.nav.editorLabel')}
               </a>
             </nav>
 

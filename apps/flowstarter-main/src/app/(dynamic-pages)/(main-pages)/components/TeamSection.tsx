@@ -6,12 +6,14 @@ import { Linkedin } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 
+type TranslationKey = Parameters<ReturnType<typeof useI18n>['t']>[0];
+
 interface TeamMember {
   key: string;
-  nameKey: string;
-  roleKey: string;
-  bioKey: string;
-  quoteKey: string;
+  nameKey: TranslationKey;
+  roleKey: TranslationKey;
+  bioKey: TranslationKey;
+  quoteKey: TranslationKey;
   image: string;
   linkedin: string;
   gradient: string;
@@ -94,7 +96,7 @@ function TeamCard({ member }: { member: TeamMember }) {
         ) : (
           <Image
             src={image}
-            alt={name}
+            alt={t(nameKey)}
             width={80}
             height={80}
             className="w-full h-full rounded-full object-cover"

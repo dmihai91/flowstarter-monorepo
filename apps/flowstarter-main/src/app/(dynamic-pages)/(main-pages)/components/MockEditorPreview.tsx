@@ -91,12 +91,12 @@ export function MockEditorPreview({
                           d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                         />
                       </svg>
-                      yoursite.com
+                      {t('mockEditor.browserUrl')}
                     </div>
                     <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       <span className="text-[0.625rem] font-medium text-emerald-600 dark:text-emerald-400">
-                        LIVE
+                        {t('mockEditor.liveIndicator')}
                       </span>
                     </div>
                   </div>
@@ -106,7 +106,7 @@ export function MockEditorPreview({
                     {/* Chat Panel */}
                     <div className="w-full sm:w-1/2 p-3 sm:p-4 flex flex-col border-b sm:border-b-0 border-gray-200/30 dark:border-white/5">
                       <div className="text-xs tracking-[0.12em] uppercase font-bold mb-2 sm:mb-3 bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
-                        ✨ Smart AI Editor
+                        {t('mockEditor.chatTitle')}
                       </div>
 
                       {/* Messages - grows to fill space */}
@@ -124,7 +124,7 @@ export function MockEditorPreview({
                                 <svg className="w-3 h-3 text-white" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0L9.5 5.5 16 8l-6.5 1.5L8 16l-1.5-6.5L0 8l6.5-2.5z" /></svg>
                               </div>
                               <div className="flex-1 px-3 py-2 rounded-xl rounded-tl-sm bg-white/55 dark:bg-white/[0.05] border border-white/50 dark:border-white/10">
-                                <div className="text-[0.625rem] font-bold text-[var(--purple)] uppercase tracking-wider mb-1">Flowstarter Assistant</div>
+                                <div className="text-[0.625rem] font-bold text-[var(--purple)] uppercase tracking-wider mb-1">{t('mockEditor.assistantName')}</div>
                                 <div className="text-sm text-gray-600 dark:text-white/70">{msg.text}</div>
                               </div>
                             </div>
@@ -162,7 +162,7 @@ export function MockEditorPreview({
                         <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white/80 dark:bg-white/[0.06] backdrop-blur-xl border-0 shadow-[0_2px_12px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(255,255,255,0.9)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.15),inset_0_0_0_1px_rgba(255,255,255,0.1)] transition-all duration-300">
                           <input
                             type="text"
-                            placeholder="Try: Add form..."
+                            placeholder={t('mockEditor.inputPlaceholder')}
                             className="flex-1 bg-transparent text-sm outline-none border-none focus:outline-none focus:ring-0 px-2 placeholder:text-gray-400 dark:placeholder:text-white/30 text-gray-900 dark:text-white"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
@@ -191,7 +191,7 @@ export function MockEditorPreview({
 
                         {/* Quick prompts */}
                         <div className="flex flex-wrap gap-2 mt-2.5">
-                          {['Add pricing', 'Contact form', 'Change colors'].map(
+                        {[t('mockEditor.quickPrompt.pricing'), t('mockEditor.quickPrompt.contact'), t('mockEditor.quickPrompt.colors')].map(
                             (prompt) => (
                               <button
                                 key={prompt}
@@ -227,15 +227,15 @@ export function MockEditorPreview({
                                 : 'bg-emerald-500'
                             }`}
                           >
-                            C
+                            {t('mockEditor.site.brandInitial')}
                           </div>
                           <span className="text-[0.8125rem] font-semibold text-gray-800 dark:text-white">
-                            CoffeeRoast
+                            {t('mockEditor.site.brand')}
                           </span>
                         </div>
                         <div className="flex items-center gap-3 text-[0.6875rem] text-gray-500 dark:text-gray-400">
                           <span className="hover:text-gray-900 dark:hover:text-white cursor-default">
-                            Home
+                            {t('mockEditor.site.nav.home')}
                           </span>
                           {mockSite.hasAboutPage && (
                             <span
@@ -245,11 +245,11 @@ export function MockEditorPreview({
                                   : 'text-emerald-500'
                               }`}
                             >
-                              About
+                              {t('mockEditor.site.nav.about')}
                             </span>
                           )}
-                          <span>Shop</span>
-                          <span>Contact</span>
+                          <span>{t('mockEditor.site.nav.shop')}</span>
+                          <span>{t('mockEditor.site.nav.contact')}</span>
                         </div>
                       </div>
 
@@ -274,7 +274,7 @@ export function MockEditorPreview({
                                   : 'bg-emerald-500'
                               }`}
                             >
-                              Shop Now
+                            {t('mockEditor.site.shopNow')}
                             </div>
                           </div>
                           <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-amber-200 to-amber-400 dark:from-amber-700 dark:to-amber-900 flex items-center justify-center">
@@ -293,23 +293,23 @@ export function MockEditorPreview({
                       >
                         <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900/30">
                           <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            Get in Touch
+                            {t('mockEditor.site.getInTouch')}
                           </div>
                           <div className="grid grid-cols-2 gap-1.5 mb-1.5">
                             <div className="h-5 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 px-2 flex items-center">
                               <span className="text-[0.625rem] text-gray-400">
-                                Name
+                                {t('mockEditor.site.form.name')}
                               </span>
                             </div>
                             <div className="h-5 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 px-2 flex items-center">
                               <span className="text-[0.625rem] text-gray-400">
-                                Email
+                                {t('mockEditor.site.form.email')}
                               </span>
                             </div>
                           </div>
                           <div className="h-7 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 mb-2 px-2 flex items-start pt-1">
                             <span className="text-[0.625rem] text-gray-400">
-                              Message...
+                              {t('mockEditor.site.form.message')}
                             </span>
                           </div>
                           <div
@@ -319,7 +319,7 @@ export function MockEditorPreview({
                                 : 'bg-emerald-500'
                             }`}
                           >
-                            Send
+                            {t('mockEditor.site.form.send')}
                           </div>
                         </div>
                       </div>
@@ -327,7 +327,7 @@ export function MockEditorPreview({
                       {/* Products/Features section */}
                       <div className="px-4 py-3">
                         <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                          Our Blends
+                          {t('mockEditor.site.blends')}
                         </div>
                         <div className="grid grid-cols-3 gap-2">
                           {['☕', '🫘', '✨'].map((emoji, i) => (
@@ -359,7 +359,7 @@ export function MockEditorPreview({
                       >
                         <div className="px-4 py-3">
                           <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            What Customers Say
+                            {t('mockEditor.site.testimonials')}
                           </div>
                           <div className="flex gap-2">
                             {[1, 2].map((i) => (
@@ -403,12 +403,12 @@ export function MockEditorPreview({
                       >
                         <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900/30">
                           <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            Pricing
+                            {t('mockEditor.site.pricing')}
                           </div>
                           <div className="flex gap-2">
                             <div className="flex-1 p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                               <div className="text-[0.6875rem] font-medium text-gray-600 dark:text-gray-400">
-                                Basic
+                                {t('mockEditor.site.basicPlan')}
                               </div>
                               <div
                                 className={`text-sm font-bold transition-colors duration-500 ${
@@ -417,7 +417,7 @@ export function MockEditorPreview({
                                     : 'text-emerald-600'
                                 }`}
                               >
-                                $9/mo
+                                {t('mockEditor.site.basicPrice')}
                               </div>
                               <div className="h-1 w-full bg-gray-100 dark:bg-gray-700 rounded mt-1.5 mb-1" />
                               <div className="h-1 w-3/4 bg-gray-100 dark:bg-gray-700 rounded" />
@@ -431,7 +431,7 @@ export function MockEditorPreview({
                             >
                               <div className="flex items-center gap-1">
                                 <div className="text-[0.6875rem] font-medium text-gray-600 dark:text-gray-400">
-                                  Pro
+                                  {t('mockEditor.site.proPlan')}
                                 </div>
                                 <div
                                   className={`text-[0.5rem] px-1 py-0.5 rounded-full text-white transition-colors duration-500 ${
@@ -440,7 +440,7 @@ export function MockEditorPreview({
                                       : 'bg-emerald-500'
                                   }`}
                                 >
-                                  POPULAR
+                                  {t('mockEditor.site.popular')}
                                 </div>
                               </div>
                               <div
@@ -450,7 +450,7 @@ export function MockEditorPreview({
                                     : 'text-emerald-600'
                                 }`}
                               >
-                                $29/mo
+                                {t('mockEditor.site.proPrice')}
                               </div>
                               <div className="h-1 w-full bg-gray-100 dark:bg-gray-700 rounded mt-1.5 mb-1" />
                               <div className="h-1 w-3/4 bg-gray-100 dark:bg-gray-700 rounded" />
@@ -463,7 +463,7 @@ export function MockEditorPreview({
                       <div className="mt-auto px-4 py-2.5 bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
                         <div className="flex items-center justify-between">
                           <div className="text-[0.625rem] text-gray-400">
-                            © {new Date().getFullYear()} CoffeeRoast
+                            © {new Date().getFullYear()} {t('mockEditor.site.brand')}
                           </div>
                           <div className="flex gap-2">
                             {['📘', '📷', '✉️'].map((icon, i) => (
@@ -484,10 +484,10 @@ export function MockEditorPreview({
                   style={{ animationDelay: '1s' }}
                 >
                   <div className="text-base sm:text-lg lg:text-2xl font-bold">
-                    Draft
+                    {t('mockEditor.floatingDraft')}
                   </div>
                   <div className="text-[0.5rem] sm:text-[0.625rem] lg:text-xs text-white/70">
-                    ~2 weeks
+                    {t('mockEditor.floatingTime')}
                   </div>
                 </div>
 

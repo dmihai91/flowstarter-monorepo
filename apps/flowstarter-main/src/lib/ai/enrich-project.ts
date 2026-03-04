@@ -62,7 +62,7 @@ export async function enrichProject(userPrompt: string): Promise<EnrichedProject
       },
     ],
     temperature: 0.3,
-    maxTokens: 600,
+    maxOutputTokens: 600,
   });
 
   if (!content) {

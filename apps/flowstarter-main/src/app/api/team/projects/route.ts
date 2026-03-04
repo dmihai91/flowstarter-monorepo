@@ -49,9 +49,9 @@ export async function GET() {
     }
 
     // Get unique user IDs and fetch their info from Clerk
-    const userIds = [
-      ...new Set(projects?.map((p) => p.user_id).filter(Boolean) || []),
-    ];
+    const userIds = Array.from(
+      new Set(projects?.map((p) => p.user_id).filter(Boolean) || []),
+    );
     const userMap: Record<string, { email: string; name: string }> = {};
 
     if (userIds.length > 0) {

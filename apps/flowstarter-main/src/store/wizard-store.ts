@@ -3,7 +3,7 @@
 import { safeSessionStorage } from '@/lib/safe-storage';
 import type { ProjectConfig, ProjectWizardStep } from '@/types/project-config';
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, type PersistStorage, type StorageValue } from 'zustand/middleware';
 
 interface HostedAvailabilityState {
   suggestedDomain: string | null;
@@ -238,8 +238,22 @@ export const useWizardStore = create<WizardStoreState>()(
     }),
     {
       name: 'flowstarter-wizard-storage',
-      storage: safeSessionStorage,
-      partialize: (state) => ({
+      storage: {
+        getItem: (name: string): StorageValue<WizardStoreState> | null => {
+          const str = safeSessionStorage.getItem(name);
+          if (!str) return null;
+          try { return JSON.parse(str); } catch { return null; }
+        },
+        setItem: (name: string, value: StorageValue<WizardStoreState>) => {
+          safeSessionStorage.setItem(name, JSON.stringify(value));
+        },
+        removeItem: (name: string) => {
+          safeSessionStorage.removeItem(name);
+        },
+      } satisfies PersistStorage<WizardStoreState>,
+      partialize: (state): WizardStoreState => ({
+        ...state,
+        // Only persist these fields
         prefillData: state.prefillData,
         prefillImages: state.prefillImages,
         skipLoadingScreen: state.skipLoadingScreen,

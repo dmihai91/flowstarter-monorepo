@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from '~/lib/i18n/useTranslation';
 import { workbenchStore } from '~/lib/stores/workbench';
 import { classNames } from '~/utils/classNames';
 import { Checkbox } from '~/components/ui/Checkbox';
@@ -10,6 +11,7 @@ interface LockedItem {
 }
 
 export function LockManager() {
+  const { t } = useTranslation();
   const [lockedItems, setLockedItems] = useState<LockedItem[]>([]);
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<'all' | 'files' | 'folders'>('all');
@@ -148,7 +150,7 @@ export function LockManager() {
           <span className="absolute left-2 top-1/2 -translate-y-1/2 text-flowstarter-elements-textTertiary i-ph:magnifying-glass text-xs pointer-events-none" />
           <input
             type="text"
-            placeholder="Search..."
+            placeholder={t.workbench.lockManager.searchPlaceholder}
             className="w-full text-xs pl-6 pr-2 py-0.5 h-6 bg-flowstarter-elements-background-depth-2 text-flowstarter-elements-textPrimary rounded border border-flowstarter-elements-borderColor focus:outline-none"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -183,7 +185,7 @@ export function LockManager() {
           <button
             className="ml-auto px-2 py-0.5 rounded bg-flowstarter-elements-button-secondary-background hover:bg-flowstarter-elements-button-secondary-backgroundHover text-flowstarter-elements-button-secondary-text text-xs flex items-center gap-1"
             onClick={handleUnlockSelected}
-            title="Unlock all selected items"
+            title={t.workbench.lockManager.unlockSelected}
           >
             Unlock all
           </button>
@@ -241,7 +243,7 @@ export function LockManager() {
 
                     toast.success(`${item.path.replace('/home/project/', '')} unlocked`);
                   }}
-                  title="Unlock"
+                  title={t.workbench.lockManager.unlock}
                 >
                   <span className="i-ph:lock-open text-xs" />
                 </button>

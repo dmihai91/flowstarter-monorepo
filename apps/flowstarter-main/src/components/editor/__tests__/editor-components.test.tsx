@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import { createRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { ChatInput } from '../ChatInput';
-import { PreviewControls } from '../PreviewControls';
 import { PreviewPanel } from '../PreviewPanel';
 
 // Mock design system components (avoid duplicate React instances)
@@ -67,94 +66,6 @@ vi.mock('@/contexts/ThemeContext', () => ({
     setTheme: vi.fn(),
   }),
 }));
-
-describe('PreviewControls', () => {
-  const defaultProps = {
-    deviceView: 'desktop' as const,
-    onDeviceViewChange: vi.fn(),
-    onFullscreen: vi.fn(),
-    onOpenInTab: vi.fn(),
-    hasPreview: true,
-  };
-
-  it('should render all device view buttons', () => {
-    render(<PreviewControls {...defaultProps} />);
-    expect(screen.getAllByRole('button')).toHaveLength(5); // 3 devices + 2 actions
-  });
-
-  it('should call onDeviceViewChange when mobile button is clicked', async () => {
-    const user = userEvent.setup();
-    const onDeviceViewChange = vi.fn();
-    render(
-      <PreviewControls
-        {...defaultProps}
-        onDeviceViewChange={onDeviceViewChange}
-      />
-    );
-
-    const mobileButton = screen.getAllByRole('button')[0];
-    await user.click(mobileButton);
-    expect(onDeviceViewChange).toHaveBeenCalledWith('mobile');
-  });
-
-  it('should call onDeviceViewChange when tablet button is clicked', async () => {
-    const user = userEvent.setup();
-    const onDeviceViewChange = vi.fn();
-    render(
-      <PreviewControls
-        {...defaultProps}
-        onDeviceViewChange={onDeviceViewChange}
-      />
-    );
-
-    const tabletButton = screen.getAllByRole('button')[1];
-    await user.click(tabletButton);
-    expect(onDeviceViewChange).toHaveBeenCalledWith('tablet');
-  });
-
-  it('should call onDeviceViewChange when desktop button is clicked', async () => {
-    const user = userEvent.setup();
-    const onDeviceViewChange = vi.fn();
-    render(
-      <PreviewControls
-        {...defaultProps}
-        onDeviceViewChange={onDeviceViewChange}
-      />
-    );
-
-    const desktopButton = screen.getAllByRole('button')[2];
-    await user.click(desktopButton);
-    expect(onDeviceViewChange).toHaveBeenCalledWith('desktop');
-  });
-
-  it('should call onFullscreen when fullscreen button is clicked', async () => {
-    const user = userEvent.setup();
-    const onFullscreen = vi.fn();
-    render(<PreviewControls {...defaultProps} onFullscreen={onFullscreen} />);
-
-    const fullscreenButton = screen.getAllByRole('button')[3];
-    await user.click(fullscreenButton);
-    expect(onFullscreen).toHaveBeenCalled();
-  });
-
-  it('should call onOpenInTab when open in tab button is clicked', async () => {
-    const user = userEvent.setup();
-    const onOpenInTab = vi.fn();
-    render(<PreviewControls {...defaultProps} onOpenInTab={onOpenInTab} />);
-
-    const openInTabButton = screen.getAllByRole('button')[4];
-    await user.click(openInTabButton);
-    expect(onOpenInTab).toHaveBeenCalled();
-  });
-
-  it('should disable all buttons when hasPreview is false', () => {
-    render(<PreviewControls {...defaultProps} hasPreview={false} />);
-    const buttons = screen.getAllByRole('button');
-    buttons.forEach((button) => {
-      expect(button).toBeDisabled();
-    });
-  });
-});
 
 describe('PreviewPanel', () => {
   it('should render iframe when previewHtml is provided', () => {

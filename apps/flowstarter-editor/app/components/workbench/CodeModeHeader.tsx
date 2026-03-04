@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { workbenchStore, type WorkbenchViewType } from '~/lib/stores/workbench';
 import { IconButton } from '~/components/ui/IconButton';
+import { useTranslation } from '~/lib/i18n/useTranslation';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 interface CodeModeHeaderProps {
@@ -13,6 +14,7 @@ interface CodeModeHeaderProps {
 
 export const CodeModeHeader = memo(
   ({ onDownloadZip, onSyncFiles, onPushToGitHub, isSyncing, setIsPushDialogOpen }: CodeModeHeaderProps) => {
+    const { t } = useTranslation();
     const setSelectedView = (view: WorkbenchViewType) => {
       workbenchStore.currentView.set(view);
     };
@@ -24,25 +26,25 @@ export const CodeModeHeader = memo(
           <IconButton
             icon="i-lucide:eye"
             className="w-7 h-7"
-            title="Preview"
+            title={t.workbench.codeMode.preview}
             onClick={() => setSelectedView('preview')}
           />
           <IconButton
             icon="i-lucide:code"
             className="w-7 h-7 rounded-md bg-flowstarter-elements-item-backgroundActive text-flowstarter-elements-item-contentAccent"
-            title="Code"
+            title={t.workbench.codeMode.code}
             onClick={() => setSelectedView('code')}
           />
           <IconButton
             icon="i-lucide:git-compare-arrows"
             className="w-7 h-7"
-            title="Diff"
+            title={t.workbench.codeMode.diff}
             onClick={() => setSelectedView('diff')}
           />
           <div className="flex items-center">
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
-                <IconButton icon="i-lucide:settings" className="w-7 h-7" title="More Options" />
+                <IconButton icon="i-lucide:settings" className="w-7 h-7" title={t.workbench.codeMode.moreOptions} />
               </DropdownMenu.Trigger>
               <DropdownMenu.Content
                 className="min-w-[240px] z-[250] bg-flowstarter-elements-background-depth-3 rounded-lg shadow-xl border border-flowstarter-elements-borderColor animate-in fade-in-0 zoom"
@@ -55,7 +57,7 @@ export const CodeModeHeader = memo(
                 >
                   <div className="flex items-center gap-2">
                     <span className="i-lucide:download text-current"></span>
-                    <span>Download Code</span>
+                    <span>{t.workbench.codeMode.downloadCode}</span>
                   </div>
                 </DropdownMenu.Item>
                 <DropdownMenu.Item
@@ -69,7 +71,7 @@ export const CodeModeHeader = memo(
                     ) : (
                       <span className="i-lucide:cloud-download text-current" />
                     )}
-                    <span>{isSyncing ? 'Syncing...' : 'Sync Files'}</span>
+                    <span>{isSyncing ? t.workbench.codeMode.syncing : t.workbench.codeMode.syncFiles}</span>
                   </div>
                 </DropdownMenu.Item>
                 <DropdownMenu.Item
@@ -78,7 +80,7 @@ export const CodeModeHeader = memo(
                 >
                   <div className="flex items-center gap-2">
                     <span className="i-lucide:git-branch text-current" />
-                    <span>Push to GitHub</span>
+                    <span>{t.workbench.codeMode.pushToGitHub}</span>
                   </div>
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
@@ -95,11 +97,11 @@ export const CodeModeHeader = memo(
             <div className="flex gap-1 empty:hidden"></div>
             <IconButton
               onClick={() => setIsPushDialogOpen(true)}
-              title="Publish"
+              title={t.workbench.codeMode.publish}
               className="px-3 w-auto flex gap-1 h-7 text-xs font-medium bg-flowstarter-elements-textPrimary text-flowstarter-elements-background-depth-1 rounded-md"
             >
               <div className="i-lucide:github text-base" />
-              <span>Publish</span>
+              <span>{t.workbench.codeMode.publish}</span>
             </IconButton>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { memo, useEffect, useState } from 'react';
+import { useTranslation } from '~/lib/i18n/useTranslation';
 import type { BundledLanguage, SpecialLanguage } from 'shiki';
 import { classNames } from '~/utils/classNames';
 import { createScopedLogger } from '~/utils/logger';
@@ -17,6 +18,7 @@ interface CodeBlockProps {
 
 export const CodeBlock = memo(
   ({ className, code, language = 'plaintext', theme = 'dark-plus', disableCopy = false }: CodeBlockProps) => {
+    const { t } = useTranslation();
     const [html, setHTML] = useState<string | undefined>(undefined);
     const [copied, setCopied] = useState(false);
 
@@ -72,7 +74,7 @@ export const CodeBlock = memo(
                   'before:opacity-100': copied,
                 },
               )}
-              title="Copy Code"
+              title={t.chat.codeBlock.copyCode}
               onClick={() => copyToClipboard()}
             >
               <div className="i-ph:clipboard-text-duotone"></div>

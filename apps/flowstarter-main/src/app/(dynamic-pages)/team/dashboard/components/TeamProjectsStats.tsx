@@ -130,7 +130,7 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
                   </span>
                 </div>
                 <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                  {recentProject.name || 'Untitled'}
+                  {recentProject.name || t('app.untitled')}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-white/40">
                   {t('team.dashboard.lastEdit', {

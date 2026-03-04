@@ -30,7 +30,7 @@ describe('useTeamJoinValidation', () => {
       role: 'member',
     };
     
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: true,
       json: async () => mockResponse,
     });
@@ -54,7 +54,7 @@ describe('useTeamJoinValidation', () => {
   });
 
   it('should handle invalid token', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: false,
       json: async () => ({ error: 'Token expired' }),
     });
@@ -74,7 +74,7 @@ describe('useTeamJoin', () => {
   });
 
   it('should join team successfully', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: true,
       json: async () => ({ success: true }),
     });
@@ -90,7 +90,7 @@ describe('useTeamJoin', () => {
   });
 
   it('should handle join error', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       ok: false,
       json: async () => ({ error: 'Already a member' }),
     });

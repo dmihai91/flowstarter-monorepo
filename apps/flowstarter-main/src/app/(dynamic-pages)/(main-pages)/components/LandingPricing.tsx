@@ -16,16 +16,16 @@ export function LandingPricing() {
   return (
     <div ref={sectionRef}>
         {/* Pricing Section */}
-        <section data-section="pricing" id="pricing" className="py-8 lg:py-18 relative">
+        <section data-section="pricing" id="pricing" className="py-8 lg:py-18 pb-4 lg:pb-8 relative">
           {/* Gradient accent - lavender tint */}
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--landing-bg-tint)] to-transparent dark:via-[var(--landing-dark-surface-tint)] pointer-events-none" />
 
           <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
             <div className="text-center mb-12 lg:mb-16">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight">
-                Clear{' '}
+                {t('landing.pricing.heading1')}{' '}
                 <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
-                  pricing
+                  {t('landing.pricing.heading2')}
                 </span>
               </h2>
             </div>
@@ -54,7 +54,7 @@ export function LandingPricing() {
                     <span className="text-base text-gray-400 dark:text-white/40">
                       {t('landing.pricing.buildLabel')}{' '}
                     </span>
-                    <span className="text-lg line-through text-gray-400 dark:text-white/30 font-medium mr-1">€699</span>
+                    <span className="text-lg line-through text-gray-400 dark:text-white/30 font-medium mr-1">{t('landing.pricing.buildOriginalPrice')}</span>
                     <span className="text-3xl font-bold">{t('landing.pricing.buildPrice')}</span>
                     <span className="text-base text-gray-400 dark:text-white/40 ml-1">
                       {t('landing.pricing.buildPeriod')}
@@ -64,12 +64,12 @@ export function LandingPricing() {
                     <span className="text-base text-gray-400 dark:text-white/40">
                       {t('landing.pricing.careLabel')}{' '}
                     </span>
-                    <span className="text-lg line-through text-gray-400 dark:text-white/30 font-medium mr-1">€49</span>
+                    <span className="text-lg line-through text-gray-400 dark:text-white/30 font-medium mr-1">{t('landing.pricing.careOriginalPrice')}</span>
                     <span className="text-3xl font-bold">{t('landing.pricing.carePrice')}</span>
                     <span className="text-base text-gray-400 dark:text-white/40 ml-1">
                       {t('landing.pricing.carePeriod')}
                     </span>
-                    <span className="inline-flex items-center ml-3 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-semibold text-emerald-600 dark:text-emerald-400">First month free</span>
+                    <span className="inline-flex items-center ml-3 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-semibold text-emerald-600 dark:text-emerald-400">{t('landing.pricing.firstMonthFree')}</span>
                   </div>
                   <p className="text-sm text-gray-400 dark:text-white/30 mt-2">
                     {t('landing.pricing.note')}
@@ -185,13 +185,13 @@ export function LandingPricing() {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-gray-800 dark:text-white/80 mb-1">
-                        Pay only when you&apos;re happy
+                        {t('landing.pricing.guaranteeTitle')}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-white/45 leading-relaxed">
-                        We collect 50% upfront to start your project. You only pay the remaining 50% when you&apos;re happy with the result.
+                        {t('landing.pricing.guaranteeDesc')}
                       </p>
                       <p className="text-[0.625rem] text-gray-400 dark:text-white/25 mt-1.5">
-                        The initial 50% deposit is non-refundable and covers design, setup, and infrastructure costs.
+                        {t('landing.pricing.guaranteeNote')}
                       </p>
                     </div>
                   </div>
@@ -224,13 +224,13 @@ export function LandingPricing() {
 
                 {/* Footer note */}
                 <p className="text-xs text-gray-400 dark:text-white/30 text-center mt-4">
-                  No lock-in. Cancel anytime. No hidden fees.
+                  {t('landing.pricing.footerNote')}
                 </p>
               </GlassCard>
 
               {/* Fine print */}
               <p className="text-center text-base text-gray-400 dark:text-white/30 mt-6">
-                No contracts. Cancel anytime. First month free.
+                {t('landing.pricing.finePrint')}
               </p>
             </div>
           </div>

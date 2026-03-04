@@ -56,12 +56,12 @@ export default function AuthLayout({
         </ScrollAwareHeader>
 
         {/* Main content */}
-        <div className="relative z-10 flex-1 flex flex-col items-center px-4 mt-[100px] pb-6">
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-4">
           <div className="w-full max-w-md">
-            {/* Title */}
-            <div className="text-center mb-8">
+            {/* Title - hidden on small screens where card has its own heading */}
+            <div className="text-center mb-4 sm:mb-8 hidden sm:block">
               {title && (
-                <h1 className="text-3xl font-bold tracking-tight mb-3">
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
                   <span className="text-gray-900 dark:text-white">
                     {title.split(' ').slice(0, -1).join(' ')}{' '}
                   </span>

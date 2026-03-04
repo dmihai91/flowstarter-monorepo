@@ -125,6 +125,7 @@ export default function TeamDashboardPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           projectConfig: {
+            projectName: `${clientInfo.name}'s Website`,
             clientName: clientInfo.name,
             clientEmail: clientInfo.email,
             clientPhone: clientInfo.phone,

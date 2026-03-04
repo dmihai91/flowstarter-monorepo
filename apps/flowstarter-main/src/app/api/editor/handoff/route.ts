@@ -71,10 +71,15 @@ export async function POST(request: NextRequest) {
     if (projectConfig && !projectId) {
       // Create new draft project
       const payload = {
-        name: projectConfig.clientName || projectConfig.name || 'Untitled Project',
+        name: projectConfig.projectName || projectConfig.name || 'Untitled Project',
         description: projectConfig.description || '',
         data: JSON.stringify({
           ...projectConfig,
+          client: {
+            name: projectConfig.clientName || '',
+            email: projectConfig.clientEmail || '',
+            phone: projectConfig.clientPhone || '',
+          },
           handoffMode: mode,
           handoffTimestamp: Date.now(),
         }),

@@ -264,7 +264,7 @@ export function QuickScaffold() {
         className={cn(
           'relative rounded-xl border backdrop-blur-xl transition-all duration-200 overflow-hidden',
           isFocused
-            ? 'border-[var(--purple)]/50 bg-white dark:bg-white/[0.06] shadow-[0_0_0_2px_rgba(var(--purple-rgb),0.1)]'
+            ? 'border-[var(--purple)]/30 bg-white dark:bg-white/[0.06]'
             : 'border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-white/[0.03]'
         )}
       >
@@ -277,7 +277,7 @@ export function QuickScaffold() {
           onBlur={() => setIsFocused(false)}
           placeholder={input ? "" : placeholderText || "Describe your client's business..."}
           rows={2}
-          className="w-full px-3 pt-3 pb-2 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 text-sm leading-relaxed resize-none focus:outline-none border-0"
+          className="w-full px-3 pt-3 pb-2 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 text-sm leading-relaxed resize-none focus:outline-none border-0 select-text"
           style={{
             minHeight: '56px',
             maxHeight: '120px',

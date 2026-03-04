@@ -11,6 +11,8 @@ import { DashboardWrapper } from './components/DashboardWrapper';
 import { MilestonesTimeline } from './components/MilestonesTimeline';
 import { PrimaryAction } from './components/PrimaryAction';
 import { getTimeGreetingKey } from './hooks/useDashboardMilestones';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -108,6 +110,7 @@ export default function DashboardPage() {
   const loading = !isUserLoaded || isLoading;
 
   const firstName = user?.firstName || 'there';
+  const isAdmin = (user?.publicMetadata as { role?: string } | undefined)?.role?.toLowerCase() === 'admin';
   const hour = new Date().getHours();
   const greeting = t(getTimeGreetingKey(hour) as any);
 
@@ -132,6 +135,11 @@ export default function DashboardPage() {
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
               {t('dashboard.title')}
             </h1>
+            {isAdmin && (
+              <Link href="/team/dashboard" className="inline-flex items-center gap-1.5 mt-2 text-xs text-[var(--purple)] hover:underline">
+                Team Dashboard <ArrowRight className="w-3 h-3" />
+              </Link>
+            )}
           </div>
 
           {/* Milestones Timeline */}

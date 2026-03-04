@@ -17,10 +17,22 @@ import { Plus, UserPlus, FolderOpen, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { z } from 'zod';
 
 export const dynamic = 'force-dynamic';
 
 const EDITOR_URL = process.env.NEXT_PUBLIC_EDITOR_URL || 'http://localhost:5173';
+
+const clientSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.string().email('Please enter a valid email address'),
+  phone: z.string().optional().refine(
+    (val) => !val || /^[+]?[\d\s()-]{7,}$/.test(val),
+    'Please enter a valid phone number'
+  ),
+});
+
+type ClientErrors = Partial<Record<keyof z.infer<typeof clientSchema>, string>>;
 
 export default function TeamDashboardPage() {
   const { user, isLoaded: userLoaded } = useUser();
@@ -32,6 +44,7 @@ export default function TeamDashboardPage() {
   const [showClientModal, setShowClientModal] = useState(false);
   const [clientInfo, setClientInfo] = useState({ name: '', email: '', phone: '' });
   const [isSendingToEditor, setIsSendingToEditor] = useState(false);
+  const [clientErrors, setClientErrors] = useState<ClientErrors>({});
   const [isAdmin, setIsAdmin] = useState(false);
 
   // Check if user is team member
@@ -66,11 +79,22 @@ export default function TeamDashboardPage() {
 
   const createNewInEditor = () => {
     setClientInfo({ name: '', email: '', phone: '' });
+    setClientErrors({});
     setShowClientModal(true);
   };
 
   const handleClientSubmit = async () => {
-    if (!clientInfo.name.trim() || !clientInfo.email.trim()) return;
+    const result = clientSchema.safeParse(clientInfo);
+    if (!result.success) {
+      const fieldErrors: ClientErrors = {};
+      for (const issue of result.error.issues) {
+        const field = issue.path[0] as keyof ClientErrors;
+        if (!fieldErrors[field]) fieldErrors[field] = issue.message;
+      }
+      setClientErrors(fieldErrors);
+      return;
+    }
+    setClientErrors({});
     setIsSendingToEditor(true);
     try {
       const res = await fetch('/api/editor/handoff', {
@@ -167,9 +191,10 @@ export default function TeamDashboardPage() {
                 <Input
                   placeholder="John Smith"
                   value={clientInfo.name}
-                  onChange={(e) => setClientInfo(prev => ({ ...prev, name: e.target.value }))}
-                  className="mt-1"
+                  onChange={(e) => { setClientInfo(prev => ({ ...prev, name: e.target.value })); setClientErrors(prev => ({ ...prev, name: undefined })); }}
+                  className={`mt-1 ${clientErrors.name ? 'border-red-400 dark:border-red-500/50' : ''}`}
                 />
+                {clientErrors.name && <p className="text-xs text-red-500 mt-1">{clientErrors.name}</p>}
               </div>
               <div>
                 <Label className="text-sm font-medium text-gray-700 dark:text-white/70">Client Email *</Label>
@@ -177,18 +202,20 @@ export default function TeamDashboardPage() {
                   type="email"
                   placeholder="john@example.com"
                   value={clientInfo.email}
-                  onChange={(e) => setClientInfo(prev => ({ ...prev, email: e.target.value }))}
-                  className="mt-1"
+                  onChange={(e) => { setClientInfo(prev => ({ ...prev, email: e.target.value })); setClientErrors(prev => ({ ...prev, email: undefined })); }}
+                  className={`mt-1 ${clientErrors.email ? 'border-red-400 dark:border-red-500/50' : ''}`}
                 />
+                {clientErrors.email && <p className="text-xs text-red-500 mt-1">{clientErrors.email}</p>}
               </div>
               <div>
                 <Label className="text-sm font-medium text-gray-700 dark:text-white/70">Client Phone</Label>
                 <Input
                   placeholder="+40 712 345 678"
                   value={clientInfo.phone}
-                  onChange={(e) => setClientInfo(prev => ({ ...prev, phone: e.target.value }))}
-                  className="mt-1"
+                  onChange={(e) => { setClientInfo(prev => ({ ...prev, phone: e.target.value })); setClientErrors(prev => ({ ...prev, phone: undefined })); }}
+                  className={`mt-1 ${clientErrors.phone ? 'border-red-400 dark:border-red-500/50' : ''}`}
                 />
+                {clientErrors.phone && <p className="text-xs text-red-500 mt-1">{clientErrors.phone}</p>}
               </div>
             </div>
 
@@ -200,7 +227,7 @@ export default function TeamDashboardPage() {
                 variant="accent"
                 className="flex-1"
                 onClick={handleClientSubmit}
-                disabled={!clientInfo.name.trim() || !clientInfo.email.trim() || isSendingToEditor}
+                disabled={isSendingToEditor}
               >
                 {isSendingToEditor ? 'Opening Editor...' : 'Continue in Editor'}
               </Button>

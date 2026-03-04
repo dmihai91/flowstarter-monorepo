@@ -234,7 +234,7 @@ export default function TeamDashboardPage() {
                 variant="accent"
                 className="flex-1"
                 onClick={handleClientSubmit}
-                disabled={isSendingToEditor}
+                disabled={!clientInfo.name.trim() || !clientInfo.email.trim() || isSendingToEditor}
               >
                 {isSendingToEditor ? 'Opening Editor...' : 'Continue in Editor'}
               </Button>

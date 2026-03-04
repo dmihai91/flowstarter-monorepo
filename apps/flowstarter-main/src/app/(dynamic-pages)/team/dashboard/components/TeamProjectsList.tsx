@@ -154,7 +154,8 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
       {/* List View */}
       {viewMode === 'list' && (
         <div className="space-y-2">
-          <div className="hidden md:grid md:grid-cols-[1fr_100px_150px_100px_40px] gap-4 px-4 py-2 text-xs font-medium text-gray-500 dark:text-white/50 uppercase tracking-wider">
+          <div className="hidden md:grid md:grid-cols-[48px_1fr_100px_150px_100px_40px] gap-4 px-4 py-2 text-xs font-medium text-gray-500 dark:text-white/50 uppercase tracking-wider">
+            <div></div>
             <div>{t('team.dashboard.table.project')}</div>
             <div>{t('team.dashboard.table.status')}</div>
             <div>{t('team.dashboard.table.owner')}</div>
@@ -189,7 +190,16 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                   }}
                 >
                   {/* Desktop Row */}
-                  <div className="hidden md:grid md:grid-cols-[1fr_100px_150px_100px_40px] gap-4 px-4 py-3 items-center">
+                  <div className="hidden md:grid md:grid-cols-[48px_1fr_100px_150px_100px_40px] gap-4 px-4 py-3 items-center">
+                    <div className="w-12 h-9 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/10 flex-shrink-0">
+                      {project.thumbnailUrl ? (
+                        <img src={project.thumbnailUrl} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-xs font-bold text-gray-400 dark:text-white/30">
+                          {(project.name || 'P').charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
                     <div className="min-w-0">
                       <p className="font-medium text-gray-900 dark:text-white text-sm truncate">
                         {project.name || t('team.dashboard.untitledProject')}
@@ -226,6 +236,15 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                   {/* Mobile Row */}
                   <div className="md:hidden p-4">
                     <div className="flex items-start justify-between gap-3">
+                      <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/10 flex-shrink-0">
+                        {project.thumbnailUrl ? (
+                          <img src={project.thumbnailUrl} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-sm font-bold text-gray-400 dark:text-white/30">
+                            {(project.name || 'P').charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                      </div>
                       <div className="min-w-0 flex-1">
                         <p className="font-medium text-gray-900 dark:text-white text-sm">
                           {project.name || t('team.dashboard.untitledProject')}

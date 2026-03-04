@@ -1,13 +1,21 @@
 'use client';
 
+import { LogoIcon } from './logo';
+
 /**
  * Unified loading states for all pages.
- * Use <AppLoader /> for full-page loading.
+ * Use <AppLoader /> for full-page loading with logo + spinner.
  * Use <AppLoader variant="inline" /> for inline loading.
  * Use <CardSkeleton count={n} /> for card grid loading.
  */
 
-export function AppLoader({ variant = 'page' }: { variant?: 'page' | 'inline' }) {
+export function AppLoader({
+  variant = 'page',
+  message = 'Loading...',
+}: {
+  variant?: 'page' | 'inline';
+  message?: string;
+}) {
   const spinner = (
     <div className="relative w-10 h-10">
       <div className="absolute inset-0 rounded-full border-2 border-gray-200 dark:border-white/10" />
@@ -23,8 +31,10 @@ export function AppLoader({ variant = 'page' }: { variant?: 'page' | 'inline' })
   }
 
   return (
-    <div className="flex-1 flex items-center justify-center min-h-[60vh]">
+    <div className="flex-1 flex flex-col items-center justify-center min-h-[60vh] gap-8 animate-in fade-in duration-300">
+      <LogoIcon size="lg" />
       {spinner}
+      <p className="text-sm text-gray-500 dark:text-white/40">{message}</p>
     </div>
   );
 }

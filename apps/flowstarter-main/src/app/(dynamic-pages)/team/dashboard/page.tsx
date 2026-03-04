@@ -12,7 +12,7 @@ import { useTranslations } from '@/lib/i18n';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Plus, UserPlus, FolderOpen, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -45,6 +45,29 @@ export default function TeamDashboardPage() {
   const [clientInfo, setClientInfo] = useState({ name: '', email: '', phone: '' });
   const [isSendingToEditor, setIsSendingToEditor] = useState(false);
   const [clientErrors, setClientErrors] = useState<ClientErrors>({});
+  const debounceTimers = useRef<Record<string, NodeJS.Timeout>>({});
+
+  const validateField = useCallback((field: keyof ClientErrors, value: string) => {
+    if (debounceTimers.current[field]) clearTimeout(debounceTimers.current[field]);
+    debounceTimers.current[field] = setTimeout(() => {
+      const result = clientSchema.shape[field].safeParse(value);
+      if (!result.success) {
+        setClientErrors(prev => ({ ...prev, [field]: result.error.issues[0].message }));
+      } else {
+        setClientErrors(prev => ({ ...prev, [field]: undefined }));
+      }
+    }, 400);
+  }, []);
+
+  const validateFieldImmediate = useCallback((field: keyof ClientErrors, value: string) => {
+    if (debounceTimers.current[field]) clearTimeout(debounceTimers.current[field]);
+    const result = clientSchema.shape[field].safeParse(value);
+    if (!result.success) {
+      setClientErrors(prev => ({ ...prev, [field]: result.error.issues[0].message }));
+    } else {
+      setClientErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+  }, []);
   const [isAdmin, setIsAdmin] = useState(false);
 
   // Check if user is team member
@@ -198,8 +221,8 @@ export default function TeamDashboardPage() {
                 <Input
                   placeholder="John Smith"
                   value={clientInfo.name}
-                  onChange={(e) => { setClientInfo(prev => ({ ...prev, name: e.target.value })); setClientErrors(prev => ({ ...prev, name: undefined })); }}
-                  onBlur={() => { if (clientInfo.name.trim().length > 0 && clientInfo.name.trim().length < 2) setClientErrors(prev => ({ ...prev, name: 'Name must be at least 2 characters' })); }}
+                  onChange={(e) => { const v = e.target.value; setClientInfo(prev => ({ ...prev, name: v })); validateField('name', v); }}
+                  onBlur={() => validateFieldImmediate('name', clientInfo.name)}
                   className={`mt-1 ${clientErrors.name ? 'border-red-400 dark:border-red-500/50' : ''}`}
                 />
                 {clientErrors.name && <p className="text-xs text-red-500 mt-1">{clientErrors.name}</p>}
@@ -210,8 +233,8 @@ export default function TeamDashboardPage() {
                   type="email"
                   placeholder="john@example.com"
                   value={clientInfo.email}
-                  onChange={(e) => { setClientInfo(prev => ({ ...prev, email: e.target.value })); setClientErrors(prev => ({ ...prev, email: undefined })); }}
-                  onBlur={() => { if (clientInfo.email.trim() && !clientInfo.email.includes('@')) setClientErrors(prev => ({ ...prev, email: 'Please enter a valid email address' })); }}
+                  onChange={(e) => { const v = e.target.value; setClientInfo(prev => ({ ...prev, email: v })); validateField('email', v); }}
+                  onBlur={() => validateFieldImmediate('email', clientInfo.email)}
                   className={`mt-1 ${clientErrors.email ? 'border-red-400 dark:border-red-500/50' : ''}`}
                 />
                 {clientErrors.email && <p className="text-xs text-red-500 mt-1">{clientErrors.email}</p>}
@@ -221,7 +244,8 @@ export default function TeamDashboardPage() {
                 <Input
                   placeholder="+40 712 345 678"
                   value={clientInfo.phone}
-                  onChange={(e) => { setClientInfo(prev => ({ ...prev, phone: e.target.value })); setClientErrors(prev => ({ ...prev, phone: undefined })); }}
+                  onChange={(e) => { const v = e.target.value; setClientInfo(prev => ({ ...prev, phone: v })); if (v) validateField('phone', v); else setClientErrors(prev => ({ ...prev, phone: undefined })); }}
+                  onBlur={() => { if (clientInfo.phone) validateFieldImmediate('phone', clientInfo.phone); }}
                   className={`mt-1 ${clientErrors.phone ? 'border-red-400 dark:border-red-500/50' : ''}`}
                 />
                 {clientErrors.phone && <p className="text-xs text-red-500 mt-1">{clientErrors.phone}</p>}

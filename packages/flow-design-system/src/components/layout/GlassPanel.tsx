@@ -25,13 +25,16 @@ export const GlassPanel = forwardRef<HTMLDivElement, GlassPanelProps>(
     return (
       <div
         ref={ref}
-        className={`rounded-2xl backdrop-blur-2xl backdrop-saturate-150 ${shadowStyles[shadow]} ${paddings[padding]} ${className}`}
+        className={`relative rounded-2xl backdrop-blur-2xl backdrop-saturate-150 ${shadowStyles[shadow]} ${paddings[padding]} ${className}`}
         style={{
           backgroundColor: 'color-mix(in srgb, var(--glass-surface) 80%, transparent)',
-          borderTop: '1px solid var(--glass-border-highlight)',
-          borderLeft: '1px solid var(--glass-border-highlight)',
-          borderBottom: '1px solid var(--glass-border-shadow)',
-          borderRight: '1px solid var(--glass-border-shadow)',
+          border: '1px solid transparent',
+          backgroundClip: 'padding-box',
+          // Liquid glass 3D border: bright top-left → dark bottom-right
+          borderTopColor: 'var(--glass-border-highlight)',
+          borderLeftColor: 'var(--glass-border-highlight)',
+          borderBottomColor: 'var(--glass-border-shadow)',
+          borderRightColor: 'var(--glass-border-shadow)',
           ...style,
         }}
         {...props}

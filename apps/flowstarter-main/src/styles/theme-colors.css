@@ -20,9 +20,9 @@
 
   /* Glass surface (used for modals, cards, popovers) */
   --glass-surface: #ffffff;
-  --glass-border-highlight: rgba(255, 255, 255, 0.40);
-  --glass-border-shadow: rgba(0, 0, 0, 0.04);
-  --glass-shadow: 0 8px 32px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04), 1px 1px 0 rgba(0,0,0,0.03) inset, -1px -1px 0 rgba(255,255,255,1) inset, 0 1px 0 rgba(255,255,255,0.9) inset;
+  --glass-border-highlight: rgba(255, 255, 255, 0.95);
+  --glass-border-shadow: rgba(0, 0, 0, 0.08);
+  --glass-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04), 0 1px 0 rgba(255,255,255,1) inset, -1px -1px 0 rgba(255,255,255,0.8) inset, 0 -1px 0 rgba(0,0,0,0.04) inset;
 
   /* Figma Design Tokens - Light Mode */
   /* Neutral backgrounds */
@@ -127,9 +127,9 @@
 
   /* Glass surface (dark) */
   --glass-surface: #1a1a1f;
-  --glass-border-highlight: rgba(255, 255, 255, 0.08);
-  --glass-border-shadow: rgba(0, 0, 0, 0.20);
-  --glass-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.2), 1px 1px 0 rgba(0,0,0,0.3) inset, -1px -1px 0 rgba(255,255,255,0.08) inset, 0 1px 0 rgba(255,255,255,0.06) inset;
+  --glass-border-highlight: rgba(255, 255, 255, 0.12);
+  --glass-border-shadow: rgba(0, 0, 0, 0.40);
+  --glass-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.08) inset, -1px -1px 0 rgba(255,255,255,0.05) inset, 0 -1px 0 rgba(0,0,0,0.3) inset;
 
   /* Figma Design Tokens - Dark Mode */
   /* Neutral backgrounds */

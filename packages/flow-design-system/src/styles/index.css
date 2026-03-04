@@ -75,3 +75,77 @@
 .flow-animate-slide-up {
   animation: flow-slide-up 0.3s ease-out;
 }
+
+/* ── Apple Liquid Glass border effect ── */
+.glass-liquid {
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+/* Specular highlight — bright top-left catch light */
+.glass-liquid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.38) 0%,
+    rgba(255, 255, 255, 0.12) 20%,
+    rgba(255, 255, 255, 0.03) 40%,
+    transparent 60%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+[data-theme='dark'] .glass-liquid::before,
+.dark .glass-liquid::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.10) 0%,
+    rgba(255, 255, 255, 0.04) 20%,
+    rgba(255, 255, 255, 0.01) 40%,
+    transparent 60%
+  );
+}
+
+/* Luminous refractive border with prismatic color shift */
+.glass-liquid::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.55) 15%,
+    rgba(200, 210, 255, 0.30) 30%,
+    rgba(180, 200, 255, 0.15) 50%,
+    rgba(200, 180, 255, 0.10) 70%,
+    rgba(255, 255, 255, 0.05) 85%,
+    transparent 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 0.3s ease;
+}
+
+[data-theme='dark'] .glass-liquid::after,
+.dark .glass-liquid::after {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(200, 210, 255, 0.14) 15%,
+    rgba(160, 180, 255, 0.10) 30%,
+    rgba(180, 160, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0.03) 70%,
+    transparent 100%
+  );
+}

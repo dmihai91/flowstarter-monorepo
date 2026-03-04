@@ -96,7 +96,7 @@ export function PrimaryAction({ hasAnyProject, hasLiveProject }: PrimaryActionPr
             {t('dashboard.stats.buildPhaseActive')}
           </span>
           <a
-            href={EXTERNAL_URLS.calendly.discovery}
+            href={EXTERNAL_URLS.calendly.checkIn}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white text-sm font-medium hover:bg-gray-200 dark:hover:bg-white/15 transition-all whitespace-nowrap"

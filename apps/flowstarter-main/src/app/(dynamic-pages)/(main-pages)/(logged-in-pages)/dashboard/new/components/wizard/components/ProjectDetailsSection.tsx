@@ -355,7 +355,7 @@ export function ProjectDetailsSection({
                   validationStatus !== 'generating' &&
                   validationStatus !== 'sufficient' && (
                     <div
-                      className={`text-[16px] font-normal leading-[24px] mt-[12px] text-amber-600 dark:text-amber-400`}
+                      className={`text-[1rem] font-normal leading-[24px] mt-[12px] text-amber-600 dark:text-amber-400`}
                     >
                       {!meetsContentRequirement
                         ? t('assistant.validation.needMoreContent', {
@@ -413,7 +413,7 @@ export function ProjectDetailsSection({
                 !collectMode ||
                 (collectMode === 'manual' && !hasIndustry)
               }
-              className="bg-[#000000] hover:bg-[#1a1a1a] disabled:bg-[#000000] disabled:opacity-50 text-white rounded-lg px-[20px] py-[15px] text-[16px] font-medium h-auto min-h-0 shadow-sm transition-all duration-200"
+              className="bg-[#000000] hover:bg-[#1a1a1a] disabled:bg-[#000000] disabled:opacity-50 text-white rounded-lg px-[20px] py-[15px] text-[1rem] font-medium h-auto min-h-0 shadow-sm transition-all duration-200"
             >
               {t('app.continue')}
               <ArrowRight className="h-4 w-4 ml-2" />

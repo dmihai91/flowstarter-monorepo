@@ -4,6 +4,7 @@ import { ProjectWithOwner } from '@/hooks/useTeamProjects';
 import { useFormatDate } from '@/hooks/useFormatDate';
 import { useTranslations } from '@/lib/i18n';
 import { GlassPanel } from '@flowstarter/flow-design-system';
+import { Button } from '@/components/ui/button';
 
 // Status groupings - single source of truth
 const LIVE_STATUSES = ['completed', 'live'] as const;
@@ -85,9 +86,9 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
           <span className="text-sm text-gray-500 dark:text-white/50">
             {t('team.dashboard.totalProjects')}
           </span>
-          <button className="px-2.5 py-1 text-xs font-medium text-gray-600 dark:text-white/70 bg-gray-100 dark:bg-white/10 rounded-md hover:bg-gray-200 dark:hover:bg-white/15 transition-colors">
+          <Button variant="ghost" size="xs">
             {t('team.dashboard.details')} →
-          </button>
+          </Button>
         </div>
         <p className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
           {totalProjects}
@@ -124,7 +125,7 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span className={`px-1.5 py-0.5 text-[10px] font-medium rounded ${getStatusBadgeClass(recentProject.status)}`}>
+                  <span className={`px-1.5 py-0.5 text-[0.625rem] font-medium rounded ${getStatusBadgeClass(recentProject.status)}`}>
                     {getStatusLabel(recentProject.status)}
                   </span>
                 </div>
@@ -148,9 +149,9 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
           <span className="text-sm text-gray-500 dark:text-white/50">
             {t('team.dashboard.revenue')}
           </span>
-          <button className="px-2.5 py-1 text-xs font-medium text-gray-600 dark:text-white/70 bg-gray-100 dark:bg-white/10 rounded-md hover:bg-gray-200 dark:hover:bg-white/15 transition-colors">
+          <Button variant="ghost" size="xs">
             {t('team.dashboard.details')} →
-          </button>
+          </Button>
         </div>
         <p className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
           {formatCurrency(totalSetupFees + monthlyRevenue)}

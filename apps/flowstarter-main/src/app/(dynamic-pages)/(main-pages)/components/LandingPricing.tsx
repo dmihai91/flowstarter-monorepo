@@ -16,7 +16,7 @@ export function LandingPricing() {
   return (
     <div ref={sectionRef}>
         {/* Pricing Section */}
-        <section data-section="pricing" id="pricing" className="py-8 lg:py-28 relative">
+        <section data-section="pricing" id="pricing" className="py-8 lg:py-18 relative">
           {/* Gradient accent - lavender tint */}
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--landing-bg-tint)] to-transparent dark:via-[var(--landing-dark-surface-tint)] pointer-events-none" />
 
@@ -190,7 +190,7 @@ export function LandingPricing() {
                       <p className="text-xs text-gray-500 dark:text-white/45 leading-relaxed">
                         We collect 50% upfront to start your project. You only pay the remaining 50% when you&apos;re happy with the result.
                       </p>
-                      <p className="text-[10px] text-gray-400 dark:text-white/25 mt-1.5">
+                      <p className="text-[0.625rem] text-gray-400 dark:text-white/25 mt-1.5">
                         The initial 50% deposit is non-refundable and covers design, setup, and infrastructure costs.
                       </p>
                     </div>

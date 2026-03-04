@@ -173,7 +173,7 @@ export default function EditorHomePage() {
                     
                     {/* Category badge */}
                     <div className="mt-3">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wider bg-white/[0.04] text-white/40 border border-white/[0.04]">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[0.625rem] font-medium uppercase tracking-wider bg-white/[0.04] text-white/40 border border-white/[0.04]">
                         {template.category}
                       </span>
                     </div>

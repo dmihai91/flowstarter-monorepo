@@ -118,7 +118,7 @@ export function TeamSidebar() {
       {/* Configuration */}
       <div className={cn(!showLabel && "w-full")}>
         {showLabel && (
-          <h3 className="px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
+          <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
             {t('team.sidebar.configuration')}
           </h3>
         )}
@@ -133,7 +133,7 @@ export function TeamSidebar() {
       {isAdmin && (
         <div className={cn(!showLabel && "w-full")}>
           {showLabel && (
-            <h3 className="px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
+            <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
               {t('team.sidebar.team')}
             </h3>
           )}

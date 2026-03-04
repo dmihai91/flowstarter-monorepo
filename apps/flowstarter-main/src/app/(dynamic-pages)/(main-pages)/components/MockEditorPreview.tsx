@@ -48,10 +48,10 @@ export function MockEditorPreview({
               >
                 {/* Title above editor */}
                 <div className="text-center mb-6">
-                  <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                  <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
                     {t('landing.editor.title')}
                   </h3>
-                  <p className="text-base text-gray-500 dark:text-white/50">
+                  <p className="text-lg text-gray-500 dark:text-white/50">
                     {t('landing.editor.subtitle')}
                   </p>
                 </div>
@@ -70,7 +70,7 @@ export function MockEditorPreview({
                         <div className="w-2.5 h-2.5 rounded-full bg-[#28ca42]" />
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100/80 dark:bg-white/5 backdrop-blur text-[10px] text-gray-400 dark:text-white/30">
+                    <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100/80 dark:bg-white/5 backdrop-blur text-[0.6875rem] text-gray-400 dark:text-white/30">
                       <svg
                         className="w-2.5 h-2.5"
                         fill="none"
@@ -88,17 +88,17 @@ export function MockEditorPreview({
                     </div>
                     <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="text-[9px] font-medium text-emerald-600 dark:text-emerald-400">
+                      <span className="text-[0.625rem] font-medium text-emerald-600 dark:text-emerald-400">
                         LIVE
                       </span>
                     </div>
                   </div>
 
                   {/* Split: Chat + Preview */}
-                  <div className="flex flex-col sm:flex-row sm:divide-x divide-gray-200/30 dark:divide-white/5 min-h-[280px] sm:min-h-[320px]">
+                  <div className="flex flex-col sm:flex-row sm:divide-x divide-gray-200/30 dark:divide-white/5 min-h-[280px] sm:min-h-[360px] sm:h-[500px]">
                     {/* Chat Panel */}
                     <div className="w-full sm:w-1/2 p-3 sm:p-4 flex flex-col border-b sm:border-b-0 border-gray-200/30 dark:border-white/5">
-                      <div className="text-[11px] tracking-[0.12em] uppercase font-bold mb-2 sm:mb-3 bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
+                      <div className="text-xs tracking-[0.12em] uppercase font-bold mb-2 sm:mb-3 bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
                         ✨ Smart AI Editor
                       </div>
 
@@ -107,7 +107,7 @@ export function MockEditorPreview({
                         {messages.map((msg, i) =>
                           msg.role === 'user' ? (
                             <div key={i} className="flex justify-end">
-                              <div className="max-w-[95%] px-3 py-2 rounded-xl rounded-tr-sm bg-gradient-to-r from-[var(--purple)] to-blue-500 text-white text-[13px] shadow-sm">
+                              <div className="max-w-[95%] px-3 py-2 rounded-xl rounded-tr-sm bg-gradient-to-r from-[var(--purple)] to-blue-500 text-white text-sm shadow-sm">
                                 {msg.text}
                               </div>
                             </div>
@@ -117,8 +117,8 @@ export function MockEditorPreview({
                                 <svg className="w-3 h-3 text-white" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0L9.5 5.5 16 8l-6.5 1.5L8 16l-1.5-6.5L0 8l6.5-2.5z" /></svg>
                               </div>
                               <div className="flex-1 px-3 py-2 rounded-xl rounded-tl-sm bg-white/55 dark:bg-white/[0.05] border border-white/50 dark:border-white/10">
-                                <div className="text-[9px] font-bold text-[var(--purple)] uppercase tracking-wider mb-1">Flowstarter Assistant</div>
-                                <div className="text-[13px] text-gray-600 dark:text-white/70">{msg.text}</div>
+                                <div className="text-[0.625rem] font-bold text-[var(--purple)] uppercase tracking-wider mb-1">Flowstarter Assistant</div>
+                                <div className="text-sm text-gray-600 dark:text-white/70">{msg.text}</div>
                               </div>
                             </div>
                           )
@@ -156,7 +156,7 @@ export function MockEditorPreview({
                           <input
                             type="text"
                             placeholder="Try: Add form..."
-                            className="flex-1 bg-transparent text-[13px] outline-none border-none focus:outline-none focus:ring-0 px-2 placeholder:text-gray-400 dark:placeholder:text-white/30 text-gray-900 dark:text-white"
+                            className="flex-1 bg-transparent text-sm outline-none border-none focus:outline-none focus:ring-0 px-2 placeholder:text-gray-400 dark:placeholder:text-white/30 text-gray-900 dark:text-white"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
@@ -190,7 +190,7 @@ export function MockEditorPreview({
                                 key={prompt}
                                 onClick={() => handleSend(prompt)}
                                 disabled={isTyping}
-                                className="px-3 py-1.5 text-[11px] rounded-full bg-white/55 dark:bg-white/[0.04] backdrop-blur-sm hover:bg-white/70 dark:hover:bg-white/[0.08] border border-gray-200/30 dark:border-white/10 text-gray-600 dark:text-white/50 transition-all disabled:opacity-50 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)]"
+                                className="px-3.5 py-2 text-[0.8125rem] rounded-full bg-white/55 dark:bg-white/[0.04] backdrop-blur-sm hover:bg-white/70 dark:hover:bg-white/[0.08] border border-gray-200/30 dark:border-white/10 text-gray-600 dark:text-white/50 transition-all disabled:opacity-50 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)]"
                               >
                                 {prompt}
                               </button>
@@ -201,7 +201,7 @@ export function MockEditorPreview({
                     </div>
 
                     {/* Mock Site Preview */}
-                    <div className="w-full sm:w-1/2 bg-white dark:bg-[#0f0f12] min-h-[200px] sm:min-h-[260px] overflow-hidden relative">
+                    <div className="w-full sm:w-1/2 bg-white dark:bg-[#0f0f12] overflow-hidden overflow-y-auto relative flex flex-col">
                       {/* Right edge mask */}
                       <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white dark:from-[#0f0f12] to-transparent pointer-events-none z-10" />
                       {/* Realistic site header */}
@@ -214,7 +214,7 @@ export function MockEditorPreview({
                       >
                         <div className="flex items-center gap-2">
                           <div
-                            className={`w-5 h-5 rounded-md flex items-center justify-center text-[8px] font-bold text-white transition-colors duration-500 ${
+                            className={`w-5 h-5 rounded-md flex items-center justify-center text-[0.5rem] font-bold text-white transition-colors duration-500 ${
                               mockSite.primaryColor === 'violet'
                                 ? 'bg-[var(--purple)]/50'
                                 : 'bg-emerald-500'
@@ -222,11 +222,11 @@ export function MockEditorPreview({
                           >
                             C
                           </div>
-                          <span className="text-xs font-semibold text-gray-800 dark:text-white">
+                          <span className="text-[0.8125rem] font-semibold text-gray-800 dark:text-white">
                             CoffeeRoast
                           </span>
                         </div>
-                        <div className="flex items-center gap-3 text-[10px] text-gray-500 dark:text-gray-400">
+                        <div className="flex items-center gap-3 text-[0.6875rem] text-gray-500 dark:text-gray-400">
                           <span className="hover:text-gray-900 dark:hover:text-white cursor-default">
                             Home
                           </span>
@@ -261,7 +261,7 @@ export function MockEditorPreview({
                             <div className="h-1.5 w-28 bg-gray-300 dark:bg-gray-600 rounded mb-1" />
                             <div className="h-1.5 w-24 bg-gray-300 dark:bg-gray-600 rounded mb-3" />
                             <div
-                              className={`h-5 w-16 rounded-full text-[9px] text-white flex items-center justify-center transition-colors duration-500 ${
+                              className={`h-5 w-16 rounded-full text-[0.5625rem] text-white flex items-center justify-center transition-colors duration-500 ${
                                 mockSite.primaryColor === 'violet'
                                   ? 'bg-[var(--purple)]/50'
                                   : 'bg-emerald-500'
@@ -285,28 +285,28 @@ export function MockEditorPreview({
                         }`}
                       >
                         <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900/30">
-                          <div className="text-[11px] font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                          <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
                             Get in Touch
                           </div>
                           <div className="grid grid-cols-2 gap-1.5 mb-1.5">
                             <div className="h-5 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 px-2 flex items-center">
-                              <span className="text-[9px] text-gray-400">
+                              <span className="text-[0.625rem] text-gray-400">
                                 Name
                               </span>
                             </div>
                             <div className="h-5 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 px-2 flex items-center">
-                              <span className="text-[9px] text-gray-400">
+                              <span className="text-[0.625rem] text-gray-400">
                                 Email
                               </span>
                             </div>
                           </div>
                           <div className="h-7 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 mb-2 px-2 flex items-start pt-1">
-                            <span className="text-[9px] text-gray-400">
+                            <span className="text-[0.625rem] text-gray-400">
                               Message...
                             </span>
                           </div>
                           <div
-                            className={`h-5 w-14 rounded text-[9px] text-white flex items-center justify-center transition-colors duration-500 ${
+                            className={`h-5 w-14 rounded text-[0.5625rem] text-white flex items-center justify-center transition-colors duration-500 ${
                               mockSite.primaryColor === 'violet'
                                 ? 'bg-[var(--purple)]/50'
                                 : 'bg-emerald-500'
@@ -319,7 +319,7 @@ export function MockEditorPreview({
 
                       {/* Products/Features section */}
                       <div className="px-4 py-3">
-                        <div className="text-[11px] font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
                           Our Blends
                         </div>
                         <div className="grid grid-cols-3 gap-2">
@@ -351,7 +351,7 @@ export function MockEditorPreview({
                         }`}
                       >
                         <div className="px-4 py-3">
-                          <div className="text-[11px] font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                          <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
                             What Customers Say
                           </div>
                           <div className="flex gap-2">
@@ -370,7 +370,7 @@ export function MockEditorPreview({
                                   {[1, 2, 3, 4, 5].map((s) => (
                                     <span
                                       key={s}
-                                      className={`text-[8px] ${
+                                      className={`text-[0.5625rem] ${
                                         mockSite.primaryColor === 'violet'
                                           ? 'text-[var(--purple)]'
                                           : 'text-emerald-400'
@@ -395,12 +395,12 @@ export function MockEditorPreview({
                         }`}
                       >
                         <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900/30">
-                          <div className="text-[11px] font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                          <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
                             Pricing
                           </div>
                           <div className="flex gap-2">
                             <div className="flex-1 p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                              <div className="text-[10px] font-medium text-gray-600 dark:text-gray-400">
+                              <div className="text-[0.6875rem] font-medium text-gray-600 dark:text-gray-400">
                                 Basic
                               </div>
                               <div
@@ -423,11 +423,11 @@ export function MockEditorPreview({
                               }`}
                             >
                               <div className="flex items-center gap-1">
-                                <div className="text-[10px] font-medium text-gray-600 dark:text-gray-400">
+                                <div className="text-[0.6875rem] font-medium text-gray-600 dark:text-gray-400">
                                   Pro
                                 </div>
                                 <div
-                                  className={`text-[7px] px-1 py-0.5 rounded-full text-white transition-colors duration-500 ${
+                                  className={`text-[0.5rem] px-1 py-0.5 rounded-full text-white transition-colors duration-500 ${
                                     mockSite.primaryColor === 'violet'
                                       ? 'bg-[var(--purple)]/50'
                                       : 'bg-emerald-500'
@@ -453,9 +453,9 @@ export function MockEditorPreview({
                       </div>
 
                       {/* Footer */}
-                      <div className="px-4 py-2.5 bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+                      <div className="mt-auto px-4 py-2.5 bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
                         <div className="flex items-center justify-between">
-                          <div className="text-[9px] text-gray-400">
+                          <div className="text-[0.625rem] text-gray-400">
                             © {new Date().getFullYear()} CoffeeRoast
                           </div>
                           <div className="flex gap-2">
@@ -479,7 +479,7 @@ export function MockEditorPreview({
                   <div className="text-base sm:text-lg lg:text-2xl font-bold">
                     Draft
                   </div>
-                  <div className="text-[8px] sm:text-[10px] lg:text-xs text-white/70">
+                  <div className="text-[0.5rem] sm:text-[0.625rem] lg:text-xs text-white/70">
                     ~2 weeks
                   </div>
                 </div>

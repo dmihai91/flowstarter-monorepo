@@ -52,22 +52,22 @@ export function MilestonesTimeline({ hasAnyProject, hasLiveProject }: Milestones
                 {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : isLocked ? <Lock className="w-4 h-4" /> : <Icon className="w-5 h-5" />}
               </div>
               <div className="flex-1 min-w-0">
-                <span className={`text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider ${
+                <span className={`text-[0.625rem] sm:text-[0.6875rem] font-semibold uppercase tracking-wider ${
                   isActive ? 'text-[var(--purple)]' : isCompleted ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-white/40'
                 }`}>
                   {t('dashboard.stepper.milestone', { number: i + 1 })}
                 </span>
                 <div className="flex items-center gap-2">
-                  <h3 className={`text-[15px] font-semibold ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
+                  <h3 className={`text-[0.9375rem] font-semibold ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
                     {m.title}
                   </h3>
                   {isCompleted && (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.625rem] font-semibold bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400">
                       ✓ {t('dashboard.stepper.done')}
                     </span>
                   )}
                 </div>
-                <p className={`text-[11px] sm:text-xs leading-snug text-gray-500 dark:text-white/50 ${isLocked ? 'opacity-60' : ''}`}>
+                <p className={`text-[0.6875rem] sm:text-xs leading-snug text-gray-500 dark:text-white/50 ${isLocked ? 'opacity-60' : ''}`}>
                   {m.desc}
                 </p>
               </div>
@@ -79,13 +79,13 @@ export function MilestonesTimeline({ hasAnyProject, hasLiveProject }: Milestones
       {/* Desktop: horizontal timeline */}
       <div className="hidden lg:block">
         <div className="relative flex items-start">
-          {/* Background line */}
-          <div className="absolute top-5 left-[calc(12.5%+16px)] right-[calc(12.5%+16px)] h-[2px] bg-gray-200/80 dark:bg-white/10 rounded-full" />
+          {/* Background line — spans from center of first circle to center of last */}
+          <div className="absolute top-5 left-[12.5%] right-[12.5%] h-[2px] bg-gray-200/80 dark:bg-white/10 rounded-full" />
           {/* Completed progress line */}
           {milestones.filter(m => m.status === 'completed').length > 0 && (
             <div
-              className="absolute top-5 left-[calc(12.5%+16px)] h-[2px] bg-gradient-to-r from-green-400 to-green-400/60 rounded-full z-[1] transition-all duration-700"
-              style={{ width: `${(milestones.filter(m => m.status === 'completed').length / milestones.length) * 75}%` }}
+              className="absolute top-5 left-[12.5%] h-[2px] bg-gradient-to-r from-green-400 to-green-400/60 rounded-full z-[1] transition-all duration-700"
+              style={{ width: `${(milestones.filter(m => m.status === 'completed').length / (milestones.length - 1)) * 75}%` }}
             />
           )}
 
@@ -117,7 +117,7 @@ export function MilestonesTimeline({ hasAnyProject, hasLiveProject }: Milestones
                       ? 'bg-green-50/90 dark:bg-green-500/[0.08] ring-1 ring-green-500/40 shadow-[0_4px_16px_rgba(34,197,94,0.15)]'
                       : 'bg-white/50 dark:bg-white/[0.03] ring-1 ring-gray-200/40 dark:ring-white/5 shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.1)]'}
                   `}>
-                    <span className={`text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider ${
+                    <span className={`text-[0.625rem] sm:text-[0.6875rem] font-semibold uppercase tracking-wider ${
                       isActive ? 'text-[var(--purple)]' : isCompleted ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-white/40'
                     }`}>
                       {t('dashboard.stepper.milestone', { number: i + 1 })}
@@ -125,7 +125,7 @@ export function MilestonesTimeline({ hasAnyProject, hasLiveProject }: Milestones
                     <h3 className={`text-sm font-semibold mt-0.5 ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
                       {m.title}
                     </h3>
-                    <p className={`text-[11px] sm:text-xs leading-snug mt-0.5 ${isLocked ? 'text-gray-400 dark:text-white/30' : 'text-gray-500 dark:text-white/50'}`}>
+                    <p className={`text-[0.6875rem] sm:text-xs leading-snug mt-0.5 ${isLocked ? 'text-gray-400 dark:text-white/30' : 'text-gray-500 dark:text-white/50'}`}>
                       {m.desc}
                     </p>
                   </div>
@@ -165,11 +165,11 @@ export function MilestonesTimeline({ hasAnyProject, hasLiveProject }: Milestones
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <h3 className={`text-[15px] font-semibold ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
+                  <h3 className={`text-[0.9375rem] font-semibold ${isLocked ? 'text-gray-400 dark:text-white/40' : 'text-gray-900 dark:text-white'}`}>
                     {m.title}
                   </h3>
                   {isCompleted && (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.625rem] font-semibold bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400">
                       ✓ {t('dashboard.stepper.done')}
                     </span>
                   )}
@@ -179,7 +179,7 @@ export function MilestonesTimeline({ hasAnyProject, hasLiveProject }: Milestones
                 </p>
               </div>
               {isActive && (
-                <span className="text-[10px] font-semibold text-[var(--purple)] bg-[var(--purple)]/10 px-2 py-0.5 rounded-full whitespace-nowrap">
+                <span className="text-[0.625rem] font-semibold text-[var(--purple)] bg-[var(--purple)]/10 px-2 py-0.5 rounded-full whitespace-nowrap">
                   Current
                 </span>
               )}

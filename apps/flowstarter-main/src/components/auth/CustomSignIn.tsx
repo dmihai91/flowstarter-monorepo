@@ -234,7 +234,9 @@ export function CustomSignIn() {
             <Button
               onClick={handleForgotPassword}
               disabled={isResetLoading || !resetEmail}
-              className="w-full h-11 rounded-xl font-medium mt-4 bg-white dark:bg-[var(--surface-2)]/50 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-[var(--surface-2)]/70 transition-all shadow-sm"
+              variant="outline"
+              size="lg"
+              className="w-full mt-4"
             >
               {isResetLoading
                 ? t('auth.forgotPassword.sendingCode')
@@ -313,7 +315,9 @@ export function CustomSignIn() {
               disabled={
                 isResetLoading || !resetCode || !newPassword || !confirmPassword
               }
-              className="w-full h-11 rounded-xl font-medium mt-4 bg-white dark:bg-[var(--surface-2)]/50 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-[var(--surface-2)]/70 transition-all shadow-sm"
+              variant="outline"
+              size="lg"
+              className="w-full mt-4"
             >
               {isResetLoading
                 ? t('auth.forgotPassword.resettingPassword')
@@ -440,9 +444,9 @@ export function CustomSignIn() {
 
         <Button
           type="submit"
-          variant="default"
+          size="xl"
           disabled={isLoading || !formik.isValid}
-          className="w-full h-12 rounded-lg font-semibold mt-4 bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 shadow-md hover:shadow-lg transition-all"
+          className="w-full font-semibold mt-4 shadow-md"
         >
           {isLoading ? t('auth.signIn.signingIn') : t('auth.signIn')}
         </Button>

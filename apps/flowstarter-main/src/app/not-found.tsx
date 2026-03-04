@@ -81,7 +81,7 @@ export default function NotFound() {
                   <div className="text-lg font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
                     {stat.value}
                   </div>
-                  <div className="text-[9px] text-gray-400 dark:text-white/30 uppercase tracking-wider">
+                  <div className="text-[0.5625rem] text-gray-400 dark:text-white/30 uppercase tracking-wider">
                     {stat.label}
                   </div>
                 </div>

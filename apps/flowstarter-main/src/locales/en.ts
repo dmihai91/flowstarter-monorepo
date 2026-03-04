@@ -1319,6 +1319,19 @@ const en = {
   'landing.pillars.convert.subtitle': 'Turn visitors into booked appointments',
   'landing.pillars.convert.body': 'Visitors see your work, understand your value, and book directly. No forms that go nowhere. All set up for you.',
 
+  // Team Section
+  'landing.team.title': 'Built by people, not algorithms',
+  'landing.team.subtitle': 'We started Flowstarter because we needed it ourselves.',
+  'landing.team.darius.name': 'Darius',
+  'landing.team.darius.role': 'Co-founder & Engineer',
+  'landing.team.darius.bio': '10+ years building software for companies big and small.',
+  'landing.team.darius.quote': 'I build what I wished existed.',
+  'landing.team.dorin.name': 'Dorin',
+  'landing.team.dorin.role': 'Co-founder & Designer',
+  'landing.team.dorin.bio': 'Turns complexity into clarity, one pixel at a time.',
+  'landing.team.dorin.quote': 'Good design is invisible.',
+  'landing.team.linkedin': 'LinkedIn',
+
   // Manifesto
   'landing.manifesto.title': 'Our mission',
   'landing.manifesto.headline': 'Every real expert deserves to be found.',

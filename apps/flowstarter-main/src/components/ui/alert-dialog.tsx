@@ -84,7 +84,7 @@ function AlertDialogContent({
       <AlertDialogPrimitive.Content
         data-slot="alert-dialog-content"
         className={cn(
-          'bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-2xl backdrop-saturate-150',
+          'bg-white/95 dark:bg-[var(--glass-surface)]/95 backdrop-blur-2xl backdrop-saturate-150',
           'border border-white/60 dark:border-white/10',
           'shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25),0_0_0_1px_rgba(255,255,255,0.1)_inset]',
           'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',

@@ -22,9 +22,10 @@ export function SocialAuth({
       <Button
         type="button"
         variant="outline"
+        size="lg"
         onClick={onGoogleClick}
         disabled={isGoogleLoading || isAppleLoading}
-        className="w-full h-11 rounded-lg bg-white dark:bg-[var(--surface-2)]/50 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-[var(--surface-2)]/70 transition-all shadow-sm"
+        className="w-full"
       >
         <GoogleIcon className="w-5 h-5 mr-2" />
         <span className="hidden sm:inline">
@@ -37,9 +38,10 @@ export function SocialAuth({
       <Button
         type="button"
         variant="outline"
+        size="lg"
         onClick={onAppleClick}
         disabled={isGoogleLoading || isAppleLoading}
-        className="w-full h-11 rounded-lg bg-white dark:bg-[var(--surface-2)]/50 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-[var(--surface-2)]/70 transition-all shadow-sm"
+        className="w-full"
       >
         <AppleBrandIcon className="w-5 h-5 mr-2" />
         <span className="hidden sm:inline">

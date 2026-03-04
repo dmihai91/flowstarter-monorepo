@@ -15,6 +15,7 @@ import { useMutation } from 'convex/react';
 import { api } from '~/convex/_generated/api';
 import type { Id } from '~/convex/_generated/dataModel';
 import type { ChatMessage, ColorPalette, SystemFont, LogoInfo, BuildPhase } from '../types';
+import { syncProjectName } from '~/lib/services/projectSyncService';
 
 interface ConversationState {
   step?: string;
@@ -263,7 +264,12 @@ export function useConvexSync({
 
       lastSyncedProjectNameRef.current = conversationState.projectName;
       prevProjectIdRef.current = projectId;
-      console.log('[useConvexSync] ✅ Synced project name:', conversationState.projectName);
+      console.log('[useConvexSync] ✅ Synced project name to Convex:', conversationState.projectName);
+
+      // Also sync to Supabase so the team dashboard shows the real name
+      syncProjectName(conversationState.projectName).catch((err) => {
+        console.error('[useConvexSync] ❌ Failed to sync project name to Supabase:', err);
+      });
     } catch (error) {
       console.error('[useConvexSync] ❌ Failed to sync project name:', error);
     }

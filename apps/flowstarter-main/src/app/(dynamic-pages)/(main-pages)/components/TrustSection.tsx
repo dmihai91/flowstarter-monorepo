@@ -17,7 +17,7 @@ export function TrustSection() {
   ];
 
   return (
-    <section ref={sectionRef} className="py-16 lg:py-28">
+    <section ref={sectionRef} className="py-12 lg:py-18">
       <div className={`max-w-5xl mx-auto px-6 lg:px-12 transition-all duration-1000 ease-out ${
         isVisible ? 'opacity-100' : 'opacity-0'
       }`}>

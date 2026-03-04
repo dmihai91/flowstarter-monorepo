@@ -47,7 +47,7 @@ export function AppHeader() {
               <span className="sm:hidden"><Logo size="sm" /></span>
               <span className="hidden sm:block"><Logo size="md" /></span>
               {isTeam && (
-                <span className="px-2 py-0.5 text-[10px] font-medium bg-[var(--purple)]/10 text-[var(--purple)] rounded-full hidden sm:block">
+                <span className="px-2 py-0.5 text-[0.625rem] font-medium bg-[var(--purple)]/10 text-[var(--purple)] rounded-full hidden sm:block">
                   Team
                 </span>
               )}

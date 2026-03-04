@@ -18,6 +18,9 @@
   --secondary-lightest: hsl(211 93% 61% / 0.1);
   --secondary-dark: hsl(213, 85%, 54%);
 
+  /* Glass surface (used for modals, cards, popovers) */
+  --glass-surface: #ffffff;
+
   /* Figma Design Tokens - Light Mode */
   /* Neutral backgrounds */
   --ui-bg-base: hsl(0 0% 100%);
@@ -59,6 +62,16 @@
   --landing-bg-tint: #f7f5ff;
   --landing-dark-surface: #0a0a0c;
   --landing-dark-surface-tint: #0d0d14;
+
+  /* Hero gradient — base wash */
+  --hero-wash-from: #f0eafc;
+  --hero-wash-via: #faf9ff;
+  --hero-wash-to: #f8f0f4;
+  /* Hero gradient — glow orbs (light mode: muted, professional) */
+  --hero-glow-primary: #c4adee;
+  --hero-glow-secondary: #e4afc8;
+  --hero-glow-accent: #a8bfee;
+  --hero-glow-focal: #d4c4ed;
 
   /* Flow-line SVG gradient stops */
   --landing-flow-start: #a855f7;
@@ -109,6 +122,9 @@
   --secondary-lightest: hsl(212 100% 61% / 0.1);
   --secondary-dark: hsl(213 75% 54%);
 
+  /* Glass surface (dark) */
+  --glass-surface: #1a1a1f;
+
   /* Figma Design Tokens - Dark Mode */
   /* Neutral backgrounds */
   --ui-bg-base: hsl(240 16% 20%);
@@ -149,6 +165,16 @@
   --landing-btn-via: #818CF8;
   --landing-btn-hover-from: #4F46E5;
   --landing-btn-hover-via: #6366F1;
+
+  /* Hero gradient — dark wash */
+  --hero-wash-from: #0c0516;
+  --hero-wash-via: #08060e;
+  --hero-wash-to: #0b050f;
+  /* Hero gradient — dark glow orbs */
+  --hero-glow-primary: #351a80;
+  --hero-glow-secondary: #481440;
+  --hero-glow-accent: #161c50;
+  --hero-glow-focal: #451a90;
 
   --landing-card-bg: rgba(255, 255, 255, 0.02);
   --landing-card-border: rgba(255, 255, 255, 0.05);

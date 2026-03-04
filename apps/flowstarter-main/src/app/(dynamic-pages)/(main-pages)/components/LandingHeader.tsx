@@ -31,7 +31,7 @@ export function LandingHeader() {
             isLoaded ? 'opacity-100' : 'opacity-0'
           } ${
             scrolled || mobileMenuOpen
-              ? 'bg-white/60 dark:bg-[#0a0a0c]/60 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/40 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.04)]'
+              ? 'bg-white/70 dark:bg-[#0a0a0c]/70 backdrop-blur-lg lg:backdrop-blur-2xl backdrop-saturate-150 border-b border-white/40 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.04)]'
               : ''
           }`}
         >

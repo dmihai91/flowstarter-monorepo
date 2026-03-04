@@ -177,7 +177,7 @@ function TemplateCard({
           <h3 className="text-sm font-semibold text-[var(--flow-text-primary)] truncate">
             {template.name}
           </h3>
-          <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-medium bg-[var(--flow-bg-tertiary)] text-[var(--flow-text-tertiary)]">
+          <span className="shrink-0 px-2 py-0.5 rounded-full text-[0.625rem] font-medium bg-[var(--flow-bg-tertiary)] text-[var(--flow-text-tertiary)]">
             {CATEGORY_LABELS[template.category] || template.category}
           </span>
         </div>
@@ -188,13 +188,13 @@ function TemplateCard({
           {template.features.slice(0, 3).map((feature) => (
             <span
               key={feature}
-              className="px-1.5 py-0.5 rounded text-[10px] text-[var(--flow-text-muted)] bg-[var(--flow-bg-primary)]"
+              className="px-1.5 py-0.5 rounded text-[0.625rem] text-[var(--flow-text-muted)] bg-[var(--flow-bg-primary)]"
             >
               {feature}
             </span>
           ))}
           {template.features.length > 3 && (
-            <span className="px-1.5 py-0.5 text-[10px] text-[var(--flow-text-muted)]">
+            <span className="px-1.5 py-0.5 text-[0.625rem] text-[var(--flow-text-muted)]">
               +{template.features.length - 3}
             </span>
           )}

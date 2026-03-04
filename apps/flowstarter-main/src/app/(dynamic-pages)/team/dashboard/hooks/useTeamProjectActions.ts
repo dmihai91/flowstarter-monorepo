@@ -10,6 +10,13 @@ import { toast } from 'sonner';
 
 const EDITOR_URL = process.env.NEXT_PUBLIC_EDITOR_URL || 'http://localhost:5173';
 
+interface HandoffResponse {
+  success: boolean;
+  projectId: string;
+  token: string;
+  editorUrl: string;
+}
+
 export function useTeamProjectActions() {
   const { t } = useTranslations();
   const deleteProjectMutation = useTeamDeleteProject();
@@ -67,8 +74,8 @@ export function useTeamProjectActions() {
         body: JSON.stringify({ projectId }),
       });
       if (!res.ok) throw new Error('Handoff failed');
-      const data = await res.json();
-      window.open(`${EDITOR_URL}?handoff=${data.token}`, '_blank');
+      const data: HandoffResponse = await res.json();
+      window.open(data.editorUrl || `${EDITOR_URL}?handoff=${data.token}`, '_blank');
     } catch (error) {
       console.error('Failed to open in editor:', error);
       toast.error(t('team.dashboard.toast.editorFailed'));

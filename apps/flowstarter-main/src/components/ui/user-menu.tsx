@@ -140,16 +140,16 @@ export function UserMenu() {
 
         <DropdownMenuItem
           onClick={() => setShowSignOutDialog(true)}
-          className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 focus:bg-red-50 dark:focus:bg-red-900/20"
+          variant="destructive"
         >
-          <LogOut className="h-4 w-4 text-red-500 dark:text-red-400" />
+          <LogOut className="h-4 w-4" />
           {t('app.signOut')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
 
     <AlertDialog open={showSignOutDialog} onOpenChange={setShowSignOutDialog}>
-      <AlertDialogContent className="bg-white dark:bg-[#1a1a1f] border-gray-200 dark:border-white/10">
+      <AlertDialogContent className="bg-white dark:bg-[var(--glass-surface)] border-gray-200 dark:border-white/10">
         <AlertDialogHeader>
           <AlertDialogTitle>{t('app.sigOutTitle')}</AlertDialogTitle>
           <AlertDialogDescription>

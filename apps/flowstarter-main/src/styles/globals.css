@@ -137,6 +137,40 @@ body {
   }
 }
 
+/* ── Touch-device GPU optimizations (iPad / tablets) ── */
+/* Safari on iPad struggles with stacked blurs + backdrop-blur + fixed layers. */
+/* Use (hover: none) to target touch-primary devices without penalising desktop. */
+@media (hover: none) {
+  /* Promote blur orbs to their own layer so Safari doesn't re-rasterize on scroll */
+  .will-change-transform {
+    will-change: transform;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+
+  /* Disable expensive hero flow-line animation on touch */
+  .animate-\[flowDrift_20s_ease-in-out_infinite_alternate\] {
+    animation: none !important;
+  }
+
+  /* Disable the shimmer CTA button animation (saves a compositing layer) */
+  .animate-\[shimmerBtn_3s_ease-in-out_infinite\] {
+    animation: none !important;
+    background-position: 0 0 !important;
+  }
+
+  /* Lighten backdrop-blur globally on touch for smoother scrolling */
+  .backdrop-blur-md {
+    -webkit-backdrop-filter: blur(8px) !important;
+    backdrop-filter: blur(8px) !important;
+  }
+
+  .backdrop-blur-sm {
+    -webkit-backdrop-filter: blur(2px) !important;
+    backdrop-filter: blur(2px) !important;
+  }
+}
+
 /* iPad and tablet specific improvements */
 /* Extend down to 640px to cover iPad mini in portrait (Tailwind sm breakpoint) */
 @media (min-width: 640px) and (max-width: 1024px) {

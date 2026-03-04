@@ -17,10 +17,10 @@ export function DomainOwnershipSelector({
 
   return (
     <div className="space-y-4">
-      <Label className="text-[18px] font-medium leading-[normal] text-ui-text-primary">
+      <Label className="text-[1.125rem] font-medium leading-[normal] text-ui-text-primary">
         {t('domain.config.ownershipQuestion')}
       </Label>
-      <p className="text-[16px] font-normal leading-[24px] text-ui-text-secondary">
+      <p className="text-[1rem] font-normal leading-[24px] text-ui-text-secondary">
         {t('domain.config.bestOption')}
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-[20px]">
@@ -33,15 +33,15 @@ export function DomainOwnershipSelector({
             <div className="bg-ui-accent-purple-light rounded-[8px] p-[6px] flex items-center justify-center">
               <Server className="h-[16px] w-[16px] text-ui-text-dark" />
             </div>
-            <span className="text-[16px] font-medium leading-[24px] text-ui-text-primary">
+            <span className="text-[1rem] font-medium leading-[24px] text-ui-text-primary">
               {t('domain.config.useHosted')}
             </span>
           </div>
           <div className="mt-[4px]">
-            <span className="block text-[16px] font-normal leading-[24px] text-ui-text-secondary">
+            <span className="block text-[1rem] font-normal leading-[24px] text-ui-text-secondary">
               {t('domain.config.freeSubdomain')}
             </span>
-            <span className="mt-[8px] inline-block text-[12px] px-[12px] py-[5px] rounded-[32px] bg-ui-accent-green-bg text-ui-accent-green border border-ui-accent-green/30">
+            <span className="mt-[8px] inline-block text-[0.75rem] px-[12px] py-[5px] rounded-[32px] bg-ui-accent-green-bg text-ui-accent-green border border-ui-accent-green/30">
               {t('domain.recommended')}
             </span>
           </div>
@@ -56,11 +56,11 @@ export function DomainOwnershipSelector({
             <div className="bg-ui-accent-purple rounded-[8px] p-[6px] flex items-center justify-center">
               <CheckCircle className="h-[16px] w-[16px] text-ui-text-primary" />
             </div>
-            <span className="text-[16px] font-medium leading-[24px] text-ui-text-primary">
+            <span className="text-[1rem] font-medium leading-[24px] text-ui-text-primary">
               {t('domain.config.owns')}
             </span>
           </div>
-          <span className="text-[16px] font-normal leading-[24px] text-ui-text-secondary">
+          <span className="text-[1rem] font-normal leading-[24px] text-ui-text-secondary">
             {t('domain.config.useExisting')}
           </span>
         </button>
@@ -74,11 +74,11 @@ export function DomainOwnershipSelector({
             <div className="bg-ui-accent-green rounded-[8px] p-[6px] flex items-center justify-center">
               <ShoppingCart className="h-[16px] w-[16px] text-ui-text-dark" />
             </div>
-            <span className="text-[16px] font-medium leading-[24px] text-ui-text-primary">
+            <span className="text-[1rem] font-medium leading-[24px] text-ui-text-primary">
               {t('domain.config.wantsToBuy')}
             </span>
           </div>
-          <span className="text-[16px] font-normal leading-[24px] text-ui-text-secondary">
+          <span className="text-[1rem] font-normal leading-[24px] text-ui-text-secondary">
             {t('domain.config.findAndPurchase')}
           </span>
         </button>

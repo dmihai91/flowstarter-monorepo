@@ -8,7 +8,7 @@ export function TeamProjectsStatsSkeleton() {
       {[1, 2].map((i) => (
         <div
           key={i}
-          className="p-5 rounded-xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl animate-pulse"
+          className="p-5 rounded-xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[var(--glass-surface)]/80 backdrop-blur-xl animate-pulse"
           style={{ animationDelay: `${i * 100}ms` }}
         >
           <div className="flex items-center justify-between mb-3">

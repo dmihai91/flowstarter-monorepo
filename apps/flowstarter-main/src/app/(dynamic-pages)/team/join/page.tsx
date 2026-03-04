@@ -75,7 +75,7 @@ function JoinPageContent() {
           </h1>
           <p className="text-gray-500 dark:text-white/50 mb-6">Invalid invitation link</p>
           <Link href="/">
-            <Button variant="outline" className="rounded-xl">
+            <Button variant="outline">
               Go to Homepage
             </Button>
           </Link>
@@ -115,7 +115,7 @@ function JoinPageContent() {
           </h1>
           <p className="text-gray-500 dark:text-white/50 mb-6">{errorMessage}</p>
           <Link href="/">
-            <Button variant="outline" className="rounded-xl">
+            <Button variant="outline">
               Go to Homepage
             </Button>
           </Link>

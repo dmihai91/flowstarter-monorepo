@@ -169,7 +169,7 @@ export function Sidebar() {
       {/* Main Navigation */}
       <div className={cn(effectiveCollapsed && "w-full")}>
         {showLabel && (
-          <h3 className="px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
+          <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
             {t('sidebar.main')}
           </h3>
         )}
@@ -190,7 +190,7 @@ export function Sidebar() {
       {/* Support */}
       <div className={cn(effectiveCollapsed && "w-full")}>
         {showLabel && (
-          <h3 className="px-3 mb-2 text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
+          <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
             {t('sidebar.support')}
           </h3>
         )}

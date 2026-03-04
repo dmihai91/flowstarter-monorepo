@@ -61,7 +61,7 @@ export function ActionCard({
             {description}
           </p>
           {badge && (
-            <span className="inline-flex items-center rounded-full bg-gray-100 dark:bg-[#3a3a42] px-1.5 py-0.5 sm:px-2 sm:py-1 text-[9px] sm:text-sm font-medium text-gray-700 dark:text-gray-200 border border-gray-200/50 dark:border-gray-600/50">
+            <span className="inline-flex items-center rounded-full bg-gray-100 dark:bg-[#3a3a42] px-1.5 py-0.5 sm:px-2 sm:py-1 text-[0.5625rem] sm:text-sm font-medium text-gray-700 dark:text-gray-200 border border-gray-200/50 dark:border-gray-600/50">
               {badge}
             </span>
           )}

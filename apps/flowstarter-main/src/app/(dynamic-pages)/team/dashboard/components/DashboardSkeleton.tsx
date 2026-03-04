@@ -19,7 +19,7 @@ export function DashboardSkeleton() {
 
       {/* Quick Scaffold Skeleton */}
       <div className="mb-8">
-        <div className="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl p-4">
+        <div className="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[var(--glass-surface)]/80 backdrop-blur-xl p-4">
           <div className="flex items-center gap-3">
             <Skeleton className="w-10 h-10 rounded-xl" />
             <Skeleton className="h-5 w-64" />
@@ -36,7 +36,7 @@ export function DashboardSkeleton() {
           {[1, 2].map((i) => (
             <div
               key={i}
-              className="p-5 rounded-xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl"
+              className="p-5 rounded-xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[var(--glass-surface)]/80 backdrop-blur-xl"
             >
               <div className="flex items-center justify-between mb-3">
                 <Skeleton className="h-4 w-24" />
@@ -69,7 +69,7 @@ export function DashboardSkeleton() {
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="p-5 rounded-xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[#1a1a1f]/80 backdrop-blur-xl"
+            className="p-5 rounded-xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[var(--glass-surface)]/80 backdrop-blur-xl"
             style={{ animationDelay: `${i * 100}ms` }}
           >
             {/* Card Header */}

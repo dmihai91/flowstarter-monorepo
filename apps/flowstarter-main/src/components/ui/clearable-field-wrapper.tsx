@@ -46,7 +46,7 @@ export function ClearableFieldWrapper({
 
       {/* Character counter at bottom-right */}
       {counter && (
-        <div className="absolute right-[16px] bottom-[12px] text-[13px] font-normal leading-[16px] text-gray-500 dark:text-[#a1a1af] pointer-events-none">
+        <div className="absolute right-[16px] bottom-[12px] text-[0.8125rem] font-normal leading-[16px] text-gray-500 dark:text-[#a1a1af] pointer-events-none">
           {counter}
         </div>
       )}

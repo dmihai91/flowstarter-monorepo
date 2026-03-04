@@ -18,7 +18,7 @@ export function StepDot({
   size,
 }: StepDotProps) {
   const stepColor = getStepColor(stepId);
-  const base = size === 'sm' ? 'w-7 h-7 text-sm' : 'w-8 h-8 text-[11px]';
+  const base = size === 'sm' ? 'w-7 h-7 text-sm' : 'w-8 h-8 text-[0.6875rem]';
 
   return (
     <div

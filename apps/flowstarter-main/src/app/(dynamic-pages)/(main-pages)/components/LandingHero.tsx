@@ -19,23 +19,23 @@ export function LandingHero() {
   }, []);
 
   return (
-    <section className="relative pt-20 sm:pt-28 lg:pt-40 pb-4 lg:pb-12 overflow-hidden">
+    <section className="relative pt-16 sm:pt-22 lg:pt-32 pb-2 lg:pb-6 overflow-hidden">
       {/* Background gradient — premium multi-layer */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Base wash — warm to cool */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#f0e6ff] via-[#faf8ff] to-[#fdf0f6] dark:from-[#0d0618] dark:via-[#08060f] dark:to-[#0c0610]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--hero-wash-from)] via-[var(--hero-wash-via)] to-[var(--hero-wash-to)]" />
         {/* Primary — violet glow, upper-left */}
-        <div className="absolute -top-[15%] -left-[10%] w-[75%] sm:w-[60%] h-[65%] rounded-full bg-[#bea0ff] dark:bg-[#4020a0] opacity-45 dark:opacity-55 blur-[100px] sm:blur-[160px]" />
+        <div className="absolute -top-[15%] -left-[10%] w-[75%] sm:w-[60%] h-[65%] rounded-full bg-[var(--hero-glow-primary)] opacity-30 dark:opacity-40 blur-[60px] md:blur-[100px] lg:blur-[180px] will-change-transform" />
         {/* Secondary — rose glow, lower-right */}
-        <div className="absolute -bottom-[5%] -right-[8%] w-[65%] sm:w-[50%] h-[55%] rounded-full bg-[#f0a0c8] dark:bg-[#581845] opacity-40 dark:opacity-45 blur-[100px] sm:blur-[160px]" />
+        <div className="absolute -bottom-[5%] -right-[8%] w-[65%] sm:w-[50%] h-[55%] rounded-full bg-[var(--hero-glow-secondary)] opacity-25 dark:opacity-30 blur-[60px] md:blur-[100px] lg:blur-[180px] will-change-transform" />
         {/* Accent — cool blue, center-right */}
-        <div className="absolute top-[25%] right-[8%] w-[30%] sm:w-[22%] h-[35%] rounded-full bg-[#98b8ff] dark:bg-[#182060] opacity-30 dark:opacity-35 blur-[120px] sm:blur-[180px]" />
+        <div className="absolute top-[25%] right-[8%] w-[30%] sm:w-[22%] h-[35%] rounded-full bg-[var(--hero-glow-accent)] opacity-20 dark:opacity-25 blur-[60px] md:blur-[100px] lg:blur-[200px] will-change-transform" />
         {/* Focal — concentrated glow behind headline */}
-        <div className="absolute top-[18%] left-[30%] w-[30%] sm:w-[20%] h-[30%] rounded-full bg-[#d8c0ff] dark:bg-[#5525b0] opacity-35 dark:opacity-30 blur-[60px] sm:blur-[100px]" />
+        <div className="absolute top-[18%] left-[30%] w-[30%] sm:w-[20%] h-[30%] rounded-full bg-[var(--hero-glow-focal)] opacity-25 dark:opacity-20 blur-[40px] md:blur-[70px] lg:blur-[120px] will-change-transform" />
       </div>
 
       {/* Bottom fade — smooth transition to next section */}
-      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-b from-transparent to-[var(--landing-bg)] dark:to-[var(--landing-dark-surface)] pointer-events-none z-[1]" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-[var(--landing-bg)]/50 to-[var(--landing-bg)] dark:via-[var(--landing-dark-surface)]/50 dark:to-[var(--landing-dark-surface)] pointer-events-none z-[1]" />
 
       {/* Subtle flow lines */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -97,7 +97,7 @@ export function LandingHero() {
 
           {/* Launch price anchor */}
           <div className="hero-fade hero-fade-5 inline-flex flex-col sm:flex-row items-center gap-2 sm:gap-4 mt-8 px-6 sm:px-8 py-4 sm:py-4 rounded-2xl bg-gradient-to-r from-amber-50/80 to-orange-50/60 dark:from-amber-500/[0.06] dark:to-orange-500/[0.03] backdrop-blur-sm border border-amber-200/40 dark:border-amber-500/15 shadow-[0_2px_16px_rgba(245,158,11,0.08)]">
-            <span className="text-[10px] sm:text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">🔥 Limited launch price</span>
+            <span className="text-[0.625rem] sm:text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">🔥 Limited launch price</span>
             <span className="hidden sm:block w-px h-5 bg-amber-300/30 dark:bg-amber-500/20" />
             <div className="flex items-center gap-3">
               <div className="flex items-baseline gap-1.5">

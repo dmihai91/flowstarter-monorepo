@@ -190,9 +190,10 @@ export function CustomSignUp() {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-4">
             <Button
               type="submit"
-              variant="default"
+              variant="outline"
+              size="lg"
               disabled={isVerifyingCode}
-              className="w-full sm:w-auto h-11 rounded-xl font-medium bg-white dark:bg-[var(--surface-2)]/50 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-[var(--surface-2)]/70 transition-all shadow-sm"
+              className="w-full sm:w-auto"
             >
               {isVerifyingCode
                 ? t('auth.signUp.verifying')
@@ -200,10 +201,11 @@ export function CustomSignUp() {
             </Button>
             <Button
               type="button"
-              variant="outline"
+              variant="ghost"
+              size="lg"
               disabled={isResending}
               onClick={handleResendCode}
-              className="w-full sm:w-auto h-11 rounded-lg bg-white dark:bg-[var(--surface-2)]/30 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-[var(--surface-2)]/50 transition-all shadow-sm"
+              className="w-full sm:w-auto"
             >
               {isResending
                 ? t('auth.signUp.resending')
@@ -323,9 +325,9 @@ export function CustomSignUp() {
 
         <Button
           type="submit"
-          variant="default"
+          size="xl"
           disabled={isLoading || !formik.isValid}
-          className="w-full h-12 rounded-lg font-semibold mt-4 bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 shadow-md hover:shadow-lg transition-all"
+          className="w-full font-semibold mt-4 shadow-md"
         >
           {isLoading
             ? t('auth.signUp.creatingAccount')

@@ -250,7 +250,8 @@ export default function TeamLoginPage() {
                 <Button
                   type="submit"
                   disabled={isLoading || !email || !password}
-                  className="w-full h-12 rounded-lg font-semibold bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 shadow-md transition-all disabled:opacity-50"
+                  size="xl"
+                  className="w-full font-semibold shadow-md"
                 >
                   {isLoading ? t('team.login.signingIn') : t('team.login.signIn')}
                 </Button>
@@ -305,7 +306,8 @@ export default function TeamLoginPage() {
                 <Button
                   type="submit"
                   disabled={isLoading || code.length !== 6}
-                  className="w-full h-12 rounded-lg font-semibold bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 shadow-md transition-all disabled:opacity-50"
+                  size="xl"
+                  className="w-full font-semibold shadow-md"
                 >
                   {isLoading ? t('team.login.verifying') : t('team.login.verify')}
                 </Button>

@@ -15,7 +15,7 @@ export function FAQSection() {
         {/* FAQ Section */}
         <section
           ref={sectionRef} id="faq"
-          className="pt-16 pb-8 lg:pt-28 lg:pb-28"
+          className="pt-12 pb-6 lg:pt-18 lg:pb-18"
         >
           <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div

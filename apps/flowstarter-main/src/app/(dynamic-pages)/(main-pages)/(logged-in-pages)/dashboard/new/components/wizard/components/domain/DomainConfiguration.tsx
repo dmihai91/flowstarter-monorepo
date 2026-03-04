@@ -286,13 +286,13 @@ export function DomainConfiguration({
             <Globe className="h-[32px] w-[32px] text-ui-accent-green" />
           </div>
           <div>
-            <CardTitle className="text-[18px] font-medium leading-[normal] text-ui-text-primary">
+            <CardTitle className="text-[1.125rem] font-medium leading-[normal] text-ui-text-primary">
               {t('domain.config.title')}
             </CardTitle>
-            <p className="text-[16px] font-normal leading-[24px] text-ui-text-secondary mt-[12px]">
+            <p className="text-[1rem] font-normal leading-[24px] text-ui-text-secondary mt-[12px]">
               {t('domain.config.subtitle')}
             </p>
-            <p className="text-[16px] font-normal leading-[24px] text-ui-text-secondary mt-[12px]">
+            <p className="text-[1rem] font-normal leading-[24px] text-ui-text-secondary mt-[12px]">
               {t('domain.config.subtitle2')}
             </p>
           </div>
@@ -328,7 +328,7 @@ export function DomainConfiguration({
                 className="space-y-6"
               >
                 <div className="flex items-center justify-between">
-                  <Label className="text-[18px] font-medium leading-[normal] text-ui-text-primary">
+                  <Label className="text-[1.125rem] font-medium leading-[normal] text-ui-text-primary">
                     {sectionTitle}
                   </Label>
                   <button
@@ -338,7 +338,7 @@ export function DomainConfiguration({
                       setConfirmedCustomDomain(null);
                     }}
                     disabled={!projectConfig.name.trim()}
-                    className="border-[1.5px] border-ui-border-base border-solid rounded-[12px] px-[12px] py-[11px] flex gap-[6px] items-center text-[16px] font-medium leading-[17px] text-ui-text-primary hover:bg-ui-bg-overlay-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="border-[1.5px] border-ui-border-base border-solid rounded-[12px] px-[12px] py-[11px] flex gap-[6px] items-center text-[1rem] font-medium leading-[17px] text-ui-text-primary hover:bg-ui-bg-overlay-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {t('domain.config.changeSelection')}
                   </button>
@@ -376,10 +376,10 @@ export function DomainConfiguration({
               >
                 {projectConfig.domainConfig.domainType === 'hosted' ? (
                   <>
-                    <p className="text-[16px] font-normal leading-[24px] text-ui-text-secondary">
+                    <p className="text-[1rem] font-normal leading-[24px] text-ui-text-secondary">
                       {t('domain.config.subtitle3')}
                     </p>
-                    <div className="mt-[8px] px-[12px] py-[11px] rounded-[12px] border-[1.5px] border-ui-border-base bg-ui-bg-overlay-hover text-ui-text-secondary text-[16px] font-normal leading-[24px] max-w-[600px]">
+                    <div className="mt-[8px] px-[12px] py-[11px] rounded-[12px] border-[1.5px] border-ui-border-base bg-ui-bg-overlay-hover text-ui-text-secondary text-[1rem] font-normal leading-[24px] max-w-[600px]">
                       {t('domain.config.hintChangeToCustomOrBuy')}
                     </div>
                     <div className="flex gap-3">
@@ -397,7 +397,7 @@ export function DomainConfiguration({
                           }
                           className="h-[44px] text-md font-normal bg-ui-bg-input border-[1.5px] border-ui-border-base border-solid focus:border-ui-border-focus focus:ring-2 focus:ring-ui-border-focus/20 text-ui-text-primary placeholder:text-ui-text-placeholder rounded-l-[12px] rounded-r-none border-r-0 transition-all"
                         />
-                        <div className="h-[44px] px-1 bg-ui-bg-overlay-hover border-[1.5px] border-l-0 border-ui-border-base rounded-r-[12px] flex items-center text-[16px] font-medium text-ui-text-secondary whitespace-nowrap">
+                        <div className="h-[44px] px-1 bg-ui-bg-overlay-hover border-[1.5px] border-l-0 border-ui-border-base rounded-r-[12px] flex items-center text-[1rem] font-medium text-ui-text-secondary whitespace-nowrap">
                           {PLATFORM_CONFIG.SUBDOMAIN_SUFFIX}
                         </div>
                       </div>
@@ -426,7 +426,7 @@ export function DomainConfiguration({
                                 lastAutoCustomDomainRef.current =
                                   autoSuggestedCustomDomain;
                               }}
-                              className="text-[12px] font-medium px-[12px] py-[5px] rounded-[32px] bg-ui-accent-purple-bg text-ui-accent-purple-light border border-ui-accent-purple-light/30 hover:bg-ui-accent-purple-bg/50 transition-all duration-200"
+                              className="text-[0.75rem] font-medium px-[12px] py-[5px] rounded-[32px] bg-ui-accent-purple-bg text-ui-accent-purple-light border border-ui-accent-purple-light/30 hover:bg-ui-accent-purple-bg/50 transition-all duration-200"
                             >
                               {t('domain.customOption.useSuggested')} "
                               {autoSuggestedCustomDomain}"
@@ -444,7 +444,7 @@ export function DomainConfiguration({
                               ? `${projectNameToDomain(projectConfig.name)}.com`
                               : 'yourbusiness.com'
                           }
-                          className={`h-[44px] pr-[28px] text-[16px] font-normal bg-ui-bg-input border-[1.5px] border-solid focus:ring-2 transition-all duration-200 text-ui-text-primary placeholder:text-ui-text-placeholder rounded-[12px] ${
+                          className={`h-[44px] pr-[28px] text-[1rem] font-normal bg-ui-bg-input border-[1.5px] border-solid focus:ring-2 transition-all duration-200 text-ui-text-primary placeholder:text-ui-text-placeholder rounded-[12px] ${
                             showValidation
                               ? validationResult?.isValid
                                 ? 'border-status-success focus:border-status-success focus:ring-status-success/20'
@@ -455,11 +455,11 @@ export function DomainConfiguration({
                         {showValidation && (
                           <div className="absolute right-[12px] top-1/2 transform -translate-y-1/2">
                             {validationResult?.isValid ? (
-                              <span className="text-status-success text-[18px]">
+                              <span className="text-status-success text-[1.125rem]">
                                 ✓
                               </span>
                             ) : (
-                              <span className="text-status-warning text-[18px]">
+                              <span className="text-status-warning text-[1.125rem]">
                                 ⚠
                               </span>
                             )}
@@ -473,7 +473,7 @@ export function DomainConfiguration({
                             domainInputValue.trim().toLowerCase()
                           )
                         }
-                        className="bg-ui-text-primary rounded-[100px] px-[8px] py-[10px] h-[44px] flex items-center justify-center gap-[8px] text-ui-text-dark text-[16px] font-medium leading-[17px] hover:bg-ui-text-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="bg-ui-text-primary rounded-[100px] px-[8px] py-[10px] h-[44px] flex items-center justify-center gap-[8px] text-ui-text-dark text-[1rem] font-medium leading-[17px] hover:bg-ui-text-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {t('domain.continueWithThisDomain')}
                       </button>

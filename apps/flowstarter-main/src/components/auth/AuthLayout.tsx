@@ -46,7 +46,7 @@ export default function AuthLayout({
             <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
               <Logo size="md" />
               {showTeamBadge && (
-                <span className="px-2 py-0.5 text-[10px] font-medium bg-[var(--purple)]/10 text-[var(--purple)] rounded-full">
+                <span className="px-2 py-0.5 text-[0.625rem] font-medium bg-[var(--purple)]/10 text-[var(--purple)] rounded-full">
                   Team
                 </span>
               )}
@@ -93,7 +93,7 @@ export default function AuthLayout({
                       <div className="text-lg font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
                         {stat.value}
                       </div>
-                      <div className="text-[9px] text-gray-400 dark:text-white/30 uppercase tracking-wide font-medium">
+                      <div className="text-[0.5625rem] text-gray-400 dark:text-white/30 uppercase tracking-wide font-medium">
                         {stat.label}
                       </div>
                     </div>

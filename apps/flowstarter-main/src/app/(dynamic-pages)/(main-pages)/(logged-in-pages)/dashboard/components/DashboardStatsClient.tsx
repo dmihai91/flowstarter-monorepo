@@ -61,7 +61,7 @@ function IntegrationLogo({
       <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
         <Icon className="w-5 h-5 text-[var(--purple)] opacity-35 group-hover:opacity-50 transition-opacity" />
       </div>
-      <span className="text-[10px] sm:text-xs sm:text-sm sm:text-base text-gray-400 dark:text-white/30 font-medium">
+      <span className="text-[0.625rem] sm:text-xs sm:text-sm sm:text-base text-gray-400 dark:text-white/30 font-medium">
         {name}
       </span>
     </div>
@@ -315,7 +315,7 @@ export function DashboardStatsClient({
               {t('dashboard.stats.aiCapabilities')}
             </span>
             {aiCredits?.hasSubscription && (
-              <span className="text-[10px] sm:text-xs sm:text-sm text-[var(--green)] bg-[var(--green)]/10 px-2 py-0.5 rounded-full font-medium">
+              <span className="text-[0.625rem] sm:text-xs sm:text-sm text-[var(--green)] bg-[var(--green)]/10 px-2 py-0.5 rounded-full font-medium">
                 {t('dashboard.stats.aiCapabilitiesActive')}
               </span>
             )}
@@ -344,7 +344,7 @@ export function DashboardStatsClient({
                     style={{ width: `${Math.min((aiCredits.remaining / aiCredits.total) * 100, 100)}%` }}
                   />
                 </div>
-                <p className="text-[10px] sm:text-xs sm:text-sm sm:text-base text-gray-400 dark:text-white/30 mt-1">
+                <p className="text-[0.625rem] sm:text-xs sm:text-sm sm:text-base text-gray-400 dark:text-white/30 mt-1">
                   {t('dashboard.stats.aiCreditsReset')}
                 </p>
               </div>
@@ -356,7 +356,7 @@ export function DashboardStatsClient({
                   t('dashboard.stats.aiCapability.seo'),
                   t('dashboard.stats.aiCapability.images'),
                 ].map((cap) => (
-                  <span key={cap} className="text-[11px] sm:text-xs sm:text-sm text-gray-500 dark:text-white/40 flex items-center gap-1">
+                  <span key={cap} className="text-[0.6875rem] sm:text-xs sm:text-sm text-gray-500 dark:text-white/40 flex items-center gap-1">
                     <span className="w-1 h-1 rounded-full bg-[var(--purple)]/40" />
                     {cap}
                   </span>
@@ -400,7 +400,7 @@ export function DashboardStatsClient({
                 {t('dashboard.stats.integrationsSetup')} →
               </Link>
             ) : (
-              <span className="text-[10px] sm:text-xs sm:text-sm sm:text-base text-gray-400 dark:text-white/30 bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded-full font-medium">
+              <span className="text-[0.625rem] sm:text-xs sm:text-sm sm:text-base text-gray-400 dark:text-white/30 bg-gray-100 dark:bg-white/5 px-2 py-0.5 rounded-full font-medium">
                 {t('dashboard.stats.integrationsAfterLaunch')}
               </span>
             )}

@@ -14,7 +14,7 @@ export function EditorShowcase() {
   const editor = useMockEditor();
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden py-8 lg:py-12">
+    <section ref={sectionRef} className="relative overflow-hidden py-4 lg:py-6">
       <div className="relative">
         <div className="py-6 lg:py-8">
           <div className={`max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 transition-all duration-1000 ease-out ${

@@ -19,23 +19,23 @@ export function LandingHero() {
   }, []);
 
   return (
-    <section className="relative pt-20 sm:pt-28 lg:pt-44 pb-8 lg:pb-28 overflow-hidden">
+    <section className="relative pt-20 sm:pt-28 lg:pt-40 pb-4 lg:pb-12 overflow-hidden">
       {/* Background gradient — premium multi-layer */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Base wash */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#f5f0ff] via-[#fdfbff] to-[#fef8fb] dark:from-[#0c0614] dark:via-[#090810] dark:to-[#0a070e]" />
-        {/* Primary — large violet, top-left, very soft */}
-        <div className="absolute -top-[20%] -left-[15%] w-[80%] sm:w-[65%] h-[70%] rounded-full bg-[#c9b0ff] dark:bg-[#3a1880] opacity-40 dark:opacity-50 blur-[120px] sm:blur-[180px]" />
-        {/* Secondary — warm rose, bottom-right */}
-        <div className="absolute -bottom-[10%] -right-[10%] w-[70%] sm:w-[55%] h-[60%] rounded-full bg-[#f4a8d0] dark:bg-[#4d1540] opacity-35 dark:opacity-40 blur-[120px] sm:blur-[180px]" />
-        {/* Accent — soft blue, center-right (adds cool depth) */}
-        <div className="absolute top-[20%] right-[10%] w-[35%] sm:w-[25%] h-[40%] rounded-full bg-[#a8c4ff] dark:bg-[#1a2060] opacity-25 dark:opacity-30 blur-[140px] sm:blur-[200px]" />
-        {/* Highlight — small bright spot near center-top (focal glow) */}
-        <div className="absolute top-[15%] left-[35%] w-[25%] sm:w-[18%] h-[25%] rounded-full bg-[#e0d0ff] dark:bg-[#5020a0] opacity-30 dark:opacity-25 blur-[80px] sm:blur-[120px]" />
+        {/* Base wash — warm to cool */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#f0e6ff] via-[#faf8ff] to-[#fdf0f6] dark:from-[#0d0618] dark:via-[#08060f] dark:to-[#0c0610]" />
+        {/* Primary — violet glow, upper-left */}
+        <div className="absolute -top-[15%] -left-[10%] w-[75%] sm:w-[60%] h-[65%] rounded-full bg-[#bea0ff] dark:bg-[#4020a0] opacity-45 dark:opacity-55 blur-[100px] sm:blur-[160px]" />
+        {/* Secondary — rose glow, lower-right */}
+        <div className="absolute -bottom-[5%] -right-[8%] w-[65%] sm:w-[50%] h-[55%] rounded-full bg-[#f0a0c8] dark:bg-[#581845] opacity-40 dark:opacity-45 blur-[100px] sm:blur-[160px]" />
+        {/* Accent — cool blue, center-right */}
+        <div className="absolute top-[25%] right-[8%] w-[30%] sm:w-[22%] h-[35%] rounded-full bg-[#98b8ff] dark:bg-[#182060] opacity-30 dark:opacity-35 blur-[120px] sm:blur-[180px]" />
+        {/* Focal — concentrated glow behind headline */}
+        <div className="absolute top-[18%] left-[30%] w-[30%] sm:w-[20%] h-[30%] rounded-full bg-[#d8c0ff] dark:bg-[#5525b0] opacity-35 dark:opacity-30 blur-[60px] sm:blur-[100px]" />
       </div>
 
       {/* Bottom fade — smooth transition to next section */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-[var(--landing-bg)] dark:to-[var(--landing-dark-surface)] pointer-events-none z-[1]" />
+      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-b from-transparent to-[var(--landing-bg)] dark:to-[var(--landing-dark-surface)] pointer-events-none z-[1]" />
 
       {/* Subtle flow lines */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">

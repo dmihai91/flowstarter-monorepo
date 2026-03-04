@@ -20,12 +20,17 @@ export function LoadingScreen({ message = 'Loading...' }: LoadingScreenProps) {
     <div
       style={{
         position: 'fixed',
-        inset: 0,
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100dvh',
         zIndex: 9999,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'var(--bg-primary, #ffffff)',
+        margin: 0,
+        padding: 0,
       }}
       role="status"
       aria-live="polite"

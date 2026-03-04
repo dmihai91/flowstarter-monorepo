@@ -243,8 +243,15 @@ function IndexRedirector() {
         );
 
         if (existingConvexProject) {
-          // Project already linked — find its conversation or create one
+          // Project already linked — sync name from Supabase
           console.log('[Index] Found existing Convex project for Supabase UUID:', existingConvexProject._id);
+          if (projectName && projectName !== existingConvexProject.name) {
+            await convex.mutation(api.projects.update, {
+              id: existingConvexProject._id,
+              name: projectName,
+            });
+            console.log('[Index] Synced project name from Supabase:', projectName);
+          }
 
           // Look for existing conversation linked to this project
           const existingConvos = conversations || [];

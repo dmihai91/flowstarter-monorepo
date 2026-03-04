@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useMutation } from '@tanstack/react-query';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { cn } from '@/lib/utils';
-import { Wand2, Paperclip, Loader2, ArrowRight, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { Wand2, Paperclip, Loader2, ArrowRight, X, ChevronDown, ChevronUp, Check, Pencil, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { GlassCard } from '@flowstarter/flow-design-system';
@@ -19,6 +19,11 @@ export function QuickScaffold() {
   const [isExpanded, setIsExpanded] = useLocalStorage('scaffold-expanded', false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Review step state
+  const [showReview, setShowReview] = useState(false);
+  const [enrichedData, setEnrichedData] = useState<Record<string, string> | null>(null);
+  const [aiSteps, setAiSteps] = useState<Array<{ label: string; done: boolean }>>([]);
 
   // React Query mutation for AI enrichment
   const enrichMutation = useMutation({
@@ -45,75 +50,95 @@ export function QuickScaffold() {
   const handleSubmit = async () => {
     if (!input.trim()) return;
 
+    // Show AI progress steps
+    setAiSteps([
+      { label: 'Reading business description...', done: false },
+      { label: 'Identifying industry & audience...', done: false },
+      { label: 'Crafting value proposition...', done: false },
+      { label: 'Generating project brief...', done: false },
+    ]);
+
+    // Animate steps
+    const animateSteps = async () => {
+      for (let i = 0; i < 4; i++) {
+        await new Promise(r => setTimeout(r, 600 + Math.random() * 400));
+        setAiSteps(prev => prev.map((s, j) => j <= i ? { ...s, done: true } : s));
+      }
+    };
+    animateSteps();
+
     enrichMutation.mutate(
       { description: input },
       {
         onSuccess: async (enriched) => {
-// Create project with ALL enriched data and handoff to editor
-          try {
-            const res = await fetch('/api/editor/handoff', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                projectConfig: {
-                  name: enriched.businessName,
-                  description: enriched.description || input,
-                  userDescription: input,
-                  industry: enriched.industry,
-                  businessInfo: {
-                    description: enriched.description || input,
-                    uvp: enriched.uvp,
-                    targetAudience: enriched.targetAudience,
-                    industry: enriched.industry,
-                    goal: enriched.goal,
-                    offerType: enriched.offerType,
-                    brandTone: enriched.brandTone,
-                    offerings: enriched.offerings,
-                  },
-                  contactInfo: {
-                    email: enriched.contactEmail || '',
-                    phone: enriched.contactPhone || '',
-                    address: enriched.contactAddress || '',
-                    website: enriched.website || '',
-                  },
-                },
-                mode: 'interactive',
-              }),
-            });
-            if (res.ok) {
-              const data = await res.json();
-              window.open(data.editorUrl || `${EDITOR_URL}?handoff=${data.token}`, '_blank');
-            } else {
-              window.open(EDITOR_URL, '_blank');
-            }
-          } catch {
-            window.open(EDITOR_URL, '_blank');
-          }
+          // Complete all steps
+          setAiSteps(prev => prev.map(s => ({ ...s, done: true })));
+          await new Promise(r => setTimeout(r, 300));
+
+          // Show review form
+          setEnrichedData({
+            businessName: enriched.businessName || '',
+            description: enriched.description || input,
+            industry: enriched.industry || '',
+            targetAudience: enriched.targetAudience || '',
+            uvp: enriched.uvp || '',
+            goal: enriched.goal || '',
+            offerType: enriched.offerType || '',
+            brandTone: enriched.brandTone || '',
+            offerings: enriched.offerings || '',
+          });
+          setShowReview(true);
+          setAiSteps([]);
         },
         onError: async (error) => {
           console.error('[QuickScaffold] Enrichment error:', error);
-          // Fallback: handoff with just the description
-          try {
-            const res = await fetch('/api/editor/handoff', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                projectConfig: { description: input, userDescription: input },
-                mode: 'interactive',
-              }),
-            });
-            if (res.ok) {
-              const data = await res.json();
-              window.open(data.editorUrl || `${EDITOR_URL}?handoff=${data.token}`, '_blank');
-            } else {
-              window.open(EDITOR_URL, '_blank');
-            }
-          } catch {
-            window.open(EDITOR_URL, '_blank');
-          }
+          setAiSteps([]);
+          // Fallback: open editor with just description
+          handleLaunchEditor({ description: input, userDescription: input });
         },
       }
     );
+  };
+
+  const handleLaunchEditor = async (projectConfig: Record<string, unknown>) => {
+    try {
+      const res = await fetch('/api/editor/handoff', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectConfig, mode: 'interactive' }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setShowReview(false);
+        setEnrichedData(null);
+        setInput('');
+        window.open(data.editorUrl || \`\${EDITOR_URL}?handoff=\${data.token}\`, '_blank');
+      } else {
+        window.open(EDITOR_URL, '_blank');
+      }
+    } catch {
+      window.open(EDITOR_URL, '_blank');
+    }
+  };
+
+  const handleConfirmAndLaunch = () => {
+    if (!enrichedData) return;
+    handleLaunchEditor({
+      name: enrichedData.businessName,
+      description: enrichedData.description,
+      userDescription: input,
+      industry: enrichedData.industry,
+      businessInfo: {
+        description: enrichedData.description,
+        uvp: enrichedData.uvp,
+        targetAudience: enrichedData.targetAudience,
+        industry: enrichedData.industry,
+        goal: enrichedData.goal,
+        offerType: enrichedData.offerType,
+        brandTone: enrichedData.brandTone,
+        offerings: enrichedData.offerings,
+      },
+    });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -185,6 +210,115 @@ export function QuickScaffold() {
   }, [charIndex, isDeleting, exampleIndex, input]);
 
   const isClassifying = enrichMutation.isPending;
+
+  // AI progress steps view
+  if (aiSteps.length > 0 && !showReview) {
+    return (
+      <GlassCard noHover>
+        <div className="flex items-center gap-3 mb-5">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center">
+            <Sparkles className="w-5 h-5 text-[var(--purple)] animate-pulse" />
+          </div>
+          <div>
+            <h3 className="font-medium text-gray-900 dark:text-white text-sm">AI is analyzing...</h3>
+            <p className="text-xs text-gray-500 dark:text-white/40">Building your project brief</p>
+          </div>
+        </div>
+        <div className="space-y-3">
+          {aiSteps.map((step, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <div className={cn(
+                'w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-all duration-300',
+                step.done
+                  ? 'bg-green-500 text-white'
+                  : 'border-2 border-gray-300 dark:border-white/20'
+              )}>
+                {step.done ? <Check className="w-3 h-3" /> : (
+                  i === aiSteps.filter(s => s.done).length
+                    ? <Loader2 className="w-3 h-3 animate-spin text-[var(--purple)]" />
+                    : null
+                )}
+              </div>
+              <span className={cn(
+                'text-sm transition-colors',
+                step.done ? 'text-gray-900 dark:text-white' : 'text-gray-400 dark:text-white/30'
+              )}>{step.label}</span>
+            </div>
+          ))}
+        </div>
+      </GlassCard>
+    );
+  }
+
+  // Review enriched data
+  if (showReview && enrichedData) {
+    const fields = [
+      { key: 'businessName', label: 'Business Name' },
+      { key: 'industry', label: 'Industry' },
+      { key: 'description', label: 'Description' },
+      { key: 'targetAudience', label: 'Target Audience' },
+      { key: 'uvp', label: 'Value Proposition' },
+      { key: 'offerings', label: 'Services / Offerings' },
+      { key: 'brandTone', label: 'Brand Tone' },
+      { key: 'goal', label: 'Primary Goal' },
+    ].filter(f => enrichedData[f.key]);
+
+    return (
+      <GlassCard noHover>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center">
+              <Check className="w-5 h-5 text-green-600 dark:text-green-400" />
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-900 dark:text-white text-sm">Review Project Brief</h3>
+              <p className="text-xs text-gray-500 dark:text-white/40">Edit any field before launching</p>
+            </div>
+          </div>
+          <button
+            onClick={() => { setShowReview(false); setEnrichedData(null); setAiSteps([]); }}
+            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-white/60 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="space-y-3 mb-5 max-h-[320px] overflow-y-auto pr-1">
+          {fields.map(({ key, label }) => (
+            <div key={key}>
+              <label className="text-xs font-medium text-gray-500 dark:text-white/40 mb-1 block">{label}</label>
+              <input
+                type="text"
+                value={enrichedData[key] || ''}
+                onChange={(e) => setEnrichedData(prev => prev ? { ...prev, [key]: e.target.value } : prev)}
+                className="w-full px-3 py-2 text-sm bg-white/80 dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.08] rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-[var(--purple)]/30 transition-colors"
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="flex gap-2">
+          <Button
+            onClick={() => { setShowReview(false); setEnrichedData(null); }}
+            variant="outline"
+            size="sm"
+            className="flex-1"
+          >
+            Start Over
+          </Button>
+          <Button
+            onClick={handleConfirmAndLaunch}
+            variant="accent"
+            size="sm"
+            className="flex-1"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            Open in Editor
+          </Button>
+        </div>
+      </GlassCard>
+    );
+  }
 
   // Collapsed state - compact one-liner
   if (!isExpanded) {

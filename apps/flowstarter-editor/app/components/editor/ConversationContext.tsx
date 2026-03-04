@@ -118,6 +118,10 @@ export function ConversationProvider({ children, initialConversationId }: Conver
   const updateProjectName = useCallback(
     async (name: string) => {
       await updateState({ projectName: name });
+      // Sync name to Supabase (fire-and-forget)
+      syncProjectName(name).catch((err) =>
+        console.warn('[ConversationContext] Failed to sync project name:', err)
+      );
     },
     [updateState],
   );

@@ -46,7 +46,7 @@ export default function AuthLayout({
       </header>
 
       {/* Content — fills remaining space, scrolls if needed */}
-      <main className="relative z-10 flex-1 flex flex-col items-center px-4 pt-8 sm:pt-16 lg:pt-24 pb-8">
+      <main className="relative z-10 flex-1 flex flex-col items-center px-4 pt-4 sm:pt-10 lg:pt-20 pb-8">
         <div className="w-full max-w-md">
           {title && (
             <div className="text-center mb-6">

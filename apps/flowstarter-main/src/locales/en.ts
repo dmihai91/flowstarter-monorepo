@@ -1145,10 +1145,11 @@ const en = {
   'landing.hero.badge': 'We build it. You refine it with AI.',
   'landing.hero.headline1': 'Your expertise is real.',
   'landing.hero.headline2': 'Your online presence should be too.',
+  'landing.hero.audience': 'Perfect for consultants, coaches, creators, and small businesses who need a professional online presence fast.',
   'landing.hero.pain':
     'We design, build, and launch a professional website for your business. Ready in days, not months.',
   'landing.hero.subheadline': '',
-  'landing.hero.cta': 'Get Your Website Launched',
+  'landing.hero.cta': 'Launch My Website',
   'landing.hero.ctaNote':
     'One call. We handle everything. You\'ll be live in days.',
   'landing.hero.priceBuild': '€499',

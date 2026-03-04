@@ -77,8 +77,13 @@ export function LandingHero() {
         </h1>
 
         {/* Body */}
-        <p className="hero-fade hero-fade-3 text-lg sm:text-xl text-gray-500 dark:text-white/55 leading-relaxed mb-10 max-w-2xl mx-auto">
+        <p className="hero-fade hero-fade-3 text-lg sm:text-xl text-gray-500 dark:text-white/55 leading-relaxed mb-4 max-w-2xl mx-auto">
           {t('landing.hero.pain')}
+        </p>
+
+        {/* Audience qualifier */}
+        <p className="hero-fade hero-fade-3 text-sm sm:text-base text-gray-400 dark:text-white/40 mb-10 max-w-xl mx-auto">
+          {t('landing.hero.audience')}
         </p>
 
         {/* CTA */}

@@ -53,7 +53,7 @@ export function TeamSection() {
         isVisible ? 'opacity-100' : 'opacity-0'
       }`}>
         <div className="text-center mb-10 lg:mb-14">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-3">
+          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-3">
             {t('landing.team.title')}
           </h2>
           <p className="text-base text-gray-500 dark:text-white/40">

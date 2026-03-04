@@ -31,7 +31,7 @@ export default function AuthLayout({
       <FlowBackground variant="dashboard" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }} />
 
       {/* Header */}
-      <header className="relative z-50 shrink-0 border-b border-gray-200/30 dark:border-white/5 bg-white/50 dark:bg-black/20 backdrop-blur-sm">
+      <header className="sticky top-0 z-50 shrink-0 border-b border-gray-200/30 dark:border-white/5 bg-white/80 dark:bg-[#0a0810]/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
             <Logo size="md" />

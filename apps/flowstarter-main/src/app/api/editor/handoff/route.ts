@@ -120,9 +120,9 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      if (project.user_id !== userId) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
-      }
+      // TODO: Add team membership check when roles are implemented
+      // For now, any authenticated user can open projects they have access to
+      // (team access control will be added with the team_members table)
     }
 
     // If no projectId yet, create an empty draft

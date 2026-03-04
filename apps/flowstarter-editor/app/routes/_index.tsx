@@ -261,13 +261,25 @@ function IndexRedirector() {
 
           if (linkedConvo) {
             console.log('[Index] Redirecting to existing conversation:', linkedConvo._id);
-            // Sync project name from Supabase to conversation
+            // Sync project data from Supabase to conversation
+            const updates: Record<string, unknown> = { id: linkedConvo._id };
             if (projectName && projectName !== linkedConvo.projectName) {
-              await convex.mutation(api.conversations.updateState, {
-                id: linkedConvo._id,
-                projectName,
-              });
-              console.log('[Index] Synced conversation name from Supabase:', projectName);
+              updates.projectName = projectName;
+            }
+            if (projectDescription && !linkedConvo.projectDescription) {
+              updates.projectDescription = projectDescription;
+            }
+            if (businessInfo && !linkedConvo.businessInfo?.description) {
+              updates.businessInfo = businessInfo;
+              // If business data exists but conversation is still on early step, advance to template
+              const earlySteps = ['welcome', 'describe', 'name'];
+              if (linkedConvo.step && earlySteps.includes(linkedConvo.step)) {
+                updates.step = 'template';
+              }
+            }
+            if (Object.keys(updates).length > 1) {
+              await convex.mutation(api.conversations.updateState, updates as any);
+              console.log('[Index] Synced conversation data from Supabase:', Object.keys(updates));
             }
             navigate(`/project/${linkedConvo._id}`, { replace: true });
           } else {

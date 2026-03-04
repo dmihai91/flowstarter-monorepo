@@ -247,7 +247,7 @@ function IndexRedirector() {
           console.log('[Index] Found existing Convex project for Supabase UUID:', existingConvexProject._id);
           if (projectName && projectName !== existingConvexProject.name) {
             await convex.mutation(api.projects.update, {
-              id: existingConvexProject._id,
+              projectId: existingConvexProject._id,
               name: projectName,
             });
             console.log('[Index] Synced project name from Supabase:', projectName);

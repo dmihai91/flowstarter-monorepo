@@ -127,7 +127,7 @@ export default function DashboardPage() {
 
         <DashboardInit>
           {/* Greeting */}
-          <div className="mt-4 sm:mt-6 mb-6">
+          <div className="mt-1 sm:mt-2 mb-6">
             <p className="text-sm sm:text-base text-gray-500 dark:text-white/50 mb-1">
               {greeting},{' '}
               <span className="text-gray-700 dark:text-white/70 font-medium">{firstName}</span>

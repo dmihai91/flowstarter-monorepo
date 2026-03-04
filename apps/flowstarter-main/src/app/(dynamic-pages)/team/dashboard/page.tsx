@@ -125,7 +125,7 @@ export default function TeamDashboardPage() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
       {/* Header Row */}
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mt-1 sm:mt-2 mb-8">
         <div>
           <p className="text-gray-500 dark:text-white/50 mb-1 text-sm sm:text-base">
             {greeting},{' '}

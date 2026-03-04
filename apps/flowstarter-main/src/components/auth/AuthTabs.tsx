@@ -4,7 +4,7 @@ import { CustomSignIn } from './CustomSignIn';
 
 export default function AuthTabs() {
   return (
-    <div className="w-full max-w-[520px] mx-auto rounded-2xl bg-white/95 dark:bg-[var(--surface-2)]/90 backdrop-blur-2xl backdrop-saturate-150 py-4 sm:py-6 md:py-8 px-3 sm:px-4 md:px-6 shadow-lg dark:shadow-2xl my-2 sm:my-4 md:my-6 border border-gray-200/50 dark:border-white/10">
+    <div className="w-full max-w-[520px] mx-auto rounded-2xl bg-white/95 dark:bg-[var(--surface-2)]/90 backdrop-blur-2xl backdrop-saturate-150 py-4 sm:py-6 px-3 sm:px-4 md:px-6 shadow-lg dark:shadow-2xl border border-gray-200/50 dark:border-white/10">
       <h1 className="text-xl font-semibold text-center text-gray-900 dark:text-white mb-6">
         Sign in to your account
       </h1>

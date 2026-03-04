@@ -60,7 +60,14 @@ export function MockEditorPreview({
 
 
                 {/* Editor window */}
-                <div className="relative bg-white/90 dark:bg-[#141418]/90 backdrop-blur-xl rounded-3xl border border-gray-200/30 dark:border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden transition-all duration-300 hover:shadow-[0_25px_70px_rgba(0,0,0,0.12)] dark:hover:shadow-[0_25px_70px_rgba(0,0,0,0.5)] hover:scale-[1.01]">
+                <div className="relative backdrop-blur-xl rounded-3xl overflow-hidden transition-all duration-300 shadow-[var(--glass-shadow)] hover:scale-[1.01]"
+                style={{
+                  backgroundColor: 'color-mix(in srgb, var(--glass-surface) 90%, transparent)',
+                  borderTop: '1px solid var(--glass-border-highlight)',
+                  borderLeft: '1px solid var(--glass-border-highlight)',
+                  borderBottom: '1px solid var(--glass-border-shadow)',
+                  borderRight: '1px solid var(--glass-border-shadow)',
+                }}>
                   {/* Browser chrome */}
                   <div className="flex items-center justify-between px-4 py-3 bg-white/80 dark:bg-white/[0.05] backdrop-blur-sm border-b border-gray-200/50 dark:border-white/5">
                     <div className="flex items-center gap-2">

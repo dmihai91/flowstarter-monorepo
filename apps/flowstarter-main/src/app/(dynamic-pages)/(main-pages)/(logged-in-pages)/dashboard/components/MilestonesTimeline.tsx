@@ -36,7 +36,7 @@ export function MilestonesTimeline({ hasAnyProject, hasLiveProject }: Milestones
             <div key={i} className={`
               relative p-4 flex items-center gap-3 transition-all duration-300 rounded-xl
               ${isActive
-                ? 'bg-white/80 dark:bg-white/[0.06] ring-2 ring-[var(--purple)]/30 shadow-[0_4px_20px_rgba(77,93,217,0.15)]'
+                ? 'bg-[color-mix(in_srgb,var(--glass-surface)_80%,transparent)] ring-2 ring-[var(--purple)]/30 shadow-[var(--glass-shadow)] [border-top:1px_solid_var(--glass-border-highlight)] [border-left:1px_solid_var(--glass-border-highlight)] [border-bottom:1px_solid_var(--glass-border-shadow)] [border-right:1px_solid_var(--glass-border-shadow)]'
                 : isCompleted
                 ? 'bg-green-50/90 dark:bg-green-500/[0.08] ring-1 ring-green-500/40 shadow-[0_4px_16px_rgba(34,197,94,0.15)]'
                 : 'bg-white/50 dark:bg-white/[0.03] ring-1 ring-gray-200/40 dark:ring-white/5 shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.1)]'}
@@ -112,7 +112,7 @@ export function MilestonesTimeline({ hasAnyProject, hasLiveProject }: Milestones
                   <div className={`
                     w-full max-w-[180px] p-3 rounded-xl text-center transition-all duration-300
                     ${isActive
-                      ? 'bg-white/80 dark:bg-white/[0.06] ring-2 ring-[var(--purple)]/30 shadow-[0_4px_20px_rgba(77,93,217,0.15)]'
+                      ? 'bg-[color-mix(in_srgb,var(--glass-surface)_80%,transparent)] ring-2 ring-[var(--purple)]/30 shadow-[var(--glass-shadow)] [border-top:1px_solid_var(--glass-border-highlight)] [border-left:1px_solid_var(--glass-border-highlight)] [border-bottom:1px_solid_var(--glass-border-shadow)] [border-right:1px_solid_var(--glass-border-shadow)]'
                       : isCompleted
                       ? 'bg-green-50/90 dark:bg-green-500/[0.08] ring-1 ring-green-500/40 shadow-[0_4px_16px_rgba(34,197,94,0.15)]'
                       : 'bg-white/50 dark:bg-white/[0.03] ring-1 ring-gray-200/40 dark:ring-white/5 shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.1)]'}

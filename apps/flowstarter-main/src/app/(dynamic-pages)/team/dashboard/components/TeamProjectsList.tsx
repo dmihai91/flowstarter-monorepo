@@ -163,7 +163,14 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
             <div></div>
           </div>
 
-          <div className="border-t border-l border-white/40 dark:border-white/[0.08] border-b border-r border-black/[0.04] dark:border-black/[0.2] rounded-xl overflow-hidden divide-y divide-white/10 dark:divide-white/5 bg-white/55 dark:bg-white/[0.03] backdrop-blur-xl shadow-lg shadow-black/[0.03]">
+          <div className="rounded-xl overflow-hidden divide-y divide-white/10 dark:divide-white/5 backdrop-blur-xl shadow-[var(--glass-shadow)]"
+            style={{
+              backgroundColor: 'color-mix(in srgb, var(--glass-surface) 80%, transparent)',
+              borderTop: '1px solid var(--glass-border-highlight)',
+              borderLeft: '1px solid var(--glass-border-highlight)',
+              borderBottom: '1px solid var(--glass-border-shadow)',
+              borderRight: '1px solid var(--glass-border-shadow)',
+            }}>
             {projects.map((project) => {
               const status =
                 typeof project.status === 'string' ? project.status : 'draft';

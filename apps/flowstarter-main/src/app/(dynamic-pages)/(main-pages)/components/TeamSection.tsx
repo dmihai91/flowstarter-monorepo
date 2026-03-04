@@ -77,7 +77,14 @@ function TeamCard({ member }: { member: TeamMember }) {
   const [imgError, setImgError] = useState(false);
 
   return (
-    <div className="flex flex-col items-center text-center p-8 rounded-2xl bg-white/40 dark:bg-white/[0.03] backdrop-blur-sm border border-gray-200/30 dark:border-white/[0.06]">
+    <div className="flex flex-col items-center text-center p-8 rounded-2xl backdrop-blur-sm shadow-[var(--glass-shadow)]"
+      style={{
+        backgroundColor: 'color-mix(in srgb, var(--glass-surface) 80%, transparent)',
+        borderTop: '1px solid var(--glass-border-highlight)',
+        borderLeft: '1px solid var(--glass-border-highlight)',
+        borderBottom: '1px solid var(--glass-border-shadow)',
+        borderRight: '1px solid var(--glass-border-shadow)',
+      }}>
       {/* Avatar */}
       <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${gradient} p-[2px] mb-4 shadow-lg`}>
         {imgError ? (

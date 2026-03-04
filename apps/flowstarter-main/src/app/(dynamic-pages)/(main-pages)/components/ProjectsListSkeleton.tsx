@@ -33,7 +33,13 @@ export function ProjectsListSkeleton({ count = 3 }: { count?: number }) {
               </div>
 
               {/* Preview placeholder skeleton */}
-              <div className="relative overflow-hidden rounded-2xl border border-white/40 dark:border-white/10 shadow-sm h-16 flex items-center justify-center p-3">
+              <div className="relative overflow-hidden rounded-2xl shadow-sm h-16 flex items-center justify-center p-3"
+                style={{
+                  borderTop: '1px solid var(--glass-border-highlight)',
+                  borderLeft: '1px solid var(--glass-border-highlight)',
+                  borderBottom: '1px solid var(--glass-border-shadow)',
+                  borderRight: '1px solid var(--glass-border-shadow)',
+                }}>
                 <Skeleton className="h-12 w-4/5 rounded-xl" />
               </div>
 

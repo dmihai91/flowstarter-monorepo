@@ -172,7 +172,14 @@ export default function TeamDashboardPage() {
       {showClientModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowClientModal(false)}>
           <div
-            className="w-full max-w-md mx-4 rounded-2xl p-6 relative bg-white/95 dark:bg-[var(--glass-surface)]/95 backdrop-blur-2xl border border-gray-200/60 dark:border-white/10 shadow-[0_25px_50px_rgba(0,0,0,0.15),0_1px_0_rgba(255,255,255,0.8)_inset] dark:shadow-[0_25px_50px_rgba(0,0,0,0.5),0_1px_0_rgba(255,255,255,0.06)_inset]"
+            className="w-full max-w-md mx-4 rounded-2xl p-6 relative backdrop-blur-2xl shadow-[var(--glass-shadow)]"
+            style={{
+              backgroundColor: 'color-mix(in srgb, var(--glass-surface) 95%, transparent)',
+              borderTop: '1px solid var(--glass-border-highlight)',
+              borderLeft: '1px solid var(--glass-border-highlight)',
+              borderBottom: '1px solid var(--glass-border-shadow)',
+              borderRight: '1px solid var(--glass-border-shadow)',
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             <button

@@ -277,7 +277,7 @@ export function QuickScaffold() {
           onBlur={() => setIsFocused(false)}
           placeholder={input ? "" : placeholderText || "Describe your client's business..."}
           rows={2}
-          className="w-full px-3 pt-3 pb-2 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 text-sm leading-relaxed resize-none focus:outline-none border-0 select-text"
+          className="w-full px-4 pt-4 pb-3 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 text-sm leading-relaxed resize-none focus:outline-none border-0 select-text"
           style={{
             minHeight: '56px',
             maxHeight: '120px',

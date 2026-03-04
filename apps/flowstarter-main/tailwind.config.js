@@ -5,6 +5,7 @@ export default {
     './node_modules/fumadocs-ui/dist/**/*.js',
     './src/**/*.{js,ts,jsx,tsx,mdx}',
     './content/**/*.mdx',
+    '../../packages/flow-design-system/src/**/*.{js,ts,jsx,tsx}',
   ],
   prefix: '',
   theme: {

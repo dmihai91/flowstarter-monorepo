@@ -1,15 +1,11 @@
-export const metadata = {
-  title: {
-    default: 'Dashboard | Flowstarter',
-    template: '%s | Flowstarter Dashboard',
-  },
-  description: 'Manage your websites, track projects, and collaborate with your team.',
-};
+'use client';
+
+import { SidebarProvider } from '@/contexts/SidebarContext';
 
 export default function TeamLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return <SidebarProvider>{children}</SidebarProvider>;
 }

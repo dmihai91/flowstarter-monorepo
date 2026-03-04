@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
     if (projectConfig && !projectId) {
       // Create new draft project
       const payload = {
-        name: projectConfig.projectName || projectConfig.name || 'Untitled Project',
+        name: projectConfig.projectName || 'New Project',
         description: projectConfig.description || '',
         data: JSON.stringify({
           ...projectConfig,

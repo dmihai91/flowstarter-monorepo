@@ -8,6 +8,7 @@ import { QuickScaffold } from './components/QuickScaffold';
 import { DashboardLoader } from './components/DashboardSkeleton';
 import { Button } from '@/components/ui/button';
 import { useTeamProjects } from '@/hooks/useTeamProjects';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from '@/lib/i18n';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
@@ -39,6 +40,7 @@ export default function TeamDashboardPage() {
   const { t } = useTranslations();
   const router = useRouter();
   const { data: projects, isLoading: projectsLoading } = useTeamProjects();
+  const queryClient = useQueryClient();
 
   const [isLoading, setIsLoading] = useState(true);
   const [showClientModal, setShowClientModal] = useState(false);
@@ -125,7 +127,7 @@ export default function TeamDashboardPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           projectConfig: {
-            projectName: `${clientInfo.name}'s Website`,
+            projectName: 'New Project',
             clientName: clientInfo.name,
             clientEmail: clientInfo.email,
             clientPhone: clientInfo.phone,
@@ -135,6 +137,8 @@ export default function TeamDashboardPage() {
       });
       if (res.ok) {
         const data = await res.json();
+        queryClient.invalidateQueries({ queryKey: ['team-projects'] });
+        queryClient.invalidateQueries({ queryKey: ['projects'] });
         window.open(data.editorUrl || `${EDITOR_URL}?handoff=${data.token}`, '_blank');
       } else {
         window.open(EDITOR_URL, '_blank');

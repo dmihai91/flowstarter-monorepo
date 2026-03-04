@@ -27,12 +27,12 @@ export default function AuthLayout({
   useTheme();
   return (
     <>
-      <style jsx global>{\`
+      <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
         .font-display {
           font-family: 'Outfit', system-ui, sans-serif;
         }
-      \`}</style>
+      >`}</style>
 
       <div className="min-h-[100dvh] w-full font-display relative flex flex-col bg-[radial-gradient(circle_at_0%_0%,#ede6ff_0%,transparent_80%),radial-gradient(circle_at_100%_100%,#fde9f0_0%,transparent_80%),linear-gradient(to_bottom,#fbf9ff,#fdfcff)] dark:bg-[radial-gradient(circle_at_0%_0%,#1a0d2e_0%,transparent_80%),radial-gradient(circle_at_100%_100%,#200a1a_0%,transparent_80%),linear-gradient(to_bottom,#0a0810,#0a0a0c)]">
         <FlowBackground variant="dashboard" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }} />

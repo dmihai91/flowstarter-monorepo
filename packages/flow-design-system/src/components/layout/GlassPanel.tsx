@@ -10,18 +10,7 @@ const shadowStyles = {
   none: '',
   subtle: 'shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)]',
   elevated: 'shadow-[0_4px_12px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.06)]',
-  glass: [
-    // Light mode — 3D glassmorphism
-    'shadow-[0_8px_32px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.04),',
-    '1px_1px_0_rgba(0,0,0,0.03)_inset,',    // bottom-right inner edge (depth)
-    '-1px_-1px_0_rgba(255,255,255,1)_inset,', // top-left inner highlight (3D light)
-    '0_1px_0_rgba(255,255,255,0.9)_inset]',   // top edge highlight
-    // Dark mode — 3D glassmorphism
-    'dark:shadow-[0_8px_32px_rgba(0,0,0,0.35),0_2px_8px_rgba(0,0,0,0.2),',
-    '1px_1px_0_rgba(0,0,0,0.3)_inset,',       // bottom-right inner edge (depth)
-    '-1px_-1px_0_rgba(255,255,255,0.08)_inset,', // top-left inner highlight (3D light)
-    '0_1px_0_rgba(255,255,255,0.06)_inset]',    // top edge highlight
-  ].join(''),
+  glass: 'shadow-[var(--glass-shadow)]',
 };
 
 const paddings = {
@@ -31,20 +20,20 @@ const paddings = {
   lg: 'p-6',
 };
 
-const baseStyles = `
-  rounded-2xl
-  backdrop-blur-2xl backdrop-saturate-150
-  bg-white/80 dark:bg-[#1a1a1f]/80
-  border-t border-l border-white/40 dark:border-white/[0.08]
-  border-b border-r border-black/[0.04] dark:border-black/[0.2]
-`;
-
 export const GlassPanel = forwardRef<HTMLDivElement, GlassPanelProps>(
-  ({ shadow = 'glass', padding = 'md', children, className = '', ...props }, ref) => {
+  ({ shadow = 'glass', padding = 'md', children, className = '', style, ...props }, ref) => {
     return (
       <div
         ref={ref}
-        className={`${baseStyles} ${shadowStyles[shadow]} ${paddings[padding]} ${className}`}
+        className={`rounded-2xl backdrop-blur-2xl backdrop-saturate-150 ${shadowStyles[shadow]} ${paddings[padding]} ${className}`}
+        style={{
+          backgroundColor: 'color-mix(in srgb, var(--glass-surface) 80%, transparent)',
+          borderTop: '1px solid var(--glass-border-highlight)',
+          borderLeft: '1px solid var(--glass-border-highlight)',
+          borderBottom: '1px solid var(--glass-border-shadow)',
+          borderRight: '1px solid var(--glass-border-shadow)',
+          ...style,
+        }}
         {...props}
       >
         {children}

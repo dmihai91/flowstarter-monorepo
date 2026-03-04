@@ -6,6 +6,7 @@
  */
 
 import { useQuery, useMutation } from 'convex/react';
+import { syncProjectName } from '~/lib/services/projectSyncService';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '~/convex/_generated/api';
 import type { Id } from '~/convex/_generated/dataModel';
@@ -231,6 +232,10 @@ export function useConversations(initialConversationId?: Id<'conversations'>): U
   const updateConversationProjectName = useCallback(
     async (id: Id<'conversations'>, name: string) => {
       await updateProjectNameMutation({ id, projectName: name });
+      // Sync to Supabase (fire-and-forget)
+      syncProjectName(name).catch((err) =>
+        console.warn('[useConversations] Failed to sync name to Supabase:', err)
+      );
     },
     [updateProjectNameMutation],
   );

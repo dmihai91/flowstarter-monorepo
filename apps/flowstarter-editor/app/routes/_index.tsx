@@ -261,6 +261,14 @@ function IndexRedirector() {
 
           if (linkedConvo) {
             console.log('[Index] Redirecting to existing conversation:', linkedConvo._id);
+            // Sync project name from Supabase to conversation
+            if (projectName && projectName !== linkedConvo.projectName) {
+              await convex.mutation(api.conversations.updateState, {
+                id: linkedConvo._id,
+                projectName,
+              });
+              console.log('[Index] Synced conversation name from Supabase:', projectName);
+            }
             navigate(`/project/${linkedConvo._id}`, { replace: true });
           } else {
             const newConversationId = await createConversation({

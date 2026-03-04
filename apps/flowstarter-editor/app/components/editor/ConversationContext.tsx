@@ -59,6 +59,7 @@ interface ConversationContextValue {
 
   // Project name
   projectName: string | null;
+  hasProjectName: boolean;
   updateProjectName: (name: string) => Promise<void>;
   updateConversationProjectName: (id: Id<'conversations'>, name: string) => Promise<void>;
 }
@@ -111,20 +112,14 @@ export function ConversationProvider({ children, initialConversationId }: Conver
   const closeSidebar = useCallback(() => setIsSidebarOpen(false), []);
   const toggleSidebar = useCallback(() => setIsSidebarOpen((prev) => !prev), []);
 
-  // Project name from active conversation state
-  const projectName = activeConversation?.projectName || null;
-
-  // Update project name via updateState
-  const updateProjectName = useCallback(
-    async (name: string) => {
-      await updateState({ projectName: name });
-      // Sync name to Supabase (fire-and-forget)
-      syncProjectName(name).catch((err) =>
-        console.warn('[ConversationContext] Failed to sync project name:', err)
-      );
-    },
-    [updateState],
-  );
+  // Bidirectional project name sync (Convex ↔ Supabase)
+  const rawProjectName = activeConversation?.projectName || null;
+  const { updateName: updateProjectName, hasName: hasProjectName } = useProjectNameSync({
+    conversationId: activeConversation?._id || null,
+    projectId: activeConversation?.projectId || null,
+    currentName: rawProjectName,
+  });
+  const projectName = rawProjectName;
 
   const value = useMemo<ConversationContextValue>(
     () => ({
@@ -148,6 +143,7 @@ export function ConversationProvider({ children, initialConversationId }: Conver
       clearMessages,
       updateState,
       projectName,
+      hasProjectName,
       updateProjectName,
       updateConversationProjectName,
     }),
@@ -172,6 +168,7 @@ export function ConversationProvider({ children, initialConversationId }: Conver
       clearMessages,
       updateState,
       projectName,
+      hasProjectName,
       updateProjectName,
       updateConversationProjectName,
     ],

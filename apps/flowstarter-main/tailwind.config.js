@@ -6,6 +6,7 @@ export default {
     './src/**/*.{js,ts,jsx,tsx,mdx}',
     './content/**/*.mdx',
     '../../packages/flow-design-system/src/**/*.{js,ts,jsx,tsx}',
+    '../../packages/flow-design-system/src/**/*.{js,ts,jsx,tsx}',
   ],
   prefix: '',
   theme: {

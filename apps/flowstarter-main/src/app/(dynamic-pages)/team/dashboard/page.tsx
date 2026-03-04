@@ -166,13 +166,13 @@ export default function TeamDashboardPage() {
           </h1>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-          <Button variant="accent" size="default" className="w-full sm:w-auto px-5 py-2 h-10" onClick={createNewInEditor}>
+          <Button variant="accent" size="default" className="w-full sm:w-auto px-5 !h-10" onClick={createNewInEditor}>
               <Plus className="w-4 h-4 mr-2" />
               New Project
             </Button>
           {isAdmin && (
             <Link href="/team/dashboard/invite" className="w-full sm:w-auto">
-              <Button variant="outline" size="default" className="w-full sm:w-auto px-5 py-2 h-10">
+              <Button variant="outline" size="default" className="w-full sm:w-auto px-5 !h-10">
                 <UserPlus className="w-4 h-4 mr-2" />
                 <span className="hidden sm:inline">Invite Member</span>
                 <span className="sm:hidden">Invite</span>

@@ -94,7 +94,7 @@ export default function TeamDashboardPage() {
   const firstName = user?.firstName || 'there';
   const hour = new Date().getHours();
   const greeting =
-    hour < 12 ? t('dashboard.greeting.morning') : hour < 18 ? t('dashboard.greeting.afternoon') : t('dashboard.greeting.evening');
+    hour < 12 ? t('dashboard.greeting.morning') : hour < 18 ? t('dashboard.greeting.afternoon') : hour < 21 ? t('dashboard.greeting.evening') : t('dashboard.greeting.night');
 
   // Count projects by status
   const activeProjects = projects?.filter(p => 

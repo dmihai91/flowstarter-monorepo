@@ -90,7 +90,7 @@ export function LoginClient() {
 
   return (
     <AuthRedirectWrapper>
-      <AuthLayout showStats={false}>
+      <AuthLayout showStats={true}>
         {noticeContent ? (
           <div
             className={`flex flex-col mb-4 mx-auto w-full max-w-[530px] rounded-xl border p-3 justify-center items-center backdrop-blur-sm ${noticeContent.style}`}

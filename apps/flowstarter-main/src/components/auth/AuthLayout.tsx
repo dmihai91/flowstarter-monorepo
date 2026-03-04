@@ -1,7 +1,7 @@
 'use client';
 
 import { useTheme } from '@/contexts/ThemeContext';
-import type { TranslationKeys } from '@/lib/i18n';
+import { useTranslations, type TranslationKeys } from '@/lib/i18n';
 import Link from 'next/link';
 import Footer from '@/components/Footer';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -22,8 +22,10 @@ export default function AuthLayout({
   subtitle,
   children,
   showTeamBadge = false,
+  showStats = false,
 }: AuthLayoutProps) {
   useTheme();
+  const { t } = useTranslations();
   return (
     <div className="min-h-screen w-full relative flex flex-col bg-[#fbf9ff] dark:bg-[#0a0810]">
       <FlowBackground variant="dashboard" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }} />
@@ -57,6 +59,29 @@ export default function AuthLayout({
             </div>
           )}
           {children}
+          {showStats && (
+            <div className="mt-8 pt-6 border-t border-gray-200/50 dark:border-white/10">
+              <div className="flex items-center justify-center">
+                {[
+                  { value: t('landing.stats.weeks'), label: t('landing.stats.weeksLabel') },
+                  { value: t('landing.stats.calls'), label: t('landing.stats.callsLabel') },
+                  { value: t('landing.stats.techSkills'), label: t('landing.stats.techSkillsLabel') },
+                ].map((stat, i) => (
+                  <div key={i} className="flex items-center">
+                    <div className="text-center px-4">
+                      <div className="text-lg font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
+                        {stat.value}
+                      </div>
+                      <div className="text-[0.5625rem] text-gray-400 dark:text-white/30 uppercase tracking-wide font-medium">
+                        {stat.label}
+                      </div>
+                    </div>
+                    {i < 2 && <div className="w-px h-6 bg-gray-200 dark:bg-white/10" />}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </main>
 

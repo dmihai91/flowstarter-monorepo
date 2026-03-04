@@ -22,7 +22,7 @@ import { z } from 'zod';
 
 export const dynamic = 'force-dynamic';
 
-const EDITOR_URL = process.env.NEXT_PUBLIC_EDITOR_URL || 'http://localhost:5173';
+const EDITOR_URL = process.env.NEXT_PUBLIC_EDITOR_URL || (process.env.NODE_ENV === 'production' ? 'https://editor.flowstarter.dev' : 'http://localhost:5173');
 
 const clientSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),

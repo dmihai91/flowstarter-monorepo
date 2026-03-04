@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { GlassCard } from '@flowstarter/flow-design-system';
 
-const EDITOR_URL = process.env.NEXT_PUBLIC_EDITOR_URL || 'http://localhost:5173';
+const EDITOR_URL = process.env.NEXT_PUBLIC_EDITOR_URL || (process.env.NODE_ENV === 'production' ? 'https://editor.flowstarter.dev' : 'http://localhost:5173');
 
 export function QuickScaffold() {
   const router = useRouter();

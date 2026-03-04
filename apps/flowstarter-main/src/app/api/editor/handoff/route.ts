@@ -12,7 +12,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Editor URL - configure in environment
 const EDITOR_URL =
-  process.env.NEXT_PUBLIC_EDITOR_URL || 'http://localhost:5173';
+  process.env.NEXT_PUBLIC_EDITOR_URL || 
+  (process.env.NODE_ENV === 'production' ? 'https://editor.flowstarter.dev' : 'http://localhost:5173');
 
 // Handoff secret - used to sign tokens
 function getHandoffSecret(): string {

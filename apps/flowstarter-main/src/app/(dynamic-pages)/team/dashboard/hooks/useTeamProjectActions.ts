@@ -8,7 +8,7 @@ import type { ProjectPricingData } from '@/hooks/useTeamProjects';
 import { useTranslations } from '@/lib/i18n';
 import { toast } from 'sonner';
 
-const EDITOR_URL = process.env.NEXT_PUBLIC_EDITOR_URL || 'http://localhost:5173';
+const EDITOR_URL = process.env.NEXT_PUBLIC_EDITOR_URL || (process.env.NODE_ENV === 'production' ? 'https://editor.flowstarter.dev' : 'http://localhost:5173');
 
 interface HandoffResponse {
   success: boolean;

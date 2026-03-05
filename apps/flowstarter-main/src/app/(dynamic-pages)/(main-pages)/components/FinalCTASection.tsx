@@ -44,7 +44,7 @@ export function FinalCTASection() {
               {t('landing.cta.subtitle')}
             </p>
             <a href={EXTERNAL_URLS.calendly.discovery} target="_blank" rel="noopener noreferrer" className="inline-flex justify-center w-full sm:w-auto">
-              <Button className="relative overflow-hidden w-full sm:w-auto !bg-white !text-[#0f0c29] hover:!bg-white/90 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] rounded-lg px-8 h-12 text-base sm:px-12 sm:h-16 sm:text-lg font-semibold shadow-xl shadow-white/10 transition-all duration-300 hover:scale-105">
+              <Button className="relative overflow-hidden w-full sm:w-auto hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] rounded-lg px-8 h-12 text-base sm:px-12 sm:h-16 sm:text-lg font-semibold shadow-xl shadow-white/10 transition-all duration-300 hover:scale-105" variant="secondary">
                 {t('landing.cta.button')}
                 <svg
                   className="w-5 h-5 ml-3"

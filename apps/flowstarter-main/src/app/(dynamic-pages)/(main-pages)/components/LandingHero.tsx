@@ -89,7 +89,7 @@ export function LandingHero() {
         {/* CTA */}
         <div className="hero-fade hero-fade-4">
           <a href={EXTERNAL_URLS.calendly.discovery} target="_blank" rel="noopener noreferrer">
-            <Button className="relative overflow-hidden bg-gradient-to-r from-[var(--purple)] via-blue-500 to-[var(--purple)] bg-[length:200%_100%] animate-[shimmerBtn_3s_ease-in-out_infinite] text-white rounded-xl px-8 sm:px-10 h-13 sm:h-14 text-base sm:text-lg font-semibold shadow-[0_8px_30px_rgba(124,58,237,0.25)] hover:shadow-[0_12px_40px_rgba(124,58,237,0.35)] transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] group">
+            <Button variant="brand-gradient" className="relative overflow-hidden bg-[length:200%_100%] animate-[shimmerBtn_3s_ease-in-out_infinite] rounded-xl px-8 sm:px-10 h-13 sm:h-14 text-base sm:text-lg shadow-[0_8px_30px_rgba(124,58,237,0.25)] hover:shadow-[0_12px_40px_rgba(124,58,237,0.35)] hover:scale-[1.03] active:scale-[0.98] group">
               {t('landing.hero.cta')}
               <svg className="w-5 h-5 ml-2.5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />

@@ -122,7 +122,7 @@ export function HelpContent({ showHero = true, showCta = true }: { showHero?: bo
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{t('help.cta.title')}</h2>
           <p className="text-gray-500 dark:text-white/50 mb-6">{t('help.cta.description')}</p>
           <a href={EXTERNAL_URLS.calendly.discovery} target="_blank" rel="noopener noreferrer">
-            <Button className="bg-gradient-to-r from-[var(--landing-btn-from)] via-[var(--landing-btn-via)] to-[var(--landing-btn-from)] text-white rounded-xl px-8 h-12 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300">
+            <Button variant="brand-gradient" className="rounded-xl px-8 h-12 shadow-lg">
               {t('help.cta.button')}
             </Button>
           </a>

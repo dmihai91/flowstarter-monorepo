@@ -96,7 +96,7 @@ export function LandingHeader() {
                   rel="noopener noreferrer"
                   className="hidden sm:block"
                 >
-                  <Button className="bg-gradient-to-r from-[var(--landing-btn-from)] via-[var(--landing-btn-via)] to-[var(--landing-btn-from)] text-white hover:from-[var(--landing-btn-hover-from)] hover:via-[var(--landing-btn-hover-via)] hover:to-[var(--landing-btn-hover-from)] rounded-lg px-6 h-10 text-sm font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300">
+                  <Button variant="brand-gradient" size="sm" className="rounded-lg px-6 shadow-lg">
                     {t('landing.header.cta')}
                   </Button>
                 </a>
@@ -203,7 +203,7 @@ export function LandingHeader() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="mt-2"
                 >
-                  <Button className="w-full bg-gradient-to-r from-[var(--landing-btn-from)] via-[var(--landing-btn-via)] to-[var(--landing-btn-from)] text-white hover:from-[var(--landing-btn-hover-from)] hover:via-[var(--landing-btn-hover-via)] hover:to-[var(--landing-btn-hover-from)] rounded-lg h-10 text-sm font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300">
+                  <Button variant="brand-gradient" size="sm" className="w-full rounded-lg shadow-lg">
                     {t('landing.header.cta')}
                   </Button>
                 </a>

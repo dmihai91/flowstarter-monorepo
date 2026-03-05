@@ -204,7 +204,7 @@ export function LandingPricing() {
                   rel="noopener noreferrer"
                   className="block"
                 >
-                  <Button className="w-full bg-gradient-to-r from-[var(--landing-btn-from)] via-[var(--landing-btn-via)] to-[var(--landing-btn-from)] text-white hover:from-[var(--landing-btn-hover-from)] hover:via-[var(--landing-btn-hover-via)] hover:to-[var(--landing-btn-hover-from)] rounded-lg h-14 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 hover:scale-[1.02]">
+                  <Button variant="brand-gradient" size="lg" className="w-full rounded-lg shadow-lg">
                     {t('landing.pricing.cta')}
                     <svg
                       className="w-4 h-4 ml-2"

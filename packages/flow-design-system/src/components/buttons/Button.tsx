@@ -13,6 +13,7 @@ export type ButtonVariant =
   | 'gradient'
   | 'accent'
   | 'brand'
+| 'brand-gradient'
   | 'link'
   | 'transparent';
 
@@ -97,6 +98,13 @@ const variantStyles: Record<ButtonVariant, string> = {
     'bg-[var(--purple,#4d5dd9)] text-white',
     'hover:bg-[var(--purple,#4d5dd9)]/90',
     'hover:shadow-lg hover:scale-[1.02]',
+    'focus-visible:ring-[var(--purple,#4d5dd9)]',
+  ].join(' '),
+  'brand-gradient': [
+    'bg-gradient-to-r from-[var(--purple,#4d5dd9)] via-blue-500 to-[var(--purple,#4d5dd9)]',
+    'text-white',
+    'hover:shadow-lg hover:shadow-[var(--purple,#4d5dd9)]/20',
+    'hover:scale-[1.02]',
     'focus-visible:ring-[var(--purple,#4d5dd9)]',
   ].join(' '),
   brand: [

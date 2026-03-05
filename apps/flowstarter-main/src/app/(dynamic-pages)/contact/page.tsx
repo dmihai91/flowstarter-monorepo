@@ -219,7 +219,7 @@ export default function ContactPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Button className="w-full bg-gradient-to-r from-[var(--landing-btn-from)] via-[var(--landing-btn-via)] to-[var(--landing-btn-from)] text-white rounded-xl h-12 text-base font-semibold shadow-lg transition-all duration-300">
+                  <Button variant="brand-gradient" className="w-full rounded-xl h-12 shadow-lg">
                     <Calendar className="w-4 h-4 mr-2" />
                     {t('contact.talk.button')}
                   </Button>

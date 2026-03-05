@@ -9,7 +9,7 @@
 import { useUser } from '@clerk/remix';
 import { useEffect, useRef, useState } from 'react';
 import { useStore } from '@nanostores/react';
-import { Logo, LoadingScreen, ScrollAwareHeader, Footer, ThemeToggle, FlowBackground, GlassPanel, type FooterLink } from '@flowstarter/flow-design-system';
+import { Logo, LoadingScreen, Footer, ThemeToggle, FlowBackground, GlassPanel, type FooterLink } from '@flowstarter/flow-design-system';
 import { initializeFromClerkUser } from '~/lib/team-auth';
 import { getMainPlatformHomepage, getCalendlyUrl } from '~/lib/config/domains';
 import { themeStore, setTheme, getEffectiveTheme } from '~/lib/stores/theme';
@@ -56,21 +56,21 @@ function LoginPrompt() {
   const redirectUrl = typeof window !== 'undefined' ? encodeURIComponent(window.location.href) : '';
 
   return (
-    <div className="min-h-screen w-full font-display relative overflow-hidden flex flex-col">
+    <div className="min-h-screen w-full relative flex flex-col bg-[#fbf9ff] dark:bg-[#0a0810]">
       <FlowBackground variant="dashboard" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }} />
 
-      {/* Header — matches main platform AuthLayout */}
-      <ScrollAwareHeader className="z-50" scrolledClass="bg-white/80 dark:bg-[#14141a]/85 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-          <a href={homepageUrl} className="flex items-center gap-2 sm:gap-3 no-underline">
+      {/* Header — static, not fixed */}
+      <header className="sticky top-0 z-50 shrink-0 border-b border-gray-200/30 dark:border-white/5 bg-white/80 dark:bg-[#0a0810]/80 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+          <a href={homepageUrl} className="flex items-center gap-2 no-underline">
             <Logo size="md" />
           </a>
           <ThemeToggle theme={theme} onThemeChange={setTheme} />
         </div>
-      </ScrollAwareHeader>
+      </header>
 
-      {/* Content — matches main platform AuthLayout structure */}
-      <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-8 mt-14">
+      {/* Content */}
+      <main className="relative z-10 flex-1 flex flex-col items-center px-4 pt-4 sm:pt-10 lg:pt-20 pb-8">
         <div className="w-full max-w-md">
 
           {/* Title block — gradient on last word, same as main platform */}
@@ -88,7 +88,7 @@ function LoginPrompt() {
 
           {/* Auth card */}
           <div className="relative">
-            <GlassPanel padding="lg" shadow="glass">
+            <div className="bg-white/95 dark:bg-[#1a1a1f]/90 backdrop-blur-2xl backdrop-saturate-150 rounded-2xl border border-gray-200/50 dark:border-white/10 p-5 sm:p-8 shadow-lg dark:shadow-2xl">
               <h2 className="text-xl font-semibold text-center text-gray-900 dark:text-white mb-1.5">
                 {t.auth.cardTitle}
               </h2>
@@ -133,7 +133,7 @@ function LoginPrompt() {
                 </svg>
                 {t.auth.teamLogin}
               </a>
-            </GlassPanel>
+            </div>
           </div>
 
           {/* Stats */}
@@ -161,9 +161,8 @@ function LoginPrompt() {
             </div>
           </div>
         </div>
-      </div>
+      </main>
 
-      {/* Footer */}
       <Footer baseUrl={homepageUrl} links={footerLinks} builtWithLabel={t.footer.builtWith} byTeamLabel={t.footer.byTeam} />
     </div>
   );

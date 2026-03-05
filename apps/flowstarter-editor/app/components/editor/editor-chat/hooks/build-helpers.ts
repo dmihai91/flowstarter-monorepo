@@ -1,4 +1,4 @@
-import type { SystemFont, ContactDetails, IntegrationConfig } from '../types';
+import type { SystemFont, ContactDetails, IntegrationConfig, BusinessInfo } from '../types';
 import { BUILD_PROGRESS } from './simple-build-types';
 
 /**
@@ -56,21 +56,12 @@ export function mapProgressMessage(
   }
 }
 
-interface BusinessData {
-  businessType?: string;
-  uvp?: string;
-  targetAudience?: string;
-  description?: string;
-  businessGoals?: string;
-  industry?: string;
-}
-
 interface SiteGenerationParams {
   projectId: string;
   projectName: string;
   templateId: string;
   templateName: string;
-  businessData: BusinessData | null;
+  businessData: BusinessInfo | null;
   projectDescription: string;
   palette: { colors: string[] };
   font: SystemFont;
@@ -124,5 +115,5 @@ export function buildSiteGenerationInput(params: SiteGenerationParams) {
 /** Maps ContactDetails fields to Convex-compatible format (undefined instead of empty string). */
 export function toConvexContactDetails(details: ContactDetails) {
   const fields = ['email', 'phone', 'address', 'website', 'facebook', 'instagram', 'twitter', 'linkedin', 'youtube', 'tiktok'] as const;
-  return Object.fromEntries(fields.map(f => [f, (details as Record<string, string | undefined>)[f] || undefined]));
+  return Object.fromEntries(fields.map(f => [f, (details as unknown as Record<string, string | undefined>)[f] || undefined]));
 }

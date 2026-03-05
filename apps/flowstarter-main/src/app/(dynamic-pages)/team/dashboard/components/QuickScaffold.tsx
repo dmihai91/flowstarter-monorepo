@@ -112,7 +112,7 @@ export function QuickScaffold() {
         setShowReview(false);
         setEnrichedData(null);
         setInput('');
-        window.open(data.editorUrl || \`\${EDITOR_URL}?handoff=\${data.token}\`, '_blank');
+        window.open(data.editorUrl || `${EDITOR_URL}?handoff=${data.token}`, '_blank');
       } else {
         window.open(EDITOR_URL, '_blank');
       }

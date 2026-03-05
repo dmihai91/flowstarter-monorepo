@@ -50,8 +50,11 @@ export default function AuthLayout({
         <div className="w-full max-w-md">
           {title && (
             <div className="text-center mb-6">
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2 text-gray-900 dark:text-white">
-                {title}
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
+                <span className="text-gray-900 dark:text-white">{title.split(' ').slice(0, -1).join(' ')} </span>
+                <span className="bg-gradient-to-r from-[var(--purple,#4d5dd9)] to-blue-500 bg-clip-text text-transparent">
+                  {title.split(' ').slice(-1)}
+                </span>
               </h1>
               {subtitle && (
                 <p className="text-gray-500 dark:text-white/50 text-sm">{subtitle}</p>

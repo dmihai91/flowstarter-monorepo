@@ -22,7 +22,7 @@ export function SocialAuth({
       <Button
         type="button"
         variant="outline"
-        size="lg"
+        size="default"
         onClick={onGoogleClick}
         disabled={isGoogleLoading || isAppleLoading}
         className="w-full"
@@ -38,7 +38,7 @@ export function SocialAuth({
       <Button
         type="button"
         variant="outline"
-        size="lg"
+        size="default"
         onClick={onAppleClick}
         disabled={isGoogleLoading || isAppleLoading}
         className="w-full"

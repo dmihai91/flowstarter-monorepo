@@ -1,91 +1,25 @@
 /**
- * Gretly Orchestrator
+ * Gretly Orchestrator - Three-tier agent architecture
  *
- * Master orchestrator using a three-tier agent architecture:
- *
- * Model Roles:
- * - **PlannerAgent (Claude Opus 4.6)** (Master): Planning, reviewing, exception handling
- * - **Kimi K2.5 on Groq** (Executor): Fast code generation, bulk output
- * - **Claude Sonnet 4** (Fixer): Fresh perspective on fixes, primary model
- *
- * All agents communicate via FlowOps protocol.
- *
- * Pipeline Flow:
- * ```
- * ┌─────────────────────────────────────────────────────────────────┐
- * │                    PLANNER AGENT / Opus 4.6 (Master)             │
- * │  - Creates modification plan (fetches business + template)      │
- * │  - Reviews generated output                                     │
- * │  - Handles escalations when fixes fail                          │
- * │  Cost: High, rare calls                                         │
- * └─────────────────────────────────────────────────────────────────┘
- *                              │
- *                        FlowOps protocol
- *                              │
- * ┌─────────────────────────────────────────────────────────────────┐
- * │                    Kimi K2.5 (Code Generator)                     │
- * │  - Template-based generation                                    │
- * │  - Fast iterations, bulk output                                 │
- * │  Cost: Low, many calls                                          │
- * └─────────────────────────────────────────────────────────────────┘
- *                              │
- *                        FlowOps protocol
- *                              │
- * ┌─────────────────────────────────────────────────────────────────┐
- * │                    SONNET 4 (Fixer)                             │
- * │  - Sonnet 4 primary for fresh perspective                       │
- * │  - K2 optional fast path for simple fixes                       │
- * │  Cost: Medium, as needed                                        │
- * └─────────────────────────────────────────────────────────────────┘
- *
- * Pipeline Phases:
- * PLAN → GENERATE → BUILD → FIX (loop) → REVIEW → REFINE (loop) → ESCALATE/PUBLISH
- * ```
+ * Flow: PLAN → GENERATE → BUILD → FIX (loop) → REVIEW → REFINE (loop) → PUBLISH
+ * See gretly-phases.ts for phase execution functions.
  */
 
 import { createScopedLogger } from '~/utils/logger';
 import type { BuildErrorDTO } from '~/lib/flowops/schema';
 import type { PlanResultDTO, ReviewResultDTO } from '~/lib/flowstarter/agents/planner-agent';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
+import type { GretlyPhase, GretlyConfig, GretlyInput, GretlyResult, ResolvedConfig, ErrorHistoryEntry } from './types';
+import { registerAgents, callPlannerAgent, callPlannerAgentReview } from './agent-communication';
+import { fetchData, executeGeneration, executeBuildWithFixing, handleEscalation } from './gretly-phases';
 
-// Import modular components
-import type {
-  GretlyPhase,
-  GretlyConfig,
-  GretlyInput,
-  GretlyResult,
-  ResolvedConfig,
-  ErrorHistoryEntry,
-} from './types';
-import {
-  registerAgents,
-  callPlannerAgent,
-  callPlannerAgentReview,
-  callPlannerAgentEscalate,
-  callCodeGeneratorAgent,
-  callFixerAgent,
-} from './agent-communication';
-import { findFilePath } from './utils';
-
-// Re-export types for external use
 export type { GretlyPhase, GretlyConfig, GretlyInput, GretlyResult, BusinessInfo, TemplateInfo, DesignInfo, GretlyDataFetcher } from './types';
 
 const logger = createScopedLogger('Gretly');
 
-/*
- * ============================================================================
- * Gretly Orchestrator
- * ============================================================================
- */
-
 /**
- * Gretly - Master Orchestrator with Three-Tier Agent Architecture
- *
- * - PlannerAgent (Opus 4.6): Planning, review, escalation
- * - CodeGeneratorAgent (Kimi K2.5): Fast code generation
- * - FixerAgent (Sonnet 4): Error fixing with fresh perspective
- *
- * All communication happens via FlowOps protocol.
+ * Gretly - Master Orchestrator with Three-Tier Agent Architecture.
+ * Phase execution is delegated to standalone functions in gretly-phases.ts.
  */
 export class Gretly {
   private config: ResolvedConfig;
@@ -151,14 +85,12 @@ export class Gretly {
 
     logger.info(`Starting Gretly for project ${input.projectId}`);
 
-    // Resolve input data - use fetcher if available
     let resolvedInput = input;
     let templateFiles: Record<string, string> = {};
 
     try {
-      // Phase 0: DATA FETCHING (optional)
       if (this.config.dataFetcher) {
-        const fetchResult = await this.fetchData(input);
+        const fetchResult = await fetchData(this.config, input, this.config.onProgress);
         resolvedInput = fetchResult.resolvedInput;
         templateFiles = fetchResult.templateFiles;
       }
@@ -176,39 +108,23 @@ export class Gretly {
       plan = planResponse.result;
       logger.info(`Plan created: ${plan.modifications.length} modifications`);
 
-      // Main Loop: GENERATE → BUILD → FIX → REVIEW → REFINE
       while (refineIterations <= this.config.maxRefineIterations) {
-        // Phase 2: GENERATING
-        const generateResult = await this.executeGeneration(
-          resolvedInput,
-          plan,
-          refineIterations,
-          templateFiles,
-          files,
-          review?.improvements,
+        files = await executeGeneration(
+          this.config, resolvedInput, plan, refineIterations,
+          templateFiles, files, (p) => this.setPhase(p), review?.improvements,
         );
-        files = generateResult;
 
-        // Phase 3: BUILDING (with self-healing)
-        const buildResult = await this.executeBuildWithFixing(
-          input,
-          files,
-          buildFn,
-          errorHistory,
-          fixAttempts,
+        const buildResult = await executeBuildWithFixing(
+          this.config, input, files, buildFn, errorHistory, fixAttempts, (p) => this.setPhase(p),
         );
 
         fixAttempts = buildResult.fixAttempts;
 
         if (buildResult.needsEscalation) {
-          const escalationResult = await this.handleEscalation(
-            resolvedInput,
-            errorHistory,
-            files,
-            fixAttempts,
-            refineIterations,
-            buildResult.lastBuildError,
-            buildResult.buildResult,
+          const escalationResult = await handleEscalation(
+            this.config, resolvedInput, errorHistory, files,
+            fixAttempts, refineIterations, this.phases, (p) => this.setPhase(p),
+            buildResult.lastBuildError, buildResult.buildResult,
           );
           if (escalationResult) {
             return escalationResult;
@@ -299,243 +215,11 @@ export class Gretly {
     }
   }
 
-  /*
-   * ────────────────────────────────────────────────────────────────────────────
-   * Private Methods: Phase Execution
-   * ────────────────────────────────────────────────────────────────────────────
-   */
-
   private setPhase(phase: GretlyPhase): void {
     this.currentPhase = phase;
     this.phases.push(phase);
     this.config.onPhaseChange?.(phase);
     logger.debug(`Phase: ${phase}`);
-  }
-
-  /**
-   * Fetch data from external sources if dataFetcher is configured.
-   */
-  private async fetchData(input: GretlyInput): Promise<{
-    resolvedInput: GretlyInput;
-    templateFiles: Record<string, string>;
-  }> {
-    this.config.onProgress?.('planning', t(EDITOR_LABEL_KEYS.ORCH_FETCHING_PROJECT), 2);
-
-    let resolvedInput = input;
-    let templateFiles: Record<string, string> = {};
-
-    if (this.config.dataFetcher?.fetchBusinessInfo) {
-      const freshBusinessInfo = await this.config.dataFetcher.fetchBusinessInfo(input.projectId);
-
-      if (freshBusinessInfo) {
-        resolvedInput = { ...resolvedInput, businessInfo: freshBusinessInfo };
-        logger.info('Fetched fresh business info');
-      }
-    }
-
-    if (this.config.dataFetcher?.fetchTemplate) {
-      const templateData = await this.config.dataFetcher.fetchTemplate(input.template.slug);
-
-      if (templateData) {
-        resolvedInput = { ...resolvedInput, template: templateData.info };
-        templateFiles = templateData.files;
-        logger.info(`Fetched template with ${Object.keys(templateFiles).length} files`);
-      }
-    }
-
-    return { resolvedInput, templateFiles };
-  }
-
-  /**
-   * Execute the generation phase.
-   */
-  private async executeGeneration(
-    input: GretlyInput,
-    plan: PlanResultDTO,
-    refineIterations: number,
-    templateFiles: Record<string, string>,
-    currentFiles: Record<string, string>,
-    feedback?: Array<{ file: string; instruction: string; priority: 'must-fix' | 'should-fix' | 'nice-to-have' }>,
-  ): Promise<Record<string, string>> {
-    this.setPhase('generating');
-    this.config.onProgress?.(
-      'generating',
-      refineIterations === 0
-        ? t(EDITOR_LABEL_KEYS.ORCH_CODE_GENERATING)
-        : t(EDITOR_LABEL_KEYS.ORCH_CODE_REFINING, { iteration: refineIterations }),
-      20 + refineIterations * 10,
-    );
-
-    const baseFiles = refineIterations === 0 && Object.keys(templateFiles).length > 0 ? templateFiles : currentFiles;
-
-    const generateResponse = await callCodeGeneratorAgent(
-      refineIterations === 0 ? 'generate' : 'refine',
-      input,
-      plan,
-      baseFiles,
-      feedback,
-    );
-
-    if (!generateResponse.success) {
-      throw new Error(generateResponse.error || 'Generation failed');
-    }
-
-    logger.info(`Generated ${Object.keys(generateResponse.files).length} files`);
-    return generateResponse.files;
-  }
-
-  /**
-   * Execute the build phase with self-healing via FixerAgent.
-   */
-  private async executeBuildWithFixing(
-    input: GretlyInput,
-    files: Record<string, string>,
-    buildFn: (
-      projectId: string,
-      files: Record<string, string>,
-    ) => Promise<{
-      success: boolean;
-      error?: string;
-      buildError?: BuildErrorDTO;
-      previewUrl?: string;
-      sandboxId?: string;
-    }>,
-    errorHistory: ErrorHistoryEntry[],
-    initialFixAttempts: number,
-  ): Promise<{
-    success: boolean;
-    fixAttempts: number;
-    needsEscalation: boolean;
-    lastBuildError?: BuildErrorDTO;
-    buildResult: Awaited<ReturnType<typeof buildFn>> | null;
-  }> {
-    this.setPhase('building');
-    this.config.onProgress?.('building', t(EDITOR_LABEL_KEYS.ORCH_BUILDING_SITE), 40);
-
-    let buildSuccess = false;
-    let lastBuildError: BuildErrorDTO | undefined;
-    let buildResult: Awaited<ReturnType<typeof buildFn>> | null = null;
-    let localFixAttempts = 0;
-    let fixAttempts = initialFixAttempts;
-
-    logger.info(`Starting build loop with maxFixAttempts=${this.config.maxFixAttempts}`);
-
-    for (let attempt = 0; attempt <= this.config.maxFixAttempts; attempt++) {
-      logger.debug(`Build attempt ${attempt}/${this.config.maxFixAttempts}`);
-      buildResult = await buildFn(input.projectId, files);
-
-      if (buildResult.success) {
-        buildSuccess = true;
-        logger.info(`Build succeeded on attempt ${attempt}`);
-        break;
-      }
-
-      logger.debug(`Build failed on attempt ${attempt}, buildError=${!!buildResult.buildError}, maxFixAttempts=${this.config.maxFixAttempts}`);
-
-      if (!buildResult.buildError || attempt >= this.config.maxFixAttempts) {
-        logger.warn(`Breaking build loop: buildError=${!!buildResult.buildError}, attempt=${attempt} >= maxFixAttempts=${this.config.maxFixAttempts}`);
-        lastBuildError = buildResult.buildError;
-        break;
-      }
-
-      // Phase 4: FIXING
-      this.setPhase('fixing');
-      this.config.onProgress?.(
-        'fixing',
-        t(EDITOR_LABEL_KEYS.ORCH_FIXER_FIXING, { file: buildResult.buildError.file }),
-        50,
-      );
-      fixAttempts++;
-      localFixAttempts++;
-
-      const fixResult = await callFixerAgent(buildResult.buildError, files);
-
-      if (!fixResult.success || !fixResult.fixedContent) {
-        // Track error for potential escalation
-        const existingError = errorHistory.find((e) => e.file === buildResult!.buildError!.file);
-
-        if (existingError) {
-          existingError.fixAttempts++;
-          existingError.lastFixSummary = fixResult.summary;
-        } else {
-          errorHistory.push({
-            file: buildResult.buildError.file,
-            error: buildResult.buildError.message,
-            fixAttempts: 1,
-            lastFixSummary: fixResult.summary,
-          });
-        }
-
-        lastBuildError = buildResult.buildError;
-        break;
-      }
-
-      // Apply fix
-      const foundPath = findFilePath(buildResult.buildError.file, files);
-
-      if (foundPath) {
-        files[foundPath] = fixResult.fixedContent;
-        logger.info(`Fixed ${foundPath}: ${fixResult.summary}`);
-      }
-
-      this.setPhase('building');
-      this.config.onProgress?.('building', t(EDITOR_LABEL_KEYS.ORCH_RETRYING_BUILD, { attempt: attempt + 1 }), 55);
-    }
-
-    const needsEscalation = !buildSuccess && localFixAttempts >= this.config.maxFixAttempts;
-
-    return {
-      success: buildSuccess,
-      fixAttempts,
-      needsEscalation,
-      lastBuildError,
-      buildResult,
-    };
-  }
-
-  /**
-   * Handle escalation when fixes fail.
-   */
-  private async handleEscalation(
-    input: GretlyInput,
-    errorHistory: ErrorHistoryEntry[],
-    files: Record<string, string>,
-    fixAttempts: number,
-    refineIterations: number,
-    lastBuildError?: BuildErrorDTO,
-    buildResult?: { success: boolean; error?: string } | null,
-  ): Promise<GretlyResult | null> {
-    this.setPhase('escalating');
-    this.config.onProgress?.('escalating', t(EDITOR_LABEL_KEYS.ORCH_PLANNER_ANALYZING), 60);
-
-    const escalateResponse = await callPlannerAgentEscalate(input, errorHistory);
-
-    if (escalateResponse.type === 'escalate') {
-      logger.warn(`Escalation: ${escalateResponse.result.escalationType}`);
-
-      // Return with escalation info - let caller decide what to do
-      return {
-        success: false,
-        files,
-        phases: this.phases,
-        fixAttempts,
-        refineIterations,
-        error: escalateResponse.result.explanation,
-        escalation: escalateResponse.result,
-      };
-    }
-
-    // If escalation handler returns something unexpected, fail
-    this.setPhase('failed');
-
-    return {
-      success: false,
-      files,
-      phases: this.phases,
-      fixAttempts,
-      refineIterations,
-      error: lastBuildError?.message || buildResult?.error || t(EDITOR_LABEL_KEYS.ORCH_BUILD_FAILED_MAX),
-    };
   }
 }
 

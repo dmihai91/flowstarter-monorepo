@@ -9,8 +9,6 @@ import { useEffect, useState, useMemo } from 'react';
 
 import { ClientOnly } from 'remix-utils/client-only';
 import { ToastContainer } from 'react-toastify';
-import { AmplitudeProvider } from './components/AmplitudeProvider';
-import { GTMProvider } from './components/GTMProvider';
 import { ConvexProvider, ConvexReactClient } from 'convex/react';
 import { QueryProvider } from './components/QueryProvider';
 import { ClerkProvider } from '@clerk/remix';
@@ -271,8 +269,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <ClientOnly>{() => <DeferredStyles />}</ClientOnly>
-      <ClientOnly>{() => <AmplitudeProvider />}</ClientOnly>
-      <ClientOnly>{() => <GTMProvider />}</ClientOnly>
       <ClientOnly>{() => <ConvexWrapper>{children}</ConvexWrapper>}</ClientOnly>
       <ClientOnly>{() => <ToastContainer />}</ClientOnly>
       <ScrollRestoration />

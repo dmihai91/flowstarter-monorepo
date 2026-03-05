@@ -229,7 +229,6 @@ flowstarter/
 | Route                                 | Purpose                       |
 | ------------------------------------- | ----------------------------- |
 | `/api/domains/availability`           | Domain availability (GoDaddy) |
-| `/api/templates/[templateId]/preview` | Template preview generation   |
 | `/api/local-templates`                | Local template listing        |
 | `/api/uploadthing`                    | File upload handling          |
 | `/api/feedback`                       | User feedback submission      |
@@ -576,7 +575,7 @@ When working with AI functionality:
 
 ## 🔒 Security Requirements (CRITICAL - 10+/10 Standard)
 
-**All code must achieve enterprise-grade security. Reference: `docs/TEMPLATE_PREVIEW_SECURITY.md`**
+**All code must achieve enterprise-grade security.**
 
 ### Input Validation
 
@@ -741,20 +740,6 @@ Use middleware helpers: `applySecurityHeaders()` from `src/utils/security-header
 - [ ] Security headers present
 - [ ] CSP uses nonces
 - [ ] Run: `security-tests/run-tests.ps1`
-
-### Reference Implementation
-
-**10+/10 Security Example:** `src/app/api/template-preview/[id]/route.ts`
-
-Features:
-- Nonce-based CSP (no unsafe-inline)
-- IP anonymization (GDPR)
-- Allowlist validation
-- Integrity monitoring
-- Comprehensive logging
-- Path traversal protection
-
-**Full Documentation:** `docs/TEMPLATE_PREVIEW_SECURITY.md`
 
 ### Security Resources
 

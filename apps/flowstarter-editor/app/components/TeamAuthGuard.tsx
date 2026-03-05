@@ -140,9 +140,9 @@ function LoginPrompt() {
           <div className="mt-10 pt-6 border-t border-gray-200 dark:border-white/10">
             <div className="flex items-center justify-center">
               {[
-                { value: '1-2', label: t.auth.stats.weeksToLaunch },
-                { value: '1', label: t.auth.stats.callNeeded },
-                { value: '0', label: t.auth.stats.techSkillsRequired },
+                { value: 'AI', label: t.auth.stats.aiPowered },
+                { value: '\u26A1', label: t.auth.stats.livePreview },
+                { value: '1', label: t.auth.stats.oneClickPublish },
               ].map((stat, i) => (
                 <div key={i} className="flex items-center">
                   <div className="text-center px-4">

@@ -22,9 +22,9 @@ export const en = {
     teamAccessRequired: 'Team Access Required',
     teamAccessDescription: 'This area is restricted to team members only.',
     stats: {
-      weeksToLaunch: 'Weeks to launch',
-      callNeeded: 'Call needed',
-      techSkillsRequired: 'Tech skills required',
+      aiPowered: 'AI-powered builder',
+      livePreview: 'Real-time preview',
+      oneClickPublish: 'One-click publish',
     },
   },
   client: {

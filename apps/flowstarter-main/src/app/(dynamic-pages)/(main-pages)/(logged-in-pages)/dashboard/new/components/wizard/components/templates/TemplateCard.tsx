@@ -1,19 +1,17 @@
 'use client';
 
-import { PreviewLoading } from '@/components/editor/PreviewLoading';
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useTranslations } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import type { ProjectConfig } from '@/types/project-config';
 import type { ProjectTemplate } from '@/types/project-types';
-import { Check, Eye, Globe, Sparkles } from 'lucide-react';
+import { Check, Sparkles } from 'lucide-react';
 import NextImage from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -35,8 +33,6 @@ export function TemplateCard({
   projectConfig,
 }: TemplateCardProps) {
   const { t } = useTranslations();
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [isIframeLoading, setIsIframeLoading] = useState(false);
   const { resolvedTheme } = useTheme();
   const [imageError, setImageError] = useState(false);
   useEffect(() => {
@@ -63,23 +59,9 @@ export function TemplateCard({
     return template.thumbnailUrl;
   }, [template.thumbnailUrl, resolvedTheme, imageError]);
 
-  const displayUrl = useMemo(() => {
-    // If we have project config with a name, use that for the URL
-    if (projectConfig?.name) {
-      const slug = projectConfig.name.toLowerCase().replace(/\s+/g, '-');
-      return `https://${slug}.com`;
-    }
-    // Otherwise fall back to template slug
-    const slug =
-      (template as unknown as { slug?: string })?.slug || template.id;
-    return `https://${slug}.com`;
-  }, [template.id, template, projectConfig?.name]);
-
   const handleTemplateClick = () => {
     onSelectAction(template);
   };
-
-  const previewProjectName = projectConfig?.name || template.name;
 
   const handleTemplateDoubleClick = () => {
     onSelectAction(template);
@@ -151,19 +133,6 @@ export function TemplateCard({
           </div>
         )}
 
-        {/* Hover-only Preview Icon */}
-        <button
-          type="button"
-          aria-label={t('wizard.template.preview')}
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsIframeLoading(true);
-            setIsPreviewOpen(true);
-          }}
-          className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 z-10 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 w-9 h-9 sm:w-8 sm:h-8 rounded-full bg-black/45 dark:bg-white/10 backdrop-blur flex items-center justify-center text-white/90 active:bg-black/70 sm:hover:bg-black/60 focus:outline-hidden focus:ring-2 focus:ring-white/50 touch-manipulation"
-        >
-          <Eye className="w-4 h-4 sm:w-4 sm:h-4 text-white/90" />
-        </button>
         {showRecommendedBadge && isRecommended && (
           <div className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-1 rounded-full bg-yellow-500 flex items-center gap-1 shadow-lg z-10">
             <Sparkles className="h-3 w-3 text-white" />
@@ -209,112 +178,6 @@ export function TemplateCard({
           </div>
         )}
       </CardHeader>
-
-      {/* Fullscreen Preview Modal - renders live HTML via iframe */}
-      <Dialog
-        open={isPreviewOpen}
-        onOpenChange={(open) => {
-          setIsPreviewOpen(open);
-          // Reset loader each time preview is opened
-          if (open) {
-            setIsIframeLoading(true);
-          }
-        }}
-      >
-        <DialogContent
-          className="p-0 fixed inset-0 top-0! left-0! translate-x-0! translate-y-0! max-w-none! w-screen! h-dvh! rounded-none border-0 sm:max-w-none! overflow-hidden"
-          style={{
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            width: '100vw',
-            height: '100vh',
-            maxWidth: '100vw',
-            maxHeight: '100vh',
-            transform: 'none',
-          }}
-        >
-          <DialogTitle className="sr-only">
-            {t('wizard.template.preview')}: {template.name}
-          </DialogTitle>
-          <div className="relative flex flex-col w-full h-[100dvh] bg-background">
-            {/* Header */}
-            <div className="w-full border-b border-border bg-background/80 backdrop-blur px-6 py-4 shrink-0">
-              <div className="w-full">
-                <div className="text-sm font-medium text-foreground">
-                  {template.name} - {t('wizard.template.preview')}
-                </div>
-                {template.description ? (
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {template.description}
-                  </div>
-                ) : null}
-              </div>
-            </div>
-
-            {/* Content - Full Width Preview */}
-            <div className="w-full flex-1 overflow-hidden flex flex-col">
-              {/* Faux browser chrome */}
-              <div className="flex items-center gap-3 px-3 py-2 bg-muted border-b border-border shrink-0">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
-                </div>
-                <div className="flex-1 flex items-center gap-2 min-w-0">
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-border bg-background text-xs text-foreground w-full min-w-0">
-                    <Globe className="w-3.5 h-3.5 opacity-70" />
-                    <span className="truncate">{displayUrl}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Live compiled preview in iframe - Full Width */}
-              <div className="relative w-full flex-1 bg-background overflow-hidden">
-                {isIframeLoading && (
-                  <div className="absolute inset-0 z-10">
-                    <PreviewLoading
-                      projectName={previewProjectName}
-                      isGenerating={true}
-                    />
-                  </div>
-                )}
-                <iframe
-                  src={(() => {
-                    const params = new URLSearchParams({
-                      theme: resolvedTheme === 'dark' ? 'dark' : 'light',
-                      enhanceWithAI: 'true', // Always enable AI enhancement
-                    });
-
-                    if (projectConfig) {
-                      if (projectConfig.name)
-                        params.set('projectName', projectConfig.name);
-                      if (projectConfig.description)
-                        params.set(
-                          'projectDescription',
-                          projectConfig.description
-                        );
-                      if (projectConfig.USP)
-                        params.set('projectUSP', projectConfig.USP);
-                      if (projectConfig.targetUsers)
-                        params.set('targetUsers', projectConfig.targetUsers);
-                    }
-
-                    return `/template-preview/${
-                      template.id
-                    }?${params.toString()}`;
-                  })()}
-                  className="w-full h-full border-0"
-                  title={`${template.name} preview`}
-                  sandbox="allow-scripts allow-same-origin"
-                  onLoad={() => setIsIframeLoading(false)}
-                />
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </Card>
   );
 }

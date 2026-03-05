@@ -1,49 +1,36 @@
 import { useId } from 'react';
 
-interface LogoProps {
+export interface LogoProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   showText?: boolean;
   className?: string;
 }
 
-// Must match main platform's logo.tsx sizes
 const iconSizes = { xs: 24, sm: 28, md: 32, lg: 40, xl: 48 };
 const textSizes = { xs: 16, sm: 20, md: 24, lg: 30, xl: 36 };
 
-function LogoMark({ size = 'md', className }: { size?: LogoProps['size']; className?: string }) {
-  const gradientId = useId();
+export function LogoMark({ size = 'md', className }: { size?: LogoProps['size']; className?: string }) {
+  const id = useId();
   const px = iconSizes[size!];
 
   return (
     <div className={className} style={{ width: px, height: px, flexShrink: 0, position: 'relative' }}>
       <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
         <defs>
-          <linearGradient id={gradientId} x1="0" y1="40" x2="40" y2="0" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#8B5CF6" />
+          <linearGradient id={`${id}-bg`} x1="0" y1="40" x2="40" y2="0" gradientUnits="userSpaceOnUse">
+            <stop stopColor="var(--purple, #4D5DD9)" />
+            <stop offset="0.5" stopColor="#7C3AED" />
             <stop offset="1" stopColor="#06B6D4" />
           </linearGradient>
-          <linearGradient id={`${gradientId}-lines`} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="rgba(255,255,255,0.5)" />
-            <stop offset="50%" stopColor="rgba(255,255,255,1)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0.5)" />
-          </linearGradient>
         </defs>
-        <rect width="40" height="40" rx="10" fill={`url(#${gradientId})`} />
-        <path
-          d="M8 26 Q14 20, 20 23 Q26 26, 32 20"
-          stroke={`url(#${gradientId}-lines)`}
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          fill="none"
-        />
-        <path
-          d="M8 20 Q14 14, 20 17 Q26 20, 32 14"
-          stroke={`url(#${gradientId}-lines)`}
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          fill="none"
-          opacity="0.55"
-        />
+        {/* Background */}
+        <rect width="40" height="40" rx="11" fill={`url(#${id}-bg)`} />
+        <rect x="1" y="1" width="38" height="38" rx="10" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
+        {/* Stylized "F" — vertical stem + two horizontal arms with flowing curves */}
+        <path d="M14 10 L14 30" stroke="white" strokeWidth="3" strokeLinecap="round" />
+        <path d="M14 12 C18 12, 22 10, 27 12" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+        <path d="M14 20 C17 20, 20 18, 24 20" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+        <path d="M14 30 C18 30, 22 28, 28 26" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round" fill="none" />
       </svg>
     </div>
   );
@@ -57,11 +44,19 @@ export function Logo({ size = 'md', showText = true, className }: LogoProps) {
         <span style={{
           fontFamily: "'Inter', ui-sans-serif, system-ui, sans-serif",
           fontWeight: 700,
-          fontSize: textSizes[size],
+          fontSize: textSizes[size!],
           letterSpacing: '-0.025em',
           color: 'var(--text-primary, #09090b)',
         }}>
-          Flowstarter
+          Flow
+          <span style={{
+            background: 'linear-gradient(to right, var(--purple, #4D5DD9), #06B6D4)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+          }}>
+            starter
+          </span>
         </span>
       )}
     </div>

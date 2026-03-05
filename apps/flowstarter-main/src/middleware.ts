@@ -92,8 +92,6 @@ const isPublicRoute = createRouteMatcher([
   '/verify(.*)',
   '/sso-callback(.*)',
   '/api/webhooks(.*)',
-  '/api/template-preview(.*)',
-  '/template-preview(.*)',
   '/api/health(.*)',
   '/api/auth/session(.*)', // Session check for editor SSO
   '/api/contact(.*)', // Public contact form API
@@ -323,22 +321,6 @@ export default clerkMiddleware(async (auth, req) => {
     } catch {
       // User not authenticated, continue to landing page
     }
-  }
-
-  // Check for system token for template preview routes
-  if (req.nextUrl.pathname.startsWith('/template-preview')) {
-    const systemToken = req.headers.get('x-system-token');
-    const validToken = process.env.SYSTEM_TOKEN;
-
-    // Use timing-safe comparison to prevent timing attacks
-    if (systemToken && validToken) {
-      const tokensMatch = await timingSafeCompare(systemToken, validToken);
-      if (tokensMatch) {
-        applySecurityHeaders(res, nonce);
-        return res;
-      }
-    }
-    // If no valid system token, fall through to regular auth
   }
 
   if (isPublicRoute(req)) {

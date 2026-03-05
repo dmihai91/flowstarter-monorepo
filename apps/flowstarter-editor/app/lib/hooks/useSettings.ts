@@ -7,9 +7,6 @@ import {
   latestBranchStore,
   autoSelectStarterTemplate,
   enableContextOptimizationStore,
-  tabConfigurationStore,
-  updateTabConfiguration as updateTabConfig,
-  resetTabConfiguration as resetTabConfig,
   updateProviderSettings as updateProviderSettingsStore,
   updateLatestBranch,
   updateAutoSelectTemplate,
@@ -20,7 +17,6 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import type { IProviderSetting, ProviderInfo, IProviderConfig } from '~/types/model';
-import type { TabWindowConfig, TabVisibilityConfig } from '~/components/@settings/core/types';
 import { logStore } from '~/lib/stores/logs';
 import { getLocalStorage, setLocalStorage } from '~/lib/persistence';
 
@@ -30,7 +26,6 @@ export interface Settings {
   notifications: boolean;
   eventLogs: boolean;
   timezone: string;
-  tabConfiguration: TabWindowConfig;
 }
 
 export interface UseSettingsReturn {
@@ -60,10 +55,6 @@ export interface UseSettingsReturn {
   contextOptimizationEnabled: boolean;
   enableContextOptimization: (enabled: boolean) => void;
 
-  // Tab configuration
-  tabConfiguration: TabWindowConfig;
-  updateTabConfiguration: (config: TabVisibilityConfig) => void;
-  resetTabConfiguration: () => void;
 }
 
 // Add interface to match ProviderSetting type
@@ -80,7 +71,6 @@ export function useSettings(): UseSettingsReturn {
   const autoSelectTemplate = useStore(autoSelectStarterTemplate);
   const [activeProviders, setActiveProviders] = useState<ProviderInfo[]>([]);
   const contextOptimizationEnabled = useStore(enableContextOptimizationStore);
-  const tabConfiguration = useStore(tabConfigurationStore);
   const [settings, setSettings] = useState<Settings>(() => {
     const storedSettings = getLocalStorage('settings');
     return {
@@ -89,7 +79,6 @@ export function useSettings(): UseSettingsReturn {
       notifications: storedSettings?.notifications ?? true,
       eventLogs: storedSettings?.eventLogs ?? true,
       timezone: storedSettings?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
-      tabConfiguration,
     };
   });
 
@@ -204,9 +193,6 @@ export function useSettings(): UseSettingsReturn {
     setNotifications,
     setTimezone,
     settings,
-    tabConfiguration,
-    updateTabConfiguration: updateTabConfig,
-    resetTabConfiguration: resetTabConfig,
   };
 }
 

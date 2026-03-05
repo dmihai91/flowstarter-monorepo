@@ -5,7 +5,7 @@ import * as React from 'react';
 
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { VariantProps } from 'class-variance-authority';
+import type { ButtonVariant } from '@flowstarter/flow-design-system';
 
 function AlertDialog({
   ...props
@@ -156,8 +156,9 @@ function AlertDialogAction({
   className,
   variant,
   ...props
-}: React.ComponentProps<typeof AlertDialogPrimitive.Action> &
-  VariantProps<typeof buttonVariants>) {
+}: React.ComponentProps<typeof AlertDialogPrimitive.Action> & {
+  variant?: ButtonVariant;
+}) {
   return (
     <AlertDialogPrimitive.Action
       className={cn(buttonVariants({ variant }), className)}

@@ -58,7 +58,6 @@ export function NavigationWrapper() {
   const [hasSeenInitial, setHasSeenInitial] = useState(false);
   const isDashboardRoute = pathname === '/dashboard';
   const isWizardRoute = pathname === '/dashboard/new';
-  const isTemplatePreview = pathname.startsWith('/template-preview');
   const isClientDashboard = pathname.startsWith('/dashboard'); // Client dashboard has its own header
   const isNoNavbarRoute = noNavbarRoutes.includes(pathname) || isTeamRoute || isClientDashboard;
   const [, setIsErrorPage] = useState(false);
@@ -66,8 +65,7 @@ export function NavigationWrapper() {
   // Check synchronously during render to catch error pages immediately
   // This ensures the navbar is hidden even on the first render
   const errorPageFlag = getIsErrorPage();
-  const shouldHideNavbar =
-    isTemplatePreview || errorPageFlag || isNoNavbarRoute;
+  const shouldHideNavbar = errorPageFlag || isNoNavbarRoute;
 
   // Sync state with flag for useEffect dependencies
   useEffect(() => {

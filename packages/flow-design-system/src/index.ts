@@ -5,12 +5,18 @@
  */
 
 // Components - Brand
-export { Logo, LogoIcon } from './components/Logo';
+export { Logo, LogoIcon, LogoMark, type LogoProps } from './components/Logo';
 export { LoadingScreen } from './components/LoadingScreen';
 export { ThemeToggle, type ThemeToggleProps } from './components/ThemeToggle';
 
 // Components - Buttons
-export { Button, type ButtonProps } from './components/buttons/Button';
+export {
+  Button,
+  getButtonStyles,
+  type ButtonProps,
+  type ButtonVariant,
+  type ButtonSize,
+} from './components/buttons/Button';
 
 // Components - Cards
 export { 

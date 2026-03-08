@@ -15,6 +15,8 @@ import { useConversationContext } from './ConversationContext';
 import { useDaytonaPreview, createAutoFixHandler } from '~/lib/hooks/useDaytonaPreview';
 import { DaytonaPreview } from '~/components/workbench/DaytonaPreview';
 import type { OnboardingStep } from './editor-chat/types';
+import { TerminalPanel } from './TerminalPanel';
+import type { AgentActivityEvent } from './AgentActivityPanel';
 import type { OrchestratorStatusDTO } from '~/lib/hooks/types/orchestrator.dto';
 import type { Id } from '../../../convex/_generated/dataModel';
 
@@ -34,6 +36,8 @@ interface EditorLayoutProps {
   onboardingStep?: OnboardingStep;
   onPublish?: () => void;
   orchestrationStatus?: OrchestratorStatusDTO | null;
+  agentEvents?: AgentActivityEvent[];
+  isAgentActive?: boolean;
 }
 
 const PANEL_CONFIG = {
@@ -51,6 +55,8 @@ export function EditorLayout({
   onboardingStep,
   onPublish,
   orchestrationStatus,
+  agentEvents = [],
+  isAgentActive = false,
 }: EditorLayoutProps) {
   const { isDark } = useThemeStyles();
   const colors = getColors(isDark);
@@ -209,6 +215,8 @@ export function EditorLayout({
         onProjectNameChange={updateProjectName}
         onPublish={onPublish}
         onMenuClick={toggleSidebar}
+        terminalErrorCount={agentEvents.filter((e: AgentActivityEvent) => e.type === 'error' || (e.type === 'sandbox_exit' && (e as any).code !== 0)).length}
+        hasTerminalActivity={(agentEvents ?? []).length > 0}
       />
 
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
@@ -260,7 +268,9 @@ export function EditorLayout({
             <ClientOnly>
               {() => (
                 <Suspense fallback={<LoadingSpinner message="Loading editor..." />}>
-                  {viewMode === 'preview' ? (
+                  {viewMode === 'terminal' ? (
+                    <TerminalPanel events={agentEvents ?? []} isActive={isAgentActive} />
+                  ) : viewMode === 'preview' ? (
                     // Preview mode: show Daytona preview or loading state
                     <DaytonaPreview state={daytonaState} onRefresh={refreshPreview} onRetry={retryPreview} />
                   ) : (

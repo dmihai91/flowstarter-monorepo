@@ -13,6 +13,8 @@ import { isTeamMode, getModeCapabilities, getUserMode } from '~/lib/team-auth';
 import type { Id } from '../../../../convex/_generated/dataModel';
 
 interface EditorHeaderProps {
+  terminalErrorCount?: number;
+  hasTerminalActivity?: boolean;
   projectName: string;
   projectId?: Id<'projects'> | null;
   viewMode: ViewMode;
@@ -32,6 +34,8 @@ export function EditorHeader({
   onProjectNameChange,
   onPublish,
   onMenuClick,
+  terminalErrorCount = 0,
+  hasTerminalActivity = false,
 }: EditorHeaderProps) {
   const { isDark } = useThemeStyles();
   const colors = getColors(isDark);
@@ -131,7 +135,7 @@ export function EditorHeader({
 
       {/* CENTER: View toggle */}
       <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-        <ViewToggle viewMode={viewMode} onViewModeChange={onViewModeChange} isMobile={isMobile} />
+        <ViewToggle viewMode={viewMode} onViewModeChange={onViewModeChange} isMobile={isMobile} terminalErrorCount={terminalErrorCount} hasTerminalActivity={hasTerminalActivity} />
       </div>
 
       {/* RIGHT: Actions */}

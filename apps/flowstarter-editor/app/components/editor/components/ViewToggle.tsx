@@ -2,12 +2,14 @@ import React from 'react';
 import { useThemeStyles, getColors } from '~/components/editor/hooks';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
 
-export type ViewMode = 'preview' | 'editor' | 'chat';
+export type ViewMode = 'preview' | 'editor' | 'chat' | 'terminal';
 
 interface ViewToggleProps {
   viewMode: ViewMode;
   onViewModeChange: (mode: ViewMode) => void;
   isMobile?: boolean;
+  hasTerminalActivity?: boolean;
+  terminalErrorCount?: number;
 }
 
 const ChatIcon = () => (
@@ -30,7 +32,20 @@ const EditorIcon = () => (
   </svg>
 );
 
-export function ViewToggle({ viewMode, onViewModeChange, isMobile = false }: ViewToggleProps) {
+const TerminalIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <polyline points="4,17 10,11 4,5" />
+    <line x1="12" y1="19" x2="20" y2="19" />
+  </svg>
+);
+
+export function ViewToggle({
+  viewMode,
+  onViewModeChange,
+  isMobile = false,
+  hasTerminalActivity = false,
+  terminalErrorCount = 0,
+}: ViewToggleProps) {
   const { isDark } = useThemeStyles();
   const colors = getColors(isDark);
 
@@ -47,6 +62,7 @@ export function ViewToggle({ viewMode, onViewModeChange, isMobile = false }: Vie
     transition: 'all 0.15s',
     background: isActive ? colors.surfaceSelected : 'transparent',
     color: isActive ? colors.textPrimary : colors.textSubtle,
+    position: 'relative',
   });
 
   return (
@@ -77,6 +93,40 @@ export function ViewToggle({ viewMode, onViewModeChange, isMobile = false }: Vie
           {t(EDITOR_LABEL_KEYS.VIEW_EDITOR)}
         </button>
       )}
+      <button
+        onClick={() => onViewModeChange('terminal')}
+        style={getButtonStyle(viewMode === 'terminal')}
+      >
+        <TerminalIcon />
+        Terminal
+        {/* Error badge */}
+        {terminalErrorCount > 0 && (
+          <span style={{
+            marginLeft: '4px',
+            background: '#EF4444',
+            color: '#fff',
+            fontSize: '10px',
+            fontWeight: 600,
+            lineHeight: 1,
+            padding: '1px 4px',
+            borderRadius: '4px',
+          }}>
+            {terminalErrorCount}
+          </span>
+        )}
+        {/* Activity pulse (no errors, but active) */}
+        {hasTerminalActivity && terminalErrorCount === 0 && viewMode !== 'terminal' && (
+          <span style={{
+            width: '5px',
+            height: '5px',
+            borderRadius: '50%',
+            background: 'var(--purple, #4d5dd9)',
+            marginLeft: '2px',
+            display: 'inline-block',
+            animation: 'pulse 1.5s infinite',
+          }} />
+        )}
+      </button>
     </div>
   );
 }

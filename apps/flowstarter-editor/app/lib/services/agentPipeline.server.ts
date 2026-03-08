@@ -1,46 +1,45 @@
 /**
- * Agents SDK Pipeline — Full sub-agent orchestration
+ * Agent Pipeline — Orchestrator + Sonnet sub-agents via direct API (OpenRouter)
+ *
+ * No Claude Code CLI subprocess. Uses Anthropic SDK pointed at OpenRouter,
+ * so OPEN_ROUTER_API_KEY is all that's needed — no direct Anthropic billing.
  *
  * Architecture:
- *   Orchestrator (Opus-4-6, MCP tools) directs the pipeline:
- *     → fetch_template     : loads Astro template files into working dir
- *     → spawn_coder_agent  : spins up Sonnet sub-agent for a file group
- *     → validate_syntax    : runs per-file AST/regex validation
- *     → push_to_preview    : deploys files to Daytona sandbox via HTTP
- *
- *   All events stream to the client via onAgentEvent → SSE → TerminalPanel.
- *
- * Runtime: Node.js only (SDK spawns local Claude Code CLI process).
- *          AGENTS_SDK_ENABLED=true to activate; Cloudflare Workers falls back
- *          to the memory-based batch path.
+ *   Orchestrator (Opus-4-6) uses tool_use to call:
+ *     scaffold_template  → writes template files into temp working dir
+ *     spawn_coder_agent  → Sonnet sub-agent generates/edits a file group
+ *     validate_file      → structural checks on .astro files
+ *     list_output_files  → inventory
+ *     read_file          → read current file content
  */
 
-import {
-  query,
-  tool,
-  createSdkMcpServer,
-  type Options,
-  type SDKMessage,
-} from '@anthropic-ai/claude-agent-sdk';
-import { z } from 'zod';
+import Anthropic from '@anthropic-ai/sdk';
 import { tmpdir } from 'os';
 import { mkdir, writeFile, readFile, readdir, rm } from 'fs/promises';
 import { join, extname } from 'path';
 import type { AgentActivityEvent } from './claude-agent/types';
 import type { SiteGenerationInput, GeneratedFile, SiteGenerationResult } from './claude-agent/types';
 
-// ── Re-export so callers don't need two imports ───────────────────────────────
 export type { AgentActivityEvent };
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
-interface CoderTask {
-  files: string[];        // relative paths within workDir
-  instructions: string;   // what to change
-  designSpec?: string;    // Opus design direction
-}
+const ORCHESTRATOR_MODEL     = 'anthropic/claude-opus-4-6';
+const CODER_MODEL            = 'anthropic/claude-sonnet-4-6';
+const MAX_ORCHESTRATOR_TURNS = 30;
+const MAX_CODER_TURNS        = 5;
 
 type Emit = (event: AgentActivityEvent) => void;
+
+// ── OpenRouter client ─────────────────────────────────────────────────────────
+
+function getClient(): Anthropic {
+  const apiKey = process.env.OPEN_ROUTER_API_KEY;
+  if (!apiKey) throw new Error('OPEN_ROUTER_API_KEY is not set');
+  return new Anthropic({
+    apiKey,
+    baseURL: 'https://openrouter.ai/api/v1',
+    defaultHeaders: { 'HTTP-Referer': 'https://flowstarter.dev', 'X-Title': 'Flowstarter' },
+  });
+}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -48,210 +47,145 @@ async function collectDir(dir: string, base = ''): Promise<GeneratedFile[]> {
   const entries = await readdir(dir, { withFileTypes: true });
   const out: GeneratedFile[] = [];
   for (const e of entries) {
-    if (e.name.startsWith('.') || e.name === 'node_modules') continue;
+    if (e.name.startsWith('.') || e.name === 'node_modules' || e.name === 'dist') continue;
     const full = join(dir, e.name);
     const rel  = base ? `${base}/${e.name}` : e.name;
     if (e.isDirectory()) out.push(...await collectDir(full, rel));
-    else out.push({ path: rel, content: await readFile(full, 'utf-8') });
+    else out.push({ path: rel, content: await readFile(full, 'utf-8').catch(() => '') });
   }
   return out;
 }
 
 function countLines(s: string) { return s.split('\n').length; }
 
-// ── Sub-agent: Sonnet coder ───────────────────────────────────────────────────
+// ── Sonnet coder sub-agent ────────────────────────────────────────────────────
 
 async function runCoderSubAgent(
-  task: CoderTask,
+  files: string[],
+  instructions: string,
+  designSpec: string,
+  projectCtx: string,
   workDir: string,
-  projectContext: string,
   emit: Emit,
 ): Promise<void> {
-  const fileList = task.files.map(f => `- ${f}`).join('\n');
-  const prompt = `You are a focused code generator for an Astro website.
+  const client = getClient();
 
-${projectContext}
+  const fileContents: Record<string, string> = {};
+  for (const f of files) {
+    try { fileContents[f] = await readFile(join(workDir, f), 'utf-8'); }
+    catch { fileContents[f] = '(new file — create from scratch)'; }
+  }
 
-## Your task
-${task.instructions}
+  const fileBlock = Object.entries(fileContents)
+    .map(([p, c]) => `### ${p}\n\`\`\`\n${c.slice(0, 6000)}\n\`\`\``)
+    .join('\n\n');
+
+  const prompt = `You are an expert Astro developer. Rewrite the following files for a client website.
+
+## Project context
+${projectCtx}
 
 ## Design direction
-${task.designSpec ?? 'Follow the template\'s existing style.'}
+${designSpec}
 
-## Files you should modify/create
-${fileList}
+## Task
+${instructions}
 
-Read each file, apply the changes, and write it back. Be precise and complete.
-Do not modify files not listed above.`;
+## Current file contents
+${fileBlock}
 
-  const opts: Options = {
-    cwd: workDir,
-    model: 'claude-sonnet-4-6',
-    permissionMode: 'bypassPermissions',
-    maxTurns: 20,
-  };
+Return ONLY a valid JSON object — no markdown fences, no explanation:
+{"files":{"path/to/file.astro":"complete file content","..."}}
 
-  for await (const msg of query({ prompt, options: opts })) {
-    emitSdkMessage(msg, emit);
-  }
-}
+Rules:
+- Complete file content for every listed file
+- Real business content — no Lorem Ipsum, no placeholder text
+- Inline all data as JS const in frontmatter — NEVER import from content/*.md
+- NEVER use astro-icon — use inline SVGs or emoji
+- Preserve existing import paths unless explicitly changing them`;
 
-// ── Custom MCP tools ──────────────────────────────────────────────────────────
+  const messages: Anthropic.MessageParam[] = [{ role: 'user', content: prompt }];
 
-function buildMcpServer(
-  workDir: string,
-  input: SiteGenerationInput,
-  templateFiles: GeneratedFile[],
-  emit: Emit,
-) {
-  return createSdkMcpServer({
-    name: 'flowstarter-pipeline',
-    tools: [
-      // 1. Scaffold template files into workDir
-      tool(
-        'scaffold_template',
-        'Write all template files into the working directory so you can read and edit them.',
-        {},
-        async () => {
-          for (const file of templateFiles) {
-            const full = join(workDir, file.path);
-            await mkdir(join(full, '..'), { recursive: true });
-            await writeFile(full, file.content, 'utf-8');
-          }
-          emit({ type: 'tool_call', name: 'scaffold_template', input: { files: templateFiles.length } });
-          return { content: [{ type: 'text', text: `Scaffolded ${templateFiles.length} template files into ${workDir}` }] };
-        },
-      ),
+  for (let turn = 0; turn < MAX_CODER_TURNS; turn++) {
+    const res = await client.messages.create({
+      model: CODER_MODEL, max_tokens: 16000, temperature: 0.2, messages,
+    });
 
-      // 2. Spawn a focused Sonnet sub-agent for a group of files
-      tool(
-        'spawn_coder_agent',
-        'Spawn a Sonnet sub-agent to implement changes to a specific group of files. ' +
-        'Use one call per logical group (e.g. hero section, services section, contact page).',
-        {
-          task_name:    z.string().describe('Short name for this task'),
-          files:        z.array(z.string()).describe('Relative file paths to modify'),
-          instructions: z.string().describe('Detailed instructions for what to change'),
-          design_spec:  z.string().optional().describe('Design direction and brand voice'),
-        },
-        async ({ task_name, files, instructions, design_spec }) => {
-          const bizName = input.businessInfo.name || input.siteName;
-          const ctx = `Business: ${bizName}\nSite: ${input.siteName}\nIndustry: ${(input.businessInfo as Record<string,unknown>).targetAudience ?? ''}\nDescription: ${input.businessInfo.description ?? ''}`;
+    const block = res.content.find(b => b.type === 'text');
+    if (!block || block.type !== 'text') break;
+    const raw = block.text.trim();
 
-          emit({ type: 'tool_call', name: 'spawn_coder_agent', input: { task_name, files } });
-
-          await runCoderSubAgent(
-            { files, instructions, designSpec: design_spec },
-            workDir,
-            ctx,
-            emit,
-          );
-
-          emit({ type: 'tool_result', name: 'spawn_coder_agent', duration_s: 0 });
-          return { content: [{ type: 'text', text: `Coder sub-agent for "${task_name}" complete. Files updated: ${files.join(', ')}` }] };
-        },
-      ),
-
-      // 3. Validate Astro/HTML syntax for a file
-      tool(
-        'validate_file',
-        'Validate Astro or HTML syntax for a file in the working directory. Returns errors if any.',
-        { path: z.string().describe('Relative file path to validate') },
-        async ({ path }) => {
-          try {
-            const full = join(workDir, path);
-            const content = await readFile(full, 'utf-8');
-            const ext = extname(path);
-
-            const issues: string[] = [];
-
-            // Basic structural checks
-            if (['.astro', '.html'].includes(ext)) {
-              if ((content.match(/<[^>]+>/g) ?? []).length === 0) issues.push('No HTML tags found');
-              const opens  = (content.match(/<[a-zA-Z][^/>]*>/g) ?? []).length;
-              const closes = (content.match(/<\/[a-zA-Z][^>]*>/g) ?? []).length;
-              if (Math.abs(opens - closes) > 3) issues.push(`Possible unclosed tags (${opens} open, ${closes} close)`);
-            }
-
-            emit({ type: 'file_read', path });
-            const result = issues.length === 0
-              ? `${path}: OK (${countLines(content)} lines)`
-              : `${path}: ${issues.join('; ')}`;
-            return { content: [{ type: 'text', text: result }] };
-          } catch (e) {
-            return { content: [{ type: 'text', text: `Error reading ${path}: ${e instanceof Error ? e.message : e}` }] };
-          }
-        },
-      ),
-
-      // 4. List files in workDir for inspection
-      tool(
-        'list_output_files',
-        'List all generated files in the working directory.',
-        {},
-        async () => {
-          const files = await collectDir(workDir);
-          emit({ type: 'text', content: `Output: ${files.length} files` });
-          return { content: [{ type: 'text', text: files.map(f => f.path).join('\n') }] };
-        },
-      ),
-    ],
-  });
-}
-
-// ── SDK message → AgentActivityEvent ─────────────────────────────────────────
-
-function emitSdkMessage(msg: SDKMessage, emit: Emit) {
-  switch (msg.type) {
-    case 'assistant': {
-      if (!msg.message?.content) break;
-      for (const block of msg.message.content) {
-        if (block.type === 'text' && block.text) {
-          emit({ type: 'text', content: block.text });
-        } else if (block.type === 'thinking' && (block as { thinking?: string }).thinking) {
-          emit({ type: 'thinking', text: (block as { thinking: string }).thinking });
-        } else if (block.type === 'tool_use') {
-          const input = block.input as Record<string, unknown>;
-          const name = block.name as string;
-          if (name === 'Write' || name === 'create_file') {
-            emit({ type: 'file_write', path: (input.file_path || input.path) as string, lines: countLines((input.content as string) ?? '') });
-          } else if (name === 'Edit') {
-            emit({ type: 'file_write', path: (input.file_path || input.path) as string });
-          } else if (name === 'Read') {
-            emit({ type: 'file_read', path: (input.file_path || input.path) as string });
-          } else if (name === 'Bash') {
-            emit({ type: 'command', cmd: (input.command || input.cmd) as string });
-          } else {
-            emit({ type: 'tool_call', name, input });
-          }
+    // Strip markdown fences if model added them
+    const stripped = raw.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+    try {
+      const parsed = JSON.parse(stripped) as { files?: Record<string, string> };
+      if (parsed.files) {
+        for (const [path, content] of Object.entries(parsed.files)) {
+          const full = join(workDir, path);
+          await mkdir(join(full, '..'), { recursive: true });
+          await writeFile(full, content, 'utf-8');
+          emit({ type: 'file_write', path, lines: countLines(content) });
         }
       }
       break;
-    }
-    case 'tool_progress':
-      emit({ type: 'tool_result', name: msg.tool_name, duration_s: msg.elapsed_time_seconds });
-      break;
-    case 'result': {
-      const r = msg as { subtype?: string; usage?: { input_tokens: number; output_tokens: number }; total_cost_usd?: number; duration_ms?: number; num_turns?: number };
-      if (r.subtype === 'success') {
-        emit({
-          type: 'done',
-          duration_ms: r.duration_ms ?? 0,
-          turns: r.num_turns ?? 0,
-          cost_usd: r.total_cost_usd ?? 0,
-          input_tokens: r.usage?.input_tokens ?? 0,
-          output_tokens: r.usage?.output_tokens ?? 0,
-        });
-      } else if (r.subtype === 'error_during_execution') {
-        const errs = (r as { errors?: string[] }).errors;
-        emit({ type: 'error', message: errs?.join('; ') ?? 'Agent error' });
-      }
-      break;
+    } catch {
+      messages.push({ role: 'assistant', content: raw });
+      messages.push({ role: 'user', content: 'Invalid JSON. Return ONLY the JSON object {"files":{...}}, no fences, no explanation.' });
     }
   }
 }
 
-// ── Main export: full pipeline ────────────────────────────────────────────────
+// ── Orchestrator agentic loop ─────────────────────────────────────────────────
+
+async function runOrchestrator(
+  systemPrompt: string,
+  userPrompt: string,
+  toolDefs: Array<{ name: string; description: string; input_schema: Anthropic.Tool['input_schema']; handler: (input: Record<string, unknown>) => Promise<string> }>,
+  emit: Emit,
+  onProgress?: (msg: string) => void,
+): Promise<void> {
+  const client = getClient();
+  const tools: Anthropic.Tool[] = toolDefs.map(({ name, description, input_schema }) => ({ name, description, input_schema }));
+  const messages: Anthropic.MessageParam[] = [{ role: 'user', content: userPrompt }];
+
+  for (let turn = 0; turn < MAX_ORCHESTRATOR_TURNS; turn++) {
+    const res = await client.messages.create({
+      model: ORCHESTRATOR_MODEL, max_tokens: 8000, temperature: 0.3,
+      system: systemPrompt, tools, tool_choice: { type: 'auto' }, messages,
+    });
+
+    messages.push({ role: 'assistant', content: res.content });
+
+    for (const block of res.content) {
+      if (block.type === 'text' && block.text) {
+        emit({ type: 'text', content: block.text });
+        onProgress?.(block.text.slice(0, 100));
+      }
+    }
+
+    if (res.stop_reason === 'end_turn') break;
+    if (res.stop_reason !== 'tool_use') break;
+
+    const toolResults: Anthropic.ToolResultBlockParam[] = [];
+    for (const block of res.content) {
+      if (block.type !== 'tool_use') continue;
+      const def = toolDefs.find(t => t.name === block.name);
+      let result: string;
+      try {
+        result = def
+          ? await def.handler(block.input as Record<string, unknown>)
+          : `Unknown tool: ${block.name}`;
+      } catch (e) {
+        result = `Tool error: ${e instanceof Error ? e.message : String(e)}`;
+        emit({ type: 'error', message: result });
+      }
+      toolResults.push({ type: 'tool_result', tool_use_id: block.id, content: result });
+    }
+    messages.push({ role: 'user', content: toolResults });
+  }
+}
+
+// ── Main export ───────────────────────────────────────────────────────────────
 
 export async function runAgentPipeline(
   input: SiteGenerationInput,
@@ -259,74 +193,169 @@ export async function runAgentPipeline(
   onProgress?: (msg: string) => void,
 ): Promise<SiteGenerationResult> {
   const emit: Emit = input.onAgentEvent ?? (() => {});
-  const progress = (msg: string) => {
-    onProgress?.(msg);
-    emit({ type: 'text', content: msg });
-  };
+  const progress = (msg: string) => { onProgress?.(msg); emit({ type: 'text', content: msg }); };
 
-  // Unique working directory per build
   const workDir = join(tmpdir(), `fs-pipeline-${input.projectId}-${Date.now()}`);
   await mkdir(workDir, { recursive: true });
-
-  progress('Pipeline started — scaffolding template...');
+  progress('Pipeline started — loading template...');
 
   try {
-    const mcpServer = buildMcpServer(workDir, input, templateFiles, emit);
+    const bizInfo = input.businessInfo;
+    const bizName = bizInfo.name || input.siteName;
+    const contactInfo = input.contactInfo ?? (bizInfo as Record<string, unknown>);
 
-    const bizInfo  = input.businessInfo;
-    const bizName  = bizInfo.name || input.siteName;
-    const services = (bizInfo.services ?? []).join(', ');
-    const audience = bizInfo.description ?? '';
+    const projectCtx = [
+      `Site: ${input.siteName}`,
+      `Business: ${bizName}`,
+      `Description: ${bizInfo.description ?? ''}`,
+      `Services: ${(bizInfo.services ?? []).join(', ')}`,
+      `Target audience: ${(bizInfo as Record<string,unknown>).targetAudience ?? ''}`,
+      `Brand tone: ${(bizInfo as Record<string,unknown>).brandTone ?? 'Professional'}`,
+      `Primary colour: ${input.design?.primaryColor ?? '#3B82F6'}`,
+      `Font: ${input.design?.fontFamily ?? 'Inter'}`,
+      `Phone: ${contactInfo.phone ?? ''}`,
+      `Email: ${contactInfo.email ?? ''}`,
+      `Address: ${contactInfo.address ?? ''}`,
+    ].join('\n');
 
-    const orchestratorPrompt = `You are the lead architect for a website generation pipeline.
+    // Build tool definitions (closures capture workDir + input)
+    const toolDefs = [
+      {
+        name: 'scaffold_template',
+        description: 'Write all template files into the working directory.',
+        input_schema: { type: 'object' as const, properties: {}, required: [] },
+        handler: async () => {
+          for (const file of templateFiles) {
+            const full = join(workDir, file.path);
+            await mkdir(join(full, '..'), { recursive: true });
+            await writeFile(full, file.content, 'utf-8');
+          }
+          emit({ type: 'tool_call', name: 'scaffold_template', input: { files: templateFiles.length } });
+          return `Scaffolded ${templateFiles.length} template files into working directory.`;
+        },
+      },
+      {
+        name: 'read_file',
+        description: 'Read the current content of a file.',
+        input_schema: {
+          type: 'object' as const,
+          properties: { path: { type: 'string' } },
+          required: ['path'],
+        },
+        handler: async (inp: Record<string, unknown>) => {
+          const path = inp.path as string;
+          try {
+            const content = await readFile(join(workDir, path), 'utf-8');
+            emit({ type: 'file_read', path });
+            return content;
+          } catch { return `File not found: ${path}`; }
+        },
+      },
+      {
+        name: 'spawn_coder_agent',
+        description: 'Spawn a Sonnet sub-agent to rewrite a group of files with real business content.',
+        input_schema: {
+          type: 'object' as const,
+          properties: {
+            task_name:    { type: 'string' },
+            files:        { type: 'array', items: { type: 'string' } },
+            instructions: { type: 'string' },
+            design_spec:  { type: 'string' },
+          },
+          required: ['task_name', 'files', 'instructions'],
+        },
+        handler: async (inp: Record<string, unknown>) => {
+          const { task_name, files, instructions, design_spec } = inp as {
+            task_name: string; files: string[]; instructions: string; design_spec?: string;
+          };
+          emit({ type: 'tool_call', name: 'spawn_coder_agent', input: { task_name, files } });
+          await runCoderSubAgent(
+            files,
+            instructions,
+            design_spec ?? 'Use the primary colour, professional typography, real business content.',
+            projectCtx,
+            workDir,
+            emit,
+          );
+          emit({ type: 'tool_result', name: 'spawn_coder_agent', duration_s: 0 });
+          return `Agent "${task_name}" complete. Files updated: ${files.join(', ')}`;
+        },
+      },
+      {
+        name: 'validate_file',
+        description: 'Check a file for structural issues (broken imports, missing content, etc).',
+        input_schema: {
+          type: 'object' as const,
+          properties: { path: { type: 'string' } },
+          required: ['path'],
+        },
+        handler: async (inp: Record<string, unknown>) => {
+          const path = inp.path as string;
+          try {
+            const content = await readFile(join(workDir, path), 'utf-8');
+            const issues: string[] = [];
+            if (['.astro', '.html'].includes(extname(path))) {
+              if (!content.includes('<')) issues.push('No HTML found');
+              if (content.includes("from '../../content/")) issues.push('Imports from content/*.md — inline the data instead');
+              if (content.includes('astro-icon')) issues.push('Uses astro-icon — replace with inline SVG');
+              if (content.includes('Lorem ipsum')) issues.push('Contains placeholder Lorem ipsum text');
+            }
+            emit({ type: 'file_read', path });
+            return issues.length === 0
+              ? `${path}: OK (${countLines(content)} lines)`
+              : `${path}: ISSUES — ${issues.join('; ')}`;
+          } catch { return `Cannot read: ${path}`; }
+        },
+      },
+      {
+        name: 'list_output_files',
+        description: 'List all generated files.',
+        input_schema: { type: 'object' as const, properties: {}, required: [] },
+        handler: async () => {
+          const files = await collectDir(workDir);
+          emit({ type: 'text', content: `Output: ${files.length} files` });
+          return `${files.length} files:\n${files.map(f => f.path).join('\n')}`;
+        },
+      },
+    ];
 
-## Project
-Site name: ${input.siteName}
-Business: ${bizName}
-Description: ${bizInfo.description ?? ''}
-Services: ${services}
-Audience: ${audience}
-Template: ${input.template.name} (${input.template.slug})
-Primary colour: ${input.design?.primaryColor ?? '#3B82F6'}
+    progress('Orchestrator (Opus-4-6 via OpenRouter) started...');
 
-## Your job
-1. Call scaffold_template to load the template files into the working directory.
-2. Read key files (index.astro, layout, components) to understand the template structure.
-3. Create a clear design spec: brand voice, colour palette, typography direction, section order.
-4. For each logical section or page, call spawn_coder_agent with focused instructions.
-   - Each call should cover a coherent group (e.g. hero + nav, services section, contact page).
-   - Write precise instructions including real copy: business name, services, CTAs, contact info.
-   - Pass the design spec so every sub-agent stays on brand.
-5. After all coder agents finish, call validate_file on each .astro and .html file.
-   If errors are found, fix them yourself or spawn another coder agent.
-6. Call list_output_files to confirm everything is in order.
-7. Write a short summary of what was built.
+    await runOrchestrator(
+      'You are an expert web architect and creative director. Build beautiful, conversion-optimised websites by orchestrating specialist sub-agents.',
+      `Build a complete website for this business.
 
-Important:
-- Use REAL content from the business info above — no Lorem Ipsum.
-- Every section must reflect the actual services, audience, and brand.
-- Colour scheme must use the primary colour: ${input.design?.primaryColor ?? '#3B82F6'}.
-- Do not modify package.json, tsconfig.json, or astro.config.mjs.`;
+## Business info
+${projectCtx}
 
-    progress('Orchestrator agent started (Opus-4-6)...');
+## Template
+${input.template.name} (${input.template.slug}) — ${templateFiles.length} files available
 
-    const opts: Options = {
-      cwd: workDir,
-      model: 'claude-opus-4-6',
-      permissionMode: 'bypassPermissions',
-      maxTurns: 30,
-      mcpServers: { flowstarter: mcpServer },
-      systemPrompt: 'You are an expert web architect and creative director. You orchestrate sub-agents to build beautiful, conversion-optimised websites.',
-    };
+## Steps
+1. scaffold_template — load all template files
+2. read_file on index.astro, Layout.astro, Hero.astro, Services.astro to understand structure
+3. spawn_coder_agent in groups:
+   - "global-styles": tailwind.config.mjs + src/styles/global.css + src/layouts/Layout.astro
+   - "homepage": src/pages/index.astro + src/components/Hero.astro
+   - "components": Services.astro + Pricing.astro + Testimonials.astro + Footer.astro
+   - "inner-pages": about.astro + contact.astro + services.astro
+4. validate_file on each .astro — fix any ISSUES
+5. list_output_files to confirm
 
-    for await (const msg of query({ prompt: orchestratorPrompt, options: opts })) {
-      emitSdkMessage(msg, emit);
-    }
+## Rules
+- Real content everywhere — business name, actual services, real contact details
+- NEVER import from content/*.md
+- NEVER use astro-icon
+- Primary colour ${input.design?.primaryColor ?? '#3B82F6'} must appear throughout
+- Do NOT touch package.json, tsconfig.json, astro.config.mjs`,
+      toolDefs,
+      emit,
+      onProgress,
+    );
 
-    progress('Pipeline complete — collecting output files...');
-
+    progress('Collecting output files...');
     const generatedFiles = await collectDir(workDir);
-    progress(`Generated ${generatedFiles.length} files.`);
+    progress(`Done — ${generatedFiles.length} files generated.`);
 
     return { success: true, files: generatedFiles };
   } catch (err) {
@@ -334,18 +363,14 @@ Important:
     emit({ type: 'error', message });
     return { success: false, files: [], error: message };
   } finally {
-    // Clean up temp dir
     await rm(workDir, { recursive: true, force: true }).catch(() => {});
   }
 }
 
-/** True when running in Node.js and the pipeline is enabled */
+/** True when OPEN_ROUTER_API_KEY is set and AGENTS_SDK_ENABLED != 'false' */
 export function isAgentPipelineAvailable(): boolean {
   try {
-    // Agents SDK is the DEFAULT on Node.js; opt out with AGENTS_SDK_ENABLED=false
     if (process.env.AGENTS_SDK_ENABLED === 'false') return false;
-    return !!(process?.versions?.node);
-  } catch {
-    return false;
-  }
+    return !!(process?.versions?.node && process.env.OPEN_ROUTER_API_KEY);
+  } catch { return false; }
 }

@@ -14,7 +14,7 @@ import { applyRuleBasedFixes, validateFix, detectFramework } from './fixer-agent
 
 export type { FixerResponseDTO } from '~/lib/flowops/schema';
 
-const PRIMARY_MODEL = 'claude-sonnet-4-20250514';
+const PRIMARY_MODEL = 'claude-opus-4-20250514';
 const FAST_MODEL = 'moonshotai/kimi-k2-instruct-0905';
 
 interface LLMFixResponse {

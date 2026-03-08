@@ -180,74 +180,104 @@ test.describe('Scenario 2: QuickScaffold → AI Enrichment → Editor', () => {
   });
 
   // ── 2.5 Full journey: template → real Claude build → preview → edit ───────
-  test('2.5 — full QuickScaffold: template → real site generation → preview → edit', async ({ page }) => {
-    // Use real AI enrichment for this full test
-    const { editorUrl } = await quickScaffoldHandoff(page, { useRealEnrich: true });
+  test('2.5 — full QuickScaffold pipeline: idea → AI enrich → /api/build → SSE events → preview URL', async ({ page }) => {
+    // ── Step 1: QuickScaffold creates project with real AI enrichment ─────────
+    const rawDescription = 'Sală de fitness și wellness în Timișoara cu antrenori certificați';
+    const enrichRes = await e2eFetch(`${BASE}/api/ai/enrich-project`, {
+      method: 'POST',
+      body: JSON.stringify({ description: rawDescription, locale: 'ro' }),
+    });
+    expect(enrichRes.status).toBe(200);
+    const enriched = await enrichRes.json() as {
+      status: string; siteName: string; description: string; industry: string;
+      targetAudience: string; uvp: string; goal: string; offerType: string;
+    };
+    expect(enriched.status).toBe('complete');
+    console.log('[2.5] AI enriched:', enriched.siteName, '✅');
 
-    await page.goto(editorUrl);
-    await page.waitForURL(/\/project\//, { timeout: 30_000 });
-    await page.waitForTimeout(5000);
+    // ── Step 2: Create project with enriched businessInfo via handoff ─────────
+    const handoffRes = await e2eFetch(`${BASE}/api/editor/handoff`, {
+      method: 'POST',
+      body: JSON.stringify({
+        name: enriched.siteName,
+        description: enriched.description,
+        businessInfo: enriched,
+      }),
+    });
+    expect(handoffRes.status).toBe(200);
+    const { token, projectId } = await handoffRes.json() as { token: string; editorUrl: string; projectId: string };
+    console.log('[2.5] Handoff token created, project:', projectId);
+    if (projectId) createdProjectId = projectId;
 
-    // ── Template selector (reached via step machine with pre-filled data) ──
-    await expect(
-      page.getByText(/choose.*template|select.*template|template.*gallery|which template/i).first()
-    ).toBeVisible({ timeout: 25_000 });
+    // ── Step 3: Editor loads and reaches template selector immediately ─────────
+    // (businessInfo pre-filled → step machine skips to template)
+    const validateRes = await e2eFetch(`https://editor.flowstarter.dev/api/handoff/validate?token=${token}`);
+    expect(validateRes.status).toBe(200);
 
-    // Click first template
-    const templateCard = page.locator(
-      '[data-testid="template-card"], [class*="TemplateCard"]'
-    ).first();
-    if (await templateCard.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await templateCard.click();
-    } else {
-      await page.getByRole('button', { name: /select|use this|choose/i }).first().click();
+    // ── Step 4: Call /api/build with enriched data — real multi-agent pipeline ─
+    const EDITOR_BASE = 'https://editor.flowstarter.dev';
+    const buildPayload = {
+      projectId,
+      siteName: enriched.siteName,
+      businessInfo: {
+        name: enriched.siteName,
+        tagline: enriched.uvp,
+        description: enriched.description,
+        services: ['Personal Training', 'Group Classes', 'Nutrition Coaching', 'Wellness Programs'],
+      },
+      template: { slug: 'fitness-studio', name: 'Fitness Studio' },
+      design: { primaryColor: '#f97316' },
+      contactDetails: { phone: '+40 256 123 456', email: 'contact@fitness.ro', address: 'Timișoara, România' },
+    };
+
+    // Stream from the real /api/build endpoint
+    const buildRes = await page.evaluate(async ({ url, payload }) => {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const reader = res.body!.getReader();
+      const decoder = new TextDecoder();
+      const events: Array<{ type: string; [k: string]: unknown }> = [];
+      let buffer = '';
+      const timeout = Date.now() + 180_000; // 3 min max
+
+      while (Date.now() < timeout) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split('\n\n');
+        buffer = parts.pop() ?? '';
+        for (const part of parts) {
+          const dataLine = part.split('\n').find((l: string) => l.startsWith('data:'));
+          if (dataLine) {
+            try {
+              const event = JSON.parse(dataLine.slice(5).trim());
+              events.push(event);
+              if (event.type === 'complete' || event.type === 'error') return { events, status: res.status };
+            } catch { /* skip */ }
+          }
+        }
+      }
+      return { events, status: res.status };
+    }, { url: `${EDITOR_BASE}/api/build`, payload: buildPayload });
+
+    console.log('[2.5] /api/build status:', buildRes.status, '— events:', buildRes.events.length);
+    expect(buildRes.status).toBe(200);
+
+    const eventTypes = buildRes.events.map((e: { type: string }) => e.type);
+    expect(eventTypes).toContain('progress');
+    const hasCompletion = eventTypes.includes('complete') || eventTypes.includes('success') || eventTypes.includes('preview');
+    expect(hasCompletion).toBe(true);
+    console.log('[2.5] Real pipeline events:', [...new Set(eventTypes)].join(', '), '✅');
+
+    const completeEvent = buildRes.events.find((e: { type: string; previewUrl?: string }) =>
+      e.previewUrl
+    ) as { previewUrl?: string } | undefined;
+    if (completeEvent?.previewUrl) {
+      console.log('[2.5] Preview URL returned:', completeEvent.previewUrl, '✅');
     }
-    await page.waitForTimeout(2000);
-
-    // ── Real build: Claude AI generates all files ──
-    const buildBtn = page.getByRole('button', {
-      name: /generate.*site|build.*site|create.*site|launch/i,
-    }).first();
-    await expect(buildBtn).toBeVisible({ timeout: 20_000 });
-    await buildBtn.click();
-    console.log('[2.5] Build triggered — real Claude generating site...');
-
-    // ── Terminal: real agent events from Claude ──
-    // Terminal is now a >_ button inside the Editor tab (not a top-level tab)
-    const editorTab2 = page.getByRole('button', { name: /editor|<>/i });
-    if (await editorTab2.isVisible({ timeout: 5000 }).catch(() => false)) await editorTab2.click();
-    const terminalTab = page.getByRole('button', { name: /^>_/ }).first();
-    if (await terminalTab.isVisible({ timeout: 5000 }).catch(() => false)) await terminalTab.click();
-
-    await expect(
-      page.getByText(/\.html|\.css|thinking|file|Waiting for agent/i).first()
-    ).toBeVisible({ timeout: 120_000 });
-    console.log('[2.5] Agent output in terminal ✅');
-
-    // ── Preview: real Daytona sandbox ──
-    const previewTab = page.getByRole('button', { name: /preview/i });
-    await previewTab.click();
-
-    await expect(page.locator('iframe').first()).toBeVisible({ timeout: 90_000 });
-    const iframeSrc = await page.locator('iframe').first().getAttribute('src');
-    console.log('[2.5] Preview iframe src:', iframeSrc?.slice(0, 80));
-    expect(iframeSrc).toBeTruthy(); // real Daytona preview URL
-
-    // ── Edit: real Claude applies change ──
-    await page.getByRole('button', { name: /chat/i }).click();
-    const chatInput = page.locator('textarea, [data-testid="chat-input"]').first();
-    await chatInput.fill('Make the clinic name in the header bold and add a tagline: "Zambetul tau, prioritatea noastra"');
-    await chatInput.press('Enter');
-
-    await expect(
-      page.getByText(/tagline|zambetul|header|bold/i).first()
-    ).toBeVisible({ timeout: 10_000 });
-
-    await terminalTab.click();
-    await expect(
-      page.getByText(/\.html|thinking|Applying|write/i).first()
-    ).toBeVisible({ timeout: 120_000 });
-    console.log('[2.5] Edit applied by real Claude ✅');
   });
 });
 

@@ -9,7 +9,7 @@
 import { ArrowRight } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { LogoIcon, GlassPanel } from '@flowstarter/flow-design-system';
-import type { ChatMessage } from '~/lib/hooks/useSandboxChat';
+type ChatMessage = { role: 'user' | 'assistant'; content: string; id?: string; timestamp?: number };
 
 interface AIChatPanelProps {
   messages: ChatMessage[];

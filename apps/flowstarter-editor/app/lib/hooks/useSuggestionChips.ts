@@ -3,7 +3,7 @@
  */
 
 import { useMemo } from 'react';
-import type { ChatMessage } from './useSandboxChat';
+type ChatMessage = { role: 'user' | 'assistant'; content: string; id?: string; timestamp?: number };
 
 const DEFAULT_SUGGESTIONS = [
   'Add pricing',

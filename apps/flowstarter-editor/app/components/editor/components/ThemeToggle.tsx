@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { setTheme } from '~/lib/stores/theme';
 import { useThemeStyles, getColors } from '~/components/editor/hooks';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
@@ -26,9 +26,59 @@ const SystemIcon = () => (
   </svg>
 );
 
+/** Inject the keyframe + ::view-transition rules once into the document head */
+function injectViewTransitionStyles() {
+  if (typeof document === 'undefined') return;
+  if (document.getElementById('theme-transition-styles')) return;
+  const style = document.createElement('style');
+  style.id = 'theme-transition-styles';
+  style.textContent = `
+    /* Radial-reveal transition when switching theme */
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation: none;
+      mix-blend-mode: normal;
+    }
+    ::view-transition-new(root) {
+      animation: theme-reveal 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes theme-reveal {
+      from { clip-path: var(--theme-reveal-from, circle(0% at 50% 50%)); }
+      to   { clip-path: circle(150% at var(--theme-reveal-x, 50%) var(--theme-reveal-y, 50%)); }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 export function ThemeToggle() {
   const { theme, isDark } = useThemeStyles();
   const colors = getColors(isDark);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleThemeChange = (newTheme: Theme, event: React.MouseEvent<HTMLButtonElement>) => {
+    if (newTheme === theme) return;
+
+    // Calculate click origin for the reveal animation
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = Math.round(rect.left + rect.width / 2);
+    const y = Math.round(rect.top + rect.height / 2);
+
+    const root = document.documentElement;
+    root.style.setProperty('--theme-reveal-x', `${x}px`);
+    root.style.setProperty('--theme-reveal-y', `${y}px`);
+    // Small circle on start so it expands outward from the button
+    root.style.setProperty('--theme-reveal-from', `circle(0% at ${x}px ${y}px)`);
+
+    injectViewTransitionStyles();
+
+    // Use View Transitions API if available, otherwise fall back to instant switch
+    const vt = (document as Document & { startViewTransition?: (cb: () => void) => void }).startViewTransition;
+    if (vt) {
+      vt(() => setTheme(newTheme));
+    } else {
+      setTheme(newTheme);
+    }
+  };
 
   const getButtonStyle = (themeOption: Theme): React.CSSProperties => {
     const isSelected = theme === themeOption;
@@ -49,6 +99,7 @@ export function ThemeToggle() {
 
   return (
     <div
+      ref={containerRef}
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -60,17 +111,21 @@ export function ThemeToggle() {
       }}
     >
       <button
-        onClick={() => setTheme('light')}
+        onClick={(e) => handleThemeChange('light', e)}
         style={getButtonStyle('light')}
         title={t(EDITOR_LABEL_KEYS.THEME_LIGHT)}
       >
         <SunIcon />
       </button>
-      <button onClick={() => setTheme('dark')} style={getButtonStyle('dark')} title={t(EDITOR_LABEL_KEYS.THEME_DARK)}>
+      <button
+        onClick={(e) => handleThemeChange('dark', e)}
+        style={getButtonStyle('dark')}
+        title={t(EDITOR_LABEL_KEYS.THEME_DARK)}
+      >
         <MoonIcon />
       </button>
       <button
-        onClick={() => setTheme('system')}
+        onClick={(e) => handleThemeChange('system', e)}
         style={getButtonStyle('system')}
         title={t(EDITOR_LABEL_KEYS.THEME_SYSTEM)}
       >

@@ -212,8 +212,9 @@ export default clerkMiddleware(async (auth, req) => {
       const isFeedbackApi = pathname === '/api/feedback';
       const isAuthApi = pathname.startsWith('/api/auth/'); // Protected by Clerk auth
       const isEditorApi = pathname.startsWith('/api/editor/'); // Protected by handoff tokens / Clerk auth
+      const isProjectsApi = pathname.startsWith('/api/projects/') || pathname === '/api/projects';
       const unsafe = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method);
-      if (unsafe && !isWebhook && !isTeamApi && !isAiApi && !isFeedbackApi && !isAuthApi && !isEditorApi) {
+      if (unsafe && !isWebhook && !isTeamApi && !isAiApi && !isFeedbackApi && !isAuthApi && !isEditorApi && !isProjectsApi) {
         if (!isSameOrigin) {
           // Log CSRF block
           logSecurityEventEdge('security.csrf_blocked', {

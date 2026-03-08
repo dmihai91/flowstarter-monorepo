@@ -230,112 +230,25 @@ function IndexRedirector() {
 
         hasRedirected.current = true;
 
-        // Check if a Convex project already exists for this Supabase UUID
-        // Retry up to 5 times in case WS isn't connected yet
-        let existingConvexProject = null;
-        for (let attempt = 0; attempt < 5; attempt++) {
-          try {
-            existingConvexProject = await convex.query(
-              api.projects.getBySupabaseId,
-              { supabaseProjectId }
-            );
-            break; // success
-          } catch (queryErr) {
-            console.warn('[Index] Convex query attempt', attempt + 1, 'failed:', queryErr);
-            if (attempt < 4) await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
-          }
+        // Use server-side initialization — avoids browser Convex WS auth dependency
+        console.log('[Index] Calling /api/handoff/initialize (server-side)...');
+        const initRes = await fetch('/api/handoff/initialize', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: handoffToken }),
+        });
+
+        if (!initRes.ok) {
+          const err = await initRes.json().catch(() => ({})) as { error?: string };
+          throw new Error(`Server init failed: ${err.error || initRes.status}`);
         }
 
-        if (existingConvexProject) {
-          // Project already linked — sync name from Supabase
-          console.log('[Index] Found existing Convex project for Supabase UUID:', existingConvexProject._id);
-          if (projectName && projectName !== existingConvexProject.name) {
-            await convex.mutation(api.projects.update, {
-              projectId: existingConvexProject._id,
-              name: projectName,
-            });
-            console.log('[Index] Synced project name from Supabase:', projectName);
-          }
-
-          // Look for existing conversation linked to this project
-          const existingConvos = conversations || [];
-          const linkedConvo = existingConvos.find(
-            (c) => c.projectId === existingConvexProject!._id
-          );
-
-          if (linkedConvo) {
-            console.log('[Index] Redirecting to existing conversation:', linkedConvo._id);
-            // Sync project data from Supabase to conversation
-            const updates: Record<string, unknown> = { id: linkedConvo._id };
-            if (projectName && projectName !== linkedConvo.projectName) {
-              updates.projectName = projectName;
-            }
-            if (projectDescription && !linkedConvo.projectDescription) {
-              updates.projectDescription = projectDescription;
-            }
-            if (businessInfo && !(linkedConvo.businessInfo as Record<string, unknown> | undefined)?.description) {
-              updates.businessInfo = businessInfo;
-              // If business data exists but conversation is still on early step, advance to template
-              const earlySteps = ['welcome', 'describe', 'name'];
-              if (linkedConvo.step && earlySteps.includes(linkedConvo.step)) {
-                updates.step = 'template';
-              }
-            }
-            if (Object.keys(updates).length > 1) {
-              await convex.mutation(api.conversations.updateState, updates as any);
-              console.log('[Index] Synced conversation data from Supabase:', Object.keys(updates));
-            }
-            navigate(`/project/${linkedConvo._id}`, { replace: true });
-          } else {
-            const newConversationId = await createConversation({
-              sessionId,
-              title: projectName,
-            });
-            console.log('[Index] Created new conversation for existing project:', newConversationId);
-            navigate(`/project/${newConversationId}`, { replace: true });
-          }
-        } else {
-          // Create new Convex project linked to Supabase
-          console.log('[Index] Creating new Convex project for Supabase UUID:', supabaseProjectId);
-
-          const { projectId: convexProjectId, urlId } = await createEmptyProject({
-            name: projectName,
-            description: config?.userDescription || projectDescription,
-            templateId: handoffProject?.templateId || '',
-            supabaseProjectId,
-            ...(hasBusinessData
-              ? {
-                  businessDetails: {
-                    businessName: projectName,
-                    description: config?.userDescription || projectDescription,
-                    targetAudience: config?.targetUsers,
-                    goals: config?.businessGoals ? [config.businessGoals] : undefined,
-                  },
-                }
-              : {}),
-          });
-
-          // Create conversation linked to the new project
-          // If business data exists, set step to 'welcome' so useWelcomeInit
-          // detects businessInfo/projectDescription and skips to template selection
-          const conversationId = await createConversationWithProject({
-            sessionId,
-            projectId: convexProjectId,
-            projectUrlId: urlId,
-            projectName,
-            projectDescription: config?.userDescription || projectDescription,
-            // Start at 'welcome' if business data exists (skips to template via useWelcomeInit)
-            // Start at 'describe' if only name is set (skips naming step)
-            // Start at 'welcome' (full flow) if neither
-            step: hasBusinessData ? 'welcome' : hasName ? 'describe' : 'welcome',
-            businessInfo,
-          });
-
-          console.log('[Index] Created project + conversation from handoff:', convexProjectId, conversationId);
-          // Mark session so AuthGuard on /project/:id allows through without Clerk session
-          sessionStorage.setItem('flowstarter_handoff_session', '1');
-          navigate(`/project/${conversationId}`, { replace: true });
-        }
+        const { conversationId } = await initRes.json() as { conversationId: string };
+        console.log('[Index] Server-side init complete, conversationId:', conversationId);
+        sessionStorage.setItem('flowstarter_handoff_session', '1');
+        hasRedirected.current = true;
+        navigate(\`/project/\${conversationId}\`, { replace: true });
+        return; // done — skip rest of old flow
       } catch (error) {
         console.error('[Index] Handoff validation error:', error);
         // Log full error details to help diagnose

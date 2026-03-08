@@ -175,7 +175,7 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
 
     // Template selector must appear (driven by real Convex step)
     await expect(
-      page.getByText(/choose.*template|select.*template|template.*gallery|which template/i).first()
+      page.getByText(/pick a template|choose a template|template|Browse all/i).first()
     ).toBeVisible({ timeout: 25_000 });
 
     console.log('[1.7] Template selector reached ✅');
@@ -203,7 +203,7 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
 
     // ── Step 2: Template selector appears (real step machine) ──
     await expect(
-      page.getByText(/choose.*template|select.*template|template.*gallery|which template/i).first()
+      page.getByText(/pick a template|choose a template|template|Browse all/i).first()
     ).toBeVisible({ timeout: 30_000 });
     console.log('[1.8] Template selector visible ✅');
 

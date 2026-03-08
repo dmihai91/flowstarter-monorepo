@@ -240,10 +240,20 @@ function IndexRedirector() {
         hasRedirected.current = true;
 
         // Check if a Convex project already exists for this Supabase UUID
-        const existingConvexProject = await convex.query(
-          api.projects.getBySupabaseId,
-          { supabaseProjectId }
-        );
+        // Retry up to 5 times in case WS isn't connected yet
+        let existingConvexProject = null;
+        for (let attempt = 0; attempt < 5; attempt++) {
+          try {
+            existingConvexProject = await convex.query(
+              api.projects.getBySupabaseId,
+              { supabaseProjectId }
+            );
+            break; // success
+          } catch (queryErr) {
+            console.warn('[Index] Convex query attempt', attempt + 1, 'failed:', queryErr);
+            if (attempt < 4) await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
+          }
+        }
 
         if (existingConvexProject) {
           // Project already linked — sync name from Supabase
@@ -332,6 +342,11 @@ function IndexRedirector() {
         }
       } catch (error) {
         console.error('[Index] Handoff validation error:', error);
+        // Log full error details to help diagnose
+        if (error instanceof Error) {
+          console.error('[Index] Error name:', error.name, '| message:', error.message);
+          console.error('[Index] Error stack:', error.stack);
+        }
         setIsValidatingHandoff(false);
       }
     };
@@ -349,6 +364,11 @@ function IndexRedirector() {
     // Wait if we're still validating handoff
     if (isValidatingHandoff) {
       return;
+    }
+
+    // If handoff was present but failed (Convex error etc.), log it
+    if (hasHandoff && !hasRedirected.current) {
+      console.warn('[Index] Handoff flow did not complete — falling through to normal flow');
     }
 
     // Wait for conversations to load

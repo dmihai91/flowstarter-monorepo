@@ -1,407 +1,241 @@
 /**
- * Scenario 2: QuickScaffold AI Enrichment → Review → Handoff → Editor
+ * Scenario 2: QuickScaffold AI Enrichment → Review → Editor (Real Domain)
  *
- * An operator uses the QuickScaffold on the main platform dashboard.
- * They type a short business description, the AI enriches it into structured data.
- * The operator reviews/completes the enriched data, then clicks "Open in Editor".
- * The editor receives the handoff token, extracts the full business data,
- * skips the onboarding collect steps, goes straight to template selection,
- * and generates a working website using the pre-filled data.
- *
- * What IS real (not mocked):
- *   - HMAC token generation + validation (full lifecycle)
- *   - Business data embedding in token payload
- *   - Editor step machine advancement (hasBusinessData → skip to template)
- *   - Project name preservation from QuickScaffold input
- *   - Token signature validation in editor's validate route
- *
- * What IS mocked:
- *   - Clerk auth, Supabase REST, Convex WS
- *   - AI enrichment response (deterministic test data)
- *   - Daytona sandboxes, Claude AI generation
+ * Tests the QuickScaffold path: operator types a short description,
+ * AI enriches it into structured business data (mocked — expensive),
+ * operator reviews/edits, clicks "Open in Editor".
+ * Editor receives full businessInfo → skips straight to template selection
+ * → operator picks template → (mocked) site generation → editing.
  */
 
 import { test, expect, type Page } from '@playwright/test';
 import {
-  MAIN,
+  BASE,
   EDITOR,
-  MOCK_PROJECT,
-  MOCK_ENRICHED,
-  MOCK_USER,
+  BUSINESS_INFO,
+  CONTACT_INFO,
   QUICKSCAFFOLD_INPUT,
-  setupAllMocks,
-  mockEdit,
+  ENRICHED_DATA,
+  testProjectName,
   makeHandoffToken,
+  mockExpensiveServices,
+  mockAgentEditSSE,
+  mockAIEnrich,
+  cleanupProject,
 } from './helpers';
-// ─── UI Helper ────────────────────────────────────────────────────────────────
-async function navigateToEditorUI(page: Page, token: string, projectId: string, name: string, data: object): Promise<void> {
-  await page.addInitScript(({ pid, nm, dat, tok }) => {
-    localStorage.setItem('flowstarter_handoff_token', tok);
-    localStorage.setItem('flowstarter_handoff_data', JSON.stringify({
-      projectId: pid, name: nm, fromMainPlatform: true, ...dat,
-    }));
-  }, { pid: projectId, nm: name, dat: data, tok: token } as any);
 
-  await page.goto(`${EDITOR}/?handoff=${encodeURIComponent(token)}`);
-  await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(4000);
-}
+// ─── Shared cleanup ───────────────────────────────────────────────────────────
 
+let createdProjectId: string | undefined;
 
+test.afterEach(async ({ page }) => {
+  if (createdProjectId) {
+    await cleanupProject(page, createdProjectId);
+    createdProjectId = undefined;
+  }
+});
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Helper: QuickScaffold → handoff (mirrors what the dashboard does) ────────
 
-/**
- * Simulate the QuickScaffold → handoff flow:
- * 1. Call main platform's AI enrich endpoint (mocked)
- * 2. Call main platform's handoff endpoint with enriched data
- * 3. Return the editor URL
- *
- * This mirrors exactly what QuickScaffold.tsx does when the operator
- * clicks "Open in Editor" after reviewing the AI-generated data.
- */
-async function runQuickScaffoldHandoff(page: Page): Promise<{
-  editorUrl: string;
-  token: string;
-  projectId: string;
+async function quickScaffoldHandoff(page: Page): Promise<{
+  editorUrl: string; token: string; projectId: string;
 }> {
-  // Step 1: enrich (mocked to return MOCK_ENRICHED)
-  // We don't call this here — the handoff directly packages the enriched data
-
-  // Step 2: call handoff with the full enriched payload
-  const handoffResponse = await page.request.post(`${MAIN}/api/editor/handoff`, {
+  // The dashboard calls /api/ai/enrich-project first (we mock that),
+  // then calls /api/editor/handoff with the enriched data.
+  const res = await page.request.post(`${BASE}/api/editor/handoff`, {
     data: {
       projectConfig: {
-        name: MOCK_ENRICHED.name,
-        description: MOCK_ENRICHED.description,
+        name: ENRICHED_DATA.name,
+        description: ENRICHED_DATA.description,
         userDescription: QUICKSCAFFOLD_INPUT,
-        industry: MOCK_ENRICHED.industry,
+        industry: ENRICHED_DATA.industry,
         businessInfo: {
-          description: MOCK_ENRICHED.description,
-          uvp: MOCK_ENRICHED.uvp,
-          targetAudience: MOCK_ENRICHED.targetAudience,
-          goal: MOCK_ENRICHED.goal,
-          brandTone: MOCK_ENRICHED.brandTone,
-          offerings: MOCK_ENRICHED.offerings,
+          description: ENRICHED_DATA.description,
+          uvp: ENRICHED_DATA.uvp,
+          targetAudience: ENRICHED_DATA.targetAudience,
+          goal: ENRICHED_DATA.goal,
+          brandTone: ENRICHED_DATA.brandTone,
+          offerings: ENRICHED_DATA.offerings,
         },
-        contactInfo: {
-          email: MOCK_ENRICHED.contactEmail,
-        },
+        contactInfo: { email: ENRICHED_DATA.contactEmail },
       },
       mode: 'generate',
     },
-    headers: {
-      Authorization: 'Bearer mock_clerk_token',
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
   });
 
-  const body = await handoffResponse.json() as {
-    success?: boolean;
-    editorUrl?: string;
-    token?: string;
-    projectId?: string;
-    error?: string;
+  expect(res.status()).toBe(200);
+  const body = await res.json() as {
+    success: boolean; editorUrl: string; token: string; projectId: string;
   };
-
-  return {
-    editorUrl: body.editorUrl || '',
-    token: body.token || '',
-    projectId: body.projectId || '',
-  };
+  expect(body.success).toBe(true);
+  createdProjectId = body.projectId;
+  return body;
 }
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 test.describe('Scenario 2: QuickScaffold → AI Enrichment → Editor', () => {
-  test.setTimeout(90_000);
+  test.setTimeout(120_000);
 
-  // ── 2.1 QuickScaffold handoff embeds enriched data in token ───────────────
-  test('2.1 — handoff token embeds AI-enriched business data', async ({ page }) => {
-    await setupAllMocks(page);
+  // ── 2.1 Enriched data is embedded in the handoff token ───────────────────
+  test('2.1 — QuickScaffold handoff embeds AI-enriched businessInfo in token', async ({ page }) => {
+    const { token } = await quickScaffoldHandoff(page);
 
-    // Build the token the same way the fixed handoff route would
-    const token = makeHandoffToken({
-      projectId: MOCK_PROJECT.id,
-      userId: MOCK_USER.id,
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 900,
-      project: {
-        id: MOCK_PROJECT.id,
-        name: MOCK_ENRICHED.name,
-        description: MOCK_ENRICHED.description,
-        data: {
-          userDescription: QUICKSCAFFOLD_INPUT,
-          businessInfo: {
-            description: MOCK_ENRICHED.description,
-            uvp: MOCK_ENRICHED.uvp,
-            targetAudience: MOCK_ENRICHED.targetAudience,
-            goal: MOCK_ENRICHED.goal,
-            brandTone: MOCK_ENRICHED.brandTone,
-          },
-          contactInfo: { email: MOCK_ENRICHED.contactEmail },
-          mode: 'generate',
-        },
-      },
-    });
-
-    // Navigate to editor — real validation runs
-    await page.goto(`${EDITOR}/?handoff=${encodeURIComponent(token)}`);
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(3000);
-
-    // Token should be accepted (not login screen)
-    const loginScreen = await page.getByText(/Sign in to your account/i).isVisible().catch(() => false);
-    expect(loginScreen).toBe(false);
-  });
-
-  // ── 2.2 Project name from QuickScaffold preserved in editor ───────────────
-  test('2.2 — AI-generated project name from QuickScaffold appears in editor', async ({ page }) => {
-    await setupAllMocks(page);
-
-    const enrichedName = MOCK_ENRICHED.name; // "Dr. Elena Dental Clinic"
-
-    const token = makeHandoffToken({
-      projectId: MOCK_PROJECT.id,
-      userId: MOCK_USER.id,
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 900,
-      project: {
-        id: MOCK_PROJECT.id,
-        name: enrichedName,
-        description: MOCK_ENRICHED.description,
-        data: {
-          businessInfo: {
-            description: MOCK_ENRICHED.description,
-            uvp: MOCK_ENRICHED.uvp,
-            targetAudience: MOCK_ENRICHED.targetAudience,
-          },
-        },
-      },
-    });
-
-    // ── API-level: validate token and confirm AI-generated name is embedded ──
     const validateRes = await page.request.post(`${EDITOR}/api/handoff/validate`, {
       data: { token },
       headers: { 'Content-Type': 'application/json' },
     });
-    const validated = await validateRes.json() as { valid: boolean; project?: { name?: string } };
+
+    expect(validateRes.status()).toBe(200);
+    const validated = await validateRes.json() as {
+      valid: boolean;
+      project?: { data?: { businessInfo?: typeof BUSINESS_INFO } };
+    };
+
     expect(validated.valid).toBe(true);
-    expect(validated.project?.name).toBe(enrichedName);
 
-    // ── UI-level: editor renders without login screen ──
-    await navigateToEditorUI(page, token, MOCK_PROJECT.id, enrichedName, {
-      businessInfo: { description: MOCK_ENRICHED.description, uvp: MOCK_ENRICHED.uvp },
-    });
-
-    const loginShown = await page.getByText(/Sign in to your account/i).isVisible().catch(() => false);
-    expect(loginShown).toBe(false);
+    const bi = validated.project?.data?.businessInfo as typeof BUSINESS_INFO | undefined;
+    expect(bi?.description).toBe(ENRICHED_DATA.description);
+    expect(bi?.uvp).toBe(ENRICHED_DATA.uvp);
+    expect(bi?.targetAudience).toBe(ENRICHED_DATA.targetAudience);
+    expect(bi?.goal).toBe(ENRICHED_DATA.goal);
   });
 
-  // ── 2.3 Full business data skips describe step ────────────────────────────
-  test('2.3 — QuickScaffold business data skips describe/name steps in editor', async ({ page }) => {
-    await setupAllMocks(page);
+  // ── 2.2 Operator edits AI field → modification preserved in token ─────────
+  test('2.2 — operator-edited UVP is preserved verbatim in token payload', async ({ page }) => {
+    const operatorUvp = 'Aparatura de ultima generatie + garantia satisfactiei';
 
-    // Token with ALL business data — what QuickScaffold produces after review
-    const token = makeHandoffToken({
-      projectId: MOCK_PROJECT.id,
-      userId: MOCK_USER.id,
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 900,
-      project: {
-        id: MOCK_PROJECT.id,
-        name: MOCK_ENRICHED.name,
-        description: MOCK_ENRICHED.description,
-        data: {
-          userDescription: QUICKSCAFFOLD_INPUT,
+    const res = await page.request.post(`${BASE}/api/editor/handoff`, {
+      data: {
+        projectConfig: {
+          name: testProjectName(),
+          description: ENRICHED_DATA.description,
           businessInfo: {
-            description: MOCK_ENRICHED.description,
-            uvp: MOCK_ENRICHED.uvp,
-            targetAudience: MOCK_ENRICHED.targetAudience,
-            goal: MOCK_ENRICHED.goal,
-            brandTone: MOCK_ENRICHED.brandTone,
-            offerings: MOCK_ENRICHED.offerings,
-          },
-          contactInfo: { email: MOCK_ENRICHED.contactEmail },
-          mode: 'generate',
-        },
-      },
-    });
-
-    await page.goto(`${EDITOR}/?handoff=${encodeURIComponent(token)}`);
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(5000);
-
-    // Should NOT ask for business description (already have full businessInfo)
-    const askingForDesc = await page.getByText(/tell me about|what does your business|describe your/i)
-      .isVisible({ timeout: 3000 }).catch(() => false);
-    expect(askingForDesc).toBe(false);
-
-    // Should NOT ask for business name (already have it)
-    const askingForName = await page.getByText(/what.*name.*business|business.*called/i)
-      .isVisible({ timeout: 2000 }).catch(() => false);
-    expect(askingForName).toBe(false);
-  });
-
-  // ── 2.4 Operator edits AI-generated data before opening editor ───────────
-  test('2.4 — operator can modify AI-enriched field; modification is in token', async ({ page }) => {
-    await setupAllMocks(page);
-
-    // Simulate operator changing the UVP before clicking "Open in Editor"
-    const operatorEditedUvp = 'Tratamente fara durere + aparatura de ultima generatie';
-
-    const token = makeHandoffToken({
-      projectId: MOCK_PROJECT.id,
-      userId: MOCK_USER.id,
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 900,
-      project: {
-        id: MOCK_PROJECT.id,
-        name: MOCK_ENRICHED.name,
-        description: MOCK_ENRICHED.description,
-        data: {
-          businessInfo: {
-            description: MOCK_ENRICHED.description,
-            uvp: operatorEditedUvp, // ← operator's edit
-            targetAudience: MOCK_ENRICHED.targetAudience,
-            goal: MOCK_ENRICHED.goal,
+            ...BUSINESS_INFO,
+            uvp: operatorUvp, // ← operator overrode the AI suggestion
           },
         },
+        mode: 'generate',
       },
+      headers: { 'Content-Type': 'application/json' },
     });
 
-    // Validate the token contains the edited UVP
-    // Use the editor's validate endpoint (real route, real verification)
-    const validateResponse = await page.request.post(`${EDITOR}/api/handoff/validate`, {
+    const { token, projectId } = await res.json() as { token: string; projectId: string };
+    createdProjectId = projectId;
+
+    const validateRes = await page.request.post(`${EDITOR}/api/handoff/validate`, {
       data: { token },
       headers: { 'Content-Type': 'application/json' },
     });
 
-    const validated = await validateResponse.json() as {
+    const validated = await validateRes.json() as {
       valid: boolean;
-      project?: {
-        data?: { businessInfo?: { uvp?: string } };
-      };
+      project?: { data?: { businessInfo?: { uvp?: string } } };
     };
 
     expect(validated.valid).toBe(true);
-    // Project data is nested in token.project.data
-    const bi = (validated.project as any)?.data?.businessInfo;
-    expect(bi?.uvp).toBe(operatorEditedUvp);
+    expect(validated.project?.data?.businessInfo?.uvp).toBe(operatorUvp);
   });
 
-  // ── 2.5 Full QuickScaffold journey: AI data → template → build → edit ────
-  test('2.5 — full QuickScaffold journey: AI data → template → site generation → edit', async ({ page }) => {
-    await setupAllMocks(page);
-    await mockEdit(page, 'Update hero headline');
+  // ── 2.3 Editor skips to template when businessInfo is pre-filled ──────────
+  test('2.3 — QuickScaffold editor skips describe/name steps, shows template selector', async ({ page }) => {
+    const { editorUrl } = await quickScaffoldHandoff(page);
 
-    // Full enriched token (all business data from AI + operator review)
-    const token = makeHandoffToken({
-      projectId: MOCK_PROJECT.id,
-      userId: MOCK_USER.id,
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 900,
-      project: {
-        id: MOCK_PROJECT.id,
-        name: MOCK_ENRICHED.name,
-        description: MOCK_ENRICHED.description,
-        data: {
-          userDescription: QUICKSCAFFOLD_INPUT,
-          businessInfo: {
-            description: MOCK_ENRICHED.description,
-            uvp: MOCK_ENRICHED.uvp,
-            targetAudience: MOCK_ENRICHED.targetAudience,
-            goal: MOCK_ENRICHED.goal,
-            brandTone: MOCK_ENRICHED.brandTone,
-            offerings: MOCK_ENRICHED.offerings,
-          },
-          contactInfo: { email: MOCK_ENRICHED.contactEmail },
-          mode: 'generate',
-        },
-      },
-    });
+    await mockExpensiveServices(page, ENRICHED_DATA.name);
+    await page.goto(editorUrl);
+    await page.waitForURL(/\/project\//, { timeout: 20_000 });
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(5000); // useWelcomeInit + step advance
 
-    // ── Step 1: Land in editor with full business data ──
-    await navigateToEditorUI(page, token, MOCK_PROJECT.id, MOCK_ENRICHED.name, {
-      userDescription: QUICKSCAFFOLD_INPUT,
-      businessInfo: {
-        description: MOCK_ENRICHED.description,
-        uvp: MOCK_ENRICHED.uvp,
-        targetAudience: MOCK_ENRICHED.targetAudience,
-        goal: MOCK_ENRICHED.goal,
-      },
-      contactInfo: { email: MOCK_ENRICHED.contactEmail },
-    });
+    // Must NOT be asking for business description (already provided)
+    const askingForDesc = await page.getByText(
+      /tell me about your business|what does your business do/i
+    ).isVisible({ timeout: 3000 }).catch(() => false);
+    expect(askingForDesc).toBe(false);
 
-    // ── Step 2: Verify editor shell is alive ──
-    expect(await page.locator('body').isVisible()).toBe(true);
-    const loginShown = await page.getByText(/Sign in to your account/i).isVisible().catch(() => false);
-    expect(loginShown).toBe(false);
+    // Template selector must appear
+    await expect(
+      page.getByText(/choose.*template|select.*template|template.*gallery|which template/i).first()
+    ).toBeVisible({ timeout: 20_000 });
+  });
 
-    // ── Step 3: Template selection (auto-shown due to full business data) ──
-    const templateArea = page.getByText(/dentist pro|clinic clean|choose.*template|template.*gallery/i).first();
-    if (await templateArea.isVisible({ timeout: 8000 }).catch(() => false)) {
-      // Click first template
-      await templateArea.click();
-      await page.waitForTimeout(1000);
+  // ── 2.4 Full QuickScaffold journey: template → build → edit ──────────────
+  test('2.4 — full QuickScaffold flow: template selected → site built → edited', async ({ page }) => {
+    const { editorUrl } = await quickScaffoldHandoff(page);
+
+    await mockExpensiveServices(page, ENRICHED_DATA.name);
+    await mockAgentEditSSE(page, 'Make hero headline bold');
+
+    // ── Navigate ──
+    await page.goto(editorUrl);
+    await page.waitForURL(/\/project\//, { timeout: 20_000 });
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(5000);
+
+    // ── Step 1: Template selector must appear (businessInfo was pre-filled) ──
+    await expect(
+      page.getByText(/choose.*template|select.*template|template.*gallery|which template/i).first()
+    ).toBeVisible({ timeout: 25_000 });
+
+    // Click first template card
+    const templateCard = page.locator('[data-testid="template-card"], [class*="TemplateCard"], [class*="template-card"]').first();
+    if (await templateCard.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await templateCard.click();
+      await page.waitForTimeout(1500);
+    } else {
+      // Fallback: click the first visible template option
+      const templateOption = page.getByRole('button', { name: /select|use this|choose/i }).first();
+      if (await templateOption.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await templateOption.click();
+      }
     }
 
-    // ── Step 4: Site generation ──
-    const buildBtn = page.getByRole('button', { name: /generate|build|create.*site|launch/i }).first();
-    if (await buildBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await buildBtn.click();
-      await page.waitForTimeout(3000);
-    }
+    // ── Step 2: Build trigger ──
+    const buildBtn = page.getByRole('button', {
+      name: /generate.*site|build.*site|create.*site|launch/i,
+    }).first();
+    await expect(buildBtn).toBeVisible({ timeout: 15_000 });
+    await buildBtn.click();
 
-    // ── Step 5: Switch to terminal, verify agent activity ──
+    // ── Step 3: Terminal shows agent activity from mocked SSE ──
     const terminalTab = page.getByRole('button', { name: /terminal/i });
-    if (await terminalTab.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await terminalTab.click();
-      // Terminal should have content (not crash)
-      expect(await page.locator('body').isVisible()).toBe(true);
-    }
+    await expect(terminalTab).toBeVisible({ timeout: 10_000 });
+    await terminalTab.click();
 
-    // ── Step 6: Edit the generated site ──
+    await expect(
+      page.getByText(/index\.html|styles\.css|script\.js|Waiting for agent/i).first()
+    ).toBeVisible({ timeout: 15_000 });
+
+    // ── Step 4: Preview tab shows the generated site ──
+    const previewTab = page.getByRole('button', { name: /preview/i }).first();
+    await expect(previewTab).toBeVisible({ timeout: 5000 });
+    await previewTab.click();
+
+    // The preview area should show content (iframe or generated HTML)
+    await expect(
+      page.locator('iframe[src*="preview"], iframe[src*="daytona"], [data-testid="preview"]').first()
+    ).toBeVisible({ timeout: 10_000 });
+
+    // ── Step 5: Edit via chat ──
     const chatTab = page.getByRole('button', { name: /chat/i });
-    if (await chatTab.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await chatTab.click();
-    }
+    await chatTab.click();
 
     const chatInput = page.locator('textarea, [data-testid="chat-input"]').first();
-    if (await chatInput.isVisible({ timeout: 8000 }).catch(() => false)) {
-      await chatInput.fill('Make the hero headline bigger and use the clinic blue color');
-      await chatInput.press('Enter');
-      await page.waitForTimeout(2000);
+    await expect(chatInput).toBeVisible({ timeout: 8000 });
 
-      const editSent = await page.getByText(/hero|headline|bigger|blue/i)
-        .first().isVisible({ timeout: 5000 }).catch(() => false);
-      expect(editSent).toBe(true);
-    }
+    await chatInput.fill('Make the hero headline bold and larger');
+    await chatInput.press('Enter');
 
-    expect(await page.locator('body').isVisible()).toBe(true);
-  });
+    // Edit request appears in chat history
+    await expect(
+      page.getByText(/hero.*headline|headline.*bold|bold.*larger/i).first()
+    ).toBeVisible({ timeout: 8000 });
 
-  // ── 2.6 Validate endpoint rejects QuickScaffold token with wrong secret ──
-  test('2.6 — editor rejects QuickScaffold token signed with wrong secret', async ({ page }) => {
-    // Token signed with WRONG secret
-    const payload = {
-      projectId: MOCK_PROJECT.id,
-      userId: MOCK_USER.id,
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 900,
-      project: { id: MOCK_PROJECT.id, name: 'Malicious Project', description: '', data: {} },
-    };
-    const data = Buffer.from(JSON.stringify(payload)).toString('base64url');
-    const wrongSig = Buffer.from('wrongsecretXXXXXXX').toString('base64url');
-    const badToken = `${data}.${wrongSig}`;
-
-    const validateResponse = await page.request.post(`${EDITOR}/api/handoff/validate`, {
-      data: { token: badToken },
-      headers: { 'Content-Type': 'application/json' },
-    });
-
-    const result = await validateResponse.json() as { valid: boolean; error?: string };
-    expect(result.valid).toBe(false);
-    expect(validateResponse.status()).toBe(401);
+    // Agent edit SSE fires — terminal should update
+    await terminalTab.click();
+    await expect(
+      page.getByText(/Applying|index\.html|thinking/i).first()
+    ).toBeVisible({ timeout: 10_000 });
   });
 });

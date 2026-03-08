@@ -1,54 +1,59 @@
+/**
+ * Cross-App Playwright Config — Production Domain
+ *
+ * Runs E2E tests against the real deployed apps:
+ *   Main platform:  https://flowstarter.dev
+ *   Editor:         https://editor.flowstarter.dev
+ *
+ * Auth: Real Clerk session, saved by global setup (login once, reuse).
+ * Convex: Real deployment (outstanding-otter-369.convex.cloud).
+ * Supabase: Real deployment — tests create/clean up their own data.
+ * Daytona + Claude AI: Intercepted at browser level (SSE routes mocked).
+ *
+ * Run:
+ *   npx playwright test --config=playwright.cross-app.config.ts
+ *
+ * Required env vars (in .env or shell):
+ *   E2E_BASE_URL        https://flowstarter.dev
+ *   E2E_EDITOR_URL      https://editor.flowstarter.dev
+ *   E2E_USER_EMAIL      e2e@flowstarter.dev
+ *   E2E_USER_PASSWORD   <secret>
+ *   HANDOFF_SECRET      <shared secret>
+ */
 import { config } from 'dotenv';
+import { defineConfig, devices } from '@playwright/test';
+
 config({ path: '.env' });
 config({ path: '.env.local', override: true });
 
-/**
- * Cross-App Playwright Config
- *
- * Runs E2E tests that span BOTH the main platform (localhost:3000) and the
- * editor (localhost:5173). Used for full operator flow: dashboard → handoff → editor.
- *
- * Run: npx playwright test --config=playwright.cross-app.config.ts
- */
-import { defineConfig, devices } from '@playwright/test';
+const BASE     = process.env.E2E_BASE_URL    || 'https://flowstarter.dev';
+const EDITOR   = process.env.E2E_EDITOR_URL  || 'https://editor.flowstarter.dev';
 
 export default defineConfig({
   testDir: './e2e/cross-app',
-  fullyParallel: false, // cross-app tests share state, run sequentially
+  fullyParallel: false,  // sequential — tests share Convex/Supabase state
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   workers: 1,
-  timeout: 90_000,
+  timeout: 120_000,
   reporter: process.env.CI ? 'github' : 'list',
+
+  globalSetup: './e2e/cross-app/global-setup.ts',
+
   use: {
-    // No fixed baseURL — tests navigate explicitly to localhost:3000 or :5173
-    trace: 'on-first-retry',
+    baseURL: BASE,
+    storageState: './e2e/cross-app/.auth/session.json',  // saved by global-setup
+    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
-    video: 'on-first-retry',
-    // Keep the browser context alive across navigations to both apps
-    baseURL: 'http://localhost:3000',
+    video: 'retain-on-failure',
   },
+
   projects: [
     {
       name: 'cross-app-chromium',
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  // Both servers must be running. In CI, start them; locally they're assumed running.
-  webServer: process.env.CI
-    ? [
-        {
-          command: 'npx next dev -p 3000',
-          url: 'http://localhost:3000',
-          reuseExistingServer: false,
-          cwd: '../../apps/flowstarter-main',
-        },
-        {
-          command: 'npm run dev',
-          url: 'http://localhost:5173',
-          reuseExistingServer: false,
-          cwd: '../../apps/flowstarter-editor',
-        },
-      ]
-    : undefined, // locally: assume both dev servers are running
 });
+
+export { BASE, EDITOR };

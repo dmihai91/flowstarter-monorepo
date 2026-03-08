@@ -255,6 +255,18 @@ export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuard
 
   // Clerk still loading — show loading fallback, not the login prompt
   // Unless we've timed out, in which case show the login prompt
+  // If the URL contains a handoff token, bypass Clerk auth check.
+  // The handoff token is HMAC-signed by the main platform and validated
+  // in _index.tsx — it serves as the auth proof for this request.
+  const hasHandoffToken = typeof window !== 'undefined'
+    ? new URLSearchParams(window.location.search).has('handoff')
+    : false;
+
+  if (hasHandoffToken && !isSignedIn) {
+    // Pass through — _index.tsx handles the token validation and redirect
+    return <>{children}</>;
+  }
+
   if (!isLoaded) {
     if (loadingTimedOut) {
       return <LoginPrompt />;

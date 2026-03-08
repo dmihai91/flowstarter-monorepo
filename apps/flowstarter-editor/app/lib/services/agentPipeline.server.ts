@@ -36,7 +36,7 @@ function getClient(): Anthropic {
   if (!apiKey) throw new Error('OPEN_ROUTER_API_KEY is not set');
   return new Anthropic({
     apiKey,
-    baseURL: 'https://openrouter.ai/api/v1',
+    baseURL: 'https://openrouter.ai/api',
     defaultHeaders: { 'HTTP-Referer': 'https://flowstarter.dev', 'X-Title': 'Flowstarter' },
   });
 }

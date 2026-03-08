@@ -375,12 +375,9 @@ export async function action({ request }: ActionFunctionArgs) {
       return Response.json({ error: 'template.slug is required' }, { status: 400 });
     }
 
-    // Route through smart router
-    const requestDescription = describeBuildRequest(body);
-    console.log(`[Build] Routing: "${requestDescription.slice(0, 80)}..."`);
-    
-    const routeDecision = await routeModification(requestDescription);
-    console.log(`[Build] Decision: ${routeDecision.route} (confidence: ${routeDecision.confidence})`);
+    // Agents SDK is the primary pipeline. Set AGENTS_SDK_ENABLED=false to fall back to the Gretly pipeline.
+    const useGretlyFallback = process.env.AGENTS_SDK_ENABLED === 'false';
+    console.log(`[Build] Pipeline: ${useGretlyFallback ? 'Gretly (legacy fallback)' : 'Agents SDK (primary)'}`);
 
     // Create SSE stream
     const encoder = new TextEncoder();
@@ -393,15 +390,15 @@ export async function action({ request }: ActionFunctionArgs) {
           controller.enqueue(encoder.encode(`event: agent-event\ndata: ${JSON.stringify(event)}\n\n`));
         };
 
-
         try {
-          if (routeDecision.route === 'gretly') {
+          if (useGretlyFallback) {
             await handleGretlyBuild(body, send, sendAgentEvent);
           } else {
             await handleSimpleBuild(body, send, sendAgentEvent);
           }
         } catch (error) {
           send({ type: 'error', error: error instanceof Error ? error.message : 'Build failed' });
+        }
         }
 
         controller.close();

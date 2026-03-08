@@ -14,7 +14,7 @@ import { buildGenerateFilePrompt, buildRefineFilePrompt } from './code-generator
 // Re-export schemas and types for backward compatibility
 export * from './code-generator-schemas';
 
-const EXECUTOR_MODEL = 'claude-sonnet-4-6';
+const EXECUTOR_MODEL = 'anthropic/claude-sonnet-4-6'; // Sonnet via OpenRouter for fast code gen
 const MAX_TOKENS = 16000;
 
 export class CodeGeneratorAgent extends BaseAgent {
@@ -151,14 +151,16 @@ you execute them precisely.`,
     try {
       const response = await generateJSON<{ success: boolean; content?: string; error?: string }>(
         [{ role: 'user', content: prompt }],
-        { model: EXECUTOR_MODEL, temperature: 0.2, maxTokens: MAX_TOKENS, thinking: { budget: 10000 } },
+        { model: EXECUTOR_MODEL, temperature: 0.2, maxTokens: MAX_TOKENS },
       );
       if (response.success && response.content) {
         return { path: modification.path, success: true, content: response.content };
       }
       return { path: modification.path, success: false, error: response.error || 'Generation returned empty content' };
     } catch (error) {
-      return { path: modification.path, success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+      const errMsg = error instanceof Error ? error.message : 'Unknown error';
+      console.error('[CodeGen] generateFile FAILED for', modification.path, ':', errMsg);
+      return { path: modification.path, success: false, error: errMsg };
     }
   }
 
@@ -169,7 +171,7 @@ you execute them precisely.`,
     try {
       const response = await generateJSON<{ success: boolean; content?: string }>(
         [{ role: 'user', content: prompt }],
-        { model: EXECUTOR_MODEL, temperature: 0.2, maxTokens: MAX_TOKENS, thinking: { budget: 10000 } },
+        { model: EXECUTOR_MODEL, temperature: 0.2, maxTokens: MAX_TOKENS },
       );
       return response.success && response.content ? response.content : null;
     } catch (error) {

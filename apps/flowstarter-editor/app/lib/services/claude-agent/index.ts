@@ -72,7 +72,7 @@ export async function generateSiteFromTemplate(
 
       try {
         if (input.template.slug !== 'modern-business') {
-          templateFiles = await fetchTemplateScaffold('modern-business');
+          templateFiles = await fetchTemplateScaffold('coach-pro'); // coach-pro is a real MCP template
         }
       } catch {
         console.warn('[FlowstarterAgent] Fallback template fetch failed, generating from scratch');

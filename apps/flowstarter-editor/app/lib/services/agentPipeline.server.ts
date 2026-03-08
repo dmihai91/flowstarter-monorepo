@@ -342,7 +342,9 @@ Important:
 /** True when running in Node.js and the pipeline is enabled */
 export function isAgentPipelineAvailable(): boolean {
   try {
-    return !!(process?.versions?.node && process.env.AGENTS_SDK_ENABLED === 'true');
+    // Agents SDK is the DEFAULT on Node.js; opt out with AGENTS_SDK_ENABLED=false
+    if (process.env.AGENTS_SDK_ENABLED === 'false') return false;
+    return !!(process?.versions?.node);
   } catch {
     return false;
   }

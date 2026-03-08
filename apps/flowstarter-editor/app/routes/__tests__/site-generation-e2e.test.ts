@@ -9,6 +9,9 @@
 
 import { describe, it, expect, vi, beforeAll, afterAll, beforeEach } from 'vitest';
 
+// These tests require a running dev server — extend timeout for the check
+const TEST_TIMEOUT = 30_000;
+
 // Test configuration
 const BASE_URL = process.env.TEST_BASE_URL || 'http://localhost:5173';
 const TIMEOUT = 120000; // 2 minutes for full generation
@@ -93,6 +96,8 @@ async function consumeSSEStream(response: Response): Promise<{
 }
 
 describe('Site Generation E2E', () => {
+  vi.setConfig({ testTimeout: TEST_TIMEOUT });
+
   beforeAll(async () => {
     serverAvailable = await checkServerAvailable();
     if (!serverAvailable) {
@@ -155,7 +160,7 @@ describe('Site Generation E2E', () => {
   describe('Assets Agent', () => {
     it('should analyze business for asset needs', async () => {
       if (!serverAvailable) {
-        console.log('Skipping - dev server not available');
+        console.log('Skipping Assets Agent test - dev server not available');
         return;
       }
 

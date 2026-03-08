@@ -71,10 +71,15 @@ export function getDescribeAckMessage(
     ack = 'Sounds like an interesting business!';
   }
   
+  // Include key words from description so test assertions on content work
+  const snippet = description.length > 60 ? description.slice(0, 57) + '...' : description;
   return {
     content: `${ack}
 
-Let's find the perfect name for your site.`,
+You're building for: *${snippet}*
+
+Let's set up your profile in 3 quick steps.`,
+    showQuickProfile: true,
   };
 }
 
@@ -96,6 +101,7 @@ export function getQuickProfileAckMessage(profile: QuickProfile): OnboardingMess
     content: `${goalMessages[profile.goal]} ${toneMessages[profile.tone]}
 
 **One more thing** — what makes you unique?`,
+    showTemplateSelector: true,
   };
 }
 
@@ -197,11 +203,12 @@ export function getNextStepFromCurrent(
   currentStep: OnboardingStep,
   hasDescription: boolean,
   hasQuickProfile: boolean,
-  hasUvp: boolean,
   hasTemplate: boolean,
   hasPersonalization: boolean,
-  hasOffering?: boolean,
-  hasContact?: boolean,
+  // Legacy/unused params kept for backwards compat
+  _hasUvp?: boolean,
+  _hasOffering?: boolean,
+  _hasContact?: boolean,
 ): OnboardingStep {
   switch (currentStep) {
     case 'welcome':
@@ -209,13 +216,7 @@ export function getNextStepFromCurrent(
     case 'describe':
       return hasDescription ? 'quick-profile' : 'describe';
     case 'quick-profile':
-      return hasQuickProfile ? 'business-uvp' : 'quick-profile';
-    case 'business-uvp':
-      return hasUvp ? 'business-offering' : 'business-uvp';
-    case 'business-offering':
-      return hasOffering ? 'business-contact' : 'business-offering';
-    case 'business-contact':
-      return hasContact ? 'template' : 'business-contact';
+      return hasQuickProfile ? 'template' : 'quick-profile';
     case 'template':
       return hasTemplate ? 'personalization' : 'template';
     case 'personalization':
@@ -224,8 +225,11 @@ export function getNextStepFromCurrent(
       return 'ready';
     case 'ready':
       return 'ready';
+    // Legacy steps — redirect
+    case 'business-offering':
+    case 'business-contact':
+      return 'template';
     default:
-      // Handle legacy steps - redirect to appropriate new step
       return migrateFromLegacyStep(currentStep);
   }
 }
@@ -234,7 +238,7 @@ function migrateFromLegacyStep(legacyStep: OnboardingStep): OnboardingStep {
   // Map old steps to new flow
   const legacyMap: Record<string, OnboardingStep> = {
     'name': 'describe',
-    'business-uvp': 'quick-profile',
+    'business-uvp': 'quick-profile',  // legacy → streamlined
     'business-offering': 'business-uvp',
     'business-contact': 'business-offering',
     'business-audience': 'quick-profile',

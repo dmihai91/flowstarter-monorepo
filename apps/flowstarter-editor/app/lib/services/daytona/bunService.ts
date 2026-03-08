@@ -96,11 +96,23 @@ export async function installBun(sandbox: Sandbox, workDir: string): Promise<boo
 /**
  * Install dependencies using bun
  */
-export async function bunInstall(sandbox: Sandbox, workDir: string): Promise<boolean> {
+export async function bunInstall(
+  sandbox: Sandbox,
+  workDir: string,
+  onOutput?: (line: string, stream: 'stdout' | 'stderr') => void,
+): Promise<boolean> {
   log.debug(' Running bun install...');
 
   const installResult = await sandbox.process.executeCommand(`${BUN_PATH_SETUP}bun install`, workDir, undefined, 180);
   log.debug(` Install result: exit=${installResult.exitCode}, output=${installResult.result?.slice(0, 500)}`);
+
+  // Emit output lines to the terminal panel
+  if (onOutput && installResult.result) {
+    const lines = installResult.result.split('\n').filter((l: string) => l.trim());
+    for (const line of lines) {
+      onOutput(line, installResult.exitCode === 0 ? 'stdout' : 'stderr');
+    }
+  }
 
   if (installResult.exitCode !== 0) {
     log.error(' bun install failed:', installResult.result?.slice(0, 500));

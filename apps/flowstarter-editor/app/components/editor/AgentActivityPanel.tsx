@@ -11,6 +11,7 @@
 import { useState, useRef, useEffect } from 'react';
 
 export type AgentActivityEvent =
+  // Agent (Claude) events
   | { type: 'thinking'; text: string; duration_s?: number }
   | { type: 'tool_call'; name: string; input: Record<string, unknown> }
   | { type: 'tool_result'; name: string; duration_s: number }
@@ -22,6 +23,10 @@ export type AgentActivityEvent =
   | { type: 'text'; content: string }
   | { type: 'error'; message: string }
   | { type: 'done'; duration_ms: number; turns: number; cost_usd: number; input_tokens: number; output_tokens: number }
+  // Daytona sandbox events
+  | { type: 'sandbox_status'; message: string }
+  | { type: 'sandbox_output'; line: string; stream: 'stdout' | 'stderr' }
+  | { type: 'sandbox_exit'; code: number; cmd: string }
 
 interface AgentActivityPanelProps {
   events: AgentActivityEvent[];
@@ -161,6 +166,38 @@ function EventRow({ event }: { event: AgentActivityEvent }) {
         <div className="flex gap-3 items-start py-0.5">
           <span className="w-16 shrink-0" />
           <span className="flex-1 text-xs font-mono text-[#71717a] break-words">{event.content}</span>
+        </div>
+      );
+
+    case 'sandbox_status':
+      return (
+        <div className="flex gap-3 items-baseline py-0.5">
+          <span className="w-16 shrink-0 text-right text-xs font-mono font-medium text-[#71717a]">
+            sandbox
+          </span>
+          <span className="flex-1 text-xs font-mono text-[#71717a]">{event.message}</span>
+        </div>
+      );
+
+    case 'sandbox_output':
+      return (
+        <div className="flex gap-3 items-baseline py-0.5">
+          <span className="w-16 shrink-0" />
+          <span className={`flex-1 text-[11px] font-mono break-all whitespace-pre-wrap ${
+            event.stream === 'stderr' ? 'text-[#EF4444]/80' : 'text-[#71717a]'
+          }`}>
+            {event.line}
+          </span>
+        </div>
+      );
+
+    case 'sandbox_exit':
+      return (
+        <div className="flex gap-3 items-baseline py-0.5">
+          <span className="w-16 shrink-0" />
+          <span className={`text-[11px] font-mono ${event.code === 0 ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>
+            → exited {event.code === 0 ? 'successfully' : `with code ${event.code}`}
+          </span>
         </div>
       );
 

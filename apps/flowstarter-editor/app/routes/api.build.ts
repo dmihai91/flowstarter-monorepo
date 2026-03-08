@@ -6,6 +6,7 @@
  */
 
 import type { ActionFunctionArgs } from '@remix-run/node';
+import type { AgentActivityEvent } from '~/components/editor/AgentActivityPanel';
 import { routeModification, type RouteDecision } from './api.modification-router';
 
 // Import simple build logic
@@ -126,10 +127,12 @@ function tryRuleBasedFix(
 }
 
 type SSESender = (data: Record<string, unknown>) => void;
+type SandboxEventSender = (event: AgentActivityEvent) => void;
+
 
 // ƒ"?ƒ"?ƒ"? Simple Build Handler ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?
 
-async function handleSimpleBuild(body: BuildRequest, send: SSESender): Promise<void> {
+async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentEvent?: SandboxEventSender): Promise<void> {
   try {
     resetCostTracker();
 
@@ -213,7 +216,7 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender): Promise<v
           filesRecord,
           prewarmedSandbox,
           undefined,
-          (msg) => send({ type: 'progress', phase: 'build', message: msg })
+          (msg) => { send({ type: 'progress', phase: 'build', message: msg }); sendAgentEvent?.({ type: 'sandbox_status', message: msg }); }
         );
         sandboxId = prewarmedSandbox.sandboxId;
       } else if (sandboxId) {
@@ -222,7 +225,7 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender): Promise<v
           sandboxId,
           filesRecord,
           undefined,
-          (msg) => send({ type: 'progress', phase: 'fix', message: msg })
+          (msg) => { send({ type: 'progress', phase: 'fix', message: msg }); sendAgentEvent?.({ type: 'sandbox_status', message: msg }); }
         );
       } else {
         // No sandbox available, can't continue
@@ -300,7 +303,7 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender): Promise<v
 
 // ƒ"?ƒ"?ƒ"? Gretly Build Handler ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?ƒ"?
 
-async function handleGretlyBuild(body: BuildRequest, send: SSESender): Promise<void> {
+async function handleGretlyBuild(body: BuildRequest, send: SSESender, sendAgentEvent?: SandboxEventSender): Promise<void> {
   try {
     send({ type: 'progress', phase: 'prewarm', message: 'Preparing build environment...' });
     const prewarmedSandbox = await prewarmEnvironment(body.projectId);
@@ -383,12 +386,16 @@ export async function action({ request }: ActionFunctionArgs) {
         const send = (data: Record<string, unknown>) => {
           controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
         };
+        const sendAgentEvent = (event: AgentActivityEvent) => {
+          controller.enqueue(encoder.encode(`event: agent-event\ndata: ${JSON.stringify(event)}\n\n`));
+        };
+
 
         try {
           if (routeDecision.route === 'gretly') {
-            await handleGretlyBuild(body, send);
+            await handleGretlyBuild(body, send, sendAgentEvent);
           } else {
-            await handleSimpleBuild(body, send);
+            await handleSimpleBuild(body, send, sendAgentEvent);
           }
         } catch (error) {
           send({ type: 'error', error: error instanceof Error ? error.message : 'Build failed' });

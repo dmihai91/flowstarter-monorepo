@@ -19,6 +19,8 @@ interface EditorHeaderProps {
   projectId?: Id<'projects'> | null;
   viewMode: ViewMode;
   isPublishEnabled: boolean;
+  terminalOpen?: boolean;
+  onTerminalToggle?: () => void;
   onViewModeChange: (mode: ViewMode) => void;
   onProjectNameChange?: (name: string) => void;
   onPublish?: () => void;
@@ -36,6 +38,8 @@ export function EditorHeader({
   onMenuClick,
   terminalErrorCount = 0,
   hasTerminalActivity = false,
+  terminalOpen = false,
+  onTerminalToggle,
 }: EditorHeaderProps) {
   const { isDark } = useThemeStyles();
   const colors = getColors(isDark);
@@ -145,6 +149,34 @@ export function EditorHeader({
           <MagicLinkButton projectId={projectId ?? null} />
         )}
 
+        {/* Terminal toggle — only in editor mode, shown as >_ button */}
+        {viewMode === 'editor' && onTerminalToggle && (
+          <button
+            onClick={onTerminalToggle}
+            title={terminalOpen ? 'Close terminal' : 'Open terminal'}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              padding: '5px 10px',
+              borderRadius: '6px',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '12px',
+              fontWeight: 600,
+              fontFamily: 'monospace',
+              background: terminalOpen
+                ? (isDark ? 'rgba(77,93,217,0.18)' : 'rgba(77,93,217,0.1)')
+                : (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'),
+              color: terminalOpen
+                ? 'rgba(77,93,217,0.9)'
+                : (isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'),
+              transition: 'all 0.15s',
+            }}
+          >
+            {'>_'}
+          </button>
+        )}
         {!isCompact && <PublishButton isEnabled={isPublishEnabled} onClick={onPublish} />}
         {!isCompact && <Separator />}
         {!isMobile && <div style={{ marginLeft: '8px' }}><ThemeToggle /></div>}

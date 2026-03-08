@@ -2,14 +2,13 @@ import React from 'react';
 import { useThemeStyles, getColors } from '~/components/editor/hooks';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
 
-export type ViewMode = 'preview' | 'editor' | 'chat' | 'terminal';
+export type ViewMode = 'preview' | 'editor' | 'chat';
 
 interface ViewToggleProps {
   viewMode: ViewMode;
   onViewModeChange: (mode: ViewMode) => void;
   isMobile?: boolean;
   hasTerminalActivity?: boolean;
-  terminalErrorCount?: number;
 }
 
 const ChatIcon = () => (
@@ -44,7 +43,6 @@ export function ViewToggle({
   onViewModeChange,
   isMobile = false,
   hasTerminalActivity = false,
-  terminalErrorCount = 0,
 }: ViewToggleProps) {
   const { isDark } = useThemeStyles();
   const colors = getColors(isDark);
@@ -93,40 +91,6 @@ export function ViewToggle({
           {t(EDITOR_LABEL_KEYS.VIEW_EDITOR)}
         </button>
       )}
-      <button
-        onClick={() => onViewModeChange('terminal')}
-        style={getButtonStyle(viewMode === 'terminal')}
-      >
-        <TerminalIcon />
-        Terminal
-        {/* Error badge */}
-        {terminalErrorCount > 0 && (
-          <span style={{
-            marginLeft: '4px',
-            background: '#EF4444',
-            color: '#fff',
-            fontSize: '10px',
-            fontWeight: 600,
-            lineHeight: 1,
-            padding: '1px 4px',
-            borderRadius: '4px',
-          }}>
-            {terminalErrorCount}
-          </span>
-        )}
-        {/* Activity pulse (no errors, but active) */}
-        {hasTerminalActivity && terminalErrorCount === 0 && viewMode !== 'terminal' && (
-          <span style={{
-            width: '5px',
-            height: '5px',
-            borderRadius: '50%',
-            background: 'var(--purple, #4d5dd9)',
-            marginLeft: '2px',
-            display: 'inline-block',
-            animation: 'pulse 1.5s infinite',
-          }} />
-        )}
-      </button>
     </div>
   );
 }

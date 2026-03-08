@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy, useCallback } from 'react';
+import React, { useState, useEffect, useRef, Suspense, lazy, useCallback } from 'react';
 import { FlowBackground } from '@flowstarter/flow-design-system';
 import { useNavigate } from '@remix-run/react';
 import { ClientOnly } from 'remix-utils/client-only';
@@ -61,6 +61,8 @@ export function EditorLayout({
   const { isDark } = useThemeStyles();
   const colors = getColors(isDark);
   const [viewMode, setViewMode] = useState<ViewMode>('preview');
+  const [terminalOpen, setTerminalOpen] = useState(false);
+  const [terminalHeight, setTerminalHeight] = useState(240);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
 
@@ -115,6 +117,15 @@ export function EditorLayout({
   }, [onboardingStep, viewMode, previewTriggered, projectId, daytonaState.status, startPreview]);
 
   // Handle view mode changes - trigger preview on first switch to preview tab
+  // Auto-open terminal when agent starts running
+  const prevAgentActive = useRef(false);
+  useEffect(() => {
+    if (isAgentActive && !prevAgentActive.current) {
+      setTerminalOpen(true);
+    }
+    prevAgentActive.current = isAgentActive;
+  }, [isAgentActive]);
+
   const handleViewModeChange = useCallback(
     (mode: ViewMode) => {
       setViewMode(mode);
@@ -217,6 +228,8 @@ export function EditorLayout({
         onMenuClick={toggleSidebar}
         terminalErrorCount={agentEvents.filter((e: AgentActivityEvent) => e.type === 'error' || (e.type === 'sandbox_exit' && (e as any).code !== 0)).length}
         hasTerminalActivity={(agentEvents ?? []).length > 0}
+        terminalOpen={terminalOpen}
+        onTerminalToggle={() => setTerminalOpen(o => !o)}
       />
 
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
@@ -268,14 +281,32 @@ export function EditorLayout({
             <ClientOnly>
               {() => (
                 <Suspense fallback={<LoadingSpinner message="Loading editor..." />}>
-                  {viewMode === 'terminal' ? (
-                    <TerminalPanel events={agentEvents ?? []} isActive={isAgentActive} />
-                  ) : viewMode === 'preview' ? (
+                  {viewMode === 'preview' ? (
                     // Preview mode: show Daytona preview or loading state
                     <DaytonaPreview state={daytonaState} onRefresh={refreshPreview} onRetry={retryPreview} />
                   ) : (
-                    // Editor mode: show Monaco code editor with Convex files
-                    <ConvexCodeEditor projectId={projectId} onSaveComplete={refreshPreview} />
+                    // Editor mode: code editor + integrated terminal panel at bottom
+                    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                      <div style={{ flex: 1, overflow: 'hidden', minHeight: 0 }}>
+                        <ConvexCodeEditor projectId={projectId} onSaveComplete={refreshPreview} />
+                      </div>
+                      {/* Integrated terminal — toggled via terminal button in header */}
+                      {terminalOpen && (
+                        <div
+                          style={{
+                            height: terminalHeight,
+                            minHeight: 120,
+                            maxHeight: '60%',
+                            borderTop: '1px solid var(--border-subtle, rgba(255,255,255,0.08))',
+                            flexShrink: 0,
+                            overflow: 'hidden',
+                            resize: 'vertical',
+                          }}
+                        >
+                          <TerminalPanel events={agentEvents ?? []} isActive={isAgentActive} />
+                        </div>
+                      )}
+                    </div>
                   )}
                 </Suspense>
               )}

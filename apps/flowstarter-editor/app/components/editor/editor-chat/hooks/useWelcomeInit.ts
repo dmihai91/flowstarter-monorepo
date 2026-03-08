@@ -273,7 +273,7 @@ export function useWelcomeInit({
 
     const hasNoMessages = !state || !state.messages || state.messages.length === 0;
 
-    if (hasNoMessages && currentStep === 'welcome' && currentMessages.length === 0) {
+    if (hasNoMessages && (currentStep === 'welcome' || currentStep === 'describe') && currentMessages.length === 0) {
       hasInitialized.current = true;
 
       if (initTimeoutRef.current) {

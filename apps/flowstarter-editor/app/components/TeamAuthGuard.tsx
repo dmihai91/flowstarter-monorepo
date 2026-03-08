@@ -258,12 +258,18 @@ export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuard
   // If the URL contains a handoff token, bypass Clerk auth check.
   // The handoff token is HMAC-signed by the main platform and validated
   // in _index.tsx — it serves as the auth proof for this request.
+  // Allow through if:
+  // (a) Current URL has a handoff token (handled by _index.tsx), OR
+  // (b) A validated handoff session is stored (user was redirected from _index.tsx)
   const hasHandoffToken = typeof window !== 'undefined'
     ? new URLSearchParams(window.location.search).has('handoff')
     : false;
+  const hasHandoffSession = typeof window !== 'undefined'
+    ? !!sessionStorage.getItem('flowstarter_handoff_session')
+    : false;
 
-  if (hasHandoffToken && !isSignedIn) {
-    // Pass through — _index.tsx handles the token validation and redirect
+  if ((hasHandoffToken || hasHandoffSession) && !isSignedIn) {
+    // Pass through — handoff token was validated by the server
     return <>{children}</>;
   }
 

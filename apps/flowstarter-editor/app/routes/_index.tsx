@@ -342,6 +342,8 @@ function IndexRedirector() {
           });
 
           console.log('[Index] Created project + conversation from handoff:', convexProjectId, conversationId);
+          // Mark session so AuthGuard on /project/:id allows through without Clerk session
+          sessionStorage.setItem('flowstarter_handoff_session', '1');
           navigate(`/project/${conversationId}`, { replace: true });
         }
       } catch (error) {

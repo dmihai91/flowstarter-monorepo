@@ -4,6 +4,7 @@ import { useParams } from '@remix-run/react';
 import { ClientOnly } from 'remix-utils/client-only';
 import type { Id } from '../../convex/_generated/dataModel';
 import { ProjectEditorContent } from '~/components/editor/ProjectEditorContent';
+import { AuthGuard } from '~/components/TeamAuthGuard';
 import { ProjectNotFoundRedirect } from '~/components/editor/ProjectNotFoundRedirect';
 import { en } from '~/lib/i18n/locales/en';
 
@@ -40,5 +41,9 @@ function ProjectEditorWrapper() {
 }
 
 export default function ProjectPage() {
-  return <ClientOnly fallback={<LoadingFallback />}>{() => <ProjectEditorWrapper />}</ClientOnly>;
+  return (
+    <AuthGuard fallback={<LoadingFallback />}>
+      <ClientOnly fallback={<LoadingFallback />}>{() => <ProjectEditorWrapper />}</ClientOnly>
+    </AuthGuard>
+  );
 }

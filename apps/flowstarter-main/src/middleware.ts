@@ -360,13 +360,20 @@ export default clerkMiddleware(async (auth, req) => {
   // For page routes: redirect to login with return path
 
   // ── E2E dev bypass — skip Clerk check when secret header present ──────────
-  // Safe: only active in non-production environments; secret required.
   if (process.env.NODE_ENV !== 'production' && process.env.E2E_SECRET) {
     const e2eSecret = req.headers.get('x-e2e-secret');
     if (e2eSecret === process.env.E2E_SECRET) {
-      // Allow through — requireAuth() in the route handler does the same check
       return NextResponse.next();
     }
+  }
+
+  // ── Clerk ticket pass-through ─────────────────────────────────────────────
+  // Allow __clerk_ticket params through on any page — Clerk JS processes the
+  // ticket client-side to establish a session. Redirecting away strips the
+  // ticket and the session is never created. The ticket is HMAC-signed by
+  // Clerk and single-use, so this is safe.
+  if (req.nextUrl.searchParams.has('__clerk_ticket')) {
+    return NextResponse.next();
   }
 
   try {

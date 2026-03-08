@@ -12,7 +12,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const authResult = await requireAuth();
+  const authResult = await requireAuth(request);
   if (!authResult.authenticated) {
     return authResult.response;
   }
@@ -84,7 +84,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   // Verify authentication first
-  const authResult = await requireAuth();
+  const authResult = await requireAuth(request);
   if (!authResult.authenticated) {
     return authResult.response;
   }
@@ -150,4 +150,27 @@ export async function GET(
       { status: 500 }
     );
   }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const authResult = await requireAuth(request);
+  if (!authResult.authenticated) return authResult.response;
+
+  const { id } = await params;
+  const { createSupabaseServiceRoleClient } = await import('@/supabase-clients/server');
+  const supabase = createSupabaseServiceRoleClient();
+
+  const { error } = await supabase
+    .from('projects')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', authResult.userId);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+  return NextResponse.json({ success: true });
 }

@@ -1,5 +1,5 @@
 import { enrichProject } from '@/lib/ai/enrich-project';
-import { auth } from '@clerk/nextjs/server';
+import { requireAuth } from '@/lib/api-auth';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -9,10 +9,8 @@ const RequestSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const authResult = await requireAuth(request);
+    if (!authResult.authenticated) return authResult.response;
 
     const json = await request.json();
     const parsed = RequestSchema.safeParse(json);

@@ -205,6 +205,7 @@ function IndexRedirector() {
         // Check both top-level fields and nested businessInfo/contactInfo from buildChatData
         const bi = config?.businessInfo || {};
         const ci = config?.contactInfo || {};
+        const hasName = !!(projectName && projectName !== 'Untitled Project' && projectName.length > 1);
         const hasBusinessData = !!(
           config?.userDescription ||
           bi?.description ||
@@ -333,7 +334,10 @@ function IndexRedirector() {
             projectUrlId: urlId,
             projectName,
             projectDescription: config?.userDescription || projectDescription,
-            step: hasBusinessData ? 'welcome' : 'describe',
+            // Start at 'welcome' if business data exists (skips to template via useWelcomeInit)
+            // Start at 'describe' if only name is set (skips naming step)
+            // Start at 'welcome' (full flow) if neither
+            step: hasBusinessData ? 'welcome' : hasName ? 'describe' : 'welcome',
             businessInfo,
           });
 

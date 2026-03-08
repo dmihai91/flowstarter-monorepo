@@ -181,16 +181,36 @@ export function useWelcomeInit({
         localStorage.removeItem('flowstarter_handoff_data');
 
         if (handoffData.fromMainPlatform) {
-          const description = handoffData.config?.userDescription || handoffData.description || handoffData.name || '';
+          const name = handoffData.name;
+          const description = handoffData.config?.userDescription || handoffData.description || '';
+
+          // Name was already set on the dashboard — set it in flow state and skip naming step
+          if (name && name !== 'Untitled Project') {
+            flow.setProjectName(name);
+          }
 
           if (description) {
+            // Has both name + description → treat like internal flow (skip to template)
             flow.setProjectDescription(description);
-            msg.addAssistantMessage(
-              `**Great, let's continue building your site!**\n\nI see you want to create: "${description}"\n\nLet's give it a name. What would you like to call your project?`,
-            );
-            flow.setStep('name');
-            msg.setSuggestedReplies(SUGGESTED_REPLIES.nameChoice());
+            if (name) {
+              initialStateRef.current = {
+                ...initialStateRef.current,
+                projectName: name,
+                projectDescription: description,
+              } as typeof initialStateRef.current;
+            }
+            await initializeInternalFlow();
+            return;
+          }
 
+          if (name && name !== 'Untitled Project') {
+            // Has name but no description → skip naming, ask for business description
+            flow.setProjectDescription('');
+            msg.addAssistantMessage(
+              `**Great, "${name}" is all set.** Now tell me about your business — what do you do and who do you serve?`
+            );
+            flow.setStep('describe');
+            msg.setSuggestedReplies([]);
             return;
           }
         }

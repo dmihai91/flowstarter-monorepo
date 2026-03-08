@@ -196,6 +196,7 @@ export const createWithProject = mutation({
     messages: v.optional(v.array(messageSchema)),
     businessInfo: v.optional(
       v.object({
+        description: v.optional(v.string()),
         uvp: v.optional(v.string()),
         targetAudience: v.optional(v.string()),
         businessGoals: v.optional(v.array(v.string())),
@@ -204,6 +205,7 @@ export const createWithProject = mutation({
         sellingMethodDetails: v.optional(v.string()),
         pricingOffers: v.optional(v.string()),
         industry: v.optional(v.string()),
+        businessType: v.optional(v.string()),
       })
     ),
   },

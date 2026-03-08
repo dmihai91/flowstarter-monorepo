@@ -319,6 +319,7 @@ export default defineSchema({
     // Business discovery progress
     businessInfo: v.optional(
       v.object({
+        description: v.optional(v.string()),
         uvp: v.optional(v.string()),
         targetAudience: v.optional(v.string()),
         businessGoals: v.optional(v.array(v.string())),

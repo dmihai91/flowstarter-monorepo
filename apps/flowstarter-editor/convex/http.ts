@@ -46,7 +46,13 @@ const handoffInitialize = httpAction(async (ctx, request) => {
     } else {
       const created = await ctx.runMutation(api.projects.createEmpty, {
         name: projectName, description: projectDescription, supabaseProjectId,
-        businessDetails: businessInfo ? { businessName: projectName, description: (businessInfo as { description?: string }).description || projectDescription, ...businessInfo } : { businessName: projectName, description: projectDescription },
+        // createEmpty has strict businessDetails schema — only pass allowed fields
+        businessDetails: {
+          businessName: projectName,
+          description: (businessInfo as { description?: string })?.description || projectDescription,
+          targetAudience: (businessInfo as { targetAudience?: string })?.targetAudience,
+          goals: (businessInfo as { goal?: string })?.goal ? [(businessInfo as { goal: string }).goal] : undefined,
+        },
       }) as { projectId: string; urlId: string };
       convexProjectId = created.projectId;
       urlId = created.urlId;

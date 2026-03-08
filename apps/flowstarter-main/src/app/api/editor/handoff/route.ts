@@ -1,5 +1,6 @@
 import 'server-only';
-import { requireAuthWithSupabase } from '@/lib/api-auth';
+import { requireAuth } from '@/lib/api-auth';
+import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createHmac } from 'crypto';
@@ -152,12 +153,13 @@ export async function GET(request: NextRequest) {
 // handoff token that embeds the project data for self-contained validation.
 
 export async function POST(request: NextRequest) {
-  const authResult = await requireAuthWithSupabase();
+  const authResult = await requireAuth(request);
   if (!authResult.authenticated) {
     return authResult.response;
   }
 
-  const { userId, supabase } = authResult;
+  const { userId } = authResult;
+  const supabase = createSupabaseServiceRoleClient();
 
   try {
     const body = await request.json();
@@ -194,7 +196,7 @@ export async function POST(request: NextRequest) {
       try {
         projectData = typeof project.data === 'string'
           ? JSON.parse(project.data)
-          : (project.data as Record<string, unknown>) ?? {};
+          : (project.data as unknown as Record<string, unknown>) ?? {};
       } catch {
         projectData = {};
       }

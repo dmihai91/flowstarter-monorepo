@@ -41,9 +41,9 @@ interface EditorLayoutProps {
 }
 
 const PANEL_CONFIG = {
-  initialWidth: 440,
-  minWidth: 320,
-  maxWidth: 600,
+  initialWidth: 560,
+  minWidth: 380,
+  maxWidth: 720,
 } as const;
 
 export function EditorLayout({
@@ -237,9 +237,9 @@ export function EditorLayout({
         <div
           style={{
             // On narrow tablets use % so the panel never overflows the viewport
-            width: isMobile ? '100%' : isTablet ? 'min(360px, 42vw)' : `${chatWidth}px`,
-            minWidth: isMobile ? '100%' : isTablet ? '280px' : `${PANEL_CONFIG.minWidth}px`,
-            maxWidth: isMobile ? '100%' : isTablet ? '420px' : `${PANEL_CONFIG.maxWidth}px`,
+            width: isMobile ? '100%' : isTablet ? 'min(480px, 48vw)' : `${chatWidth}px`,
+            minWidth: isMobile ? '100%' : isTablet ? '340px' : `${PANEL_CONFIG.minWidth}px`,
+            maxWidth: isMobile ? '100%' : isTablet ? '560px' : `${PANEL_CONFIG.maxWidth}px`,
             flexShrink: 0,
             display: isMobile && viewMode === 'preview' ? 'none' : 'flex',
             flexDirection: 'column',

@@ -50,6 +50,29 @@ async function sendMessage(page: Page, message: string) {
   await chatInput.press('Enter');
 }
 
+
+  // Mock push-file endpoint (new streaming preview)
+  await page.route('**/api/daytona/push-file', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: true }),
+    });
+  });
+
+  // Mock agent-code streaming endpoint (replaces old modify endpoint)
+  await page.route('**/api/agent-code', async (route) => {
+    const agentEvents = [
+      `event: agent-event\ndata: ${JSON.stringify({ type: 'file_write', path: 'src/index.html', lines: 120 })}\n\n`,
+      `event: agent-event\ndata: ${JSON.stringify({ type: 'done', duration_ms: 5000, turns: 2, cost_usd: 0.15, input_tokens: 1500, output_tokens: 600 })}\n\n`,
+      `event: result\ndata: ${JSON.stringify({ success: true })}\n\n`,
+    ].join('');
+    await route.fulfill({
+      status: 200,
+      headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
+      body: agentEvents,
+    });
+  });
 async function waitForResponse(page: Page, timeout = 30000) {
   // Wait for either success, error, or processing complete
   await page.waitForSelector(

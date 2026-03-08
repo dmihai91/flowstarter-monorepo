@@ -83,6 +83,29 @@ async function setupMocks(page: Page) {
     });
   });
 
+
+  // Mock agent-code streaming (new pipeline)
+  await page.route('**/api/agent-code', async (route) => {
+    const body = [
+      `event: agent-event\ndata: ${JSON.stringify({ type: 'file_write', path: 'src/index.html', lines: 100 })}\n\n`,
+      `event: result\ndata: ${JSON.stringify({ success: true, files: [] })}\n\n`,
+    ].join('');
+    await route.fulfill({
+      status: 200,
+      headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
+      body,
+    });
+  });
+
+  // Mock push-file (streaming preview)
+  await page.route('**/api/daytona/push-file', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: true }),
+    });
+  });
+
   // Mock Daytona workspace
   await page.route('**/api/daytona/**', async (route) => {
     await route.fulfill({

@@ -251,7 +251,7 @@ CRITICAL SYNTAX RULES FOR ASTRO FILES:
 
   // Use Claude Sonnet for Astro files (needs careful syntax), Kimi for simpler files
   const isAstroFile = filePath.endsWith('.astro');
-  const model = isAstroFile ? 'anthropic/claude-sonnet-4' : 'moonshotai/kimi-k2-instruct-0905';
+  const model = isAstroFile ? 'anthropic/claude-sonnet-4-6' : 'moonshotai/kimi-k2-instruct-0905';
   
   const content = await generateCompletion(
     [
@@ -417,7 +417,7 @@ Remember:
 
   // Use Claude Sonnet for Astro files (needs careful syntax), Kimi for simpler files
   const isAstroFile = filePath.endsWith('.astro');
-  const model = isAstroFile ? 'anthropic/claude-sonnet-4' : 'moonshotai/kimi-k2-instruct-0905';
+  const model = isAstroFile ? 'anthropic/claude-sonnet-4-6' : 'moonshotai/kimi-k2-instruct-0905';
   const result = await generateCompletion(messages, {
     model,
     temperature: 0.1,  // Low temperature for faithful implementation

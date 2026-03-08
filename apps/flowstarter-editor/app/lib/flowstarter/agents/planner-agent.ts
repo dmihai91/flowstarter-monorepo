@@ -19,7 +19,7 @@ import {
 // Re-export schemas and types for backward compatibility
 export * from './planner-agent-schemas';
 
-const MASTER_MODEL = 'anthropic/claude-opus-4';
+const MASTER_MODEL = 'anthropic/claude-opus-4-6';
 
 export class PlannerAgent extends BaseAgent {
   private readonly approvalThreshold: number;

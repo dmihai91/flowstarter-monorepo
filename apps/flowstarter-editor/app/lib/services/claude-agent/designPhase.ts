@@ -176,7 +176,7 @@ Return a JSON object with this structure:
   ];
 
   const result = await generateJSON<DesignSpec>(messages, {
-    model: 'anthropic/claude-opus-4',
+    model: 'anthropic/claude-opus-4-6',
     temperature: 0.8,  // Higher temperature for creativity
     maxTokens: 4000,
   });

@@ -79,10 +79,7 @@ export default function DomainsPage() {
                 href="https://dash.cloudflare.com/?to=/:account/add-site"
                 target="_blank"
                 rel="noopener noreferrer"
-              >
-                <Cloud className="w-4 h-4 mr-2" />
-                Add to Cloudflare
-              </a>
+              ><Cloud className="w-4 h-4 mr-2" />Add to Cloudflare</a>
             </Button>
           </div>
         </div>

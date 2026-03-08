@@ -7,7 +7,7 @@
 
 export const OPENROUTER_CONFIG = {
   baseUrl: 'https://openrouter.ai/api/v1',
-  defaultModel: import.meta.env.VITE_OPENROUTER_MODEL || 'anthropic/claude-sonnet-4',
+  defaultModel: import.meta.env.VITE_OPENROUTER_MODEL || 'anthropic/claude-sonnet-4-6',
   apiKey: import.meta.env.VITE_OPENROUTER_API_KEY || '',
 };
 

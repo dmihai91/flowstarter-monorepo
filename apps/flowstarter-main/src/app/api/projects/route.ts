@@ -11,7 +11,7 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 export async function POST(request: NextRequest) {
   // Verify authentication first
-  const authResult = await requireAuth();
+  const authResult = await requireAuth(request);
   if (!authResult.authenticated) {
     return authResult.response;
   }
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
  */
 export async function GET() {
   // Verify authentication first
-  const authResult = await requireAuth();
+  const authResult = await requireAuth(request);
   if (!authResult.authenticated) {
     return authResult.response;
   }

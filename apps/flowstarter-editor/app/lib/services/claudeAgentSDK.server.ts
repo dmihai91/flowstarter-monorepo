@@ -114,7 +114,7 @@ export async function generateCode(
     // Configure the agent
     const options: Options = {
       cwd: input.workingDirectory,
-      model: 'claude-sonnet-4-20250514', // Sonnet: fast coder; Opus used in fixer-agent for quality passes
+      model: 'claude-sonnet-4-6', // Sonnet: fast coder; Opus used in fixer-agent for quality passes
       permissionMode: 'bypassPermissions', // Allow all file operations
       maxTurns: 50,
       systemPrompt,
@@ -363,7 +363,7 @@ For saving user-uploaded images:
 export async function quickGenerate(
   prompt: string,
   workingDirectory: string,
-  model: string = 'claude-sonnet-4-20250514', // override with opus for quality-critical tasks
+  model: string = 'claude-sonnet-4-6', // override with opus for quality-critical tasks
 ): Promise<CodeGenerationResult> {
   return generateCode({
     projectId: 'quick-generate',

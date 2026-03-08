@@ -9,6 +9,7 @@ interface ViewToggleProps {
   onViewModeChange: (mode: ViewMode) => void;
   isMobile?: boolean;
   hasTerminalActivity?: boolean;
+  terminalErrorCount?: number;
 }
 
 const ChatIcon = () => (

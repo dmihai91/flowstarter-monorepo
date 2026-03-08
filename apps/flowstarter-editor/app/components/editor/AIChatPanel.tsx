@@ -9,7 +9,7 @@
 import { ArrowRight } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { LogoIcon, GlassPanel } from '@flowstarter/flow-design-system';
-type ChatMessage = { role: 'user' | 'assistant'; content: string; id?: string; timestamp?: number };
+type ChatMessage = { role: 'user' | 'assistant'; content: string; id?: string; timestamp?: number; isStreaming?: boolean };
 
 interface AIChatPanelProps {
   messages: ChatMessage[];

@@ -8,7 +8,7 @@
 import { fetchTemplateScaffold } from '../templateService';
 
 // Re-export types
-export type { SiteGenerationInput, GeneratedFile, SiteGenerationResult, BuildError } from './types';
+export type { SiteGenerationInput, GeneratedFile, SiteGenerationResult, BuildError, AgentActivityEvent } from './types';
 
 // Import from modules
 import type { SiteGenerationInput, GeneratedFile, SiteGenerationResult } from './types';
@@ -37,6 +37,9 @@ export async function generateSiteFromTemplate(
   input: SiteGenerationInput,
   onProgress?: (message: string) => void,
 ): Promise<SiteGenerationResult> {
+  // Agents SDK path — Node.js only (not Cloudflare Workers)
+  // Pipe onAgentEvent from input through to the SDK callbacks
+  const agentEventSink = input.onAgentEvent;
   const anthropicApiKey = process.env.ANTHROPIC_API_KEY;
 
   if (!anthropicApiKey) {
@@ -114,8 +117,30 @@ export async function generateSiteFromTemplate(
     console.log(`[FlowstarterAgent] Deduplicated to ${deduplicatedMods.length} unique files`);
     onProgress?.(`Plan created: Updating ${deduplicatedMods.length} files...`);
 
-    // 4. Execute changes in parallel
+    // 4. Execute changes — Agents SDK (Node.js) or memory-based (Workers)
     const generatedFiles: GeneratedFile[] = [];
+
+    if (isAgentsSDKAvailable()) {
+      // ── Agents SDK path: Claude autonomously edits files in tmpdir ───────────
+      const planText = deduplicatedMods.map(
+        (m, i) => `${i + 1}. ${m.path}: ${m.instructions}`
+      ).join('\n');
+
+      onProgress?.('Launching Agents SDK for autonomous code generation...');
+      agentEventSink?.({ type: 'thinking', text: 'Planning file modifications...' });
+
+      const sdkFiles = await generateSiteWithAgentsSDK(
+        { ...input, onAgentEvent: agentEventSink },
+        templateFiles,
+        planText,
+        onProgress,
+      );
+
+      for (const f of sdkFiles) {
+        generatedFiles.push({ path: f.path, content: f.content });
+      }
+    } else {
+      // ── Memory-based path: parallel LLM batch calls (Cloudflare Workers) ────
 
     // Add all original files first (except those being modified)
     for (const [path, content] of filesMap.entries()) {
@@ -184,6 +209,8 @@ export async function generateSiteFromTemplate(
       onProgress?.(`Completed ${Math.min(i + batch.length, deduplicatedMods.length)} of ${deduplicatedMods.length} files`);
     }
 
+    } // end memory-based path
+
     console.log(`[FlowstarterAgent] Generation complete. Total files: ${generatedFiles.length}`);
     onProgress?.('Validating generated files...');
 
@@ -233,3 +260,106 @@ export async function generateSiteFromTemplate(
 
 
 
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Agents SDK Integration
+// Replaces the batch file-generation phase with a single autonomous SDK run.
+// Requires Node.js runtime (file system access via os.tmpdir()).
+// Falls back to the memory-based approach in Cloudflare Workers.
+// ═══════════════════════════════════════════════════════════════════════════
+
+import { generateCode } from '~/lib/services/claudeAgentSDK.server';
+
+/** True when running in Node.js and AGENTS_SDK_ENABLED is set */
+function isAgentsSDKAvailable(): boolean {
+  try {
+    // Workers runtime has no `process.versions.node`
+    return !!(process?.versions?.node && process.env.AGENTS_SDK_ENABLED === 'true');
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Write template files to a tmpdir, run the Agents SDK, return modified files.
+ * Only called when Node.js runtime is detected.
+ */
+async function generateSiteWithAgentsSDK(
+  input: SiteGenerationInput,
+  templateFiles: Array<{ path: string; content: string }>,
+  plan: string,
+  onProgress?: (message: string) => void,
+): Promise<Array<{ path: string; content: string }>> {
+  const { tmpdir } = await import('os');
+  const { mkdir, writeFile, readdir, readFile } = await import('fs/promises');
+  const { join } = await import('path');
+
+  const workDir = join(tmpdir(), `flowstarter-${input.projectId}-${Date.now()}`);
+  await mkdir(workDir, { recursive: true });
+
+  // Write template files to tmpdir
+  for (const file of templateFiles) {
+    const fullPath = join(workDir, file.path);
+    await mkdir(join(fullPath, '..'), { recursive: true });
+    await writeFile(fullPath, file.content, 'utf-8');
+  }
+
+  onProgress?.('Agents SDK: files scaffolded, running autonomous generation...');
+
+  const businessName = input.businessInfo.name || input.siteName;
+  const prompt = `You are generating a professional website for: ${businessName}
+
+## Business Context
+${JSON.stringify(input.businessInfo, null, 2)}
+
+## Template
+${input.template.name} (slug: ${input.template.slug})
+
+## Your Task
+${plan}
+
+Read the existing template files, then apply ALL modifications described above.
+Write every changed file back. Do not skip any files from the plan.
+Ensure the result is production-ready Astro/HTML.`;
+
+  const result = await generateCode(
+    {
+      projectId: input.projectId,
+      prompt,
+      workingDirectory: workDir,
+      systemPrompt: `You are an expert Astro web developer. You are customizing a template website.
+Apply all requested changes precisely. Write clean, semantic, accessible HTML/CSS/Astro code.
+Business name: ${businessName}. Site name: ${input.siteName}.`,
+    },
+    {
+      onProgress: (p) => onProgress?.(p.message),
+      onAgentEvent: input.onAgentEvent,
+    },
+  );
+
+  if (!result.success) {
+    throw new Error(result.error || 'Agents SDK generation failed');
+  }
+
+  // Read all files from the workdir
+  const outputFiles: Array<{ path: string; content: string }> = [];
+
+  async function collectFiles(dir: string, base: string): Promise<void> {
+    const entries = await readdir(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (entry.name.startsWith('.') || entry.name === 'node_modules') continue;
+      const full = join(dir, entry.name);
+      const rel = join(base, entry.name);
+      if (entry.isDirectory()) {
+        await collectFiles(full, rel);
+      } else {
+        const content = await readFile(full, 'utf-8');
+        outputFiles.push({ path: rel, content });
+      }
+    }
+  }
+
+  await collectFiles(workDir, '');
+  onProgress?.(`Agents SDK: collected ${outputFiles.length} output files`);
+  return outputFiles;
+}

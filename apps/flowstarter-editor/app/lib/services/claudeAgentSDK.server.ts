@@ -50,22 +50,9 @@ export interface StreamCallbacks {
   onAgentEvent?: (event: AgentActivityEvent) => void;
 }
 
-/**
- * Structured event types for the AgentActivityPanel UI component.
- * These are forwarded to the client via SSE.
- */
-export type AgentActivityEvent =
-  | { type: 'thinking'; text: string; duration_s?: number }
-  | { type: 'tool_call'; name: string; input: Record<string, unknown> }
-  | { type: 'tool_result'; name: string; duration_s: number }
-  | { type: 'file_write'; path: string; lines?: number; duration_s?: number }
-  | { type: 'file_read'; path: string }
-  | { type: 'file_delete'; path: string }
-  | { type: 'command'; cmd: string }
-  | { type: 'command_output'; text: string; success?: boolean }
-  | { type: 'text'; content: string }
-  | { type: 'error'; message: string }
-  | { type: 'done'; duration_ms: number; turns: number; cost_usd: number; input_tokens: number; output_tokens: number }
+// Re-export AgentActivityEvent from the canonical definition in claude-agent/types.ts
+export type { AgentActivityEvent } from '~/lib/services/claude-agent/types';
+import type { AgentActivityEvent } from '~/lib/services/claude-agent/types';
 
 /**
  * Build prompt content with optional images
@@ -127,7 +114,7 @@ export async function generateCode(
     // Configure the agent
     const options: Options = {
       cwd: input.workingDirectory,
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-20250514', // Sonnet: fast coder; Opus used in fixer-agent for quality passes
       permissionMode: 'bypassPermissions', // Allow all file operations
       maxTurns: 50,
       systemPrompt,
@@ -376,7 +363,7 @@ For saving user-uploaded images:
 export async function quickGenerate(
   prompt: string,
   workingDirectory: string,
-  model: string = 'claude-sonnet-4-20250514',
+  model: string = 'claude-sonnet-4-20250514', // override with opus for quality-critical tasks
 ): Promise<CodeGenerationResult> {
   return generateCode({
     projectId: 'quick-generate',

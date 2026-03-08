@@ -188,7 +188,7 @@ test.describe('Scenario 2: QuickScaffold → AI Enrichment → Editor', () => {
       body: JSON.stringify({ description: rawDescription, locale: 'ro' }),
     });
     expect(enrichRes.status).toBe(200);
-    const enriched = await enrichRes.json() as {
+    const enriched = enrichRes.body as {
       status: string; siteName: string; description: string; industry: string;
       targetAudience: string; uvp: string; goal: string; offerType: string;
     };
@@ -205,7 +205,7 @@ test.describe('Scenario 2: QuickScaffold → AI Enrichment → Editor', () => {
       }),
     });
     expect(handoffRes.status).toBe(200);
-    const { token, projectId } = await handoffRes.json() as { token: string; editorUrl: string; projectId: string };
+    const { token, projectId } = handoffRes.body as { token: string; editorUrl: string; projectId: string };
     console.log('[2.5] Handoff token created, project:', projectId);
     if (projectId) createdProjectId = projectId;
 

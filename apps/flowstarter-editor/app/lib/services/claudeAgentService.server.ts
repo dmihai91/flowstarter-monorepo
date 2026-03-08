@@ -13,7 +13,7 @@
  */
 
 // Re-export everything from the modular implementation
-export type { SiteGenerationInput, GeneratedFile, SiteGenerationResult, BuildError } from './claude-agent';
+export type { SiteGenerationInput, GeneratedFile, SiteGenerationResult, BuildError, AgentActivityEvent } from './claude-agent';
 
 export { generateSiteFromTemplate, generateSiteHybrid, generateSiteSync, healBuildErrors } from './claude-agent';
 

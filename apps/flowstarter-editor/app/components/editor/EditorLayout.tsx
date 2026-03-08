@@ -236,9 +236,11 @@ export function EditorLayout({
         {/* LEFT: Chat Panel (Resizable on desktop, full-width on mobile) */}
         <div
           style={{
-            width: isMobile ? '100%' : isTablet ? '360px' : `${chatWidth}px`,
-            minWidth: isMobile ? '100%' : isTablet ? '320px' : `${PANEL_CONFIG.minWidth}px`,
-            maxWidth: isMobile ? '100%' : isTablet ? '400px' : `${PANEL_CONFIG.maxWidth}px`,
+            // On narrow tablets use % so the panel never overflows the viewport
+            width: isMobile ? '100%' : isTablet ? 'min(360px, 42vw)' : `${chatWidth}px`,
+            minWidth: isMobile ? '100%' : isTablet ? '280px' : `${PANEL_CONFIG.minWidth}px`,
+            maxWidth: isMobile ? '100%' : isTablet ? '420px' : `${PANEL_CONFIG.maxWidth}px`,
+            flexShrink: 0,
             display: isMobile && viewMode === 'preview' ? 'none' : 'flex',
             flexDirection: 'column',
             overflow: 'hidden',

@@ -246,6 +246,7 @@ export function EditorChatPanel({
       <div
         ref={paginationScrollRef}
         className={`flex-1 overflow-y-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6 relative z-[1] scrollbar-thin scrollbar-track-transparent ${isDark ? 'scrollbar-thumb-white/10' : 'scrollbar-thumb-black/10'}`}
+        style={{ minHeight: 0 }}
       >
         {/* Business Context Card (for internal/template-first flow) */}
         {isInternalFlow && businessContext && (

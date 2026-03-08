@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { AttachedImage, OnboardingStep } from '~/components/editor/editor-chat/types';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
@@ -38,6 +38,19 @@ export function ChatInput({
   onRemoveImage,
   onClearImages,
 }: ChatInputProps) {
+  // iOS/iPadOS: push input above keyboard when visual viewport shrinks
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
+  useEffect(() => {
+    const vv = (window as Window & { visualViewport?: { height: number; addEventListener: Function; removeEventListener: Function } }).visualViewport;
+    if (!vv) return;
+    const onResize = () => {
+      const offset = Math.max(0, window.innerHeight - vv.height);
+      setKeyboardOffset(offset);
+    };
+    vv.addEventListener('resize', onResize);
+    return () => vv.removeEventListener('resize', onResize);
+  }, []);
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Reset textarea height when input is cleared
@@ -61,8 +74,11 @@ export function ChatInput({
     <div
       className="px-3 sm:px-4 pt-2 sm:pt-3 pb-3 sm:pb-4 relative z-[1]"
       style={{
-        paddingBottom: 'max(12px, env(safe-area-inset-bottom, 12px))',
+        paddingBottom: keyboardOffset
+          ? `${keyboardOffset + 12}px`
+          : 'max(12px, env(safe-area-inset-bottom, 12px))',
         background: 'transparent',
+        transition: 'padding-bottom 0.15s ease',
       }}
     >
       {/* Hidden file input */}

@@ -13,14 +13,14 @@ import {
   BUSINESS_INFO, CONTACT_INFO,
   QUICKSCAFFOLD_INPUT, ENRICHED_DATA,
   testProjectName, makeHandoffToken,
-  authenticatedFetch, cleanupProject,
+  e2eFetch, cleanupProject, RUN_ID,
 } from './helpers';
 
 let createdProjectId: string | undefined;
 
-test.afterEach(async ({ page }) => {
+test.afterEach(async () => {
   if (createdProjectId) {
-    await cleanupProject(page, createdProjectId);
+    await cleanupProject(createdProjectId);
     createdProjectId = undefined;
   }
 });
@@ -36,7 +36,7 @@ async function quickScaffoldHandoff(page: Page, opts: {
   if (opts.useRealEnrich) {
     // Call the real AI enrichment endpoint (real Claude)
     console.log('[QS] Calling real AI enrich...');
-    const enrichResult = await authenticatedFetch(page, `${BASE}/api/ai/enrich-project`, {
+    const enrichResult = await e2eFetch(`${BASE}/api/ai/enrich-project`, {
       method: 'POST',
       body: { description: QUICKSCAFFOLD_INPUT },
     });
@@ -46,7 +46,7 @@ async function quickScaffoldHandoff(page: Page, opts: {
     }
   }
 
-  const result = await authenticatedFetch(page, `${BASE}/api/editor/handoff`, {
+  const result = await e2eFetch(`${BASE}/api/editor/handoff`, {
     method: 'POST',
     body: {
       projectConfig: {
@@ -84,7 +84,7 @@ test.describe('Scenario 2: QuickScaffold → AI Enrichment → Editor', () => {
   test('2.1 — real Claude enriches QuickScaffold description into structured businessInfo', async ({ page }) => {
     console.log('[2.1] Calling real AI enrich with input:', QUICKSCAFFOLD_INPUT);
 
-    const result = await authenticatedFetch(page, `${BASE}/api/ai/enrich-project`, {
+    const result = await e2eFetch(`${BASE}/api/ai/enrich-project`, {
       method: 'POST',
       body: { description: QUICKSCAFFOLD_INPUT },
     });
@@ -135,7 +135,7 @@ test.describe('Scenario 2: QuickScaffold → AI Enrichment → Editor', () => {
   test('2.3 — operator-edited field preserved verbatim in token payload', async ({ page }) => {
     const customUvp = `Garantia satisfactiei sau rambursam ${RUN_ID}`;
 
-    const result = await authenticatedFetch(page, `${BASE}/api/editor/handoff`, {
+    const result = await e2eFetch(`${BASE}/api/editor/handoff`, {
       method: 'POST',
       body: {
         projectConfig: {
@@ -249,5 +249,3 @@ test.describe('Scenario 2: QuickScaffold → AI Enrichment → Editor', () => {
   });
 });
 
-// RUN_ID accessible in test scope
-const RUN_ID = Date.now().toString(36).slice(-6);

@@ -16,26 +16,26 @@ import {
   BASE, EDITOR,
   BUSINESS_INFO, CONTACT_INFO,
   testProjectName, makeHandoffToken,
-  authenticatedFetch, cleanupProject,
+  e2eFetch, browserFetch, cleanupProject,
 } from './helpers';
 
 // ─── Shared cleanup ───────────────────────────────────────────────────────────
 
 let createdProjectId: string | undefined;
 
-test.afterEach(async ({ page }) => {
+test.afterEach(async () => {
   if (createdProjectId) {
-    await cleanupProject(page, createdProjectId);
+    await cleanupProject(createdProjectId);
     createdProjectId = undefined;
   }
 });
 
 // ─── Helper ───────────────────────────────────────────────────────────────────
 
-async function callHandoff(page: Page, projectConfig: object): Promise<{
+async function callHandoff(_page: Page, projectConfig: object): Promise<{
   editorUrl: string; token: string; projectId: string;
 }> {
-  const result = await authenticatedFetch(page, `${BASE}/api/editor/handoff`, {
+  const result = await e2eFetch(`${BASE}/api/editor/handoff`, {
     method: 'POST',
     body: { projectConfig, mode: 'interactive' },
   });

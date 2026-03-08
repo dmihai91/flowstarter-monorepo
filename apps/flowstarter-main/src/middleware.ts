@@ -358,6 +358,17 @@ export default clerkMiddleware(async (auth, req) => {
   // If the route is protected, authenticate the user.
   // For API routes: return 401 JSON response
   // For page routes: redirect to login with return path
+
+  // ── E2E dev bypass — skip Clerk check when secret header present ──────────
+  // Safe: only active in non-production environments; secret required.
+  if (process.env.NODE_ENV !== 'production' && process.env.E2E_SECRET) {
+    const e2eSecret = req.headers.get('x-e2e-secret');
+    if (e2eSecret === process.env.E2E_SECRET) {
+      // Allow through — requireAuth() in the route handler does the same check
+      return NextResponse.next();
+    }
+  }
+
   try {
     const authResult = await auth();
     const userId = authResult?.userId;

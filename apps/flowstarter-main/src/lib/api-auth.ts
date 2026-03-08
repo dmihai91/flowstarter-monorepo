@@ -60,7 +60,23 @@ export function forbiddenResponse(message = 'Forbidden'): NextResponse {
  * }
  * ```
  */
-export async function requireAuth(): Promise<AuthResult> {
+export async function requireAuth(request?: Request): Promise<AuthResult> {
+  // ── E2E dev bypass ────────────────────────────────────────────────────────
+  // Allows Playwright tests to call protected API routes without a browser
+  // session. ONLY active in non-production + correct E2E_SECRET header.
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    process.env.E2E_SECRET &&
+    request
+  ) {
+    const secret = request.headers.get('x-e2e-secret');
+    const userId = request.headers.get('x-e2e-user-id');
+    if (secret === process.env.E2E_SECRET && userId) {
+      console.log('[API Auth] E2E bypass — userId:', userId);
+      return { authenticated: true, userId, getToken: async () => null };
+    }
+  }
+
   try {
     const session = await auth();
     const userId = session?.userId;
@@ -107,7 +123,7 @@ export async function requireAuth(): Promise<AuthResult> {
  * }
  * ```
  */
-export async function requireAuthWithSupabase(): Promise<
+export async function requireAuthWithSupabase(request?: Request): Promise<
   | {
       authenticated: true;
       userId: string;
@@ -119,9 +135,23 @@ export async function requireAuthWithSupabase(): Promise<
     }
   | { authenticated: false; response: NextResponse }
 > {
-  const authResult = await requireAuth();
+  const authResult = await requireAuth(request);
   if (!authResult.authenticated) {
     return authResult;
+  }
+
+  // ── E2E bypass: use service-role client (no JWT needed) ───────────────────
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    process.env.E2E_SECRET &&
+    request?.headers.get('x-e2e-secret') === process.env.E2E_SECRET
+  ) {
+    const { createSupabaseServiceRoleClient } = await import('@/supabase-clients/server');
+    return {
+      authenticated: true,
+      userId: authResult.userId,
+      supabase: createSupabaseServiceRoleClient() as any,
+    };
   }
 
   // Dynamically import to avoid circular dependencies

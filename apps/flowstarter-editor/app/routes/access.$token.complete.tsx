@@ -83,8 +83,8 @@ function MagicLinkCompleteContent() {
         if (handoffToken) {
           const res = await fetch(`${MAIN_PLATFORM_URL}/api/editor/handoff?token=${handoffToken}`);
           if (res.ok) {
-            const data = await res.json();
-            clerkUserId = data.userId;
+            const data = await res.json() as { userId?: string; user?: { signupMethod?: 'google' | 'apple' | 'email' } };
+            clerkUserId = data.userId || null;
             // Detect signup method from Clerk metadata if available
             signupMethod = data.user?.signupMethod || 'google';
           }

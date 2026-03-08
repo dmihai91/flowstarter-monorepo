@@ -3,7 +3,7 @@
 import { ScrollAwareHeader } from '@flowstarter/flow-design-system';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ArrowLeft, Menu } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Logo } from '@/components/ui/logo';
 import { useSidebar } from '@/contexts/SidebarContext';
@@ -14,7 +14,6 @@ export function AppHeader() {
   const { setIsMobileOpen } = useSidebar();
 
   const isTeam = pathname?.startsWith('/team');
-  const isWizardPage = pathname?.startsWith('/dashboard/new') || pathname?.startsWith('/wizard');
   const homeHref = isTeam ? '/team/dashboard' : '/dashboard';
 
   return (
@@ -34,25 +33,15 @@ export function AppHeader() {
             <Menu className="w-5 h-5" />
           </button>
 
-          {isWizardPage ? (
-            <Link
-              href={homeHref}
-              className="flex items-center gap-2 text-gray-600 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span className="text-sm font-medium">Back</span>
-            </Link>
-          ) : (
-            <Link href={homeHref} className="flex items-center gap-3 group">
-              <span className="sm:hidden"><Logo size="sm" /></span>
-              <span className="hidden sm:block"><Logo size="md" /></span>
-              {isTeam && (
-                <span className="px-2 py-0.5 text-[0.625rem] font-medium bg-[var(--purple)]/10 text-[var(--purple)] rounded-full hidden sm:block">
-                  Team
-                </span>
-              )}
-            </Link>
-          )}
+          <Link href={homeHref} className="flex items-center gap-3 group">
+            <span className="sm:hidden"><Logo size="sm" /></span>
+            <span className="hidden sm:block"><Logo size="md" /></span>
+            {isTeam && (
+              <span className="px-2 py-0.5 text-[0.625rem] font-medium bg-[var(--purple)]/10 text-[var(--purple)] rounded-full hidden sm:block">
+                Team
+              </span>
+            )}
+          </Link>
         </div>
 
         {/* Right: theme + user */}

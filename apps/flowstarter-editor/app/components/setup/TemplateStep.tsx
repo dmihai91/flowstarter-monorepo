@@ -33,8 +33,8 @@ export function TemplateStep({ data, onUpdate, onNext, onPrev }: TemplateStepPro
       try {
         const response = await fetch('/api/templates');
         if (response.ok) {
-          const data = await response.json();
-          setTemplates(data.templates || []);
+          const result = await response.json() as { templates?: Template[] };
+          setTemplates(result.templates || []);
         }
       } catch {
         // Fallback templates

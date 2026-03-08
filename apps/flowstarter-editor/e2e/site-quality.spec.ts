@@ -9,7 +9,7 @@
  * - Accessibility fundamentals
  */
 
-import { test, expect, type Page, type Frame } from '@playwright/test';
+import { test, expect, type Page, type FrameLocator } from '@playwright/test';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // Test Configuration
@@ -31,16 +31,16 @@ const TEST_PROJECT = {
 // Helper Functions
 // ═══════════════════════════════════════════════════════════════════════════════
 
-async function getPreviewFrame(page: Page): Promise<Frame | null> {
+async function getPreviewFrame(page: Page): Promise<FrameLocator | null> {
   const iframe = page.locator('iframe[title="Daytona Preview"]');
   await expect(iframe).toBeVisible({ timeout: 60000 });
   
-  const frame = await iframe.contentFrame();
+  const frame = iframe.contentFrame();
   return frame;
 }
 
-async function waitForPreviewContent(page: Page, maxRetries = 20): Promise<Frame> {
-  let frame: Frame | null = null;
+async function waitForPreviewContent(page: Page, maxRetries = 20): Promise<FrameLocator> {
+  let frame: FrameLocator | null = null;
   
   for (let i = 0; i < maxRetries; i++) {
     frame = await getPreviewFrame(page);

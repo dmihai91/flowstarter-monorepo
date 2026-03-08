@@ -21,7 +21,7 @@ describe('Logo Skip Flow (Stale Closure Fix)', () => {
   it('should have latest font value when logo is skipped', async () => {
     // Simulate the state management pattern
     let selectedFont: { name: string } | null = null;
-    const selectedFontRef = { current: selectedFont };
+    const selectedFontRef: { current: { name: string } | null } = { current: selectedFont };
     
     const setSelectedFont = (font: { name: string } | null) => {
       selectedFont = font;

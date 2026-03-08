@@ -69,7 +69,7 @@ export async function deployToPages(
   const formData = new FormData();
 
   for (const file of files) {
-    const blob = new Blob([file.content]);
+    const blob = new Blob([new Uint8Array(file.content)]);
     formData.append(file.path, blob, file.path);
   }
 
@@ -89,7 +89,7 @@ export async function deployToPages(
     throw new Error(`Deployment failed: ${JSON.stringify(error)}`);
   }
 
-  const data = await response.json();
+  const data = await response.json() as { result: { id: string; url: string; environment: string } };
   const deployment = data.result;
 
   return {
@@ -120,9 +120,9 @@ export async function getDeploymentStatus(
     throw new Error('Failed to get deployment status');
   }
 
-  const data = await response.json();
+  const data = await response.json() as { result: Record<string, unknown> & { latest_stage?: { status?: string } } };
   return {
     status: data.result.latest_stage?.status || 'unknown',
-    url: data.result.url,
+    url: data.result.url as string | undefined,
   };
 }

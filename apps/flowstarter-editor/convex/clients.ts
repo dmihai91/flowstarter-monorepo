@@ -6,7 +6,6 @@
 
 import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
-import { Id } from './_generated/dataModel';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // QUERIES
@@ -18,21 +17,18 @@ import { Id } from './_generated/dataModel';
 export const list = query({
   args: {
     status: v.optional(v.union(
-      v.literal('lead'),
+      v.literal('invited'),
       v.literal('onboarding'),
-      v.literal('review'),
       v.literal('active'),
       v.literal('churned')
     )),
   },
   handler: async (ctx, args) => {
-    let query = ctx.db.query('clients');
+    const clientQuery = args.status
+      ? ctx.db.query('clients').withIndex('by_status', (q) => q.eq('status', args.status!))
+      : ctx.db.query('clients');
     
-    if (args.status) {
-      query = query.withIndex('by_status', (q) => q.eq('status', args.status!));
-    }
-    
-    const clients = await query.order('desc').collect();
+    const clients = await clientQuery.order('desc').collect();
     
     // Get project counts for each client
     const clientsWithProjects = await Promise.all(
@@ -177,9 +173,8 @@ export const update = mutation({
     company: v.optional(v.string()),
     discoveryNotes: v.optional(v.string()),
     status: v.optional(v.union(
-      v.literal('lead'),
+      v.literal('invited'),
       v.literal('onboarding'),
-      v.literal('review'),
       v.literal('active'),
       v.literal('churned')
     )),

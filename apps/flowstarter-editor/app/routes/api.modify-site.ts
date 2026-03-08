@@ -26,7 +26,7 @@ async function convexQuery<T>(path: string, args: Record<string, unknown>): Prom
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ path, args }),
   });
-  const data = await response.json();
+  const data = await response.json() as { status: string; value?: T; errorMessage?: string };
   if (data.status === 'error') {
     throw new Error(data.errorMessage || 'Convex query failed');
   }
@@ -42,7 +42,7 @@ async function convexMutation<T>(path: string, args: Record<string, unknown>): P
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ path, args }),
   });
-  const data = await response.json();
+  const data = await response.json() as { status: string; value?: T; errorMessage?: string };
   if (data.status === 'error') {
     throw new Error(data.errorMessage || 'Convex mutation failed');
   }
@@ -185,11 +185,11 @@ Rules:
   }
 
   try {
-    const messages: Array<{ role: 'user' | 'assistant'; content: string | any[] }> = [];
+    const messages: Array<{ role: 'user' | 'assistant'; content: string | Array<Record<string, unknown>> }> = [];
 
     // Build message with images if provided
     if (images && images.length > 0) {
-      const content: any[] = [];
+      const content: Array<Record<string, unknown>> = [];
 
       // Add images first
       for (const img of images) {
@@ -214,8 +214,11 @@ Rules:
       messages.push({ role: 'user', content: userPrompt });
     }
 
-    const response = await generateCompletion(messages, {
-      systemPrompt,
+    const allMessages = [
+      { role: 'system' as const, content: systemPrompt },
+      ...messages.map(m => ({ role: m.role as 'system' | 'user' | 'assistant', content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) })),
+    ];
+    const response = await generateCompletion(allMessages, {
       maxTokens: 16000,
     });
 

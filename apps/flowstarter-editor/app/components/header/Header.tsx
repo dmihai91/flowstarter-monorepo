@@ -2,7 +2,6 @@ import { useStore } from '@nanostores/react';
 import { useState } from 'react';
 import { chatStore } from '~/lib/stores/chat';
 import { SettingsButton } from '~/components/ui/SettingsButton';
-import { ControlPanelDialog } from '~/components/@settings';
 import { getMainPlatformHomepage } from '~/lib/config/domains';
 import { Logo, ScrollAwareHeader } from '@flowstarter/flow-design-system';
 
@@ -41,7 +40,6 @@ export function Header() {
       {/* Spacer to account for fixed header */}
       <div className="h-14" />
 
-      <ControlPanelDialog isOpen={isSettingsOpen} onClose={handleSettingsClose} />
     </>
   );
 }

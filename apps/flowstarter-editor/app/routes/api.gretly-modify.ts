@@ -152,18 +152,28 @@ export async function action({ request }: ActionFunctionArgs) {
           ],
         };
 
-        // Call the code generator agent
-        const generateResult = await codeGenerator.invoke('generate', {
-          plan: modificationPlan,
-          existingFiles: body.currentFiles,
-          images: body.images,
-        });
+        // Call the code generator agent via chat (BaseAgent API)
+        const chatResponse = await codeGenerator.chat(JSON.stringify({
+          type: 'generate',
+          projectId: body.projectId,
+          templateFiles: body.currentFiles,
+          modifications: modificationPlan.modifications.map(m => ({
+            path: m.target,
+            instructions: m.instruction,
+          })),
+        }));
+
+        const generateResult = JSON.parse(chatResponse.message.content) as {
+          success: boolean;
+          files?: Record<string, string>;
+          error?: string;
+        };
 
         if (!generateResult.success || !generateResult.files) {
           throw new Error(generateResult.error || 'Code generation failed');
         }
 
-        const generatedFiles = generateResult.files as Record<string, string>;
+        const generatedFiles = generateResult.files;
         const modifiedFiles = Object.keys(generatedFiles);
 
         logger.info('Generated ' + modifiedFiles.length + ' files');

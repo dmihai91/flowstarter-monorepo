@@ -122,6 +122,8 @@ export function getFirstMissingField(info: Partial<BusinessInfo>): OnboardingSte
  */
 export function assembleBusinessInfo(partial: Partial<BusinessInfo>): BusinessInfo {
   return {
+    description: partial.description || '',
+    quickProfile: partial.quickProfile || { goal: 'leads', offerType: 'free', tone: 'professional' },
     uvp: partial.uvp || '',
     targetAudience: partial.targetAudience || '',
     businessGoals: partial.businessGoals || [],

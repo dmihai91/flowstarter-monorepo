@@ -1,6 +1,5 @@
 'use client';
 
-import { useWizardStore } from '@/store/wizard-store';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -42,7 +41,6 @@ export interface ParsedChat {
 export function useProject() {
   const { id } = useParams();
   const router = useRouter();
-  const setTeamWizardData = useWizardStore((state) => state.setTeamWizardData);
   
   const [project, setProject] = useState<ProjectData | null>(null);
   const [parsedChat, setParsedChat] = useState<ParsedChat | null>(null);
@@ -110,20 +108,18 @@ export function useProject() {
     projectId: project?.id || '',
   });
 
-  // Auto-redirect incomplete drafts to wizard
+  // Auto-redirect incomplete drafts to team wizard
   useEffect(() => {
     if (isLoading || !project) return;
     
     if (!isComplete && project.is_draft) {
-      setTeamWizardData(buildWizardData());
       router.push(`/team/dashboard/new?id=${project.id}`);
     }
-  }, [isLoading, project, isComplete]);
+  }, [isLoading, project, isComplete, router]);
 
   // Edit project handler
   const handleEdit = () => {
     if (!project) return;
-    setTeamWizardData(buildWizardData());
     router.push(`/team/dashboard/new?id=${project.id}`);
   };
 

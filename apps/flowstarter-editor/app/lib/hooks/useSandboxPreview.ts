@@ -26,7 +26,7 @@ export function useSandboxPreview({ projectId, autoRefresh = true }: UseSandboxP
         throw new Error('Failed to fetch preview URL');
       }
 
-      const data = await response.json();
+      const data = await response.json() as { previewUrl?: string };
       if (data.previewUrl) {
         setPreviewUrl(data.previewUrl);
         setIsLive(true);

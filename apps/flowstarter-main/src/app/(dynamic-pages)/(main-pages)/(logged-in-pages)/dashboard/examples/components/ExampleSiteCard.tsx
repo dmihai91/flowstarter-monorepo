@@ -107,15 +107,9 @@ export function ExampleSiteCard({ site, className }: ExampleSiteCardProps) {
 
       <CardContent className="px-4 pb-4 pt-0">
         <Button asChild className="w-full" size="sm">
-          <Link
-            href={
-              site.createdWith
-                ? `/dashboard/new?template=${site.createdWith}`
-                : '/dashboard/new'
-            }
-          >
+          <Link href={site.url} target="_blank" rel="noopener noreferrer">
             <Layers className="h-4 w-4 mr-2" />
-            Use This Template
+            View Site
           </Link>
         </Button>
       </CardContent>

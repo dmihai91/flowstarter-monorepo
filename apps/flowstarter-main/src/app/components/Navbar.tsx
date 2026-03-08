@@ -9,18 +9,13 @@ import {
   NavbarHeader,
   NavbarLogo,
   PublicNavLinks,
-  useCompactViewport,
   useScrolled,
-  useWizardNavbar,
-  WizardNavControls,
 } from './nav';
 
 export const ExternalNavigationWithAuth = () => {
   const { isSignedIn, isLoaded } = useAuth();
   const [isMounted, setIsMounted] = useState(false);
   const isScrolled = useScrolled();
-  const isCompact = useCompactViewport();
-  const wizardState = useWizardNavbar();
 
   // Handle mounting state to prevent hydration mismatch
   useEffect(() => {
@@ -40,16 +35,7 @@ export const ExternalNavigationWithAuth = () => {
       <NavbarLogo href={logoDestination} />
 
       {isSignedIn ? (
-        <>
-          {wizardState.isOnWizard ? (
-            <WizardNavControls
-              isCompact={isCompact}
-              wizardState={wizardState}
-            />
-          ) : (
-            <DashboardNavControls />
-          )}
-        </>
+        <DashboardNavControls />
       ) : (
         <nav className="ml-auto flex gap-3 sm:gap-6 items-center">
           <ThemeToggle className="inline-flex mr-2" />

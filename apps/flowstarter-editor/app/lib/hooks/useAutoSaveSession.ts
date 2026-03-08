@@ -6,8 +6,8 @@
 
 import { useMutation } from 'convex/react';
 import { useEffect, useRef, useCallback } from 'react';
-import { api } from '../../../../convex/_generated/api';
-import type { Id } from '../../../../convex/_generated/dataModel';
+import { api } from '~/convex/_generated/api';
+import type { Id } from '~/convex/_generated/dataModel';
 
 interface AutoSaveOptions {
   projectId: string;

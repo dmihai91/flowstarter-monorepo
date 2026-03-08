@@ -16,7 +16,7 @@ import {
   generatePlaceholderComponent,
   patchTailwindContentPaths,
 } from './templates';
-import { generateDefaultContentMd, generateContentFiles } from './contentGeneration';
+import { generateContentFiles } from './contentGeneration';
 
 /**
  * Normalize file path to include src/ prefix when appropriate
@@ -89,7 +89,7 @@ export function initializeFilesMap(
   // Legacy content.md for backwards compatibility
   if (!filesMap.has('content.md')) {
     console.log('[FlowstarterAgent] content.md missing, generating default...');
-    filesMap.set('content.md', generateDefaultContentMd(input));
+    filesMap.set('content.md', `# ${input.siteName}\n\n${input.businessInfo?.description || 'Welcome to our website.'}\n`);
   }
 
   addDefaultStyles(filesMap, input);

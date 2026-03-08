@@ -10,9 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useTranslations } from '@/lib/i18n';
-import { useProjectAIStore } from '@/store/ai-suggestions-store';
 import { useDraftStore } from '@/store/draft-store';
-import { initialProjectConfig, useWizardStore } from '@/store/wizard-store';
 import { useClerk, useUser } from '@clerk/nextjs';
 import { LogOut, Settings } from 'lucide-react';
 import Image from 'next/image';
@@ -29,8 +27,6 @@ export const CustomUserButton = ({ className }: CustomUserButtonProps) => {
   const { user } = useUser();
   const { t } = useTranslations();
   const { reset: resetDraft } = useDraftStore();
-  const { reset: resetAI } = useProjectAIStore();
-  const { reset: resetWizard } = useWizardStore();
 
   useEffect(() => {
     setMounted(true);
@@ -49,8 +45,6 @@ export const CustomUserButton = ({ className }: CustomUserButtonProps) => {
 
   const resetAllStores = () => {
     resetDraft();
-    resetAI();
-    resetWizard(initialProjectConfig);
   };
 
   const getInitials = () => {

@@ -112,11 +112,11 @@ describe('Site Generation E2E', () => {
       });
 
       expect(response.ok).toBe(true);
-      const data = await response.json();
+      const data = await response.json() as Record<string, unknown>;
       
       expect(data.success).toBe(true);
-      expect(data.decision.route).toBe('simple');
-      expect(data.decision.confidence).toBeGreaterThanOrEqual(0.7);
+      expect((data.decision as Record<string, unknown>).route).toBe('simple');
+      expect((data.decision as Record<string, unknown>).confidence).toBeGreaterThanOrEqual(0.7);
       expect(data.latencyMs).toBeLessThan(500); // Should be fast
     });
 
@@ -131,10 +131,10 @@ describe('Site Generation E2E', () => {
       });
 
       expect(response.ok).toBe(true);
-      const data = await response.json();
+      const data = await response.json() as Record<string, unknown>;
       
       expect(data.success).toBe(true);
-      expect(data.decision.route).toBe('gretly');
+      expect((data.decision as Record<string, unknown>).route).toBe('gretly');
     });
 
     it('should handle edge cases gracefully', async () => {
@@ -167,15 +167,15 @@ describe('Site Generation E2E', () => {
       });
 
       expect(response.ok).toBe(true);
-      const data = await response.json();
+      const data = await response.json() as Record<string, unknown>;
       
       expect(data.success).toBe(true);
       expect(data.suggestions).toBeDefined();
       expect(Array.isArray(data.suggestions)).toBe(true);
       
-      if (data.suggestions.length > 0) {
-        expect(data.suggestions[0]).toHaveProperty('type');
-        expect(data.suggestions[0]).toHaveProperty('prompt');
+      if ((data.suggestions as unknown[]).length > 0) {
+        expect((data.suggestions as unknown[])[0]).toHaveProperty('type');
+        expect((data.suggestions as unknown[])[0]).toHaveProperty('prompt');
       }
     });
 
@@ -197,7 +197,7 @@ describe('Site Generation E2E', () => {
       });
 
       expect(response.ok).toBe(true);
-      const data = await response.json();
+      const data = await response.json() as Record<string, unknown>;
       
       if (data.success) {
         expect(data.url).toBeDefined();
@@ -226,7 +226,7 @@ describe('Site Generation E2E', () => {
       });
 
       expect(response.ok).toBe(true);
-      const data = await response.json();
+      const data = await response.json() as Record<string, unknown>;
       
       expect(data.success).toBe(true);
       expect(data.message).toBeDefined();
@@ -250,7 +250,7 @@ describe('Site Generation E2E', () => {
       });
 
       expect(response.ok).toBe(true);
-      const data = await response.json();
+      const data = await response.json() as Record<string, unknown>;
       
       expect(data.success).toBe(true);
       expect(data.totalCost).toBeDefined();
@@ -271,7 +271,7 @@ describe('Site Generation E2E', () => {
       });
 
       expect(response.ok).toBe(true);
-      const data = await response.json();
+      const data = await response.json() as Record<string, unknown>;
       
       expect(data.success).toBe(true);
       expect(data.totalCost).toBeLessThan(0.1); // Simple should be cheap
@@ -292,10 +292,10 @@ describe('Site Generation E2E', () => {
         route: 'gretly',
       });
 
-      const simpleData = await simpleResponse.json();
-      const gretlyData = await gretlyResponse.json();
+      const simpleData = await simpleResponse.json() as Record<string, unknown>;
+      const gretlyData = await gretlyResponse.json() as Record<string, unknown>;
       
-      expect(gretlyData.totalCost).toBeGreaterThan(simpleData.totalCost);
+      expect(gretlyData.totalCost as number).toBeGreaterThan(simpleData.totalCost as number);
     });
   });
 });
@@ -410,9 +410,9 @@ describe('Integration Tests', () => {
     const routeResponse = await apiRequest('/api/modification-router', {
       instruction: 'change the button color to blue',
     });
-    const routeData = await routeResponse.json();
+    const routeData = await routeResponse.json() as Record<string, unknown>;
     
-    expect(routeData.decision.route).toBe('simple');
+    expect((routeData.decision as Record<string, unknown>).route).toBe('simple');
 
     // Step 2: Execute via simple flow
     const modifyResponse = await apiRequest('/api/modify-site', {
@@ -420,7 +420,7 @@ describe('Integration Tests', () => {
       projectId: process.env.TEST_PROJECT_ID,
       instruction: 'change the button color to blue',
     });
-    const modifyData = await modifyResponse.json();
+    const modifyData = await modifyResponse.json() as Record<string, unknown>;
     
     expect(modifyData.success).toBe(true);
   }, TIMEOUT);
@@ -435,11 +435,11 @@ describe('Integration Tests', () => {
     const routeResponse = await apiRequest('/api/modification-router', {
       instruction: 'add a new blog section with recent posts',
     });
-    const routeData = await routeResponse.json();
+    const routeData = await routeResponse.json() as Record<string, unknown>;
     
-    expect(routeData.decision.route).toBe('gretly');
+    expect((routeData.decision as Record<string, unknown>).route).toBe('gretly');
 
-    // Step 2: Would execute via Gretly (skipping actual execution for time)
+    // Step 2: Would execute via Gretly
     console.log('Gretly route confirmed, skipping full execution');
   });
 });

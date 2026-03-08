@@ -22,8 +22,12 @@ export async function action({ request }: ActionFunctionArgs) {
     return json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const body = await request.json();
+  const body = await request.json() as { action?: string; projectData?: Record<string, unknown> };
   const { action: syncAction, projectData } = body;
+
+  if (!projectData) {
+    return json({ error: 'Missing projectData' }, { status: 400 });
+  }
 
   if (syncAction === 'create') {
     try {
@@ -33,8 +37,8 @@ export async function action({ request }: ActionFunctionArgs) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId,
-          name: projectData.name || 'Untitled Project',
-          description: projectData.description || '',
+          name: (projectData.name as string) || 'Untitled Project',
+          description: (projectData.description as string) || '',
           convexProjectId: projectData.convexProjectId,
           templateId: projectData.templateId,
           businessInfo: projectData.businessInfo,
@@ -43,10 +47,10 @@ export async function action({ request }: ActionFunctionArgs) {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        return json({ error: (err as any).error || 'Create failed' }, { status: res.status });
+        return json({ error: (err as Record<string, unknown>).error || 'Create failed' }, { status: res.status });
       }
 
-      const data = await res.json();
+      const data = await res.json() as { projectId?: string };
       return json({ success: true, supabaseProjectId: data.projectId });
     } catch (e) {
       console.error('[ProjectSync] Create error:', e);
@@ -61,18 +65,18 @@ export async function action({ request }: ActionFunctionArgs) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId,
-          supabaseProjectId: projectData.supabaseProjectId,
-          name: projectData.name,
-          description: projectData.description,
-          status: projectData.status,
-          templateId: projectData.templateId,
-          businessInfo: projectData.businessInfo,
+          supabaseProjectId: projectData?.supabaseProjectId,
+          name: projectData?.name,
+          description: projectData?.description,
+          status: projectData?.status,
+          templateId: projectData?.templateId,
+          businessInfo: projectData?.businessInfo,
         }),
       });
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        return json({ error: (err as any).error || 'Update failed' }, { status: res.status });
+        return json({ error: (err as Record<string, unknown>).error || 'Update failed' }, { status: res.status });
       }
 
       return json({ success: true });

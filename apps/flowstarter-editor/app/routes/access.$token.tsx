@@ -120,7 +120,7 @@ function MagicLinkAccessContent() {
     setValidationData(validation);
     
     // Check if client already has a Clerk account linked
-    if (validation.client.hasClerkAccount) {
+    if (validation.client?.hasClerkAccount) {
       // Client already signed up - redirect to main platform to login
       // They'll be redirected back with auth
       const returnUrl = encodeURIComponent(`${window.location.origin}/access/${token}/complete`);

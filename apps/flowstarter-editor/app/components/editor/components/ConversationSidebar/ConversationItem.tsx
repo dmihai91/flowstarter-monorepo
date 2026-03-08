@@ -175,7 +175,7 @@ export function ConversationItem({
 }
 
 interface EditInputProps {
-  inputRef: React.RefObject<HTMLInputElement>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
   editValue: string;
   setEditValue: (value: string) => void;
   isDark: boolean;

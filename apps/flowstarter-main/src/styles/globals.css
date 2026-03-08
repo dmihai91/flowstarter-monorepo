@@ -2,6 +2,8 @@
 @import './theme-colors.css';
 @import '@flowstarter/flow-design-system/styles';
 
+@source "../../../../packages/flow-design-system/src";
+
 /* Font family CSS variables */
 :root {
   --font-inter: 'Inter', sans-serif;

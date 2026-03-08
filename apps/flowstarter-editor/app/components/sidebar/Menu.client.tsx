@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { DialogRoot } from '~/components/ui/Dialog';
 import { ThemeSwitch } from '~/components/ui/ThemeSwitch';
 import { SettingsButton } from '~/components/ui/SettingsButton';
-import { ControlPanelDialog } from '~/components/@settings';
 import { Button } from '~/components/ui/Button';
 import { useChatHistory } from '~/lib/persistence';
 import { cubicEasingFn } from '~/utils/easings';
@@ -244,7 +243,6 @@ export const Menu = () => {
         </div>
       </motion.div>
 
-      <ControlPanelDialog isOpen={isSettingsOpen} onClose={handleSettingsClose} />
     </>
   );
 };

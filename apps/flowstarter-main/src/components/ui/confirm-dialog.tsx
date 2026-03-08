@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import type { ButtonVariant } from '@flowstarter/flow-design-system';
 import * as React from 'react';
 
 export function ConfirmDialog({
@@ -29,13 +30,7 @@ export function ConfirmDialog({
   confirmLabel: React.ReactNode;
   cancelLabel: React.ReactNode;
   onConfirmAction: () => void;
-  confirmVariant?:
-    | 'default'
-    | 'destructive'
-    | 'outline'
-    | 'secondary'
-    | 'ghost'
-    | 'link';
+  confirmVariant?: ButtonVariant;
 }) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChangeAction}>
@@ -47,7 +42,7 @@ export function ConfirmDialog({
           ) : null}
         </AlertDialogHeader>
         <AlertDialogFooter className="mt-1 py-4 border-gray-400/30 dark:border-gray-600/30">
-          <AlertDialogCancel className="surface-1 hover:bg-gray-200 dark:hover:bg-gray-700 w-full sm:w-32 h-10 mt-0">
+          <AlertDialogCancel className="w-full sm:w-32 h-10 mt-0">
             {cancelLabel}
           </AlertDialogCancel>
           <AlertDialogAction

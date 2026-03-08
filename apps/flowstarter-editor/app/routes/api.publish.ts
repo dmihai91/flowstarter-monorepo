@@ -13,7 +13,7 @@ export async function action({ request }: ActionFunctionArgs) {
     return json({ error: 'Method not allowed' }, { status: 405 });
   }
 
-  const { projectId } = await request.json();
+  const { projectId } = await request.json() as { projectId?: string };
 
   if (!projectId) {
     return json({ error: 'projectId required' }, { status: 400 });
@@ -39,8 +39,8 @@ export async function action({ request }: ActionFunctionArgs) {
     const client = getClient();
 
     // Find sandbox for project
-    const { items: sandboxes } = await client.list({ source: 'flowstarter' });
-    const sandbox = sandboxes.find((s) => s.labels?.project === projectId);
+    const sandboxes = await client.list();
+    const sandbox = sandboxes.find((s) => (s as unknown as { labels?: Record<string, string> }).labels?.project === projectId);
 
     if (!sandbox) {
       return json({ error: 'No active workspace found' }, { status: 404 });

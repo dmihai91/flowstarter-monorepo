@@ -27,11 +27,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const res = await fetch(`${MAIN_PLATFORM_URL}/api/editor/handoff?token=${encodeURIComponent(token)}`);
     
     if (!res.ok) {
-      const err = await res.json().catch(() => ({ error: 'Validation failed' }));
+      const err = await res.json().catch(() => ({ error: 'Validation failed' })) as { error?: string };
       return json({ valid: false, error: err.error }, { status: res.status });
     }
 
-    const data = await res.json();
+    const data = await res.json() as { project?: { id: string }; userId?: string };
     
     return json({
       valid: true,
@@ -50,7 +50,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
  * Returns full project data
  */
 export async function action({ request }: ActionFunctionArgs) {
-  const body = await request.json();
+  const body = await request.json() as { token?: string };
   const token = body.token;
 
   if (!token) {
@@ -61,11 +61,11 @@ export async function action({ request }: ActionFunctionArgs) {
     const res = await fetch(`${MAIN_PLATFORM_URL}/api/editor/handoff?token=${encodeURIComponent(token)}`);
     
     if (!res.ok) {
-      const err = await res.json().catch(() => ({ error: 'Validation failed' }));
+      const err = await res.json().catch(() => ({ error: 'Validation failed' })) as { error?: string };
       return json({ valid: false, error: err.error }, { status: res.status });
     }
 
-    const data = await res.json();
+    const data = await res.json() as { project?: unknown; userId?: string };
     
     return json({
       valid: true,

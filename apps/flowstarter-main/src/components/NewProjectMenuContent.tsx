@@ -1,13 +1,8 @@
 'use client';
 
-import {
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
-import { MagicWandIcon } from '@/components/ui/magic-wand-icon';
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { useTranslations } from '@/lib/i18n';
-import { Edit3, Layout, MessageCircle } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
+import { MessageCircle } from 'lucide-react';
 import { useState } from 'react';
 
 // Editor URL - configure in environment
@@ -16,11 +11,9 @@ const EDITOR_URL =
 
 export function NewProjectMenuContent() {
   const { t } = useTranslations();
-  const router = useRouter();
-  const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleInteractiveChat = async () => {
+  const handleOpenEditor = async () => {
     setIsLoading(true);
     try {
       // Create a handoff to the editor with interactive mode
@@ -54,76 +47,21 @@ export function NewProjectMenuContent() {
     }
   };
 
-  const handleQuickForm = () => {
-    router.push('/dashboard/new?mode=scratch&fresh=true');
-  };
-
-  const handleBrowseTemplates = () => {
-    router.push('/dashboard/new?path=gallery');
-  };
-
-  const handleStartWithAI = () => {
-    // If on dashboard, scroll to the assistant section
-    if (pathname === '/dashboard') {
-      const assistantElement = document.getElementById('flowstarter-assistant');
-      if (assistantElement) {
-        assistantElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-        });
-      }
-    } else {
-      // Otherwise, navigate to dashboard first
-      router.push('/dashboard#flowstarter-assistant');
-    }
-  };
-
   return (
-    <>
-      <DropdownMenuItem
-        onClick={handleInteractiveChat}
-        disabled={isLoading}
-        className="flex items-start gap-3 p-4 cursor-pointer"
-      >
-        <MessageCircle className="h-5 w-5 text-[var(--purple)] mt-0.5" />
-        <div className="flex-1 cursor-pointer">
-          <div className="font-semibold text-sm mb-1">
-            {t('newProject.dropdown.interactive.title')}
-          </div>
-          <div className="text-xs text-gray-600 dark:text-gray-400">
-            {t('newProject.dropdown.interactive.description')}
-          </div>
+    <DropdownMenuItem
+      onClick={handleOpenEditor}
+      disabled={isLoading}
+      className="flex items-start gap-3 p-4 cursor-pointer"
+    >
+      <MessageCircle className="h-5 w-5 text-[var(--purple)] mt-0.5" />
+      <div className="flex-1 cursor-pointer">
+        <div className="font-semibold text-sm mb-1">
+          {t('newProject.dropdown.interactive.title')}
         </div>
-      </DropdownMenuItem>
-      <DropdownMenuItem
-        onClick={handleQuickForm}
-        className="flex items-start gap-3 p-4 cursor-pointer"
-      >
-        <Edit3 className="h-5 w-5 text-[var(--green)] mt-0.5" />
-        <div className="flex-1">
-          <div className="font-semibold text-sm mb-1">
-            {t('newProject.dropdown.quickForm.title')}
-          </div>
-          <div className="text-xs text-gray-600 dark:text-gray-400">
-            {t('newProject.dropdown.quickForm.description')}
-          </div>
+        <div className="text-xs text-gray-600 dark:text-gray-400">
+          {t('newProject.dropdown.interactive.description')}
         </div>
-      </DropdownMenuItem>
-      <DropdownMenuSeparator className="my-1" />
-      <DropdownMenuItem
-        onClick={handleBrowseTemplates}
-        className="flex items-start gap-3 p-4 cursor-pointer"
-      >
-        <Layout className="h-5 w-5 text-blue-500 mt-0.5" />
-        <div className="flex-1">
-          <div className="font-semibold text-sm mb-1">
-            {t('newProject.dropdown.template.title')}
-          </div>
-          <div className="text-xs text-gray-600 dark:text-gray-400">
-            {t('newProject.dropdown.template.description')}
-          </div>
-        </div>
-      </DropdownMenuItem>
-    </>
+      </div>
+    </DropdownMenuItem>
   );
 }

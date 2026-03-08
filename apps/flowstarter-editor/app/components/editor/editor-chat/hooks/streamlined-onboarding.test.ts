@@ -247,78 +247,78 @@ describe('getReadyMessage', () => {
 
 describe('getNextStepFromCurrent', () => {
   it('welcome -> describe', () => {
-    const next = getNextStepFromCurrent('welcome', false, false, false, false);
+    const next = getNextStepFromCurrent('welcome', false, false, false, false, false);
     expect(next).toBe('describe');
   });
 
   it('describe -> describe when no description', () => {
-    const next = getNextStepFromCurrent('describe', false, false, false, false);
+    const next = getNextStepFromCurrent('describe', false, false, false, false, false);
     expect(next).toBe('describe');
   });
 
   it('describe -> quick-profile when has description', () => {
-    const next = getNextStepFromCurrent('describe', true, false, false, false);
+    const next = getNextStepFromCurrent('describe', true, false, false, false, false);
     expect(next).toBe('quick-profile');
   });
 
   it('quick-profile -> quick-profile when no profile', () => {
-    const next = getNextStepFromCurrent('quick-profile', true, false, false, false);
+    const next = getNextStepFromCurrent('quick-profile', true, false, false, false, false);
     expect(next).toBe('quick-profile');
   });
 
   it('quick-profile -> template when has profile', () => {
-    const next = getNextStepFromCurrent('quick-profile', true, true, false, false);
+    const next = getNextStepFromCurrent('quick-profile', true, true, false, false, false);
     expect(next).toBe('template');
   });
 
   it('template -> template when no template', () => {
-    const next = getNextStepFromCurrent('template', true, true, false, false);
+    const next = getNextStepFromCurrent('template', true, true, false, false, false);
     expect(next).toBe('template');
   });
 
   it('template -> personalization when has template', () => {
-    const next = getNextStepFromCurrent('template', true, true, true, false);
+    const next = getNextStepFromCurrent('template', true, true, true, false, false);
     expect(next).toBe('personalization');
   });
 
   it('personalization -> personalization when not personalized', () => {
-    const next = getNextStepFromCurrent('personalization', true, true, true, false);
+    const next = getNextStepFromCurrent('personalization', true, true, true, false, false);
     expect(next).toBe('personalization');
   });
 
   it('personalization -> creating when personalized', () => {
-    const next = getNextStepFromCurrent('personalization', true, true, true, true);
+    const next = getNextStepFromCurrent('personalization', true, true, true, true, true);
     expect(next).toBe('creating');
   });
 
   it('creating -> ready', () => {
-    const next = getNextStepFromCurrent('creating', true, true, true, true);
+    const next = getNextStepFromCurrent('creating', true, true, true, true, true);
     expect(next).toBe('ready');
   });
 
   it('ready -> ready (stays)', () => {
-    const next = getNextStepFromCurrent('ready', true, true, true, true);
+    const next = getNextStepFromCurrent('ready', true, true, true, true, true);
     expect(next).toBe('ready');
   });
 
   describe('legacy step migration', () => {
     it('name -> describe', () => {
-      const next = getNextStepFromCurrent('name' as OnboardingStep, false, false, false, false);
+      const next = getNextStepFromCurrent('name' as OnboardingStep, false, false, false, false, false);
       expect(next).toBe('describe');
     });
 
     it('business-uvp -> quick-profile', () => {
-      const next = getNextStepFromCurrent('business-uvp' as OnboardingStep, false, false, false, false);
+      const next = getNextStepFromCurrent('business-uvp' as OnboardingStep, false, false, false, false, false);
       expect(next).toBe('quick-profile');
     });
 
     it('business-summary -> template', () => {
-      const next = getNextStepFromCurrent('business-summary' as OnboardingStep, false, false, false, false);
+      const next = getNextStepFromCurrent('business-summary' as OnboardingStep, false, false, false, false, false);
       expect(next).toBe('template');
     });
 
     it('integrations -> ready', () => {
-      const next = getNextStepFromCurrent('integrations' as OnboardingStep, false, false, false, false);
+      const next = getNextStepFromCurrent('integrations' as OnboardingStep, false, false, false, false, false);
       expect(next).toBe('ready');
     });
   });

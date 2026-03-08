@@ -4,8 +4,13 @@
  * Handles sandbox creation, discovery, and lifecycle management.
  */
 
-import { Daytona, Sandbox, SandboxState } from '@daytonaio/sdk';
+import { Daytona, Sandbox } from '@daytonaio/sdk';
 import type { ReusableSandboxResult } from './types';
+
+/** Helper to safely get sandbox info */
+async function getSandboxInfo(s: Sandbox): Promise<Awaited<ReturnType<Sandbox['info']>>> {
+  return s.info();
+}
 
 /**
  * Find a reusable sandbox for the given project.
@@ -16,38 +21,43 @@ export async function findReusableSandbox(
   projectId: string,
 ): Promise<ReusableSandboxResult | null> {
   try {
-    const { items: sandboxes } = await client.list({ source: 'flowstarter' });
+    const sandboxes = await client.list();
 
-    const projectSandboxes = sandboxes.filter((s) => s.labels?.project === projectId);
+    // Get info for all sandboxes to check labels and state
+    const sandboxInfos = await Promise.all(
+      sandboxes.map(async (s) => ({ sandbox: s, info: await getSandboxInfo(s) })),
+    );
 
-    const startedSandbox = projectSandboxes.find((s) => s.state === SandboxState.STARTED);
+    const projectSandboxes = sandboxInfos.filter((si) => si.info.labels?.project === projectId);
+
+    const startedSandbox = projectSandboxes.find((si) => si.info.state === 'started');
     if (startedSandbox) {
-      return { sandbox: startedSandbox, needsStart: false };
+      return { sandbox: startedSandbox.sandbox, needsStart: false };
     }
 
-    const stoppedSandbox = projectSandboxes.find((s) => s.state === SandboxState.STOPPED);
+    const stoppedSandbox = projectSandboxes.find((si) => si.info.state === 'stopped');
     if (stoppedSandbox) {
-      return { sandbox: stoppedSandbox, needsStart: true };
+      return { sandbox: stoppedSandbox.sandbox, needsStart: true };
     }
 
-    const archivedSandbox = projectSandboxes.find((s) => s.state === SandboxState.ARCHIVED);
+    const archivedSandbox = projectSandboxes.find((si) => si.info.state === 'archived');
     if (archivedSandbox) {
-      return { sandbox: archivedSandbox, needsStart: true };
+      return { sandbox: archivedSandbox.sandbox, needsStart: true };
     }
 
     // Check for any unassigned sandbox
-    const anyAvailable = sandboxes.find(
-      (s) =>
-        !s.labels?.project &&
-        (s.state === SandboxState.STARTED ||
-          s.state === SandboxState.STOPPED ||
-          s.state === SandboxState.ARCHIVED),
+    const anyAvailable = sandboxInfos.find(
+      (si) =>
+        !si.info.labels?.project &&
+        (si.info.state === 'started' ||
+          si.info.state === 'stopped' ||
+          si.info.state === 'archived'),
     );
 
     if (anyAvailable) {
       return {
-        sandbox: anyAvailable,
-        needsStart: anyAvailable.state !== SandboxState.STARTED,
+        sandbox: anyAvailable.sandbox,
+        needsStart: anyAvailable.info.state !== 'started',
       };
     }
 
@@ -78,10 +88,10 @@ export async function createSandbox(client: Daytona, projectId: string): Promise
 
   for (const bunImage of bunImages) {
     try {
-      const sandbox = await client.create(
-        { ...baseConfig, image: bunImage },
-        { timeout: 120 },
-      );
+  const sandbox = await client.create(
+    { ...baseConfig, image: bunImage },
+    120,
+  );
       return sandbox;
     } catch {
       // Try next image
@@ -91,7 +101,7 @@ export async function createSandbox(client: Daytona, projectId: string): Promise
   // Fallback to node
   const sandbox = await client.create(
     { ...baseConfig, language: 'javascript' },
-    { timeout: 120 },
+    120,
   );
 
   return sandbox;
@@ -102,13 +112,13 @@ export async function createSandbox(client: Daytona, projectId: string): Promise
  */
 export async function ensureSandboxRunning(sandbox: Sandbox): Promise<boolean> {
   try {
-    await sandbox.refreshData();
+    const sandboxInfo = await sandbox.info();
 
-    if (sandbox.state === SandboxState.STARTED) {
+    if (sandboxInfo.state === 'started') {
       return true;
     }
 
-    if (sandbox.state === SandboxState.STOPPED || sandbox.state === SandboxState.ARCHIVED) {
+    if (sandboxInfo.state === 'stopped' || sandboxInfo.state === 'archived') {
       await sandbox.start(60);
       await new Promise((r) => setTimeout(r, 3000));
       return true;

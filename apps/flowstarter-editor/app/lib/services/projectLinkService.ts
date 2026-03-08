@@ -52,10 +52,10 @@ export async function linkProjectToSupabase({
       return null;
     }
 
-    const data = await response.json();
+    const data = await response.json() as { supabaseProjectId?: string; alreadyLinked?: boolean };
     return {
-      supabaseProjectId: data.supabaseProjectId,
-      alreadyLinked: data.alreadyLinked,
+      supabaseProjectId: data.supabaseProjectId || '',
+      alreadyLinked: data.alreadyLinked || false,
     };
   } catch (error) {
     console.warn('[ProjectLink] Error linking project:', error);

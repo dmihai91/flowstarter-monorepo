@@ -18,7 +18,7 @@ export function SocialAuth({
   const { t } = useTranslations();
 
   return (
-    <div className="grid grid-cols-2 gap-3 mb-6 w-full">
+    <div className="flex flex-col sm:grid sm:grid-cols-2 gap-3 mb-6 w-full">
       <Button
         type="button"
         variant="outline"
@@ -28,12 +28,7 @@ export function SocialAuth({
         className="w-full"
       >
         <GoogleIcon className="w-5 h-5 mr-2" />
-        <span className="hidden sm:inline">
-          {isGoogleLoading ? t('auth.signIn.connecting') : t('auth.google')}
-        </span>
-        <span className="sm:hidden">
-          {isGoogleLoading ? t('auth.signIn.connecting') : 'Google'}
-        </span>
+        {isGoogleLoading ? t('auth.signIn.connecting') : t('auth.google')}
       </Button>
       <Button
         type="button"
@@ -44,12 +39,7 @@ export function SocialAuth({
         className="w-full"
       >
         <AppleBrandIcon className="w-5 h-5 mr-2" />
-        <span className="hidden sm:inline">
-          {isAppleLoading ? t('auth.signIn.connecting') : t('auth.apple')}
-        </span>
-        <span className="sm:hidden">
-          {isAppleLoading ? t('auth.signIn.connecting') : 'Apple'}
-        </span>
+        {isAppleLoading ? t('auth.signIn.connecting') : t('auth.apple')}
       </Button>
     </div>
   );

@@ -242,7 +242,6 @@ function migrateFromLegacyStep(legacyStep: OnboardingStep): OnboardingStep {
     'business-tone': 'quick-profile',
     'business-selling': 'quick-profile',
     'business-pricing': 'quick-profile',
-    'business-contact': 'personalization',
     'business-summary': 'template',
     'integrations': 'ready',
   };
@@ -260,6 +259,8 @@ export interface OnboardingContext {
   quickProfile?: QuickProfile;
   uvp?: string;
   uvpSkipped?: boolean;
+  offerings?: string;
+  contactInfo?: boolean;
   templateId?: string;
   templateName?: string;
   hasPersonalization?: boolean;
@@ -270,7 +271,7 @@ export interface OnboardingContext {
 }
 
 export function generateOnboardingResponse(context: OnboardingContext): OnboardingMessage {
-  const { step, description, quickProfile, uvp, uvpSkipped, templateName, previewUrl, projectName, userName, buildProgress } = context;
+  const { step, description, quickProfile, uvp, uvpSkipped, offerings, contactInfo, templateName, previewUrl, projectName, userName, buildProgress } = context;
   
   switch (step) {
     case 'welcome':

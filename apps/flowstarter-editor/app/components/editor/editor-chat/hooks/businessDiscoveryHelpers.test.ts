@@ -24,6 +24,8 @@ import type { BusinessInfo } from '../types';
 // ─── Test Fixtures ────────────────────────────────────────────────────────────
 
 const COMPLETE_BUSINESS_INFO: BusinessInfo = {
+  description: 'Personalized fitness coaching for busy professionals',
+  quickProfile: { goal: 'bookings', offerType: 'high-ticket', tone: 'professional' },
   uvp: 'Personalized 15-minute workouts for busy professionals',
   targetAudience: 'Executives aged 30-50',
   businessGoals: ['Generate leads', 'Book consultations', 'Build brand awareness'],
@@ -33,6 +35,8 @@ const COMPLETE_BUSINESS_INFO: BusinessInfo = {
 };
 
 const MINIMAL_BUSINESS_INFO: BusinessInfo = {
+  description: 'Fast pizza delivery for college students',
+  quickProfile: { goal: 'sales', offerType: 'low-ticket', tone: 'friendly' },
   uvp: 'Fast pizza delivery',
   targetAudience: 'College students',
   businessGoals: ['Get orders'],

@@ -8,7 +8,6 @@ import {
 import { I18nProvider, useTranslations } from '@/lib/i18n';
 import en from '@/locales/en';
 import ro from '@/locales/ro';
-import { useWizardStore } from '@/store/wizard-store';
 import { useAuth } from '@clerk/nextjs';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -50,14 +49,11 @@ export function NavigationWrapper() {
   const { isLoaded } = useAuth();
   const [isMounted, setIsMounted] = useState(false);
   const [isDraftLoading, setIsDraftLoading] = useState(false);
-  const isDraftDiscarding = useWizardStore((state) => state.isDiscarding);
-  const skipLoadingScreen = useWizardStore((state) => state.skipLoadingScreen);
   const loaderTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isPublicRoute = publicRoutes.includes(pathname) || isTeamRoute;
   const { t } = useTranslations();
   const [hasSeenInitial, setHasSeenInitial] = useState(false);
   const isDashboardRoute = pathname === '/dashboard';
-  const isWizardRoute = pathname === '/dashboard/new';
   const isClientDashboard = pathname.startsWith('/dashboard'); // Client dashboard has its own header
   const isNoNavbarRoute = noNavbarRoutes.includes(pathname) || isTeamRoute || isClientDashboard;
   const [, setIsErrorPage] = useState(false);
@@ -116,18 +112,13 @@ export function NavigationWrapper() {
     }
   }, []);
 
-  // Listen for draft loading events dispatched by pages (e.g., wizard)
+  // Listen for draft loading events dispatched by pages
   // Don't show global loading screen for draft fetches on dashboard page
-  // Don't show if wizard has skipLoadingScreen enabled
   useEffect(() => {
     const handleStart = (e: Event) => {
       const customEvent = e as CustomEvent;
       // Skip showing loader if we're on dashboard and it's just a draft fetch
       if (isDashboardRoute && customEvent.detail?.scope === 'draftFetch') {
-        return;
-      }
-      // Skip showing loader if wizard wants to skip it (e.g., quick mode)
-      if (isWizardRoute && skipLoadingScreen) {
         return;
       }
       setIsDraftLoading(true);
@@ -140,7 +131,7 @@ export function NavigationWrapper() {
       window.removeEventListener('draft-loading-start', handleStart);
       window.removeEventListener('draft-loading-end', handleEnd);
     };
-  }, [isDashboardRoute, isWizardRoute, skipLoadingScreen]);
+  }, [isDashboardRoute]);
 
   // Remove route-driven loader; rely solely on query events
   useEffect(() => {
@@ -175,7 +166,6 @@ export function NavigationWrapper() {
     !isTeamRoute &&
     (shouldShowInitial ||
       isDraftLoading ||
-      isDraftDiscarding ||
       !isMounted ||
       (!isPublicRoute && !isLoaded));
 
@@ -194,14 +184,10 @@ export function NavigationWrapper() {
     // Determine message based on context and priority
     let message = t('app.loadingExperience');
 
-    if (isDraftDiscarding) {
-      message = t('draft.discardingDraft');
-    } else if (isDraftLoading && !shouldShowInitial) {
+    if (isDraftLoading && !shouldShowInitial) {
       message = t('draft.restoringDraft');
     } else if (isDashboardRoute) {
       message = t('dashboard.loading');
-    } else if (isWizardRoute) {
-      message = t('wizard.loading');
     }
 
     return <LoadingScreen message={message} />;

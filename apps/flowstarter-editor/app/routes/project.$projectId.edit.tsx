@@ -22,7 +22,7 @@ export default function ProjectEditRoute() {
   const [isSettingUp, setIsSettingUp] = useState(false);
 
   const project = useQuery(api.projects.get, {
-    id: projectId as Id<'projects'>,
+    projectId: projectId as Id<'projects'>,
   });
 
   const updateProject = useMutation(api.projects.update);
@@ -65,9 +65,8 @@ export default function ProjectEditRoute() {
 
         // Update project with setup data
         await updateProject({
-          id: projectId as Id<'projects'>,
-          templateId: data.templateSlug,
-          templateName: data.templateName,
+          projectId: projectId as Id<'projects'>,
+          name: data.templateName,
         });
       } catch (error) {
         console.error('Setup failed:', error);
@@ -96,9 +95,9 @@ export default function ProjectEditRoute() {
       <SetupWizard
         projectId={projectId!}
         initialBusinessData={{
-          name: project.businessDetails?.name,
+          name: (project.businessDetails as Record<string, unknown> | undefined)?.businessName as string | undefined,
           description: project.businessDetails?.description,
-          industry: project.businessDetails?.industry,
+          industry: (project.businessDetails as Record<string, unknown> | undefined)?.industry as string | undefined,
         }}
         onComplete={handleSetupComplete}
         isLoading={isSettingUp}
@@ -111,7 +110,7 @@ export default function ProjectEditRoute() {
     <>
       <SandboxEditorLayout
         projectId={projectId!}
-        domainName={project.domainName}
+        domainName={(project as Record<string, unknown>).domainName as string | undefined}
         onBack={handleBack}
         onPublish={() => setIsPublishOpen(true)}
       />

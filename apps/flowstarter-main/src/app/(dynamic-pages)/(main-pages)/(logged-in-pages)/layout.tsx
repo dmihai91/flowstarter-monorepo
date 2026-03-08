@@ -10,21 +10,7 @@ import { AppHeader } from '@/components/ui/app-header';
 
 function LayoutContent({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-
-  const hidesSidebar =
-    pathname?.startsWith('/dashboard/new') || pathname?.startsWith('/wizard');
-
   const { isCollapsed } = useSidebar();
-
-  if (hidesSidebar) {
-    // Full-width layout for wizard pages
-    return (
-      <div className="min-h-screen flex flex-col">
-        <AppHeader />
-        <main className="flex-1 mt-16">{children}</main>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex flex-col">

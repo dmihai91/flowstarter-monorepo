@@ -45,7 +45,7 @@ export function ExamplesEmptyState({
               </Button>
             ) : (
               <Button asChild size="lg">
-                <Link href="/dashboard/new">
+                <Link href="/dashboard">
                   <Layers className="h-4 w-4 mr-2" />
                   {t('examples.cta.browseTemplates')}
                 </Link>

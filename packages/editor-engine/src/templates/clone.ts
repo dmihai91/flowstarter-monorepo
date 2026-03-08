@@ -111,8 +111,8 @@ export async function cloneTemplateToSandbox(
         batch.map(async (file) => {
           const content = await fs.readFile(file.absolutePath);
           return {
-            source: content,
-            destination: `${workDir}/${file.relativePath}`,
+            path: `${workDir}/${file.relativePath}`,
+            content: new File([content], file.relativePath),
           };
         }),
       );

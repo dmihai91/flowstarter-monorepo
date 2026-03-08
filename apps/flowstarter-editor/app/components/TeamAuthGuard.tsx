@@ -9,7 +9,7 @@
 import { useUser } from '@clerk/remix';
 import { useEffect, useRef, useState } from 'react';
 import { useStore } from '@nanostores/react';
-import { Logo, LoadingScreen, Footer, ThemeToggle, FlowBackground, GlassPanel, type FooterLink } from '@flowstarter/flow-design-system';
+import { Logo, LoadingScreen, Footer, ThemeToggle, FlowBackground, GlassPanel, ScrollAwareHeader, type FooterLink } from '@flowstarter/flow-design-system';
 import { initializeFromClerkUser } from '~/lib/team-auth';
 import { getMainPlatformHomepage, getCalendlyUrl } from '~/lib/config/domains';
 import { themeStore, setTheme, getEffectiveTheme } from '~/lib/stores/theme';

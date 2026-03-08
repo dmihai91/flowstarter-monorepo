@@ -400,7 +400,14 @@ export async function action({ context, request }: ActionFunctionArgs): Promise<
     const groqApiKey = env.GROQ_API_KEY;
 
     // Use template recommendation agent
-    const agentResult = await recommendTemplates(templates, projectDescription, projectName, businessInfo);
+    const agentResult = await recommendTemplates(templates, projectDescription, projectName, {
+      uvp: businessInfo.uvp || '',
+      targetAudience: businessInfo.targetAudience || '',
+      brandTone: businessInfo.brandTone || '',
+      businessGoals: businessInfo.businessGoals,
+      pricingOffers: businessInfo.pricingOffers,
+      industry: businessInfo.industry,
+    });
 
     const llmRecs = agentResult.recommendations;
 

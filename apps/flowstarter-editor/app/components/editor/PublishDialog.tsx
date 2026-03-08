@@ -50,7 +50,7 @@ export function PublishDialog({ isOpen, onClose, projectId }: PublishDialogProps
 
       setStep('deploying');
 
-      const data = await response.json();
+      const data = await response.json() as { publishedUrl?: string };
       setPublishedUrl(data.publishedUrl || null);
       setStep('done');
     } catch (err) {

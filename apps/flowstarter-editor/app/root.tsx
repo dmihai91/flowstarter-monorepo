@@ -324,6 +324,7 @@ export default function App() {
   // The rootAuthLoader reads these and passes them to ClerkProvider
 
   return (
+    // @ts-expect-error ClerkProvider props are injected by rootAuthLoader at runtime
     <ClerkProvider {...(loaderData || {})}>
       <Layout>
         <Outlet />

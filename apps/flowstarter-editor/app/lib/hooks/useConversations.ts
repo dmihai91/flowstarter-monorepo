@@ -244,7 +244,7 @@ export function useConversations(initialConversationId?: Id<'conversations'>): U
   const deleteConversation = useCallback(
     async (id: Id<'conversations'>) => {
       // Look up conversation to get supabaseProjectId before deleting
-      const convo = conversations?.find(c => c._id === id);
+      const convo = conversationsData?.find(c => c._id === id);
       const project = convo?.projectId ? await null : null; // project info comes from Convex mutation
 
       // The mutation returns any associated workspace IDs that need cleanup

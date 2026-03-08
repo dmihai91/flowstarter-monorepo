@@ -58,9 +58,9 @@ export interface DomainConfig {
  */
 const DOMAINS: DomainConfig[] = [
   // Mind/body wellness (order: therapist before yoga before fitness)
-  THERAPIST_DOMAIN,
+  THERAPIST_DOMAIN as DomainConfig,
   YOGA_DOMAIN,
-  FITNESS_DOMAIN,
+  FITNESS_DOMAIN as DomainConfig,
   
   // Service professionals
   COACHING_DOMAIN,

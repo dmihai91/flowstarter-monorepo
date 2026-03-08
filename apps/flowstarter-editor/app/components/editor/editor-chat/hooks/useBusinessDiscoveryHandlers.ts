@@ -336,8 +336,8 @@ export function useBusinessDiscoveryHandlers({
             });
             
             if (response.ok) {
-              const result = await response.json();
-              extractedMethod = result.category || 'other';
+              const result = await response.json() as { category?: string; details?: string; confidence?: number };
+              extractedMethod = (result.category || 'other') as typeof extractedMethod;
               extractedDetails = result.details || answer;
               console.log(`[business-selling] LLM extracted: ${extractedMethod} (confidence: ${result.confidence})`);
             }
@@ -383,7 +383,7 @@ export function useBusinessDiscoveryHandlers({
             });
             
             if (response.ok) {
-              const result = await response.json();
+              const result = await response.json() as { intent?: string; confidence?: number };
               isSkip = result.intent === 'skip';
               console.log(`[business-pricing] LLM detected intent: ${result.intent} (confidence: ${result.confidence})`);
             }
@@ -430,6 +430,8 @@ export function useBusinessDiscoveryHandlers({
 
         // Complete business info collection
         const completeInfo: BusinessInfo = {
+          description: businessInfoRef.current.description || '',
+          quickProfile: businessInfoRef.current.quickProfile || { goal: 'leads', offerType: 'high-ticket', tone: 'professional' },
           uvp: businessInfoRef.current.uvp || '',
           targetAudience: businessInfoRef.current.targetAudience || '',
           businessGoals: businessInfoRef.current.businessGoals || [],

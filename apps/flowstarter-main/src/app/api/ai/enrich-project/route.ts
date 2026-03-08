@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 
     const result = await enrichProject(parsed.data.description);
 
-    return NextResponse.json({ success: true, ...result });
+    return NextResponse.json(result);
   } catch (error) {
     console.error('[Enrich API] Error:', error);
     return NextResponse.json(

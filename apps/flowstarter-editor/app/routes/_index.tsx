@@ -121,6 +121,9 @@ interface HandoffProject {
     USP?: string;
     industry?: string;
     platformType?: string;
+    businessInfo?: Record<string, unknown>;
+    contactInfo?: Record<string, unknown>;
+    description?: string;
   };
 }
 
@@ -209,18 +212,18 @@ function IndexRedirector() {
         );
         const businessInfo = hasBusinessData
           ? {
-              description: bi?.description || config?.userDescription || projectDescription || undefined,
-              uvp: bi?.uvp || config?.USP || undefined,
-              targetAudience: bi?.targetAudience || config?.targetUsers || undefined,
-              businessGoals: bi?.goal ? [bi.goal] : config?.businessGoals ? [config.businessGoals] : undefined,
-              brandTone: bi?.brandTone || undefined,
-              industry: bi?.industry || config?.industry || undefined,
-              offerings: bi?.offerType || undefined,
-              contactEmail: ci?.email || undefined,
-              contactPhone: ci?.phone || undefined,
-              contactAddress: ci?.address || undefined,
-              website: ci?.website || undefined,
-              sellingMethod: bi?.goal || undefined,
+              description: (bi?.description as string) || (config?.userDescription as string) || projectDescription || undefined,
+              uvp: (bi?.uvp as string) || (config?.USP as string) || undefined,
+              targetAudience: (bi?.targetAudience as string) || (config?.targetUsers as string) || undefined,
+              businessGoals: bi?.goal ? [bi.goal as string] : config?.businessGoals ? [config.businessGoals] : undefined,
+              brandTone: (bi?.brandTone as string) || undefined,
+              industry: (bi?.industry as string) || (config?.industry as string) || undefined,
+              offerings: (bi?.offerType as string) || undefined,
+              contactEmail: (ci?.email as string) || undefined,
+              contactPhone: (ci?.phone as string) || undefined,
+              contactAddress: (ci?.address as string) || undefined,
+              website: (ci?.website as string) || undefined,
+              sellingMethod: (bi?.goal as string) || undefined,
             }
           : undefined;
 
@@ -269,7 +272,7 @@ function IndexRedirector() {
             if (projectDescription && !linkedConvo.projectDescription) {
               updates.projectDescription = projectDescription;
             }
-            if (businessInfo && !linkedConvo.businessInfo?.description) {
+            if (businessInfo && !(linkedConvo.businessInfo as Record<string, unknown> | undefined)?.description) {
               updates.businessInfo = businessInfo;
               // If business data exists but conversation is still on early step, advance to template
               const earlySteps = ['welcome', 'describe', 'name'];

@@ -1,5 +1,6 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { Slot } from '@radix-ui/react-slot';
+import { twMerge } from 'tailwind-merge';
 
 export type ButtonVariant =
   | 'default'
@@ -95,26 +96,26 @@ const variantStyles: Record<ButtonVariant, string> = {
     'focus-visible:ring-purple-500',
   ].join(' '),
   accent: [
-    'bg-[var(--purple,#4d5dd9)] text-white',
-    'hover:bg-[var(--purple,#4d5dd9)]/90',
+    'bg-[var(--purple)] text-white',
+    'hover:brightness-110',
     'hover:shadow-lg hover:scale-[1.02]',
-    'focus-visible:ring-[var(--purple,#4d5dd9)]',
+    'focus-visible:ring-[var(--purple)]',
   ].join(' '),
   'brand-gradient': [
-    'bg-gradient-to-r from-[var(--purple,#4d5dd9)] via-blue-500 to-[var(--purple,#4d5dd9)]',
+    'bg-gradient-to-r from-[var(--purple)] via-blue-500 to-[var(--purple)]',
     'text-white',
-    'hover:shadow-lg hover:shadow-[var(--purple,#4d5dd9)]/20',
+    'hover:shadow-lg hover:shadow-[var(--purple)]/20',
     'hover:scale-[1.02]',
-    'focus-visible:ring-[var(--purple,#4d5dd9)]',
+    'focus-visible:ring-[var(--purple)]',
   ].join(' '),
   brand: [
-    'bg-[var(--purple,#4d5dd9)] text-white',
-    'hover:bg-[var(--purple,#4d5dd9)]/90',
+    'bg-[var(--purple)] text-white',
+    'hover:brightness-110',
     'hover:shadow-md',
-    'focus-visible:ring-[var(--purple,#4d5dd9)]',
+    'focus-visible:ring-[var(--purple)]',
   ].join(' '),
   link: [
-    'text-[var(--purple,#4d5dd9)]',
+    'text-[var(--purple)]',
     'underline-offset-4 hover:underline',
   ].join(' '),
   transparent: 'bg-transparent hover:bg-transparent',
@@ -139,7 +140,7 @@ export function getButtonStyles(
   size: ButtonSize = 'md',
   className?: string,
 ): string {
-  return [baseStyles, variantStyles[variant], sizeStyles[size], className].filter(Boolean).join(' ');
+  return twMerge(baseStyles, variantStyles[variant], sizeStyles[size], className);
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(

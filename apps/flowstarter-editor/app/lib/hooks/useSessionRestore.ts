@@ -7,8 +7,8 @@
 
 import { useQuery, useMutation } from 'convex/react';
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { api } from '../../../../convex/_generated/api';
-import type { Id } from '../../../../convex/_generated/dataModel';
+import { api } from '~/convex/_generated/api';
+import type { Id } from '~/convex/_generated/dataModel';
 
 const SESSION_MAX_AGE_MS = 60 * 60 * 1000; // 1 hour
 

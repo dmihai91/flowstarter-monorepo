@@ -93,7 +93,7 @@ export async function runClaudeCodeInSandbox(
     timestamp: new Date(),
   });
 
-  const workDir = (await sandbox.getWorkDir()) || '/home/daytona';
+  const workDir = (await sandbox.getUserRootDir()) || '/home/daytona';
   const fullCommand = `cd ${DEFAULTS.workDir} && ${command}`;
 
   const result = await sandbox.process.executeCommand(fullCommand, workDir);
@@ -127,7 +127,7 @@ export async function runClaudeCodeInSandbox(
  */
 export async function cancelClaudeCode(sandbox: Sandbox): Promise<boolean> {
   try {
-    const workDir = (await sandbox.getWorkDir()) || '/home/daytona';
+    const workDir = (await sandbox.getUserRootDir()) || '/home/daytona';
     await sandbox.process.executeCommand('pkill -f "claude" || true', workDir);
     return true;
   } catch {
@@ -140,7 +140,7 @@ export async function cancelClaudeCode(sandbox: Sandbox): Promise<boolean> {
  */
 export async function isClaudeCodeAvailable(sandbox: Sandbox): Promise<boolean> {
   try {
-    const workDir = (await sandbox.getWorkDir()) || '/home/daytona';
+    const workDir = (await sandbox.getUserRootDir()) || '/home/daytona';
     const result = await sandbox.process.executeCommand('which claude', workDir);
     return result.exitCode === 0;
   } catch {
@@ -153,7 +153,7 @@ export async function isClaudeCodeAvailable(sandbox: Sandbox): Promise<boolean> 
  */
 export async function getClaudeCodeVersion(sandbox: Sandbox): Promise<string | null> {
   try {
-    const workDir = (await sandbox.getWorkDir()) || '/home/daytona';
+    const workDir = (await sandbox.getUserRootDir()) || '/home/daytona';
     const result = await sandbox.process.executeCommand('claude --version', workDir);
     if (result.exitCode === 0) {
       return result.result.trim();

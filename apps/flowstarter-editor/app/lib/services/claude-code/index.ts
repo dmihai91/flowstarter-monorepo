@@ -34,7 +34,6 @@ export {
   parseChangedFiles,
   CONTEXT_FILE_PATH,
   buildContextMarkdown,
-  writeContextFile,
   readContextFile,
   buildContextFromConvex,
   FRONTEND_DESIGN_SKILL,
@@ -64,7 +63,8 @@ export {
   cancelGeneration,
 } from './cliInterface';
 
-// Local context builder (uses local workspace manager)
+// Local context builder (uses local workspace manager + accepts workspaceId)
 export {
+  writeContextFile,
   updateContextFile,
 } from './contextBuilder';

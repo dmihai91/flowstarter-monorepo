@@ -113,8 +113,7 @@ Suggest 3-5 images for this business's website. Include at least:
 3. Optional: team/about image if relevant`;
 
   const response = await generateCompletion(
-    [{ role: 'user', content: userPrompt }],
-    { systemPrompt }
+    [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }],
   );
 
   try {

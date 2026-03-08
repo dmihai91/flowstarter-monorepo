@@ -246,7 +246,8 @@ export async function writeContextFile(
   data: ContextData,
 ): Promise<string> {
   const content = buildContextMarkdown(data);
-  await sandbox.fs.uploadFile(Buffer.from(content, 'utf-8'), CONTEXT_FILE_PATH);
+  const file = new File([content], 'CONTEXT.md', { type: 'text/markdown' });
+  await sandbox.fs.uploadFile(CONTEXT_FILE_PATH, file);
   return CONTEXT_FILE_PATH;
 }
 
@@ -255,8 +256,8 @@ export async function writeContextFile(
  */
 export async function readContextFile(sandbox: Sandbox): Promise<string | null> {
   try {
-    const buffer = await sandbox.fs.downloadFile(CONTEXT_FILE_PATH);
-    return buffer.toString('utf-8');
+    const blob = await sandbox.fs.downloadFile(CONTEXT_FILE_PATH);
+    return await blob.text();
   } catch {
     return null;
   }

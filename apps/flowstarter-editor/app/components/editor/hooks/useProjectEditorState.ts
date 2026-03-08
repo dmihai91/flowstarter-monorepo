@@ -139,20 +139,22 @@ function useInitialState(
   if (!hasInitialized.current && (conversation || initialFromNav) && (messages !== undefined || initialFromNav?.messages)) {
     const src = conversation || initialFromNav;
     hasInitialized.current = true;
-    ref.current = {
-      step: (src.step as OnboardingStep) || 'welcome',
-      projectDescription: src.projectDescription || '',
-      selectedTemplateId: src.selectedTemplateId || null,
-      selectedTemplateName: src.selectedTemplateName || null,
-      selectedPalette: src.selectedPalette || null,
-      selectedFont: src.selectedFont || null,
-      selectedLogo: src.selectedLogo || null,
-      projectUrlId: src.projectUrlId || null,
-      buildPhase: (src.buildPhase as BuildPhase) || 'idle',
-      projectName: src.projectName || null,
-      businessInfo: (src.businessInfo as BusinessInfo | null) || null,
-      messages: messages || initialFromNav?.messages || [],
-    };
+    if (src) {
+      ref.current = {
+        step: (src.step as OnboardingStep) || 'welcome',
+        projectDescription: src.projectDescription || '',
+        selectedTemplateId: src.selectedTemplateId || null,
+        selectedTemplateName: src.selectedTemplateName || null,
+        selectedPalette: src.selectedPalette || null,
+        selectedFont: src.selectedFont || null,
+        selectedLogo: src.selectedLogo || null,
+        projectUrlId: src.projectUrlId || null,
+        buildPhase: (src.buildPhase as BuildPhase) || 'idle',
+        projectName: src.projectName || null,
+        businessInfo: (src.businessInfo as BusinessInfo | null) || null,
+        messages: messages || initialFromNav?.messages || [],
+      };
+    }
   }
 
   return ref.current;

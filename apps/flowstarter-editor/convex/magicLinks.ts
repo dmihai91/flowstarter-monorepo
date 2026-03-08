@@ -7,7 +7,6 @@
 
 import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
-import { Id } from './_generated/dataModel';
 
 // Generate a secure random token
 function generateToken(): string {
@@ -261,7 +260,7 @@ export const use = mutation({
     const client = await ctx.db.get(link.clientId);
     if (client && client.status === 'onboarding') {
       await ctx.db.patch(link.clientId, {
-        status: 'review',
+        status: 'active',
         updatedAt: now,
       });
     }

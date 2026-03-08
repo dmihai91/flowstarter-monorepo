@@ -90,7 +90,6 @@ export function Sidebar() {
     if (exact) return pathname === href;
     if (href === '/dashboard') {
       return pathname === '/dashboard' || 
-             pathname?.startsWith('/dashboard/new') || 
              pathname?.startsWith('/dashboard/projects');
     }
     return pathname?.startsWith(href);

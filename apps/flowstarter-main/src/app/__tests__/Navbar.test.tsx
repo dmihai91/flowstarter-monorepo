@@ -27,9 +27,6 @@ vi.mock('@/lib/i18n', () => ({
   useI18n: () => ({ t: (key: string) => key, locale: 'en' }),
 }));
 
-vi.mock('@/store/wizard-store', () => ({
-  useWizardStore: vi.fn(() => ({ currentStep: 0, projectName: '' })),
-}));
 
 vi.mock('@/components/ui/theme-toggle', () => ({
   ThemeToggle: () => <div data-testid="theme-toggle" />,
@@ -41,10 +38,8 @@ vi.mock('../components/nav', () => ({
   NavbarHeader: ({ children }: any) => <header>{children}</header>,
   NavbarLogo: ({ href }: any) => <a href={href} data-testid="logo">Logo</a>,
   PublicNavLinks: () => <nav data-testid="public-links">Links</nav>,
-  WizardNavControls: () => <div data-testid="wizard-nav">Wizard</div>,
   useCompactViewport: () => false,
   useScrolled: () => false,
-  useWizardNavbar: () => ({ isOnWizard: false }),
 }));
 
 const mockUseAuth = useAuth as ReturnType<typeof vi.fn>;

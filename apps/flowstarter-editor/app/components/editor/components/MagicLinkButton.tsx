@@ -113,8 +113,8 @@ export function MagicLinkButton({ projectId }: MagicLinkButtonProps) {
               marginTop: '8px',
               width: '320px',
               padding: '16px',
-              backgroundColor: colors.bgCard,
-              border: `1px solid ${colors.border}`,
+              backgroundColor: colors.bgPrimary,
+              border: colors.borderLight,
               borderRadius: '12px',
               boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
               zIndex: 1000,
@@ -125,7 +125,7 @@ export function MagicLinkButton({ projectId }: MagicLinkButtonProps) {
                 margin: 0, 
                 fontSize: '14px', 
                 fontWeight: 600,
-                color: colors.text,
+                color: colors.textPrimary,
               }}>
                 Share with Client
               </h3>
@@ -150,7 +150,7 @@ export function MagicLinkButton({ projectId }: MagicLinkButtonProps) {
                   borderRadius: '8px',
                   marginBottom: '12px',
                 }}>
-                  <div style={{ fontWeight: 500, color: colors.text, fontSize: '13px' }}>
+                  <div style={{ fontWeight: 500, color: colors.textPrimary, fontSize: '13px' }}>
                     {client.name}
                   </div>
                   <div style={{ fontSize: '12px', color: colors.textSubtle, marginTop: '2px' }}>
@@ -200,7 +200,7 @@ export function MagicLinkButton({ projectId }: MagicLinkButtonProps) {
                           backgroundColor: copied ? '#10b981' : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'),
                           border: 'none',
                           borderRadius: '6px',
-                          color: copied ? 'white' : colors.text,
+                          color: copied ? 'white' : colors.textPrimary,
                           fontSize: '12px',
                           cursor: 'pointer',
                         }}
@@ -214,7 +214,7 @@ export function MagicLinkButton({ projectId }: MagicLinkButtonProps) {
                           backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
                           border: 'none',
                           borderRadius: '6px',
-                          color: colors.text,
+                          color: colors.textPrimary,
                           fontSize: '12px',
                           cursor: 'pointer',
                         }}

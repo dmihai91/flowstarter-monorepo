@@ -49,7 +49,7 @@ export const DaytonaPreview = memo(({ state, onRefresh, onRetry }: DaytonaPrevie
   if (status === 'error') {
     return (
       <ErrorState
-        error={error}
+        error={error ?? undefined}
         isDark={isDark}
         containerStyle={containerStyle}
         iconContainerStyle={iconContainerStyle}
@@ -65,7 +65,7 @@ export const DaytonaPreview = memo(({ state, onRefresh, onRetry }: DaytonaPrevie
   return (
     <ReadyState
       previewUrl={previewUrl}
-      displayUrl={displayUrl}
+      displayUrl={displayUrl ?? undefined}
       isDark={isDark}
       colors={colors}
       onRefresh={onRefresh}

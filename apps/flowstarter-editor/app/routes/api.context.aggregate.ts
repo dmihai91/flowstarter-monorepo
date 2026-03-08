@@ -14,7 +14,7 @@ export async function action({ request }: ActionFunctionArgs) {
     return json({ error: 'Method not allowed' }, { status: 405 });
   }
 
-  const { projectId, supabaseProjectId } = await request.json();
+  const { projectId, supabaseProjectId } = await request.json() as { projectId?: string; supabaseProjectId?: string };
 
   if (!projectId) {
     return json({ error: 'projectId required' }, { status: 400 });

@@ -26,7 +26,6 @@ import {
   PlusCircle,
   Trash2,
 } from 'lucide-react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useProjectHighlight } from './hooks/useProjectHighlight';
@@ -170,12 +169,13 @@ export const ProjectsList = ({
             </p>
           </div>
           <div className="flex items-center gap-3 w-full sm:w-auto">
-            <Link href="/dashboard/new" className="w-full sm:w-auto">
-              <Button className="flex items-center justify-center gap-2 rounded-xl text-white font-semibold shadow-sm hover:shadow-md transition-all duration-300 w-full sm:w-auto">
-                <PlusCircle className="h-4 w-4" />
-                {t('projects.new')}
-              </Button>
-            </Link>
+            <Button
+              onClick={() => router.push('/dashboard')}
+              className="flex items-center justify-center gap-2 rounded-xl text-white font-semibold shadow-sm hover:shadow-md transition-all duration-300 w-full sm:w-auto"
+            >
+              <PlusCircle className="h-4 w-4" />
+              {t('projects.new')}
+            </Button>
           </div>
         </div>
       )}

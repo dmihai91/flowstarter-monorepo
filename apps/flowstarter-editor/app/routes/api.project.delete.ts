@@ -9,7 +9,7 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   try {
-    const { supabaseProjectId } = await request.json();
+    const { supabaseProjectId } = await request.json() as { supabaseProjectId?: string };
     if (!supabaseProjectId) {
       return Response.json({ error: 'Missing supabaseProjectId' }, { status: 400 });
     }

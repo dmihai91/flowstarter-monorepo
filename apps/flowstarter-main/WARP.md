@@ -77,7 +77,6 @@ flowstarter/
 │   │   │   └── (main-pages)/     # Protected pages
 │   │   │       └── (logged-in-pages)/
 │   │   │           ├── dashboard/    # Main dashboard
-│   │   │           │   ├── new/      # Project wizard
 │   │   │           │   ├── templates/
 │   │   │           │   └── integrations/
 │   │   │           ├── profile/
@@ -91,9 +90,7 @@ flowstarter/
 │   ├── lib/                      # Utilities, services, configs
 │   │   └── ai/                   # AI configurations
 │   ├── store/                    # Zustand stores
-│   │   ├── wizard-store.ts       # Project wizard state
-│   │   ├── draft-store.ts        # Draft persistence
-│   │   └── ai-suggestions-store.ts
+│   │   └── draft-store.ts        # Draft persistence
 │   ├── types/                    # TypeScript definitions
 │   ├── data/                     # Database operations
 │   ├── supabase-clients/         # Supabase client instances
@@ -213,7 +210,6 @@ flowstarter/
 | -------------------------- | ---------------- | -------------------- |
 | `/api/projects`            | GET, POST        | List/create projects |
 | `/api/projects/[id]`       | GET, PUT, DELETE | Project CRUD         |
-| `/api/projects/draft`      | GET, POST, PUT   | Draft management     |
 | `/api/projects/check-name` | POST             | Name availability    |
 
 ### Integrations (`/api/integrations/`)
@@ -320,17 +316,7 @@ Real-time updates via Server-Sent Events:
 ### Zustand Stores (`src/store/`)
 
 ```typescript
-// wizard-store.ts - Project creation wizard
-interface WizardStore {
-  currentStep: WizardStep;
-  projectDetails: ProjectDetails;
-  templateId: string | null;
-  designConfig: DesignConfig;
-  // ... actions
-}
-
-// draft-store.ts - Auto-save draft persistence
-// ai-suggestions-store.ts - AI recommendation cache
+// draft-store.ts - Draft persistence for project creation
 ```
 
 ### Convex Real-time Sync
@@ -494,6 +480,13 @@ const { t } = useTranslations();
 - Each hook should have a single responsibility
 - All hooks must have unit tests in `__tests__/` sibling directory
 - Hook test pattern: `vitest` + `@testing-library/react` `renderHook`
+
+### Data Fetching (React Query - MANDATORY)
+- **ALL fetch/API calls MUST use React Query** (`useQuery`, `useMutation`, `useInfiniteQuery`)
+- NEVER use raw `fetch` or `axios` directly in components or hooks without wrapping in React Query
+- Use `useMutation` for POST/PUT/DELETE operations (including editor handoff, AI enrichment, etc.)
+- Use `useQuery` for GET operations with caching
+- Mutations that trigger side effects (e.g. opening a window) should still use `useMutation` for consistent loading/error state
 
 ### Design System
 - Use `@flowstarter/flow-design-system` components (`GlassCard`, `FlowBackground`, `GlassPanel`, etc.)

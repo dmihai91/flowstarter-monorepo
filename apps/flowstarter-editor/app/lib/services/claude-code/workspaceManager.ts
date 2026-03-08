@@ -212,7 +212,7 @@ export async function getWorkspaceStatus(
     const sandbox = await client.get(workspace.sandboxId);
 
     // Update state from sandbox
-    workspace.state = mapSandboxState(sandbox.state);
+    workspace.state = sandbox.state ? mapSandboxState(sandbox.state) : ('unknown' as WorkspaceState);
 
     // Update preview URL if available
     const previewUrl = await getPreviewUrl(sandbox);

@@ -69,11 +69,15 @@ export async function downloadBundle(
 
   for (const filePath of filePaths) {
     try {
-      const content = await sandbox.fs.downloadFile(filePath);
+      const blob = await sandbox.fs.downloadFile(filePath);
 
-      if (content.length > MAX_FILE_SIZE) {
+      if (blob.size > MAX_FILE_SIZE) {
         continue; // Skip files over 25MB
       }
+
+      // Convert Blob to Buffer
+      const arrayBuffer = await blob.arrayBuffer();
+      const content = Buffer.from(arrayBuffer);
 
       // Convert to relative path (remove outputDir prefix)
       const relativePath = filePath.replace(outputDir, '').replace(/^\//, '');

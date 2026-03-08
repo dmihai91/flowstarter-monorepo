@@ -116,7 +116,7 @@ export function ConversationProvider({ children, initialConversationId }: Conver
   // Bidirectional project name sync (Convex ↔ Supabase)
   const rawProjectName = activeConversation?.projectName || null;
   const { updateName: updateProjectName, hasName: hasProjectName } = useProjectNameSync({
-    conversationId: activeConversation?._id || null,
+    conversationId: activeConversation?.id || null,
     projectId: activeConversation?.projectId || null,
     currentName: rawProjectName,
   });

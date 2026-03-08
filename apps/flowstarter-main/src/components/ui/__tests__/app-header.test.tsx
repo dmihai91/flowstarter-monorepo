@@ -71,12 +71,6 @@ describe('AppHeader', () => {
     expect(screen.queryByText('Team')).not.toBeInTheDocument();
   });
 
-  it('shows back button on wizard pages', () => {
-    mockPathname = '/dashboard/new';
-    render(<AppHeader />);
-    expect(screen.getByText('Back')).toBeInTheDocument();
-  });
-
   it('renders theme toggle', () => {
     render(<AppHeader />);
     expect(screen.getByTestId('theme-toggle')).toBeInTheDocument();

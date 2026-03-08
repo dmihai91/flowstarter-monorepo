@@ -247,7 +247,7 @@ function IndexRedirector() {
         console.log('[Index] Server-side init complete, conversationId:', conversationId);
         sessionStorage.setItem('flowstarter_handoff_session', '1');
         hasRedirected.current = true;
-        navigate(\`/project/\${conversationId}\`, { replace: true });
+        navigate(`/project/${conversationId}`, { replace: true });
         return; // done — skip rest of old flow
       } catch (error) {
         console.error('[Index] Handoff validation error:', error);

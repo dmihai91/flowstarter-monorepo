@@ -71,6 +71,16 @@ function normalizeMessagesField(messages: unknown): ChatMessage[] {
 }
 
 // List conversations by session (most recent first)
+
+export const getByProject = query({
+  args: { projectId: v.id("projects") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("conversations")
+      .withIndex("by_project", (q) => q.eq("projectId", args.projectId))
+      .collect();
+  },
+});
 export const getBySessionId = query({
   args: { sessionId: v.string() },
   handler: async (ctx, args) => {

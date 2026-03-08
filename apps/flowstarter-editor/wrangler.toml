@@ -4,3 +4,8 @@ compatibility_flags = ["nodejs_compat"]
 compatibility_date = "2025-03-28"
 pages_build_output_dir = "./build/client"
 send_metrics = false
+
+[vars]
+VITE_CONVEX_URL = "https://outstanding-otter-369.convex.cloud"
+CONVEX_URL = "https://outstanding-otter-369.convex.cloud"
+HANDOFF_SECRET = "9c5ff35ecdf4c9699e4749c408c1ee6bbad51552c8e66cb8e008f5c13ae48e9c"

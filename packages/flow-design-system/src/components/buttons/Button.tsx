@@ -160,6 +160,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const classes = getButtonStyles(variant, size, className);
     const Comp = asChild ? Slot : 'button';
 
+    // When asChild is true, Slot calls React.Children.only — pass only children
+    if (asChild) {
+      return (
+        <Comp ref={ref} disabled={isDisabled} className={classes} {...props}>
+          {children}
+        </Comp>
+      );
+    }
+
     return (
       <Comp
         ref={ref}

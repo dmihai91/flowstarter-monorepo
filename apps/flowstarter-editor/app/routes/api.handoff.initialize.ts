@@ -66,9 +66,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
   const env = (context?.cloudflare?.env || context?.env || {}) as CloudflareEnv;
   const secret = env.HANDOFF_SECRET || process.env.HANDOFF_SECRET || process.env.VITE_HANDOFF_SECRET || 'dev-secret';
   const convexUrl = env.CONVEX_URL || process.env.VITE_CONVEX_URL || '';
-  const convexAdminKey = env.CONVEX_ADMIN_KEY || process.env.CONVEX_ADMIN_KEY || '';
+  // Convex site URL (for HTTP Actions) — different from the deployment URL
+  const convexSiteUrl = (env as Record<string,string>).CONVEX_SITE_URL || process.env.CONVEX_SITE_URL || convexUrl.replace('.convex.cloud', '.convex.site');
 
-  if (!convexUrl || !convexAdminKey) {
+  if (!convexUrl) {
     return json({ error: 'Convex not configured' }, { status: 503 });
   }
 
@@ -98,53 +99,30 @@ export async function action({ request, context }: ActionFunctionArgs) {
   );
 
   try {
-    // 1. Check if Convex project already exists for this Supabase UUID
-    const existing = await convexQuery(convexUrl, convexAdminKey, 'projects:getBySupabaseId', { supabaseProjectId }) as { _id: string } | null;
-
-    let convexProjectId: string;
-    let urlId: string;
-
-    if (existing) {
-      convexProjectId = existing._id;
-      // Find existing active conversation
-      const convos = await convexQuery(convexUrl, convexAdminKey, 'conversations:getBySessionId', { sessionId: `project-${convexProjectId}` }) as Array<{ _id: string }>;
-      if (convos?.length > 0) {
-        return json({ conversationId: convos[0]._id });
-      }
-      urlId = convexProjectId; // fallback
-    } else {
-      // 2. Create Convex project
-      const created = await convexMutation(convexUrl, convexAdminKey, 'projects:createEmpty', {
-        name: projectName,
-        description: projectDescription,
+    // Call Convex HTTP Action (no admin key needed — secured by HANDOFF_SECRET)
+    const convexActionUrl = `${convexSiteUrl}/handoff/initialize`;
+    const convexRes = await fetch(convexActionUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-handoff-secret': secret,
+      },
+      body: JSON.stringify({
         supabaseProjectId,
-        businessDetails: businessInfo ? { businessName: projectName, description: (businessInfo as { description?: string }).description || projectDescription, ...businessInfo } : { businessName: projectName, description: projectDescription },
-      }) as { projectId: string; urlId: string };
-      convexProjectId = created.projectId;
-      urlId = created.urlId;
+        projectName,
+        projectDescription,
+        businessInfo,
+        step: hasBusinessData ? 'welcome' : (projectName && projectName !== 'Untitled Project' ? 'describe' : 'welcome'),
+      }),
+    });
+
+    if (!convexRes.ok) {
+      const errBody = await convexRes.json().catch(() => ({})) as { error?: string };
+      throw new Error(`Convex action failed: ${errBody.error || convexRes.status}`);
     }
 
-    // 3. Create conversation
-    const sessionId = `project-${convexProjectId}`;
-    const step = hasBusinessData ? 'welcome' : (projectName && projectName !== 'Untitled Project' ? 'describe' : 'welcome');
-    const conversationId = await convexMutation(convexUrl, convexAdminKey, 'conversations:createWithProject', {
-      sessionId,
-      projectId: convexProjectId,
-      projectUrlId: urlId,
-      projectName,
-      projectDescription,
-      step,
-      businessInfo: businessInfo ? {
-        description: (businessInfo as { description?: string }).description || projectDescription,
-        uvp: (businessInfo as { uvp?: string }).uvp,
-        targetAudience: (businessInfo as { targetAudience?: string }).targetAudience,
-        industry: (businessInfo as { industry?: string }).industry,
-        businessGoals: (businessInfo as { goal?: string }).goal ? [(businessInfo as { goal: string }).goal] : undefined,
-        businessType: (businessInfo as { offerType?: string }).offerType,
-      } : undefined,
-    }) as string;
-
-    return json({ conversationId });
+    const { conversationId } = await convexRes.json() as { conversationId: string };
+    return json({ conversationId })
   } catch (err) {
     console.error('[api.handoff.initialize] Error:', err);
     return json({ error: err instanceof Error ? err.message : 'Internal error' }, { status: 500 });

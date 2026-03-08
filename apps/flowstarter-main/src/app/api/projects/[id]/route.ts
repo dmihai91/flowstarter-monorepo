@@ -163,6 +163,7 @@ export async function DELETE(
   const { createSupabaseServiceRoleClient } = await import('@/supabase-clients/server');
   const supabase = createSupabaseServiceRoleClient();
 
+  // 1. Delete from Supabase (source of truth)
   const { error } = await supabase
     .from('projects')
     .delete()
@@ -172,5 +173,47 @@ export async function DELETE(
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  // 2. Cascade to Convex — delete project, conversations, files, snapshots
+  //    Fire-and-forget: Supabase delete already succeeded; log failures but don't block
+  const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
+  const convexAdminKey = process.env.CONVEX_ADMIN_KEY;
+
+  if (convexUrl && convexAdminKey) {
+    try {
+      // Call Convex HTTP API directly (no cross-package import needed)
+      const convexResp = await fetch(`${convexUrl}/api/mutation`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Convex ${convexAdminKey}`,
+        },
+        body: JSON.stringify({
+          path: 'projects:deleteBySupabaseId',
+          args: { supabaseProjectId: id },
+          format: 'json',
+        }),
+      });
+
+      const result = (await convexResp.json()) as { status: string; value?: { deleted: boolean; daytonaWorkspaceIds: string[] } };
+      const data = result.value;
+
+      // 3. Delete Daytona sandbox(es) using workspace IDs returned from Convex
+      if (data?.daytonaWorkspaceIds?.length) {
+        const editorUrl = process.env.NEXT_PUBLIC_EDITOR_URL || 'https://editor.flowstarter.dev';
+        await fetch(`${editorUrl}/api/daytona/cleanup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ workspaceIds: data!.daytonaWorkspaceIds }),
+        }).catch(err => console.error('[DELETE project] Daytona cleanup failed:', err));
+      }
+    } catch (err) {
+      // Log but don't fail — Supabase delete succeeded; Convex/Daytona can be retried
+      console.error('[DELETE project] Convex cascade failed:', err);
+    }
+  } else {
+    console.warn('[DELETE project] CONVEX_ADMIN_KEY or NEXT_PUBLIC_CONVEX_URL not set — skipping Convex cascade');
+  }
+
   return NextResponse.json({ success: true });
 }

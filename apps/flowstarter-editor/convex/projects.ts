@@ -632,3 +632,67 @@ export const checkNameAvailability = mutation({
   },
 });
 
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CASCADE DELETE — called by main platform when a Supabase project is deleted
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Delete a Convex project (+ all conversations, files, snapshots) by Supabase UUID.
+ * Returns Daytona workspace IDs so the caller can also destroy the sandbox.
+ */
+export const deleteBySupabaseId = mutation({
+  args: { supabaseProjectId: v.string() },
+  handler: async (ctx, args) => {
+    const project = await ctx.db
+      .query('projects')
+      .withIndex('by_supabaseProjectId', (q) =>
+        q.eq('supabaseProjectId', args.supabaseProjectId)
+      )
+      .first();
+
+    if (!project) {
+      return { success: true, deleted: false, daytonaWorkspaceIds: [] };
+    }
+
+    const daytonaWorkspaceIds: string[] = [];
+    if (project.daytonaWorkspaceId) {
+      daytonaWorkspaceIds.push(project.daytonaWorkspaceId);
+    }
+
+    // Delete all conversations linked to this project
+    const conversations = await ctx.db
+      .query('conversations')
+      .withIndex('by_project', (q) => q.eq('projectId', project._id))
+      .collect();
+
+    for (const convo of conversations) {
+      await ctx.db.delete(convo._id);
+    }
+
+    // Delete all files
+    const files = await ctx.db
+      .query('files')
+      .withIndex('by_project', (q) => q.eq('projectId', project._id))
+      .collect();
+
+    for (const file of files) {
+      await ctx.db.delete(file._id);
+    }
+
+    // Delete all snapshots
+    const snapshots = await ctx.db
+      .query('snapshots')
+      .withIndex('by_project', (q) => q.eq('projectId', project._id))
+      .collect();
+
+    for (const snapshot of snapshots) {
+      await ctx.db.delete(snapshot._id);
+    }
+
+    // Delete the project itself
+    await ctx.db.delete(project._id);
+
+    return { success: true, deleted: true, daytonaWorkspaceIds };
+  },
+});

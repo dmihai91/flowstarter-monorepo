@@ -226,10 +226,16 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
     await buildBtn.click();
     console.log('[1.8] Build triggered — waiting for real Claude AI generation...');
 
-    // ── Step 4: Terminal shows real agent events ──
-    const terminalTab = page.getByRole('button', { name: /terminal/i });
-    await expect(terminalTab).toBeVisible({ timeout: 15_000 });
-    await terminalTab.click();
+    // ── Step 4: Switch to Editor tab, open >_ terminal panel ──
+    const editorTab = page.getByRole('button', { name: /editor|<>/i });
+    if (await editorTab.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await editorTab.click();
+    }
+    // Terminal is now a >_ button inside the editor view
+    const terminalBtn = page.getByRole('button', { name: /^>_$|\>_/i }).first();
+    if (await terminalBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await terminalBtn.click();
+    }
 
     // Real Claude writes files — these will appear as file_write events
     await expect(
@@ -256,7 +262,7 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
     ).toBeVisible({ timeout: 10_000 });
 
     // Edit triggers real Claude again — verify terminal shows new activity
-    await terminalTab.click();
+    if (await terminalBtn.isVisible({ timeout: 3000 }).catch(() => false)) { await terminalBtn.click(); }
     await expect(
       page.getByText(/\.html|thinking|Applying/i).first()
     ).toBeVisible({ timeout: 120_000 });

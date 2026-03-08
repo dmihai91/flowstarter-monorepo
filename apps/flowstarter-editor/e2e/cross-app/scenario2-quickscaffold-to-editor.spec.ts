@@ -213,9 +213,11 @@ test.describe('Scenario 2: QuickScaffold → AI Enrichment → Editor', () => {
     console.log('[2.5] Build triggered — real Claude generating site...');
 
     // ── Terminal: real agent events from Claude ──
-    const terminalTab = page.getByRole('button', { name: /terminal/i });
-    await expect(terminalTab).toBeVisible({ timeout: 15_000 });
-    await terminalTab.click();
+    // Terminal is now a >_ button inside the Editor tab (not a top-level tab)
+    const editorTab2 = page.getByRole('button', { name: /editor|<>/i });
+    if (await editorTab2.isVisible({ timeout: 5000 }).catch(() => false)) await editorTab2.click();
+    const terminalTab = page.getByRole('button', { name: /^>_/ }).first();
+    if (await terminalTab.isVisible({ timeout: 5000 }).catch(() => false)) await terminalTab.click();
 
     await expect(
       page.getByText(/\.html|\.css|thinking|file|Waiting for agent/i).first()

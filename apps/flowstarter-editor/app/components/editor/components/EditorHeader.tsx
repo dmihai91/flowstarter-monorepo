@@ -123,20 +123,28 @@ export function EditorHeader({
         {isCompact && !isMobile && projectName && (
           <span
             style={{
-              padding: '3px 10px',
-              backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)',
-              borderRadius: '20px',
-              fontSize: '12px',
-              fontWeight: 500,
-              color: isDark ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.55)',
-              maxWidth: '160px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              padding: '4px 10px 4px 8px',
+              backgroundColor: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.04)',
+              borderRadius: '8px',
+              fontSize: '13px',
+              fontWeight: 600,
+              color: isDark ? 'rgba(255,255,255,0.82)' : 'rgba(0,0,0,0.72)',
+              maxWidth: '180px',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
               flexShrink: 1,
-              border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.08)',
+              border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.09)',
+              letterSpacing: '-0.01em',
             }}
           >
+            {/* Folder icon */}
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ flexShrink: 0, opacity: 0.6 }}>
+              <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+            </svg>
             {projectName}
           </span>
         )}

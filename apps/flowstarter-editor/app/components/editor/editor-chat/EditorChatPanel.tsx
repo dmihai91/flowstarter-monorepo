@@ -324,23 +324,8 @@ export function EditorChatPanel({
           </motion.div>
         )}
 
-        {/* INTERNAL FLOW: Full Template Gallery - user manually picks from ALL templates */}
-        {step === 'template' && isInternalFlow && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="ml-10">
-            <FullTemplateGallery
-              templates={templates}
-              templatesLoading={templatesLoading}
-              templatesError={templatesError}
-              isDark={isDark}
-              onTemplateSelect={handleTemplateSelect}
-              onPreview={openPreview}
-              onRetry={refetchTemplates}
-            />
-          </motion.div>
-        )}
-
-        {/* SELF-SERVE FLOW: Template Recommendations - only show when loading or has recommendations */}
-        {step === 'template' && !isInternalFlow && (recommendationsLoading || recommendations.length > 0) && (
+        {/* TEMPLATE STEP: Recommendations first (both internal + self-serve flows) */}
+        {step === 'template' && (recommendationsLoading || recommendations.length > 0) && (
           <div className="ml-10">
             <TemplateRecommendationGallery
               recommendations={recommendations}
@@ -351,22 +336,54 @@ export function EditorChatPanel({
               onPreview={openPreview}
               onRetry={fetchRecommendations}
             />
+            {/* "See all templates" button — shown once recommendations are loaded */}
+            {!recommendationsLoading && recommendations.length > 0 && (
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                onClick={refetchTemplates}
+                style={{
+                  marginTop: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: 'transparent',
+                  border: isDark ? '1px solid rgba(255,255,255,0.12)' : '1px solid rgba(0,0,0,0.1)',
+                  borderRadius: '8px',
+                  padding: '7px 14px',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  color: isDark ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.5)',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s',
+                  width: '100%',
+                  justifyContent: 'center',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.color = isDark ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.8)')}
+                onMouseLeave={e => (e.currentTarget.style.color = isDark ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.5)')}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                  <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                Browse all templates
+              </motion.button>
+            )}
           </div>
         )}
 
-        {/* SELF-SERVE FLOW: Template Gallery fallback - show when no recommendations after loading */}
-        {step === 'template' && !isInternalFlow && recommendations.length === 0 && !recommendationsLoading && (
+        {/* TEMPLATE STEP: Full gallery — fallback when no recommendations, or after "Browse all" */}
+        {step === 'template' && recommendations.length === 0 && !recommendationsLoading && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="ml-10">
-            <TemplateGallery
+            <FullTemplateGallery
               templates={templates}
               templatesLoading={templatesLoading}
               templatesError={templatesError}
-              thumbnailErrors={thumbnailErrors}
               isDark={isDark}
               onTemplateSelect={handleTemplateSelect}
               onPreview={openPreview}
               onRetry={refetchTemplates}
-              onThumbnailError={handleThumbnailError}
             />
           </motion.div>
         )}

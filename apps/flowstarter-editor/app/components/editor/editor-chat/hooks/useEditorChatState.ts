@@ -182,9 +182,11 @@ export function useEditorChatState({
     (businessInfo: import('../types').BusinessInfo, projectName: string, description: string) => {
       // Update business hook with initial state
       businessHook.setBusinessInfo(businessInfo);
-      // Note: We no longer fetch recommendations here - user picks from all templates
+      // Fetch AI recommendations using the pre-populated business data
+      // This gives a tailored shortlist first; full gallery is still accessible
+      templateHook.fetchRecommendations(businessInfo, projectName, description);
     },
-    [businessHook],
+    [businessHook, templateHook],
   );
 
   useWelcomeInit({ 

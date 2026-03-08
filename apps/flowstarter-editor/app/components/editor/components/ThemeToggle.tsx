@@ -33,18 +33,26 @@ function injectViewTransitionStyles() {
   const style = document.createElement('style');
   style.id = 'theme-transition-styles';
   style.textContent = `
-    /* Radial-reveal transition when switching theme */
-    ::view-transition-old(root),
-    ::view-transition-new(root) {
-      animation: none;
+    /* Smooth radial-reveal transition when switching theme */
+    ::view-transition-group(root) {
+      animation-duration: 0s;
+    }
+    ::view-transition-old(root) {
+      animation: theme-fade-out 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
       mix-blend-mode: normal;
     }
     ::view-transition-new(root) {
-      animation: theme-reveal 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation: theme-reveal 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      mix-blend-mode: normal;
     }
     @keyframes theme-reveal {
-      from { clip-path: var(--theme-reveal-from, circle(0% at 50% 50%)); }
-      to   { clip-path: circle(150% at var(--theme-reveal-x, 50%) var(--theme-reveal-y, 50%)); }
+      0%   { clip-path: var(--theme-reveal-from, circle(0% at 50% 50%)); opacity: 0.85; }
+      60%  { opacity: 1; }
+      100% { clip-path: circle(150% at var(--theme-reveal-x, 50%) var(--theme-reveal-y, 50%)); opacity: 1; }
+    }
+    @keyframes theme-fade-out {
+      0%   { opacity: 1; }
+      100% { opacity: 0; }
     }
   `;
   document.head.appendChild(style);

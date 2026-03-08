@@ -35,7 +35,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   workers: 1,
-  timeout: 120_000,
+  timeout: 300_000, // 5 min — real Claude + Daytona generation
   reporter: process.env.CI ? 'github' : 'list',
 
   globalSetup: './e2e/cross-app/global-setup.ts',

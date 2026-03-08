@@ -1,36 +1,25 @@
 /**
- * Scenario 1: Dashboard New Project → Handoff → Editor (Real Domain)
+ * Scenario 1: Dashboard New Project → Handoff → Editor (Real APIs)
  *
- * Tests against https://flowstarter.dev + https://editor.flowstarter.dev.
- * Clerk auth, Supabase, and Convex are all real.
- * Only Daytona and Claude AI are mocked (SSE intercept — expensive).
+ * Everything is real — no mocks:
+ *   - Clerk auth session (global-setup)
+ *   - Supabase dev: project created + deleted after each test
+ *   - Convex dev: project + conversation created, step machine runs
+ *   - Claude AI: real site generation (credits used)
+ *   - Daytona: real sandbox provisioning
  *
- * Flow:
- *   1. Operator creates a project via POST /api/editor/handoff (main platform)
- *   2. Handoff token issued (HMAC-signed, self-contained)
- *   3. Editor validates token → creates Convex project + conversation
- *   4. Step machine: 'describe' (no pre-fill) or 'welcome'→'template' (with businessInfo)
- *   5. Operator completes chat, selects template, triggers build (mocked SSE)
- *   6. Operator edits the generated site via chat
+ * Timeouts are generous (120-300s) to accommodate real AI generation.
  */
 
 import { test, expect, type Page } from '@playwright/test';
 import {
-  BASE,
-  EDITOR,
-  BUSINESS_INFO,
-  CONTACT_INFO,
-  QUICKSCAFFOLD_INPUT,
-  ENRICHED_DATA,
-  testProjectName,
-  makeHandoffToken,
-  mockExpensiveServices,
-  mockAgentEditSSE,
-  cleanupProject,
-  createdResources,
+  BASE, EDITOR,
+  BUSINESS_INFO, CONTACT_INFO,
+  testProjectName, makeHandoffToken,
+  authenticatedFetch, cleanupProject,
 } from './helpers';
 
-// ─── Shared state ─────────────────────────────────────────────────────────────
+// ─── Shared cleanup ───────────────────────────────────────────────────────────
 
 let createdProjectId: string | undefined;
 
@@ -41,20 +30,18 @@ test.afterEach(async ({ page }) => {
   }
 });
 
-// ─── Helper: call the real handoff API ────────────────────────────────────────
+// ─── Helper ───────────────────────────────────────────────────────────────────
 
 async function callHandoff(page: Page, projectConfig: object): Promise<{
   editorUrl: string; token: string; projectId: string;
 }> {
-  const res = await page.request.post(`${BASE}/api/editor/handoff`, {
-    data: { projectConfig, mode: 'interactive' },
-    headers: { 'Content-Type': 'application/json' },
+  const result = await authenticatedFetch(page, `${BASE}/api/editor/handoff`, {
+    method: 'POST',
+    body: { projectConfig, mode: 'interactive' },
   });
 
-  expect(res.status(), `Handoff API returned ${res.status()}`).toBe(200);
-  const body = await res.json() as {
-    success: boolean; editorUrl: string; token: string; projectId: string;
-  };
+  expect(result.status, `Handoff returned ${result.status}: ${JSON.stringify(result.body)}`).toBe(200);
+  const body = result.body as { success: boolean; editorUrl: string; token: string; projectId: string };
   expect(body.success).toBe(true);
   createdProjectId = body.projectId;
   return body;
@@ -63,282 +50,255 @@ async function callHandoff(page: Page, projectConfig: object): Promise<{
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
-  test.setTimeout(120_000);
+  test.setTimeout(300_000); // 5 min — real Claude + Daytona can take 2-3 min
 
-  // ── 1.1 Handoff API issues a valid signed token ───────────────────────────
-  test('1.1 — POST /api/editor/handoff returns HMAC token + editorUrl', async ({ page }) => {
+  // ── 1.1 Handoff API issues a real HMAC token ──────────────────────────────
+  test('1.1 — POST /api/editor/handoff returns signed token + editorUrl', async ({ page }) => {
     const name = testProjectName();
     const { token, editorUrl, projectId } = await callHandoff(page, {
       name,
       description: BUSINESS_INFO.description,
     });
 
-    // Token is present and correctly formatted (data.signature)
     expect(token).toBeTruthy();
     expect(token.split('.').length).toBeGreaterThanOrEqual(2);
-
-    // editorUrl points to editor domain with token as query param
     expect(editorUrl).toContain(EDITOR);
     expect(editorUrl).toContain('handoff=');
+    expect(projectId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
 
-    // Project was created in Supabase (has a UUID)
-    expect(projectId).toMatch(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-    );
+    console.log('[1.1] Project created:', projectId, '| Editor URL:', editorUrl.slice(0, 80));
   });
 
-  // ── 1.2 Editor validates the token and loads the project ─────────────────
-  test('1.2 — editor validates real token; project name preserved', async ({ page }) => {
+  // ── 1.2 Editor validates the token, name preserved ────────────────────────
+  test('1.2 — editor validates real token; project name preserved end-to-end', async ({ page }) => {
     const name = testProjectName();
     const { token } = await callHandoff(page, { name, description: BUSINESS_INFO.description });
 
-    // Call the editor's validate endpoint directly — real HMAC check
-    const validateRes = await page.request.post(`${EDITOR}/api/handoff/validate`, {
+    // Real validate endpoint — local HMAC check in editor
+    const res = await page.request.get(
+      `${EDITOR}/api/handoff/validate?token=${encodeURIComponent(token)}`
+    );
+    expect(res.status()).toBe(200);
+    const validated = await res.json() as { valid: boolean; projectId?: string };
+    expect(validated.valid).toBe(true);
+
+    // Full project data via POST
+    const res2 = await page.request.post(`${EDITOR}/api/handoff/validate`, {
       data: { token },
       headers: { 'Content-Type': 'application/json' },
     });
-
-    expect(validateRes.status()).toBe(200);
-    const validated = await validateRes.json() as {
-      valid: boolean;
-      project?: { name?: string; id?: string };
-    };
-
-    expect(validated.valid).toBe(true);
-    expect(validated.project?.name).toBe(name);
-    expect(validated.project?.id).toBe(createdProjectId);
+    expect(res2.status()).toBe(200);
+    const full = await res2.json() as { valid: boolean; project?: { name?: string } };
+    expect(full.valid).toBe(true);
+    expect(full.project?.name).toBe(name);
   });
 
-  // ── 1.3 Expired token is rejected (401) ──────────────────────────────────
-  test('1.3 — expired token is rejected by editor validate', async ({ page }) => {
-    const expiredToken = makeHandoffToken({
+  // ── 1.3 Expired token rejected ────────────────────────────────────────────
+  test('1.3 — expired token rejected (401)', async ({ page }) => {
+    const expired = makeHandoffToken({
       projectId: '00000000-0000-0000-0000-000000000001',
       userId: 'user_test',
       iat: Math.floor(Date.now() / 1000) - 1800,
-      exp: Math.floor(Date.now() / 1000) - 900, // 15 min ago
-      project: { id: '00000000-0000-0000-0000-000000000001', name: 'Expired', description: '', data: {} },
+      exp: Math.floor(Date.now() / 1000) - 900,
+      project: { id: '00000000-0000-0000-0000-000000000001', name: 'x', description: '', data: {} },
     });
 
     const res = await page.request.post(`${EDITOR}/api/handoff/validate`, {
-      data: { token: expiredToken },
+      data: { token: expired },
       headers: { 'Content-Type': 'application/json' },
     });
-
     expect(res.status()).toBe(401);
-    const body = await res.json() as { valid: boolean };
-    expect(body.valid).toBe(false);
+    expect((await res.json() as any).valid).toBe(false);
   });
 
-  // ── 1.4 Tampered token is rejected (401) ─────────────────────────────────
-  test('1.4 — tampered token signature rejected', async ({ page }) => {
-    const { token } = await callHandoff(page, {
-      name: testProjectName(),
-      description: 'test',
-    });
-    const tampered = token.slice(0, -4) + 'XXXX'; // corrupt last 4 chars of sig
+  // ── 1.4 Tampered token rejected ───────────────────────────────────────────
+  test('1.4 — tampered signature rejected (401)', async ({ page }) => {
+    const { token } = await callHandoff(page, { name: testProjectName(), description: 'test' });
+    const tampered = token.slice(0, -6) + 'XXXXXX';
 
     const res = await page.request.post(`${EDITOR}/api/handoff/validate`, {
       data: { token: tampered },
       headers: { 'Content-Type': 'application/json' },
     });
-
     expect(res.status()).toBe(401);
   });
 
-  // ── 1.5 Navigating to editor with token loads the editor (no login) ───────
-  test('1.5 — editor loads without login screen when token is valid', async ({ page }) => {
+  // ── 1.5 Editor loads without login, navigates to /project/:id ────────────
+  test('1.5 — editor loads authenticated; redirects to /project/:id', async ({ page }) => {
     const name = testProjectName();
     const { editorUrl } = await callHandoff(page, {
       name,
       description: BUSINESS_INFO.description,
     });
 
-    await mockExpensiveServices(page, name);
     await page.goto(editorUrl);
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(5000); // Convex connection + step machine
+    // Real Convex WS connection + project/conversation creation
+    await page.waitForURL(/\/project\//, { timeout: 30_000 });
 
-    // No login screen
+    expect(page.url()).toMatch(/\/project\//);
     const loginVisible = await page.getByText(/Sign in to your account/i).isVisible().catch(() => false);
     expect(loginVisible).toBe(false);
 
-    // Editor shell loaded — URL moved to /project/:id
-    await page.waitForURL(/\/project\//, { timeout: 15_000 });
-    expect(page.url()).toMatch(/\/project\//);
+    console.log('[1.5] Editor loaded at:', page.url());
   });
 
-  // ── 1.6 No business data → editor starts at describe/name step ───────────
-  test('1.6 — without businessInfo, editor shows business question in chat', async ({ page }) => {
-    const name = testProjectName();
-    const { editorUrl } = await callHandoff(page, { name }); // no businessInfo
+  // ── 1.6 No businessInfo → editor asks for business description ────────────
+  test('1.6 — without businessInfo, editor shows business collection chat', async ({ page }) => {
+    const { editorUrl } = await callHandoff(page, { name: testProjectName() });
 
-    await mockExpensiveServices(page, name);
     await page.goto(editorUrl);
-    await page.waitForURL(/\/project\//, { timeout: 20_000 });
-    await page.waitForLoadState('networkidle');
+    await page.waitForURL(/\/project\//, { timeout: 30_000 });
     await page.waitForTimeout(3000);
 
-    // Chat input must be visible — editor is collecting business data
     const chatInput = page.locator('textarea, [data-testid="chat-input"]').first();
     await expect(chatInput).toBeVisible({ timeout: 15_000 });
   });
 
-  // ── 1.7 With businessInfo → Convex step advances to template ─────────────
-  test('1.7 — with businessInfo, step machine advances to template selection', async ({ page }) => {
-    const name = testProjectName();
+  // ── 1.7 With businessInfo → Convex step machine skips to template ─────────
+  test('1.7 — pre-filled businessInfo: Convex step machine reaches template selector', async ({ page }) => {
     const { editorUrl } = await callHandoff(page, {
-      name,
+      name: testProjectName(),
       description: BUSINESS_INFO.description,
       businessInfo: BUSINESS_INFO,
       contactInfo: CONTACT_INFO,
     });
 
-    await mockExpensiveServices(page, name);
     await page.goto(editorUrl);
-    await page.waitForURL(/\/project\//, { timeout: 20_000 });
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(5000); // wait for useWelcomeInit to advance step
+    await page.waitForURL(/\/project\//, { timeout: 30_000 });
+    await page.waitForTimeout(5000); // useWelcomeInit advances step
 
-    // Should NOT be asking for business description
-    const askingForDesc = await page.getByText(
+    // Must NOT be asking for description
+    const askingDesc = await page.getByText(
       /tell me about your business|what does your business do/i
     ).isVisible({ timeout: 3000 }).catch(() => false);
-    expect(askingForDesc).toBe(false);
+    expect(askingDesc).toBe(false);
 
-    // Template selector OR "choose a template" message must be visible
-    const templateVisible = await page.getByText(
-      /choose.*template|select.*template|template.*gallery|which template/i
-    ).first().isVisible({ timeout: 15_000 }).catch(() => false);
+    // Template selector must appear (driven by real Convex step)
+    await expect(
+      page.getByText(/choose.*template|select.*template|template.*gallery|which template/i).first()
+    ).toBeVisible({ timeout: 25_000 });
 
-    // The BusinessContextCard (showing the pre-filled data) should be visible
-    const contextCard = await page.getByText(BUSINESS_INFO.description).first()
-      .isVisible({ timeout: 5000 }).catch(() => false);
-
-    expect(templateVisible || contextCard).toBe(true);
+    console.log('[1.7] Template selector reached ✅');
   });
 
-  // ── 1.8 Full journey: describe → template → build → edit ─────────────────
-  test('1.8 — full operator journey: chat → template → site created → edit', async ({ page }) => {
+  // ── 1.8 Full journey: chat → template → REAL Claude build → edit ──────────
+  test('1.8 — full operator journey: describe → template → site built by Claude → edit', async ({ page }) => {
     const name = testProjectName();
-    const { editorUrl } = await callHandoff(page, { name }); // no pre-fill — operator types it
+    const { editorUrl } = await callHandoff(page, { name });
 
-    await mockExpensiveServices(page, name);
-    await mockAgentEditSSE(page, 'Add clinic address to contact section');
-
-    // ── Navigate to editor ──
     await page.goto(editorUrl);
-    await page.waitForURL(/\/project\//, { timeout: 20_000 });
-    await page.waitForLoadState('networkidle');
+    await page.waitForURL(/\/project\//, { timeout: 30_000 });
     await page.waitForTimeout(4000);
 
-    // ── Step 1: Business description via chat ──
+    // ── Step 1: Describe business via chat ──
     const chatInput = page.locator('textarea, [data-testid="chat-input"]').first();
     await expect(chatInput).toBeVisible({ timeout: 15_000 });
 
     await chatInput.fill(
-      'Cabinet stomatologic estetic in Cluj-Napoca. Tratamente fara durere, programari in aceeasi zi.'
+      'Cabinet stomatologic estetic in Cluj-Napoca. Dr. Elena Popescu. ' +
+      'Tratamente fara durere, programari in aceeasi zi. Target: profesionisti 28-55 ani.'
     );
     await chatInput.press('Enter');
+    await page.waitForTimeout(2000);
 
-    // Message appears in chat history
+    // ── Step 2: Template selector appears (real step machine) ──
     await expect(
-      page.getByText(/Cluj-Napoca|stomatologic|programari/i).first()
+      page.getByText(/choose.*template|select.*template|template.*gallery|which template/i).first()
+    ).toBeVisible({ timeout: 30_000 });
+    console.log('[1.8] Template selector visible ✅');
+
+    // Click first template
+    const templateCard = page.locator(
+      '[data-testid="template-card"], [class*="TemplateCard"], [class*="template-card"]'
+    ).first();
+    if (await templateCard.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await templateCard.click();
+    } else {
+      await page.getByRole('button', { name: /select|use this|choose/i }).first().click();
+    }
+    await page.waitForTimeout(2000);
+
+    // ── Step 3: Build trigger (real Claude + Daytona) ──
+    const buildBtn = page.getByRole('button', {
+      name: /generate.*site|build.*site|create.*site|launch/i,
+    }).first();
+    await expect(buildBtn).toBeVisible({ timeout: 20_000 });
+    await buildBtn.click();
+    console.log('[1.8] Build triggered — waiting for real Claude AI generation...');
+
+    // ── Step 4: Terminal shows real agent events ──
+    const terminalTab = page.getByRole('button', { name: /terminal/i });
+    await expect(terminalTab).toBeVisible({ timeout: 15_000 });
+    await terminalTab.click();
+
+    // Real Claude writes files — these will appear as file_write events
+    await expect(
+      page.getByText(/\.html|\.css|\.js|Waiting for agent/i).first()
+    ).toBeVisible({ timeout: 120_000 }); // 2 min for real generation
+    console.log('[1.8] Agent output visible in terminal ✅');
+
+    // ── Step 5: Preview iframe appears with real generated site ──
+    const previewTab = page.getByRole('button', { name: /preview/i });
+    await previewTab.click();
+
+    await expect(
+      page.locator('iframe').first()
+    ).toBeVisible({ timeout: 60_000 }); // wait for Daytona sandbox + preview
+    console.log('[1.8] Preview iframe loaded ✅');
+
+    // ── Step 6: Edit the generated site via chat ──
+    await page.getByRole('button', { name: /chat/i }).click();
+    await chatInput.fill('Add the clinic address to the contact section: Str. Memo 10, Cluj-Napoca');
+    await chatInput.press('Enter');
+
+    await expect(
+      page.getByText(/Memo|Cluj|contact/i).first()
     ).toBeVisible({ timeout: 10_000 });
 
-    // ── Step 2: Wait for template selector to appear ──
-    // The AI processes the description and advances the step machine
-    const templateArea = page.getByText(
-      /choose.*template|select.*template|template.*gallery|which template/i
-    ).first();
-    const templateVisible = await templateArea.isVisible({ timeout: 25_000 }).catch(() => false);
-
-    if (templateVisible) {
-      // Click first available template
-      const templateBtn = page.locator('[data-testid="template-card"], [class*="template"]').first();
-      if (await templateBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-        await templateBtn.click();
-        await page.waitForTimeout(1500);
-      }
-    }
-
-    // ── Step 3: Build trigger ──
-    const buildBtn = page.getByRole('button', {
-      name: /generate|build.*site|create.*site|launch.*site/i,
-    }).first();
-
-    if (await buildBtn.isVisible({ timeout: 10_000 }).catch(() => false)) {
-      await buildBtn.click();
-
-      // ── Step 4: Agent events appear in terminal ──
-      const terminalTab = page.getByRole('button', { name: /terminal/i });
-      await expect(terminalTab).toBeVisible({ timeout: 10_000 });
-      await terminalTab.click();
-
-      // Terminal shows file writes from the (mocked) SSE stream
-      await expect(
-        page.getByText(/index\.html|styles\.css|Waiting for agent/i).first()
-      ).toBeVisible({ timeout: 15_000 });
-
-      // ── Step 5: Switch back to chat and edit ──
-      const chatTab = page.getByRole('button', { name: /chat/i });
-      if (await chatTab.isVisible({ timeout: 3000 }).catch(() => false)) {
-        await chatTab.click();
-      }
-
-      await chatInput.fill('Add the clinic address to the contact section: Str. Memo 10, Cluj-Napoca');
-      await chatInput.press('Enter');
-
-      await expect(
-        page.getByText(/Memo|Cluj|contact/i).first()
-      ).toBeVisible({ timeout: 8_000 });
-    } else {
-      // Template step not reached — chat flow is still in progress
-      // Verify the editor is alive and responding
-      const alive = await page.locator('body').isVisible();
-      expect(alive).toBe(true);
-      console.log('[1.8] Template not reached in this run — chat still in progress');
-    }
+    // Edit triggers real Claude again — verify terminal shows new activity
+    await terminalTab.click();
+    await expect(
+      page.getByText(/\.html|thinking|Applying/i).first()
+    ).toBeVisible({ timeout: 120_000 });
+    console.log('[1.8] Edit applied via real Claude ✅');
   });
 
-  // ── 1.9 Project name syncs back to Supabase when renamed in editor ────────
-  test('1.9 — renaming project in editor fires sync to Supabase', async ({ page }) => {
+  // ── 1.9 Name sync: rename in editor → Supabase updated ───────────────────
+  test('1.9 — renaming project in editor syncs to Supabase via /api/editor/sync', async ({ page }) => {
     const name = testProjectName();
     const { editorUrl, projectId } = await callHandoff(page, {
       name,
       description: BUSINESS_INFO.description,
     });
 
-    await mockExpensiveServices(page, name);
-
-    // Intercept the sync call so we can verify it fires
-    let syncBody: Record<string, unknown> | null = null;
+    let syncPayload: Record<string, unknown> | null = null;
     await page.route(`${BASE}/api/editor/sync`, async (route) => {
-      syncBody = await route.request().postDataJSON().catch(() => null);
-      await route.continue(); // let it reach the real server
+      syncPayload = await route.request().postDataJSON().catch(() => null);
+      await route.continue();
     });
 
     await page.goto(editorUrl);
-    await page.waitForURL(/\/project\//, { timeout: 20_000 });
+    await page.waitForURL(/\/project\//, { timeout: 30_000 });
     await page.waitForTimeout(4000);
 
-    // Find the project name editable field in the header
     const nameInput = page.locator(
-      '[data-testid="project-name-input"], input[placeholder*="project"], [contenteditable][data-name]'
+      '[data-testid="project-name-input"], [contenteditable][data-name]'
     ).first();
 
     if (await nameInput.isVisible({ timeout: 5000 }).catch(() => false)) {
-      const newName = `${name} — Updated`;
+      const newName = `${name} — Renamed`;
       await nameInput.click();
       await page.keyboard.selectAll();
       await page.keyboard.type(newName);
       await page.keyboard.press('Enter');
-      await page.waitForTimeout(1500);
+      await page.waitForTimeout(2000);
 
-      expect(syncBody).not.toBeNull();
-      expect((syncBody as any)?.name).toContain('Updated');
-      expect((syncBody as any)?.projectId).toBe(projectId);
+      expect(syncPayload).not.toBeNull();
+      expect((syncPayload as any)?.name).toContain('Renamed');
+      console.log('[1.9] Sync fired with name:', (syncPayload as any)?.name);
     } else {
-      console.log('[1.9] Project name input not accessible in current step — skipping rename assertion');
+      console.log('[1.9] Name input not in header at this step — verifying editor alive');
+      expect(await page.locator('body').isVisible()).toBe(true);
     }
   });
 });

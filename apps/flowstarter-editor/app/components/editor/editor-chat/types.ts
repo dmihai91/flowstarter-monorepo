@@ -7,6 +7,9 @@ export interface ChatMessage {
   content: string;
   timestamp: number;
   component?: React.ReactNode;
+  /** Live agent events for AgentStatusMessage card */
+  agentEvents?: import('~/components/editor/AgentActivityPanel').AgentActivityEvent[];
+  isAgentActive?: boolean;
 }
 
 export interface SuggestedReply {
@@ -223,6 +226,7 @@ export interface InitialChatState {
 }
 
 export interface EditorChatPanelProps {
+  onOpenTerminal?: () => void;
   userName?: string;
   userAvatar?: string;
   conversationId?: string;

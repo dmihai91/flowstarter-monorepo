@@ -39,6 +39,7 @@ export interface UseOnboardingMessagesReturn {
   setMessages: (messages: ChatMessage[]) => void;
   addUserMessage: (content: string) => ChatMessage;
   addAssistantMessage: (content: string, component?: React.ReactNode) => ChatMessage;
+  updateMessage: (id: string, patch: Partial<ChatMessage>) => void;
   addLLMMessage: (
     messageType: MessageType,
     context?: Record<string, unknown> | null,

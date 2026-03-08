@@ -228,6 +228,14 @@ export function useOnboardingMessages(options: UseOnboardingMessagesOptions = {}
     [generateMessage, onMessagesChange],
   );
 
+
+  // Update an existing message by id (e.g. live agent status card)
+  const updateMessage = useCallback((id: string, patch: Partial<import('../types').ChatMessage>) => {
+    setMessagesInternal(prev =>
+      prev.map(msg => msg.id === id ? { ...msg, ...patch } : msg)
+    );
+  }, []);
+
   return {
     // State
     messages,
@@ -240,6 +248,7 @@ export function useOnboardingMessages(options: UseOnboardingMessagesOptions = {}
     setMessages,
     addUserMessage,
     addAssistantMessage,
+    updateMessage,
     addLLMMessage,
     addStepTransitionMessage,
     setSuggestedReplies,

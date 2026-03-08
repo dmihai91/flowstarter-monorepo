@@ -29,6 +29,7 @@ import {
   BusinessContextCard,  // NEW: Displays business info for internal flow
 } from './components';
 import type { EditorChatPanelProps } from './types';
+import { AgentStatusMessage } from '~/components/editor/AgentStatusMessage';
 
 export function EditorChatPanel({
   userName = 'You',
@@ -40,6 +41,7 @@ export function EditorChatPanel({
   onPreviewChange,
   onStateChange,
   onOrchestrationStatusChange,
+  onOpenTerminal,
 }: EditorChatPanelProps) {
   const theme = useStore(themeStore);
   const effectiveTheme = theme === 'system' ? getEffectiveTheme() : theme;
@@ -284,7 +286,15 @@ export function EditorChatPanel({
                   content={msg.content}
                   timestamp={msg.timestamp}
                   isDark={isDark}
-                  component={msg.component}
+                  component={
+                    msg.agentEvents && msg.agentEvents.length > 0
+                      ? <AgentStatusMessage
+                          events={msg.agentEvents}
+                          isActive={msg.isAgentActive ?? false}
+                          onOpenTerminal={onOpenTerminal}
+                        />
+                      : msg.component
+                  }
                 />
               )}
               {msg.role === 'user' && (

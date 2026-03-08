@@ -52,6 +52,7 @@ export interface GenerateSiteStreamParams {
   deployToPreview?: boolean;
   signal?: AbortSignal;
   onProgress?: (message: string) => void;
+  onAgentEvent?: (event: import('~/components/editor/AgentActivityPanel').AgentActivityEvent) => void;
 }
 
 export interface GenerateSiteStreamResult {
@@ -106,7 +107,7 @@ async function generateSite(params: GenerateSiteParams): Promise<GenerateSiteRes
 }
 
 async function generateSiteWithStream(params: GenerateSiteStreamParams): Promise<GenerateSiteStreamResult> {
-  const { signal, onProgress, ...body } = params;
+  const { signal, onProgress, onAgentEvent, ...body } = params;
 
   const response = await fetch('/api/build', {
     method: 'POST',
@@ -140,21 +141,25 @@ async function generateSiteWithStream(params: GenerateSiteStreamParams): Promise
     buffer = lines.pop() || '';
 
     for (const line of lines) {
-      if (line.startsWith('data: ')) {
-        try {
+      try {
+        // Standard progress/complete events: "data: {...}"
+        if (line.startsWith('data: ')) {
           const data = JSON.parse(line.slice(6));
-
-          if (data.type === 'progress' && onProgress) {
-            onProgress(data.message);
-          } else if (data.type === 'error') {
-            throw new Error(data.error);
-          } else if (data.type === 'complete') {
-            result = data.result;
+          if (data.type === 'progress' && onProgress) onProgress(data.message);
+          else if (data.type === 'error') throw new Error(data.error);
+          else if (data.type === 'complete') result = data.result;
+        }
+        // Agent-event SSE: "event: agent-event\ndata: {...}"
+        else if (line.includes('event: agent-event')) {
+          const dataLine = line.split('\n').find(l => l.startsWith('data:'));
+          if (dataLine && onAgentEvent) {
+            const event = JSON.parse(dataLine.slice(5).trim());
+            onAgentEvent(event);
           }
-        } catch (e) {
-          if (e instanceof Error && e.message !== 'Unexpected end of JSON input') {
-            console.warn('Error parsing SSE data:', e);
-          }
+        }
+      } catch (e) {
+        if (e instanceof Error && e.message !== 'Unexpected end of JSON input') {
+          console.warn('Error parsing SSE data:', e);
         }
       }
     }

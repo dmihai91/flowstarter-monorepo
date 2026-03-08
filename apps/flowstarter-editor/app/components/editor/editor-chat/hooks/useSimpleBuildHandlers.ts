@@ -13,6 +13,7 @@ import { generateProjectSlug } from '~/lib/utils/slug';
 import { useGenerateSiteStream } from '~/lib/hooks/useApiQueries';
 import type { ContactDetails, InitialChatState, IntegrationConfig } from '../types';
 import type { Id } from '~/convex/_generated/dataModel';
+import type { AgentActivityEvent } from '~/components/editor/AgentActivityPanel';
 import { MESSAGE_KEYS, getMessage } from '../constants';
 import { toConvexIntegrations, buildIntegrationsMessage } from './integrationHelpers';
 import { BUILD_PROGRESS } from './simple-build-types';
@@ -29,6 +30,9 @@ export function useSimpleBuildHandlers({
   onPreviewChange, onProjectReady, onStateChange, existingProjectId,
 }: UseSimpleBuildHandlersProps): UseSimpleBuildHandlersReturn {
   const generateSiteMutation = useGenerateSiteStream();
+  // Live agent events accumulator — drives the AgentStatusMessage in chat
+  const agentEventsRef = useRef<AgentActivityEvent[]>([]);
+  const chatMsgIdRef = useRef<string | null>(null);
   const updateIntegrations = useMutation(api.projects.updateIntegrations);
   const updateContactDetails = useMutation(api.projects.updateContactDetails);
 
@@ -140,16 +144,30 @@ export function useSimpleBuildHandlers({
         );
 
         const siteInput = buildSiteGenerationInput({
+          onAgentEvent: (event) => {
+            agentEventsRef.current = [...agentEventsRef.current, event];
+            if (chatMsgIdRef.current) messageHook.updateMessage(chatMsgIdRef.current, { agentEvents: agentEventsRef.current, isAgentActive: true } as any);
+          },
           projectId, projectName,
           templateId: selectedTemplate.id || 'default', templateName: selectedTemplate.name,
           businessData: businessHook.businessInfo, projectDescription: flowHook.projectDescription || '',
           palette: selectedPalette, font: selectedFont,
           integrations, contactDetails, generateImages: generateImages || false, signal,
           onProgress: (msg: string) => mapProgressMessage(msg, setBuildPhase, setBuildProgress, setBuildStep),
+
         });
 
         setBuildProgress(BUILD_PROGRESS.GENERATING_PROGRESS);
         setBuildStep('Planning site architecture...');
+
+        // Reset agent events and add a live status card to chat
+        agentEventsRef.current = [];
+        const statusMsg = messageHook.addAssistantMessage(
+          'Building your site...',
+          null, // component injected via updateMessage below
+        );
+        chatMsgIdRef.current = statusMsg?.id ?? null;
+
         const result = await generateSiteMutation.mutateAsync(siteInput as Parameters<typeof generateSiteMutation.mutateAsync>[0]);
 
         // Handle preview

@@ -70,6 +70,7 @@ interface SiteGenerationParams {
   generateImages: boolean;
   signal: AbortSignal;
   onProgress: (message: string) => void;
+  onAgentEvent?: (event: import('~/components/editor/AgentActivityPanel').AgentActivityEvent) => void;
 }
 
 /**
@@ -79,7 +80,7 @@ export function buildSiteGenerationInput(params: SiteGenerationParams) {
   const {
     projectId, projectName, templateId, templateName, businessData,
     projectDescription, palette, font, integrations, contactDetails,
-    generateImages, signal, onProgress,
+    generateImages, signal, onProgress, onAgentEvent,
   } = params;
 
   return {
@@ -109,6 +110,7 @@ export function buildSiteGenerationInput(params: SiteGenerationParams) {
     generateImages: generateImages || false,
     signal,
     onProgress,
+    onAgentEvent,
   };
 }
 

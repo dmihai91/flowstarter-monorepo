@@ -119,6 +119,27 @@ export function EditorHeader({
             Team
           </span>
         )}
+        {/* Project name pill — visible on compact/tablet when full editor is hidden */}
+        {isCompact && !isMobile && projectName && (
+          <span
+            style={{
+              padding: '3px 10px',
+              backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)',
+              borderRadius: '20px',
+              fontSize: '12px',
+              fontWeight: 500,
+              color: isDark ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.55)',
+              maxWidth: '160px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              flexShrink: 1,
+              border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.08)',
+            }}
+          >
+            {projectName}
+          </span>
+        )}
         {!isCompact && (
           <>
             <Separator />

@@ -183,8 +183,9 @@ export async function* streamTemplateScaffold(templateId: string): AsyncGenerato
  * Get thumbnail URL for a template
  */
 export function getTemplateThumbnailUrl(templateId: string, theme?: 'light' | 'dark'): string {
+  // Use the editor's own proxy route — MCP server is not publicly accessible
   const params = theme ? `?theme=${theme}` : '';
-  return `${MCP_BASE_URL}/api/templates/${templateId}/thumbnail${params}`;
+  return `/api/templates/${templateId}/thumbnail${params}`;
 }
 
 /**

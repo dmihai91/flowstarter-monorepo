@@ -39,9 +39,9 @@ export const MESSAGE_LABELS: Record<MessageKey, string> = {
   [MESSAGE_KEYS.WELCOME_SHOWCASE]: '',
   [MESSAGE_KEYS.WELCOME_CTA]: 'Tell me what you do and I\'ll build your site.',
   [MESSAGE_KEYS.INTERNAL_WELCOME]:
-    "**Let's build your website!** 🚀\n\nI have all your business details. Now let's pick a template that matches your brand.",
+    "**Your business details are ready.** Let's pick a template that matches your brand.",
   [MESSAGE_KEYS.INTERNAL_WELCOME_WITH_NAME]:
-    "**Let's build {{businessName}}'s website!** 🚀\n\nI have all your business details. Let's pick a template that matches your brand.",
+    "**Everything is set for {{businessName}}.** Let's pick a template that matches your brand.",
   [MESSAGE_KEYS.INTERNAL_TEMPLATE_PROMPT]:
     "I've selected **3 templates** that match your business profile.\n\nClick any template to preview it, or browse all options below.",
   [MESSAGE_KEYS.DESCRIBE_PROMPT]:

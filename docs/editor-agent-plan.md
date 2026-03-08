@@ -182,3 +182,82 @@ User request: {editRequest}
 | 5. Performance | 1-2 days | P2 |
 
 **Total: ~10-15 days to fully functional editor**
+
+---
+
+## Phase 2b: Agent Transparency Panel (for technical team)
+
+### What the SDK Already Gives Us
+
+The Agent SDK emits rich typed messages we're mostly ignoring:
+
+| SDK Message Type | What It Contains | Currently Used? |
+|---|---|---|
+| `system` (init) | Tools list, model, cwd, mcp_servers | ✅ Partial (tool count only) |
+| `assistant` | Text content + `tool_use` blocks (name, input) | ✅ Text only |
+| `stream_event` | Raw Anthropic events — **includes thinking blocks** | ❌ Ignored |
+| `tool_progress` | tool_name, elapsed_time_seconds | ✅ Basic ("Using Write...") |
+| `result` | duration_ms, total_cost_usd, num_turns, modelUsage per model | ❌ Ignored |
+
+### What We Should Stream to the Client
+
+```typescript
+// New SSE event types for the transparency panel
+type AgentEvent =
+  | { type: 'thinking'; text: string }           // Extended thinking content
+  | { type: 'tool_call'; name: string; input: Record<string, unknown> }  // e.g. "Write index.html"
+  | { type: 'tool_result'; name: string; duration_s: number }
+  | { type: 'file_write'; path: string; lines: number }  // File created/updated
+  | { type: 'file_read'; path: string }
+  | { type: 'command'; cmd: string; output?: string }     // npm install, build, etc.
+  | { type: 'text'; content: string }             // Agent's reasoning/narration
+  | { type: 'error'; message: string }
+  | { type: 'cost'; usd: number; tokens: { input: number; output: number } }
+  | { type: 'done'; duration_ms: number; turns: number; cost_usd: number }
+```
+
+### UI: Collapsible Agent Activity Panel
+
+```
+┌─────────────────────────────────────────────────────┐
+│ 🤖 Agent Activity                        ▼ Collapse │
+├─────────────────────────────────────────────────────┤
+│ 💭 Thinking (2.3s)                                  │
+│   "I need to create a modern landing page for a     │
+│    dental practice. The template uses a hero with    │
+│    gradient background. Let me start with..."        │
+│                                                      │
+│ 📝 Write  index.html  (142 lines)           0.8s    │
+│ 📝 Write  styles.css  (89 lines)            0.4s    │
+│ 📝 Write  script.js   (34 lines)            0.3s    │
+│ 📖 Read   package.json                     0.1s    │
+│ ⚡ Run    npm install                       3.2s    │
+│ ⚡ Run    npm run build                     1.8s    │
+│ ✅ Build passed                                      │
+│                                                      │
+│ ──────────────────────────────────────────────────── │
+│ ⏱ 12.4s  │  3 turns  │  $0.23  │  4,200 tokens     │
+└─────────────────────────────────────────────────────┘
+```
+
+### Implementation
+
+**Server side** (`processMessage` in `claudeAgentSDK.server.ts`):
+- Forward `stream_event` thinking blocks → `{ type: 'thinking', text }`
+- Forward `assistant` tool_use blocks → `{ type: 'tool_call', name, input }`
+- Forward `tool_progress` → `{ type: 'tool_result', name, duration_s }`
+- Forward `result` → `{ type: 'done', duration_ms, turns, cost_usd }`
+- Parse Write/Read/Bash from tool_use inputs for file/command events
+
+**Client side** (new `useAgentActivity` hook + `AgentActivityPanel` component):
+- Accumulate events in a log array
+- Render in a collapsible panel below the chat or beside the preview
+- Thinking blocks shown in a muted/italic style (collapsible if long)
+- File operations shown with icons + line counts
+- Running cost/token counter at the bottom
+- Auto-scroll to latest event
+
+### Position in UI
+- **Desktop**: Right sidebar panel (below file tree), collapsible
+- **Mobile**: Bottom sheet, swipe up to expand
+- **Default state**: Collapsed to summary bar ("Working... 3 files written, $0.12")

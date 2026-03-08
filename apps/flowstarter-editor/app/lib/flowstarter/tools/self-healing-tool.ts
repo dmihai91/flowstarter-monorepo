@@ -4,7 +4,7 @@
  * Three-tier self-healing system for fixing build errors:
  * - Tier 1: Rule-based fixes (instant)
  * - Tier 2: Search-based fixes (via SearchTool)
- * - Tier 3: LLM-based fixes (Kimi K2)
+ * - Tier 3: LLM-based fixes (Sonnet-4-6)
  */
 
 import { BaseTool, type ToolContext } from '~/lib/flowops/base-tool';
@@ -236,7 +236,7 @@ export class SelfHealingTool extends BaseTool<SelfHealingInput, SelfHealingOutpu
 
     /*
      * ─────────────────────────────────────────────────────────────────────────
-     * Tier 3: LLM-based (Kimi K2)
+     * Tier 3: LLM-based (Sonnet-4-6)
      * ─────────────────────────────────────────────────────────────────────────
      */
     if (enableTiers.llm) {
@@ -379,7 +379,7 @@ OUTPUT (JSON only):
 }`;
 
     const response = await generateJSON<LLMFixResponse>([{ role: 'user', content: prompt }], {
-      model: 'moonshotai/kimi-k2-instruct-0905',
+      model: 'anthropic/claude-sonnet-4-6',
       temperature: 0.1,
       maxTokens: 8000,
     });

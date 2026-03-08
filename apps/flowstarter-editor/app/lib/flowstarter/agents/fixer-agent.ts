@@ -2,7 +2,7 @@
  * FlowOps Fixer Agent (Support)
  *
  * Three-tier approach: rule-based → search-based → LLM-based fixes.
- * Primary: Claude Sonnet 4, Fallback: Kimi K2.
+ * Primary: Claude Sonnet 4, Fallback: Sonnet-4-6.
  * Called by Gretly Engine when build errors are detected.
  */
 
@@ -15,7 +15,7 @@ import { applyRuleBasedFixes, validateFix, detectFramework } from './fixer-agent
 export type { FixerResponseDTO } from '~/lib/flowops/schema';
 
 const PRIMARY_MODEL = 'claude-opus-4-6';
-const FAST_MODEL = 'moonshotai/kimi-k2-instruct-0905';
+const FAST_MODEL = 'anthropic/claude-sonnet-4-6';
 
 interface LLMFixResponse {
   success: boolean;
@@ -99,18 +99,18 @@ CRITICAL: TypeScript implicit 'any' errors are common. Fix them by:
     // Tier 3a: Fast model (K2) - Optional
     if (this.tryFastModelFirst) {
       attempts++;
-      context.onProgress?.('Trying fast fix with Kimi K2...', 50);
+      context.onProgress?.('Trying fast fix with Sonnet-4-6...', 50);
       try {
         const k2Fix = await this.applyLLMFix(request, searchContext, FAST_MODEL);
         if (k2Fix && validateFix(k2Fix.fixedContent, request.file)) {
-          this.logger.info(`Tier 3a (Kimi K2 fast) fix applied: ${k2Fix.summary}`);
+          this.logger.info(`Tier 3a (Sonnet-4-6 fast) fix applied: ${k2Fix.summary}`);
           return this.createSuccessResponse({
             success: true, fixedContent: k2Fix.fixedContent,
             summary: `[K2] ${k2Fix.summary}`, tier: 'llm', attempts,
           });
         }
       } catch (err) {
-        this.logger.warn('Kimi K2 fast fix failed, escalating to Sonnet:', err);
+        this.logger.warn('Sonnet-4-6 fast fix failed, escalating to Sonnet:', err);
       }
     }
 

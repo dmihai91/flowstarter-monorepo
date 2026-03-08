@@ -399,8 +399,6 @@ export async function action({ request }: ActionFunctionArgs) {
         } catch (error) {
           send({ type: 'error', error: error instanceof Error ? error.message : 'Build failed' });
         }
-        }
-
         controller.close();
       },
     });

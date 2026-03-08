@@ -5,7 +5,7 @@
 // Phase 1: Architect (strategic planning) - Opus 4.6 for best quality
 export const ARCHITECT_MODEL = 'anthropic/claude-opus-4-6';
 // Phase 2: Builder (fast execution)
-export const BUILDER_MODEL = 'moonshotai/kimi-k2-instruct-0905';
+export const BUILDER_MODEL = 'anthropic/claude-sonnet-4-6';
 // Fallback if primary fails
 export const FALLBACK_MODEL = 'deepseek/deepseek-chat';
 

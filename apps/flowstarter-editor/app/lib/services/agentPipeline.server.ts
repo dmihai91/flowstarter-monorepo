@@ -314,7 +314,7 @@ Important:
       cwd: workDir,
       model: 'claude-opus-4-6',
       permissionMode: 'bypassPermissions',
-      maxTurns: 80,
+      maxTurns: 30,
       mcpServers: { flowstarter: mcpServer },
       systemPrompt: 'You are an expert web architect and creative director. You orchestrate sub-agents to build beautiful, conversion-optimised websites.',
     };

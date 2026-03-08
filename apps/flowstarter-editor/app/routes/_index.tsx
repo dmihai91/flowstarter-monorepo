@@ -228,16 +228,6 @@ function IndexRedirector() {
             }
           : undefined;
 
-        // Store handoff data for downstream use
-        storeHandoffData({
-          projectId: supabaseProjectId,
-          userId: data.userId,
-          name: projectName,
-          description: projectDescription,
-          config,
-          fromMainPlatform: true,
-        });
-
         hasRedirected.current = true;
 
         // Check if a Convex project already exists for this Supabase UUID

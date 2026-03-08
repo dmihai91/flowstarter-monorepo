@@ -166,58 +166,41 @@ export function useWelcomeInit({
       return;
     }
 
-    // Check for handoff data
-    const handoffDataStr = typeof window !== 'undefined' ? localStorage.getItem('flowstarter_handoff_data') : null;
+    // ═══════════════════════════════════════════════════════════════════════
+    // STEP DETERMINATION FROM SUPABASE DATA (via Convex initialState)
+    // The handoff token seeds projectName / projectDescription / businessInfo
+    // into the Convex conversation on creation. Use that — not localStorage.
+    // ═══════════════════════════════════════════════════════════════════════
+    const projectName = state?.projectName;
+    const projectDescription = state?.projectDescription;
+    const hasName = !!(projectName && projectName !== 'Untitled Project' && projectName.length > 1);
+    const hasDescription = !!(projectDescription && projectDescription.length > 10);
 
-    if (handoffDataStr) {
-      try {
-        const handoffData = JSON.parse(handoffDataStr) as {
-          fromMainPlatform?: boolean;
-          name?: string;
-          description?: string;
-          config?: { userDescription?: string };
-        };
+    if (hasName) {
+      // Sync name into flow state so header / ProjectNameEditor reflects it
+      flow.setProjectName(projectName!);
+    }
 
-        localStorage.removeItem('flowstarter_handoff_data');
+    if (hasName && hasDescription) {
+      // Both name + description from Supabase → treat like internal flow (skip to template)
+      flow.setProjectDescription(projectDescription!);
+      await initializeInternalFlow();
+      return;
+    }
 
-        if (handoffData.fromMainPlatform) {
-          const name = handoffData.name;
-          const description = handoffData.config?.userDescription || handoffData.description || '';
+    if (hasName && !hasDescription) {
+      // Name known, business description not yet collected → skip naming step
+      msg.addAssistantMessage(
+        `**Great, "${projectName}" is all set.** Now tell me about your business — what do you do and who do you serve?`
+      );
+      flow.setStep('describe');
+      msg.setSuggestedReplies([]);
+      return;
+    }
 
-          // Name was already set on the dashboard — set it in flow state and skip naming step
-          if (name && name !== 'Untitled Project') {
-            flow.setProjectName(name);
-          }
-
-          if (description) {
-            // Has both name + description → treat like internal flow (skip to template)
-            flow.setProjectDescription(description);
-            if (name) {
-              initialStateRef.current = {
-                ...initialStateRef.current,
-                projectName: name,
-                projectDescription: description,
-              } as typeof initialStateRef.current;
-            }
-            await initializeInternalFlow();
-            return;
-          }
-
-          if (name && name !== 'Untitled Project') {
-            // Has name but no description → skip naming, ask for business description
-            flow.setProjectDescription('');
-            msg.addAssistantMessage(
-              `**Great, "${name}" is all set.** Now tell me about your business — what do you do and who do you serve?`
-            );
-            flow.setStep('describe');
-            msg.setSuggestedReplies([]);
-            return;
-          }
-        }
-      } catch (e) {
-        console.warn('[useWelcomeInit] Failed to parse handoff data:', e);
-        localStorage.removeItem('flowstarter_handoff_data');
-      }
+    // Clean up any stale localStorage artefact (legacy, can be removed later)
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('flowstarter_handoff_data');
     }
 
     /*

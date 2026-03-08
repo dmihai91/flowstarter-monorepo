@@ -379,7 +379,8 @@ export async function action({ request }: ActionFunctionArgs) {
     const useGretlyFallback = process.env.AGENTS_SDK_ENABLED === 'false';
     console.log(`[Build] Pipeline: ${useGretlyFallback ? 'Gretly (legacy fallback)' : 'Agents SDK (primary)'}`);
 
-    // Create SSE stream
+    // Create SSE stream with keepalive pings every 20s
+    // (prevents proxy/browser timeouts during long agent turns)
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
@@ -390,6 +391,11 @@ export async function action({ request }: ActionFunctionArgs) {
           controller.enqueue(encoder.encode(`event: agent-event\ndata: ${JSON.stringify(event)}\n\n`));
         };
 
+        // Keepalive: SSE comment every 20s so the connection isn't dropped
+        const keepalive = setInterval(() => {
+          try { controller.enqueue(encoder.encode(': keepalive\n\n')); } catch { /* closed */ }
+        }, 20_000);
+
         try {
           if (useGretlyFallback) {
             await handleGretlyBuild(body, send, sendAgentEvent);
@@ -398,6 +404,8 @@ export async function action({ request }: ActionFunctionArgs) {
           }
         } catch (error) {
           send({ type: 'error', error: error instanceof Error ? error.message : 'Build failed' });
+        } finally {
+          clearInterval(keepalive);
         }
         controller.close();
       },

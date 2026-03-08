@@ -6,6 +6,7 @@
  */
 
 import { useState, useCallback, useRef } from 'react';
+import type { AgentActivityEvent } from '~/components/editor/AgentActivityPanel';
 
 export interface FileChange {
   path: string;
@@ -36,9 +37,11 @@ export interface UseAgentCodeOptions {
   onProgress?: (progress: AgentProgress) => void;
   onError?: (error: string) => void;
   onComplete?: (result: AgentResult) => void;
+  onAgentEvent?: (event: AgentActivityEvent) => void;
 }
 
 export interface UseAgentCodeReturn {
+  agentEvents: AgentActivityEvent[];
   generateCode: (params: {
     projectId: string;
     prompt: string;
@@ -71,6 +74,7 @@ export function useAgentCode(options: UseAgentCodeOptions = {}): UseAgentCodeRet
   const [isRunning, setIsRunning] = useState(false);
   const [progress, setProgress] = useState<AgentProgress | null>(null);
   const [fileChanges, setFileChanges] = useState<FileChange[]>([]);
+  const [agentEvents, setAgentEvents] = useState<AgentActivityEvent[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -137,6 +141,11 @@ export function useAgentCode(options: UseAgentCodeOptions = {}): UseAgentCodeRet
                     case 'result':
                       result = data;
                       callbacks.onComplete?.(data);
+                      break;
+
+                    case 'agent-event':
+                      setAgentEvents((prev) => [...prev, data as AgentActivityEvent]);
+                      callbacks.onAgentEvent?.(data as AgentActivityEvent);
                       break;
                   }
                 } catch (e) {
@@ -242,6 +251,7 @@ export function useAgentCode(options: UseAgentCodeOptions = {}): UseAgentCodeRet
   }, []);
 
   return {
+    agentEvents,
     generateCode,
     fixBuildError,
     applyChanges,

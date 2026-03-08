@@ -14,7 +14,7 @@ import { buildGenerateFilePrompt, buildRefineFilePrompt } from './code-generator
 // Re-export schemas and types for backward compatibility
 export * from './code-generator-schemas';
 
-const EXECUTOR_MODEL = 'moonshotai/kimi-k2-instruct-0905';
+const EXECUTOR_MODEL = 'claude-sonnet-4-20250514';
 const MAX_TOKENS = 16000;
 
 export class CodeGeneratorAgent extends BaseAgent {

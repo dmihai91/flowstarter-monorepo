@@ -88,6 +88,9 @@ export async function action({ request }: ActionFunctionArgs) {
       onError: async (error) => {
         await sendEvent('error', { error });
       },
+      onAgentEvent: async (event) => {
+        await sendEvent('agent-event', event);
+      },
     };
 
     // Process in background

@@ -46,7 +46,26 @@ export interface StreamCallbacks {
   onFileChange?: (file: FileChange) => void;
   onProgress?: (progress: { phase: string; message: string }) => void;
   onError?: (error: string) => void;
+  /** Rich structured events for the AgentActivityPanel */
+  onAgentEvent?: (event: AgentActivityEvent) => void;
 }
+
+/**
+ * Structured event types for the AgentActivityPanel UI component.
+ * These are forwarded to the client via SSE.
+ */
+export type AgentActivityEvent =
+  | { type: 'thinking'; text: string; duration_s?: number }
+  | { type: 'tool_call'; name: string; input: Record<string, unknown> }
+  | { type: 'tool_result'; name: string; duration_s: number }
+  | { type: 'file_write'; path: string; lines?: number; duration_s?: number }
+  | { type: 'file_read'; path: string }
+  | { type: 'file_delete'; path: string }
+  | { type: 'command'; cmd: string }
+  | { type: 'command_output'; text: string; success?: boolean }
+  | { type: 'text'; content: string }
+  | { type: 'error'; message: string }
+  | { type: 'done'; duration_ms: number; turns: number; cost_usd: number; input_tokens: number; output_tokens: number }
 
 /**
  * Build prompt content with optional images
@@ -219,36 +238,92 @@ export async function generateCode(
 /**
  * Process incoming SDK messages and trigger callbacks
  */
+function countLines(content: unknown): number {
+  if (typeof content === 'string') return content.split('\n').length;
+  return 0;
+}
+
 function processMessage(message: SDKMessage, callbacks?: StreamCallbacks): void {
+  const emit = (event: AgentActivityEvent) => callbacks?.onAgentEvent?.(event);
+
   switch (message.type) {
-    case 'assistant':
-      // Extract text from assistant message
-      if (message.message.content) {
-        for (const block of message.message.content) {
-          if (block.type === 'text') {
-            callbacks?.onMessage?.(block.text);
+    case 'assistant': {
+      if (!message.message.content) break;
+
+      for (const block of message.message.content) {
+        if (block.type === 'text' && block.text) {
+          callbacks?.onMessage?.(block.text);
+          emit({ type: 'text', content: block.text });
+        } else if (block.type === 'thinking' && (block as any).thinking) {
+          emit({ type: 'thinking', text: (block as any).thinking });
+        } else if (block.type === 'tool_use') {
+          const toolName = block.name as string;
+          const input = block.input as Record<string, unknown>;
+
+          // Map tool names to file events
+          if (toolName === 'Write' || toolName === 'create_file') {
+            const path = (input.file_path || input.path) as string;
+            const content = input.content as string;
+            if (path) emit({ type: 'file_write', path, lines: countLines(content) });
+          } else if (toolName === 'Edit' || toolName === 'str_replace_editor') {
+            const path = (input.file_path || input.path || input.old_file_path) as string;
+            if (path) emit({ type: 'file_write', path });
+          } else if (toolName === 'Read' || toolName === 'read_file') {
+            const path = (input.file_path || input.path) as string;
+            if (path) emit({ type: 'file_read', path });
+          } else if (toolName === 'Bash' || toolName === 'bash' || toolName === 'execute_command') {
+            const cmd = (input.command || input.cmd) as string;
+            if (cmd) emit({ type: 'command', cmd });
+          } else {
+            emit({ type: 'tool_call', name: toolName, input });
           }
         }
       }
-
       break;
+    }
 
-    case 'system':
+    case 'stream_event': {
+      // Raw streaming events — capture thinking deltas
+      const event = message.event as any;
+      if (event?.type === 'content_block_delta' && event.delta?.type === 'thinking_delta') {
+        // Thinking is accumulated in assistant blocks; no-op here to avoid duplication
+      }
+      break;
+    }
+
+    case 'system': {
       if (message.subtype === 'init') {
         callbacks?.onProgress?.({
           phase: 'initialized',
-          message: `Agent initialized with ${message.tools.length} tools`,
+          message: `Agent initialized with ${(message as any).tools?.length ?? 0} tools`,
         });
       }
-
       break;
+    }
 
-    case 'tool_progress':
-      callbacks?.onProgress?.({
-        phase: 'working',
-        message: `Using ${message.tool_name}...`,
-      });
+    case 'tool_progress': {
+      callbacks?.onProgress?.({ phase: 'working', message: `Using ${message.tool_name}...` });
+      emit({ type: 'tool_result', name: message.tool_name, duration_s: message.elapsed_time_seconds });
       break;
+    }
+
+    case 'result': {
+      const r = message as any;
+      if (r.subtype === 'success') {
+        const usage = r.usage ?? {};
+        emit({
+          type: 'done',
+          duration_ms: r.duration_ms ?? 0,
+          turns: r.num_turns ?? 0,
+          cost_usd: r.total_cost_usd ?? 0,
+          input_tokens: usage.input_tokens ?? 0,
+          output_tokens: usage.output_tokens ?? 0,
+        });
+      } else if (r.errors?.length) {
+        emit({ type: 'error', message: r.errors.join('; ') });
+      }
+      break;
+    }
   }
 }
 

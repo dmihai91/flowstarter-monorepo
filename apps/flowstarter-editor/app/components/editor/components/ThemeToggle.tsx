@@ -72,9 +72,9 @@ export function ThemeToggle() {
     injectViewTransitionStyles();
 
     // Use View Transitions API if available, otherwise fall back to instant switch
-    const vt = (document as Document & { startViewTransition?: (cb: () => void) => void }).startViewTransition;
-    if (vt) {
-      vt(() => setTheme(newTheme));
+    const doc = document as Document & { startViewTransition?: (cb: () => void) => unknown };
+    if (doc.startViewTransition) {
+      doc.startViewTransition(() => setTheme(newTheme));
     } else {
       setTheme(newTheme);
     }

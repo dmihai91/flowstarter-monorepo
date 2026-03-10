@@ -19,6 +19,7 @@ import { mkdir, writeFile, readFile, readdir, rm } from 'fs/promises';
 import { join } from 'path';
 import type { AgentActivityEvent } from './claude-agent/types';
 import type { SiteGenerationInput, GeneratedFile, SiteGenerationResult } from './claude-agent/types';
+import { fixContentImports } from './postProcessAstro';
 
 export type { AgentActivityEvent };
 
@@ -177,7 +178,7 @@ Always write complete files — never truncate or use placeholders.`,
     }
 
     progress('Collecting output files...');
-    const generatedFiles = await collectDir(workDir);
+    const generatedFiles = fixContentImports(await collectDir(workDir));
     progress(`Done — ${generatedFiles.length} files generated.`);
 
     return { success: true, files: generatedFiles };

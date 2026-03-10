@@ -211,11 +211,10 @@ test.describe('Scenario 2: QuickScaffold → AI Enrichment → Editor', () => {
 
     // ── Step 3: Editor loads and reaches template selector immediately ─────────
     // (businessInfo pre-filled → step machine skips to template)
-    const validateRes = await e2eFetch(`https://editor.flowstarter.dev/api/handoff/validate?token=${token}`);
+    const validateRes = await e2eFetch(`${EDITOR}/api/handoff/validate?token=${token}`);
     expect(validateRes.status).toBe(200);
 
     // ── Step 4: Call /api/build with enriched data — real multi-agent pipeline ─
-    const EDITOR_BASE = 'https://editor.flowstarter.dev';
     const buildPayload = {
       projectId,
       siteName: enriched.siteName,
@@ -261,7 +260,7 @@ test.describe('Scenario 2: QuickScaffold → AI Enrichment → Editor', () => {
         }
       }
       return { events, status: res.status };
-    }, { url: `${EDITOR_BASE}/api/build`, payload: buildPayload });
+    }, { url: `${EDITOR}/api/build`, payload: buildPayload });
 
     console.log('[2.5] /api/build status:', buildRes.status, '— events:', buildRes.events.length);
     expect(buildRes.status).toBe(200);
@@ -280,4 +279,3 @@ test.describe('Scenario 2: QuickScaffold → AI Enrichment → Editor', () => {
     }
   });
 });
-

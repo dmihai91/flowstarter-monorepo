@@ -213,7 +213,6 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
     // ── Step 4: Call /api/build directly — real multi-agent pipeline ─────────
     // (Planner → Sonnet coder → Opus fixer → Reviewer)
     // Daytona sandbox is mocked via route.fulfill in playwright config
-    const EDITOR_BASE = 'https://editor.flowstarter.dev';
     const buildPayload = {
       projectId,
       siteName: name,
@@ -262,7 +261,7 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
         }
       }
       return { events, status: res.status };
-    }, { url: `${EDITOR_BASE}/api/build`, payload: buildPayload });
+    }, { url: `${EDITOR}/api/build`, payload: buildPayload });
 
     console.log('[1.8] /api/build status:', buildRes.status, '— events:', buildRes.events.length);
     expect(buildRes.status).toBe(200);

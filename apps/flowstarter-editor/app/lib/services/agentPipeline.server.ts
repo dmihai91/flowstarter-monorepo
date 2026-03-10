@@ -207,9 +207,11 @@ Always write complete files — never truncate or use placeholders.`,
 
     progress('Collecting output files...');
     const allFiles = await collectDir(workDir);
-    // Strip integration components that use getEntry()/content imports — they break the Astro build
+    // Strip integration components that use getEntry()/content imports — they break Astro build
+    // These components require a content collection config + MD files that don't exist
     const INTEGRATION_BLOCKLIST = ['BookingWidget.astro', 'ContactForm.astro', 'Newsletter.astro', 'PaymentWidget.astro', 'SocialFeed.astro'];
     const filtered = allFiles.filter(f => !INTEGRATION_BLOCKLIST.some(b => f.path.endsWith(b)));
+    // Also strip any astro.config that imports astro-icon (breaks build without the package)
     const generatedFiles = fixContentImports(filtered);
     progress(`Done — ${generatedFiles.length} files generated.`);
 

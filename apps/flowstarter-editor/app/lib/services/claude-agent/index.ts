@@ -87,41 +87,12 @@ export async function generateSiteFromTemplate(
     // 3. Build context and create modification plan
     const context = buildContext(filesMap);
     
-    // ─── PHASE 1: DESIGN (Opus) ─────────────────────────────────────────────
-    onProgress?.(`Creative director is designing your site...`);
-    console.log('[FlowstarterAgent] Phase 1: Generating design spec with Opus...');
-
-    let designSpec: DesignSpec | null = null;
-    try {
-      designSpec = await generateDesignSpec(input);
-      console.log('[FlowstarterAgent] Design spec created:', {
-        mood: designSpec.designDirection.mood,
-        uniqueElement: designSpec.designDirection.uniqueElement,
-        heroHeadline: designSpec.hero.headline,
-        sections: designSpec.sections.length,
-      });
-      onProgress?.(`Design vision: "${designSpec.designDirection.uniqueElement}"`);
-    } catch (error) {
-      console.error('[FlowstarterAgent] Design phase failed, continuing with default:', error);
-      onProgress?.(`Design phase skipped, using template defaults...`);
-    }
-
-    // ─── PHASE 2: PLANNING ──────────────────────────────────────────────────
-    onProgress?.(`Planning strategic customizations...`);
-    console.log('[FlowstarterAgent] Generating strategic modification plan...');
-
-    const modifications = await generateModificationPlan(input, context);
-    console.log(`[FlowstarterAgent] Plan created: ${modifications.length} modifications`);
-
-    const deduplicatedMods = deduplicateModifications(modifications);
-    console.log(`[FlowstarterAgent] Deduplicated to ${deduplicatedMods.length} unique files`);
-    onProgress?.(`Plan created: Updating ${deduplicatedMods.length} files...`);
-
     // 4. Execute changes — Agents SDK (Node.js) or memory-based (Workers)
     const generatedFiles: GeneratedFile[] = [];
 
     if (isAgentsSDKAvailable()) {
       // ── Full Agents SDK pipeline: Opus orchestrator + Sonnet sub-agents ──────
+      // Skip design + planning phases — the agent does its own planning
       onProgress?.('Launching Agents SDK pipeline (Opus orchestrator + Sonnet coders)...');
 
       const pipelineResult = await runAgentPipeline(
@@ -138,6 +109,35 @@ export async function generateSiteFromTemplate(
         generatedFiles.push(f);
       }
     } else {
+      // ─── PHASE 1: DESIGN (Opus) — only for non-agent path ──────────────────
+      onProgress?.(`Creative director is designing your site...`);
+      console.log('[FlowstarterAgent] Phase 1: Generating design spec with Opus...');
+
+      let designSpec: DesignSpec | null = null;
+      try {
+        designSpec = await generateDesignSpec(input);
+        console.log('[FlowstarterAgent] Design spec created:', {
+          mood: designSpec.designDirection.mood,
+          uniqueElement: designSpec.designDirection.uniqueElement,
+          heroHeadline: designSpec.hero.headline,
+          sections: designSpec.sections.length,
+        });
+        onProgress?.(`Design vision: "${designSpec.designDirection.uniqueElement}"`);
+      } catch (error) {
+        console.error('[FlowstarterAgent] Design phase failed, continuing with default:', error);
+        onProgress?.(`Design phase skipped, using template defaults...`);
+      }
+
+      // ─── PHASE 2: PLANNING ──────────────────────────────────────────────────
+      onProgress?.(`Planning strategic customizations...`);
+      console.log('[FlowstarterAgent] Generating strategic modification plan...');
+
+      const modifications = await generateModificationPlan(input, context);
+      console.log(`[FlowstarterAgent] Plan created: ${modifications.length} modifications`);
+
+      const deduplicatedMods = deduplicateModifications(modifications);
+      console.log(`[FlowstarterAgent] Deduplicated to ${deduplicatedMods.length} unique files`);
+      onProgress?.(`Plan created: Updating ${deduplicatedMods.length} files...`);
       // ── Memory-based path: parallel LLM batch calls (Cloudflare Workers) ────
 
     // Add all original files first (except those being modified)

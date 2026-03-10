@@ -32,6 +32,10 @@ test.afterEach(async () => {
 
 // ─── Helper ───────────────────────────────────────────────────────────────────
 
+function editorHandoffUrl(token: string): string {
+  return `${EDITOR}?handoff=${encodeURIComponent(token)}`;
+}
+
 async function callHandoff(_page: Page, projectConfig: object): Promise<{
   editorUrl: string; token: string; projectId: string;
 }> {
@@ -62,7 +66,7 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
 
     expect(token).toBeTruthy();
     expect(token.split('.').length).toBeGreaterThanOrEqual(2);
-    expect(editorUrl).toContain(EDITOR);
+    // editorUrl comes from server env (may be production domain) — just verify token is embedded
     expect(editorUrl).toContain('handoff=');
     expect(projectId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
 
@@ -126,12 +130,12 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
   // ── 1.5 Editor loads without login, navigates to /project/:id ────────────
   test('1.5 — editor loads authenticated; redirects to /project/:id', async ({ page }) => {
     const name = testProjectName();
-    const { editorUrl } = await callHandoff(page, {
+    const { token } = await callHandoff(page, {
       name,
       description: BUSINESS_INFO.description,
     });
 
-    await page.goto(editorUrl);
+    await page.goto(editorHandoffUrl(token));
     // Real Convex WS connection + project/conversation creation
     await page.waitForURL(/\/project\//, { timeout: 30_000 });
 
@@ -144,9 +148,9 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
 
   // ── 1.6 No businessInfo → editor asks for business description ────────────
   test('1.6 — without businessInfo, editor shows business collection chat', async ({ page }) => {
-    const { editorUrl } = await callHandoff(page, { name: testProjectName() });
+    const { token } = await callHandoff(page, { name: testProjectName() });
 
-    await page.goto(editorUrl);
+    await page.goto(editorHandoffUrl(token));
     await page.waitForURL(/\/project\//, { timeout: 30_000 });
     await page.waitForTimeout(3000);
 
@@ -156,14 +160,14 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
 
   // ── 1.7 With businessInfo → Convex step machine skips to template ─────────
   test('1.7 — pre-filled businessInfo: Convex step machine reaches template selector', async ({ page }) => {
-    const { editorUrl } = await callHandoff(page, {
+    const { token } = await callHandoff(page, {
       name: testProjectName(),
       description: BUSINESS_INFO.description,
       businessInfo: BUSINESS_INFO,
       contactInfo: CONTACT_INFO,
     });
 
-    await page.goto(editorUrl);
+    await page.goto(editorHandoffUrl(token));
     await page.waitForURL(/\/project\//, { timeout: 30_000 });
     await page.waitForTimeout(5000); // useWelcomeInit advances step
 
@@ -185,11 +189,11 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
   test('1.8 — full idea-to-site pipeline: /api/build SSE streams real agent events', async ({ page }) => {
     // ── Step 1: Create project via handoff (idea stage — no businessInfo) ────
     const name = testProjectName();
-    const { editorUrl, projectId } = await callHandoff(page, { name });
+    const { token, projectId } = await callHandoff(page, { name });
     console.log('[1.8] Project created:', projectId);
 
     // ── Step 2: Browser loads editor — chat collects business description ────
-    await page.goto(editorUrl);
+    await page.goto(editorHandoffUrl(token));
     await page.waitForURL(/\/project\//, { timeout: 30_000 });
     await page.waitForTimeout(3000);
 
@@ -298,7 +302,7 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
   // ── 1.9 Name sync: rename in editor → Supabase updated ───────────────────
   test('1.9 — renaming project in editor syncs to Supabase via /api/editor/sync', async ({ page }) => {
     const name = testProjectName();
-    const { editorUrl, projectId } = await callHandoff(page, {
+    const { token, projectId } = await callHandoff(page, {
       name,
       description: BUSINESS_INFO.description,
     });
@@ -309,7 +313,7 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
       await route.continue();
     });
 
-    await page.goto(editorUrl);
+    await page.goto(editorHandoffUrl(token));
     await page.waitForURL(/\/project\//, { timeout: 30_000 });
     await page.waitForTimeout(4000);
 

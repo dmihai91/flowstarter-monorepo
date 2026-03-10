@@ -185,7 +185,7 @@ test.describe('Scenario 2: QuickScaffold → AI Enrichment → Editor', () => {
     const rawDescription = 'Sală de fitness și wellness în Timișoara cu antrenori certificați';
     const enrichRes = await e2eFetch(`${BASE}/api/ai/enrich-project`, {
       method: 'POST',
-      body: JSON.stringify({ description: rawDescription, locale: 'ro' }),
+      body: { description: rawDescription, locale: 'ro' },
     });
     expect(enrichRes.status).toBe(200);
     const enriched = enrichRes.body as {

@@ -94,4 +94,46 @@ const { title } = frontmatter;
 
     expect(twice).toEqual(once);
   });
+
+  it('leaves nested destructuring untouched', () => {
+    const input = [
+      astroFile(`---
+import { frontmatter as services } from '../../content/services.md';
+const { title, items: { featured } } = services;
+---
+
+<h1>{title}</h1>`),
+    ];
+
+    const result = fixContentImports(input);
+    expect(result[0].content).toContain('const { title, items: { featured } }');
+  });
+
+  it('does not replace alias.prop outside curly braces', () => {
+    const files = fixContentImports([
+      astroFile(`---
+import { frontmatter as hero } from '../../content/hero.md';
+---
+
+<meta name="description" content={hero.description}>
+<p>hero.title should not be replaced</p>`),
+    ]);
+
+    expect(files[0].content).toContain('hero.title should not be replaced');
+    expect(files[0].content).not.toContain('{hero.description}');
+  });
+
+  it('does not leave excessive blank lines after import removal', () => {
+    const files = fixContentImports([
+      astroFile(`---
+import { frontmatter } from '../../content/hero.md';
+
+const extra = true;
+---
+
+<h1>{extra}</h1>`),
+    ]);
+
+    expect(files[0].content).not.toMatch(/\n{3,}/);
+  });
 });

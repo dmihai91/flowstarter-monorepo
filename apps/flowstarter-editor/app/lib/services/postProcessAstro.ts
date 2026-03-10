@@ -5,8 +5,10 @@ type ContentImport = {
   slug: string;
 };
 
-const CONTENT_IMPORT_RE =
-  /^import\s*\{\s*frontmatter(?:\s+as\s+(\w+))?\s*\}\s*from\s*['"][^'"]*\/content\/([\w-]+)\.md['"]\s*;?\s*$/gm;
+/** Factory — avoids stateful regex footgun with module-level g flag */
+function contentImportRe(): RegExp {
+  return /^import\s*\{\s*frontmatter(?:\s+as\s+(\w+))?\s*\}\s*from\s*['"][^'"]*\/content\/([\w-]+)\.md['"]\s*;?\s*$/gm;
+}
 
 const FRONTMATTER_RE = /^---\s*\n([\s\S]*?)\n---/;
 
@@ -24,14 +26,16 @@ function processFile(file: GeneratedFile): GeneratedFile {
 }
 
 function getContentImports(content: string): ContentImport[] {
-  return Array.from(content.matchAll(CONTENT_IMPORT_RE), ([, alias, slug]) => ({
+  return Array.from(content.matchAll(contentImportRe()), ([, alias, slug]) => ({
     alias: alias ?? 'frontmatter',
     slug,
   }));
 }
 
 function rewriteAstroContent(content: string, imports: ContentImport[]): string {
-  const withoutImports = content.replace(CONTENT_IMPORT_RE, '');
+  const withoutImports = content
+    .replace(contentImportRe(), '')
+    .replace(/\n{3,}/g, '\n\n');
   const frontmatter = withoutImports.match(FRONTMATTER_RE);
   if (!frontmatter) return replacePropertyAccess(withoutImports, imports);
   const script = rewriteFrontmatter(frontmatter[1], imports);
@@ -48,7 +52,11 @@ function replaceDestructuring(script: string, item: ContentImport): string {
     `const\\s*\\{([\\s\\S]*?)\\}\\s*=\\s*${escapeRegExp(item.alias)}\\s*;?`,
     'g',
   );
-  return script.replace(pattern, (_, rawFields: string) => createConstBlock(rawFields, item.slug));
+  return script.replace(pattern, (match, rawFields: string) => {
+    // Nested destructuring is not supported — leave untouched rather than silently break
+    if (rawFields.includes('{')) return match;
+    return createConstBlock(rawFields, item.slug);
+  });
 }
 
 function createConstBlock(rawFields: string, slug: string): string {
@@ -68,13 +76,41 @@ function createConstLine(field: string, slug: string): string {
   return `const ${name} = ${buildLiteral(source, slug)};`;
 }
 
+/**
+ * Replace alias.prop in content.
+ * Frontmatter script: replace everywhere.
+ * Template body: only replace inside {...} expression delimiters.
+ */
 function replacePropertyAccess(content: string, imports: ContentImport[]): string {
-  return imports.reduce((nextContent, item) => replaceAliasProperties(nextContent, item), content);
+  const closingFence = content.indexOf('\n---', content.indexOf('---') + 3);
+  if (closingFence === -1) {
+    return imports.reduce((c, item) => replaceAliasInExpressions(c, item), content);
+  }
+  const fenceEnd = content.indexOf('\n', closingFence + 1);
+  const scriptPart = content.slice(0, fenceEnd);
+  const templatePart = content.slice(fenceEnd);
+
+  const fixedScript = imports.reduce((c, item) => replaceAliasEverywhere(c, item), scriptPart);
+  const fixedTemplate = imports.reduce((c, item) => replaceAliasInExpressions(c, item), templatePart);
+  return fixedScript + fixedTemplate;
 }
 
-function replaceAliasProperties(content: string, item: ContentImport): string {
+/** Replace alias.prop anywhere (used in frontmatter script) */
+function replaceAliasEverywhere(content: string, item: ContentImport): string {
   const pattern = new RegExp(`${escapeRegExp(item.alias)}\\.(\\w+)`, 'g');
   return content.replace(pattern, (_, prop: string) => buildLiteral(prop, item.slug));
+}
+
+/** Replace alias.prop only inside {...} expressions (used in template body) */
+function replaceAliasInExpressions(content: string, item: ContentImport): string {
+  const exprPattern = new RegExp(
+    `\\{([^}]*${escapeRegExp(item.alias)}\\.\\w+[^}]*)\\}`,
+    'g',
+  );
+  return content.replace(exprPattern, (match) => {
+    const propPattern = new RegExp(`${escapeRegExp(item.alias)}\\.(\\w+)`, 'g');
+    return match.replace(propPattern, (_, prop: string) => buildLiteral(prop, item.slug));
+  });
 }
 
 function buildLiteral(prop: string, slug: string): string {

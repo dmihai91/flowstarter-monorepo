@@ -206,7 +206,11 @@ Always write complete files — never truncate or use placeholders.`,
     }
 
     progress('Collecting output files...');
-    const generatedFiles = fixContentImports(await collectDir(workDir));
+    const allFiles = await collectDir(workDir);
+    // Strip integration components that use getEntry()/content imports — they break the Astro build
+    const INTEGRATION_BLOCKLIST = ['BookingWidget.astro', 'ContactForm.astro', 'Newsletter.astro', 'PaymentWidget.astro', 'SocialFeed.astro'];
+    const filtered = allFiles.filter(f => !INTEGRATION_BLOCKLIST.some(b => f.path.endsWith(b)));
+    const generatedFiles = fixContentImports(filtered);
     progress(`Done — ${generatedFiles.length} files generated.`);
 
     return { success: true, files: generatedFiles };

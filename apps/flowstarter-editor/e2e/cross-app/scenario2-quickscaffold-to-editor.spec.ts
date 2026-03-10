@@ -198,11 +198,11 @@ test.describe('Scenario 2: QuickScaffold → AI Enrichment → Editor', () => {
     // ── Step 2: Create project with enriched businessInfo via handoff ─────────
     const handoffRes = await e2eFetch(`${BASE}/api/editor/handoff`, {
       method: 'POST',
-      body: JSON.stringify({
+      body: {
         name: enriched.siteName,
         description: enriched.description,
         businessInfo: enriched,
-      }),
+      },
     });
     expect(handoffRes.status).toBe(200);
     const { token, projectId } = handoffRes.body as { token: string; editorUrl: string; projectId: string };

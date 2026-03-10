@@ -199,9 +199,11 @@ test.describe('Scenario 2: QuickScaffold → AI Enrichment → Editor', () => {
     const handoffRes = await e2eFetch(`${BASE}/api/editor/handoff`, {
       method: 'POST',
       body: {
-        name: enriched.siteName,
-        description: enriched.description,
-        businessInfo: enriched,
+        projectConfig: {
+          name: enriched.siteName,
+          description: enriched.description,
+          businessInfo: enriched,
+        },
       },
     });
     expect(handoffRes.status).toBe(200);

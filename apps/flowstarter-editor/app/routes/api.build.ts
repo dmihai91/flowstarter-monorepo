@@ -336,6 +336,35 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentE
       console.error('[Build:Simple] Failed to log costs:', e);
     }
 
+    // Persist total cost to Supabase project record
+    try {
+      const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      if (supabaseUrl && supabaseKey && body.projectId) {
+        const costUsd = totalCost.totalCostUSD;
+        const aiCredits = Math.ceil(costUsd * 100); // 1 credit = $0.01
+        await fetch(
+          `${supabaseUrl}/rest/v1/projects?id=eq.${body.projectId}`,
+          {
+            method: 'PATCH',
+            headers: {
+              'apikey': supabaseKey,
+              'Authorization': `Bearer ${supabaseKey}`,
+              'Content-Type': 'application/json',
+              'Prefer': 'return=minimal',
+            },
+            body: JSON.stringify({
+              generation_cost_usd: costUsd,
+              ai_credits_used: aiCredits,
+            }),
+          }
+        );
+        console.log(`[Build:Simple] Updated Supabase project cost: $${costUsd.toFixed(4)} (${aiCredits} credits)`);
+      }
+    } catch (e) {
+      console.error('[Build:Simple] Failed to update Supabase cost:', e);
+    }
+
     send({
       type: 'complete',
       result: {
@@ -457,6 +486,26 @@ export async function action({ request }: ActionFunctionArgs) {
                 durationMs: e.duration_ms,
                 metadata: { step: 'agent-pipeline' },
               }).catch(err => console.error('[Build] Failed to log agent cost:', err));
+            }
+            // Also update Supabase project record
+            const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+            const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+            const pid = body?.projectId;
+            if (supabaseUrl && supabaseKey && pid) {
+              const aiCredits = Math.ceil(e.cost_usd * 100);
+              fetch(`${supabaseUrl}/rest/v1/projects?id=eq.${pid}`, {
+                method: 'PATCH',
+                headers: {
+                  'apikey': supabaseKey,
+                  'Authorization': `Bearer ${supabaseKey}`,
+                  'Content-Type': 'application/json',
+                  'Prefer': 'return=minimal',
+                },
+                body: JSON.stringify({
+                  generation_cost_usd: e.cost_usd,
+                  ai_credits_used: aiCredits,
+                }),
+              }).catch(err => console.error('[Build] Failed to update Supabase cost:', err));
             }
           }
         };

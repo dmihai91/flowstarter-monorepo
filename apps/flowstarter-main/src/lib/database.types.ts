@@ -201,6 +201,8 @@ export type Database = {
           domain_type: string | null
           generated_at: string | null
           generation_completed_at: string | null
+          generation_cost_usd: number | null
+          ai_credits_used: number | null
           id: string
           is_draft: boolean
           name: string
@@ -219,6 +221,8 @@ export type Database = {
           domain_type?: string | null
           generated_at?: string | null
           generation_completed_at?: string | null
+          generation_cost_usd?: number | null
+          ai_credits_used?: number | null
           id?: string
           is_draft?: boolean
           name: string
@@ -237,6 +241,8 @@ export type Database = {
           domain_type?: string | null
           generated_at?: string | null
           generation_completed_at?: string | null
+          generation_cost_usd?: number | null
+          ai_credits_used?: number | null
           id?: string
           is_draft?: boolean
           name?: string

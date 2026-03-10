@@ -15,6 +15,8 @@ interface TeamProjectCardProject {
   is_paid?: boolean | null;
   owner_email?: string | null;
   owner_name?: string | null;
+  generation_cost_usd?: number | null;
+  ai_credits_used?: number | null;
 }
 
 interface TeamProjectCardProps {
@@ -121,7 +123,19 @@ export function TeamProjectCard({
           </div>
         )}
 
-      <div className="flex items-center justify-between text-xs text-gray-500 dark:text-white/40 pt-3 border-t border-gray-100 dark:border-white/5">
+      {(project.generation_cost_usd != null && project.generation_cost_usd > 0) && (
+        <div className="flex items-center gap-3 mb-4 py-2 px-3 rounded-lg bg-purple-50 dark:bg-purple-500/10 text-sm">
+          <span className="text-purple-700 dark:text-purple-300 font-medium">
+            {project.ai_credits_used || 0} {t('team.dashboard.aiCredits')}
+          </span>
+          <span className="text-gray-300 dark:text-white/20">&bull;</span>
+          <span className="text-gray-500 dark:text-white/50">
+            &euro;{(project.generation_cost_usd * 0.92).toFixed(2)} {t('team.dashboard.cost')}
+          </span>
+        </div>
+      )}
+
+            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-white/40 pt-3 border-t border-gray-100 dark:border-white/5">
         <span>{getOwnerDisplay(project, t('team.dashboard.unknownOwner'))}</span>
         <span>{t('team.dashboard.lastEdit', { time: timeAgo })}</span>
       </div>

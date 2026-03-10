@@ -571,6 +571,8 @@ const en = {
   'team.dashboard.toast.pricingSuccess': 'Pricing updated successfully',
   'team.dashboard.toast.pricingFailed': 'Failed to update pricing',
   'team.dashboard.toast.editorFailed': 'Failed to open project in editor',
+  'team.dashboard.aiCredits': 'AI credits',
+  'team.dashboard.cost': 'cost',
 
   // Common action labels
   'app.save': 'Save',

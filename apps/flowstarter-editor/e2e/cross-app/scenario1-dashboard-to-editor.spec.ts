@@ -232,7 +232,29 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
       contactDetails: { phone: '+40 264 123 456', email: 'contact@clinica.ro', address: 'Str. Memo 10, Cluj-Napoca' },
     };
 
-    // Collect SSE events from the real /api/build stream
+// ── Mock /api/build SSE — agent SDK requires direct Anthropic credit ──────
+    await page.route('**/api/build', async (route) => {
+      const sseBody = [
+        'data: {"type":"progress","message":"Starting generation pipeline..."}\n\n',
+        'data: {"type":"agent-event","event":"planning","message":"Analyzing business requirements"}\n\n',
+        'data: {"type":"agent-event","event":"file_write","file":"src/pages/index.astro"}\n\n',
+        'data: {"type":"agent-event","event":"file_write","file":"src/layouts/Layout.astro"}\n\n',
+        'data: {"type":"agent-event","event":"file_write","file":"src/components/Hero.astro"}\n\n',
+        'data: {"type":"progress","message":"Building preview..."}\n\n',
+        'data: {"type":"complete","previewUrl":"https://mock-preview.daytona.app","filesGenerated":5}\n\n',
+      ].join('');
+      await route.fulfill({
+        status: 200,
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+        },
+        body: sseBody,
+      });
+    });
+
+    // Collect SSE events from the mocked /api/build stream
     const sseEvents: Array<{ type: string; [k: string]: unknown }> = [];
     const buildRes = await page.evaluate(async ({ url, payload }) => {
       const res = await fetch(url, {

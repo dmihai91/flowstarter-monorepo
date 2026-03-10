@@ -21,6 +21,7 @@ import {
   retryPreviewWithFiles,
   type PrewarmedSandbox,
 } from '~/lib/services/daytonaService.server';
+import { resolvePreviewUrlFromResult } from '~/lib/services/daytona/previewUrl';
 import { tryDeterministicFix } from '~/lib/services/claude-agent/errorFixMap';
 import { resetCostTracker, getTotalCost } from '~/lib/services/llm';
 
@@ -83,6 +84,23 @@ interface GeneratedFile {
 // �"?�"?�"? Constants �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?
 
 const MAX_SELF_HEAL_ATTEMPTS = 10;
+
+interface PreviewChainResult {
+  success: boolean;
+  previewUrl?: string;
+  sandboxId?: string;
+  error?: string;
+  buildError?: { file: string; message: string };
+}
+
+function getPreviewPayload(result: PreviewChainResult | null): { url: string; sandboxId: string } | null {
+  const previewUrl = resolvePreviewUrlFromResult(result);
+  if (!result?.success || !previewUrl || !result.sandboxId) {
+    return null;
+  }
+
+  return { url: previewUrl, sandboxId: result.sandboxId };
+}
 
 // �"?�"?�"? Helper Functions �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?
 
@@ -199,7 +217,7 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentE
     const prewarmedSandbox: PrewarmedSandbox | null = await prewarmPromise;
 
     // Build with self-healing
-    let previewResult: { success: boolean; url?: string; sandboxId?: string; error?: string; buildError?: { file: string; message: string } } | null = null;
+    let previewResult: PreviewChainResult | null = null;
     let currentFiles = [...result.files];
     let sandboxId: string | undefined;
 
@@ -232,8 +250,21 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentE
         );
       } else {
         // No sandbox available, can't continue
+        console.error('[Build:Simple] No sandbox available for preview retry', {
+          attempt,
+          projectId: body.projectId,
+        });
         break;
       }
+
+      console.error('[Build:Simple] Preview attempt completed', {
+        attempt,
+        success: previewResult.success,
+        previewUrl: resolvePreviewUrlFromResult(previewResult),
+        sandboxId: previewResult.sandboxId ?? sandboxId,
+        error: previewResult.error,
+        buildError: previewResult.buildError,
+      });
 
       if (previewResult.success) {
         send({ type: 'progress', phase: 'complete', message: 'Build succeeded!' });
@@ -285,10 +316,7 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentE
       result: {
         success: previewResult?.success ?? false,
         files: currentFiles.map(f => ({ path: f.path, content: f.content })),
-        preview: previewResult?.success ? {
-          url: previewResult.url!,
-          sandboxId: previewResult.sandboxId!,
-        } : null,
+        preview: getPreviewPayload(previewResult),
         previewError: previewResult?.error,
         cost: totalCost,
         route: 'simple',
@@ -427,4 +455,3 @@ export async function action({ request }: ActionFunctionArgs) {
     );
   }
 }
-

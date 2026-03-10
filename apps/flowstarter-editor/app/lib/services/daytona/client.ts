@@ -26,6 +26,11 @@ export function getClient(env?: DaytonaEnv): Daytona {
   log.debug(`Config: apiUrl=${apiUrl}, hasApiKey=${!!apiKey}`);
 
   if (!apiKey) {
+    console.error('[Daytona:getClient] Missing DAYTONA_API_KEY', {
+      hasEnvApiKey: !!env?.DAYTONA_API_KEY,
+      hasProcessApiKey: !!process.env.DAYTONA_API_KEY,
+      apiUrl,
+    });
     throw new Error('Daytona API key not configured. Add DAYTONA_API_KEY to your .env file.');
   }
 
@@ -87,4 +92,3 @@ export function clearCachedPreview(projectId: string): void {
 }
 
 export { log };
-

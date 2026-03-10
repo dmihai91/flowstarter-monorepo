@@ -18,6 +18,7 @@ import {
   checkServerStarted,
   hasFatalError,
   runAstroCheck,
+  getPreviewUrl,
 } from './devServerService';
 import { getOrCreateSandbox } from './sandboxHelpers';
 import { startPreview } from './previewService';
@@ -281,22 +282,20 @@ export async function startPreviewWithPrewarmedSandbox(
 async function getPreviewUrlFromSandbox(sandbox: Sandbox, output: string): Promise<string | null> {
   const portMatch = output.match(/localhost:(\d+)/i);
   const port = portMatch ? parseInt(portMatch[1], 10) : 4321;
+  console.error('[Daytona:prewarm] Resolving preview URL from prewarmed sandbox', {
+    sandboxId: sandbox.id,
+    detectedPort: port,
+    outputSnippet: output.slice(0, 300),
+  });
 
-  try {
-    const previewLink = await sandbox.getPreviewLink(port);
-    return previewLink.url;
-  } catch {
-    // Try common ports
-    for (const p of [4321, 5173, 3000]) {
-      try {
-        const previewLink = await sandbox.getPreviewLink(p);
-        return previewLink.url;
-      } catch {
-        continue;
-      }
-    }
+  const previewResult = await getPreviewUrl(sandbox, port);
+  if (!previewResult) {
+    console.error('[Daytona:prewarm] Failed to resolve preview URL from prewarmed sandbox', {
+      sandboxId: sandbox.id,
+      detectedPort: port,
+    });
+    return null;
   }
 
-  return null;
+  return previewResult.url;
 }
-

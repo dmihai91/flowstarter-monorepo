@@ -27,6 +27,7 @@ import {
   createBuildError,
 } from './devServerService';
 import { getOrCreateSandbox } from './sandboxHelpers';
+import { extractPreviewUrlValue } from './previewUrl';
 import type { PreviewResult } from './types';
 
 /**
@@ -140,11 +141,21 @@ export async function startAndWaitForDevServer(
   progress: (message: string) => void,
 ): Promise<PreviewResult | { previewUrl: string }> {
   progress('Starting Astro dev server...');
+  console.error('[Daytona:startAndWaitForDevServer] Starting preview flow', {
+    sandboxId: sandbox.id,
+    workDir,
+  });
   await killExistingDevServers(sandbox, workDir);
 
   const astroCheckResult = await runAstroCheck(sandbox, workDir);
   if (!astroCheckResult.success && astroCheckResult.errors.length > 0) {
     const firstError = astroCheckResult.errors[0];
+    console.error('[Daytona:startAndWaitForDevServer] Astro check failed', {
+      sandboxId: sandbox.id,
+      file: firstError.file,
+      line: firstError.line,
+      message: firstError.message,
+    });
     log.warn(` Astro check failed: ${firstError.message} in ${firstError.file}`);
     return {
       success: false,
@@ -155,14 +166,27 @@ export async function startAndWaitForDevServer(
   }
 
   const { output } = await startDevServerTest(sandbox, workDir);
+  console.error('[Daytona:startAndWaitForDevServer] Dev server test completed', {
+    sandboxId: sandbox.id,
+    outputSnippet: output.slice(0, 500),
+  });
   if (hasFatalError(output, checkServerStarted(output))) {
+    console.error('[Daytona:startAndWaitForDevServer] Fatal error detected in test output', {
+      sandboxId: sandbox.id,
+    });
     return handleBuildError(output, sandboxId);
   }
 
   await startDevServerBackground(sandbox, workDir);
+  console.error('[Daytona:startAndWaitForDevServer] Background server launched', {
+    sandboxId: sandbox.id,
+  });
 
   const previewUrl = await setupPreviewUrl(sandbox, workDir, output);
   if (!previewUrl) {
+    console.error('[Daytona:startAndWaitForDevServer] Preview URL setup returned empty', {
+      sandboxId: sandbox.id,
+    });
     const devLog = await readDevLog(sandbox, workDir, 100);
     if (devLog && hasFatalError(devLog, false)) {
       return handleBuildError(devLog, sandboxId);
@@ -171,9 +195,18 @@ export async function startAndWaitForDevServer(
   }
 
   progress('Waiting for dev server to respond...');
+  console.error('[Daytona:startAndWaitForDevServer] Waiting for preview URL health check', {
+    sandboxId: sandbox.id,
+    previewUrl,
+  });
   const waitResult = await waitForDevServer(previewUrl, 60000, { sandbox, workDir, logCheckInterval: 3 });
 
   if (!waitResult.ready) {
+    console.error('[Daytona:startAndWaitForDevServer] Preview URL never became ready', {
+      sandboxId: sandbox.id,
+      previewUrl,
+      buildError: waitResult.buildError,
+    });
     if (waitResult.buildError) {
       return { success: false, error: `Dev server failed: ${waitResult.buildError.message.slice(0, 200)}`, buildError: waitResult.buildError, sandboxId };
     }
@@ -185,6 +218,10 @@ export async function startAndWaitForDevServer(
   }
 
   progress('Preview server is live!');
+  console.error('[Daytona:startAndWaitForDevServer] Preview URL is live', {
+    sandboxId: sandbox.id,
+    previewUrl,
+  });
   return { previewUrl };
 }
 
@@ -198,10 +235,19 @@ export async function setupPreviewUrl(
 ): Promise<string | null> {
   const detectedPort = output.match(/localhost:(\d+)/i)?.[1];
   const portNum = detectedPort ? parseInt(detectedPort, 10) : null;
+  console.error('[Daytona:setupPreviewUrl] Resolving preview URL', {
+    sandboxId: sandbox.id,
+    detectedPort: portNum,
+    outputSnippet: output.slice(0, 300),
+  });
 
   const previewResult = await getPreviewUrl(sandbox, portNum);
 
   if (!previewResult) {
+    console.error('[Daytona:setupPreviewUrl] No preview URL returned for any port', {
+      sandboxId: sandbox.id,
+      detectedPort: portNum,
+    });
     log.error(' Could not get preview URL for any port');
     return null;
   }
@@ -216,15 +262,40 @@ export async function setupPreviewUrl(
 
   if (bgPort && bgPort !== workingPort) {
     log.debug(` Background server using different port: ${bgPort}`);
+    console.error('[Daytona:setupPreviewUrl] Background dev log reported a different port', {
+      sandboxId: sandbox.id,
+      initialPort: workingPort,
+      backgroundPort: bgPort,
+    });
 
     try {
       const newPreviewLink = await sandbox.getPreviewLink(bgPort);
-      previewUrl = newPreviewLink.url;
+      const nextUrl = extractPreviewUrlValue(newPreviewLink);
+
+      if (!nextUrl) {
+        console.error('[Daytona:setupPreviewUrl] Alternate preview link had no URL', {
+          sandboxId: sandbox.id,
+          backgroundPort: bgPort,
+          previewLink: newPreviewLink,
+        });
+      } else {
+        previewUrl = nextUrl;
+      }
       log.debug(` Updated preview URL to port ${bgPort}: ${previewUrl}`);
-    } catch {
+    } catch (error) {
+      console.error('[Daytona:setupPreviewUrl] Failed to resolve alternate port preview URL', {
+        sandboxId: sandbox.id,
+        backgroundPort: bgPort,
+        error: error instanceof Error ? error.message : String(error),
+      });
       log.debug(` Could not get preview URL for port ${bgPort}, keeping original`);
     }
   }
 
+  console.error('[Daytona:setupPreviewUrl] Returning preview URL', {
+    sandboxId: sandbox.id,
+    previewUrl,
+    port: workingPort,
+  });
   return previewUrl;
 }

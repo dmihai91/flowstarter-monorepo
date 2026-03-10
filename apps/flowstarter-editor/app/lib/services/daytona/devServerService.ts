@@ -9,6 +9,7 @@ import type { Sandbox } from '@daytonaio/sdk';
 import { log } from './client';
 import { getBunPathSetup } from './bunService';
 import { extractPort, extractBuildErrorFromLog } from './errorParser';
+import { extractPreviewUrlValue } from './previewUrl';
 import type { BuildErrorInfo } from './types';
 
 /**
@@ -231,7 +232,7 @@ export async function getPreviewUrl(
   sandbox: Sandbox,
   detectedPort: number | null,
 ): Promise<{ url: string; port: number } | null> {
-  const portsToTry = detectedPort ? [detectedPort, 4321, 5173, 3000] : [4321, 5173, 3000];
+  const portsToTry = Array.from(new Set(detectedPort ? [detectedPort, 4321, 5173, 3000] : [4321, 5173, 3000]));
 
   log.debug(` Detected port from output: ${detectedPort}, will try ports: ${portsToTry.join(', ')}`);
 
@@ -239,13 +240,34 @@ export async function getPreviewUrl(
     try {
       log.debug(` Trying port ${port}...`);
       const previewLink = await sandbox.getPreviewLink(port);
-      log.debug(` Got preview URL for port ${port}: ${previewLink.url}`);
-      return { url: previewLink.url, port };
-    } catch {
+      const previewUrl = extractPreviewUrlValue(previewLink);
+
+      if (!previewUrl) {
+        console.error('[Daytona:getPreviewUrl] getPreviewLink returned without a URL', {
+          port,
+          previewLink,
+          sandboxId: sandbox.id,
+        });
+        continue;
+      }
+
+      log.debug(` Got preview URL for port ${port}: ${previewUrl}`);
+      return { url: previewUrl, port };
+    } catch (error) {
+      console.error('[Daytona:getPreviewUrl] getPreviewLink failed', {
+        port,
+        sandboxId: sandbox.id,
+        error: error instanceof Error ? error.message : String(error),
+      });
       log.debug(` Port ${port} failed, trying next...`);
     }
   }
 
+  console.error('[Daytona:getPreviewUrl] Exhausted preview ports without a URL', {
+    detectedPort,
+    sandboxId: sandbox.id,
+    portsToTry,
+  });
   return null;
 }
 
@@ -381,4 +403,3 @@ export async function runAstroCheck(
 }
 
 export { parseErrorDetails, parseAllErrors, hasFatalError, checkServerStarted, extractPort, createBuildError, extractBuildErrorFromLog } from './errorParser';
-

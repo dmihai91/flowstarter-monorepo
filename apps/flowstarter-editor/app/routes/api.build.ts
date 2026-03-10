@@ -24,6 +24,8 @@ import {
 import { resolvePreviewUrlFromResult } from '~/lib/services/daytona/previewUrl';
 import { tryDeterministicFix } from '~/lib/services/claude-agent/errorFixMap';
 import { resetCostTracker, getTotalCost } from '~/lib/services/llm';
+import { getConvexClient } from './onboarding-chat/cost-logging';
+import { api } from '../../convex/_generated/api';
 
 // Import Gretly pipeline
 import { generateSite as generateSiteGretly, prewarmEnvironment } from '~/lib/flowstarter';
@@ -311,6 +313,29 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentE
 
     const totalCost = getTotalCost();
 
+    // Persist costs to Convex
+    try {
+      const convex = getConvexClient();
+      if (convex && totalCost.breakdown.length > 0) {
+        const projectConvexId = body.projectId;
+        for (const usage of totalCost.breakdown) {
+          await convex.mutation(api.costs.logCost, {
+            projectId: projectConvexId as any,
+            operation: 'site_generation',
+            model: usage.model,
+            promptTokens: usage.promptTokens,
+            completionTokens: usage.completionTokens,
+            totalTokens: usage.totalTokens,
+            costUSD: usage.costUSD,
+            metadata: { template: body.template?.slug },
+          });
+        }
+        console.log('[Build:Simple] Logged', totalCost.breakdown.length, 'cost entries, total: $' + totalCost.totalCostUSD.toFixed(4));
+      }
+    } catch (e) {
+      console.error('[Build:Simple] Failed to log costs:', e);
+    }
+
     send({
       type: 'complete',
       result: {
@@ -417,6 +442,23 @@ export async function action({ request }: ActionFunctionArgs) {
         };
         const sendAgentEvent = (event: AgentActivityEvent) => {
           controller.enqueue(encoder.encode(`event: agent-event\ndata: ${JSON.stringify(event)}\n\n`));
+          // Log agent pipeline costs when the 'done' event arrives
+          if (event.type === 'done' && (event as any).cost_usd > 0) {
+            const e = event as any;
+            const convex = getConvexClient();
+            if (convex) {
+              convex.mutation(api.costs.logCost, {
+                operation: 'site_generation' as const,
+                model: 'claude-agent-sdk',
+                promptTokens: e.input_tokens ?? 0,
+                completionTokens: e.output_tokens ?? 0,
+                totalTokens: (e.input_tokens ?? 0) + (e.output_tokens ?? 0),
+                costUSD: e.cost_usd,
+                durationMs: e.duration_ms,
+                metadata: { step: 'agent-pipeline' },
+              }).catch(err => console.error('[Build] Failed to log agent cost:', err));
+            }
+          }
         };
 
         // Keepalive: SSE comment every 20s so the connection isn't dropped

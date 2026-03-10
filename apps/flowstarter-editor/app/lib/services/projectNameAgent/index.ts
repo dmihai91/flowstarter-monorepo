@@ -11,6 +11,7 @@ import { createScopedLogger } from '~/utils/logger';
 import {
   detectCategory,
   getGenerationPrompt,
+  getFallbackNames,
   getRandomFallbackName,
   containsBannedWord,
   getBannedWord,
@@ -26,9 +27,9 @@ export type {
   GenerateNameOptions,
 } from './types';
 export { extractProjectName } from './name-extraction';
-export { refineProjectName } from './name-refinement';
+import { refineProjectName as refineProjectNameBase } from './name-refinement';
 
-import type { NameGenerationResult, GenerateNameOptions } from './types';
+import type { NameGenerationResult, GenerateNameOptions, RefinementContext } from './types';
 
 const logger = createScopedLogger('ProjectNameAgent');
 
@@ -124,8 +125,29 @@ export async function generateProjectName(
 /**
  * Generate fallback name (exported for API route)
  */
-export function generateFallbackName(description: string): string {
-  return getRandomFallbackName(description);
+export function generateFallbackName(description: string, exclude?: string | string[]): string {
+  const exclusions = new Set(toExcludedNames(exclude));
+  const names = getFallbackNames(description);
+  const availableNames = names.filter((name) => !exclusions.has(normalizeName(name)));
+
+  if (availableNames.length === 0) {
+    return getRandomFallbackName(description);
+  }
+
+  return availableNames[Math.floor(Math.random() * availableNames.length)];
+}
+
+export async function refineProjectName(context: RefinementContext): Promise<NameGenerationResult> {
+  const result = await refineProjectNameBase(context);
+
+  if (!result.success && normalizeName(result.projectName) === normalizeName(context.previousName)) {
+    return {
+      ...result,
+      projectName: generateFallbackName(context.projectDescription || '', context.previousName),
+    };
+  }
+
+  return result;
 }
 
 /**
@@ -171,4 +193,16 @@ function parseAndFilterNames(response: string, projectDescription: string): stri
     }
     return true;
   });
+}
+
+function toExcludedNames(exclude?: string | string[]): string[] {
+  if (!exclude) {
+    return [];
+  }
+
+  return (Array.isArray(exclude) ? exclude : [exclude]).map(normalizeName).filter(Boolean);
+}
+
+function normalizeName(name: string): string {
+  return name.trim().toLowerCase();
 }

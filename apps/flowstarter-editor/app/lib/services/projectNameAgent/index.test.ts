@@ -354,6 +354,19 @@ describe('refineProjectName', () => {
     expect(mockGenerateCompletion).not.toHaveBeenCalled();
   });
 
+  it('uses a different fallback name than previousName when API unavailable', async () => {
+    delete process.env.OPEN_ROUTER_API_KEY;
+
+    const result = await refineProjectName({
+      previousName: 'Safe Ground',
+      refinementFeedback: 'try another',
+      projectDescription: 'therapist',
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.projectName).not.toBe('Safe Ground');
+  });
+
   it('handles "shorter" fallback by taking first word', async () => {
     delete process.env.OPEN_ROUTER_API_KEY;
 

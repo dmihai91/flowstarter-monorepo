@@ -20,7 +20,7 @@ const { title, description } = frontmatter;
 
     expect(files[0].content).not.toContain("content/services.md");
     expect(files[0].content).toContain('const title = "Services";');
-    expect(files[0].content).toContain('const description = "Services description";');
+    expect(files[0].content).toContain('const description = "Services Description";');
   });
 
   it('handles aliased imports and replaces remaining property access', () => {

@@ -25,7 +25,7 @@ export type { AgentActivityEvent };
 
 const ORCHESTRATOR_MODEL = 'claude-opus-4-6';
 const CODER_MODEL        = 'claude-sonnet-4-6';
-const MAX_TURNS          = 40;
+const MAX_TURNS          = 120;
 
 type Emit = (event: AgentActivityEvent) => void;
 
@@ -146,19 +146,47 @@ export async function runAgentPipeline(
 ${input.template.name} (${input.template.slug}) — files are in your working directory.
 
 ## Your task
-1. Read the existing template files to understand structure (index.astro, Layout.astro, key components).
-2. Rewrite each file with real business content:
-   - Replace ALL placeholder text with actual content for ${bizName}
-   - Apply the primary colour ${input.design?.primaryColor ?? '#3B82F6'} throughout (buttons, headings, accents)
-   - Use ${input.design?.headingFont ?? 'Inter'} for headings, ${input.design?.fontFamily ?? 'Inter'} for body
-   - Real contact details everywhere (phone, email, address)
-   - Real services: ${services}
-3. Do NOT import from content/*.md — inline all data as JS const in frontmatter
-4. Do NOT use astro-icon — use inline SVGs or emoji
-5. Do NOT modify package.json, tsconfig.json, astro.config.mjs
-6. After writing all files, verify each .astro file builds (check for obvious syntax errors)
 
-Write every file completely. No Lorem Ipsum. No placeholder text.`;
+IMPORTANT: Be efficient with tool calls. Read only the files you need, then write them all.
+
+### Phase 1 — Read core files only (skip integration components)
+Read ONLY these files to understand the structure:
+- src/pages/index.astro
+- src/layouts/Layout.astro  
+- src/components/Hero.astro
+- src/styles/global.css
+- tailwind.config.mjs
+
+Do NOT read integration components (BookingWidget, Newsletter, etc.) — they will be handled separately.
+
+### Phase 2 — Rewrite ALL files with real business content
+Rewrite each file completely for ${bizName}:
+- Replace ALL placeholder text with real content in Romanian if the business is Romanian
+- Apply primary colour ${input.design?.primaryColor ?? '#3B82F6'} in tailwind.config.mjs and throughout
+- Use ${input.design?.headingFont ?? 'Inter'} for headings, ${input.design?.fontFamily ?? 'Inter'} for body  
+- Include real contact details: phone, email, address
+- Include real services: ${services}
+- Write complete files — never truncate
+
+### Files to rewrite (in this order):
+1. tailwind.config.mjs — update colors only
+2. src/styles/global.css — update theme colours
+3. src/layouts/Layout.astro — branding, nav, footer, NO astro-icon (use inline SVGs)
+4. src/pages/index.astro — full landing page with all sections, NO astro-icon
+5. src/components/Hero.astro — business hero with real content
+6. src/components/Services.astro — real services with descriptions and prices
+7. src/components/Testimonials.astro — realistic testimonials
+8. src/components/Pricing.astro — real pricing plans
+9. src/components/Footer.astro — real contact info
+10. src/pages/about.astro — about the business
+11. src/pages/services.astro — detailed services page
+12. src/pages/contact.astro — contact page with form and info
+
+### Rules
+- Do NOT import from content/*.md — inline all data as JS const in frontmatter
+- Do NOT use astro-icon or Icon components — use inline SVGs
+- Do NOT modify package.json, tsconfig.json, astro.config.mjs
+- Write EVERY file completely. No Lorem Ipsum. No placeholders.`;
 
   try {
     const opts: Options = {

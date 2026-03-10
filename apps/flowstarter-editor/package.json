@@ -69,7 +69,9 @@
     "@codemirror/search": "^6.5.11",
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.38.4",
-    "@daytonaio/sdk": "^0.132.0",
+    "@daytonaio/sdk": "^0.150.0",
+    "@flowstarter/editor-engine": "workspace:*",
+    "@flowstarter/flow-design-system": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.25.2",
     "@monaco-editor/react": "^4.6.0",
     "@nanostores/react": "^0.7.3",
@@ -135,9 +137,7 @@
     "tailwind-merge": "^2.6.0",
     "unist-util-visit": "^5.0.0",
     "vite-plugin-node-polyfills": "^0.22.0",
-    "zod": "^3.25.76",
-    "@flowstarter/flow-design-system": "workspace:*",
-    "@flowstarter/editor-engine": "workspace:*"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@blitz/eslint-plugin": "0.1.0",

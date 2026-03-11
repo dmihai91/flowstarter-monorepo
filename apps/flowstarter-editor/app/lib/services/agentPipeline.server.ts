@@ -12,7 +12,7 @@ export type { AgentActivityEvent };
 const logger = { error: (...args: unknown[]) => console.error('[AgentPipeline]', ...args) };
 const MODEL = 'anthropic/claude-sonnet-4-6';
 const MAX_TURNS = 20;
-const MAX_OUTPUT_TOKENS = 12_000;
+const MAX_OUTPUT_TOKENS = 32_000;
 const MODEL_PRICING: Record<string, { input: number; output: number; cacheRead: number; cacheWrite: number }> = {
   [MODEL]: { input: 3 / 1_000_000, output: 15 / 1_000_000, cacheRead: 0.3 / 1_000_000, cacheWrite: 3.75 / 1_000_000 },
 };
@@ -96,22 +96,26 @@ ${buildBusinessSummary(input)}
 ${templateIndex}
 
 ## Task
-Call write_files ONCE with ALL files. Do NOT write files one at a time.
+Use write_files to write files in 2 batches:
 
-Files to include in the write_files call:
-1. astro.config.mjs — \`import { defineConfig } from 'astro/config'; import tailwind from '@astrojs/tailwind'; export default defineConfig({ integrations: [tailwind()] });\`
-2. tailwind.config.mjs — brand colors from primary color
-3. src/styles/global.css — CSS custom properties + font imports
-4. src/layouts/Layout.astro — nav, footer, meta, responsive
-5. src/components/Hero.astro — hero with headline, CTA, stats
-6. src/components/Services.astro — services grid with prices
-7. src/components/Testimonials.astro — testimonial cards
-8. src/components/Pricing.astro — pricing tiers + FAQ
-9. src/components/Footer.astro — footer with contact + links
-10. src/pages/index.astro — landing page importing sections
-11. src/pages/about.astro — about page with company story
-12. src/pages/services.astro — detailed services page
-13. src/pages/contact.astro — contact form page
+BATCH 1 — call write_files with config + layout + styles:
+- astro.config.mjs — clean config (no astro-icon)
+- tailwind.config.mjs — brand colors from primary color
+- src/styles/global.css — CSS custom properties + font imports
+- src/layouts/Layout.astro — nav, footer, meta, responsive
+
+BATCH 2 — call write_files with ALL components:
+- src/components/Hero.astro — hero with headline, CTA, stats
+- src/components/Services.astro — services grid with prices
+- src/components/Testimonials.astro — testimonial cards
+- src/components/Pricing.astro — pricing tiers + FAQ
+- src/components/Footer.astro — footer with contact + links
+
+BATCH 3 — call write_files with ALL pages:
+- src/pages/index.astro — landing page importing sections
+- src/pages/about.astro — about page with company story
+- src/pages/services.astro — detailed services page
+- src/pages/contact.astro — contact form page
 
 ## Content rules
 - Compelling, professional copy in the business's language

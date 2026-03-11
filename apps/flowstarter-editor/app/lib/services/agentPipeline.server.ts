@@ -4,7 +4,7 @@ import { tmpdir } from 'os';
 import { dirname, join, normalize } from 'path';
 
 import { fixContentImports } from './postProcessAstro';
-import type { AgentActivityEvent, GeneratedFile, SiteGenerationInput, SiteGenerationResult } from './claude-agent/types';
+import type { AgentActivityEvent, GeneratedFile, PipelineCost, SiteGenerationInput, SiteGenerationResult } from './claude-agent/types';
 
 export type { AgentActivityEvent };
 
@@ -368,7 +368,15 @@ export async function runAgentPipeline(
     const outputTokens = orchestrator.usage.outputTokens + coderUsage.outputTokens;
     emit({ type: 'done', duration_ms: Date.now() - startedAt, turns: orchestrator.turns, cost_usd: orchestrator.usage.costUsd + coderUsage.costUsd, input_tokens: inputTokens, output_tokens: outputTokens });
     progress(`Done — ${files.length} files generated.`);
-    return { success: true, files };
+    const cost: PipelineCost = {
+      totalCostUSD: orchestrator.usage.costUsd + coderUsage.costUsd,
+      totalTokens: inputTokens + outputTokens,
+      breakdown: [
+        { model: ORCHESTRATOR_MODEL, promptTokens: orchestrator.usage.inputTokens, completionTokens: orchestrator.usage.outputTokens, totalTokens: orchestrator.usage.inputTokens + orchestrator.usage.outputTokens, costUSD: orchestrator.usage.costUsd },
+        { model: CODER_MODEL, promptTokens: coderUsage.inputTokens, completionTokens: coderUsage.outputTokens, totalTokens: coderUsage.inputTokens + coderUsage.outputTokens, costUSD: coderUsage.costUsd },
+      ].filter(b => b.totalTokens > 0),
+    };
+    return { success: true, files, cost };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Pipeline error';
     emit({ type: 'error', message });

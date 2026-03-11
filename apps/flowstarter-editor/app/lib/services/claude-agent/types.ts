@@ -83,10 +83,24 @@ export interface GeneratedFile {
   content: string;
 }
 
+export interface PipelineCost {
+  totalCostUSD: number;
+  totalTokens: number;
+  breakdown: Array<{
+    model: string;
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+    costUSD: number;
+  }>;
+}
+
 export interface SiteGenerationResult {
   success: boolean;
   files?: GeneratedFile[];
   error?: string;
+  /** Cost breakdown from the generation pipeline */
+  cost?: PipelineCost;
   /** Assets that were generated for this site */
   generatedAssets?: GeneratedAsset[];
 }

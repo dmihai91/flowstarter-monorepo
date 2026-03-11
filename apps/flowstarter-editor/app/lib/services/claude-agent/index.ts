@@ -108,6 +108,8 @@ export async function generateSiteFromTemplate(
       for (const f of pipelineResult.files ?? []) {
         generatedFiles.push(f);
       }
+      // Pass pipeline cost to result
+      return { success: true, files: generatedFiles, cost: pipelineResult.cost };
     } else {
       // ─── PHASE 1: DESIGN (Opus) — only for non-agent path ──────────────────
       onProgress?.(`Creative director is designing your site...`);

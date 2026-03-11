@@ -352,7 +352,14 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentE
       }
     }
 
-    const totalCost = getTotalCost();
+    // Merge legacy LLM tracker costs with agent pipeline costs
+    const legacyCost = getTotalCost();
+    const pipelineCost = result.cost;
+    const totalCost = {
+      totalCostUSD: legacyCost.totalCostUSD + (pipelineCost?.totalCostUSD ?? 0),
+      totalTokens: legacyCost.totalTokens + (pipelineCost?.totalTokens ?? 0),
+      breakdown: [...legacyCost.breakdown, ...(pipelineCost?.breakdown ?? [])],
+    };
 
     // Persist costs to Convex
     try {

@@ -2,6 +2,7 @@ import { type ActionFunctionArgs } from '@remix-run/cloudflare';
 import { streamText } from '~/lib/.server/llm/stream-text';
 import type { IProviderSetting, ProviderInfo } from '~/types/model';
 import { generateText } from 'ai';
+import { trackLLMUsage } from '~/lib/.server/llm/cost-tracker';
 import { PROVIDER_LIST } from '~/utils/constants';
 import { MAX_TOKENS } from '~/lib/.server/llm/constants';
 import { LLMManager } from '~/lib/modules/llm/manager';

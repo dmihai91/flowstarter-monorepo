@@ -3,6 +3,7 @@
  */
 
 import type { createOpenRouter } from '@openrouter/ai-sdk-provider';
+import { trackLLMUsage } from '~/lib/.server/llm/cost-tracker';
 import { generateText } from 'ai';
 import { createScopedLogger } from '~/utils/logger';
 import type { BusinessInfo, DesignBrief } from './types';

@@ -1,3 +1,4 @@
+import { trackLLMUsage } from './cost-tracker';
 import { generateText, type CoreTool, type GenerateTextResult, type Message } from 'ai';
 import type { IProviderSetting } from '~/types/model';
 import { DEFAULT_MODEL, DEFAULT_PROVIDER, PROVIDER_LIST } from '~/utils/constants';

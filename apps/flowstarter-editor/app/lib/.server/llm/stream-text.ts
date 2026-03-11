@@ -1,4 +1,5 @@
 import { convertToCoreMessages, streamText as _streamText, type Message } from 'ai';
+import { trackLLMUsage } from './cost-tracker';
 import { MAX_TOKENS, type FileMap } from './constants';
 import { DEFAULT_MODEL, DEFAULT_PROVIDER, MODIFICATIONS_TAG_NAME, PROVIDER_LIST, WORK_DIR } from '~/utils/constants';
 import type { IProviderSetting } from '~/types/model';
@@ -198,7 +199,7 @@ Use these preferences when creating UI components, styling code, or suggesting d
   const allTools = { ...options?.tools };
   const hasTools = Object.keys(allTools).length > 0;
 
-  return await _streamText({
+  const result = await _streamText({
     model: provider.getModelInstance({
       model: modelDetails.name,
       serverEnv,
@@ -210,6 +211,18 @@ Use these preferences when creating UI components, styling code, or suggesting d
     messages: convertToCoreMessages(processedMessages as any),
     ...(hasTools ? { tools: allTools, toolChoice: 'auto' } : {}),
     ...options,
+    onFinish: ({ usage }) => {
+      if (usage) {
+        // Extract projectId from messages or options context
+        const projectId = (options as any)?.projectId;
+        trackLLMUsage(projectId, modelDetails.name, {
+          promptTokens: usage.promptTokens ?? 0,
+          completionTokens: usage.completionTokens ?? 0,
+        });
+      }
+    },
   });
+
+  return result;
 }
 

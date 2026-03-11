@@ -11,6 +11,7 @@
 import { json, type ActionFunctionArgs } from '@remix-run/node';
 import { createOpenAI } from '@ai-sdk/openai';
 import { generateText } from 'ai';
+import { trackLLMUsage } from '~/lib/.server/llm/cost-tracker';
 
 /** Router model - Llama 3.3 70B on Groq for fast classification */
 const ROUTER_MODEL = 'llama-3.3-70b-versatile';

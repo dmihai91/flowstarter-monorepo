@@ -1,6 +1,7 @@
 import { useServerSupabaseWithAuth } from '@/hooks/useServerSupabase';
 import { googleAnalyticsDataService } from '@/lib/google-analytics-data';
 import { getValidGoogleCredentials } from '@/lib/google-oauth-helper';
+import { getAllProjectGACredentials } from '@/lib/google-analytics-vault';
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
@@ -177,56 +178,54 @@ export async function GET() {
     let avgSessionDuration = 0;
     let potentialRevenue = 0;
 
-    // Try to get OAuth access token for the user
-    const accessToken = await getValidGoogleCredentials(userId);
+    // Fetch analytics from Vault-backed GA credentials (encrypted at rest)
+    const vaultCredentials = await getAllProjectGACredentials(userId);
 
-    // Fetch analytics data if user has Google Analytics connected
-    if (accessToken) {
-      // Get all projects with GA configured
-      // Cast to extended type that includes analytics columns
-      const projectsWithGA = (allProjects as ProjectWithAnalytics[]).filter(
-        (p) => p.analytics_ga_property_id
+    if (vaultCredentials.length > 0) {
+      const analyticsPromises = vaultCredentials.map((cred) =>
+        googleAnalyticsDataService
+          .getProjectOverview(cred.propertyId, 30, cred.accessToken)
+          .catch((err) => {
+            console.error('Failed to fetch GA analytics:', err);
+            return null;
+          })
       );
 
-      if (projectsWithGA.length > 0) {
-        // Fetch analytics for each project and aggregate
-        const analyticsPromises = projectsWithGA.map((project) =>
-          googleAnalyticsDataService
-            .getProjectOverview(
-              project.analytics_ga_property_id!,
-              30,
-              accessToken
-            )
-            .catch((err) => {
-              console.error(
-                `Failed to fetch analytics for project ${project.id}:`,
-                err
-              );
-              return null;
-            })
-        );
+      const analyticsResults = await Promise.all(analyticsPromises);
 
-        const analyticsResults = await Promise.all(analyticsPromises);
-
-        // Aggregate analytics data across all projects
-        analyticsResults.forEach((analytics) => {
-          if (analytics) {
-            totalViews += analytics.totalPageViews;
-            uniqueVisitors += analytics.uniqueVisitors;
-            totalLeads += analytics.totalLeads;
-            avgSessionDuration += analytics.avgSessionDuration;
-          }
-        });
-
-        // Average the session duration across projects
-        if (projectsWithGA.length > 0) {
-          avgSessionDuration = Math.round(
-            avgSessionDuration / projectsWithGA.length
-          );
+      analyticsResults.forEach((analytics) => {
+        if (analytics) {
+          totalViews += analytics.totalPageViews;
+          uniqueVisitors += analytics.uniqueVisitors;
+          totalLeads += analytics.totalLeads;
+          avgSessionDuration += analytics.avgSessionDuration;
         }
+      });
 
-        // Calculate potential revenue (example: $50 per lead)
-        potentialRevenue = totalLeads * 50;
+      if (vaultCredentials.length > 0) {
+        avgSessionDuration = Math.round(avgSessionDuration / vaultCredentials.length);
+      }
+      potentialRevenue = totalLeads * 50;
+    } else {
+      // Fallback: legacy user_integrations table (for existing users not yet migrated)
+      const accessToken = await getValidGoogleCredentials(userId);
+      if (accessToken) {
+        const projectsWithGA = (allProjects as ProjectWithAnalytics[]).filter(
+          (p) => p.analytics_ga_property_id
+        );
+        if (projectsWithGA.length > 0) {
+          const analyticsPromises = projectsWithGA.map((project) =>
+            googleAnalyticsDataService
+              .getProjectOverview(project.analytics_ga_property_id!, 30, accessToken)
+              .catch(() => null)
+          );
+          const analyticsResults = await Promise.all(analyticsPromises);
+          analyticsResults.forEach((a) => {
+            if (a) { totalViews += a.totalPageViews; uniqueVisitors += a.uniqueVisitors; totalLeads += a.totalLeads; avgSessionDuration += a.avgSessionDuration; }
+          });
+          if (projectsWithGA.length > 0) avgSessionDuration = Math.round(avgSessionDuration / projectsWithGA.length);
+          potentialRevenue = totalLeads * 50;
+        }
       }
     }
 

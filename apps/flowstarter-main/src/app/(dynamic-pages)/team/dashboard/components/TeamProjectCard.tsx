@@ -124,8 +124,8 @@ export function TeamProjectCard({
         )}
 
       {(project.generation_cost_usd != null && project.generation_cost_usd > 0) && (
-        <div className="flex items-center gap-3 mb-4 py-2 px-3 rounded-lg bg-purple-50 dark:bg-purple-500/10 text-sm">
-          <span className="text-purple-700 dark:text-purple-300 font-medium">
+        <div className="flex items-center gap-3 mb-4 py-2 px-3 rounded-lg bg-[var(--purple)]/5 dark:bg-[var(--purple)]/10 text-sm">
+          <span className="text-[var(--purple)] dark:text-[var(--purple)] font-medium">
             {project.ai_credits_used || 0} {t('team.dashboard.aiCredits')}
           </span>
           <span className="text-gray-300 dark:text-white/20">&bull;</span>

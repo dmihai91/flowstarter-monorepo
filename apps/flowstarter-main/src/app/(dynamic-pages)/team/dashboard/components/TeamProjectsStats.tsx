@@ -203,8 +203,8 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
           <p className="text-3xl font-bold text-gray-900 dark:text-white">
             {totalCredits} credits
           </p>
-          <p className="text-lg font-semibold text-gray-700 dark:text-white/80">
-            EUR {totalCostEur.toFixed(0)}
+          <p className="text-lg font-semibold text-[var(--purple)] dark:text-[var(--purple)]">
+            €{totalCostEur.toFixed(2)}
           </p>
         </div>
         <div className="flex items-center gap-3 text-xs">

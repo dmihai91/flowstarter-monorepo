@@ -4,6 +4,7 @@ import { tmpdir } from 'os';
 import { dirname, join, normalize } from 'path';
 
 import { fixContentImports } from './postProcessAstro';
+import { buildTemplateIndex } from './templateIndex';
 import type { AgentActivityEvent, GeneratedFile, PipelineCost, SiteGenerationInput, SiteGenerationResult } from './claude-agent/types';
 
 export type { AgentActivityEvent };
@@ -110,7 +111,7 @@ function buildBusinessSummary(input: SiteGenerationInput): string {
   ].join('\n');
 }
 
-function buildPrompt(input: SiteGenerationInput): string {
+function buildPrompt(input: SiteGenerationInput, templateIndex: string): string {
   const business = input.businessInfo;
   return `You are an expert Astro developer building a complete website for a real business client.
 
@@ -129,11 +130,14 @@ ${formatIntegrations(input)}
 ${formatGeneratedAssets(input)}
 
 ## Your task
-Phase 1 - Read (be efficient):
-1. List files to see what's available.
-2. Read ONLY the key files: index.astro, Layout.astro, Hero.astro, global.css, tailwind.config.mjs
+## Template structure (index)
+The template files are already in your working directory. Here is their structure:
 
-Phase 2 - Write ALL files with real business content:
+${templateIndex}
+
+## Your task
+Write ALL files with real business content. You already know the structure from the index above.
+Do NOT read files first -- write them directly:
 Write each file completely for ${business.name || input.siteName}:
 1. tailwind.config.mjs - update colors
 2. src/styles/global.css - update theme
@@ -282,7 +286,8 @@ export async function runAgentPipeline(
     progress(`Template ready - ${templateFiles.length} files in ${workDir}`);
     progress('Generating site with Sonnet 4-6...');
     const client = getClient();
-    const { turns, usage } = await runToolLoop(client, buildPrompt(input), createToolDefinitions(workDir), emit, progress);
+    const templateIndex = buildTemplateIndex(templateFiles);
+    const { turns, usage } = await runToolLoop(client, buildPrompt(input, templateIndex), createToolDefinitions(workDir), emit, progress);
     progress('Collecting output files...');
     const allFiles = await collectDir(workDir);
     const filtered = allFiles.filter(f => !INTEGRATION_COMPONENT_BLOCKLIST.some(b => f.path.endsWith(b)));

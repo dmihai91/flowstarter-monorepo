@@ -138,7 +138,7 @@ function tryRuleBasedFix(
   }
 
   // Fix Element.style TypeScript error — cast to HTMLElement
-  if (lowerError.includes("property 'style' does not exist") || lowerError.includes('ts(2339)') and 'style' in lowerError) {
+  if (lowerError.includes("property 'style' does not exist") || lowerError.includes('ts(2339)') && lowerError.includes('style')) {
     const fixed = fileContent
       .replace(/(\w+)\.style\./g, '($1 as HTMLElement).style.');
     if (fixed !== fileContent) {
@@ -149,10 +149,8 @@ function tryRuleBasedFix(
   // Fix content collection imports
   if (lowerError.includes('getentry') || lowerError.includes('content collection')) {
     const fixed = fileContent
-      .replace(/import\s*\{[^}]*getEntry[^}]*\}\s*from\s*['"]astro:content['"];?
-?/g, '')
-      .replace(/const\s+\w+\s*=\s*await\s+getEntry\([^)]*\);?
-?/g, '');
+      .replace(/import\s*\{[^}]*getEntry[^}]*\}\s*from\s*['"]astro:content['"];?\n?/g, '')
+      .replace(/const\s+\w+\s*=\s*await\s+getEntry\([^)]*\);?\n?/g, '');
     if (fixed !== fileContent) {
       return { fixedContent: fixed, summary: 'Removed content collection imports' };
     }

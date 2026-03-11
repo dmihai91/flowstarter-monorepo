@@ -11,10 +11,10 @@ export type { AgentActivityEvent };
 
 const logger = { error: (...args: unknown[]) => console.error('[AgentPipeline]', ...args) };
 const MODEL = 'anthropic/claude-sonnet-4-6';
-const MAX_TURNS = 30;
+const MAX_TURNS = 25;
 const MAX_OUTPUT_TOKENS = 16_000;
 const MODEL_PRICING: Record<string, { input: number; output: number; cacheRead: number; cacheWrite: number }> = {
-  [MODEL]: { input: 3 / 1_000_000, output: 15 / 1_000_000, cacheRead: 0.3 / 1_000_000, cacheWrite: 3.75 / 1_000_000 },
+  [MODEL]: { input: 3e-6, output: 15e-6, cacheRead: 0.3e-6, cacheWrite: 3.75e-6 },
 };
 const INTEGRATION_COMPONENT_BLOCKLIST = [
   'BookingWidget.astro', 'ContactForm.astro', 'Newsletter.astro',
@@ -29,12 +29,8 @@ type MessageParam = CreateParams['messages'][number];
 type ToolParam = NonNullable<CreateParams['tools']>[number];
 type ResponseMessage = Awaited<ReturnType<Anthropic['messages']['create']>>;
 type ToolResultBlock = { type: 'tool_result'; tool_use_id: string; content: string; is_error?: boolean };
-
 interface ToolCall { id: string; name: string; input: Record<string, unknown> }
-interface ToolDefinition {
-  tool: ToolParam;
-  execute: (input: Record<string, unknown>, emit: Emit) => Promise<string>;
-}
+interface ToolDefinition { tool: ToolParam; execute: (input: Record<string, unknown>, emit: Emit) => Promise<string> }
 
 function getClient(): Anthropic {
   const apiKey = process.env.OPEN_ROUTER_API_KEY;
@@ -47,155 +43,162 @@ async function collectDir(dir: string, base = ''): Promise<GeneratedFile[]> {
   const files = await Promise.all(entries.map(async (entry) => {
     if (entry.name.startsWith('.') || entry.name === 'dist' || entry.name === 'node_modules') return [];
     const fullPath = join(dir, entry.name);
-    const relativePath = base ? `${base}/${entry.name}` : entry.name;
-    if (entry.isDirectory()) return collectDir(fullPath, relativePath);
-    return [{ path: relativePath, content: await readFile(fullPath, 'utf-8').catch(() => '') }];
+    const rel = base ? `${base}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) return collectDir(fullPath, rel);
+    return [{ path: rel, content: await readFile(fullPath, 'utf-8').catch(() => '') }];
   }));
   return files.flat();
 }
 
 function resolvePath(workDir: string, path: string): string {
-  const trimmedPath = path.trim();
-  if (!trimmedPath) throw new Error('Path is required');
-  const fullPath = normalize(join(workDir, trimmedPath));
-  const normalizedRoot = normalize(workDir);
-  if (!fullPath.startsWith(normalizedRoot + '/') && !fullPath.startsWith(normalizedRoot + '\\') && fullPath !== normalizedRoot) throw new Error(`Path escapes workDir: ${path}`);
-  return fullPath;
+  const p = path.trim();
+  if (!p) throw new Error('Path is required');
+  const full = normalize(join(workDir, p));
+  const root = normalize(workDir);
+  if (!full.startsWith(root + '/') && !full.startsWith(root + '\\') && full !== root) throw new Error(`Path escapes workDir: ${path}`);
+  return full;
 }
 
-const countLines = (content: string) => content.split('\n').length;
+const countLines = (s: string) => s.split('\n').length;
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null;
 
 function getContactInfo(input: SiteGenerationInput): ContactInfo {
   return (input as SiteGenerationInput & { contactInfo?: ContactInfo }).contactInfo ?? input.businessInfo.contact ?? {};
 }
 
-function buildBusinessSummary(input: SiteGenerationInput): string {
+// ── Optimization 3: Pre-generate boilerplate files (no LLM needed) ──────────
+function generateBoilerplate(input: SiteGenerationInput): GeneratedFile[] {
+  const primary = input.design?.primaryColor ?? '#3B82F6';
+  const headingFont = input.design?.headingFont ?? 'Inter';
+  const bodyFont = input.design?.fontFamily ?? 'Inter';
   const contact = getContactInfo(input);
-  const business = input.businessInfo;
+
   return [
-    `name: ${business.name || input.siteName}`,
-    `description: ${business.description ?? ''}`,
-    `services: ${(business.services ?? []).join(', ') || 'None'}`,
-    `colors: primary=${input.design?.primaryColor ?? '#3B82F6'}, secondary=${input.design?.secondaryColor ?? ''}, accent=${input.design?.accentColor ?? ''}`,
-    `fonts: headings=${input.design?.headingFont ?? 'Inter'}, body=${input.design?.fontFamily ?? 'Inter'}`,
-    `contact: email=${contact.email ?? ''}, phone=${contact.phone ?? ''}, address=${contact.address ?? ''}`,
-  ].join('\n');
+    {
+      path: 'astro.config.mjs',
+      content: `import { defineConfig } from 'astro/config';\nimport tailwind from '@astrojs/tailwind';\nexport default defineConfig({ integrations: [tailwind()] });\n`,
+    },
+    {
+      path: 'tailwind.config.mjs',
+      content: `/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
+  theme: {
+    extend: {
+      colors: {
+        primary: { DEFAULT: '${primary}', light: '${primary}dd', dark: '${primary}bb' },
+        secondary: '#1a1a2e',
+        accent: { gold: '#f5e27a', DEFAULT: '${primary}' },
+        surface: { soft: '#f8f9fa', DEFAULT: '#ffffff' },
+        text: { DEFAULT: '#1a1a2e', muted: '#6b7280', light: '#9ca3af' },
+        border: '#e5e7eb',
+      },
+      fontFamily: {
+        serif: ['${headingFont}', 'Georgia', 'serif'],
+        sans: ['${bodyFont}', 'system-ui', 'sans-serif'],
+      },
+      borderRadius: { '4xl': '2rem' },
+    },
+  },
+  plugins: [],
+};\n`,
+    },
+    {
+      path: 'src/styles/global.css',
+      content: `@import url('https://fonts.googleapis.com/css2?family=${headingFont.replace(/ /g, '+')}:wght@400;500;600;700&family=${bodyFont.replace(/ /g, '+')}:wght@300;400;500;600;700&display=swap');
+@tailwind base; @tailwind components; @tailwind utilities;
+@layer base {
+  body { @apply font-sans text-text bg-surface antialiased; }
+  h1, h2, h3, h4 { @apply font-serif; }
+}
+@layer components {
+  .btn-primary { @apply inline-flex items-center justify-center gap-2 bg-primary text-white font-semibold px-6 py-3 rounded-xl hover:opacity-90 transition-all duration-300 shadow-lg; }
+  .btn-outline { @apply inline-flex items-center justify-center gap-2 border-2 border-primary text-primary font-semibold px-6 py-3 rounded-xl hover:bg-primary hover:text-white transition-all duration-300; }
+  .btn-outline-white { @apply inline-flex items-center justify-center gap-2 border-2 border-white/30 text-white font-semibold px-6 py-3 rounded-xl hover:bg-white/10 transition-all duration-300; }
+  .card { @apply bg-white rounded-3xl p-7 shadow-sm border border-border hover:shadow-lg transition-all duration-300; }
+  .section-label { @apply inline-flex items-center gap-2 text-primary font-semibold text-sm uppercase tracking-wider mb-4; }
+  .badge-gold { @apply inline-flex items-center gap-1.5 bg-accent-gold/20 text-yellow-700 font-semibold rounded-full; }
+  .bg-dark-mesh { @apply bg-gradient-to-br from-secondary via-gray-900 to-secondary; }
+  .shadow-primary { box-shadow: 0 8px 32px ${primary}33; }
+  .shadow-primary-lg { box-shadow: 0 12px 48px ${primary}44; }
+}\n`,
+    },
+  ];
 }
 
 function buildPrompt(input: SiteGenerationInput, templateIndex: string): string {
   const biz = input.businessInfo as Record<string, unknown>;
-  return `Build a complete, beautiful website for this business using write_files (batch tool).
+  const contact = getContactInfo(input);
+  return `Build a website for this business. Config files (astro.config, tailwind, global.css) are ALREADY written — do NOT write them again.
 
 ## Business
-${buildBusinessSummary(input)}
-- target audience: ${String(biz.targetAudience ?? '')}
-- brand tone: ${String(biz.brandTone ?? 'Professional')}
+name: ${input.businessInfo.name || input.siteName}
+description: ${input.businessInfo.description ?? ''}
+services: ${(input.businessInfo.services ?? []).join(', ')}
+audience: ${String(biz.targetAudience ?? '')} | tone: ${String(biz.brandTone ?? 'Professional')}
+contact: ${JSON.stringify(contact)}
+primary color: ${input.design?.primaryColor ?? '#3B82F6'}
 
-## Template structure (reference only)
+## Template reference
 ${templateIndex}
 
-## Task
-Use write_files to write files in 2 batches:
+## Write these files using write_files (2 calls):
 
-BATCH 1 — call write_files with config + layout + styles:
-- astro.config.mjs — clean config (no astro-icon)
-- tailwind.config.mjs — brand colors from primary color
-- src/styles/global.css — CSS custom properties + font imports
-- src/layouts/Layout.astro — nav, footer, meta, responsive
+CALL 1 — layout + all components:
+- src/layouts/Layout.astro (250+ lines: head, responsive nav, main slot, NO footer — footer is a component)
+- src/components/Hero.astro (150+ lines: headline, description, 2 CTAs, trust badges with SVG icons, stats)
+- src/components/Services.astro (180+ lines: section header, 6 service cards with business-relevant SVG icons, prices, CTAs)
+- src/components/Testimonials.astro (140+ lines: 3-4 testimonials with star ratings, client names, photos placeholder)
+- src/components/Pricing.astro (200+ lines: 2-3 pricing tiers, features lists, FAQ accordion with 4-6 items)
+- src/components/Footer.astro (80+ lines: 4 columns — about, services, contact info, social links, copyright)
 
-BATCH 2 — call write_files with ALL components:
-- src/components/Hero.astro — hero with headline, CTA, stats
-- src/components/Services.astro — services grid with prices
-- src/components/Testimonials.astro — testimonial cards
-- src/components/Pricing.astro — pricing tiers + FAQ
-- src/components/Footer.astro — footer with contact + links
+CALL 2 — all pages:
+- src/pages/index.astro (30 lines: import Layout + all components, compose landing page)
+- src/pages/about.astro (250+ lines: company story, timeline, team, mission, values with Layout)
+- src/pages/services.astro (250+ lines: detailed services with descriptions, process steps, pricing per service)
+- src/pages/contact.astro (200+ lines: contact form, map placeholder, business hours, address with Layout)
 
-BATCH 3 — call write_files with ALL pages:
-- src/pages/index.astro — landing page importing sections
-- src/pages/about.astro — about page with company story
-- src/pages/services.astro — detailed services page
-- src/pages/contact.astro — contact form page
-
-## Content rules
-- Compelling, professional copy in the business's language
-- Contact: ${JSON.stringify(getContactInfo(input))}
-- 3-5 services, 3-4 testimonials, 2-3 pricing plans, 4-6 FAQ items
-- NO Lorem Ipsum — real, relevant content only
-
-## Design quality rules
-- Icons MUST be relevant to the business (e.g., dental: tooth, smile, implant; beauty: scissors, brush, face)
-- Use detailed multi-path SVGs (NOT single-circle/line generic icons)
-- Footer must be a full component (50+ lines) with columns: About, Services, Contact, Social links
-- NO emoji in the UI — use inline SVGs for all icons
-- Trust/benefit bars must use SVG icons, not emoji or text symbols
-- Each section needs visual variety: cards, grids, timelines, stats, gradients
-- Color scheme must use the provided primary color consistently
-
-## Technical rules
-- Inline all data as JS const in frontmatter (NOT from content/*.md)
-- Use inline SVGs (NOT astro-icon)
-- In <script> tags: (el as HTMLElement).style (cast Element to HTMLElement)
-- Every file complete and self-contained
-- Each component 100-300 lines of rich content`;
+## Rules
+- ALL content in the business's language, professional and compelling
+- Inline SVGs relevant to the business (NOT generic circles/lines)
+- NO emoji, NO astro-icon, NO content/*.md imports
+- Each component self-contained with data in frontmatter const
+- (el as HTMLElement).style in <script> tags
+- 3-5 services, 3-4 testimonials, 2-3 pricing plans, 4-6 FAQ items`;
 }
 
-function createToolDefinitions(workDir: string): ToolDefinition[] {
+function createTools(workDir: string): ToolDefinition[] {
+  const writeSingle = async (path: string, content: string, emit: Emit) => {
+    const full = resolvePath(workDir, path);
+    await mkdir(dirname(full), { recursive: true });
+    await writeFile(full, content, 'utf-8');
+    const lines = countLines(content);
+    emit({ type: 'file_write', path, lines });
+    return `${path} (${lines}L)`;
+  };
+
   return [
     {
       tool: {
         name: 'write_files',
-        description: 'Write multiple files at once. Use this to write all website files in a single call.',
+        description: 'Write multiple files at once.',
         input_schema: {
           type: 'object' as const,
-          properties: {
-            files: {
-              type: 'array' as const,
-              items: {
-                type: 'object' as const,
-                properties: { path: { type: 'string' as const }, content: { type: 'string' as const } },
-                required: ['path', 'content'],
-              },
-            },
-          },
+          properties: { files: { type: 'array' as const, items: { type: 'object' as const, properties: { path: { type: 'string' as const }, content: { type: 'string' as const } }, required: ['path', 'content'] } } },
           required: ['files'],
         },
       },
       execute: async (input, emit) => {
         const files = (input.files as Array<{ path: string; content: string }>) ?? [];
-        const results: string[] = [];
-        for (const file of files) {
-          const path = String(file.path ?? '');
-          const content = String(file.content ?? '');
-          const fullPath = resolvePath(workDir, path);
-          await mkdir(dirname(fullPath), { recursive: true });
-          await writeFile(fullPath, content, 'utf-8');
-          const lines = countLines(content);
-          emit({ type: 'file_write', path, lines });
-          results.push(`${path} (${lines}L)`);
-        }
+        const results = await Promise.all(files.map((f) => writeSingle(f.path, f.content, emit)));
         return `Wrote ${results.length} files: ${results.join(', ')}`;
       },
     },
     {
-      tool: { name: 'write_file', description: 'Write a single file.', input_schema: { type: 'object' as const, properties: { path: { type: 'string' }, content: { type: 'string' } }, required: ['path', 'content'] } },
+      tool: { name: 'write_file', description: 'Write one file.', input_schema: { type: 'object' as const, properties: { path: { type: 'string' }, content: { type: 'string' } }, required: ['path', 'content'] } },
       execute: async (input, emit) => {
-        const path = String(input.path ?? '');
-        const content = String(input.content ?? '');
-        const fullPath = resolvePath(workDir, path);
-        await mkdir(dirname(fullPath), { recursive: true });
-        await writeFile(fullPath, content, 'utf-8');
-        emit({ type: 'file_write', path, lines: countLines(content) });
-        return `Wrote ${path} (${countLines(content)} lines)`;
-      },
-    },
-    {
-      tool: { name: 'read_file', description: 'Read a file.', input_schema: { type: 'object' as const, properties: { path: { type: 'string' } }, required: ['path'] } },
-      execute: async (input, emit) => {
-        const path = String(input.path ?? '');
-        const content = await readFile(resolvePath(workDir, path), 'utf-8');
-        emit({ type: 'file_read', path });
-        return content;
+        const r = await writeSingle(String(input.path ?? ''), String(input.content ?? ''), emit);
+        return `Wrote ${r}`;
       },
     },
     {
@@ -209,120 +212,76 @@ function createToolDefinitions(workDir: string): ToolDefinition[] {
   ];
 }
 
-function emitResponseBlocks(response: ResponseMessage, emit: Emit): void {
-  for (const block of response.content) {
-    if (block.type === 'text' && block.text) emit({ type: 'text', content: block.text });
-    if (block.type === 'thinking' && 'thinking' in block) emit({ type: 'thinking', text: String(block.thinking) });
-  }
-}
-
 function getToolCalls(response: ResponseMessage): ToolCall[] {
-  return response.content.flatMap((block) => {
-    if (block.type !== 'tool_use' || !isRecord(block.input)) return [];
-    return [{ id: block.id, name: block.name, input: block.input }];
-  });
+  return response.content.flatMap((b) => (b.type === 'tool_use' && isRecord(b.input)) ? [{ id: b.id, name: b.name, input: b.input }] : []);
 }
 
 function addUsage(model: string, response: ResponseMessage, totals: UsageTotals): void {
   const u = response.usage as Record<string, number>;
-  const inp = u.input_tokens ?? 0;
-  const out = u.output_tokens ?? 0;
-  const cacheRead = u.cache_read_input_tokens ?? 0;
-  const cacheCreate = u.cache_creation_input_tokens ?? 0;
-  const pricing = MODEL_PRICING[model] ?? MODEL_PRICING[MODEL];
+  const inp = u.input_tokens ?? 0, out = u.output_tokens ?? 0;
+  const cr = u.cache_read_input_tokens ?? 0, cw = u.cache_creation_input_tokens ?? 0;
+  const p = MODEL_PRICING[model] ?? MODEL_PRICING[MODEL];
   totals.inputTokens += inp;
   totals.outputTokens += out;
-  totals.costUsd += ((inp - cacheRead - cacheCreate) * pricing.input)
-    + (cacheRead * pricing.cacheRead) + (cacheCreate * pricing.cacheWrite)
-    + (out * pricing.output);
+  totals.costUsd += (inp - cr - cw) * p.input + cr * p.cacheRead + cw * p.cacheWrite + out * p.output;
 }
 
-async function executeToolCall(tc: ToolCall, tools: ToolDefinition[], emit: Emit): Promise<ToolResultBlock> {
-  const start = Date.now();
-  const tool = tools.find((t) => t.tool.name === tc.name);
-  if (!tool) {
-    emit({ type: 'error', message: `Unknown tool: ${tc.name}` });
-    return { type: 'tool_result', tool_use_id: tc.id, content: `Unknown tool: ${tc.name}`, is_error: true };
-  }
-  emit({ type: 'tool_call', name: tc.name, input: tc.input });
-  try {
-    const result = await tool.execute(tc.input, emit);
-    emit({ type: 'tool_result', name: tc.name, duration_s: (Date.now() - start) / 1000 });
-    return { type: 'tool_result', tool_use_id: tc.id, content: result };
-  } catch (error) {
-    const msg = error instanceof Error ? error.message : 'Tool execution failed';
-    emit({ type: 'error', message: msg });
-    return { type: 'tool_result', tool_use_id: tc.id, content: msg, is_error: true };
-  }
-}
-
-/**
- * Truncate old write_file/write_files tool_use blocks in message history.
- * Keeps the tool name and path but replaces content with a summary.
- * This prevents context from growing linearly with each file written.
- */
-function truncateOldToolUseContent(messages: MessageParam[]): void {
-  // Keep the last 2 assistant messages intact, truncate older ones
-  let assistantCount = 0;
+// ── Optimization 1: Truncate old tool_use content to prevent context bloat ──
+function truncateHistory(messages: MessageParam[]): void {
+  let aCount = 0;
   for (let i = messages.length - 1; i >= 0; i--) {
     const msg = messages[i];
     if (msg.role !== 'assistant' || !Array.isArray(msg.content)) continue;
-    assistantCount++;
-    if (assistantCount <= 2) continue; // keep recent
+    aCount++;
+    if (aCount <= 1) continue; // keep last assistant intact
     for (const block of msg.content) {
-      if (block.type === 'tool_use' && isRecord(block.input)) {
-        const name = block.name;
-        if (name === 'write_file' && typeof block.input.content === 'string') {
-          const lines = countLines(block.input.content);
-          block.input = { path: block.input.path, content: `[${lines} lines — content omitted from history]` };
-        }
-        if (name === 'write_files' && Array.isArray(block.input.files)) {
-          block.input = {
-            files: (block.input.files as Array<{ path: string; content: string }>).map((f) => ({
-              path: f.path,
-              content: `[${countLines(f.content)} lines — omitted]`,
-            })),
-          };
-        }
+      if (block.type !== 'tool_use' || !isRecord(block.input)) continue;
+      if (block.name === 'write_file' && typeof block.input.content === 'string') {
+        block.input = { path: block.input.path, content: `[${countLines(block.input.content)}L omitted]` };
+      }
+      if (block.name === 'write_files' && Array.isArray(block.input.files)) {
+        block.input = { files: (block.input.files as Array<{ path: string; content: string }>).map((f) => ({ path: f.path, content: `[${countLines(f.content)}L]` })) };
       }
     }
   }
-}
-
-async function writeTemplateFiles(workDir: string, templateFiles: GeneratedFile[]): Promise<void> {
-  await Promise.all(templateFiles.map(async (file) => {
-    const fullPath = resolvePath(workDir, file.path);
-    await mkdir(dirname(fullPath), { recursive: true });
-    await writeFile(fullPath, file.content, 'utf-8');
-  }));
 }
 
 async function runToolLoop(
   client: Anthropic, prompt: string, tools: ToolDefinition[], emit: Emit, progress: (msg: string) => void,
 ): Promise<{ turns: number; usage: UsageTotals }> {
   const usage: UsageTotals = { inputTokens: 0, outputTokens: 0, costUsd: 0 };
-  const messages: MessageParam[] = [{
-    role: 'user',
-    content: [{ type: 'text', text: prompt, cache_control: { type: 'ephemeral' } }],
-  }];
+  const messages: MessageParam[] = [{ role: 'user', content: [{ type: 'text', text: prompt, cache_control: { type: 'ephemeral' } }] }];
 
   for (let turn = 1; turn <= MAX_TURNS; turn++) {
-    // Truncate old tool inputs to keep context lean
-    truncateOldToolUseContent(messages);
-
+    truncateHistory(messages);
     const response = await client.messages.create({
       model: MODEL, max_tokens: MAX_OUTPUT_TOKENS,
-      system: [{ type: 'text', text: 'Expert Astro developer. Write files immediately using write_files or write_file. No explanations needed — just write the code.', cache_control: { type: 'ephemeral' } }],
-      tools: tools.map((t) => t.tool),
-      messages,
+      system: [{ type: 'text', text: 'Expert Astro/Tailwind developer. Write files immediately — no explanations. Use write_files for batches.', cache_control: { type: 'ephemeral' } }],
+      tools: tools.map((t) => t.tool), messages,
     });
     addUsage(MODEL, response, usage);
-    emitResponseBlocks(response, emit);
+    for (const b of response.content) {
+      if (b.type === 'text' && b.text) emit({ type: 'text', content: b.text });
+      if (b.type === 'thinking' && 'thinking' in b) emit({ type: 'thinking', text: String(b.thinking) });
+    }
     messages.push({ role: 'assistant', content: response.content });
-    const toolCalls = getToolCalls(response);
-    if (!toolCalls.length) return { turns: turn, usage };
-    progress(`Turn ${turn}: ${toolCalls.length} tool call${toolCalls.length === 1 ? '' : 's'}`);
-    const results = await Promise.all(toolCalls.map((call) => executeToolCall(call, tools, emit)));
+    const calls = getToolCalls(response);
+    if (!calls.length) return { turns: turn, usage };
+    progress(`Turn ${turn}: ${calls.length} tool call${calls.length === 1 ? '' : 's'}`);
+    const results: ToolResultBlock[] = [];
+    for (const tc of calls) {
+      const tool = tools.find((t) => t.tool.name === tc.name);
+      if (!tool) { results.push({ type: 'tool_result', tool_use_id: tc.id, content: 'Unknown tool', is_error: true }); continue; }
+      emit({ type: 'tool_call', name: tc.name, input: tc.input });
+      try {
+        const r = await tool.execute(tc.input, emit);
+        results.push({ type: 'tool_result', tool_use_id: tc.id, content: r });
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'Tool failed';
+        emit({ type: 'error', message: msg });
+        results.push({ type: 'tool_result', tool_use_id: tc.id, content: msg, is_error: true });
+      }
+    }
     messages.push({ role: 'user', content: results });
   }
   throw new Error(`Agent reached MAX_TURNS (${MAX_TURNS}) without finishing`);
@@ -338,24 +297,37 @@ export async function runAgentPipeline(
 
   await mkdir(workDir, { recursive: true });
   try {
-    await writeTemplateFiles(workDir, templateFiles);
+    // Write template files as reference
+    await Promise.all(templateFiles.map(async (f) => {
+      const p = resolvePath(workDir, f.path);
+      await mkdir(dirname(p), { recursive: true });
+      await writeFile(p, f.content, 'utf-8');
+    }));
     progress(`Template ready — ${templateFiles.length} files`);
+
+    // Optimization 3: Pre-generate boilerplate (no LLM needed)
+    const boilerplate = generateBoilerplate(input);
+    for (const f of boilerplate) {
+      const p = resolvePath(workDir, f.path);
+      await mkdir(dirname(p), { recursive: true });
+      await writeFile(p, f.content, 'utf-8');
+      emit({ type: 'file_write', path: f.path, lines: countLines(f.content) });
+    }
+    progress(`Pre-generated ${boilerplate.length} config files`);
 
     const client = getClient();
     const templateIndex = buildTemplateIndex(templateFiles);
     const prompt = buildPrompt(input, templateIndex);
 
     progress('Agent generating website...');
-    const { turns, usage } = await runToolLoop(client, prompt, createToolDefinitions(workDir), emit, progress);
+    const { turns, usage } = await runToolLoop(client, prompt, createTools(workDir), emit, progress);
 
     progress('Collecting output files...');
     const allFiles = await collectDir(workDir);
     const filtered = allFiles.filter((f) => !INTEGRATION_COMPONENT_BLOCKLIST.some((b) => f.path.endsWith(b)));
     for (const file of filtered) {
       if (file.path === 'astro.config.mjs' && file.content.includes('astro-icon')) {
-        file.content = file.content
-          .replace(/import\s+icon\s+from\s+['"]astro-icon['"];?\n?/g, '')
-          .replace(/,?\s*icon\(\)/g, '');
+        file.content = file.content.replace(/import\s+icon\s+from\s+['"]astro-icon['"];?\n?/g, '').replace(/,?\s*icon\(\)/g, '');
       }
     }
     const files = fixContentImports(filtered);
@@ -363,11 +335,13 @@ export async function runAgentPipeline(
     emit({ type: 'done', duration_ms: Date.now() - startedAt, turns, cost_usd: usage.costUsd, input_tokens: usage.inputTokens, output_tokens: usage.outputTokens });
     progress(`Done — ${files.length} files in ${turns} turns`);
 
-    const cost: PipelineCost = {
-      totalCostUSD: usage.costUsd, totalTokens: usage.inputTokens + usage.outputTokens,
-      breakdown: [{ model: MODEL, promptTokens: usage.inputTokens, completionTokens: usage.outputTokens, totalTokens: usage.inputTokens + usage.outputTokens, costUSD: usage.costUsd }],
+    return {
+      success: true, files,
+      cost: {
+        totalCostUSD: usage.costUsd, totalTokens: usage.inputTokens + usage.outputTokens,
+        breakdown: [{ model: MODEL, promptTokens: usage.inputTokens, completionTokens: usage.outputTokens, totalTokens: usage.inputTokens + usage.outputTokens, costUSD: usage.costUsd }],
+      },
     };
-    return { success: true, files, cost };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Pipeline error';
     logger.error(message);

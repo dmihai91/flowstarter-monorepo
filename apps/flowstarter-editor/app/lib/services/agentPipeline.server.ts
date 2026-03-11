@@ -11,7 +11,7 @@ export type { AgentActivityEvent };
 
 const logger = { error: (...args: unknown[]) => console.error('[AgentPipeline]', ...args) };
 const MODEL = 'anthropic/claude-sonnet-4-6';
-const MAX_TURNS = 25;
+const MAX_TURNS = 10;
 const MAX_OUTPUT_TOKENS = 16_000;
 const MODEL_PRICING: Record<string, { input: number; output: number; cacheRead: number; cacheWrite: number }> = {
   [MODEL]: { input: 3e-6, output: 15e-6, cacheRead: 0.3e-6, cacheWrite: 3.75e-6 },
@@ -129,42 +129,36 @@ export default {
 function buildPrompt(input: SiteGenerationInput, templateIndex: string): string {
   const biz = input.businessInfo as Record<string, unknown>;
   const contact = getContactInfo(input);
-  return `Build a website for this business. Config files (astro.config, tailwind, global.css) are ALREADY written — do NOT write them again.
+  return `Build a website. Config files (astro.config, tailwind, global.css) ALREADY WRITTEN. Do NOT rewrite them.
 
-## Business
-name: ${input.businessInfo.name || input.siteName}
-description: ${input.businessInfo.description ?? ''}
-services: ${(input.businessInfo.services ?? []).join(', ')}
-audience: ${String(biz.targetAudience ?? '')} | tone: ${String(biz.brandTone ?? 'Professional')}
-contact: ${JSON.stringify(contact)}
-primary color: ${input.design?.primaryColor ?? '#3B82F6'}
+Business: ${input.businessInfo.name || input.siteName}
+${input.businessInfo.description ?? ''}
+Services: ${(input.businessInfo.services ?? []).join(', ')}
+Contact: ${JSON.stringify(contact)}
+Color: ${input.design?.primaryColor ?? '#3B82F6'} | Audience: ${String(biz.targetAudience ?? '')} | Tone: ${String(biz.brandTone ?? 'Professional')}
 
-## Template reference
+Template files for reference:
 ${templateIndex}
 
-## Write these files using write_files (2 calls):
+Write ALL files in exactly 3 write_files calls:
 
-CALL 1 — layout + all components:
-- src/layouts/Layout.astro (250+ lines: head, responsive nav, main slot, NO footer — footer is a component)
-- src/components/Hero.astro (150+ lines: headline, description, 2 CTAs, trust badges with SVG icons, stats)
-- src/components/Services.astro (180+ lines: section header, 6 service cards with business-relevant SVG icons, prices, CTAs)
-- src/components/Testimonials.astro (140+ lines: 3-4 testimonials with star ratings, client names, photos placeholder)
-- src/components/Pricing.astro (200+ lines: 2-3 pricing tiers, features lists, FAQ accordion with 4-6 items)
-- src/components/Footer.astro (80+ lines: 4 columns — about, services, contact info, social links, copyright)
+CALL 1 (layout + hero + services):
+- src/layouts/Layout.astro — head, responsive nav with mobile menu, <slot/>, footer
+- src/components/Hero.astro — headline, tagline, 2 CTAs, stats bar
+- src/components/Services.astro — grid of service cards with inline SVG icons
 
-CALL 2 — all pages:
-- src/pages/index.astro (30 lines: import Layout + all components, compose landing page)
-- src/pages/about.astro (250+ lines: company story, timeline, team, mission, values with Layout)
-- src/pages/services.astro (250+ lines: detailed services with descriptions, process steps, pricing per service)
-- src/pages/contact.astro (200+ lines: contact form, map placeholder, business hours, address with Layout)
+CALL 2 (remaining components):
+- src/components/Testimonials.astro — 3 testimonial cards with star ratings
+- src/components/Pricing.astro — 2-3 plans with feature lists
+- src/components/Footer.astro — 4 columns: about, services, contact, social
 
-## Rules
-- ALL content in the business's language, professional and compelling
-- Inline SVGs relevant to the business (NOT generic circles/lines)
-- NO emoji, NO astro-icon, NO content/*.md imports
-- Each component self-contained with data in frontmatter const
-- (el as HTMLElement).style in <script> tags
-- 3-5 services, 3-4 testimonials, 2-3 pricing plans, 4-6 FAQ items`;
+CALL 3 (all pages):
+- src/pages/index.astro — imports Layout + all components
+- src/pages/about.astro — story, timeline, values (full page with Layout)
+- src/pages/services.astro — detailed services (full page with Layout)
+- src/pages/contact.astro — form, hours, map placeholder (full page with Layout)
+
+Rules: content in business language, inline SVGs (no astro-icon), no emoji, no content/*.md imports, (el as HTMLElement).style in scripts, data in frontmatter const.`;
 }
 
 function createTools(workDir: string): ToolDefinition[] {

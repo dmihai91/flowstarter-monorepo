@@ -115,7 +115,7 @@ Do NOT add explanations, comments about what you changed, or markdown code block
 Return ONLY the raw file code.`;
 
     const fixedContent = await generateCompletion([{ role: 'user', content: fixPrompt }], {
-      model: 'anthropic/claude-sonnet-4-6',
+      model: 'z-ai/glm-4.7',
       temperature: 0.1,
       maxTokens: 12000,
     });
@@ -170,7 +170,7 @@ No explanations, no markdown code blocks - just the raw fixed code.`;
   try {
     // Use Claude Sonnet for more reliable fixing
     const fixedContent = await generateCompletion([{ role: 'user', content: fixPrompt }], {
-      model: 'anthropic/claude-sonnet-4-6',
+      model: 'z-ai/glm-4.7',
       temperature: 0.1,
       maxTokens: 12000,
     });

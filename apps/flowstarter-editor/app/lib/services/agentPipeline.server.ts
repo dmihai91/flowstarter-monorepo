@@ -137,6 +137,7 @@ Do NOT write files one at a time.
 - Write a clean astro.config.mjs that does NOT import astro-icon:
   import { defineConfig } from 'astro/config'; import tailwind from '@astrojs/tailwind';
   export default defineConfig({ integrations: [tailwind()] });
+- In <script> tags, cast DOM elements to HTMLElement before accessing .style: (el as HTMLElement).style
 - Every file must be complete and self-contained`;
 }
 

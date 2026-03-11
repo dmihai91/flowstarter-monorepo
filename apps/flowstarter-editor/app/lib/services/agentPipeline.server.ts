@@ -11,7 +11,7 @@ export type { AgentActivityEvent };
 
 const logger = { error: (...args: unknown[]) => console.error('[AgentPipeline]', ...args) };
 const MODEL = 'anthropic/claude-sonnet-4-6';
-const MAX_TURNS = 20;
+const MAX_TURNS = 30;
 const MAX_OUTPUT_TOKENS = 16_000;
 const MODEL_PRICING: Record<string, { input: number; output: number; cacheRead: number; cacheWrite: number }> = {
   [MODEL]: { input: 3 / 1_000_000, output: 15 / 1_000_000, cacheRead: 0.3 / 1_000_000, cacheWrite: 3.75 / 1_000_000 },
@@ -303,7 +303,7 @@ async function runToolLoop(
 
     const response = await client.messages.create({
       model: MODEL, max_tokens: MAX_OUTPUT_TOKENS,
-      system: [{ type: 'text', text: 'You are an expert Astro developer. Build beautiful websites with real content. Write complete files. Prefer write_files (batch) over write_file (single).', cache_control: { type: 'ephemeral' } }],
+      system: [{ type: 'text', text: 'Expert Astro developer. Write files immediately using write_files or write_file. No explanations needed — just write the code.', cache_control: { type: 'ephemeral' } }],
       tools: tools.map((t) => t.tool),
       messages,
     });

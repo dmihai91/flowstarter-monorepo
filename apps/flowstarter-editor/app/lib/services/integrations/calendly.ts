@@ -53,7 +53,7 @@ function sanitizeUrl(url: string): string {
   // Only allow https calendly.com URLs
   try {
     const parsed = new URL(url);
-    if (parsed.protocol !== 'https:' || !parsed.hostname.endsWith('calendly.com')) {
+    if (parsed.protocol !== 'https:' || (parsed.hostname !== 'calendly.com' && !parsed.hostname.endsWith('.calendly.com'))) {
       return '';
     }
     // Reject URLs with suspicious encoded characters (XSS attempts)

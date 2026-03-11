@@ -59,8 +59,8 @@ function resolvePath(workDir: string, path: string): string {
   const trimmedPath = path.trim();
   if (!trimmedPath) throw new Error('Path is required');
   const fullPath = normalize(join(workDir, trimmedPath));
-  const root = `${normalize(workDir)}/`;
-  if (!fullPath.startsWith(root) && fullPath !== normalize(workDir)) throw new Error(`Path escapes workDir: ${path}`);
+  const normalizedRoot = normalize(workDir);
+  if (!fullPath.startsWith(normalizedRoot + '/') && !fullPath.startsWith(normalizedRoot + '\\') && fullPath !== normalizedRoot) throw new Error(`Path escapes workDir: ${path}`);
   return fullPath;
 }
 

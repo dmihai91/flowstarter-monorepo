@@ -23,6 +23,8 @@ import {
 } from '~/lib/services/daytonaService.server';
 import { resolvePreviewUrlFromResult } from '~/lib/services/daytona/previewUrl';
 import { tryDeterministicFix } from '~/lib/services/claude-agent/errorFixMap';
+import { healBuildErrors } from '~/lib/services/claude-agent/errorHealing';
+import type { BuildError } from '~/lib/services/claude-agent/types';
 import { resetCostTracker, getTotalCost } from '~/lib/services/llm';
 import { getConvexClient } from './onboarding-chat/cost-logging';
 import { api } from '../../convex/_generated/api';
@@ -308,7 +310,46 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentE
         continue;
       }
 
-      break;
+      const buildError: BuildError = {
+        file: previewResult.buildError.file,
+        message: previewResult.buildError.message,
+      };
+      const errorTarget = buildError.file || 'unknown file';
+
+      send({ type: 'progress', phase: 'fix', message: 'AI is fixing the error...' });
+      sendAgentEvent?.({
+        type: 'error',
+        message: `Build error in ${errorTarget}: ${buildError.message}`,
+      });
+      sendAgentEvent?.({
+        type: 'text',
+        content: `Attempting AI healing for ${errorTarget}.`,
+      });
+
+      try {
+        const healedFiles = await healBuildErrors(
+          generationInput,
+          currentFiles,
+          [buildError],
+          (msg) => {
+            send({ type: 'progress', phase: 'fix', message: msg });
+            sendAgentEvent?.({ type: 'text', content: msg });
+          }
+        );
+
+        currentFiles = healedFiles;
+        sendAgentEvent?.({
+          type: 'text',
+          content: `AI healing completed for ${errorTarget}. Retrying build.`,
+        });
+        continue;
+      } catch (error) {
+        sendAgentEvent?.({
+          type: 'error',
+          message: error instanceof Error ? error.message : 'AI healing failed',
+        });
+        break;
+      }
     }
 
     const totalCost = getTotalCost();

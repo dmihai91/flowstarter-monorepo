@@ -10,6 +10,9 @@ export type AgentActivityEvent =
   | { type: 'command_output'; text: string; success?: boolean }
   | { type: 'text'; content: string }
   | { type: 'error'; message: string }
+  | { type: 'auto_fix'; attempt: number; max: number; error: string; strategy: string }
+  | { type: 'auto_fix_result'; attempt: number; success: boolean; message: string }
+  | { type: 'sandbox_status'; message: string }
   | { type: 'done'; duration_ms: number; turns: number; cost_usd: number; input_tokens: number; output_tokens: number };
 
 /**

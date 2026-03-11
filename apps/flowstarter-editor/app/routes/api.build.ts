@@ -278,74 +278,50 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentE
       }
 
       // Try to fix
-      send({ type: 'progress', phase: 'fix', message: `Fixing error in ${previewResult.buildError.file}...` });
+      const errorMsg = previewResult.buildError.message;
+      const errorFile = previewResult.buildError.file;
+      sendAgentEvent?.({ type: 'auto_fix', attempt, max: MAX_SELF_HEAL_ATTEMPTS, error: `${errorFile}: ${errorMsg}`, strategy: 'analyzing' });
+      send({ type: 'progress', phase: 'fix', message: `Fixing error in ${errorFile}...` });
 
-      const fileToFix = currentFiles.find(f => f.path.includes(previewResult!.buildError!.file));
+      const fileToFix = currentFiles.find(f => f.path.includes(errorFile));
       if (!fileToFix) break;
 
-      const ruleFix = tryRuleBasedFix(previewResult.buildError.message, fileToFix.content, fileToFix.path);
+      // Strategy 1: Rule-based fix
+      const ruleFix = tryRuleBasedFix(errorMsg, fileToFix.content, fileToFix.path);
       if (ruleFix) {
         fileToFix.content = ruleFix.fixedContent;
+        sendAgentEvent?.({ type: 'auto_fix_result', attempt, success: true, message: `Rule fix: ${ruleFix.summary}` });
         send({ type: 'progress', phase: 'fix', message: `Fixed: ${ruleFix.summary}` });
         continue;
       }
 
-      // Build filesRecord for deterministic fix
+      // Strategy 2: Deterministic fix
       const allFilesRecord: Record<string, string> = {};
-      for (const f of currentFiles) {
-        allFilesRecord[f.path] = f.content;
-      }
-      const detFix = tryDeterministicFix(
-        previewResult.buildError.message,
-        previewResult.buildError.message, // fullOutput - use message as fallback
-        fileToFix.content,
-        fileToFix.path,
-        allFilesRecord
-      );
+      for (const f of currentFiles) { allFilesRecord[f.path] = f.content; }
+      sendAgentEvent?.({ type: 'auto_fix', attempt, max: MAX_SELF_HEAL_ATTEMPTS, error: errorMsg, strategy: 'deterministic' });
+      const detFix = tryDeterministicFix(errorMsg, errorMsg, fileToFix.content, fileToFix.path, allFilesRecord);
       if (detFix) {
         fileToFix.content = detFix.fixedContent;
+        sendAgentEvent?.({ type: 'auto_fix_result', attempt, success: true, message: `Deterministic fix: ${detFix.summary}` });
         send({ type: 'progress', phase: 'fix', message: `Fixed: ${detFix.summary}` });
         continue;
       }
 
-      const buildError: BuildError = {
-        file: previewResult.buildError.file,
-        message: previewResult.buildError.message,
-      };
-      const errorTarget = buildError.file || 'unknown file';
-
+      // Strategy 3: AI healing (GLM)
+      const buildError: BuildError = { file: errorFile, message: errorMsg };
+      sendAgentEvent?.({ type: 'auto_fix', attempt, max: MAX_SELF_HEAL_ATTEMPTS, error: `${errorFile}: ${errorMsg}`, strategy: 'ai-healing' });
       send({ type: 'progress', phase: 'fix', message: 'AI is fixing the error...' });
-      sendAgentEvent?.({
-        type: 'error',
-        message: `Build error in ${errorTarget}: ${buildError.message}`,
-      });
-      sendAgentEvent?.({
-        type: 'text',
-        content: `Attempting AI healing for ${errorTarget}.`,
-      });
 
       try {
         const healedFiles = await healBuildErrors(
-          generationInput,
-          currentFiles,
-          [buildError],
-          (msg) => {
-            send({ type: 'progress', phase: 'fix', message: msg });
-            sendAgentEvent?.({ type: 'text', content: msg });
-          }
+          generationInput, currentFiles, [buildError],
+          (msg) => { send({ type: 'progress', phase: 'fix', message: msg }); sendAgentEvent?.({ type: 'text', content: msg }); }
         );
-
         currentFiles = healedFiles;
-        sendAgentEvent?.({
-          type: 'text',
-          content: `AI healing completed for ${errorTarget}. Retrying build.`,
-        });
+        sendAgentEvent?.({ type: 'auto_fix_result', attempt, success: true, message: `AI healed ${errorFile}` });
         continue;
       } catch (error) {
-        sendAgentEvent?.({
-          type: 'error',
-          message: error instanceof Error ? error.message : 'AI healing failed',
-        });
+        sendAgentEvent?.({ type: 'auto_fix_result', attempt, success: false, message: error instanceof Error ? error.message : 'AI healing failed' });
         break;
       }
     }

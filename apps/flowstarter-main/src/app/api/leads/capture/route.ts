@@ -5,7 +5,7 @@
  * Stores lead in Supabase.
  */
 import { NextRequest, NextResponse } from 'next/server';
-import { createSupabaseServiceRoleClient } from '@/lib/supabase/server';
+import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 
 // Simple in-memory rate limit (per IP, 10 submissions per minute)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();

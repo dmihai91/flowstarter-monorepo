@@ -5,7 +5,7 @@
 import 'server-only';
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/api-auth';
-import { createSupabaseServiceRoleClient } from '@/lib/supabase/server';
+import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import { storeSecret } from '@/lib/vault';
 
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';

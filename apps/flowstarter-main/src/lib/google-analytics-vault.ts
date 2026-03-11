@@ -5,7 +5,7 @@
  * Falls back to legacy user_integrations table.
  */
 import 'server-only';
-import { createSupabaseServiceRoleClient } from '@/lib/supabase/server';
+import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import { readSecret } from '@/lib/vault';
 
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';

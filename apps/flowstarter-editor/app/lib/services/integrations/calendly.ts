@@ -48,13 +48,33 @@ function calendlyHeadScript(): string {
   return '\n    <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">\n    <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>';
 }
 
+/** Sanitize URL for safe HTML attribute injection */
+function sanitizeUrl(url: string): string {
+  // Only allow https calendly.com URLs
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'https:' || !parsed.hostname.endsWith('calendly.com')) {
+      return '';
+    }
+    // Reject URLs with suspicious encoded characters (XSS attempts)
+    if (/%22|%3C|%3E|%27|onload|onerror|onclick|javascript:/i.test(parsed.href)) {
+      return '';
+    }
+    return parsed.href.replace(/"/g, '&quot;');
+  } catch {
+    return '';
+  }
+}
+
 function inlineWidget(url: string): string {
-  return `<div class="calendly-inline-widget" data-url="${url}" style="min-width:320px;height:700px;"></div>`;
+  const safeUrl = sanitizeUrl(url);
+  if (!safeUrl) return '<!-- Invalid Calendly URL -->';
+  return `<div class="calendly-inline-widget" data-url="${safeUrl}" style="min-width:320px;height:700px;"></div>`;
 }
 
 function serviceBookingButtons(eventTypes: CalendlyEventType[]): string {
   const buttons = eventTypes.map((et) =>
-    `    <button onclick="Calendly.initPopupWidget({url: '${et.scheduling_url}'}); return false;" class="btn-primary w-full justify-between">
+    `    <button onclick="Calendly.initPopupWidget({url: '${sanitizeUrl(et.scheduling_url)}'}); return false;" class="btn-primary w-full justify-between">
       <span>${et.name}</span><span class="text-sm opacity-75">${et.duration} min</span>
     </button>`
   ).join('\n');

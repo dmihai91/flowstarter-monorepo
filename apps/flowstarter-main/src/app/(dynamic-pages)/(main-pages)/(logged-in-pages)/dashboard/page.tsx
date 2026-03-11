@@ -7,6 +7,7 @@ import { GlassCard } from '@flowstarter/flow-design-system';
 import { DashboardInit } from './components/DashboardInit';
 import { DashboardMessages } from './components/DashboardMessages';
 import { DashboardStatsClientFetcher } from './components/DashboardStatsClientFetcher';
+import { UpcomingMeetingsCard } from './components/UpcomingMeetingsCard';
 import { DashboardWrapper } from './components/DashboardWrapper';
 import { MilestonesTimeline } from './components/MilestonesTimeline';
 import { PrimaryAction } from './components/PrimaryAction';
@@ -152,6 +153,13 @@ export default function DashboardPage() {
           <div className="mb-8">
             <DashboardStatsClientFetcher />
           </div>
+
+          {/* Upcoming Meetings (Calendly) */}
+          {data?.lastProject && (
+            <div className="mb-8">
+              <UpcomingMeetingsCard projectId={data.lastProject.id} />
+            </div>
+          )}
         </DashboardInit>
       </div>
       )}

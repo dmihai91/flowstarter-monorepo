@@ -53,6 +53,17 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
     .filter((p) => p.is_paid)
     .reduce((sum, p) => sum + (p.monthly_fee || 0), 0);
   const paidCount = projects.filter((p) => p.is_paid).length;
+  const totalCredits = projects.reduce(
+    (sum, p) => sum + (p.ai_credits_used || 0),
+    0
+  );
+  const totalCostEur = projects.reduce(
+    (sum, p) => sum + ((p.generation_cost_usd || 0) * 0.92),
+    0
+  );
+  const sitesGenerated = projects.filter(
+    (p) => (p.generation_cost_usd || 0) > 0
+  ).length;
 
   // Most recent project
   const recentProject =
@@ -173,6 +184,34 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
             <span className="w-2 h-2 rounded-full bg-[var(--purple)]" />
             <span className="text-gray-600 dark:text-white/60">
               {t('team.dashboard.countPaid', { count: paidCount })}
+            </span>
+          </span>
+        </div>
+      </GlassPanel>
+
+      {/* AI Usage Card */}
+      <GlassPanel shadow="glass" padding="md">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm text-gray-500 dark:text-white/50">
+            AI Usage
+          </span>
+          <Button variant="ghost" size="xs">
+            {t('team.dashboard.details')} →
+          </Button>
+        </div>
+        <div className="mb-3">
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">
+            {totalCredits} credits
+          </p>
+          <p className="text-lg font-semibold text-gray-700 dark:text-white/80">
+            EUR {totalCostEur.toFixed(0)}
+          </p>
+        </div>
+        <div className="flex items-center gap-3 text-xs">
+          <span className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-[var(--purple)]" />
+            <span className="text-gray-600 dark:text-white/60">
+              {sitesGenerated} sites generated
             </span>
           </span>
         </div>

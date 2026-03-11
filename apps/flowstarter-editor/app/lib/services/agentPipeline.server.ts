@@ -123,6 +123,15 @@ BATCH 3 — call write_files with ALL pages:
 - 3-5 services, 3-4 testimonials, 2-3 pricing plans, 4-6 FAQ items
 - NO Lorem Ipsum — real, relevant content only
 
+## Design quality rules
+- Icons MUST be relevant to the business (e.g., dental: tooth, smile, implant; beauty: scissors, brush, face)
+- Use detailed multi-path SVGs (NOT single-circle/line generic icons)
+- Footer must be a full component (50+ lines) with columns: About, Services, Contact, Social links
+- NO emoji in the UI — use inline SVGs for all icons
+- Trust/benefit bars must use SVG icons, not emoji or text symbols
+- Each section needs visual variety: cards, grids, timelines, stats, gradients
+- Color scheme must use the provided primary color consistently
+
 ## Technical rules
 - Inline all data as JS const in frontmatter (NOT from content/*.md)
 - Use inline SVGs (NOT astro-icon)

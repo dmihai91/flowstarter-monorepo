@@ -339,9 +339,9 @@ export async function runAgentPipeline(
     // Phase 1: Sonnet generates content brief (single turn, no tools)
     progress('Sonnet generating content brief...');
     const briefResponse = await client.messages.create({
-      model,
+      model: ORCHESTRATOR_MODEL,
       max_tokens: MAX_OUTPUT_TOKENS,
-      system: model === ORCHESTRATOR_MODEL ? [{ type: 'text', text: 'You are a creative director. Output only valid JSON.', cache_control: { type: 'ephemeral' } }],
+      system: [{ type: 'text', text: 'You are a creative director. Output only valid JSON.', cache_control: { type: 'ephemeral' } }],
       messages: [{ role: 'user', content: [{ type: 'text', text: buildContentBriefPrompt(input), cache_control: { type: 'ephemeral' } }] }],
     });
     addUsage(ORCHESTRATOR_MODEL, briefResponse, totalUsage);

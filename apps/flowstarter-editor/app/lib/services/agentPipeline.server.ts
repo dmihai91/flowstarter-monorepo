@@ -8,21 +8,13 @@ import type { AgentActivityEvent, GeneratedFile, SiteGenerationInput, SiteGenera
 export type { AgentActivityEvent };
 
 const ORCHESTRATOR_MODEL = 'anthropic/claude-opus-4-6';
-const MAX_TURNS = 40;
-const MAX_OUTPUT_TOKENS = 8_000;
-const INTEGRATION_BLOCKLIST = new Set([
-  'access_token',
-  'api_key',
-  'apikey',
-  'client_secret',
-  'key',
-  'open_router_api_key',
-  'password',
-  'private_key',
-  'secret',
-  'token',
-  'webhook_secret',
-]);
+const MAX_TURNS = 120;
+const MAX_OUTPUT_TOKENS = 16_000;
+/** Integration components that use getEntry()/content collections - break Astro build */
+const INTEGRATION_COMPONENT_BLOCKLIST = [
+  'BookingWidget.astro', 'ContactForm.astro', 'Newsletter.astro',
+  'PaymentWidget.astro', 'SocialFeed.astro',
+];
 const SYSTEM_PROMPT = `You are an expert Astro developer and creative director.
 Build beautiful, conversion-optimised websites with real business content.
 Always write complete files and avoid placeholders.`;
@@ -95,26 +87,13 @@ function getContactInfo(input: SiteGenerationInput): ContactInfo {
   return withTopLevel.contactInfo ?? input.businessInfo.contact ?? {};
 }
 
-function sanitizeIntegrationValue(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(sanitizeIntegrationValue);
-  if (!isRecord(value)) return value;
-  return Object.fromEntries(
-    Object.entries(value)
-      .filter(([key]) => !INTEGRATION_BLOCKLIST.has(key.toLowerCase()))
-      .map(([key, innerValue]) => [key, sanitizeIntegrationValue(innerValue)]),
-  );
-}
 
 function formatIntegrations(input: SiteGenerationInput): string {
   const integrations = input.integrations ?? [];
   if (!integrations.length) return 'None';
   return integrations
-    .map((integration) => JSON.stringify({
-      id: integration.id,
-      name: integration.name,
-      config: sanitizeIntegrationValue(integration.config),
-    }))
-    .join('\n');
+    .map((i) => `${i.name} (${i.id})`)
+    .join(', ');
 }
 
 function formatGeneratedAssets(input: SiteGenerationInput): string {
@@ -331,7 +310,9 @@ export async function runAgentPipeline(
     const prompt = buildPrompt(input);
     const { turns, usage } = await runToolLoop(client, prompt, createToolDefinitions(workDir), emit, progress);
     progress('Collecting output files...');
-    const files = fixContentImports(await collectDir(workDir));
+    const allFiles = await collectDir(workDir);
+    const filtered = allFiles.filter(f => !INTEGRATION_COMPONENT_BLOCKLIST.some(b => f.path.endsWith(b)));
+    const files = fixContentImports(filtered);
     emit({
       type: 'done',
       duration_ms: Date.now() - startedAt,

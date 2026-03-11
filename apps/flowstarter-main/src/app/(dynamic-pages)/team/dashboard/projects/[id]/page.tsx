@@ -22,6 +22,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { useProject } from './hooks/useProject';
+import { IntegrationSettings } from './components/IntegrationSettings';
 import { GlassPanel } from '@flowstarter/flow-design-system';
 
 // Loading state component
@@ -212,6 +213,9 @@ export default function ProjectDetailPage() {
               <EmptyState text="No contact information available" />
             )}
           </InfoCard>
+
+          {/* Integrations */}
+          <IntegrationSettings projectId={project.id} />
 
           {/* Quick Actions */}
           <InfoCard

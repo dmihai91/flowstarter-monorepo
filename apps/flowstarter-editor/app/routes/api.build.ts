@@ -25,7 +25,6 @@ import { resolvePreviewUrlFromResult } from '~/lib/services/daytona/previewUrl';
 import { tryDeterministicFix } from '~/lib/services/claude-agent/errorFixMap';
 import { healBuildErrors } from '~/lib/services/claude-agent/errorHealing';
 import type { BuildError } from '~/lib/services/claude-agent/types';
-import { resetCostTracker, getTotalCost } from '~/lib/services/llm';
 import { getConvexClient } from './onboarding-chat/cost-logging';
 import { api } from '../../convex/_generated/api';
 
@@ -156,7 +155,6 @@ type SandboxEventSender = (event: AgentActivityEvent) => void;
 
 async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentEvent?: SandboxEventSender): Promise<void> {
   try {
-    resetCostTracker();
 
     // Start prewarming sandbox in parallel
     send({ type: 'progress', phase: 'prewarm', message: 'Preparing build environment...' });
@@ -352,14 +350,7 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentE
       }
     }
 
-    // Merge legacy LLM tracker costs with agent pipeline costs
-    const legacyCost = getTotalCost();
-    const pipelineCost = result.cost;
-    const totalCost = {
-      totalCostUSD: legacyCost.totalCostUSD + (pipelineCost?.totalCostUSD ?? 0),
-      totalTokens: legacyCost.totalTokens + (pipelineCost?.totalTokens ?? 0),
-      breakdown: [...legacyCost.breakdown, ...(pipelineCost?.breakdown ?? [])],
-    };
+        const totalCost = result.cost ?? { totalCostUSD: 0, totalTokens: 0, breakdown: [] };
 
     // Persist costs to Convex
     try {

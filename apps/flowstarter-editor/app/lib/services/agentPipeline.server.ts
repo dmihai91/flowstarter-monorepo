@@ -11,12 +11,11 @@ export type { AgentActivityEvent };
 
 const logger = { error: (...args: unknown[]) => console.error('[AgentPipeline]', ...args) };
 const MODEL = 'anthropic/claude-sonnet-4-6';
-const MAX_TURNS = 30;
-const MAX_OUTPUT_TOKENS = 16_000;
+const MAX_TURNS = 20;
+const MAX_OUTPUT_TOKENS = 12_000;
 const MODEL_PRICING: Record<string, { input: number; output: number; cacheRead: number; cacheWrite: number }> = {
   [MODEL]: { input: 3 / 1_000_000, output: 15 / 1_000_000, cacheRead: 0.3 / 1_000_000, cacheWrite: 3.75 / 1_000_000 },
 };
-/** Integration components that use getEntry()/content collections — break Astro build */
 const INTEGRATION_COMPONENT_BLOCKLIST = [
   'BookingWidget.astro', 'ContactForm.astro', 'Newsletter.astro',
   'PaymentWidget.astro', 'SocialFeed.astro',
@@ -86,74 +85,87 @@ function buildBusinessSummary(input: SiteGenerationInput): string {
 
 function buildPrompt(input: SiteGenerationInput, templateIndex: string): string {
   const biz = input.businessInfo as Record<string, unknown>;
-  return `You are an expert Astro/Tailwind developer and creative content writer.
-Build a beautiful, fully customised website for this business.
+  return `Build a complete, beautiful website for this business using write_files (batch tool).
 
 ## Business
 ${buildBusinessSummary(input)}
 - target audience: ${String(biz.targetAudience ?? '')}
 - brand tone: ${String(biz.brandTone ?? 'Professional')}
 
-## Template structure (reference only — do NOT read files)
+## Template structure (reference only)
 ${templateIndex}
 
 ## Task
-Write ALL files below directly using write_file. Do NOT call read_file first.
-Think through the content strategy, then write each file completely.
+Call write_files ONCE with ALL files. Do NOT write files one at a time.
 
-Files to write. Call write_file for ALL files in each batch (parallel tool calls):
-
-BATCH 1 (config + styles):
-- tailwind.config.mjs — brand colors derived from primary color
-- src/styles/global.css — CSS custom properties + font imports
-
-BATCH 2 (layout + components):
-- src/layouts/Layout.astro — nav, footer, meta tags, responsive
-- src/components/Hero.astro — hero with headline, subheadline, CTA
-- src/components/Services.astro — services grid with descriptions + prices
-- src/components/Testimonials.astro — testimonial cards
-- src/components/Pricing.astro — pricing tiers
-- src/components/Footer.astro — footer with contact info + links
-
-BATCH 3 (pages):
-- src/pages/index.astro — landing page importing all section components
-- src/pages/about.astro — about page with company story
-- src/pages/services.astro — detailed services page
-- src/pages/contact.astro — contact form page
-
-IMPORTANT: Write ALL files in each batch in a single response using multiple write_file calls.
-Do NOT write files one at a time.
+Files to include in the write_files call:
+1. astro.config.mjs — \`import { defineConfig } from 'astro/config'; import tailwind from '@astrojs/tailwind'; export default defineConfig({ integrations: [tailwind()] });\`
+2. tailwind.config.mjs — brand colors from primary color
+3. src/styles/global.css — CSS custom properties + font imports
+4. src/layouts/Layout.astro — nav, footer, meta, responsive
+5. src/components/Hero.astro — hero with headline, CTA, stats
+6. src/components/Services.astro — services grid with prices
+7. src/components/Testimonials.astro — testimonial cards
+8. src/components/Pricing.astro — pricing tiers + FAQ
+9. src/components/Footer.astro — footer with contact + links
+10. src/pages/index.astro — landing page importing sections
+11. src/pages/about.astro — about page with company story
+12. src/pages/services.astro — detailed services page
+13. src/pages/contact.astro — contact form page
 
 ## Content rules
-- Write compelling, professional copy in the business's language
-- All contact details: ${JSON.stringify(getContactInfo(input))}
-- Include 3-5 services, 3-4 testimonials, 2-3 pricing plans, 4-6 FAQ items
+- Compelling, professional copy in the business's language
+- Contact: ${JSON.stringify(getContactInfo(input))}
+- 3-5 services, 3-4 testimonials, 2-3 pricing plans, 4-6 FAQ items
 - NO Lorem Ipsum — real, relevant content only
 
 ## Technical rules
-- Inline all data as JS const in Astro frontmatter (NOT from content/*.md imports)
-- Use inline SVGs (NOT astro-icon — it is not installed)
-- Do NOT modify package.json or tsconfig.json
-- Write a clean astro.config.mjs that does NOT import astro-icon:
-  import { defineConfig } from 'astro/config'; import tailwind from '@astrojs/tailwind';
-  export default defineConfig({ integrations: [tailwind()] });
-- In <script> tags, cast DOM elements to HTMLElement before accessing .style: (el as HTMLElement).style
-- Every file must be complete and self-contained`;
+- Inline all data as JS const in frontmatter (NOT from content/*.md)
+- Use inline SVGs (NOT astro-icon)
+- In <script> tags: (el as HTMLElement).style (cast Element to HTMLElement)
+- Every file complete and self-contained
+- Each component 100-300 lines of rich content`;
 }
 
 function createToolDefinitions(workDir: string): ToolDefinition[] {
   return [
     {
-      tool: { name: 'read_file', description: 'Read a file from the working directory.', input_schema: { type: 'object' as const, properties: { path: { type: 'string' } }, required: ['path'] } },
+      tool: {
+        name: 'write_files',
+        description: 'Write multiple files at once. Use this to write all website files in a single call.',
+        input_schema: {
+          type: 'object' as const,
+          properties: {
+            files: {
+              type: 'array' as const,
+              items: {
+                type: 'object' as const,
+                properties: { path: { type: 'string' as const }, content: { type: 'string' as const } },
+                required: ['path', 'content'],
+              },
+            },
+          },
+          required: ['files'],
+        },
+      },
       execute: async (input, emit) => {
-        const path = String(input.path ?? '');
-        const content = await readFile(resolvePath(workDir, path), 'utf-8');
-        emit({ type: 'file_read', path });
-        return content;
+        const files = (input.files as Array<{ path: string; content: string }>) ?? [];
+        const results: string[] = [];
+        for (const file of files) {
+          const path = String(file.path ?? '');
+          const content = String(file.content ?? '');
+          const fullPath = resolvePath(workDir, path);
+          await mkdir(dirname(fullPath), { recursive: true });
+          await writeFile(fullPath, content, 'utf-8');
+          const lines = countLines(content);
+          emit({ type: 'file_write', path, lines });
+          results.push(`${path} (${lines}L)`);
+        }
+        return `Wrote ${results.length} files: ${results.join(', ')}`;
       },
     },
     {
-      tool: { name: 'write_file', description: 'Write a complete file.', input_schema: { type: 'object' as const, properties: { path: { type: 'string' }, content: { type: 'string' } }, required: ['path', 'content'] } },
+      tool: { name: 'write_file', description: 'Write a single file.', input_schema: { type: 'object' as const, properties: { path: { type: 'string' }, content: { type: 'string' } }, required: ['path', 'content'] } },
       execute: async (input, emit) => {
         const path = String(input.path ?? '');
         const content = String(input.content ?? '');
@@ -165,7 +177,16 @@ function createToolDefinitions(workDir: string): ToolDefinition[] {
       },
     },
     {
-      tool: { name: 'list_files', description: 'List files in the working directory.', input_schema: { type: 'object' as const, properties: {}, required: [] } },
+      tool: { name: 'read_file', description: 'Read a file.', input_schema: { type: 'object' as const, properties: { path: { type: 'string' } }, required: ['path'] } },
+      execute: async (input, emit) => {
+        const path = String(input.path ?? '');
+        const content = await readFile(resolvePath(workDir, path), 'utf-8');
+        emit({ type: 'file_read', path });
+        return content;
+      },
+    },
+    {
+      tool: { name: 'list_files', description: 'List files.', input_schema: { type: 'object' as const, properties: {}, required: [] } },
       execute: async (_input, emit) => {
         const listing = (await collectDir(workDir)).map((f) => f.path).sort().join('\n');
         emit({ type: 'text', content: `Listed ${listing ? listing.split('\n').length : 0} files` });
@@ -222,6 +243,39 @@ async function executeToolCall(tc: ToolCall, tools: ToolDefinition[], emit: Emit
   }
 }
 
+/**
+ * Truncate old write_file/write_files tool_use blocks in message history.
+ * Keeps the tool name and path but replaces content with a summary.
+ * This prevents context from growing linearly with each file written.
+ */
+function truncateOldToolUseContent(messages: MessageParam[]): void {
+  // Keep the last 2 assistant messages intact, truncate older ones
+  let assistantCount = 0;
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const msg = messages[i];
+    if (msg.role !== 'assistant' || !Array.isArray(msg.content)) continue;
+    assistantCount++;
+    if (assistantCount <= 2) continue; // keep recent
+    for (const block of msg.content) {
+      if (block.type === 'tool_use' && isRecord(block.input)) {
+        const name = block.name;
+        if (name === 'write_file' && typeof block.input.content === 'string') {
+          const lines = countLines(block.input.content);
+          block.input = { path: block.input.path, content: `[${lines} lines — content omitted from history]` };
+        }
+        if (name === 'write_files' && Array.isArray(block.input.files)) {
+          block.input = {
+            files: (block.input.files as Array<{ path: string; content: string }>).map((f) => ({
+              path: f.path,
+              content: `[${countLines(f.content)} lines — omitted]`,
+            })),
+          };
+        }
+      }
+    }
+  }
+}
+
 async function writeTemplateFiles(workDir: string, templateFiles: GeneratedFile[]): Promise<void> {
   await Promise.all(templateFiles.map(async (file) => {
     const fullPath = resolvePath(workDir, file.path);
@@ -240,9 +294,12 @@ async function runToolLoop(
   }];
 
   for (let turn = 1; turn <= MAX_TURNS; turn++) {
+    // Truncate old tool inputs to keep context lean
+    truncateOldToolUseContent(messages);
+
     const response = await client.messages.create({
       model: MODEL, max_tokens: MAX_OUTPUT_TOKENS,
-      system: [{ type: 'text', text: 'You are an expert Astro developer. Build beautiful websites with real content. Write complete files.', cache_control: { type: 'ephemeral' } }],
+      system: [{ type: 'text', text: 'You are an expert Astro developer. Build beautiful websites with real content. Write complete files. Prefer write_files (batch) over write_file (single).', cache_control: { type: 'ephemeral' } }],
       tools: tools.map((t) => t.tool),
       messages,
     });
@@ -281,7 +338,6 @@ export async function runAgentPipeline(
     progress('Collecting output files...');
     const allFiles = await collectDir(workDir);
     const filtered = allFiles.filter((f) => !INTEGRATION_COMPONENT_BLOCKLIST.some((b) => f.path.endsWith(b)));
-    // Ensure astro.config.mjs doesn't import astro-icon (template default)
     for (const file of filtered) {
       if (file.path === 'astro.config.mjs' && file.content.includes('astro-icon')) {
         file.content = file.content

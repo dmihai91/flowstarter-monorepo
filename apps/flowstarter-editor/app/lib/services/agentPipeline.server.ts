@@ -10,12 +10,10 @@ export type { AgentActivityEvent };
 
 const logger = { error: (...args: unknown[]) => console.error('[AgentPipeline]', ...args) };
 const ORCHESTRATOR_MODEL = 'anthropic/claude-sonnet-4-6';
-const CODER_MODEL = 'z-ai/glm-4.7';
 const MAX_TURNS = 120;
 const MAX_OUTPUT_TOKENS = 16_000;
 const MODEL_PRICING = {
   [ORCHESTRATOR_MODEL]: { input: 3 / 1_000_000, output: 15 / 1_000_000 },
-  [CODER_MODEL]: { input: 0.4 / 1_000_000, output: 1.6 / 1_000_000 },
 } as const;
 /** Integration components that use getEntry()/content collections - break Astro build */
 const INTEGRATION_COMPONENT_BLOCKLIST = [
@@ -34,7 +32,6 @@ type MessageParam = CreateParams['messages'][number];
 type ToolParam = NonNullable<CreateParams['tools']>[number];
 type ResponseMessage = Awaited<ReturnType<Anthropic['messages']['create']>>;
 type ToolResultBlock = { type: 'tool_result'; tool_use_id: string; content: string; is_error?: boolean };
-type PlanItem = { path: string; instructions: string };
 
 interface ToolCall {
   id: string;
@@ -82,7 +79,6 @@ function getContactInfo(input: SiteGenerationInput): ContactInfo {
   const withTopLevel = input as SiteGenerationInput & { contactInfo?: ContactInfo };
   return withTopLevel.contactInfo ?? input.businessInfo.contact ?? {};
 }
-
 
 function formatLines(lines: string[]): string {
   return lines.filter(Boolean).join('\n') || 'None';
@@ -133,19 +129,30 @@ ${formatIntegrations(input)}
 ${formatGeneratedAssets(input)}
 
 ## Your task
-1. List files, then read the important Astro/layout/component files.
-2. Decide which files should be rewritten for ${business.name || input.siteName}.
-3. Do NOT write files. Output a JSON plan instead.
+Phase 1 - Read (be efficient):
+1. List files to see what's available.
+2. Read ONLY the key files: index.astro, Layout.astro, Hero.astro, global.css, tailwind.config.mjs
 
-## Output format
-Return ONLY valid JSON:
-[{"path":"src/pages/index.astro","instructions":"Complete rewrite guidance"}]
+Phase 2 - Write ALL files with real business content:
+Write each file completely for ${business.name || input.siteName}:
+1. tailwind.config.mjs - update colors
+2. src/styles/global.css - update theme
+3. src/layouts/Layout.astro - branding, nav, footer (inline SVGs, NO astro-icon)
+4. src/pages/index.astro - full landing page
+5. src/components/Hero.astro - business hero
+6. src/components/Services.astro - real services with prices
+7. src/components/Testimonials.astro - realistic testimonials
+8. src/components/Pricing.astro - real pricing
+9. src/components/Footer.astro - real contact info
+10. src/pages/about.astro - about page
+11. src/pages/services.astro - detailed services
+12. src/pages/contact.astro - contact with form
 
 Rules:
-- Do NOT call write_file unless absolutely necessary.
-- Prefer read_file and list_files for analysis.
-- Each instructions field must explain what to write in that file.
-- Do NOT include markdown fences or commentary.`;
+- Do NOT import from content/*.md - inline all data
+- Do NOT use astro-icon - use inline SVGs
+- Do NOT modify package.json, tsconfig.json, astro.config.mjs
+- Write COMPLETE files. No Lorem Ipsum. No placeholders.`;
 }
 
 function emitResponseBlocks(response: ResponseMessage, emit: Emit): void {
@@ -257,80 +264,6 @@ async function runToolLoop(
   throw new Error(`Agent reached MAX_TURNS (${MAX_TURNS}) without finishing`);
 }
 
-function parsePlan(text: string): PlanItem[] {
-  const trimmed = text.trim();
-  const json = trimmed.startsWith('[') ? trimmed : trimmed.slice(trimmed.indexOf('['), trimmed.lastIndexOf(']') + 1);
-  const parsed = JSON.parse(json) as unknown;
-  if (!Array.isArray(parsed)) return [];
-  return parsed.flatMap((item) => {
-    if (!isRecord(item)) return [];
-    const path = typeof item.path === 'string' ? item.path.trim() : '';
-    const instructions = typeof item.instructions === 'string' ? item.instructions.trim() : '';
-    return path && instructions ? [{ path, instructions }] : [];
-  });
-}
-
-function buildCoderPrompt(input: SiteGenerationInput, path: string, original: string, instructions: string): string {
-  return `You are an expert Astro/Tailwind developer. Rewrite this file completely for the business described below.
-
-Business:
-${buildBusinessSummary(input)}
-
-Original file (${path}):
-\`\`\`
-${original}
-\`\`\`
-
-Instructions from the designer:
-${instructions}
-
-Rules:
-- Write the COMPLETE file, not a diff
-- Do NOT use astro-icon - use inline SVGs
-- Do NOT import from content/*.md - inline all data
-- No placeholders, no Lorem Ipsum
-- Output ONLY the file content, no markdown fences`;
-}
-
-async function rewritePlannedFiles(
-  client: Anthropic,
-  workDir: string,
-  input: SiteGenerationInput,
-  plan: PlanItem[],
-  templateFiles: GeneratedFile[],
-  emit: Emit,
-  progress: (message: string) => void,
-): Promise<UsageTotals> {
-  const usage = { inputTokens: 0, outputTokens: 0, costUsd: 0 };
-  const originals = new Map(templateFiles.map((file) => [file.path, file.content]));
-
-  for (const item of plan) {
-    progress(`Writing ${item.path} with GLM 4.7...`);
-    try {
-      const original = originals.get(item.path) ?? await readFile(resolvePath(workDir, item.path), 'utf-8').catch(() => '');
-      const response = await client.messages.create({
-        model: CODER_MODEL,
-        max_tokens: MAX_OUTPUT_TOKENS,
-        system: SYSTEM_PROMPT,
-        messages: [{ role: 'user', content: buildCoderPrompt(input, item.path, original, item.instructions) }],
-      });
-      addUsage(CODER_MODEL, response, usage);
-      const content = parseText(response).trim();
-      if (!content) throw new Error(`Empty response for ${item.path}`);
-      const fullPath = resolvePath(workDir, item.path);
-      await mkdir(dirname(fullPath), { recursive: true });
-      await writeFile(fullPath, content, 'utf-8');
-      emit({ type: 'file_write', path: item.path, lines: countLines(content) });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : `GLM failed for ${item.path}`;
-      logger.error(`GLM rewrite failed for ${item.path}:`, message);
-      emit({ type: 'error', message: `GLM failed for ${item.path}: ${message}` });
-    }
-  }
-
-  return usage;
-}
-
 export async function runAgentPipeline(
   input: SiteGenerationInput,
   templateFiles: GeneratedFile[],
@@ -342,39 +275,24 @@ export async function runAgentPipeline(
   const workDir = join(tmpdir(), `fs-pipeline-${input.projectId}-${Date.now()}`);
 
   await mkdir(workDir, { recursive: true });
-  progress('Pipeline started — writing template files...');
+  progress('Pipeline started - writing template files...');
 
   try {
     await writeTemplateFiles(workDir, templateFiles);
-    progress(`Template ready — ${templateFiles.length} files in ${workDir}`);
-    progress('Orchestrator (Sonnet) planning...');
+    progress(`Template ready - ${templateFiles.length} files in ${workDir}`);
+    progress('Generating site with Sonnet 4-6...');
     const client = getClient();
-    const orchestrator = await runToolLoop(client, buildPrompt(input), createToolDefinitions(workDir), emit, progress);
-    let coderUsage = { inputTokens: 0, outputTokens: 0, costUsd: 0 };
-    try {
-      const plan = parsePlan(orchestrator.text);
-      if (plan.length) coderUsage = await rewritePlannedFiles(client, workDir, input, plan, templateFiles, emit, progress);
-      else progress('No JSON rewrite plan returned by orchestrator; keeping current files.');
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to parse orchestrator plan';
-      logger.error('Plan parsing failed:', message);
-      emit({ type: 'error', message: `Plan parsing failed: ${message}` });
-    }
+    const { turns, usage } = await runToolLoop(client, buildPrompt(input), createToolDefinitions(workDir), emit, progress);
     progress('Collecting output files...');
     const allFiles = await collectDir(workDir);
     const filtered = allFiles.filter(f => !INTEGRATION_COMPONENT_BLOCKLIST.some(b => f.path.endsWith(b)));
     const files = fixContentImports(filtered);
-    const inputTokens = orchestrator.usage.inputTokens + coderUsage.inputTokens;
-    const outputTokens = orchestrator.usage.outputTokens + coderUsage.outputTokens;
-    emit({ type: 'done', duration_ms: Date.now() - startedAt, turns: orchestrator.turns, cost_usd: orchestrator.usage.costUsd + coderUsage.costUsd, input_tokens: inputTokens, output_tokens: outputTokens });
-    progress(`Done — ${files.length} files generated.`);
+    emit({ type: 'done', duration_ms: Date.now() - startedAt, turns, cost_usd: usage.costUsd, input_tokens: usage.inputTokens, output_tokens: usage.outputTokens });
+    progress(`Done - ${files.length} files generated.`);
     const cost: PipelineCost = {
-      totalCostUSD: orchestrator.usage.costUsd + coderUsage.costUsd,
-      totalTokens: inputTokens + outputTokens,
-      breakdown: [
-        { model: ORCHESTRATOR_MODEL, promptTokens: orchestrator.usage.inputTokens, completionTokens: orchestrator.usage.outputTokens, totalTokens: orchestrator.usage.inputTokens + orchestrator.usage.outputTokens, costUSD: orchestrator.usage.costUsd },
-        { model: CODER_MODEL, promptTokens: coderUsage.inputTokens, completionTokens: coderUsage.outputTokens, totalTokens: coderUsage.inputTokens + coderUsage.outputTokens, costUSD: coderUsage.costUsd },
-      ].filter(b => b.totalTokens > 0),
+      totalCostUSD: usage.costUsd,
+      totalTokens: usage.inputTokens + usage.outputTokens,
+      breakdown: [{ model: ORCHESTRATOR_MODEL, promptTokens: usage.inputTokens, completionTokens: usage.outputTokens, totalTokens: usage.inputTokens + usage.outputTokens, costUSD: usage.costUsd }],
     };
     return { success: true, files, cost };
   } catch (error) {

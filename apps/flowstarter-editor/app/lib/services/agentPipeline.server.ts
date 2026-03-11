@@ -53,6 +53,47 @@ function getClient(): Anthropic {
   return new Anthropic({ apiKey, baseURL: 'https://openrouter.ai/api' });
 }
 
+/** Call GLM via OpenAI-compatible chat completions (not Anthropic messages API) */
+async function callGLM(
+  systemPrompt: string,
+  userPrompt: string,
+  tools?: Array<{ name: string; description: string; input_schema: Record<string, unknown> }>,
+): Promise<{ content: string; toolCalls: Array<{ id: string; name: string; args: Record<string, unknown> }>; inputTokens: number; outputTokens: number }> {
+  const apiKey = process.env.OPEN_ROUTER_API_KEY;
+  if (!apiKey) throw new Error('OPEN_ROUTER_API_KEY not configured');
+  const body: Record<string, unknown> = {
+    model: CODER_MODEL,
+    max_tokens: MAX_OUTPUT_TOKENS,
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ],
+  };
+  if (tools?.length) {
+    body.tools = tools.map(t => ({ type: 'function', function: { name: t.name, description: t.description, parameters: t.input_schema } }));
+  }
+  const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!resp.ok) throw new Error(`GLM ${resp.status}: ${await resp.text()}`);
+  const data = await resp.json() as Record<string, unknown>;
+  const choice = ((data.choices as Array<Record<string, unknown>>) || [])[0] || {};
+  const msg = (choice.message || {}) as Record<string, unknown>;
+  const usage = (data.usage || {}) as Record<string, number>;
+  const toolCalls = ((msg.tool_calls || []) as Array<Record<string, unknown>>).map(tc => {
+    const fn = (tc.function || {}) as Record<string, unknown>;
+    return { id: String(tc.id || ''), name: String(fn.name || ''), args: JSON.parse(String(fn.arguments || '{}')) as Record<string, unknown> };
+  });
+  return {
+    content: String(msg.content || ''),
+    toolCalls,
+    inputTokens: usage.prompt_tokens || 0,
+    outputTokens: usage.completion_tokens || 0,
+  };
+}
+
 async function collectDir(dir: string, base = ''): Promise<GeneratedFile[]> {
   const entries = await readdir(dir, { withFileTypes: true });
   const files = await Promise.all(entries.map(async (entry) => {
@@ -367,7 +408,7 @@ export async function runAgentPipeline(
     const filtered = allFiles.filter(f => !INTEGRATION_COMPONENT_BLOCKLIST.some(b => f.path.endsWith(b)));
     const files = fixContentImports(filtered);
 
-    emit({ type: 'done', duration_ms: Date.now() - startedAt, turns: turns + 1, cost_usd: totalUsage.costUsd, input_tokens: totalUsage.inputTokens, output_tokens: totalUsage.outputTokens });
+    emit({ type: 'done', duration_ms: Date.now() - startedAt, turns: coderTurns + 1, cost_usd: totalUsage.costUsd, input_tokens: totalUsage.inputTokens, output_tokens: totalUsage.outputTokens });
     progress(`Done - ${files.length} files generated`);
 
     const cost: PipelineCost = {

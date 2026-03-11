@@ -2,25 +2,26 @@ import Anthropic from '@anthropic-ai/sdk';
 import { mkdir, readFile, readdir, rm, writeFile } from 'fs/promises';
 import { tmpdir } from 'os';
 import { dirname, join, normalize } from 'path';
-import { createScopedLogger } from '~/utils/logger';
+
 import { fixContentImports } from './postProcessAstro';
 import type { AgentActivityEvent, GeneratedFile, SiteGenerationInput, SiteGenerationResult } from './claude-agent/types';
 
 export type { AgentActivityEvent };
 
-const logger = createScopedLogger('AgentPipeline');
+const logger = { error: (...args: unknown[]) => console.error('[AgentPipeline]', ...args) };
 const ORCHESTRATOR_MODEL = 'anthropic/claude-sonnet-4-6';
 const CODER_MODEL = 'z-ai/glm-4.7';
-const MAX_TURNS = 40;
-const MAX_OUTPUT_TOKENS = 8_000;
+const MAX_TURNS = 120;
+const MAX_OUTPUT_TOKENS = 16_000;
 const MODEL_PRICING = {
   [ORCHESTRATOR_MODEL]: { input: 3 / 1_000_000, output: 15 / 1_000_000 },
   [CODER_MODEL]: { input: 0.4 / 1_000_000, output: 1.6 / 1_000_000 },
 } as const;
-const INTEGRATION_BLOCKLIST = new Set([
-  'access_token', 'api_key', 'apikey', 'client_secret', 'key', 'open_router_api_key',
-  'password', 'private_key', 'secret', 'token', 'webhook_secret',
-]);
+/** Integration components that use getEntry()/content collections - break Astro build */
+const INTEGRATION_COMPONENT_BLOCKLIST = [
+  'BookingWidget.astro', 'ContactForm.astro', 'Newsletter.astro',
+  'PaymentWidget.astro', 'SocialFeed.astro',
+];
 const SYSTEM_PROMPT = `You are an expert Astro developer and creative director.
 Build beautiful, conversion-optimised websites with real business content.
 Always write complete files and avoid placeholders.`;
@@ -82,13 +83,6 @@ function getContactInfo(input: SiteGenerationInput): ContactInfo {
   return withTopLevel.contactInfo ?? input.businessInfo.contact ?? {};
 }
 
-function sanitizeIntegrationValue(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(sanitizeIntegrationValue);
-  if (!isRecord(value)) return value;
-  return Object.fromEntries(Object.entries(value)
-    .filter(([key]) => !INTEGRATION_BLOCKLIST.has(key.toLowerCase()))
-    .map(([key, inner]) => [key, sanitizeIntegrationValue(inner)]));
-}
 
 function formatLines(lines: string[]): string {
   return lines.filter(Boolean).join('\n') || 'None';
@@ -98,7 +92,7 @@ function formatIntegrations(input: SiteGenerationInput): string {
   return formatLines((input.integrations ?? []).map((integration) => JSON.stringify({
     id: integration.id,
     name: integration.name,
-    config: sanitizeIntegrationValue(integration.config),
+    config: integration.config,
   })));
 }
 
@@ -367,7 +361,9 @@ export async function runAgentPipeline(
       emit({ type: 'error', message: `Plan parsing failed: ${message}` });
     }
     progress('Collecting output files...');
-    const files = fixContentImports(await collectDir(workDir));
+    const allFiles = await collectDir(workDir);
+    const filtered = allFiles.filter(f => !INTEGRATION_COMPONENT_BLOCKLIST.some(b => f.path.endsWith(b)));
+    const files = fixContentImports(filtered);
     const inputTokens = orchestrator.usage.inputTokens + coderUsage.inputTokens;
     const outputTokens = orchestrator.usage.outputTokens + coderUsage.outputTokens;
     emit({ type: 'done', duration_ms: Date.now() - startedAt, turns: orchestrator.turns, cost_usd: orchestrator.usage.costUsd + coderUsage.costUsd, input_tokens: inputTokens, output_tokens: outputTokens });

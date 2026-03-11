@@ -229,6 +229,24 @@ export async function GET() {
       }
     }
 
+    // Count real leads from captured form submissions
+    try {
+      const projectIds = allProjects.map(p => p.id);
+      if (projectIds.length > 0) {
+        const { count: capturedLeads } = await supabase
+          .from('leads')
+          .select('*', { count: 'exact', head: true })
+          .in('project_id', projectIds)
+          .neq('status', 'spam');
+        if (capturedLeads && capturedLeads > totalLeads) {
+          totalLeads = capturedLeads;
+        }
+      }
+    } catch (e) {
+      // leads table may not exist yet
+      console.error('[Stats] Failed to count leads:', e);
+    }
+
     const stats: DashboardStatsPayload = {
       totalProjects,
       liveProjects,

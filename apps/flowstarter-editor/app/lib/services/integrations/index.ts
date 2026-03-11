@@ -5,13 +5,15 @@
  */
 import { injectCalendly, fetchCalendlyEventTypes, type CalendlyConfig } from './calendly';
 import { injectAnalytics, type AnalyticsConfig } from './analytics';
+import { injectLeadCapture, type LeadCaptureConfig } from './lead-capture';
 
 export { fetchCalendlyEventTypes };
-export type { CalendlyConfig, AnalyticsConfig };
+export type { CalendlyConfig, AnalyticsConfig, LeadCaptureConfig };
 
 export interface IntegrationsConfig {
   calendly?: CalendlyConfig;
   analytics?: AnalyticsConfig;
+  leadCapture?: LeadCaptureConfig;
 }
 
 /**
@@ -24,7 +26,7 @@ export async function injectIntegrations(
 ): Promise<Array<{ path: string; content: string }>> {
   let result = files;
 
-  // Calendly: fetch event types if API key provided, then inject
+  // Calendly
   if (config.calendly?.url) {
     const calendlyConfig = { ...config.calendly };
     if (calendlyConfig.apiKey && !calendlyConfig.eventTypes) {
@@ -43,6 +45,12 @@ export async function injectIntegrations(
   if (config.analytics?.id) {
     result = injectAnalytics(result, config.analytics);
     console.log(`[Integrations] ${config.analytics.provider} analytics injected`);
+  }
+
+  // Lead capture
+  if (config.leadCapture?.projectId) {
+    result = injectLeadCapture(result, config.leadCapture);
+    console.log('[Integrations] Lead capture injected');
   }
 
   return result;

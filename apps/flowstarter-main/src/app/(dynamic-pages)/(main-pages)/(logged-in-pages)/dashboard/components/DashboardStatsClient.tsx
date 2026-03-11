@@ -264,7 +264,7 @@ export function DashboardStatsClient({
             </span>
             {totalLeads > 0 && (
               <Link
-                href="/dashboard/analytics/leads"
+                href="/dashboard/leads"
                 className="text-xs sm:text-sm font-medium text-[var(--purple)] hover:underline"
               >
                 {t('dashboard.details')} →

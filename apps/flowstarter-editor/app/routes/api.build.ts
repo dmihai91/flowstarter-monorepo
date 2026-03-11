@@ -370,12 +370,43 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentE
       console.error('[Build:Simple] Failed to log costs:', e);
     }
 
-    // Inject integrations (Calendly, Analytics) — zero LLM cost
+    // Inject integrations (Calendly, Analytics, Lead capture) — zero LLM cost
+    // Auto-read from Supabase project config (operator sets these in dashboard)
     try {
-      const integrations = body.integrations || {};
-      if (integrations.calendly?.url || integrations.analytics?.id) {
-        currentFiles = await injectIntegrations(currentFiles, integrations);
-        console.log('[Build:Simple] Integrations injected');
+      const projectId = body.projectId;
+      if (projectId) {
+        const { data: projConfig } = await supabaseClient
+          .from('projects')
+          .select('calendly_url, calendly_api_key_id, ga_property_id, ga_refresh_token_id')
+          .eq('id', projectId)
+          .single();
+
+        const intConfig: Record<string, unknown> = body.integrations || {};
+
+        // Calendly: use saved config if not passed in body
+        if (projConfig?.calendly_url && !intConfig.calendly) {
+          let calendlyApiKey: string | undefined;
+          if (projConfig.calendly_api_key_id) {
+            try {
+              const vaultRes = await supabaseClient.rpc('read_project_secret', { p_secret_id: projConfig.calendly_api_key_id });
+              if (vaultRes.data) calendlyApiKey = vaultRes.data as string;
+            } catch { /* vault read optional */ }
+          }
+          intConfig.calendly = { url: projConfig.calendly_url, apiKey: calendlyApiKey };
+        }
+
+        // Analytics: use saved GA measurement ID
+        if (projConfig?.ga_property_id && !intConfig.analytics) {
+          intConfig.analytics = { provider: 'ga4', id: projConfig.ga_property_id };
+        }
+
+        // Lead capture: always inject if project has an ID
+        intConfig.leadCapture = { projectId, apiUrl: process.env.LEAD_CAPTURE_URL || 'https://flowstarter.dev/api/leads/capture' };
+
+        if (Object.keys(intConfig).length > 0) {
+          currentFiles = await injectIntegrations(currentFiles, intConfig as any);
+          console.log('[Build:Simple] Integrations injected from project config');
+        }
       }
     } catch (e) {
       console.error('[Build:Simple] Integration injection failed:', e);

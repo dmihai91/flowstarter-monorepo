@@ -293,6 +293,14 @@ export async function runAgentPipeline(
 
   await mkdir(workDir, { recursive: true });
   try {
+    // DRY RUN: Skip LLM calls, return template files as-is
+    if (process.env.DRY_RUN === 'true' || process.env.NODE_ENV === 'test') {
+      progress('DRY RUN — skipping LLM, returning template files');
+      const files = templateFiles.filter((f) => !f.path.includes('node_modules'));
+      emit({ type: 'done', duration_ms: Date.now() - startedAt, turns: 0, cost_usd: 0, input_tokens: 0, output_tokens: 0 });
+      return { success: true, files, cost: { totalCostUSD: 0, totalTokens: 0, breakdown: [] } };
+    }
+
     // Write template files as reference
     await Promise.all(templateFiles.map(async (f) => {
       const p = resolvePath(workDir, f.path);

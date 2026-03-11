@@ -13,7 +13,6 @@
  */
 
 import { json, type ActionFunctionArgs } from '@remix-run/node';
-import { generateCompletion } from '~/lib/services/llm';
 
 const CONVEX_URL = process.env.CONVEX_URL || 'https://outstanding-otter-369.convex.cloud';
 
@@ -47,12 +46,6 @@ async function convexMutation<T>(path: string, args: Record<string, unknown>): P
     throw new Error(data.errorMessage || 'Convex mutation failed');
   }
   return data.value as T;
-}
-
-interface ImageData {
-  base64: string;
-  mediaType: string;
-  filename?: string;
 }
 
 interface ModifyRequest {
@@ -129,115 +122,6 @@ async function saveFileChanges(
   }
 }
 
-/**
- * Use Claude to generate file modifications
- */
-async function generateModifications(
-  files: Record<string, string>,
-  instruction: string,
-  images?: ImageData[]
-): Promise<{ changes: FileChange[]; response: string }> {
-  // Build file context
-  const fileList = Object.keys(files)
-    .filter(f => !f.includes('node_modules') && !f.startsWith('.'))
-    .slice(0, 50); // Limit to 50 files for context
-
-  const fileContext = fileList
-    .map(path => {
-      const content = files[path];
-      // Truncate very large files
-      const truncated = content.length > 10000
-        ? content.slice(0, 10000) + '\n... (truncated)'
-        : content;
-      return `=== ${path} ===\n${truncated}`;
-    })
-    .join('\n\n');
-
-  const systemPrompt = `You are a website modification assistant. Given a set of files and a user instruction, generate the necessary file changes.
-
-IMPORTANT: You must respond in valid JSON format only. No other text.
-
-Response format:
-{
-  "changes": [
-    {
-      "path": "path/to/file.tsx",
-      "content": "full file content here",
-      "operation": "update"
-    }
-  ],
-  "response": "Brief description of what was changed"
-}
-
-Rules:
-1. Only modify files that need to change
-2. Include the FULL file content for modified files, not just the changes
-3. Use "create" for new files, "update" for existing files, "delete" to remove
-4. Keep the same code style and formatting as existing files
-5. For React/TypeScript files, maintain proper imports and types
-6. If the instruction is unclear, make reasonable assumptions based on context`;
-
-  let userPrompt = `Here are the current project files:\n\n${fileContext}\n\n---\n\nUser instruction: ${instruction}`;
-
-  // Add image context if provided
-  if (images && images.length > 0) {
-    userPrompt += `\n\n[User has attached ${images.length} image(s) for reference]`;
-  }
-
-  try {
-    const messages: Array<{ role: 'user' | 'assistant'; content: string | Array<Record<string, unknown>> }> = [];
-
-    // Build message with images if provided
-    if (images && images.length > 0) {
-      const content: Array<Record<string, unknown>> = [];
-
-      // Add images first
-      for (const img of images) {
-        content.push({
-          type: 'image',
-          source: {
-            type: 'base64',
-            media_type: img.mediaType,
-            data: img.base64,
-          },
-        });
-      }
-
-      // Add text
-      content.push({
-        type: 'text',
-        text: userPrompt,
-      });
-
-      messages.push({ role: 'user', content });
-    } else {
-      messages.push({ role: 'user', content: userPrompt });
-    }
-
-    const allMessages = [
-      { role: 'system' as const, content: systemPrompt },
-      ...messages.map(m => ({ role: m.role as 'system' | 'user' | 'assistant', content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) })),
-    ];
-    const response = await generateCompletion(allMessages, {
-      maxTokens: 16000,
-    });
-
-    // Parse JSON response
-    const jsonMatch = response.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      throw new Error('No valid JSON found in response');
-    }
-
-    const result = JSON.parse(jsonMatch[0]);
-    return {
-      changes: result.changes || [],
-      response: result.response || 'Changes applied successfully',
-    };
-  } catch (error) {
-    console.error('Modification generation error:', error);
-    throw error;
-  }
-}
 
 export async function action({ request }: ActionFunctionArgs) {
   if (request.method !== 'POST') {
@@ -259,40 +143,45 @@ export async function action({ request }: ActionFunctionArgs) {
 
       case 'modify': {
         // 1. Get current files from Convex
-        const files = await getProjectFiles(body.projectId);
+        const fileMap = await getProjectFiles(body.projectId);
+        const fileCount = Object.keys(fileMap).length;
 
-        if (Object.keys(files).length === 0) {
-          return json({
-            success: false,
-            error: 'No files found for this project in Convex',
-          }, { status: 400 });
+        if (fileCount === 0) {
+          return json({ success: false, error: 'No files found for this project in Convex' }, { status: 400 });
         }
 
-        // 2. Generate modifications using Claude
-        const { changes, response } = await generateModifications(
-          files,
+        // 2. Run the Claude Agent SDK for editing
+        const { runEditAgent } = await import('~/lib/services/editAgent.server');
+        const currentFiles = Object.entries(fileMap).map(([path, content]) => ({ path, content }));
+
+        // Get supabaseProjectId from the request or derive from Convex project
+        const supabaseProjectId = (body as any).supabaseProjectId || body.projectId;
+
+        const editResult = await runEditAgent(
           body.instruction,
-          body.images
+          currentFiles,
+          supabaseProjectId,
         );
 
-        if (changes.length === 0) {
-          return json({
-            success: true,
-            message: response,
-            changes: [],
-          });
+        if (!editResult.success) {
+          return json({ success: false, error: editResult.error }, { status: 500 });
         }
 
-        // 3. Save changes to Convex
-        await saveFileChanges(body.projectId, changes);
+        // 3. Save modified files back to Convex
+        const convexSiteUrl = (process.env.CONVEX_URL || 'https://outstanding-otter-369.convex.cloud').replace('.convex.cloud', '.convex.site');
+        const handoffSecret = process.env.HANDOFF_SECRET || '';
+        
+        await fetch(\`\${convexSiteUrl}/files/save-batch\`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-handoff-secret': handoffSecret },
+          body: JSON.stringify({ supabaseProjectId, files: editResult.files }),
+        });
 
         return json({
           success: true,
-          message: response,
-          changes: changes.map(c => ({
-            path: c.path,
-            operation: c.operation,
-          })),
+          message: \`Modified \${editResult.files.length} files in \${editResult.turns} turns\`,
+          changes: editResult.files.map(f => ({ path: f.path, operation: 'update' })),
+          cost: editResult.costUsd,
         });
       }
 

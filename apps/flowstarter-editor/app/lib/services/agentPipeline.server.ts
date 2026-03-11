@@ -290,16 +290,19 @@ async function runToolLoop(
   progress: (message: string) => void,
 ): Promise<{ turns: number; usage: UsageTotals }> {
   const usage = { inputTokens: 0, outputTokens: 0, costUsd: 0 };
+  const isAnthropic = model.startsWith('anthropic/');
   const messages: MessageParam[] = [{
     role: 'user',
-    content: [{ type: 'text', text: prompt, cache_control: { type: 'ephemeral' } }],
+    content: isAnthropic
+      ? [{ type: 'text', text: prompt, cache_control: { type: 'ephemeral' } }]
+      : prompt,
   }];
 
   for (let turn = 1; turn <= MAX_TURNS; turn++) {
     const response = await client.messages.create({
       model,
       max_tokens: MAX_OUTPUT_TOKENS,
-      system: SYSTEM_PROMPT,
+      system: isAnthropic ? [{ type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }] : SYSTEM_PROMPT,
       tools: tools.map((tool) => tool.tool),
       messages,
     });

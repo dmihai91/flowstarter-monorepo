@@ -370,6 +370,17 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentE
       console.error('[Build:Simple] Failed to log costs:', e);
     }
 
+    // Inject integrations (Calendly, Analytics) — zero LLM cost
+    try {
+      const integrations = body.integrations || {};
+      if (integrations.calendly?.url || integrations.analytics?.id) {
+        currentFiles = await injectIntegrations(currentFiles, integrations);
+        console.log('[Build:Simple] Integrations injected');
+      }
+    } catch (e) {
+      console.error('[Build:Simple] Integration injection failed:', e);
+    }
+
     // Persist generated files to Convex via HTTP Action
     try {
       const convexSiteUrl = (process.env.CONVEX_URL || 'https://outstanding-otter-369.convex.cloud').replace('.convex.cloud', '.convex.site');

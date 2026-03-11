@@ -255,7 +255,7 @@ async function runToolLoop(
       tools: tools.map((t) => t.tool), messages,
     });
     addUsage(MODEL, response, usage);
-    trackLLMUsage(undefined, MODEL, { promptTokens: (response.usage as any).input_tokens ?? 0, completionTokens: (response.usage as any).output_tokens ?? 0 });
+    trackLLMUsage(undefined, MODEL, 'site_generation', { promptTokens: (response.usage as any).input_tokens ?? 0, completionTokens: (response.usage as any).output_tokens ?? 0 });
     for (const b of response.content) {
       if (b.type === 'text' && b.text) emit({ type: 'text', content: b.text });
       if (b.type === 'thinking' && 'thinking' in b) emit({ type: 'thinking', text: String(b.thinking) });

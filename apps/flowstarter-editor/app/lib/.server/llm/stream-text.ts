@@ -213,9 +213,9 @@ Use these preferences when creating UI components, styling code, or suggesting d
     ...options,
     onFinish: ({ usage }) => {
       if (usage) {
-        // Extract projectId from messages or options context
-        const projectId = (options as any)?.projectId;
-        trackLLMUsage(projectId, modelDetails.name, {
+        const projectId = (options as any)?.supabaseProjectId;
+        const operation = (options as any)?.operation || 'chat';
+        trackLLMUsage(projectId, modelDetails.name, operation, {
           promptTokens: usage.promptTokens ?? 0,
           completionTokens: usage.completionTokens ?? 0,
         });

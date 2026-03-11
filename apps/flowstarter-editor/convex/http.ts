@@ -126,3 +126,112 @@ const filesSaveBatch = httpAction(async (ctx, request) => {
 
 http.route({ path: '/files/save-batch', method: 'POST', handler: filesSaveBatch });
 http.route({ path: '/files/save-batch', method: 'OPTIONS', handler: filesSaveBatch });
+
+// ─── Cost Logging ───────────────────────────────────────────────────
+const costsLog = httpAction(async (ctx, request) => {
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, X-Handoff-Secret' } });
+  }
+
+  const expectedSecret = process.env.HANDOFF_SECRET;
+  const incomingSecret = request.headers.get('x-handoff-secret');
+  if (!expectedSecret || incomingSecret !== expectedSecret) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
+  }
+
+  let body: {
+    supabaseProjectId: string;
+    operation: string;
+    model: string;
+    promptTokens: number;
+    completionTokens: number;
+    costUSD: number;
+    durationMs?: number;
+  };
+  try { body = await request.json(); }
+  catch { return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers: { 'Content-Type': 'application/json' } }); }
+
+  const { supabaseProjectId, operation, model, promptTokens, completionTokens, costUSD, durationMs } = body;
+  if (!supabaseProjectId || !model) {
+    return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+  }
+
+  try {
+    // Find the Convex project by Supabase ID
+    const project = await ctx.runQuery(api.projects.getBySupabaseId, { supabaseProjectId }) as { _id: string } | null;
+
+    // Log cost to Convex
+    const costId = await ctx.runMutation(api.costs.logCost, {
+      projectId: project?._id,
+      operation: operation as any,
+      model,
+      promptTokens: promptTokens || 0,
+      completionTokens: completionTokens || 0,
+      totalTokens: (promptTokens || 0) + (completionTokens || 0),
+      costUSD: costUSD || 0,
+      durationMs,
+    });
+
+    // Get updated totals for this project
+    let totalCostUSD = costUSD;
+    let totalCredits = Math.ceil(costUSD / 0.01);
+    if (project) {
+      const projectCosts = await ctx.runQuery(api.costs.getProjectCosts, { projectId: project._id as any });
+      totalCostUSD = projectCosts.summary.totalCostUSD;
+      totalCredits = Math.ceil(totalCostUSD / 0.01);
+    }
+
+    return new Response(JSON.stringify({
+      costId,
+      totalCostUSD,
+      totalCredits,
+      projectId: project?._id,
+    }), { headers: { 'Content-Type': 'application/json' } });
+  } catch (err) {
+    console.error('[costs/log]', err);
+    return new Response(JSON.stringify({ error: err instanceof Error ? err.message : 'Internal error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+  }
+});
+
+http.route({ path: '/costs/log', method: 'POST', handler: costsLog });
+http.route({ path: '/costs/log', method: 'OPTIONS', handler: costsLog });
+
+// ─── Cost Totals (for syncing to Supabase) ──────────────────────────
+const costsTotals = httpAction(async (ctx, request) => {
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, X-Handoff-Secret' } });
+  }
+
+  const expectedSecret = process.env.HANDOFF_SECRET;
+  const incomingSecret = request.headers.get('x-handoff-secret');
+  if (!expectedSecret || incomingSecret !== expectedSecret) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
+  }
+
+  const url = new URL(request.url);
+  const supabaseProjectId = url.searchParams.get('supabaseProjectId');
+  if (!supabaseProjectId) {
+    return new Response(JSON.stringify({ error: 'Missing supabaseProjectId' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+  }
+
+  try {
+    const project = await ctx.runQuery(api.projects.getBySupabaseId, { supabaseProjectId }) as { _id: string } | null;
+    if (!project) {
+      return new Response(JSON.stringify({ totalCostUSD: 0, totalCredits: 0, operations: 0 }), { headers: { 'Content-Type': 'application/json' } });
+    }
+
+    const projectCosts = await ctx.runQuery(api.costs.getProjectCosts, { projectId: project._id as any });
+    return new Response(JSON.stringify({
+      totalCostUSD: projectCosts.summary.totalCostUSD,
+      totalCredits: Math.ceil(projectCosts.summary.totalCostUSD / 0.01),
+      totalTokens: projectCosts.summary.totalTokens,
+      operations: projectCosts.summary.operationCount,
+    }), { headers: { 'Content-Type': 'application/json' } });
+  } catch (err) {
+    console.error('[costs/totals]', err);
+    return new Response(JSON.stringify({ error: err instanceof Error ? err.message : 'Internal error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+  }
+});
+
+http.route({ path: '/costs/totals', method: 'GET', handler: costsTotals });
+http.route({ path: '/costs/totals', method: 'OPTIONS', handler: costsTotals });

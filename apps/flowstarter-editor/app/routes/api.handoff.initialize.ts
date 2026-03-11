@@ -112,7 +112,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
         projectName,
         projectDescription,
         businessInfo,
-        step: hasBusinessData ? 'welcome' : (projectName && projectName !== 'Untitled Project' ? 'describe' : 'welcome'),
+        step: hasBusinessData ? 'template' : (projectName && projectName !== 'Untitled Project' ? 'describe' : 'welcome'),
       }),
     });
 

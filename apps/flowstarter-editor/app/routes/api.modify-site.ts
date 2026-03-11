@@ -177,11 +177,22 @@ export async function action({ request }: ActionFunctionArgs) {
           body: JSON.stringify({ supabaseProjectId, files: editResult.files }),
         });
 
+        // Auto-sync to Daytona preview after edit
+        let previewUrl: string | undefined;
+        try {
+          const { startPreviewWithPrewarmedSandbox, prewarmSandbox } = await import('~/lib/services/daytonaService.server');
+          const filesMap = editResult.files.reduce((acc: Record<string, string>, f: { path: string; content: string }) => { acc[f.path] = f.content; return acc; }, {} as Record<string, string>);
+          const prewarmed = await prewarmSandbox(supabaseProjectId);
+          const preview = await startPreviewWithPrewarmedSandbox(supabaseProjectId, filesMap, prewarmed, undefined, (msg: string) => console.log('[modify-sync]', msg));
+          if (preview.success) previewUrl = preview.previewUrl || \`https://4321-\${preview.sandboxId}.daytonaproxy01.net\`;
+        } catch (e) { console.error('[modify-sync] Preview sync failed:', e); }
+
         return json({
           success: true,
           message: \`Modified \${editResult.files.length} files in \${editResult.turns} turns\`,
-          changes: editResult.files.map(f => ({ path: f.path, operation: 'update' })),
+          changes: editResult.files.map((f: { path: string }) => ({ path: f.path, operation: 'update' })),
           cost: editResult.costUsd,
+          previewUrl,
         });
       }
 

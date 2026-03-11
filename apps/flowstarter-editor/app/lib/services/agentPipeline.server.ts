@@ -14,7 +14,7 @@ const ORCHESTRATOR_MODEL = 'anthropic/claude-sonnet-4-6';
 const MAX_TURNS = 120;
 const MAX_OUTPUT_TOKENS = 16_000;
 const MODEL_PRICING = {
-  [ORCHESTRATOR_MODEL]: { input: 3 / 1_000_000, output: 15 / 1_000_000 },
+  [ORCHESTRATOR_MODEL]: { input: 3 / 1_000_000, output: 15 / 1_000_000, cacheRead: 0.3 / 1_000_000, cacheWrite: 3.75 / 1_000_000 },
 } as const;
 /** Integration components that use getEntry()/content collections - break Astro build */
 const INTEGRATION_COMPONENT_BLOCKLIST = [
@@ -174,11 +174,16 @@ function getToolCalls(response: ResponseMessage): ToolCall[] {
 }
 
 function addUsage(model: keyof typeof MODEL_PRICING, response: ResponseMessage, totals: UsageTotals): void {
-  const inputTokens = response.usage.input_tokens ?? 0;
-  const outputTokens = response.usage.output_tokens ?? 0;
+  const u = response.usage as Record<string, number>;
+  const inputTokens = u.input_tokens ?? 0;
+  const outputTokens = u.output_tokens ?? 0;
+  const cacheRead = u.cache_read_input_tokens ?? 0;
+  const cacheCreation = u.cache_creation_input_tokens ?? 0;
+  const uncachedInput = inputTokens - cacheRead - cacheCreation;
   totals.inputTokens += inputTokens;
   totals.outputTokens += outputTokens;
-  totals.costUsd += (inputTokens * MODEL_PRICING[model].input) + (outputTokens * MODEL_PRICING[model].output);
+  const pricing = MODEL_PRICING[model];
+  totals.costUsd += (uncachedInput * pricing.input) + (cacheRead * pricing.cacheRead) + (cacheCreation * pricing.cacheWrite) + (outputTokens * pricing.output);
 }
 
 function createToolDefinitions(workDir: string): ToolDefinition[] {
@@ -250,11 +255,22 @@ async function runToolLoop(
   progress: (message: string) => void,
 ): Promise<{ turns: number; usage: UsageTotals; text: string }> {
   const usage = { inputTokens: 0, outputTokens: 0, costUsd: 0 };
-  const messages: MessageParam[] = [{ role: 'user', content: prompt }];
+  const messages: MessageParam[] = [{
+    role: 'user',
+    content: [{ type: 'text', text: prompt, cache_control: { type: 'ephemeral' } }],
+  }];
   let finalText = '';
 
   for (let turn = 1; turn <= MAX_TURNS; turn++) {
-    const response = await client.messages.create({ model: ORCHESTRATOR_MODEL, max_tokens: MAX_OUTPUT_TOKENS, system: SYSTEM_PROMPT, tools: tools.map((tool) => tool.tool), messages });
+    const response = await client.messages.create({
+      model: ORCHESTRATOR_MODEL,
+      max_tokens: MAX_OUTPUT_TOKENS,
+      system: [
+        { type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } },
+      ],
+      tools: tools.map((tool) => tool.tool),
+      messages,
+    });
     addUsage(ORCHESTRATOR_MODEL, response, usage);
     emitResponseBlocks(response, emit);
     finalText = parseText(response).trim() || finalText;

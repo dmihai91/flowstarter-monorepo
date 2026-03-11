@@ -101,19 +101,28 @@ ${templateIndex}
 Write ALL files below directly using write_file. Do NOT call read_file first.
 Think through the content strategy, then write each file completely.
 
-Files to write (in order):
-1. tailwind.config.mjs — brand colors derived from primary color
-2. src/styles/global.css — CSS custom properties + font imports
-3. src/layouts/Layout.astro — nav, footer, meta tags, responsive
-4. src/pages/index.astro — landing page importing all section components
-5. src/components/Hero.astro — hero with headline, subheadline, CTA
-6. src/components/Services.astro — services grid with descriptions + prices
-7. src/components/Testimonials.astro — testimonial cards
-8. src/components/Pricing.astro — pricing tiers
-9. src/components/Footer.astro — footer with contact info + links
-10. src/pages/about.astro — about page with company story
-11. src/pages/services.astro — detailed services page
-12. src/pages/contact.astro — contact form page
+Files to write. Call write_file for ALL files in each batch (parallel tool calls):
+
+BATCH 1 (config + styles):
+- tailwind.config.mjs — brand colors derived from primary color
+- src/styles/global.css — CSS custom properties + font imports
+
+BATCH 2 (layout + components):
+- src/layouts/Layout.astro — nav, footer, meta tags, responsive
+- src/components/Hero.astro — hero with headline, subheadline, CTA
+- src/components/Services.astro — services grid with descriptions + prices
+- src/components/Testimonials.astro — testimonial cards
+- src/components/Pricing.astro — pricing tiers
+- src/components/Footer.astro — footer with contact info + links
+
+BATCH 3 (pages):
+- src/pages/index.astro — landing page importing all section components
+- src/pages/about.astro — about page with company story
+- src/pages/services.astro — detailed services page
+- src/pages/contact.astro — contact form page
+
+IMPORTANT: Write ALL files in each batch in a single response using multiple write_file calls.
+Do NOT write files one at a time.
 
 ## Content rules
 - Write compelling, professional copy in the business's language
@@ -124,7 +133,10 @@ Files to write (in order):
 ## Technical rules
 - Inline all data as JS const in Astro frontmatter (NOT from content/*.md imports)
 - Use inline SVGs (NOT astro-icon — it is not installed)
-- Do NOT modify package.json, tsconfig.json, or astro.config.mjs
+- Do NOT modify package.json or tsconfig.json
+- Write a clean astro.config.mjs that does NOT import astro-icon:
+  import { defineConfig } from 'astro/config'; import tailwind from '@astrojs/tailwind';
+  export default defineConfig({ integrations: [tailwind()] });
 - Every file must be complete and self-contained`;
 }
 
@@ -268,6 +280,14 @@ export async function runAgentPipeline(
     progress('Collecting output files...');
     const allFiles = await collectDir(workDir);
     const filtered = allFiles.filter((f) => !INTEGRATION_COMPONENT_BLOCKLIST.some((b) => f.path.endsWith(b)));
+    // Ensure astro.config.mjs doesn't import astro-icon (template default)
+    for (const file of filtered) {
+      if (file.path === 'astro.config.mjs' && file.content.includes('astro-icon')) {
+        file.content = file.content
+          .replace(/import\s+icon\s+from\s+['"]astro-icon['"];?\n?/g, '')
+          .replace(/,?\s*icon\(\)/g, '');
+      }
+    }
     const files = fixContentImports(filtered);
 
     emit({ type: 'done', duration_ms: Date.now() - startedAt, turns, cost_usd: usage.costUsd, input_tokens: usage.inputTokens, output_tokens: usage.outputTokens });

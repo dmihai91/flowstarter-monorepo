@@ -21,7 +21,7 @@ const operationType = v.union(
 // Log a single LLM operation cost
 export const logCost = mutation({
   args: {
-    projectId: v.optional(v.id('projects')),
+    projectId: v.optional(v.string()),
     operation: operationType,
     model: v.string(),
     promptTokens: v.number(),
@@ -51,7 +51,7 @@ export const logCost = mutation({
 // Log multiple costs in a batch (for site generation with multiple LLM calls)
 export const logCostBatch = mutation({
   args: {
-    projectId: v.optional(v.id('projects')),
+    projectId: v.optional(v.string()),
     operation: operationType,
     costs: v.array(v.object({
       model: v.string(),

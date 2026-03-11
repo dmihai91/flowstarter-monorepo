@@ -1,11 +1,12 @@
 /**
  * GET /api/analytics/callback?code=xxx&state=projectId
- * OAuth callback — exchanges code for tokens, stores in Supabase.
+ * OAuth callback — exchanges code, stores refresh token in Vault (encrypted).
  */
 import 'server-only';
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/api-auth';
 import { createSupabaseServiceRoleClient } from '@/lib/supabase/server';
+import { storeSecret } from '@/lib/vault';
 
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 
@@ -20,7 +21,6 @@ export async function GET(request: NextRequest) {
 
   const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL || 'https://flowstarter.dev'}/api/analytics/callback`;
 
-  // Exchange code for tokens
   const tokenRes = await fetch(GOOGLE_TOKEN_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -43,15 +43,23 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/team/dashboard?error=no_refresh_token', request.url));
   }
 
-  // Get GA4 properties to let user pick one (for now, store token and redirect to property picker)
+  // Store refresh token encrypted in Vault
   const supabase = createSupabaseServiceRoleClient();
+  const secretId = await storeSecret(
+    supabase, projectId, 'ga_refresh_token', tokens.refresh_token,
+    'Google Analytics refresh token',
+  );
+
+  // Store vault reference (not the token itself)
   await supabase
     .from('projects')
-    .update({ ga_refresh_token: tokens.refresh_token })
+    .update({
+      ga_refresh_token_id: secretId,
+      ga_connected_at: new Date().toISOString(),
+    })
     .eq('id', projectId);
 
-  // Redirect to analytics setup page where they can select the GA4 property
   return NextResponse.redirect(
-    new URL(`/team/dashboard/analytics?projectId=${projectId}&connected=true`, request.url)
+    new URL(`/team/dashboard/analytics?projectId=${projectId}&connected=true`, request.url),
   );
 }

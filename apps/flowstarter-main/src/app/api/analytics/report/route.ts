@@ -1,13 +1,12 @@
 /**
  * GET /api/analytics/report?projectId=xxx&range=30
- *
- * Fetches GA4 analytics for a client's site.
- * Uses OAuth refresh token stored in Supabase to get access token.
+ * Fetches GA4 analytics. Reads refresh token from Vault (encrypted at rest).
  */
 import 'server-only';
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/api-auth';
 import { createSupabaseServiceRoleClient } from '@/lib/supabase/server';
+import { readSecret } from '@/lib/vault';
 
 const GA4_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const GA4_API = 'https://analyticsdata.googleapis.com/v1beta';
@@ -28,22 +27,29 @@ export async function GET(request: NextRequest) {
 
   const { data: project } = await supabase
     .from('projects')
-    .select('id, ga_property_id, ga_refresh_token, owner_id, team_id')
+    .select('id, ga_property_id, ga_refresh_token_id, owner_id, team_id')
     .eq('id', projectId)
     .single();
 
   if (!project) return NextResponse.json({ error: 'Project not found' }, { status: 404 });
-  if (!project.ga_property_id || !project.ga_refresh_token) {
+  if (!project.ga_property_id || !project.ga_refresh_token_id) {
     return NextResponse.json({ error: 'Google Analytics not connected' }, { status: 400 });
   }
 
+  // Decrypt refresh token from Vault
+  const refreshToken = await readSecret(supabase, project.ga_refresh_token_id);
+  if (!refreshToken) {
+    return NextResponse.json({ error: 'Token not found in vault' }, { status: 500 });
+  }
+
+  // Exchange for access token
   const tokenRes = await fetch(GA4_TOKEN_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
       client_id: process.env.GOOGLE_CLIENT_ID || '',
       client_secret: process.env.GOOGLE_CLIENT_SECRET || '',
-      refresh_token: project.ga_refresh_token,
+      refresh_token: refreshToken,
       grant_type: 'refresh_token',
     }),
   });

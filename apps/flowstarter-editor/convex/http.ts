@@ -78,3 +78,51 @@ http.route({ path: '/handoff/initialize', method: 'POST', handler: handoffInitia
 http.route({ path: '/handoff/initialize', method: 'OPTIONS', handler: handoffInitialize });
 
 export default http;
+
+// ─── Files Save ─────────────────────────────────────────────────────
+const filesSaveBatch = httpAction(async (ctx, request) => {
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, X-Handoff-Secret' } });
+  }
+
+  const expectedSecret = process.env.HANDOFF_SECRET;
+  const incomingSecret = request.headers.get('x-handoff-secret');
+  if (!expectedSecret || incomingSecret !== expectedSecret) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
+  }
+
+  let body: { supabaseProjectId: string; files: Array<{ path: string; content: string }> };
+  try { body = await request.json(); }
+  catch { return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers: { 'Content-Type': 'application/json' } }); }
+
+  const { supabaseProjectId, files } = body;
+  if (!supabaseProjectId || !files?.length) {
+    return new Response(JSON.stringify({ error: 'Missing supabaseProjectId or files' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+  }
+
+  try {
+    // Find or create the Convex project
+    let project = await ctx.runQuery(api.projects.getBySupabaseId, { supabaseProjectId }) as { _id: string } | null;
+    if (!project) {
+      // Create a minimal project
+      const created = await ctx.runMutation(api.projects.createEmpty, {
+        name: supabaseProjectId, description: '', supabaseProjectId,
+      }) as { projectId: string };
+      project = { _id: created.projectId };
+    }
+
+    // Save files
+    const fileIds = await ctx.runMutation(api.files.saveBatch, {
+      projectId: project._id as any,
+      files: files.map((f) => ({ path: f.path, content: f.content, type: 'file' as const })),
+    });
+
+    return new Response(JSON.stringify({ saved: fileIds.length, projectId: project._id }), { headers: { 'Content-Type': 'application/json' } });
+  } catch (err) {
+    console.error('[files/save-batch]', err);
+    return new Response(JSON.stringify({ error: err instanceof Error ? err.message : 'Internal error' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+  }
+});
+
+http.route({ path: '/files/save-batch', method: 'POST', handler: filesSaveBatch });
+http.route({ path: '/files/save-batch', method: 'OPTIONS', handler: filesSaveBatch });

@@ -297,12 +297,43 @@ export async function action({ request }: ActionFunctionArgs) {
       }
 
       case 'sync-preview': {
-        // TODO: Implement Daytona sync
-        // This would push Convex files to Daytona for preview
-        return json({
-          success: true,
-          message: 'Preview sync not yet implemented',
+        const { projectId: syncProjectId } = body as SyncToPreviewRequest;
+        
+        // 1. Load files from Convex via HTTP Action
+        const convexSiteUrl = (process.env.CONVEX_URL || 'https://outstanding-otter-369.convex.cloud').replace('.convex.cloud', '.convex.site');
+        const handoffSecret = process.env.HANDOFF_SECRET;
+        if (!handoffSecret) return json({ error: 'HANDOFF_SECRET not configured' }, { status: 500 });
+
+        // Get files from Convex public query
+        const convexUrl = process.env.CONVEX_URL || 'https://outstanding-otter-369.convex.cloud';
+        const filesResp = await fetch(`${convexUrl}/api/query`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: 'files:list', args: { projectId: syncProjectId } }),
         });
+        const filesData = await filesResp.json() as { status: string; value?: Array<{ path: string; content: string; type: string }> };
+        if (filesData.status === 'error' || !filesData.value?.length) {
+          return json({ error: 'No files found in Convex for this project' }, { status: 404 });
+        }
+
+        const files = filesData.value.filter(f => f.type === 'file').reduce((acc, f) => {
+          acc[f.path] = f.content;
+          return acc;
+        }, {} as Record<string, string>);
+
+        // 2. Push to Daytona
+        const { startPreviewWithPrewarmedSandbox, prewarmSandbox } = await import('~/lib/services/daytonaService.server');
+        const prewarmed = await prewarmSandbox(syncProjectId);
+        const previewResult = await startPreviewWithPrewarmedSandbox(
+          syncProjectId, files, prewarmed, undefined,
+          (msg) => console.log(`[sync-preview] ${msg}`),
+        );
+
+        if (previewResult.success) {
+          const previewUrl = previewResult.previewUrl || `https://4321-${previewResult.sandboxId}.daytonaproxy01.net`;
+          return json({ success: true, previewUrl, sandboxId: previewResult.sandboxId, fileCount: Object.keys(files).length });
+        }
+        return json({ success: false, error: previewResult.error }, { status: 500 });
       }
 
       default:

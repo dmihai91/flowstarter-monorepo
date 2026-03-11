@@ -12,7 +12,7 @@ export type { AgentActivityEvent };
 const logger = { error: (...args: unknown[]) => console.error('[AgentPipeline]', ...args) };
 const MODEL = 'anthropic/claude-sonnet-4-6';
 const MAX_TURNS = 20;
-const MAX_OUTPUT_TOKENS = 32_000;
+const MAX_OUTPUT_TOKENS = 16_000;
 const MODEL_PRICING: Record<string, { input: number; output: number; cacheRead: number; cacheWrite: number }> = {
   [MODEL]: { input: 3 / 1_000_000, output: 15 / 1_000_000, cacheRead: 0.3 / 1_000_000, cacheWrite: 3.75 / 1_000_000 },
 };

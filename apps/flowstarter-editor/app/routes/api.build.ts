@@ -370,6 +370,30 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentE
       console.error('[Build:Simple] Failed to log costs:', e);
     }
 
+    // Persist generated files to Convex via HTTP Action
+    try {
+      const convexSiteUrl = (process.env.CONVEX_URL || 'https://outstanding-otter-369.convex.cloud').replace('.convex.cloud', '.convex.site');
+      const handoffSecret = process.env.HANDOFF_SECRET;
+      if (handoffSecret && currentFiles.length > 0) {
+        const saveResp = await fetch(`${convexSiteUrl}/files/save-batch`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-handoff-secret': handoffSecret },
+          body: JSON.stringify({
+            supabaseProjectId: body.projectId,
+            files: currentFiles.map(f => ({ path: f.path, content: f.content })),
+          }),
+        });
+        const saveResult = await saveResp.json() as { saved?: number; error?: string };
+        if (saveResult.saved) {
+          console.log(`[Build:Simple] Persisted ${saveResult.saved} files to Convex`);
+        } else {
+          console.error('[Build:Simple] Failed to persist files:', saveResult.error);
+        }
+      }
+    } catch (e) {
+      console.error('[Build:Simple] Failed to persist files to Convex:', e);
+    }
+
     // Persist total cost to Supabase project record
     try {
       const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -390,6 +414,8 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentE
             body: JSON.stringify({
               generation_cost_usd: costUsd,
               ai_credits_used: aiCredits,
+              ...(sandboxId ? { sandbox_id: sandboxId } : {}),
+              ...(getPreviewPayload(previewResult) ? { preview_url: getPreviewPayload(previewResult)?.url } : {}),
             }),
           }
         );

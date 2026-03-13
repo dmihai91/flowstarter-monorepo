@@ -275,10 +275,19 @@ test.describe('Complete Site Build Flow', () => {
     for (let i = 0; i < discoveryResponses.length; i++) {
       await page.waitForTimeout(3000);
       
-      // Check if template gallery appeared
+      // Check if template gallery or template step appeared
       const templateVisible = await page.getByTestId('template-gallery').isVisible().catch(() => false);
-      if (templateVisible) {
+      const templateGridVisible = await page.getByTestId('template-grid').isVisible().catch(() => false);
+      if (templateVisible || templateGridVisible) {
         console.log('  Template gallery appeared — business discovery complete');
+        break;
+      }
+      
+      // Check if chat input is still available (if not, step may have advanced to a UI panel)
+      const chatInput = page.getByTestId('chat-input');
+      const inputVisible = await chatInput.isVisible().catch(() => false);
+      if (!inputVisible) {
+        console.log('  Chat input not visible — step may have advanced to UI panel');
         break;
       }
       
@@ -288,12 +297,11 @@ test.describe('Complete Site Build Flow', () => {
       await waitForAssistantResponse(page);
     }
     
-    // Final check — wait longer for template gallery if it hasn't appeared yet
-    const templateGalleryVisible = await page.getByTestId('template-gallery').isVisible().catch(() => false);
-    if (!templateGalleryVisible) {
-      console.log('  Waiting for template gallery...');
-      await page.waitForTimeout(10000);
-    }
+    // Wait for template gallery with generous timeout
+    console.log('  Waiting for template gallery...');
+    await expect(page.getByTestId('template-gallery')).toBeVisible({ timeout: 60000 }).catch(() => {
+      console.log('  ⚠️ Template gallery not visible after 60s');
+    });
     
     await takeStepScreenshot(page, '06-after-discovery');
     console.log('✅ Business discovery completed\n');

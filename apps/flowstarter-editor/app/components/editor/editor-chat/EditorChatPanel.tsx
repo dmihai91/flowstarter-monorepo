@@ -336,7 +336,7 @@ export function EditorChatPanel({
 
         {/* TEMPLATE STEP: Recommendations first (both internal + self-serve flows) */}
         {step === 'template' && (recommendationsLoading || recommendations.length > 0) && (
-          <div className="ml-10">
+          <div className="ml-10" data-testid="template-gallery">
             <TemplateRecommendationGallery
               recommendations={recommendations}
               isLoading={recommendationsLoading}
@@ -385,7 +385,7 @@ export function EditorChatPanel({
 
         {/* TEMPLATE STEP: Full gallery — fallback when no recommendations, or after "Browse all" */}
         {step === 'template' && recommendations.length === 0 && !recommendationsLoading && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="ml-10">
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="ml-10" data-testid="template-gallery">
             <FullTemplateGallery
               templates={templates}
               templatesLoading={templatesLoading}

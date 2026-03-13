@@ -248,9 +248,53 @@ test.describe('Complete Site Build Flow', () => {
     console.log('✅ Quick profile completed\n');
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 5: Template Selection (quick-profile advances directly here)
+    // STEP 5: Business UVP (chat — AI asks after quick-profile)
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 5: Template Selection');
+    console.log('📍 Step 5: Business UVP');
+    // Wait for AI to ask about UVP
+    await page.waitForTimeout(3000);
+    await expect(page.getByText(/unique|value|special|different|apart|stand.*out|competitive|what.*makes/i).first())
+      .toBeVisible({ timeout: 20000 })
+      .catch(() => console.log('  ⚠️ No UVP prompt - proceeding'));
+    await sendMessage(page, TEST_PROJECT.uvp);
+    await waitForAssistantResponse(page);
+    await takeStepScreenshot(page, '05-after-uvp');
+    console.log('✅ UVP submitted\n');
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // STEP 6: Continue through remaining business discovery steps
+    // ═══════════════════════════════════════════════════════════════════════════
+    console.log('📍 Step 6: Remaining business discovery');
+    // The AI may ask about offering, contact, etc. — respond to whatever comes
+    for (let i = 0; i < 5; i++) {
+      await page.waitForTimeout(2000);
+      
+      // Check if template gallery appeared (means business discovery is done)
+      const templateVisible = await page.getByTestId('template-gallery').isVisible().catch(() => false);
+      if (templateVisible) {
+        console.log('  Template gallery appeared — business discovery complete');
+        break;
+      }
+      
+      // Check if there's a chat input we can respond to
+      const chatInput = page.getByTestId('chat-input');
+      const inputVisible = await chatInput.isVisible().catch(() => false);
+      if (inputVisible) {
+        const bodyText = await page.locator('.assistant-message').last().textContent().catch(() => '');
+        if (bodyText && bodyText.length > 20) {
+          console.log('  Responding to business discovery prompt...');
+          await sendMessage(page, 'We offer premium 1-on-1 coaching. Email: test@ironhour.com, Phone: +40712345678');
+          await waitForAssistantResponse(page);
+        }
+      }
+    }
+    await takeStepScreenshot(page, '06-after-discovery');
+    console.log('✅ Business discovery completed\n');
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // STEP 7: Template Selection
+    // ═══════════════════════════════════════════════════════════════════════════
+    console.log('📍 Step 9: Template Selection');
     await page.waitForTimeout(5000); // Wait for templates to load
 
     // STRICT: Template gallery must be visible
@@ -274,7 +318,7 @@ test.describe('Complete Site Build Flow', () => {
     // ═══════════════════════════════════════════════════════════════════════════
     // STEP 10: Personalization (Palette → Font → Logo + AI Images toggle)
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 6: Personalization');
+    console.log('📍 Step 10: Personalization');
     await page.waitForTimeout(3000);
 
     // STEP 13a: Select Palette
@@ -341,7 +385,7 @@ test.describe('Complete Site Build Flow', () => {
     // ═══════════════════════════════════════════════════════════════════════════
     // STEP 11: Integrations Panel - Configure integrations before building
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 7: Integrations Panel');
+    console.log('📍 Step 9: Integrations Panel');
 
     // Wait for integrations panel to appear
     await page.waitForTimeout(2000);
@@ -425,7 +469,7 @@ test.describe('Complete Site Build Flow', () => {
     // ═══════════════════════════════════════════════════════════════════════════
     // STEP 12: Build Process - Wait for preview iframe WITH ACTUAL CONTENT
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 8: Build Process');
+    console.log('📍 Step 10: Build Process');
     await takeStepScreenshot(page, '12-build-start');
 
     // First, wait for the build to progress (check for build phases UI)
@@ -551,7 +595,7 @@ test.describe('Complete Site Build Flow', () => {
     // ═══════════════════════════════════════════════════════════════════════════
     // STEP 12: Verify Flowstarter URL in Address Bar
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 8: Verifying URL Display');
+    console.log('📍 Step 10: Verifying URL Display');
 
     // STRICT: Address bar must show flowstarter.app URL
     const addressBar = page

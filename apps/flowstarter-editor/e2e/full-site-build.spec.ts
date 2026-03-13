@@ -115,9 +115,9 @@ test.describe('Complete Site Build Flow', () => {
   test('Full journey: Welcome → Description → Name → Business → Template → Build → Preview', async ({ page }) => {
     // Authenticate as test user via Clerk testing token
     await setupClerkTestingToken({ page });
-    await page.goto('/');
-    await clerk.signIn({ page, signInParams: { strategy: 'ticket', ticket: process.env.CLERK_TESTING_TOKEN || '' } });
-    console.log('✅ Clerk auth established');
+    await page.goto('https://flowstarter.dev');
+    await clerk.signIn({ page, emailAddress: process.env.E2E_USER_EMAIL || 'test@flowstarter.app' });
+    console.log('✅ Clerk auth established on primary domain');
 
     console.log('\n🚀 Starting complete site creation flow...\n');
 
@@ -766,11 +766,12 @@ test.describe('Preview Component Behavior', () => {
   test.setTimeout(120000); // 2 minutes
 
   test('DaytonaPreview shows loading states correctly', async ({ page }) => {
-    // Authenticate as test user
+    // Authenticate as test user on primary domain first
     await setupClerkTestingToken({ page });
-    await page.goto('/new');
+    await page.goto('https://flowstarter.dev');
     await clerk.signIn({ page, emailAddress: process.env.E2E_USER_EMAIL || 'test@flowstarter.app' });
-    // Don't use networkidle - it times out due to WebSocket connections
+    // Now navigate to editor (satellite syncs the session)
+    await page.goto('/new');
     await page.waitForLoadState('domcontentloaded');
 
     // Wait for chat input to be visible (indicates page is ready)

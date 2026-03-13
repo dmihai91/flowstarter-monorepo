@@ -171,7 +171,7 @@ export async function action({ request }: ActionFunctionArgs) {
         const convexSiteUrl = (process.env.CONVEX_URL || 'https://outstanding-otter-369.convex.cloud').replace('.convex.cloud', '.convex.site');
         const handoffSecret = process.env.HANDOFF_SECRET || '';
         
-        await fetch(\`\${convexSiteUrl}/files/save-batch\`, {
+        await fetch(`${convexSiteUrl}/files/save-batch`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-handoff-secret': handoffSecret },
           body: JSON.stringify({ supabaseProjectId, files: editResult.files }),
@@ -184,12 +184,12 @@ export async function action({ request }: ActionFunctionArgs) {
           const filesMap = editResult.files.reduce((acc: Record<string, string>, f: { path: string; content: string }) => { acc[f.path] = f.content; return acc; }, {} as Record<string, string>);
           const prewarmed = await prewarmSandbox(supabaseProjectId);
           const preview = await startPreviewWithPrewarmedSandbox(supabaseProjectId, filesMap, prewarmed, undefined, (msg: string) => console.log('[modify-sync]', msg));
-          if (preview.success) previewUrl = preview.previewUrl || \`https://4321-\${preview.sandboxId}.daytonaproxy01.net\`;
+          if (preview.success) previewUrl = preview.previewUrl || `https://4321-${preview.sandboxId}.daytonaproxy01.net`;
         } catch (e) { console.error('[modify-sync] Preview sync failed:', e); }
 
         return json({
           success: true,
-          message: \`Modified \${editResult.files.length} files in \${editResult.turns} turns\`,
+          message: `Modified ${editResult.files.length} files in ${editResult.turns} turns`,
           changes: editResult.files.map((f: { path: string }) => ({ path: f.path, operation: 'update' })),
           cost: editResult.costUsd,
           previewUrl,

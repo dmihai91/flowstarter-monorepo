@@ -43,3 +43,8 @@ Thumbs.db
 .nx/workspace-data
 mprocs.log
 .env.shared
+
+# M4 sync scripts
+m4-sync.sh
+m4-pull.sh
+m4-dev.sh

@@ -88,6 +88,8 @@ export function useSendHandler({
     // Business discovery steps
     else if (
       step === 'business-uvp' ||
+      step === 'business-offering' ||
+      step === 'business-contact' ||
       step === 'business-audience' ||
       step === 'business-goals' ||
       step === 'business-tone' ||
@@ -262,9 +264,18 @@ export function useSendHandler({
       messageHook.addUserMessage(userInput);
 
       if (!currentUrlId) {
-        messageHook.addAssistantMessage(getMessage(MESSAGE_KEYS.READY_SETUP_FIRST));
-        flowHook.setStep('describe');
-        messageHook.setSuggestedReplies(getRandomServicePrompts());
+        // Only reset to describe if we're genuinely at the start
+        // Never regress from business discovery or later steps
+        const currentStep = flowHook.step;
+        const noRegressSteps = ['business-uvp', 'business-offering', 'business-contact', 'business-audience', 'business-goals', 'business-tone', 'business-selling', 'business-pricing', 'business-summary', 'template', 'personalization', 'creating', 'ready'];
+        if (!noRegressSteps.includes(currentStep)) {
+          messageHook.addAssistantMessage(getMessage(MESSAGE_KEYS.READY_SETUP_FIRST));
+          flowHook.setStep('describe');
+          messageHook.setSuggestedReplies(getRandomServicePrompts());
+        } else {
+          // Don't regress — just add a helpful message
+          messageHook.addAssistantMessage("Let me help you with the current step. Please answer the question above to continue.");
+        }
       } else {
         messageHook.addAssistantMessage(getMessage(MESSAGE_KEYS.READY_HELP_PROMPT));
       }

@@ -212,133 +212,84 @@ test.describe('Complete Site Build Flow', () => {
     console.log('✅ Name submitted\n');
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 4: Business Discovery - UVP
+    // STEP 4: Quick Profile (UI Panel — Goal + Offer Type + Tone)
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 4: Business UVP');
-    // STRICT: Wait for UVP prompt
-    await expect(page.getByText(/unique|value|special|different|apart|stand.*out|competitive/i).first())
+    console.log('📍 Step 4: Quick Profile Panel');
+    
+    // Wait for the quick-profile panel to appear (3 option groups + Continue button)
+    const getLeadsBtn = page.getByText('Get Leads').first();
+    await expect(getLeadsBtn).toBeVisible({ timeout: 30000 });
+    console.log('  Quick profile panel visible');
+    await takeStepScreenshot(page, '04-quick-profile');
+
+    // Select Goal: Get Bookings
+    const bookingsBtn = page.getByText('Get Bookings').first();
+    await bookingsBtn.click();
+    console.log('  Selected goal: Get Bookings');
+
+    // Select Offer Type: Premium
+    const premiumBtn = page.getByText('Premium').first();
+    await premiumBtn.click();
+    console.log('  Selected offer type: Premium');
+
+    // Select Tone: Professional
+    const professionalBtn = page.getByText('Professional').first();
+    await professionalBtn.click();
+    console.log('  Selected tone: Professional');
+
+    await takeStepScreenshot(page, '04-quick-profile-filled');
+
+    // Click Continue
+    const continueBtn = page.getByRole('button', { name: /continue/i }).first();
+    await expect(continueBtn).toBeEnabled({ timeout: 5000 });
+    await continueBtn.click();
+    await waitForAssistantResponse(page);
+    await takeStepScreenshot(page, '04-after-quick-profile');
+    console.log('✅ Quick profile completed\n');
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // STEP 5: Business UVP (chat)
+    // ═══════════════════════════════════════════════════════════════════════════
+    console.log('📍 Step 5: Business UVP');
+    await expect(page.getByText(/unique|value|special|different|apart|stand.*out|competitive|what.*makes/i).first())
       .toBeVisible({ timeout: 20000 })
       .catch(() => console.log('  ⚠️ No UVP prompt - proceeding'));
 
     await sendMessage(page, TEST_PROJECT.uvp);
     await waitForAssistantResponse(page);
-    await takeStepScreenshot(page, '04-after-uvp');
+    await takeStepScreenshot(page, '05-after-uvp');
     console.log('✅ UVP submitted\n');
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 5: Business Discovery - Audience
+    // STEP 6: Business Offering (chat)
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 5: Target Audience');
-    // STRICT: Wait for audience prompt
-    await expect(page.getByText(/audience|customer|who|target|people|market|client|serve/i).first())
+    console.log('📍 Step 6: Business Offering');
+    await expect(page.getByText(/offer|service|product|sell|package|provide|deliver/i).first())
       .toBeVisible({ timeout: 20000 })
-      .catch(() => console.log('  ⚠️ No audience prompt - proceeding'));
+      .catch(() => console.log('  ⚠️ No offering prompt - proceeding'));
 
-    await sendMessage(page, TEST_PROJECT.audience);
+    await sendMessage(page, TEST_PROJECT.selling + ' ' + TEST_PROJECT.pricing);
     await waitForAssistantResponse(page);
-    await takeStepScreenshot(page, '05-after-audience');
-    console.log('✅ Audience submitted\n');
+    await takeStepScreenshot(page, '06-after-offering');
+    console.log('✅ Offering submitted\n');
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 6: Business Discovery - Goals
+    // STEP 7: Business Contact (chat)
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 6: Business Goals');
-    // STRICT: Wait for goals prompt
-    await expect(page.getByText(/goal|achieve|objective|aim|purpose|outcome|hope|want/i).first())
+    console.log('📍 Step 7: Business Contact');
+    await expect(page.getByText(/contact|email|phone|reach|address|location|how.*can.*reach/i).first())
       .toBeVisible({ timeout: 20000 })
-      .catch(() => console.log('  ⚠️ No goals prompt - proceeding'));
+      .catch(() => console.log('  ⚠️ No contact prompt - proceeding'));
 
-    await sendMessage(page, TEST_PROJECT.goals);
+    await sendMessage(page, 'Email: ' + TEST_PROJECT.contactEmail + ', Phone: ' + TEST_PROJECT.contactPhone + ', Address: ' + TEST_PROJECT.contactAddress);
     await waitForAssistantResponse(page);
-    await takeStepScreenshot(page, '06-after-goals');
-    console.log('✅ Goals submitted\n');
+    await takeStepScreenshot(page, '07-after-contact');
+    console.log('✅ Contact info submitted\n');
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 7: Business Discovery - Tone
+    // STEP 8: Business Summary Confirmation
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 7: Brand Tone');
-    // STRICT: Wait for tone prompt
-    await expect(page.getByText(/tone|personality|voice|brand|style|feel|vibe|aesthetic/i).first())
-      .toBeVisible({ timeout: 20000 })
-      .catch(() => console.log('  ⚠️ No tone prompt - proceeding'));
-
-    await sendMessage(page, TEST_PROJECT.tone);
-    await waitForAssistantResponse(page);
-    await takeStepScreenshot(page, '07-after-tone');
-    console.log('✅ Tone submitted\n');
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 8: Business Discovery - Selling Method
-    // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 8: Selling Method');
-    // STRICT: Wait for selling prompt
-    await expect(page.getByText(/sell|convert|booking|product|service|offer|monetize|revenue/i).first())
-      .toBeVisible({ timeout: 20000 })
-      .catch(() => console.log('  ⚠️ No selling prompt - proceeding'));
-
-    await sendMessage(page, TEST_PROJECT.selling);
-    await waitForAssistantResponse(page);
-    await takeStepScreenshot(page, '08-after-selling');
-    console.log('✅ Selling method submitted\n');
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 9: Business Discovery - Pricing
-    // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 9: Pricing/Offers');
-    // STRICT: Wait for pricing prompt
-    await expect(page.getByText(/pricing|price|offer|package|cost|rate|fee|plan|investment|budget/i).first())
-      .toBeVisible({ timeout: 20000 })
-      .catch(() => console.log('  ⚠️ No pricing prompt - proceeding'));
-
-    await sendMessage(page, TEST_PROJECT.pricing);
-    await waitForAssistantResponse(page);
-    await takeStepScreenshot(page, '09-after-pricing');
-    console.log('✅ Pricing submitted\n');
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 10: Contact Details (UI Panel)
-    // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 10: Contact Details');
-    await page.waitForTimeout(2000);
-    await takeStepScreenshot(page, '10-contact-details');
-
-    // Wait for ContactDetailsPanel to appear
-    const contactPanel = page.getByTestId('contact-details-panel');
-    await expect(contactPanel).toBeVisible({ timeout: 20000 });
-    console.log('  Contact details panel visible');
-
-    // Fill in email (required field)
-    const emailInput = page.getByTestId('contact-email-input');
-    await expect(emailInput).toBeVisible({ timeout: 5000 });
-    await emailInput.fill(TEST_PROJECT.contactEmail);
-    console.log('  Email filled');
-
-    // Fill in phone (optional)
-    const phoneInput = page.getByTestId('contact-phone-input');
-    if (await phoneInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await phoneInput.fill(TEST_PROJECT.contactPhone);
-      console.log('  Phone filled');
-    }
-
-    // Fill in address (optional)
-    const addressInput = page.getByTestId('contact-address-input');
-    if (await addressInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await addressInput.fill(TEST_PROJECT.contactAddress);
-      console.log('  Address filled');
-    }
-
-    // Click Continue button
-    const contactContinueBtn = page.getByTestId('contact-continue-button');
-    await expect(contactContinueBtn).toBeVisible({ timeout: 5000 });
-    await contactContinueBtn.click();
-    await waitForAssistantResponse(page);
-    await takeStepScreenshot(page, '10-after-contact');
-    console.log('✅ Contact details submitted\n');
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 11: Business Summary Confirmation
-    // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 11: Business Summary');
+    console.log('📍 Step 8: Business Summary');
     // STRICT: Wait for summary
     await expect(page.getByText(/summary|confirm|look.*good|review|ready|proceed|got.*it|information/i).first())
       .toBeVisible({ timeout: 20000 })
@@ -351,9 +302,9 @@ test.describe('Complete Site Build Flow', () => {
     console.log('✅ Summary confirmed\n');
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 12: Template Selection
+    // STEP 9: Template Selection
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 12: Template Selection');
+    console.log('📍 Step 9: Template Selection');
     await page.waitForTimeout(5000); // Wait for templates to load
 
     // STRICT: Template gallery must be visible
@@ -375,9 +326,9 @@ test.describe('Complete Site Build Flow', () => {
     console.log('✅ Template selected\n');
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 13: Personalization (Palette → Font → Logo + AI Images toggle)
+    // STEP 10: Personalization (Palette → Font → Logo + AI Images toggle)
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 13: Personalization');
+    console.log('📍 Step 10: Personalization');
     await page.waitForTimeout(3000);
 
     // STEP 13a: Select Palette
@@ -385,7 +336,7 @@ test.describe('Complete Site Build Flow', () => {
     const paletteSection = page.getByTestId('palette-section');
     await expect(paletteSection).toBeVisible({ timeout: 20000 });
     console.log('  Palette section visible');
-    await takeStepScreenshot(page, '13-personalization-palette');
+    await takeStepScreenshot(page, '10-personalization-palette');
 
     // STRICT: At least one palette option must exist
     const paletteOptions = page.locator('[data-testid^="palette-option-"]');
@@ -442,13 +393,13 @@ test.describe('Complete Site Build Flow', () => {
     console.log('✅ Logo skipped\n');
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 14: Integrations Panel - Configure integrations before building
+    // STEP 11: Integrations Panel - Configure integrations before building
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 14: Integrations Panel');
+    console.log('📍 Step 11: Integrations Panel');
 
     // Wait for integrations panel to appear
     await page.waitForTimeout(2000);
-    await takeStepScreenshot(page, '14-integrations-panel');
+    await takeStepScreenshot(page, '11-integrations-panel');
 
     // Verify integrations panel title (use first() since it appears in both left and right panels)
     const integrationsTitle = page.locator('text=Connect Your Services').first();
@@ -464,7 +415,7 @@ test.describe('Complete Site Build Flow', () => {
       await bookingToggle.click();
       await page.waitForTimeout(1000);
       console.log('    ✅ Booking toggle enabled');
-      await takeStepScreenshot(page, '14-booking-enabled');
+      await takeStepScreenshot(page, '11-booking-enabled');
 
       // Enter Calendly URL (using real test URL)
       const calendlyInput = page.locator('input[placeholder*="calendly" i]');
@@ -472,7 +423,7 @@ test.describe('Complete Site Build Flow', () => {
         await calendlyInput.fill('https://calendly.com/darius-popescu1191/30min');
         await page.waitForTimeout(500);
         console.log('    ✅ Calendly URL entered: https://calendly.com/darius-popescu1191/30min');
-        await takeStepScreenshot(page, '14-calendly-url');
+        await takeStepScreenshot(page, '11-calendly-url');
       }
     } else {
       console.log('    ⚠️ Booking toggle not found');
@@ -486,7 +437,7 @@ test.describe('Complete Site Build Flow', () => {
       await newsletterToggle.click();
       await page.waitForTimeout(1000);
       console.log('    ✅ Newsletter toggle enabled');
-      await takeStepScreenshot(page, '14-newsletter-enabled');
+      await takeStepScreenshot(page, '11-newsletter-enabled');
 
       // Select newsletter provider
       const providerSelect = page.locator('select').last();
@@ -502,7 +453,7 @@ test.describe('Complete Site Build Flow', () => {
           await page.waitForTimeout(500);
           console.log('    ✅ Mailchimp URL entered');
         }
-        await takeStepScreenshot(page, '14-provider-selected');
+        await takeStepScreenshot(page, '11-provider-selected');
       }
     } else {
       console.log('    ⚠️ Newsletter toggle not found');
@@ -517,19 +468,19 @@ test.describe('Complete Site Build Flow', () => {
     console.log('  ✅ Build/Continue and Skip buttons visible');
 
     // Take final integrations screenshot
-    await takeStepScreenshot(page, '14-integrations-complete');
+    await takeStepScreenshot(page, '11-integrations-complete');
 
     // Click the build button to proceed (either "Build My Site" or "Continue")
     await buildButton.click();
     await page.waitForTimeout(2000);
-    await takeStepScreenshot(page, '14-after-build-click');
+    await takeStepScreenshot(page, '11-after-build-click');
     console.log('✅ Integrations configured - build starting\n');
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 15: Build Process - Wait for preview iframe WITH ACTUAL CONTENT
+    // STEP 12: Build Process - Wait for preview iframe WITH ACTUAL CONTENT
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 15: Build Process');
-    await takeStepScreenshot(page, '15-build-start');
+    console.log('📍 Step 12: Build Process');
+    await takeStepScreenshot(page, '12-build-start');
 
     // First, wait for the build to progress (check for build phases UI)
     // The build shows phases: Preparing environment → AI customizing site → Creating files → Starting preview
@@ -648,13 +599,13 @@ test.describe('Complete Site Build Flow', () => {
     expect(previewReady, 'Preview must render actual site content before marking build complete').toBe(true);
 
     console.log('✅ Preview has actual content\n');
-    await takeStepScreenshot(page, '13-build-complete');
-    await takeStepScreenshot(page, '14-preview-verified');
+    await takeStepScreenshot(page, '10-build-complete');
+    await takeStepScreenshot(page, '11-preview-verified');
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 15: Verify Flowstarter URL in Address Bar
+    // STEP 12: Verify Flowstarter URL in Address Bar
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 15: Verifying URL Display');
+    console.log('📍 Step 12: Verifying URL Display');
 
     // STRICT: Address bar must show flowstarter.app URL
     const addressBar = page
@@ -686,7 +637,7 @@ test.describe('Complete Site Build Flow', () => {
     expect(daytonaUrlVisible, 'Address bar should NOT show raw Daytona URL').toBe(false);
     console.log('✅ No raw Daytona URL visible\n');
 
-    await takeStepScreenshot(page, '15-final-success');
+    await takeStepScreenshot(page, '12-final-success');
 
     // ═══════════════════════════════════════════════════════════════════════════
     // STEP 16: Visual Verification - Check preview dimensions and final state

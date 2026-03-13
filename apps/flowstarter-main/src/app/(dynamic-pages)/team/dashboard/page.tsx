@@ -151,7 +151,7 @@ export default function TeamDashboardPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto min-h-full">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto min-h-full pb-0">
       {/* Header Row */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mt-1 sm:mt-2 mb-8">
         <div>

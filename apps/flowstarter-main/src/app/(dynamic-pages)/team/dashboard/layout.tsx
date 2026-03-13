@@ -25,7 +25,7 @@ export default function TeamDashboardLayout({
 
   return (
     <SidebarProvider>
-      <div className="min-h-[100dvh] flex flex-col bg-[var(--landing-bg)] dark:bg-[var(--landing-dark-surface)]">
+      <div className="h-[100dvh] flex flex-col overflow-hidden bg-[var(--landing-bg)] dark:bg-[var(--landing-dark-surface)]">
         {/* Gradient background - behind everything */}
         <FlowBackground variant="dashboard" style={{ position: "fixed", inset: 0, zIndex: 0 }} />
         {/* Gradient overlay with indigo + amber glows */}

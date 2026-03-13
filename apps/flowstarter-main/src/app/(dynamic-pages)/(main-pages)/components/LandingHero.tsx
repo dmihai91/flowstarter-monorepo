@@ -25,9 +25,9 @@ export function LandingHero() {
         {/* Base wash — barely tinted */}
         <div className="absolute inset-0 bg-gradient-to-b from-[var(--hero-wash-from)] via-[var(--hero-wash-via)] to-[var(--hero-wash-to)]" />
         {/* Central halo — single radial glow behind headline area */}
-        <div className="absolute top-[10%] left-1/2 -translate-x-1/2 w-[90%] sm:w-[70%] h-[60%] rounded-full bg-[var(--hero-glow-primary)] opacity-[0.12] dark:opacity-[0.15] blur-[80px] md:blur-[120px] lg:blur-[200px] will-change-transform" />
+        <div className="absolute top-[10%] left-1/2 -translate-x-1/2 w-[90%] sm:w-[70%] h-[60%] rounded-full bg-[var(--hero-glow-primary)] opacity-[0.18] dark:opacity-[0.15] blur-[80px] md:blur-[120px] lg:blur-[200px] will-change-transform" />
         {/* Subtle secondary — slight cool shift lower */}
-        <div className="absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[60%] sm:w-[45%] h-[40%] rounded-full bg-[var(--hero-glow-secondary)] opacity-[0.08] dark:opacity-[0.10] blur-[80px] md:blur-[120px] lg:blur-[180px] will-change-transform" />
+        <div className="absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[60%] sm:w-[45%] h-[40%] rounded-full bg-[var(--hero-glow-secondary)] opacity-[0.10] dark:opacity-[0.10] blur-[80px] md:blur-[120px] lg:blur-[180px] will-change-transform" />
         {/* Noise texture overlay */}
         <div className="absolute inset-0 opacity-[0.025] dark:opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")', backgroundRepeat: 'repeat', backgroundSize: '128px 128px' }} />
       </div>
@@ -37,7 +37,7 @@ export function LandingHero() {
 
       {/* Subtle flow lines */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <svg className="absolute inset-0 w-full h-full opacity-[0.06] dark:opacity-[0.03]" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" fill="none">
+        <svg className="absolute inset-0 w-full h-full opacity-[0.15] dark:opacity-[0.08]" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" fill="none">
           <defs>
             <linearGradient id="heroLine1" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="var(--purple)" stopOpacity="0" />

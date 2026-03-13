@@ -45,27 +45,27 @@ async function syncWithRetry(
     if (res.ok) {
       const data = await res.json();
       if (attempt > 0) {
-        logger.info(\`Sync succeeded after \${attempt + 1} attempts\`);
+        logger.info(`Sync succeeded after ${attempt + 1} attempts`);
       }
       return data as Record<string, unknown>;
     }
 
     // Auth errors (401/403) won't resolve with retries
     if (res.status === 401 || res.status === 403) {
-      logger.error(\`Sync \${payload.action} failed: \${res.status} (auth error, not retrying)\`);
+      logger.error(`Sync ${payload.action} failed: ${res.status} (auth error, not retrying)`);
       return null;
     }
 
-    throw new Error(\`HTTP \${res.status}\`);
+    throw new Error(`HTTP ${res.status}`);
   } catch (e) {
     if (attempt < MAX_RETRIES) {
       const delay = RETRY_DELAYS[attempt] || 10000;
-      logger.warn(\`Sync \${payload.action} failed (attempt \${attempt + 1}/\${MAX_RETRIES + 1}), retrying in \${delay}ms:\`, e);
+      logger.warn(`Sync ${payload.action} failed (attempt ${attempt + 1}/${MAX_RETRIES + 1}), retrying in ${delay}ms:`, e);
       await new Promise(resolve => setTimeout(resolve, delay));
       return syncWithRetry(payload, attempt + 1);
     }
 
-    logger.error(\`Sync \${payload.action} failed after \${MAX_RETRIES + 1} attempts:\`, e);
+    logger.error(`Sync ${payload.action} failed after ${MAX_RETRIES + 1} attempts:`, e);
     return null;
   }
 }

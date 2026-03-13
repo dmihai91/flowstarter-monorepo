@@ -104,7 +104,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className="font-sans min-h-screen"
+        className="font-sans min-h-screen bg-[var(--landing-bg)] dark:bg-[var(--landing-dark-surface,#0a0a0f)]"
         style={{ fontFamily: 'var(--font-inter)' }}
         suppressHydrationWarning
       >

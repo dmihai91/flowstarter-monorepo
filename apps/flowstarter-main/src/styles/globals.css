@@ -42,6 +42,7 @@ body {
   max-width: 100%;
   margin: 0;
   padding: 0;
+  background-color: var(--landing-bg, #fafafa);
 }
 
 @keyframes bgGlow {
@@ -1644,3 +1645,9 @@ body {
 .animate-fade-in-up-delay-2 { animation-delay: 0.2s; }
 .animate-fade-in-up-delay-3 { animation-delay: 0.35s; }
 .animate-fade-in-up-delay-4 { animation-delay: 0.5s; }
+
+/* Ensure body matches app background to prevent white gaps */
+.dark body,
+html.dark body {
+  background-color: var(--landing-dark-surface, #0a0a0c);
+}

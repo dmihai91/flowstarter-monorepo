@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { clerk, setupClerkTestingToken } from '@clerk/testing/playwright';
 
 /**
  * Test cleanup utilities
@@ -112,6 +113,12 @@ test.describe('Complete Site Build Flow', () => {
   });
 
   test('Full journey: Welcome → Description → Name → Business → Template → Build → Preview', async ({ page }) => {
+    // Authenticate as test user via Clerk testing token
+    await setupClerkTestingToken({ page });
+    await page.goto('/');
+    await clerk.signIn({ page, signInParams: { strategy: 'ticket', ticket: process.env.CLERK_TESTING_TOKEN || '' } });
+    console.log('✅ Clerk auth established');
+
     console.log('\n🚀 Starting complete site creation flow...\n');
 
     // Capture important console logs from the browser for debugging
@@ -759,7 +766,10 @@ test.describe('Preview Component Behavior', () => {
   test.setTimeout(120000); // 2 minutes
 
   test('DaytonaPreview shows loading states correctly', async ({ page }) => {
+    // Authenticate as test user
+    await setupClerkTestingToken({ page });
     await page.goto('/new');
+    await clerk.signIn({ page, emailAddress: process.env.E2E_USER_EMAIL || 'test@flowstarter.app' });
     // Don't use networkidle - it times out due to WebSocket connections
     await page.waitForLoadState('domcontentloaded');
 

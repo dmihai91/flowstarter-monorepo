@@ -25,13 +25,13 @@ export function LandingHero() {
         {/* Base wash — warm to cool */}
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--hero-wash-from)] via-[var(--hero-wash-via)] to-[var(--hero-wash-to)]" />
         {/* Primary — violet glow, upper-left */}
-        <div className="absolute -top-[15%] -left-[10%] w-[75%] sm:w-[60%] h-[65%] rounded-full bg-[var(--hero-glow-primary)] opacity-30 dark:opacity-40 blur-[60px] md:blur-[100px] lg:blur-[180px] will-change-transform" />
+        <div className="absolute -top-[15%] -left-[10%] w-[75%] sm:w-[60%] h-[65%] rounded-full bg-[var(--hero-glow-primary)] opacity-35 dark:opacity-40 blur-[60px] md:blur-[100px] lg:blur-[180px] will-change-transform" />
         {/* Secondary — rose glow, lower-right */}
-        <div className="absolute -bottom-[5%] -right-[8%] w-[65%] sm:w-[50%] h-[55%] rounded-full bg-[var(--hero-glow-secondary)] opacity-25 dark:opacity-30 blur-[60px] md:blur-[100px] lg:blur-[180px] will-change-transform" />
+        <div className="absolute -bottom-[5%] -right-[8%] w-[65%] sm:w-[50%] h-[55%] rounded-full bg-[var(--hero-glow-secondary)] opacity-30 dark:opacity-30 blur-[60px] md:blur-[100px] lg:blur-[180px] will-change-transform" />
         {/* Accent — cool blue, center-right */}
-        <div className="absolute top-[25%] right-[8%] w-[30%] sm:w-[22%] h-[35%] rounded-full bg-[var(--hero-glow-accent)] opacity-20 dark:opacity-25 blur-[60px] md:blur-[100px] lg:blur-[200px] will-change-transform" />
+        <div className="absolute top-[25%] right-[8%] w-[30%] sm:w-[22%] h-[35%] rounded-full bg-[var(--hero-glow-accent)] opacity-25 dark:opacity-25 blur-[60px] md:blur-[100px] lg:blur-[200px] will-change-transform" />
         {/* Focal — concentrated glow behind headline */}
-        <div className="absolute top-[18%] left-[30%] w-[30%] sm:w-[20%] h-[30%] rounded-full bg-[var(--hero-glow-focal)] opacity-25 dark:opacity-20 blur-[40px] md:blur-[70px] lg:blur-[120px] will-change-transform" />
+        <div className="absolute top-[18%] left-[30%] w-[30%] sm:w-[20%] h-[30%] rounded-full bg-[var(--hero-glow-focal)] opacity-[0.38] dark:opacity-20 blur-[40px] md:blur-[70px] lg:blur-[120px] will-change-transform" />
       </div>
 
       {/* Bottom fade — smooth transition to next section */}

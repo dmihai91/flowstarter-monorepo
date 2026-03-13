@@ -67,14 +67,14 @@
   --landing-dark-surface-tint: #0d0d14;
 
   /* Hero gradient — base wash */
-  --hero-wash-from: #f0eafc;
-  --hero-wash-via: #faf9ff;
-  --hero-wash-to: #f8f0f4;
+  --hero-wash-from: #eee8fc;
+  --hero-wash-via: #f5f3ff;
+  --hero-wash-to: #ece8fa;
   /* Hero gradient — glow orbs (light mode: muted, professional) */
-  --hero-glow-primary: #c4adee;
-  --hero-glow-secondary: #e4afc8;
-  --hero-glow-accent: #a8bfee;
-  --hero-glow-focal: #d4c4ed;
+  --hero-glow-primary: #b8a0f2;
+  --hero-glow-secondary: #a18ee8;
+  --hero-glow-accent: #c8baf6;
+  --hero-glow-focal: #ab96f0;
 
   /* Flow-line SVG gradient stops */
   --landing-flow-start: #a855f7;

@@ -313,7 +313,7 @@ test.describe('Complete Site Build Flow', () => {
     await page.waitForTimeout(5000); // Wait for templates to load
 
     // STRICT: Template gallery must be visible
-    const templateGallery = page.getByTestId('template-gallery');
+    const templateGallery = page.getByTestId('template-gallery').first();
     await expect(templateGallery).toBeVisible({ timeout: 30000 });
     console.log('  Template gallery visible');
     await takeStepScreenshot(page, '12-template-selection');

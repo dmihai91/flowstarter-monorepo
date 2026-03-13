@@ -25,7 +25,7 @@ export default function TeamDashboardLayout({
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex flex-col">
+      <div className="h-screen flex flex-col overflow-hidden">
         {/* Gradient background - behind everything */}
         <FlowBackground variant="dashboard" style={{ position: "fixed", inset: 0, zIndex: 0 }} />
         {/* Gradient overlay with indigo + amber glows */}
@@ -54,9 +54,9 @@ export default function TeamDashboardLayout({
         <AppHeader />
         <div className="h-16" />
         
-        <div className="flex-1 flex relative z-10">
+        <div className="flex-1 flex relative z-10 overflow-hidden">
           <TeamSidebar />
-          <main className="flex-1 min-w-0 overflow-auto">
+          <main className="flex-1 min-w-0 overflow-y-auto">
             {children}
           </main>
         </div>

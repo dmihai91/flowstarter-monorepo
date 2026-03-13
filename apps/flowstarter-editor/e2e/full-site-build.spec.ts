@@ -265,29 +265,36 @@ test.describe('Complete Site Build Flow', () => {
     // STEP 6: Continue through remaining business discovery steps
     // ═══════════════════════════════════════════════════════════════════════════
     console.log('📍 Step 6: Remaining business discovery');
-    // The AI may ask about offering, contact, etc. — respond to whatever comes
-    for (let i = 0; i < 5; i++) {
-      await page.waitForTimeout(2000);
+    // The AI asks about offering, contact info, etc. Respond until template gallery appears.
+    const discoveryResponses = [
+      'We offer premium 1-on-1 fitness coaching sessions, both in-person and online. Packages start at €150/session.',
+      'Email: coach@ironhour.com, Phone: +40712345678, Address: Str. Victoriei 42, Bucharest, Romania',
+      'Yes, that looks great. Let\'s proceed!',
+    ];
+    
+    for (let i = 0; i < discoveryResponses.length; i++) {
+      await page.waitForTimeout(3000);
       
-      // Check if template gallery appeared (means business discovery is done)
+      // Check if template gallery appeared
       const templateVisible = await page.getByTestId('template-gallery').isVisible().catch(() => false);
       if (templateVisible) {
         console.log('  Template gallery appeared — business discovery complete');
         break;
       }
       
-      // Check if there's a chat input we can respond to
-      const chatInput = page.getByTestId('chat-input');
-      const inputVisible = await chatInput.isVisible().catch(() => false);
-      if (inputVisible) {
-        const bodyText = await page.locator('.assistant-message').last().textContent().catch(() => '');
-        if (bodyText && bodyText.length > 20) {
-          console.log('  Responding to business discovery prompt...');
-          await sendMessage(page, 'We offer premium 1-on-1 coaching. Email: test@ironhour.com, Phone: +40712345678');
-          await waitForAssistantResponse(page);
-        }
-      }
+      // Send the next response
+      console.log('  Responding to discovery prompt ' + (i + 1) + '...');
+      await sendMessage(page, discoveryResponses[i]);
+      await waitForAssistantResponse(page);
     }
+    
+    // Final check — wait longer for template gallery if it hasn't appeared yet
+    const templateGalleryVisible = await page.getByTestId('template-gallery').isVisible().catch(() => false);
+    if (!templateGalleryVisible) {
+      console.log('  Waiting for template gallery...');
+      await page.waitForTimeout(10000);
+    }
+    
     await takeStepScreenshot(page, '06-after-discovery');
     console.log('✅ Business discovery completed\n');
 

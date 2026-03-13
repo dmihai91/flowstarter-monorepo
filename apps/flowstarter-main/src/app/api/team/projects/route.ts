@@ -20,16 +20,20 @@ export async function GET() {
     let role = (
       sessionClaims?.metadata as { role?: string }
     )?.role?.toLowerCase();
+    console.log('[Team Projects] userId:', userId, 'sessionClaims role:', role);
 
     // Fallback to publicMetadata if not in session claims
     if (!role) {
       const user = await currentUser();
       role = (user?.publicMetadata as { role?: string })?.role?.toLowerCase();
+      console.log('[Team Projects] publicMetadata role:', role);
     }
 
     if (role !== 'team' && role !== 'admin') {
+      console.log('[Team Projects] REJECTED - role:', role);
       return NextResponse.json({ error: 'Not a team member' }, { status: 403 });
     }
+    console.log('[Team Projects] AUTHORIZED - role:', role);
 
     // Use service role client to bypass RLS and fetch all projects
     const supabaseAdmin = createClient(

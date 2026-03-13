@@ -82,6 +82,7 @@ function syncUpdate(supabaseId: string, state: Partial<InitialChatState>): void 
       description: state.projectDescription || undefined,
       templateId: state.selectedTemplateId || undefined,
       businessInfo: state.businessInfo || undefined,
+      quickProfile: state.quickProfile || undefined,
     },
   });
 }
@@ -103,6 +104,7 @@ async function syncCreate(
       description: state.projectDescription || '',
       templateId: state.selectedTemplateId || undefined,
       businessInfo: state.businessInfo || undefined,
+      quickProfile: state.quickProfile || undefined,
     },
   });
 

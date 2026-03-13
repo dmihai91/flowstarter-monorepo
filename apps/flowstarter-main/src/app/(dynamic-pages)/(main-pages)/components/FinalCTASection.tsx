@@ -14,7 +14,7 @@ export function FinalCTASection() {
         <section className="py-8 lg:py-18 mt-8 lg:mt-10 relative overflow-hidden bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#3730a3] dark:from-[#0c0a1d] dark:via-[#14103a] dark:to-[#1e1b4b]">
           {/* Subtle radial glow */}
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-            <div className="w-[700px] h-[450px] rounded-full bg-indigo-500/15 blur-[160px]" />
+            <div className="w-[700px] h-[450px] rounded-full bg-indigo-500/8 blur-[180px]" />
           </div>
 
           {/* Flow lines pattern */}
@@ -44,7 +44,7 @@ export function FinalCTASection() {
               {t('landing.cta.subtitle')}
             </p>
             <a href={EXTERNAL_URLS.calendly.discovery} target="_blank" rel="noopener noreferrer" className="inline-flex justify-center w-full sm:w-auto">
-              <Button className="relative overflow-hidden w-full sm:w-auto hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] rounded-lg px-8 h-12 text-base sm:px-12 sm:h-16 sm:text-lg font-semibold shadow-xl shadow-white/10 transition-all duration-300 hover:scale-105" variant="secondary">
+              <Button className="relative overflow-hidden w-full sm:w-auto hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] rounded-lg px-8 h-12 text-base sm:px-12 sm:h-16 sm:text-lg font-semibold shadow-lg shadow-white/5 transition-all duration-300 hover:scale-105" variant="secondary">
                 {t('landing.cta.button')}
                 <svg
                   className="w-5 h-5 ml-3"

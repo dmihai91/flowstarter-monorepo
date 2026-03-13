@@ -248,63 +248,9 @@ test.describe('Complete Site Build Flow', () => {
     console.log('✅ Quick profile completed\n');
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 5: Business UVP (chat)
+    // STEP 5: Template Selection (quick-profile advances directly here)
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 5: Business UVP');
-    await expect(page.getByText(/unique|value|special|different|apart|stand.*out|competitive|what.*makes/i).first())
-      .toBeVisible({ timeout: 20000 })
-      .catch(() => console.log('  ⚠️ No UVP prompt - proceeding'));
-
-    await sendMessage(page, TEST_PROJECT.uvp);
-    await waitForAssistantResponse(page);
-    await takeStepScreenshot(page, '05-after-uvp');
-    console.log('✅ UVP submitted\n');
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 6: Business Offering (chat)
-    // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 6: Business Offering');
-    await expect(page.getByText(/offer|service|product|sell|package|provide|deliver/i).first())
-      .toBeVisible({ timeout: 20000 })
-      .catch(() => console.log('  ⚠️ No offering prompt - proceeding'));
-
-    await sendMessage(page, TEST_PROJECT.selling + ' ' + TEST_PROJECT.pricing);
-    await waitForAssistantResponse(page);
-    await takeStepScreenshot(page, '06-after-offering');
-    console.log('✅ Offering submitted\n');
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 7: Business Contact (chat)
-    // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 7: Business Contact');
-    await expect(page.getByText(/contact|email|phone|reach|address|location|how.*can.*reach/i).first())
-      .toBeVisible({ timeout: 20000 })
-      .catch(() => console.log('  ⚠️ No contact prompt - proceeding'));
-
-    await sendMessage(page, 'Email: ' + TEST_PROJECT.contactEmail + ', Phone: ' + TEST_PROJECT.contactPhone + ', Address: ' + TEST_PROJECT.contactAddress);
-    await waitForAssistantResponse(page);
-    await takeStepScreenshot(page, '07-after-contact');
-    console.log('✅ Contact info submitted\n');
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 8: Business Summary Confirmation
-    // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 8: Business Summary');
-    // STRICT: Wait for summary
-    await expect(page.getByText(/summary|confirm|look.*good|review|ready|proceed|got.*it|information/i).first())
-      .toBeVisible({ timeout: 20000 })
-      .catch(() => console.log('  ⚠️ No summary prompt - proceeding'));
-    await takeStepScreenshot(page, '11-business-summary');
-
-    await sendMessage(page, 'looks good');
-    await waitForAssistantResponse(page);
-    await takeStepScreenshot(page, '11-after-confirmation');
-    console.log('✅ Summary confirmed\n');
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 9: Template Selection
-    // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 9: Template Selection');
+    console.log('📍 Step 5: Template Selection');
     await page.waitForTimeout(5000); // Wait for templates to load
 
     // STRICT: Template gallery must be visible
@@ -328,7 +274,7 @@ test.describe('Complete Site Build Flow', () => {
     // ═══════════════════════════════════════════════════════════════════════════
     // STEP 10: Personalization (Palette → Font → Logo + AI Images toggle)
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 10: Personalization');
+    console.log('📍 Step 6: Personalization');
     await page.waitForTimeout(3000);
 
     // STEP 13a: Select Palette
@@ -395,7 +341,7 @@ test.describe('Complete Site Build Flow', () => {
     // ═══════════════════════════════════════════════════════════════════════════
     // STEP 11: Integrations Panel - Configure integrations before building
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 11: Integrations Panel');
+    console.log('📍 Step 7: Integrations Panel');
 
     // Wait for integrations panel to appear
     await page.waitForTimeout(2000);
@@ -479,7 +425,7 @@ test.describe('Complete Site Build Flow', () => {
     // ═══════════════════════════════════════════════════════════════════════════
     // STEP 12: Build Process - Wait for preview iframe WITH ACTUAL CONTENT
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 12: Build Process');
+    console.log('📍 Step 8: Build Process');
     await takeStepScreenshot(page, '12-build-start');
 
     // First, wait for the build to progress (check for build phases UI)
@@ -605,7 +551,7 @@ test.describe('Complete Site Build Flow', () => {
     // ═══════════════════════════════════════════════════════════════════════════
     // STEP 12: Verify Flowstarter URL in Address Bar
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 12: Verifying URL Display');
+    console.log('📍 Step 8: Verifying URL Display');
 
     // STRICT: Address bar must show flowstarter.app URL
     const addressBar = page

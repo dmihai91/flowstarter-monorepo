@@ -62,7 +62,7 @@ async function cleanupTestProjects(baseUrl: string) {
 const TEST_TIMESTAMP = Date.now().toString(36).slice(-4); // e.g., "k2a9"
 const TEST_PROJECT = {
   description: 'A fitness coaching website for busy professionals with workout programs and online booking',
-  name: `Iron Hour ${TEST_TIMESTAMP}`,  // Unique name like "Iron Hour k2a9"
+  name: `E2E Test ${TEST_TIMESTAMP}`,  // Unique name the AI won't counter-suggest
   uvp: 'Personalized 15-minute workouts designed for maximum efficiency',
   audience: 'Busy executives and professionals aged 30-50',
   goals: 'Generate leads and book consultations',
@@ -184,40 +184,30 @@ test.describe('Complete Site Build Flow', () => {
     await waitForAssistantResponse(page);
     await takeStepScreenshot(page, '03-after-name');
 
-    // Handle "slug already taken" error - retry with a new unique name
-    const slugTakenMessage = page.getByText(/already taken|try a different name|already exists/i).first();
-    if (await slugTakenMessage.isVisible({ timeout: 2000 }).catch(() => false)) {
-      console.log('  ⚠️ Slug conflict - trying alternative name...');
-      const altName = `Iron Hour ${Date.now().toString(36).slice(-6)}`;
-      await sendMessage(page, altName);
-      await waitForAssistantResponse(page);
-    }
-
-    // Handle AI counter-suggestion — if the AI suggests a different name, accept it
-    const counterSuggestion = page.getByText(/how about|suggest|instead|what about|I'd recommend/i).first();
-    if (await counterSuggestion.isVisible({ timeout: 3000 }).catch(() => false)) {
-      console.log('  AI counter-suggested a name — accepting it');
-      await sendMessage(page, 'Yes, use that name');
-      await waitForAssistantResponse(page);
-    }
-
-    // Handle slug conflict after any name attempt (initial or counter-suggestion)
-    for (let retries = 0; retries < 3; retries++) {
-      const slugError = page.getByText(/already taken|try a different name|already exists|slug.*taken/i).first();
+    // Handle naming edge cases: AI counter-suggestions and slug conflicts
+    for (let nameRetry = 0; nameRetry < 3; nameRetry++) {
+      await page.waitForTimeout(1000);
+      
+      // Check for slug conflict first
+      const slugError = page.getByText(/already taken|try a different/i).first();
       if (await slugError.isVisible({ timeout: 2000 }).catch(() => false)) {
-        const uniqueName = `Forge ${Date.now().toString(36).slice(-6)}`;
-        console.log(`  ⚠️ Slug conflict (retry ${retries + 1}) — trying "${uniqueName}"`);
-        await sendMessage(page, uniqueName);
+        const ts = Date.now().toString(36);
+        console.log(`  Slug conflict - retrying with E2E Run ${ts}`);
+        await sendMessage(page, `E2E Run ${ts}`);
         await waitForAssistantResponse(page);
-        // Accept if AI counter-suggests again
-        const reCounter = page.getByText(/how about|suggest|instead/i).first();
-        if (await reCounter.isVisible({ timeout: 2000 }).catch(() => false)) {
-          await sendMessage(page, 'Yes, use that');
-          await waitForAssistantResponse(page);
-        }
-      } else {
-        break;
+        continue;
       }
+      
+      // Check if AI counter-suggested (it may reject our name and propose alternatives)
+      const counterSuggestion = page.getByText(/how about|instead|I.*suggest|what about/i).first();
+      if (await counterSuggestion.isVisible({ timeout: 2000 }).catch(() => false)) {
+        console.log('  AI counter-suggested - accepting');
+        await sendMessage(page, 'Yes');
+        await waitForAssistantResponse(page);
+        continue; // Check for slug conflict on the accepted name
+      }
+      
+      break;
     }
 
     // The system may ask for confirmation - click the "Yes" button if visible

@@ -15,7 +15,7 @@ import { EditorUserMessage, EditorAssistantMessage, EditorMessageWrapper } from 
 import { TemplatePreviewDialog } from '../TemplatePreviewDialog';
 import { useOptionalConversationContext } from '../ConversationContext';
 
-import { useEditorChatState, useAttachments, useFontsLoader, useConvexSync, useMessagePagination } from './hooks';
+import { useEditorChatState, useAttachments, useFontsLoader, useConvexSync, useMessagePagination, useActivityEvents } from './hooks';
 import { ColorPaletteToColorPalette } from './utils';
 import {
   TemplateGallery,
@@ -174,6 +174,12 @@ export function EditorChatPanel({
     attachedImages, fileInputRef, attachmentMenuRef,
     handleFileSelect, handleScreenshot, removeAttachedImage, clearAttachedImages,
   } = useAttachments();
+
+  // ── Agent activity events for AgentActivityLog ──
+  const activeAgentMsg = messages.findLast(m => m.agentEvents && m.agentEvents.length > 0);
+  const rawAgentEvents = activeAgentMsg?.agentEvents ?? [];
+  const activityEvents = useActivityEvents(rawAgentEvents);
+  const agentIsActive = activeAgentMsg?.isAgentActive ?? false;
 
   // ── Determine which phases show the chat input ──
   const chatInputVisible =
@@ -350,6 +356,17 @@ export function EditorChatPanel({
           progress={buildProgress}
           buildPhase={buildPhase}
         />
+
+        {/* Agent activity log (shown during build when events exist) */}
+        {(step === 'creating' || agentRunning) && activityEvents.length > 0 && (
+          <AgentActivityLog
+            events={activityEvents}
+            isDark={isDark}
+            isActive={agentIsActive}
+            progress={buildProgress}
+            buildPhase={buildPhase as import('./types').BuildPhase}
+          />
+        )}
 
         {/* Typing indicator */}
         <TypingIndicator isTyping={isTyping} />

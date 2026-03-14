@@ -8,7 +8,7 @@ export interface ChatMessage {
   timestamp: number;
   component?: React.ReactNode;
   /** Live agent events for AgentStatusMessage card */
-  agentEvents?: import('~/components/editor/AgentActivityPanel').AgentActivityEvent[];
+  agentEvents?: import('~/lib/services/claude-agent/types').AgentActivityEvent[];
   isAgentActive?: boolean;
 }
 

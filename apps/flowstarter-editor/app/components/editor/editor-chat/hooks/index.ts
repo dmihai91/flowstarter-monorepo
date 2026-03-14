@@ -82,3 +82,6 @@ export {
   type UseQuickProfileHandlersOptions,
   type UseQuickProfileHandlersReturn,
 } from './useQuickProfileHandlers';
+
+// NEW: Agent activity event adapter (AgentActivityEvent → ActivityEvent)
+export { useActivityEvents } from './useActivityEvents';

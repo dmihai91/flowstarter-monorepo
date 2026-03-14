@@ -14,7 +14,7 @@ import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { Plus, UserPlus, FolderOpen, X } from 'lucide-react';
+import { Plus, UserPlus, FolderOpen, X, Sparkles, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
@@ -44,8 +44,15 @@ export default function TeamDashboardPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [showClientModal, setShowClientModal] = useState(false);
-  const [clientInfo, setClientInfo] = useState({ name: '', email: '', phone: '' });
+  const [clientInfo, setClientInfo] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    projectName: '',
+    projectDescription: '',
+  });
   const [isSendingToEditor, setIsSendingToEditor] = useState(false);
+  const [isGeneratingProjectName, setIsGeneratingProjectName] = useState(false);
   const [clientErrors, setClientErrors] = useState<ClientErrors>({});
   const debounceTimers = useRef<Record<string, NodeJS.Timeout>>({});
 
@@ -103,9 +110,42 @@ export default function TeamDashboardPage() {
 
 
   const createNewInEditor = () => {
-    setClientInfo({ name: '', email: '', phone: '' });
+    setClientInfo({
+      name: '',
+      email: '',
+      phone: '',
+      projectName: '',
+      projectDescription: '',
+    });
     setClientErrors({});
     setShowClientModal(true);
+  };
+
+  const handleGenerateProjectName = async () => {
+    if (!clientInfo.name.trim() || isGeneratingProjectName) return;
+
+    setIsGeneratingProjectName(true);
+    try {
+      const res = await fetch('/api/ai/generate-name', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clientName: clientInfo.name,
+          description: clientInfo.projectDescription,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to generate project name');
+      }
+
+      const data = await res.json();
+      setClientInfo(prev => ({ ...prev, projectName: data.name || prev.projectName }));
+    } catch {
+      toast.error('Could not generate a project name');
+    } finally {
+      setIsGeneratingProjectName(false);
+    }
   };
 
   const handleClientSubmit = async () => {
@@ -127,10 +167,11 @@ export default function TeamDashboardPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           projectConfig: {
-            projectName: `${clientInfo.name} — Website`,
+            projectName: clientInfo.projectName || `${clientInfo.name} — Website`,
             clientName: clientInfo.name,
             clientEmail: clientInfo.email,
             clientPhone: clientInfo.phone,
+            description: clientInfo.projectDescription,
           },
           mode: 'interactive',
         }),
@@ -254,6 +295,53 @@ export default function TeamDashboardPage() {
                   className={`mt-1 ${clientErrors.phone ? 'border-red-400 dark:border-red-500/50' : ''}`}
                 />
                 {clientErrors.phone && <p className="text-xs text-red-500 mt-1">{clientErrors.phone}</p>}
+              </div>
+
+              <div className="relative py-1">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-200 dark:border-white/10" />
+                </div>
+                <div className="relative flex justify-center">
+                  <span className="bg-white px-3 text-xs font-medium uppercase tracking-[0.18em] text-gray-400 dark:bg-[color-mix(in_srgb,var(--glass-surface)_95%,transparent)] dark:text-white/40">
+                    Project Details
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">Project Name</Label>
+                <div className="relative mt-1">
+                  <Input
+                    placeholder="e.g. Sunrise Bakery"
+                    value={clientInfo.projectName}
+                    onChange={(e) => setClientInfo(prev => ({ ...prev, projectName: e.target.value }))}
+                    className="pr-11"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleGenerateProjectName}
+                    disabled={isGeneratingProjectName || !clientInfo.name.trim()}
+                    className="absolute right-1 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md border border-gray-200 bg-white text-gray-500 transition-colors hover:border-gray-300 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:bg-white/5 dark:text-white/60 dark:hover:border-white/20 dark:hover:text-white"
+                    aria-label="Generate project name"
+                  >
+                    {isGeneratingProjectName ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Sparkles className="h-3.5 w-3.5" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">Describe the project</Label>
+                <textarea
+                  rows={3}
+                  placeholder="A website for a bakery in Bucharest specializing in sourdough bread and pastries..."
+                  value={clientInfo.projectDescription}
+                  onChange={(e) => setClientInfo(prev => ({ ...prev, projectDescription: e.target.value }))}
+                  className="file:text-foreground placeholder:text-muted-foreground mt-1 flex min-h-[72px] w-full min-w-0 rounded-lg border px-2.5 py-2 text-sm shadow-sm transition-[color,box-shadow,border-color,background-color] outline-none text-gray-900 dark:text-gray-100 bg-white border-gray-300/90 hover:border-gray-400 focus:border-[var(--purple)]/70 focus-visible:border-[var(--purple)]/50 focus-visible:ring-1 focus-visible:ring-[var(--purple)]/20 dark:bg-white/5 dark:backdrop-blur-sm dark:border-white/15 dark:hover:border-white/25 dark:focus-visible:ring-white/20 dark:focus-visible:border-white/40 dark:focus:border-white/40 focus:shadow-none focus-visible:shadow-none resize-none"
+                />
               </div>
             </div>
 

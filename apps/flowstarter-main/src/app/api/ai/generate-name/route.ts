@@ -8,11 +8,14 @@ const RequestSchema = z.object({
   description: z.string().optional().default(''),
 });
 
-function getOpenAIClient() {
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error('OPENAI_API_KEY is not configured');
+function getOpenRouterClient() {
+  if (!process.env.OPENROUTER_API_KEY) {
+    throw new Error('OPENROUTER_API_KEY is not configured');
   }
-  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  return new OpenAI({
+    apiKey: process.env.OPENROUTER_API_KEY,
+    baseURL: 'https://openrouter.ai/api/v1',
+  });
 }
 
 export async function POST(request: NextRequest) {
@@ -31,9 +34,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ name: clientName });
     }
 
-    const openai = getOpenAIClient();
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+    const openrouter = getOpenRouterClient();
+    const response = await openrouter.chat.completions.create({
+      model: 'moonshotai/kimi-k2',
       max_tokens: 30,
       messages: [
         {
@@ -49,7 +52,7 @@ export async function POST(request: NextRequest) {
 
     const name = response.choices[0]?.message?.content?.trim();
     if (!name) {
-      throw new Error('No name returned from OpenAI');
+      throw new Error('No name returned from model');
     }
 
     return NextResponse.json({ name });

@@ -62,7 +62,7 @@ async function cleanupTestProjects(baseUrl: string) {
 const TEST_TIMESTAMP = Date.now().toString(36).slice(-4); // e.g., "k2a9"
 const TEST_PROJECT = {
   description: 'A fitness coaching website for busy professionals with workout programs and online booking',
-  name: `FitPro ${TEST_TIMESTAMP}`,  // Unique name like "FitPro k2a9"
+  name: `Iron Hour ${TEST_TIMESTAMP}`,  // Unique name like "Iron Hour k2a9"
   uvp: 'Personalized 15-minute workouts designed for maximum efficiency',
   audience: 'Busy executives and professionals aged 30-50',
   goals: 'Generate leads and book consultations',
@@ -188,8 +188,16 @@ test.describe('Complete Site Build Flow', () => {
     const slugTakenMessage = page.getByText(/already taken|try a different name|already exists/i).first();
     if (await slugTakenMessage.isVisible({ timeout: 2000 }).catch(() => false)) {
       console.log('  ⚠️ Slug conflict - trying alternative name...');
-      const altName = `FitPro ${Date.now().toString(36).slice(-6)}`;
+      const altName = `Iron Hour ${Date.now().toString(36).slice(-6)}`;
       await sendMessage(page, altName);
+      await waitForAssistantResponse(page);
+    }
+
+    // Handle AI counter-suggestion — if the AI suggests a different name, accept it
+    const counterSuggestion = page.getByText(/how about|suggest|instead|what about|I'd recommend/i).first();
+    if (await counterSuggestion.isVisible({ timeout: 3000 }).catch(() => false)) {
+      console.log('  AI counter-suggested a name — accepting it');
+      await sendMessage(page, 'Yes, use that name');
       await waitForAssistantResponse(page);
     }
 

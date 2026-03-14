@@ -79,7 +79,12 @@ async function quickScaffoldHandoff(page: Page, opts: {
 test.beforeEach(async ({ page }) => {
   await setupClerkTestingToken({ page });
   await page.goto('https://flowstarter.dev');
-  await clerk.signIn({ page, emailAddress: process.env.E2E_USER_EMAIL || 'test@flowstarter.app' });
+  const isSignedIn = await page.evaluate(() => {
+    return document.cookie.includes('__session') || document.cookie.includes('__clerk');
+  });
+  if (!isSignedIn) {
+    await clerk.signIn({ page, emailAddress: process.env.E2E_USER_EMAIL || 'test@flowstarter.app' });
+  }
 });
 
 // ─── Tests ────────────────────────────────────────────────────────────────────

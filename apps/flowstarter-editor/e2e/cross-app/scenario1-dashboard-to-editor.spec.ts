@@ -33,8 +33,6 @@ test.afterEach(async () => {
 
 test.beforeEach(async ({ page }) => {
   await setupClerkTestingToken({ page });
-  await page.goto('https://flowstarter.dev');
-  await clerk.signIn({ page, emailAddress: process.env.E2E_USER_EMAIL || 'test@flowstarter.app' });
 });
 
 // ─── Helper ───────────────────────────────────────────────────────────────────

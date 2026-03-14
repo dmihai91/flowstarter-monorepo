@@ -85,7 +85,15 @@ export function useSendHandler({
         "Once you've made your selections, click **Continue** to proceed!"
       );
     }
-    // Business discovery steps
+    // Business details (consolidated form) - guide user to use the form
+    else if (step === 'business-details') {
+      messageHook.addUserMessage(userInput);
+      messageHook.addAssistantMessage(
+        "Please fill in the form above with your value proposition, services, and contact information. " +
+        "Click **Continue** when you're ready to proceed!"
+      );
+    }
+    // Legacy business discovery steps
     else if (
       step === 'business-uvp' ||
       step === 'business-offering' ||
@@ -267,7 +275,7 @@ export function useSendHandler({
         // Only reset to describe if we're genuinely at the start
         // Never regress from business discovery or later steps
         const currentStep = flowHook.step;
-        const noRegressSteps = ['business-uvp', 'business-offering', 'business-contact', 'business-audience', 'business-goals', 'business-tone', 'business-selling', 'business-pricing', 'business-summary', 'template', 'personalization', 'creating', 'ready'];
+        const noRegressSteps = ['business-details', 'business-uvp', 'business-offering', 'business-contact', 'business-audience', 'business-goals', 'business-tone', 'business-selling', 'business-pricing', 'business-summary', 'template', 'personalization', 'integrations', 'creating', 'ready'];
         if (!noRegressSteps.includes(currentStep)) {
           messageHook.addAssistantMessage(getMessage(MESSAGE_KEYS.READY_SETUP_FIRST));
           flowHook.setStep('describe');

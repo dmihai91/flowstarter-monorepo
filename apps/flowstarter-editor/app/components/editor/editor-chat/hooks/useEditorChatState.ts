@@ -43,7 +43,7 @@ import { useSuggestionHandlers } from './useSuggestionHandlers';
 import { useSendHandler } from './useSendHandler';
 
 // Types
-import type { PreviewInfo, InitialChatState, OnboardingStep } from '../types';
+import type { PreviewInfo, InitialChatState, OnboardingStep, BusinessDetailsData } from '../types';
 
 // Re-export PreviewSource from useAdditionalState
 export type { PreviewSource } from './useAdditionalState';
@@ -293,6 +293,60 @@ export function useEditorChatState({
     onStateChange,
   });
 
+  /**
+   * Handle the consolidated BusinessDetailsForm submission.
+   * Updates business info with UVP, offerings, contact details, then advances to template.
+   */
+  const handleBusinessDetailsComplete = useCallback(
+    async (data: BusinessDetailsData) => {
+      // Merge new business-details data into existing businessInfo
+      const currentInfo = businessHook.businessInfo || {
+        description: flowHook.projectDescription,
+        quickProfile: additionalState.quickProfile || { goal: 'leads' as const, offerType: 'free' as const, tone: 'professional' as const },
+      };
+
+      const updatedInfo = {
+        ...currentInfo,
+        uvp: data.uvp,
+        offerings: data.offerings.map(o => `${o.name}${o.price ? ` (${o.price})` : ''}: ${o.description}`).join('; ') || undefined,
+        contactEmail: data.contactEmail,
+        contactPhone: data.contactPhone,
+        contactAddress: data.contactAddress,
+        website: data.website,
+      };
+
+      businessHook.setBusinessInfo(updatedInfo);
+      onStateChange?.({ businessInfo: updatedInfo });
+
+      // Also store contact details separately
+      if (data.contactEmail) {
+        onStateChange?.({
+          contactDetails: {
+            email: data.contactEmail,
+            phone: data.contactPhone,
+            address: data.contactAddress,
+            website: data.website,
+            ...(data.socialLinks || {}),
+          },
+        });
+      }
+
+      // Transition to template step
+      messageHook.addAssistantMessage(
+        "Great! I've got your business details. Now let's pick the perfect template for your site."
+      );
+      flowHook.setStep('template');
+
+      // Fetch AI recommendations using the updated info
+      templateHook.fetchRecommendations(
+        updatedInfo,
+        flowHook.projectName!,
+        flowHook.projectDescription,
+      );
+    },
+    [messageHook, flowHook, businessHook, templateHook, additionalState, onStateChange],
+  );
+
   // ═══════════════════════════════════════════════════════════════════════
   // Other Handlers
   // ═══════════════════════════════════════════════════════════════════════
@@ -454,6 +508,7 @@ export function useEditorChatState({
     handleSkipContactDetails: buildHandlers.handleSkipContactDetails,
     handleIntegrationsComplete: buildHandlers.handleIntegrationsComplete,
     handleSkipIntegrations: buildHandlers.handleSkipIntegrations,
+    handleBusinessDetailsComplete,
     handleSuggestionAccept,
     handleSend,
     handleThumbnailError: templateHook.handleThumbnailError,

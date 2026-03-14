@@ -1,7 +1,11 @@
-export { SuggestedReplies } from './SuggestedReplies';
+// === NEW components (editor redesign) ===
+export { BusinessDetailsForm } from './BusinessDetailsForm';
 export { TemplateGallery } from './TemplateGallery';
-export { TemplateRecommendationGallery } from './TemplateRecommendationGallery';
-export { FullTemplateGallery } from './FullTemplateGallery';
+export { IntegrationModal } from './IntegrationModal';
+export { AgentActivityLog } from './AgentActivityLog';
+export type { ActivityEvent } from './AgentActivityLog';
+
+// === Kept components ===
 export { PaletteSelector } from './PaletteSelector';
 export { CustomPaletteModal } from './CustomPaletteModal';
 export { FontSelector } from './FontSelector';
@@ -9,8 +13,7 @@ export { PersonalizationPanel } from './PersonalizationPanel';
 export { ChatInput } from './ChatInput';
 export { TypingIndicator } from './TypingIndicator';
 export { CreatingIndicator } from './CreatingIndicator';
-export { BuildTimeline, createBuildSteps, type BuildStep } from './BuildTimeline';
-export { IntegrationsPanel } from './IntegrationsPanel';
-export { ContactDetailsPanel } from './ContactDetailsPanel';
 export { QuickProfileSelector } from './QuickProfileSelector';
-export { BusinessContextCard } from './BusinessContextCard';
+
+// === Kept but not used in new flow (available for legacy/internal) ===
+export { TemplateCard } from './TemplateCard';

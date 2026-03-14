@@ -64,6 +64,7 @@ export const STEP_LABELS: Record<OnboardingStep, string> = {
   describe: 'Describe your project',
   name: 'Name your project',
   'quick-profile': 'Quick profile',
+  'business-details': 'Business details',
   'business-uvp': 'Value proposition',
   'business-offering': 'Your offering',
   'business-audience': 'Target audience',

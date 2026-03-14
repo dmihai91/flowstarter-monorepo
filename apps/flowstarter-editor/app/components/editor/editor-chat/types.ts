@@ -58,23 +58,23 @@ export type OnboardingStep =
   | 'describe'         // What do you sell + who is it for?
   | 'name'             // Project/business name
   | 'quick-profile'    // Goal + Offer + Tone - 3 multiple choice
-  | 'business-uvp'     // What makes you different? (UVP)
-  | 'business-offering' // Package/offering details + selling method
-  | 'business-contact'  // Business contact info (email, phone, address, website)
+  | 'business-details' // Consolidated: UVP + offerings + contact info
   | 'template'         // Pick from recommended templates
   | 'personalization'  // Logo + Colors + Font
+  | 'integrations'     // Calendly + GA integration cards
   | 'creating'         // Build in progress
   | 'ready'            // Done!
-  
+
   // === LEGACY STEPS (deprecated, kept for migration) ===
-  | 'business-audience'// @deprecated - merged into describe
-  | 'business-goals'   // @deprecated - merged into quick-profile
-  | 'business-tone'    // @deprecated - merged into quick-profile
-  | 'business-selling' // @deprecated - merged into quick-profile
-  | 'business-pricing' // @deprecated - merged into quick-profile
-  | 'business-contact' // @deprecated - collect post-publish
-  | 'business-summary' // @deprecated - removed
-  | 'integrations';    // @deprecated - moved to post-publish
+  | 'business-uvp'      // @deprecated - merged into business-details
+  | 'business-offering' // @deprecated - merged into business-details
+  | 'business-contact'  // @deprecated - merged into business-details
+  | 'business-audience' // @deprecated - merged into describe
+  | 'business-goals'    // @deprecated - merged into quick-profile
+  | 'business-tone'     // @deprecated - merged into quick-profile
+  | 'business-selling'  // @deprecated - merged into quick-profile
+  | 'business-pricing'  // @deprecated - merged into quick-profile
+  | 'business-summary'; // @deprecated - removed
 
 // ═══════════════════════════════════════════════════════════════════════════
 // QUICK PROFILE - Replaces 8 business discovery steps
@@ -152,6 +152,25 @@ export interface BusinessInfo {
 // ═══════════════════════════════════════════════════════════════════════════
 // EXISTING TYPES (Unchanged)
 // ═══════════════════════════════════════════════════════════════════════════
+
+/** A single service/offering item for BusinessDetailsForm */
+export interface ServiceOffering {
+  id: string;
+  name: string;
+  description: string;
+  price?: string;
+}
+
+/** Data collected from the BusinessDetailsForm */
+export interface BusinessDetailsData {
+  uvp: string;
+  offerings: ServiceOffering[];
+  contactEmail: string;
+  contactPhone?: string;
+  contactAddress?: string;
+  website?: string;
+  socialLinks?: Record<string, string>;
+}
 
 export interface LogoInfo {
   type: 'uploaded' | 'generated' | 'none';
@@ -254,13 +273,13 @@ export interface CategoryColors {
 /** New streamlined step order */
 export const STREAMLINED_STEPS: OnboardingStep[] = [
   'welcome',
-  'describe', 
+  'describe',
+  'name',
   'quick-profile',
-  'business-uvp',
-  'business-offering',
-  'business-contact',
+  'business-details',
   'template',
   'personalization',
+  'integrations',
   'creating',
   'ready',
 ];

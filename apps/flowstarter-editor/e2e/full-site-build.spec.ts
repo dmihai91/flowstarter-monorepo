@@ -201,6 +201,25 @@ test.describe('Complete Site Build Flow', () => {
       await waitForAssistantResponse(page);
     }
 
+    // Handle slug conflict after any name attempt (initial or counter-suggestion)
+    for (let retries = 0; retries < 3; retries++) {
+      const slugError = page.getByText(/already taken|try a different name|already exists|slug.*taken/i).first();
+      if (await slugError.isVisible({ timeout: 2000 }).catch(() => false)) {
+        const uniqueName = \`Forge \${Date.now().toString(36).slice(-6)}\`;
+        console.log(\`  ⚠️ Slug conflict (retry \${retries + 1}) — trying "\${uniqueName}"\`);
+        await sendMessage(page, uniqueName);
+        await waitForAssistantResponse(page);
+        // Accept if AI counter-suggests again
+        const reCounter = page.getByText(/how about|suggest|instead/i).first();
+        if (await reCounter.isVisible({ timeout: 2000 }).catch(() => false)) {
+          await sendMessage(page, 'Yes, use that');
+          await waitForAssistantResponse(page);
+        }
+      } else {
+        break;
+      }
+    }
+
     // The system may ask for confirmation - click the "Yes" button if visible
     const confirmButton = page.getByRole('button', { name: /yes|sounds good|use this|perfect/i }).first();
     if (await confirmButton.isVisible({ timeout: 2000 }).catch(() => false)) {

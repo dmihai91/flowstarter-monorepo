@@ -205,8 +205,8 @@ test.describe('Complete Site Build Flow', () => {
     for (let retries = 0; retries < 3; retries++) {
       const slugError = page.getByText(/already taken|try a different name|already exists|slug.*taken/i).first();
       if (await slugError.isVisible({ timeout: 2000 }).catch(() => false)) {
-        const uniqueName = \`Forge \${Date.now().toString(36).slice(-6)}\`;
-        console.log(\`  ⚠️ Slug conflict (retry \${retries + 1}) — trying "\${uniqueName}"\`);
+        const uniqueName = `Forge ${Date.now().toString(36).slice(-6)}`;
+        console.log(`  ⚠️ Slug conflict (retry ${retries + 1}) — trying "${uniqueName}"`);
         await sendMessage(page, uniqueName);
         await waitForAssistantResponse(page);
         // Accept if AI counter-suggests again

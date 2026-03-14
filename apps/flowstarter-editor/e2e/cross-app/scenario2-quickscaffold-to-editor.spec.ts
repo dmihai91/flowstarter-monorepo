@@ -8,7 +8,7 @@
  */
 
 import { test, expect, type Page } from '@playwright/test';
-import { setupClerkTestingToken } from '@clerk/testing/playwright';
+import { clerk, setupClerkTestingToken } from '@clerk/testing/playwright';
 import {
   BASE, EDITOR,
   BUSINESS_INFO, CONTACT_INFO,
@@ -75,6 +75,12 @@ async function quickScaffoldHandoff(page: Page, opts: {
   createdProjectId = body.projectId;
   return body;
 }
+
+test.beforeEach(async ({ page }) => {
+  await setupClerkTestingToken({ page });
+  await page.goto('https://flowstarter.dev');
+  await clerk.signIn({ page, emailAddress: process.env.E2E_USER_EMAIL || 'test@flowstarter.app' });
+});
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
@@ -165,7 +171,6 @@ test.describe('Scenario 2: QuickScaffold → AI Enrichment → Editor', () => {
   test('2.4 — QuickScaffold data skips describe/name steps; template selector shown', async ({ page }) => {
     const { editorUrl } = await quickScaffoldHandoff(page);
 
-    await setupClerkTestingToken({ page });
     await page.goto(editorUrl);
     await page.waitForURL(/\/project\//, { timeout: 30_000 });
     await page.waitForTimeout(5000);

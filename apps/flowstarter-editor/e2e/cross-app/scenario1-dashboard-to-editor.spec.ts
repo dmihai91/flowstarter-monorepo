@@ -12,7 +12,7 @@
  */
 
 import { test, expect, type Page } from '@playwright/test';
-import { setupClerkTestingToken } from '@clerk/testing/playwright';
+import { clerk, setupClerkTestingToken } from '@clerk/testing/playwright';
 import {
   BASE, EDITOR,
   BUSINESS_INFO, CONTACT_INFO,
@@ -29,6 +29,12 @@ test.afterEach(async () => {
     await cleanupProject(createdProjectId);
     createdProjectId = undefined;
   }
+});
+
+test.beforeEach(async ({ page }) => {
+  await setupClerkTestingToken({ page });
+  await page.goto('https://flowstarter.dev');
+  await clerk.signIn({ page, emailAddress: process.env.E2E_USER_EMAIL || 'test@flowstarter.app' });
 });
 
 // ─── Helper ───────────────────────────────────────────────────────────────────
@@ -136,7 +142,6 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
       description: BUSINESS_INFO.description,
     });
 
-    await setupClerkTestingToken({ page });
     await page.goto(editorHandoffUrl(token));
     // Real Convex WS connection + project/conversation creation
     await page.waitForURL(/\/project\//, { timeout: 30_000 });
@@ -152,7 +157,6 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
   test('1.6 — without businessInfo, editor shows business collection chat', async ({ page }) => {
     const { token } = await callHandoff(page, { name: testProjectName() });
 
-    await setupClerkTestingToken({ page });
     await page.goto(editorHandoffUrl(token));
     await page.waitForURL(/\/project\//, { timeout: 30_000 });
     await page.waitForTimeout(3000);
@@ -170,7 +174,6 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
       contactInfo: CONTACT_INFO,
     });
 
-    await setupClerkTestingToken({ page });
     await page.goto(editorHandoffUrl(token));
     await page.waitForURL(/\/project\//, { timeout: 30_000 });
     await page.waitForTimeout(5000); // useWelcomeInit advances step
@@ -197,7 +200,6 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
     console.log('[1.8] Project created:', projectId);
 
     // ── Step 2: Browser loads editor — chat collects business description ────
-    await setupClerkTestingToken({ page });
     await page.goto(editorHandoffUrl(token));
     await page.waitForURL(/\/project\//, { timeout: 30_000 });
     await page.waitForTimeout(3000);
@@ -332,7 +334,6 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
       await route.continue();
     });
 
-    await setupClerkTestingToken({ page });
     await page.goto(editorHandoffUrl(token));
     await page.waitForURL(/\/project\//, { timeout: 30_000 });
     await page.waitForTimeout(4000);

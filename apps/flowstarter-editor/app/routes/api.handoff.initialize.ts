@@ -95,34 +95,30 @@ export async function action({ request, context }: ActionFunctionArgs) {
   const rawBusinessInfo = data?.businessInfo as Record<string, unknown> | undefined;
   const client = data?.client as Record<string, unknown> | undefined;
   const contactInfo = data?.contactInfo as Record<string, unknown> | undefined;
+  // Strip to known fields only — Convex schema rejects unknown fields
+  const contactEmail = (rawBusinessInfo?.contactEmail as string | undefined) ||
+    (client?.email as string | undefined) || (contactInfo?.email as string | undefined);
+  const contactPhone = (rawBusinessInfo?.contactPhone as string | undefined) ||
+    (client?.phone as string | undefined) || (contactInfo?.phone as string | undefined);
+  const contactAddress = (rawBusinessInfo?.contactAddress as string | undefined) ||
+    (contactInfo?.address as string | undefined);
+  const website = (rawBusinessInfo?.website as string | undefined) ||
+    (contactInfo?.website as string | undefined);
+
   const businessInfo = rawBusinessInfo
     ? {
-        ...rawBusinessInfo,
-        contactEmail:
-          (rawBusinessInfo.contactEmail as string | undefined) ||
-          (client?.email as string | undefined) ||
-          (contactInfo?.email as string | undefined),
-        contactPhone:
-          (rawBusinessInfo.contactPhone as string | undefined) ||
-          (client?.phone as string | undefined) ||
-          (contactInfo?.phone as string | undefined),
-        contactAddress:
-          (rawBusinessInfo.contactAddress as string | undefined) ||
-          (contactInfo?.address as string | undefined),
-        website:
-          (rawBusinessInfo.website as string | undefined) ||
-          (contactInfo?.website as string | undefined),
+        description: rawBusinessInfo.description as string | undefined,
+        uvp: rawBusinessInfo.uvp as string | undefined,
+        targetAudience: rawBusinessInfo.targetAudience as string | undefined,
+        industry: rawBusinessInfo.industry as string | undefined,
+        brandTone: rawBusinessInfo.brandTone as string | undefined,
+        businessType: rawBusinessInfo.offerType as string | undefined,
+        businessGoals: rawBusinessInfo.goal ? [rawBusinessInfo.goal as string] : undefined,
+        sellingMethod: rawBusinessInfo.sellingMethod as string | undefined,
+        pricingOffers: rawBusinessInfo.offerings as string | undefined,
+        contactEmail, contactPhone, contactAddress, website,
       }
-    : {
-        contactEmail:
-          (client?.email as string | undefined) ||
-          (contactInfo?.email as string | undefined),
-        contactPhone:
-          (client?.phone as string | undefined) ||
-          (contactInfo?.phone as string | undefined),
-        contactAddress: contactInfo?.address as string | undefined,
-        website: contactInfo?.website as string | undefined,
-      };
+    : { contactEmail, contactPhone, contactAddress, website };
   const hasBusinessData = !!(
     (businessInfo as { description?: string })?.description ||
     projectDescription.length > 10

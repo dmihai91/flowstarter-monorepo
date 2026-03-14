@@ -58,13 +58,27 @@ const handoffInitialize = httpAction(async (ctx, request) => {
       urlId = created.urlId;
     }
 
-    const bi = businessInfo as { description?: string; uvp?: string; targetAudience?: string; industry?: string; goal?: string; offerType?: string } | undefined;
+    const bi = businessInfo as {
+      description?: string; uvp?: string; targetAudience?: string; industry?: string;
+      brandTone?: string; sellingMethod?: string; pricingOffers?: string;
+      goal?: string; offerType?: string; businessGoals?: string[]; businessType?: string;
+    } | undefined;
     const conversationId = await ctx.runMutation(api.conversations.createWithProject, {
       sessionId: `project-${convexProjectId}`,
       projectId: convexProjectId as never,
       projectUrlId: urlId,
       projectName, projectDescription, step,
-      businessInfo: bi ? { description: bi.description || projectDescription, uvp: bi.uvp, targetAudience: bi.targetAudience, industry: bi.industry, businessGoals: bi.goal ? [bi.goal] : undefined, businessType: bi.offerType } : undefined,
+      businessInfo: bi ? {
+        description: bi.description || projectDescription,
+        uvp: bi.uvp,
+        targetAudience: bi.targetAudience,
+        industry: bi.industry,
+        brandTone: bi.brandTone,
+        sellingMethod: bi.sellingMethod,
+        pricingOffers: bi.pricingOffers,
+        businessGoals: bi.businessGoals || (bi.goal ? [bi.goal] : undefined),
+        businessType: bi.businessType || bi.offerType,
+      } : undefined,
     }) as string;
 
     return new Response(JSON.stringify({ conversationId }), { headers: { 'Content-Type': 'application/json' } });

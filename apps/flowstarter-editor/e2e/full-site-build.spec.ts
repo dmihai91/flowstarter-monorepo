@@ -198,13 +198,16 @@ test.describe('Complete Site Build Flow', () => {
         continue;
       }
       
-      // Check if AI counter-suggested (it may reject our name and propose alternatives)
-      const counterSuggestion = page.getByText(/how about|instead|I.*suggest|what about/i).first();
-      if (await counterSuggestion.isVisible({ timeout: 2000 }).catch(() => false)) {
-        console.log('  AI counter-suggested - accepting');
-        await sendMessage(page, 'Yes');
-        await waitForAssistantResponse(page);
-        continue; // Check for slug conflict on the accepted name
+      // Check if AI counter-suggested — but only if chat-input is still visible (step hasn't advanced)
+      const chatStillVisible = await page.getByTestId('chat-input').isVisible({ timeout: 1000 }).catch(() => false);
+      if (chatStillVisible) {
+        const counterSuggestion = page.getByText(/how about|instead|I.*suggest|what about/i).first();
+        if (await counterSuggestion.isVisible({ timeout: 2000 }).catch(() => false)) {
+          console.log('  AI counter-suggested - accepting');
+          await sendMessage(page, 'Yes');
+          await waitForAssistantResponse(page);
+          continue;
+        }
       }
       
       break;

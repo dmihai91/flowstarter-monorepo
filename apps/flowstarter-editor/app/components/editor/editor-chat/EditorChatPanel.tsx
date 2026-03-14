@@ -276,7 +276,7 @@ export function EditorChatPanel({
         )}
 
         {/* Business Details (consolidated form) */}
-        {step === 'business-details' && (
+        {(step === 'business-details' || step === 'business-uvp' || step === 'business-offering' || step === 'business-contact') && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="ml-10">
             <BusinessDetailsForm
               isDark={isDark}

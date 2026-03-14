@@ -24,6 +24,7 @@ import {
 import { resolvePreviewUrlFromResult } from '~/lib/services/daytona/previewUrl';
 import { tryDeterministicFix } from '~/lib/services/claude-agent/errorFixMap';
 import { healBuildErrors } from '~/lib/services/claude-agent/errorHealing';
+import { validateAndFixFiles } from '~/lib/services/claude-agent/astValidation';
 import type { BuildError } from '~/lib/services/claude-agent/types';
 import { getConvexClient } from './onboarding-chat/cost-logging';
 import { api } from '../../convex/_generated/api';
@@ -233,6 +234,35 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentE
     }
 
     send({ type: 'progress', phase: 'generate', message: `Generated ${result.files.length} files` });
+
+    const generatedFilesRecord: Record<string, string> = {};
+    for (const file of result.files) {
+      generatedFilesRecord[file.path] = file.content;
+    }
+    const validationResult = validateAndFixFiles(generatedFilesRecord);
+    if (validationResult.fixCount > 0) {
+      result.files = result.files.map((file) => ({
+        ...file,
+        content: validationResult.fixedFiles[file.path] ?? file.content,
+      }));
+      console.log(
+        '[Build:Simple] Pre-sandbox validation applied fixes:',
+        validationResult.fixCount,
+        validationResult.fixSummary,
+      );
+      send({
+        type: 'progress',
+        phase: 'generate',
+        message: `Pre-sandbox validation applied ${validationResult.fixCount} fixes`,
+      });
+      sendAgentEvent?.({
+        type: 'text',
+        content: `Pre-sandbox validation applied ${validationResult.fixCount} fixes`,
+      });
+      for (const summary of validationResult.fixSummary) {
+        sendAgentEvent?.({ type: 'text', content: `[ASTValidation] ${summary}` });
+      }
+    }
 
     // Wait for prewarm
     const prewarmedSandbox: PrewarmedSandbox | null = await prewarmPromise;

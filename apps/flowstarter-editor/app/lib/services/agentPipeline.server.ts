@@ -9,6 +9,7 @@ import { mkdir, readFile, readdir, rm, writeFile } from 'fs/promises';
 import { tmpdir } from 'os';
 import { dirname, join } from 'path';
 
+import { validateAndFixFiles } from './claude-agent/astValidation';
 import { fixContentImports } from './postProcessAstro';
 import { buildTemplateIndex } from './templateIndex';
 import { trackLLMUsage, syncCostsToSupabase } from '~/lib/.server/llm/cost-tracker';
@@ -78,9 +79,18 @@ function generateBoilerplate(input: SiteGenerationInput): GeneratedFile[] {
   ];
 }
 
-function buildPrompt(input: SiteGenerationInput, templateIndex: string): string {
+function buildPrompt(input: SiteGenerationInput, templateIndex: string, templateFiles: GeneratedFile[]): string {
   const biz = input.businessInfo as Record<string, unknown>;
   const contact = getContactInfo(input);
+  const layoutFile = templateFiles.find((f) => f.path.includes('Layout.astro'));
+  const indexFile = templateFiles.find((f) => f.path.includes('pages/index.astro'));
+  let referenceSection = '';
+  if (layoutFile) {
+    referenceSection += `\n\nREFERENCE — Working Layout.astro:\n\`\`\`astro\n${layoutFile.content.slice(0, 3000)}\n\`\`\``;
+  }
+  if (indexFile) {
+    referenceSection += `\n\nREFERENCE — Working index.astro:\n\`\`\`astro\n${indexFile.content.slice(0, 2000)}\n\`\`\``;
+  }
   return `Build an Astro website. Config files (astro.config, tailwind, global.css) are ALREADY written.
 
 Business: ${input.businessInfo.name || input.siteName}
@@ -91,6 +101,7 @@ Color: ${input.design?.primaryColor ?? '#3B82F6'} | Tone: ${String(biz.brandTone
 
 Template reference:
 ${templateIndex}
+${referenceSection}
 
 Write these files (use the Write tool for each):
 1. src/layouts/Layout.astro — head, responsive nav, <slot/>, footer
@@ -104,7 +115,8 @@ Write these files (use the Write tool for each):
 9. src/pages/services.astro — detailed services
 10. src/pages/contact.astro — form + hours
 
-Rules: business language, inline SVGs, no astro-icon, no content/*.md imports, no emoji, (el as HTMLElement).style in scripts.`;
+Rules: business language, inline SVGs, no astro-icon, no content/*.md imports, no emoji, (el as HTMLElement).style in scripts.
+CRITICAL — the sandbox only has astro, @astrojs/tailwind, and tailwindcss installed. Do NOT import any other packages. Use inline SVGs instead of icon libraries. Use static data arrays instead of content collections.`;
 }
 
 async function collectDir(dir: string, base = ''): Promise<GeneratedFile[]> {
@@ -157,7 +169,7 @@ export async function runAgentPipeline(
 
     // Build prompt
     const templateIndex = buildTemplateIndex(templateFiles);
-    const prompt = buildPrompt(input, templateIndex);
+    const prompt = buildPrompt(input, templateIndex, templateFiles);
 
     // Run Agent SDK
     progress('Agent generating website...');
@@ -172,7 +184,18 @@ export async function runAgentPipeline(
         model: MODEL,
         maxTurns: MAX_TURNS_GENERATE,
         maxBudgetUsd: MAX_BUDGET_GENERATE,
-        systemPrompt: 'Expert Astro/Tailwind developer. Write files immediately. No explanations needed.',
+        systemPrompt: `Expert Astro/Tailwind developer building a client website. Write files immediately. No explanations.
+
+CRITICAL RULES — violations cause build failures:
+- NEVER import astro-icon or any external npm package (only astro, @astrojs/tailwind, tailwindcss are installed)
+- NEVER use getCollection() or astro:content — there are no content collections
+- NEVER import from content/*.md — use inline data arrays instead
+- NEVER use <Icon> components — use inline SVG or Unicode characters
+- ALL .astro files must have matching --- fences (open and close)
+- ALL imports in frontmatter must end with semicolons
+- Use (el as HTMLElement).style for DOM access in <script> tags
+- Images: use placeholder URLs like https://placehold.co/800x600
+- Every component must be self-contained with no external dependencies`,
         tools: ['Read', 'Write', 'Edit', 'Glob'],
         allowedTools: ['Read', 'Write', 'Edit', 'Glob'],
         persistSession: false,
@@ -226,6 +249,21 @@ export async function runAgentPipeline(
       }
     }
     const files = fixContentImports(filtered);
+    const filesRecord: Record<string, string> = {};
+    for (const file of files) {
+      filesRecord[file.path] = file.content;
+    }
+    const validationResult = validateAndFixFiles(filesRecord);
+    if (validationResult.fixCount > 0) {
+      for (const file of files) {
+        file.content = validationResult.fixedFiles[file.path] ?? file.content;
+      }
+      console.log(`[AgentPipeline] Pre-deploy validation: ${validationResult.fixCount} fixes applied`);
+      emit({ type: 'text', content: `[AgentPipeline] Pre-deploy validation: ${validationResult.fixCount} fixes applied` });
+      for (const summary of validationResult.fixSummary) {
+        emit({ type: 'text', content: `[ASTValidation] ${summary}` });
+      }
+    }
 
     const durationMs = Date.now() - startedAt;
     emit({ type: 'done', duration_ms: durationMs, turns, cost_usd: 0, input_tokens: 0, output_tokens: 0 });

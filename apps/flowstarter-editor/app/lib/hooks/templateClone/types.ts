@@ -48,6 +48,8 @@ export interface CloneOptions {
   projectName: string;
   palette: ColorPalette;
   fonts: FontPairing;
+  existingProjectId?: string;
+  existingUrlId?: string;
 }
 
 export interface CloneResult {
@@ -60,4 +62,3 @@ export interface UseTemplateCloneResult {
   isCloning: boolean;
   error: string | null;
 }
-

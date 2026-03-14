@@ -1,7 +1,7 @@
 /**
  * useTemplateClone Hook (Refactored)
  *
- * Hook to clone a template from the Flowstarter MCP server and create a new project in Convex.
+ * Hook to clone a template from the Flowstarter MCP server.
  * Uses extracted modules for better maintainability.
  */
 
@@ -17,7 +17,8 @@ import { fetchScaffoldData, createFileBatches, applyCustomizations } from './tem
 export { clearTemplateCache } from './templateClone';
 
 /**
- * Hook to clone a template from the Flowstarter MCP server and create a new project in Convex
+ * Hook to clone a template from the Flowstarter MCP server.
+ * If an existing Convex project is provided, files are cloned into that project.
  */
 export function useTemplateClone(): UseTemplateCloneResult {
   const [isCloning, setIsCloning] = useState(false);
@@ -30,7 +31,7 @@ export function useTemplateClone(): UseTemplateCloneResult {
   const createSnapshot = useMutation(api.snapshots.create);
 
   const cloneTemplate = useCallback(
-    async ({ template, projectName, palette, fonts }: CloneOptions): Promise<CloneResult> => {
+    async ({ template, projectName, palette, fonts, existingProjectId, existingUrlId }: CloneOptions): Promise<CloneResult> => {
       console.log(`[cloneTemplate] Starting clone for template "${template.id}"`);
 
       const startTime = Date.now();
@@ -39,7 +40,9 @@ export function useTemplateClone(): UseTemplateCloneResult {
 
       try {
         // First try the direct MCP → Convex endpoint (faster for small templates)
-        const result = await tryMcpEndpoint({ template, projectName, palette, fonts, startTime });
+        const result = existingProjectId
+          ? null
+          : await tryMcpEndpoint({ template, projectName, palette, fonts, startTime });
 
         if (result) {
           return result;
@@ -51,6 +54,8 @@ export function useTemplateClone(): UseTemplateCloneResult {
           projectName,
           palette,
           fonts,
+          existingProjectId,
+          existingUrlId,
           startTime,
           createProject,
           generateUrlId,
@@ -161,6 +166,8 @@ async function clientSideBatchedUpload({
   projectName,
   palette,
   fonts,
+  existingProjectId,
+  existingUrlId,
   startTime,
   createProject,
   generateUrlId,
@@ -175,32 +182,35 @@ async function clientSideBatchedUpload({
 
   console.log(`[cloneTemplate] Fetched ${files.length} files, preparing batched upload...`);
 
-  // 2. Generate URL ID
-  const urlId = await generateUrlId({ baseName: projectName });
-  console.log(`[cloneTemplate] Generated urlId: ${urlId}`);
+  const urlId = existingUrlId || (await generateUrlId({ baseName: projectName }));
+  if (!existingUrlId) {
+    console.log(`[cloneTemplate] Generated urlId: ${urlId}`);
+  }
 
-  // 3. Create project in Convex
-  const projectId = await createProject({
-    name: projectName,
-    urlId,
-    description: projectName,
-    palette: {
-      id: palette.id,
-      name: palette.name,
-      colors: palette.colors,
-    },
-    fonts: {
-      id: fonts.id,
-      name: fonts.name,
-      heading: fonts.heading,
-      body: fonts.body,
-      googleFonts: fonts.googleFonts,
-    },
-    metadata: {
-      templateId: template.id,
-    },
-  });
-  console.log(`[cloneTemplate] Created project: ${projectId}`);
+  // 3. Create project in Convex unless this clone targets an existing project
+  const projectId = existingProjectId
+    ? existingProjectId
+    : await createProject({
+        name: projectName,
+        urlId,
+        description: projectName,
+        palette: {
+          id: palette.id,
+          name: palette.name,
+          colors: palette.colors,
+        },
+        fonts: {
+          id: fonts.id,
+          name: fonts.name,
+          heading: fonts.heading,
+          body: fonts.body,
+          googleFonts: fonts.googleFonts,
+        },
+        metadata: {
+          templateId: template.id,
+        },
+      });
+  console.log(`[cloneTemplate] ${existingProjectId ? 'Reusing' : 'Created'} project: ${projectId}`);
 
   // 4. Upload files in batches
   const batches = createFileBatches(files);
@@ -240,4 +250,3 @@ async function clientSideBatchedUpload({
     projectId,
   };
 }
-

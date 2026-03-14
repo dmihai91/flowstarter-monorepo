@@ -92,7 +92,37 @@ export async function action({ request, context }: ActionFunctionArgs) {
   const projectName = projectData?.name || 'Untitled Project';
   const projectDescription = projectData?.description || '';
   const data = projectData?.data as Record<string, unknown> | undefined;
-  const businessInfo = data?.businessInfo as Record<string, unknown> | undefined;
+  const rawBusinessInfo = data?.businessInfo as Record<string, unknown> | undefined;
+  const client = data?.client as Record<string, unknown> | undefined;
+  const contactInfo = data?.contactInfo as Record<string, unknown> | undefined;
+  const businessInfo = rawBusinessInfo
+    ? {
+        ...rawBusinessInfo,
+        contactEmail:
+          (rawBusinessInfo.contactEmail as string | undefined) ||
+          (client?.email as string | undefined) ||
+          (contactInfo?.email as string | undefined),
+        contactPhone:
+          (rawBusinessInfo.contactPhone as string | undefined) ||
+          (client?.phone as string | undefined) ||
+          (contactInfo?.phone as string | undefined),
+        contactAddress:
+          (rawBusinessInfo.contactAddress as string | undefined) ||
+          (contactInfo?.address as string | undefined),
+        website:
+          (rawBusinessInfo.website as string | undefined) ||
+          (contactInfo?.website as string | undefined),
+      }
+    : {
+        contactEmail:
+          (client?.email as string | undefined) ||
+          (contactInfo?.email as string | undefined),
+        contactPhone:
+          (client?.phone as string | undefined) ||
+          (contactInfo?.phone as string | undefined),
+        contactAddress: contactInfo?.address as string | undefined,
+        website: contactInfo?.website as string | undefined,
+      };
   const hasBusinessData = !!(
     (businessInfo as { description?: string })?.description ||
     projectDescription.length > 10

@@ -68,6 +68,7 @@ function slugifyName(text: string): string {
     .slice(0, 40);
 }
 
+// NOTE: Projects should be created from dashboard handoff, not directly.
 // Create a new project
 export const create = mutation({
   args: {
@@ -359,6 +360,7 @@ export const generateUrlId = mutation({
   },
 });
 
+// NOTE: Projects should be created from dashboard handoff, not directly.
 // Create an empty project immediately when user starts (first prompt)
 // Data is populated incrementally as user progresses through onboarding
 export const createEmpty = mutation({

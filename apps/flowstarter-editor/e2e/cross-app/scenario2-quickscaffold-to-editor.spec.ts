@@ -243,6 +243,10 @@ test.describe('Scenario 2: QuickScaffold → AI Enrichment → Editor', () => {
       contactDetails: { phone: '+40 256 123 456', email: 'contact@fitness.ro', address: 'Timișoara, România' },
     };
 
+// Navigate to editor so page.route and page.evaluate work on the right origin
+    await page.goto(`${EDITOR}?handoff=${encodeURIComponent(token)}`);
+    await page.waitForURL(/\/project\//, { timeout: 30_000 });
+
 // ── Mock /api/build SSE — agent SDK requires direct Anthropic credit ──────
     await page.route('**/api/build', async (route) => {
       const sseBody = [
@@ -296,7 +300,7 @@ test.describe('Scenario 2: QuickScaffold → AI Enrichment → Editor', () => {
         }
       }
       return { events, status: res.status };
-    }, { url: `${EDITOR}/api/build`, payload: buildPayload });
+    }, { url: `/api/build`, payload: buildPayload });
 
     console.log('[2.5] /api/build status:', buildRes.status, '— events:', buildRes.events.length);
     expect(buildRes.status).toBe(200);

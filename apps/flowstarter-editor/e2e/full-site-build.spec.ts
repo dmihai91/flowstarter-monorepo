@@ -46,12 +46,13 @@ async function cleanupTestProjects(baseUrl: string) {
  * 1. Welcome screen
  * 2. Project description
  * 3. Project naming
- * 4. Business discovery (UVP, audience, goals, tone, selling, pricing)
- * 5. Business summary confirmation
+ * 4. Quick profile
+ * 5. Business details
  * 6. Template selection
  * 7. Personalization (palette, font, logo)
- * 8. Build process
- * 9. Working site preview - MUST verify iframe loads actual content
+ * 8. Integrations
+ * 9. Build process
+ * 10. Working site preview - MUST verify iframe loads actual content
  *
  * This test is STRICT - no fallbacks allowed. If any step fails, the test fails.
  * Uses data-testid attributes for reliable element selection.
@@ -68,10 +69,7 @@ const TEST_PROJECT = {
   tone: 'Professional yet motivating',
   selling: 'Online booking for training sessions',
   pricing: 'Monthly packages starting at $99',
-  // Contact details for new business-contact step
   contactEmail: 'coach@fitpro-test.com',
-  contactPhone: '+1 555-123-4567',
-  contactAddress: '123 Fitness St, Health City, HC 12345',
 };
 
 // Utility functions using test IDs - STRICT, no fallbacks
@@ -112,7 +110,7 @@ test.describe('Complete Site Build Flow', () => {
     await cleanupTestProjects('http://localhost:5173');
   });
 
-  test('Full journey: Welcome → Description → Name → Business → Template → Build → Preview', async ({ page }) => {
+  test('Full journey: Welcome → Description → Name → Quick Profile → Business Details → Template → Personalization → Integrations → Build → Preview', async ({ page }) => {
     // Authenticate as test user via Clerk testing token
     await setupClerkTestingToken({ page });
     await page.goto('https://flowstarter.dev');
@@ -248,75 +246,51 @@ test.describe('Complete Site Build Flow', () => {
     console.log('✅ Quick profile completed\n');
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 5: Business UVP (chat — AI asks after quick-profile)
+    // STEP 5: Business Details (supports current business-uvp fallback)
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 5: Business UVP');
-    // Wait for AI to ask about UVP
-    await page.waitForTimeout(3000);
-    await expect(page.getByText(/unique|value|special|different|apart|stand.*out|competitive|what.*makes/i).first())
-      .toBeVisible({ timeout: 20000 })
-      .catch(() => console.log('  ⚠️ No UVP prompt - proceeding'));
-    await sendMessage(page, TEST_PROJECT.uvp);
-    await waitForAssistantResponse(page);
-    await takeStepScreenshot(page, '05-after-uvp');
-    console.log('✅ UVP submitted\n');
+    console.log('📍 Step 5: Business Details');
+    const businessUvpInput = page.getByTestId('business-uvp-input');
+    const businessDetailsForm = page.getByTestId('business-details-form');
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 6: Continue through remaining business discovery steps
-    // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 6: Remaining business discovery');
-    // The AI asks about offering, contact info, etc. Respond until template gallery appears.
-    const discoveryResponses = [
-      'We offer premium 1-on-1 fitness coaching sessions, both in-person and online. Packages start at €150/session.',
-      'Email: coach@ironhour.com, Phone: +40712345678, Address: Str. Victoriei 42, Bucharest, Romania',
-      'Yes, that looks great. Let\'s proceed!',
-    ];
-    
-    for (let i = 0; i < discoveryResponses.length; i++) {
-      await page.waitForTimeout(3000);
-      
-      // Check if template gallery or template step appeared
-      const templateVisible = await page.getByTestId('template-gallery').isVisible().catch(() => false);
-      const templateGridVisible = await page.getByTestId('template-grid').isVisible().catch(() => false);
-      if (templateVisible || templateGridVisible) {
-        console.log('  Template gallery appeared — business discovery complete');
-        break;
-      }
-      
-      // Check if chat input is still available (if not, step may have advanced to a UI panel)
-      const chatInput = page.getByTestId('chat-input');
-      const inputVisible = await chatInput.isVisible().catch(() => false);
-      if (!inputVisible) {
-        console.log('  Chat input not visible — step may have advanced to UI panel');
-        break;
-      }
-      
-      // Send the next response
-      console.log('  Responding to discovery prompt ' + (i + 1) + '...');
-      await sendMessage(page, discoveryResponses[i]);
-      await waitForAssistantResponse(page);
+    await expect
+      .poll(
+        async () =>
+          (await businessDetailsForm.isVisible().catch(() => false)) ||
+          (await businessUvpInput.isVisible().catch(() => false)),
+        { timeout: 30000 }
+      )
+      .toBeTruthy();
+
+    const directBusinessDetailsVisible = await businessDetailsForm.isVisible().catch(() => false);
+    if (!directBusinessDetailsVisible) {
+      console.log('  Quick profile routed to legacy business-uvp step; waiting for consolidated form');
+      await expect(businessUvpInput).toBeVisible({ timeout: 20000 });
+      await expect(businessDetailsForm).toBeVisible({ timeout: 20000 });
+    } else {
+      await expect(businessUvpInput).toBeVisible({ timeout: 10000 });
     }
-    
-    // Wait for template gallery with generous timeout
-    console.log('  Waiting for template gallery...');
-    await expect(page.getByTestId('template-gallery')).toBeVisible({ timeout: 60000 }).catch(() => {
-      console.log('  ⚠️ Template gallery not visible after 60s');
-    });
-    
-    await takeStepScreenshot(page, '06-after-discovery');
-    console.log('✅ Business discovery completed\n');
+
+    await expect(page.getByTestId('chat-input')).toBeHidden({ timeout: 10000 });
+    await takeStepScreenshot(page, '05-business-details');
+
+    await businessUvpInput.fill(TEST_PROJECT.uvp);
+    await page.getByTestId('business-email-input').fill(TEST_PROJECT.contactEmail);
+    await page.getByTestId('business-details-continue').click();
+    await takeStepScreenshot(page, '05-after-business-details');
+    console.log('✅ Business details submitted\n');
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 7: Template Selection
+    // STEP 6: Template Selection
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 9: Template Selection');
-    await page.waitForTimeout(5000); // Wait for templates to load
+    console.log('📍 Step 6: Template Selection');
 
     // STRICT: Template gallery must be visible
     const templateGallery = page.getByTestId('template-gallery').first();
     await expect(templateGallery).toBeVisible({ timeout: 30000 });
+    await expect(page.getByTestId('template-grid')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('chat-input')).toBeHidden({ timeout: 10000 });
     console.log('  Template gallery visible');
-    await takeStepScreenshot(page, '12-template-selection');
+    await takeStepScreenshot(page, '06-template-selection');
 
     // STRICT: At least one template card must exist
     const templateCards = page.locator('[data-testid^="template-card-"]');
@@ -327,14 +301,15 @@ test.describe('Complete Site Build Flow', () => {
     // Click the first template card
     await templateCards.first().click();
     await page.waitForTimeout(3000);
-    await takeStepScreenshot(page, '12-template-selected');
+    await takeStepScreenshot(page, '06-template-selected');
     console.log('✅ Template selected\n');
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 10: Personalization (Palette → Font → Logo + AI Images toggle)
+    // STEP 7: Personalization (Palette → Font → Logo + AI Images toggle)
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 10: Personalization');
+    console.log('📍 Step 7: Personalization');
     await page.waitForTimeout(3000);
+    await expect(page.getByTestId('chat-input')).toBeHidden({ timeout: 10000 });
 
     // STEP 13a: Select Palette
     console.log('📍 Step 13a: Selecting palette...');
@@ -398,94 +373,41 @@ test.describe('Complete Site Build Flow', () => {
     console.log('✅ Logo skipped\n');
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 11: Integrations Panel - Configure integrations before building
+    // STEP 8: Integrations Panel
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 9: Integrations Panel');
+    console.log('📍 Step 8: Integrations Panel');
 
     // Wait for integrations panel to appear
     await page.waitForTimeout(2000);
-    await takeStepScreenshot(page, '11-integrations-panel');
+    const integrationsPanel = page.getByTestId('integrations-panel');
+    await expect(integrationsPanel).toBeVisible({ timeout: 15000 });
+    await expect(page.getByTestId('chat-input')).toBeHidden({ timeout: 10000 });
+    await takeStepScreenshot(page, '08-integrations-panel');
 
-    // Verify integrations panel title (use first() since it appears in both left and right panels)
-    const integrationsTitle = page.locator('text=Connect Your Services').first();
-    await expect(integrationsTitle).toBeVisible({ timeout: 10000 });
-    console.log('  ✅ Integrations panel title visible');
-
-    // Test 1: Enable Booking toggle
-    console.log('  📍 Testing Booking integration...');
-    // Find all toggle switches and click the first one (Booking)
-    const allToggles = page.locator('button[role="switch"]');
-    const bookingToggle = allToggles.first();
-    if (await bookingToggle.isVisible({ timeout: 3000 })) {
-      await bookingToggle.click();
-      await page.waitForTimeout(1000);
-      console.log('    ✅ Booking toggle enabled');
-      await takeStepScreenshot(page, '11-booking-enabled');
-
-      // Enter Calendly URL (using real test URL)
-      const calendlyInput = page.locator('input[placeholder*="calendly" i]');
-      if (await calendlyInput.isVisible({ timeout: 3000 })) {
-        await calendlyInput.fill('https://calendly.com/darius-popescu1191/30min');
-        await page.waitForTimeout(500);
-        console.log('    ✅ Calendly URL entered: https://calendly.com/darius-popescu1191/30min');
-        await takeStepScreenshot(page, '11-calendly-url');
-      }
-    } else {
-      console.log('    ⚠️ Booking toggle not found');
-    }
-
-    // Test 2: Enable Newsletter toggle
-    console.log('  📍 Testing Newsletter integration...');
-    // Click the second toggle (Newsletter)
-    const newsletterToggle = allToggles.nth(1);
-    if (await newsletterToggle.isVisible({ timeout: 3000 })) {
-      await newsletterToggle.click();
-      await page.waitForTimeout(1000);
-      console.log('    ✅ Newsletter toggle enabled');
-      await takeStepScreenshot(page, '11-newsletter-enabled');
-
-      // Select newsletter provider
-      const providerSelect = page.locator('select').last();
-      if (await providerSelect.isVisible({ timeout: 3000 })) {
-        await providerSelect.selectOption('mailchimp');
-        await page.waitForTimeout(500);
-        console.log('    ✅ Mailchimp provider selected');
-
-        // Enter Mailchimp form URL
-        const newsletterInput = page.locator('input[placeholder*="Form action" i], input[placeholder*="URL" i]').last();
-        if (await newsletterInput.isVisible({ timeout: 3000 })) {
-          await newsletterInput.fill('https://example.us1.list-manage.com/subscribe/post');
-          await page.waitForTimeout(500);
-          console.log('    ✅ Mailchimp URL entered');
-        }
-        await takeStepScreenshot(page, '11-provider-selected');
-      }
-    } else {
-      console.log('    ⚠️ Newsletter toggle not found');
-    }
-
-    // Verify both buttons are present
-    // Note: Button text changes to "Continue" when integrations are enabled
-    const buildButton = page.locator('button:has-text("Build My Site"), button:has-text("Continue")').first();
-    const skipIntegrations = page.locator('button:has-text("Skip for Now")');
-    await expect(buildButton).toBeVisible({ timeout: 5000 });
+    const skipIntegrations = page.getByTestId('integrations-skip-button');
+    const continueIntegrations = page.getByTestId('integrations-continue-button');
     await expect(skipIntegrations).toBeVisible({ timeout: 5000 });
-    console.log('  ✅ Build/Continue and Skip buttons visible');
+    await expect(continueIntegrations).toBeVisible({ timeout: 5000 });
 
-    // Take final integrations screenshot
-    await takeStepScreenshot(page, '11-integrations-complete');
+    if (await page.getByTestId('calendly-url-input').isVisible().catch(() => false)) {
+      console.log('  Calendly input visible in integrations panel');
+    }
+    if (await page.getByTestId('ga-measurement-input').isVisible().catch(() => false)) {
+      console.log('  GA measurement input visible in integrations panel');
+    }
 
-    // Click the build button to proceed (either "Build My Site" or "Continue")
-    await buildButton.click();
+    await skipIntegrations.click();
     await page.waitForTimeout(2000);
-    await takeStepScreenshot(page, '11-after-build-click');
-    console.log('✅ Integrations configured - build starting\n');
+    await takeStepScreenshot(page, '08-after-integrations-skip');
+    console.log('✅ Integrations skipped - build starting\n');
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // STEP 12: Build Process - Wait for preview iframe WITH ACTUAL CONTENT
+    // STEP 9: Build Process - Wait for preview iframe WITH ACTUAL CONTENT
     // ═══════════════════════════════════════════════════════════════════════════
-    console.log('📍 Step 10: Build Process');
-    await takeStepScreenshot(page, '12-build-start');
+    console.log('📍 Step 9: Build Process');
+    await expect(page.getByTestId('agent-activity-log')).toBeVisible({ timeout: 30000 });
+    await expect(page.getByTestId('chat-input')).toBeVisible({ timeout: 10000 });
+    await takeStepScreenshot(page, '09-build-start');
 
     // First, wait for the build to progress (check for build phases UI)
     // The build shows phases: Preparing environment → AI customizing site → Creating files → Starting preview
@@ -1019,5 +941,3 @@ test.describe('Preview API Integration', () => {
     console.log(`✅ Workspace API endpoint responds with status ${response.status()}`);
   });
 });
-
-

@@ -8,6 +8,7 @@ interface ViewToggleProps {
   viewMode: ViewMode;
   onViewModeChange: (mode: ViewMode) => void;
   isMobile?: boolean;
+  isCompact?: boolean;
   hasTerminalActivity?: boolean;
   terminalErrorCount?: number;
 }
@@ -43,6 +44,7 @@ export function ViewToggle({
   viewMode,
   onViewModeChange,
   isMobile = false,
+  isCompact = false,
   hasTerminalActivity = false,
   terminalErrorCount = 0,
 }: ViewToggleProps) {
@@ -85,18 +87,18 @@ export function ViewToggle({
       )}
       <button onClick={() => onViewModeChange('preview')} style={getButtonStyle(viewMode === 'preview')}>
         <PreviewIcon />
-        {t(EDITOR_LABEL_KEYS.VIEW_PREVIEW)}
+        {!isCompact && t(EDITOR_LABEL_KEYS.VIEW_PREVIEW)}
       </button>
       {!isMobile && (
         <button onClick={() => onViewModeChange('editor')} style={getButtonStyle(viewMode === 'editor')}>
           <EditorIcon />
-          {t(EDITOR_LABEL_KEYS.VIEW_EDITOR)}
+          {!isCompact && t(EDITOR_LABEL_KEYS.VIEW_EDITOR)}
         </button>
       )}
       {!isMobile && (
         <button onClick={() => onViewModeChange('terminal')} style={getButtonStyle(viewMode === 'terminal')}>
           <TerminalIcon />
-          Terminal
+          {!isCompact && 'Terminal'}
           {terminalErrorCount > 0 && (
             <span style={{
               fontSize: '10px',

@@ -298,12 +298,13 @@ function ActionButtons({ colors, onEdit, onDelete }: ActionButtonsProps) {
           border: 'none',
           color: colors.textMuted,
           cursor: 'pointer',
-          padding: '4px',
-          borderRadius: '4px',
-          transition: 'color 0.15s ease',
+          padding: '8px',
+          borderRadius: '6px',
+          transition: 'all 0.15s ease',
+          WebkitTapHighlightColor: 'transparent',
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.color = colors.textPrimary)}
-        onMouseLeave={(e) => (e.currentTarget.style.color = colors.textMuted)}
+        onMouseEnter={(e) => { e.currentTarget.style.color = colors.textPrimary; e.currentTarget.style.background = colors.surfaceMedium || 'rgba(0,0,0,0.05)'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.color = colors.textMuted; e.currentTarget.style.background = 'transparent'; }}
         title={t(EDITOR_LABEL_KEYS.SIDEBAR_RENAME)}
       >
         <EditIcon />
@@ -316,14 +317,15 @@ function ActionButtons({ colors, onEdit, onDelete }: ActionButtonsProps) {
         style={{
           background: 'transparent',
           border: 'none',
-          color: colors.textMuted,
+          color: '#ef4444',
           cursor: 'pointer',
-          padding: '4px',
-          borderRadius: '4px',
-          transition: 'color 0.15s ease',
+          padding: '8px',
+          borderRadius: '6px',
+          transition: 'all 0.15s ease',
+          WebkitTapHighlightColor: 'transparent',
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.color = '#ef4444')}
-        onMouseLeave={(e) => (e.currentTarget.style.color = colors.textMuted)}
+        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)')}
+        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
         title={t(EDITOR_LABEL_KEYS.SIDEBAR_DELETE)}
       >
         <TrashIcon />

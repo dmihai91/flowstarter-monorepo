@@ -132,7 +132,7 @@ export function EditorHeader({
               fontSize: '13px',
               fontWeight: 600,
               color: isDark ? 'rgba(255,255,255,0.82)' : 'rgba(0,0,0,0.72)',
-              maxWidth: '180px',
+              maxWidth: isCompact ? '140px' : '180px',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -168,7 +168,7 @@ export function EditorHeader({
 
       {/* CENTER: View toggle */}
       <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-        <ViewToggle viewMode={viewMode} onViewModeChange={onViewModeChange} isMobile={isMobile} terminalErrorCount={terminalErrorCount} hasTerminalActivity={hasTerminalActivity} />
+        <ViewToggle viewMode={viewMode} onViewModeChange={onViewModeChange} isMobile={isMobile} isCompact={isCompact} terminalErrorCount={terminalErrorCount} hasTerminalActivity={hasTerminalActivity} />
       </div>
 
       {/* RIGHT: Actions */}

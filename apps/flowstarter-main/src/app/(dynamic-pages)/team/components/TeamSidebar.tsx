@@ -203,7 +203,7 @@ export function TeamSidebar() {
           collapsed ? 'w-[68px]' : 'w-64'
         )}
       >
-        <div className="sticky top-16 h-[calc(100vh-4rem)] flex flex-col">
+        <div className="h-full flex flex-col overflow-hidden">
           <SidebarContent showLabel={!collapsed} showCollapseToggle />
         </div>
       </aside>

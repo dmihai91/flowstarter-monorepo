@@ -1,0 +1,21 @@
+{
+  "id": "electric-ink",
+  "name": "Electric Ink",
+  "description": "Bold contrast with electric accents. For designers who make statements.",
+  "colors": {
+    "primary": "#1A1A2E",
+    "primary-dark": "#0F0F1E",
+    "secondary": "#E94560",
+    "accent": "#0F3460",
+    "background": "#FAFAFA",
+    "surface": "#FFFFFF",
+    "text": "#1A1A2E",
+    "text-muted": "#6B6B80"
+  },
+  "fonts": {
+    "heading": "Space Grotesk",
+    "body": "DM Sans",
+    "weights": { "heading": "700", "body": "400" }
+  },
+  "preview": { "gradient": "from-indigo-900 to-rose-500" }
+}

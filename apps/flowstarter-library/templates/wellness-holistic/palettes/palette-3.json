@@ -1,0 +1,21 @@
+{
+  "id": "ocean-breath",
+  "name": "Ocean Breath",
+  "description": "Cool blues and sandy neutrals. Coastal healing.",
+  "colors": {
+    "primary": "#4A8BA8",
+    "primary-dark": "#3A7290",
+    "secondary": "#A8D4E2",
+    "accent": "#D4A574",
+    "background": "#F5FAFB",
+    "surface": "#FFFFFF",
+    "text": "#1E3A4A",
+    "text-muted": "#5A7A8A"
+  },
+  "fonts": {
+    "heading": "Libre Baskerville",
+    "body": "Open Sans",
+    "weights": { "heading": "700", "body": "400" }
+  },
+  "preview": { "gradient": "from-cyan-600 to-cyan-300" }
+}

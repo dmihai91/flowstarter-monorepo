@@ -1,0 +1,21 @@
+{
+  "id": "lotus-pink",
+  "name": "Lotus Pink",
+  "description": "Soft pinks and gentle greens. Feminine healing energy.",
+  "colors": {
+    "primary": "#C47A8A",
+    "primary-dark": "#A86472",
+    "secondary": "#E8C4CC",
+    "accent": "#8AAE8C",
+    "background": "#FDF8F9",
+    "surface": "#FFFFFF",
+    "text": "#3A2A2E",
+    "text-muted": "#8A7075"
+  },
+  "fonts": {
+    "heading": "Cormorant Garamond",
+    "body": "Nunito Sans",
+    "weights": { "heading": "600", "body": "400" }
+  },
+  "preview": { "gradient": "from-pink-400 to-pink-200" }
+}

@@ -1,0 +1,21 @@
+{
+  "id": "pastel-studio",
+  "name": "Pastel Studio",
+  "description": "Soft, approachable creativity. Illustration-friendly.",
+  "colors": {
+    "primary": "#6C63FF",
+    "primary-dark": "#5548D4",
+    "secondary": "#FF6584",
+    "accent": "#43E97B",
+    "background": "#FEFEFE",
+    "surface": "#F8F7FF",
+    "text": "#2D2D3F",
+    "text-muted": "#8888AA"
+  },
+  "fonts": {
+    "heading": "Poppins",
+    "body": "Nunito",
+    "weights": { "heading": "700", "body": "400" }
+  },
+  "preview": { "gradient": "from-indigo-400 to-pink-400" }
+}

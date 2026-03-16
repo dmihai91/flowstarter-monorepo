@@ -1,0 +1,21 @@
+{
+  "id": "monochrome",
+  "name": "Monochrome",
+  "description": "Let the work speak. Pure black and white.",
+  "colors": {
+    "primary": "#000000",
+    "primary-dark": "#1A1A1A",
+    "secondary": "#444444",
+    "accent": "#FF4444",
+    "background": "#FFFFFF",
+    "surface": "#F5F5F5",
+    "text": "#111111",
+    "text-muted": "#888888"
+  },
+  "fonts": {
+    "heading": "Outfit",
+    "body": "IBM Plex Sans",
+    "weights": { "heading": "700", "body": "400" }
+  },
+  "preview": { "gradient": "from-neutral-900 to-neutral-400" }
+}

@@ -1,0 +1,21 @@
+{
+  "id": "champagne-blush",
+  "name": "Champagne Blush",
+  "description": "Soft and feminine. Effortless elegance.",
+  "colors": {
+    "primary": "#C9A87C",
+    "primary-dark": "#B08E62",
+    "secondary": "#F0DCC8",
+    "accent": "#D4746A",
+    "background": "#FFFAF5",
+    "surface": "#FFFFFF",
+    "text": "#3D2E1F",
+    "text-muted": "#8A7564"
+  },
+  "fonts": {
+    "heading": "Cormorant Garamond",
+    "body": "Nunito Sans",
+    "weights": { "heading": "600", "body": "400" }
+  },
+  "preview": { "gradient": "from-amber-400 to-amber-200" }
+}

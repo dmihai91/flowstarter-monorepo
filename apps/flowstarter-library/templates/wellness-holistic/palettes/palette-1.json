@@ -1,0 +1,21 @@
+{
+  "id": "zen-garden",
+  "name": "Zen Garden",
+  "description": "Peaceful greens and warm stone. Meditative calm.",
+  "colors": {
+    "primary": "#5C7A5E",
+    "primary-dark": "#4A6A4C",
+    "secondary": "#A8C5A0",
+    "accent": "#C8A882",
+    "background": "#F7FAF5",
+    "surface": "#FFFFFF",
+    "text": "#2A3A2A",
+    "text-muted": "#6B7C6B"
+  },
+  "fonts": {
+    "heading": "Cormorant Garamond",
+    "body": "Nunito",
+    "weights": { "heading": "600", "body": "400" }
+  },
+  "preview": { "gradient": "from-green-600 to-green-300" }
+}

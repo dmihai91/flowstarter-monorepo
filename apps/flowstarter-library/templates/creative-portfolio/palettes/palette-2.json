@@ -1,0 +1,21 @@
+{
+  "id": "studio-warm",
+  "name": "Studio Warm",
+  "description": "Earthy warmth meets clean design. Gallery-ready.",
+  "colors": {
+    "primary": "#C45B28",
+    "primary-dark": "#A84A1E",
+    "secondary": "#2B4141",
+    "accent": "#E8B059",
+    "background": "#FAF6F1",
+    "surface": "#FFFFFF",
+    "text": "#2B2B2B",
+    "text-muted": "#7A7A7A"
+  },
+  "fonts": {
+    "heading": "Sora",
+    "body": "Inter",
+    "weights": { "heading": "600", "body": "400" }
+  },
+  "preview": { "gradient": "from-orange-600 to-amber-400" }
+}

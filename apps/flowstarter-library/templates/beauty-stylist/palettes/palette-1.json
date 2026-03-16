@@ -1,0 +1,21 @@
+{
+  "id": "rose-gold",
+  "name": "Rose Gold",
+  "description": "Warm and luxurious. The signature beauty palette.",
+  "colors": {
+    "primary": "#B76E79",
+    "primary-dark": "#9A5B65",
+    "secondary": "#E8C4C8",
+    "accent": "#D4A574",
+    "background": "#FDF8F7",
+    "surface": "#FFFFFF",
+    "text": "#2D1F21",
+    "text-muted": "#7A6365"
+  },
+  "fonts": {
+    "heading": "Playfair Display",
+    "body": "Lato",
+    "weights": { "heading": "700", "body": "400" }
+  },
+  "preview": { "gradient": "from-rose-500 to-rose-300" }
+}

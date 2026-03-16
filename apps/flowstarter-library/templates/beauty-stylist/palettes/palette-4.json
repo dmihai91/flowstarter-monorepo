@@ -1,0 +1,21 @@
+{
+  "id": "midnight-noir",
+  "name": "Midnight Noir",
+  "description": "Bold and dramatic. High-fashion edge.",
+  "colors": {
+    "primary": "#C8A97E",
+    "primary-dark": "#B8935C",
+    "secondary": "#2A2A2A",
+    "accent": "#E8D5B5",
+    "background": "#FAFAF8",
+    "surface": "#FFFFFF",
+    "text": "#1A1A1A",
+    "text-muted": "#6B6B6B"
+  },
+  "fonts": {
+    "heading": "Montserrat",
+    "body": "Inter",
+    "weights": { "heading": "700", "body": "400" }
+  },
+  "preview": { "gradient": "from-neutral-800 to-amber-400" }
+}

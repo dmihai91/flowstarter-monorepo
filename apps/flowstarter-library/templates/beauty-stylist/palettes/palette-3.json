@@ -1,0 +1,21 @@
+{
+  "id": "lavender-mist",
+  "name": "Lavender Mist",
+  "description": "Tranquil and refined. Spa-inspired serenity.",
+  "colors": {
+    "primary": "#9B8EC4",
+    "primary-dark": "#7E72A8",
+    "secondary": "#D4CCE8",
+    "accent": "#C4A882",
+    "background": "#FAF8FD",
+    "surface": "#FFFFFF",
+    "text": "#2A2440",
+    "text-muted": "#6B6480"
+  },
+  "fonts": {
+    "heading": "DM Serif Display",
+    "body": "Source Sans 3",
+    "weights": { "heading": "400", "body": "400" }
+  },
+  "preview": { "gradient": "from-purple-400 to-purple-200" }
+}

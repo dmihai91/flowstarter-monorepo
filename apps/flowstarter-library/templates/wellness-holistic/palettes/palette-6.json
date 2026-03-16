@@ -1,0 +1,21 @@
+{
+  "id": "moonlit-healing",
+  "name": "Moonlit Healing",
+  "description": "Dark mode. Quiet nighttime healing space.",
+  "colors": {
+    "primary": "#8AAE8C",
+    "primary-dark": "#6B8E6E",
+    "secondary": "#C4956A",
+    "accent": "#C47A8A",
+    "background": "#0E1210",
+    "surface": "#1A1F1A",
+    "text": "#E8F0E8",
+    "text-muted": "#8A9A8A"
+  },
+  "fonts": {
+    "heading": "Cormorant Garamond",
+    "body": "Nunito",
+    "weights": { "heading": "600", "body": "400" }
+  },
+  "preview": { "gradient": "from-green-900 to-neutral-900" }
+}

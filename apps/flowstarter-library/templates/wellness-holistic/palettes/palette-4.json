@@ -1,0 +1,21 @@
+{
+  "id": "clay-earth",
+  "name": "Clay Earth",
+  "description": "Grounded terracotta and warm neutrals. Earthy authenticity.",
+  "colors": {
+    "primary": "#B8705A",
+    "primary-dark": "#9A5C48",
+    "secondary": "#D4B8A0",
+    "accent": "#6B8E6B",
+    "background": "#FBF7F4",
+    "surface": "#FFFFFF",
+    "text": "#3A2A20",
+    "text-muted": "#8A7060"
+  },
+  "fonts": {
+    "heading": "Playfair Display",
+    "body": "Lato",
+    "weights": { "heading": "700", "body": "400" }
+  },
+  "preview": { "gradient": "from-orange-700 to-orange-300" }
+}

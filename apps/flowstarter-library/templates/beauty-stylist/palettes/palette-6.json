@@ -1,0 +1,21 @@
+{
+  "id": "velvet-night",
+  "name": "Velvet Night",
+  "description": "Dark mode. Moody luxury after hours.",
+  "colors": {
+    "primary": "#D4A574",
+    "primary-dark": "#C8935C",
+    "secondary": "#B76E79",
+    "accent": "#E8C4C8",
+    "background": "#0F0D12",
+    "surface": "#1A171F",
+    "text": "#F5F0EC",
+    "text-muted": "#9A8E85"
+  },
+  "fonts": {
+    "heading": "Playfair Display",
+    "body": "Lato",
+    "weights": { "heading": "700", "body": "400" }
+  },
+  "preview": { "gradient": "from-neutral-900 to-rose-900" }
+}

@@ -1,0 +1,21 @@
+{
+  "id": "dark-studio",
+  "name": "Dark Studio",
+  "description": "Dark mode. Cinematic, immersive portfolio viewing.",
+  "colors": {
+    "primary": "#6C63FF",
+    "primary-dark": "#5548D4",
+    "secondary": "#E94560",
+    "accent": "#00FF88",
+    "background": "#0A0A14",
+    "surface": "#14141F",
+    "text": "#F0F0F5",
+    "text-muted": "#8A8AA0"
+  },
+  "fonts": {
+    "heading": "Space Grotesk",
+    "body": "DM Sans",
+    "weights": { "heading": "700", "body": "400" }
+  },
+  "preview": { "gradient": "from-indigo-900 to-neutral-900" }
+}

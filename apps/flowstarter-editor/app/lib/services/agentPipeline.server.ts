@@ -116,7 +116,8 @@ Write these files (use the Write tool for each):
 10. src/pages/contact.astro — form + hours
 
 Rules: business language, inline SVGs, no astro-icon, no content/*.md imports, no emoji, (el as HTMLElement).style in scripts.
-CRITICAL — the sandbox only has astro, @astrojs/tailwind, and tailwindcss installed. Do NOT import any other packages. Use inline SVGs instead of icon libraries. Use static data arrays instead of content collections.`;
+CRITICAL — the sandbox only has astro, @astrojs/tailwind, and tailwindcss installed. Do NOT import any other packages. Use inline SVGs instead of icon libraries. Use static data arrays instead of content collections.
+CRITICAL — ALL data arrays MUST have explicit TypeScript types. Example: const stats: { label: string; value: string }[] = [...]. Never leave untyped arrays — astro check will reject them.`;
 }
 
 async function collectDir(dir: string, base = ''): Promise<GeneratedFile[]> {

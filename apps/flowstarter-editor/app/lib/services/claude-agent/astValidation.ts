@@ -408,6 +408,35 @@ function parseInstalledPackages(files: Record<string, string>): Set<string> {
  * Returns fixed files and a summary of what was fixed.
  * Auto-fixes what it can; reports what it can't.
  */
+
+/**
+ * Fix untyped array/object declarations in Astro frontmatter.
+ * Converts `const items = [{ ... }]` → `const items: Record<string, unknown>[] = [{ ... }]`
+ * and `const obj = { ... }` → `const obj: Record<string, unknown> = { ... }`
+ * This prevents ts(7005) "implicitly has an 'any[]' type" errors from `astro check`.
+ */
+function fixUntypedArrays(content: string): string {
+  // Only fix inside frontmatter (between --- fences)
+  const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
+  if (!fmMatch) return content;
+  
+  let fm = fmMatch[1];
+  
+  // Fix: const name = [{ ... pattern — add Record<string, unknown>[] type
+  // Matches: const varName = [ (with optional whitespace/newline before [)
+  // But NOT if already typed: const varName: SomeType[] = [
+  fm = fm.replace(
+    /^(\s*const\s+\w+)\s*=\s*\[/gm,
+    (match, prefix) => {
+      // Don't add type if already has one (colon before =)
+      if (/:\s*\S/.test(prefix)) return match;
+      return `${prefix}: Record<string, unknown>[] = [`;
+    }
+  );
+  
+  return content.replace(fmMatch[0], `---\n${fm}\n---`);
+}
+
 export function validateAndFixFiles(
   files: Record<string, string>,
 ): ValidationResult {
@@ -466,6 +495,17 @@ export function validateAndFixFiles(
         fileModified = true;
         fixCount++;
         fixSummary.push(`Fixed missing semicolons in ${filePath.split('/').pop()}`);
+      }
+    }
+
+    // 2.5. Fix untyped arrays in frontmatter (prevents ts(7005) implicit any errors)
+    if (filePath.endsWith('.astro')) {
+      const beforeTypeFix = currentContent;
+      currentContent = fixUntypedArrays(currentContent);
+      if (currentContent !== beforeTypeFix) {
+        fileModified = true;
+        fixCount++;
+        fixSummary.push(`Added type annotations to untyped arrays in ${filePath.split('/').pop()}`);
       }
     }
 

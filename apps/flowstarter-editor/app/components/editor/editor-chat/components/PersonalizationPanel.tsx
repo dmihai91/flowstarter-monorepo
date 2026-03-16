@@ -69,14 +69,16 @@ export function PersonalizationPanel({
       autoSelectedRef.current = true;
       // Convert TemplatePalette to ColorPalette and auto-select
       const first = templatePalettes[0];
-      const autoColors = first.colors || {};
+      const c = first.colors || {};
       const autoPalette: import('../types').ColorPalette = {
+        id: first.id || 'auto-palette',
         name: first.name || 'Default',
-        primary: autoColors.primary || '#3B82F6',
-        secondary: autoColors.secondary || '#1E40AF',
-        accent: autoColors.accent || '#F59E0B',
-        background: autoColors.background || '#FFFFFF',
-        text: autoColors.text || '#111827',
+        colors: [c.primary || '#3B82F6', c.secondary || '#1E40AF', c.accent || '#F59E0B', c.background || '#FFFFFF', c.text || '#111827'],
+        primary: c.primary || '#3B82F6',
+        secondary: c.secondary || '#1E40AF',
+        accent: c.accent || '#F59E0B',
+        background: c.background || '#FFFFFF',
+        text: c.text || '#111827',
       };
       // Auto-select after a brief delay so the UI shows the transition
       setTimeout(() => panel.handlePaletteSelect(autoPalette), 300);

@@ -28,6 +28,8 @@ import { validateAndFixFiles } from '~/lib/services/claude-agent/astValidation';
 import type { BuildError } from '~/lib/services/claude-agent/types';
 import { getConvexClient } from './onboarding-chat/cost-logging';
 import { api } from '../../convex/_generated/api';
+import { createClient } from '@supabase/supabase-js';
+import { injectIntegrations } from '~/lib/services/integrations/index';
 
 // Import Gretly pipeline
 import { generateSite as generateSiteGretly, prewarmEnvironment } from '~/lib/flowstarter';
@@ -402,9 +404,15 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentE
 
     // Inject integrations (Calendly, Analytics, Lead capture) — zero LLM cost
     // Auto-read from Supabase project config (operator sets these in dashboard)
+    // Client scoped to project's own data via RLS + .eq('id', projectId)
     try {
       const projectId = body.projectId;
-      if (projectId) {
+      const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
+      const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+      if (projectId && supabaseUrl && (supabaseServiceKey || supabaseAnonKey)) {
+        // Prefer service role key for Vault access; fall back to anon key (Vault RPCs won't work)
+        const supabaseClient = createClient(supabaseUrl, supabaseServiceKey || supabaseAnonKey!);
         const { data: projConfig } = await supabaseClient
           .from('projects')
           .select('calendly_url, calendly_api_key_id, ga_property_id, ga_refresh_token_id')

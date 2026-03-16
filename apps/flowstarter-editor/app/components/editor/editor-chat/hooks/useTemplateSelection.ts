@@ -64,7 +64,18 @@ export function useTemplateSelection(options: UseTemplateSelectionOptions = {}):
   const handleTemplateSelect = useCallback(
     (template: Template) => {
       setSelectedTemplate(template);
-      setSelectedRecommendation(null);
+      // Wrap template as a synthetic recommendation to preserve palettes/fonts
+      if (template.palettes && template.palettes.length > 0) {
+        setSelectedRecommendation({
+          template,
+          palettes: template.palettes || [],
+          fonts: template.fonts || [],
+          reasoning: '',
+          matchScore: 0,
+        });
+      } else {
+        setSelectedRecommendation(null);
+      }
       onTemplateSelect?.(template);
     },
     [onTemplateSelect],

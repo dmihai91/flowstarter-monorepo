@@ -8,7 +8,7 @@
  * - AI images toggle (for template customization)
  */
 
-import { useMemo } from 'react';
+import { useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Palette, Type, ImageIcon, SkipForward, ChevronRight } from 'lucide-react';
 import { PaletteSelector } from './PaletteSelector';
@@ -60,6 +60,31 @@ export function PersonalizationPanel({
     onFontSelect,
     onLogoSelect,
   });
+
+  // Auto-select first template palette to skip palette section
+  const autoSelectedRef = useRef(false);
+  useEffect(() => {
+    if (autoSelectedRef.current) return;
+    if (templatePalettes && templatePalettes.length > 0 && panel.currentSection === 'palette') {
+      autoSelectedRef.current = true;
+      // Convert TemplatePalette to ColorPalette and auto-select
+      const first = templatePalettes[0];
+      const autoColors = first.colors || {};
+      const autoPalette: import('../types').ColorPalette = {
+        name: first.name || 'Default',
+        primary: autoColors.primary || '#3B82F6',
+        secondary: autoColors.secondary || '#1E40AF',
+        accent: autoColors.accent || '#F59E0B',
+        background: autoColors.background || '#FFFFFF',
+        text: autoColors.text || '#111827',
+      };
+      // Auto-select after a brief delay so the UI shows the transition
+      setTimeout(() => panel.handlePaletteSelect(autoPalette), 300);
+    } else if (templatePalette && panel.currentSection === 'palette') {
+      autoSelectedRef.current = true;
+      setTimeout(() => panel.handlePaletteSelect(templatePalette), 300);
+    }
+  }, [templatePalettes, templatePalette, panel.currentSection, panel.handlePaletteSelect]);
 
   // Theme colors - glassmorphism palette
   const colors = useMemo(

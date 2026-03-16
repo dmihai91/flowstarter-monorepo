@@ -174,7 +174,8 @@ export function EditorHeader({
       {/* RIGHT: Actions */}
       <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '4px' : isCompact ? '12px' : '12px' }}>
         {/* Magic Link button - Team only, hide on mobile */}
-        {canGenerateMagicLink && !isCompact && (
+        {/* Share button disabled for now
+        {false && canGenerateMagicLink && !isCompact && (
           <MagicLinkButton projectId={projectId ?? null} />
         )}
 

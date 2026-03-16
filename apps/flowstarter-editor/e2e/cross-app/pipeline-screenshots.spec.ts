@@ -1,6 +1,5 @@
 /**
- * Full Pipeline Visual Test — Operator Flow
- * Captures screenshots at every step of the idea-to-draft flow.
+ * Full Pipeline Visual Test — New site from scratch
  */
 import { test, expect } from '@playwright/test';
 import { setupClerkTestingToken } from '@clerk/testing/playwright';
@@ -20,44 +19,30 @@ async function e2eFetch(url: string, opts: { method?: string; body?: Record<stri
   return { status: res.status, body: await res.json().catch(() => ({})) };
 }
 
-test('Full operator pipeline — idea to draft with screenshots', async ({ page }) => {
+async function screenshot(page: any, name: string, step: string) {
+  await page.screenshot({ path: `${DIR}/${name}.png`, fullPage: false });
+  console.log(`📸 ${step}`);
+}
+
+test('New site from scratch — full interactive flow', async ({ page }) => {
   test.setTimeout(300_000);
   await setupClerkTestingToken({ page });
 
-  // 1. Dashboard
+  // ── 1. Dashboard ───────────────────────────────────────────────
   await page.goto(BASE + '/team/dashboard');
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(2000);
-  await page.screenshot({ path: `${DIR}/01-dashboard.png`, fullPage: false });
-  console.log('📸 01 — Dashboard');
+  await screenshot(page, '01-dashboard', '01 — Dashboard');
 
-  // 2. New Project modal
-  const newBtn = page.getByRole('button', { name: /new project/i }).first();
-  if (await newBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
-    await newBtn.click();
-    await page.waitForTimeout(1000);
-    await page.screenshot({ path: `${DIR}/02-new-project-modal.png`, fullPage: false });
-    console.log('📸 02 — New Project modal');
-  }
-
-  // 3. Create project via API with full business data
+  // ── 2. Create project with minimal data (no businessInfo) ──────
+  // This forces the editor to go through ALL steps
   const handoffRes = await e2eFetch(`${BASE}/api/editor/handoff`, {
     method: 'POST',
     body: {
       projectConfig: {
-        name: 'Dental Estetic Cluj',
-        description: 'Cabinet stomatologic estetic premium în Cluj-Napoca, specializat în albiri, fațete, implanturi.',
-        businessInfo: {
-          description: 'Cabinet stomatologic estetic premium în Cluj-Napoca',
-          uvp: 'Tratamente fără durere cu programări în aceeași zi și materiale premium',
-          targetAudience: 'Profesioniști din Cluj-Napoca, 28-55 ani',
-          industry: 'Healthcare / Dental',
-          goal: 'bookings',
-          brandTone: 'professional',
-          offerings: 'Albire dentară profesională 400€, Fațete ceramice 800€/dinte, Implanturi 1200€, Ortodonție invizibilă 3500€',
-        },
-        contactInfo: { email: 'contact@dentalestetic.ro', phone: '+40741000001', address: 'Str. Memo 10, Cluj-Napoca' },
-        client: { name: 'Dr. Elena Popescu', email: 'elena@dentalclinic.ro' },
+        name: 'Artisan Bakery Cluj',
+        description: 'Brutărie artizanală în Cluj-Napoca',
+        client: { name: 'Maria Ionescu', email: 'maria@bakery.ro' },
       },
     },
   });
@@ -65,62 +50,133 @@ test('Full operator pipeline — idea to draft with screenshots', async ({ page 
   const { token, projectId } = handoffRes.body as { token: string; projectId: string };
   console.log(`✅ Project: ${projectId}`);
 
-  // 4. Editor handoff
+  // ── 3. Handoff to editor ───────────────────────────────────────
   await page.goto(`${EDITOR}?handoff=${encodeURIComponent(token)}`);
   await page.waitForURL(/\/project\//, { timeout: 30_000 });
   await page.waitForTimeout(3000);
-  await page.screenshot({ path: `${DIR}/04-editor-after-handoff.png`, fullPage: false });
-  console.log('📸 04 — Editor after handoff');
+  await screenshot(page, '02-editor-loaded', '02 — Editor loaded');
 
-  // 5. Wait for step machine to settle
-  await page.waitForTimeout(5000);
-  await page.screenshot({ path: `${DIR}/05-step-settled.png`, fullPage: false });
-  console.log('📸 05 — Step settled');
+  // ── 4. Find chat input and describe the business ───────────────
+  const chatInput = page.locator('[data-testid="chat-input"], textarea').first();
+  await chatInput.waitFor({ state: 'visible', timeout: 15_000 });
+  await screenshot(page, '03-chat-ready', '03 — Chat ready');
 
-  // 6. Check for template selector (with businessInfo, should skip to template)
-  const tmplText = page.locator('text=/template/i').first();
-  if (await tmplText.isVisible({ timeout: 8000 }).catch(() => false)) {
-    await page.screenshot({ path: `${DIR}/06-template-selector.png`, fullPage: false });
-    console.log('📸 06 — Template selector');
+  // Type business description
+  await chatInput.fill('O brutărie artizanală premium în centrul Clujului. Facem pâine cu maia, croissante, prăjituri și cafea de specialitate. Totul din ingrediente locale, organice. Vrem un site care arată warm, artizanal, cu foto mari cu produsele noastre și posibilitate de comandă online.');
+  await screenshot(page, '04-description-typed', '04 — Description typed');
 
-    // Click first template card
-    const cards = page.locator('[data-testid*="template"], [class*="template-card"], [role="button"]:has(img)');
-    const count = await cards.count();
-    console.log(`Found ${count} template-like elements`);
-    if (count > 0) {
-      await cards.first().click();
-      await page.waitForTimeout(2000);
-      await page.screenshot({ path: `${DIR}/07-template-clicked.png`, fullPage: false });
-      console.log('📸 07 — Template clicked');
+  // Submit
+  const sendBtn = page.locator('button[type="submit"], button:has(svg[class*="send"]), [data-testid="send-button"]').first();
+  if (await sendBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await sendBtn.click();
+  } else {
+    await chatInput.press('Enter');
+  }
+  
+  // Wait for AI response
+  await page.waitForTimeout(8000);
+  await screenshot(page, '05-after-describe', '05 — After describe (AI processing)');
+
+  // ── 5. Watch step transitions ──────────────────────────────────
+  // Take screenshots every 5s for 30s to catch step transitions
+  for (let i = 0; i < 6; i++) {
+    await page.waitForTimeout(5000);
+    await screenshot(page, `06-transition-${String(i).padStart(2, '0')}`, `06.${i} — Step transition`);
+    
+    // Check if we're at naming step
+    const nameInput = page.locator('input[placeholder*="name" i], [data-testid="project-name"]');
+    if (await nameInput.isVisible({ timeout: 1000 }).catch(() => false)) {
+      console.log('🎯 Name step detected');
+      await screenshot(page, '07-name-step', '07 — Name step');
+      // Accept the suggested name or type one
+      const existingValue = await nameInput.inputValue().catch(() => '');
+      if (!existingValue) {
+        await nameInput.fill('Artisan Bakery');
+      }
+      // Try to proceed
+      const nextBtn = page.locator('button:has-text("Continue"), button:has-text("Next"), button[type="submit"]').first();
+      if (await nextBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await nextBtn.click();
+        await page.waitForTimeout(3000);
+      }
+      break;
     }
-  }
 
-  // 7. Look for chat input — might need to send a message to proceed
-  const chatInput = page.locator('textarea').first();
-  if (await chatInput.isVisible({ timeout: 5000 }).catch(() => false)) {
-    await page.screenshot({ path: `${DIR}/08-chat-input.png`, fullPage: false });
-    console.log('📸 08 — Chat input visible');
-  }
+    // Check for quick-profile
+    const profileSelector = page.locator('text=/quick.*profile/i, text=/what.*type/i, [data-testid="quick-profile"]');
+    if (await profileSelector.isVisible({ timeout: 1000 }).catch(() => false)) {
+      console.log('🎯 Quick profile step detected');
+      await screenshot(page, '07-quick-profile', '07 — Quick profile');
+      break;
+    }
 
-  // 8. Screenshot every 10s for up to 2 min to capture build progress
-  for (let i = 0; i < 12; i++) {
-    await page.waitForTimeout(10000);
-    await page.screenshot({ path: `${DIR}/09-progress-${String(i).padStart(2, '0')}.png`, fullPage: false });
-    console.log(`📸 09.${i} — Progress check`);
-
-    // Check for completion indicators
-    const done = await page.locator('text=/ready/i, text=/preview.*ready/i, text=/your.*site.*is/i, iframe[src*="daytona"]').first().isVisible({ timeout: 1000 }).catch(() => false);
-    if (done) {
-      console.log('✅ Build complete!');
+    // Check for template
+    const templateText = page.locator('text=/choose.*template/i, text=/select.*template/i, [data-testid="template-gallery"]');
+    if (await templateText.isVisible({ timeout: 1000 }).catch(() => false)) {
+      console.log('🎯 Template step detected');
       break;
     }
   }
 
-  // 10. Final state
-  await page.screenshot({ path: `${DIR}/10-final.png`, fullPage: false });
-  console.log('📸 10 — Final');
+  // ── 6. Keep progressing through steps ──────────────────────────
+  // Take screenshots every 5s for another 60s
+  for (let i = 0; i < 12; i++) {
+    await page.waitForTimeout(5000);
+    await screenshot(page, `08-flow-${String(i).padStart(2, '0')}`, `08.${i} — Flow progress`);
+
+    // If chat has input, check if there's a prompt we should respond to
+    const textarea = page.locator('textarea:visible').first();
+    if (await textarea.isVisible({ timeout: 500 }).catch(() => false)) {
+      const placeholder = await textarea.getAttribute('placeholder').catch(() => '');
+      console.log(`  Chat placeholder: "${placeholder}"`);
+    }
+
+    // Look for clickable template cards
+    const templateCard = page.locator('[data-testid*="template-card"], .group.cursor-pointer:has(img), [class*="template"]:has(img)').first();
+    if (await templateCard.isVisible({ timeout: 500 }).catch(() => false)) {
+      console.log('🎯 Clicking template card');
+      await templateCard.click();
+      await page.waitForTimeout(3000);
+      await screenshot(page, '09-template-selected', '09 — Template selected');
+    }
+
+    // Look for Skip/Continue/Build buttons
+    const actionBtn = page.locator('button:has-text("Skip"), button:has-text("Build"), button:has-text("Generate"), button:has-text("Continue")').first();
+    if (await actionBtn.isVisible({ timeout: 500 }).catch(() => false)) {
+      const text = await actionBtn.textContent();
+      console.log(`🎯 Clicking: "${text}"`);
+      await actionBtn.click();
+      await page.waitForTimeout(3000);
+      await screenshot(page, `10-after-${text?.toLowerCase().replace(/\s+/g, '-')}`, `10 — After "${text}"`);
+    }
+
+    // Check for build/creating phase
+    const building = page.locator('text=/building/i, text=/generating.*site/i, text=/creating/i, [data-testid="agent-activity"]').first();
+    if (await building.isVisible({ timeout: 500 }).catch(() => false)) {
+      console.log('🚀 Build phase detected!');
+      await screenshot(page, '11-build-started', '11 — Build started');
+      
+      // Wait for build with periodic screenshots
+      for (let j = 0; j < 12; j++) {
+        await page.waitForTimeout(10000);
+        await screenshot(page, `12-build-${String(j).padStart(2, '0')}`, `12.${j} — Build progress`);
+        
+        const done = page.locator('text=/ready/i, text=/preview.*ready/i, text=/your.*site/i, iframe').first();
+        if (await done.isVisible({ timeout: 1000 }).catch(() => false)) {
+          console.log('✅ Build complete!');
+          await screenshot(page, '13-build-complete', '13 — Build complete');
+          break;
+        }
+      }
+      break;
+    }
+  }
+
+  // Final
+  await page.waitForTimeout(2000);
+  await screenshot(page, '99-final', '99 — Final state');
 
   // Cleanup
   await e2eFetch(`${BASE}/api/projects/${projectId}`, { method: 'DELETE' }).catch(() => {});
-  console.log('🧹 Cleaned up');
+  console.log('🧹 Done');
 });

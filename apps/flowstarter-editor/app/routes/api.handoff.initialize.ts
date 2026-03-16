@@ -119,9 +119,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
         contactEmail, contactPhone, contactAddress, website,
       }
     : { contactEmail, contactPhone, contactAddress, website };
+  // Require real business data (uvp, industry, offerings) — not just a project description
+  const bi = businessInfo as { description?: string; uvp?: string; industry?: string; pricingOffers?: string } | undefined;
   const hasBusinessData = !!(
-    (businessInfo as { description?: string })?.description ||
-    projectDescription.length > 10
+    bi?.uvp || bi?.industry || bi?.pricingOffers
   );
 
   try {

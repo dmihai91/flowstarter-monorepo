@@ -10,7 +10,7 @@
 
 import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Palette, Type, ImageIcon } from 'lucide-react';
+import { Palette, Type, ImageIcon, SkipForward, ChevronRight } from 'lucide-react';
 import { PaletteSelector } from './PaletteSelector';
 import { FontSelector } from './FontSelector';
 import { LogoSection } from './LogoSection';
@@ -91,8 +91,9 @@ export function PersonalizationPanel({
           : '0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9)',
       }}
     >
-      {/* Progress indicator */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
+      {/* Header: Progress + Skip to build */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', gap: '8px', flex: 1 }}>
         {panel.sections.map((section, index) => (
           <div
             key={section}
@@ -110,6 +111,38 @@ export function PersonalizationPanel({
             }}
           />
         ))}
+        </div>
+        <button
+          onClick={panel.handleSkipAll}
+          data-testid="skip-customization"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            padding: '6px 12px',
+            marginLeft: '12px',
+            borderRadius: '8px',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '12px',
+            fontWeight: 500,
+            color: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.45)',
+            background: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.05)',
+            transition: 'all 0.15s',
+            whiteSpace: 'nowrap',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)';
+            e.currentTarget.style.background = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.45)';
+            e.currentTarget.style.background = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.05)';
+          }}
+        >
+          Skip to build
+          <SkipForward size={14} />
+        </button>
       </div>
 
       <AnimatePresence mode="wait">
@@ -121,6 +154,28 @@ export function PersonalizationPanel({
               <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: headingColor }}>
                 {t(EDITOR_LABEL_KEYS.PERSONALIZE_COLORS)}
               </h3>
+              <button
+                onClick={panel.handleSkipSection}
+                style={{
+                  marginLeft: 'auto',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '2px',
+                  padding: '4px 8px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  fontWeight: 500,
+                  color: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)',
+                  background: 'transparent',
+                  transition: 'color 0.15s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'}
+                onMouseLeave={e => e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)'}
+              >
+                Skip <ChevronRight size={14} />
+              </button>
             </div>
             <PaletteSelector
               templatePalette={templatePalette || null}
@@ -141,6 +196,28 @@ export function PersonalizationPanel({
               <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: headingColor }}>
                 {t(EDITOR_LABEL_KEYS.PERSONALIZE_FONTS)}
               </h3>
+              <button
+                onClick={panel.handleSkipSection}
+                style={{
+                  marginLeft: 'auto',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '2px',
+                  padding: '4px 8px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  fontWeight: 500,
+                  color: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)',
+                  background: 'transparent',
+                  transition: 'color 0.15s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'}
+                onMouseLeave={e => e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)'}
+              >
+                Skip <ChevronRight size={14} />
+              </button>
             </div>
             <FontSelector
               isDark={isDark}

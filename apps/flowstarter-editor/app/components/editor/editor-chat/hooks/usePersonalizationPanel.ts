@@ -170,6 +170,30 @@ export function usePersonalizationPanel({
     onLogoSelect(logoInfo, useAiImages);
   }, [onLogoSelect, useAiImages]);
 
+  /** Skip all remaining personalization — use defaults and proceed to build */
+  const handleSkipAll = useCallback(() => {
+    // If still on palette, auto-select first available
+    if (currentSection === 'palette') {
+      // Don't call onPaletteSelect — just advance
+    }
+    // Skip font if not selected
+    // Skip logo and trigger build
+    const logoInfo: LogoInfo = { type: 'none' };
+    setSelectedLogo(logoInfo);
+    onLogoSelect(logoInfo, useAiImages);
+  }, [currentSection, onLogoSelect, useAiImages]);
+
+  /** Skip current section only */
+  const handleSkipSection = useCallback(() => {
+    if (currentSection === 'palette') {
+      setCurrentSection('font');
+    } else if (currentSection === 'font') {
+      setCurrentSection('logo');
+    } else if (currentSection === 'logo') {
+      handleSkipLogo();
+    }
+  }, [currentSection, handleSkipLogo]);
+
   return {
     currentSection,
     sections,
@@ -189,6 +213,8 @@ export function usePersonalizationPanel({
     handleFileUpload,
     handleGenerateLogo,
     handleSkipLogo,
+    handleSkipAll,
+    handleSkipSection,
   };
 }
 

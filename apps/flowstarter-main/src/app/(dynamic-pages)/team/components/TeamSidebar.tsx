@@ -197,7 +197,7 @@ export function TeamSidebar() {
       {/* Desktop/Tablet sidebar - Glassmorphism */}
       <aside 
         className={cn(
-          'hidden md:flex flex-col flex-shrink-0 transition-all duration-300',
+          'hidden md:flex flex-col flex-shrink-0 overflow-hidden transition-all duration-300',
           'bg-white/90 dark:bg-[#101014]/95 backdrop-blur-xl backdrop-saturate-150',
           'border-r border-white/60 dark:border-white/10 shadow-[1px_0_3px_rgba(0,0,0,0.05)]',
           collapsed ? 'w-[68px]' : 'w-64'

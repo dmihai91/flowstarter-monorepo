@@ -5,6 +5,7 @@ import { TeamSidebar } from '../components/TeamSidebar';
 import { FlowBackground } from '@flowstarter/flow-design-system';
 import { SidebarProvider } from '@/contexts/SidebarContext';
 import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
 // Pages that should NOT show sidebar (full-width layouts)
 const FULL_WIDTH_PATHS = ['/team/dashboard/new', '/team/dashboard/projects/'];
@@ -18,6 +19,16 @@ export default function TeamDashboardLayout({
   
   // Check if current path should be full-width (no sidebar)
   const isFullWidth = FULL_WIDTH_PATHS.some(path => pathname?.startsWith(path));
+
+  // Prevent body scroll — sidebar must stay fixed, only <main> scrolls
+  useEffect(() => {
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    };
+  }, []);
 
   if (isFullWidth) {
     return children;

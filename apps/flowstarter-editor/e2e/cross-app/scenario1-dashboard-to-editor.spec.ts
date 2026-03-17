@@ -71,8 +71,8 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
 
     expect(token).toBeTruthy();
     expect(token.split('.').length).toBeGreaterThanOrEqual(2);
-    // editorUrl comes from server env (may be production domain) — just verify token is embedded
-    expect(editorUrl).toContain('handoff=');
+    // editorUrl is now /project/:id when pre-init succeeds, or /?handoff=... as fallback
+    expect(editorUrl).toMatch(/\/project\/|handoff=/);
     expect(projectId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
 
     console.log('[1.1] Project created:', projectId, '| Editor URL:', editorUrl.slice(0, 80));
@@ -135,13 +135,14 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
   // ── 1.5 Editor loads without login, navigates to /project/:id ────────────
   test('1.5 — editor loads authenticated; redirects to /project/:id', async ({ page }) => {
     const name = testProjectName();
-    const { token } = await callHandoff(page, {
+    const { token, editorUrl } = await callHandoff(page, {
       name,
       description: BUSINESS_INFO.description,
     });
 
-    await page.goto(editorHandoffUrl(token));
-    // Real Convex WS connection + project/conversation creation
+    // editorUrl now points directly to /project/:id (pre-initialized server-side)
+    await page.goto(editorUrl);
+    // If editorUrl already is /project/:id, we just need to wait for page load
     await page.waitForURL(/\/project\//, { timeout: 30_000 });
 
     expect(page.url()).toMatch(/\/project\//);

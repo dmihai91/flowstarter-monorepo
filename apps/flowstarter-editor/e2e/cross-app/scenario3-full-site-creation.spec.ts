@@ -171,13 +171,12 @@ test.describe('Scenario 3: Full Site Creation', () => {
     // ── Step 6: Personalization ───────────────────────────────────────────────
     console.log('\n📍 Step 6: Personalization');
 
-    // Palette — click first option
+    // Palette — REQUIRED for build to start (build aborts if no palette)
     const paletteOption = page.locator('[data-testid*="palette"]').first();
-    if (await paletteOption.isVisible({ timeout: 8000 }).catch(() => false)) {
-      await paletteOption.click();
-      await page.waitForTimeout(2000); // Let Convex sync step=personalization
-      console.log('  ✅ Palette selected');
-    }
+    await paletteOption.waitFor({ timeout: 15000 });
+    await paletteOption.click();
+    await page.waitForTimeout(2000); // Let Convex sync step=personalization
+    console.log('  ✅ Palette selected (required)');
 
     // Font
     const fontOption = page.locator('[data-testid*="font"]').first();

@@ -125,10 +125,23 @@ test.describe('Scenario 3: Full Site Creation', () => {
     await page.waitForSelector('[data-testid^="template-card-"]', { timeout: 15000 });
     const templateCard = page.locator('[data-testid^="template-card-"]').first();
     await templateCard.scrollIntoViewIfNeeded();
+    const cardId = await templateCard.getAttribute('data-testid');
     await templateCard.click();
-    console.log(`  ✅ Template clicked: ${await templateCard.getAttribute('data-testid')}`);
-    // Wait for personalization to appear
-    await page.waitForTimeout(2000);
+    console.log(`  ✅ Template clicked: ${cardId}`);
+
+    // Verify selection registered — right panel should change from "Pick a template"
+    const selectionConfirmed = await page.waitForFunction(
+      () => !document.body.innerText.includes('Pick a template'),
+      { timeout: 10000 }
+    ).then(() => true).catch(() => false);
+
+    if (!selectionConfirmed) {
+      // Try double-click or clicking the "Select" button inside the card
+      console.log('  ⚠️ First click did not register, retrying...');
+      await templateCard.dblclick();
+      await page.waitForTimeout(2000);
+    }
+    console.log(`  ✅ Template selected confirmed: ${selectionConfirmed}`);
     await page.waitForTimeout(2000);
     await ss(page, '05-template-selected');
 
@@ -182,8 +195,8 @@ test.describe('Scenario 3: Full Site Creation', () => {
       const hint = t.match(/\d+%|turn \d|healing|building|compiling|preview|ready|complete|error/i)?.[0] || '...';
       console.log(`  ⏱  ${elapsed}s — ${hint}`);
       await ss(page, `08-build-${String(elapsed).padStart(3, '0')}s`);
-      // Avoid CSS keyframe false positives — check for UI-specific phrases
-      if (/your site is ready|view your site|site preview|preview is ready|build complete|site is live/i.test(t) || (/preview/i.test(t) && /daytona|https/i.test(t))) {
+      // Check for actual build completion (not nav tab 'Preview' or CSS text)
+      if (/your site is ready|site is live|build.*complete|view.*site/i.test(t) || (/preview/i.test(t) && /daytona|https:/i.test(t))) {
         buildDone = true;
         console.log('✅ Build complete!');
         break;

@@ -175,7 +175,7 @@ test.describe('Scenario 3: Full Site Creation', () => {
     const paletteOption = page.locator('[data-testid*="palette"]').first();
     if (await paletteOption.isVisible({ timeout: 8000 }).catch(() => false)) {
       await paletteOption.click();
-      await page.waitForTimeout(800);
+      await page.waitForTimeout(2000); // Let Convex sync step=personalization
       console.log('  ✅ Palette selected');
     }
 
@@ -210,22 +210,31 @@ test.describe('Scenario 3: Full Site Creation', () => {
 
     // ── Step 8: Real Claude build ─────────────────────────────────────────────
     console.log('\n📍 Step 8: Build — Claude generating site (up to 5 min)...');
+    // Wait for the build to start (activity log appears or creating step)
+    await page.waitForFunction(
+      () => {
+        const t = document.body.innerText;
+        return t.includes('Preparing environment') || t.includes('Dependencies installed') ||
+               t.includes('Turn 1') || t.includes('Agent') || t.includes('Building');
+      },
+      { timeout: 60000 }
+    ).catch(() => console.log('  ⚠️ Build start not detected within 60s'));
+
+    // Now wait for completion — up to 5 min
     let buildDone = false;
     for (let i = 0; i < 10; i++) {
       await page.waitForTimeout(30000);
       const t = await getText() || '';
       const elapsed = (i + 1) * 30;
-      const hint = t.match(/\d+%|turn \d|healing|building|compiling|preview|ready|complete|error/i)?.[0] || '...';
-      console.log(`  ⏱  ${elapsed}s — ${hint}`);
+      // Check for Daytona preview URL in page text
+      const hasPreviewUrl = /https?:\/\/[a-z0-9-]+\.daytonaproxy|daytona\.app|ngrok/i.test(t);
+      const hasDoneText = /site is ready|build complete|view your site|site is live/i.test(t);
+      const hint = t.match(/\d+%|Turn \d|healing|Preparing|Dependencies|complete|error|Preview/)?.[0] || '...';
+      console.log(`  ⏱  ${elapsed}s — ${hint}${hasPreviewUrl ? ' (URL found!)' : ''}`);
       await ss(page, `08-build-${String(elapsed).padStart(3, '0')}s`);
-      // Check for actual build completion (not nav tab 'Preview' or CSS text)
-      if (/your site is ready|site is live|build.*complete|view.*site/i.test(t) || (/preview/i.test(t) && /daytona|https:/i.test(t))) {
+      if (hasPreviewUrl || hasDoneText) {
         buildDone = true;
         console.log('✅ Build complete!');
-        break;
-      }
-      if (/error|failed|unable/i.test(t) && !/building|compiling/i.test(t)) {
-        console.log('❌ Build error detected');
         break;
       }
     }

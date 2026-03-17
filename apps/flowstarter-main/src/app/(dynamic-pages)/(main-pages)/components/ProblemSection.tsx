@@ -8,12 +8,12 @@ const p = LANDING.problem;
 
 export function ProblemSection() {
   return (
-    <SectionWrapper id="problem" className="bg-gray-50/50 dark:bg-white/[0.02]">
+    <SectionWrapper id="problem" tinted>
       <SectionHeading className="text-center">{p.title}</SectionHeading>
 
       <div className="mt-16 grid gap-8 md:grid-cols-3">
         {p.pains.map((pain) => (
-          <div key={pain.title} className="text-center md:text-left">
+          <div key={pain.title} className="rounded-2xl bg-[var(--landing-card-bg)] p-6 ring-1 ring-[var(--landing-card-border)] backdrop-blur-sm text-center md:text-left">
             <div className="mx-auto mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 dark:bg-red-500/10 text-red-500 dark:text-red-400 md:mx-0">
               <LandingIcon name={pain.icon as IconName} className="h-6 w-6" />
             </div>

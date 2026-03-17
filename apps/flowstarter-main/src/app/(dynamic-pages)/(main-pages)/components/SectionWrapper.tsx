@@ -7,16 +7,21 @@ interface SectionWrapperProps {
   id?: string;
   children: React.ReactNode;
   className?: string;
-  /** Extra top/bottom padding override */
   padding?: string;
+  /** Use tinted background (alternating sections) */
+  tinted?: boolean;
 }
 
-export function SectionWrapper({ id, children, className = '', padding = 'py-24 md:py-32' }: SectionWrapperProps) {
+export function SectionWrapper({ id, children, className = '', padding = 'py-24 md:py-32', tinted = false }: SectionWrapperProps) {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
-    <section ref={ref} id={id} className={`${padding} ${className}`}>
+    <section
+      ref={ref}
+      id={id}
+      className={`${padding} ${tinted ? 'bg-[var(--landing-bg-tint)] dark:bg-[var(--landing-dark-surface-tint)]' : ''} ${className}`}
+    >
       <motion.div
         className="mx-auto max-w-7xl px-6 lg:px-8"
         initial={{ opacity: 0, y: 24 }}

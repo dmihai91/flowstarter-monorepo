@@ -10,8 +10,8 @@ interface FeatureCardProps {
 
 export function FeatureCard({ icon, title, description }: FeatureCardProps) {
   return (
-    <div className="group rounded-2xl bg-white/70 dark:bg-white/[0.04] p-6 ring-1 ring-gray-200 dark:ring-white/10 backdrop-blur-sm transition-all duration-200 hover:ring-gray-300 dark:hover:ring-white/20 hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-none">
-      <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+    <div className="group rounded-2xl bg-[var(--landing-card-bg)] p-6 ring-1 ring-[var(--landing-card-border)] backdrop-blur-sm transition-all duration-200 hover:shadow-lg hover:shadow-[var(--landing-glow)]">
+      <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--landing-bg-tint)] dark:bg-indigo-500/10 text-[var(--landing-text-accent)]">
         <LandingIcon name={icon} className="h-5 w-5" />
       </div>
       <h3 className="mb-2 text-base font-semibold text-gray-900 dark:text-white">{title}</h3>

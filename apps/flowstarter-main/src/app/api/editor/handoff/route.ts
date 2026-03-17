@@ -18,11 +18,16 @@ if (!HANDOFF_SECRET && process.env.NODE_ENV === 'production') {
   throw new Error('HANDOFF_SECRET env var is required in production');
 }
 
+const CONVEX_SITE_URL =
+  process.env.CONVEX_SITE_URL ||
+  (process.env.NEXT_PUBLIC_CONVEX_URL || '').replace('.convex.cloud', '.convex.site');
+
 // ─── Token helpers ────────────────────────────────────────────────────────────
 
 export interface HandoffPayload {
   projectId: string;
   userId: string;
+  conversationId?: string;
   iat: number;
   exp: number;
   project: {
@@ -254,10 +259,54 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Pre-initialize Convex project + conversation so the editor can navigate instantly
+    let conversationId: string | undefined;
+    if (CONVEX_SITE_URL) {
+      try {
+        const bi = (projectData?.businessInfo ?? {}) as Record<string, unknown>;
+        const client = (projectData?.client ?? {}) as Record<string, unknown>;
+        const ci = (projectData?.contactInfo ?? {}) as Record<string, unknown>;
+        const hasBusinessData = !!(bi?.uvp || bi?.industry || bi?.pricingOffers);
+        const convexRes = await fetch(`${CONVEX_SITE_URL}/handoff/initialize`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-handoff-secret': HANDOFF_SECRET || 'dev-secret' },
+          body: JSON.stringify({
+            supabaseProjectId: resolvedProjectId,
+            projectName: projectName!,
+            projectDescription: projectDescription!,
+            businessInfo: {
+              description: bi.description,
+              uvp: bi.uvp,
+              targetAudience: bi.targetAudience,
+              industry: bi.industry,
+              brandTone: bi.brandTone,
+              businessType: bi.offerType,
+              businessGoals: bi.goal ? [bi.goal] : undefined,
+              sellingMethod: bi.sellingMethod,
+              pricingOffers: bi.offerings,
+              contactEmail: (bi.contactEmail as string) || (client.email as string) || (ci.email as string),
+              contactPhone: (bi.contactPhone as string) || (client.phone as string) || (ci.phone as string),
+              contactAddress: (bi.contactAddress as string) || (ci.address as string),
+              website: (bi.website as string) || (ci.website as string),
+            },
+            step: hasBusinessData ? 'template' : (projectName && projectName !== 'Untitled Project' ? 'describe' : 'welcome'),
+          }),
+        });
+        if (convexRes.ok) {
+          const convexData = await convexRes.json() as { conversationId?: string };
+          conversationId = convexData.conversationId;
+        }
+      } catch (e) {
+        // Non-fatal — editor will initialize itself as fallback
+        console.warn('[Editor Handoff] Convex pre-init failed:', e);
+      }
+    }
+
     // Issue a self-contained signed token — no server-side storage needed
     const token = createHandoffToken({
       projectId: resolvedProjectId,
       userId,
+      conversationId,
       project: {
         id: resolvedProjectId,
         name: projectName!,
@@ -266,13 +315,16 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const editorUrl = `${EDITOR_URL}?handoff=${encodeURIComponent(token)}`;
+    const editorUrl = conversationId
+      ? `${EDITOR_URL}/project/${conversationId}`
+      : `${EDITOR_URL}?handoff=${encodeURIComponent(token)}`;
 
-    console.info('[Editor Handoff] Token issued', { userId, projectId: resolvedProjectId, mode });
+    console.info('[Editor Handoff] Token issued', { userId, projectId: resolvedProjectId, mode, conversationId });
 
     return NextResponse.json({
       success: true,
       projectId: resolvedProjectId,
+      conversationId,
       token,
       editorUrl,
     });

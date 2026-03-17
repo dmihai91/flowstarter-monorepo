@@ -21,6 +21,7 @@ interface HandoffValidateResponse {
   valid?: boolean;
   projectId?: string;
   userId?: string;
+  conversationId?: string;
   project?: HandoffProjectPayload;
 }
 
@@ -103,6 +104,33 @@ export function HandoffGate({ handoffToken, hasHandoff, loadingMessage }: Handof
 
     const initialize = async () => {
       try {
+        // Fast path: decode token locally to check for pre-initialized conversationId
+        // Token format: base64url(json).base64url(sig)
+        let preConversationId: string | undefined;
+        let preProjectId: string | undefined;
+        let preProject: HandoffProjectPayload | undefined;
+        try {
+          const [dataPart] = handoffToken.split('.');
+          const payload = JSON.parse(atob(dataPart.replace(/-/g, '+').replace(/_/g, '/'))) as {
+            conversationId?: string;
+            projectId?: string;
+            project?: HandoffProjectPayload;
+          };
+          preConversationId = payload.conversationId;
+          preProjectId = payload.projectId;
+          preProject = payload.project;
+        } catch { /* fall through to API validation */ }
+
+        if (preConversationId && preProjectId) {
+          // Token already has conversationId — navigate instantly, no API calls needed
+          storeHandoffToken(handoffToken);
+          storeHandoffData(buildStoredHandoffData(preProjectId, preProject));
+          sessionStorage.setItem('flowstarter_handoff_session', '1');
+          navigate(`/project/${preConversationId}`, { replace: true });
+          return;
+        }
+
+        // Slow path: validate token + initialize via API (fallback for old tokens)
         const validateRes = await fetch(`/api/handoff/validate?token=${encodeURIComponent(handoffToken)}`);
         const validateData = (await validateRes.json().catch(() => ({}))) as HandoffValidateResponse;
 
@@ -110,15 +138,8 @@ export function HandoffGate({ handoffToken, hasHandoff, loadingMessage }: Handof
           throw new Error('Invalid or expired handoff link.');
         }
 
-        const fullRes = await fetch('/api/handoff/validate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token: handoffToken }),
-        });
-        const fullData = (await fullRes.json().catch(() => ({}))) as HandoffValidateResponse;
-
         storeHandoffToken(handoffToken);
-        storeHandoffData(buildStoredHandoffData(validateData.projectId, fullData.project));
+        storeHandoffData(buildStoredHandoffData(validateData.projectId, validateData.project));
 
         const initRes = await fetch('/api/handoff/initialize', {
           method: 'POST',

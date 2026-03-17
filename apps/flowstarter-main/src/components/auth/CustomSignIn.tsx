@@ -199,7 +199,7 @@ export function CustomSignIn() {
   // Forgot Password UI
   if (showForgotPassword) {
     return (
-      <div className="w-full max-w-[520px] mx-auto space-y-6">
+      <div className="w-full max-w-[520px] mx-auto space-y-6 pt-3 sm:pt-5">
         <div className="space-y-3">
           <h2 className="text-2xl font-semibold">
             {t('auth.forgotPassword.title')}

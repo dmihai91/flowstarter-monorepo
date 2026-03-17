@@ -437,6 +437,18 @@ function fixUntypedArrays(content: string): string {
   return content.replace(fmMatch[0], `---\n${fm}\n---`);
 }
 
+function fixStringLiteralProps(content: string): string {
+  return content.replace(
+    /interface Props \{([^}]*)\}/g,
+    (_match: string, body: string) => {
+      const fixedBody = body
+        .replace(/: "[^"]*"/g, ': string')
+        .replace(/: '[^']*'/g, ': string');
+      return 'interface Props {' + fixedBody + '}';
+    }
+  );
+}
+
 export function validateAndFixFiles(
   files: Record<string, string>,
 ): ValidationResult {
@@ -502,10 +514,11 @@ export function validateAndFixFiles(
     if (filePath.endsWith('.astro')) {
       const beforeTypeFix = currentContent;
       currentContent = fixUntypedArrays(currentContent);
+      currentContent = fixStringLiteralProps(currentContent);
       if (currentContent !== beforeTypeFix) {
         fileModified = true;
         fixCount++;
-        fixSummary.push(`Added type annotations to untyped arrays in ${filePath.split('/').pop()}`);
+        fixSummary.push(`Fixed type annotations in ${filePath.split('/').pop()}`);
       }
     }
 

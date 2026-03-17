@@ -19,7 +19,7 @@ export type { AgentActivityEvent };
 
 const logger = { error: (...args: unknown[]) => console.error('[AgentPipeline]', ...args) };
 const MODEL = 'claude-sonnet-4-6';
-const MAX_TURNS_GENERATE = 8;
+const MAX_TURNS_GENERATE = 12;
 const MAX_BUDGET_GENERATE = 0.60; // Hard cap per build
 const INTEGRATION_COMPONENT_BLOCKLIST = [
   'BookingWidget.astro', 'ContactForm.astro', 'Newsletter.astro',
@@ -196,7 +196,12 @@ CRITICAL RULES — violations cause build failures:
 - ALL imports in frontmatter must end with semicolons
 - Use (el as HTMLElement).style for DOM access in <script> tags
 - Images: use placeholder URLs like https://placehold.co/800x600
-- Every component must be self-contained with no external dependencies`,
+- Every component must be self-contained with no external dependencies
+- ALWAYS define a typed Props interface in every .astro component that receives props:
+  interface Props { title: string; description?: string; items?: { label: string; value: string }[] }
+  const { title, description, items = [] } = Astro.props;
+- NEVER type a prop as a string literal like '"Learn more"' — use 'string' instead
+- NEVER use 'as const' on prop default values inside destructuring`,
         tools: ['Read', 'Write', 'Edit', 'Glob'],
         allowedTools: ['Read', 'Write', 'Edit', 'Glob'],
         persistSession: false,

@@ -120,16 +120,14 @@ test.describe('Scenario 3: Full Site Creation', () => {
 
     await ss(page, '04-template-gallery');
 
-    // Click first template card
-    const templateCard = page.locator('[data-testid*="template"], [class*="template"]').first()
-      .or(page.locator('.cursor-pointer').first());
-    if (await templateCard.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await templateCard.click();
-      console.log('  ✅ Template selected');
-    } else {
-      // Try clicking any card-like element
-      await page.locator('button, [role="button"]').nth(2).click();
-    }
+    // Click first template card using data-testid
+    await page.waitForSelector('[data-testid^="template-card-"]', { timeout: 15000 });
+    const templateCard = page.locator('[data-testid^="template-card-"]').first();
+    await templateCard.scrollIntoViewIfNeeded();
+    await templateCard.click();
+    console.log(`  ✅ Template clicked: ${await templateCard.getAttribute('data-testid')}`);
+    // Wait for personalization to appear
+    await page.waitForTimeout(2000);
     await page.waitForTimeout(2000);
     await ss(page, '05-template-selected');
 
@@ -183,7 +181,8 @@ test.describe('Scenario 3: Full Site Creation', () => {
       const hint = t.match(/\d+%|turn \d|healing|building|compiling|preview|ready|complete|error/i)?.[0] || '...';
       console.log(`  ⏱  ${elapsed}s — ${hint}`);
       await ss(page, `08-build-${String(elapsed).padStart(3, '0')}s`);
-      if (/preview|your site|view site|live|ready|complete/i.test(t)) {
+      // Avoid CSS keyframe false positives — check for UI-specific phrases
+      if (/your site is ready|view your site|site preview|preview is ready|build complete|site is live/i.test(t) || (/preview/i.test(t) && /daytona|https/i.test(t))) {
         buildDone = true;
         console.log('✅ Build complete!');
         break;

@@ -39,10 +39,13 @@ test.describe('Scenario 3: Full Site Creation', () => {
     console.log('\n📍 Step 1: Dashboard');
     await page.goto(`${MAIN}/team/dashboard`);
     await page.waitForLoadState('networkidle');
+    // Wait to ensure we're on the dashboard (not redirected to login)
+    await page.waitForURL(/\/team\/dashboard/, { timeout: 15000 });
     await ss(page, '01-dashboard');
 
-    const newBtn = page.getByRole('button', { name: /new project|add|create/i }).first();
-    await newBtn.waitFor({ timeout: 10000 });
+    // Find "New Project" button — uses variant="accent" with Plus icon + "New Project" text
+    const newBtn = page.locator('button').filter({ hasText: 'New Project' }).first();
+    await newBtn.waitFor({ timeout: 15000 });
     await newBtn.click();
     await page.waitForTimeout(800);
     await ss(page, '02-modal-open');

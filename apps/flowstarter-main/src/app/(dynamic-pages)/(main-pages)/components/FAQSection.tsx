@@ -1,38 +1,107 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { SectionWrapper, SectionHeading } from './SectionWrapper';
-import { LANDING } from './landing-content';
-
-function FAQItem({ q, a }: { q: string; a: string }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="border-b border-[var(--landing-card-border)]">
-      <button onClick={() => setOpen(!open)} className="flex w-full items-center justify-between py-5 text-left">
-        <span className="text-base font-medium text-gray-900 dark:text-white pr-4">{q}</span>
-        <svg className={`h-5 w-5 flex-shrink-0 text-gray-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-        </svg>
-      </button>
-      <AnimatePresence>
-        {open && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
-            <p className="pb-5 text-sm leading-relaxed text-gray-500 dark:text-gray-400">{a}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
+import { useI18n } from '@/lib/i18n';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { GlassCard } from '@flowstarter/flow-design-system';
+import { useFAQAccordion } from './hooks/useFAQAccordion';
 
 export function FAQSection() {
+  const { t } = useI18n();
+  const { ref: sectionRef, isVisible } = useScrollAnimation();
+  const { openIndex: openFaq, toggle: toggleFaq } = useFAQAccordion(0);
+
   return (
-    <SectionWrapper tinted>
-      <SectionHeading className="text-center">{LANDING.faq.title}</SectionHeading>
-      <div className="mx-auto mt-16 max-w-3xl">
-        {LANDING.faq.items.map((item) => <FAQItem key={item.q} q={item.q} a={item.a} />)}
-      </div>
-    </SectionWrapper>
+    <>
+        {/* FAQ Section */}
+        <section
+          ref={sectionRef} id="faq"
+          className="pt-12 pb-6 lg:pt-18 lg:pb-18"
+        >
+          <div className="max-w-7xl mx-auto px-6 lg:px-12">
+            <div
+              id="faq-content"
+              data-animate
+              className={`grid lg:grid-cols-1 gap-10 transition-all duration-[350ms] ${
+                isVisible
+                  ? 'opacity-100'
+                  : 'opacity-0'
+              }`}
+            >
+              <div className="col-span-2 text-center mb-6 lg:mb-8">
+                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4">
+                  {t('landing.faq.heading1')}
+                  <br />
+                  <span className="bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
+                    {t('landing.faq.heading2')}
+                  </span>
+                </h2>
+              </div>
+
+              <div className="col-span-2 space-y-3 max-w-3xl mx-auto w-full">
+                {[
+                  { q: t('landing.faq.q1'), a: t('landing.faq.a1') },
+                  { q: t('landing.faq.q2'), a: t('landing.faq.a2') },
+                  { q: t('landing.faq.q3'), a: t('landing.faq.a3') },
+                  { q: t('landing.faq.q4'), a: t('landing.faq.a4') },
+                  { q: t('landing.faq.q5'), a: t('landing.faq.a5') },
+                  { q: t('landing.faq.q6'), a: t('landing.faq.a6') },
+                  { q: t('landing.faq.q7'), a: t('landing.faq.a7') },
+                  { q: t('landing.faq.q8'), a: t('landing.faq.a8') },
+                  { q: t('landing.faq.q9'), a: t('landing.faq.a9') },
+                  { q: t('landing.faq.q10'), a: t('landing.faq.a10') },
+                ].map((faq, i) => (
+                  <GlassCard
+                    key={i}
+                    variant="subtle"
+                    noHover
+                    className={`overflow-hidden !p-0 ${
+                      isVisible
+                        ? 'opacity-100'
+                        : 'opacity-0'
+                    }`}
+                    style={{
+                      transitionProperty: 'opacity, transform',
+                      transitionDuration: '0.5s',
+                      transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                      transitionDelay: isVisible ? `${i * 80}ms` : '0ms',
+                    }}
+                  >
+                    <button
+                      onClick={() => toggleFaq(i)}
+                      className="group/faq w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors"
+                    >
+                      <h3 className="text-base font-semibold pr-4">{faq.q}</h3>
+                      <svg
+                        className={`w-5 h-5 text-gray-400 group-hover/faq:text-[var(--purple)] flex-shrink-0 transition-all duration-200 ${
+                          openFaq === i ? 'rotate-180 text-[var(--purple)]' : ''
+                        }`}
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+                    <div
+                      className={`overflow-hidden transition-all duration-300 ${
+                        openFaq === i ? 'max-h-48 pb-5' : 'max-h-0'
+                      }`}
+                    >
+                      <p className="px-6 text-gray-500 dark:text-white/40 leading-relaxed text-sm max-w-[60ch]">
+                        {faq.a}
+                      </p>
+                    </div>
+                  </GlassCard>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+    </>
   );
 }

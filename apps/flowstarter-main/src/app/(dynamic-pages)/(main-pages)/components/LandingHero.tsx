@@ -1,37 +1,134 @@
 'use client';
 
-import { CTAButton } from './CTAButton';
-import { LANDING } from './landing-content';
+import { useI18n } from '@/lib/i18n';
+import { EXTERNAL_URLS } from '@/lib/constants';
+import { Button } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
 
-const h = LANDING.hero;
-
+/**
+ * Landing page hero — clean, focused, high-converting.
+ * Only: badge, headline, one paragraph, CTA.
+ */
 export function LandingHero() {
+  const { t } = useI18n();
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoaded(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <section className="relative overflow-hidden pt-32 pb-20 md:pt-44 md:pb-32">
-      {/* Radial halo - uses the hero wash variables */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 h-[700px] w-[900px] rounded-full bg-[radial-gradient(ellipse,var(--hero-wash-from)_0%,var(--hero-wash-via)_40%,transparent_70%)] opacity-80 dark:opacity-20 blur-[40px]" />
-        <div className="absolute top-[10%] left-1/2 -translate-x-1/2 h-[400px] w-[600px] rounded-full bg-[var(--landing-glow)] blur-[80px]" />
+    <section className="relative pt-20 sm:pt-24 lg:pt-28 pb-2 lg:pb-6 overflow-hidden">
+      {/* Background gradient — premium multi-layer */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Base wash — barely tinted */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[var(--hero-wash-from)] via-[var(--hero-wash-via)] to-[var(--hero-wash-to)]" />
+        {/* Central halo — single radial glow behind headline area */}
+        <div className="absolute top-[10%] left-1/2 -translate-x-1/2 w-[90%] sm:w-[70%] h-[60%] rounded-full bg-[var(--hero-glow-primary)] opacity-[0.18] dark:opacity-[0.15] blur-[80px] md:blur-[120px] lg:blur-[200px] will-change-transform" />
+        {/* Subtle secondary — slight cool shift lower */}
+        <div className="absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[60%] sm:w-[45%] h-[40%] rounded-full bg-[var(--hero-glow-secondary)] opacity-[0.10] dark:opacity-[0.10] blur-[80px] md:blur-[120px] lg:blur-[180px] will-change-transform" />
+        {/* Noise texture overlay */}
+        <div className="absolute inset-0 opacity-[0.025] dark:opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")', backgroundRepeat: 'repeat', backgroundSize: '128px 128px' }} />
       </div>
 
-      <div className="relative mx-auto max-w-4xl px-6 text-center lg:px-8">
-        <h1 className="hero-fade hero-fade-1 font-display text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl lg:text-6xl lg:leading-[1.1]">
-          Launch your online business
-          <span className="text-flow"> without tech skills or expensive agencies</span>
-        </h1>
+      {/* Bottom fade — smooth transition to next section */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-[var(--landing-bg)]/50 to-[var(--landing-bg)] dark:via-[var(--landing-dark-surface)]/50 dark:to-[var(--landing-dark-surface)] pointer-events-none z-[1]" />
 
-        <p className="hero-fade hero-fade-2 mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-gray-600 dark:text-gray-400 sm:text-xl">
-          {h.subheadline}
-        </p>
+      {/* Subtle flow lines */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <svg className="absolute inset-0 w-full h-full opacity-[0.15] dark:opacity-[0.30]" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" fill="none">
+          <defs>
+            <linearGradient id="heroLine1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="var(--purple)" stopOpacity="0" />
+              <stop offset="50%" stopColor="var(--purple)" />
+              <stop offset="100%" stopColor="var(--purple)" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <g className="animate-[flowDrift_20s_ease-in-out_infinite_alternate]">
+            <path d="M-100,200 Q200,170 500,230 T1000,190 T1400,230" stroke="url(#heroLine1)" strokeWidth="1" />
+            <path d="M-100,400 Q300,370 600,430 T1100,390 T1400,420" stroke="url(#heroLine1)" strokeWidth="0.8" />
+            <path d="M-100,600 Q250,570 550,630 T1050,590 T1400,620" stroke="url(#heroLine1)" strokeWidth="0.6" />
+          </g>
+        </svg>
+      </div>
 
-        <div className="hero-fade hero-fade-3 mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <CTAButton size="lg" href="/team/dashboard">{h.primaryCta}</CTAButton>
-          <CTAButton variant="secondary" size="lg" href="#pricing">{h.secondaryCta}</CTAButton>
+      <div className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10 text-center">
+        {/* Badge */}
+        <div className={`transition-all duration-700 ease-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+          <div className="hero-fade hero-fade-1 inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/60 dark:bg-white/[0.06] backdrop-blur-md border border-gray-200/40 dark:border-white/[0.08] shadow-[0_2px_20px_rgba(0,0,0,0.04)] mb-6">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            <span className="text-sm font-medium text-gray-600 dark:text-white/70">
+              {t('landing.hero.badge')}
+            </span>
+          </div>
         </div>
 
-        <p className="hero-fade hero-fade-4 mt-10 text-sm text-gray-500 dark:text-gray-500">
-          {h.trustLine}
+        {/* Headline */}
+        <h1 className={`hero-fade hero-fade-2 text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.08] tracking-tight mb-5 text-gray-900 dark:text-white`}>
+          {t('landing.hero.headline1')}
+          <br />
+          <span className="text-flow">{t('landing.hero.headline2')}</span>
+        </h1>
+
+        {/* Body */}
+        <p className="hero-fade hero-fade-3 text-lg sm:text-xl text-gray-500 dark:text-white/55 leading-relaxed mb-4 max-w-2xl mx-auto">
+          {t('landing.hero.pain')}
         </p>
+
+        {/* Audience qualifier */}
+        <p className="hero-fade hero-fade-3 text-sm sm:text-base text-gray-400 dark:text-white/40 mb-7 max-w-xl mx-auto">
+          {t('landing.hero.audience')}
+        </p>
+
+        {/* CTA */}
+        <div className="hero-fade hero-fade-4">
+          <a href={EXTERNAL_URLS.calendly.discovery} target="_blank" rel="noopener noreferrer">
+            <Button variant="brand-gradient" className="relative overflow-hidden bg-[length:200%_100%] animate-[shimmerBtn_3s_ease-in-out_infinite] rounded-xl px-8 sm:px-10 h-13 sm:h-14 text-base sm:text-lg shadow-[0_8px_30px_rgba(124,58,237,0.25)] hover:shadow-[0_12px_40px_rgba(124,58,237,0.35)] hover:scale-[1.03] active:scale-[0.98] group">
+              {t('landing.hero.cta')}
+              <svg className="w-5 h-5 ml-2.5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Button>
+          </a>
+          <p className="hero-fade hero-fade-5 text-sm text-gray-400 dark:text-white/35 mt-4">
+            {t('landing.hero.ctaNote')}
+          </p>
+
+          {/* Launch price anchor */}
+          <div className="hero-fade hero-fade-5 inline-flex flex-col sm:flex-row items-center gap-2 sm:gap-4 mt-8 px-6 sm:px-8 py-4 sm:py-4 rounded-2xl bg-gradient-to-r from-amber-50/80 to-orange-50/60 dark:from-amber-500/[0.06] dark:to-orange-500/[0.03] backdrop-blur-sm border border-amber-200/40 dark:border-amber-500/15 shadow-[0_2px_16px_rgba(245,158,11,0.08)]">
+            <span className="text-[0.625rem] sm:text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">{t('landing.hero.limitedBadge')}</span>
+            <span className="hidden sm:block w-px h-5 bg-amber-300/30 dark:bg-amber-500/20" />
+            <div className="flex items-center gap-3">
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-sm text-gray-400 dark:text-white/30 line-through">{t('landing.hero.buildOriginalPrice')}</span>
+                <span className="text-xl font-extrabold text-gray-900 dark:text-white">{t('landing.hero.priceBuild')}</span>
+                <span className="text-xs text-gray-400 dark:text-white/35">{t('landing.hero.buildSetupLabel')}</span>
+              </div>
+              <span className="text-gray-300 dark:text-white/15">+</span>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-sm text-gray-400 dark:text-white/30 line-through">{t('landing.hero.careOriginalPrice')}</span>
+                <span className="text-xl font-extrabold text-gray-900 dark:text-white">{t('landing.hero.priceMonthly')}</span>
+                <span className="text-xs text-gray-400 dark:text-white/35">{t('landing.hero.monthlyLabel')}</span>
+              </div>
+            </div>
+          </div>
+          <p className="hero-fade hero-fade-5 text-xs sm:text-sm text-amber-600/70 dark:text-amber-400/50 mt-3">{t('landing.hero.urgency')}</p>
+
+          {/* Limited spots indicator — hidden for now, uncomment when ready
+          <div className="hero-fade hero-fade-5 flex items-center justify-center gap-2 mt-8 text-sm sm:text-base text-gray-500 dark:text-white/40">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
+            </span>
+            <span>Launch batch: accepting only 10 clients</span>
+            <span className="font-semibold text-gray-700 dark:text-white/70">· 10 spots remaining</span>
+          </div>
+          */}
+        </div>
       </div>
     </section>
   );

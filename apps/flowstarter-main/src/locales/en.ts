@@ -1142,14 +1142,14 @@ const en = {
   'waitlist.landing.privacy': 'No spam. Unsubscribe anytime.',
 
   // Landing Page - Hero
-  'landing.hero.badge': 'We build it. You refine it with AI.',
-  'landing.hero.headline1': 'Your expertise is real.',
-  'landing.hero.headline2': 'Your online presence should be too.',
-  'landing.hero.audience': 'Perfect for consultants, coaches, creators, and small businesses who need a professional online presence fast.',
+  'landing.hero.badge': 'Done for you. Managed by you.',
+  'landing.hero.headline1': 'Launch your online business',
+  'landing.hero.headline2': 'without tech skills or expensive agencies.',
+  'landing.hero.audience': 'Built for creators, freelancers, and small businesses who want to get online and monetize faster.',
   'landing.hero.pain':
-    'We design, build, and launch a professional website for your business. Ready in days, not months.',
+    'We build your initial setup for you, then you manage and grow everything from one AI-powered dashboard.',
   'landing.hero.subheadline': '',
-  'landing.hero.cta': 'Launch My Website',
+  'landing.hero.cta': 'Launch my business',
   'landing.hero.ctaNote':
     'One call. We handle everything. You\'ll be live in days.',
   'landing.hero.priceBuild': '€499',
@@ -1306,16 +1306,16 @@ const en = {
   'landing.pricing.footerNote': 'No lock-in. Cancel anytime. No hidden fees.',
   'landing.pricing.finePrint': 'No contracts. Cancel anytime. First month free.',
   'landing.pricing.cta': 'Claim Your Spot',
-  'landing.header.cta': 'Book Free Call',
+  'landing.header.cta': 'Launch my business',
 
   // Landing Page - For/Not For
 
 
   // Landing Page - CTA
-  'landing.cta.title': "Your skills deserve clients. Let's make that happen.",
+  'landing.cta.title': "Stop waiting months to get online.",
   'landing.cta.subtitle':
-    "Book a free discovery call. We'll talk through your business and see if Flowstarter is the right fit. No pressure. No pitch deck.",
-  'landing.cta.button': 'Book Your Free Strategy Call',
+    "Get your business foundation launched in days, then manage and grow it with Flowstarter.",
+  'landing.cta.button': 'Launch my business',
 
   // Landing Page - Footer CTA
   'landing.cta.setupPrice': '€499 setup',

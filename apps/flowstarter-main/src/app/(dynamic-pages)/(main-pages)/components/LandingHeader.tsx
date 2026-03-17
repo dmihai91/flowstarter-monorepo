@@ -23,7 +23,7 @@ export function LandingHeader() {
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
         {/* Logo */}
         <a href="/" className="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 text-sm font-bold text-white">F</span>
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--purple-primary)] to-[var(--purple-primary-dark)] text-sm font-bold text-white">F</span>
           Flowstarter
         </a>
 

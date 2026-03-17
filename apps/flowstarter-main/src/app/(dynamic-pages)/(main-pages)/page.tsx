@@ -5,6 +5,7 @@ import { CookieConsent } from '@/components/CookieConsent';
 import { FlowFieldBackground } from './components/FlowFieldBackground';
 import { LandingHeader } from './components/LandingHeader';
 import { LandingHero } from './components/LandingHero';
+import { EditorShowcase } from './components/EditorShowcase';
 import { ProblemSection } from './components/ProblemSection';
 import { SolutionSection } from './components/SolutionSection';
 import { IncludedSection } from './components/IncludedSection';
@@ -50,6 +51,7 @@ export default function LandingPage() {
         <FlowFieldBackground />
         <LandingHeader />
         <LandingHero />
+        <EditorShowcase />
         <ProblemSection />
         <SolutionSection />
         <IncludedSection />

@@ -16,11 +16,11 @@ const sizeClasses = {
 };
 
 export function CTAButton({ children, variant = 'primary', size = 'md', href, onClick, className = '' }: CTAButtonProps) {
-  const base = 'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500';
+  const base = 'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--purple-primary)]';
 
   const variants = {
-    primary: 'bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] text-white shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 hover:bg-[linear-gradient(135deg,var(--landing-btn-hover-from),var(--landing-btn-hover-via))] hover:-translate-y-0.5 active:translate-y-0',
-    secondary: 'border border-[var(--landing-card-border)] text-gray-700 dark:text-gray-200 hover:border-indigo-400 dark:hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-[var(--landing-card-bg)] backdrop-blur-sm',
+    primary: 'bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] text-white shadow-lg shadow-[var(--purple-primary-lightest)] hover:shadow-xl hover:shadow-[var(--purple-primary-lighter)] hover:bg-[linear-gradient(135deg,var(--landing-btn-hover-from),var(--landing-btn-hover-via))] hover:-translate-y-0.5 active:translate-y-0',
+    secondary: 'border border-[var(--landing-card-border)] text-gray-700 dark:text-gray-200 hover:border-[var(--purple-primary-light)] dark:hover:border-[var(--purple-primary-light)] hover:text-[var(--purple-primary)] dark:hover:text-[var(--purple-primary-light)] bg-[var(--landing-card-bg)] backdrop-blur-sm',
   };
 
   const classes = `${base} ${variants[variant]} ${sizeClasses[size]} ${className}`;

@@ -20,7 +20,7 @@ export function DifferentiationSection() {
             <h3 className={`text-lg font-semibold ${card.highlighted ? 'text-white' : 'text-gray-900 dark:text-white'}`}>
               {card.label}
             </h3>
-            <p className={`mt-3 text-sm leading-relaxed ${card.highlighted ? 'text-indigo-100' : 'text-gray-500 dark:text-gray-400'}`}>
+            <p className={`mt-3 text-sm leading-relaxed ${card.highlighted ? 'text-[var(--purple-primary-lightest)]' : 'text-gray-500 dark:text-gray-400'}`}>
               {card.description}
             </p>
           </div>

@@ -425,7 +425,7 @@ export function tryDeterministicFix(
     // ── Astro props typed as string literal instead of string type ──────────────
   if (
     error.includes("Property") && error.includes("does not exist on type") &&
-    (error.includes('"\"') || error.includes("'"") || error.match(/on type '".+"'/))
+    error.includes("does not exist on type")
   ) {
     return {
       type: 'deterministic',
@@ -479,7 +479,7 @@ export function tryGlobalDeterministicFix(
     // ── Astro props typed as string literal instead of string type ──────────────
   if (
     error.includes("Property") && error.includes("does not exist on type") &&
-    (error.includes('"\"') || error.includes("'"") || error.match(/on type '".+"'/))
+    error.includes("does not exist on type")
   ) {
     return {
       type: 'deterministic',

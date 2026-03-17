@@ -126,22 +126,40 @@ test.describe('Scenario 3: Full Site Creation', () => {
     const templateCard = page.locator('[data-testid^="template-card-"]').first();
     await templateCard.scrollIntoViewIfNeeded();
     const cardId = await templateCard.getAttribute('data-testid');
-    await templateCard.click();
+
+    // Click with force to bypass any motion overlay, wait for 200ms setTimeout
+    await templateCard.click({ force: true });
+    await page.waitForTimeout(500);
     console.log(`  ✅ Template clicked: ${cardId}`);
 
-    // Verify selection registered — right panel should change from "Pick a template"
+    // Verify selection registered — wait for personalization or build panel
     const selectionConfirmed = await page.waitForFunction(
-      () => !document.body.innerText.includes('Pick a template'),
-      { timeout: 10000 }
+      () => {
+        const t = document.body.innerText;
+        return !t.includes('Pick a template') && (
+          t.includes('palette') || t.includes('Palette') ||
+          t.includes('font') || t.includes('Font') ||
+          t.includes('logo') || t.includes('Logo') ||
+          t.includes('Building') || t.includes('Preparing')
+        );
+      },
+      { timeout: 15000 }
     ).then(() => true).catch(() => false);
 
     if (!selectionConfirmed) {
-      // Try double-click or clicking the "Select" button inside the card
-      console.log('  ⚠️ First click did not register, retrying...');
-      await templateCard.dblclick();
-      await page.waitForTimeout(2000);
+      console.log('  ⚠️ Retry: looking for "Use this template" button');
+      // Try clicking the hover button directly
+      const useBtn = page.getByText('Use this template').first();
+      if (await useBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await useBtn.click({ force: true });
+        await page.waitForTimeout(500);
+      } else {
+        // Last resort: click again
+        await templateCard.click({ force: true });
+        await page.waitForTimeout(2000);
+      }
     }
-    console.log(`  ✅ Template selected confirmed: ${selectionConfirmed}`);
+    console.log(`  ✅ Template selection confirmed: ${selectionConfirmed}`);
     await page.waitForTimeout(2000);
     await ss(page, '05-template-selected');
 

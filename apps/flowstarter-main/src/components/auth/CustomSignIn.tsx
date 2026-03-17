@@ -233,9 +233,8 @@ export function CustomSignIn() {
             <Button
               onClick={handleForgotPassword}
               disabled={isResetLoading || !resetEmail}
-              variant="outline"
-              size="lg"
-              className="w-full mt-4"
+              size="xl"
+              className="w-full mt-4 font-semibold shadow-md"
             >
               {isResetLoading
                 ? t('auth.forgotPassword.sendingCode')
@@ -314,9 +313,8 @@ export function CustomSignIn() {
               disabled={
                 isResetLoading || !resetCode || !newPassword || !confirmPassword
               }
-              variant="outline"
-              size="lg"
-              className="w-full mt-4"
+              size="xl"
+              className="w-full mt-4 font-semibold shadow-md"
             >
               {isResetLoading
                 ? t('auth.forgotPassword.resettingPassword')

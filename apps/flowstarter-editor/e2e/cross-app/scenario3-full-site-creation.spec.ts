@@ -5,7 +5,7 @@
  * Timeout: 10 minutes (real Claude pipeline takes 3-5 min)
  */
 import { test, expect } from '@playwright/test';
-import { clerk, setupClerkTestingToken } from '@clerk/testing/playwright';
+import { setupClerkTestingToken } from '@clerk/testing/playwright';
 import path from 'path';
 import fs from 'fs';
 
@@ -32,15 +32,7 @@ test.describe('Scenario 3: Full Site Creation', () => {
     // ── Auth ──────────────────────────────────────────────────────────────────
     await setupClerkTestingToken({ page });
     await page.goto(MAIN);
-    // setupClerkTestingToken already authenticates — only call signIn if not yet signed in
-    const signedIn = await page.evaluate(() => !!(window as any).Clerk?.user).catch(() => false);
-    if (!signedIn) {
-      await clerk.signIn({
-        page,
-        emailAddress: process.env.E2E_USER_EMAIL || 'test@flowstarter.app',
-        password: process.env.E2E_USER_PASSWORD || 'SecurePa$$wd11!',
-      });
-    }
+    await page.waitForLoadState('networkidle');
     console.log('✅ Signed in');
 
     // ── Step 1: Dashboard ─────────────────────────────────────────────────────

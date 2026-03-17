@@ -427,6 +427,7 @@ export function TemplateGallery({
                         onClick={() => handleTemplateClick(template)}
                         onPreview={e => { e.stopPropagation(); onPreview(template); }}
                         onThumbnailError={() => handleThumbnailError(template.id)}
+                        data-testid={`all-template-card-${template.id}`}
                       />
                     ))}
                   </AnimatePresence>

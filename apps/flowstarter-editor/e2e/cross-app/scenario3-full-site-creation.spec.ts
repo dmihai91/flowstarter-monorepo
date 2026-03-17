@@ -122,8 +122,13 @@ test.describe('Scenario 3: Full Site Creation', () => {
     await ss(page, '04-template-gallery');
 
     // Click first template card using data-testid
-    await page.waitForSelector('[data-testid^="template-card-"]', { timeout: 15000 });
-    const templateCard = page.locator('[data-testid^="template-card-"]').first();
+    // Wait for either recommended cards or all-template cards to appear
+    await page.waitForSelector('[data-testid^="template-card-"], [data-testid^="all-template-card-"]', { timeout: 15000 });
+    // Prefer all-template cards (always present) over recommendation cards (may be empty)
+    const hasAllCards = await page.locator('[data-testid^="all-template-card-"]').count() > 0;
+    const templateCard = hasAllCards
+      ? page.locator('[data-testid^="all-template-card-"]').first()
+      : page.locator('[data-testid^="template-card-"]').first();
     await templateCard.scrollIntoViewIfNeeded();
     const cardId = await templateCard.getAttribute('data-testid');
 

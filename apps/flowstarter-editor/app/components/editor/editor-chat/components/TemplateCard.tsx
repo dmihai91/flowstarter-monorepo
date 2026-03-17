@@ -15,11 +15,13 @@ interface TemplateCardProps {
   onClick: () => void;
   onPreview: (e: React.MouseEvent) => void;
   onThumbnailError: () => void;
+  'data-testid'?: string;
 }
 
 export function TemplateCard({
   template, index, isDark, isSelected, isHovered,
   hasThumbnailError, onMouseEnter, onMouseLeave, onClick, onPreview, onThumbnailError,
+  'data-testid': testId,
 }: TemplateCardProps) {
   const colors = getCategoryColors(template.category || 'default');
   const thumbnailUrl = template.thumbnail || getTemplateThumbnailUrl(template.id, isDark ? 'dark' : 'light');
@@ -46,6 +48,7 @@ export function TemplateCard({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onClick={onClick}
+      data-testid={testId}
       className="group rounded-2xl overflow-hidden cursor-pointer"
       style={{
         background: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(255, 255, 255, 0.7)',

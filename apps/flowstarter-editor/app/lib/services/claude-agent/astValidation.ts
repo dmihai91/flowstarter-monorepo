@@ -439,7 +439,7 @@ function fixUntypedArrays(content: string): string {
 
 function fixStringLiteralProps(content: string): string {
   return content.replace(
-    /interface Props \{([^}]*)\}/g,
+    /interface Props \{([^}]*)\}/gs,
     (_match: string, body: string) => {
       const fixedBody = body
         .replace(/: "[^"]*"/g, ': string')

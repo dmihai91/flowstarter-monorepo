@@ -422,24 +422,6 @@ export function tryDeterministicFix(
       }
     }
   }
-    // ── Astro props typed as string literal instead of string type ──────────────
-  if (
-    error.includes("Property") && error.includes("does not exist on type") &&
-    error.includes("does not exist on type")
-  ) {
-    return {
-      type: 'deterministic',
-      description: 'Fix prop typed as string literal — should be string type',
-      // Healing prompt for AI fallback
-      prompt: `The error "Property X does not exist on type 'Y'" means a prop is typed as a string literal instead of string.
-Fix by ensuring the Props interface uses 'string' not a literal like '"Learn more"'.
-Example fix:
-WRONG: interface Props { cta: "Learn more" }
-RIGHT: interface Props { cta: string }
-Also ensure default values use: const { cta = "Learn more" } = Astro.props; (not typed as const)`,
-    };
-  }
-
   return null;
 }
 
@@ -476,23 +458,7 @@ export function tryGlobalDeterministicFix(
     }
   }
 
-    // ── Astro props typed as string literal instead of string type ──────────────
-  if (
-    error.includes("Property") && error.includes("does not exist on type") &&
-    error.includes("does not exist on type")
-  ) {
-    return {
-      type: 'deterministic',
-      description: 'Fix prop typed as string literal — should be string type',
-      // Healing prompt for AI fallback
-      prompt: `The error "Property X does not exist on type 'Y'" means a prop is typed as a string literal instead of string.
-Fix by ensuring the Props interface uses 'string' not a literal like '"Learn more"'.
-Example fix:
-WRONG: interface Props { cta: "Learn more" }
-RIGHT: interface Props { cta: string }
-Also ensure default values use: const { cta = "Learn more" } = Astro.props; (not typed as const)`,
-    };
-  }
+
 
   return null;
 }

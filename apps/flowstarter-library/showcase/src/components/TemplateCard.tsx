@@ -93,7 +93,7 @@ export function TemplateCard({ template, darkMode, onPreview }: TemplateCardProp
             alt={template.name}
             onLoad={() => setImageLoaded(true)}
             onError={() => setImageError(true)}
-            className={`h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            className={`h-full w-full object-cover object-left-top transition-transform duration-500 group-hover:scale-105 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
           />
         ) : null}
 

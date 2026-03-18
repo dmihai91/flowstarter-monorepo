@@ -41,7 +41,7 @@ export function Header({ themeMode, setThemeMode, darkMode, searchQuery, setSear
             <Logo size="sm" />
           </a>
 
-          <div className="flex-1 max-w-md">
+          <div className="hidden sm:block flex-1 max-w-md">
             <div className="relative">
               <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none">
                 <SearchIcon />

@@ -220,11 +220,14 @@ function TeamAccessDenied() {
 
 export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuardProps) {
   // Skip auth for handoff flows — HandoffGate handles auth independently
-  // Check both URL param (initial handoff) and sessionStorage (after redirect to /project/:id)
-  const hasHandoffToken = typeof window !== 'undefined' && (
-    new URL(window.location.href).searchParams.has('handoff') ||
-    sessionStorage.getItem('flowstarter_handoff_session') === '1'
-  );
+  const hasHandoffToken = (() => {
+    if (typeof window === 'undefined') return false;
+    try {
+      const hasUrlToken = window.location.search.includes('handoff=');
+      const hasSessionToken = sessionStorage.getItem('flowstarter_handoff_session') === '1';
+      return hasUrlToken || hasSessionToken;
+    } catch { return false; }
+  })();
 
   const { isLoaded, isSignedIn, user } = useUser();
   const [userMode, setUserMode] = useState<'guest' | 'team' | 'client'>('guest');

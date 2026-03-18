@@ -219,6 +219,9 @@ function TeamAccessDenied() {
 }
 
 export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuardProps) {
+  // If there's a handoff token in the URL, skip auth entirely — HandoffGate handles auth
+  const hasHandoffToken = typeof window !== 'undefined' && new URL(window.location.href).searchParams.has('handoff');
+
   const { isLoaded, isSignedIn, user } = useUser();
   const [userMode, setUserMode] = useState<'guest' | 'team' | 'client'>('guest');
   const [loadingTimedOut, setLoadingTimedOut] = useState(false);
@@ -260,6 +263,11 @@ export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuard
     }
 
     return <>{fallback ?? <LoadingFallback />}</>;
+  }
+
+  // Bypass auth for handoff URLs — HandoffGate validates the token independently
+  if (hasHandoffToken) {
+    return <>{children}</>;
   }
 
   // Loaded but not signed in — show login prompt

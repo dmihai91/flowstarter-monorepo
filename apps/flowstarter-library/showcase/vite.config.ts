@@ -112,6 +112,7 @@ export default defineConfig({
   },
   server: {
     port: 2000,
+    allowedHosts: ["library.flowstarter.dev"],
     host: true,
     strictPort: true,
     proxy: {

@@ -172,13 +172,15 @@ test.describe('Scenario 3: Full Site Creation', () => {
     console.log('\n📍 Step 6: Personalization');
 
     // Palette — REQUIRED for build to start (build aborts if no palette)
-    // Wait for personalization panel to appear first
-    await page.waitForSelector('[data-testid="palette-section"], [data-testid="personalization-panel"]', { timeout: 15000 });
+    await page.waitForSelector('[data-testid="palette-section"]', { timeout: 20000 });
+    // Wait for palette options to be visible (they have stagger animations)
+    await page.waitForTimeout(2000);
     const paletteOption = page.locator('[data-testid^="palette-option-"]').first();
-    await paletteOption.waitFor({ timeout: 10000 });
-    await paletteOption.click();
-    await page.waitForTimeout(2000); // Let state advance to font section + Convex sync
-    console.log('  ✅ Palette selected (required)');
+    // Use JS click to bypass animation opacity
+    await paletteOption.waitFor({ state: 'attached', timeout: 10000 });
+    await paletteOption.click({ force: true });
+    await page.waitForTimeout(2000);
+    console.log(`  ✅ Palette selected: ${await paletteOption.getAttribute('data-testid')}`);
 
     // Font
     const fontOption = page.locator('[data-testid^="font-option-"]').first();

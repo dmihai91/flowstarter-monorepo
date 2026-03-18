@@ -8,7 +8,6 @@
 
 import { useUser } from '@clerk/remix';
 import { useEffect, useRef, useState } from 'react';
-import { useLocation } from '@remix-run/react';
 import { useStore } from '@nanostores/react';
 import { Logo, LoadingScreen, Footer, ThemeToggle, FlowBackground, GlassPanel, ScrollAwareHeader, type FooterLink } from '@flowstarter/flow-design-system';
 import { initializeFromClerkUser } from '~/lib/team-auth';
@@ -220,17 +219,6 @@ function TeamAccessDenied() {
 }
 
 export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuardProps) {
-  // Skip auth for handoff flows — HandoffGate handles auth independently
-  // Check URL param (SSR-safe) + sessionStorage (client-only, post-redirect)
-  const location = useLocation();
-  const [hasHandoffSession, setHasHandoffSession] = useState(false);
-  useEffect(() => {
-    try {
-      setHasHandoffSession(sessionStorage.getItem('flowstarter_handoff_session') === '1');
-    } catch { /* ignore */ }
-  }, []);
-  const hasHandoffToken = location.search.includes('handoff=') || hasHandoffSession;
-
   const { isLoaded, isSignedIn, user } = useUser();
   const [userMode, setUserMode] = useState<'guest' | 'team' | 'client'>('guest');
   const [loadingTimedOut, setLoadingTimedOut] = useState(false);
@@ -265,18 +253,14 @@ export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuard
     };
   }, [isLoaded]);
 
-
+  // Clerk still loading — show loading fallback, not the login prompt
+  // Unless we've timed out, in which case show the login prompt
   if (!isLoaded) {
     if (loadingTimedOut) {
       return <LoginPrompt />;
     }
 
     return <>{fallback ?? <LoadingFallback />}</>;
-  }
-
-  // Bypass auth for handoff URLs — HandoffGate validates the token independently
-  if (hasHandoffToken) {
-    return <>{children}</>;
   }
 
   // Loaded but not signed in — show login prompt

@@ -47,11 +47,8 @@ const MAIN_URL = process.env.MAIN_APP_URL || process.env.E2E_BASE_URL || 'https:
 const EDITOR_URL = process.env.EDITOR_APP_URL || process.env.E2E_EDITOR_URL || 'https://editor.flowstarter.dev';
 
 test.beforeEach(async ({ page }) => {
-  // Set Clerk testing token on main app domain
-  await page.goto(MAIN_URL);
-  await setupClerkTestingToken({ page });
-  // Also set token on editor domain (satellite auth requires token on each domain)
-  await page.goto(EDITOR_URL);
+  // Use the same approach as scenario1 which passes on M4
+  // setupClerkTestingToken sets the testing token on the current page domain
   await setupClerkTestingToken({ page });
 });
 

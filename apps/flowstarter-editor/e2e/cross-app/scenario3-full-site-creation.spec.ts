@@ -146,32 +146,25 @@ test.describe('Scenario 3: Full Site Creation', () => {
     await page.waitForTimeout(500);
     console.log(`  ✅ Template clicked: ${cardId}`);
 
-    // Verify selection registered — wait for personalization or build panel
-    const selectionConfirmed = await page.waitForFunction(
-      () => {
-        const t = document.body.innerText;
-        return !t.includes('Pick a template') && (
-          t.includes('palette') || t.includes('Palette') ||
-          t.includes('font') || t.includes('Font') ||
-          t.includes('logo') || t.includes('Logo') ||
-          t.includes('Building') || t.includes('Preparing')
-        );
-      },
-      { timeout: 15000 }
-    ).then(() => true).catch(() => false);
+    // Verify selection registered — wait for personalization-panel to mount
+    // (this is a dedicated component that only renders after template is selected)
+    const selectionConfirmed = await page.waitForSelector('[data-testid="personalization-panel"]', { timeout: 20000 })
+      .then(() => true).catch(() => false);
 
     if (!selectionConfirmed) {
-      console.log('  ⚠️ Retry: looking for "Use this template" button');
-      // Try clicking the hover button directly
+      console.log('  ⚠️ Retry: personalization panel not found, clicking again');
+      await templateCard.click({ force: true });
+      await page.waitForTimeout(500);
+      // Try "Use this template" button (hover state)
+      await page.mouse.move(0, 0); // move mouse away first
+      await templateCard.hover();
+      await page.waitForTimeout(300);
       const useBtn = page.getByText('Use this template').first();
-      if (await useBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+      if (await useBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
         await useBtn.click({ force: true });
-        await page.waitForTimeout(500);
-      } else {
-        // Last resort: click again
-        await templateCard.click({ force: true });
-        await page.waitForTimeout(2000);
       }
+      await page.waitForSelector('[data-testid="personalization-panel"]', { timeout: 15000 })
+        .catch(() => console.log('  ❌ Personalization panel still not found'));
     }
     console.log(`  ✅ Template selection confirmed: ${selectionConfirmed}`);
     await page.waitForTimeout(2000);

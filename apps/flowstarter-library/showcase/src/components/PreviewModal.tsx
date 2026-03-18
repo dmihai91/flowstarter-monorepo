@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { X, Check, Palette, Type, ExternalLink, Monitor, Tablet, Smartphone } from 'lucide-react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { ExternalLink, Monitor, Smartphone, Tablet, X } from 'lucide-react';
 
 export interface PaletteColor {
   primary?: string;
@@ -22,6 +22,11 @@ export interface Font {
   body?: string;
 }
 
+interface TemplateHero {
+  headline?: string;
+  subheadline?: string;
+}
+
 interface Template {
   slug: string;
   name: string;
@@ -32,10 +37,7 @@ interface Template {
   palettes?: Palette[];
   fonts?: Font[];
   hasPreview?: boolean;
-  hero?: {
-    headline?: string;
-    subheadline?: string;
-  };
+  hero?: TemplateHero;
 }
 
 interface PreviewModalProps {
@@ -45,357 +47,246 @@ interface PreviewModalProps {
 }
 
 type ViewMode = 'desktop' | 'tablet' | 'mobile';
-type ActiveTab = 'preview' | 'palettes' | 'fonts';
 
-export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps) {
+interface ViewModeOption {
+  mode: ViewMode;
+  label: string;
+  icon: IconComponent;
+  widthClassName: string;
+}
+
+type IconComponent = (props: { className?: string }) => React.JSX.Element;
+
+const MonitorIcon = Monitor as unknown as IconComponent;
+const TabletIcon = Tablet as unknown as IconComponent;
+const SmartphoneIcon = Smartphone as unknown as IconComponent;
+const CloseIcon = X as unknown as IconComponent;
+const ExternalLinkIcon = ExternalLink as unknown as IconComponent;
+
+const viewModeOptions: ViewModeOption[] = [
+  { mode: 'desktop', label: 'Desktop', icon: MonitorIcon, widthClassName: 'w-full' },
+  { mode: 'tablet', label: 'Tablet', icon: TabletIcon, widthClassName: 'mx-auto w-[768px]' },
+  { mode: 'mobile', label: 'Mobile', icon: SmartphoneIcon, widthClassName: 'mx-auto w-[390px]' },
+];
+
+export function PreviewModal({
+  template,
+  darkMode,
+  onClose,
+}: PreviewModalProps): React.ReactElement {
   const [selectedPalette, setSelectedPalette] = useState<Palette | null>(
-    template.palettes?.[0] || null
+    template.palettes?.[0] || null,
   );
-  const [selectedFont, setSelectedFont] = useState<Font | null>(
-    template.fonts?.[0] || null
-  );
+  const [selectedFont, setSelectedFont] = useState<Font | null>(template.fonts?.[0] || null);
   const [viewMode, setViewMode] = useState<ViewMode>('desktop');
-  const [activeTab, setActiveTab] = useState<ActiveTab>('preview');
-  const [imageLoaded, setImageLoaded] = useState(false);
 
-  const palettes = template.palettes || [];
-  const fonts = template.fonts || [];
+  const palettes: Palette[] = template.palettes || [];
+  const fonts: Font[] = template.fonts || [];
+
+  useEffect(() => {
+    setSelectedPalette(template.palettes?.[0] || null);
+    setSelectedFont(template.fonts?.[0] || null);
+    setViewMode('desktop');
+  }, [template]);
 
   const handleEscape = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+    (event: KeyboardEvent): void => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
     },
-    [onClose]
+    [onClose],
   );
 
   useEffect(() => {
     document.addEventListener('keydown', handleEscape);
     document.body.style.overflow = 'hidden';
+
     return () => {
       document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = '';
     };
   }, [handleEscape]);
 
-  const thumbnailUrl = darkMode 
-    ? (template.thumbnailDark || template.thumbnail)
-    : (template.thumbnailLight || template.thumbnail);
+  const previewUrl = useMemo((): string => {
+    const searchParams = new URLSearchParams();
 
-  const viewportSizes = {
-    desktop: 'w-full',
-    tablet: 'w-[768px] mx-auto',
-    mobile: 'w-[375px] mx-auto',
-  };
+    if (selectedPalette?.id) {
+      searchParams.set('palette', selectedPalette.id);
+    }
+    if (selectedFont?.id) {
+      searchParams.set('font', selectedFont.id);
+    }
+    searchParams.set('mode', darkMode ? 'dark' : 'light');
+
+    const search = searchParams.toString();
+    return `/templates/${template.slug}/${search ? `?${search}` : ''}`;
+  }, [darkMode, selectedFont, selectedPalette, template.slug]);
+
+  const fallbackUrl = useMemo((): string => `/templates/${template.slug}/`, [template.slug]);
+
+  const currentViewportClassName =
+    viewModeOptions.find((option: ViewModeOption) => option.mode === viewMode)?.widthClassName ||
+    'w-full';
 
   return (
-    <div className="fixed inset-0 z-50 flex">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-        aria-hidden
-      />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 md:p-4">
+      <div className="absolute inset-0 bg-neutral-950/90 backdrop-blur-md" onClick={onClose} aria-hidden />
 
-      {/* Modal - Full screen on mobile, large on desktop */}
       <div
-        className="relative flex flex-col w-full h-full md:m-4 md:rounded-2xl bg-white dark:bg-surface-900 overflow-hidden animate-fade-in md:max-w-[95vw] md:max-h-[95vh] md:mx-auto"
+        className="relative flex h-full w-full flex-col overflow-hidden bg-white md:max-h-[96vh] md:rounded-3xl md:border md:border-neutral-200 dark:bg-neutral-900 dark:md:border-neutral-800"
         role="dialog"
         aria-modal="true"
         aria-labelledby="preview-title"
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-surface-200 dark:border-surface-700 shrink-0 bg-surface-50 dark:bg-surface-800/50">
-          <div className="flex items-center gap-4">
-            {/* Template info */}
-            <div className="flex items-center gap-3">
-              <div 
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg"
-                style={{ backgroundColor: selectedPalette?.colors?.primary || '#3b82f6' }}
-              >
-                {template.name.charAt(0)}
-              </div>
-              <div>
-                <h2 id="preview-title" className="font-display text-lg font-semibold text-surface-900 dark:text-white">
-                  {template.name}
-                </h2>
-                <p className="text-xs text-surface-500 dark:text-surface-400 hidden sm:block">
-                  {template.description.slice(0, 60)}...
-                </p>
-              </div>
-            </div>
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-200 px-4 py-4 dark:border-neutral-800 md:px-6">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-[0.26em] text-purple-500">
+              Live Preview
+            </p>
+            <h2
+              id="preview-title"
+              className="truncate font-display text-lg font-bold text-neutral-900 dark:text-white"
+            >
+              {template.name}
+            </h2>
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Viewport toggles */}
-            <div className="hidden md:flex items-center gap-1 bg-surface-100 dark:bg-surface-700 rounded-lg p-1">
-              {[
-                { mode: 'desktop' as ViewMode, icon: Monitor, label: 'Desktop' },
-                { mode: 'tablet' as ViewMode, icon: Tablet, label: 'Tablet' },
-                { mode: 'mobile' as ViewMode, icon: Smartphone, label: 'Mobile' },
-              ].map(({ mode, icon: Icon, label }) => (
-                <button
-                  key={mode}
-                  onClick={() => setViewMode(mode)}
-                  className={`p-2 rounded-md transition-colors ${
-                    viewMode === mode
-                      ? 'bg-white dark:bg-surface-600 text-surface-900 dark:text-white shadow-sm'
-                      : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
-                  }`}
-                  title={label}
-                >
-                  <Icon className="w-4 h-4" />
-                </button>
-              ))}
-            </div>
-
-            {/* Tab toggles */}
-            <div className="flex items-center gap-1 bg-surface-100 dark:bg-surface-700 rounded-lg p-1">
-              <button
-                onClick={() => setActiveTab('palettes')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                  activeTab === 'palettes'
-                    ? 'bg-white dark:bg-surface-600 text-surface-900 dark:text-white shadow-sm'
-                    : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
-                }`}
-              >
-                <Palette className="w-4 h-4" />
-                <span className="hidden sm:inline">Colors</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('fonts')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                  activeTab === 'fonts'
-                    ? 'bg-white dark:bg-surface-600 text-surface-900 dark:text-white shadow-sm'
-                    : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
-                }`}
-              >
-                <Type className="w-4 h-4" />
-                <span className="hidden sm:inline">Fonts</span>
-              </button>
+            <div className="flex items-center rounded-full border border-neutral-200 bg-neutral-100 p-1 dark:border-neutral-700 dark:bg-neutral-800">
+              {viewModeOptions.map(({ mode, icon: Icon, label }: ViewModeOption) => {
+                const isActive = viewMode === mode;
+                return (
+                  <button
+                    key={mode}
+                    onClick={() => setViewMode(mode)}
+                    title={label}
+                    className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
+                      isActive
+                        ? 'bg-purple-600 text-white shadow-sm shadow-purple-500/30'
+                        : 'text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </button>
+                );
+              })}
             </div>
 
             <button
               onClick={onClose}
-              className="p-2 rounded-lg text-surface-500 hover:text-surface-900 dark:hover:text-white hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors ml-2"
-              aria-label="Close"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white"
+              aria-label="Close preview"
             >
-              <X className="w-5 h-5" />
+              <CloseIcon className="h-4 w-4" />
             </button>
           </div>
         </div>
 
-        {/* Content area */}
-        <div className="flex flex-1 min-h-0 overflow-hidden">
-          {/* Preview area */}
-          <div className="flex-1 bg-surface-100 dark:bg-surface-800 p-4 md:p-6 overflow-auto">
-            <div className={`${viewportSizes[viewMode]} transition-all duration-300`}>
-              {/* Preview card - shows thumbnail with palette overlay */}
-              <div 
-                className="relative bg-white dark:bg-surface-900 rounded-xl shadow-2xl overflow-hidden"
-                style={{
-                  '--preview-primary': selectedPalette?.colors?.primary || '#3b82f6',
-                  '--preview-secondary': selectedPalette?.colors?.secondary || '#1e40af',
-                  '--preview-accent': selectedPalette?.colors?.accent || '#dbeafe',
-                } as React.CSSProperties}
-              >
-                {/* Mock browser chrome */}
-                <div className="flex items-center gap-2 px-4 py-3 bg-surface-100 dark:bg-surface-800 border-b border-surface-200 dark:border-surface-700">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-red-400" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                    <div className="w-3 h-3 rounded-full bg-green-400" />
-                  </div>
-                  <div className="flex-1 mx-4">
-                    <div className="bg-white dark:bg-surface-700 rounded-md px-3 py-1.5 text-xs text-surface-500 dark:text-surface-400 flex items-center gap-2">
-                      <span className="truncate">https://{template.slug}.flowstarter.app</span>
-                      <ExternalLink className="w-3 h-3 shrink-0" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Preview content */}
-                <div className="relative aspect-[16/10] overflow-hidden">
-                  {thumbnailUrl ? (
-                    <>
-                      {!imageLoaded && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-surface-100 dark:bg-surface-800">
-                          <div className="w-8 h-8 border-2 border-surface-300 dark:border-surface-600 border-t-brand-500 rounded-full animate-spin" />
-                        </div>
-                      )}
-                      <img
-                        src={thumbnailUrl}
-                        alt={template.name}
-                        className={`w-full h-full object-cover object-top transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                        onLoad={() => setImageLoaded(true)}
-                      />
-                      {/* Color overlay hint */}
-                      <div 
-                        className="absolute inset-0 opacity-10 pointer-events-none transition-colors duration-500"
-                        style={{ 
-                          background: `linear-gradient(135deg, ${selectedPalette?.colors?.primary || '#3b82f6'}40, ${selectedPalette?.colors?.secondary || '#1e40af'}30)`
-                        }}
-                      />
-                    </>
-                  ) : (
-                    <div 
-                      className="w-full h-full flex items-center justify-center"
-                      style={{ 
-                        background: `linear-gradient(135deg, ${selectedPalette?.colors?.accent || '#dbeafe'}, ${selectedPalette?.colors?.primary || '#3b82f6'}20)`
-                      }}
-                    >
-                      <div className="text-center p-8">
-                        <div 
-                          className="w-20 h-20 rounded-2xl mx-auto mb-4 flex items-center justify-center text-white text-3xl font-bold"
-                          style={{ backgroundColor: selectedPalette?.colors?.primary || '#3b82f6' }}
-                        >
-                          {template.name.charAt(0)}
-                        </div>
-                        <h3 className="text-xl font-semibold text-surface-900 dark:text-white mb-2">
-                          {template.hero?.headline || template.name}
-                        </h3>
-                        <p className="text-surface-600 dark:text-surface-400 text-sm max-w-md">
-                          {template.hero?.subheadline || template.description}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Side panel for palettes/fonts */}
-          <div className={`w-80 border-l border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-900 overflow-y-auto shrink-0 transition-all duration-300 ${
-            activeTab === 'preview' ? 'hidden md:block' : 'block'
-          }`}>
-            {activeTab === 'palettes' && (
-              <div className="p-4">
-                <h3 className="text-sm font-semibold text-surface-900 dark:text-white mb-4 flex items-center gap-2">
-                  <Palette className="w-4 h-4" />
-                  Color Palettes
-                </h3>
-                <div className="space-y-3">
-                  {palettes.map((palette) => (
+        <div className="border-b border-neutral-200 px-4 py-4 dark:border-neutral-800 md:px-6">
+          <div className="flex gap-6 overflow-x-auto pb-1">
+            {palettes.length > 0 ? (
+              <div className="flex min-w-max items-center gap-3">
+                {palettes.map((palette: Palette) => {
+                  const isActive = selectedPalette?.id === palette.id;
+                  return (
                     <button
                       key={palette.id}
                       onClick={() => setSelectedPalette(palette)}
-                      className={`w-full p-3 rounded-xl border-2 transition-all duration-200 text-left ${
-                        selectedPalette?.id === palette.id
-                          ? 'border-brand-500 bg-brand-50 dark:bg-brand-950/30'
-                          : 'border-surface-200 dark:border-surface-700 hover:border-surface-300 dark:hover:border-surface-600'
-                      }`}
+                      className="flex items-center gap-2"
                     >
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-surface-900 dark:text-white">
-                          {palette.name}
-                        </span>
-                        {selectedPalette?.id === palette.id && (
-                          <Check className="w-4 h-4 text-brand-500" />
-                        )}
-                      </div>
-                      <div className="flex gap-1 rounded-lg overflow-hidden">
-                        {['primary', 'secondary', 'accent'].map((key) => (
-                          <div
-                            key={key}
-                            className="h-8 flex-1 first:rounded-l-md last:rounded-r-md"
-                            style={{ backgroundColor: palette.colors?.[key as keyof PaletteColor] || '#e5e7eb' }}
-                            title={`${key}: ${palette.colors?.[key as keyof PaletteColor]}`}
-                          />
-                        ))}
-                      </div>
-                      <div className="flex gap-1 mt-2">
-                        {['background', 'text'].map((key) => (
-                          <div
-                            key={key}
-                            className="h-4 flex-1 rounded border border-surface-200 dark:border-surface-600"
-                            style={{ backgroundColor: palette.colors?.[key as keyof PaletteColor] || '#ffffff' }}
-                            title={`${key}: ${palette.colors?.[key as keyof PaletteColor]}`}
-                          />
-                        ))}
-                      </div>
+                      <span
+                        className={`flex h-7 w-7 items-center justify-center rounded-full transition-all ${
+                          isActive ? 'ring-2 ring-purple-500 ring-offset-2 ring-offset-white dark:ring-offset-neutral-900' : ''
+                        }`}
+                        style={{ backgroundColor: palette.colors?.primary || '#8b5cf6' }}
+                      />
+                      <span
+                        className={`text-sm font-medium ${
+                          isActive
+                            ? 'text-purple-600 dark:text-purple-400'
+                            : 'text-neutral-500 dark:text-neutral-400'
+                        }`}
+                      >
+                        {palette.name}
+                      </span>
                     </button>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
-            )}
+            ) : null}
 
-            {activeTab === 'fonts' && (
-              <div className="p-4">
-                <h3 className="text-sm font-semibold text-surface-900 dark:text-white mb-4 flex items-center gap-2">
-                  <Type className="w-4 h-4" />
-                  Font Pairings
-                </h3>
-                <div className="space-y-3">
-                  {fonts.map((font) => (
+            {fonts.length > 0 ? (
+              <div className="flex min-w-max items-center gap-2">
+                {fonts.map((font: Font) => {
+                  const isActive = selectedFont?.id === font.id;
+                  return (
                     <button
                       key={font.id}
                       onClick={() => setSelectedFont(font)}
-                      className={`w-full p-4 rounded-xl border-2 transition-all duration-200 text-left ${
-                        selectedFont?.id === font.id
-                          ? 'border-brand-500 bg-brand-50 dark:bg-brand-950/30'
-                          : 'border-surface-200 dark:border-surface-700 hover:border-surface-300 dark:hover:border-surface-600'
+                      className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
+                        isActive
+                          ? 'border-purple-500 bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300'
+                          : 'border-neutral-200 text-neutral-500 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-400 dark:hover:border-neutral-600'
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-sm font-medium text-surface-900 dark:text-white">
-                          {font.name}
-                        </span>
-                        {selectedFont?.id === font.id && (
-                          <Check className="w-4 h-4 text-brand-500" />
-                        )}
-                      </div>
-                      <div className="space-y-1">
-                        <div 
-                          className="text-lg font-semibold text-surface-900 dark:text-white"
-                          style={{ fontFamily: font.heading || 'inherit' }}
-                        >
-                          Heading Font
-                        </div>
-                        <div 
-                          className="text-sm text-surface-600 dark:text-surface-400"
-                          style={{ fontFamily: font.body || 'inherit' }}
-                        >
-                          Body text appears like this
-                        </div>
-                      </div>
+                      {font.name}
                     </button>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
-            )}
+            ) : null}
           </div>
         </div>
 
-        {/* Footer with selected options */}
-        <div className="px-4 md:px-6 py-4 border-t border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50 shrink-0">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex flex-wrap items-center gap-4 text-sm">
-              {selectedPalette && (
-                <div className="flex items-center gap-2">
-                  <span className="text-surface-500 dark:text-surface-400">Palette:</span>
-                  <div className="flex items-center gap-1.5 px-2 py-1 bg-white dark:bg-surface-700 rounded-md border border-surface-200 dark:border-surface-600">
-                    <div 
-                      className="w-4 h-4 rounded"
-                      style={{ backgroundColor: selectedPalette.colors?.primary }}
-                    />
-                    <span className="font-medium text-surface-900 dark:text-white">{selectedPalette.name}</span>
-                  </div>
+        <div className="flex-1 overflow-auto bg-neutral-100 p-3 dark:bg-neutral-950 md:p-5">
+          <div className={`${currentViewportClassName} transition-all duration-300`}>
+            <div className="overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-2xl shadow-neutral-900/10 dark:border-neutral-800 dark:bg-neutral-900 dark:shadow-black/40">
+              <div className="flex items-center gap-2 border-b border-neutral-200 bg-neutral-50 px-4 py-3 dark:border-neutral-800 dark:bg-neutral-900">
+                <div className="flex gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-yellow-400" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-green-400" />
                 </div>
-              )}
-              {selectedFont && (
-                <div className="flex items-center gap-2">
-                  <span className="text-surface-500 dark:text-surface-400">Font:</span>
-                  <span className="font-medium text-surface-900 dark:text-white">{selectedFont.name}</span>
+                <div className="ml-3 flex min-w-0 flex-1 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-1.5 text-xs text-neutral-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400">
+                  <span className="truncate">{previewUrl}</span>
+                  <ExternalLinkIcon className="h-3 w-3 shrink-0" />
                 </div>
-              )}
+              </div>
+
+              <iframe
+                key={previewUrl}
+                title={`${template.name} preview`}
+                src={previewUrl}
+                className="h-[calc(100vh-120px)] w-full bg-white"
+              />
             </div>
-            <button
-              className="px-6 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-medium rounded-lg transition-colors flex items-center gap-2"
-            >
-              Use This Template
-              <ExternalLink className="w-4 h-4" />
-            </button>
           </div>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-4 border-t border-neutral-200 bg-white px-4 py-4 dark:border-neutral-800 dark:bg-neutral-900 md:px-6">
+          <div className="flex flex-wrap items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400">
+            {selectedPalette ? (
+              <span className="rounded-full border border-purple-200 bg-purple-50 px-3 py-1 dark:border-purple-500/30 dark:bg-purple-500/10">
+                Palette: <span className="font-semibold text-purple-700 dark:text-purple-300">{selectedPalette.name}</span>
+              </span>
+            ) : null}
+            {selectedFont ? (
+              <span className="rounded-full border border-neutral-200 px-3 py-1 dark:border-neutral-700">
+                Font: <span className="font-semibold text-neutral-900 dark:text-white">{selectedFont.name}</span>
+              </span>
+            ) : null}
+          </div>
+
+          <a
+            href={fallbackUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-purple-500/20 transition-colors hover:bg-purple-700"
+          >
+            Open full preview
+            <ExternalLinkIcon className="h-4 w-4" />
+          </a>
         </div>
       </div>
     </div>

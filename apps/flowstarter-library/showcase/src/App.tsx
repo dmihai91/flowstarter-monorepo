@@ -1,11 +1,37 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { I18nProvider, useTranslation } from './i18n';
+import { Footer } from './components/Footer';
 import { Header } from './components/Header';
+import { Hero } from './components/Hero';
+import { PreviewModal } from './components/PreviewModal';
 import { Sidebar } from './components/Sidebar';
 import { TemplateCard, TemplateCardSkeleton } from './components/TemplateCard';
-import { PreviewModal } from './components/PreviewModal';
-import { Footer } from './components/Footer';
-import { Hero } from './components/Hero';
+
+interface TemplatePaletteColors {
+  primary?: string;
+  secondary?: string;
+  accent?: string;
+  background?: string;
+  text?: string;
+}
+
+interface TemplatePalette {
+  id: string;
+  name: string;
+  colors?: TemplatePaletteColors;
+}
+
+interface TemplateFont {
+  id: string;
+  name: string;
+  heading?: string;
+  body?: string;
+}
+
+interface TemplateHero {
+  headline?: string;
+  subheadline?: string;
+}
 
 interface Template {
   slug: string;
@@ -14,99 +40,104 @@ interface Template {
   category?: string;
   tags?: string[];
   color: string;
-  thumbnail: string;
+  thumbnail?: string;
   thumbnailLight?: string;
   thumbnailDark?: string;
-  palettes?: Array<{
-    id: string;
-    name: string;
-    colors?: { primary?: string; secondary?: string; accent?: string; background?: string; text?: string };
-  }>;
-  fonts?: Array<{ id: string; name: string; heading?: string; body?: string }>;
+  palettes?: TemplatePalette[];
+  fonts?: TemplateFont[];
   features?: string[];
   hasPreview?: boolean;
-  hero?: {
-    headline?: string;
-    subheadline?: string;
-  };
+  hero?: TemplateHero;
+}
+
+interface CategoryCount {
+  name: string;
+  count: number;
 }
 
 type ThemeMode = 'light' | 'dark' | 'auto';
 
+function isTemplateArray(value: unknown): value is Template[] {
+  return Array.isArray(value);
+}
+
 function AppContent(): React.ReactElement {
   const { t } = useTranslation();
   const [templates, setTemplates] = useState<Template[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
-
   const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('theme') as ThemeMode | null;
-      if (stored === 'light' || stored === 'dark' || stored === 'auto') return stored;
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme === 'light' || storedTheme === 'dark' || storedTheme === 'auto') {
+        return storedTheme;
+      }
     }
     return 'auto';
   });
-
-  const getSystemPreference = () =>
-    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-  const [systemDark, setSystemDark] = useState(getSystemPreference);
-  const darkMode = themeMode === 'auto' ? systemDark : themeMode === 'dark';
-
-  const [searchQuery, setSearchQuery] = useState('');
+  const [systemDark, setSystemDark] = useState<boolean>(() => {
+    if (typeof window === 'undefined') {
+      return false;
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
 
-  // Get unique categories from templates
-  const categories = useMemo(() => {
-    const cats = new Map<string, number>();
-    templates.forEach((t) => {
-      const cat = t.category || 'other';
-      cats.set(cat, (cats.get(cat) || 0) + 1);
+  const darkMode = themeMode === 'auto' ? systemDark : themeMode === 'dark';
+
+  const categories = useMemo((): CategoryCount[] => {
+    const counts = new Map<string, number>();
+    templates.forEach((template: Template) => {
+      const categoryName = template.category || 'other';
+      counts.set(categoryName, (counts.get(categoryName) || 0) + 1);
     });
-    return Array.from(cats.entries())
-      .map(([name, count]) => ({ name, count }))
-      .sort((a, b) => b.count - a.count);
+
+    return Array.from(counts.entries())
+      .map(([name, count]: [string, number]) => ({ name, count }))
+      .sort((left: CategoryCount, right: CategoryCount) => right.count - left.count);
   }, [templates]);
 
-  // Get unique features from templates
-  const availableFeatures = useMemo(() => {
-    const features = new Set<string>();
-    templates.forEach((t) => {
-      t.features?.forEach((f) => features.add(f));
+  const availableFeatures = useMemo((): string[] => {
+    const featureSet = new Set<string>();
+    templates.forEach((template: Template) => {
+      template.features?.forEach((feature: string) => featureSet.add(feature));
     });
-    return Array.from(features).sort();
+
+    return Array.from(featureSet).sort((left: string, right: string) => left.localeCompare(right));
   }, [templates]);
 
-  const filteredTemplates = useMemo(() => {
+  const filteredTemplates = useMemo((): Template[] => {
     let filtered = templates;
 
-    // Category filter
     if (selectedCategory) {
-      filtered = filtered.filter((t) => (t.category || 'other') === selectedCategory);
-    }
-
-    // Feature filters
-    if (selectedFeatures.length > 0) {
-      filtered = filtered.filter((t) =>
-        selectedFeatures.every((f) => t.features?.includes(f))
-      );
-    }
-
-    // Search filter
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
       filtered = filtered.filter(
-        (t) =>
-          t.name.toLowerCase().includes(q) ||
-          t.description.toLowerCase().includes(q) ||
-          t.tags?.some((tag) => tag.toLowerCase().includes(q))
+        (template: Template) => (template.category || 'other') === selectedCategory,
       );
+    }
+
+    if (selectedFeatures.length > 0) {
+      filtered = filtered.filter((template: Template) =>
+        selectedFeatures.every((feature: string) => template.features?.includes(feature)),
+      );
+    }
+
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter((template: Template) => {
+        const nameMatches = template.name.toLowerCase().includes(query);
+        const descriptionMatches = template.description.toLowerCase().includes(query);
+        const tagMatches =
+          template.tags?.some((tag: string) => tag.toLowerCase().includes(query)) || false;
+
+        return nameMatches || descriptionMatches || tagMatches;
+      });
     }
 
     return filtered;
-  }, [templates, searchQuery, selectedCategory, selectedFeatures]);
+  }, [templates, selectedCategory, selectedFeatures, searchQuery]);
 
   useEffect(() => {
     localStorage.setItem('theme', themeMode);
@@ -117,163 +148,169 @@ function AppContent(): React.ReactElement {
   }, [darkMode]);
 
   useEffect(() => {
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const handler = () => setSystemDark(mq.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (event: MediaQueryListEvent): void => {
+      setSystemDark(event.matches);
+    };
+
+    setSystemDark(mediaQuery.matches);
+    mediaQuery.addEventListener('change', handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
   }, []);
 
   useEffect(() => {
-    // Try API first, fall back to static JSON
-    const fetchTemplates = async () => {
-      try {
-        // Try the MCP server API first
-        const apiRes = await fetch('/api/templates');
-        if (apiRes.ok) {
-          const data = await apiRes.json();
-          setTemplates(data || []);
-          return;
-        }
-      } catch {
-        // API failed, try static JSON
-      }
+    async function loadTemplates(): Promise<void> {
+      const endpoints: string[] = ['/api/templates', '/api/templates.json'];
 
-      try {
-        // Fall back to static JSON
-        const staticRes = await fetch('/api/templates.json');
-        if (staticRes.ok) {
-          const data = await staticRes.json();
-          setTemplates(data || []);
-          return;
+      for (const endpoint of endpoints) {
+        try {
+          const response = await fetch(endpoint);
+          if (!response.ok) {
+            continue;
+          }
+
+          const payload: unknown = await response.json();
+          if (isTemplateArray(payload)) {
+            setTemplates(payload);
+            setError(null);
+            return;
+          }
+        } catch {
+          // Continue to the fallback endpoint.
         }
-      } catch {
-        // Static also failed
       }
 
       setError(t('errors.loadFailed'));
-    };
+    }
 
-    fetchTemplates().finally(() => setLoading(false));
+    loadTemplates().finally(() => setLoading(false));
   }, [t]);
 
-  const toggleFeature = (feature: string) => {
-    setSelectedFeatures((prev) =>
-      prev.includes(feature) ? prev.filter((f) => f !== feature) : [...prev, feature]
+  const toggleFeature = (feature: string): void => {
+    setSelectedFeatures((previousFeatures: string[]) =>
+      previousFeatures.includes(feature)
+        ? previousFeatures.filter((currentFeature: string) => currentFeature !== feature)
+        : [...previousFeatures, feature],
     );
   };
 
+  const clearAllFilters = (): void => {
+    setSearchQuery('');
+    setSelectedCategory(null);
+    setSelectedFeatures([]);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-surface-50 via-white to-surface-100 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 text-surface-900 dark:text-surface-100 transition-colors duration-300">
-      <Header
-        themeMode={themeMode}
-        setThemeMode={setThemeMode}
-        darkMode={darkMode}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-      />
+    <div className="relative min-h-screen overflow-hidden bg-neutral-50 text-neutral-900 transition-colors duration-300 dark:bg-neutral-950 dark:text-white">
+      <div className="absolute inset-0 flow-grid-bg" />
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/2 h-[400px] w-[800px] -translate-x-1/2 rounded-full bg-purple-500/5 blur-3xl dark:bg-purple-500/10" />
+      </div>
 
-      {/* Hero Section */}
-      <Hero templateCount={templates.length} />
+      <div className="relative z-10">
+        <Header
+          themeMode={themeMode}
+          setThemeMode={setThemeMode}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
 
-      {/* Main Content with Sidebar */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-        <div className="flex gap-8">
-          {/* Sidebar */}
-          <Sidebar
-            categories={categories}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-            features={availableFeatures}
-            selectedFeatures={selectedFeatures}
-            toggleFeature={toggleFeature}
-            darkMode={darkMode}
-          />
+        <Hero templateCount={templates.length} />
 
-          {/* Template Grid */}
-          <div className="flex-1 min-w-0">
-            {/* Results header */}
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-surface-900 dark:text-white">
-                {filteredTemplates.length} {filteredTemplates.length === 1 ? 'Template' : 'Templates'}
-                {selectedCategory && (
-                  <span className="font-normal text-surface-500 dark:text-surface-400">
-                    {' '}in {selectedCategory}
-                  </span>
-                )}
-              </h2>
-              {(selectedCategory || selectedFeatures.length > 0) && (
-                <button
-                  onClick={() => {
-                    setSelectedCategory(null);
-                    setSelectedFeatures([]);
-                  }}
-                  className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400 dark:hover:text-brand-300 font-medium"
-                >
-                  Clear filters
-                </button>
-              )}
-            </div>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+          <div className="flex gap-8 items-start">
+            <Sidebar
+              categories={categories}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+              features={availableFeatures}
+              selectedFeatures={selectedFeatures}
+              toggleFeature={toggleFeature}
+            />
 
-            {/* Error */}
-            {error && (
-              <div className="text-center py-16 px-6 rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50">
-                <p className="text-red-600 dark:text-red-400 font-medium">
-                  {error}
-                </p>
-              </div>
-            )}
-
-            {/* Empty */}
-            {!loading && !error && filteredTemplates.length === 0 && (
-              <div className="text-center py-20 px-6 rounded-2xl bg-surface-100 dark:bg-surface-800/50 border border-surface-200 dark:border-surface-700/50">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-surface-200 dark:bg-surface-700 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-surface-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+            <div className="min-w-0 flex-1">
+              <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div className="space-y-1">
+                  <p className="text-xs font-semibold uppercase tracking-[0.28em] text-neutral-400 dark:text-neutral-500">
+                    Curated Selection
+                  </p>
+                  <h2 className="font-display text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
+                    {filteredTemplates.length} {filteredTemplates.length === 1 ? 'Template' : 'Templates'}
+                    {selectedCategory ? (
+                      <span className="ml-2 text-lg font-medium text-neutral-400 dark:text-neutral-500">
+                        in {selectedCategory}
+                      </span>
+                    ) : null}
+                  </h2>
                 </div>
-                <p className="text-surface-600 dark:text-surface-400 font-medium">
-                  No templates found
-                </p>
-                <p className="text-surface-500 dark:text-surface-500 text-sm mt-1">
-                  Try adjusting your filters or search query
-                </p>
-              </div>
-            )}
 
-            {/* Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {loading &&
-                Array.from({ length: 6 }).map((_, i) => (
-                  <TemplateCardSkeleton key={i} darkMode={darkMode} />
-                ))}
-              {!loading &&
-                filteredTemplates.map((template, i) => (
-                  <div
-                    key={template.slug}
-                    className="animate-fade-up opacity-0"
-                    style={{ animationDelay: `${i * 0.05}s` }}
+                {(selectedCategory || selectedFeatures.length > 0 || searchQuery) ? (
+                  <button
+                    onClick={clearAllFilters}
+                    className="text-sm font-semibold text-purple-600 transition-colors hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300"
                   >
-                    <TemplateCard
-                      template={template}
-                      darkMode={darkMode}
-                      onPreview={setPreviewTemplate}
-                    />
+                    Clear filters
+                  </button>
+                ) : null}
+              </div>
+
+              {error ? (
+                <div className="rounded-3xl border border-red-200 bg-red-50 px-6 py-16 text-center dark:border-red-900/60 dark:bg-red-950/30">
+                  <p className="font-medium text-red-600 dark:text-red-400">{error}</p>
+                </div>
+              ) : null}
+
+              {!loading && !error && filteredTemplates.length === 0 ? (
+                <div className="col-span-full flex flex-col items-center justify-center gap-4 py-20">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-neutral-100 text-2xl dark:bg-neutral-800">
+                    🔍
                   </div>
-                ))}
+                  <p className="font-medium text-neutral-500 dark:text-neutral-400">No templates found</p>
+                  <button
+                    onClick={clearAllFilters}
+                    className="text-sm font-semibold text-purple-600 hover:underline dark:text-purple-400"
+                  >
+                    Clear filters
+                  </button>
+                </div>
+              ) : null}
+
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                {loading
+                  ? Array.from({ length: 6 }).map((_: unknown, index: number) => (
+                      <TemplateCardSkeleton key={`skeleton-${index}`} />
+                    ))
+                  : filteredTemplates.map((template: Template, index: number) => (
+                      <div
+                        key={template.slug}
+                        className="animate-fade-up opacity-0"
+                        style={{ animationDelay: `${index * 0.05}s` }}
+                      >
+                        <TemplateCard
+                          template={template}
+                          darkMode={darkMode}
+                          onPreview={setPreviewTemplate}
+                        />
+                      </div>
+                    ))}
+              </div>
             </div>
           </div>
-        </div>
-      </main>
+        </main>
 
-      <Footer />
+        <Footer />
 
-      {previewTemplate && (
-        <PreviewModal
-          template={previewTemplate}
-          darkMode={darkMode}
-          onClose={() => setPreviewTemplate(null)}
-        />
-      )}
+        {previewTemplate ? (
+          <PreviewModal
+            template={previewTemplate}
+            darkMode={darkMode}
+            onClose={() => setPreviewTemplate(null)}
+          />
+        ) : null}
+      </div>
     </div>
   );
 }

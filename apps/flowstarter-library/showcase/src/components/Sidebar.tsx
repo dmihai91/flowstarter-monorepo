@@ -1,5 +1,4 @@
 import React from 'react';
-import { ChevronDown, Check } from 'lucide-react';
 import { useTranslation } from '../i18n';
 
 interface Category {
@@ -14,7 +13,6 @@ interface SidebarProps {
   features: string[];
   selectedFeatures: string[];
   toggleFeature: (feature: string) => void;
-  darkMode: boolean;
 }
 
 const categoryKeys: Record<string, string> = {
@@ -26,15 +24,6 @@ const categoryKeys: Record<string, string> = {
   other: 'categories.other',
 };
 
-const categoryIcons: Record<string, string> = {
-  education: '📚',
-  coaching: '🎯',
-  health: '💚',
-  creative: '🎨',
-  business: '💼',
-  other: '✨',
-};
-
 export function Sidebar({
   categories,
   selectedCategory,
@@ -42,121 +31,92 @@ export function Sidebar({
   features,
   selectedFeatures,
   toggleFeature,
-  darkMode,
-}: SidebarProps) {
+}: SidebarProps): React.ReactElement {
   const { t } = useTranslation();
+  const allTemplatesCount = categories.reduce(
+    (total: number, category: Category) => total + category.count,
+    0,
+  );
 
   return (
-    <aside className="hidden lg:block w-64 shrink-0">
-      <div className="sticky top-24 space-y-6">
-        {/* Categories */}
-        <div className="bg-white dark:bg-surface-800/50 rounded-2xl border border-surface-200 dark:border-surface-700/50 p-4">
-          <button
-            className="flex items-center justify-between w-full text-left mb-3"
-          >
-            <h3 className="text-sm font-semibold text-surface-900 dark:text-white">
-              {t('sidebar.categories')}
-            </h3>
-            <ChevronDown className="w-4 h-4 text-surface-400" />
-          </button>
-          
+    <aside className="hidden w-60 shrink-0 lg:block">
+      <div className="sticky top-20 space-y-4">
+        <div className="rounded-2xl border border-neutral-200/80 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900">
+          <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500">
+            Industry
+          </h3>
           <div className="space-y-1">
             <button
               onClick={() => setSelectedCategory(null)}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
-                selectedCategory === null
-                  ? 'bg-brand-50 dark:bg-brand-950/30 text-brand-600 dark:text-brand-400 font-medium'
-                  : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700/50'
+              className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
+                !selectedCategory
+                  ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300'
+                  : 'text-neutral-600 hover:bg-neutral-50 dark:text-neutral-400 dark:hover:bg-neutral-800'
               }`}
             >
-              <span className="flex items-center gap-2">
-                <span>🌟</span>
-                <span>{t('sidebar.allTemplates')}</span>
-              </span>
-              <span className={`text-xs px-2 py-0.5 rounded-full ${
-                selectedCategory === null
-                  ? 'bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400'
-                  : 'bg-surface-100 dark:bg-surface-700 text-surface-500'
-              }`}>
-                {categories.reduce((sum, c) => sum + c.count, 0)}
-              </span>
-            </button>
-            
-            {categories.map((category) => (
-              <button
-                key={category.name}
-                onClick={() => setSelectedCategory(category.name)}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
-                  selectedCategory === category.name
-                    ? 'bg-brand-50 dark:bg-brand-950/30 text-brand-600 dark:text-brand-400 font-medium'
-                    : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700/50'
+              <span>All templates</span>
+              <span
+                className={`rounded-full px-2 py-0.5 text-xs ${
+                  !selectedCategory
+                    ? 'bg-purple-100 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400'
+                    : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800'
                 }`}
               >
-                <span className="flex items-center gap-2">
-                  <span>{categoryIcons[category.name] || '📁'}</span>
-                  <span>{categoryKeys[category.name] ? t(categoryKeys[category.name]) : category.name}</span>
-                </span>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${
-                  selectedCategory === category.name
-                    ? 'bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400'
-                    : 'bg-surface-100 dark:bg-surface-700 text-surface-500'
-                }`}>
-                  {category.count}
+                {allTemplatesCount}
+              </span>
+            </button>
+
+            {categories.map(({ name, count }: Category) => (
+              <button
+                key={name}
+                onClick={() => setSelectedCategory(name === selectedCategory ? null : name)}
+                className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm font-medium capitalize transition-colors ${
+                  selectedCategory === name
+                    ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300'
+                    : 'text-neutral-600 hover:bg-neutral-50 dark:text-neutral-400 dark:hover:bg-neutral-800'
+                }`}
+              >
+                <span>{categoryKeys[name] ? t(categoryKeys[name]) : name}</span>
+                <span
+                  className={`rounded-full px-2 py-0.5 text-xs ${
+                    selectedCategory === name
+                      ? 'bg-purple-100 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400'
+                      : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800'
+                  }`}
+                >
+                  {count}
                 </span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Features */}
-        <div className="bg-white dark:bg-surface-800/50 rounded-2xl border border-surface-200 dark:border-surface-700/50 p-4">
-          <h3 className="text-sm font-semibold text-surface-900 dark:text-white mb-3">
-            {t('sidebar.features')}
-          </h3>
-          
-          <div className="space-y-2">
-            {features.slice(0, 8).map((feature) => (
-              <label
-                key={feature}
-                className="flex items-center gap-3 cursor-pointer group"
-              >
-                <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${
-                  selectedFeatures.includes(feature)
-                    ? 'bg-brand-500 border-brand-500'
-                    : 'border-surface-300 dark:border-surface-600 group-hover:border-brand-400'
-                }`}>
-                  {selectedFeatures.includes(feature) && (
-                    <Check className="w-3 h-3 text-white" />
-                  )}
-                </div>
-                <span className={`text-sm transition-colors ${
-                  selectedFeatures.includes(feature)
-                    ? 'text-surface-900 dark:text-white font-medium'
-                    : 'text-surface-600 dark:text-surface-400 group-hover:text-surface-900 dark:group-hover:text-white'
-                }`}>
-                  {feature}
-                </span>
-              </label>
-            ))}
-          </div>
-        </div>
+        {features.length > 0 ? (
+          <div className="rounded-2xl border border-neutral-200/80 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900">
+            <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500">
+              Features
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {features.map((feature: string) => {
+                const isSelected = selectedFeatures.includes(feature);
 
-        {/* Pro tip */}
-        <div className="bg-gradient-to-br from-brand-50 to-brand-100/50 dark:from-brand-950/30 dark:to-brand-900/20 rounded-2xl border border-brand-200/50 dark:border-brand-800/30 p-4">
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-full bg-brand-500/10 dark:bg-brand-400/10 flex items-center justify-center shrink-0">
-              <span className="text-lg">💡</span>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-brand-900 dark:text-brand-100">
-                {t('sidebar.proTip')}
-              </p>
-              <p className="text-xs text-brand-700 dark:text-brand-300 mt-1">
-                {t('sidebar.proTipDescription')}
-              </p>
+                return (
+                  <button
+                    key={feature}
+                    onClick={() => toggleFeature(feature)}
+                    className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors ${
+                      isSelected
+                        ? 'border-purple-200 bg-purple-100 text-purple-700 dark:border-purple-500/30 dark:bg-purple-500/20 dark:text-purple-300'
+                        : 'border-transparent bg-neutral-100 text-neutral-600 hover:border-neutral-300 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:border-neutral-600'
+                    }`}
+                  >
+                    {feature}
+                  </button>
+                );
+              })}
             </div>
           </div>
-        </div>
+        ) : null}
       </div>
     </aside>
   );

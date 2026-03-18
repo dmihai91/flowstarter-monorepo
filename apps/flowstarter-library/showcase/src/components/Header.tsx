@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search } from 'lucide-react';
+import { Monitor, Moon, Search, Sun } from 'lucide-react';
 import { useTranslation } from '../i18n';
 
 type ThemeMode = 'light' | 'dark' | 'auto';
@@ -7,84 +7,103 @@ type ThemeMode = 'light' | 'dark' | 'auto';
 interface HeaderProps {
   themeMode: ThemeMode;
   setThemeMode: (mode: ThemeMode) => void;
-  darkMode: boolean;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
 }
 
-const SunIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="5" />
-    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
-  </svg>
-);
+interface ThemeOption {
+  mode: ThemeMode;
+  icon: IconComponent;
+}
 
-const MoonIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
-  </svg>
-);
+type IconComponent = (props: { className?: string }) => React.JSX.Element;
 
-const MonitorIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-    <line x1="8" y1="21" x2="16" y2="21" />
-    <line x1="12" y1="17" x2="12" y2="21" />
-  </svg>
-);
+const SunIcon = Sun as unknown as IconComponent;
+const MoonIcon = Moon as unknown as IconComponent;
+const MonitorIcon = Monitor as unknown as IconComponent;
+const SearchIcon = Search as unknown as IconComponent;
 
-export function Header({ themeMode, setThemeMode, darkMode, searchQuery, setSearchQuery }: HeaderProps) {
+const themeOptions: ThemeOption[] = [
+  { mode: 'light', icon: SunIcon },
+  { mode: 'dark', icon: MoonIcon },
+  { mode: 'auto', icon: MonitorIcon },
+];
+
+export function Header({
+  themeMode,
+  setThemeMode,
+  searchQuery,
+  setSearchQuery,
+}: HeaderProps): React.ReactElement {
   const { t } = useTranslation();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-surface-200/80 dark:border-surface-800/80 bg-surface-50/80 dark:bg-surface-950/80 backdrop-blur-xl">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-[72px] gap-6">
-          <a href="/" className="flex items-center gap-3 shrink-0 group">
-            <div className="w-9 h-9 rounded-lg bg-brand-500 flex items-center justify-center shadow-sm group-hover:shadow-glow transition-shadow duration-300">
-              <span className="text-white font-display font-bold text-lg">F</span>
+    <header className="sticky top-0 z-50 border-b border-neutral-200/80 bg-white/80 backdrop-blur-xl dark:border-neutral-800/60 dark:bg-neutral-950/80">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between gap-6">
+          <a href="/" className="flex shrink-0 items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-purple-700 shadow-lg shadow-purple-500/25">
+              <span className="text-sm font-bold text-white">F</span>
             </div>
-            <span className="font-display text-xl font-semibold text-surface-900 dark:text-white tracking-tight">
-              {t('brand.name')}
-            </span>
+            <div className="flex flex-col leading-none">
+              <span className="font-display text-sm font-bold tracking-tight text-neutral-900 dark:text-white">
+                FlowStarter
+              </span>
+              <span className="text-xs font-medium text-neutral-400 dark:text-neutral-500">
+                Template Library
+              </span>
+            </div>
           </a>
 
-          <div className="flex-1 max-w-sm">
+          <div className="flex-1 max-w-md">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400 dark:text-surface-500" />
+              <SearchIcon className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
               <input
                 type="text"
                 placeholder={t('search.placeholder')}
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-900/50 text-surface-900 dark:text-white placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500/50 transition-all text-sm"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setSearchQuery(event.target.value)
+                }
+                className="w-full rounded-xl border border-neutral-200 bg-neutral-50 py-2 pl-10 pr-4 text-sm text-neutral-900 transition-all placeholder:text-neutral-400 focus:border-purple-500/60 focus:outline-none focus:ring-2 focus:ring-purple-500/30 dark:border-neutral-700/60 dark:bg-neutral-900/60 dark:text-white dark:placeholder:text-neutral-500"
               />
             </div>
           </div>
 
-          <div className="flex items-center gap-0.5 p-1 rounded-full bg-surface-100 dark:bg-surface-800/80 shrink-0">
-            {[
-              { mode: 'light' as ThemeMode, icon: <SunIcon />, labelKey: 'theme.light' },
-              { mode: 'dark' as ThemeMode, icon: <MoonIcon />, labelKey: 'theme.dark' },
-              { mode: 'auto' as ThemeMode, icon: <MonitorIcon />, labelKey: 'theme.auto' },
-            ].map(({ mode, icon, labelKey }) => {
-              const isSelected = themeMode === mode;
-              return (
+          <div className="flex shrink-0 items-center gap-3">
+            <div className="flex items-center gap-0.5 rounded-full border border-neutral-200 bg-neutral-100 p-1 dark:border-neutral-700/50 dark:bg-neutral-800/80">
+              {themeOptions.map(({ mode, icon: Icon }: ThemeOption) => (
                 <button
                   key={mode}
                   onClick={() => setThemeMode(mode)}
-                  aria-label={t(labelKey)}
-                  title={t(labelKey)}
-                  className={`flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 ${
-                    isSelected
-                      ? 'bg-white dark:bg-surface-700 text-surface-900 dark:text-white shadow-sm'
-                      : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
+                  title={mode}
+                  className={`flex h-7 w-7 items-center justify-center rounded-full text-xs transition-all duration-200 ${
+                    themeMode === mode
+                      ? 'bg-white text-neutral-900 shadow-sm dark:bg-neutral-700 dark:text-white'
+                      : 'text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300'
                   }`}
                 >
-                  {icon}
+                  <Icon className="h-3.5 w-3.5" />
                 </button>
-              );
-            })}
+              ))}
+            </div>
+
+            <a
+              href="https://flowstarter.dev"
+              className="hidden items-center gap-2 rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-purple-500/20 transition-colors hover:bg-purple-700 sm:flex"
+            >
+              Get Early Access
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </a>
           </div>
         </div>
       </div>

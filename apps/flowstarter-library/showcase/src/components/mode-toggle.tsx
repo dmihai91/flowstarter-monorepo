@@ -1,6 +1,12 @@
 import { Moon, Sun, Monitor } from "lucide-react"
 import { useTheme } from "./theme-provider"
 
+type IconComponent = (props: { className?: string; strokeWidth?: number }) => JSX.Element
+
+const SunIcon = Sun as unknown as IconComponent
+const MoonIcon = Moon as unknown as IconComponent
+const MonitorIcon = Monitor as unknown as IconComponent
+
 export function ModeToggle() {
   const { theme, setTheme } = useTheme()
 
@@ -15,7 +21,7 @@ export function ModeToggle() {
         }`}
         aria-label="Light mode"
       >
-        <Sun className="h-4 w-4" strokeWidth={2} />
+        <SunIcon className="h-4 w-4" strokeWidth={2} />
       </button>
       <button
         onClick={() => setTheme("dark")}
@@ -26,7 +32,7 @@ export function ModeToggle() {
         }`}
         aria-label="Dark mode"
       >
-        <Moon className="h-4 w-4" strokeWidth={2} />
+        <MoonIcon className="h-4 w-4" strokeWidth={2} />
       </button>
       <button
         onClick={() => setTheme("system")}
@@ -37,7 +43,7 @@ export function ModeToggle() {
         }`}
         aria-label="System mode"
       >
-        <Monitor className="h-4 w-4" strokeWidth={2} />
+        <MonitorIcon className="h-4 w-4" strokeWidth={2} />
       </button>
     </div>
   )

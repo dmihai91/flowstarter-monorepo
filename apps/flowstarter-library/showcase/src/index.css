@@ -2,9 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --purple-primary: hsl(241 93% 61%);
+  --purple-glow: hsl(241 93% 61% / 0.15);
+  --grid-color: rgb(139 92 246 / 0.06);
+}
+
+.dark {
+  --grid-color: rgb(139 92 246 / 0.08);
+}
+
 @layer base {
+  html {
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
   body {
-    @apply font-sans antialiased text-surface-900 dark:text-surface-100;
+    @apply font-sans antialiased text-neutral-900 dark:text-white bg-neutral-50 dark:bg-neutral-950;
   }
 }
 
@@ -14,13 +32,33 @@
   }
 }
 
-/* Noise overlay for depth */
-.noise-overlay::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  z-index: 9999;
+@keyframes text-flow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.text-flow {
+  background: linear-gradient(135deg, #8b5cf6, #a78bfa, #7c3aed, #c4b5fd, #8b5cf6);
+  background-size: 300% 300%;
+  animation: text-flow 6s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.flow-grid-bg {
+  background-image:
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.glass-card {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }

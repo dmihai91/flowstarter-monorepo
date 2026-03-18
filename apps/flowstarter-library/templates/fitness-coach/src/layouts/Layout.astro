@@ -74,7 +74,20 @@ const navLinks = [
     </style>
     <Analytics />
     <title>{title}</title>
-  </head>
+  
+  <script>
+    // Sync theme from ?mode= URL param (used by library preview)
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get('mode');
+    if (mode === 'dark') {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else if (mode === 'light') {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  </script>
+</head>
   <body class="min-h-screen">
     <!-- Navigation -->
     <nav class="fixed top-0 left-0 right-0 z-50 bg-[#0F0F0F]/90 backdrop-blur-md border-b border-white/10">

@@ -1,0 +1,115 @@
+---
+import { frontmatter as contactFrontmatter } from '../../content/contact.md';
+import { frontmatter as siteFrontmatter } from '../../content/site.md';
+import Icon from './Icon.astro';
+
+interface ContactField {
+  name: string;
+  label: string;
+  type: 'text' | 'email' | 'tel' | 'textarea';
+  placeholder: string;
+}
+
+interface ContactData {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  availability: string[];
+  hours: string[];
+  form_fields: ContactField[];
+}
+
+interface SiteData {
+  location: string;
+  phone: string;
+  phone_display: string;
+  email: string;
+  address_lines: string[];
+}
+
+const contact = contactFrontmatter as ContactData;
+const site = siteFrontmatter as SiteData;
+const availability: string[] = contact.availability;
+const hours: string[] = contact.hours;
+const fields: ContactField[] = contact.form_fields;
+---
+
+<section id="contact" class="section-shell pb-20">
+  <div class="section-heading">
+    <span class="section-kicker">{contact.eyebrow}</span>
+    <h2 class="section-title">{contact.title}</h2>
+    <p class="section-copy">{contact.subtitle}</p>
+  </div>
+
+  <div class="mt-12 grid gap-6 lg:grid-cols-[0.88fr_1.12fr]">
+    <div class="space-y-6">
+      <article class="glass-card p-6">
+        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--color-primary)]">Reach Out</p>
+        <div class="mt-5 space-y-4 text-sm text-[var(--color-text-muted)]">
+          <p class="flex items-start gap-3">
+            <Icon name="map-pin" class="mt-0.5 h-4 w-4 text-[var(--color-primary)]" />
+            <span>{site.address_lines.join(', ')}</span>
+          </p>
+          <a href={`tel:${site.phone}`} class="footer-link flex items-center gap-3">
+            <Icon name="phone" class="h-4 w-4 text-[var(--color-primary)]" />
+            {site.phone_display}
+          </a>
+          <a href={`mailto:${site.email}`} class="footer-link flex items-center gap-3">
+            <Icon name="mail" class="h-4 w-4 text-[var(--color-primary)]" />
+            {site.email}
+          </a>
+        </div>
+      </article>
+
+      <article class="glass-card p-6">
+        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--color-primary)]">Availability</p>
+        <ul class="mt-5 space-y-3 text-sm text-[var(--color-text-muted)]">
+          {availability.map((item: string) => (
+            <li class="flex items-start gap-3">
+              <Icon name="star" class="mt-1 h-3.5 w-3.5 text-[var(--color-accent)]" />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </article>
+
+      <article class="glass-card p-6">
+        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--color-primary)]">Studio Hours</p>
+        <ul class="mt-5 space-y-3 text-sm text-[var(--color-text-muted)]">
+          {hours.map((item: string) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+        <p class="mt-5 text-xs uppercase tracking-[0.24em] text-[var(--color-text-muted)]">{site.location}</p>
+      </article>
+    </div>
+
+    <form class="glass-card grid gap-5 p-6">
+      {fields.map((field: ContactField) => (
+        <label class="grid gap-2 text-sm font-medium text-[var(--color-text)]">
+          <span>{field.label}</span>
+          {field.type === 'textarea' ? (
+            <textarea
+              name={field.name}
+              rows={5}
+              class="glass-input min-h-[150px] resize-y"
+              placeholder={field.placeholder}
+            ></textarea>
+          ) : (
+            <input
+              type={field.type}
+              name={field.name}
+              class="glass-input"
+              placeholder={field.placeholder}
+            />
+          )}
+        </label>
+      ))}
+
+      <button type="submit" class="btn-primary justify-center">
+        Send Inquiry
+        <Icon name="arrow-right" class="h-4 w-4" />
+      </button>
+    </form>
+  </div>
+</section>

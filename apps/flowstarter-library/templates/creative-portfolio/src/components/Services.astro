@@ -1,0 +1,43 @@
+---
+import { frontmatter as servicesFrontmatter } from '../../content/services.md';
+import Icon from './Icon.astro';
+
+interface ServiceItem {
+  icon: string;
+  title: string;
+  description: string;
+  price: string;
+}
+
+interface ServicesData {
+  title: string;
+  subtitle: string;
+  services: ServiceItem[];
+}
+
+const data = servicesFrontmatter as ServicesData;
+const services: ServiceItem[] = data.services;
+---
+
+<section id="services" class="section-shell">
+  <div class="section-heading">
+    <span class="section-kicker">Services</span>
+    <h2 class="section-title">{data.title}</h2>
+    <p class="section-copy">{data.subtitle}</p>
+  </div>
+
+  <div class="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+    {services.map((service: ServiceItem) => (
+      <article class="glass-card service-card p-6">
+        <div class="icon-chip">
+          <Icon name={service.icon} class="h-6 w-6" />
+        </div>
+        <h3 class="mt-5 text-xl font-semibold text-[var(--color-text)]">{service.title}</h3>
+        <p class="mt-3 text-sm leading-7 text-[var(--color-text-muted)]">{service.description}</p>
+        <div class="mt-5 inline-flex rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-[var(--color-text)]">
+          {service.price}
+        </div>
+      </article>
+    ))}
+  </div>
+</section>

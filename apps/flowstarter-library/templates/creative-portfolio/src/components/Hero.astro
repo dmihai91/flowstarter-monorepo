@@ -1,0 +1,158 @@
+---
+import { frontmatter as heroFrontmatter } from '../../content/hero.md';
+import { frontmatter as siteFrontmatter } from '../../content/site.md';
+import Icon from './Icon.astro';
+
+interface CallToAction {
+  text: string;
+  href: string;
+}
+
+interface StatItem {
+  value: string;
+  label: string;
+}
+
+interface HeroData {
+  headline: string;
+  subheadline: string;
+  badge?: string;
+  eyebrow?: string;
+  image: string;
+  image_alt: string;
+  cta_primary?: CallToAction;
+  cta_secondary?: CallToAction;
+  stats?: StatItem[];
+  highlights?: string[];
+}
+
+interface SiteData {
+  name: string;
+  tagline: string;
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  badge?: string;
+  primaryCta?: CallToAction;
+  secondaryCta?: CallToAction;
+  compact?: boolean;
+  showStats?: boolean;
+}
+
+const hero = heroFrontmatter as HeroData;
+const site = siteFrontmatter as SiteData;
+const {
+  title,
+  subtitle,
+  badge,
+  primaryCta,
+  secondaryCta,
+  compact = false,
+  showStats = true,
+} = Astro.props as Props;
+
+const resolvedTitle = title ?? hero.headline;
+const resolvedSubtitle = subtitle ?? hero.subheadline;
+const resolvedBadge = badge ?? hero.badge ?? site.tagline;
+const resolvedPrimaryCta = primaryCta ?? hero.cta_primary;
+const resolvedSecondaryCta = secondaryCta ?? hero.cta_secondary;
+const stats: StatItem[] = showStats ? hero.stats ?? [] : [];
+const highlights: string[] = hero.highlights ?? [];
+---
+
+<section class:list={['hero-section', compact && 'hero-section-compact']}>
+  <div class="hero-gradient absolute inset-0"></div>
+  <div class="dot-pattern absolute inset-0 opacity-40"></div>
+  <div class="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.35),transparent_65%)]"></div>
+
+  <div class="section-shell relative">
+    {compact ? (
+      <div class="mx-auto max-w-3xl text-center">
+        <span class="badge-pill mx-auto inline-flex">{resolvedBadge}</span>
+        <h1 class="mt-6 text-4xl font-semibold leading-tight text-white sm:text-5xl">{resolvedTitle}</h1>
+        <p class="mx-auto mt-5 max-w-2xl text-base leading-8 text-white/78 sm:text-lg">{resolvedSubtitle}</p>
+        {(resolvedPrimaryCta || resolvedSecondaryCta) && (
+          <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            {resolvedPrimaryCta && (
+              <a href={resolvedPrimaryCta.href} class="btn-primary">
+                {resolvedPrimaryCta.text}
+                <Icon name="arrow-right" class="h-4 w-4" />
+              </a>
+            )}
+            {resolvedSecondaryCta && (
+              <a href={resolvedSecondaryCta.href} class="btn-secondary">
+                {resolvedSecondaryCta.text}
+              </a>
+            )}
+          </div>
+        )}
+      </div>
+    ) : (
+      <div class="grid items-center gap-10 lg:grid-cols-[1.08fr_0.92fr]">
+        <div>
+          <span class="badge-pill inline-flex">{resolvedBadge}</span>
+          <p class="mt-6 text-sm uppercase tracking-[0.3em] text-white/70">{hero.eyebrow ?? site.tagline}</p>
+          <h1 class="mt-4 max-w-3xl text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-6xl">
+            {resolvedTitle}
+          </h1>
+          <p class="mt-6 max-w-2xl text-base leading-8 text-white/78 sm:text-lg">{resolvedSubtitle}</p>
+
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+            {resolvedPrimaryCta && (
+              <a href={resolvedPrimaryCta.href} class="btn-primary">
+                {resolvedPrimaryCta.text}
+                <Icon name="arrow-right" class="h-4 w-4" />
+              </a>
+            )}
+            {resolvedSecondaryCta && (
+              <a href={resolvedSecondaryCta.href} class="btn-secondary">
+                {resolvedSecondaryCta.text}
+              </a>
+            )}
+          </div>
+
+          {highlights.length > 0 && (
+            <div class="mt-10 flex flex-wrap gap-3">
+              {highlights.map((item: string) => (
+                <span class="glass-chip">
+                  <Icon name="star" class="h-3.5 w-3.5 text-[var(--color-accent)]" />
+                  {item}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {stats.length > 0 && (
+            <div class="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              {stats.map((stat: StatItem) => (
+                <div class="glass-card p-5 text-left">
+                  <p class="text-2xl font-semibold text-white">{stat.value}</p>
+                  <p class="mt-1 text-sm text-white/70">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div class="relative">
+          <div class="glass-card overflow-hidden p-3">
+            <img
+              src={hero.image}
+              alt={hero.image_alt}
+              class="h-full min-h-[420px] w-full rounded-[1.1rem] object-cover"
+              loading="eager"
+            />
+          </div>
+          <div class="glass-card absolute -bottom-6 right-6 max-w-xs p-5">
+            <p class="text-xs uppercase tracking-[0.28em] text-white/60">Signature Approach</p>
+            <p class="mt-2 text-sm leading-7 text-white/80">
+              Thoughtful creative direction, elevated client experience, and details designed to linger.
+            </p>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+</section>

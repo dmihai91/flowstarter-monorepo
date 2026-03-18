@@ -1,0 +1,22 @@
+---
+import { frontmatter as servicesFrontmatter } from '../../content/services.md';
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import ServicesSection from '../components/Services.astro';
+import TestimonialsSection from '../components/Testimonials.astro';
+import ContactSection from '../components/Contact.astro';
+
+interface ServicesPageData {
+  title: string;
+  subtitle: string;
+}
+
+const servicesPage = servicesFrontmatter as ServicesPageData;
+---
+
+<Layout title={`Services | ${servicesPage.title}`}>
+  <Hero title={servicesPage.title} subtitle={servicesPage.subtitle} badge="Signature Offerings" compact={true} showStats={false} />
+  <ServicesSection />
+  <TestimonialsSection />
+  <ContactSection />
+</Layout>

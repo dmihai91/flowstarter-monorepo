@@ -1,0 +1,18 @@
+---
+import { frontmatter as contactFrontmatter } from '../../content/contact.md';
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import ContactSection from '../components/Contact.astro';
+
+interface ContactPageData {
+  title: string;
+  subtitle: string;
+}
+
+const contactPage = contactFrontmatter as ContactPageData;
+---
+
+<Layout title={`Contact | ${contactPage.title}`}>
+  <Hero title={contactPage.title} subtitle={contactPage.subtitle} badge="Book Your Visit" compact={true} showStats={false} />
+  <ContactSection />
+</Layout>

@@ -1,0 +1,22 @@
+---
+import { frontmatter as aboutFrontmatter } from '../../content/about.md';
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import AboutSection from '../components/About.astro';
+import TestimonialsSection from '../components/Testimonials.astro';
+import ContactSection from '../components/Contact.astro';
+
+interface AboutPageData {
+  page_title: string;
+  page_subtitle: string;
+}
+
+const aboutPage = aboutFrontmatter as AboutPageData;
+---
+
+<Layout title={`About | ${aboutPage.page_title}`}>
+  <Hero title={aboutPage.page_title} subtitle={aboutPage.page_subtitle} badge="About the Studio" compact={true} showStats={false} />
+  <AboutSection />
+  <TestimonialsSection />
+  <ContactSection />
+</Layout>

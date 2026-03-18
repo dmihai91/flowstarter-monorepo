@@ -4,13 +4,10 @@
 
 :root {
   --purple-primary: hsl(241 93% 61%);
-  --purple-glow: hsl(241 93% 61% / 0.15);
-  --grid-color: rgb(139 92 246 / 0.09);   /* visible on light bg */
   --text-primary: #09090b;
 }
 
 .dark {
-  --grid-color: rgb(139 92 246 / 0.07);
   --text-primary: #fafafa;
 }
 
@@ -19,10 +16,10 @@
   html.dark { color-scheme: dark; }
   body {
     @apply font-sans antialiased text-neutral-900 dark:text-white;
-    background: #f3f2f8;   /* light lavender-gray — makes glow + grid pop */
+    background: #f0eefb;
   }
   html.dark body {
-    background: #08080c;
+    background: #060608;
   }
 }
 
@@ -30,40 +27,51 @@
   .text-balance { text-wrap: balance; }
 }
 
-/* ─── Background system ─────────────────────────────────────── */
+/* ─── Flow Background — fixed layer behind everything ─────── */
+
+.showcase-bg {
+  position: relative;
+  isolation: isolate;
+}
 
 /* Dot grid */
 .showcase-bg::before {
   content: '';
   position: fixed;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, var(--grid-color) 1px, transparent 0);
+  z-index: -2;
+  background-image:
+    radial-gradient(circle, rgba(109, 78, 237, 0.18) 1px, transparent 1px);
   background-size: 28px 28px;
-  pointer-events: none;
-  z-index: 0;
 }
 
-/* Light mode glow */
+/* Light mode: strong purple glow from top */
 .showcase-bg::after {
   content: '';
   position: fixed;
   inset: 0;
+  z-index: -1;
   background:
-    radial-gradient(ellipse 80% 50% at 50% -5%, rgba(109, 78, 237, 0.14) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 30% at 85% 90%, rgba(77, 93, 217, 0.07) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: 0;
+    radial-gradient(ellipse 90% 60% at 50% -15%, rgba(109, 78, 237, 0.30) 0%, rgba(124, 58, 237, 0.10) 40%, transparent 65%),
+    radial-gradient(ellipse 60% 40% at 80% 95%, rgba(77, 93, 217, 0.15) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 30% at 10% 70%, rgba(139, 92, 246, 0.10) 0%, transparent 50%);
 }
 
-/* Dark mode glow — richer */
+/* Dark mode: deep purple glow */
+.dark .showcase-bg::before {
+  background-image:
+    radial-gradient(circle, rgba(139, 92, 246, 0.12) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
 .dark .showcase-bg::after {
   background:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(124, 58, 237, 0.22) 0%, transparent 55%),
-    radial-gradient(ellipse 55% 40% at 85% 85%, rgba(77, 93, 217, 0.12) 0%, transparent 50%),
-    radial-gradient(ellipse 40% 30% at 10% 60%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+    radial-gradient(ellipse 100% 60% at 50% -10%, rgba(124, 58, 237, 0.40) 0%, rgba(109, 40, 217, 0.15) 40%, transparent 65%),
+    radial-gradient(ellipse 70% 50% at 85% 90%, rgba(77, 93, 217, 0.20) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 5%  55%, rgba(139, 92, 246, 0.12) 0%, transparent 50%);
 }
 
-/* ─── Animated text gradient ────────────────────────────────── */
+/* ─── Animated text gradient ─────────────────────────────── */
 
 @keyframes text-flow {
   0%, 100% { background-position: 0% 50%; }
@@ -79,7 +87,7 @@
   background-clip: text;
 }
 
-/* ─── Glass utility ─────────────────────────────────────────── */
+/* ─── Glass ──────────────────────────────────────────────── */
 .glass-card {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);

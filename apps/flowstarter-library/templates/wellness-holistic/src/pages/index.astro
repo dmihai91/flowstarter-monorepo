@@ -2,6 +2,21 @@
 import Layout from '../layouts/Layout.astro';
 
 
+const _iconMap: Record<string, string> = {
+  "lucide:apple": `<circle cx="12" cy="12" r="5" fill="currentColor"/>`,
+  "lucide:brain": `<circle cx="12" cy="12" r="5" fill="currentColor"/>`,
+  "lucide:flower-2": `<circle cx="12" cy="12" r="5" fill="currentColor"/>`,
+  "lucide:hand": `<circle cx="12" cy="12" r="5" fill="currentColor"/>`,
+  "lucide:sparkles": `<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>`,
+  "lucide:target": `<circle cx="12" cy="12" r="5" fill="currentColor"/>`,
+};
+function getIconSvg(name: string, cls: string): string {
+  const body = _iconMap[name] || '<circle cx="12" cy="12" r="5" fill="currentColor"/>';
+  const needsFill = ["lucide:facebook","lucide:star","lucide:linkedin"].includes(name);
+  const fill = needsFill ? "currentColor" : "none";
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${fill}" class="${cls}" aria-hidden="true">${body}</svg>`;
+}
+
 interface Service {
   icon: string;
   title: string;
@@ -84,7 +99,7 @@ const stats = [
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         <div>
           <p class="text-primary font-medium mb-4 flex items-center gap-2">
-            <Icon name="lucide:award" class="w-5 h-5" />
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></g></svg>
             Licensed Naturopathic Doctor
           </p>
           <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-semibold text-slate-800 dark:text-white leading-tight mb-6">
@@ -96,7 +111,7 @@ const stats = [
           <div class="flex flex-col sm:flex-row gap-4 mb-8">
             <a href="#contact" class="btn-primary">
               Book a Consultation
-              <Icon name="lucide:arrow-right" class="w-5 h-5 ml-2" />
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 ml-2" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></g></svg>
             </a>
             <a href="#services" class="btn-outline">Explore Services</a>
           </div>
@@ -116,7 +131,7 @@ const stats = [
           <div class="absolute -bottom-6 -left-6 bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg">
             <div class="flex items-center gap-4">
               <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                <Icon name="lucide:flower-2" class="w-6 h-6 text-primary" />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-6 h-6 text-primary" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 16.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 1 1 4.5 4.5 4.5 4.5 0 1 1-4.5 4.5"/></g></svg>
               </div>
               <div>
                 <div class="text-2xl font-serif font-bold text-slate-800 dark:text-white">12+</div>
@@ -154,7 +169,7 @@ const stats = [
           <ul class="space-y-3">
             {credentials.map((credential: string) => (
               <li class="flex items-center gap-3">
-                <Icon name="lucide:check-circle" class="w-5 h-5 text-primary flex-shrink-0" />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 text-primary flex-shrink-0" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></g></svg>
                 <span class="text-slate-700 dark:text-slate-300">{credential}</span>
               </li>
             ))}
@@ -177,7 +192,7 @@ const stats = [
         {services.map((service: Service) => (
           <div class="card group hover:-translate-y-1">
             <div class="w-14 h-14 bg-primary/10 dark:bg-primary/20 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors">
-              <Icon name={service.icon} class="w-7 h-7 text-primary" />
+              <Fragment set:html={getIconSvg(service.icon, "w-7 h-7 text-primary")} />
             </div>
             <h3 class="text-xl font-serif font-semibold text-slate-800 dark:text-white mb-2">{service.title}</h3>
             <p class="text-slate-600 dark:text-slate-400 mb-4">{service.description}</p>
@@ -191,7 +206,7 @@ const stats = [
       <div class="mt-12 text-center">
         <a href="#contact" class="btn-primary">
           Book Your Consultation
-          <Icon name="lucide:calendar" class="w-5 h-5 ml-2" />
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 ml-2" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M8 2v4M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></g></svg>
         </a>
       </div>
     </div>
@@ -258,7 +273,7 @@ const stats = [
           <div class="faq-item bg-white dark:bg-slate-800 rounded-xl shadow-sm dark:shadow-none dark:border dark:border-slate-700 overflow-hidden">
             <button class="faq-trigger w-full px-6 py-5 flex items-center justify-between text-left" data-index={index}>
               <span class="font-medium text-slate-800 dark:text-white pr-4">{faq.question}</span>
-              <Icon name="lucide:chevron-down" class="w-5 h-5 text-primary transition-transform faq-icon flex-shrink-0" />
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 text-primary transition-transform faq-icon flex-shrink-0" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6"/></svg>
             </button>
             <div class="faq-content hidden px-6 pb-5">
               <p class="text-slate-600 dark:text-slate-400">{faq.answer}</p>
@@ -281,7 +296,7 @@ const stats = [
           <div class="space-y-6 mb-8">
             <div class="flex items-start gap-4">
               <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Icon name="lucide:map-pin" class="w-6 h-6 text-primary" />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-6 h-6 text-primary" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></g></svg>
               </div>
               <div>
                 <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Clinic Location</h4>
@@ -290,7 +305,7 @@ const stats = [
             </div>
             <div class="flex items-start gap-4">
               <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Icon name="lucide:clock" class="w-6 h-6 text-primary" />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-6 h-6 text-primary" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></g></svg>
               </div>
               <div>
                 <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Clinic Hours</h4>
@@ -299,7 +314,7 @@ const stats = [
             </div>
             <div class="flex items-start gap-4">
               <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Icon name="lucide:phone" class="w-6 h-6 text-primary" />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-6 h-6 text-primary" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
               </div>
               <div>
                 <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Contact</h4>
@@ -339,7 +354,7 @@ const stats = [
             </div>
             <button type="submit" class="btn-primary w-full">
               Request Consultation
-              <Icon name="lucide:send" class="w-5 h-5 ml-2" />
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 ml-2" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></g></svg>
             </button>
             <p class="text-xs text-slate-500 dark:text-slate-400 text-center">Your health information is kept strictly confidential.</p>
           </form>

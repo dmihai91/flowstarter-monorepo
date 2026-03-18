@@ -48,5 +48,5 @@ h1, h2, h3, h4, h5, h6 {
 }
 .icon-sun { @apply block; }
 .icon-moon { @apply hidden; }
-:global(html.dark) .icon-sun { @apply hidden; }
-:global(html.dark) .icon-moon { @apply block; }
+html.dark .icon-sun { @apply hidden; }
+html.dark .icon-moon { @apply block; }

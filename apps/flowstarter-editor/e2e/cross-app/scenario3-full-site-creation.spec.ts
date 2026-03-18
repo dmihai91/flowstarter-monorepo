@@ -44,7 +44,14 @@ test.afterEach(async () => {
 });
 
 test.beforeEach(async ({ page }) => {
+  // Set Clerk testing token on main app domain first
   await setupClerkTestingToken({ page });
+  await page.goto(MAIN);
+  await page.waitForLoadState('networkidle');
+  // Also set token on editor domain (satellite auth requires token on each domain)
+  await page.goto(EDITOR);
+  await setupClerkTestingToken({ page });
+  await page.waitForLoadState('networkidle');
 });
 
 test.describe('Scenario 3: Full Site Creation', () => {

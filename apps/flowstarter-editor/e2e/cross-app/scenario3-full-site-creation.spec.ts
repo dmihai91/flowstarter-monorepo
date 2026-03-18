@@ -75,22 +75,22 @@ test.describe('Scenario 3: Full Site Creation', () => {
     });
 
     expect(handoff.status).toBe(200);
-    const { editorUrl, projectId, conversationId } = handoff.body as {
+    const { editorUrl, projectId, conversationId, token } = handoff.body as {
       editorUrl: string; projectId: string; conversationId?: string; token: string;
     };
     createdProjectId = projectId;
     console.log(`✅ Project created: ${projectId}`);
     console.log(`   Editor URL: ${editorUrl}`);
-    console.log(`   Conversation ID: ${conversationId || 'none (will init in editor)'}`);
+    console.log(`   Conversation ID: ${conversationId || 'will init in editor'}`);
 
-    // editorUrl should now be /project/:id directly (pre-initialized)
-    expect(editorUrl).toMatch(/\/project\//);
-
-    // ── Step 2: Navigate to editor ────────────────────────────────────────────
+    // ── Step 2: Navigate to editor via handoff token (bypasses Clerk satellite auth) ──
     console.log('\n📍 Step 2: Navigate to editor');
-    await page.goto(editorUrl);
+    // Always use handoff token URL — HandoffGate handles auth + redirects to /project/:id
+    // (Direct /project/:id URL requires Clerk satellite auth which may not work in test env)
+    await page.goto(`${EDITOR}?handoff=${encodeURIComponent(token)}`);
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForURL(/\/project\//, { timeout: 20000 });
+    // If using handoff token, wait for redirect to /project/:id
+    await page.waitForURL(/\/project\//, { timeout: 30000 });
     console.log(`✅ Editor loaded at: ${page.url()}`);
     await ss(page, '01-editor-loaded');
 

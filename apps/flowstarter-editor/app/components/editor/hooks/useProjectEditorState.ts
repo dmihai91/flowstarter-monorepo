@@ -113,7 +113,33 @@ function buildConvexUpdate(state: Partial<InitialChatState>): Record<string, unk
   ];
 
   for (const key of keys) {
-    if (state[key]) update[key] = state[key];
+    if (key === 'businessInfo' && state[key]) {
+      // Strip to only Convex-allowed fields — unknown fields cause ArgumentValidationError
+      const bi = state[key] as Record<string, unknown>;
+      const cleanBi: Record<string, unknown> = {};
+      const allowedBiKeys = ['uvp','targetAudience','businessGoals','brandTone','sellingMethod',
+        'sellingMethodDetails','pricingOffers','industry','offerings','contactEmail','contactPhone',
+        'contactAddress','website'] as const;
+      for (const bKey of allowedBiKeys) {
+        if (bi[bKey] !== undefined && bi[bKey] !== null) cleanBi[bKey] = bi[bKey];
+      }
+      if (Object.keys(cleanBi).length > 0) update[key] = cleanBi;
+    } else if (key === 'selectedPalette' && state[key]) {
+      // Convex expects { id, name, colors: string[] } — colors may be object in app
+      const p = state[key] as Record<string, unknown>;
+      const colors = Array.isArray(p.colors)
+        ? (p.colors as unknown[]).filter((c): c is string => typeof c === 'string')
+        : typeof p.colors === 'object' && p.colors !== null
+          ? Object.values(p.colors as Record<string, unknown>).filter((c): c is string => typeof c === 'string')
+          : [];
+      if (p.id && p.name) update[key] = { id: p.id, name: p.name, colors };
+    } else if (key === 'selectedFont' && state[key]) {
+      // Convex expects { id, name, heading, body }
+      const f = state[key] as Record<string, unknown>;
+      if (f.id && f.name && f.heading && f.body) update[key] = { id: f.id, name: f.name, heading: f.heading, body: f.body };
+    } else if (state[key]) {
+      update[key] = state[key];
+    }
   }
 
   return update;

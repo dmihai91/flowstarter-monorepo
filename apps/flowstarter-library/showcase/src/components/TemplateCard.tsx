@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import { GlassCard, Button } from '@flowstarter/flow-design-system';
 
 export interface PaletteColors {
   primary?: string;
@@ -44,10 +43,7 @@ interface TemplateCardProps {
 }
 
 function formatCategoryLabel(category: string): string {
-  return category
-    .split('-')
-    .map((part: string) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ');
+  return category.split('-').map((p: string) => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
 }
 
 function PlayIcon() {
@@ -57,7 +53,6 @@ function PlayIcon() {
     </svg>
   );
 }
-
 function ArrowIcon() {
   return (
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -68,25 +63,23 @@ function ArrowIcon() {
 
 export function TemplateCard({ template, darkMode, onPreview }: TemplateCardProps): React.ReactElement {
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
-  const [imageError, setImageError] = useState<boolean>(false);
+  const [imageError, setImageError]   = useState<boolean>(false);
 
   const thumbnailUrl = darkMode
-    ? template.thumbnailDark || template.thumbnail
+    ? template.thumbnailDark  || template.thumbnail
     : template.thumbnailLight || template.thumbnail;
 
-  const palettes: Palette[] = template.palettes || [];
   const swatches: string[] = useMemo(() => {
-    const paletteSwatches = palettes
-      .slice(0, 6)
-      .map((p: Palette) => p.colors?.primary)
-      .filter((c: string | undefined): c is string => Boolean(c));
-    return paletteSwatches.length > 0 ? paletteSwatches : [template.color || '#8b5cf6'];
-  }, [palettes, template.color]);
+    const palettes = template.palettes || [];
+    const colors = palettes.slice(0, 6).map((p: Palette) => p.colors?.primary).filter((c): c is string => Boolean(c));
+    return colors.length > 0 ? colors : [template.color || '#8b5cf6'];
+  }, [template.palettes, template.color]);
 
   return (
-    <GlassCard noHover={false} className="!p-0 overflow-hidden rounded-2xl flex flex-col group cursor-default">
-      {/* Thumbnail */}
-      <div className="relative aspect-[16/10] overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-200/60 bg-white/95 shadow-[0_8px_32px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-[2px] hover:border-purple-500/20 hover:shadow-[0_12px_40px_rgba(0,0,0,0.1)] dark:border-white/10 dark:bg-white/[0.04] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] dark:hover:border-purple-500/30 dark:hover:shadow-[0_12px_40px_rgba(124,58,237,0.15)]">
+
+      {/* Thumbnail — full bleed, no padding */}
+      <div className="relative w-full overflow-hidden bg-neutral-100 dark:bg-neutral-800" style={{ aspectRatio: '16/10' }}>
         {thumbnailUrl && !imageError ? (
           <img
             src={thumbnailUrl}
@@ -97,7 +90,7 @@ export function TemplateCard({ template, darkMode, onPreview }: TemplateCardProp
           />
         ) : null}
 
-        {!imageLoaded || imageError ? (
+        {(!imageLoaded || imageError) ? (
           <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700" />
         ) : null}
 
@@ -107,6 +100,7 @@ export function TemplateCard({ template, darkMode, onPreview }: TemplateCardProp
           </div>
         ) : null}
 
+        {/* Hover overlay */}
         <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
           <button
             onClick={() => onPreview(template)}
@@ -119,9 +113,9 @@ export function TemplateCard({ template, darkMode, onPreview }: TemplateCardProp
       </div>
 
       {/* Body */}
-      <div className="flex flex-1 flex-col gap-3 px-4 py-4">
+      <div className="flex flex-1 flex-col gap-3 p-4">
         <div>
-          <h3 className="mb-1 text-base font-bold leading-tight text-neutral-900 dark:text-white font-display">
+          <h3 className="mb-1 text-base font-bold leading-tight text-neutral-900 dark:text-white">
             {template.name}
           </h3>
           <p className="line-clamp-2 text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
@@ -131,9 +125,9 @@ export function TemplateCard({ template, darkMode, onPreview }: TemplateCardProp
 
         <div className="flex items-center gap-1.5">
           <span className="mr-0.5 text-xs text-neutral-400 dark:text-neutral-500">Palettes:</span>
-          {swatches.map((color: string, index: number) => (
+          {swatches.map((color: string, i: number) => (
             <div
-              key={`${template.slug}-swatch-${index}`}
+              key={`${template.slug}-sw-${i}`}
               className="h-4 w-4 rounded-full border-2 border-white shadow-sm ring-1 ring-neutral-200 transition-transform hover:scale-125 dark:border-neutral-900 dark:ring-neutral-700"
               style={{ backgroundColor: color }}
             />
@@ -141,35 +135,27 @@ export function TemplateCard({ template, darkMode, onPreview }: TemplateCardProp
         </div>
 
         <div className="mt-auto flex items-center gap-2 pt-1">
-          <Button
-            variant="outline"
-            size="sm"
+          <button
             onClick={() => onPreview(template)}
-            icon={<PlayIcon />}
-            iconPosition="left"
-            className="flex-1"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm font-semibold text-neutral-700 transition-colors hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:border-neutral-600"
           >
-            Preview
-          </Button>
-          <Button
-            variant="brand-gradient"
-            size="sm"
-            icon={<ArrowIcon />}
-            iconPosition="right"
-            className="flex-1"
+            <PlayIcon /> Preview
+          </button>
+          <button
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-purple-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-purple-700"
           >
-            Use Template
-          </Button>
+            Use Template <ArrowIcon />
+          </button>
         </div>
       </div>
-    </GlassCard>
+    </div>
   );
 }
 
 export function TemplateCardSkeleton(): React.ReactElement {
   return (
-    <GlassCard noHover className="overflow-hidden rounded-2xl">
-      <div className="aspect-[16/10] animate-pulse bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700" />
+    <div className="flex flex-col overflow-hidden rounded-2xl border border-gray-200/60 bg-white/95 shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:border-white/10 dark:bg-white/[0.04]">
+      <div className="w-full animate-pulse bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700" style={{ aspectRatio: '16/10' }} />
       <div className="space-y-3 p-4">
         <div className="h-5 w-2/3 animate-pulse rounded-lg bg-neutral-200 dark:bg-neutral-700" />
         <div className="h-4 w-full animate-pulse rounded-lg bg-neutral-100 dark:bg-neutral-800" />
@@ -184,6 +170,6 @@ export function TemplateCardSkeleton(): React.ReactElement {
           <div className="h-10 animate-pulse rounded-lg bg-purple-200/60 dark:bg-purple-500/20" />
         </div>
       </div>
-    </GlassCard>
+    </div>
   );
 }

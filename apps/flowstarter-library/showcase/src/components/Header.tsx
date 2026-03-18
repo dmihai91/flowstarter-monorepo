@@ -12,7 +12,6 @@ interface HeaderProps {
   darkMode: boolean;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  // Drawer / sidebar props
   categories: Category[];
   selectedCategory: string | null;
   setSelectedCategory: (cat: string | null) => void;
@@ -46,26 +45,22 @@ function ThemeToggle({ themeMode, setThemeMode, darkMode }: { themeMode: ThemeMo
   }`;
   return (
     <>
-      {/* Mobile: single cycle */}
-      <button onClick={cycle} aria-label={`Theme: ${themeMode}`} title={`Switch theme (${themeMode})`}
-        className={`sm:hidden h-9 w-9 ${btnBase}`}>
+      {/* Mobile: single cycle button */}
+      <button onClick={cycle} aria-label={"Theme: " + themeMode} title={"Switch theme (" + themeMode + ")"}
+        className={"sm:hidden h-9 w-9 shrink-0 " + btnBase}>
         {currentIcon}
       </button>
       {/* Desktop: full pill */}
-      <div className={`hidden sm:flex items-center rounded-full p-1 ${
-        darkMode ? 'bg-white/8 border border-white/12' : 'bg-neutral-100 border border-neutral-200'
-      }`}>
+      <div className={"hidden sm:flex items-center rounded-full p-1 " + (darkMode ? 'bg-white/8 border border-white/12' : 'bg-neutral-100 border border-neutral-200')}>
         {opts.map(({ mode, icon, label }) => {
           const active = themeMode === mode;
           return (
             <button key={mode} onClick={() => setThemeMode(mode)} aria-label={label} title={label}
-              className={`flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 ${
+              className={"flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 " + (
                 active
-                  ? darkMode
-                    ? 'bg-white/15 text-white shadow-sm'
-                    : 'bg-white text-purple-700 shadow-sm shadow-neutral-300/60 border border-neutral-200'
+                  ? darkMode ? 'bg-white/15 text-white shadow-sm' : 'bg-white text-purple-700 shadow-sm shadow-neutral-300/60 border border-neutral-200'
                   : darkMode ? 'text-neutral-400 hover:text-neutral-200' : 'text-neutral-400 hover:text-neutral-700'
-              }`}>{icon}</button>
+              )}>{icon}</button>
           );
         })}
       </div>
@@ -99,41 +94,36 @@ function MobileDrawer({
   }, [onClose]);
 
   const pill = (active: boolean) =>
-    `rounded-full px-3 py-1.5 text-xs font-medium transition-colors border cursor-pointer ${
+    'rounded-full px-3 py-1.5 text-xs font-medium transition-colors border cursor-pointer ' + (
       active
         ? 'border-purple-500 bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300'
         : darkMode
           ? 'border-neutral-700 text-neutral-400 hover:border-neutral-600'
           : 'border-neutral-200 text-neutral-600 hover:border-neutral-300 bg-white'
-    }`;
+    );
 
   return (
     <>
-      {/* Backdrop */}
       <div
-        className={`fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${open ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={'fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity duration-300 lg:hidden ' + (open ? 'opacity-100' : 'opacity-0 pointer-events-none')}
         onClick={onClose}
         aria-hidden
       />
-
-      {/* Drawer */}
       <div
-        className={`fixed top-0 left-0 z-50 h-full w-72 transform transition-transform duration-300 ease-out lg:hidden ${
-          open ? 'translate-x-0' : '-translate-x-full'
-        } ${darkMode ? 'bg-[#0d0d10] border-r border-white/8' : 'bg-white border-r border-neutral-200'} flex flex-col`}
+        ref={drawerRef}
+        className={'fixed top-0 left-0 z-50 h-full w-72 transform transition-transform duration-300 ease-out lg:hidden ' +
+          (open ? 'translate-x-0' : '-translate-x-full') + ' ' +
+          (darkMode ? 'bg-[#0d0d10] border-r border-white/8' : 'bg-white border-r border-neutral-200') +
+          ' flex flex-col'}
       >
-        {/* Drawer header */}
-        <div className={`flex items-center justify-between px-4 py-4 border-b ${darkMode ? 'border-white/8' : 'border-neutral-200'}`}>
+        <div className={'flex items-center justify-between px-4 py-4 border-b ' + (darkMode ? 'border-white/8' : 'border-neutral-200')}>
           <Logo size="xs" />
-          <button onClick={onClose} className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${darkMode ? 'text-neutral-400 hover:bg-white/8' : 'text-neutral-500 hover:bg-neutral-100'}`}>
+          <button onClick={onClose} className={'flex h-8 w-8 items-center justify-center rounded-full transition-colors ' + (darkMode ? 'text-neutral-400 hover:bg-white/8' : 'text-neutral-500 hover:bg-neutral-100')}>
             <XIcon />
           </button>
         </div>
 
-        {/* Drawer body */}
         <div className="flex-1 overflow-y-auto px-4 py-5 space-y-6">
-
-          {/* Search */}
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none"><SearchIcon /></span>
             <input
@@ -141,28 +131,19 @@ function MobileDrawer({
               placeholder="Search templates..."
               value={searchQuery}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-              className={`w-full rounded-xl py-2.5 pl-9 pr-3 text-sm transition-all placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-purple-500/30 ${
-                darkMode
-                  ? 'border border-neutral-700 bg-neutral-900 text-white'
-                  : 'border border-neutral-200 bg-neutral-50 text-neutral-900'
-              }`}
+              className={'w-full rounded-xl py-2.5 pl-9 pr-3 text-sm transition-all placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-purple-500/30 ' + (darkMode ? 'border border-neutral-700 bg-neutral-900 text-white' : 'border border-neutral-200 bg-neutral-50 text-neutral-900')}
             />
           </div>
 
-          {/* Categories */}
           <div>
-            <p className={`mb-3 text-xs font-semibold uppercase tracking-widest ${darkMode ? 'text-neutral-500' : 'text-neutral-400'}`}>Industry</p>
+            <p className={'mb-3 text-xs font-semibold uppercase tracking-widest ' + (darkMode ? 'text-neutral-500' : 'text-neutral-400')}>Industry</p>
             <div className="flex flex-col gap-1">
               <button
                 onClick={() => { setSelectedCategory(null); onClose(); }}
-                className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors text-left ${
-                  !selectedCategory
-                    ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300'
-                    : darkMode ? 'text-neutral-400 hover:bg-white/5' : 'text-neutral-600 hover:bg-neutral-50'
-                }`}
+                className={'flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors text-left ' + (!selectedCategory ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300' : darkMode ? 'text-neutral-400 hover:bg-white/5' : 'text-neutral-600 hover:bg-neutral-50')}
               >
                 <span>All templates</span>
-                <span className={`text-xs rounded-full px-2 py-0.5 ${darkMode ? 'bg-white/8 text-neutral-400' : 'bg-neutral-100 text-neutral-500'}`}>
+                <span className={'text-xs rounded-full px-2 py-0.5 ' + (darkMode ? 'bg-white/8 text-neutral-400' : 'bg-neutral-100 text-neutral-500')}>
                   {categories.reduce((s, c) => s + c.count, 0)}
                 </span>
               </button>
@@ -170,38 +151,28 @@ function MobileDrawer({
                 <button
                   key={cat.name}
                   onClick={() => { setSelectedCategory(cat.name); onClose(); }}
-                  className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors text-left capitalize ${
-                    selectedCategory === cat.name
-                      ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300'
-                      : darkMode ? 'text-neutral-400 hover:bg-white/5' : 'text-neutral-600 hover:bg-neutral-50'
-                  }`}
+                  className={'flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors text-left capitalize ' + (selectedCategory === cat.name ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300' : darkMode ? 'text-neutral-400 hover:bg-white/5' : 'text-neutral-600 hover:bg-neutral-50')}
                 >
                   <span>{cat.name}</span>
-                  <span className={`text-xs rounded-full px-2 py-0.5 ${darkMode ? 'bg-white/8 text-neutral-400' : 'bg-neutral-100 text-neutral-500'}`}>
-                    {cat.count}
-                  </span>
+                  <span className={'text-xs rounded-full px-2 py-0.5 ' + (darkMode ? 'bg-white/8 text-neutral-400' : 'bg-neutral-100 text-neutral-500')}>{cat.count}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Features */}
           {features.length > 0 && (
             <div>
-              <p className={`mb-3 text-xs font-semibold uppercase tracking-widest ${darkMode ? 'text-neutral-500' : 'text-neutral-400'}`}>Features</p>
+              <p className={'mb-3 text-xs font-semibold uppercase tracking-widest ' + (darkMode ? 'text-neutral-500' : 'text-neutral-400')}>Features</p>
               <div className="flex flex-wrap gap-2">
                 {features.map((f) => (
-                  <button key={f} onClick={() => toggleFeature(f)} className={pill(selectedFeatures.includes(f))}>
-                    {f}
-                  </button>
+                  <button key={f} onClick={() => toggleFeature(f)} className={pill(selectedFeatures.includes(f))}>{f}</button>
                 ))}
               </div>
             </div>
           )}
         </div>
 
-        {/* Drawer footer */}
-        <div className={`px-4 py-4 border-t ${darkMode ? 'border-white/8' : 'border-neutral-200'}`}>
+        <div className={'px-4 py-4 border-t ' + (darkMode ? 'border-white/8' : 'border-neutral-200')}>
           <a href="https://flowstarter.dev" className="flex items-center justify-center gap-2 w-full rounded-xl bg-purple-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-purple-700 no-underline">
             Get Early Access
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -237,34 +208,45 @@ export function Header({
         toggleFeature={toggleFeature}
       />
 
-      <header className={`sticky top-0 z-30 backdrop-blur-xl ${
-        darkMode
-          ? 'border-b border-white/8 bg-[#08080c]/85'
-          : 'border-b border-purple-200/50 bg-white/90 shadow-sm shadow-purple-100/40'
-      }`}>
+      <header className={'sticky top-0 z-30 backdrop-blur-xl ' + (darkMode ? 'border-b border-white/8 bg-[#08080c]/85' : 'border-b border-purple-200/50 bg-white/90 shadow-sm shadow-purple-100/40')}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center gap-3">
 
-            {/* Hamburger — mobile only */}
+          {/* ── Mobile row (hidden on sm+) ── */}
+          <div className="flex sm:hidden h-14 items-center gap-2">
+            {/* Hamburger */}
             <button
               onClick={() => setDrawerOpen(true)}
-              className={`flex lg:hidden h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors ${
-                darkMode
-                  ? 'border border-white/12 text-neutral-300 hover:bg-white/8'
-                  : 'border border-neutral-200 text-neutral-600 hover:bg-neutral-100'
-              }`}
+              className={'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors ' + (darkMode ? 'border border-white/12 text-neutral-300 hover:bg-white/8' : 'border border-neutral-200 text-neutral-600 hover:bg-neutral-100')}
               aria-label="Open menu"
             >
               <MenuIcon />
             </button>
 
-            {/* Logo */}
+            {/* Search — fills center */}
+            <div className="relative flex-1">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" style={{ zIndex: 1 }}>
+                <SearchIcon />
+              </span>
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+                className={'w-full rounded-xl py-2 pl-9 pr-3 text-sm transition-all placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-purple-500/30 ' + (darkMode ? 'border border-neutral-700/60 bg-neutral-900/60 text-white focus:border-purple-500/60' : 'border border-neutral-200 bg-neutral-50 text-neutral-900 shadow-sm focus:border-purple-400/60')}
+              />
+            </div>
+
+            {/* Theme toggle — rightmost */}
+            <ThemeToggle themeMode={themeMode} setThemeMode={setThemeMode} darkMode={darkMode} />
+          </div>
+
+          {/* ── Desktop row (hidden on mobile) ── */}
+          <div className="hidden sm:flex h-16 items-center gap-3">
             <a href="/" className="flex shrink-0 items-center no-underline">
               <Logo size="sm" />
             </a>
 
-            {/* Desktop search */}
-            <div className="hidden sm:flex flex-1 max-w-md">
+            <div className="flex flex-1 max-w-md">
               <div className="relative w-full">
                 <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500 dark:text-neutral-400 pointer-events-none">
                   <SearchIcon />
@@ -274,28 +256,23 @@ export function Header({
                   placeholder={t('search.placeholder')}
                   value={searchQuery}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-                  className={`w-full rounded-xl py-2 pl-10 pr-4 text-sm transition-all placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-purple-500/30 ${
-                    darkMode
-                      ? 'border border-neutral-700/60 bg-neutral-900/60 text-white focus:border-purple-500/60'
-                      : 'border border-neutral-200 bg-neutral-50 text-neutral-900 focus:border-purple-400/60'
-                  }`}
+                  className={'w-full rounded-xl py-2 pl-10 pr-4 text-sm transition-all placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-purple-500/30 ' + (darkMode ? 'border border-neutral-700/60 bg-neutral-900/60 text-white focus:border-purple-500/60' : 'border border-neutral-200 bg-neutral-50 text-neutral-900 focus:border-purple-400/60')}
                 />
               </div>
             </div>
 
-            {/* Right side */}
-            <div className="ml-auto flex items-center gap-2 sm:gap-3">
+            <div className="ml-auto flex items-center gap-3">
               <ThemeToggle themeMode={themeMode} setThemeMode={setThemeMode} darkMode={darkMode} />
               <a
                 href="https://flowstarter.dev"
-                className="hidden sm:flex items-center gap-2 rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-purple-500/25 transition-colors hover:bg-purple-700 no-underline"
+                className="flex items-center gap-2 rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-purple-500/25 transition-colors hover:bg-purple-700 no-underline"
               >
                 Get Early Access
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </a>
             </div>
-
           </div>
+
         </div>
       </header>
     </>

@@ -44,8 +44,17 @@ export function AppHeader() {
           </Link>
         </div>
 
-        {/* Right: theme + user */}
+        {/* Right: templates link + theme + user */}
         <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3">
+          <a
+            href="https://library.flowstarter.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden sm:flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white hover:bg-gray-100/50 dark:hover:bg-white/5 transition-colors no-underline"
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            Templates
+          </a>
           <div className="hidden sm:block">
             <ThemeToggle />
           </div>

@@ -84,7 +84,7 @@ export function TemplateCard({ template, darkMode, onPreview }: TemplateCardProp
   }, [palettes, template.color]);
 
   return (
-    <GlassCard noHover={false} className="overflow-hidden rounded-2xl flex flex-col group cursor-default">
+    <GlassCard noHover={false} className="!p-0 overflow-hidden rounded-2xl flex flex-col group cursor-default">
       {/* Thumbnail */}
       <div className="relative aspect-[16/10] overflow-hidden bg-neutral-100 dark:bg-neutral-800">
         {thumbnailUrl && !imageError ? (
@@ -119,7 +119,7 @@ export function TemplateCard({ template, darkMode, onPreview }: TemplateCardProp
       </div>
 
       {/* Body */}
-      <div className="flex flex-1 flex-col gap-3 p-4">
+      <div className="flex flex-1 flex-col gap-3 px-4 py-4">
         <div>
           <h3 className="mb-1 text-base font-bold leading-tight text-neutral-900 dark:text-white font-display">
             {template.name}

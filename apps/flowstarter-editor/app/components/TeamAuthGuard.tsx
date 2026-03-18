@@ -8,6 +8,7 @@
 
 import { useUser } from '@clerk/remix';
 import { useEffect, useRef, useState } from 'react';
+import { useLocation } from '@remix-run/react';
 import { useStore } from '@nanostores/react';
 import { Logo, LoadingScreen, Footer, ThemeToggle, FlowBackground, GlassPanel, ScrollAwareHeader, type FooterLink } from '@flowstarter/flow-design-system';
 import { initializeFromClerkUser } from '~/lib/team-auth';

@@ -43,15 +43,16 @@ test.afterEach(async () => {
   }
 });
 
+const MAIN_URL = process.env.MAIN_APP_URL || process.env.E2E_BASE_URL || 'https://flowstarter.dev';
+const EDITOR_URL = process.env.EDITOR_APP_URL || process.env.E2E_EDITOR_URL || 'https://editor.flowstarter.dev';
+
 test.beforeEach(async ({ page }) => {
-  // Set Clerk testing token on main app domain first
+  // Set Clerk testing token on main app domain
+  await page.goto(MAIN_URL);
   await setupClerkTestingToken({ page });
-  await page.goto(MAIN);
-  await page.waitForLoadState('networkidle');
   // Also set token on editor domain (satellite auth requires token on each domain)
-  await page.goto(EDITOR);
+  await page.goto(EDITOR_URL);
   await setupClerkTestingToken({ page });
-  await page.waitForLoadState('networkidle');
 });
 
 test.describe('Scenario 3: Full Site Creation', () => {

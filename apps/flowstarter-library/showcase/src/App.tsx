@@ -212,9 +212,15 @@ function AppContent(): React.ReactElement {
           darkMode={darkMode}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
+          categories={categories}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          features={availableFeatures}
+          selectedFeatures={selectedFeatures}
+          toggleFeature={toggleFeature}
         />
 
-        <Hero templateCount={templates.length} />
+        <Hero templateCount={templates.length} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
           <div className="flex gap-8 items-start">

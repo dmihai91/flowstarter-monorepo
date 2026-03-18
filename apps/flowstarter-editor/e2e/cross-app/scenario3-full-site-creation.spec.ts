@@ -60,6 +60,15 @@ test.describe('Scenario 3: Full Site Creation', () => {
 
   test('3.1 — Handoff → Editor instantly → Business steps → Template → Build → Preview', async ({ page }) => {
 
+    // Capture browser console errors for debugging
+    const consoleErrors: string[] = [];
+    page.on('console', msg => {
+      if (msg.type() === 'error') {
+        consoleErrors.push(`[console.error] ${msg.text()}`);
+        console.log(`  🔴 ${msg.text().slice(0, 120)}`);
+      }
+    });
+
     // ── Step 1: Create project via handoff API (same as dashboard "New Project" button) ──
     console.log('\n📍 Step 1: Create project via handoff API');
     const handoff = await e2eFetch(`${BASE}/api/editor/handoff`, {

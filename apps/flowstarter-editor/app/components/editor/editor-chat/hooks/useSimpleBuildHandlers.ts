@@ -160,6 +160,9 @@ export function useSimpleBuildHandlers({
         setBuildProgress(BUILD_PROGRESS.GENERATING_PROGRESS);
         setBuildStep('Planning site architecture...');
 
+        // Track whether build completed successfully — prevents catch from resetting on post-build errors
+        let buildCompletedSuccessfully = false;
+
         // Reset agent events and add a live status card to chat
         agentEventsRef.current = [];
         const statusMsg = messageHook.addAssistantMessage(
@@ -189,6 +192,7 @@ export function useSimpleBuildHandlers({
         const selfHealAttempts = ((result as unknown) as Record<string, unknown>).selfHealAttempts as number || 0;
         setBuildPhase(selfHealAttempts > 0 ? 'complete-healed' : 'complete');
 
+        buildCompletedSuccessfully = true;
         flowHook.setStep('ready');
         setCurrentUrlId(projectId);
         onProjectReadyRef.current?.(projectId);
@@ -207,7 +211,10 @@ export function useSimpleBuildHandlers({
       } catch (error) {
         if (error instanceof Error && error.name === 'AbortError') return;
         console.error('[SimpleBuildHandlers] Failed to create project:', error);
-        setBuildStep(''); setBuildProgress(BUILD_PROGRESS.INITIAL); flowHook.setStep('template');
+        // Don't reset to template if the build already completed — only reset on pre-build failures
+        if (!buildCompletedSuccessfully) {
+          setBuildStep(''); setBuildProgress(BUILD_PROGRESS.INITIAL); flowHook.setStep('template');
+        }
         const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
         messageHook.addAssistantMessage(`Something went wrong while building your site: ${errorMessage}\n\nPlease try again or select a different template.`);
         messageHook.setSuggestedReplies([{ id: 'retry', text: 'Try again' }, { id: 'different-template', text: 'Choose different template' }]);

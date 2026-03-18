@@ -19,9 +19,9 @@ function LogoMark() {
       <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
         <defs>
           <linearGradient id={`${id}-bg`} x1="0" y1="40" x2="40" y2="0" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#4D5DD9" />
-            <stop offset="0.5" stopColor="#7C3AED" />
-            <stop offset="1" stopColor="#818CF8" />
+            <stop stopColor="hsl(241 91% 50%)" />
+            <stop offset="0.5" stopColor="hsl(241 92% 57%)" />
+            <stop offset="1" stopColor="hsl(241 93% 71%)" />
           </linearGradient>
         </defs>
         <rect width="40" height="40" rx="11" fill={`url(#${id}-bg)`} />
@@ -105,7 +105,7 @@ export function Header({ themeMode, setThemeMode, darkMode, searchQuery, setSear
             <LogoMark />
             <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1, gap: 3 }}>
               <span style={{ fontFamily: "'Inter', ui-sans-serif, system-ui, sans-serif", fontWeight: 700, fontSize: 15, letterSpacing: '-0.025em', color: logoTextColor }}>
-                Flow<span style={{ background: 'linear-gradient(to right, #4D5DD9, #818CF8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>starter</span>
+                Flow<span style={{ background: 'linear-gradient(to right, hsl(241 93% 61%), hsl(241 93% 71%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>starter</span>
               </span>
               <span style={{ fontFamily: "'Inter', ui-sans-serif, system-ui, sans-serif", fontSize: 11, fontWeight: 500, color: logoSubColor, letterSpacing: '0.01em' }}>
                 Template Library
@@ -130,7 +130,7 @@ export function Header({ themeMode, setThemeMode, darkMode, searchQuery, setSear
           {/* Right: theme toggle + CTA */}
           <div className="flex shrink-0 items-center gap-3">
             <ThemeToggleControl themeMode={themeMode} setThemeMode={setThemeMode} darkMode={darkMode} />
-            <a href="https://flowstarter.dev" className="hidden sm:flex items-center gap-2 rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-purple-500/20 transition-colors hover:bg-purple-700 no-underline">
+            <a href="https://flowstarter.dev" className="hidden sm:flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-purple-500/20 transition-colors hover:bg-purple-600 no-underline">
               Get Early Access
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </a>

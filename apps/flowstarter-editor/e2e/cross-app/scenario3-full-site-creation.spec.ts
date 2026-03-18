@@ -56,7 +56,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.describe('Scenario 3: Full Site Creation', () => {
-  test.setTimeout(600_000); // 10 min — real Claude build
+  test.setTimeout(900_000); // 15 min — real Claude build with healing
 
   test('3.1 — Handoff → Editor instantly → Business steps → Template → Build → Preview', async ({ page }) => {
 
@@ -249,7 +249,7 @@ test.describe('Scenario 3: Full Site Creation', () => {
 
     // Now wait for completion — up to 5 min
     let buildDone = false;
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 15; i++) {
       await page.waitForTimeout(30000);
       const t = await getText() || '';
       const elapsed = (i + 1) * 30;

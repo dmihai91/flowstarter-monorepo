@@ -201,7 +201,9 @@ CRITICAL RULES — violations cause build failures:
   interface Props { title: string; description?: string; items?: { label: string; value: string }[] }
   const { title, description, items = [] } = Astro.props;
 - NEVER type a prop as a string literal like '"Learn more"' — use 'string' instead
-- NEVER use 'as const' on prop default values inside destructuring`,
+- NEVER use 'as const' on prop default values inside destructuring
+- NEVER access .property on a string variable — if cta is a string, use it directly: {cta} NOT {cta.text}
+- If a prop needs both text and href, type it as an object: interface Props { cta: { text: string; href: string } }`,
         tools: ['Read', 'Write', 'Edit', 'Glob'],
         allowedTools: ['Read', 'Write', 'Edit', 'Glob'],
         persistSession: false,

@@ -229,35 +229,28 @@ test.describe('Scenario 3: Full Site Creation', () => {
     await ss(page, '07-build-starting');
 
     // ── Step 8: Real Claude build ─────────────────────────────────────────────
-    console.log('\n📍 Step 8: Build — Claude generating site (up to 5 min)...');
-    // Wait for the build to start (activity log appears or creating step)
-    await page.waitForFunction(
-      () => {
-        const t = document.body.innerText;
-        return t.includes('Preparing environment') || t.includes('Dependencies installed') ||
-               t.includes('Turn 1') || t.includes('Agent') || t.includes('Building');
-      },
-      { timeout: 60000 }
-    ).catch(() => console.log('  ⚠️ Build start not detected within 60s'));
+    console.log('\n📍 Step 8: Build — Claude generating site...');
 
-    // Now wait for completion — up to 5 min
-    let buildDone = false;
-    for (let i = 0; i < 15; i++) {
-      await page.waitForTimeout(30000);
-      const t = await getText() || '';
-      const elapsed = (i + 1) * 30;
-      // Check for Daytona preview URL in page text
-      const hasPreviewUrl = /https?:\/\/[a-z0-9-]+\.daytonaproxy|daytona\.app|ngrok/i.test(t);
-      const hasDoneText = /site is ready|build complete|view your site|site is live/i.test(t);
-      const hint = t.match(/\d+%|Turn \d|healing|Preparing|Dependencies|complete|error|Preview/)?.[0] || '...';
-      console.log(`  ⏱  ${elapsed}s — ${hint}${hasPreviewUrl ? ' (URL found!)' : ''}`);
-      await ss(page, `08-build-${String(elapsed).padStart(3, '0')}s`);
-      if (hasPreviewUrl || hasDoneText) {
-        buildDone = true;
-        console.log('✅ Build complete!');
-        break;
-      }
-    }
+    // Wait for preview iframe to appear OR "Your site is ready!" message — up to 8 min
+    // This is a DOM-level wait, not a text poll, so it won't miss the success state
+    const buildResult = await Promise.race([
+      // Success path 1: preview iframe with src (Daytona URL)
+      page.waitForSelector('iframe[src*="daytona"], iframe[src*="preview"]', { timeout: 480000 })
+        .then(() => 'iframe'),
+      // Success path 2: "Your site is ready!" message in chat
+      page.waitForFunction(
+        () => document.body.innerText.includes('Your site is ready') ||
+              document.body.innerText.includes('site is ready') ||
+              document.body.innerText.includes('files for your website'),
+        { timeout: 480000 }
+      ).then(() => 'ready-text'),
+      // Timeout path
+      new Promise<string>(resolve => setTimeout(() => resolve('timeout'), 480000)),
+    ]);
+
+    const buildDone = buildResult !== 'timeout';
+    console.log(`  Build result: ${buildResult}`);
+    await ss(page, '08-build-complete');
 
     await ss(page, '09-build-final');
 

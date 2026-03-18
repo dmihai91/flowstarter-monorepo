@@ -3,16 +3,41 @@
   "slug": "workshop-host",
   "description": "Dynamic template for workshop facilitators, masterclass instructors, and seminar leaders. Features event registration, curriculum showcase, and participant testimonials.",
   "category": "education",
-  "tags": ["workshop", "masterclass", "seminar", "facilitator", "training", "group-learning", "professional-development"],
+  "tags": [
+    "workshop",
+    "masterclass",
+    "seminar",
+    "facilitator",
+    "training",
+    "group-learning",
+    "professional-development"
+  ],
   "framework": "astro",
-  "features": ["Multi-page", "Booking integration", "Newsletter integration", "Workshop catalog", "Testimonials", "Event registration"],
+  "features": [
+    "Multi-page",
+    "Booking integration",
+    "Newsletter integration",
+    "Workshop catalog",
+    "Testimonials",
+    "Event registration"
+  ],
   "integrations": {
     "booking": {
       "name": "Event Registration",
       "description": "Let participants register for upcoming workshops",
       "providers": [
-        {"id": "calendly", "name": "Calendly", "field": "calendly_url", "placeholder": "https://calendly.com/your-username/workshop"},
-        {"id": "eventbrite", "name": "Eventbrite", "field": "eventbrite_url", "placeholder": "https://eventbrite.com/e/your-event"}
+        {
+          "id": "calendly",
+          "name": "Calendly",
+          "field": "calendly_url",
+          "placeholder": "https://calendly.com/your-username/workshop"
+        },
+        {
+          "id": "eventbrite",
+          "name": "Eventbrite",
+          "field": "eventbrite_url",
+          "placeholder": "https://eventbrite.com/e/your-event"
+        }
       ],
       "optional": true,
       "configPath": "content/integrations/booking.md"
@@ -21,10 +46,45 @@
       "name": "Newsletter",
       "description": "Share workshop announcements and resources",
       "providers": [
-        {"id": "mailchimp", "name": "Mailchimp", "field": "mailchimp_url", "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"}
+        {
+          "id": "mailchimp",
+          "name": "Mailchimp",
+          "field": "mailchimp_url",
+          "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+        }
       ],
       "optional": true,
       "configPath": "content/integrations/newsletter.md"
     }
-  }
+  },
+  "fonts": [
+    {
+      "id": "font-1",
+      "name": "Editorial",
+      "heading": "Fraunces",
+      "body": "Outfit",
+      "googleFonts": "Fraunces:ital,wght@0,300;1,700&family=Outfit:wght@400;500"
+    },
+    {
+      "id": "font-2",
+      "name": "Classic",
+      "heading": "Playfair Display",
+      "body": "Source Sans 3",
+      "googleFonts": "Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600"
+    },
+    {
+      "id": "font-3",
+      "name": "Modern",
+      "heading": "Plus Jakarta Sans",
+      "body": "Inter",
+      "googleFonts": "Plus+Jakarta+Sans:wght@600;800&family=Inter:wght@400;500"
+    },
+    {
+      "id": "font-4",
+      "name": "Human",
+      "heading": "Cormorant Garamond",
+      "body": "Jost",
+      "googleFonts": "Cormorant+Garamond:wght@400;600&family=Jost:wght@400;500"
+    }
+  ]
 }

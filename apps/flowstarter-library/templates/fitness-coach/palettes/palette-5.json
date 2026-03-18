@@ -1,21 +1,26 @@
 {
-  "id": "soft-rose",
-  "name": "Soft Rose",
-  "description": "Compassionate and warm. Great for relationship counselors.",
+  "id": "palette-5",
+  "name": "Steel Core",
+  "description": "Metallic neutrals with bright signal yellow for clarity.",
   "colors": {
-    "primary": "#C08B8B",
-    "primary-dark": "#A87777",
-    "secondary": "#E0C4C4",
-    "accent": "#7AA89B",
-    "background": "#FDFAF9",
-    "surface": "#FFFFFF",
-    "text": "#453535",
-    "text-muted": "#8B7575"
+    "primary": "#EAB308",
+    "primary-dark": "#d3a107",
+    "secondary": "#1C1C1C",
+    "accent": "#38BDF8",
+    "background": "#111111",
+    "surface": "#1B1B1B",
+    "text": "#FAFAFA",
+    "text-muted": "#A3A3A3"
   },
   "fonts": {
-    "heading": "Cormorant Garamond",
-    "body": "Source Sans 3",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Barlow Condensed",
+    "body": "Barlow",
+    "weights": {
+      "heading": "800",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-rose-400 to-pink-300" }
+  "preview": {
+    "gradient": "from-[#EAB308] to-[#38BDF8]"
+  }
 }

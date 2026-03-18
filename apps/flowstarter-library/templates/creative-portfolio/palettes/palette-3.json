@@ -1,21 +1,26 @@
 {
-  "id": "monochrome",
-  "name": "Monochrome",
-  "description": "Let the work speak. Pure black and white.",
+  "id": "palette-3",
+  "name": "Cobalt Poster",
+  "description": "Poster-inspired cobalt and red on dark charcoal.",
   "colors": {
-    "primary": "#000000",
-    "primary-dark": "#1A1A1A",
-    "secondary": "#444444",
-    "accent": "#FF4444",
-    "background": "#FFFFFF",
-    "surface": "#F5F5F5",
-    "text": "#111111",
-    "text-muted": "#888888"
+    "primary": "#2563EB",
+    "primary-dark": "#2159d4",
+    "secondary": "#0B0B0E",
+    "accent": "#FF5A5F",
+    "background": "#0C0C10",
+    "surface": "#17171C",
+    "text": "#F6F5F1",
+    "text-muted": "#ABA99E"
   },
   "fonts": {
-    "heading": "Outfit",
-    "body": "IBM Plex Sans",
-    "weights": { "heading": "700", "body": "400" }
+    "heading": "Bebas Neue",
+    "body": "Inter",
+    "weights": {
+      "heading": "400",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-neutral-900 to-neutral-400" }
+  "preview": {
+    "gradient": "from-[#2563EB] to-[#FF5A5F]"
+  }
 }

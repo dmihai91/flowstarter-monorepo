@@ -1,21 +1,26 @@
 {
-  "id": "soft-rose",
-  "name": "Soft Rose",
-  "description": "Compassionate and warm. Great for relationship counselors.",
+  "id": "palette-5",
+  "name": "Ink & Linen",
+  "description": "Editorial monochrome with a red-orange focal accent.",
   "colors": {
-    "primary": "#C08B8B",
-    "primary-dark": "#A87777",
-    "secondary": "#E0C4C4",
-    "accent": "#7AA89B",
-    "background": "#FDFAF9",
+    "primary": "#2B2D42",
+    "primary-dark": "#27293b",
+    "secondary": "#F7F4EF",
+    "accent": "#EF8354",
+    "background": "#FFFEFC",
     "surface": "#FFFFFF",
-    "text": "#453535",
-    "text-muted": "#8B7575"
+    "text": "#1B1D2C",
+    "text-muted": "#696C78"
   },
   "fonts": {
-    "heading": "Cormorant Garamond",
-    "body": "Source Sans 3",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Fraunces",
+    "body": "Outfit",
+    "weights": {
+      "heading": "700",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-rose-400 to-pink-300" }
+  "preview": {
+    "gradient": "from-[#2B2D42] to-[#EF8354]"
+  }
 }

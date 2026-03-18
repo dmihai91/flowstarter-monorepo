@@ -71,5 +71,35 @@
       "optional": true,
       "configPath": "content/integrations/newsletter.md"
     }
-  }
+  },
+  "fonts": [
+    {
+      "id": "font-1",
+      "name": "Modern",
+      "heading": "Plus Jakarta Sans",
+      "body": "Inter",
+      "googleFonts": "Plus+Jakarta+Sans:wght@600;800&family=Inter:wght@400;500"
+    },
+    {
+      "id": "font-2",
+      "name": "Friendly",
+      "heading": "Nunito",
+      "body": "Nunito Sans",
+      "googleFonts": "Nunito:wght@700;800&family=Nunito+Sans:wght@400;600"
+    },
+    {
+      "id": "font-3",
+      "name": "Classic",
+      "heading": "Playfair Display",
+      "body": "Source Sans 3",
+      "googleFonts": "Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600"
+    },
+    {
+      "id": "font-4",
+      "name": "Growth",
+      "heading": "Manrope",
+      "body": "DM Sans",
+      "googleFonts": "Manrope:wght@700;800&family=DM+Sans:wght@400;500"
+    }
+  ]
 }

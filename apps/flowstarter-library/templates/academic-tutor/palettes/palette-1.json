@@ -1,21 +1,26 @@
 {
-  "id": "serene-sage",
-  "name": "Serene Sage",
-  "description": "Calming and grounded. Perfect for counselors and therapists.",
+  "id": "palette-1",
+  "name": "Scholars Blue",
+  "description": "Classic academic blue with red confidence accents.",
   "colors": {
-    "primary": "#6B8E6B",
-    "primary-dark": "#5A7A5A",
-    "secondary": "#A8C5A8",
-    "accent": "#D4A574",
-    "background": "#F8FAF7",
+    "primary": "#1A3A6B",
+    "primary-dark": "#173460",
+    "secondary": "#EEF3FB",
+    "accent": "#E84040",
+    "background": "#FFFFFF",
     "surface": "#FFFFFF",
-    "text": "#2D3B2D",
-    "text-muted": "#6B7C6B"
+    "text": "#1A2744",
+    "text-muted": "#5B6C89"
   },
   "fonts": {
-    "heading": "Cormorant Garamond",
-    "body": "Nunito",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Merriweather",
+    "body": "Source Sans 3",
+    "weights": {
+      "heading": "700",
+      "body": "600"
+    }
   },
-  "preview": { "gradient": "from-green-600 to-green-400" }
+  "preview": {
+    "gradient": "from-[#1A3A6B] to-[#E84040]"
+  }
 }

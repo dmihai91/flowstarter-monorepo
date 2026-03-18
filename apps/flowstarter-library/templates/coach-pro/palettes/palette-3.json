@@ -1,21 +1,26 @@
 {
-  "id": "lavender-peace",
-  "name": "Lavender Peace",
-  "description": "Gentle and soothing. Ideal for wellness coaches.",
+  "id": "palette-3",
+  "name": "Wine Reserve",
+  "description": "Burgundy and parchment for a polished editorial presence.",
   "colors": {
-    "primary": "#9B8BB4",
-    "primary-dark": "#8677A1",
-    "secondary": "#C4B8D9",
-    "accent": "#D4A574",
-    "background": "#FAF9FC",
+    "primary": "#5B2333",
+    "primary-dark": "#52202e",
+    "secondary": "#F9F2EE",
+    "accent": "#D28C63",
+    "background": "#FFFDFC",
     "surface": "#FFFFFF",
-    "text": "#3D3650",
-    "text-muted": "#7B7290"
+    "text": "#2A1820",
+    "text-muted": "#765866"
   },
   "fonts": {
     "heading": "Playfair Display",
-    "body": "Lato",
-    "weights": { "heading": "600", "body": "400" }
+    "body": "DM Sans",
+    "weights": {
+      "heading": "700",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-purple-400 to-violet-300" }
+  "preview": {
+    "gradient": "from-[#5B2333] to-[#D28C63]"
+  }
 }

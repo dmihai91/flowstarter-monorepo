@@ -69,5 +69,35 @@
       "optional": true,
       "configPath": "content/integrations/newsletter.md"
     }
-  }
+  },
+  "fonts": [
+    {
+      "id": "font-1",
+      "name": "Poster",
+      "heading": "Bebas Neue",
+      "body": "Inter",
+      "googleFonts": "Bebas+Neue:wght@400&family=Inter:wght@400;500"
+    },
+    {
+      "id": "font-2",
+      "name": "Studio",
+      "heading": "Oswald",
+      "body": "DM Sans",
+      "googleFonts": "Oswald:wght@500;700&family=DM+Sans:wght@400;500"
+    },
+    {
+      "id": "font-3",
+      "name": "Editorial",
+      "heading": "Playfair Display",
+      "body": "Source Sans 3",
+      "googleFonts": "Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600"
+    },
+    {
+      "id": "font-4",
+      "name": "Sharp",
+      "heading": "Anton",
+      "body": "Space Grotesk",
+      "googleFonts": "Anton:wght@400&family=Space+Grotesk:wght@400;500"
+    }
+  ]
 }

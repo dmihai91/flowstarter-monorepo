@@ -1,21 +1,26 @@
 {
-  "id": "lavender-peace",
-  "name": "Lavender Peace",
-  "description": "Gentle and soothing. Ideal for wellness coaches.",
+  "id": "palette-3",
+  "name": "Harbor Strategy",
+  "description": "Slate blue and parchment for sharper executive facilitation.",
   "colors": {
-    "primary": "#9B8BB4",
-    "primary-dark": "#8677A1",
-    "secondary": "#C4B8D9",
-    "accent": "#D4A574",
-    "background": "#FAF9FC",
+    "primary": "#355070",
+    "primary-dark": "#304865",
+    "secondary": "#F5F4EE",
+    "accent": "#E07A5F",
+    "background": "#FCFCFA",
     "surface": "#FFFFFF",
-    "text": "#3D3650",
-    "text-muted": "#7B7290"
+    "text": "#1D2A36",
+    "text-muted": "#6A7883"
   },
   "fonts": {
-    "heading": "Playfair Display",
-    "body": "Lato",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Fraunces",
+    "body": "Outfit",
+    "weights": {
+      "heading": "700",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-purple-400 to-violet-300" }
+  "preview": {
+    "gradient": "from-[#355070] to-[#E07A5F]"
+  }
 }

@@ -3,16 +3,43 @@
   "slug": "fitness-coach",
   "description": "High-energy template for personal trainers and fitness coaches. Bold design with transformation gallery, training programs, booking system, and client results.",
   "category": "fitness",
-  "tags": ["fitness", "personal-trainer", "gym", "trainer", "workout", "athletic", "yoga", "strength"],
+  "tags": [
+    "fitness",
+    "personal-trainer",
+    "gym",
+    "trainer",
+    "workout",
+    "athletic",
+    "yoga",
+    "strength"
+  ],
   "framework": "astro",
-  "features": ["Multi-page", "Booking integration", "Newsletter integration", "Testimonials", "Pricing", "FAQ", "Dark mode"],
+  "features": [
+    "Multi-page",
+    "Booking integration",
+    "Newsletter integration",
+    "Testimonials",
+    "Pricing",
+    "FAQ",
+    "Dark mode"
+  ],
   "integrations": {
     "booking": {
       "name": "Booking System",
       "description": "Connect Calendly to let clients book training sessions",
       "providers": [
-        {"id": "calendly", "name": "Calendly", "field": "calendly_url", "placeholder": "https://calendly.com/your-username/session"},
-        {"id": "calcom", "name": "Cal.com", "field": "calcom_url", "placeholder": "https://cal.com/your-username/session"}
+        {
+          "id": "calendly",
+          "name": "Calendly",
+          "field": "calendly_url",
+          "placeholder": "https://calendly.com/your-username/session"
+        },
+        {
+          "id": "calcom",
+          "name": "Cal.com",
+          "field": "calcom_url",
+          "placeholder": "https://cal.com/your-username/session"
+        }
       ],
       "optional": true,
       "configPath": "content/integrations/booking.md"
@@ -21,12 +48,57 @@
       "name": "Newsletter",
       "description": "Connect Mailchimp to share fitness tips and workout plans",
       "providers": [
-        {"id": "mailchimp", "name": "Mailchimp", "field": "mailchimp_url", "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"},
-        {"id": "convertkit", "name": "ConvertKit", "field": "convertkit_form_id", "placeholder": "1234567"},
-        {"id": "buttondown", "name": "Buttondown", "field": "buttondown_username", "placeholder": "your-username"}
+        {
+          "id": "mailchimp",
+          "name": "Mailchimp",
+          "field": "mailchimp_url",
+          "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+        },
+        {
+          "id": "convertkit",
+          "name": "ConvertKit",
+          "field": "convertkit_form_id",
+          "placeholder": "1234567"
+        },
+        {
+          "id": "buttondown",
+          "name": "Buttondown",
+          "field": "buttondown_username",
+          "placeholder": "your-username"
+        }
       ],
       "optional": true,
       "configPath": "content/integrations/newsletter.md"
     }
-  }
+  },
+  "fonts": [
+    {
+      "id": "font-1",
+      "name": "Performance",
+      "heading": "Barlow Condensed",
+      "body": "Barlow",
+      "googleFonts": "Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500"
+    },
+    {
+      "id": "font-2",
+      "name": "Athletic",
+      "heading": "Oswald",
+      "body": "Inter",
+      "googleFonts": "Oswald:wght@500;700&family=Inter:wght@400;500"
+    },
+    {
+      "id": "font-3",
+      "name": "Sharp",
+      "heading": "Teko",
+      "body": "DM Sans",
+      "googleFonts": "Teko:wght@600;700&family=DM+Sans:wght@400;500"
+    },
+    {
+      "id": "font-4",
+      "name": "Bold",
+      "heading": "Bebas Neue",
+      "body": "Jost",
+      "googleFonts": "Bebas+Neue:wght@400&family=Jost:wght@400;500"
+    }
+  ]
 }

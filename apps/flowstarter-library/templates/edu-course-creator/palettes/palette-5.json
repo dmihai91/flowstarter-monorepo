@@ -1,21 +1,26 @@
 {
-  "id": "soft-rose",
-  "name": "Soft Rose",
-  "description": "Compassionate and warm. Great for relationship counselors.",
+  "id": "palette-5",
+  "name": "Studio Slate",
+  "description": "Polished charcoal and mint for modern creator brands.",
   "colors": {
-    "primary": "#C08B8B",
-    "primary-dark": "#A87777",
-    "secondary": "#E0C4C4",
-    "accent": "#7AA89B",
-    "background": "#FDFAF9",
+    "primary": "#334155",
+    "primary-dark": "#2e3b4d",
+    "secondary": "#F8FAFC",
+    "accent": "#10B981",
+    "background": "#FFFFFF",
     "surface": "#FFFFFF",
-    "text": "#453535",
-    "text-muted": "#8B7575"
+    "text": "#18212F",
+    "text-muted": "#5E6B7D"
   },
   "fonts": {
-    "heading": "Cormorant Garamond",
-    "body": "Source Sans 3",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Plus Jakarta Sans",
+    "body": "Inter",
+    "weights": {
+      "heading": "800",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-rose-400 to-pink-300" }
+  "preview": {
+    "gradient": "from-[#334155] to-[#10B981]"
+  }
 }

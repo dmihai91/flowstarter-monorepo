@@ -3,15 +3,37 @@
   "slug": "music-teacher",
   "description": "Harmonious template for music instructors, instrument teachers, and vocal coaches. Features lesson booking, repertoire showcase, and student recital highlights.",
   "category": "education",
-  "tags": ["music", "piano", "guitar", "voice", "violin", "lessons", "instrument", "recital", "performance"],
+  "tags": [
+    "music",
+    "piano",
+    "guitar",
+    "voice",
+    "violin",
+    "lessons",
+    "instrument",
+    "recital",
+    "performance"
+  ],
   "framework": "astro",
-  "features": ["Multi-page", "Booking integration", "Newsletter integration", "Lesson packages", "Testimonials", "Recital showcase"],
+  "features": [
+    "Multi-page",
+    "Booking integration",
+    "Newsletter integration",
+    "Lesson packages",
+    "Testimonials",
+    "Recital showcase"
+  ],
   "integrations": {
     "booking": {
       "name": "Lesson Booking",
       "description": "Let students book music lessons",
       "providers": [
-        {"id": "calendly", "name": "Calendly", "field": "calendly_url", "placeholder": "https://calendly.com/your-username/music-lesson"}
+        {
+          "id": "calendly",
+          "name": "Calendly",
+          "field": "calendly_url",
+          "placeholder": "https://calendly.com/your-username/music-lesson"
+        }
       ],
       "optional": true,
       "configPath": "content/integrations/booking.md"
@@ -20,10 +42,45 @@
       "name": "Newsletter",
       "description": "Share practice tips and recital announcements",
       "providers": [
-        {"id": "mailchimp", "name": "Mailchimp", "field": "mailchimp_url", "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"}
+        {
+          "id": "mailchimp",
+          "name": "Mailchimp",
+          "field": "mailchimp_url",
+          "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+        }
       ],
       "optional": true,
       "configPath": "content/integrations/newsletter.md"
     }
-  }
+  },
+  "fonts": [
+    {
+      "id": "font-1",
+      "name": "Stage",
+      "heading": "Abril Fatface",
+      "body": "Lato",
+      "googleFonts": "Abril+Fatface:wght@400&family=Lato:wght@300;400;700"
+    },
+    {
+      "id": "font-2",
+      "name": "Classic",
+      "heading": "Cormorant Garamond",
+      "body": "Inter",
+      "googleFonts": "Cormorant+Garamond:wght@400;600&family=Inter:wght@400;500"
+    },
+    {
+      "id": "font-3",
+      "name": "Jazz",
+      "heading": "Bodoni Moda",
+      "body": "DM Sans",
+      "googleFonts": "Bodoni+Moda:opsz,wght@6..96,700&family=DM+Sans:wght@400;500"
+    },
+    {
+      "id": "font-4",
+      "name": "Modern",
+      "heading": "Sora",
+      "body": "Source Sans 3",
+      "googleFonts": "Sora:wght@600;700&family=Source+Sans+3:wght@400;600"
+    }
+  ]
 }

@@ -1,21 +1,26 @@
 {
-  "id": "serene-sage",
-  "name": "Serene Sage",
-  "description": "Calming and grounded. Perfect for counselors and therapists.",
+  "id": "palette-1",
+  "name": "Emerald Launch",
+  "description": "Fresh green and orange for creator economy momentum.",
   "colors": {
-    "primary": "#6B8E6B",
-    "primary-dark": "#5A7A5A",
-    "secondary": "#A8C5A8",
-    "accent": "#D4A574",
-    "background": "#F8FAF7",
+    "primary": "#0EA271",
+    "primary-dark": "#0d9266",
+    "secondary": "#F0FBF6",
+    "accent": "#FF6B35",
+    "background": "#FFFFFF",
     "surface": "#FFFFFF",
-    "text": "#2D3B2D",
-    "text-muted": "#6B7C6B"
+    "text": "#1A2E1A",
+    "text-muted": "#5A715A"
   },
   "fonts": {
-    "heading": "Cormorant Garamond",
-    "body": "Nunito",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Plus Jakarta Sans",
+    "body": "Inter",
+    "weights": {
+      "heading": "800",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-green-600 to-green-400" }
+  "preview": {
+    "gradient": "from-[#0EA271] to-[#FF6B35]"
+  }
 }

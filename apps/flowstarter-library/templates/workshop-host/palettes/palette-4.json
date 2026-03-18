@@ -1,21 +1,26 @@
 {
-  "id": "warm-sand",
-  "name": "Warm Sand",
-  "description": "Nurturing and earthy. Perfect for holistic practitioners.",
+  "id": "palette-4",
+  "name": "Olive Studio",
+  "description": "Muted olive and apricot for warm collaborative energy.",
   "colors": {
-    "primary": "#B89B7A",
-    "primary-dark": "#A08665",
-    "secondary": "#D4C4B0",
-    "accent": "#7A9B89",
-    "background": "#FDFBF7",
+    "primary": "#6B705C",
+    "primary-dark": "#606553",
+    "secondary": "#F7F3E9",
+    "accent": "#F2A65A",
+    "background": "#FDFCF8",
     "surface": "#FFFFFF",
-    "text": "#3D3630",
-    "text-muted": "#8B7D70"
+    "text": "#252920",
+    "text-muted": "#737768"
   },
   "fonts": {
-    "heading": "DM Serif Display",
-    "body": "DM Sans",
-    "weights": { "heading": "400", "body": "400" }
+    "heading": "Fraunces",
+    "body": "Outfit",
+    "weights": {
+      "heading": "700",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-amber-600 to-yellow-400" }
+  "preview": {
+    "gradient": "from-[#6B705C] to-[#F2A65A]"
+  }
 }

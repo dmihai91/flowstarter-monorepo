@@ -1,21 +1,26 @@
 {
-  "id": "soft-rose",
-  "name": "Soft Rose",
-  "description": "Compassionate and warm. Great for relationship counselors.",
+  "id": "palette-5",
+  "name": "Studio Neon",
+  "description": "Bright pink and blue for pop-forward music coaching.",
   "colors": {
-    "primary": "#C08B8B",
-    "primary-dark": "#A87777",
-    "secondary": "#E0C4C4",
-    "accent": "#7AA89B",
-    "background": "#FDFAF9",
-    "surface": "#FFFFFF",
-    "text": "#453535",
-    "text-muted": "#8B7575"
+    "primary": "#EC4899",
+    "primary-dark": "#d4418a",
+    "secondary": "#150B22",
+    "accent": "#22D3EE",
+    "background": "#0D0715",
+    "surface": "#181126",
+    "text": "#FFF4FB",
+    "text-muted": "#B89EC6"
   },
   "fonts": {
-    "heading": "Cormorant Garamond",
-    "body": "Source Sans 3",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Abril Fatface",
+    "body": "Lato",
+    "weights": {
+      "heading": "400",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-rose-400 to-pink-300" }
+  "preview": {
+    "gradient": "from-[#EC4899] to-[#22D3EE]"
+  }
 }

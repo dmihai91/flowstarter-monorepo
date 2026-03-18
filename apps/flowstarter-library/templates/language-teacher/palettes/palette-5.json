@@ -1,21 +1,26 @@
 {
-  "id": "soft-rose",
-  "name": "Soft Rose",
-  "description": "Compassionate and warm. Great for relationship counselors.",
+  "id": "palette-5",
+  "name": "Study Pop",
+  "description": "Playful violet and peach for modern tutoring and language apps.",
   "colors": {
-    "primary": "#C08B8B",
-    "primary-dark": "#A87777",
-    "secondary": "#E0C4C4",
-    "accent": "#7AA89B",
-    "background": "#FDFAF9",
+    "primary": "#8B5CF6",
+    "primary-dark": "#7d53dd",
+    "secondary": "#F5F3FF",
+    "accent": "#FB923C",
+    "background": "#FFFEFF",
     "surface": "#FFFFFF",
-    "text": "#453535",
-    "text-muted": "#8B7575"
+    "text": "#271A40",
+    "text-muted": "#7A6A95"
   },
   "fonts": {
-    "heading": "Cormorant Garamond",
-    "body": "Source Sans 3",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Nunito",
+    "body": "Nunito Sans",
+    "weights": {
+      "heading": "800",
+      "body": "600"
+    }
   },
-  "preview": { "gradient": "from-rose-400 to-pink-300" }
+  "preview": {
+    "gradient": "from-[#8B5CF6] to-[#FB923C]"
+  }
 }

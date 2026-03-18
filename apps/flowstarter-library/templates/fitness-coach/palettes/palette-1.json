@@ -1,21 +1,26 @@
 {
-  "id": "serene-sage",
-  "name": "Serene Sage",
-  "description": "Calming and grounded. Perfect for counselors and therapists.",
+  "id": "palette-1",
+  "name": "Firestorm",
+  "description": "Explosive red-orange with high-contrast athletic energy.",
   "colors": {
-    "primary": "#6B8E6B",
-    "primary-dark": "#5A7A5A",
-    "secondary": "#A8C5A8",
-    "accent": "#D4A574",
-    "background": "#F8FAF7",
-    "surface": "#FFFFFF",
-    "text": "#2D3B2D",
-    "text-muted": "#6B7C6B"
+    "primary": "#E8390E",
+    "primary-dark": "#d1330d",
+    "secondary": "#0A0A0A",
+    "accent": "#F5C518",
+    "background": "#0F0F0F",
+    "surface": "#181818",
+    "text": "#FFFFFF",
+    "text-muted": "#B5B5B5"
   },
   "fonts": {
-    "heading": "Cormorant Garamond",
-    "body": "Nunito",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Barlow Condensed",
+    "body": "Barlow",
+    "weights": {
+      "heading": "800",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-green-600 to-green-400" }
+  "preview": {
+    "gradient": "from-[#E8390E] to-[#F5C518]"
+  }
 }

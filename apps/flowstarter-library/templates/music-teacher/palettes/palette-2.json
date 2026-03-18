@@ -1,21 +1,26 @@
 {
-  "id": "ocean-calm",
-  "name": "Ocean Calm",
-  "description": "Peaceful and reassuring. Great for mental health practitioners.",
+  "id": "palette-2",
+  "name": "Blue Note",
+  "description": "Indigo and cool blue for refined, jazz-inspired sites.",
   "colors": {
-    "primary": "#5B8FA8",
-    "primary-dark": "#4A7A91",
-    "secondary": "#8FBCD4",
-    "accent": "#E8B4A0",
-    "background": "#F7FAFB",
-    "surface": "#FFFFFF",
-    "text": "#2C3E4A",
-    "text-muted": "#6B8494"
+    "primary": "#3B4CCA",
+    "primary-dark": "#3544b6",
+    "secondary": "#0C122E",
+    "accent": "#60A5FA",
+    "background": "#070B18",
+    "surface": "#111833",
+    "text": "#EEF3FF",
+    "text-muted": "#9BA7C7"
   },
   "fonts": {
-    "heading": "Libre Baskerville",
-    "body": "Open Sans",
-    "weights": { "heading": "700", "body": "400" }
+    "heading": "Abril Fatface",
+    "body": "Lato",
+    "weights": {
+      "heading": "400",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-cyan-600 to-sky-400" }
+  "preview": {
+    "gradient": "from-[#3B4CCA] to-[#60A5FA]"
+  }
 }

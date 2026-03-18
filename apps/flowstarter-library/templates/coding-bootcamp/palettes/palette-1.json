@@ -1,21 +1,26 @@
 {
-  "id": "serene-sage",
-  "name": "Serene Sage",
-  "description": "Calming and grounded. Perfect for counselors and therapists.",
+  "id": "palette-1",
+  "name": "Electric Cyan",
+  "description": "Deep-space cyan and violet for high-conversion bootcamp sites.",
   "colors": {
-    "primary": "#6B8E6B",
-    "primary-dark": "#5A7A5A",
-    "secondary": "#A8C5A8",
-    "accent": "#D4A574",
-    "background": "#F8FAF7",
-    "surface": "#FFFFFF",
-    "text": "#2D3B2D",
-    "text-muted": "#6B7C6B"
+    "primary": "#00D4FF",
+    "primary-dark": "#00bfe6",
+    "secondary": "#0A0F1E",
+    "accent": "#7B2FBE",
+    "background": "#060B18",
+    "surface": "#10182B",
+    "text": "#E8F4FD",
+    "text-muted": "#8CA7BF"
   },
   "fonts": {
-    "heading": "Cormorant Garamond",
-    "body": "Nunito",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Space Grotesk",
+    "body": "JetBrains Mono",
+    "weights": {
+      "heading": "700",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-green-600 to-green-400" }
+  "preview": {
+    "gradient": "from-[#00D4FF] to-[#7B2FBE]"
+  }
 }

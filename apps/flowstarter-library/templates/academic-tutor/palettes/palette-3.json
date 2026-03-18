@@ -1,21 +1,26 @@
 {
-  "id": "lavender-peace",
-  "name": "Lavender Peace",
-  "description": "Gentle and soothing. Ideal for wellness coaches.",
+  "id": "palette-3",
+  "name": "Merit Maroon",
+  "description": "Strong editorial maroon for ambitious student brands.",
   "colors": {
-    "primary": "#9B8BB4",
-    "primary-dark": "#8677A1",
-    "secondary": "#C4B8D9",
-    "accent": "#D4A574",
-    "background": "#FAF9FC",
+    "primary": "#7A2330",
+    "primary-dark": "#6e202b",
+    "secondary": "#FAF1F2",
+    "accent": "#F3A712",
+    "background": "#FFFDFD",
     "surface": "#FFFFFF",
-    "text": "#3D3650",
-    "text-muted": "#7B7290"
+    "text": "#36161D",
+    "text-muted": "#81606A"
   },
   "fonts": {
-    "heading": "Playfair Display",
-    "body": "Lato",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Merriweather",
+    "body": "Source Sans 3",
+    "weights": {
+      "heading": "700",
+      "body": "600"
+    }
   },
-  "preview": { "gradient": "from-purple-400 to-violet-300" }
+  "preview": {
+    "gradient": "from-[#7A2330] to-[#F3A712]"
+  }
 }

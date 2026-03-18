@@ -1,21 +1,26 @@
 {
-  "id": "ocean-calm",
-  "name": "Ocean Calm",
-  "description": "Peaceful and reassuring. Great for mental health practitioners.",
+  "id": "palette-2",
+  "name": "Slate Power",
+  "description": "Steel blues and graphite for disciplined, high-trust coaching.",
   "colors": {
-    "primary": "#5B8FA8",
-    "primary-dark": "#4A7A91",
-    "secondary": "#8FBCD4",
-    "accent": "#E8B4A0",
-    "background": "#F7FAFB",
+    "primary": "#243B53",
+    "primary-dark": "#20354b",
+    "secondary": "#F3F7FA",
+    "accent": "#5DA9E9",
+    "background": "#FCFEFF",
     "surface": "#FFFFFF",
-    "text": "#2C3E4A",
-    "text-muted": "#6B8494"
+    "text": "#132433",
+    "text-muted": "#5D7387"
   },
   "fonts": {
-    "heading": "Libre Baskerville",
-    "body": "Open Sans",
-    "weights": { "heading": "700", "body": "400" }
+    "heading": "Playfair Display",
+    "body": "DM Sans",
+    "weights": {
+      "heading": "700",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-cyan-600 to-sky-400" }
+  "preview": {
+    "gradient": "from-[#243B53] to-[#5DA9E9]"
+  }
 }

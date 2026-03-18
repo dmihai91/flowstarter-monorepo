@@ -1,21 +1,26 @@
 {
-  "id": "ocean-breath",
-  "name": "Ocean Breath",
-  "description": "Cool blues and sandy neutrals. Coastal healing.",
+  "id": "palette-3",
+  "name": "Clay Ritual",
+  "description": "Earthy clay and warm neutrals for grounded healing brands.",
   "colors": {
-    "primary": "#4A8BA8",
-    "primary-dark": "#3A7290",
-    "secondary": "#A8D4E2",
-    "accent": "#D4A574",
-    "background": "#F5FAFB",
+    "primary": "#B2745C",
+    "primary-dark": "#a06853",
+    "secondary": "#F8F1EB",
+    "accent": "#7A9E7E",
+    "background": "#FFFDFC",
     "surface": "#FFFFFF",
-    "text": "#1E3A4A",
-    "text-muted": "#5A7A8A"
+    "text": "#37251E",
+    "text-muted": "#816D66"
   },
   "fonts": {
-    "heading": "Libre Baskerville",
-    "body": "Open Sans",
-    "weights": { "heading": "700", "body": "400" }
+    "heading": "Gilda Display",
+    "body": "Mulish",
+    "weights": {
+      "heading": "400",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-cyan-600 to-cyan-300" }
+  "preview": {
+    "gradient": "from-[#B2745C] to-[#7A9E7E]"
+  }
 }

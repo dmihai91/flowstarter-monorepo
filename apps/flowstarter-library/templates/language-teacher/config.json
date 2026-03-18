@@ -3,15 +3,37 @@
   "slug": "language-teacher",
   "description": "Engaging template for language tutors, ESL teachers, and conversation coaches. Features lesson booking, language level assessment, and student progress showcase.",
   "category": "education",
-  "tags": ["language", "ESL", "Spanish", "French", "Mandarin", "English", "conversation", "fluency", "tutor"],
+  "tags": [
+    "language",
+    "ESL",
+    "Spanish",
+    "French",
+    "Mandarin",
+    "English",
+    "conversation",
+    "fluency",
+    "tutor"
+  ],
   "framework": "astro",
-  "features": ["Multi-page", "Booking integration", "Newsletter integration", "Language levels", "Testimonials", "Trial lessons"],
+  "features": [
+    "Multi-page",
+    "Booking integration",
+    "Newsletter integration",
+    "Language levels",
+    "Testimonials",
+    "Trial lessons"
+  ],
   "integrations": {
     "booking": {
       "name": "Lesson Booking",
       "description": "Let students book language lessons",
       "providers": [
-        {"id": "calendly", "name": "Calendly", "field": "calendly_url", "placeholder": "https://calendly.com/your-username/language-lesson"}
+        {
+          "id": "calendly",
+          "name": "Calendly",
+          "field": "calendly_url",
+          "placeholder": "https://calendly.com/your-username/language-lesson"
+        }
       ],
       "optional": true,
       "configPath": "content/integrations/booking.md"
@@ -20,10 +42,45 @@
       "name": "Newsletter",
       "description": "Share language tips and learning resources",
       "providers": [
-        {"id": "mailchimp", "name": "Mailchimp", "field": "mailchimp_url", "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"}
+        {
+          "id": "mailchimp",
+          "name": "Mailchimp",
+          "field": "mailchimp_url",
+          "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+        }
       ],
       "optional": true,
       "configPath": "content/integrations/newsletter.md"
     }
-  }
+  },
+  "fonts": [
+    {
+      "id": "font-1",
+      "name": "Friendly",
+      "heading": "Nunito",
+      "body": "Nunito Sans",
+      "googleFonts": "Nunito:wght@700;800&family=Nunito+Sans:wght@400;600"
+    },
+    {
+      "id": "font-2",
+      "name": "Modern",
+      "heading": "Poppins",
+      "body": "DM Sans",
+      "googleFonts": "Poppins:wght@600;700&family=DM+Sans:wght@400;500"
+    },
+    {
+      "id": "font-3",
+      "name": "Classic",
+      "heading": "Merriweather",
+      "body": "Source Sans 3",
+      "googleFonts": "Merriweather:wght@700&family=Source+Sans+3:wght@400;600"
+    },
+    {
+      "id": "font-4",
+      "name": "Playful",
+      "heading": "Baloo 2",
+      "body": "Inter",
+      "googleFonts": "Baloo+2:wght@600;700&family=Inter:wght@400;500"
+    }
+  ]
 }

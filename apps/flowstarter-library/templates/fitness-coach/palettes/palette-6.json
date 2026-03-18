@@ -1,21 +1,26 @@
 {
-  "id": "forest-healing",
-  "name": "Forest Healing",
-  "description": "Deep and grounding. Ideal for nature therapy practices.",
+  "id": "palette-6",
+  "name": "Shadow Heat",
+  "description": "Dark mode default with red heat and crisp contrast.",
   "colors": {
-    "primary": "#4A6B5D",
-    "primary-dark": "#3A564A",
-    "secondary": "#7A9B89",
-    "accent": "#D4A574",
-    "background": "#F5F8F6",
-    "surface": "#FFFFFF",
-    "text": "#1F2E26",
-    "text-muted": "#5A7065"
+    "primary": "#FF5A36",
+    "primary-dark": "#e65131",
+    "secondary": "#140B09",
+    "accent": "#FFD166",
+    "background": "#080808",
+    "surface": "#141212",
+    "text": "#FFF8F4",
+    "text-muted": "#B9AAA2"
   },
   "fonts": {
-    "heading": "Fraunces",
-    "body": "Nunito",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Barlow Condensed",
+    "body": "Barlow",
+    "weights": {
+      "heading": "800",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-emerald-700 to-green-500" }
+  "preview": {
+    "gradient": "from-[#080808] to-[#FF5A36]"
+  }
 }

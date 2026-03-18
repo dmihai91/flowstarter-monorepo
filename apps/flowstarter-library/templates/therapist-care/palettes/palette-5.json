@@ -1,21 +1,26 @@
 {
-  "id": "soft-rose",
-  "name": "Soft Rose",
-  "description": "Compassionate and warm. Great for relationship counselors.",
+  "id": "palette-5",
+  "name": "Rose Quartz",
+  "description": "Dusty pink and neutral hues with gentle warmth.",
   "colors": {
-    "primary": "#C08B8B",
-    "primary-dark": "#A87777",
-    "secondary": "#E0C4C4",
-    "accent": "#7AA89B",
-    "background": "#FDFAF9",
+    "primary": "#B57C8E",
+    "primary-dark": "#a37080",
+    "secondary": "#FBF1F4",
+    "accent": "#D8A48F",
+    "background": "#FFF8FA",
     "surface": "#FFFFFF",
-    "text": "#453535",
-    "text-muted": "#8B7575"
+    "text": "#3E2830",
+    "text-muted": "#846873"
   },
   "fonts": {
     "heading": "Cormorant Garamond",
-    "body": "Source Sans 3",
-    "weights": { "heading": "600", "body": "400" }
+    "body": "Inter",
+    "weights": {
+      "heading": "600",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-rose-400 to-pink-300" }
+  "preview": {
+    "gradient": "from-[#B57C8E] to-[#D8A48F]"
+  }
 }

@@ -1,21 +1,26 @@
 {
-  "id": "champagne-blush",
-  "name": "Champagne Blush",
-  "description": "Soft and feminine. Effortless elegance.",
+  "id": "palette-2",
+  "name": "Champagne Glow",
+  "description": "Cream, gold, and taupe for an upscale editorial look.",
   "colors": {
-    "primary": "#C9A87C",
-    "primary-dark": "#B08E62",
-    "secondary": "#F0DCC8",
-    "accent": "#D4746A",
-    "background": "#FFFAF5",
+    "primary": "#B78A5B",
+    "primary-dark": "#a57c52",
+    "secondary": "#FBF7F1",
+    "accent": "#D65D6E",
+    "background": "#FFFDFC",
     "surface": "#FFFFFF",
-    "text": "#3D2E1F",
-    "text-muted": "#8A7564"
+    "text": "#2B211A",
+    "text-muted": "#847466"
   },
   "fonts": {
-    "heading": "Cormorant Garamond",
-    "body": "Nunito Sans",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Cormorant",
+    "body": "Jost",
+    "weights": {
+      "heading": "600",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-amber-400 to-amber-200" }
+  "preview": {
+    "gradient": "from-[#B78A5B] to-[#D65D6E]"
+  }
 }

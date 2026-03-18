@@ -1,21 +1,26 @@
 {
-  "id": "soft-rose",
-  "name": "Soft Rose",
-  "description": "Compassionate and warm. Great for relationship counselors.",
+  "id": "palette-5",
+  "name": "Platinum Focus",
+  "description": "Minimal grayscale with electric cobalt emphasis.",
   "colors": {
-    "primary": "#C08B8B",
-    "primary-dark": "#A87777",
-    "secondary": "#E0C4C4",
-    "accent": "#7AA89B",
-    "background": "#FDFAF9",
+    "primary": "#2E3A59",
+    "primary-dark": "#293450",
+    "secondary": "#F4F5F7",
+    "accent": "#5473FF",
+    "background": "#FFFFFF",
     "surface": "#FFFFFF",
-    "text": "#453535",
-    "text-muted": "#8B7575"
+    "text": "#171B26",
+    "text-muted": "#6A7288"
   },
   "fonts": {
-    "heading": "Cormorant Garamond",
-    "body": "Source Sans 3",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Playfair Display",
+    "body": "DM Sans",
+    "weights": {
+      "heading": "700",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-rose-400 to-pink-300" }
+  "preview": {
+    "gradient": "from-[#2E3A59] to-[#5473FF]"
+  }
 }

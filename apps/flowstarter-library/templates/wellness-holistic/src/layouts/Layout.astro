@@ -31,7 +31,34 @@ const navLinks = [
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Mulish:wght@300;400;600&display=swap" rel="stylesheet">
+    <style is:global>
+      :root {
+        --font-heading: "Gilda Display", serif;
+        --font-body: "Mulish", sans-serif;
+        --color-primary: #7B9E87;
+        --color-primary-light: #88a893;
+        --color-primary-dark: #6f8e7a;
+        --color-secondary: #F7F3EE;
+        --color-accent: #D4956A;
+        --color-background: #FDFAF6;
+        --color-surface: #FFFFFF;
+        --color-text: #2C3E2D;
+        --color-text-muted: #728274;
+      }
+
+      body {
+        font-family: var(--font-body);
+      }
+
+      h1, h2, h3, h4, h5, h6, .font-heading {
+        font-family: var(--font-heading);
+      }
+
+      .font-body {
+        font-family: var(--font-body);
+      }
+    </style>
     <title>{title}</title>
     <script is:inline>
       (function() {

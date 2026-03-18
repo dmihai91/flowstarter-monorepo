@@ -1,21 +1,26 @@
 {
-  "id": "soft-rose",
-  "name": "Soft Rose",
-  "description": "Compassionate and warm. Great for relationship counselors.",
+  "id": "palette-5",
+  "name": "Ivory Ink",
+  "description": "Muted charcoal and ivory for prestige and readability.",
   "colors": {
-    "primary": "#C08B8B",
-    "primary-dark": "#A87777",
-    "secondary": "#E0C4C4",
-    "accent": "#7AA89B",
-    "background": "#FDFAF9",
+    "primary": "#333D4B",
+    "primary-dark": "#2e3744",
+    "secondary": "#F6F3ED",
+    "accent": "#D97706",
+    "background": "#FEFCF8",
     "surface": "#FFFFFF",
-    "text": "#453535",
-    "text-muted": "#8B7575"
+    "text": "#1F2732",
+    "text-muted": "#6C7582"
   },
   "fonts": {
-    "heading": "Cormorant Garamond",
+    "heading": "Merriweather",
     "body": "Source Sans 3",
-    "weights": { "heading": "600", "body": "400" }
+    "weights": {
+      "heading": "700",
+      "body": "600"
+    }
   },
-  "preview": { "gradient": "from-rose-400 to-pink-300" }
+  "preview": {
+    "gradient": "from-[#333D4B] to-[#D97706]"
+  }
 }

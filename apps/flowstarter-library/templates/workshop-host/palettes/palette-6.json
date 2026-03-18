@@ -1,21 +1,26 @@
 {
-  "id": "forest-healing",
-  "name": "Forest Healing",
-  "description": "Deep and grounding. Ideal for nature therapy practices.",
+  "id": "palette-6",
+  "name": "Workshop After Hours",
+  "description": "Dark mode with forest, ink, and terracotta depth.",
   "colors": {
-    "primary": "#4A6B5D",
-    "primary-dark": "#3A564A",
-    "secondary": "#7A9B89",
-    "accent": "#D4A574",
-    "background": "#F5F8F6",
-    "surface": "#FFFFFF",
-    "text": "#1F2E26",
-    "text-muted": "#5A7065"
+    "primary": "#5E8A6E",
+    "primary-dark": "#557c63",
+    "secondary": "#141A16",
+    "accent": "#F28C6B",
+    "background": "#0B100D",
+    "surface": "#151D18",
+    "text": "#EEF2ED",
+    "text-muted": "#9EA99F"
   },
   "fonts": {
     "heading": "Fraunces",
-    "body": "Nunito",
-    "weights": { "heading": "600", "body": "400" }
+    "body": "Outfit",
+    "weights": {
+      "heading": "700",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-emerald-700 to-green-500" }
+  "preview": {
+    "gradient": "from-[#0B100D] to-[#5E8A6E]"
+  }
 }

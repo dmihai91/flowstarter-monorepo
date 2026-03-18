@@ -1,20 +1,18 @@
 ---
-headline: "Speak Confidently in Any Language"
-subheadline: "Personalized language lessons focused on real conversation. Whether you're preparing for travel, work, or just love learning — I'll help you speak with confidence."
-badge: "Native Speaker • TESOL Certified • 1,000+ Students Fluent"
+headline: "Speak a New Language with Confidence"
+subheadline: "Fun, practical lessons tailored to your level and goals. French, Spanish, Italian, Portuguese."
+badge: "Native Speaker · 200+ Students · 4.9★ on iTalki"
 cta_primary:
-  text: "Book a Free Trial Lesson"
-  href: "#booking"
+  text: "Book a Lesson"
+  href: "#contact"
 cta_secondary:
-  text: "See Student Progress"
-  href: "#testimonials"
+  text: "View Languages"
+  href: "#services"
 stats:
-  - value: "1,000+"
+  - value: "200+"
     label: "Students Taught"
-  - value: "5"
-    label: "Languages Offered"
-  - value: "95%"
-    label: "Reach Their Goals"
-  - value: "4.9"
-    label: "Student Rating"
+  - value: "4 Languages"
+    label: "Specialties"
+  - value: "Conversational"
+    label: "Practical First"
 ---

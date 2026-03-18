@@ -1,21 +1,26 @@
 {
-  "id": "lavender-peace",
-  "name": "Lavender Peace",
-  "description": "Gentle and soothing. Ideal for wellness coaches.",
+  "id": "palette-3",
+  "name": "Infrared UI",
+  "description": "Sharp coral and indigo for bold program launches.",
   "colors": {
-    "primary": "#9B8BB4",
-    "primary-dark": "#8677A1",
-    "secondary": "#C4B8D9",
-    "accent": "#D4A574",
-    "background": "#FAF9FC",
-    "surface": "#FFFFFF",
-    "text": "#3D3650",
-    "text-muted": "#7B7290"
+    "primary": "#FF5C7A",
+    "primary-dark": "#e6536e",
+    "secondary": "#150B20",
+    "accent": "#6EE7F9",
+    "background": "#0B0612",
+    "surface": "#171021",
+    "text": "#FAF3FF",
+    "text-muted": "#A898B6"
   },
   "fonts": {
-    "heading": "Playfair Display",
-    "body": "Lato",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Space Grotesk",
+    "body": "JetBrains Mono",
+    "weights": {
+      "heading": "700",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-purple-400 to-violet-300" }
+  "preview": {
+    "gradient": "from-[#FF5C7A] to-[#6EE7F9]"
+  }
 }

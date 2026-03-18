@@ -1,21 +1,26 @@
 {
-  "id": "lavender-peace",
-  "name": "Lavender Peace",
-  "description": "Gentle and soothing. Ideal for wellness coaches.",
+  "id": "palette-3",
+  "name": "Golden Funnel",
+  "description": "Warm neutrals and gold for premium knowledge products.",
   "colors": {
-    "primary": "#9B8BB4",
-    "primary-dark": "#8677A1",
-    "secondary": "#C4B8D9",
-    "accent": "#D4A574",
-    "background": "#FAF9FC",
+    "primary": "#B7791F",
+    "primary-dark": "#a56d1c",
+    "secondary": "#FFF8EB",
+    "accent": "#0EA5A0",
+    "background": "#FFFDFA",
     "surface": "#FFFFFF",
-    "text": "#3D3650",
-    "text-muted": "#7B7290"
+    "text": "#3F2D11",
+    "text-muted": "#836848"
   },
   "fonts": {
-    "heading": "Playfair Display",
-    "body": "Lato",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Plus Jakarta Sans",
+    "body": "Inter",
+    "weights": {
+      "heading": "800",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-purple-400 to-violet-300" }
+  "preview": {
+    "gradient": "from-[#B7791F] to-[#0EA5A0]"
+  }
 }

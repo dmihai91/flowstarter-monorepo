@@ -1,21 +1,26 @@
 {
-  "id": "lavender-peace",
-  "name": "Lavender Peace",
-  "description": "Gentle and soothing. Ideal for wellness coaches.",
+  "id": "palette-3",
+  "name": "Sunset Roma",
+  "description": "Terracotta and cream for warm, conversational energy.",
   "colors": {
-    "primary": "#9B8BB4",
-    "primary-dark": "#8677A1",
-    "secondary": "#C4B8D9",
-    "accent": "#D4A574",
-    "background": "#FAF9FC",
+    "primary": "#D97745",
+    "primary-dark": "#c36b3e",
+    "secondary": "#FFF5EC",
+    "accent": "#7C3AED",
+    "background": "#FFFDFC",
     "surface": "#FFFFFF",
-    "text": "#3D3650",
-    "text-muted": "#7B7290"
+    "text": "#37221A",
+    "text-muted": "#8A6D63"
   },
   "fonts": {
-    "heading": "Playfair Display",
-    "body": "Lato",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Nunito",
+    "body": "Nunito Sans",
+    "weights": {
+      "heading": "800",
+      "body": "600"
+    }
   },
-  "preview": { "gradient": "from-purple-400 to-violet-300" }
+  "preview": {
+    "gradient": "from-[#D97745] to-[#7C3AED]"
+  }
 }

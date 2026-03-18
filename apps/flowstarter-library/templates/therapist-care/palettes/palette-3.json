@@ -1,21 +1,26 @@
 {
-  "id": "lavender-peace",
-  "name": "Lavender Peace",
-  "description": "Gentle and soothing. Ideal for wellness coaches.",
+  "id": "palette-3",
+  "name": "Warm Sand",
+  "description": "Terracotta and sand tones with a welcoming, human feel.",
   "colors": {
-    "primary": "#9B8BB4",
-    "primary-dark": "#8677A1",
-    "secondary": "#C4B8D9",
-    "accent": "#D4A574",
-    "background": "#FAF9FC",
+    "primary": "#B0714D",
+    "primary-dark": "#9e6645",
+    "secondary": "#F5E8DC",
+    "accent": "#8E5E3B",
+    "background": "#FCF8F2",
     "surface": "#FFFFFF",
-    "text": "#3D3650",
-    "text-muted": "#7B7290"
+    "text": "#3D2B20",
+    "text-muted": "#7C6456"
   },
   "fonts": {
-    "heading": "Playfair Display",
-    "body": "Lato",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Cormorant Garamond",
+    "body": "Inter",
+    "weights": {
+      "heading": "600",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-purple-400 to-violet-300" }
+  "preview": {
+    "gradient": "from-[#B0714D] to-[#D4B18A]"
+  }
 }

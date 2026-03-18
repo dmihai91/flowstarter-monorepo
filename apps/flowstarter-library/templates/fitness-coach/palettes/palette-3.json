@@ -1,21 +1,26 @@
 {
-  "id": "lavender-peace",
-  "name": "Lavender Peace",
-  "description": "Gentle and soothing. Ideal for wellness coaches.",
+  "id": "palette-3",
+  "name": "Volt Lime",
+  "description": "Charcoal and volt green built for challenge-driven messaging.",
   "colors": {
-    "primary": "#9B8BB4",
-    "primary-dark": "#8677A1",
-    "secondary": "#C4B8D9",
-    "accent": "#D4A574",
-    "background": "#FAF9FC",
-    "surface": "#FFFFFF",
-    "text": "#3D3650",
-    "text-muted": "#7B7290"
+    "primary": "#84CC16",
+    "primary-dark": "#77b814",
+    "secondary": "#111111",
+    "accent": "#F97316",
+    "background": "#0B0B0B",
+    "surface": "#171717",
+    "text": "#F7F7F7",
+    "text-muted": "#A1A1AA"
   },
   "fonts": {
-    "heading": "Playfair Display",
-    "body": "Lato",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Barlow Condensed",
+    "body": "Barlow",
+    "weights": {
+      "heading": "800",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-purple-400 to-violet-300" }
+  "preview": {
+    "gradient": "from-[#84CC16] to-[#F97316]"
+  }
 }

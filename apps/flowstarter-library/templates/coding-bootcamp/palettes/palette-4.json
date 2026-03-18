@@ -1,21 +1,26 @@
 {
-  "id": "warm-sand",
-  "name": "Warm Sand",
-  "description": "Nurturing and earthy. Perfect for holistic practitioners.",
+  "id": "palette-4",
+  "name": "Steel IDE",
+  "description": "Cool graphite with neon blue for enterprise-ready training.",
   "colors": {
-    "primary": "#B89B7A",
-    "primary-dark": "#A08665",
-    "secondary": "#D4C4B0",
-    "accent": "#7A9B89",
-    "background": "#FDFBF7",
-    "surface": "#FFFFFF",
-    "text": "#3D3630",
-    "text-muted": "#8B7D70"
+    "primary": "#38BDF8",
+    "primary-dark": "#32aadf",
+    "secondary": "#111827",
+    "accent": "#A78BFA",
+    "background": "#0B1020",
+    "surface": "#121A2D",
+    "text": "#F3F7FF",
+    "text-muted": "#94A3B8"
   },
   "fonts": {
-    "heading": "DM Serif Display",
-    "body": "DM Sans",
-    "weights": { "heading": "400", "body": "400" }
+    "heading": "Space Grotesk",
+    "body": "JetBrains Mono",
+    "weights": {
+      "heading": "700",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-amber-600 to-yellow-400" }
+  "preview": {
+    "gradient": "from-[#38BDF8] to-[#A78BFA]"
+  }
 }

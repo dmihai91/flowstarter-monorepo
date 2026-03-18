@@ -1,20 +1,18 @@
 ---
-headline: "Unlock Your Academic Potential"
-subheadline: "Personalized tutoring that meets you where you are. Whether you're preparing for the SAT, struggling with calculus, or need help with essays — I'll help you build confidence and achieve your goals."
-badge: "Harvard-Educated • 500+ Students Helped • 4.9★ Rating"
+headline: "Tutoring That Actually Works"
+subheadline: "Personalized 1-on-1 sessions for SAT prep, math, science, and writing. Real results, guaranteed."
+badge: "Harvard-Educated · 4.9★ Rating · 98% Student Improvement"
 cta_primary:
-  text: "Book a Free Consultation"
-  href: "#booking"
+  text: "Book a Trial Session"
+  href: "#contact"
 cta_secondary:
-  text: "View Success Stories"
-  href: "#testimonials"
+  text: "See Subjects"
+  href: "#services"
 stats:
+  - value: "98%"
+    label: "Score Improvement"
   - value: "500+"
     label: "Students Tutored"
-  - value: "150+"
-    label: "SAT Point Avg Increase"
-  - value: "98%"
-    label: "Pass Rate"
-  - value: "4.9"
-    label: "Average Rating"
+  - value: "Top 1%"
+    label: "SAT Outcomes"
 ---

@@ -31,7 +31,34 @@ const navLinks = [
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,600;1,300;1,600&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+    <style is:global>
+      :root {
+        --font-heading: "Cormorant", serif;
+        --font-body: "Jost", sans-serif;
+        --color-primary: #C9607A;
+        --color-primary-light: #ce7087;
+        --color-primary-dark: #b5566e;
+        --color-secondary: #FBF5F7;
+        --color-accent: #8B5E3C;
+        --color-background: #FFF9FA;
+        --color-surface: #FFFFFF;
+        --color-text: #2A1520;
+        --color-text-muted: #7C616D;
+      }
+
+      body {
+        font-family: var(--font-body);
+      }
+
+      h1, h2, h3, h4, h5, h6, .font-heading {
+        font-family: var(--font-heading);
+      }
+
+      .font-body {
+        font-family: var(--font-body);
+      }
+    </style>
     <title>{title}</title>
     <script is:inline>
       (function() {

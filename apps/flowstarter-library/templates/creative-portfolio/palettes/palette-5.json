@@ -1,21 +1,26 @@
 {
-  "id": "pastel-studio",
-  "name": "Pastel Studio",
-  "description": "Soft, approachable creativity. Illustration-friendly.",
+  "id": "palette-5",
+  "name": "Neon Magenta",
+  "description": "Nightclub neon energy for experimental visual brands.",
   "colors": {
-    "primary": "#6C63FF",
-    "primary-dark": "#5548D4",
-    "secondary": "#FF6584",
-    "accent": "#43E97B",
-    "background": "#FEFEFE",
-    "surface": "#F8F7FF",
-    "text": "#2D2D3F",
-    "text-muted": "#8888AA"
+    "primary": "#FF3CAC",
+    "primary-dark": "#e6369b",
+    "secondary": "#0B0710",
+    "accent": "#7CF9FF",
+    "background": "#09050D",
+    "surface": "#150F1B",
+    "text": "#FFF6FD",
+    "text-muted": "#BCA9C0"
   },
   "fonts": {
-    "heading": "Poppins",
-    "body": "Nunito",
-    "weights": { "heading": "700", "body": "400" }
+    "heading": "Bebas Neue",
+    "body": "Inter",
+    "weights": {
+      "heading": "400",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-indigo-400 to-pink-400" }
+  "preview": {
+    "gradient": "from-[#FF3CAC] to-[#7CF9FF]"
+  }
 }

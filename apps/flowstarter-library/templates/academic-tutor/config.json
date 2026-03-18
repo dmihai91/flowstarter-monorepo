@@ -3,16 +3,44 @@
   "slug": "academic-tutor",
   "description": "Professional template for academic tutors, test prep specialists, and subject matter experts. Features 1-on-1 session booking, student testimonials, and subject expertise showcase.",
   "category": "education",
-  "tags": ["tutor", "academic", "test-prep", "SAT", "ACT", "math", "science", "english", "homework-help", "online-tutoring"],
+  "tags": [
+    "tutor",
+    "academic",
+    "test-prep",
+    "SAT",
+    "ACT",
+    "math",
+    "science",
+    "english",
+    "homework-help",
+    "online-tutoring"
+  ],
   "framework": "astro",
-  "features": ["Multi-page", "Booking integration", "Newsletter integration", "Subject showcase", "Testimonials", "Pricing packages"],
+  "features": [
+    "Multi-page",
+    "Booking integration",
+    "Newsletter integration",
+    "Subject showcase",
+    "Testimonials",
+    "Pricing packages"
+  ],
   "integrations": {
     "booking": {
       "name": "Booking System",
       "description": "Let students book tutoring sessions directly",
       "providers": [
-        {"id": "calendly", "name": "Calendly", "field": "calendly_url", "placeholder": "https://calendly.com/your-username/tutoring-session"},
-        {"id": "calcom", "name": "Cal.com", "field": "calcom_url", "placeholder": "https://cal.com/your-username/tutoring"}
+        {
+          "id": "calendly",
+          "name": "Calendly",
+          "field": "calendly_url",
+          "placeholder": "https://calendly.com/your-username/tutoring-session"
+        },
+        {
+          "id": "calcom",
+          "name": "Cal.com",
+          "field": "calcom_url",
+          "placeholder": "https://cal.com/your-username/tutoring"
+        }
       ],
       "optional": true,
       "configPath": "content/integrations/booking.md"
@@ -21,11 +49,51 @@
       "name": "Newsletter",
       "description": "Share study tips and resources with students",
       "providers": [
-        {"id": "mailchimp", "name": "Mailchimp", "field": "mailchimp_url", "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"},
-        {"id": "convertkit", "name": "ConvertKit", "field": "convertkit_form_id", "placeholder": "1234567"}
+        {
+          "id": "mailchimp",
+          "name": "Mailchimp",
+          "field": "mailchimp_url",
+          "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+        },
+        {
+          "id": "convertkit",
+          "name": "ConvertKit",
+          "field": "convertkit_form_id",
+          "placeholder": "1234567"
+        }
       ],
       "optional": true,
       "configPath": "content/integrations/newsletter.md"
     }
-  }
+  },
+  "fonts": [
+    {
+      "id": "font-1",
+      "name": "Academic",
+      "heading": "Merriweather",
+      "body": "Source Sans 3",
+      "googleFonts": "Merriweather:wght@700;900&family=Source+Sans+3:wght@400;600"
+    },
+    {
+      "id": "font-2",
+      "name": "Modern",
+      "heading": "Plus Jakarta Sans",
+      "body": "Inter",
+      "googleFonts": "Plus+Jakarta+Sans:wght@600;800&family=Inter:wght@400;500"
+    },
+    {
+      "id": "font-3",
+      "name": "Friendly",
+      "heading": "Nunito",
+      "body": "Nunito Sans",
+      "googleFonts": "Nunito:wght@700;800&family=Nunito+Sans:wght@400;600"
+    },
+    {
+      "id": "font-4",
+      "name": "Classic",
+      "heading": "Playfair Display",
+      "body": "DM Sans",
+      "googleFonts": "Playfair+Display:wght@700&family=DM+Sans:wght@400;500"
+    }
+  ]
 }

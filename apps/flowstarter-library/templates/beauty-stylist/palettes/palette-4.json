@@ -1,21 +1,26 @@
 {
-  "id": "midnight-noir",
-  "name": "Midnight Noir",
-  "description": "Bold and dramatic. High-fashion edge.",
+  "id": "palette-4",
+  "name": "Modern Plum",
+  "description": "Plum and shell pink for fashion-forward presentation.",
   "colors": {
-    "primary": "#C8A97E",
-    "primary-dark": "#B8935C",
-    "secondary": "#2A2A2A",
-    "accent": "#E8D5B5",
-    "background": "#FAFAF8",
+    "primary": "#7C3A5D",
+    "primary-dark": "#703454",
+    "secondary": "#FBF3F7",
+    "accent": "#F4A261",
+    "background": "#FFFCFE",
     "surface": "#FFFFFF",
-    "text": "#1A1A1A",
-    "text-muted": "#6B6B6B"
+    "text": "#2B1823",
+    "text-muted": "#7E6470"
   },
   "fonts": {
-    "heading": "Montserrat",
-    "body": "Inter",
-    "weights": { "heading": "700", "body": "400" }
+    "heading": "Cormorant",
+    "body": "Jost",
+    "weights": {
+      "heading": "600",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-neutral-800 to-amber-400" }
+  "preview": {
+    "gradient": "from-[#7C3A5D] to-[#F4A261]"
+  }
 }

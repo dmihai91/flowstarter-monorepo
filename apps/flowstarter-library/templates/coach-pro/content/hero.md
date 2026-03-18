@@ -1,20 +1,18 @@
 ---
 headline: "Unlock Your True Potential"
-subheadline: "Expert coaching to help you break through limitations, gain clarity, and achieve extraordinary results in life, career, and business. Your transformation starts with one conversation."
-badge: "ICF Certified Coach | 500+ Clients Transformed"
+subheadline: "Executive coaching for leaders, founders, and high-performers ready to level up."
+badge: "ICF Certified · Forbes Featured · 300+ Leaders Coached"
 cta_primary:
-  text: "Book a Discovery Call"
+  text: "Book a Strategy Call"
   href: "#contact"
 cta_secondary:
-  text: "View Success Stories"
+  text: "See Client Wins"
   href: "#testimonials"
 stats:
-  - value: "500+"
-    label: "Clients Coached"
-  - value: "12"
-    label: "Years Experience"
-  - value: "96%"
-    label: "Goal Achievement"
-  - value: "4.9"
-    label: "Client Rating"
+  - value: "300+"
+    label: "Leaders Coached"
+  - value: "4.9★"
+    label: "Client Satisfaction"
+  - value: "12 Weeks"
+    label: "Typical Engagement"
 ---

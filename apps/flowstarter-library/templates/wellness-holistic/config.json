@@ -69,5 +69,35 @@
       "optional": true,
       "configPath": "content/integrations/newsletter.md"
     }
-  }
+  },
+  "fonts": [
+    {
+      "id": "font-1",
+      "name": "Natural",
+      "heading": "Gilda Display",
+      "body": "Mulish",
+      "googleFonts": "Gilda+Display:wght@400&family=Mulish:wght@300;400;600"
+    },
+    {
+      "id": "font-2",
+      "name": "Classic",
+      "heading": "Cormorant Garamond",
+      "body": "Inter",
+      "googleFonts": "Cormorant+Garamond:wght@400;600&family=Inter:wght@400;500"
+    },
+    {
+      "id": "font-3",
+      "name": "Soft",
+      "heading": "Fraunces",
+      "body": "Outfit",
+      "googleFonts": "Fraunces:ital,wght@0,300;1,700&family=Outfit:wght@400;500"
+    },
+    {
+      "id": "font-4",
+      "name": "Modern",
+      "heading": "Manrope",
+      "body": "DM Sans",
+      "googleFonts": "Manrope:wght@600;800&family=DM+Sans:wght@400;500"
+    }
+  ]
 }

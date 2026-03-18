@@ -1,21 +1,26 @@
 {
-  "id": "soft-rose",
-  "name": "Soft Rose",
-  "description": "Compassionate and warm. Great for relationship counselors.",
+  "id": "palette-5",
+  "name": "Amber Stack",
+  "description": "Burnt amber and navy for a warmer technical identity.",
   "colors": {
-    "primary": "#C08B8B",
-    "primary-dark": "#A87777",
-    "secondary": "#E0C4C4",
-    "accent": "#7AA89B",
-    "background": "#FDFAF9",
-    "surface": "#FFFFFF",
-    "text": "#453535",
-    "text-muted": "#8B7575"
+    "primary": "#F59E0B",
+    "primary-dark": "#dd8e0a",
+    "secondary": "#111827",
+    "accent": "#22D3EE",
+    "background": "#0A0F18",
+    "surface": "#141C27",
+    "text": "#F8F5EE",
+    "text-muted": "#AAA18E"
   },
   "fonts": {
-    "heading": "Cormorant Garamond",
-    "body": "Source Sans 3",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Space Grotesk",
+    "body": "JetBrains Mono",
+    "weights": {
+      "heading": "700",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-rose-400 to-pink-300" }
+  "preview": {
+    "gradient": "from-[#F59E0B] to-[#22D3EE]"
+  }
 }

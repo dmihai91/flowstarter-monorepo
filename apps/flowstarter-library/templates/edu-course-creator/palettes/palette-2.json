@@ -1,21 +1,26 @@
 {
-  "id": "ocean-calm",
-  "name": "Ocean Calm",
-  "description": "Peaceful and reassuring. Great for mental health practitioners.",
+  "id": "palette-2",
+  "name": "Sky Teacher",
+  "description": "Bright blue and coral for energetic course launches.",
   "colors": {
-    "primary": "#5B8FA8",
-    "primary-dark": "#4A7A91",
-    "secondary": "#8FBCD4",
-    "accent": "#E8B4A0",
-    "background": "#F7FAFB",
+    "primary": "#2563EB",
+    "primary-dark": "#2159d4",
+    "secondary": "#EFF6FF",
+    "accent": "#FB7185",
+    "background": "#FFFFFF",
     "surface": "#FFFFFF",
-    "text": "#2C3E4A",
-    "text-muted": "#6B8494"
+    "text": "#1C2942",
+    "text-muted": "#64748B"
   },
   "fonts": {
-    "heading": "Libre Baskerville",
-    "body": "Open Sans",
-    "weights": { "heading": "700", "body": "400" }
+    "heading": "Plus Jakarta Sans",
+    "body": "Inter",
+    "weights": {
+      "heading": "800",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-cyan-600 to-sky-400" }
+  "preview": {
+    "gradient": "from-[#2563EB] to-[#FB7185]"
+  }
 }

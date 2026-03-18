@@ -1,21 +1,26 @@
 {
-  "id": "ocean-calm",
-  "name": "Ocean Calm",
-  "description": "Peaceful and reassuring. Great for mental health practitioners.",
+  "id": "palette-2",
+  "name": "Electric Blue",
+  "description": "Cyber blue performance palette for modern training brands.",
   "colors": {
-    "primary": "#5B8FA8",
-    "primary-dark": "#4A7A91",
-    "secondary": "#8FBCD4",
-    "accent": "#E8B4A0",
-    "background": "#F7FAFB",
-    "surface": "#FFFFFF",
-    "text": "#2C3E4A",
-    "text-muted": "#6B8494"
+    "primary": "#0EA5E9",
+    "primary-dark": "#0d95d2",
+    "secondary": "#06141F",
+    "accent": "#22C55E",
+    "background": "#081018",
+    "surface": "#101A24",
+    "text": "#F5FAFF",
+    "text-muted": "#8FA2B5"
   },
   "fonts": {
-    "heading": "Libre Baskerville",
-    "body": "Open Sans",
-    "weights": { "heading": "700", "body": "400" }
+    "heading": "Barlow Condensed",
+    "body": "Barlow",
+    "weights": {
+      "heading": "800",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-cyan-600 to-sky-400" }
+  "preview": {
+    "gradient": "from-[#0EA5E9] to-[#22C55E]"
+  }
 }

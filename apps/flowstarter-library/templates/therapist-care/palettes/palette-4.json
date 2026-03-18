@@ -1,21 +1,26 @@
 {
-  "id": "warm-sand",
-  "name": "Warm Sand",
-  "description": "Nurturing and earthy. Perfect for holistic practitioners.",
+  "id": "palette-4",
+  "name": "Lavender Mist",
+  "description": "Muted purple tones for softer, reflective presentation.",
   "colors": {
-    "primary": "#B89B7A",
-    "primary-dark": "#A08665",
-    "secondary": "#D4C4B0",
-    "accent": "#7A9B89",
-    "background": "#FDFBF7",
+    "primary": "#8A76A6",
+    "primary-dark": "#7c6a95",
+    "secondary": "#F5F1FA",
+    "accent": "#D6A8E0",
+    "background": "#FBF9FE",
     "surface": "#FFFFFF",
-    "text": "#3D3630",
-    "text-muted": "#8B7D70"
+    "text": "#30293D",
+    "text-muted": "#756C86"
   },
   "fonts": {
-    "heading": "DM Serif Display",
-    "body": "DM Sans",
-    "weights": { "heading": "400", "body": "400" }
+    "heading": "Cormorant Garamond",
+    "body": "Inter",
+    "weights": {
+      "heading": "600",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-amber-600 to-yellow-400" }
+  "preview": {
+    "gradient": "from-[#8A76A6] to-[#D6A8E0]"
+  }
 }

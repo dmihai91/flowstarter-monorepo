@@ -1,21 +1,26 @@
 {
-  "id": "warm-sand",
-  "name": "Warm Sand",
-  "description": "Nurturing and earthy. Perfect for holistic practitioners.",
+  "id": "palette-4",
+  "name": "Lisbon Mint",
+  "description": "Fresh greens for approachable confidence-building lessons.",
   "colors": {
-    "primary": "#B89B7A",
-    "primary-dark": "#A08665",
-    "secondary": "#D4C4B0",
-    "accent": "#7A9B89",
-    "background": "#FDFBF7",
+    "primary": "#0F766E",
+    "primary-dark": "#0e6a63",
+    "secondary": "#F0FDFA",
+    "accent": "#FB7185",
+    "background": "#FCFFFE",
     "surface": "#FFFFFF",
-    "text": "#3D3630",
-    "text-muted": "#8B7D70"
+    "text": "#15302D",
+    "text-muted": "#64807B"
   },
   "fonts": {
-    "heading": "DM Serif Display",
-    "body": "DM Sans",
-    "weights": { "heading": "400", "body": "400" }
+    "heading": "Nunito",
+    "body": "Nunito Sans",
+    "weights": {
+      "heading": "800",
+      "body": "600"
+    }
   },
-  "preview": { "gradient": "from-amber-600 to-yellow-400" }
+  "preview": {
+    "gradient": "from-[#0F766E] to-[#FB7185]"
+  }
 }

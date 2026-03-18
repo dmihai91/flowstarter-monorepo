@@ -1,20 +1,18 @@
 ---
-headline: "Launch Your Tech Career in 12 Weeks"
-subheadline: "Intensive, hands-on coding programs designed to take you from beginner to job-ready developer. Learn by building real projects with expert mentorship."
-badge: "500+ Graduates Hired • 92% Job Placement • Google & Meta Alumni"
+headline: "Code Your Future"
+subheadline: "12-week intensive bootcamp. Land a $90k+ dev job or your money back. 94% hiring rate."
+badge: "500+ Graduates Hired · Google · Meta · Stripe Alumni"
 cta_primary:
   text: "Apply Now"
-  href: "#booking"
+  href: "#contact"
 cta_secondary:
-  text: "See Graduate Outcomes"
-  href: "#testimonials"
+  text: "Explore Curriculum"
+  href: "#services"
 stats:
-  - value: "500+"
-    label: "Graduates Placed"
-  - value: "92%"
-    label: "Job Placement Rate"
-  - value: "$85K"
-    label: "Avg Starting Salary"
-  - value: "12"
-    label: "Week Programs"
+  - value: "94%"
+    label: "Hiring Rate"
+  - value: "$90k+"
+    label: "Median Offer"
+  - value: "12 Weeks"
+    label: "Program Length"
 ---

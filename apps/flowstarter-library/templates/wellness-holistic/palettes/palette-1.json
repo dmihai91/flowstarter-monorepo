@@ -1,21 +1,26 @@
 {
-  "id": "zen-garden",
-  "name": "Zen Garden",
-  "description": "Peaceful greens and warm stone. Meditative calm.",
+  "id": "palette-1",
+  "name": "Linen Sage",
+  "description": "Soft sage and terracotta for calm holistic wellness brands.",
   "colors": {
-    "primary": "#5C7A5E",
-    "primary-dark": "#4A6A4C",
-    "secondary": "#A8C5A0",
-    "accent": "#C8A882",
-    "background": "#F7FAF5",
+    "primary": "#7B9E87",
+    "primary-dark": "#6f8e7a",
+    "secondary": "#F7F3EE",
+    "accent": "#D4956A",
+    "background": "#FDFAF6",
     "surface": "#FFFFFF",
-    "text": "#2A3A2A",
-    "text-muted": "#6B7C6B"
+    "text": "#2C3E2D",
+    "text-muted": "#728274"
   },
   "fonts": {
-    "heading": "Cormorant Garamond",
-    "body": "Nunito",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Gilda Display",
+    "body": "Mulish",
+    "weights": {
+      "heading": "400",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-green-600 to-green-300" }
+  "preview": {
+    "gradient": "from-[#7B9E87] to-[#D4956A]"
+  }
 }

@@ -1,21 +1,26 @@
 {
-  "id": "forest-healing",
-  "name": "Forest Healing",
-  "description": "Deep and grounding. Ideal for nature therapy practices.",
+  "id": "palette-6",
+  "name": "Exam Night",
+  "description": "Dark academic palette with high-contrast red signal accents.",
   "colors": {
-    "primary": "#4A6B5D",
-    "primary-dark": "#3A564A",
-    "secondary": "#7A9B89",
-    "accent": "#D4A574",
-    "background": "#F5F8F6",
-    "surface": "#FFFFFF",
-    "text": "#1F2E26",
-    "text-muted": "#5A7065"
+    "primary": "#78A6D6",
+    "primary-dark": "#6c95c1",
+    "secondary": "#121A27",
+    "accent": "#FF6B6B",
+    "background": "#09101A",
+    "surface": "#111A26",
+    "text": "#EDF4FC",
+    "text-muted": "#96A9BC"
   },
   "fonts": {
-    "heading": "Fraunces",
-    "body": "Nunito",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Merriweather",
+    "body": "Source Sans 3",
+    "weights": {
+      "heading": "700",
+      "body": "600"
+    }
   },
-  "preview": { "gradient": "from-emerald-700 to-green-500" }
+  "preview": {
+    "gradient": "from-[#09101A] to-[#78A6D6]"
+  }
 }

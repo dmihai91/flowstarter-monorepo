@@ -1,21 +1,26 @@
 {
-  "id": "forest-healing",
-  "name": "Forest Healing",
-  "description": "Deep and grounding. Ideal for nature therapy practices.",
+  "id": "palette-6",
+  "name": "Midnight Orchestra",
+  "description": "Dark default palette with gold stage-light accents.",
   "colors": {
-    "primary": "#4A6B5D",
-    "primary-dark": "#3A564A",
-    "secondary": "#7A9B89",
-    "accent": "#D4A574",
-    "background": "#F5F8F6",
-    "surface": "#FFFFFF",
-    "text": "#1F2E26",
-    "text-muted": "#5A7065"
+    "primary": "#9D7AE4",
+    "primary-dark": "#8d6ecd",
+    "secondary": "#12081E",
+    "accent": "#FDBA74",
+    "background": "#080511",
+    "surface": "#140B1F",
+    "text": "#F5EBFF",
+    "text-muted": "#AE9BC6"
   },
   "fonts": {
-    "heading": "Fraunces",
-    "body": "Nunito",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Abril Fatface",
+    "body": "Lato",
+    "weights": {
+      "heading": "400",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-emerald-700 to-green-500" }
+  "preview": {
+    "gradient": "from-[#080511] to-[#9D7AE4]"
+  }
 }

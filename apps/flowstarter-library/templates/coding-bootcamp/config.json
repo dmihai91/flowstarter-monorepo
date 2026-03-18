@@ -3,15 +3,36 @@
   "slug": "coding-bootcamp",
   "description": "Modern template for coding instructors, bootcamp operators, and tech educators. Features course catalog, project showcase, and career outcome statistics.",
   "category": "education",
-  "tags": ["coding", "programming", "bootcamp", "web-development", "python", "javascript", "tech", "career-change"],
+  "tags": [
+    "coding",
+    "programming",
+    "bootcamp",
+    "web-development",
+    "python",
+    "javascript",
+    "tech",
+    "career-change"
+  ],
   "framework": "astro",
-  "features": ["Multi-page", "Booking integration", "Newsletter integration", "Course catalog", "Project gallery", "Career outcomes"],
+  "features": [
+    "Multi-page",
+    "Booking integration",
+    "Newsletter integration",
+    "Course catalog",
+    "Project gallery",
+    "Career outcomes"
+  ],
   "integrations": {
     "booking": {
       "name": "Enrollment",
       "description": "Let students enroll in coding programs",
       "providers": [
-        {"id": "calendly", "name": "Calendly", "field": "calendly_url", "placeholder": "https://calendly.com/your-username/info-session"}
+        {
+          "id": "calendly",
+          "name": "Calendly",
+          "field": "calendly_url",
+          "placeholder": "https://calendly.com/your-username/info-session"
+        }
       ],
       "optional": true,
       "configPath": "content/integrations/booking.md"
@@ -20,10 +41,45 @@
       "name": "Newsletter",
       "description": "Share coding tips and job opportunities",
       "providers": [
-        {"id": "mailchimp", "name": "Mailchimp", "field": "mailchimp_url", "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"}
+        {
+          "id": "mailchimp",
+          "name": "Mailchimp",
+          "field": "mailchimp_url",
+          "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+        }
       ],
       "optional": true,
       "configPath": "content/integrations/newsletter.md"
     }
-  }
+  },
+  "fonts": [
+    {
+      "id": "font-1",
+      "name": "Cyber",
+      "heading": "Space Grotesk",
+      "body": "JetBrains Mono",
+      "googleFonts": "Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@400"
+    },
+    {
+      "id": "font-2",
+      "name": "Technical",
+      "heading": "IBM Plex Sans",
+      "body": "IBM Plex Mono",
+      "googleFonts": "IBM+Plex+Sans:wght@600;700&family=IBM+Plex+Mono:wght@400;500"
+    },
+    {
+      "id": "font-3",
+      "name": "Modern",
+      "heading": "Sora",
+      "body": "Inter",
+      "googleFonts": "Sora:wght@600;700&family=Inter:wght@400;500"
+    },
+    {
+      "id": "font-4",
+      "name": "Startup",
+      "heading": "Manrope",
+      "body": "Space Mono",
+      "googleFonts": "Manrope:wght@700;800&family=Space+Mono:wght@400;700"
+    }
+  ]
 }

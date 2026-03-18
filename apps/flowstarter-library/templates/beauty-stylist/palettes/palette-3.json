@@ -1,21 +1,26 @@
 {
-  "id": "lavender-mist",
-  "name": "Lavender Mist",
-  "description": "Tranquil and refined. Spa-inspired serenity.",
+  "id": "palette-3",
+  "name": "Mocha Studio",
+  "description": "Chocolate and nude tones with rich contrast.",
   "colors": {
-    "primary": "#9B8EC4",
-    "primary-dark": "#7E72A8",
-    "secondary": "#D4CCE8",
-    "accent": "#C4A882",
-    "background": "#FAF8FD",
+    "primary": "#7B4F3B",
+    "primary-dark": "#6f4735",
+    "secondary": "#F8F0EB",
+    "accent": "#D4A373",
+    "background": "#FEFAF8",
     "surface": "#FFFFFF",
-    "text": "#2A2440",
-    "text-muted": "#6B6480"
+    "text": "#241713",
+    "text-muted": "#78655F"
   },
   "fonts": {
-    "heading": "DM Serif Display",
-    "body": "Source Sans 3",
-    "weights": { "heading": "400", "body": "400" }
+    "heading": "Cormorant",
+    "body": "Jost",
+    "weights": {
+      "heading": "600",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-purple-400 to-purple-200" }
+  "preview": {
+    "gradient": "from-[#7B4F3B] to-[#D4A373]"
+  }
 }

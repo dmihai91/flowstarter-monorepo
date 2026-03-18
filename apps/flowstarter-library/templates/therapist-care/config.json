@@ -3,16 +3,44 @@
   "slug": "therapist-care",
   "description": "Calming, professional template for therapists and counselors. Warm sage-green palette with HIPAA-compliant design, appointment booking, and credential showcase.",
   "category": "mental-health",
-  "tags": ["therapist", "counselor", "psychologist", "mental-health", "LMFT", "therapy", "wellness", "EMDR", "CBT"],
+  "tags": [
+    "therapist",
+    "counselor",
+    "psychologist",
+    "mental-health",
+    "LMFT",
+    "therapy",
+    "wellness",
+    "EMDR",
+    "CBT"
+  ],
   "framework": "astro",
-  "features": ["Multi-page", "Booking integration", "Newsletter integration", "Contact form", "Testimonials", "FAQ", "Dark mode"],
+  "features": [
+    "Multi-page",
+    "Booking integration",
+    "Newsletter integration",
+    "Contact form",
+    "Testimonials",
+    "FAQ",
+    "Dark mode"
+  ],
   "integrations": {
     "booking": {
       "name": "Booking System",
       "description": "Connect Calendly to let clients schedule therapy sessions",
       "providers": [
-        {"id": "calendly", "name": "Calendly", "field": "calendly_url", "placeholder": "https://calendly.com/your-username/consultation"},
-        {"id": "calcom", "name": "Cal.com", "field": "calcom_url", "placeholder": "https://cal.com/your-username/consultation"}
+        {
+          "id": "calendly",
+          "name": "Calendly",
+          "field": "calendly_url",
+          "placeholder": "https://calendly.com/your-username/consultation"
+        },
+        {
+          "id": "calcom",
+          "name": "Cal.com",
+          "field": "calcom_url",
+          "placeholder": "https://cal.com/your-username/consultation"
+        }
       ],
       "optional": true,
       "configPath": "content/integrations/booking.md"
@@ -21,12 +49,57 @@
       "name": "Newsletter",
       "description": "Connect Mailchimp to share mental health resources with clients",
       "providers": [
-        {"id": "mailchimp", "name": "Mailchimp", "field": "mailchimp_url", "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"},
-        {"id": "convertkit", "name": "ConvertKit", "field": "convertkit_form_id", "placeholder": "1234567"},
-        {"id": "buttondown", "name": "Buttondown", "field": "buttondown_username", "placeholder": "your-username"}
+        {
+          "id": "mailchimp",
+          "name": "Mailchimp",
+          "field": "mailchimp_url",
+          "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+        },
+        {
+          "id": "convertkit",
+          "name": "ConvertKit",
+          "field": "convertkit_form_id",
+          "placeholder": "1234567"
+        },
+        {
+          "id": "buttondown",
+          "name": "Buttondown",
+          "field": "buttondown_username",
+          "placeholder": "your-username"
+        }
       ],
       "optional": true,
       "configPath": "content/integrations/newsletter.md"
     }
-  }
+  },
+  "fonts": [
+    {
+      "id": "font-1",
+      "name": "Serene",
+      "heading": "Cormorant Garamond",
+      "body": "Inter",
+      "googleFonts": "Cormorant+Garamond:wght@300;400;600&family=Inter:wght@400;500"
+    },
+    {
+      "id": "font-2",
+      "name": "Classic",
+      "heading": "Playfair Display",
+      "body": "Source Sans 3",
+      "googleFonts": "Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600"
+    },
+    {
+      "id": "font-3",
+      "name": "Friendly",
+      "heading": "Nunito",
+      "body": "Nunito Sans",
+      "googleFonts": "Nunito:wght@700;800&family=Nunito+Sans:wght@400;600"
+    },
+    {
+      "id": "font-4",
+      "name": "Editorial",
+      "heading": "Fraunces",
+      "body": "Outfit",
+      "googleFonts": "Fraunces:ital,wght@0,300;1,700&family=Outfit:wght@400;500"
+    }
+  ]
 }

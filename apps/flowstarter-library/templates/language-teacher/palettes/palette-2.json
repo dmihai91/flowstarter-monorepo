@@ -1,21 +1,26 @@
 {
-  "id": "ocean-calm",
-  "name": "Ocean Calm",
-  "description": "Peaceful and reassuring. Great for mental health practitioners.",
+  "id": "palette-2",
+  "name": "Mediterranean",
+  "description": "Sea blue and citrus yellow for vibrant multilingual sites.",
   "colors": {
-    "primary": "#5B8FA8",
-    "primary-dark": "#4A7A91",
-    "secondary": "#8FBCD4",
-    "accent": "#E8B4A0",
-    "background": "#F7FAFB",
+    "primary": "#2563EB",
+    "primary-dark": "#2159d4",
+    "secondary": "#F0F7FF",
+    "accent": "#FBBF24",
+    "background": "#FCFEFF",
     "surface": "#FFFFFF",
-    "text": "#2C3E4A",
-    "text-muted": "#6B8494"
+    "text": "#18263D",
+    "text-muted": "#61728A"
   },
   "fonts": {
-    "heading": "Libre Baskerville",
-    "body": "Open Sans",
-    "weights": { "heading": "700", "body": "400" }
+    "heading": "Nunito",
+    "body": "Nunito Sans",
+    "weights": {
+      "heading": "800",
+      "body": "600"
+    }
   },
-  "preview": { "gradient": "from-cyan-600 to-sky-400" }
+  "preview": {
+    "gradient": "from-[#2563EB] to-[#FBBF24]"
+  }
 }

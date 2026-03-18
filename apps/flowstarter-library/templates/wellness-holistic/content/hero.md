@@ -1,20 +1,18 @@
 ---
-headline: "Restore Balance. Reclaim Vitality."
-subheadline: "As a licensed Naturopathic Doctor, I combine ancient healing wisdom with modern science to address the root cause of your health concerns. Together, we'll create a personalized path to lasting wellness."
-badge: "Licensed Naturopathic Doctor • 12+ Years Experience"
+headline: "Restore. Rebalance. Renew."
+subheadline: "Holistic wellness programs integrating nutrition, mindfulness, and naturopathic medicine for whole-body health."
+badge: "Certified Naturopath · 12 Years Practice · 1000+ Patients"
 cta_primary:
-  text: "Book a Consultation"
+  text: "Begin Your Wellness Plan"
   href: "#contact"
 cta_secondary:
-  text: "Explore Services"
+  text: "Explore Programs"
   href: "#services"
 stats:
-  - value: "1,200+"
-    label: "Patients Helped"
-  - value: "12"
-    label: "Years Experience"
-  - value: "95%"
-    label: "Patient Satisfaction"
-  - value: "4.9"
-    label: "Average Rating"
+  - value: "1,000+"
+    label: "Patients Guided"
+  - value: "12 Years"
+    label: "Clinical Practice"
+  - value: "Whole-Body"
+    label: "Integrated Care"
 ---

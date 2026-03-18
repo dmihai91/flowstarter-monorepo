@@ -1,21 +1,26 @@
 {
-  "id": "dark-studio",
-  "name": "Dark Studio",
-  "description": "Dark mode. Cinematic, immersive portfolio viewing.",
+  "id": "palette-6",
+  "name": "Afterdark Mono",
+  "description": "Dark default palette with bright orange cueing and clean neutrals.",
   "colors": {
-    "primary": "#6C63FF",
-    "primary-dark": "#5548D4",
-    "secondary": "#E94560",
-    "accent": "#00FF88",
-    "background": "#0A0A14",
-    "surface": "#14141F",
-    "text": "#F0F0F5",
-    "text-muted": "#8A8AA0"
+    "primary": "#FF6A3D",
+    "primary-dark": "#e65f37",
+    "secondary": "#090909",
+    "accent": "#F3F1EA",
+    "background": "#050505",
+    "surface": "#111111",
+    "text": "#F4F0E8",
+    "text-muted": "#A7A094"
   },
   "fonts": {
-    "heading": "Space Grotesk",
-    "body": "DM Sans",
-    "weights": { "heading": "700", "body": "400" }
+    "heading": "Bebas Neue",
+    "body": "Inter",
+    "weights": {
+      "heading": "400",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-indigo-900 to-neutral-900" }
+  "preview": {
+    "gradient": "from-[#050505] to-[#FF6A3D]"
+  }
 }

@@ -1,21 +1,26 @@
 {
-  "id": "forest-healing",
-  "name": "Forest Healing",
-  "description": "Deep and grounding. Ideal for nature therapy practices.",
+  "id": "palette-6",
+  "name": "Night Deploy",
+  "description": "Dark mode default with crisp cyan focus and readable contrast.",
   "colors": {
-    "primary": "#4A6B5D",
-    "primary-dark": "#3A564A",
-    "secondary": "#7A9B89",
-    "accent": "#D4A574",
-    "background": "#F5F8F6",
-    "surface": "#FFFFFF",
-    "text": "#1F2E26",
-    "text-muted": "#5A7065"
+    "primary": "#69E2FF",
+    "primary-dark": "#5fcbe6",
+    "secondary": "#0F1528",
+    "accent": "#A855F7",
+    "background": "#040812",
+    "surface": "#0D1322",
+    "text": "#EAF3FF",
+    "text-muted": "#93A5C0"
   },
   "fonts": {
-    "heading": "Fraunces",
-    "body": "Nunito",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Space Grotesk",
+    "body": "JetBrains Mono",
+    "weights": {
+      "heading": "700",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-emerald-700 to-green-500" }
+  "preview": {
+    "gradient": "from-[#040812] to-[#69E2FF]"
+  }
 }

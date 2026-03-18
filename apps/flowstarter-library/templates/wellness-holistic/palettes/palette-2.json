@@ -1,21 +1,26 @@
 {
-  "id": "golden-hour",
-  "name": "Golden Hour",
-  "description": "Warm sunset tones. Inviting and nurturing.",
+  "id": "palette-2",
+  "name": "Ocean Mineral",
+  "description": "Seafoam and stone for a restorative, clean look.",
   "colors": {
-    "primary": "#C4956A",
-    "primary-dark": "#A87D55",
-    "secondary": "#E8D4B8",
-    "accent": "#7A9E7E",
-    "background": "#FFFBF5",
+    "primary": "#5C8A8A",
+    "primary-dark": "#537c7c",
+    "secondary": "#F1F7F7",
+    "accent": "#CFA36F",
+    "background": "#FBFEFD",
     "surface": "#FFFFFF",
-    "text": "#3D2E1F",
-    "text-muted": "#8A7564"
+    "text": "#243637",
+    "text-muted": "#6A7F80"
   },
   "fonts": {
-    "heading": "DM Serif Display",
-    "body": "Source Sans 3",
-    "weights": { "heading": "400", "body": "400" }
+    "heading": "Gilda Display",
+    "body": "Mulish",
+    "weights": {
+      "heading": "400",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-amber-500 to-amber-200" }
+  "preview": {
+    "gradient": "from-[#5C8A8A] to-[#CFA36F]"
+  }
 }

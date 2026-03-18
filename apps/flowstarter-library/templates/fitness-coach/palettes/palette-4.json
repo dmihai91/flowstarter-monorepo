@@ -1,21 +1,26 @@
 {
-  "id": "warm-sand",
-  "name": "Warm Sand",
-  "description": "Nurturing and earthy. Perfect for holistic practitioners.",
+  "id": "palette-4",
+  "name": "Titan Purple",
+  "description": "Dark violet and electric orange for aggressive contrast.",
   "colors": {
-    "primary": "#B89B7A",
-    "primary-dark": "#A08665",
-    "secondary": "#D4C4B0",
-    "accent": "#7A9B89",
-    "background": "#FDFBF7",
-    "surface": "#FFFFFF",
-    "text": "#3D3630",
-    "text-muted": "#8B7D70"
+    "primary": "#7C3AED",
+    "primary-dark": "#7034d5",
+    "secondary": "#0F0B19",
+    "accent": "#FB923C",
+    "background": "#090613",
+    "surface": "#171125",
+    "text": "#F8F5FF",
+    "text-muted": "#A698C2"
   },
   "fonts": {
-    "heading": "DM Serif Display",
-    "body": "DM Sans",
-    "weights": { "heading": "400", "body": "400" }
+    "heading": "Barlow Condensed",
+    "body": "Barlow",
+    "weights": {
+      "heading": "800",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-amber-600 to-yellow-400" }
+  "preview": {
+    "gradient": "from-[#7C3AED] to-[#FB923C]"
+  }
 }

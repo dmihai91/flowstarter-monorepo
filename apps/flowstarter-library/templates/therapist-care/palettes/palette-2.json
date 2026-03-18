@@ -1,21 +1,26 @@
 {
-  "id": "ocean-calm",
+  "id": "palette-2",
   "name": "Ocean Calm",
-  "description": "Peaceful and reassuring. Great for mental health practitioners.",
+  "description": "Soft sea blues for reassuring, clear communication.",
   "colors": {
-    "primary": "#5B8FA8",
-    "primary-dark": "#4A7A91",
-    "secondary": "#8FBCD4",
-    "accent": "#E8B4A0",
-    "background": "#F7FAFB",
+    "primary": "#4C7A9D",
+    "primary-dark": "#446e8d",
+    "secondary": "#EEF6FB",
+    "accent": "#2A9D8F",
+    "background": "#F8FCFF",
     "surface": "#FFFFFF",
-    "text": "#2C3E4A",
-    "text-muted": "#6B8494"
+    "text": "#203445",
+    "text-muted": "#61798A"
   },
   "fonts": {
-    "heading": "Libre Baskerville",
-    "body": "Open Sans",
-    "weights": { "heading": "700", "body": "400" }
+    "heading": "Cormorant Garamond",
+    "body": "Inter",
+    "weights": {
+      "heading": "600",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-cyan-600 to-sky-400" }
+  "preview": {
+    "gradient": "from-[#4C7A9D] to-[#2A9D8F]"
+  }
 }

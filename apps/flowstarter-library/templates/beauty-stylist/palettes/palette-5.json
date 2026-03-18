@@ -1,21 +1,26 @@
 {
-  "id": "sage-wellness",
-  "name": "Sage Wellness",
-  "description": "Natural and clean. Organic beauty vibes.",
+  "id": "palette-5",
+  "name": "Ivory Editorial",
+  "description": "Minimal ivory with black and clay accents for magazine polish.",
   "colors": {
-    "primary": "#7A9E7E",
-    "primary-dark": "#5F8263",
-    "secondary": "#C8DBC8",
-    "accent": "#D4A574",
-    "background": "#F8FAF8",
+    "primary": "#2B2B2B",
+    "primary-dark": "#272727",
+    "secondary": "#FAF7F2",
+    "accent": "#C97B63",
+    "background": "#FFFEFD",
     "surface": "#FFFFFF",
-    "text": "#2D3B2E",
-    "text-muted": "#6B7C6C"
+    "text": "#191514",
+    "text-muted": "#746C67"
   },
   "fonts": {
-    "heading": "Libre Baskerville",
-    "body": "Open Sans",
-    "weights": { "heading": "700", "body": "400" }
+    "heading": "Cormorant",
+    "body": "Jost",
+    "weights": {
+      "heading": "600",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-green-500 to-green-300" }
+  "preview": {
+    "gradient": "from-[#2B2B2B] to-[#C97B63]"
+  }
 }

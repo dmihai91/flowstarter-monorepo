@@ -1,21 +1,26 @@
 {
-  "id": "forest-healing",
-  "name": "Forest Healing",
-  "description": "Deep and grounding. Ideal for nature therapy practices.",
+  "id": "palette-6",
+  "name": "Night Fluency",
+  "description": "Dark mode with coral warmth and aqua clarity.",
   "colors": {
-    "primary": "#4A6B5D",
-    "primary-dark": "#3A564A",
-    "secondary": "#7A9B89",
-    "accent": "#D4A574",
-    "background": "#F5F8F6",
-    "surface": "#FFFFFF",
-    "text": "#1F2E26",
-    "text-muted": "#5A7065"
+    "primary": "#FF7A7A",
+    "primary-dark": "#e66e6e",
+    "secondary": "#151018",
+    "accent": "#57D7CF",
+    "background": "#0C0910",
+    "surface": "#18131D",
+    "text": "#FFF6F2",
+    "text-muted": "#B39DA2"
   },
   "fonts": {
-    "heading": "Fraunces",
-    "body": "Nunito",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Nunito",
+    "body": "Nunito Sans",
+    "weights": {
+      "heading": "800",
+      "body": "600"
+    }
   },
-  "preview": { "gradient": "from-emerald-700 to-green-500" }
+  "preview": {
+    "gradient": "from-[#0C0910] to-[#57D7CF]"
+  }
 }

@@ -1,21 +1,26 @@
 {
-  "id": "lavender-peace",
-  "name": "Lavender Peace",
-  "description": "Gentle and soothing. Ideal for wellness coaches.",
+  "id": "palette-3",
+  "name": "Warm Vinyl",
+  "description": "Burnt orange and plum for analog warmth and personality.",
   "colors": {
-    "primary": "#9B8BB4",
-    "primary-dark": "#8677A1",
-    "secondary": "#C4B8D9",
-    "accent": "#D4A574",
-    "background": "#FAF9FC",
-    "surface": "#FFFFFF",
-    "text": "#3D3650",
-    "text-muted": "#7B7290"
+    "primary": "#C15C2B",
+    "primary-dark": "#ae5327",
+    "secondary": "#2A1020",
+    "accent": "#F6C453",
+    "background": "#160913",
+    "surface": "#24111D",
+    "text": "#FFF0E8",
+    "text-muted": "#C7A79A"
   },
   "fonts": {
-    "heading": "Playfair Display",
+    "heading": "Abril Fatface",
     "body": "Lato",
-    "weights": { "heading": "600", "body": "400" }
+    "weights": {
+      "heading": "400",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-purple-400 to-violet-300" }
+  "preview": {
+    "gradient": "from-[#C15C2B] to-[#F6C453]"
+  }
 }

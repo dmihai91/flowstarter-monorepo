@@ -68,5 +68,35 @@
       "optional": true,
       "configPath": "content/integrations/newsletter.md"
     }
-  }
+  },
+  "fonts": [
+    {
+      "id": "font-1",
+      "name": "Luxury",
+      "heading": "Cormorant",
+      "body": "Jost",
+      "googleFonts": "Cormorant:ital,wght@0,300;0,600;1,300;1,600&family=Jost:wght@400;500"
+    },
+    {
+      "id": "font-2",
+      "name": "Editorial",
+      "heading": "Playfair Display",
+      "body": "Inter",
+      "googleFonts": "Playfair+Display:wght@700&family=Inter:wght@400;500"
+    },
+    {
+      "id": "font-3",
+      "name": "Soft",
+      "heading": "DM Serif Display",
+      "body": "Nunito Sans",
+      "googleFonts": "DM+Serif+Display:wght@400&family=Nunito+Sans:wght@400;600"
+    },
+    {
+      "id": "font-4",
+      "name": "Modern",
+      "heading": "Prata",
+      "body": "Manrope",
+      "googleFonts": "Prata:wght@400&family=Manrope:wght@400;500"
+    }
+  ]
 }

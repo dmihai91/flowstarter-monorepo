@@ -1,21 +1,26 @@
 {
-  "id": "serene-sage",
-  "name": "Serene Sage",
-  "description": "Calming and grounded. Perfect for counselors and therapists.",
+  "id": "palette-1",
+  "name": "Boardroom Gold",
+  "description": "Deep navy with sharp gold highlights for premium authority.",
   "colors": {
-    "primary": "#6B8E6B",
-    "primary-dark": "#5A7A5A",
-    "secondary": "#A8C5A8",
-    "accent": "#D4A574",
-    "background": "#F8FAF7",
+    "primary": "#1B1F3A",
+    "primary-dark": "#181c34",
+    "secondary": "#F8F4EF",
+    "accent": "#E8A838",
+    "background": "#FFFFFF",
     "surface": "#FFFFFF",
-    "text": "#2D3B2D",
-    "text-muted": "#6B7C6B"
+    "text": "#1B1F3A",
+    "text-muted": "#5A607F"
   },
   "fonts": {
-    "heading": "Cormorant Garamond",
-    "body": "Nunito",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Playfair Display",
+    "body": "DM Sans",
+    "weights": {
+      "heading": "700",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-green-600 to-green-400" }
+  "preview": {
+    "gradient": "from-[#1B1F3A] to-[#E8A838]"
+  }
 }

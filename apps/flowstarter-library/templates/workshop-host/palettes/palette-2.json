@@ -1,21 +1,26 @@
 {
-  "id": "ocean-calm",
-  "name": "Ocean Calm",
-  "description": "Peaceful and reassuring. Great for mental health practitioners.",
+  "id": "palette-2",
+  "name": "Canyon Paper",
+  "description": "Ochre and clay tones with an editorial workshop feel.",
   "colors": {
-    "primary": "#5B8FA8",
-    "primary-dark": "#4A7A91",
-    "secondary": "#8FBCD4",
-    "accent": "#E8B4A0",
-    "background": "#F7FAFB",
+    "primary": "#9A5C2F",
+    "primary-dark": "#8b532a",
+    "secondary": "#FBF1E3",
+    "accent": "#355070",
+    "background": "#FFFDF9",
     "surface": "#FFFFFF",
-    "text": "#2C3E4A",
-    "text-muted": "#6B8494"
+    "text": "#352418",
+    "text-muted": "#856856"
   },
   "fonts": {
-    "heading": "Libre Baskerville",
-    "body": "Open Sans",
-    "weights": { "heading": "700", "body": "400" }
+    "heading": "Fraunces",
+    "body": "Outfit",
+    "weights": {
+      "heading": "700",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-cyan-600 to-sky-400" }
+  "preview": {
+    "gradient": "from-[#9A5C2F] to-[#355070]"
+  }
 }

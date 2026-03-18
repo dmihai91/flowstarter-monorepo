@@ -1,21 +1,26 @@
 {
-  "id": "serene-sage",
+  "id": "palette-1",
   "name": "Serene Sage",
-  "description": "Calming and grounded. Perfect for counselors and therapists.",
+  "description": "Calming green neutrals for grounded, trust-building pages.",
   "colors": {
     "primary": "#6B8E6B",
-    "primary-dark": "#5A7A5A",
-    "secondary": "#A8C5A8",
-    "accent": "#D4A574",
-    "background": "#F8FAF7",
+    "primary-dark": "#608060",
+    "secondary": "#F5F0EB",
+    "accent": "#C4956A",
+    "background": "#FAFAF7",
     "surface": "#FFFFFF",
     "text": "#2D3B2D",
-    "text-muted": "#6B7C6B"
+    "text-muted": "#6A7767"
   },
   "fonts": {
     "heading": "Cormorant Garamond",
-    "body": "Nunito",
-    "weights": { "heading": "600", "body": "400" }
+    "body": "Inter",
+    "weights": {
+      "heading": "600",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-green-600 to-green-400" }
+  "preview": {
+    "gradient": "from-[#6B8E6B] to-[#C4956A]"
+  }
 }

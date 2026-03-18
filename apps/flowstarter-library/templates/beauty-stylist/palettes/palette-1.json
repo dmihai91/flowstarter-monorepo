@@ -1,21 +1,26 @@
 {
-  "id": "rose-gold",
-  "name": "Rose Gold",
-  "description": "Warm and luxurious. The signature beauty palette.",
+  "id": "palette-1",
+  "name": "Dusty Rose",
+  "description": "Soft rose and blush for elevated luxury service brands.",
   "colors": {
-    "primary": "#B76E79",
-    "primary-dark": "#9A5B65",
-    "secondary": "#E8C4C8",
-    "accent": "#D4A574",
-    "background": "#FDF8F7",
+    "primary": "#C9607A",
+    "primary-dark": "#b5566e",
+    "secondary": "#FBF5F7",
+    "accent": "#8B5E3C",
+    "background": "#FFF9FA",
     "surface": "#FFFFFF",
-    "text": "#2D1F21",
-    "text-muted": "#7A6365"
+    "text": "#2A1520",
+    "text-muted": "#7C616D"
   },
   "fonts": {
-    "heading": "Playfair Display",
-    "body": "Lato",
-    "weights": { "heading": "700", "body": "400" }
+    "heading": "Cormorant",
+    "body": "Jost",
+    "weights": {
+      "heading": "600",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-rose-500 to-rose-300" }
+  "preview": {
+    "gradient": "from-[#C9607A] to-[#8B5E3C]"
+  }
 }

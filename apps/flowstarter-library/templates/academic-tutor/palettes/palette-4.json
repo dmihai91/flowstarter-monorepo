@@ -1,21 +1,26 @@
 {
-  "id": "warm-sand",
-  "name": "Warm Sand",
-  "description": "Nurturing and earthy. Perfect for holistic practitioners.",
+  "id": "palette-4",
+  "name": "STEM Cyan",
+  "description": "Technical cyan and slate for modern tutoring funnels.",
   "colors": {
-    "primary": "#B89B7A",
-    "primary-dark": "#A08665",
-    "secondary": "#D4C4B0",
-    "accent": "#7A9B89",
-    "background": "#FDFBF7",
+    "primary": "#1177AA",
+    "primary-dark": "#0f6b99",
+    "secondary": "#ECF8FC",
+    "accent": "#8B5CF6",
+    "background": "#FAFDFF",
     "surface": "#FFFFFF",
-    "text": "#3D3630",
-    "text-muted": "#8B7D70"
+    "text": "#183142",
+    "text-muted": "#688191"
   },
   "fonts": {
-    "heading": "DM Serif Display",
-    "body": "DM Sans",
-    "weights": { "heading": "400", "body": "400" }
+    "heading": "Merriweather",
+    "body": "Source Sans 3",
+    "weights": {
+      "heading": "700",
+      "body": "600"
+    }
   },
-  "preview": { "gradient": "from-amber-600 to-yellow-400" }
+  "preview": {
+    "gradient": "from-[#1177AA] to-[#8B5CF6]"
+  }
 }

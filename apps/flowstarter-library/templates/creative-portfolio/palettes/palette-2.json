@@ -1,21 +1,26 @@
 {
-  "id": "studio-warm",
-  "name": "Studio Warm",
-  "description": "Earthy warmth meets clean design. Gallery-ready.",
+  "id": "palette-2",
+  "name": "Acid Lime",
+  "description": "Black, acid green, and bone for experimental studio vibes.",
   "colors": {
-    "primary": "#C45B28",
-    "primary-dark": "#A84A1E",
-    "secondary": "#2B4141",
-    "accent": "#E8B059",
-    "background": "#FAF6F1",
-    "surface": "#FFFFFF",
-    "text": "#2B2B2B",
-    "text-muted": "#7A7A7A"
+    "primary": "#B8FF3B",
+    "primary-dark": "#a6e635",
+    "secondary": "#090909",
+    "accent": "#F5F5F0",
+    "background": "#0B0B0B",
+    "surface": "#161616",
+    "text": "#F7F6EF",
+    "text-muted": "#B4B0A1"
   },
   "fonts": {
-    "heading": "Sora",
+    "heading": "Bebas Neue",
     "body": "Inter",
-    "weights": { "heading": "600", "body": "400" }
+    "weights": {
+      "heading": "400",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-orange-600 to-amber-400" }
+  "preview": {
+    "gradient": "from-[#B8FF3B] to-[#F5F5F0]"
+  }
 }

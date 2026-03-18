@@ -1,21 +1,26 @@
 {
-  "id": "warm-sand",
-  "name": "Warm Sand",
-  "description": "Nurturing and earthy. Perfect for holistic practitioners.",
+  "id": "palette-4",
+  "name": "Emerald Peak",
+  "description": "Dark green sophistication with crisp ivory contrast.",
   "colors": {
-    "primary": "#B89B7A",
-    "primary-dark": "#A08665",
-    "secondary": "#D4C4B0",
-    "accent": "#7A9B89",
-    "background": "#FDFBF7",
+    "primary": "#1F4D4A",
+    "primary-dark": "#1c4543",
+    "secondary": "#F3F8F5",
+    "accent": "#D7B56D",
+    "background": "#FCFFFD",
     "surface": "#FFFFFF",
-    "text": "#3D3630",
-    "text-muted": "#8B7D70"
+    "text": "#15302F",
+    "text-muted": "#5B7775"
   },
   "fonts": {
-    "heading": "DM Serif Display",
+    "heading": "Playfair Display",
     "body": "DM Sans",
-    "weights": { "heading": "400", "body": "400" }
+    "weights": {
+      "heading": "700",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-amber-600 to-yellow-400" }
+  "preview": {
+    "gradient": "from-[#1F4D4A] to-[#D7B56D]"
+  }
 }

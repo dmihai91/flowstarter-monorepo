@@ -1,21 +1,26 @@
 {
-  "id": "forest-healing",
-  "name": "Forest Healing",
-  "description": "Deep and grounding. Ideal for nature therapy practices.",
+  "id": "palette-6",
+  "name": "Night Summit",
+  "description": "Dark mode for premium personal brands and executive funnels.",
   "colors": {
-    "primary": "#4A6B5D",
-    "primary-dark": "#3A564A",
-    "secondary": "#7A9B89",
-    "accent": "#D4A574",
-    "background": "#F5F8F6",
-    "surface": "#FFFFFF",
-    "text": "#1F2E26",
-    "text-muted": "#5A7065"
+    "primary": "#E8A838",
+    "primary-dark": "#d19732",
+    "secondary": "#111420",
+    "accent": "#F7E7C1",
+    "background": "#090B12",
+    "surface": "#151926",
+    "text": "#F5F3ED",
+    "text-muted": "#A7A59F"
   },
   "fonts": {
-    "heading": "Fraunces",
-    "body": "Nunito",
-    "weights": { "heading": "600", "body": "400" }
+    "heading": "Playfair Display",
+    "body": "DM Sans",
+    "weights": {
+      "heading": "700",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-emerald-700 to-green-500" }
+  "preview": {
+    "gradient": "from-[#090B12] to-[#E8A838]"
+  }
 }

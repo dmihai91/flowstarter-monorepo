@@ -3,16 +3,42 @@
   "slug": "coach-pro",
   "description": "Professional template for life coaches, business coaches, and executive coaches. Transformation-focused design with booking calendar, coaching packages, and client success stories.",
   "category": "coaching",
-  "tags": ["coach", "life-coach", "business-coach", "career-coach", "executive-coach", "transformation", "professional"],
+  "tags": [
+    "coach",
+    "life-coach",
+    "business-coach",
+    "career-coach",
+    "executive-coach",
+    "transformation",
+    "professional"
+  ],
   "framework": "astro",
-  "features": ["Multi-page", "Booking integration", "Newsletter integration", "Coaching packages", "Testimonials", "FAQ", "Dark mode"],
+  "features": [
+    "Multi-page",
+    "Booking integration",
+    "Newsletter integration",
+    "Coaching packages",
+    "Testimonials",
+    "FAQ",
+    "Dark mode"
+  ],
   "integrations": {
     "booking": {
       "name": "Booking System",
       "description": "Connect Calendly to let clients book coaching sessions",
       "providers": [
-        {"id": "calendly", "name": "Calendly", "field": "calendly_url", "placeholder": "https://calendly.com/your-username/discovery-call"},
-        {"id": "calcom", "name": "Cal.com", "field": "calcom_url", "placeholder": "https://cal.com/your-username/discovery-call"}
+        {
+          "id": "calendly",
+          "name": "Calendly",
+          "field": "calendly_url",
+          "placeholder": "https://calendly.com/your-username/discovery-call"
+        },
+        {
+          "id": "calcom",
+          "name": "Cal.com",
+          "field": "calcom_url",
+          "placeholder": "https://cal.com/your-username/discovery-call"
+        }
       ],
       "optional": true,
       "configPath": "content/integrations/booking.md"
@@ -21,12 +47,57 @@
       "name": "Newsletter",
       "description": "Connect Mailchimp to share coaching insights with subscribers",
       "providers": [
-        {"id": "mailchimp", "name": "Mailchimp", "field": "mailchimp_url", "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"},
-        {"id": "convertkit", "name": "ConvertKit", "field": "convertkit_form_id", "placeholder": "1234567"},
-        {"id": "buttondown", "name": "Buttondown", "field": "buttondown_username", "placeholder": "your-username"}
+        {
+          "id": "mailchimp",
+          "name": "Mailchimp",
+          "field": "mailchimp_url",
+          "placeholder": "https://xxx.us1.list-manage.com/subscribe/post?u=xxx&id=xxx"
+        },
+        {
+          "id": "convertkit",
+          "name": "ConvertKit",
+          "field": "convertkit_form_id",
+          "placeholder": "1234567"
+        },
+        {
+          "id": "buttondown",
+          "name": "Buttondown",
+          "field": "buttondown_username",
+          "placeholder": "your-username"
+        }
       ],
       "optional": true,
       "configPath": "content/integrations/newsletter.md"
     }
-  }
+  },
+  "fonts": [
+    {
+      "id": "font-1",
+      "name": "Power",
+      "heading": "Playfair Display",
+      "body": "DM Sans",
+      "googleFonts": "Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500"
+    },
+    {
+      "id": "font-2",
+      "name": "Modern",
+      "heading": "Space Grotesk",
+      "body": "Inter",
+      "googleFonts": "Space+Grotesk:wght@600;700&family=Inter:wght@400;500"
+    },
+    {
+      "id": "font-3",
+      "name": "Authority",
+      "heading": "Libre Baskerville",
+      "body": "Source Sans 3",
+      "googleFonts": "Libre+Baskerville:wght@700&family=Source+Sans+3:wght@400;600"
+    },
+    {
+      "id": "font-4",
+      "name": "Editorial",
+      "heading": "Fraunces",
+      "body": "Outfit",
+      "googleFonts": "Fraunces:ital,wght@0,300;1,700&family=Outfit:wght@400;500"
+    }
+  ]
 }

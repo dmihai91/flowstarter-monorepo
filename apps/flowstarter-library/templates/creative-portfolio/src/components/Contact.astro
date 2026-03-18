@@ -20,11 +20,11 @@ interface ContactData {
 }
 
 interface SiteData {
-  location: string;
-  phone: string;
-  phone_display: string;
-  email: string;
-  address_lines: string[];
+  location?: string;
+  phone?: string;
+  phone_display?: string;
+  email?: string;
+  address_lines?: string[];
 }
 
 const contact = contactFrontmatter as ContactData;
@@ -32,6 +32,10 @@ const site = siteFrontmatter as SiteData;
 const availability: string[] = contact.availability;
 const hours: string[] = contact.hours;
 const fields: ContactField[] = contact.form_fields;
+const addressLines: string[] = site.address_lines ?? (site.location ? [site.location] : []);
+const phoneHref: string | undefined = site.phone;
+const phoneDisplay: string | undefined = site.phone_display ?? site.phone;
+const emailAddress: string | undefined = site.email;
 ---
 
 <section id="contact" class="section-shell pb-20">
@@ -46,18 +50,24 @@ const fields: ContactField[] = contact.form_fields;
       <article class="glass-card p-6">
         <p class="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--color-primary)]">Reach Out</p>
         <div class="mt-5 space-y-4 text-sm text-[var(--color-text-muted)]">
-          <p class="flex items-start gap-3">
-            <Icon name="map-pin" class="mt-0.5 h-4 w-4 text-[var(--color-primary)]" />
-            <span>{site.address_lines.join(', ')}</span>
-          </p>
-          <a href={`tel:${site.phone}`} class="footer-link flex items-center gap-3">
-            <Icon name="phone" class="h-4 w-4 text-[var(--color-primary)]" />
-            {site.phone_display}
-          </a>
-          <a href={`mailto:${site.email}`} class="footer-link flex items-center gap-3">
-            <Icon name="mail" class="h-4 w-4 text-[var(--color-primary)]" />
-            {site.email}
-          </a>
+          {addressLines.length > 0 && (
+            <p class="flex items-start gap-3">
+              <Icon name="map-pin" class="mt-0.5 h-4 w-4 text-[var(--color-primary)]" />
+              <span>{addressLines.join(', ')}</span>
+            </p>
+          )}
+          {phoneHref && phoneDisplay && (
+            <a href={`tel:${phoneHref}`} class="footer-link flex items-center gap-3">
+              <Icon name="phone" class="h-4 w-4 text-[var(--color-primary)]" />
+              {phoneDisplay}
+            </a>
+          )}
+          {emailAddress && (
+            <a href={`mailto:${emailAddress}`} class="footer-link flex items-center gap-3">
+              <Icon name="mail" class="h-4 w-4 text-[var(--color-primary)]" />
+              {emailAddress}
+            </a>
+          )}
         </div>
       </article>
 
@@ -80,7 +90,9 @@ const fields: ContactField[] = contact.form_fields;
             <li>{item}</li>
           ))}
         </ul>
-        <p class="mt-5 text-xs uppercase tracking-[0.24em] text-[var(--color-text-muted)]">{site.location}</p>
+        {site.location && (
+          <p class="mt-5 text-xs uppercase tracking-[0.24em] text-[var(--color-text-muted)]">{site.location}</p>
+        )}
       </article>
     </div>
 

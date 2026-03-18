@@ -1,21 +1,26 @@
 {
-  "id": "neon-brutalist",
-  "name": "Neon Brutalist",
-  "description": "Raw, unapologetic. For the anti-portfolio portfolio.",
+  "id": "palette-4",
+  "name": "Studio Cream",
+  "description": "Off-white and black with vivid coral for editorial work.",
   "colors": {
-    "primary": "#00FF88",
-    "primary-dark": "#00CC6A",
-    "secondary": "#FF00AA",
-    "accent": "#FFEE00",
-    "background": "#F0F0F0",
+    "primary": "#FF5C38",
+    "primary-dark": "#e65332",
+    "secondary": "#F5F2EA",
+    "accent": "#111111",
+    "background": "#FFFCF6",
     "surface": "#FFFFFF",
-    "text": "#0A0A0A",
-    "text-muted": "#555555"
+    "text": "#141414",
+    "text-muted": "#6D675C"
   },
   "fonts": {
-    "heading": "JetBrains Mono",
-    "body": "Work Sans",
-    "weights": { "heading": "800", "body": "400" }
+    "heading": "Bebas Neue",
+    "body": "Inter",
+    "weights": {
+      "heading": "400",
+      "body": "500"
+    }
   },
-  "preview": { "gradient": "from-green-400 to-pink-500" }
+  "preview": {
+    "gradient": "from-[#FF5C38] to-[#111111]"
+  }
 }

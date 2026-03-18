@@ -1,80 +1,79 @@
 ---
-/**
- * Hero Component
- * Reads content from content/hero.md (frontmatter)
- */
-
-// Import frontmatter from markdown
 import { frontmatter as hero } from '../../content/hero.md';
 
-const { headline, subheadline, badge, cta_primary, cta_secondary, stats } = hero;
+interface HeroStat {
+  value: string;
+  label: string;
+}
+
+interface HeroCta {
+  text: string;
+  href: string;
+}
+
+interface HeroContent {
+  headline: string;
+  subheadline?: string;
+  badge?: string;
+  cta_primary?: HeroCta;
+  cta_secondary?: HeroCta;
+  stats?: HeroStat[];
+}
+
+const { headline, subheadline, badge, cta_primary, cta_secondary, stats = [] } = hero as HeroContent;
+const headlineLines: string[] = headline.split('\n');
 ---
 
-<section class="hero relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
-  <!-- Background gradient -->
-  <div class="absolute inset-0 bg-gradient-to-br from-primary to-primary-dark"></div>
-  <div class="absolute inset-0 bg-[url('/images/hero-pattern.svg')] opacity-10"></div>
-  
-  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-    <!-- Trust badge -->
-    {badge && (
-      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white mb-8">
-        <span class="text-yellow-400">★</span>
-        <span class="text-sm font-medium">{badge}</span>
+<section class="relative overflow-hidden px-4 pb-24 pt-28 sm:px-6 lg:px-8">
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_color-mix(in_srgb,var(--color-accent)_18%,white)_0%,white_45%,var(--color-background)_100%)]"></div>
+  <div class="absolute right-0 top-10 hidden h-[32rem] w-[32rem] rounded-full blur-3xl lg:block" style="background: color-mix(in srgb, var(--color-accent) 18%, transparent);"></div>
+  <div class="relative mx-auto grid max-w-6xl items-center gap-16 lg:grid-cols-[1.05fr_0.95fr]">
+    <div class="max-w-2xl">
+      {badge && (
+        <div class="mb-6 inline-flex items-center gap-3 rounded-full border px-5 py-2 text-sm font-medium backdrop-blur-xl" style="border-color: color-mix(in srgb, var(--color-primary) 18%, white); background: color-mix(in srgb, white 72%, var(--color-secondary) 28%); color: var(--color-text);">
+          <span class="h-2.5 w-2.5 rounded-full bg-[var(--color-accent)]"></span>
+          <span>{badge}</span>
+        </div>
+      )}
+      <h1 class="text-5xl font-black leading-[0.92] text-[var(--color-text)] sm:text-6xl lg:text-7xl">
+        {headline}
+      </h1>
+      {subheadline && (
+        <p class="mt-6 max-w-xl text-lg leading-8 text-[color:var(--color-text-muted)]">
+          {subheadline}
+        </p>
+      )}
+      <div class="mt-10 flex flex-col gap-4 sm:flex-row">
+        {cta_primary && (
+          <a href={cta_primary.href} class="inline-flex items-center justify-center rounded-full px-7 py-4 text-sm font-semibold text-white shadow-xl shadow-black/10 transition-transform duration-300 hover:-translate-y-0.5" style="background: var(--color-primary);">
+            {cta_primary.text}
+          </a>
+        )}
+        {cta_secondary && (
+          <a href={cta_secondary.href} class="inline-flex items-center justify-center rounded-full border px-7 py-4 text-sm font-semibold" style="border-color: color-mix(in srgb, var(--color-primary) 28%, white); color: var(--color-primary); background: white;">
+            {cta_secondary.text}
+          </a>
+        )}
       </div>
-    )}
-
-    <!-- Main headline -->
-    <h1 class="text-4xl md:text-6xl lg:text-7xl font-heading font-bold text-white leading-tight mb-6">
-      {headline}
-    </h1>
-    
-    <!-- Subheadline -->
-    {subheadline && (
-      <p class="text-lg md:text-xl text-white/80 max-w-3xl mx-auto mb-10">
-        {subheadline}
-      </p>
-    )}
-
-    <!-- CTAs -->
-    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-      {cta_primary && (
-        <a href={cta_primary.href} class="btn-primary">
-          {cta_primary.text}
-          <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-          </svg>
-        </a>
-      )}
-      {cta_secondary && (
-        <a href={cta_secondary.href} class="btn-secondary">
-          {cta_secondary.text}
-        </a>
-      )}
-    </div>
-
-    <!-- Stats -->
-    {stats && stats.length > 0 && (
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto">
-        {stats.map((stat) => (
-          <div class="text-center">
-            <div class="text-3xl md:text-4xl font-heading font-bold text-white mb-1">
-              {stat.value}
-            </div>
-            <div class="text-white/60 text-sm">{stat.label}</div>
+      <div class="mt-10 grid gap-4 sm:grid-cols-3">
+        {stats.map((stat: HeroStat) => (
+          <div class="rounded-2xl border border-white/60 bg-white/70 px-4 py-4 shadow-lg shadow-black/5 backdrop-blur-xl">
+            <div class="text-2xl font-bold text-[var(--color-text)]">{stat.value}</div>
+            <div class="mt-1 text-sm text-[color:var(--color-text-muted)]">{stat.label}</div>
           </div>
         ))}
       </div>
-    )}
+    </div>
+    <div class="relative">
+      <div class="absolute inset-6 rounded-[2rem] border-[14px]" style="border-color: color-mix(in srgb, var(--color-accent) 80%, white);"></div>
+      <div class="relative overflow-hidden rounded-[2.5rem] border border-white/50 bg-[linear-gradient(145deg,color-mix(in_srgb,var(--color-primary)_88%,white)_0%,color-mix(in_srgb,var(--color-primary)_58%,black)_100%)] p-6 shadow-[0_30px_80px_rgba(0,0,0,0.18)]">
+        <div class="aspect-[4/5] rounded-[2rem] bg-[radial-gradient(circle_at_50%_26%,rgba(255,255,255,0.85),rgba(255,255,255,0.1)_26%,transparent_27%),linear-gradient(180deg,rgba(255,255,255,0.15),rgba(0,0,0,0.15))]"></div>
+        <svg class="absolute inset-0 h-full w-full" viewBox="0 0 480 600" aria-hidden="true">
+          <circle cx="250" cy="190" r="88" fill="rgba(255,255,255,0.88)"></circle>
+          <path d="M160 472c18-88 72-134 154-134s136 46 154 134" fill="rgba(255,255,255,0.74)"></path>
+          <path d="M186 150c16-62 62-96 126-96 46 0 82 16 108 48-10 36-34 60-72 72-68 21-120 32-162 34z" fill="rgba(232,168,56,0.55)"></path>
+        </svg>
+      </div>
+    </div>
   </div>
 </section>
-
-<style>
-  .btn-primary {
-    @apply inline-flex items-center px-8 py-4 bg-white text-primary font-semibold rounded-xl hover:bg-white/90 transition-all shadow-lg shadow-black/20;
-  }
-  
-  .btn-secondary {
-    @apply inline-flex items-center px-8 py-4 border-2 border-white text-white font-semibold rounded-xl hover:bg-white/10 transition-all;
-  }
-</style>

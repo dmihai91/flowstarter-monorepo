@@ -1,21 +1,26 @@
 {
-  "id": "clay-earth",
-  "name": "Clay Earth",
-  "description": "Grounded terracotta and warm neutrals. Earthy authenticity.",
+  "id": "palette-4",
+  "name": "Lavender Botanical",
+  "description": "Dusty purple and herbal green for softer wellness positioning.",
   "colors": {
-    "primary": "#B8705A",
-    "primary-dark": "#9A5C48",
-    "secondary": "#D4B8A0",
-    "accent": "#6B8E6B",
-    "background": "#FBF7F4",
+    "primary": "#8F86B8",
+    "primary-dark": "#8179a6",
+    "secondary": "#F7F5FC",
+    "accent": "#95B89A",
+    "background": "#FCFBFE",
     "surface": "#FFFFFF",
-    "text": "#3A2A20",
-    "text-muted": "#8A7060"
+    "text": "#332F40",
+    "text-muted": "#7B768A"
   },
   "fonts": {
-    "heading": "Playfair Display",
-    "body": "Lato",
-    "weights": { "heading": "700", "body": "400" }
+    "heading": "Gilda Display",
+    "body": "Mulish",
+    "weights": {
+      "heading": "400",
+      "body": "400"
+    }
   },
-  "preview": { "gradient": "from-orange-700 to-orange-300" }
+  "preview": {
+    "gradient": "from-[#8F86B8] to-[#95B89A]"
+  }
 }

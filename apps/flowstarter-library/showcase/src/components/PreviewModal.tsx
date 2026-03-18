@@ -183,60 +183,52 @@ export function PreviewModal({
           </div>
         </div>
 
-        <div className="border-b border-neutral-200 px-4 py-4 dark:border-neutral-800 md:px-6">
-          <div className="flex gap-6 overflow-x-auto pb-1">
-            {palettes.length > 0 ? (
-              <div className="flex min-w-max items-center gap-3">
-                {palettes.map((palette: Palette) => {
-                  const isActive = selectedPalette?.id === palette.id;
-                  return (
-                    <button
-                      key={palette.id}
-                      onClick={() => setSelectedPalette(palette)}
-                      className="flex items-center gap-2"
-                    >
-                      <span
-                        className={`flex h-7 w-7 items-center justify-center rounded-full transition-all ${
-                          isActive ? 'ring-2 ring-purple-500 ring-offset-2 ring-offset-white dark:ring-offset-neutral-900' : ''
-                        }`}
-                        style={{ backgroundColor: palette.colors?.primary || '#8b5cf6' }}
-                      />
-                      <span
-                        className={`text-sm font-medium ${
-                          isActive
-                            ? 'text-purple-600 dark:text-purple-400'
-                            : 'text-neutral-500 dark:text-neutral-400'
-                        }`}
-                      >
-                        {palette.name}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            ) : null}
-
-            {fonts.length > 0 ? (
-              <div className="flex min-w-max items-center gap-2">
-                {fonts.map((font: Font) => {
-                  const isActive = selectedFont?.id === font.id;
-                  return (
-                    <button
-                      key={font.id}
-                      onClick={() => setSelectedFont(font)}
-                      className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
-                        isActive
-                          ? 'border-purple-500 bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300'
-                          : 'border-neutral-200 text-neutral-500 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-400 dark:hover:border-neutral-600'
-                      }`}
-                    >
-                      {font.name}
-                    </button>
-                  );
-                })}
-              </div>
-            ) : null}
-          </div>
+        <div className="border-b border-neutral-200 px-4 py-3 dark:border-neutral-800 md:px-6">
+          {/* Palettes — circles only on mobile, circles+name on md+ */}
+          {palettes.length > 0 ? (
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+              {palettes.map((palette: Palette) => {
+                const isActive = selectedPalette?.id === palette.id;
+                return (
+                  <button
+                    key={palette.id}
+                    onClick={() => setSelectedPalette(palette)}
+                    title={palette.name}
+                    className={`flex shrink-0 items-center gap-1.5 rounded-full border px-2 py-1 text-xs font-medium transition-all md:px-3 md:text-sm ${
+                      isActive
+                        ? 'border-purple-500 bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300'
+                        : 'border-neutral-200 text-neutral-500 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-400'
+                    }`}
+                  >
+                    <span
+                      className="h-4 w-4 shrink-0 rounded-full"
+                      style={{ backgroundColor: palette.colors?.primary || '#8b5cf6' }}
+                    />
+                    <span className="hidden sm:inline">{palette.name}</span>
+                  </button>
+                );
+              })}
+              {fonts.length > 0 && (
+                <div className="mx-1 h-5 w-px shrink-0 bg-neutral-200 dark:bg-neutral-700" />
+              )}
+              {fonts.map((font: Font) => {
+                const isActive = selectedFont?.id === font.id;
+                return (
+                  <button
+                    key={font.id}
+                    onClick={() => setSelectedFont(font)}
+                    className={`shrink-0 rounded-full border px-2 py-1 text-xs font-medium transition-colors md:px-3 md:text-sm ${
+                      isActive
+                        ? 'border-purple-500 bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300'
+                        : 'border-neutral-200 text-neutral-500 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-400'
+                    }`}
+                  >
+                    {font.name}
+                  </button>
+                );
+              })}
+            </div>
+          ) : null}
         </div>
 
         <div className="flex-1 overflow-auto bg-neutral-100 p-3 dark:bg-neutral-950 md:p-5">

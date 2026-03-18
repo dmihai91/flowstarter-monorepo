@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import * as path from 'path';
+import * as nodePath from 'path';
 import * as fs from 'fs';
 import { TemplateFetcher } from '../utils/template-fetcher.js';
 import { log } from '../logging.js';
@@ -21,11 +21,11 @@ export function createTemplatesRoutes() {
 		}
 
 		// Try specific theme file first
-		let imagePath = path.join(TEMPLATES_DIR, slug, filename);
+		let imagePath = nodePath.join(TEMPLATES_DIR, slug, filename);
 
 		if (!fs.existsSync(imagePath)) {
 			// Fallback to default thumbnail.png if specific theme not found
-			imagePath = path.join(TEMPLATES_DIR, slug, 'thumbnail.png');
+			imagePath = nodePath.join(TEMPLATES_DIR, slug, 'thumbnail.png');
 		}
 
 		if (fs.existsSync(imagePath)) {
@@ -50,13 +50,13 @@ export function createTemplatesRoutes() {
 			filename = 'preview-dark.png';
 		}
 
-		let imagePath = path.join(TEMPLATES_DIR, slug, filename);
+		let imagePath = nodePath.join(TEMPLATES_DIR, slug, filename);
 		console.error(`[HTTP] Checking path: ${imagePath}`);
 		console.error(`[HTTP] Path exists: ${fs.existsSync(imagePath)}`);
 
 		if (!fs.existsSync(imagePath)) {
 			// Fallback
-			imagePath = path.join(TEMPLATES_DIR, slug, 'preview.png');
+			imagePath = nodePath.join(TEMPLATES_DIR, slug, 'preview.png');
 			console.error(`[HTTP] Fallback path: ${imagePath}`);
 			console.error(`[HTTP] Fallback exists: ${fs.existsSync(imagePath)}`);
 		}
@@ -97,14 +97,14 @@ export function createTemplatesRoutes() {
 					// Load palettes from config or palettes/ folder
 					let palettes: Array<{ id: string; name: string; colors?: Record<string, string>; fonts?: { heading?: string; body?: string } }> = Array.isArray((t.config as any)?.palettes) ? (t.config as any).palettes : [];
 					if (palettes.length === 0) {
-						const palettesDir = path.join(TEMPLATES_DIR, slug, 'palettes');
+						const palettesDir = nodePath.join(TEMPLATES_DIR, slug, 'palettes');
 						if (fs.existsSync(palettesDir)) {
 							try {
 								const paletteFiles = fs.readdirSync(palettesDir)
 									.filter((f: string) => f.endsWith('.json'))
 									.sort();
 								palettes = paletteFiles.map((file: string) => {
-									const content = JSON.parse(fs.readFileSync(path.join(palettesDir, file), 'utf-8'));
+									const content = JSON.parse(fs.readFileSync(nodePath.join(palettesDir, file), 'utf-8'));
 									const c = content.colors || {};
 									return {
 										id: content.id || file.replace('.json', ''),
@@ -145,7 +145,7 @@ export function createTemplatesRoutes() {
 					
 					// Compute sensible flags for filtering
 					const hasDark = rawFeatures.some((f: string) => /dark/i.test(f)) ||
-						fs.existsSync(path.join(TEMPLATES_DIR, slug, 'thumbnail-dark.png'));
+						fs.existsSync(nodePath.join(TEMPLATES_DIR, slug, 'thumbnail-dark.png'));
 					const hasBooking = Boolean((integrations as any)['booking']) || rawFeatures.some((f: string) => /booking/i.test(f));
 					const hasNewsletter = Boolean((integrations as any)['newsletter']) || rawFeatures.some((f: string) => /newsletter/i.test(f));
 					const hasContact = rawFeatures.some((f: string) => /contact\s*form/i.test(f));
@@ -162,6 +162,12 @@ export function createTemplatesRoutes() {
 						useCase: t.metadata.useCase || [],
 						color,
 						thumbnail: `/api/templates/${slug}/thumbnail`,
+						thumbnailLight: fs.existsSync(nodePath.join(TEMPLATES_DIR, slug, 'thumbnail-light.png'))
+							? `/api/templates/${slug}/thumbnail?theme=light`
+							: `/api/templates/${slug}/thumbnail`,
+						thumbnailDark: fs.existsSync(nodePath.join(TEMPLATES_DIR, slug, 'thumbnail-dark.png'))
+							? `/api/templates/${slug}/thumbnail?theme=dark`
+							: `/api/templates/${slug}/thumbnail`,
 						palettes,
 						fonts,
 						theme: (t.config as any)?.theme || {},

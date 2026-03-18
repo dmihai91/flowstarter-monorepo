@@ -302,7 +302,7 @@ function AppContent(): React.ReactElement {
           </div>
         </main>
 
-        <Footer />
+        <Footer darkMode={darkMode} />
 
         {previewTemplate ? (
           <PreviewModal

@@ -25,6 +25,8 @@ export async function listTemplates(
   const templateList: TemplateListItem[] = templates.map(template => {
     const slug = template.metadata.slug;
     const thumbnailPath = path.join(TEMPLATES_DIR, slug, 'thumbnail.png');
+    const thumbnailLightPath = path.join(TEMPLATES_DIR, slug, 'thumbnail-light.png');
+    const thumbnailDarkPath = path.join(TEMPLATES_DIR, slug, 'thumbnail-dark.png');
     const previewPath = path.join(TEMPLATES_DIR, slug, 'preview.png');
     
     return {
@@ -37,6 +39,12 @@ export async function listTemplates(
       totalLOC: template.metadata.stats.totalLOC,
       thumbnailUrl: fs.existsSync(thumbnailPath)
         ? `${BASE_URL}/api/templates/${slug}/thumbnail`
+        : undefined,
+      thumbnailLightUrl: fs.existsSync(thumbnailLightPath)
+        ? `${BASE_URL}/api/templates/${slug}/thumbnail-light`
+        : undefined,
+      thumbnailDarkUrl: fs.existsSync(thumbnailDarkPath)
+        ? `${BASE_URL}/api/templates/${slug}/thumbnail-dark`
         : undefined,
       previewUrl: fs.existsSync(previewPath)
         ? `${BASE_URL}/api/templates/${slug}/preview`

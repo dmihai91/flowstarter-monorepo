@@ -1,4 +1,5 @@
 import React from 'react';
+import { Zap, Palette, Type, BarChart2, Target } from 'lucide-react';
 
 interface HeroProps {
   templateCount: number;
@@ -6,20 +7,16 @@ interface HeroProps {
 
 interface HeroStat {
   label: string;
-  icon: string;
+  icon: React.ReactElement;
 }
-
-const heroStats: HeroStat[] = [
-  { label: '6 Palettes each', icon: '🎨' },
-  { label: '4 Font Pairings', icon: '✦' },
-  { label: 'Analytics Ready', icon: '📊' },
-  { label: 'Leads Capture', icon: '🎯' },
-];
 
 export function Hero({ templateCount }: HeroProps): React.ReactElement {
   const stats: HeroStat[] = [
-    { label: `${templateCount} Templates`, icon: '⚡' },
-    ...heroStats,
+    { label: `${templateCount} Templates`, icon: <Zap size={14} /> },
+    { label: '6 Palettes each',            icon: <Palette size={14} /> },
+    { label: '4 Font Pairings',            icon: <Type size={14} /> },
+    { label: 'Analytics Ready',            icon: <BarChart2 size={14} /> },
+    { label: 'Leads Capture',              icon: <Target size={14} /> },
   ];
 
   return (
@@ -48,7 +45,7 @@ export function Hero({ templateCount }: HeroProps): React.ReactElement {
                 key={label}
                 className="flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3 py-1.5 text-sm font-medium text-neutral-600 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300"
               >
-                <span>{icon}</span>
+                <span className="text-purple-500 dark:text-purple-400">{icon}</span>
                 <span>{label}</span>
               </div>
             ))}

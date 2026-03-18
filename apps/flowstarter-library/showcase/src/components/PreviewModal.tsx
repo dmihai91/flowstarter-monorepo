@@ -1,12 +1,14 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ExternalLink, Monitor, Smartphone, Tablet, X } from 'lucide-react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 export interface PaletteColor {
   primary?: string;
+  'primary-dark'?: string;
   secondary?: string;
   accent?: string;
   background?: string;
+  surface?: string;
   text?: string;
+  'text-muted'?: string;
 }
 
 export interface Palette {
@@ -20,24 +22,14 @@ export interface Font {
   name: string;
   heading?: string;
   body?: string;
-}
-
-interface TemplateHero {
-  headline?: string;
-  subheadline?: string;
+  googleFonts?: string;
 }
 
 interface Template {
   slug: string;
   name: string;
-  description: string;
-  thumbnail?: string;
-  thumbnailLight?: string;
-  thumbnailDark?: string;
   palettes?: Palette[];
   fonts?: Font[];
-  hasPreview?: boolean;
-  hero?: TemplateHero;
 }
 
 interface PreviewModalProps {
@@ -48,86 +40,157 @@ interface PreviewModalProps {
 
 type ViewMode = 'desktop' | 'tablet' | 'mobile';
 
-interface ViewModeOption {
-  mode: ViewMode;
-  label: string;
-  icon: IconComponent;
-  widthClassName: string;
+// Generate CSS overrides from palette colors — covers all Tailwind primary/accent variants
+function buildPaletteCss(colors: PaletteColor): string {
+  const p  = colors.primary     || '';
+  const pd = colors['primary-dark'] || p;
+  const ac = colors.accent      || p;
+  const bg = colors.background  || '';
+  if (!p) return '';
+  return `
+    /* palette override — injected by FlowStarter preview */
+    :root { --pal-p: ${p}; --pal-pd: ${pd}; --pal-ac: ${ac}; }
+    .bg-primary                { background-color: ${p}  !important }
+    .bg-primary-dark           { background-color: ${pd} !important }
+    .text-primary              { color:            ${p}  !important }
+    .border-primary            { border-color:     ${p}  !important }
+    .ring-primary              { --tw-ring-color:  ${p}  !important }
+    .from-primary              { --tw-gradient-from: ${p} !important }
+    .to-primary                { --tw-gradient-to:   ${p} !important }
+    .text-accent               { color:            ${ac} !important }
+    .bg-accent                 { background-color: ${ac} !important }
+    .border-accent             { border-color:     ${ac} !important }
+    .hover\\:bg-primary:hover      { background-color: ${p}  !important }
+    .hover\\:bg-primary-dark:hover { background-color: ${pd} !important }
+    .hover\\:text-primary:hover    { color:            ${p}  !important }
+    .focus\\:border-primary:focus  { border-color:     ${p}  !important }
+    .focus\\:ring-primary:focus    { --tw-ring-color:  ${p}  !important }
+    /* button shorthand classes */
+    .btn-primary  { background-color: ${p}  !important; border-color: ${p} !important }
+    .btn-outline  { border-color: ${p} !important; color: ${p} !important }
+    .btn-outline:hover { background-color: ${p} !important }
+    ${bg ? `body { background-color: ${bg} !important }` : ''}
+  `.trim();
 }
 
-type IconComponent = (props: { className?: string }) => React.JSX.Element;
+function injectPalette(iframe: HTMLIFrameElement, palette: Palette | null): void {
+  try {
+    const doc = iframe.contentDocument;
+    if (!doc) return;
+    const existing = doc.getElementById('fs-palette-override');
+    if (existing) existing.remove();
+    if (!palette?.colors) return;
+    const style = doc.createElement('style');
+    style.id = 'fs-palette-override';
+    style.textContent = buildPaletteCss(palette.colors);
+    doc.head.appendChild(style);
+  } catch { /* cross-origin guard */ }
+}
 
-const MonitorIcon = Monitor as unknown as IconComponent;
-const TabletIcon = Tablet as unknown as IconComponent;
-const SmartphoneIcon = Smartphone as unknown as IconComponent;
-const CloseIcon = X as unknown as IconComponent;
-const ExternalLinkIcon = ExternalLink as unknown as IconComponent;
+function applyTheme(iframe: HTMLIFrameElement, dark: boolean): void {
+  try {
+    const html = iframe.contentDocument?.documentElement;
+    if (!html) return;
+    html.classList.toggle('dark', dark);
+    // also sync localStorage inside iframe
+    iframe.contentWindow?.localStorage?.setItem('theme', dark ? 'dark' : 'light');
+  } catch {
+    iframe.contentWindow?.postMessage({ type: 'fs-setTheme', value: dark ? 'dark' : 'light' }, '*');
+  }
+}
 
-const viewModeOptions: ViewModeOption[] = [
-  { mode: 'desktop', label: 'Desktop', icon: MonitorIcon, widthClassName: 'w-full' },
-  { mode: 'tablet', label: 'Tablet', icon: TabletIcon, widthClassName: 'mx-auto w-[768px]' },
-  { mode: 'mobile', label: 'Mobile', icon: SmartphoneIcon, widthClassName: 'mx-auto w-[390px]' },
+function MonitorIcon({ className = '' }: { className?: string }) {
+  return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>;
+}
+function TabletIcon({ className = '' }: { className?: string }) {
+  return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>;
+}
+function PhoneIcon({ className = '' }: { className?: string }) {
+  return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>;
+}
+function XIcon({ className = '' }: { className?: string }) {
+  return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>;
+}
+function ExternalIcon({ className = '' }: { className?: string }) {
+  return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>;
+}
+
+const VIEW_MODES: { mode: ViewMode; icon: (p: { className?: string }) => React.ReactElement; label: string; width: string }[] = [
+  { mode: 'desktop', icon: MonitorIcon,  label: 'Desktop', width: 'w-full' },
+  { mode: 'tablet',  icon: TabletIcon,   label: 'Tablet',  width: 'mx-auto w-[768px]' },
+  { mode: 'mobile',  icon: PhoneIcon,    label: 'Mobile',  width: 'mx-auto w-[390px]' },
 ];
 
-export function PreviewModal({
-  template,
-  darkMode,
-  onClose,
-}: PreviewModalProps): React.ReactElement {
-  const [selectedPalette, setSelectedPalette] = useState<Palette | null>(
-    template.palettes?.[0] || null,
-  );
-  const [selectedFont, setSelectedFont] = useState<Font | null>(template.fonts?.[0] || null);
-  const [viewMode, setViewMode] = useState<ViewMode>('desktop');
+export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps): React.ReactElement {
+  const [selectedPalette, setSelectedPalette] = useState<Palette | null>(template.palettes?.[0] || null);
+  const [selectedFont,    setSelectedFont]    = useState<Font | null>(template.fonts?.[0] || null);
+  const [viewMode,        setViewMode]        = useState<ViewMode>('desktop');
+  const [iframeReady,     setIframeReady]     = useState<boolean>(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const palettes: Palette[] = template.palettes || [];
-  const fonts: Font[] = template.fonts || [];
+  const palettes = template.palettes || [];
+  const fonts    = template.fonts    || [];
 
+  // Reset when template changes
   useEffect(() => {
     setSelectedPalette(template.palettes?.[0] || null);
     setSelectedFont(template.fonts?.[0] || null);
     setViewMode('desktop');
-  }, [template]);
+    setIframeReady(false);
+  }, [template.slug]);
 
-  const handleEscape = useCallback(
-    (event: KeyboardEvent): void => {
-      if (event.key === 'Escape') {
-        onClose();
-      }
-    },
-    [onClose],
-  );
-
+  // Keyboard + scroll lock
+  const handleEscape = useCallback((e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); }, [onClose]);
   useEffect(() => {
     document.addEventListener('keydown', handleEscape);
     document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = '';
-    };
+    return () => { document.removeEventListener('keydown', handleEscape); document.body.style.overflow = ''; };
   }, [handleEscape]);
 
-  const previewUrl = useMemo((): string => {
-    const searchParams = new URLSearchParams();
+  // Listen for theme toggle messages from inside the template iframe
+  useEffect(() => {
+    const handler = (e: MessageEvent) => {
+      if (e.data?.type === 'fs-themeChanged') {
+        // template toggled its own theme — we just let it, no need to sync back to parent
+      }
+    };
+    window.addEventListener('message', handler);
+    return () => window.removeEventListener('message', handler);
+  }, []);
 
-    if (selectedPalette?.id) {
-      searchParams.set('palette', selectedPalette.id);
-    }
-    if (selectedFont?.id) {
-      searchParams.set('font', selectedFont.id);
-    }
-    searchParams.set('mode', darkMode ? 'dark' : 'light');
+  // iframe src — only changes when slug or font changes (font needs Google Fonts reload)
+  const iframeSrc = useMemo(() => {
+    const p = new URLSearchParams();
+    if (selectedFont?.id) p.set('font', selectedFont.id);
+    // include initial theme and palette for templates that DO read URL params
+    p.set('mode', darkMode ? 'dark' : 'light');
+    if (selectedPalette?.id) p.set('palette', selectedPalette.id);
+    return `/templates/${template.slug}/?${p.toString()}`;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [template.slug, selectedFont?.id]); // intentionally exclude palette+darkMode — handled via DOM
 
-    const search = searchParams.toString();
-    return `/templates/${template.slug}/${search ? `?${search}` : ''}`;
-  }, [darkMode, selectedFont, selectedPalette, template.slug]);
+  // When iframe finishes loading: inject palette + apply theme
+  const handleLoad = useCallback(() => {
+    setIframeReady(true);
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+    applyTheme(iframe, darkMode);
+    injectPalette(iframe, selectedPalette);
+  }, [darkMode, selectedPalette]);
 
-  const fallbackUrl = useMemo((): string => `/templates/${template.slug}/`, [template.slug]);
+  // When darkMode changes in parent: update iframe in-place (no reload)
+  useEffect(() => {
+    if (!iframeReady || !iframeRef.current) return;
+    applyTheme(iframeRef.current, darkMode);
+  }, [darkMode, iframeReady]);
 
-  const currentViewportClassName =
-    viewModeOptions.find((option: ViewModeOption) => option.mode === viewMode)?.widthClassName ||
-    'w-full';
+  // When palette changes: inject CSS in-place (no reload)
+  useEffect(() => {
+    if (!iframeReady || !iframeRef.current) return;
+    injectPalette(iframeRef.current, selectedPalette);
+  }, [selectedPalette, iframeReady]);
+
+  const currentWidth = VIEW_MODES.find(v => v.mode === viewMode)?.width || 'w-full';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-0 md:p-4">
@@ -135,105 +198,77 @@ export function PreviewModal({
 
       <div
         className="relative flex h-full w-full flex-col overflow-hidden bg-white md:max-h-[96vh] md:rounded-3xl md:border md:border-neutral-200 dark:bg-neutral-900 dark:md:border-neutral-800"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="preview-title"
+        role="dialog" aria-modal="true" aria-labelledby="preview-title"
       >
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-200 px-4 py-4 dark:border-neutral-800 md:px-6">
+        {/* Header */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 px-4 py-3 dark:border-neutral-800 md:px-6">
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-[0.26em] text-purple-500">
-              Live Preview
-            </p>
-            <h2
-              id="preview-title"
-              className="truncate font-display text-lg font-bold text-neutral-900 dark:text-white"
-            >
-              {template.name}
-            </h2>
+            <p className="text-xs font-semibold uppercase tracking-widest text-purple-500">Live Preview</p>
+            <h2 id="preview-title" className="truncate font-display text-lg font-bold text-neutral-900 dark:text-white">{template.name}</h2>
           </div>
-
           <div className="flex items-center gap-2">
             <div className="flex items-center rounded-full border border-neutral-200 bg-neutral-100 p-1 dark:border-neutral-700 dark:bg-neutral-800">
-              {viewModeOptions.map(({ mode, icon: Icon, label }: ViewModeOption) => {
-                const isActive = viewMode === mode;
-                return (
-                  <button
-                    key={mode}
-                    onClick={() => setViewMode(mode)}
-                    title={label}
-                    className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
-                      isActive
-                        ? 'bg-purple-600 text-white shadow-sm shadow-purple-500/30'
-                        : 'text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
-                    }`}
-                  >
-                    <Icon className="h-4 w-4" />
-                  </button>
-                );
-              })}
+              {VIEW_MODES.map(({ mode, icon: Icon, label }) => (
+                <button
+                  key={mode}
+                  onClick={() => setViewMode(mode)}
+                  title={label}
+                  className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${viewMode === mode ? 'bg-purple-600 text-white shadow-sm' : 'text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'}`}
+                >
+                  <Icon className="h-4 w-4" />
+                </button>
+              ))}
             </div>
-
-            <button
-              onClick={onClose}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white"
-              aria-label="Close preview"
-            >
-              <CloseIcon className="h-4 w-4" />
+            <button onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 text-neutral-500 transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800" aria-label="Close">
+              <XIcon className="h-4 w-4" />
             </button>
           </div>
         </div>
 
-        <div className="border-b border-neutral-200 px-4 py-3 dark:border-neutral-800 md:px-6">
-          {/* Palettes — circles only on mobile, circles+name on md+ */}
-          {palettes.length > 0 ? (
+        {/* Palette + Font row */}
+        {(palettes.length > 0 || fonts.length > 0) && (
+          <div className="border-b border-neutral-200 px-4 py-3 dark:border-neutral-800 md:px-6">
             <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-              {palettes.map((palette: Palette) => {
-                const isActive = selectedPalette?.id === palette.id;
+              {palettes.map((palette) => {
+                const active = selectedPalette?.id === palette.id;
                 return (
                   <button
                     key={palette.id}
                     onClick={() => setSelectedPalette(palette)}
                     title={palette.name}
-                    className={`flex shrink-0 items-center gap-1.5 rounded-full border px-2 py-1 text-xs font-medium transition-all md:px-3 md:text-sm ${
-                      isActive
-                        ? 'border-purple-500 bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300'
-                        : 'border-neutral-200 text-neutral-500 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-400'
-                    }`}
+                    className={`flex shrink-0 items-center gap-1.5 rounded-full border px-2 py-1 text-xs font-medium transition-all md:px-3 md:text-sm ${active ? 'border-purple-500 bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300' : 'border-neutral-200 text-neutral-500 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-400'}`}
                   >
-                    <span
-                      className="h-4 w-4 shrink-0 rounded-full"
-                      style={{ backgroundColor: palette.colors?.primary || '#8b5cf6' }}
-                    />
+                    <span className="h-4 w-4 shrink-0 rounded-full shadow-sm" style={{ backgroundColor: palette.colors?.primary || '#8b5cf6' }} />
                     <span className="hidden sm:inline">{palette.name}</span>
                   </button>
                 );
               })}
-              {fonts.length > 0 && (
+
+              {palettes.length > 0 && fonts.length > 0 && (
                 <div className="mx-1 h-5 w-px shrink-0 bg-neutral-200 dark:bg-neutral-700" />
               )}
-              {fonts.map((font: Font) => {
-                const isActive = selectedFont?.id === font.id;
+
+              {fonts.map((font) => {
+                const active = selectedFont?.id === font.id;
                 return (
                   <button
                     key={font.id}
                     onClick={() => setSelectedFont(font)}
-                    className={`shrink-0 rounded-full border px-2 py-1 text-xs font-medium transition-colors md:px-3 md:text-sm ${
-                      isActive
-                        ? 'border-purple-500 bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300'
-                        : 'border-neutral-200 text-neutral-500 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-400'
-                    }`}
+                    className={`shrink-0 rounded-full border px-2 py-1 text-xs font-medium transition-colors md:px-3 md:text-sm ${active ? 'border-purple-500 bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300' : 'border-neutral-200 text-neutral-500 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-400'}`}
                   >
                     {font.name}
                   </button>
                 );
               })}
             </div>
-          ) : null}
-        </div>
+          </div>
+        )}
 
+        {/* Browser chrome + iframe */}
         <div className="flex-1 overflow-auto bg-neutral-100 p-3 dark:bg-neutral-950 md:p-5">
-          <div className={`${currentViewportClassName} transition-all duration-300`}>
-            <div className="overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-2xl shadow-neutral-900/10 dark:border-neutral-800 dark:bg-neutral-900 dark:shadow-black/40">
+          <div className={`${currentWidth} transition-all duration-300`}>
+            <div className="overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-2xl dark:border-neutral-800">
+              {/* Browser bar */}
               <div className="flex items-center gap-2 border-b border-neutral-200 bg-neutral-50 px-4 py-3 dark:border-neutral-800 dark:bg-neutral-900">
                 <div className="flex gap-1.5">
                   <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
@@ -241,43 +276,45 @@ export function PreviewModal({
                   <span className="h-2.5 w-2.5 rounded-full bg-green-400" />
                 </div>
                 <div className="ml-3 flex min-w-0 flex-1 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-1.5 text-xs text-neutral-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400">
-                  <span className="truncate">{previewUrl}</span>
-                  <ExternalLinkIcon className="h-3 w-3 shrink-0" />
+                  <span className="truncate">{iframeSrc}</span>
+                  <ExternalIcon className="h-3 w-3 shrink-0" />
                 </div>
               </div>
 
               <iframe
-                key={previewUrl}
+                ref={iframeRef}
+                key={iframeSrc}
                 title={`${template.name} preview`}
-                src={previewUrl}
-                className="h-[calc(100vh-120px)] w-full bg-white"
+                src={iframeSrc}
+                onLoad={handleLoad}
+                className="h-[calc(100vh-180px)] w-full bg-white md:h-[calc(96vh-200px)]"
               />
             </div>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-4 border-t border-neutral-200 bg-white px-4 py-4 dark:border-neutral-800 dark:bg-neutral-900 md:px-6">
-          <div className="flex flex-wrap items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400">
-            {selectedPalette ? (
-              <span className="rounded-full border border-purple-200 bg-purple-50 px-3 py-1 dark:border-purple-500/30 dark:bg-purple-500/10">
-                Palette: <span className="font-semibold text-purple-700 dark:text-purple-300">{selectedPalette.name}</span>
+        {/* Footer */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-neutral-200 bg-white px-4 py-3 dark:border-neutral-800 dark:bg-neutral-900 md:px-6">
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            {selectedPalette && (
+              <span className="flex items-center gap-1.5 rounded-full border border-purple-200 bg-purple-50 px-3 py-1 dark:border-purple-500/30 dark:bg-purple-500/10">
+                <span className="h-3 w-3 rounded-full" style={{ backgroundColor: selectedPalette.colors?.primary || '#8b5cf6' }} />
+                <span className="font-semibold text-purple-700 dark:text-purple-300">{selectedPalette.name}</span>
               </span>
-            ) : null}
-            {selectedFont ? (
-              <span className="rounded-full border border-neutral-200 px-3 py-1 dark:border-neutral-700">
-                Font: <span className="font-semibold text-neutral-900 dark:text-white">{selectedFont.name}</span>
+            )}
+            {selectedFont && (
+              <span className="rounded-full border border-neutral-200 px-3 py-1 font-medium text-neutral-600 dark:border-neutral-700 dark:text-neutral-300">
+                {selectedFont.name}
               </span>
-            ) : null}
+            )}
           </div>
-
           <a
-            href={fallbackUrl}
+            href={`/templates/${template.slug}/`}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-purple-500/20 transition-colors hover:bg-purple-700"
           >
-            Open full preview
-            <ExternalLinkIcon className="h-4 w-4" />
+            Open full preview <ExternalIcon className="h-4 w-4" />
           </a>
         </div>
       </div>

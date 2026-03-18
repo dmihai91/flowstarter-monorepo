@@ -1,4 +1,4 @@
-import fs from 'fs'
+import http from 'http'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import react from '@vitejs/plugin-react'
@@ -8,97 +8,54 @@ import { defineConfig } from 'vite'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const MIME_TYPES: Record<string, string> = {
-  '.html': 'text/html; charset=utf-8',
-  '.css': 'text/css; charset=utf-8',
-  '.js': 'application/javascript; charset=utf-8',
-  '.mjs': 'application/javascript; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.svg': 'image/svg+xml',
-  '.woff': 'font/woff',
-  '.woff2': 'font/woff2',
-  '.ttf': 'font/ttf',
-  '.ico': 'image/x-icon',
+// Slug → Astro dev server port
+const SLUG_TO_PORT: Record<string, number> = {
+  'therapist-care':      4001,
+  'fitness-coach':       4002,
+  'coach-pro':           4003,
+  'academic-tutor':      4004,
+  'coding-bootcamp':     4005,
+  'edu-course-creator':  4006,
+  'language-teacher':    4007,
+  'music-teacher':       4008,
+  'workshop-host':       4009,
+  'beauty-stylist':      4010,
+  'creative-portfolio':  4011,
+  'wellness-holistic':   4012,
 }
 
-function serveTemplatesPlugin(): Plugin {
+function proxyTemplatesPlugin(): Plugin {
   return {
-    name: 'serve-templates',
+    name: 'proxy-templates',
     configureServer(server: ViteDevServer) {
       server.middlewares.use(
         (req: Connect.IncomingMessage, res: Connect.ServerResponse, next: Connect.NextFunction) => {
           const url = req.url || ''
+          const match = url.match(/^\/templates\/([^/?]+)(\/.*)?$/)
+          if (!match) return next()
 
-          if (!url.startsWith('/templates/') && !url.startsWith('/thumbs/')) {
-            return next()
-          }
+          const slug = match[1]
+          const subpath = match[2] || '/'
+          const port = SLUG_TO_PORT[slug]
 
-          const thumbMatch = url.match(/^\/thumbs\/([^/]+)\/(.+)$/)
-          if (thumbMatch) {
-            const [, slug, filename] = thumbMatch
-            const thumbPath = path.join(__dirname, '..', 'templates', slug, filename)
-
-            if (fs.existsSync(thumbPath)) {
-              const ext = path.extname(thumbPath)
-              const content = fs.readFileSync(thumbPath)
-              res.setHeader('Content-Type', MIME_TYPES[ext] || 'application/octet-stream')
-              res.setHeader('Cache-Control', 'public, max-age=3600')
-              res.end(content)
-              return
-            }
-          }
-
-          const match = url.match(/^\/templates\/([^/]+)(\/.*)?$/)
-          if (match) {
-            const [, slug, subpath = '/'] = match
-            const distDir = path.join(__dirname, '..', 'templates', slug, 'dist')
-
-            if (!fs.existsSync(distDir)) {
-              res.statusCode = 404
-              res.end('Template not found')
-              return
-            }
-
-            const normalizedUrl = subpath.split('?')[0] || '/'
-            const cleanSubpath = normalizedUrl.replace(/^\//, '')
-
-            let filePath = path.join(distDir, cleanSubpath)
-
-            if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
-              filePath = path.join(filePath, 'index.html')
-            }
-
-            if (!fs.existsSync(filePath) && !path.extname(cleanSubpath)) {
-              const directoryIndexPath = path.join(distDir, cleanSubpath, 'index.html')
-              if (fs.existsSync(directoryIndexPath)) {
-                filePath = directoryIndexPath
-              }
-            }
-
-            if (!fs.existsSync(filePath)) {
-              const htmlPath = `${filePath}.html`
-              if (fs.existsSync(htmlPath)) {
-                filePath = htmlPath
-              }
-            }
-
-            if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-              const ext = path.extname(filePath)
-              const content = fs.readFileSync(filePath)
-              res.setHeader('Content-Type', MIME_TYPES[ext] || 'application/octet-stream')
-              res.end(content)
-              return
-            }
-
+          if (!port) {
             res.statusCode = 404
-            res.end(`Not found: ${cleanSubpath}`)
+            res.end(`Unknown template: ${slug}`)
             return
           }
 
-          next()
+          const proxyReq = http.request(
+            { hostname: 'localhost', port, path: subpath + (url.includes('?') ? '?' + url.split('?')[1] : ''), method: req.method, headers: { ...req.headers, host: `localhost:${port}` } },
+            (proxyRes) => {
+              res.writeHead(proxyRes.statusCode || 200, proxyRes.headers)
+              proxyRes.pipe(res)
+            },
+          )
+          proxyReq.on('error', () => {
+            res.statusCode = 502
+            res.end(`Template dev server not running on port ${port}. Start it with: cd templates/${slug} && pnpm dev --port ${port}`)
+          })
+          req.pipe(proxyReq)
         },
       )
     },
@@ -106,13 +63,18 @@ function serveTemplatesPlugin(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [serveTemplatesPlugin(), react()],
+  plugins: [proxyTemplatesPlugin(), react()],
+  resolve: {
+    alias: {
+      '@flowstarter/flow-design-system': path.resolve(__dirname, '../../../packages/flow-design-system/src/index.ts'),
+    },
+  },
   build: {
     outDir: 'dist',
   },
   server: {
     port: 2000,
-    allowedHosts: ["library.flowstarter.dev", ".ts.net", "localhost", ".flowstarter.dev"],
+    allowedHosts: ['library.flowstarter.dev', '.ts.net', 'localhost', '.flowstarter.dev'],
     host: true,
     strictPort: true,
     proxy: {

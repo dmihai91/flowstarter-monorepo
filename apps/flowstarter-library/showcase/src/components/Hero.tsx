@@ -1,4 +1,5 @@
 import React from 'react';
+import { FlowBackground, Button } from '@flowstarter/flow-design-system';
 import { Zap, Palette, Type, BarChart2, Target } from 'lucide-react';
 
 interface HeroProps {
@@ -10,18 +11,26 @@ interface HeroStat {
   icon: React.ReactElement;
 }
 
+type LucideProps = { size?: number; className?: string };
+type LucideIcon = React.ForwardRefExoticComponent<LucideProps & React.RefAttributes<SVGSVGElement>>;
+const ZapIcon    = Zap    as unknown as (p: LucideProps) => React.ReactElement;
+const PaletteIcon = Palette as unknown as (p: LucideProps) => React.ReactElement;
+const TypeIcon   = Type   as unknown as (p: LucideProps) => React.ReactElement;
+const ChartIcon  = BarChart2 as unknown as (p: LucideProps) => React.ReactElement;
+const TargetIcon = Target as unknown as (p: LucideProps) => React.ReactElement;
+
 export function Hero({ templateCount }: HeroProps): React.ReactElement {
   const stats: HeroStat[] = [
-    { label: `${templateCount} Templates`, icon: <Zap size={14} /> },
-    { label: '6 Palettes each',            icon: <Palette size={14} /> },
-    { label: '4 Font Pairings',            icon: <Type size={14} /> },
-    { label: 'Analytics Ready',            icon: <BarChart2 size={14} /> },
-    { label: 'Leads Capture',              icon: <Target size={14} /> },
+    { label: `${templateCount} Templates`, icon: <ZapIcon size={14} /> },
+    { label: '6 Palettes each',            icon: <PaletteIcon size={14} /> },
+    { label: '4 Font Pairings',            icon: <TypeIcon size={14} /> },
+    { label: 'Analytics Ready',            icon: <ChartIcon size={14} /> },
+    { label: 'Leads Capture',              icon: <TargetIcon size={14} /> },
   ];
 
   return (
     <section className="relative overflow-hidden pt-16 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-purple-200 bg-purple-50 px-3 py-1.5 dark:border-purple-500/20 dark:bg-purple-500/10">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-purple-500" />
@@ -31,7 +40,8 @@ export function Hero({ templateCount }: HeroProps): React.ReactElement {
           </div>
 
           <h1 className="mb-6 font-display text-4xl font-extrabold leading-tight text-neutral-900 dark:text-white sm:text-5xl lg:text-6xl">
-            {templateCount} Templates. <span className="text-flow">Endless possibilities.</span>
+            {templateCount} Templates.{' '}
+            <span className="text-flow">Endless possibilities.</span>
           </h1>
 
           <p className="mx-auto mb-10 max-w-xl text-lg leading-relaxed text-neutral-500 dark:text-neutral-400">

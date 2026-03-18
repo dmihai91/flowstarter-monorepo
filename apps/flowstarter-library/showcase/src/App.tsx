@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { FlowBackground } from '@flowstarter/flow-design-system';
 import { I18nProvider, useTranslation } from './i18n';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
@@ -205,10 +206,7 @@ function AppContent(): React.ReactElement {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-neutral-50 text-neutral-900 transition-colors duration-300 dark:bg-neutral-950 dark:text-white">
-      <div className="absolute inset-0 flow-grid-bg" />
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 h-[400px] w-[800px] -translate-x-1/2 rounded-full bg-purple-500/5 blur-3xl dark:bg-purple-500/10" />
-      </div>
+      <FlowBackground variant="landing" animated className="absolute inset-0" />
 
       <div className="relative z-10">
         <Header

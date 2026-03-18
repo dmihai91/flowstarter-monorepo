@@ -171,35 +171,24 @@ test.describe('Scenario 3: Full Site Creation', () => {
     // ── Step 6: Personalization ───────────────────────────────────────────────
     console.log('\n📍 Step 6: Personalization');
 
-    // Palette — REQUIRED for build to start (build aborts if no palette)
-    await page.waitForSelector('[data-testid="palette-section"]', { timeout: 20000 });
-    // Wait for palette options to be visible (they have stagger animations)
-    await page.waitForTimeout(2000);
-    const paletteOption = page.locator('[data-testid^="palette-option-"]').first();
-    // Use JS click to bypass animation opacity
-    await paletteOption.waitFor({ state: 'attached', timeout: 10000 });
-    await paletteOption.click({ force: true });
-    await page.waitForTimeout(2000);
-    console.log(`  ✅ Palette selected: ${await paletteOption.getAttribute('data-testid')}`);
+    // Palette is AUTO-SELECTED by PersonalizationPanel (first template palette, 300ms delay)
+    await page.waitForSelector('[data-testid="personalization-panel"]', { timeout: 20000 });
+    await page.waitForTimeout(1500); // let auto-palette fire
 
-    // Font
+    // Font — appears after palette auto-select
+    await page.waitForSelector('[data-testid="font-section"]', { timeout: 15000 });
     const fontOption = page.locator('[data-testid^="font-option-"]').first();
-    if (await fontOption.isVisible({ timeout: 8000 }).catch(() => false)) {
-      await fontOption.click();
-      await page.waitForTimeout(1500);
-      console.log('  ✅ Font selected');
-    }
+    await fontOption.waitFor({ state: 'attached', timeout: 10000 });
+    await fontOption.click({ force: true });
+    await page.waitForTimeout(1500);
+    console.log(`  \u2705 Font: ${await fontOption.getAttribute('data-testid')}`);
 
-    // Logo — skip or click first
-    const skipLogo = page.getByRole('button', { name: /skip|no logo|continue without/i }).first();
-    const logoOpt = page.locator('[data-testid*="logo"]').first();
-    if (await skipLogo.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await skipLogo.click();
-      console.log('  ✅ Logo skipped');
-    } else if (await logoOpt.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await logoOpt.click();
-      console.log('  ✅ Logo selected (triggers build)');
-    }
+    // Logo — skip
+    await page.waitForSelector('[data-testid="logo-section"]', { timeout: 10000 });
+    const skipLogo = page.locator('[data-testid="logo-section"] button').filter({ hasText: /skip/i }).first();
+    await skipLogo.waitFor({ state: 'attached', timeout: 8000 });
+    await skipLogo.click({ force: true });
+    console.log('  \u2705 Logo skipped');
     await ss(page, '06-personalization');
 
     // ── Step 7: Integrations ──────────────────────────────────────────────────

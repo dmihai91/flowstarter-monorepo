@@ -40,6 +40,15 @@ function IndexContent() {
 }
 
 export default function Index() {
+  const { hasHandoff } = useLoaderData<typeof loader>();
+
+  // Skip AuthGuard for handoff URLs — HandoffGate validates the token independently
+  if (hasHandoff) {
+    return (
+      <ClientOnly fallback={<LoadingFallback />}>{() => <IndexContent />}</ClientOnly>
+    );
+  }
+
   return (
     <AuthGuard fallback={<LoadingFallback />}>
       <ClientOnly fallback={<LoadingFallback />}>{() => <IndexContent />}</ClientOnly>

@@ -225,6 +225,15 @@ export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuard
   const [loadingTimedOut, setLoadingTimedOut] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
+  // Handoff session bypass — must be declared at top level (React hook rules)
+  const [hasHandoffSession, setHasHandoffSession] = useState<boolean | null>(null);
+  const location = useLocation();
+  useEffect(() => {
+    try {
+      setHasHandoffSession(sessionStorage.getItem('flowstarter_handoff_session') === '1');
+    } catch { setHasHandoffSession(false); }
+  }, []);
+
   useEffect(() => {
     if (isLoaded && isSignedIn && user) {
       const mode = initializeFromClerkUser(user);
@@ -262,6 +271,17 @@ export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuard
     }
 
     return <>{fallback ?? <LoadingFallback />}</>;
+  }
+
+  // While sessionStorage check is pending, show loading to avoid flash of login
+  if (hasHandoffSession === null) {
+    return <>{fallback ?? <LoadingFallback />}</>;
+  }
+
+  // Bypass auth for handoff flows — HandoffGate/HandoffGate already validated the token
+  const hasHandoffUrl = location.search.includes('handoff=');
+  if (hasHandoffUrl || hasHandoffSession) {
+    return <>{children}</>;
   }
 
   // Loaded but not signed in — show login prompt

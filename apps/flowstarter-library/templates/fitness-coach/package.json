@@ -14,5 +14,9 @@
         "preview": "astro preview",
         "build": "astro build",
         "dev": "astro dev"
+    },
+    "devDependencies": {
+        "@astrojs/check": "^0.9.8",
+        "typescript": "^5.9.3"
     }
 }

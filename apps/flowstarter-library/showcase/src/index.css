@@ -5,7 +5,7 @@
 :root {
   --purple-primary: hsl(241 93% 61%);
   --purple-glow: hsl(241 93% 61% / 0.15);
-  --grid-color: rgb(139 92 246 / 0.04);
+  --grid-color: rgb(139 92 246 / 0.09);   /* visible on light bg */
   --text-primary: #09090b;
 }
 
@@ -19,9 +19,9 @@
   html.dark { color-scheme: dark; }
   body {
     @apply font-sans antialiased text-neutral-900 dark:text-white;
-    background: #f8f8fc;
+    background: #f3f2f8;   /* light lavender-gray — makes glow + grid pop */
   }
-  .dark body, html.dark body {
+  html.dark body {
     background: #08080c;
   }
 }
@@ -30,7 +30,9 @@
   .text-balance { text-wrap: balance; }
 }
 
-/* Dot grid overlay */
+/* ─── Background system ─────────────────────────────────────── */
+
+/* Dot grid */
 .showcase-bg::before {
   content: '';
   position: fixed;
@@ -41,33 +43,35 @@
   z-index: 0;
 }
 
-/* Ambient glow — light */
+/* Light mode glow */
 .showcase-bg::after {
   content: '';
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(ellipse 70% 40% at 50% -5%, rgba(139,92,246,0.07) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 30% at 85% 90%, rgba(77,93,217,0.04) 0%, transparent 50%);
+    radial-gradient(ellipse 80% 50% at 50% -5%, rgba(109, 78, 237, 0.14) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 30% at 85% 90%, rgba(77, 93, 217, 0.07) 0%, transparent 50%);
   pointer-events: none;
   z-index: 0;
 }
 
-/* Ambient glow — dark (much richer) */
+/* Dark mode glow — richer */
 .dark .showcase-bg::after {
   background:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(124,58,237,0.22) 0%, transparent 55%),
-    radial-gradient(ellipse 55% 40% at 85% 85%, rgba(77,93,217,0.12) 0%, transparent 50%),
-    radial-gradient(ellipse 40% 30% at 10% 60%, rgba(139,92,246,0.08) 0%, transparent 50%);
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(124, 58, 237, 0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 55% 40% at 85% 85%, rgba(77, 93, 217, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 30% at 10% 60%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
 }
 
-/* Text gradient */
+/* ─── Animated text gradient ────────────────────────────────── */
+
 @keyframes text-flow {
   0%, 100% { background-position: 0% 50%; }
   50%       { background-position: 100% 50%; }
 }
+
 .text-flow {
-  background: linear-gradient(135deg, #8b5cf6, #a78bfa, #7c3aed, #c4b5fd, #8b5cf6);
+  background: linear-gradient(135deg, #7c3aed, #a78bfa, #6d28d9, #c4b5fd, #7c3aed);
   background-size: 300% 300%;
   animation: text-flow 6s ease infinite;
   -webkit-background-clip: text;
@@ -75,6 +79,7 @@
   background-clip: text;
 }
 
+/* ─── Glass utility ─────────────────────────────────────────── */
 .glass-card {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);

@@ -27,11 +27,11 @@ function fromTheme(theme: Theme): ThemeMode { return theme === 'system' ? 'auto'
 
 export function Header({ themeMode, setThemeMode, darkMode, searchQuery, setSearchQuery }: HeaderProps): React.ReactElement {
   const { t } = useTranslation();
-  const headerBg = darkMode ? 'rgba(10,10,12,0.85)' : 'rgba(255,255,255,0.85)';
+  const headerBg = darkMode ? 'rgba(10,10,12,0.85)' : 'rgba(248,247,253,0.88)';
 
   return (
     <header
-      className="sticky top-0 z-50 border-b border-neutral-200/80 dark:border-neutral-800/60 backdrop-blur-xl"
+      className="sticky top-0 z-50 border-b border-purple-200/60 bg-transparent backdrop-blur-xl shadow-sm shadow-purple-100/50 dark:border-neutral-800/60 dark:shadow-none"
       style={{ background: headerBg }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

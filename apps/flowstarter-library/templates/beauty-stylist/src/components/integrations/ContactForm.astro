@@ -1,0 +1,133 @@
+---
+import { frontmatter as contactFrontmatter } from '../../../content/integrations/contact-form.md';
+import Icon from '../Icon.astro';
+
+interface ContactField {
+  name: string;
+  label: string;
+  type: 'text' | 'email' | 'tel' | 'select' | 'textarea';
+  placeholder?: string;
+  required?: boolean;
+  width?: 'half' | 'full';
+  rows?: number;
+  options?: string[];
+}
+
+interface NoticeContent {
+  title: string;
+  message: string;
+}
+
+interface ValidationContent {
+  required: string;
+  email: string;
+  phone: string;
+}
+
+interface ContactData {
+  enabled: boolean;
+  provider?: string | null;
+  action_url?: string | null;
+  title: string;
+  description: string;
+  fields: ContactField[];
+  submit_text: string;
+  submitting_text: string;
+  validation: ValidationContent;
+  success: NoticeContent;
+  error: NoticeContent;
+}
+
+const contact = contactFrontmatter as ContactData;
+const fields: ContactField[] = contact.fields;
+---
+
+<section id="contact-form" class="section-shell">
+  <div class="grid gap-6 lg:grid-cols-[0.88fr_1.12fr]">
+    <article class="glass-card p-6 sm:p-8">
+      <span class="section-kicker">Contact</span>
+      <h2 class="section-title mt-4">{contact.title}</h2>
+      <p class="mt-5 text-base leading-8 text-[var(--color-text-muted)]">{contact.description}</p>
+
+      <div class="mt-8 space-y-4 text-sm text-[var(--color-text-muted)]">
+        <div class="flex items-start gap-3">
+          <Icon name="mail" class="mt-0.5 h-4 w-4 text-[var(--color-primary)]" />
+          <span>Use this form for qualified inquiries. Delivery and CRM wiring are handled separately through Supabase.</span>
+        </div>
+        <div class="flex items-start gap-3">
+          <Icon name="check-circle" class="mt-0.5 h-4 w-4 text-[var(--color-primary)]" />
+          <span>{contact.validation.required}</span>
+        </div>
+        <div class="flex items-start gap-3">
+          <Icon name="check-circle" class="mt-0.5 h-4 w-4 text-[var(--color-primary)]" />
+          <span>{contact.validation.email}</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="glass-card p-6 sm:p-8">
+      <form
+        class="grid grid-cols-1 gap-5 md:grid-cols-2"
+        action={contact.action_url ?? '#'}
+        method="POST"
+        data-enabled={contact.enabled}
+        data-provider={contact.provider ?? 'none'}
+      >
+        {fields.map((field: ContactField) => (
+          <label class={`grid gap-2 text-sm font-medium text-[var(--color-text)] ${field.width === 'full' ? 'md:col-span-2' : ''}`}>
+            <span>
+              {field.label}
+              {field.required && <span class="ml-1 text-[var(--color-primary)]">*</span>}
+            </span>
+            {field.type === 'textarea' ? (
+              <textarea
+                name={field.name}
+                rows={field.rows ?? 5}
+                class="glass-input min-h-[150px] resize-y"
+                placeholder={field.placeholder ?? ''}
+                required={field.required}
+              ></textarea>
+            ) : field.type === 'select' ? (
+              <select
+                name={field.name}
+                class="glass-input"
+                required={field.required}
+              >
+                <option value="">{field.placeholder ?? 'Select an option'}</option>
+                {field.options?.map((option: string) => (
+                  <option value={option}>{option}</option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type={field.type}
+                name={field.name}
+                class="glass-input"
+                placeholder={field.placeholder ?? ''}
+                required={field.required}
+              />
+            )}
+          </label>
+        ))}
+
+        <div class="md:col-span-2 grid gap-4">
+          <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-full px-6 py-4 text-sm font-semibold text-white shadow-lg shadow-black/10" style="background: var(--color-primary);">
+            <Icon name="arrow-right" class="h-4 w-4" />
+            <span>{contact.submit_text}</span>
+          </button>
+
+          <div class="grid gap-4 md:grid-cols-2">
+            <div class="rounded-[1.25rem] border border-white/55 bg-white/50 p-4">
+              <p class="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-primary)]">{contact.success.title}</p>
+              <p class="mt-2 text-sm leading-7 text-[var(--color-text-muted)]">{contact.success.message}</p>
+            </div>
+            <div class="rounded-[1.25rem] border border-white/55 bg-white/50 p-4">
+              <p class="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-primary)]">{contact.error.title}</p>
+              <p class="mt-2 text-sm leading-7 text-[var(--color-text-muted)]">{contact.error.message}</p>
+            </div>
+          </div>
+        </div>
+      </form>
+    </article>
+  </div>
+</section>

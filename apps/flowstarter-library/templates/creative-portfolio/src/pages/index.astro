@@ -319,7 +319,15 @@ const stats = [
 
         <div class="bg-[#1C1C1C] rounded-2xl p-8 shadow-lg ">
           <h3 class="text-xl font-bold text-white mb-6">Start a Project</h3>
-          <form class="space-y-5">
+          <div id="form-success" class="hidden rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+            Thank you! We'll be in touch within 24 hours.
+          </div>
+          <div id="form-error" class="hidden rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+            Something went wrong. Please try again.
+          </div>
+          <form id="contact-form" data-contact-form data-success-message="Thank you! We'll be in touch within 24 hours." class="space-y-5">
+            <input type="hidden" name="_template" value="" />
+            <input type="hidden" name="_source" value="" />
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
                 <label class="block text-sm font-medium text-gray-300 mb-2">Name</label>

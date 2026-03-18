@@ -1,0 +1,30 @@
+---
+import ContactFormHandler from './ContactFormHandler.astro';
+
+interface Props {
+  actionUrl?: string | null;
+  successMessage?: string | null;
+  templateName: string;
+}
+
+const defaultSuccessMessage = "Thank you for reaching out! We'll be in touch within 24 hours.";
+const {
+  actionUrl = '',
+  successMessage = defaultSuccessMessage,
+  templateName,
+} = Astro.props;
+
+const normalizedActionUrl = typeof actionUrl === 'string' ? actionUrl.trim() : '';
+const normalizedSuccessMessage =
+  typeof successMessage === 'string' && successMessage.trim().length > 0
+    ? successMessage.trim()
+    : defaultSuccessMessage;
+---
+
+<ContactFormHandler
+  actionUrl={normalizedActionUrl}
+  successMessage={normalizedSuccessMessage}
+  templateName={templateName}
+  isConfigured={normalizedActionUrl.length > 0}
+  isDev={import.meta.env.DEV}
+/>

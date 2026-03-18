@@ -1,0 +1,80 @@
+---
+import { frontmatter as newsletterFrontmatter } from '../../../content/integrations/newsletter.md';
+import Icon from '../Icon.astro';
+
+interface SuccessContent {
+  title: string;
+  message: string;
+}
+
+interface AlreadySubscribedContent {
+  message: string;
+}
+
+interface NewsletterData {
+  enabled: boolean;
+  provider?: string | null;
+  list_id?: string | null;
+  title: string;
+  description: string;
+  placeholder: string;
+  cta: string;
+  submitting: string;
+  benefits?: string[];
+  privacy?: string;
+  success: SuccessContent;
+  already_subscribed: AlreadySubscribedContent;
+}
+
+const newsletter = newsletterFrontmatter as NewsletterData;
+const benefits: string[] = newsletter.benefits ?? [];
+---
+
+<section id="newsletter" class="section-shell">
+  <article class="glass-card overflow-hidden p-6 sm:p-8">
+    <div class="grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
+      <div>
+        <span class="section-kicker">Newsletter</span>
+        <h2 class="section-title mt-4">{newsletter.title}</h2>
+        <p class="mt-5 max-w-2xl text-base leading-8 text-[var(--color-text-muted)]">{newsletter.description}</p>
+
+        {benefits.length > 0 && (
+          <div class="mt-6 flex flex-wrap gap-3">
+            {benefits.map((benefit: string) => (
+              <span class="inline-flex items-center gap-2 rounded-full bg-white/65 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-text)]">
+                <Icon name="check-circle" class="h-3.5 w-3.5 text-[var(--color-primary)]" />
+                {benefit}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div class="rounded-[1.6rem] border border-white/55 bg-white/55 p-5 backdrop-blur-xl">
+        <form class="grid gap-4" data-enabled={newsletter.enabled} data-provider={newsletter.provider ?? 'none'}>
+          <label class="grid gap-2 text-sm font-medium text-[var(--color-text)]">
+            <span>Email</span>
+            <input type="email" name="email" class="glass-input" placeholder={newsletter.placeholder} required />
+          </label>
+          <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-full px-6 py-4 text-sm font-semibold text-white shadow-lg shadow-black/10" style="background: var(--color-primary);">
+            <Icon name="mail" class="h-4 w-4" />
+            <span>{newsletter.cta}</span>
+          </button>
+        </form>
+
+        <div class="mt-5 grid gap-4 sm:grid-cols-2">
+          <div class="rounded-[1.2rem] border border-white/55 bg-white/60 p-4">
+            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-primary)]">{newsletter.success.title}</p>
+            <p class="mt-2 text-sm leading-7 text-[var(--color-text-muted)]">{newsletter.success.message}</p>
+          </div>
+          <div class="rounded-[1.2rem] border border-white/55 bg-white/60 p-4">
+            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-primary)]">Already On The List</p>
+            <p class="mt-2 text-sm leading-7 text-[var(--color-text-muted)]">{newsletter.already_subscribed.message}</p>
+          </div>
+        </div>
+
+        {newsletter.privacy && <p class="mt-4 text-xs uppercase tracking-[0.22em] text-[var(--color-text-muted)]">{newsletter.privacy}</p>}
+      </div>
+    </div>
+  </article>
+</section>

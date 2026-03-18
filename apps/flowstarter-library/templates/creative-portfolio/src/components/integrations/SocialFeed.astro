@@ -1,0 +1,74 @@
+---
+import { frontmatter as socialFeedFrontmatter } from '../../../content/integrations/social-feed.md';
+import Icon from '../Icon.astro';
+
+interface PlaceholderPost {
+  image?: string;
+  caption: string;
+  likes: number;
+  type: 'image' | 'video';
+}
+
+interface SocialFeedData {
+  enabled: boolean;
+  provider?: string | null;
+  username?: string | null;
+  api_key?: string | null;
+  title: string;
+  description: string;
+  cta: string;
+  cta_href: string;
+  placeholder_posts: PlaceholderPost[];
+}
+
+const socialFeed = socialFeedFrontmatter as SocialFeedData;
+const posts: PlaceholderPost[] = socialFeed.placeholder_posts;
+const username: string = socialFeed.username ?? 'yourbrand';
+---
+
+<section id="social" class="section-shell">
+  <div class="section-heading">
+    <span class="section-kicker">Social</span>
+    <h2 class="section-title">{socialFeed.title}</h2>
+    <p class="section-copy">{socialFeed.description}</p>
+  </div>
+
+  <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+    <span class="inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--color-text)]">
+      <Icon name="share-2" class="h-3.5 w-3.5 text-[var(--color-primary)]" />
+      @{username}
+    </span>
+    <a href={socialFeed.cta_href} target="_blank" rel="noreferrer" class="inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-black/10" style="background: var(--color-primary);">
+      <Icon name="arrow-right" class="h-4 w-4" />
+      <span>{socialFeed.cta}</span>
+    </a>
+  </div>
+
+  <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+    {posts.map((post: PlaceholderPost, index: number) => (
+      <article class={`glass-card overflow-hidden p-0 ${index === 0 ? 'sm:col-span-2' : ''}`}>
+        <div class="relative min-h-[260px] px-6 py-8" style="background: linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 22%, white), color-mix(in srgb, var(--color-accent) 18%, white));">
+          <div class="absolute right-5 top-5 inline-flex items-center gap-2 rounded-full bg-white/75 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--color-text)]">
+            <Icon name={post.type === 'video' ? 'video' : 'camera'} class="h-3.5 w-3.5 text-[var(--color-primary)]" />
+            {post.type}
+          </div>
+          <div class="flex h-full items-end">
+            <div class="max-w-xl rounded-[1.2rem] bg-white/72 p-5 shadow-lg shadow-black/5 backdrop-blur-xl">
+              <p class="text-sm leading-7 text-[var(--color-text)]">{post.caption}</p>
+              <div class="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-text-muted)]">
+                <Icon name="heart" class="h-3.5 w-3.5 text-[var(--color-primary)]" />
+                {post.likes} likes
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    ))}
+  </div>
+
+  {!socialFeed.enabled && (
+    <p class="mt-6 text-sm leading-7 text-[var(--color-text-muted)]">
+      This section previews the feed layout. Live syncing is configured separately once the provider credentials are connected.
+    </p>
+  )}
+</section>

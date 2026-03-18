@@ -1,0 +1,132 @@
+---
+import { frontmatter as paymentsFrontmatter } from '../../../content/integrations/payments.md';
+import Icon from '../Icon.astro';
+
+interface Props {
+  planName?: string;
+  planPrice?: number;
+}
+
+interface TrustBadge {
+  icon: string;
+  text: string;
+}
+
+interface NoticeContent {
+  title: string;
+  message: string;
+  cta?: string;
+  retry?: string;
+}
+
+interface PaymentsData {
+  enabled: boolean;
+  provider?: string | null;
+  api_key?: string | null;
+  title: string;
+  description: string;
+  card_label: string;
+  card_placeholder: string;
+  expiry_label: string;
+  expiry_placeholder: string;
+  cvc_label: string;
+  cvc_placeholder: string;
+  name_label: string;
+  name_placeholder: string;
+  pay_button: string;
+  processing_text: string;
+  trust_badges: TrustBadge[];
+  summary_title: string;
+  subtotal_label: string;
+  tax_label: string;
+  total_label: string;
+  success: NoticeContent;
+  error: NoticeContent;
+}
+
+const { planName = 'Selected Offer', planPrice = 250 } = Astro.props as Props;
+const payments = paymentsFrontmatter as PaymentsData;
+const trustBadges: TrustBadge[] = payments.trust_badges;
+const displayPrice: string = planPrice.toFixed(0);
+---
+
+<section id="payments" class="section-shell">
+  <div class="mx-auto max-w-4xl">
+    <div class="grid gap-6 lg:grid-cols-[0.92fr_1.08fr]">
+      <article class="glass-card p-6 sm:p-8">
+        <span class="section-kicker">Payments</span>
+        <h2 class="section-title mt-4">{payments.title}</h2>
+        <p class="mt-5 text-base leading-8 text-[var(--color-text-muted)]">{payments.description}</p>
+
+        <div class="mt-8 rounded-[1.4rem] border border-white/55 bg-white/55 p-5">
+          <p class="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-primary)]">{payments.summary_title}</p>
+          <div class="mt-4 space-y-3 text-sm text-[var(--color-text)]">
+            <div class="flex items-center justify-between gap-4">
+              <span>{planName}</span>
+              <span>${displayPrice}</span>
+            </div>
+            <div class="flex items-center justify-between gap-4 text-[var(--color-text-muted)]">
+              <span>{payments.subtotal_label}</span>
+              <span>${displayPrice}</span>
+            </div>
+            <div class="flex items-center justify-between gap-4 text-[var(--color-text-muted)]">
+              <span>{payments.tax_label}</span>
+              <span>$0</span>
+            </div>
+            <div class="flex items-center justify-between gap-4 border-t border-white/60 pt-3 font-semibold">
+              <span>{payments.total_label}</span>
+              <span>${displayPrice}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-wrap gap-3">
+          {trustBadges.map((badge: TrustBadge) => (
+            <span class="inline-flex items-center gap-2 rounded-full bg-white/65 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-text)]">
+              <Icon name={badge.icon} class="h-3.5 w-3.5 text-[var(--color-primary)]" />
+              {badge.text}
+            </span>
+          ))}
+        </div>
+      </article>
+
+      <article class="glass-card p-6 sm:p-8">
+        <form class="grid gap-5" data-enabled={payments.enabled} data-provider={payments.provider ?? 'none'}>
+          <label class="grid gap-2 text-sm font-medium text-[var(--color-text)]">
+            <span>{payments.card_label}</span>
+            <input type="text" maxlength="19" class="glass-input" placeholder={payments.card_placeholder} />
+          </label>
+          <div class="grid gap-5 sm:grid-cols-2">
+            <label class="grid gap-2 text-sm font-medium text-[var(--color-text)]">
+              <span>{payments.expiry_label}</span>
+              <input type="text" maxlength="5" class="glass-input" placeholder={payments.expiry_placeholder} />
+            </label>
+            <label class="grid gap-2 text-sm font-medium text-[var(--color-text)]">
+              <span>{payments.cvc_label}</span>
+              <input type="text" maxlength="4" class="glass-input" placeholder={payments.cvc_placeholder} />
+            </label>
+          </div>
+          <label class="grid gap-2 text-sm font-medium text-[var(--color-text)]">
+            <span>{payments.name_label}</span>
+            <input type="text" class="glass-input" placeholder={payments.name_placeholder} />
+          </label>
+          <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-full px-6 py-4 text-sm font-semibold text-white shadow-lg shadow-black/10" style="background: var(--color-primary);">
+            <Icon name="check-circle" class="h-4 w-4" />
+            <span>{payments.pay_button}</span>
+          </button>
+        </form>
+
+        <div class="mt-5 grid gap-4 sm:grid-cols-2">
+          <div class="rounded-[1.2rem] border border-white/55 bg-white/60 p-4">
+            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-primary)]">{payments.success.title}</p>
+            <p class="mt-2 text-sm leading-7 text-[var(--color-text-muted)]">{payments.success.message}</p>
+          </div>
+          <div class="rounded-[1.2rem] border border-white/55 bg-white/60 p-4">
+            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-primary)]">{payments.error.title}</p>
+            <p class="mt-2 text-sm leading-7 text-[var(--color-text-muted)]">{payments.error.message}</p>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>

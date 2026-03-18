@@ -1,15 +1,29 @@
 ---
 import '../styles/global.css';
+import Analytics from '../components/integrations/Analytics.astro';
+import ContactScript from '../../../shared/ContactScript.astro';
+import { frontmatter as contactFormData } from '../../content/integrations/contact-form.md';
 
 interface Props {
   title?: string;
   description?: string;
 }
 
+interface ContactFormContent {
+  action_url?: string | null;
+  success_message?: string | null;
+}
+
 const { 
   title = "CodeLaunch - Coding Bootcamp",
   description = "Compassionate therapy services helping individuals, couples, and families navigate life's challenges. Begin your journey to healing today."
 } = Astro.props;
+const contactForm = contactFormData as ContactFormContent;
+const contactFormActionUrl = typeof contactForm.action_url === 'string' ? contactForm.action_url : '';
+const contactFormSuccessMessage =
+  typeof contactForm.success_message === 'string'
+    ? contactForm.success_message
+    : "Thank you for reaching out! We'll be in touch within 24 hours.";
 
 const navLinks = [
   { label: "Home", href: "#" },
@@ -58,6 +72,7 @@ const navLinks = [
         font-family: var(--font-body);
       }
     </style>
+    <Analytics />
     <title>{title}</title>
     <script is:inline>
       (function() {
@@ -274,5 +289,10 @@ const navLinks = [
         }
       });
     </script>
+    <ContactScript
+      actionUrl={contactFormActionUrl}
+      successMessage={contactFormSuccessMessage}
+      templateName="coding-bootcamp"
+    />
   </body>
 </html>

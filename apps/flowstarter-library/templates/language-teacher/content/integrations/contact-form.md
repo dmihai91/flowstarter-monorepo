@@ -1,7 +1,8 @@
 ---
 enabled: false
 provider: null
-action_url: null
+action_url: ""
+success_message: "Thank you for reaching out! We'll be in touch within 24 hours."
 
 title: "Reach Out"
 description: "Questions about therapy or ready to take the first step? Send a message—all inquiries are confidential."

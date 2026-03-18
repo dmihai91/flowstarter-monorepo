@@ -1,25 +1,25 @@
 ---
-headline: "Your Partner in Academic Success"
-intro: "I believe every student can excel with the right support. My approach combines deep subject expertise with patience and encouragement to help you not just pass — but truly understand and enjoy learning."
+headline: "Meet Dr. Emily Park"
+intro: "Dr. Emily Park is a Harvard PhD with 8 years of tutoring experience, known for helping students raise scores, strengthen study habits, and approach demanding coursework with confidence."
 image: "/images/tutor-portrait.jpg"
 credentials:
-  - title: "Ph.D. Mathematics"
+  - title: "Ph.D."
     institution: "Harvard University"
-  - title: "M.Ed. Education"
-    institution: "Stanford University"
-  - title: "Certified SAT/ACT Prep Instructor"
-    institution: "College Board"
+  - title: "Academic Tutor"
+    institution: "8 Years of 1-on-1 Instruction"
+  - title: "Specialist"
+    institution: "Test Prep, STEM, and Writing"
 story: |
-  After years of teaching at top universities, I realized my true passion was working one-on-one with students. There's nothing more rewarding than seeing that "aha!" moment when a concept finally clicks.
-  
-  I've helped hundreds of students improve their grades, boost their test scores, and get into their dream schools. My students have gained admission to Harvard, MIT, Stanford, and other top institutions.
-  
-  Whether you're struggling with a specific subject or aiming for a perfect score, I'm here to help you reach your full potential.
+  Dr. Emily Park combines deep academic training with practical tutoring experience across standardized testing, advanced STEM courses, and high-stakes writing.
+
+  Over the past 8 years, she has supported students working toward stronger grades, major score increases, and competitive college applications.
+
+  Her sessions are structured, encouraging, and outcome-focused, with an emphasis on turning confusion into repeatable academic confidence.
 values:
   - title: "Personalized Approach"
-    description: "Every student learns differently. I adapt my teaching style to match how you learn best."
+    description: "Every lesson is shaped around the student's pace, goals, and most effective learning style."
   - title: "No Question Too Small"
-    description: "I create a judgment-free zone where you can ask anything without embarrassment."
+    description: "Students get a supportive environment where they can ask questions early instead of falling behind."
   - title: "Real Results"
-    description: "My students see measurable improvement — an average 150-point SAT score increase."
+    description: "Sessions are built around measurable gains, from score improvement to stronger classroom performance."
 ---

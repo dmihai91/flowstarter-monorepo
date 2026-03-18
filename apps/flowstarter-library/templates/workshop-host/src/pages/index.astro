@@ -1,27 +1,50 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-const services = [
+interface Service {
+  icon: string;
+  title: string;
+  description: string;
+  duration: string;
+}
+
+interface ApproachItem {
+  title: string;
+  description: string;
+}
+
+interface Testimonial {
+  quote: string;
+  author: string;
+  type: string;
+}
+
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+const services: Service[] = [
   { icon: "lucide:user", title: "Individual Therapy", description: "One-on-one sessions focused on personal growth, anxiety, depression, trauma, and life transitions.", duration: "50 min session" },
   { icon: "lucide:heart", title: "Couples Therapy", description: "Strengthen your relationship through improved communication, conflict resolution, and deeper connection.", duration: "80 min session" },
   { icon: "lucide:users", title: "Family Therapy", description: "Navigate family dynamics, improve relationships, and create healthier patterns together.", duration: "80 min session" },
   { icon: "lucide:brain", title: "Trauma & EMDR", description: "Specialized trauma processing using evidence-based EMDR therapy for lasting healing.", duration: "50-80 min session" },
 ];
 
-const approach = [
+const approach: ApproachItem[] = [
   { title: "Compassionate Listening", description: "I create a safe, non-judgmental space where you can share your thoughts and feelings openly." },
   { title: "Evidence-Based Methods", description: "I use proven therapeutic approaches including CBT, EMDR, attachment theory, and mindfulness." },
   { title: "Collaborative Process", description: "We work together to set goals and develop strategies that fit your unique needs and values." },
   { title: "Holistic Perspective", description: "I consider all aspects of your life—mind, body, relationships—in our work together." },
 ];
 
-const testimonials = [
+const testimonials: Testimonial[] = [
   { quote: "Sarah has helped me through the most difficult time in my life. Her warmth and expertise made all the difference in my healing journey.", author: "Jennifer M.", type: "Individual Therapy Client" },
   { quote: "My husband and I were on the verge of divorce. Sarah helped us rebuild our communication and rediscover why we fell in love.", author: "David & Lisa R.", type: "Couples Therapy Clients" },
   { quote: "The EMDR therapy has been life-changing. I finally feel free from the trauma that held me back for years.", author: "Michael T.", type: "Trauma Therapy Client" },
 ];
 
-const faqs = [
+const faqs: FAQItem[] = [
   { question: "What can I expect in our first session?", answer: "Our first session is about getting to know each other. I'll ask about what brings you to therapy, your history, and your goals. This helps me understand how I can best support you. It's also a chance for you to ask questions and see if we're a good fit." },
   { question: "How long does therapy typically last?", answer: "The length of therapy varies depending on your goals and needs. Some clients find relief in 8-12 sessions, while others benefit from longer-term work. We'll regularly check in on your progress and adjust our approach as needed." },
   { question: "Do you accept insurance?", answer: "I am an out-of-network provider for most insurance plans. I can provide a superbill for you to submit to your insurance for potential reimbursement. I also offer a sliding scale for those who qualify." },
@@ -29,7 +52,7 @@ const faqs = [
   { question: "Do you offer virtual sessions?", answer: "Yes! I offer secure video therapy sessions for clients throughout California. Virtual therapy can be just as effective as in-person sessions and offers added convenience." },
 ];
 
-const credentials = [
+const credentials: string[] = [
   "Licensed Marriage & Family Therapist (LMFT #87654)",
   "EMDR Certified Therapist",
   "Masters in Clinical Psychology, Stanford University",
@@ -86,7 +109,7 @@ const getIconBody = (name: string): string => iconBodies[name] ?? '';
         <div class="relative">
           <div class="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl transform rotate-3"></div>
           <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=600&h=700&fit=crop&crop=face" alt="Sarah Mitchell, LMFT" class="relative rounded-3xl shadow-xl w-full object-cover aspect-[5/6]" />
-          <div class="absolute -bottom-6 -left-6 bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg">
+          <div class="absolute -bottom-6 -left-6 bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-lg">
             <div class="flex items-center gap-4">
               <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-6 h-6 text-primary"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m15.477 12.89l1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"/><circle cx="12" cy="8" r="6"/></g></svg>
@@ -103,7 +126,7 @@ const getIconBody = (name: string): string => iconBodies[name] ?? '';
   </section>
 
   <!-- About Section -->
-  <section id="about" class="py-20 bg-sage-50 dark:bg-slate-800/50 transition-colors">
+  <section id="about" class="py-20 bg-sage-50 dark:bg-gray-900/60 transition-colors">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div class="order-2 lg:order-1">
@@ -125,7 +148,7 @@ const getIconBody = (name: string): string => iconBodies[name] ?? '';
             I specialize in anxiety, depression, relationship issues, trauma, and life transitions. Whether you're facing a specific challenge or seeking personal growth, I'm here to support you.
           </p>
           <ul class="space-y-3">
-            {credentials.map((credential) => (
+            {credentials.map((credential: string) => (
               <li class="flex items-center gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 text-primary flex-shrink-0"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11l3 3L22 4"/></g></svg>
                 <span class="text-slate-700 dark:text-slate-300">{credential}</span>
@@ -138,7 +161,7 @@ const getIconBody = (name: string): string => iconBodies[name] ?? '';
   </section>
 
   <!-- Services Section -->
-  <section id="services" class="py-20 bg-cream dark:bg-slate-900 transition-colors">
+  <section id="services" class="py-20 bg-cream dark:bg-gray-950 transition-colors">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-2xl mx-auto mb-16">
         <p class="text-primary font-medium mb-4">Services</p>
@@ -147,7 +170,7 @@ const getIconBody = (name: string): string => iconBodies[name] ?? '';
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {services.map((service) => (
+        {services.map((service: Service) => (
           <div class="card group hover:-translate-y-1">
             <div class="flex items-start gap-5">
               <div class="w-14 h-14 bg-primary/10 dark:bg-primary/20 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors">
@@ -176,7 +199,7 @@ const getIconBody = (name: string): string => iconBodies[name] ?? '';
   </section>
 
   <!-- Approach Section -->
-  <section id="approach" class="py-20 bg-warm-100 dark:bg-slate-800/50 transition-colors">
+  <section id="approach" class="py-20 bg-warm-100 dark:bg-gray-900/60 transition-colors">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-2xl mx-auto mb-16">
         <p class="text-primary font-medium mb-4">My Approach</p>
@@ -185,7 +208,7 @@ const getIconBody = (name: string): string => iconBodies[name] ?? '';
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {approach.map((item, index) => (
+        {approach.map((item: ApproachItem, index: number) => (
           <div class="flex gap-5">
             <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-serif font-bold flex-shrink-0">{index + 1}</div>
             <div>
@@ -199,7 +222,7 @@ const getIconBody = (name: string): string => iconBodies[name] ?? '';
   </section>
 
   <!-- Testimonials Section -->
-  <section class="py-20 bg-cream dark:bg-slate-900 transition-colors">
+  <section class="py-20 bg-cream dark:bg-gray-950 transition-colors">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center max-w-2xl mx-auto mb-16">
         <p class="text-primary font-medium mb-4">Testimonials</p>
@@ -208,11 +231,11 @@ const getIconBody = (name: string): string => iconBodies[name] ?? '';
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {testimonials.map((testimonial) => (
+        {testimonials.map((testimonial: Testimonial) => (
           <div class="card-warm">
             <div class="mb-4"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-10 h-10 text-primary/30"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2a1 1 0 0 1 1 1v1a2 2 0 0 1-2 2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1a6 6 0 0 0 6-6V5a2 2 0 0 0-2-2zM5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2a1 1 0 0 1 1 1v1a2 2 0 0 1-2 2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1a6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/></svg></div>
             <p class="text-slate-700 dark:text-slate-300 mb-6 leading-relaxed italic">"{testimonial.quote}"</p>
-            <div class="border-t border-warm-300 dark:border-slate-700 pt-4">
+            <div class="border-t border-warm-300 dark:border-gray-800 pt-4">
               <div class="font-semibold text-slate-800 dark:text-white">{testimonial.author}</div>
               <div class="text-sm text-slate-500 dark:text-slate-400">{testimonial.type}</div>
             </div>
@@ -223,7 +246,7 @@ const getIconBody = (name: string): string => iconBodies[name] ?? '';
   </section>
 
   <!-- FAQ Section -->
-  <section id="faq" class="py-20 bg-sage-50 dark:bg-slate-800/50 transition-colors">
+  <section id="faq" class="py-20 bg-sage-50 dark:bg-gray-900/60 transition-colors">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <p class="text-primary font-medium mb-4">FAQ</p>
@@ -232,8 +255,8 @@ const getIconBody = (name: string): string => iconBodies[name] ?? '';
       </div>
 
       <div class="space-y-4">
-        {faqs.map((faq, index) => (
-          <div class="faq-item bg-white dark:bg-slate-800 rounded-xl shadow-sm dark:shadow-none dark:border dark:border-slate-700 overflow-hidden">
+        {faqs.map((faq: FAQItem, index: number) => (
+          <div class="faq-item bg-white dark:bg-gray-900 rounded-xl shadow-sm dark:shadow-none dark:border dark:border-gray-800 overflow-hidden">
             <button class="faq-trigger w-full px-6 py-5 flex items-center justify-between text-left" data-index={index}>
               <span class="font-medium text-slate-800 dark:text-white pr-4">{faq.question}</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 text-primary transition-transform faq-icon flex-shrink-0"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9l6 6l6-6"/></svg>
@@ -248,7 +271,7 @@ const getIconBody = (name: string): string => iconBodies[name] ?? '';
   </section>
 
   <!-- Contact Section -->
-  <section id="contact" class="py-20 bg-cream dark:bg-slate-900 transition-colors">
+  <section id="contact" class="py-20 bg-cream dark:bg-gray-950 transition-colors">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
         <div>
@@ -290,7 +313,7 @@ const getIconBody = (name: string): string => iconBodies[name] ?? '';
           </div>
         </div>
 
-        <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-lg dark:shadow-none dark:border dark:border-slate-700">
+        <div class="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg dark:shadow-none dark:border dark:border-gray-800">
           <h3 class="text-xl font-serif font-semibold text-slate-800 dark:text-white mb-6">Request a Free Consultation</h3>
           <form class="space-y-5">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">

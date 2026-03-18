@@ -132,10 +132,9 @@ export function useSimpleBuildHandlers({
         const projectName = flowHook.projectName || selectedTemplate.name || 'My Website';
         const projectId = existingProjectId || generateProjectSlug(projectName);
 
-        if (!existingProjectId) {
-          setConvexProjectId(projectId);
-          onStateChangeRef.current?.({ convexProjectId: projectId } as Partial<InitialChatState>);
-        }
+        // Only set convexProjectId if we have a real Convex project ID from handoff
+        // A generated slug (projectId from generateProjectSlug) is NOT a valid Convex ID
+        // and will cause ArgumentValidationError in Convex updateState
 
         setBuildPhase('generating');
         setBuildProgress(BUILD_PROGRESS.GENERATING_START);

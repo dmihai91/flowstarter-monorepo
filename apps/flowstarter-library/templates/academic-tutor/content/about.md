@@ -1,7 +1,7 @@
 ---
 headline: "Meet Dr. Emily Park"
 intro: "Dr. Emily Park is a Harvard PhD with 8 years of tutoring experience, known for helping students raise scores, strengthen study habits, and approach demanding coursework with confidence."
-image: "/images/tutor-portrait.jpg"
+image: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=800&q=80"
 credentials:
   - title: "Ph.D."
     institution: "Harvard University"

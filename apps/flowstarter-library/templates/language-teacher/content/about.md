@@ -1,7 +1,7 @@
 ---
 headline: "Meet Sophie Martin"
 intro: "Sophie Martin is a Paris native with 10 years of teaching experience, helping learners build fluency through practical conversation, cultural context, and consistent coaching."
-image: "/images/tutor-portrait.jpg"
+image: "https://images.unsplash.com/photo-1580894732444-8ecded7900cd?w=800&q=80"
 credentials:
   - title: "Native French Speaker"
     institution: "Paris, France"

@@ -1,7 +1,7 @@
 ---
 headline: "Meet Alex Rivera"
 intro: "Alex Rivera is an ex-IDEO facilitator who has led 200+ workshops for leadership teams, creative groups, and distributed organizations."
-image: "/images/tutor-portrait.jpg"
+image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&q=80"
 credentials:
   - title: "Former Facilitator"
     institution: "IDEO"

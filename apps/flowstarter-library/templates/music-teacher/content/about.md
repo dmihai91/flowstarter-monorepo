@@ -1,7 +1,7 @@
 ---
 headline: "Meet David Chen"
 intro: "David Chen is a Berklee College of Music graduate with 15 years of teaching experience, helping students build technique, confidence, and a lasting connection to music."
-image: "/images/tutor-portrait.jpg"
+image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&q=80"
 credentials:
   - title: "B.M. Performance"
     institution: "Berklee College of Music"

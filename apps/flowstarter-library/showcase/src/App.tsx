@@ -214,6 +214,7 @@ function AppContent(): React.ReactElement {
         <Header
           themeMode={themeMode}
           setThemeMode={setThemeMode}
+          darkMode={darkMode}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
         />

@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { FlowBackground } from '@flowstarter/flow-design-system';
 import { I18nProvider, useTranslation } from './i18n';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
@@ -205,9 +204,7 @@ function AppContent(): React.ReactElement {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-neutral-50 text-neutral-900 transition-colors duration-300 dark:bg-neutral-950 dark:text-white">
-      <FlowBackground variant="landing" animated className="absolute inset-0" />
-
+    <div className="showcase-bg relative min-h-screen overflow-hidden text-neutral-900 transition-colors duration-300 dark:text-white">
       <div className="relative z-10">
         <Header
           themeMode={themeMode}

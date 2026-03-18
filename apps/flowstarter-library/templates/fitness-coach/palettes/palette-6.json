@@ -1,16 +1,16 @@
 {
   "id": "palette-6",
-  "name": "Shadow Heat",
+  "name": "Neon Night",
   "description": "Dark mode default with red heat and crisp contrast.",
   "colors": {
-    "primary": "#FF5A36",
-    "primary-dark": "#e65131",
-    "secondary": "#140B09",
-    "accent": "#FFD166",
-    "background": "#080808",
-    "surface": "#141212",
-    "text": "#FFF8F4",
-    "text-muted": "#B9AAA2"
+    "primary": "#A3E635",
+    "primary-dark": "#84CC16",
+    "secondary": "#0A0A0A",
+    "accent": "#FACC15",
+    "background": "#050505",
+    "surface": "#111111",
+    "text": "#F8FAFC",
+    "text-muted": "#94A3B8"
   },
   "fonts": {
     "heading": "Barlow Condensed",

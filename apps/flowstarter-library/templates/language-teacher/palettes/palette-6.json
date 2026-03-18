@@ -1,16 +1,16 @@
 {
   "id": "palette-6",
-  "name": "Night Fluency",
+  "name": "Twilight Rose",
   "description": "Dark mode with coral warmth and aqua clarity.",
   "colors": {
-    "primary": "#FF7A7A",
-    "primary-dark": "#e66e6e",
-    "secondary": "#151018",
-    "accent": "#57D7CF",
-    "background": "#0C0910",
-    "surface": "#18131D",
-    "text": "#FFF6F2",
-    "text-muted": "#B39DA2"
+    "primary": "#F9A8D4",
+    "primary-dark": "#F472B6",
+    "secondary": "#0F050C",
+    "accent": "#FDE68A",
+    "background": "#08040C",
+    "surface": "#150A18",
+    "text": "#FDF2F8",
+    "text-muted": "#FBCFE8"
   },
   "fonts": {
     "heading": "Nunito",

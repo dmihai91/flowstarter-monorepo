@@ -1,16 +1,16 @@
 {
   "id": "palette-6",
-  "name": "Night Deploy",
+  "name": "Terminal Dark",
   "description": "Dark mode default with crisp cyan focus and readable contrast.",
   "colors": {
-    "primary": "#69E2FF",
-    "primary-dark": "#5fcbe6",
-    "secondary": "#0F1528",
-    "accent": "#A855F7",
-    "background": "#040812",
-    "surface": "#0D1322",
-    "text": "#EAF3FF",
-    "text-muted": "#93A5C0"
+    "primary": "#4ADE80",
+    "primary-dark": "#22C55E",
+    "secondary": "#050A05",
+    "accent": "#38BDF8",
+    "background": "#030712",
+    "surface": "#0A1020",
+    "text": "#F0FDF4",
+    "text-muted": "#6EE7B7"
   },
   "fonts": {
     "heading": "Space Grotesk",

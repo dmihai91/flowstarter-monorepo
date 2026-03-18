@@ -1,16 +1,16 @@
 {
   "id": "palette-6",
-  "name": "Creator Night",
+  "name": "Deep Ocean",
   "description": "Dark mode for launch-heavy, dashboard-like education brands.",
   "colors": {
-    "primary": "#34D399",
-    "primary-dark": "#2fbe8a",
-    "secondary": "#102118",
-    "accent": "#FF8A4C",
-    "background": "#07130C",
-    "surface": "#0E1C14",
-    "text": "#ECFDF4",
-    "text-muted": "#93B29F"
+    "primary": "#38BDF8",
+    "primary-dark": "#0EA5E9",
+    "secondary": "#060A12",
+    "accent": "#F472B6",
+    "background": "#040810",
+    "surface": "#0A1525",
+    "text": "#F0F9FF",
+    "text-muted": "#7DD3FC"
   },
   "fonts": {
     "heading": "Plus Jakarta Sans",

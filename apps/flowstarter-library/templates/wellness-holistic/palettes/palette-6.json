@@ -1,16 +1,16 @@
 {
   "id": "palette-6",
-  "name": "Moon Garden",
+  "name": "Moonlit Teal",
   "description": "Dark mode with herbal tones and candlelit warmth.",
   "colors": {
-    "primary": "#93B39B",
-    "primary-dark": "#84a18c",
-    "secondary": "#162018",
-    "accent": "#D8A071",
-    "background": "#0E140F",
-    "surface": "#171F18",
-    "text": "#ECF2EB",
-    "text-muted": "#A4B2A4"
+    "primary": "#5EEAD4",
+    "primary-dark": "#14B8A6",
+    "secondary": "#030C0C",
+    "accent": "#FDE68A",
+    "background": "#020A0A",
+    "surface": "#071515",
+    "text": "#F0FDFA",
+    "text-muted": "#99F6E4"
   },
   "fonts": {
     "heading": "Gilda Display",

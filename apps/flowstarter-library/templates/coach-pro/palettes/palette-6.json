@@ -1,16 +1,16 @@
 {
   "id": "palette-6",
-  "name": "Night Summit",
+  "name": "Obsidian Gold",
   "description": "Dark mode for premium personal brands and executive funnels.",
   "colors": {
-    "primary": "#E8A838",
-    "primary-dark": "#d19732",
-    "secondary": "#111420",
-    "accent": "#F7E7C1",
-    "background": "#090B12",
-    "surface": "#151926",
-    "text": "#F5F3ED",
-    "text-muted": "#A7A59F"
+    "primary": "#FCD34D",
+    "primary-dark": "#F59E0B",
+    "secondary": "#0C0A00",
+    "accent": "#F97316",
+    "background": "#07060A",
+    "surface": "#13110F",
+    "text": "#FFFBEB",
+    "text-muted": "#A78BFA"
   },
   "fonts": {
     "heading": "Playfair Display",

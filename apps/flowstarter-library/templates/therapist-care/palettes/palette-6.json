@@ -1,16 +1,16 @@
 {
   "id": "palette-6",
-  "name": "Midnight Forest",
+  "name": "Midnight Sage",
   "description": "Dark evergreen mode with warm copper contrast.",
   "colors": {
-    "primary": "#7FA287",
-    "primary-dark": "#72927a",
-    "secondary": "#16231B",
-    "accent": "#D8A56F",
-    "background": "#0F1712",
-    "surface": "#17231C",
-    "text": "#E6F0E8",
-    "text-muted": "#9FB1A3"
+    "primary": "#6EE7B7",
+    "primary-dark": "#4ADE80",
+    "secondary": "#111827",
+    "accent": "#F0ABFC",
+    "background": "#080C0A",
+    "surface": "#111A14",
+    "text": "#F0FDF4",
+    "text-muted": "#86EFAC"
   },
   "fonts": {
     "heading": "Cormorant Garamond",

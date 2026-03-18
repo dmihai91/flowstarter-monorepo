@@ -1,16 +1,16 @@
 {
   "id": "palette-6",
-  "name": "Exam Night",
+  "name": "Midnight Cobalt",
   "description": "Dark academic palette with high-contrast red signal accents.",
   "colors": {
-    "primary": "#78A6D6",
-    "primary-dark": "#6c95c1",
-    "secondary": "#121A27",
-    "accent": "#FF6B6B",
-    "background": "#09101A",
-    "surface": "#111A26",
-    "text": "#EDF4FC",
-    "text-muted": "#96A9BC"
+    "primary": "#60A5FA",
+    "primary-dark": "#3B82F6",
+    "secondary": "#0A0C14",
+    "accent": "#A78BFA",
+    "background": "#060810",
+    "surface": "#0F1220",
+    "text": "#EFF6FF",
+    "text-muted": "#93C5FD"
   },
   "fonts": {
     "heading": "Merriweather",

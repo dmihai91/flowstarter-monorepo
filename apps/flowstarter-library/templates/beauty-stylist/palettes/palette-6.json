@@ -1,16 +1,16 @@
 {
   "id": "palette-6",
-  "name": "Velvet Vanity",
+  "name": "Velvet Night",
   "description": "Dark mode with rose gold highlights and luxe contrast.",
   "colors": {
-    "primary": "#E48AA1",
-    "primary-dark": "#cd7c91",
-    "secondary": "#1A1016",
-    "accent": "#B68B5B",
-    "background": "#0F0810",
-    "surface": "#1A1119",
-    "text": "#FCEEF3",
-    "text-muted": "#B69AA5"
+    "primary": "#F9A8D4",
+    "primary-dark": "#EC4899",
+    "secondary": "#0C0408",
+    "accent": "#E0D7FF",
+    "background": "#070309",
+    "surface": "#12061A",
+    "text": "#FDF2F8",
+    "text-muted": "#F3ABD4"
   },
   "fonts": {
     "heading": "Cormorant",

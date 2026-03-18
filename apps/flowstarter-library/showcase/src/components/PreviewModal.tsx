@@ -88,15 +88,35 @@ function injectPalette(iframe: HTMLIFrameElement, palette: Palette | null): void
 }
 
 function applyTheme(iframe: HTMLIFrameElement, dark: boolean): void {
+  // Try direct DOM first (same-origin fast path), then postMessage fallback
   try {
     const html = iframe.contentDocument?.documentElement;
-    if (!html) return;
-    html.classList.toggle('dark', dark);
-    // also sync localStorage inside iframe
-    iframe.contentWindow?.localStorage?.setItem('theme', dark ? 'dark' : 'light');
-  } catch {
-    iframe.contentWindow?.postMessage({ type: 'fs-setTheme', value: dark ? 'dark' : 'light' }, '*');
-  }
+    if (html) {
+      html.classList.toggle('dark', dark);
+      try { iframe.contentWindow?.localStorage?.setItem('theme', dark ? 'dark' : 'light'); } catch(_) {}
+      return;
+    }
+  } catch(_) {}
+  iframe.contentWindow?.postMessage({ source: 'fs-preview', type: 'setTheme', value: dark ? 'dark' : 'light' }, '*');
+}
+
+function applyFont(iframe: HTMLIFrameElement, font: Font | null): void {
+  if (!font) return;
+  // Build Google Fonts URL from font config
+  const families: string[] = [];
+  if (font.heading) families.push(font.heading.replace(/ /g, '+') + ':wght@300;400;600;700');
+  if (font.body && font.body !== font.heading) families.push(font.body.replace(/ /g, '+') + ':wght@400;500');
+  const url = families.length > 0
+    ? `https://fonts.googleapis.com/css2?${families.map(f => `family=${f}`).join('&')}&display=swap`
+    : '';
+  // Use postMessage — font injection always needs it since fonts are in <head>
+  iframe.contentWindow?.postMessage({
+    source: 'fs-preview',
+    type: 'setFont',
+    url,
+    heading: font.heading ? `"${font.heading}", serif` : undefined,
+    body:    font.body    ? `"${font.body}", sans-serif` : undefined,
+  }, '*');
 }
 
 function MonitorIcon({ className = '' }: { className?: string }) {
@@ -158,25 +178,23 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
     return () => window.removeEventListener('message', handler);
   }, []);
 
-  // iframe src — only changes when slug or font changes (font needs Google Fonts reload)
+  // iframe src — only slug drives a reload; theme+palette+font all handled via postMessage/DOM
   const iframeSrc = useMemo(() => {
-    const p = new URLSearchParams();
-    if (selectedFont?.id) p.set('font', selectedFont.id);
-    // include initial theme and palette for templates that DO read URL params
-    p.set('mode', darkMode ? 'dark' : 'light');
-    if (selectedPalette?.id) p.set('palette', selectedPalette.id);
-    return `/templates/${template.slug}/?${p.toString()}`;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [template.slug, selectedFont?.id]); // intentionally exclude palette+darkMode — handled via DOM
+    return `/templates/${template.slug}/`;
+  }, [template.slug]);
 
-  // When iframe finishes loading: inject palette + apply theme
+  // When iframe finishes loading: apply theme + palette + font
   const handleLoad = useCallback(() => {
     setIframeReady(true);
     const iframe = iframeRef.current;
     if (!iframe) return;
-    applyTheme(iframe, darkMode);
-    injectPalette(iframe, selectedPalette);
-  }, [darkMode, selectedPalette]);
+    // Small delay to let the iframe's own scripts finish first
+    setTimeout(() => {
+      applyTheme(iframe, darkMode);
+      injectPalette(iframe, selectedPalette);
+      applyFont(iframe, selectedFont);
+    }, 80);
+  }, [darkMode, selectedPalette, selectedFont]);
 
   // When darkMode changes in parent: update iframe in-place (no reload)
   useEffect(() => {
@@ -189,6 +207,12 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
     if (!iframeReady || !iframeRef.current) return;
     injectPalette(iframeRef.current, selectedPalette);
   }, [selectedPalette, iframeReady]);
+
+  // When font changes: send via postMessage (no reload)
+  useEffect(() => {
+    if (!iframeReady || !iframeRef.current) return;
+    applyFont(iframeRef.current, selectedFont);
+  }, [selectedFont, iframeReady]);
 
   const currentWidth = VIEW_MODES.find(v => v.mode === viewMode)?.width || 'w-full';
 

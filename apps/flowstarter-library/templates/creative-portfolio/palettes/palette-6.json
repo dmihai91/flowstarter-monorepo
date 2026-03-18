@@ -1,16 +1,16 @@
 {
   "id": "palette-6",
-  "name": "Afterdark Mono",
+  "name": "Void Purple",
   "description": "Dark default palette with bright orange cueing and clean neutrals.",
   "colors": {
-    "primary": "#FF6A3D",
-    "primary-dark": "#e65f37",
-    "secondary": "#090909",
-    "accent": "#F3F1EA",
-    "background": "#050505",
-    "surface": "#111111",
-    "text": "#F4F0E8",
-    "text-muted": "#A7A094"
+    "primary": "#A78BFA",
+    "primary-dark": "#7C3AED",
+    "secondary": "#07040F",
+    "accent": "#34D399",
+    "background": "#04020A",
+    "surface": "#0C0718",
+    "text": "#F5F3FF",
+    "text-muted": "#C4B5FD"
   },
   "fonts": {
     "heading": "Bebas Neue",

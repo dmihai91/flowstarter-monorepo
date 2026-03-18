@@ -1,16 +1,16 @@
 {
   "id": "palette-6",
-  "name": "Midnight Orchestra",
+  "name": "Stage Black",
   "description": "Dark default palette with gold stage-light accents.",
   "colors": {
-    "primary": "#9D7AE4",
-    "primary-dark": "#8d6ecd",
-    "secondary": "#12081E",
-    "accent": "#FDBA74",
-    "background": "#080511",
-    "surface": "#140B1F",
-    "text": "#F5EBFF",
-    "text-muted": "#AE9BC6"
+    "primary": "#C084FC",
+    "primary-dark": "#A855F7",
+    "secondary": "#080208",
+    "accent": "#FB923C",
+    "background": "#030203",
+    "surface": "#0F080F",
+    "text": "#FAF5FF",
+    "text-muted": "#D8B4FE"
   },
   "fonts": {
     "heading": "Abril Fatface",

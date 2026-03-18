@@ -71,6 +71,11 @@ const navLinks = [
       .font-body {
         font-family: var(--font-body);
       }
+    
+      /* hide native theme toggle when rendered inside FS preview iframe */
+      html.fs-preview .theme-toggle,
+      html.fs-preview #theme-toggle,
+      html.fs-preview #theme-toggle-mobile { display: none !important; }
     </style>
     <Analytics />
     <title>{title}</title>
@@ -95,6 +100,37 @@ const navLinks = [
       document.documentElement.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
+  </script>
+
+  <script is:inline>
+    // FlowStarter preview bridge — postMessage API
+    (function() {
+      if (window.self === window.top) return; // only in iframe
+      // Mark document so CSS can hide native toggles
+      document.documentElement.classList.add('fs-preview');
+      window.addEventListener('message', function(e) {
+        if (!e.data || e.data.source !== 'fs-preview') return;
+        var d = e.data;
+        if (d.type === 'setTheme') {
+          document.documentElement.classList.toggle('dark', d.value === 'dark');
+          try { localStorage.setItem('theme', d.value); } catch(_) {}
+        } else if (d.type === 'setFont') {
+          // swap Google Fonts link
+          var existing = document.getElementById('fs-font-override');
+          if (existing) existing.remove();
+          if (d.url) {
+            var link = document.createElement('link');
+            link.id = 'fs-font-override';
+            link.rel = 'stylesheet';
+            link.href = d.url;
+            document.head.appendChild(link);
+          }
+          // apply CSS variables
+          if (d.heading) document.documentElement.style.setProperty('--font-heading', d.heading);
+          if (d.body)    document.documentElement.style.setProperty('--font-body',    d.body);
+        }
+      });
+    })();
   </script>
 </head>
   <body class="min-h-screen">

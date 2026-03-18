@@ -24,8 +24,12 @@ const SCREENSHOTS_DIR = path.join(process.cwd(), 'e2e', 'screenshots', 'scenario
 
 async function ss(page: any, name: string) {
   fs.mkdirSync(SCREENSHOTS_DIR, { recursive: true });
-  await page.screenshot({ path: path.join(SCREENSHOTS_DIR, `${name}.png`), fullPage: false });
-  console.log(`  📸 ${name}`);
+  try {
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, `${name}.png`), fullPage: false });
+    console.log(`  📸 ${name}`);
+  } catch (e) {
+    console.log(`  ⚠️ Screenshot ${name} failed: ${(e as Error).message?.slice(0, 60)}`);
+  }
 }
 
 const PROJECT = {

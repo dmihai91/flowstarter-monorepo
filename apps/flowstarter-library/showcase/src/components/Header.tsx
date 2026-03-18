@@ -32,35 +32,51 @@ function ThemeToggle({ themeMode, setThemeMode, darkMode }: { themeMode: ThemeMo
     { mode: 'auto',   icon: <SystemIcon />, label: 'System' },
   ];
 
+  const cycle = () => {
+    const order: ThemeMode[] = ['light', 'dark', 'auto'];
+    setThemeMode(order[(order.indexOf(themeMode) + 1) % 3]);
+  };
+
+  const currentIcon = opts.find(o => o.mode === themeMode)?.icon ?? <SunIcon />;
+
+  const btnBase = `flex items-center justify-center rounded-full transition-all duration-200 ${
+    darkMode
+      ? 'border border-white/12 bg-white/8 text-white hover:bg-white/15'
+      : 'border border-neutral-200 bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+  }`;
+
   return (
-    <div className={`flex items-center rounded-full p-1 ${
-      darkMode
-        ? 'bg-white/8 border border-white/12'
-        : 'bg-neutral-100 border border-neutral-200'
-    }`}>
-      {opts.map(({ mode, icon, label }) => {
-        const active = themeMode === mode;
-        return (
-          <button
-            key={mode}
-            onClick={() => setThemeMode(mode)}
-            aria-label={label}
-            title={label}
-            className={`flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 ${
-              active
-                ? darkMode
-                  ? 'bg-white/15 text-white shadow-sm'
-                  : 'bg-white text-purple-700 shadow-sm shadow-neutral-300/60 border border-neutral-200'
-                : darkMode
-                  ? 'text-neutral-400 hover:text-neutral-200'
-                  : 'text-neutral-400 hover:text-neutral-700'
-            }`}
-          >
-            {icon}
-          </button>
-        );
-      })}
-    </div>
+    <>
+      {/* Mobile: single cycle button */}
+      <button onClick={cycle} aria-label={`Theme: ${themeMode}`} title={`Switch theme (${themeMode})`}
+        className={`sm:hidden h-9 w-9 ${btnBase}`}>
+        {currentIcon}
+      </button>
+
+      {/* Desktop: full 3-button pill */}
+      <div className={`hidden sm:flex items-center rounded-full p-1 ${
+        darkMode ? 'bg-white/8 border border-white/12' : 'bg-neutral-100 border border-neutral-200'
+      }`}>
+        {opts.map(({ mode, icon, label }) => {
+          const active = themeMode === mode;
+          return (
+            <button key={mode} onClick={() => setThemeMode(mode)} aria-label={label} title={label}
+              className={`flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 ${
+                active
+                  ? darkMode
+                    ? 'bg-white/15 text-white shadow-sm'
+                    : 'bg-white text-purple-700 shadow-sm shadow-neutral-300/60 border border-neutral-200'
+                  : darkMode
+                    ? 'text-neutral-400 hover:text-neutral-200'
+                    : 'text-neutral-400 hover:text-neutral-700'
+              }`}
+            >
+              {icon}
+            </button>
+          );
+        })}
+      </div>
+    </>
   );
 }
 

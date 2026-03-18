@@ -61,7 +61,7 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
           {/* Mobile search — full-width below pills, hidden on sm+ (header has it) */}
           <div className="mt-6 sm:hidden">
             <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500 dark:text-neutral-300 pointer-events-none">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-600 dark:text-neutral-300 pointer-events-none" style={{zIndex:1}}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
                 </svg>
@@ -71,7 +71,7 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
                 id="mobile-search" placeholder="Search templates..."
                 value={searchQuery}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-                className="w-full rounded-xl border border-neutral-200 bg-white/80 py-3 pl-10 pr-4 text-sm text-neutral-900 backdrop-blur-sm transition-all placeholder:text-neutral-400 focus:border-purple-500/60 focus:outline-none focus:ring-2 focus:ring-purple-500/30 dark:border-neutral-700/60 dark:bg-neutral-900/80 dark:text-white dark:placeholder:text-neutral-500"
+                className="w-full rounded-xl border border-neutral-300 bg-white py-3 pl-10 pr-4 text-sm text-neutral-900 shadow-sm transition-all placeholder:text-neutral-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-neutral-700/60 dark:bg-neutral-900/80 dark:text-white dark:placeholder:text-neutral-500"
               />
             </div>
           </div>

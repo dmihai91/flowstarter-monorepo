@@ -43,7 +43,7 @@ export function Header({ themeMode, setThemeMode, darkMode, searchQuery, setSear
 
           <div className="hidden sm:block flex-1 max-w-md">
             <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500 dark:text-neutral-300 pointer-events-none">
                 <SearchIcon />
               </span>
               <input
@@ -56,11 +56,21 @@ export function Header({ themeMode, setThemeMode, darkMode, searchQuery, setSear
             </div>
           </div>
 
-          <div className="flex shrink-0 items-center gap-3">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <ThemeToggle
               theme={toTheme(themeMode)}
               onThemeChange={(t: Theme) => setThemeMode(fromTheme(t))}
             />
+            <button
+              onClick={() => {
+                const el = document.getElementById('mobile-search');
+                if (el) { el.focus(); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+              }}
+              className="flex sm:hidden h-9 w-9 items-center justify-center rounded-xl border border-neutral-200 text-neutral-500 transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800"
+              aria-label="Search"
+            >
+              <SearchIcon />
+            </button>
             <a
               href="https://flowstarter.dev"
               className="hidden sm:flex items-center gap-2 rounded-xl bg-purple-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-purple-500/20 transition-colors hover:bg-purple-600 no-underline"

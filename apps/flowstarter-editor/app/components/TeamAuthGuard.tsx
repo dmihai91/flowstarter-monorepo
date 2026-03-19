@@ -219,6 +219,22 @@ function TeamAccessDenied() {
   );
 }
 
+function TeamLoginRedirect() {
+  const homepageUrl = getMainPlatformHomepage();
+  const redirectUrl = typeof window !== 'undefined' ? encodeURIComponent(window.location.href) : '';
+
+  // Immediately redirect to the team login page, preserving where the operator was headed
+  useEffect(() => {
+    window.location.replace(`${homepageUrl}/team/login?redirect_url=${redirectUrl}`);
+  }, []);
+
+  return (
+    <div className="min-h-screen w-full flex items-center justify-center bg-[#fbf9ff] dark:bg-[#0a0810]">
+      <p className="text-sm text-gray-500 dark:text-white/40">Redirecting to team login…</p>
+    </div>
+  );
+}
+
 export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuardProps) {
   const { isLoaded, isSignedIn, user } = useUser();
   const [userMode, setUserMode] = useState<'guest' | 'team' | 'client'>('guest');
@@ -267,7 +283,7 @@ export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuard
   // Unless we've timed out, in which case show the login prompt
   if (!isLoaded) {
     if (loadingTimedOut) {
-      return <LoginPrompt />;
+      return requireTeam ? <TeamLoginRedirect /> : <LoginPrompt />;
     }
 
     return <>{fallback ?? <LoadingFallback />}</>;
@@ -284,9 +300,9 @@ export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuard
     return <>{children}</>;
   }
 
-  // Loaded but not signed in — show login prompt
+  // Loaded but not signed in — team flows go to team login, client flows show login prompt
   if (!isSignedIn) {
-    return <LoginPrompt />;
+    return requireTeam ? <TeamLoginRedirect /> : <LoginPrompt />;
   }
 
   if (requireTeam && userMode !== 'team') {

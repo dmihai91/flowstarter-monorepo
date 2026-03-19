@@ -41,7 +41,7 @@ function NewRouteContent() {
 
 export default function NewProjectPage() {
   return (
-    <AuthGuard fallback={<LoadingFallback />}>
+    <AuthGuard fallback={<LoadingFallback />} requireTeam>
       <ClientOnly fallback={<LoadingFallback />}>{() => <NewRouteContent />}</ClientOnly>
     </AuthGuard>
   );

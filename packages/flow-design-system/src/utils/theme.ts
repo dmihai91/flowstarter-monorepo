@@ -54,7 +54,7 @@ export function getTheme(): Theme {
  * Set the theme and persist to cookie (shared across subdomains)
  */
 export function setTheme(theme: Theme | 'auto'): void {
-  if ((theme as string) === 'auto') theme = 'system';
+  if ((theme as string) === 'auto') theme = 'system' as Theme;
   if (typeof document === 'undefined') return;
   
   const domain = getCookieDomain();

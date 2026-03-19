@@ -161,7 +161,8 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
   const [selectedPalette, setSelectedPalette] = useState<Palette | null>(template.palettes?.[0] || null);
   const [selectedFont,    setSelectedFont]    = useState<Font | null>(template.fonts?.[0] || null);
   const [userPickedPalette, setUserPickedPalette] = useState<Palette | null>(null);
-  const defaultView: ViewMode = typeof window !== 'undefined' && window.innerWidth < 640 ? 'mobile' : 'desktop';
+  const isMobileDevice = typeof window !== 'undefined' && window.innerWidth < 640;
+  const defaultView: ViewMode = isMobileDevice ? 'mobile' : 'desktop';
   const [viewMode,        setViewMode]        = useState<ViewMode>(defaultView);
   const [iframeReady,     setIframeReady]     = useState<boolean>(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -281,7 +282,7 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
           </div>
           <div className="flex items-center gap-2">
             <div className="flex items-center rounded-full border border-neutral-200 bg-neutral-100 p-1 dark:border-neutral-700 dark:bg-neutral-800">
-              {VIEW_MODES.map(({ mode, icon: Icon, label }) => (
+              {!isMobileDevice && VIEW_MODES.map(({ mode, icon: Icon, label }) => (
                 <button
                   key={mode}
                   onClick={() => setViewMode(mode)}

@@ -77,8 +77,16 @@
     hideBanner(uiState.errorBanner);
 
     if (!config.isConfigured || config.actionUrl.trim().length === 0) {
-      if (config.isDev) {
-        showBanner(uiState.errorBanner, 'Form not configured');
+      // In preview iframe — show a demo success so visitors can see the full UX
+      if (window.self !== window.top) {
+        toggleSubmittingState(uiState.submitButton, true);
+        setTimeout(function() {
+          toggleSubmittingState(uiState.submitButton, false);
+          showBanner(uiState.successBanner, config.successMessage);
+          form.reset();
+        }, 800);
+      } else if (config.isDev) {
+        showBanner(uiState.errorBanner, 'Form not configured — add actionUrl to enable lead capture.');
       }
       return;
     }

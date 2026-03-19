@@ -583,8 +583,6 @@ const navLinks = [
         }
       }
 
-      // Don't run booking intercept inside FS preview iframe
-    if (window.self !== window.top) return;
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('fs-booking-close')?.addEventListener('click', closeModal);
         document.getElementById('fs-booking-backdrop')?.addEventListener('click', closeModal);
@@ -593,16 +591,24 @@ const navLinks = [
           if (step > 1) { step--; if (step === 1) renderCalendar(); updateModal(); }
         });
 
-        // Intercept all "booking" CTA buttons
-        document.querySelectorAll('a.btn-primary, a.btn-outline, button.btn-primary').forEach(function(el){
-          var text = (el.textContent || '').toLowerCase();
-          var href = el.getAttribute('href') || '';
-          if (text.match(/book|schedule|session|appointment|start|begin|trial/)) {
-            el.addEventListener('click', function(e){
-              e.preventDefault(); openModal();
-            });
-          }
-        });
+        // Intercept booking CTA buttons (skip in iframe — nav links work normally there)
+        if (window.self === window.top) {
+          document.querySelectorAll('a.btn-primary, a.btn-outline, button.btn-primary').forEach(function(el){
+            var text = (el.textContent || '').toLowerCase();
+            if (text.match(/book|schedule|session|appointment|start|begin|trial/)) {
+              el.addEventListener('click', function(e){
+                e.preventDefault(); openModal();
+              });
+            }
+          });
+        }
+
+        // In preview iframe, wire explicit "Book" buttons to open modal
+        if (window.self !== window.top) {
+          document.querySelectorAll('[data-booking], .fs-book-btn').forEach(function(el){
+            el.addEventListener('click', function(e){ e.preventDefault(); openModal(); });
+          });
+        }
       });
     })();
     </script>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { LogoMark, LogoText } from './Logo';
+import { Logo } from '@flowstarter/flow-design-system';
 
 interface FooterProps {
   darkMode?: boolean;
@@ -24,8 +24,7 @@ export function Footer({ darkMode = false }: FooterProps): React.ReactElement {
           {/* Brand */}
           <div className="flex flex-col gap-2">
             <a href="/" className="flex items-center gap-2 no-underline">
-              <LogoMark size={22} />
-              <LogoText darkMode={darkMode} />
+              <Logo size="xs" />
             </a>
             <p className={'text-sm max-w-xs ' + muted}>
               Production-ready website templates for web designers and agencies.

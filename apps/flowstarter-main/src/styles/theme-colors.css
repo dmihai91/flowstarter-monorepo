@@ -67,14 +67,14 @@
   --landing-dark-surface-tint: #0d0d14;
 
   /* Hero gradient — base wash */
-  --hero-wash-from: #f4f1fa;
-  --hero-wash-via: #f8f6fc;
-  --hero-wash-to: #f2eff8;
+  --hero-wash-from: #ffffff;
+  --hero-wash-via: #f5f3ff;
+  --hero-wash-to: #eef2ff;
   /* Hero gradient — glow orbs (light mode: muted, professional) */
   --hero-glow-primary: #7C3AED;
-  --hero-glow-secondary: #4D5DD9;
+  --hero-glow-secondary: #4338ca;
   --hero-glow-accent: #06B6D4;
-  --hero-glow-focal: #7C3AED;
+  --hero-glow-focal: #6d28d9;
 
   /* Flow-line SVG gradient stops */
   --landing-flow-start: #4D5DD9;
@@ -173,14 +173,14 @@
   --landing-btn-hover-via: #6366F1;
 
   /* Hero gradient — dark wash */
-  --hero-wash-from: #0c0516;
-  --hero-wash-via: #08060e;
-  --hero-wash-to: #0b050f;
+  --hero-wash-from: #07040f;
+  --hero-wash-via: #0d0818;
+  --hero-wash-to: #060410;
   /* Hero gradient — dark glow orbs */
-  --hero-glow-primary: #4D5DD9;
-  --hero-glow-secondary: #7C3AED;
-  --hero-glow-accent: #06B6D4;
-  --hero-glow-focal: #5B21B6;
+  --hero-glow-primary: #6d28d9;
+  --hero-glow-secondary: #4D5DD9;
+  --hero-glow-accent: #0891b2;
+  --hero-glow-focal: #7C3AED;
 
   --landing-card-bg: rgba(255, 255, 255, 0.02);
   --landing-card-border: rgba(255, 255, 255, 0.05);

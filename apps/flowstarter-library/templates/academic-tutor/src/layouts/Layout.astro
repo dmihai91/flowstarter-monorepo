@@ -118,7 +118,12 @@ const navLinks = [
           document.documentElement.classList.toggle('dark', d.value === 'dark');
           try { localStorage.setItem('theme', d.value); } catch(_) {}
         } else if (d.type === 'setPalette') {
-          // Apply CSS vars directly on root element (inline style = highest priority, beats all stylesheets)
+          // 1. Apply theme FIRST so html.dark is set before palette CSS is evaluated
+          if (d.dark !== undefined) {
+            document.documentElement.classList.toggle('dark', !!d.dark);
+            try { localStorage.setItem('theme', d.dark ? 'dark' : 'light'); } catch(_) {}
+          }
+          // 2. Set CSS vars directly on root (inline style = highest priority)
           if (d.vars) {
             var root = document.documentElement;
             var vars = d.vars;
@@ -126,7 +131,7 @@ const navLinks = [
             if (vars['--color-background']) document.body.style.setProperty('background-color', vars['--color-background'], 'important');
             if (vars['--color-text']) document.body.style.setProperty('color', vars['--color-text'], 'important');
           }
-          // Also inject style tag for Tailwind utility class overrides
+          // 3. Inject style tag for Tailwind utility class overrides
           var existing = document.getElementById('fs-palette-override');
           if (existing) existing.remove();
           if (d.css) {

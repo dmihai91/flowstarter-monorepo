@@ -93,7 +93,7 @@ function buildPaletteCss(colors: PaletteColor): string {
   `.trim();
 }
 
-function injectPalette(iframe: HTMLIFrameElement, palette: Palette | null): void {
+function injectPalette(iframe: HTMLIFrameElement, palette: Palette | null, dark?: boolean): void {
   if (!palette?.colors) return;
   const colors = palette.colors;
   const p   = colors.primary          || '';
@@ -143,7 +143,7 @@ function injectPalette(iframe: HTMLIFrameElement, palette: Palette | null): void
   if (sur)   vars['--color-surface']       = sur;
   if (txt)   vars['--color-text']          = txt;
   if (muted) vars['--color-text-muted']    = muted;
-  iframe.contentWindow?.postMessage({ source: 'fs-preview', type: 'setPalette', css, vars }, '*');
+  iframe.contentWindow?.postMessage({ source: 'fs-preview', type: 'setPalette', css, vars, dark: dark ?? false }, '*');
 }
 
 function applyTheme(iframe: HTMLIFrameElement, dark: boolean): void {
@@ -272,34 +272,30 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
   // Pretty URL shown in the fake browser bar
   const prettyUrl = `${template.slug}.flowstarter.app`;
 
+  // Apply theme + palette atomically — always do both together to avoid race conditions
+  const applyPalette = useCallback((iframe: HTMLIFrameElement, palette: Palette | null) => {
+    const dark = palettes.length > 0 && palette?.id === palettes[palettes.length - 1]?.id;
+    applyTheme(iframe, dark);
+    injectPalette(iframe, palette, dark);
+  }, [palettes]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // When iframe finishes loading: apply theme + palette + font
   const handleLoad = useCallback(() => {
     setIframeReady(true);
     const iframe = iframeRef.current;
     if (!iframe) return;
-    // Delay to let the iframe's own scripts + postMessage listener initialize
+    // Small delay lets the iframe's postMessage listener finish registering
     setTimeout(() => {
-      applyTheme(iframe, iframeDarkRef.current);
-      injectPalette(iframe, selectedPaletteRef.current);
+      applyPalette(iframe, selectedPaletteRef.current);
       applyFont(iframe, selectedFontRef.current);
     }, 300);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps — uses refs, not stale closures
+  }, [applyPalette]); // eslint-disable-line react-hooks/exhaustive-deps — selectedPaletteRef/selectedFontRef are refs
 
-  // When darkMode changes: update theme + re-inject palette (colors depend on dark/light)
+  // When palette changes: apply theme + palette together (atomic — no separate theme effect)
   useEffect(() => {
     if (!iframeReady || !iframeRef.current) return;
-    applyTheme(iframeRef.current, iframeDark);
-    // small delay so html.dark class settles before palette vars override
-    setTimeout(() => {
-      if (iframeRef.current) injectPalette(iframeRef.current, selectedPaletteRef.current);
-    }, 50);
-  }, [iframeDark, iframeReady]);
-
-  // When palette changes: inject CSS in-place (no reload)
-  useEffect(() => {
-    if (!iframeReady || !iframeRef.current) return;
-    injectPalette(iframeRef.current, selectedPalette);
-  }, [selectedPalette, iframeReady]);
+    applyPalette(iframeRef.current, selectedPalette);
+  }, [selectedPalette, iframeReady, applyPalette]);
 
   // When font changes: send via postMessage (no reload)
   useEffect(() => {

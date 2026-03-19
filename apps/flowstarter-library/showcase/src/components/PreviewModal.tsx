@@ -94,13 +94,25 @@ function buildPaletteCss(colors: PaletteColor): string {
 }
 
 function injectPalette(iframe: HTMLIFrameElement, palette: Palette | null): void {
-  if (!iframe.contentWindow || !palette?.colors) return;
-  // Use postMessage — iframe is cross-origin (port 4100 vs 2000), contentDocument throws SecurityError
-  iframe.contentWindow.postMessage({
-    source: 'fs-preview',
-    type: 'setPalette',
-    css: buildPaletteCss(palette.colors),
-  }, '*');
+  if (!palette?.colors) return;
+  const css = buildPaletteCss(palette.colors);
+  if (!css) return;
+  // Try direct DOM injection first (works when iframe is same-origin via Vite proxy)
+  try {
+    const doc = iframe.contentDocument;
+    if (doc) {
+      let style = doc.getElementById('fs-palette-override') as HTMLStyleElement | null;
+      if (!style) {
+        style = doc.createElement('style') as HTMLStyleElement;
+        style.id = 'fs-palette-override';
+        doc.head.appendChild(style);
+      }
+      style.textContent = css;
+      return;
+    }
+  } catch { /* cross-origin fallback */ }
+  // Fallback: postMessage (cross-origin environments e.g. production subdomain)
+  iframe.contentWindow?.postMessage({ source: 'fs-preview', type: 'setPalette', css }, '*');
 }
 
 function applyTheme(iframe: HTMLIFrameElement, dark: boolean): void {

@@ -45,7 +45,7 @@ export const LANDING_COPY = {
     headlineHighlight: 'without technical skills or expensive setup',
     subheadline:
       'We build your initial setup for you, then you manage and grow everything from Flowstarter with our editor.',
-    primaryCta: 'Launch my business',
+    primaryCta: 'Book free strategy call',
     secondaryCta: 'See pricing',
     trustLine:
       'Built for creators, freelancers and small businesses who want to get online and monetize faster.',
@@ -277,6 +277,6 @@ export const LANDING_COPY = {
     headline: 'Stop waiting months to get online',
     body:
       'Get your business foundation launched in days, then manage and grow it with Flowstarter.',
-    cta: 'Launch my business',
+    cta: 'Book free strategy call',
   },
 };

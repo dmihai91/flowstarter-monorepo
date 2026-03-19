@@ -1306,7 +1306,7 @@ const en = {
   'landing.pricing.footerNote': 'No lock-in. Cancel anytime. No hidden fees.',
   'landing.pricing.finePrint': 'No contracts. Cancel anytime. First month free.',
   'landing.pricing.cta': 'Claim Your Spot',
-  'landing.header.cta': 'Launch my business',
+  'landing.header.cta': 'Book free strategy call',
 
   // Landing Page - For/Not For
 

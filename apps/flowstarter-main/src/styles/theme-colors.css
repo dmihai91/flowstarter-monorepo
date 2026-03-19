@@ -71,10 +71,10 @@
   --hero-wash-via: #f8f6fc;
   --hero-wash-to: #f2eff8;
   /* Hero gradient — glow orbs (light mode: muted, professional) */
-  --hero-glow-primary: #c0b0ec;
-  --hero-glow-secondary: #aebfed;
-  --hero-glow-accent: #d8cff4;
-  --hero-glow-focal: #bfb3ea;
+  --hero-glow-primary: #7C3AED;
+  --hero-glow-secondary: #4D5DD9;
+  --hero-glow-accent: #06B6D4;
+  --hero-glow-focal: #7C3AED;
 
   /* Flow-line SVG gradient stops */
   --landing-flow-start: #4D5DD9;
@@ -177,10 +177,10 @@
   --hero-wash-via: #08060e;
   --hero-wash-to: #0b050f;
   /* Hero gradient — dark glow orbs */
-  --hero-glow-primary: #351a80;
-  --hero-glow-secondary: #481440;
-  --hero-glow-accent: #161c50;
-  --hero-glow-focal: #451a90;
+  --hero-glow-primary: #4D5DD9;
+  --hero-glow-secondary: #7C3AED;
+  --hero-glow-accent: #06B6D4;
+  --hero-glow-focal: #5B21B6;
 
   --landing-card-bg: rgba(255, 255, 255, 0.02);
   --landing-card-border: rgba(255, 255, 255, 0.05);

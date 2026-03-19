@@ -401,7 +401,10 @@ export default clerkMiddleware(async (auth, req) => {
       // Team routes → team login, everything else → client login
       const url = req.nextUrl.clone();
       const next = req.nextUrl.pathname + (req.nextUrl.search || '');
-      url.pathname = req.nextUrl.pathname.startsWith('/team/') ? '/team/login' : '/login';
+      // /new?template= is an operator flow — send to team login
+      const isTeamRoute = req.nextUrl.pathname.startsWith('/team/') ||
+        (req.nextUrl.pathname === '/new' && req.nextUrl.searchParams.has('template'));
+      url.pathname = isTeamRoute ? '/team/login' : '/login';
       url.searchParams.set('reason', 'unauthenticated');
       url.searchParams.set('next', next);
       return NextResponse.redirect(url);

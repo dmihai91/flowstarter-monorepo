@@ -1,7 +1,7 @@
 /* Flowstarter Brand Colors - Shared across all apps */
 :root {
-  /* Primary brand color - indigo/blue */
-  --purple: hsl(233, 65%, 58%);
+  /* Primary brand color */
+  --purple: hsl(241, 93%, 61%);
   --purple-rgb: 77, 93, 217;
 
   /* Brand gradient */
@@ -14,6 +14,23 @@
   --primary-lighter: hsl(241, 93%, 61%, 0.6);
   --primary-lightest: hsl(241, 93%, 61%, 0.1);
 
+
+  /* Full purple scale */
+  --purple-primary: hsl(241 93% 61%);
+  --purple-primary-light: hsl(241 93% 61% / 0.8);
+  --purple-primary-lighter: hsl(241 93% 61% / 0.6);
+  --purple-primary-lightest: hsl(241 93% 61% / 0.1);
+  --purple-primary-dark: hsl(241 92% 57%);
+
+  /* Gradient stops */
+  --flow-start: #4D5DD9;
+  --flow-mid: #7C3AED;
+  --flow-end: #06B6D4;
+
+  /* Card surfaces */
+  --card-bg: rgba(255, 255, 255, 0.50);
+  --card-border: rgba(229, 231, 235, 0.40);
+  --glass-surface: #ffffff;
   /* Accent */
   --accent-blue: #3B82F6;
   --accent-cyan: #06B6D4;
@@ -32,7 +49,14 @@
 
 /* Dark mode */
 [data-theme='dark'] {
-  --purple: hsl(233, 65%, 58%);
+  --purple: hsl(241, 96%, 63%);
+
+  --purple-primary: hsl(241, 96%, 63%);
+  --purple-primary-light: hsl(241 96% 63% / 0.8);
+  --purple-primary-lightest: hsl(241 96% 63% / 0.12);
+  --card-bg: rgba(255, 255, 255, 0.03);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --glass-surface: rgba(18, 18, 22, 0.95);
   --bg-primary: #09090b;
   --bg-secondary: #18181b;
   --bg-tertiary: #27272a;

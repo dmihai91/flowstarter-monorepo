@@ -1,3 +1,5 @@
+@import '@flowstarter/flow-design-system/styles';
+
 /* ── Synced design tokens from main platform ───────────── */
 :root {
   --purple-primary: hsl(241 93% 61%);

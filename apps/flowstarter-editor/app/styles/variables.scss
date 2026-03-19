@@ -1,10 +1,10 @@
 /* Color Tokens Light Theme - Modernized with improved contrast */
 :root[data-theme='light'] {
-  /* Shared brand color - matches main platform */
-  --purple: hsl(233, 65%, 58%);
+  /* Shared brand color - from design system */
+  --purple: var(--purple-primary);
   
   /* Custom Brand Purple */
-  --flowstarter-accent-purple: #4d5dd9;
+  --flowstarter-accent-purple: var(--flow-start, #4d5dd9);
   --flowstarter-accent-purple-rgb: 77, 93, 217;
 
   --flowstarter-elements-borderColor: #d4d4d8;
@@ -180,8 +180,8 @@
 /* Color Tokens Dark Theme - Modernized */
 :root,
 :root[data-theme='dark'] {
-  /* Shared brand color - matches main platform */
-  --purple: hsl(233, 65%, 58%);
+  /* Shared brand color - from design system */
+  --purple: var(--purple-primary);
   
   /* Custom Brand Purple */
   --flowstarter-accent-purple: #c1c8ff;

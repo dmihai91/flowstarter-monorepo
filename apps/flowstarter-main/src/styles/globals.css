@@ -1688,13 +1688,14 @@ html.dark body {
 }
 
 @keyframes flowReveal {
-  0%   { transform: translateY(100%); opacity: 0; }
-  100% { transform: translateY(0);    opacity: 1; }
+  0%   { transform: translateY(60%); opacity: 0; filter: blur(8px); }
+  60%  { filter: blur(0); }
+  100% { transform: translateY(0);   opacity: 1; filter: blur(0); }
 }
 
 .hero-text-flow-inner {
   display: inline-block;
-  animation: flowReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+  animation: flowReveal 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
 }
 
 /* Keep for compatibility */

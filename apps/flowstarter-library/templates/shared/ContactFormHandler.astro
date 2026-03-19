@@ -1,19 +1,17 @@
 ---
-type Props = {
-  actionUrl: string;
-  successMessage: string;
-  templateName: string;
-  isConfigured: boolean;
-  isDev: boolean;
-}
-
 const {
   actionUrl,
   successMessage,
   templateName,
   isConfigured,
   isDev,
-} = Astro.props;
+} = Astro.props as {
+  actionUrl: string;
+  successMessage: string;
+  templateName: string;
+  isConfigured: boolean;
+  isDev: boolean;
+};
 ---
 
 <div

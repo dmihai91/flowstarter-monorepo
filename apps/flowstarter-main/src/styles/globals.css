@@ -1652,29 +1652,42 @@ html.dark body {
   background-color: var(--landing-dark-surface, #0a0a0c);
 }
 
-/* ── Hero word-reveal animation ─────────────────────────── */
+/* ── Hero animations ─────────────────────────────────────── */
+@keyframes heroShimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
 @keyframes wordReveal {
   0%   { opacity: 0; transform: translateY(18px) scale(0.94); filter: blur(6px); }
-  50%  { filter: blur(1px); }
+  60%  { filter: blur(0); }
   100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
 }
 
-@keyframes gradientFlow {
-  0%, 100% { background-position: 0% 50%; }
-  50%       { background-position: 100% 50%; }
-}
-
-.animate-word-reveal {
-  display: inline-block;
-  opacity: 0;
-  background: linear-gradient(135deg, #4D5DD9, #7C3AED, #a78bfa, #06B6D4, #7C3AED, #4D5DD9);
-  background-size: 400% 400%;
+/* Full-headline shimmer flow */
+.hero-text-flow {
+  background: linear-gradient(
+    90deg,
+    #4D5DD9 0%,
+    #7C3AED 20%,
+    #a78bfa 35%,
+    #06B6D4 50%,
+    #a78bfa 65%,
+    #7C3AED 80%,
+    #4D5DD9 100%
+  );
+  background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  animation:
-    wordReveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards,
-    gradientFlow 4s ease infinite;
+  animation: heroShimmer 3s linear infinite;
+}
+
+/* Word reveal — wraps each word in the highlight */
+.animate-word-reveal {
+  display: inline-block;
+  opacity: 0;
+  animation: wordReveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 

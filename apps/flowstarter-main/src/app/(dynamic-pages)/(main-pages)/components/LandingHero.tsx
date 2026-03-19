@@ -2,7 +2,7 @@
 
 import { EXTERNAL_URLS } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+
 import { LANDING_COPY, type HeroCopy } from '../landing-copy';
 
 /**

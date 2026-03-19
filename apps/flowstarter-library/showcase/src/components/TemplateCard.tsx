@@ -141,11 +141,12 @@ export function TemplateCard({ template, darkMode, onPreview }: TemplateCardProp
           >
             <PlayIcon /> Preview
           </button>
-          <button
-            className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl bg-purple-600 px-4 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-purple-700"
+          <a
+            href={`${import.meta.env.VITE_APP_URL ?? 'https://flowstarter.dev'}/new?template=${template.slug}`}
+            className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl bg-purple-600 px-4 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-purple-700 no-underline"
           >
             Use Template <ArrowIcon />
-          </button>
+          </a>
         </div>
       </div>
     </div>

@@ -43,15 +43,15 @@ export default function LandingPage() {
         @keyframes shimmerBtn { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
         @keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
         .animate-cursor-blink { animation: cursorBlink 1s step-end infinite; }
-        @keyframes textFlow { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
+        @keyframes textFlow { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
         .text-flow {
-          background: linear-gradient(90deg, var(--landing-text-accent) 0%, var(--landing-flow-end) 20%, var(--landing-flow-alt-end) 40%, var(--landing-flow-end) 60%, var(--landing-text-accent) 80%, var(--landing-flow-end) 100%);
-          background-size: 300% 100%;
+          background: linear-gradient(135deg, #4D5DD9, #7C3AED, #a78bfa, #06B6D4, #7C3AED, #4D5DD9);
+          background-size: 300% 300%;
           -webkit-background-clip: text;
           background-clip: text;
           color: transparent;
           -webkit-text-fill-color: transparent;
-          animation: textFlow 5s linear infinite;
+          animation: textFlow 6s ease infinite;
         }
         @keyframes typing { from { width: 0; } to { width: 100%; } }
         .typing-container { overflow: hidden; white-space: nowrap; border-right: 2px solid var(--purple, #4D5DD9); animation: typing 2s steps(30) forwards, cursorBlink 1s step-end infinite; will-change: transform; }

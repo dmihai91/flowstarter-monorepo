@@ -77,20 +77,20 @@
   --hero-glow-focal: #bfb3ea;
 
   /* Flow-line SVG gradient stops */
-  --landing-flow-start: #a855f7;
-  --landing-flow-end: #3b82f6;
-  --landing-flow-alt-start: #8b5cf6;
-  --landing-flow-alt-end: #06b6d4;
-  --landing-flow-end-light: #60a5fa;
+  --landing-flow-start: #4D5DD9;
+  --landing-flow-end: #7C3AED;
+  --landing-flow-alt-start: #7C3AED;
+  --landing-flow-alt-end: #06B6D4;
+  --landing-flow-end-light: #38bdf8;
 
-  /* Hero text-flow accent */
-  --landing-text-accent: #7c3aed;
+  /* Hero text-flow accent — matches library logo gradient */
+  --landing-text-accent: #4D5DD9;
 
   /* CTA button gradient (deep indigo, Stripe-style) */
-  --landing-btn-from: #4338CA;
-  --landing-btn-via: #4F46E5;
-  --landing-btn-hover-from: #3730A3;
-  --landing-btn-hover-via: #4338CA;
+  --landing-btn-from: #4D5DD9;
+  --landing-btn-via: #7C3AED;
+  --landing-btn-hover-from: #3d4dc9;
+  --landing-btn-hover-via: #6d28d9;
 
   /* Card surfaces */
   --landing-card-bg: rgba(255, 255, 255, 0.50);

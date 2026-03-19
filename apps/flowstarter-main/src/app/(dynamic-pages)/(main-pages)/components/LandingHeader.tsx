@@ -7,6 +7,7 @@ import { useI18n } from '@/lib/i18n';
 import { EXTERNAL_URLS } from '@/lib/constants';
 import Link from 'next/link';
 import { useHeaderState } from './hooks/useHeaderState';
+import { LANDING_COPY } from '../landing-copy';
 
 /**
  * Landing page header with scroll-aware styling and mobile menu.
@@ -42,6 +43,14 @@ export function LandingHeader() {
               </Link>
 
               <nav className="hidden md:flex items-center gap-8">
+                <a
+                  href="https://library.flowstarter.dev"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
+                >
+                  {LANDING_COPY.nav.templatesLabel}
+                </a>
                 <a
                   href="#process"
                   onClick={(e) => {
@@ -150,6 +159,15 @@ export function LandingHeader() {
                   <span className="text-sm text-gray-600 dark:text-white/70">{t('nav.theme')}</span>
                   <ThemeToggle />
                 </div>
+                <a
+                  href="https://library.flowstarter.dev"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors"
+                >
+                  {LANDING_COPY.nav.templatesLabel}
+                </a>
                 <a
                   href="#process"
                   onClick={(e) => {

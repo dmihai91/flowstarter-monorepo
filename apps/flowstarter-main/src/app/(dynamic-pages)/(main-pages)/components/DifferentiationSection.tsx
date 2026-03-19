@@ -1,17 +1,17 @@
 'use client';
 
 import { SectionWrapper, SectionHeading } from './SectionWrapper';
-import { LANDING } from './landing-content';
-
-const d = LANDING.differentiation;
+import { LANDING_COPY } from '../landing-copy';
 
 export function DifferentiationSection() {
+  const differentiation = LANDING_COPY.differentiation;
+
   return (
     <SectionWrapper tinted>
-      <SectionHeading className="text-center">{d.title}</SectionHeading>
+      <SectionHeading className="text-center">{differentiation.title}</SectionHeading>
 
       <div className="mt-16 grid gap-8 md:grid-cols-3">
-        {d.cards.map((card) => (
+        {differentiation.cards.map((card) => (
           <div key={card.label} className={`rounded-2xl p-8 transition-all ${
             card.highlighted
               ? 'bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] text-white shadow-xl shadow-[var(--landing-text-accent)]/20'

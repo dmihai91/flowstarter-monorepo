@@ -7,9 +7,11 @@ import { LandingHeader } from './components/LandingHeader';
 import { LandingHero } from './components/LandingHero';
 import { EditorShowcase } from './components/EditorShowcase';
 import { ProcessSection } from './components/ProcessSection';
+import { ProblemSection } from './components/ProblemSection';
 import { PillarsSection } from './components/PillarsSection';
 import { IncludedSection } from './components/IncludedSection';
-import { TrustSection } from './components/TrustSection';
+import { DifferentiationSection } from './components/DifferentiationSection';
+import { AudienceSection } from './components/AudienceSection';
 import { LandingPricing } from './components/LandingPricing';
 import { ManifestoSection } from './components/ManifestoSection';
 import { TeamSection } from './components/TeamSection';
@@ -70,28 +72,34 @@ export default function LandingPage() {
         {/* 3. How it works — 3 steps */}
         <ProcessSection />
 
-        {/* 4. Why experts choose Flowstarter — 3 pillars */}
+        {/* 4. Starting online pains */}
+        <ProblemSection />
+
+        {/* 5. Why experts choose Flowstarter — 3 pillars */}
         <PillarsSection />
 
-        {/* 5. Social proof / trust indicators */}
-        <TrustSection />
+        {/* 6. Positioning */}
+        <DifferentiationSection />
 
-        {/* 6. Everything you need — features */}
+        {/* 7. Who this is for */}
+        <AudienceSection />
+
+        {/* 8. Everything you need — features */}
         <IncludedSection />
 
-        {/* 7. Clear pricing */}
+        {/* 9. Clear pricing */}
         <LandingPricing />
 
-        {/* 8. Manifesto — emotional/mission */}
+        {/* 10. Manifesto — emotional/mission */}
         <ManifestoSection />
 
-        {/* 9. Who's behind Flowstarter */}
+        {/* 11. Who's behind Flowstarter */}
         <TeamSection />
 
-        {/* 10. FAQ */}
+        {/* 12. FAQ */}
         <FAQSection />
 
-        {/* 10. Final CTA + footer */}
+        {/* 13. Final CTA + footer */}
         <FinalCTASection />
         <Footer />
         <CookieConsent />

@@ -1,17 +1,17 @@
 'use client';
 
-import { useI18n } from '@/lib/i18n';
 import { EXTERNAL_URLS } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
+import { LANDING_COPY } from '../landing-copy';
 
 /**
  * Landing page hero — clean, focused, high-converting.
  * Only: badge, headline, one paragraph, CTA.
  */
 export function LandingHero() {
-  const { t } = useI18n();
   const [isLoaded, setIsLoaded] = useState(false);
+  const hero = LANDING_COPY.hero;
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoaded(true), 100);
@@ -62,72 +62,48 @@ export function LandingHero() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
             <span className="text-sm font-medium text-gray-600 dark:text-white/70">
-              {t('landing.hero.badge')}
+              AI-powered launch support
             </span>
           </div>
         </div>
 
         {/* Headline */}
         <h1 className={`hero-fade hero-fade-2 text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.08] tracking-tight mb-5 text-gray-900 dark:text-white`}>
-          {t('landing.hero.headline1')}
+          {hero.headlinePrefix}
           <br />
-          <span className="text-flow">{t('landing.hero.headline2')}</span>
+          <span className="text-flow">{hero.headlineHighlight}</span>
         </h1>
 
         {/* Body */}
         <p className="hero-fade hero-fade-3 text-lg sm:text-xl text-gray-500 dark:text-white/55 leading-relaxed mb-4 max-w-2xl mx-auto">
-          {t('landing.hero.pain')}
+          {hero.subheadline}
         </p>
 
         {/* Audience qualifier */}
         <p className="hero-fade hero-fade-3 text-sm sm:text-base text-gray-400 dark:text-white/40 mb-7 max-w-xl mx-auto">
-          {t('landing.hero.audience')}
+          {hero.trustLine}
         </p>
 
         {/* CTA */}
-        <div className="hero-fade hero-fade-4">
+        <div className="hero-fade hero-fade-4 flex flex-col items-center gap-4">
           <a href={EXTERNAL_URLS.calendly.discovery} target="_blank" rel="noopener noreferrer">
             <Button variant="brand-gradient" className="relative overflow-hidden bg-[length:200%_100%] animate-[shimmerBtn_3s_ease-in-out_infinite] rounded-xl px-8 sm:px-10 h-13 sm:h-14 text-base sm:text-lg shadow-[0_8px_30px_rgba(124,58,237,0.25)] hover:shadow-[0_12px_40px_rgba(124,58,237,0.35)] hover:scale-[1.03] active:scale-[0.98] group">
-              {t('landing.hero.cta')}
+              {hero.primaryCta}
               <svg className="w-5 h-5 ml-2.5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </Button>
           </a>
-          <p className="hero-fade hero-fade-5 text-sm text-gray-400 dark:text-white/35 mt-4">
-            {t('landing.hero.ctaNote')}
-          </p>
-
-          {/* Launch price anchor */}
-          <div className="hero-fade hero-fade-5 inline-flex flex-col sm:flex-row items-center gap-2 sm:gap-4 mt-8 px-6 sm:px-8 py-4 sm:py-4 rounded-2xl bg-gradient-to-r from-amber-50/80 to-orange-50/60 dark:from-amber-500/[0.06] dark:to-orange-500/[0.03] backdrop-blur-sm border border-amber-200/40 dark:border-amber-500/15 shadow-[0_2px_16px_rgba(245,158,11,0.08)]">
-            <span className="text-[0.625rem] sm:text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">{t('landing.hero.limitedBadge')}</span>
-            <span className="hidden sm:block w-px h-5 bg-amber-300/30 dark:bg-amber-500/20" />
-            <div className="flex items-center gap-3">
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-sm text-gray-400 dark:text-white/30 line-through">{t('landing.hero.buildOriginalPrice')}</span>
-                <span className="text-xl font-extrabold text-gray-900 dark:text-white">{t('landing.hero.priceBuild')}</span>
-                <span className="text-xs text-gray-400 dark:text-white/35">{t('landing.hero.buildSetupLabel')}</span>
-              </div>
-              <span className="text-gray-300 dark:text-white/15">+</span>
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-sm text-gray-400 dark:text-white/30 line-through">{t('landing.hero.careOriginalPrice')}</span>
-                <span className="text-xl font-extrabold text-gray-900 dark:text-white">{t('landing.hero.priceMonthly')}</span>
-                <span className="text-xs text-gray-400 dark:text-white/35">{t('landing.hero.monthlyLabel')}</span>
-              </div>
-            </div>
-          </div>
-          <p className="hero-fade hero-fade-5 text-xs sm:text-sm text-amber-600/70 dark:text-amber-400/50 mt-3">{t('landing.hero.urgency')}</p>
-
-          {/* Limited spots indicator — hidden for now, uncomment when ready
-          <div className="hero-fade hero-fade-5 flex items-center justify-center gap-2 mt-8 text-sm sm:text-base text-gray-500 dark:text-white/40">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
-            </span>
-            <span>Launch batch: accepting only 10 clients</span>
-            <span className="font-semibold text-gray-700 dark:text-white/70">· 10 spots remaining</span>
-          </div>
-          */}
+          <a
+            href="#pricing"
+            onClick={(event) => {
+              event.preventDefault();
+              document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="hero-fade hero-fade-5 inline-flex items-center justify-center rounded-xl border border-[var(--landing-card-border)] bg-white/60 px-6 py-3 text-sm font-medium text-gray-700 shadow-[0_8px_30px_rgba(15,23,42,0.05)] backdrop-blur-md transition hover:border-[var(--purple-primary)]/35 hover:text-gray-900 dark:bg-white/[0.03] dark:text-white/70 dark:hover:text-white"
+          >
+            {hero.secondaryCta}
+          </a>
         </div>
       </div>
     </section>

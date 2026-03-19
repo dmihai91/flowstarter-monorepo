@@ -1,12 +1,11 @@
 'use client';
 
-import { useI18n } from '@/lib/i18n';
 import { EXTERNAL_URLS } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
+import { LANDING_COPY } from '../landing-copy';
 
 export function FinalCTASection() {
-  const { t } = useI18n();
-
+  const finalCta = LANDING_COPY.finalCta;
 
   return (
     <>
@@ -37,15 +36,15 @@ export function FinalCTASection() {
           <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center relative">
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-5">
               <span className="bg-gradient-to-r from-white via-blue-300 to-white bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
-                {t('landing.cta.title')}
+                {finalCta.headline}
               </span>
             </h2>
             <p className="text-base text-white/50 mb-6 sm:mb-10 max-w-md mx-auto">
-              {t('landing.cta.subtitle')}
+              {finalCta.body}
             </p>
             <a href={EXTERNAL_URLS.calendly.discovery} target="_blank" rel="noopener noreferrer" className="inline-flex justify-center w-full sm:w-auto">
               <Button className="relative overflow-hidden w-full sm:w-auto hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] rounded-lg px-8 h-12 text-base sm:px-12 sm:h-16 sm:text-lg font-semibold shadow-lg shadow-white/5 transition-all duration-300 hover:scale-105" variant="secondary">
-                {t('landing.cta.button')}
+                {finalCta.cta}
                 <svg
                   className="w-5 h-5 ml-3"
                   fill="none"
@@ -61,13 +60,6 @@ export function FinalCTASection() {
                 </svg>
               </Button>
             </a>
-            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 mt-4 text-sm text-white/40 font-medium">
-              <span>{t('landing.cta.setupPrice')}</span>
-              <span className="text-white/20">·</span>
-              <span>{t('landing.cta.monthlyPrice')}</span>
-              <span className="text-white/20">·</span>
-              <span>{t('landing.cta.firstMonthFree')}</span>
-            </div>
           </div>
         </section>
     </>

@@ -116,7 +116,7 @@ function MobileDrawer({
           (darkMode ? 'bg-[#0d0d10] border-r border-white/8' : 'bg-white border-r border-neutral-200') +
           ' flex flex-col'}
       >
-        <div className={'flex items-center justify-between px-4 py-4 border-b ' + (darkMode ? 'border-white/8' : 'border-neutral-200')}>
+        <div className={'flex items-center justify-between px-4 py-4 border-b ' + (darkMode ? 'border-[#ffffff0a]' : 'border-neutral-200')}>
           <Logo size="xs" />
           <button onClick={onClose} className={'flex h-8 w-8 items-center justify-center rounded-full transition-colors ' + (darkMode ? 'text-neutral-400 hover:bg-white/8' : 'text-neutral-500 hover:bg-neutral-100')}>
             <XIcon />
@@ -172,7 +172,7 @@ function MobileDrawer({
           )}
         </div>
 
-        <div className={'px-4 py-4 border-t ' + (darkMode ? 'border-white/8' : 'border-neutral-200')}>
+        <div className={'px-4 py-4 border-t ' + (darkMode ? 'border-[#ffffff0a]' : 'border-neutral-200')}>
           <a href="https://flowstarter.dev" className="flex items-center justify-center gap-2 w-full rounded-xl bg-purple-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-purple-700 no-underline">
             Get Early Access
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -208,7 +208,7 @@ export function Header({
         toggleFeature={toggleFeature}
       />
 
-      <header className={'sticky top-0 z-30 backdrop-blur-xl ' + (darkMode ? 'border-b border-white/8 bg-[#08080c]/85' : 'border-b border-purple-200/50 bg-white/90 shadow-sm shadow-purple-100/40')}>
+      <header className={'sticky top-0 z-30 backdrop-blur-xl ' + (darkMode ? 'border-b border-[#ffffff0a] bg-[#08080c]/90' : 'border-b border-purple-200/40 bg-white/90 shadow-sm shadow-purple-100/40')}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* ── Mobile row (hidden on sm+) ── */}

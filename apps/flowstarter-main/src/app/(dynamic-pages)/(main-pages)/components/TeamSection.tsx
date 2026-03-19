@@ -1,10 +1,12 @@
 'use client';
 
+import { motion, useInView } from 'framer-motion';
+
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useI18n } from '@/lib/i18n';
 import { Linkedin } from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 type TranslationKey = Parameters<ReturnType<typeof useI18n>['t']>[0];
 

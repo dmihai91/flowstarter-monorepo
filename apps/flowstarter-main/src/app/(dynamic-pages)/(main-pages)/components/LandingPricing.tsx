@@ -1,5 +1,8 @@
 'use client';
 
+import { motion, useInView } from 'framer-motion';
+import { useRef } from 'react';
+
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { EXTERNAL_URLS } from '@/lib/constants';
 import { Button } from '@/components/ui/button';

@@ -1,5 +1,8 @@
 'use client';
 
+import { motion, useInView } from 'framer-motion';
+import { useRef } from 'react';
+
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { GlassCard } from '@flowstarter/flow-design-system';
 import { useFAQAccordion } from './hooks/useFAQAccordion';

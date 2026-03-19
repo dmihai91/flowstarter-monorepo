@@ -27,7 +27,6 @@ export default function LandingPage() {
         .font-display { font-family: 'Outfit', system-ui, sans-serif; }
         @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
         .animate-float { animation: float 3s ease-in-out infinite; }
-        .hero-fade { opacity: 1; }
         @keyframes wordReveal {
           0% { opacity: 0; transform: translateY(20px) scale(0.95); filter: blur(4px); }
           60% { opacity: 1; filter: blur(0px); }

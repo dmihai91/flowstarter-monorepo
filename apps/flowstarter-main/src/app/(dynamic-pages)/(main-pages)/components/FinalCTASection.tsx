@@ -1,5 +1,8 @@
 'use client';
 
+import { motion, useInView } from 'framer-motion';
+import { useRef } from 'react';
+
 import { EXTERNAL_URLS } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import { LANDING_COPY } from '../landing-copy';

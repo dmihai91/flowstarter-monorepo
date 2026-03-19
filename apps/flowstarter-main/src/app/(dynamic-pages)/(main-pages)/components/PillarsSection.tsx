@@ -1,5 +1,8 @@
 'use client';
 
+import { motion, useInView } from 'framer-motion';
+import { useRef } from 'react';
+
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { LandingIcon, type IconName } from './LandingIcons';
 import { LANDING_COPY } from '../landing-copy';

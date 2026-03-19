@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { EXTERNAL_URLS } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 
@@ -11,7 +11,8 @@ import { LANDING_COPY, type HeroCopy } from '../landing-copy';
  * Only: badge, headline, one paragraph, CTA.
  */
 export function LandingHero() {
-  const [isLoaded, setIsLoaded] = useState(true);
+  const [ready, setReady] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setReady(true), 80); return () => clearTimeout(t); }, []);
   const hero = LANDING_COPY.hero;
 
   return (
@@ -51,8 +52,10 @@ export function LandingHero() {
 
       <div className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10 text-center">
         {/* Badge */}
-        <div>
-          <div className="hero-fade hero-fade-1 inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/60 dark:bg-white/[0.06] backdrop-blur-md border border-gray-200/40 dark:border-white/[0.08] shadow-[0_2px_20px_rgba(0,0,0,0.04)] mb-6">
+        <div
+          style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0) scale(1)' : 'translateY(28px) scale(0.97)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.1s' }}
+        >
+          <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/60 dark:bg-white/[0.06] backdrop-blur-md border border-gray-200/40 dark:border-white/[0.08] shadow-[0_2px_20px_rgba(0,0,0,0.04)] mb-6">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
@@ -64,24 +67,36 @@ export function LandingHero() {
         </div>
 
         {/* Headline */}
-        <h1 className={`hero-fade hero-fade-2 text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.08] tracking-tight mb-5 text-gray-900 dark:text-white drop-shadow-sm`}>
+        <h1
+          className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.08] tracking-tight mb-5 text-gray-900 dark:text-white drop-shadow-sm"
+          style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.22s' }}
+        >
           {hero.headlinePrefix}
           <br />
           <span className="text-flow">{hero.headlineHighlight}</span>
         </h1>
 
         {/* Body */}
-        <p className="hero-fade hero-fade-3 text-xl sm:text-2xl text-gray-600 dark:text-white/55 leading-relaxed mb-4 max-w-2xl mx-auto">
+        <p
+          className="text-xl sm:text-2xl text-gray-600 dark:text-white/55 leading-relaxed mb-4 max-w-2xl mx-auto"
+          style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.38s' }}
+        >
           {hero.subheadline}
         </p>
 
         {/* Audience qualifier */}
-        <p className="hero-fade hero-fade-3 text-sm sm:text-base text-gray-400 dark:text-white/40 mb-7 max-w-xl mx-auto">
+        <p
+          className="text-sm sm:text-base text-gray-400 dark:text-white/40 mb-7 max-w-xl mx-auto"
+          style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.50s' }}
+        >
           {hero.trustLine}
         </p>
 
         {/* CTA */}
-        <div className="hero-fade hero-fade-4 flex flex-col items-center gap-4">
+        <div
+          className="flex flex-col items-center gap-4"
+          style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.64s' }}
+        >
           <a href={EXTERNAL_URLS.calendly.discovery} target="_blank" rel="noopener noreferrer">
             <Button variant="brand-gradient" className="relative overflow-hidden bg-[length:200%_100%] animate-[shimmerBtn_3s_ease-in-out_infinite] rounded-xl px-8 sm:px-10 h-13 sm:h-14 text-base sm:text-lg shadow-[0_8px_30px_rgba(124,58,237,0.25)] hover:shadow-[0_12px_40px_rgba(124,58,237,0.35)] hover:scale-[1.03] active:scale-[0.98] group">
               {hero.primaryCta}
@@ -96,7 +111,7 @@ export function LandingHero() {
               event.preventDefault();
               document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="hero-fade hero-fade-5 inline-flex items-center justify-center rounded-xl border border-[var(--landing-card-border)] bg-white/60 px-6 py-3 text-sm font-medium text-gray-700 shadow-[0_8px_30px_rgba(15,23,42,0.05)] backdrop-blur-md transition hover:border-[var(--purple-primary)]/35 hover:text-gray-900 dark:bg-white/[0.03] dark:text-white/70 dark:hover:text-white"
+            className="inline-flex items-center justify-center rounded-xl border border-[var(--landing-card-border)] bg-white/60 px-6 py-3 text-sm font-medium text-gray-700 shadow-[0_8px_30px_rgba(15,23,42,0.05)] backdrop-blur-md hover:border-[var(--purple-primary)]/35 hover:text-gray-900 dark:bg-white/[0.03] dark:text-white/70 dark:hover:text-white transition-colors"
           >
             {hero.secondaryCta}
           </a>

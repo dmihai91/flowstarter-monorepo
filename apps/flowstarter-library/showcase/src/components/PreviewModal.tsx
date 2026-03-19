@@ -254,6 +254,13 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
     return () => { document.removeEventListener('keydown', handleEscape); document.body.style.overflow = ''; };
   }, [handleEscape]);
 
+  // Apply theme + palette atomically — always do both together to avoid race conditions
+  const applyPalette = useCallback((iframe: HTMLIFrameElement, palette: Palette | null) => {
+    const dark = palettes.length > 0 && palette?.id === palettes[palettes.length - 1]?.id;
+    applyTheme(iframe, dark);
+    injectPalette(iframe, palette, dark);
+  }, [palettes]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Listen for messages from inside the template iframe
   useEffect(() => {
     const handler = (e: MessageEvent) => {
@@ -282,13 +289,6 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
 
   // Pretty URL shown in the fake browser bar
   const prettyUrl = `${template.slug}.flowstarter.app`;
-
-  // Apply theme + palette atomically — always do both together to avoid race conditions
-  const applyPalette = useCallback((iframe: HTMLIFrameElement, palette: Palette | null) => {
-    const dark = palettes.length > 0 && palette?.id === palettes[palettes.length - 1]?.id;
-    applyTheme(iframe, dark);
-    injectPalette(iframe, palette, dark);
-  }, [palettes]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // When iframe finishes loading: apply theme + palette + font
   const handleLoad = useCallback(() => {

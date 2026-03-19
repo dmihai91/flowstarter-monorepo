@@ -13,7 +13,7 @@
  * - Setup: useAgentSetup, useChatEffects
  */
 
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useEffect, useRef } from 'react';
 import { useTemplateClone } from '~/lib/hooks/useTemplateClone';
 import { useSnapshotBlob } from '~/lib/hooks/useSnapshotBlob';
 import { useTemplateCustomization } from '~/lib/hooks/useTemplateCustomization';
@@ -76,12 +76,8 @@ export function useEditorChatState({
   // Sync Callbacks (stable refs for state syncing)
   // ═══════════════════════════════════════════════════════════════════════
 
-  const {
-    handleStepChange,
-    handleTemplateSelectSync,
-    handlePaletteSelectSync,
-    handleBusinessInfoConfirmSync,
-  } = useSyncCallbacks({ onStateChange });
+  const { handleStepChange, handleTemplateSelectSync, handlePaletteSelectSync, handleBusinessInfoConfirmSync } =
+    useSyncCallbacks({ onStateChange });
 
   // ═══════════════════════════════════════════════════════════════════════
   // Core Hooks
@@ -189,13 +185,28 @@ export function useEditorChatState({
     [businessHook, templateHook],
   );
 
-  useWelcomeInit({ 
-    initialState, 
-    messageHook, 
-    flowHook, 
+  const pendingSeededBuildRef = useRef(
+    Boolean(
+      initialState?.selectedTemplateId &&
+        initialState?.selectedPalette &&
+        initialState?.selectedFont &&
+        (initialState?.businessInfo?.description || initialState?.projectDescription) &&
+        (!initialState?.messages || initialState.messages.length === 0),
+    ),
+  );
+
+  const handleTemplateBuildStart = useCallback(() => {
+    pendingSeededBuildRef.current = true;
+  }, []);
+
+  useWelcomeInit({
+    initialState,
+    messageHook,
+    flowHook,
     hasRestoredState,
     onFetchTemplates: handleFetchTemplates,
     onInternalFlowStart: handleInternalFlowStart,
+    onTemplateBuildStart: handleTemplateBuildStart,
   });
 
   // ═══════════════════════════════════════════════════════════════════════
@@ -250,40 +261,60 @@ export function useEditorChatState({
     existingProjectId: additionalState.convexProjectId,
   });
 
+  useEffect(() => {
+    if (!pendingSeededBuildRef.current) {
+      return;
+    }
+
+    if (!hasRestoredState.current) {
+      return;
+    }
+
+    if (!templateHook.selectedTemplate || !paletteHook.selectedPalette || !additionalState.selectedFont) {
+      return;
+    }
+
+    pendingSeededBuildRef.current = false;
+    void buildHandlers.startSeededBuild();
+  }, [
+    additionalState.selectedFont,
+    buildHandlers,
+    hasRestoredState,
+    paletteHook.selectedPalette,
+    templateHook.selectedTemplate,
+  ]);
+
   // ═══════════════════════════════════════════════════════════════════════
   // Flow Handlers
   // ═══════════════════════════════════════════════════════════════════════
 
-  const { handleDescriptionSubmit, handleQuickProfileComplete, handleUvpSubmit } =
-    useDescriptionFlow({
-      messageHook,
-      flowHook,
-      businessHook,
-      templateHook,
-      setQuickProfile: additionalState.setQuickProfile,
-      onStateChange,
-    });
+  const { handleDescriptionSubmit, handleQuickProfileComplete, handleUvpSubmit } = useDescriptionFlow({
+    messageHook,
+    flowHook,
+    businessHook,
+    templateHook,
+    setQuickProfile: additionalState.setQuickProfile,
+    onStateChange,
+  });
 
-  const { handleTemplateSelect, handleRecommendationSelect, fetchRecommendationsWrapped } =
-    useTemplateFlow({
-      messageHook,
-      flowHook,
-      templateHook,
-      businessHook,
-      onStateChange,
-    });
+  const { handleTemplateSelect, handleRecommendationSelect, fetchRecommendationsWrapped } = useTemplateFlow({
+    messageHook,
+    flowHook,
+    templateHook,
+    businessHook,
+    onStateChange,
+  });
 
-  const { handlePaletteSelect, handleFontSelect, handleLogoSelect, refreshSuggestions } =
-    usePersonalizationFlow({
-      messageHook,
-      flowHook,
-      paletteHook,
-      selectedFont: additionalState.selectedFont,
-      setSelectedFont: additionalState.setSelectedFont,
-      setSelectedLogo: additionalState.setSelectedLogo,
-      handlePersonalizationComplete: buildHandlers.handlePersonalizationComplete,
-      onStateChange,
-    });
+  const { handlePaletteSelect, handleFontSelect, handleLogoSelect, refreshSuggestions } = usePersonalizationFlow({
+    messageHook,
+    flowHook,
+    paletteHook,
+    selectedFont: additionalState.selectedFont,
+    setSelectedFont: additionalState.setSelectedFont,
+    setSelectedLogo: additionalState.setSelectedLogo,
+    handlePersonalizationComplete: buildHandlers.handlePersonalizationComplete,
+    onStateChange,
+  });
 
   const { businessDiscoveryHook, handleBusinessInfoConfirm } = useBusinessFlow({
     messageHook,
@@ -302,13 +333,19 @@ export function useEditorChatState({
       // Merge new business-details data into existing businessInfo
       const currentInfo = businessHook.businessInfo || {
         description: flowHook.projectDescription,
-        quickProfile: additionalState.quickProfile || { goal: 'leads' as const, offerType: 'free' as const, tone: 'professional' as const },
+        quickProfile: additionalState.quickProfile || {
+          goal: 'leads' as const,
+          offerType: 'free' as const,
+          tone: 'professional' as const,
+        },
       };
 
       const updatedInfo = {
         ...currentInfo,
         uvp: data.uvp,
-        offerings: data.offerings.map(o => `${o.name}${o.price ? ` (${o.price})` : ''}: ${o.description}`).join('; ') || undefined,
+        offerings:
+          data.offerings.map((o) => `${o.name}${o.price ? ` (${o.price})` : ''}: ${o.description}`).join('; ') ||
+          undefined,
         contactEmail: data.contactEmail,
         contactPhone: data.contactPhone,
         contactAddress: data.contactAddress,
@@ -333,16 +370,12 @@ export function useEditorChatState({
 
       // Transition to template step
       messageHook.addAssistantMessage(
-        "Great! I've got your business details. Now let's pick the perfect template for your site."
+        "Great! I've got your business details. Now let's pick the perfect template for your site.",
       );
       flowHook.setStep('template');
 
       // Fetch AI recommendations using the updated info
-      templateHook.fetchRecommendations(
-        updatedInfo,
-        flowHook.projectName!,
-        flowHook.projectDescription,
-      );
+      templateHook.fetchRecommendations(updatedInfo, flowHook.projectName!, flowHook.projectDescription);
     },
     [messageHook, flowHook, businessHook, templateHook, additionalState, onStateChange],
   );
@@ -397,7 +430,7 @@ export function useEditorChatState({
     if (!info && !initialState?.businessInfo && !initialState?.projectDescription) {
       return null;
     }
-    
+
     const source = info || initialState?.businessInfo;
     return {
       businessName: flowHook.projectName || source?.businessType || initialState?.projectName || undefined,

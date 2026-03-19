@@ -24,10 +24,24 @@ import type { UseSimpleBuildHandlersProps, UseSimpleBuildHandlersReturn } from '
 export type { UseSimpleBuildHandlersProps, UseSimpleBuildHandlersReturn } from './simple-build-types';
 
 export function useSimpleBuildHandlers({
-  messageHook, flowHook, templateHook, paletteHook, businessHook,
-  selectedFont, selectedLogo, setSelectedFont, setSelectedLogo,
-  setConvexProjectId, setCurrentUrlId, setBuildStep, setBuildProgress, setBuildPhase,
-  onPreviewChange, onProjectReady, onStateChange, existingProjectId,
+  messageHook,
+  flowHook,
+  templateHook,
+  paletteHook,
+  businessHook,
+  selectedFont,
+  selectedLogo,
+  setSelectedFont,
+  setSelectedLogo,
+  setConvexProjectId,
+  setCurrentUrlId,
+  setBuildStep,
+  setBuildProgress,
+  setBuildPhase,
+  onPreviewChange,
+  onProjectReady,
+  onStateChange,
+  existingProjectId,
 }: UseSimpleBuildHandlersProps): UseSimpleBuildHandlersReturn {
   const generateSiteMutation = useGenerateSiteStream();
   // Live agent events accumulator — drives the AgentStatusMessage in chat
@@ -44,13 +58,22 @@ export function useSimpleBuildHandlers({
   onProjectReadyRef.current = onProjectReady;
   onStateChangeRef.current = onStateChange;
 
-  useEffect(() => () => { abortControllerRef.current?.abort(); }, []);
+  useEffect(
+    () => () => {
+      abortControllerRef.current?.abort();
+    },
+    [],
+  );
 
   const useAiImagesRef = useRef<boolean>(false);
   const contactDetailsRef = useRef<ContactDetails | undefined>(undefined);
 
   const handlePersonalizationComplete = useCallback(
-    async (font: Parameters<UseSimpleBuildHandlersReturn['handlePersonalizationComplete']>[0], logo: Parameters<UseSimpleBuildHandlersReturn['handlePersonalizationComplete']>[1], useAiImages?: boolean) => {
+    async (
+      font: Parameters<UseSimpleBuildHandlersReturn['handlePersonalizationComplete']>[0],
+      logo: Parameters<UseSimpleBuildHandlersReturn['handlePersonalizationComplete']>[1],
+      useAiImages?: boolean,
+    ) => {
       setSelectedFont(font);
       setSelectedLogo(logo);
       useAiImagesRef.current = useAiImages || false;
@@ -63,7 +86,9 @@ export function useSimpleBuildHandlers({
       messageHook.addUserMessage(userMessage);
       onStateChangeRef.current?.({ useAiImages } as Partial<InitialChatState>);
       await messageHook.addStepTransitionMessage('personalization', 'integrations', {
-        fontName: font.name, logoType: logo.type, useAiImages,
+        fontName: font.name,
+        logoType: logo.type,
+        useAiImages,
       });
       flowHook.setStep('integrations');
     },
@@ -78,7 +103,8 @@ export function useSimpleBuildHandlers({
       messageHook.addUserMessage(userMessage);
 
       if (existingProjectId) {
-        try { console.log("[BROWSER] [DEBUG] Entering try block");
+        try {
+          console.log('[BROWSER] [DEBUG] Entering try block');
           await updateContactDetails({
             projectId: existingProjectId as Id<'projects'>,
             contactDetails: toConvexContactDetails(contactDetails),
@@ -101,7 +127,7 @@ export function useSimpleBuildHandlers({
   );
 
   const handleSkipContactDetails = useCallback(async () => {
-    messageHook.addUserMessage("Skip contact details for now");
+    messageHook.addUserMessage('Skip contact details for now');
     await messageHook.addStepTransitionMessage('business-contact', 'business-summary', { hasContactDetails: false });
     flowHook.setStep('business-summary');
     messageHook.setSuggestedReplies([
@@ -116,19 +142,35 @@ export function useSimpleBuildHandlers({
       abortControllerRef.current = new AbortController();
       const signal = abortControllerRef.current.signal;
 
-      console.log("[BROWSER] [DEBUG] startBuild called"); flowHook.setStep('creating');
+      console.log('[BROWSER] [DEBUG] startBuild called');
+      flowHook.setStep('creating');
       setBuildStep('Generating your website...');
       setBuildProgress(BUILD_PROGRESS.INITIAL);
 
       const selectedTemplate = templateHook.selectedTemplate;
       const selectedPalette = paletteHook.selectedPalette;
 
-      console.log("[BROWSER] [DEBUG] Checking template:", !!selectedTemplate);
-      if (!selectedTemplate) { flowHook.setStep('template'); messageHook.addAssistantMessage(getMessage(MESSAGE_KEYS.BUILD_SELECT_TEMPLATE_FIRST)); return; }
-      if (!selectedPalette) { flowHook.setStep('personalization'); messageHook.addAssistantMessage(getMessage(MESSAGE_KEYS.BUILD_SELECT_PALETTE_FIRST)); return; }
-      if (!selectedFont) { flowHook.setStep('personalization'); messageHook.addAssistantMessage('Please select a font first.'); return; }
+      console.log('[BROWSER] [DEBUG] Checking template:', !!selectedTemplate);
+      if (!selectedTemplate) {
+        flowHook.setStep('template');
+        messageHook.addAssistantMessage(getMessage(MESSAGE_KEYS.BUILD_SELECT_TEMPLATE_FIRST));
+        return;
+      }
+      if (!selectedPalette) {
+        flowHook.setStep('personalization');
+        messageHook.addAssistantMessage(getMessage(MESSAGE_KEYS.BUILD_SELECT_PALETTE_FIRST));
+        return;
+      }
+      if (!selectedFont) {
+        flowHook.setStep('personalization');
+        messageHook.addAssistantMessage('Please select a font first.');
+        return;
+      }
 
-      try { console.log("[BROWSER] [DEBUG] Entering try block");
+      let buildCompletedSuccessfully = false;
+
+      try {
+        console.log('[BROWSER] [DEBUG] Entering try block');
         const projectName = flowHook.projectName || selectedTemplate.name || 'My Website';
         const projectId = existingProjectId || generateProjectSlug(projectName);
 
@@ -145,22 +187,29 @@ export function useSimpleBuildHandlers({
         const siteInput = buildSiteGenerationInput({
           onAgentEvent: (event) => {
             agentEventsRef.current = [...agentEventsRef.current, event];
-            if (chatMsgIdRef.current) messageHook.updateMessage(chatMsgIdRef.current, { agentEvents: agentEventsRef.current, isAgentActive: true } as any);
+            if (chatMsgIdRef.current)
+              messageHook.updateMessage(chatMsgIdRef.current, {
+                agentEvents: agentEventsRef.current,
+                isAgentActive: true,
+              } as any);
           },
-          projectId, projectName,
-          templateId: selectedTemplate.id || 'default', templateName: selectedTemplate.name,
-          businessData: businessHook.businessInfo, projectDescription: flowHook.projectDescription || '',
-          palette: selectedPalette, font: selectedFont,
-          integrations, contactDetails, generateImages: generateImages || false, signal,
+          projectId,
+          projectName,
+          templateId: selectedTemplate.id || 'default',
+          templateName: selectedTemplate.name,
+          businessData: businessHook.businessInfo,
+          projectDescription: flowHook.projectDescription || '',
+          palette: selectedPalette,
+          font: selectedFont,
+          integrations,
+          contactDetails,
+          generateImages: generateImages || false,
+          signal,
           onProgress: (msg: string) => mapProgressMessage(msg, setBuildPhase, setBuildProgress, setBuildStep),
-
         });
 
         setBuildProgress(BUILD_PROGRESS.GENERATING_PROGRESS);
         setBuildStep('Planning site architecture...');
-
-        // Track whether build completed successfully — prevents catch from resetting on post-build errors
-        let buildCompletedSuccessfully = false;
 
         // Reset agent events and add a live status card to chat
         agentEventsRef.current = [];
@@ -170,25 +219,34 @@ export function useSimpleBuildHandlers({
         );
         chatMsgIdRef.current = statusMsg?.id ?? null;
 
-        const result = await generateSiteMutation.mutateAsync(siteInput as Parameters<typeof generateSiteMutation.mutateAsync>[0]);
+        const result = await generateSiteMutation.mutateAsync(
+          siteInput as Parameters<typeof generateSiteMutation.mutateAsync>[0],
+        );
 
         // Handle preview
-        setBuildPhase('deploying'); setBuildProgress(BUILD_PROGRESS.DEPLOYING_START); setBuildStep('Preparing your preview...');
+        setBuildPhase('deploying');
+        setBuildProgress(BUILD_PROGRESS.DEPLOYING_START);
+        setBuildStep('Preparing your preview...');
         if (result.preview?.url) {
           workbenchStore.setShowWorkbench(true);
           workbenchStore.currentView.set('preview');
           workbenchStore.setDaytonaPreview({ url: result.preview.url, sandboxId: result.preview.sandboxId || '' });
           onPreviewChangeRef.current?.({ url: result.preview.url, status: 'ready' });
-          if (result.files?.length) { for (const file of result.files) await workbenchStore.createFile(file.path, file.content); }
+          if (result.files?.length) {
+            for (const file of result.files) await workbenchStore.createFile(file.path, file.content);
+          }
           setBuildProgress(BUILD_PROGRESS.DEPLOYING_PROGRESS);
         } else if (result.previewError) {
           console.warn('[SimpleBuildHandlers] Preview failed:', result.previewError);
-          messageHook.addAssistantMessage(`Your site was generated, but we had trouble with the preview: ${result.previewError}`);
+          messageHook.addAssistantMessage(
+            `Your site was generated, but we had trouble with the preview: ${result.previewError}`,
+          );
         }
 
         // Complete
-        setBuildProgress(BUILD_PROGRESS.COMPLETE); setBuildStep('');
-        const selfHealAttempts = ((result as unknown) as Record<string, unknown>).selfHealAttempts as number || 0;
+        setBuildProgress(BUILD_PROGRESS.COMPLETE);
+        setBuildStep('');
+        const selfHealAttempts = ((result as unknown as Record<string, unknown>).selfHealAttempts as number) || 0;
         setBuildPhase(selfHealAttempts > 0 ? 'complete-healed' : 'complete');
 
         buildCompletedSuccessfully = true;
@@ -201,9 +259,10 @@ export function useSimpleBuildHandlers({
           { id: 'add-features', text: 'Add more sections' },
         ]);
 
-        const healNote = selfHealAttempts > 0
-          ? `\n\n_Auto-fixed ${selfHealAttempts} build issue${selfHealAttempts > 1 ? 's' : ''} during preview setup._`
-          : '';
+        const healNote =
+          selfHealAttempts > 0
+            ? `\n\n_Auto-fixed ${selfHealAttempts} build issue${selfHealAttempts > 1 ? 's' : ''} during preview setup._`
+            : '';
         messageHook.addAssistantMessage(
           `**Your site is ready!**\n\nI've created ${result.files?.length || 0} files for your website.${healNote} You can preview it now, or ask me to make any changes.`,
         );
@@ -212,26 +271,50 @@ export function useSimpleBuildHandlers({
         console.error('[SimpleBuildHandlers] Failed to create project:', error);
         // Don't reset to template if the build already completed — only reset on pre-build failures
         if (!buildCompletedSuccessfully) {
-          setBuildStep(''); setBuildProgress(BUILD_PROGRESS.INITIAL); flowHook.setStep('template');
+          setBuildStep('');
+          setBuildProgress(BUILD_PROGRESS.INITIAL);
+          flowHook.setStep('template');
         }
         const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
-        messageHook.addAssistantMessage(`Something went wrong while building your site: ${errorMessage}\n\nPlease try again or select a different template.`);
-        messageHook.setSuggestedReplies([{ id: 'retry', text: 'Try again' }, { id: 'different-template', text: 'Choose different template' }]);
+        messageHook.addAssistantMessage(
+          `Something went wrong while building your site: ${errorMessage}\n\nPlease try again or select a different template.`,
+        );
+        messageHook.setSuggestedReplies([
+          { id: 'retry', text: 'Try again' },
+          { id: 'different-template', text: 'Choose different template' },
+        ]);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [flowHook, messageHook, templateHook.selectedTemplate, paletteHook.selectedPalette, businessHook.businessInfo,
-      selectedFont, existingProjectId, setConvexProjectId, setCurrentUrlId, setBuildStep, setBuildProgress, setBuildPhase, generateSiteMutation],
+    [
+      flowHook,
+      messageHook,
+      templateHook.selectedTemplate,
+      paletteHook.selectedPalette,
+      businessHook.businessInfo,
+      selectedFont,
+      existingProjectId,
+      setConvexProjectId,
+      setCurrentUrlId,
+      setBuildStep,
+      setBuildProgress,
+      setBuildPhase,
+      generateSiteMutation,
+    ],
   );
 
   const handleIntegrationsComplete = useCallback(
     async (integrations: IntegrationConfig[]) => {
-      console.log("[BROWSER] [DEBUG] handleIntegrationsComplete called", integrations);
+      console.log('[BROWSER] [DEBUG] handleIntegrationsComplete called', integrations);
       messageHook.addUserMessage(buildIntegrationsMessage(integrations));
 
       if (existingProjectId) {
-        try { console.log("[BROWSER] [DEBUG] Entering try block");
-          await updateIntegrations({ projectId: existingProjectId as Id<'projects'>, integrations: toConvexIntegrations(integrations) });
+        try {
+          console.log('[BROWSER] [DEBUG] Entering try block');
+          await updateIntegrations({
+            projectId: existingProjectId as Id<'projects'>,
+            integrations: toConvexIntegrations(integrations),
+          });
           console.log('[useSimpleBuildHandlers] ✅ Integrations saved to Convex');
         } catch (error) {
           console.error('[useSimpleBuildHandlers] ❌ Failed to save integrations to Convex:', error);
@@ -239,7 +322,7 @@ export function useSimpleBuildHandlers({
       }
 
       onStateChangeRef.current?.({
-        integrations: integrations.map(i => ({ id: i.id, name: i.name, enabled: i.enabled, config: i.config })),
+        integrations: integrations.map((i) => ({ id: i.id, name: i.name, enabled: i.enabled, config: i.config })),
       } as Partial<InitialChatState>);
       await startBuild(integrations, contactDetailsRef.current, useAiImagesRef.current);
     },
@@ -251,5 +334,16 @@ export function useSimpleBuildHandlers({
     await startBuild([]);
   }, [messageHook, startBuild]);
 
-  return { handlePersonalizationComplete, handleContactDetailsComplete, handleSkipContactDetails, handleIntegrationsComplete, handleSkipIntegrations };
+  const startSeededBuild = useCallback(async () => {
+    await startBuild([]);
+  }, [startBuild]);
+
+  return {
+    handlePersonalizationComplete,
+    handleContactDetailsComplete,
+    handleSkipContactDetails,
+    handleIntegrationsComplete,
+    handleSkipIntegrations,
+    startSeededBuild,
+  };
 }

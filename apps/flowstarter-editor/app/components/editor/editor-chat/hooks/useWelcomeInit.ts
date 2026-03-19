@@ -3,7 +3,7 @@
  *
  * Handles the initialization of the welcome/onboarding flow,
  * including handoff data from the main platform.
- * 
+ *
  * INTERNAL FLOW (Template-First):
  * When the project already has businessDetails (from team dashboard),
  * we skip the business info collection and go directly to template selection.
@@ -35,6 +35,15 @@ function hasBusinessDetails(state?: InitialChatState): boolean {
   return false;
 }
 
+function hasPreseededTemplateBuild(state?: InitialChatState): boolean {
+  return Boolean(
+    state?.selectedTemplateId &&
+      state?.selectedPalette &&
+      state?.selectedFont &&
+      (state?.businessInfo?.description || state?.projectDescription),
+  );
+}
+
 /**
  * Extract business context from initial state for display.
  */
@@ -47,7 +56,7 @@ function getBusinessContext(state?: InitialChatState): {
   uvp?: string;
 } | null {
   if (!state) return null;
-  
+
   const businessInfo = state.businessInfo;
   return {
     businessName: state.projectName || businessInfo?.businessType || undefined,
@@ -68,15 +77,18 @@ interface UseWelcomeInitProps {
   onFetchTemplates?: () => void;
   /** Callback to trigger template recommendations fetch (self-serve flow) */
   onInternalFlowStart?: (businessInfo: BusinessInfo, projectName: string, description: string) => void;
+  /** Callback to trigger auto-build when template data was pre-seeded upstream */
+  onTemplateBuildStart?: () => void;
 }
 
-export function useWelcomeInit({ 
-  initialState, 
-  messageHook, 
-  flowHook, 
+export function useWelcomeInit({
+  initialState,
+  messageHook,
+  flowHook,
   hasRestoredState,
   onFetchTemplates,
   onInternalFlowStart,
+  onTemplateBuildStart,
 }: UseWelcomeInitProps): void {
   const hasInitialized = useRef(false);
   const initTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -87,10 +99,12 @@ export function useWelcomeInit({
   const initialStateRef = useRef(initialState);
   const onFetchTemplatesRef = useRef(onFetchTemplates);
   const onInternalFlowStartRef = useRef(onInternalFlowStart);
+  const onTemplateBuildStartRef = useRef(onTemplateBuildStart);
   flowHookRef.current = flowHook;
   messageHookRef.current = messageHook;
   onFetchTemplatesRef.current = onFetchTemplates;
   onInternalFlowStartRef.current = onInternalFlowStart;
+  onTemplateBuildStartRef.current = onTemplateBuildStart;
 
   // Only update initialStateRef if it's the first value (capture initial state once)
   if (initialState && !initialStateRef.current) {
@@ -109,7 +123,7 @@ export function useWelcomeInit({
 
     const context = getBusinessContext(state);
     const businessName = context?.businessName || state?.projectName;
-    
+
     // Set project name and description in flow state
     if (state?.projectName) {
       flow.setProjectName(state.projectName);
@@ -122,15 +136,16 @@ export function useWelcomeInit({
     const welcomeMessage = businessName
       ? getMessage(MESSAGE_KEYS.INTERNAL_WELCOME_WITH_NAME, { businessName })
       : getMessage(MESSAGE_KEYS.INTERNAL_WELCOME);
-    
+
     // Updated prompt for manual template selection
-    const templatePrompt = "**Choose a template** from the gallery below. Click any template to preview it, then select the one that best fits your vision.";
+    const templatePrompt =
+      '**Choose a template** from the gallery below. Click any template to preview it, then select the one that best fits your vision.';
 
     msg.addAssistantMessage(`${welcomeMessage}\n\n${templatePrompt}`);
-    
+
     // Go directly to template step
     flow.setStep('template');
-    
+
     // Clear suggested replies - full template gallery will be shown
     msg.setSuggestedReplies([]);
 
@@ -156,6 +171,24 @@ export function useWelcomeInit({
     const flow = flowHookRef.current;
     const msg = messageHookRef.current;
     const state = initialStateRef.current;
+
+    if (hasPreseededTemplateBuild(state)) {
+      if (state?.projectName) {
+        flow.setProjectName(state.projectName);
+      }
+      if (state?.projectDescription) {
+        flow.setProjectDescription(state.projectDescription);
+      }
+
+      msg.addAssistantMessage(
+        '**Template selections received.** I’m opening your seeded project and starting the first build now.',
+      );
+      msg.setSuggestedReplies([]);
+      flow.setStep('creating');
+      onFetchTemplatesRef.current?.();
+      onTemplateBuildStartRef.current?.();
+      return;
+    }
 
     // ═══════════════════════════════════════════════════════════════════════
     // INTERNAL FLOW: Skip to templates if business details already exist
@@ -191,7 +224,7 @@ export function useWelcomeInit({
     if (hasName && !hasDescription) {
       // Name known, business description not yet collected → skip naming step
       msg.addAssistantMessage(
-        `**Great, "${projectName}" is all set.** Now tell me about your business — what do you do and who do you serve?`
+        `**Great, "${projectName}" is all set.** Now tell me about your business — what do you do and who do you serve?`,
       );
       flow.setStep('describe');
       msg.setSuggestedReplies([]);
@@ -209,16 +242,16 @@ export function useWelcomeInit({
      */
     const profile = profileStore.get();
     const username = profile?.username || undefined;
-    
+
     // Build welcome message from localized strings
-    const greeting = username 
+    const greeting = username
       ? getMessage(MESSAGE_KEYS.WELCOME_GREETING_USER, { username })
       : getMessage(MESSAGE_KEYS.WELCOME_GREETING);
-    
+
     const cta = getMessage(MESSAGE_KEYS.WELCOME_CTA);
 
     msg.addAssistantMessage(`${greeting}\n\n${cta}`);
-    
+
     // Stay on welcome step with "Let's go" button
     flow.setStep('welcome');
     msg.setSuggestedReplies(SUGGESTED_REPLIES.welcomeStart());

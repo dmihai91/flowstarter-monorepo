@@ -1,0 +1,3 @@
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS template_slug TEXT;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS palette_id TEXT;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS font_pairing_id TEXT;

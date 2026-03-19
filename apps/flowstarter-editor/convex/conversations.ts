@@ -1,9 +1,9 @@
-import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { v } from 'convex/values';
+import { mutation, query } from './_generated/server';
 
 const messageSchema = v.object({
   id: v.string(),
-  role: v.union(v.literal("user"), v.literal("assistant"), v.literal("system")),
+  role: v.union(v.literal('user'), v.literal('assistant'), v.literal('system')),
   content: v.string(),
   createdAt: v.number(),
   component: v.optional(v.string()),
@@ -13,12 +13,7 @@ const messageSchema = v.object({
 // Integration schemas
 const bookingIntegrationSchema = v.object({
   enabled: v.boolean(),
-  provider: v.union(
-    v.literal('calendly'),
-    v.literal('calcom'),
-    v.literal('custom'),
-    v.literal('none')
-  ),
+  provider: v.union(v.literal('calendly'), v.literal('calcom'), v.literal('custom'), v.literal('none')),
   calendlyUrl: v.optional(v.string()),
   calcomUrl: v.optional(v.string()),
   title: v.optional(v.string()),
@@ -33,7 +28,7 @@ const newsletterIntegrationSchema = v.object({
     v.literal('convertkit'),
     v.literal('buttondown'),
     v.literal('custom'),
-    v.literal('none')
+    v.literal('none'),
   ),
   mailchimpUrl: v.optional(v.string()),
   convertkitFormId: v.optional(v.string()),
@@ -50,7 +45,7 @@ const integrationsSchema = v.object({
 // Local runtime type to keep TS happy when schema allows legacy strings
 type ChatMessage = {
   id: string;
-  role: "user" | "assistant" | "system";
+  role: 'user' | 'assistant' | 'system';
   content: string;
   createdAt: number;
   component?: string;
@@ -59,7 +54,7 @@ type ChatMessage = {
 
 function normalizeMessagesField(messages: unknown): ChatMessage[] {
   if (Array.isArray(messages)) return messages as ChatMessage[];
-  if (typeof messages === "string") {
+  if (typeof messages === 'string') {
     try {
       const parsed = JSON.parse(messages);
       return Array.isArray(parsed) ? (parsed as ChatMessage[]) : [];
@@ -73,11 +68,11 @@ function normalizeMessagesField(messages: unknown): ChatMessage[] {
 // List conversations by session (most recent first)
 
 export const getByProject = query({
-  args: { projectId: v.id("projects") },
+  args: { projectId: v.id('projects') },
   handler: async (ctx, args) => {
     return await ctx.db
-      .query("conversations")
-      .withIndex("by_project", (q) => q.eq("projectId", args.projectId))
+      .query('conversations')
+      .withIndex('by_project', (q) => q.eq('projectId', args.projectId))
       .collect();
   },
 });
@@ -85,9 +80,9 @@ export const getBySessionId = query({
   args: { sessionId: v.string() },
   handler: async (ctx, args) => {
     return await ctx.db
-      .query("conversations")
-      .withIndex("by_session_updated", (q) => q.eq("sessionId", args.sessionId))
-      .order("desc")
+      .query('conversations')
+      .withIndex('by_session_updated', (q) => q.eq('sessionId', args.sessionId))
+      .order('desc')
       .collect();
   },
 });
@@ -97,16 +92,16 @@ export const getActiveBySessionId = query({
   args: { sessionId: v.string() },
   handler: async (ctx, args) => {
     return await ctx.db
-      .query("conversations")
-      .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
-      .filter((q) => q.eq(q.field("isActive"), true))
+      .query('conversations')
+      .withIndex('by_session', (q) => q.eq('sessionId', args.sessionId))
+      .filter((q) => q.eq(q.field('isActive'), true))
       .first();
   },
 });
 
 // Get conversation by ID
 export const getById = query({
-  args: { id: v.id("conversations") },
+  args: { id: v.id('conversations') },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.id);
   },
@@ -115,7 +110,7 @@ export const getById = query({
 // Get messages for a conversation (with optional pagination for performance)
 export const getMessages = query({
   args: {
-    conversationId: v.id("conversations"),
+    conversationId: v.id('conversations'),
     limit: v.optional(v.number()),
     offset: v.optional(v.number()),
   },
@@ -143,7 +138,7 @@ export const getMessages = query({
 
 // Get message count for a conversation (for pagination UI)
 export const getMessageCount = query({
-  args: { conversationId: v.id("conversations") },
+  args: { conversationId: v.id('conversations') },
   handler: async (ctx, args) => {
     const convo = await ctx.db.get(args.conversationId);
     const messages = normalizeMessagesField(convo?.messages);
@@ -156,22 +151,22 @@ export const create = mutation({
   args: {
     sessionId: v.string(),
     title: v.string(),
-    projectId: v.optional(v.id("projects")),
+    projectId: v.optional(v.id('projects')),
   },
   handler: async (ctx, args) => {
     const now = Date.now();
 
     // Deactivate existing active conversation for this session
     const existingActive = await ctx.db
-      .query("conversations")
-      .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
-      .filter((q) => q.eq(q.field("isActive"), true))
+      .query('conversations')
+      .withIndex('by_session', (q) => q.eq('sessionId', args.sessionId))
+      .filter((q) => q.eq(q.field('isActive'), true))
       .collect();
     for (const convo of existingActive) {
       await ctx.db.patch(convo._id, { isActive: false, updatedAt: now });
     }
 
-    return await ctx.db.insert("conversations", {
+    return await ctx.db.insert('conversations', {
       sessionId: args.sessionId,
       title: args.title,
       isActive: true,
@@ -188,11 +183,28 @@ export const create = mutation({
 export const createWithProject = mutation({
   args: {
     sessionId: v.string(),
-    projectId: v.id("projects"),
+    projectId: v.id('projects'),
     projectUrlId: v.string(),
     projectDescription: v.optional(v.string()),
     projectName: v.optional(v.string()),
     step: v.optional(v.string()),
+    selectedTemplateId: v.optional(v.string()),
+    selectedTemplateName: v.optional(v.string()),
+    selectedPalette: v.optional(
+      v.object({
+        id: v.string(),
+        name: v.string(),
+        colors: v.array(v.string()),
+      }),
+    ),
+    selectedFont: v.optional(
+      v.object({
+        id: v.string(),
+        name: v.string(),
+        heading: v.string(),
+        body: v.string(),
+      }),
+    ),
     messages: v.optional(v.array(messageSchema)),
     businessInfo: v.optional(
       v.object({
@@ -206,7 +218,7 @@ export const createWithProject = mutation({
         pricingOffers: v.optional(v.string()),
         industry: v.optional(v.string()),
         businessType: v.optional(v.string()),
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {
@@ -214,24 +226,28 @@ export const createWithProject = mutation({
 
     // Deactivate existing active conversation for this session
     const existingActive = await ctx.db
-      .query("conversations")
-      .withIndex("by_session", (q) => q.eq("sessionId", args.sessionId))
-      .filter((q) => q.eq(q.field("isActive"), true))
+      .query('conversations')
+      .withIndex('by_session', (q) => q.eq('sessionId', args.sessionId))
+      .filter((q) => q.eq(q.field('isActive'), true))
       .collect();
     for (const convo of existingActive) {
       await ctx.db.patch(convo._id, { isActive: false, updatedAt: now });
     }
 
-    return await ctx.db.insert("conversations", {
+    return await ctx.db.insert('conversations', {
       sessionId: args.sessionId,
-      title: args.projectName || "", // Use project name if available
+      title: args.projectName || '', // Use project name if available
       isActive: true,
       projectId: args.projectId,
       projectName: args.projectName,
       projectUrlId: args.projectUrlId,
       projectDescription: args.projectDescription,
+      selectedTemplateId: args.selectedTemplateId,
+      selectedTemplateName: args.selectedTemplateName,
+      selectedPalette: args.selectedPalette,
+      selectedFont: args.selectedFont,
       businessInfo: args.businessInfo,
-      step: args.step || "describe",
+      step: args.step || 'describe',
       messages: args.messages || [],
       createdAt: now,
       updatedAt: now,
@@ -241,15 +257,15 @@ export const createWithProject = mutation({
 
 // Set active conversation
 export const setActive = mutation({
-  args: { id: v.id("conversations") },
+  args: { id: v.id('conversations') },
   handler: async (ctx, args) => {
     const convo = await ctx.db.get(args.id);
     if (!convo) return null;
     const now = Date.now();
 
     const siblings = await ctx.db
-      .query("conversations")
-      .withIndex("by_session", (q) => q.eq("sessionId", convo.sessionId))
+      .query('conversations')
+      .withIndex('by_session', (q) => q.eq('sessionId', convo.sessionId))
       .collect();
     for (const s of siblings) {
       await ctx.db.patch(s._id, { isActive: s._id === args.id, updatedAt: now });
@@ -261,7 +277,7 @@ export const setActive = mutation({
 
 // Rename conversation
 export const rename = mutation({
-  args: { id: v.id("conversations"), title: v.string() },
+  args: { id: v.id('conversations'), title: v.string() },
   handler: async (ctx, args) => {
     await ctx.db.patch(args.id, { title: args.title, updatedAt: Date.now() });
     return args.id;
@@ -270,7 +286,7 @@ export const rename = mutation({
 
 // Update project name on conversation
 export const updateProjectName = mutation({
-  args: { id: v.id("conversations"), projectName: v.string() },
+  args: { id: v.id('conversations'), projectName: v.string() },
   handler: async (ctx, args) => {
     await ctx.db.patch(args.id, { projectName: args.projectName, updatedAt: Date.now() });
     return args.id;
@@ -279,19 +295,19 @@ export const updateProjectName = mutation({
 
 // Delete conversation and associated project data
 export const remove = mutation({
-  args: { id: v.id("conversations") },
+  args: { id: v.id('conversations') },
   handler: async (ctx, args) => {
     // 1. Get the conversation to check for linked project
     const conversation = await ctx.db.get(args.id);
-    
+
     // Track workspace IDs to return
     const daytonaWorkspaceIds: string[] = [];
-    
+
     let supabaseProjectId: string | undefined;
 
     if (conversation && conversation.projectId) {
       const projectId = conversation.projectId;
-      
+
       // Get the project to find the workspace ID and supabase link
       const project = await ctx.db.get(projectId);
       if (project) {
@@ -300,7 +316,7 @@ export const remove = mutation({
         }
         supabaseProjectId = project.supabaseProjectId;
       }
-      
+
       // 2. Delete all files for this project
       const files = await ctx.db
         .query('files')
@@ -316,7 +332,7 @@ export const remove = mutation({
         .query('snapshots')
         .withIndex('by_project', (q) => q.eq('projectId', projectId))
         .collect();
-        
+
       for (const snapshot of snapshots) {
         await ctx.db.delete(snapshot._id);
       }
@@ -331,7 +347,7 @@ export const remove = mutation({
     if (conversation) {
       await ctx.db.delete(args.id);
     }
-    
+
     return { success: true, daytonaWorkspaceIds, supabaseProjectId };
   },
 });
@@ -339,8 +355,8 @@ export const remove = mutation({
 // Link conversation to a project
 export const linkToProject = mutation({
   args: {
-    id: v.id("conversations"),
-    projectId: v.id("projects"),
+    id: v.id('conversations'),
+    projectId: v.id('projects'),
     projectUrlId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
@@ -356,8 +372,8 @@ export const linkToProject = mutation({
 // Add a single message
 export const addMessage = mutation({
   args: {
-    conversationId: v.id("conversations"),
-    role: v.union(v.literal("user"), v.literal("assistant"), v.literal("system")),
+    conversationId: v.id('conversations'),
+    role: v.union(v.literal('user'), v.literal('assistant'), v.literal('system')),
     content: v.string(),
     component: v.optional(v.string()),
     metadata: v.optional(v.string()),
@@ -388,7 +404,7 @@ export const addMessage = mutation({
 // Save full message list
 export const saveMessages = mutation({
   args: {
-    conversationId: v.id("conversations"),
+    conversationId: v.id('conversations'),
     messages: v.array(messageSchema),
   },
   handler: async (ctx, args) => {
@@ -402,7 +418,7 @@ export const saveMessages = mutation({
 
 // Clear messages
 export const clearMessages = mutation({
-  args: { conversationId: v.id("conversations") },
+  args: { conversationId: v.id('conversations') },
   handler: async (ctx, args) => {
     await ctx.db.patch(args.conversationId, { messages: [], updatedAt: Date.now() });
     return args.conversationId;
@@ -413,10 +429,10 @@ export const clearMessages = mutation({
 export const migrateLegacyMessages = mutation({
   args: {},
   handler: async (ctx) => {
-    const all = await ctx.db.query("conversations").collect();
+    const all = await ctx.db.query('conversations').collect();
     let migrated = 0;
     for (const c of all) {
-      if (typeof c.messages === "string") {
+      if (typeof c.messages === 'string') {
         let parsed: ChatMessage[] = [];
         try {
           const p = JSON.parse(c.messages);
@@ -433,27 +449,23 @@ export const migrateLegacyMessages = mutation({
 // Update conversation state (onboarding data)
 export const updateState = mutation({
   args: {
-    id: v.id("conversations"),
+    id: v.id('conversations'),
     step: v.optional(v.string()),
     projectDescription: v.optional(v.string()),
     selectedTemplateId: v.optional(v.string()),
     selectedTemplateName: v.optional(v.string()),
-    selectedPalette: v.optional(
-      v.object({ id: v.string(), name: v.string(), colors: v.array(v.string()) })
-    ),
-    selectedFont: v.optional(
-      v.object({ id: v.string(), name: v.string(), heading: v.string(), body: v.string() })
-    ),
+    selectedPalette: v.optional(v.object({ id: v.string(), name: v.string(), colors: v.array(v.string()) })),
+    selectedFont: v.optional(v.object({ id: v.string(), name: v.string(), heading: v.string(), body: v.string() })),
     selectedLogo: v.optional(
       v.object({
         url: v.optional(v.string()),
         storageId: v.optional(v.id('_storage')),
         type: v.union(v.literal('uploaded'), v.literal('generated'), v.literal('none')),
         prompt: v.optional(v.string()),
-      })
+      }),
     ),
     projectUrlId: v.optional(v.string()),
-    projectId: v.optional(v.id("projects")),
+    projectId: v.optional(v.id('projects')),
     buildPhase: v.optional(v.string()),
     projectName: v.optional(v.string()),
     businessInfo: v.optional(
@@ -471,7 +483,7 @@ export const updateState = mutation({
         contactPhone: v.optional(v.string()),
         contactAddress: v.optional(v.string()),
         website: v.optional(v.string()),
-      })
+      }),
     ),
     pipelineState: v.optional(
       v.object({
@@ -485,9 +497,9 @@ export const updateState = mutation({
             toStep: v.string(),
             messageGenerated: v.boolean(),
             timestamp: v.number(),
-          })
+          }),
         ),
-      })
+      }),
     ),
     // Integrations can be updated via updateState too
     integrations: v.optional(integrationsSchema),
@@ -502,7 +514,7 @@ export const updateState = mutation({
 // Update integrations only (for dedicated integration UI)
 export const updateIntegrations = mutation({
   args: {
-    id: v.id("conversations"),
+    id: v.id('conversations'),
     integrations: integrationsSchema,
   },
   handler: async (ctx, args) => {
@@ -515,7 +527,7 @@ export const updateIntegrations = mutation({
 // Update booking integration on conversation
 export const updateBookingIntegration = mutation({
   args: {
-    id: v.id("conversations"),
+    id: v.id('conversations'),
     booking: bookingIntegrationSchema,
   },
   handler: async (ctx, args) => {
@@ -536,7 +548,7 @@ export const updateBookingIntegration = mutation({
 // Update newsletter integration on conversation
 export const updateNewsletterIntegration = mutation({
   args: {
-    id: v.id("conversations"),
+    id: v.id('conversations'),
     newsletter: newsletterIntegrationSchema,
   },
   handler: async (ctx, args) => {
@@ -553,4 +565,3 @@ export const updateNewsletterIntegration = mutation({
     return id;
   },
 });
-

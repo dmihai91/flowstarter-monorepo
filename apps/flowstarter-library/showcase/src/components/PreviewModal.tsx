@@ -165,15 +165,22 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
   const [viewMode,        setViewMode]        = useState<ViewMode>(defaultView);
   const [iframeReady,     setIframeReady]     = useState<boolean>(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // iframeDark = true only when the dark palette (palette-6, last one) is selected
+  // This decouples the library's global dark mode from the iframe's dark class
+  const palettes = template.palettes || [];
+  const fonts    = template.fonts    || [];
+  const iframeDark = palettes.length > 0 && selectedPalette?.id === palettes[palettes.length - 1]?.id;
+
   // Refs for stale-closure-safe access in handleLoad
-  const darkModeRef = useRef(darkMode);
+  const iframeDarkRef = useRef(false);
   const selectedPaletteRef = useRef(selectedPalette);
   const selectedFontRef = useRef(selectedFont);
-  useEffect(() => { darkModeRef.current = darkMode; }, [darkMode]);
+  useEffect(() => { iframeDarkRef.current = iframeDark; }, [iframeDark]);
   useEffect(() => { selectedPaletteRef.current = selectedPalette; }, [selectedPalette]);
   useEffect(() => { selectedFontRef.current = selectedFont; }, [selectedFont]);
 
-  // Auto-switch to dark palette (palette-6) when dark mode is toggled
+  // Auto-switch to dark palette (palette-6) when library dark mode changes
   useEffect(() => {
     if (!template.palettes?.length) return;
     if (userPickedPalette) return; // respect explicit user choice
@@ -181,15 +188,12 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
     setSelectedPalette(template.palettes[idx] || template.palettes[0]);
   }, [darkMode, template.palettes, userPickedPalette]);
 
-  const palettes = template.palettes || [];
-  const fonts    = template.fonts    || [];
-
   // Reset when template changes
   useEffect(() => {
-    const palettes = template.palettes || [];
-    const defaultPalette = darkMode && palettes.length > 1
-      ? palettes[palettes.length - 1]  // palette-6 for dark mode
-      : palettes[0] || null;
+    const pts = template.palettes || [];
+    const defaultPalette = darkMode && pts.length > 1
+      ? pts[pts.length - 1]
+      : pts[0] || null;
     setSelectedPalette(defaultPalette);
     setUserPickedPalette(null);
     setSelectedFont(template.fonts?.[0] || null);
@@ -231,7 +235,7 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
     if (!iframe) return;
     // Delay to let the iframe's own scripts + postMessage listener initialize
     setTimeout(() => {
-      applyTheme(iframe, darkModeRef.current);
+      applyTheme(iframe, iframeDarkRef.current);
       injectPalette(iframe, selectedPaletteRef.current);
       applyFont(iframe, selectedFontRef.current);
     }, 300);
@@ -240,12 +244,12 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
   // When darkMode changes: update theme + re-inject palette (colors depend on dark/light)
   useEffect(() => {
     if (!iframeReady || !iframeRef.current) return;
-    applyTheme(iframeRef.current, darkMode);
+    applyTheme(iframeRef.current, iframeDark);
     // small delay so html.dark class settles before palette vars override
     setTimeout(() => {
       if (iframeRef.current) injectPalette(iframeRef.current, selectedPaletteRef.current);
     }, 50);
-  }, [darkMode, iframeReady]);
+  }, [iframeDark, iframeReady]);
 
   // When palette changes: inject CSS in-place (no reload)
   useEffect(() => {

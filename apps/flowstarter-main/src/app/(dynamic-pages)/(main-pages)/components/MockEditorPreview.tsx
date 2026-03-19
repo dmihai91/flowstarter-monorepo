@@ -102,15 +102,15 @@ export function MockEditorPreview({
                   </div>
 
                   {/* Split: Chat + Preview */}
-                  <div className="flex flex-col sm:flex-row sm:divide-x divide-gray-200/30 dark:divide-white/5 h-[720px] sm:h-[640px] lg:h-[700px]">
+                  <div className="flex flex-col sm:flex-row sm:divide-x divide-gray-200/30 dark:divide-white/5 h-[900px] sm:h-[640px] lg:h-[700px]">
                     {/* Chat Panel */}
-                    <div className="w-full sm:w-1/2 p-3 sm:p-4 flex flex-col border-b sm:border-b-0 h-[320px] sm:h-auto border-gray-200/30 dark:border-white/5">
+                    <div className="w-full sm:w-1/2 p-3 sm:p-4 flex flex-col border-b sm:border-b-0 h-[420px] sm:h-auto border-gray-200/30 dark:border-white/5">
                       <div className="text-xs tracking-[0.12em] uppercase font-bold mb-2 sm:mb-3 bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
                         {t('mockEditor.chatTitle')}
                       </div>
 
                       {/* Messages - grows to fill space */}
-                      <div className="flex-1 space-y-2.5 sm:space-y-3 overflow-y-auto mb-2 sm:mb-3 pr-1 max-h-[160px] sm:max-h-none">
+                      <div className="flex-1 space-y-2.5 sm:space-y-3 overflow-y-auto mb-2 sm:mb-3 pr-1 max-h-[240px] sm:max-h-none">
                         {messages.map((msg, i) =>
                           msg.role === 'user' ? (
                             <div key={i} className="flex justify-end">

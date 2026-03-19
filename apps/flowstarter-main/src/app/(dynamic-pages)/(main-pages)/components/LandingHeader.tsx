@@ -42,7 +42,7 @@ export function LandingHeader() {
                 <Logo size="md" />
               </Link>
 
-              <nav className="hidden md:flex items-center gap-8">
+              <nav className="hidden lg:flex items-center gap-6">
                 <a
                   href="https://library.flowstarter.dev"
                   target="_blank"
@@ -90,12 +90,12 @@ export function LandingHeader() {
               </nav>
 
               <div className="flex items-center gap-2 sm:gap-4">
-                <div className="hidden md:block">
+                <div className="hidden lg:block">
                   <ThemeToggle />
                 </div>
                 <Link
                   href="/login"
-                  className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors hidden md:block"
+                  className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors hidden lg:block"
                 >
                   {t('nav.signIn')}
                 </Link>
@@ -112,7 +112,7 @@ export function LandingHeader() {
                 {/* Mobile menu button */}
                 <button
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+                  className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
                   aria-label="Toggle menu"
                 >
                   {mobileMenuOpen ? (
@@ -150,7 +150,7 @@ export function LandingHeader() {
 
             {/* Mobile menu dropdown */}
             <div
-              className={`md:hidden overflow-hidden transition-all duration-300 ${
+              className={`lg:hidden overflow-hidden transition-all duration-300 ${
                 mobileMenuOpen ? 'max-h-96 pb-4' : 'max-h-0'
               }`}
             >

@@ -256,10 +256,9 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
 
   // Apply theme + palette atomically — always do both together to avoid race conditions
   const applyPalette = useCallback((iframe: HTMLIFrameElement, palette: Palette | null) => {
-    const dark = palettes.length > 0 && palette?.id === palettes[palettes.length - 1]?.id;
-    applyTheme(iframe, dark);
-    injectPalette(iframe, palette, dark);
-  }, [palettes]); // eslint-disable-line react-hooks/exhaustive-deps
+    applyTheme(iframe, darkMode);
+    injectPalette(iframe, palette, darkMode);
+  }, [darkMode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Listen for messages from inside the template iframe
   useEffect(() => {

@@ -1,28 +1,252 @@
----
-import ContactFormHandler from './ContactFormHandler.astro';
+<div
+  id="contact-form-config"
+  data-action-url={typeof Astro.props.actionUrl === 'string' ? Astro.props.actionUrl.trim() : ''}
+  data-success-message={typeof Astro.props.successMessage === 'string' && (Astro.props.successMessage as string).trim().length > 0 ? (Astro.props.successMessage as string).trim() : "Thank you for reaching out! We'll be in touch within 24 hours."}
+  data-template-name={Astro.props.templateName}
+  data-is-configured={typeof Astro.props.actionUrl === 'string' && Astro.props.actionUrl.trim().length > 0 ? 'true' : 'false'}
+  data-is-dev={import.meta.env.DEV ? 'true' : 'false'}
+  hidden
+></div>
 
-const defaultSuccessMessage = "Thank you for reaching out! We'll be in touch within 24 hours.";
-const {
-  actionUrl = '',
-  successMessage = defaultSuccessMessage,
-  templateName,
-} = Astro.props as {
-  actionUrl?: string | null;
-  successMessage?: string | null;
-  templateName: string;
-};
+<script>
+  interface ContactFormConfig {
+    actionUrl: string;
+    successMessage: string;
+    templateName: string;
+    isConfigured: boolean;
+    isDev: boolean;
+  }
 
-const normalizedActionUrl = typeof actionUrl === 'string' ? actionUrl.trim() : '';
-const normalizedSuccessMessage =
-  typeof successMessage === 'string' && successMessage.trim().length > 0
-    ? successMessage.trim()
-    : defaultSuccessMessage;
----
+  interface LeadPayload {
+    name: string;
+    email: string;
+    phone: string;
+    message: string;
+    template: string;
+    source: string;
+  }
 
-<ContactFormHandler
-  actionUrl={normalizedActionUrl}
-  successMessage={normalizedSuccessMessage}
-  templateName={templateName}
-  isConfigured={normalizedActionUrl.length > 0}
-  isDev={import.meta.env.DEV}
-/>
+  interface FormUiState {
+    successBanner: HTMLElement | null;
+    errorBanner: HTMLElement | null;
+    submitButton: HTMLButtonElement | HTMLInputElement | null;
+  }
+
+  const configElement = document.getElementById('contact-form-config');
+
+  if (configElement instanceof HTMLDivElement) {
+    const config: ContactFormConfig = {
+      actionUrl: configElement.dataset.actionUrl ?? '',
+      successMessage: configElement.dataset.successMessage ?? "Thank you for reaching out! We'll be in touch within 24 hours.",
+      templateName: configElement.dataset.templateName ?? '',
+      isConfigured: configElement.dataset.isConfigured === 'true',
+      isDev: configElement.dataset.isDev === 'true',
+    };
+
+    const forms = Array.from(
+      document.querySelectorAll<HTMLFormElement>('#contact-form, form[data-contact-form]')
+    );
+
+    forms.forEach((form: HTMLFormElement) => {
+      initializeContactForm(form, config);
+    });
+  }
+
+  function initializeContactForm(form: HTMLFormElement, config: ContactFormConfig): void {
+    form.dataset.action = config.actionUrl;
+    form.dataset.successMessage = form.dataset.successMessage ?? config.successMessage;
+    form.dataset.template = config.templateName;
+
+    setHiddenFieldValue(form, '_template', config.templateName);
+    setHiddenFieldValue(form, '_source', window.location.href);
+
+    form.addEventListener('submit', (event: SubmitEvent) => {
+      void handleFormSubmit(event, form, config);
+    });
+  }
+
+  async function handleFormSubmit(
+    event: SubmitEvent,
+    form: HTMLFormElement,
+    config: ContactFormConfig
+  ): Promise<void> {
+    event.preventDefault();
+
+    const uiState = getFormUiState(form);
+    hideBanner(uiState.successBanner);
+    hideBanner(uiState.errorBanner);
+
+    if (!config.isConfigured || config.actionUrl.trim().length === 0) {
+      if (config.isDev) {
+        showBanner(uiState.errorBanner, 'Form not configured');
+      }
+      return;
+    }
+
+    setHiddenFieldValue(form, '_source', window.location.href);
+    toggleSubmittingState(uiState.submitButton, true);
+
+    const payload = collectLeadPayload(form, config);
+
+    try {
+      const response = await fetch(config.actionUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        showBanner(uiState.errorBanner, 'Something went wrong. Please try again.');
+        return;
+      }
+
+      showBanner(
+        uiState.successBanner,
+        form.dataset.successMessage ?? config.successMessage
+      );
+      form.reset();
+      setHiddenFieldValue(form, '_template', config.templateName);
+      setHiddenFieldValue(form, '_source', window.location.href);
+    } catch {
+      showBanner(uiState.errorBanner, 'Network error. Please try again.');
+    } finally {
+      toggleSubmittingState(uiState.submitButton, false);
+    }
+  }
+
+  function collectLeadPayload(form: HTMLFormElement, config: ContactFormConfig): LeadPayload {
+    const directName = readInputValueByLabel(form, /^name$/i);
+    const firstName = readInputValueByLabel(form, /first name/i);
+    const lastName = readInputValueByLabel(form, /last name/i);
+    const composedName = [firstName, lastName].filter(Boolean).join(' ').trim();
+    const email =
+      readInputValueByName(form, 'email') ??
+      readInputValueByType(form, 'email') ??
+      readInputValueByLabel(form, /email/i) ??
+      '';
+    const phone =
+      readInputValueByName(form, 'phone') ??
+      readInputValueByType(form, 'tel') ??
+      readInputValueByLabel(form, /phone/i) ??
+      '';
+    const message =
+      readTextareaValueByName(form, 'message') ??
+      readTextareaValue(form) ??
+      '';
+
+    return {
+      name: directName ?? composedName,
+      email,
+      phone,
+      message,
+      template:
+        form.querySelector<HTMLInputElement>('input[name="_template"]')?.value ??
+        config.templateName,
+      source:
+        form.querySelector<HTMLInputElement>('input[name="_source"]')?.value ??
+        window.location.href,
+    };
+  }
+
+  function getFormUiState(form: HTMLFormElement): FormUiState {
+    const scope = form.parentElement ?? document;
+
+    return {
+      successBanner:
+        scope.querySelector<HTMLElement>('#form-success') ??
+        document.getElementById('form-success'),
+      errorBanner:
+        scope.querySelector<HTMLElement>('#form-error') ??
+        document.getElementById('form-error'),
+      submitButton:
+        form.querySelector<HTMLButtonElement>('button[type="submit"]') ??
+        form.querySelector<HTMLInputElement>('input[type="submit"]'),
+    };
+  }
+
+  function toggleSubmittingState(
+    submitButton: HTMLButtonElement | HTMLInputElement | null,
+    isSubmitting: boolean
+  ): void {
+    if (!submitButton) {
+      return;
+    }
+
+    submitButton.disabled = isSubmitting;
+    submitButton.setAttribute('aria-busy', String(isSubmitting));
+  }
+
+  function showBanner(banner: HTMLElement | null, message: string): void {
+    if (!banner) {
+      return;
+    }
+
+    banner.textContent = message;
+    banner.classList.remove('hidden');
+  }
+
+  function hideBanner(banner: HTMLElement | null): void {
+    if (!banner) {
+      return;
+    }
+
+    banner.classList.add('hidden');
+  }
+
+  function setHiddenFieldValue(
+    form: HTMLFormElement,
+    name: '_template' | '_source',
+    value: string
+  ): void {
+    const field = form.querySelector<HTMLInputElement>(`input[name="${name}"]`);
+
+    if (field) {
+      field.value = value;
+    }
+  }
+
+  function readInputValueByName(form: HTMLFormElement, name: string): string | null {
+    const input = form.querySelector<HTMLInputElement>(`input[name="${name}"]`);
+    return input?.value.trim() || null;
+  }
+
+  function readInputValueByType(form: HTMLFormElement, type: string): string | null {
+    const input = form.querySelector<HTMLInputElement>(`input[type="${type}"]`);
+    return input?.value.trim() || null;
+  }
+
+  function readTextareaValueByName(form: HTMLFormElement, name: string): string | null {
+    const textarea = form.querySelector<HTMLTextAreaElement>(`textarea[name="${name}"]`);
+    return textarea?.value.trim() || null;
+  }
+
+  function readTextareaValue(form: HTMLFormElement): string | null {
+    const textarea = form.querySelector<HTMLTextAreaElement>('textarea');
+    return textarea?.value.trim() || null;
+  }
+
+  function readInputValueByLabel(form: HTMLFormElement, pattern: RegExp): string | null {
+    const labels = Array.from(form.querySelectorAll<HTMLLabelElement>('label'));
+
+    for (const label of labels) {
+      const labelText = label.textContent?.trim() ?? '';
+
+      if (!pattern.test(labelText)) {
+        continue;
+      }
+
+      const fieldContainer = label.parentElement;
+      const field =
+        fieldContainer?.querySelector<HTMLInputElement>('input') ??
+        fieldContainer?.querySelector<HTMLTextAreaElement>('textarea');
+
+      if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
+        return field.value.trim() || null;
+      }
+    }
+
+    return null;
+  }
+</script>

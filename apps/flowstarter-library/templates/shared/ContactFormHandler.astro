@@ -1,26 +1,10 @@
----
-const {
-  actionUrl,
-  successMessage,
-  templateName,
-  isConfigured,
-  isDev,
-} = Astro.props as {
-  actionUrl: string;
-  successMessage: string;
-  templateName: string;
-  isConfigured: boolean;
-  isDev: boolean;
-};
----
-
 <div
   id="contact-form-config"
-  data-action-url={actionUrl}
-  data-success-message={successMessage}
-  data-template-name={templateName}
-  data-is-configured={String(isConfigured)}
-  data-is-dev={String(isDev)}
+  data-action-url={Astro.props.actionUrl}
+  data-success-message={Astro.props.successMessage}
+  data-template-name={Astro.props.templateName}
+  data-is-configured={String(Astro.props.isConfigured)}
+  data-is-dev={String(Astro.props.isDev)}
   hidden
 ></div>
 

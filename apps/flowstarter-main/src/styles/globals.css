@@ -1688,6 +1688,6 @@ html.dark body {
 .animate-word-reveal {
   display: inline-block;
   opacity: 0;
-  animation: wordReveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: wordReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 

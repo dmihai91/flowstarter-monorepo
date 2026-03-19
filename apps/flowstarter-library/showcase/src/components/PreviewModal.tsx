@@ -52,18 +52,20 @@ function buildPaletteCss(colors: PaletteColor): string {
   const muted = colors['text-muted']  || '';
   if (!p) return '';
   return `
-    /* ── CSS variable override (used by inline styles in templates) ── */
-    :root {
-      ${p   ? `--color-primary: ${p};` : ''}
-      ${pd  ? `--color-primary-dark: ${pd}; --color-primary-light: ${pd};` : ''}
-      ${sec ? `--color-secondary: ${sec};` : ''}
-      ${ac  ? `--color-accent: ${ac};` : ''}
-      ${bg  ? `--color-background: ${bg};` : ''}
-      ${sur ? `--color-surface: ${sur};` : ''}
-      ${txt ? `--color-text: ${txt};` : ''}
-      ${muted ? `--color-text-muted: ${muted};` : ''}
+    /* ── CSS variable override — use html selector with !important to beat html.dark { } specificity ── */
+    html {
+      ${p   ? `--color-primary: ${p} !important;` : ''}
+      ${pd  ? `--color-primary-dark: ${pd} !important; --color-primary-light: ${pd} !important;` : ''}
+      ${sec ? `--color-secondary: ${sec} !important;` : ''}
+      ${ac  ? `--color-accent: ${ac} !important;` : ''}
+      ${bg  ? `--color-background: ${bg} !important;` : ''}
+      ${sur ? `--color-surface: ${sur} !important;` : ''}
+      ${txt ? `--color-text: ${txt} !important;` : ''}
+      ${muted ? `--color-text-muted: ${muted} !important;` : ''}
+      ${bg  ? `background-color: ${bg} !important;` : ''}
       --pal-p: ${p}; --pal-pd: ${pd}; --pal-ac: ${ac};
     }
+    body { ${bg ? `background-color: ${bg} !important;` : ''} ${txt ? `color: ${txt} !important;` : ''} }
     /* ── Tailwind utility class overrides ── */
     .bg-primary                { background-color: ${p}  !important }
     .bg-primary-dark           { background-color: ${pd} !important }
@@ -83,7 +85,7 @@ function buildPaletteCss(colors: PaletteColor): string {
     .btn-primary  { background-color: ${p}  !important; border-color: ${p} !important }
     .btn-outline  { border-color: ${p} !important; color: ${p} !important }
     .btn-outline:hover { background-color: ${p} !important }
-    ${bg ? `body { background-color: ${bg} !important }` : ''}
+
   `.trim();
 }
 

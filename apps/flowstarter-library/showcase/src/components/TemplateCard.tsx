@@ -137,12 +137,12 @@ export function TemplateCard({ template, darkMode, onPreview }: TemplateCardProp
         <div className="mt-auto flex items-center gap-2 pt-1">
           <button
             onClick={() => onPreview(template)}
-            className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl border border-neutral-200 bg-white px-4 text-sm font-semibold text-neutral-700 transition-colors hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:border-neutral-600"
+            className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl border border-neutral-200 bg-white px-4 text-xs font-semibold text-neutral-700 transition-colors hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:border-neutral-600"
           >
             <PlayIcon /> Preview
           </button>
           <button
-            className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl bg-purple-600 px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-purple-700"
+            className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl bg-purple-600 px-4 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-purple-700"
           >
             Use Template <ArrowIcon />
           </button>

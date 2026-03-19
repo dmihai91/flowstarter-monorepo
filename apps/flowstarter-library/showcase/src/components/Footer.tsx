@@ -23,8 +23,11 @@ export function Footer({ darkMode = false }: FooterProps): React.ReactElement {
         <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
           {/* Brand */}
           <div className="flex flex-col gap-3">
-            <a href="/" className="flex items-center gap-2 no-underline">
-              <Logo size="xs" />
+            <a href="/" className="flex items-center gap-2.5 no-underline group">
+              <Logo size="sm" />
+              <span className="text-[11px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-[var(--purple-primary)]/10 text-[var(--purple-primary)] border border-[var(--purple-primary)]/20 group-hover:bg-[var(--purple-primary)]/20 transition-colors">
+                Library
+              </span>
             </a>
             <p className={'text-base sm:text-sm max-w-xs leading-relaxed ' + muted}>
               Production-ready website templates for web designers and agencies.

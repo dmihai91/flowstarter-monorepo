@@ -161,6 +161,13 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
   const [viewMode,        setViewMode]        = useState<ViewMode>(defaultView);
   const [iframeReady,     setIframeReady]     = useState<boolean>(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  // Refs for stale-closure-safe access in handleLoad
+  const darkModeRef = useRef(darkMode);
+  const selectedPaletteRef = useRef(selectedPalette);
+  const selectedFontRef = useRef(selectedFont);
+  useEffect(() => { darkModeRef.current = darkMode; }, [darkMode]);
+  useEffect(() => { selectedPaletteRef.current = selectedPalette; }, [selectedPalette]);
+  useEffect(() => { selectedFontRef.current = selectedFont; }, [selectedFont]);
 
   // Auto-switch to dark palette (palette-6) when dark mode is toggled
   useEffect(() => {
@@ -213,18 +220,22 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
     setIframeReady(true);
     const iframe = iframeRef.current;
     if (!iframe) return;
-    // Small delay to let the iframe's own scripts finish first
+    // Delay to let the iframe's own scripts + postMessage listener initialize
     setTimeout(() => {
-      applyTheme(iframe, darkMode);
-      injectPalette(iframe, selectedPalette);
-      applyFont(iframe, selectedFont);
-    }, 80);
-  }, [darkMode, selectedPalette, selectedFont]);
+      applyTheme(iframe, darkModeRef.current);
+      injectPalette(iframe, selectedPaletteRef.current);
+      applyFont(iframe, selectedFontRef.current);
+    }, 300);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps — uses refs, not stale closures
 
-  // When darkMode changes in parent: update iframe in-place (no reload)
+  // When darkMode changes: update theme + re-inject palette (colors depend on dark/light)
   useEffect(() => {
     if (!iframeReady || !iframeRef.current) return;
     applyTheme(iframeRef.current, darkMode);
+    // small delay so html.dark class settles before palette vars override
+    setTimeout(() => {
+      if (iframeRef.current) injectPalette(iframeRef.current, selectedPaletteRef.current);
+    }, 50);
   }, [darkMode, iframeReady]);
 
   // When palette changes: inject CSS in-place (no reload)

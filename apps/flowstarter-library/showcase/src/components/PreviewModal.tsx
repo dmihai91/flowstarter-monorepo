@@ -271,7 +271,7 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
                 return (
                   <button
                     key={palette.id}
-                    onClick={() => setSelectedPalette(palette); setUserPickedPalette(palette)}
+                    onClick={() => { setSelectedPalette(palette); setUserPickedPalette(palette); }}
                     title={palette.name}
                     className={`flex shrink-0 items-center gap-1.5 rounded-full border px-2 py-1 text-xs font-medium transition-all md:px-3 md:text-sm ${active ? 'border-purple-500 bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300' : 'border-neutral-200 text-neutral-500 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-400'}`}
                   >

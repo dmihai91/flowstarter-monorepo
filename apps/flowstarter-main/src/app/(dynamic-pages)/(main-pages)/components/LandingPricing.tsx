@@ -109,7 +109,7 @@ export function LandingPricing() {
                       </button>
                     ) : (
                       <a
-                        href={EXTERNAL_URLS.calendly.discovery}
+                        href={`${EXTERNAL_URLS.calendly.discovery}?utm_content=${plan.name.toLowerCase()}-plan&utm_source=pricing-page&utm_medium=cta`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="mt-auto block"

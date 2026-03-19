@@ -111,10 +111,13 @@ export function createTemplatesRoutes() {
 										name: content.name || content.id || file,
 										colors: {
 											primary: c.primary || c['primary-dark'] || '#3b82f6',
+											...(c['primary-dark'] ? { 'primary-dark': c['primary-dark'] } : {}),
 											secondary: c.secondary || c.accent || '#6366f1',
 											accent: c.accent || c.secondary || '#8b5cf6',
-											background: c.background || c.surface || '#ffffff',
-											text: c.text || c['text-muted'] || '#1e293b',
+											background: c.background || '#ffffff',
+											...(c.surface ? { surface: c.surface } : {}),
+											text: c.text || '#1e293b',
+											...(c['text-muted'] ? { 'text-muted': c['text-muted'] } : {}),
 										},
 										fonts: content.fonts,
 									};

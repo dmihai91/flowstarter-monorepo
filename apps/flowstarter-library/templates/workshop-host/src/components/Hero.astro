@@ -29,7 +29,7 @@ const headlineLines: string[] = headline.split('\n');
   <div class="relative mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1.08fr_0.92fr]">
     <div class="relative z-10 max-w-3xl">
       {badge && (
-        <div class="mb-6 inline-flex items-center gap-3 rounded-full border px-5 py-2 text-sm font-medium" style="border-color: color-mix(in srgb, var(--color-primary) 18%, white); background: rgba(255,255,255,0.75); color: var(--color-text);">
+        <div class="mb-6 inline-flex items-center gap-3 rounded-full border px-5 py-2 text-sm font-medium" style="border-color: color-mix(in srgb, var(--color-primary) 18%, white); background: color-mix(in srgb, var(--color-surface) 75%, transparent); color: var(--color-text);">
           <span class="h-2.5 w-2.5 rounded-full bg-[var(--color-accent)]"></span>
           <span>{badge}</span>
         </div>
@@ -46,7 +46,7 @@ const headlineLines: string[] = headline.split('\n');
           <a href={cta_primary.href} class="inline-flex items-center justify-center rounded-full px-7 py-4 text-sm font-semibold text-white shadow-lg shadow-black/10" style="background: var(--color-primary);">{cta_primary.text}</a>
         )}
         {cta_secondary && (
-          <a href={cta_secondary.href} class="inline-flex items-center justify-center rounded-full border px-7 py-4 text-sm font-semibold" style="border-color: color-mix(in srgb, var(--color-primary) 24%, white); color: var(--color-primary); background: rgba(255,255,255,0.72);">{cta_secondary.text}</a>
+          <a href={cta_secondary.href} class="inline-flex items-center justify-center rounded-full border px-7 py-4 text-sm font-semibold" style="border-color: color-mix(in srgb, var(--color-primary) 24%, white); color: var(--color-primary); background: color-mix(in srgb, var(--color-surface) 72%, transparent);">{cta_secondary.text}</a>
         )}
       </div>
       <div class="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-3">

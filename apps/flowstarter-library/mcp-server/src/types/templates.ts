@@ -17,10 +17,13 @@ export interface TemplatePalette {
   name: string;
   colors: {
     primary: string;
+    'primary-dark'?: string;
     secondary: string;
     accent: string;
     background: string;
+    surface?: string;
     text: string;
+    'text-muted'?: string;
   };
 }
 

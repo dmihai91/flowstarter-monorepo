@@ -29,7 +29,7 @@ const headlineLines: string[] = headline.split('\n');
   <div class="absolute left-1/2 top-16 h-[34rem] w-[34rem] -translate-x-1/2 rounded-full blur-3xl" style="background: radial-gradient(circle, color-mix(in srgb, var(--color-primary) 22%, white) 0%, color-mix(in srgb, var(--color-accent) 18%, transparent) 46%, transparent 72%);"></div>
   <div class="relative mx-auto max-w-5xl text-center">
     {badge && (
-      <div class="mx-auto mb-8 inline-flex items-center gap-3 rounded-full border px-5 py-2 text-sm font-medium backdrop-blur-xl" style="border-color: color-mix(in srgb, var(--color-primary) 18%, white); background: rgba(255,255,255,0.72); color: var(--color-text);">
+      <div class="mx-auto mb-8 inline-flex items-center gap-3 rounded-full border px-5 py-2 text-sm font-medium backdrop-blur-xl" style="border-color: color-mix(in srgb, var(--color-primary) 18%, white); background: color-mix(in srgb, var(--color-surface) 72%, transparent); color: var(--color-text);">
         <span class="h-2.5 w-2.5 rounded-full bg-[var(--color-accent)]"></span>
         <span>{badge}</span>
       </div>
@@ -46,7 +46,7 @@ const headlineLines: string[] = headline.split('\n');
         <a href={cta_primary.href} class="inline-flex items-center justify-center rounded-full px-7 py-4 text-sm font-semibold text-white shadow-lg shadow-black/10" style="background: var(--color-primary);">{cta_primary.text}</a>
       )}
       {cta_secondary && (
-        <a href={cta_secondary.href} class="inline-flex items-center justify-center rounded-full border px-7 py-4 text-sm font-semibold" style="border-color: color-mix(in srgb, var(--color-accent) 32%, white); color: var(--color-text); background: rgba(255,255,255,0.76);">{cta_secondary.text}</a>
+        <a href={cta_secondary.href} class="inline-flex items-center justify-center rounded-full border px-7 py-4 text-sm font-semibold" style="border-color: color-mix(in srgb, var(--color-accent) 32%, white); color: var(--color-text); background: color-mix(in srgb, var(--color-surface) 76%, transparent);">{cta_secondary.text}</a>
       )}
     </div>
     <div class="mt-12 flex flex-wrap items-center justify-center gap-4">

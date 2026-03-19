@@ -5,6 +5,7 @@ import tailwind from '@astrojs/tailwind';
 
 // https://astro.build/config
 export default defineConfig({
+  devToolbar: { enabled: false },
   base: '/',
   build: {
     assets: '_astro',

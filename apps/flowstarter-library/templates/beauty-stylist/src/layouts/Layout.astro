@@ -511,7 +511,9 @@ const navLinks = [
         }
       }
 
-      document.addEventListener('DOMContentLoaded', function() {
+      // Don't run booking intercept inside FS preview iframe
+    if (window.self !== window.top) return;
+    document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('fs-booking-close')?.addEventListener('click', closeModal);
         document.getElementById('fs-booking-backdrop')?.addEventListener('click', closeModal);
         document.getElementById('fs-btn-next')?.addEventListener('click', handleNext);

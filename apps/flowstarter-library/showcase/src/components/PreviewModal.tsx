@@ -144,7 +144,8 @@ const VIEW_MODES: { mode: ViewMode; icon: (p: { className?: string }) => React.R
 export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps): React.ReactElement {
   const [selectedPalette, setSelectedPalette] = useState<Palette | null>(template.palettes?.[0] || null);
   const [selectedFont,    setSelectedFont]    = useState<Font | null>(template.fonts?.[0] || null);
-  const [viewMode,        setViewMode]        = useState<ViewMode>('desktop');
+  const defaultView: ViewMode = typeof window !== 'undefined' && window.innerWidth < 640 ? 'mobile' : 'desktop';
+  const [viewMode,        setViewMode]        = useState<ViewMode>(defaultView);
   const [iframeReady,     setIframeReady]     = useState<boolean>(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -155,7 +156,7 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
   useEffect(() => {
     setSelectedPalette(template.palettes?.[0] || null);
     setSelectedFont(template.fonts?.[0] || null);
-    setViewMode('desktop');
+    setViewMode(typeof window !== 'undefined' && window.innerWidth < 640 ? 'mobile' : 'desktop');
     setIframeReady(false);
   }, [template.slug]);
 

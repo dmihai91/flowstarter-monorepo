@@ -89,14 +89,24 @@ export default async function RootLayout({
             __html: `
               (function() {
                 try {
-                  const theme = localStorage.getItem('theme') || 'auto';
-                  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                  const resolvedTheme = theme === 'auto' ? systemTheme : theme;
+                  // Read from shared cookie first (synced across subdomains)
+                  var cookieTheme = document.cookie.split(';').map(function(c) { return c.trim(); })
+                    .find(function(c) { return c.startsWith('flowstarter_theme='); });
+                  var theme = cookieTheme ? cookieTheme.split('=')[1] : null;
+                  // Fall back to localStorage, then default to system
+                  if (!theme || !['light','dark','system'].includes(theme)) {
+                    theme = localStorage.getItem('theme') || localStorage.getItem('flowstarter_theme') || 'system';
+                  }
+                  // Migrate localStorage to cookie
+                  if (!cookieTheme && theme !== 'system') {
+                    var domain = location.hostname.includes('flowstarter.dev') ? '; domain=.flowstarter.dev' : '';
+                    document.cookie = 'flowstarter_theme=' + theme + '; path=/; max-age=31536000; SameSite=Lax' + domain;
+                  }
+                  var systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                  var resolvedTheme = theme === 'system' ? systemTheme : theme;
+                  document.documentElement.classList.remove('light', 'dark');
                   document.documentElement.classList.add(resolvedTheme);
                   document.documentElement.setAttribute('data-theme', resolvedTheme);
-                  if (resolvedTheme === 'dark') {
-                    document.documentElement.classList.remove('light');
-                  }
                 } catch (e) {}
               })();
             `,

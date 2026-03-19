@@ -58,7 +58,7 @@ export const LANDING_COPY = {
         number: '01',
         title: 'We launch the foundation',
         description:
-          'We create the initial structure for your business: landing page, offer structure, and key integrations.',
+          'We create the initial structure for your business: your website, your offer structure, and your essential tools connected.',
       },
       {
         number: '02',
@@ -134,19 +134,19 @@ export const LANDING_COPY = {
       },
       {
         icon: 'calendar',
-        title: 'Booking and lead capture integrations',
+        title: 'Online booking & contact form',
       },
       {
         icon: 'creditCard',
-        title: 'Payments and email tools on higher tiers',
+        title: 'Payment & email tools on higher plans',
       },
       {
         icon: 'sparkles',
-        title: 'Editing with our editor',
+        title: 'Edit anything with AI — no tech skills',
       },
       {
         icon: 'layout',
-        title: 'Central dashboard for management',
+        title: 'One dashboard to manage it all',
       },
     ],
   },
@@ -164,10 +164,10 @@ export const LANDING_COPY = {
         features: [
           'Landing page',
           'Business structure',
-          'Calendly integration',
-          'Basic analytics',
-          'AI editor',
-          'Dashboard access',
+          'Online booking setup',
+          'Visitor tracking',
+          'Edit your site with AI',
+          'Your own business dashboard',
         ],
         cta: 'Launch with Starter',
         status: 'available',
@@ -179,11 +179,11 @@ export const LANDING_COPY = {
         monthlyPrice: '59€/month',
         features: [
           'Everything in Starter',
-          'Mailchimp integration',
-          'Stripe setup',
-          'Simple funnel structure',
-          'Advanced analytics',
-          'Conversion-ready setup',
+          'Email list & newsletters',
+          'Online payment setup',
+          'Sales page to convert visitors',
+          'Visitor & revenue insights',
+          'Built to turn visitors into clients',
         ],
         cta: 'Choose Growth',
         badge: 'Recommended',
@@ -198,8 +198,8 @@ export const LANDING_COPY = {
           'Everything in Growth',
           'Digital product selling',
           'Physical product selling',
-          'Advanced flows',
-          'Multi-page setup',
+          'Custom booking & automations',
+          'Full multi-page website',
           'Priority support',
         ],
         cta: 'Coming Soon',
@@ -244,7 +244,7 @@ export const LANDING_COPY = {
       {
         question: 'What exactly do I get?',
         answer:
-          'A done-for-you launch setup with your landing page, offer structure, key integrations, dashboard access, and the AI editor to manage it after launch.',
+          'A done-for-you launch setup with your landing page, offer structure, essential tools connected, your own dashboard, and AI editing so you can manage it all after launch.',
       },
       {
         question: 'How long does launch usually take?',
@@ -259,12 +259,12 @@ export const LANDING_COPY = {
       {
         question: 'Do I need technical skills?',
         answer:
-          'No. Flowstarter is built for people who want a serious online presence without learning the technical stack.',
+          'No. Flowstarter is built for people who want a serious online presence without learning to code.',
       },
       {
         question: 'What changes on the higher tiers?',
         answer:
-          'Growth adds monetization-focused setup like Stripe, Mailchimp, and a simple funnel structure. Pro expands into advanced flows and multi-page setups.',
+          'Growth adds online payments, email marketing, and a sales page to turn visitors into clients. Pro expands into a full multi-page website and custom automations.',
       },
       {
         question: 'Am I locked into a long-term contract?',

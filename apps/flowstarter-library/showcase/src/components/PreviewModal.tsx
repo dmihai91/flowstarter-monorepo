@@ -189,11 +189,16 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
 
   // Reset when template changes
   useEffect(() => {
-    setSelectedPalette(template.palettes?.[0] || null);
+    const palettes = template.palettes || [];
+    const defaultPalette = isDark && palettes.length > 1
+      ? palettes[palettes.length - 1]  // palette-6 for dark mode
+      : palettes[0] || null;
+    setSelectedPalette(defaultPalette);
+    setUserPickedPalette(null);
     setSelectedFont(template.fonts?.[0] || null);
     setViewMode(typeof window !== 'undefined' && window.innerWidth < 640 ? 'mobile' : 'desktop');
     setIframeReady(false);
-  }, [template.slug]);
+  }, [template.slug]);  // eslint-disable-line react-hooks/exhaustive-deps — isDark via ref
 
   // Keyboard + scroll lock
   const handleEscape = useCallback((e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); }, [onClose]);

@@ -37,7 +37,7 @@ export function LandingPricing() {
                 return (
                   <div
                     key={plan.name}
-                    className={`relative flex h-full flex-col rounded-[28px] border p-7 sm:p-8 transition-all duration-700 ${
+                    className={`relative flex h-full flex-col rounded-[28px] border p-7 sm:p-8 transition-all duration-500 ${
                       isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                     } ${
                       isHighlighted

@@ -28,7 +28,7 @@ export function PillarsSection() {
               {pillars.items.map(({ title, subtitle, body, icon }, index) => (
                 <div
                   key={title}
-                  className={`rounded-2xl p-8 lg:p-10 border border-[var(--landing-card-border)] backdrop-blur-sm transition-all duration-700 ${
+                  className={`rounded-2xl p-8 lg:p-10 border border-[var(--landing-card-border)] backdrop-blur-sm transition-all duration-500 ${
                     isVisible
                       ? 'opacity-100 translate-y-0'
                       : 'opacity-0 translate-y-5'

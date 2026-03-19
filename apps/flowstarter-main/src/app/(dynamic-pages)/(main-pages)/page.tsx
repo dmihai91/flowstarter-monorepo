@@ -34,11 +34,11 @@ export default function LandingPage() {
           opacity: 0;
           animation: heroFadeUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
-        .hero-fade-1 { animation-delay: 0.1s; }
+        .hero-fade-1 { animation-delay: 0.05s; }
         .hero-fade-2 { animation-delay: 0.25s; }
         .hero-fade-3 { animation-delay: 0.4s; }
-        .hero-fade-4 { animation-delay: 0.55s; }
-        .hero-fade-5 { animation-delay: 0.7s; }
+        .hero-fade-4 { animation-delay: 0.25s; }
+        .hero-fade-5 { animation-delay: 0.35s; }
         @keyframes flowDrift { 0% { transform: translateX(0); } 100% { transform: translateX(40px); } }
         @keyframes flowDrift2 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(-30px) translateY(15px); } }
         @keyframes flowDrift3 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(20px) translateY(-10px); } }
@@ -47,7 +47,7 @@ export default function LandingPage() {
         .animate-cursor-blink { animation: cursorBlink 1s step-end infinite; }
         @keyframes textFlow { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
         .text-flow {
-          background: linear-gradient(135deg, #4D5DD9, #7C3AED, #a78bfa, #06B6D4, #7C3AED, #4D5DD9);
+          background: linear-gradient(135deg, #1e3a8a, #3730a3, #5b21b6, #7C3AED, #4D5DD9, #0e7490);
           background-size: 300% 300%;
           -webkit-background-clip: text;
           background-clip: text;

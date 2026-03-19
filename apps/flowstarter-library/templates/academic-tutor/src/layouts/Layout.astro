@@ -118,6 +118,15 @@ const navLinks = [
           document.documentElement.classList.toggle('dark', d.value === 'dark');
           try { localStorage.setItem('theme', d.value); } catch(_) {}
         } else if (d.type === 'setPalette') {
+          // Apply CSS vars directly on root element (inline style = highest priority, beats all stylesheets)
+          if (d.vars) {
+            var root = document.documentElement;
+            var vars = d.vars;
+            Object.keys(vars).forEach(function(k) { root.style.setProperty(k, vars[k]); });
+            if (vars['--color-background']) document.body.style.setProperty('background-color', vars['--color-background'], 'important');
+            if (vars['--color-text']) document.body.style.setProperty('color', vars['--color-text'], 'important');
+          }
+          // Also inject style tag for Tailwind utility class overrides
           var existing = document.getElementById('fs-palette-override');
           if (existing) existing.remove();
           if (d.css) {

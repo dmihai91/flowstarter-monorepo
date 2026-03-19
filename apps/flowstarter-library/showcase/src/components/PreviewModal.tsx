@@ -131,9 +131,19 @@ function injectPalette(iframe: HTMLIFrameElement, palette: Palette | null): void
       return;
     }
   } catch { /* cross-origin fallback */ }
-  // Fallback: postMessage
+  // Fallback: postMessage — send both vars (for direct style.setProperty in template) AND css (for Tailwind overrides)
   const css = buildPaletteCss(colors);
-  iframe.contentWindow?.postMessage({ source: 'fs-preview', type: 'setPalette', css }, '*');
+  const vars: Record<string, string> = {};
+  if (p)     vars['--color-primary']       = p;
+  if (pd)    vars['--color-primary-dark']  = pd;
+  if (pd)    vars['--color-primary-light'] = pd;
+  if (sec)   vars['--color-secondary']     = sec;
+  if (ac)    vars['--color-accent']        = ac;
+  if (bg)    vars['--color-background']    = bg;
+  if (sur)   vars['--color-surface']       = sur;
+  if (txt)   vars['--color-text']          = txt;
+  if (muted) vars['--color-text-muted']    = muted;
+  iframe.contentWindow?.postMessage({ source: 'fs-preview', type: 'setPalette', css, vars }, '*');
 }
 
 function applyTheme(iframe: HTMLIFrameElement, dark: boolean): void {

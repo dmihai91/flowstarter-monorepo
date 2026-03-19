@@ -33,7 +33,17 @@ export default function LandingPage() {
           60% { opacity: 1; filter: blur(0px); }
           100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
         }
-        .animate-word-reveal { opacity: 0; animation: wordReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes textFlowW { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        .animate-word-reveal {
+          opacity: 0;
+          background: linear-gradient(135deg, #1e3a8a, #3730a3, #5b21b6, #7C3AED, #4D5DD9, #0e7490);
+          background-size: 300% 300%;
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+          -webkit-text-fill-color: transparent;
+          animation: wordReveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards, textFlowW 6s ease infinite;
+        }
         @keyframes sectionFadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
         .section-fade { animation: sectionFadeUp 0.5s ease-out forwards; }
         @keyframes flowDrift { 0% { transform: translateX(0); } 100% { transform: translateX(40px); } }

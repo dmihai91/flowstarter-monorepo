@@ -2,7 +2,7 @@
 
 import { EXTERNAL_URLS } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { LANDING_COPY, type HeroCopy } from '../landing-copy';
 
 /**
@@ -10,13 +10,8 @@ import { LANDING_COPY, type HeroCopy } from '../landing-copy';
  * Only: badge, headline, one paragraph, CTA.
  */
 export function LandingHero() {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(true);
   const hero = LANDING_COPY.hero;
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoaded(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <section className="relative pt-20 sm:pt-24 lg:pt-28 pb-2 lg:pb-6 overflow-hidden">
@@ -55,7 +50,7 @@ export function LandingHero() {
 
       <div className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10 text-center">
         {/* Badge */}
-        <div className={`transition-all duration-500 ease-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+        <div>
           <div className="hero-fade hero-fade-1 inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/60 dark:bg-white/[0.06] backdrop-blur-md border border-gray-200/40 dark:border-white/[0.08] shadow-[0_2px_20px_rgba(0,0,0,0.04)] mb-6">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />

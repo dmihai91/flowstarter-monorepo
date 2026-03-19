@@ -35,7 +35,7 @@ export function ProcessSection() {
                   className={`group p-8 lg:p-10 ${
                     isVisible
                       ? `animate-fade-in-up animate-fade-in-up-delay-${i + 1}`
-                      : 'opacity-0 '
+                      : 'opacity-0 translate-y-4'
                   }`}
                   style={{ animationFillMode: 'forwards' }}
                 >

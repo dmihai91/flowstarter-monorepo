@@ -38,7 +38,8 @@ export function useScrollAnimation(threshold = 0.01, rootMargin = '0px 0px 400px
     return () => observer.disconnect();
   }, [threshold, rootMargin]);
 
-  return { ref, isVisible };
+  const fadeClass = isVisible ? 'section-fade' : 'opacity-0';
+  return { ref, isVisible, fadeClass };
 }
 
 /**

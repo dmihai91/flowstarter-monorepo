@@ -2,6 +2,7 @@
 
 import Footer from '@/components/Footer';
 import { CookieConsent } from '@/components/CookieConsent';
+import { ScrollFab } from './components/ScrollFab';
 import { FlowFieldBackground } from './components/FlowFieldBackground';
 import { LandingHeader } from './components/LandingHeader';
 import { LandingHero } from './components/LandingHero';
@@ -27,6 +28,8 @@ export default function LandingPage() {
         @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
         .animate-float { animation: float 3s ease-in-out infinite; }
         .hero-fade { opacity: 1; }
+        @keyframes sectionFadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        .section-fade { animation: sectionFadeUp 0.5s ease-out forwards; }
         @keyframes flowDrift { 0% { transform: translateX(0); } 100% { transform: translateX(40px); } }
         @keyframes flowDrift2 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(-30px) translateY(15px); } }
         @keyframes flowDrift3 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(20px) translateY(-10px); } }
@@ -92,6 +95,7 @@ export default function LandingPage() {
         <Footer />
         <CookieConsent />
       </div>
+        <ScrollFab />
     </>
   );
 }

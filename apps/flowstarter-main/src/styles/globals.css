@@ -1658,15 +1658,10 @@ html.dark body {
   100% { background-position: -200% center; }
 }
 
-@keyframes flowReveal {
-  0%   { clip-path: inset(0 100% 0 0 round 4px); opacity: 0.2; }
-  15%  { opacity: 1; }
-  100% { clip-path: inset(0 0% 0 0 round 4px); opacity: 1; }
-}
-
 /* Full-headline shimmer flow */
 .hero-text-flow {
   display: inline;
+  position: relative;
   background: linear-gradient(
     90deg,
     #4D5DD9 0%,
@@ -1682,9 +1677,24 @@ html.dark body {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  animation:
-    heroShimmer 3s linear infinite,
-    flowReveal 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+  animation: heroShimmer 3s linear infinite;
+}
+
+/* Wrapper that handles the reveal */
+.hero-text-flow-wrap {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+@keyframes flowReveal {
+  0%   { transform: translateY(100%); opacity: 0; }
+  100% { transform: translateY(0);    opacity: 1; }
+}
+
+.hero-text-flow-inner {
+  display: inline-block;
+  animation: flowReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
 }
 
 /* Keep for compatibility */

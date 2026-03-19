@@ -3,7 +3,7 @@
 import { EXTERNAL_URLS } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
-import { LANDING_COPY } from '../landing-copy';
+import { LANDING_COPY, type HeroCopy } from '../landing-copy';
 
 /**
  * Landing page hero — clean, focused, high-converting.

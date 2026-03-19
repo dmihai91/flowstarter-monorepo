@@ -1,5 +1,23 @@
 /** Centralized landing page copy. Edit here instead of JSX. */
 
+export interface HeroCopy {
+  headlinePrefix: string;
+  headlineHighlight: string;
+  subheadline: string;
+  primaryCta: string;
+  secondaryCta: string;
+  trustLine: string;
+  guarantee: string;
+}
+
+export interface PricingSectionCopy {
+  title: string;
+  subtitle: string;
+  plans: PricingPlan[];
+  note: string;
+  guarantee: string;
+}
+
 export interface PricingPlan {
   name: string;
   label: string;
@@ -24,7 +42,7 @@ export const LANDING_COPY = {
   },
   hero: {
     headlinePrefix: 'Launch your online business',
-    headlineHighlight: 'without tech skills or expensive agencies',
+    headlineHighlight: 'without technical skills or a full rebuild from scratch',
     subheadline:
       'We build your initial setup for you, then you manage and grow everything from Flowstarter with an AI-powered editor.',
     primaryCta: 'Launch my business',
@@ -65,7 +83,7 @@ export const LANDING_COPY = {
       },
       {
         icon: 'wallet',
-        title: 'Agencies are expensive and slow',
+        title: 'Getting online takes too long and costs too much',
       },
       {
         icon: 'puzzle',
@@ -191,15 +209,15 @@ export const LANDING_COPY = {
     ],
   },
   differentiation: {
-    title: 'Not just a website builder. Not just an agency.',
+    title: 'A new kind of launch service.',
     cards: [
       {
         label: 'Website builders',
         description: 'Give you tools, but not a real start.',
       },
       {
-        label: 'Agencies',
-        description: 'Build for you, but leave you dependent.',
+        label: 'Traditional agencies',
+        description: 'Great at big projects, but not built for fast, affordable launches.',
       },
       {
         label: 'Flowstarter',
@@ -249,7 +267,7 @@ export const LANDING_COPY = {
           'Growth adds monetization-focused setup like Stripe, Mailchimp, and a simple funnel structure. Pro expands into advanced flows and multi-page setups.',
       },
       {
-        question: 'Am I locked into an agency relationship?',
+        question: 'Am I locked into a long-term contract?',
         answer:
           'No. The setup is done for you, but the goal is long-term control on your side rather than ongoing dependency.',
       },

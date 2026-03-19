@@ -184,6 +184,9 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
     return `/templates/${template.slug}/`;
   }, [template.slug]);
 
+  // Pretty URL shown in the fake browser bar
+  const prettyUrl = `${template.slug}.flowstarter.app`;
+
   // When iframe finishes loading: apply theme + palette + font
   const handleLoad = useCallback(() => {
     setIframeReady(true);
@@ -301,7 +304,7 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
                   <span className="h-2.5 w-2.5 rounded-full bg-green-400" />
                 </div>
                 <div className="ml-3 flex min-w-0 flex-1 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-1.5 text-xs text-neutral-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400">
-                  <span className="truncate">{iframeSrc}</span>
+                  <span className="truncate">{prettyUrl}</span>
                   <ExternalIcon className="h-3 w-3 shrink-0" />
                 </div>
               </div>

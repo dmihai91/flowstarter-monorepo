@@ -371,15 +371,22 @@ const navLinks = [
             <div id="fs-time-grid" class="grid grid-cols-3 gap-2"></div>
           </div>
           <!-- Step 3: Details -->
-          <div id="fs-step-3" class="hidden space-y-4">
+          <div id="fs-step-3" class="hidden space-y-3">
             <p id="fs-booking-summary" class="rounded-xl bg-gray-50 dark:bg-slate-800 px-4 py-3 text-sm text-slate-600 dark:text-slate-300"></p>
             <div>
-              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Full Name</label>
-              <input id="fs-name" type="text" placeholder="Your name" class="w-full rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors" />
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Full Name <span class="text-red-400">*</span></label>
+              <input id="fs-name" type="text" placeholder="Your full name" autocomplete="name" class="w-full rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors" />
+              <p id="fs-err-name" class="hidden mt-1 text-xs text-red-500">Please enter your full name.</p>
             </div>
             <div>
-              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Email Address</label>
-              <input id="fs-email" type="email" placeholder="you@example.com" class="w-full rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors" />
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Email Address <span class="text-red-400">*</span></label>
+              <input id="fs-email" type="email" placeholder="you@example.com" autocomplete="email" class="w-full rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors" />
+              <p id="fs-err-email" class="hidden mt-1 text-xs text-red-500">Please enter a valid email address.</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Phone <span class="text-gray-400 font-normal">(optional)</span></label>
+              <input id="fs-phone" type="tel" placeholder="+1 (555) 000-0000" autocomplete="tel" class="w-full rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors" />
+              <p id="fs-err-phone" class="hidden mt-1 text-xs text-red-500">Please enter a valid phone number.</p>
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Notes <span class="text-gray-400 font-normal">(optional)</span></label>
@@ -507,9 +514,34 @@ const navLinks = [
         if (step === 1) { if (!selectedDate) return; step = 2; renderTimes(); updateModal(); }
         else if (step === 2) { if (!selectedTime) return; step = 3; updateModal(); }
         else if (step === 3) {
-          var name = document.getElementById('fs-name').value.trim();
+          var name  = document.getElementById('fs-name').value.trim();
           var email = document.getElementById('fs-email').value.trim();
-          if (!name || !email) { alert('Please fill in your name and email.'); return; }
+          var phone = (document.getElementById('fs-phone') || {value:''}).value.trim();
+          var valid = true;
+          // helpers
+          function setErr(id, show) {
+            var el = document.getElementById(id);
+            if (el) { el.classList[show ? 'remove' : 'add']('hidden'); }
+          }
+          function setBorder(id, err) {
+            var el = document.getElementById(id);
+            if (el) {
+              el.style.borderColor = err ? '#ef4444' : '';
+              el.style.boxShadow  = err ? '0 0 0 2px rgba(239,68,68,0.2)' : '';
+            }
+          }
+          // clear previous errors
+          ['fs-err-name','fs-err-email','fs-err-phone'].forEach(function(id){ setErr(id, false); });
+          ['fs-name','fs-email','fs-phone'].forEach(function(id){ setBorder(id, false); });
+          // validate name
+          if (!name) { setErr('fs-err-name', true); setBorder('fs-name', true); valid = false; }
+          // validate email
+          var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+          if (!email || !emailOk) { setErr('fs-err-email', true); setBorder('fs-email', true); valid = false; }
+          // validate phone (optional but if filled must look like a phone)
+          if (phone && !/^[+\d][\d\s\-().]{6,}$/.test(phone)) { setErr('fs-err-phone', true); setBorder('fs-phone', true); valid = false; }
+          if (!valid) return;
+          // all good — show confirmation
           document.getElementById('fs-confirm-summary').textContent = selectedDate.label + ' at ' + selectedTime;
           document.getElementById('fs-confirm-email').textContent = email;
           step = 4; updateModal();

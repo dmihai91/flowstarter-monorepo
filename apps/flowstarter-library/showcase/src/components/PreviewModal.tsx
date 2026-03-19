@@ -147,12 +147,6 @@ function PhoneIcon({ className = '' }: { className?: string }) {
 function XIcon({ className = '' }: { className?: string }) {
   return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>;
 }
-function MoonIcon({ className = '' }: { className?: string }) {
-  return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>;
-}
-function SunIcon({ className = '' }: { className?: string }) {
-  return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>;
-}
 function ExternalIcon({ className = '' }: { className?: string }) {
   return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>;
 }
@@ -167,16 +161,15 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
   const [selectedPalette, setSelectedPalette] = useState<Palette | null>(template.palettes?.[0] || null);
   const [selectedFont,    setSelectedFont]    = useState<Font | null>(template.fonts?.[0] || null);
   const [userPickedPalette, setUserPickedPalette] = useState<Palette | null>(null);
-  const [isDark, setIsDark] = useState<boolean>(darkMode); // independent dark toggle per preview
   const defaultView: ViewMode = typeof window !== 'undefined' && window.innerWidth < 640 ? 'mobile' : 'desktop';
   const [viewMode,        setViewMode]        = useState<ViewMode>(defaultView);
   const [iframeReady,     setIframeReady]     = useState<boolean>(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   // Refs for stale-closure-safe access in handleLoad
-  const darkModeRef = useRef(isDark);
+  const darkModeRef = useRef(darkMode);
   const selectedPaletteRef = useRef(selectedPalette);
   const selectedFontRef = useRef(selectedFont);
-  useEffect(() => { darkModeRef.current = isDark; }, [isDark]);
+  useEffect(() => { darkModeRef.current = darkMode; }, [darkMode]);
   useEffect(() => { selectedPaletteRef.current = selectedPalette; }, [selectedPalette]);
   useEffect(() => { selectedFontRef.current = selectedFont; }, [selectedFont]);
 
@@ -184,9 +177,9 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
   useEffect(() => {
     if (!template.palettes?.length) return;
     if (userPickedPalette) return; // respect explicit user choice
-    const idx = isDark ? template.palettes.length - 1 : 0; // palette-6 or palette-1
+    const idx = darkMode ? template.palettes.length - 1 : 0; // palette-6 or palette-1
     setSelectedPalette(template.palettes[idx] || template.palettes[0]);
-  }, [isDark, template.palettes, userPickedPalette]);
+  }, [darkMode, template.palettes, userPickedPalette]);
 
   const palettes = template.palettes || [];
   const fonts    = template.fonts    || [];
@@ -194,7 +187,7 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
   // Reset when template changes
   useEffect(() => {
     const palettes = template.palettes || [];
-    const defaultPalette = isDark && palettes.length > 1
+    const defaultPalette = darkMode && palettes.length > 1
       ? palettes[palettes.length - 1]  // palette-6 for dark mode
       : palettes[0] || null;
     setSelectedPalette(defaultPalette);
@@ -202,7 +195,7 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
     setSelectedFont(template.fonts?.[0] || null);
     setViewMode(typeof window !== 'undefined' && window.innerWidth < 640 ? 'mobile' : 'desktop');
     setIframeReady(false);
-  }, [template.slug]);  // eslint-disable-line react-hooks/exhaustive-deps — isDark via ref
+  }, [template.slug]);  // eslint-disable-line react-hooks/exhaustive-deps — darkMode via ref
 
   // Keyboard + scroll lock
   const handleEscape = useCallback((e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); }, [onClose]);
@@ -247,12 +240,12 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
   // When darkMode changes: update theme + re-inject palette (colors depend on dark/light)
   useEffect(() => {
     if (!iframeReady || !iframeRef.current) return;
-    applyTheme(iframeRef.current, isDark);
+    applyTheme(iframeRef.current, darkMode);
     // small delay so html.dark class settles before palette vars override
     setTimeout(() => {
       if (iframeRef.current) injectPalette(iframeRef.current, selectedPaletteRef.current);
     }, 50);
-  }, [isDark, iframeReady]);
+  }, [darkMode, iframeReady]);
 
   // When palette changes: inject CSS in-place (no reload)
   useEffect(() => {
@@ -294,14 +287,7 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
                   <Icon className="h-4 w-4" />
                 </button>
               ))}
-              <div className="mx-1 h-5 w-px bg-neutral-200 dark:bg-neutral-700" />
-              <button
-                onClick={() => setIsDark(d => !d)}
-                title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-                className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${isDark ? 'bg-slate-800 text-yellow-300 shadow-sm' : 'text-neutral-400 hover:text-neutral-700'}`}
-              >
-                {isDark ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}
-              </button>
+
             </div>
             <button onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 text-neutral-500 transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800" aria-label="Close">
               <XIcon className="h-4 w-4" />

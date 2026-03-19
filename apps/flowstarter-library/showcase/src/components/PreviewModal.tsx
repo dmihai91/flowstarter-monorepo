@@ -41,7 +41,7 @@ interface PreviewModalProps {
 type ViewMode = 'desktop' | 'tablet' | 'mobile';
 
 // Generate CSS overrides from palette colors — covers all Tailwind primary/accent variants
-function buildPaletteCss(colors: PaletteColor): string {
+function buildPaletteCss(colors: PaletteColor, dark = false): string {
   const p   = colors.primary          || '';
   const pd  = colors['primary-dark']  || p;
   const sec = colors.secondary        || '';
@@ -62,10 +62,10 @@ function buildPaletteCss(colors: PaletteColor): string {
       ${sur ? `--color-surface: ${sur} !important;` : ''}
       ${txt ? `--color-text: ${txt} !important;` : ''}
       ${muted ? `--color-text-muted: ${muted} !important;` : ''}
-      ${bg  ? `background-color: ${bg} !important;` : ''}
+      ${bg && !dark ? `background-color: ${bg} !important;` : ''}
       --pal-p: ${p}; --pal-pd: ${pd}; --pal-ac: ${ac};
     }
-    body { ${bg ? `background-color: ${bg} !important;` : ''} ${txt ? `color: ${txt} !important;` : ''} }
+    ${!dark ? `body { ${bg ? `background-color: ${bg} !important;` : ''} ${txt ? `color: ${txt} !important;` : ''} }` : 'body { /* dark mode: let template dark: CSS handle bg/text */ }'}
     /* Override Tailwind dark: heading/text colors so palette wins over html.dark rules */
     ${txt ? `h1, h2, h3, h4, h5, h6 { color: ${txt} !important; }` : ''}
     ${txt ? `.text-slate-800, .text-slate-900, .text-slate-700 { color: ${txt} !important; }` : ''}
@@ -106,43 +106,51 @@ function injectPalette(iframe: HTMLIFrameElement, palette: Palette | null, dark?
   const muted = colors['text-muted']  || '';
   if (!p) return;
 
+  // In dark mode: only inject brand colors — let template's own dark:bg/dark:text CSS control background/text
+  // In light mode: inject everything including background/text overrides
+  const injectBg  = !dark;
+  const injectTxt = !dark;
+
   try {
     const doc = iframe.contentDocument;
     if (doc?.documentElement) {
-      // Set CSS vars directly on the root element style — inline style wins over ANY stylesheet
       const root = doc.documentElement;
-      if (p)     root.style.setProperty('--color-primary',    p);
-      if (pd)    root.style.setProperty('--color-primary-dark', pd);
-      if (pd)    root.style.setProperty('--color-primary-light', pd);
-      if (sec)   root.style.setProperty('--color-secondary',  sec);
-      if (ac)    root.style.setProperty('--color-accent',     ac);
-      if (bg)    root.style.setProperty('--color-background', bg);
-      if (sur)   root.style.setProperty('--color-surface',    sur);
-      if (txt)   root.style.setProperty('--color-text',       txt);
-      if (muted) root.style.setProperty('--color-text-muted', muted);
-      // Body bg + text (regular properties, use important to beat Tailwind dark: classes)
-      if (bg && doc.body) doc.body.style.setProperty('background-color', bg, 'important');
-      if (txt && doc.body) doc.body.style.setProperty('color', txt, 'important');
-      // Tailwind class overrides for baked-in hardcoded colors
-      const css = buildPaletteCss(colors);
+      if (p)             root.style.setProperty('--color-primary',    p);
+      if (pd)            root.style.setProperty('--color-primary-dark', pd);
+      if (pd)            root.style.setProperty('--color-primary-light', pd);
+      if (sec)           root.style.setProperty('--color-secondary',  sec);
+      if (ac)            root.style.setProperty('--color-accent',     ac);
+      if (bg && injectBg)  root.style.setProperty('--color-background', bg);
+      if (sur && injectBg) root.style.setProperty('--color-surface',    sur);
+      if (txt && injectTxt) root.style.setProperty('--color-text',      txt);
+      if (muted && injectTxt) root.style.setProperty('--color-text-muted', muted);
+      // Body overrides — only in light mode
+      if (injectBg  && bg  && doc.body) doc.body.style.setProperty('background-color', bg, 'important');
+      if (injectTxt && txt && doc.body) doc.body.style.setProperty('color', txt, 'important');
+      // In dark mode: clear any previously-injected body overrides so dark:bg CSS takes over
+      if (dark && doc.body) {
+        doc.body.style.removeProperty('background-color');
+        doc.body.style.removeProperty('color');
+      }
+      const css = buildPaletteCss(colors, dark);
       let style = doc.getElementById('fs-palette-override') as HTMLStyleElement | null;
       if (!style) { style = doc.createElement('style') as HTMLStyleElement; style.id = 'fs-palette-override'; doc.head.appendChild(style); }
       style.textContent = css;
       return;
     }
   } catch { /* cross-origin fallback */ }
-  // Fallback: postMessage — send both vars (for direct style.setProperty in template) AND css (for Tailwind overrides)
-  const css = buildPaletteCss(colors);
+  // Fallback: postMessage
+  const css = buildPaletteCss(colors, dark);
   const vars: Record<string, string> = {};
-  if (p)     vars['--color-primary']       = p;
-  if (pd)    vars['--color-primary-dark']  = pd;
-  if (pd)    vars['--color-primary-light'] = pd;
-  if (sec)   vars['--color-secondary']     = sec;
-  if (ac)    vars['--color-accent']        = ac;
-  if (bg)    vars['--color-background']    = bg;
-  if (sur)   vars['--color-surface']       = sur;
-  if (txt)   vars['--color-text']          = txt;
-  if (muted) vars['--color-text-muted']    = muted;
+  if (p)               vars['--color-primary']       = p;
+  if (pd)              vars['--color-primary-dark']  = pd;
+  if (pd)              vars['--color-primary-light'] = pd;
+  if (sec)             vars['--color-secondary']     = sec;
+  if (ac)              vars['--color-accent']        = ac;
+  if (bg && injectBg)  vars['--color-background']    = bg;
+  if (sur && injectBg) vars['--color-surface']       = sur;
+  if (txt && injectTxt) vars['--color-text']         = txt;
+  if (muted && injectTxt) vars['--color-text-muted'] = muted;
   iframe.contentWindow?.postMessage({ source: 'fs-preview', type: 'setPalette', css, vars, dark: dark ?? false }, '*');
 }
 

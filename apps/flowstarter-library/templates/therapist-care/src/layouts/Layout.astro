@@ -131,8 +131,14 @@ const navLinks = [
             var root = document.documentElement;
             var vars = d.vars;
             Object.keys(vars).forEach(function(k) { root.style.setProperty(k, vars[k]); });
-            if (vars['--color-background']) document.body.style.setProperty('background-color', vars['--color-background'], 'important');
-            if (vars['--color-text']) document.body.style.setProperty('color', vars['--color-text'], 'important');
+            if (!d.dark) {
+              if (vars['--color-background']) document.body.style.setProperty('background-color', vars['--color-background'], 'important');
+              if (vars['--color-text']) document.body.style.setProperty('color', vars['--color-text'], 'important');
+            } else {
+              // Dark mode: clear body overrides so template's own dark:bg/dark:text CSS takes over
+              document.body.style.removeProperty('background-color');
+              document.body.style.removeProperty('color');
+            }
           }
           // 3. Inject style tag for Tailwind utility class overrides
           var existing = document.getElementById('fs-palette-override');

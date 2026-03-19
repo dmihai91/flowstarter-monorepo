@@ -3,10 +3,10 @@
   "name": "Boardroom Gold",
   "description": "Deep navy with sharp gold highlights for premium authority.",
   "colors": {
-    "primary": "#1B1F3A",
-    "primary-dark": "#181c34",
+    "primary": "#E8A838",
+    "primary-dark": "#c58e2f",
     "secondary": "#F8F4EF",
-    "accent": "#E8A838",
+    "accent": "#1B1F3A",
     "background": "#FFFFFF",
     "surface": "#FFFFFF",
     "text": "#1B1F3A",

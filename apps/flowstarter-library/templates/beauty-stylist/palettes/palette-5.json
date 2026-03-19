@@ -3,10 +3,10 @@
   "name": "Ivory Editorial",
   "description": "Minimal ivory with black and clay accents for magazine polish.",
   "colors": {
-    "primary": "#2B2B2B",
-    "primary-dark": "#272727",
+    "primary": "#C97B63",
+    "primary-dark": "#aa6854",
     "secondary": "#FAF7F2",
-    "accent": "#C97B63",
+    "accent": "#2B2B2B",
     "background": "#FFFEFD",
     "surface": "#FFFFFF",
     "text": "#191514",

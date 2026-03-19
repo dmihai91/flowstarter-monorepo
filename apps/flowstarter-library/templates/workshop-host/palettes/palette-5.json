@@ -3,10 +3,10 @@
   "name": "Ink & Linen",
   "description": "Editorial monochrome with a red-orange focal accent.",
   "colors": {
-    "primary": "#2B2D42",
-    "primary-dark": "#27293b",
+    "primary": "#EF8354",
+    "primary-dark": "#cb6f47",
     "secondary": "#F7F4EF",
-    "accent": "#EF8354",
+    "accent": "#2B2D42",
     "background": "#FFFEFC",
     "surface": "#FFFFFF",
     "text": "#1B1D2C",

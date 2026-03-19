@@ -1,7 +1,7 @@
 ---
 headline: "Built by Engineers Who Have Shipped at Scale"
 intro: "Founded by Sarah Kim, a former Google engineer, the bootcamp combines rigorous instruction with practical career preparation for students moving into modern tech roles."
-image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&q=80"
+image: "https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?w=800&q=80"
 credentials:
   - title: "Founder"
     institution: "Sarah Kim"

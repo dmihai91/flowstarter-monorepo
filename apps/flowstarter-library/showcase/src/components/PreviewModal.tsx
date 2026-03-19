@@ -95,23 +95,44 @@ function buildPaletteCss(colors: PaletteColor): string {
 
 function injectPalette(iframe: HTMLIFrameElement, palette: Palette | null): void {
   if (!palette?.colors) return;
-  const css = buildPaletteCss(palette.colors);
-  if (!css) return;
-  // Try direct DOM injection first (works when iframe is same-origin via Vite proxy)
+  const colors = palette.colors;
+  const p   = colors.primary          || '';
+  const pd  = colors['primary-dark']  || p;
+  const sec = colors.secondary        || '';
+  const ac  = colors.accent           || p;
+  const bg  = colors.background       || '';
+  const sur = colors.surface          || bg;
+  const txt = colors.text             || '';
+  const muted = colors['text-muted']  || '';
+  if (!p) return;
+
   try {
     const doc = iframe.contentDocument;
-    if (doc) {
+    if (doc?.documentElement) {
+      // Set CSS vars directly on the root element style — inline style wins over ANY stylesheet
+      const root = doc.documentElement;
+      if (p)     root.style.setProperty('--color-primary',    p);
+      if (pd)    root.style.setProperty('--color-primary-dark', pd);
+      if (pd)    root.style.setProperty('--color-primary-light', pd);
+      if (sec)   root.style.setProperty('--color-secondary',  sec);
+      if (ac)    root.style.setProperty('--color-accent',     ac);
+      if (bg)    root.style.setProperty('--color-background', bg);
+      if (sur)   root.style.setProperty('--color-surface',    sur);
+      if (txt)   root.style.setProperty('--color-text',       txt);
+      if (muted) root.style.setProperty('--color-text-muted', muted);
+      // Body bg + text (regular properties, use important to beat Tailwind dark: classes)
+      if (bg && doc.body) doc.body.style.setProperty('background-color', bg, 'important');
+      if (txt && doc.body) doc.body.style.setProperty('color', txt, 'important');
+      // Tailwind class overrides for baked-in hardcoded colors
+      const css = buildPaletteCss(colors);
       let style = doc.getElementById('fs-palette-override') as HTMLStyleElement | null;
-      if (!style) {
-        style = doc.createElement('style') as HTMLStyleElement;
-        style.id = 'fs-palette-override';
-        doc.head.appendChild(style);
-      }
+      if (!style) { style = doc.createElement('style') as HTMLStyleElement; style.id = 'fs-palette-override'; doc.head.appendChild(style); }
       style.textContent = css;
       return;
     }
   } catch { /* cross-origin fallback */ }
-  // Fallback: postMessage (cross-origin environments e.g. production subdomain)
+  // Fallback: postMessage
+  const css = buildPaletteCss(colors);
   iframe.contentWindow?.postMessage({ source: 'fs-preview', type: 'setPalette', css }, '*');
 }
 

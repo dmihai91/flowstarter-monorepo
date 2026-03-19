@@ -44,7 +44,7 @@ export const LANDING_COPY = {
     headlinePrefix: 'Launch your online business',
     headlineHighlight: 'without technical skills or a full rebuild from scratch',
     subheadline:
-      'We build your initial setup for you, then you manage and grow everything from Flowstarter with an AI-powered editor.',
+      'We build your initial setup for you, then you manage and grow everything from Flowstarter with our editor.',
     primaryCta: 'Launch my business',
     secondaryCta: 'See pricing',
     trustLine:
@@ -142,7 +142,7 @@ export const LANDING_COPY = {
       },
       {
         icon: 'sparkles',
-        title: 'AI-powered editing',
+        title: 'Editing with our editor',
       },
       {
         icon: 'layout',

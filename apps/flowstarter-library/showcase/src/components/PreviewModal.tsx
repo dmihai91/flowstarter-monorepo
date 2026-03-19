@@ -254,16 +254,26 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
     return () => { document.removeEventListener('keydown', handleEscape); document.body.style.overflow = ''; };
   }, [handleEscape]);
 
-  // Listen for theme toggle messages from inside the template iframe
+  // Listen for messages from inside the template iframe
   useEffect(() => {
     const handler = (e: MessageEvent) => {
+      // Template signals ready — more reliable than onLoad timing on mobile browsers
+      if (e.data?.source === 'fs-template' && e.data?.type === 'ready') {
+        setIframeReady(true);
+        const iframe = iframeRef.current;
+        if (iframe) {
+          applyPalette(iframe, selectedPaletteRef.current);
+          applyFont(iframe, selectedFontRef.current);
+        }
+        return;
+      }
       if (e.data?.type === 'fs-themeChanged') {
         // template toggled its own theme — we just let it, no need to sync back to parent
       }
     };
     window.addEventListener('message', handler);
     return () => window.removeEventListener('message', handler);
-  }, []);
+  }, [applyPalette]);
 
   // iframe src — only slug drives a reload; theme+palette+font all handled via postMessage/DOM
   const iframeSrc = useMemo(() => {

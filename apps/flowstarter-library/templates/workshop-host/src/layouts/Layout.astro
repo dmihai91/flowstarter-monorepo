@@ -111,6 +111,9 @@ const navLinks = [
 
 
 
+      // Signal parent that listener is ready — more reliable than parent relying on iframe onLoad
+      window.parent.postMessage({ source: 'fs-template', type: 'ready' }, '*');
+
       window.addEventListener('message', function(e) {
         if (!e.data || e.data.source !== 'fs-preview') return;
         var d = e.data;

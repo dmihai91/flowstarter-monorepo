@@ -12,7 +12,7 @@ interface SectionWrapperProps {
   tinted?: boolean;
 }
 
-export function SectionWrapper({ id, children, className = '', padding = 'py-24 md:py-32', tinted = false }: SectionWrapperProps) {
+export function SectionWrapper({ id, children, className = '', padding = 'py-12 md:py-20', tinted = false }: SectionWrapperProps) {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-80px' });
 

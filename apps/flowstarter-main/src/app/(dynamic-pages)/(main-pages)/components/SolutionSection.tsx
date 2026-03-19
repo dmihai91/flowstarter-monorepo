@@ -10,7 +10,7 @@ export function SolutionSection() {
     <SectionWrapper id="solution">
       <SectionHeading className="text-center">{s.title}</SectionHeading>
 
-      <div className="mt-16 grid gap-12 md:grid-cols-3">
+      <div className="mt-8 grid gap-12 md:grid-cols-3">
         {s.steps.map((step) => (
           <div key={step.number} className="relative">
             <span className="font-display text-5xl font-bold text-[var(--purple-primary-lightest)] dark:text-[var(--purple-primary-lighter)]">{step.number}</span>

@@ -11,7 +11,7 @@ export function ProblemSection() {
     <SectionWrapper id="problem" tinted>
       <SectionHeading className="text-center">{problem.title}</SectionHeading>
 
-      <div className="mt-16 grid gap-8 md:grid-cols-3">
+      <div className="mt-8 grid gap-8 md:grid-cols-3">
         {problem.pains.map((pain) => (
           <div key={pain.title} className="rounded-3xl bg-[var(--landing-card-bg)] p-7 ring-1 ring-[var(--landing-card-border)] backdrop-blur-sm text-center md:text-left shadow-[0_10px_35px_rgba(15,23,42,0.04)]">
             <div className="mx-auto mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 dark:bg-red-500/10 text-red-500 dark:text-red-400 md:mx-0">

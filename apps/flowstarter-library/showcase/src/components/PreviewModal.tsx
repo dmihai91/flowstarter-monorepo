@@ -90,17 +90,13 @@ function buildPaletteCss(colors: PaletteColor): string {
 }
 
 function injectPalette(iframe: HTMLIFrameElement, palette: Palette | null): void {
-  try {
-    const doc = iframe.contentDocument;
-    if (!doc) return;
-    const existing = doc.getElementById('fs-palette-override');
-    if (existing) existing.remove();
-    if (!palette?.colors) return;
-    const style = doc.createElement('style');
-    style.id = 'fs-palette-override';
-    style.textContent = buildPaletteCss(palette.colors);
-    doc.head.appendChild(style);
-  } catch { /* cross-origin guard */ }
+  if (!iframe.contentWindow || !palette?.colors) return;
+  // Use postMessage — iframe is cross-origin (port 4100 vs 2000), contentDocument throws SecurityError
+  iframe.contentWindow.postMessage({
+    source: 'fs-preview',
+    type: 'setPalette',
+    css: buildPaletteCss(palette.colors),
+  }, '*');
 }
 
 function applyTheme(iframe: HTMLIFrameElement, dark: boolean): void {

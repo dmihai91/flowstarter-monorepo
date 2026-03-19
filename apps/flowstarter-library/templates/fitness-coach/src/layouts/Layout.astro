@@ -132,6 +132,15 @@ const navLinks = [
         if (d.type === 'setTheme') {
           document.documentElement.classList.toggle('dark', d.value === 'dark');
           try { localStorage.setItem('theme', d.value); } catch(_) {}
+        } else if (d.type === 'setPalette') {
+          var existing = document.getElementById('fs-palette-override');
+          if (existing) existing.remove();
+          if (d.css) {
+            var style = document.createElement('style');
+            style.id = 'fs-palette-override';
+            style.textContent = d.css;
+            document.head.appendChild(style);
+          }
         } else if (d.type === 'setFont') {
           // swap Google Fonts link
           var existing = document.getElementById('fs-font-override');

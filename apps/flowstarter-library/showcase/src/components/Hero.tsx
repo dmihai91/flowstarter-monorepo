@@ -29,7 +29,7 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
 
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-purple-200 bg-purple-50 px-3 py-1.5 dark:border-purple-500/20 dark:bg-purple-500/10">
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-purple-200 bg-purple-50 px-3 py-1.5 dark:border-purple-500/20 dark:bg-purple-500/10 hero-fade hero-fade-1">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-purple-500" />
             <span className="text-xs font-semibold uppercase tracking-widest text-[var(--purple-primary)]">
               Operator Template Library
@@ -51,12 +51,12 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
             </span>
           </h1>
 
-          <p className="mx-auto mb-10 max-w-xl text-xl sm:text-2xl leading-relaxed text-neutral-600 dark:text-neutral-400">
+          <p className="mx-auto mb-10 max-w-xl text-xl sm:text-2xl leading-relaxed text-neutral-600 dark:text-neutral-400 hero-fade hero-fade-3">
             Production-ready Astro templates with 6 palettes and 4 font pairings each.
             Deploy client sites in minutes, not weeks.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-3 hero-fade hero-fade-4">
             {stats.map(({ label, icon }: HeroStat) => (
               <div
                 key={label}

@@ -33,8 +33,8 @@ export function getTheme(): Theme {
     const [name, value] = cookie.trim().split('=');
     if (name === THEME_COOKIE_NAME) {
       const theme = value as Theme;
-      if (['light', 'dark', 'system'].includes(theme)) {
-        return theme;
+      if (['light', 'dark', 'system', 'auto'].includes(theme)) {
+        return theme === 'auto' ? 'system' : theme as Theme;
       }
     }
   }
@@ -53,7 +53,8 @@ export function getTheme(): Theme {
 /**
  * Set the theme and persist to cookie (shared across subdomains)
  */
-export function setTheme(theme: Theme): void {
+export function setTheme(theme: Theme | 'auto'): void {
+  if ((theme as string) === 'auto') theme = 'system';
   if (typeof document === 'undefined') return;
   
   const domain = getCookieDomain();
@@ -93,6 +94,14 @@ export function applyTheme(theme?: Theme): void {
     getEffectiveTheme();
   
   document.documentElement.setAttribute('data-theme', effectiveTheme);
+  // Also toggle dark class for Tailwind class-based dark mode
+  if (effectiveTheme === 'dark') {
+    document.documentElement.classList.add('dark');
+    document.documentElement.classList.remove('light');
+  } else {
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+  }
   
   // Update favicon based on theme
   const iconLink = document.querySelector('link[rel="icon"]:not([media])') as HTMLLinkElement;

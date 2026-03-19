@@ -69,10 +69,16 @@ function AppContent(): React.ReactElement {
   const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
   const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
     if (typeof window !== 'undefined') {
-      const storedTheme = localStorage.getItem('theme');
-      if (storedTheme === 'light' || storedTheme === 'dark' || storedTheme === 'auto') {
-        return storedTheme;
-      }
+      // Read from shared cookie first (synced across .flowstarter.dev subdomains)
+      const cookieMatch = document.cookie.split(';').map(c => c.trim())
+        .find(c => c.startsWith('flowstarter_theme='));
+      const cookieVal = cookieMatch?.split('=')[1];
+      if (cookieVal === 'dark') return 'dark';
+      if (cookieVal === 'light') return 'light';
+      if (cookieVal === 'system') return 'auto';
+      // Fall back to localStorage
+      const ls = localStorage.getItem('theme') || localStorage.getItem('flowstarter_theme');
+      if (ls === 'light' || ls === 'dark' || ls === 'auto') return ls;
     }
     return 'auto';
   });
@@ -140,7 +146,14 @@ function AppContent(): React.ReactElement {
   }, [templates, selectedCategory, selectedFeatures, searchQuery]);
 
   useEffect(() => {
+    // Write to shared cookie so other apps on .flowstarter.dev pick it up
+    const val = themeMode === 'auto' ? 'system' : themeMode;
+    const h = window.location.hostname;
+    const domain = h.includes('flowstarter.dev') ? '; domain=.flowstarter.dev'
+                 : h.includes('flowstarter.app') ? '; domain=.flowstarter.app' : '';
+    document.cookie = `flowstarter_theme=${val}; path=/; max-age=31536000; SameSite=Lax${domain}`;
     localStorage.setItem('theme', themeMode);
+    localStorage.setItem('flowstarter_theme', val);
   }, [themeMode]);
 
   useEffect(() => {

@@ -222,7 +222,7 @@ function AppContent(): React.ReactElement {
 
         <Hero templateCount={templates.length} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
-        <main className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
           <div className="flex gap-8 items-start">
             <Sidebar
               categories={categories}

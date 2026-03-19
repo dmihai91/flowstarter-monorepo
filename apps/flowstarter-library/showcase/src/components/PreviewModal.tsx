@@ -67,9 +67,9 @@ function buildPaletteCss(colors: PaletteColor, dark = false): string {
     }
     ${!dark ? `body { ${bg ? `background-color: ${bg} !important;` : ''} ${txt ? `color: ${txt} !important;` : ''} }` : 'body { /* dark mode: let template dark: CSS handle bg/text */ }'}
     /* Override Tailwind dark: heading/text colors so palette wins over html.dark rules */
-    ${txt ? `h1, h2, h3, h4, h5, h6 { color: ${txt} !important; }` : ''}
-    ${txt ? `.text-slate-800, .text-slate-900, .text-slate-700 { color: ${txt} !important; }` : ''}
-    ${muted ? `.text-slate-500, .text-slate-600, .text-slate-400 { color: ${muted} !important; }` : ''}
+    ${txt && !dark ? `h1, h2, h3, h4, h5, h6 { color: ${txt} !important; }` : ''}
+    ${txt && !dark ? `.text-slate-800, .text-slate-900, .text-slate-700 { color: ${txt} !important; }` : ''}
+    ${muted && !dark ? `.text-slate-500, .text-slate-600, .text-slate-400 { color: ${muted} !important; }` : ''}
     /* ── Tailwind utility class overrides ── */
     .bg-primary                { background-color: ${p}  !important }
     .bg-primary-dark           { background-color: ${pd} !important }

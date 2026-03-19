@@ -36,12 +36,22 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
             </span>
           </div>
 
-          <h1 className="mb-6 font-display text-4xl font-extrabold leading-tight text-neutral-900 dark:text-white sm:text-5xl lg:text-6xl">
+          <h1 className="mb-6 font-display text-5xl font-extrabold leading-[1.08] tracking-tight text-neutral-900 dark:text-white sm:text-6xl lg:text-7xl">
             {templateCount} Templates.{' '}
-            <span className="text-flow">Endless possibilities.</span>
+            <span className="inline">
+              {'Endless possibilities.'.split(' ').map((word, i) => (
+                <span
+                  key={i}
+                  className="inline-block animate-word-reveal"
+                  style={{ animationDelay: `${i * 0.08}s`, animationFillMode: 'both' }}
+                >
+                  {word}&nbsp;
+                </span>
+              ))}
+            </span>
           </h1>
 
-          <p className="mx-auto mb-10 max-w-xl text-lg leading-relaxed text-neutral-500 dark:text-neutral-400">
+          <p className="mx-auto mb-10 max-w-xl text-xl sm:text-2xl leading-relaxed text-neutral-600 dark:text-neutral-400">
             Production-ready Astro templates with 6 palettes and 4 font pairings each.
             Deploy client sites in minutes, not weeks.
           </p>

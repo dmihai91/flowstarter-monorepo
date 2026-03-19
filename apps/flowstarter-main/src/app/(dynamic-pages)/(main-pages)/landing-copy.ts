@@ -42,7 +42,7 @@ export const LANDING_COPY = {
   },
   hero: {
     headlinePrefix: 'Launch your online business',
-    headlineHighlight: 'without technical skills or a full rebuild from scratch',
+    headlineHighlight: 'without technical skills or expensive setup',
     subheadline:
       'We build your initial setup for you, then you manage and grow everything from Flowstarter with our editor.',
     primaryCta: 'Launch my business',

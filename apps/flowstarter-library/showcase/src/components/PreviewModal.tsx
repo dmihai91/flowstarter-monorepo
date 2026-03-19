@@ -214,7 +214,8 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
   // This decouples the library's global dark mode from the iframe's dark class
   const palettes = template.palettes || [];
   const fonts    = template.fonts    || [];
-  const iframeDark = palettes.length > 0 && selectedPalette?.id === palettes[palettes.length - 1]?.id;
+  // iframeDark follows library dark mode — preview shows template in whichever mode the library is in
+  const iframeDark = darkMode;
 
   // Refs for stale-closure-safe access in handleLoad
   const iframeDarkRef = useRef(false);

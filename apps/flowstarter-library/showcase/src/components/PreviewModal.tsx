@@ -42,10 +42,12 @@ type ViewMode = 'desktop' | 'tablet' | 'mobile';
 
 // Generate CSS overrides from palette colors — covers all Tailwind primary/accent variants
 function buildPaletteCss(colors: PaletteColor, dark = false): string {
-  const p   = colors.primary          || '';
+  const rawP = colors.primary         || '';
+  const ac  = colors.accent           || rawP;
+  // In dark mode, if primary is near-black it's invisible on dark bg — use accent as effective primary
+  const p   = (dark && tooDarkForDarkMode(rawP)) ? ac : rawP;
   const pd  = colors['primary-dark']  || p;
   const sec = colors.secondary        || '';
-  const ac  = colors.accent           || p;
   const bg  = colors.background       || '';
   const sur = colors.surface          || bg;
   const txt = colors.text             || '';
@@ -93,13 +95,24 @@ function buildPaletteCss(colors: PaletteColor, dark = false): string {
   `.trim();
 }
 
+// Returns true if a hex color is too dark to be visible on a dark background
+function tooDarkForDarkMode(hex: string): boolean {
+  if (!hex || hex.length < 7) return false;
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return (0.299 * r + 0.587 * g + 0.114 * b) < 80; // luminance < ~31%
+}
+
 function injectPalette(iframe: HTMLIFrameElement, palette: Palette | null, dark?: boolean): void {
   if (!palette?.colors) return;
   const colors = palette.colors;
-  const p   = colors.primary          || '';
+  const rawP = colors.primary         || '';
+  const ac  = colors.accent           || rawP;
+  // In dark mode, if primary is near-black it's invisible on dark bg — use accent as effective primary
+  const p   = (dark && tooDarkForDarkMode(rawP)) ? ac : rawP;
   const pd  = colors['primary-dark']  || p;
   const sec = colors.secondary        || '';
-  const ac  = colors.accent           || p;
   const bg  = colors.background       || '';
   const sur = colors.surface          || bg;
   const txt = colors.text             || '';

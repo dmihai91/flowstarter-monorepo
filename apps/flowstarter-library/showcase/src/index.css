@@ -1,18 +1,18 @@
 
 /* ── Hero element fade-in (badge, subtitle, stats) ─────────── */
 @keyframes heroFadeUp {
-  from { opacity: 0; transform: translateY(18px); filter: blur(6px); }
+  from { opacity: 0; transform: translateY(32px); filter: blur(10px); }
   to   { opacity: 1; transform: translateY(0);    filter: blur(0px); }
 }
 .hero-fade {
   opacity: 0;
-  animation: heroFadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-.hero-fade-1 { animation-delay: 0.05s; }
-.hero-fade-2 { animation-delay: 0.15s; }
-.hero-fade-3 { animation-delay: 0.28s; }
-.hero-fade-4 { animation-delay: 0.40s; }
-.hero-fade-5 { animation-delay: 0.50s; }
+.hero-fade-1 { animation-delay: 0.1s; }
+.hero-fade-2 { animation-delay: 0.25s; }
+.hero-fade-3 { animation-delay: 0.45s; }
+.hero-fade-4 { animation-delay: 0.62s; }
+.hero-fade-5 { animation-delay: 0.76s; }
 
 /* ── Synced design tokens from main platform ───────────── */
 :root {
@@ -297,7 +297,7 @@
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  animation: wordReveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards, text-flow 6s ease infinite;
+  animation: wordReveal 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards, text-flow 6s ease infinite;
 }
 
 @keyframes text-flow {

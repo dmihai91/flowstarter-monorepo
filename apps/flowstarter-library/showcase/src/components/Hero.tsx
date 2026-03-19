@@ -31,7 +31,7 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
 
           <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-purple-200 bg-purple-50 px-3 py-1.5 dark:border-purple-500/20 dark:bg-purple-500/10">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-purple-500" />
-            <span className="text-xs font-semibold uppercase tracking-widest text-purple-600 dark:text-purple-400">
+            <span className="text-xs font-semibold uppercase tracking-widest text-[var(--purple-primary)]">
               Operator Template Library
             </span>
           </div>
@@ -62,7 +62,7 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
                 key={label}
                 className="flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3 py-1.5 text-sm font-medium text-neutral-600 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300"
               >
-                <span className="text-purple-500 dark:text-purple-400">{icon}</span>
+                <span className="text-[var(--purple-primary)]">{icon}</span>
                 <span>{label}</span>
               </div>
             ))}
@@ -81,7 +81,7 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
                 id="mobile-search" placeholder="Search templates..."
                 value={searchQuery}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-                className="w-full rounded-xl border border-neutral-300 bg-white py-3 pl-10 pr-4 text-sm text-neutral-900 shadow-sm transition-all placeholder:text-neutral-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-neutral-700/60 dark:bg-neutral-900/80 dark:text-white dark:placeholder:text-neutral-500"
+                className="w-full rounded-xl border border-neutral-300 bg-white py-3 pl-10 pr-4 text-sm text-neutral-900 shadow-sm transition-all placeholder:text-neutral-400 focus:border-[var(--purple-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--purple-primary)]/20 dark:border-neutral-700/60 dark:bg-neutral-900/80 dark:text-white dark:placeholder:text-neutral-500"
               />
             </div>
           </div>

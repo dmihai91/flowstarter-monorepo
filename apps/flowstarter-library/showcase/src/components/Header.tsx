@@ -232,7 +232,7 @@ export function Header({
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-                className={'w-full rounded-xl py-2 pl-9 pr-3 text-sm transition-all placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-purple-500/30 ' + (darkMode ? 'border border-neutral-700/60 bg-neutral-900/60 text-white focus:border-purple-500/60' : 'border border-neutral-200 bg-neutral-50 text-neutral-900 shadow-sm focus:border-purple-400/60')}
+                className={'w-full rounded-xl py-2 pl-9 pr-3 text-sm transition-all placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-purple-500/30 ' + (darkMode ? 'border border-neutral-700/60 bg-neutral-900/60 text-white focus:border-[var(--purple-primary)]/60' : 'border border-neutral-200 bg-neutral-50 text-neutral-900 shadow-sm focus:border-purple-400/60')}
               />
             </div>
 
@@ -256,7 +256,7 @@ export function Header({
                   placeholder={t('search.placeholder')}
                   value={searchQuery}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-                  className={'w-full rounded-xl py-2 pl-10 pr-4 text-sm transition-all placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-purple-500/30 ' + (darkMode ? 'border border-neutral-700/60 bg-neutral-900/60 text-white focus:border-purple-500/60' : 'border border-neutral-200 bg-neutral-50 text-neutral-900 focus:border-purple-400/60')}
+                  className={'w-full rounded-xl py-2 pl-10 pr-4 text-sm transition-all placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-purple-500/30 ' + (darkMode ? 'border border-neutral-700/60 bg-neutral-900/60 text-white focus:border-[var(--purple-primary)]/60' : 'border border-neutral-200 bg-neutral-50 text-neutral-900 focus:border-purple-400/60')}
                 />
               </div>
             </div>

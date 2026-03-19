@@ -1681,21 +1681,20 @@ html.dark body {
 }
 
 /* Wrapper that handles the reveal */
-.hero-text-flow-wrap {
-  display: inline-block;
-  overflow: hidden;
-  vertical-align: bottom;
+@keyframes flowReveal {
+  0%   { opacity: 0; filter: blur(10px); letter-spacing: 0.04em; }
+  60%  { filter: blur(2px); }
+  100% { opacity: 1; filter: blur(0); letter-spacing: normal; }
 }
 
-@keyframes flowReveal {
-  0%   { transform: translateY(60%); opacity: 0; filter: blur(8px); }
-  60%  { filter: blur(0); }
-  100% { transform: translateY(0);   opacity: 1; filter: blur(0); }
+.hero-text-flow-wrap {
+  display: inline;
 }
 
 .hero-text-flow-inner {
-  display: inline-block;
-  animation: flowReveal 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+  display: inline;
+  opacity: 0;
+  animation: flowReveal 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
 
 /* Keep for compatibility */

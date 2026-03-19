@@ -3,7 +3,7 @@
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { EXTERNAL_URLS } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
-import { LANDING_COPY } from '../landing-copy';
+import { LANDING_COPY, type PricingPlan } from '../landing-copy';
 
 /**
  * Landing page pricing section with plans and comparison.

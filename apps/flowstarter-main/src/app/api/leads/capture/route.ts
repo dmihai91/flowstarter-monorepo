@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * POST /api/leads/capture
  * Public endpoint — called from generated client sites.

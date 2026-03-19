@@ -1,7 +1,7 @@
 'use client';
 
 import { SectionWrapper, SectionHeading } from './SectionWrapper';
-import { LANDING_COPY } from '../landing-copy';
+import { LANDING_COPY, type DifferentiationCard } from '../landing-copy';
 
 export function DifferentiationSection() {
   const differentiation = LANDING_COPY.differentiation;

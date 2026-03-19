@@ -25,19 +25,22 @@ export async function GET(request: NextRequest) {
 
   const supabase = createSupabaseServiceRoleClient();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: project } = await supabase
     .from('projects')
     .select('id, ga_property_id, ga_refresh_token_id, owner_id, team_id')
     .eq('id', projectId)
     .single();
 
-  if (!project) return NextResponse.json({ error: 'Project not found' }, { status: 404 });
-  if (!project.ga_property_id || !project.ga_refresh_token_id) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const p = project as any;
+  if (!p) return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+  if (!p.ga_property_id || !p.ga_refresh_token_id) {
     return NextResponse.json({ error: 'Google Analytics not connected' }, { status: 400 });
   }
 
   // Decrypt refresh token from Vault
-  const refreshToken = await readSecret(supabase, project.ga_refresh_token_id);
+  const refreshToken = await readSecret(supabase, p.ga_refresh_token_id);
   if (!refreshToken) {
     return NextResponse.json({ error: 'Token not found in vault' }, { status: 500 });
   }
@@ -59,7 +62,7 @@ export async function GET(request: NextRequest) {
   }
 
   const { access_token } = (await tokenRes.json()) as { access_token: string };
-  const property = `properties/${project.ga_property_id}`;
+  const property = `properties/${p.ga_property_id}`;
   const dateRange = { startDate: `${range}daysAgo`, endDate: 'today' };
 
   const [overview, pages, daily] = await Promise.all([

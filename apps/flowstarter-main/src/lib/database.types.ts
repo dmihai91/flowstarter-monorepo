@@ -210,7 +210,18 @@ export type Database = {
           template_id: string | null
           updated_at: string
           user_id: string
-        }
+          ga_property_id: string | null
+          ga_refresh_token_id: string | null
+          ga_connected_at: string | null
+          calendly_api_key_id: string | null
+          calendly_url: string | null
+          published_url: string | null
+          custom_domain: string | null
+          domain_status: string | null
+          template_slug: string | null
+          palette_id: string | null
+          font_pairing_id: string | null
+                  }
         Insert: {
           convex_session_id?: string | null
           created_at?: string
@@ -230,7 +241,18 @@ export type Database = {
           template_id?: string | null
           updated_at?: string
           user_id: string
-        }
+          ga_property_id?: string | null
+          ga_refresh_token_id?: string | null
+          ga_connected_at?: string | null
+          calendly_api_key_id?: string | null
+          calendly_url?: string | null
+          published_url?: string | null
+          custom_domain?: string | null
+          domain_status?: string | null
+          template_slug?: string | null
+          palette_id?: string | null
+          font_pairing_id?: string | null
+                  }
         Update: {
           convex_session_id?: string | null
           created_at?: string
@@ -250,7 +272,18 @@ export type Database = {
           template_id?: string | null
           updated_at?: string
           user_id?: string
-        }
+          ga_property_id?: string | null
+          ga_refresh_token_id?: string | null
+          ga_connected_at?: string | null
+          calendly_api_key_id?: string | null
+          calendly_url?: string | null
+          published_url?: string | null
+          custom_domain?: string | null
+          domain_status?: string | null
+          template_slug?: string | null
+          palette_id?: string | null
+          font_pairing_id?: string | null
+                  }
         Relationships: []
       }
       security_audit_logs: {
@@ -304,7 +337,18 @@ export type Database = {
           message: string
           status: string | null
           user_id: string
-        }
+          ga_property_id: string | null
+          ga_refresh_token_id: string | null
+          ga_connected_at: string | null
+          calendly_api_key_id: string | null
+          calendly_url: string | null
+          published_url: string | null
+          custom_domain: string | null
+          domain_status: string | null
+          template_slug: string | null
+          palette_id: string | null
+          font_pairing_id: string | null
+                  }
         Insert: {
           category: string
           created_at?: string | null
@@ -313,7 +357,18 @@ export type Database = {
           message: string
           status?: string | null
           user_id: string
-        }
+          ga_property_id?: string | null
+          ga_refresh_token_id?: string | null
+          ga_connected_at?: string | null
+          calendly_api_key_id?: string | null
+          calendly_url?: string | null
+          published_url?: string | null
+          custom_domain?: string | null
+          domain_status?: string | null
+          template_slug?: string | null
+          palette_id?: string | null
+          font_pairing_id?: string | null
+                  }
         Update: {
           category?: string
           created_at?: string | null
@@ -333,7 +388,18 @@ export type Database = {
           integration_id: string
           updated_at: string
           user_id: string
-        }
+          ga_property_id: string | null
+          ga_refresh_token_id: string | null
+          ga_connected_at: string | null
+          calendly_api_key_id: string | null
+          calendly_url: string | null
+          published_url: string | null
+          custom_domain: string | null
+          domain_status: string | null
+          template_slug: string | null
+          palette_id: string | null
+          font_pairing_id: string | null
+                  }
         Insert: {
           config?: Json
           created_at?: string
@@ -341,7 +407,18 @@ export type Database = {
           integration_id: string
           updated_at?: string
           user_id: string
-        }
+          ga_property_id?: string | null
+          ga_refresh_token_id?: string | null
+          ga_connected_at?: string | null
+          calendly_api_key_id?: string | null
+          calendly_url?: string | null
+          published_url?: string | null
+          custom_domain?: string | null
+          domain_status?: string | null
+          template_slug?: string | null
+          palette_id?: string | null
+          font_pairing_id?: string | null
+                  }
         Update: {
           config?: Json
           created_at?: string

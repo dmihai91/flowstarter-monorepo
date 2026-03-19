@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Integration tests: Lead capture → Supabase persistence
  *

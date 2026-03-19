@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
  * Requires authentication - returns 401 if not authenticated.
  * Explicitly filters by user_id for clients (RLS as backup).
  */
-export async function GET() {
+export async function GET(request: Request) {
   // Verify authentication first
   const authResult = await requireAuth(request);
   if (!authResult.authenticated) {

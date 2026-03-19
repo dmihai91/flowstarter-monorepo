@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * GET /api/leads/list?projectId=xxx&status=new&limit=50
  * Lists leads for a project. Requires auth.

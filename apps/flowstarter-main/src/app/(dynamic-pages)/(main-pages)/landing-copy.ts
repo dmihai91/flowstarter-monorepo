@@ -1,5 +1,23 @@
 /** Centralized landing page copy. Edit here instead of JSX. */
 
+export interface PricingPlan {
+  name: string;
+  label: string;
+  setupPrice: string;
+  monthlyPrice: string;
+  features: readonly string[];
+  cta: string;
+  status: 'available' | 'coming-soon';
+  badge?: string;
+  recommended?: boolean;
+}
+
+export interface DifferentiationCard {
+  label: string;
+  description: string;
+  highlighted?: boolean;
+}
+
 export const LANDING_COPY = {
   nav: {
     templatesLabel: 'Templates',
@@ -242,4 +260,4 @@ export const LANDING_COPY = {
       'Get your business foundation launched in days, then manage and grow it with Flowstarter.',
     cta: 'Launch my business',
   },
-} as const;
+};

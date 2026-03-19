@@ -42,14 +42,29 @@ type ViewMode = 'desktop' | 'tablet' | 'mobile';
 
 // Generate CSS overrides from palette colors — covers all Tailwind primary/accent variants
 function buildPaletteCss(colors: PaletteColor): string {
-  const p  = colors.primary     || '';
-  const pd = colors['primary-dark'] || p;
-  const ac = colors.accent      || p;
-  const bg = colors.background  || '';
+  const p   = colors.primary          || '';
+  const pd  = colors['primary-dark']  || p;
+  const sec = colors.secondary        || '';
+  const ac  = colors.accent           || p;
+  const bg  = colors.background       || '';
+  const sur = colors.surface          || bg;
+  const txt = colors.text             || '';
+  const muted = colors['text-muted']  || '';
   if (!p) return '';
   return `
-    /* palette override — injected by FlowStarter preview */
-    :root { --pal-p: ${p}; --pal-pd: ${pd}; --pal-ac: ${ac}; }
+    /* ── CSS variable override (used by inline styles in templates) ── */
+    :root {
+      ${p   ? `--color-primary: ${p};` : ''}
+      ${pd  ? `--color-primary-dark: ${pd}; --color-primary-light: ${pd};` : ''}
+      ${sec ? `--color-secondary: ${sec};` : ''}
+      ${ac  ? `--color-accent: ${ac};` : ''}
+      ${bg  ? `--color-background: ${bg};` : ''}
+      ${sur ? `--color-surface: ${sur};` : ''}
+      ${txt ? `--color-text: ${txt};` : ''}
+      ${muted ? `--color-text-muted: ${muted};` : ''}
+      --pal-p: ${p}; --pal-pd: ${pd}; --pal-ac: ${ac};
+    }
+    /* ── Tailwind utility class overrides ── */
     .bg-primary                { background-color: ${p}  !important }
     .bg-primary-dark           { background-color: ${pd} !important }
     .text-primary              { color:            ${p}  !important }
@@ -65,7 +80,6 @@ function buildPaletteCss(colors: PaletteColor): string {
     .hover\\:text-primary:hover    { color:            ${p}  !important }
     .focus\\:border-primary:focus  { border-color:     ${p}  !important }
     .focus\\:ring-primary:focus    { --tw-ring-color:  ${p}  !important }
-    /* button shorthand classes */
     .btn-primary  { background-color: ${p}  !important; border-color: ${p} !important }
     .btn-outline  { border-color: ${p} !important; color: ${p} !important }
     .btn-outline:hover { background-color: ${p} !important }

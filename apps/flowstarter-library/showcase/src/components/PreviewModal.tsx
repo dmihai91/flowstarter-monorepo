@@ -144,10 +144,19 @@ const VIEW_MODES: { mode: ViewMode; icon: (p: { className?: string }) => React.R
 export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps): React.ReactElement {
   const [selectedPalette, setSelectedPalette] = useState<Palette | null>(template.palettes?.[0] || null);
   const [selectedFont,    setSelectedFont]    = useState<Font | null>(template.fonts?.[0] || null);
+  const [userPickedPalette, setUserPickedPalette] = useState<Palette | null>(null);
   const defaultView: ViewMode = typeof window !== 'undefined' && window.innerWidth < 640 ? 'mobile' : 'desktop';
   const [viewMode,        setViewMode]        = useState<ViewMode>(defaultView);
   const [iframeReady,     setIframeReady]     = useState<boolean>(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // Auto-switch to dark palette (palette-6) when dark mode is toggled
+  useEffect(() => {
+    if (!template.palettes?.length) return;
+    if (userPickedPalette) return; // respect explicit user choice
+    const idx = darkMode ? template.palettes.length - 1 : 0; // palette-6 or palette-1
+    setSelectedPalette(template.palettes[idx] || template.palettes[0]);
+  }, [darkMode, template.palettes, userPickedPalette]);
 
   const palettes = template.palettes || [];
   const fonts    = template.fonts    || [];
@@ -262,7 +271,7 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
                 return (
                   <button
                     key={palette.id}
-                    onClick={() => setSelectedPalette(palette)}
+                    onClick={() => setSelectedPalette(palette); setUserPickedPalette(palette)}
                     title={palette.name}
                     className={`flex shrink-0 items-center gap-1.5 rounded-full border px-2 py-1 text-xs font-medium transition-all md:px-3 md:text-sm ${active ? 'border-purple-500 bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300' : 'border-neutral-200 text-neutral-500 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-400'}`}
                   >

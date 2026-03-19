@@ -1,5 +1,4 @@
 import 'server-only';
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * AI Audit Logging
  *
@@ -69,7 +68,7 @@ export async function encryptJSONString(payload: unknown): Promise<string> {
   return Buffer.from(combined).toString('base64');
 }
 
-export async function decryptJSONString(b64: string): Promise<any> {
+export async function decryptJSONString(b64: string): Promise<unknown> {
   const secret = process.env.AI_AUDIT_ENC_KEY || '';
   if (!secret || secret.length < 16) {
     throw new Error('AI_AUDIT_ENC_KEY not configured');
@@ -87,10 +86,10 @@ export async function decryptJSONString(b64: string): Promise<any> {
 }
 
 export type AuditPayload = {
-  context?: Record<string, any>;
-  result?: Record<string, any> | null;
+  context?: unknown;
+  result?: unknown;
   status?: 'ok' | 'error';
-  meta?: Record<string, any>;
+  meta?: unknown;
 };
 
 export async function saveAuditLog(args: {
@@ -131,11 +130,11 @@ export async function auditAiEvent(args: {
   action: string;
   projectId?: string | null;
   pipelineId?: string | null;
-  context?: Record<string, any>;
-  result?: Record<string, any> | null;
+  context?: unknown;
+  result?: unknown;
   status?: 'ok' | 'error';
   sessionClaims?: unknown;
-  meta?: Record<string, any>;
+  meta?: unknown;
 }) {
   // No longer extract PII from request or session
   // IP, user agent, and username are intentionally not collected

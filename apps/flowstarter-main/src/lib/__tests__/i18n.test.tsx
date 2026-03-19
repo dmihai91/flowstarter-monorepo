@@ -20,11 +20,25 @@ const testMessages: TestMessages = {
   },
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type TestKey = any;
+type TestKey = 'test.simple' | 'test.withVar' | 'test.multipleVars';
+type TestTranslator = {
+  t: (key: TestKey, vars?: Record<string, string | number>) => string;
+};
+
+function useTestI18n() {
+  return useI18n() as unknown as TestTranslator & {
+    locale: string;
+    setLocale: (locale: string) => void;
+    messages: Record<string, string>;
+  };
+}
+
+function useTestTranslations() {
+  return useTranslations() as unknown as TestTranslator;
+}
 
 function TestComponent() {
-  const { t, locale, setLocale } = useI18n();
+  const { t, locale, setLocale } = useTestI18n();
   return (
     <div>
       <div data-testid="simple">{t('test.simple' as TestKey)}</div>
@@ -120,7 +134,7 @@ describe('I18n', () => {
 
     it('should return key as fallback if message not found', () => {
       function TestMissingKey() {
-        const { t } = useI18n();
+        const { t } = useTestI18n();
         return <div data-testid="missing">{t('missing.key' as TestKey)}</div>;
       }
 
@@ -135,7 +149,7 @@ describe('I18n', () => {
 
     it('should handle empty variables object', () => {
       function TestNoVars() {
-        const { t } = useI18n();
+        const { t } = useTestI18n();
         return <div data-testid="simple">{t('test.simple' as TestKey)}</div>;
       }
 
@@ -150,7 +164,7 @@ describe('I18n', () => {
 
     it('should handle numeric variable values', () => {
       function TestNumeric() {
-        const { t } = useI18n();
+        const { t } = useTestI18n();
         return (
           <div data-testid="count">
             {t('test.multipleVars' as TestKey, {
@@ -195,7 +209,7 @@ describe('I18n', () => {
 
     it('should expose messages object', () => {
       function TestMessages() {
-        const { messages } = useI18n();
+        const { messages } = useTestI18n();
         return <div data-testid="messages">{JSON.stringify(messages)}</div>;
       }
 
@@ -218,7 +232,7 @@ describe('I18n', () => {
 
     it('should work the same as useI18n', () => {
       function TestWithUseTranslations() {
-        const { t } = useTranslations();
+        const { t } = useTestTranslations();
         return <div data-testid="text">{t('test.simple' as TestKey)}</div>;
       }
 

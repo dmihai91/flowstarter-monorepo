@@ -1,6 +1,22 @@
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import { NextRequest, NextResponse } from 'next/server';
 
+type ContactSubmissionInsert = {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  created_at: string;
+};
+
+type ContactSubmissionClient = {
+  from: (table: 'contact_submissions') => {
+    insert: (
+      values: ContactSubmissionInsert
+    ) => Promise<{ error: { message: string } | null }>;
+  };
+};
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -25,9 +41,11 @@ export async function POST(request: NextRequest) {
 
     // Create Supabase client with service role (bypasses RLS)
     const supabase = createSupabaseServiceRoleClient();
+    const contactSubmissionClient =
+      supabase as unknown as ContactSubmissionClient;
 
     // Insert into contact_submissions table
-    const { error } = await (supabase as any).from('contact_submissions').insert({
+    const { error } = await contactSubmissionClient.from('contact_submissions').insert({
       name,
       email,
       subject,

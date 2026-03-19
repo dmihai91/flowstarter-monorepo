@@ -3,19 +3,22 @@
  * Verifies correct RPC calls and error handling.
  */
 import { describe, it, expect, vi } from 'vitest';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 // Mock server-only import
 vi.mock('server-only', () => ({}));
 
 // We test the logic by simulating Supabase RPC calls
 describe('Vault operations', () => {
+  type VaultTestSupabase = Pick<SupabaseClient, 'rpc'>;
+
   function createMockSupabase(rpcResults: Record<string, { data?: unknown; error?: { message: string } | null }>) {
     return {
       rpc: vi.fn((fn: string, params: Record<string, unknown>) => {
         const result = rpcResults[fn];
         return Promise.resolve(result || { data: null, error: { message: 'Unknown function' } });
       }),
-    };
+    } as unknown as VaultTestSupabase;
   }
 
   describe('storeSecret', () => {
@@ -25,7 +28,7 @@ describe('Vault operations', () => {
       });
 
       const { storeSecret } = await import('../vault');
-      const result = await storeSecret(supabase as any, 'proj-1', 'ga_token', 'secret_value', 'GA token');
+      const result = await storeSecret(supabase as unknown as SupabaseClient, 'proj-1', 'ga_token', 'secret_value', 'GA token');
 
       expect(supabase.rpc).toHaveBeenCalledWith('store_project_secret', {
         p_project_id: 'proj-1',
@@ -42,7 +45,7 @@ describe('Vault operations', () => {
       });
 
       const { storeSecret } = await import('../vault');
-      await expect(storeSecret(supabase as any, 'proj-1', 'key', 'val')).rejects.toThrow('Vault store failed: Permission denied');
+      await expect(storeSecret(supabase as unknown as SupabaseClient, 'proj-1', 'key', 'val')).rejects.toThrow('Vault store failed: Permission denied');
     });
   });
 
@@ -53,7 +56,7 @@ describe('Vault operations', () => {
       });
 
       const { readSecret } = await import('../vault');
-      const result = await readSecret(supabase as any, 'uuid-456');
+      const result = await readSecret(supabase as unknown as SupabaseClient, 'uuid-456');
 
       expect(supabase.rpc).toHaveBeenCalledWith('read_project_secret', { p_secret_id: 'uuid-456' });
       expect(result).toBe('decrypted_token');
@@ -65,7 +68,7 @@ describe('Vault operations', () => {
       });
 
       const { readSecret } = await import('../vault');
-      const result = await readSecret(supabase as any, 'nonexistent');
+      const result = await readSecret(supabase as unknown as SupabaseClient, 'nonexistent');
       expect(result).toBeNull();
     });
   });
@@ -77,7 +80,7 @@ describe('Vault operations', () => {
       });
 
       const { deleteSecret } = await import('../vault');
-      await deleteSecret(supabase as any, 'uuid-789');
+      await deleteSecret(supabase as unknown as SupabaseClient, 'uuid-789');
 
       expect(supabase.rpc).toHaveBeenCalledWith('delete_project_secret', { p_secret_id: 'uuid-789' });
     });

@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
+import type { Table } from '@/types';
 
 vi.mock('@/lib/i18n', () => ({
   useTranslations: () => ({ t: (key: string) => key }),
@@ -15,10 +16,10 @@ function makeProject(overrides: Record<string, unknown> = {}) {
     description: 'A test project',
     status: 'active',
     created_at: '2025-01-01',
-    updated_at: null,
+    updated_at: undefined,
     generated_at: null,
     ...overrides,
-  } as any;
+  } as unknown as Table<'projects'>;
 }
 
 describe('useProjectCards', () => {

@@ -1,6 +1,11 @@
 import { useMemo } from 'react';
 
 export type MilestoneStatus = 'completed' | 'active' | 'locked';
+export type TimeGreetingKey =
+  | 'dashboard.greeting.morning'
+  | 'dashboard.greeting.afternoon'
+  | 'dashboard.greeting.evening'
+  | 'dashboard.greeting.night';
 
 export function getMilestoneStatuses(
   hasAnyProject: boolean,
@@ -11,7 +16,7 @@ export function getMilestoneStatuses(
   return ['active', 'locked', 'locked', 'locked'];
 }
 
-export function getTimeGreetingKey(hour: number): string {
+export function getTimeGreetingKey(hour: number): TimeGreetingKey {
   if (hour >= 5 && hour < 12) return 'dashboard.greeting.morning';
   if (hour >= 12 && hour < 18) return 'dashboard.greeting.afternoon';
   if (hour >= 18 && hour < 21) return 'dashboard.greeting.evening';

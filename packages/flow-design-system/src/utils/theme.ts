@@ -32,9 +32,9 @@ export function getTheme(): Theme {
   for (const cookie of cookies) {
     const [name, value] = cookie.trim().split('=');
     if (name === THEME_COOKIE_NAME) {
-      const theme = value as Theme;
+      const theme = value as Theme | 'auto';
       if (['light', 'dark', 'system', 'auto'].includes(theme)) {
-        return theme === 'auto' ? 'system' : theme as Theme;
+        return theme === 'auto' ? 'system' : theme;
       }
     }
   }

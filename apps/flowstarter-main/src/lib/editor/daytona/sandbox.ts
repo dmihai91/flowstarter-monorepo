@@ -1,12 +1,45 @@
 import 'server-only';
 import { getClient, getCachedSandbox, setCachedSandbox } from './client';
 
-// Daytona SDK types - package not installed locally, resolved at runtime
-type Sandbox = any;
+type SandboxStateValue = 'started' | 'stopped' | 'archived' | string;
+type PreviewLink = string | { url?: string };
+
+interface Sandbox {
+  id: string;
+  state: SandboxStateValue;
+  labels?: Record<string, string>;
+  refreshData: () => Promise<void>;
+  start: (timeout: number) => Promise<void>;
+  getWorkDir?: () => Promise<string | undefined>;
+  getPreviewLink: (port: number) => Promise<PreviewLink | undefined>;
+  process: {
+    executeCommand?: (command: string, workDir: string) => Promise<unknown>;
+  };
+}
+
+interface SandboxListResponse {
+  items: Sandbox[];
+}
+
+interface DaytonaClient {
+  get: (sandboxId: string) => Promise<Sandbox>;
+  list: (args: { source: string }) => Promise<SandboxListResponse>;
+  create: (
+    config: {
+      image: string;
+      envVars: Record<string, string>;
+      autoStopInterval: number;
+      public: boolean;
+      labels: Record<string, string>;
+    },
+    options: { timeout: number }
+  ) => Promise<Sandbox>;
+}
+
 const SandboxState = { STARTED: 'started', STOPPED: 'stopped', ARCHIVED: 'archived' } as const;
 
 export async function getOrCreateSandbox(projectId: string): Promise<{ sandbox: Sandbox; isNew: boolean }> {
-  const client: any = getClient();
+  const client = getClient() as unknown as DaytonaClient;
 
   const cached = getCachedSandbox(projectId);
   if (cached) {
@@ -23,7 +56,7 @@ export async function getOrCreateSandbox(projectId: string): Promise<{ sandbox: 
 
   try {
     const { items } = await client.list({ source: 'flowstarter-editor' });
-    const match = items.find((s: any) => s.labels?.project === projectId);
+    const match = items.find((sandbox) => sandbox.labels?.project === projectId);
     if (match) {
       await match.refreshData();
       if (match.state !== SandboxState.STARTED) await match.start(60);

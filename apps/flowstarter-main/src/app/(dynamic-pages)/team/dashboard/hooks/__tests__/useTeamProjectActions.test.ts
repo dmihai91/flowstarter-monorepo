@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
+import type { ProjectPricingData } from '@/hooks/useTeamProjects';
 
 const mockDeleteMutateAsync = vi.fn();
 const mockRenameMutateAsync = vi.fn();
@@ -108,11 +109,11 @@ describe('useTeamProjectActions', () => {
     it('calls mutateAsync with pricing data and shows success', async () => {
       mockPricingMutateAsync.mockResolvedValueOnce(undefined);
       const onSuccess = vi.fn();
-      const pricingData = { setup_fee: 500, monthly_fee: 30, is_paid: true, project_type: 'pro' };
+      const pricingData: ProjectPricingData = { setup_fee: 500, monthly_fee: 30, is_paid: true, project_type: 'pro' };
       const { result } = renderHook(() => useTeamProjectActions());
 
       await act(async () => {
-        await result.current.handleUpdatePricing('p1', pricingData as any, onSuccess);
+        await result.current.handleUpdatePricing('p1', pricingData, onSuccess);
       });
 
       expect(mockPricingMutateAsync).toHaveBeenCalledWith({ id: 'p1', ...pricingData });
@@ -125,7 +126,7 @@ describe('useTeamProjectActions', () => {
       const { result } = renderHook(() => useTeamProjectActions());
 
       await act(async () => {
-        await result.current.handleUpdatePricing('p1', {} as any);
+        await result.current.handleUpdatePricing('p1', {} as ProjectPricingData);
       });
 
       expect(mockToastError).toHaveBeenCalledWith('team.dashboard.toast.pricingFailed');

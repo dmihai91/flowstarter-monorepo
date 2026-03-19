@@ -13,6 +13,12 @@ vi.mock('@/lib/constants', () => ({
 
 import { useMockEditor } from '../useMockEditor';
 
+declare global {
+  interface Window {
+    __demoInterval?: ReturnType<typeof setInterval>;
+  }
+}
+
 describe('useMockEditor', () => {
   beforeEach(() => {
     vi.useFakeTimers();
@@ -20,9 +26,9 @@ describe('useMockEditor', () => {
 
   afterEach(() => {
     vi.useRealTimers();
-    if ((window as any).__demoInterval) {
-      clearInterval((window as any).__demoInterval);
-      delete (window as any).__demoInterval;
+    if (window.__demoInterval) {
+      clearInterval(window.__demoInterval);
+      delete window.__demoInterval;
     }
   });
 

@@ -7,10 +7,33 @@ import { getInitials } from '@/lib/user-utils';
 import { formatDate } from '@/lib/format-utils';
 import { useTranslations } from '@/lib/i18n';
 import { useUser } from '@clerk/nextjs';
-import { Pencil, Check, X, Mail, User, Calendar, Shield, Camera } from 'lucide-react';
+import { Pencil, Check, X, Mail, User, Calendar, Shield, Camera, type LucideIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useState, useRef } from 'react';
 import { GlassCard } from '@flowstarter/flow-design-system';
+
+type ClerkErrorLike = {
+  message?: string;
+  errors?: Array<{ longMessage?: string }>;
+};
+
+function getClerkErrorMessage(error: unknown, fallback: string) {
+  if (error && typeof error === 'object') {
+    const clerkError = error as ClerkErrorLike;
+    if (clerkError.errors?.[0]?.longMessage) {
+      return clerkError.errors[0].longMessage;
+    }
+    if (clerkError.message) {
+      return clerkError.message;
+    }
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return fallback;
+}
 
 export function ProfileContent() {
   const { user, isLoaded } = useUser();
@@ -67,8 +90,8 @@ export function ProfileContent() {
         }
       }
       setEditingField(null);
-    } catch (err: any) {
-      setMessage({ type: 'error', text: err?.errors?.[0]?.longMessage || err?.message || 'Something went wrong.' });
+    } catch (err: unknown) {
+      setMessage({ type: 'error', text: getClerkErrorMessage(err, 'Something went wrong.') });
     } finally {
       setSaving(false);
     }
@@ -81,8 +104,8 @@ export function ProfileContent() {
     try {
       await user.setProfileImage({ file });
       setMessage({ type: 'success', text: 'Profile photo updated.' });
-    } catch (err: any) {
-      setMessage({ type: 'error', text: err?.message || t('app.failedToUpdatePhoto') });
+    } catch (err: unknown) {
+      setMessage({ type: 'error', text: getClerkErrorMessage(err, t('app.failedToUpdatePhoto')) });
     } finally {
       setSaving(false);
     }
@@ -106,7 +129,7 @@ export function ProfileContent() {
     field, 
     editable = false 
   }: { 
-    icon: any; 
+    icon: LucideIcon; 
     label: string; 
     value: string; 
     field?: string; 

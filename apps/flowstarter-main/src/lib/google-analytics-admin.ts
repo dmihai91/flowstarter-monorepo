@@ -20,6 +20,27 @@ export interface GA4Account {
   createTime: string;
 }
 
+type AccountsResponse = {
+  accounts?: GA4Account[];
+};
+
+type ApiProperty = Omit<GA4Property, 'propertyId' | 'measurementId'>;
+
+type PropertiesResponse = {
+  properties?: ApiProperty[];
+};
+
+type DataStream = {
+  type?: string;
+  webStreamData?: {
+    measurementId?: string;
+  };
+};
+
+type DataStreamsResponse = {
+  dataStreams?: DataStream[];
+};
+
 /**
  * Fetch all GA4 accounts the user has access to
  */
@@ -43,7 +64,7 @@ export async function fetchGA4Accounts(
       return [];
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as AccountsResponse;
     return data.accounts || [];
   } catch (error) {
     console.error('Error fetching GA4 accounts:', error);
@@ -78,13 +99,12 @@ export async function fetchGA4PropertiesForAccount(
       return [];
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as PropertiesResponse;
     const properties = data.properties || [];
 
     // Extract property IDs and fetch data streams to get measurement IDs
     return await Promise.all(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      properties.map(async (property: any) => {
+      properties.map(async (property) => {
         const propertyId = property.name.split('/')[1]; // Extract ID from "properties/123456789"
 
         // Fetch data streams to get measurement ID
@@ -132,13 +152,12 @@ async function fetchMeasurementId(
       return undefined;
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as DataStreamsResponse;
     const dataStreams = data.dataStreams || [];
 
     // Find web data stream (type: WEB_DATA_STREAM)
     const webStream = dataStreams.find(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (stream: any) => stream.type === 'WEB_DATA_STREAM' || stream.webStreamData
+      (stream) => stream.type === 'WEB_DATA_STREAM' || stream.webStreamData
     );
 
     return webStream?.webStreamData?.measurementId;

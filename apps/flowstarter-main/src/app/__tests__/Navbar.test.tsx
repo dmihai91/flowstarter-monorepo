@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ExternalNavigationWithAuth } from '../components/Navbar';
 import { useAuth } from '@clerk/nextjs';
+import type { ComponentProps, PropsWithChildren } from 'react';
 
 vi.mock('@clerk/nextjs', () => ({
   useAuth: vi.fn(),
@@ -14,11 +15,11 @@ vi.mock('next/navigation', () => ({
 }));
 
 vi.mock('next/image', () => ({
-  default: (props: any) => <img {...props} />,
+  default: (props: ComponentProps<'img'>) => <img {...props} />,
 }));
 
 vi.mock('next/link', () => ({
-  default: ({ children, href, ...props }: any) => (
+  default: ({ children, href, ...props }: PropsWithChildren<ComponentProps<'a'>>) => (
     <a href={href} {...props}>{children}</a>
   ),
 }));
@@ -35,8 +36,8 @@ vi.mock('@/components/ui/theme-toggle', () => ({
 vi.mock('../components/nav', () => ({
   AuthButtons: () => <div data-testid="auth-buttons">Auth</div>,
   DashboardNavControls: () => <div data-testid="dashboard-nav">Dashboard</div>,
-  NavbarHeader: ({ children }: any) => <header>{children}</header>,
-  NavbarLogo: ({ href }: any) => <a href={href} data-testid="logo">Logo</a>,
+  NavbarHeader: ({ children }: PropsWithChildren) => <header>{children}</header>,
+  NavbarLogo: ({ href }: { href: string }) => <a href={href} data-testid="logo">Logo</a>,
   PublicNavLinks: () => <nav data-testid="public-links">Links</nav>,
   useCompactViewport: () => false,
   useScrolled: () => false,

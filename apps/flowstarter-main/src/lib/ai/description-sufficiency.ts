@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { models } from '@/lib/ai/openrouter-client';
 import { generateObject } from 'ai';
 import { z } from 'zod';
@@ -39,13 +38,14 @@ export async function evaluateDescriptionSufficiency(input: {
     `BusinessType: ${input.businessType || ''}`,
   ].join('\n');
 
-  const { object } = await generateObject<any>({
+  // @ts-expect-error - Vercel AI SDK + Zod inference exceeds TS instantiation limits here
+  const { object } = await generateObject({
     model: models.gpt4,
     messages: [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userContent },
     ],
-    schema: sufficiencySchema as any,
+    schema: sufficiencySchema as z.ZodType<SufficiencyResult>,
     temperature: 0,
   });
 

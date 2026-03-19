@@ -113,7 +113,7 @@ export default function DashboardPage() {
   const firstName = user?.firstName || 'there';
   const isAdmin = (user?.publicMetadata as { role?: string } | undefined)?.role?.toLowerCase() === 'admin';
   const hour = new Date().getHours();
-  const greeting = t(getTimeGreetingKey(hour) as any);
+  const greeting = t(getTimeGreetingKey(hour));
 
   const hasAnyProject = (data?.totalProjects ?? 0) > 0;
   const hasLiveProject = (data?.liveProjects ?? 0) > 0;

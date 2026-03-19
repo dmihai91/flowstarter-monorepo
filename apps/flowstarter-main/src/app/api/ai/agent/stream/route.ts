@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { auditAiEvent } from '@/lib/ai/audit';
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest } from 'next/server';
@@ -6,6 +5,18 @@ import { z } from 'zod';
 
 const CODING_AGENT_URL =
   process.env.NEXT_PUBLIC_CODING_AGENT_URL || 'http://localhost:8000';
+
+type StreamEvent = {
+  status?: string;
+  message?: string;
+  data?: Record<string, unknown>;
+  details?: unknown;
+};
+type CodingAgentErrorResponse = { detail?: string };
+
+function getErrorMessage(error: unknown, fallback = 'Internal server error') {
+  return error instanceof Error ? error.message : fallback;
+}
 
 const AgentBodySchema = z.object({
   agent: z
@@ -17,7 +28,7 @@ const AgentBodySchema = z.object({
     ])
     .optional(),
   action: z.string(),
-  context: z.record(z.any()),
+  context: z.record(z.string(), z.unknown()),
 });
 
 export async function POST(request: NextRequest) {
@@ -121,7 +132,8 @@ export async function POST(request: NextRequest) {
     );
 
     if (!codingAgentResponse.ok) {
-      const errorData = await codingAgentResponse.json();
+      const errorData =
+        (await codingAgentResponse.json()) as CodingAgentErrorResponse;
       await auditAiEvent({
         req: request,
         userId,
@@ -170,7 +182,7 @@ export async function POST(request: NextRequest) {
       async start(controller) {
         const decoder = new TextDecoder();
         let buffer = '';
-        let finalResult: any = null;
+        let finalResult: Record<string, unknown> | null = null;
 
         try {
           // eslint-disable-next-line no-constant-condition
@@ -200,10 +212,10 @@ export async function POST(request: NextRequest) {
                 if (line.startsWith('data: ')) {
                   const data = line.slice(6);
                   try {
-                    const eventData = JSON.parse(data);
+                    const eventData = JSON.parse(data) as StreamEvent;
 
                     // Check if this is the final result
-                    if (eventData.status === 'done') {
+                    if (eventData.status === 'done' && eventData.data) {
                       finalResult = eventData.data;
                     }
 
@@ -231,11 +243,11 @@ export async function POST(request: NextRequest) {
               result: finalResult,
             });
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.error('Stream error:', error);
           const errorEvent = {
             status: 'error',
-            message: error?.message || 'Stream processing error',
+            message: getErrorMessage(error, 'Stream processing error'),
           };
           controller.enqueue(
             encoder.encode(`data: ${JSON.stringify(errorEvent)}\n\n`)
@@ -254,7 +266,7 @@ export async function POST(request: NextRequest) {
         'X-Accel-Buffering': 'no',
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Stream endpoint error:', error);
 
     // Return error as SSE event
@@ -263,7 +275,7 @@ export async function POST(request: NextRequest) {
       start(controller) {
         const errorEvent = {
           status: 'error',
-          message: error?.message || 'Internal server error',
+          message: getErrorMessage(error),
         };
         controller.enqueue(
           encoder.encode(`data: ${JSON.stringify(errorEvent)}\n\n`)

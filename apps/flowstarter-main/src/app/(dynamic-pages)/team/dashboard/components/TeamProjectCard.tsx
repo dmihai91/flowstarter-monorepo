@@ -86,7 +86,7 @@ export function TeamProjectCard({
           </p>
         </div>
         <TeamProjectActionMenu
-          project={project as any}
+          project={project}
           onOpenInEditor={onOpenInEditor}
           onRename={onRename}
           onPricing={onPricing}

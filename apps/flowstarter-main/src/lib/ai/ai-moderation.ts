@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { models } from '@/lib/ai/openrouter-client';
 import { generateText } from 'ai';
 

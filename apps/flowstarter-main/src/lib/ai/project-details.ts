@@ -1,5 +1,4 @@
 import 'server-only';
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { aiModerateContent, ModerationResult } from '@/lib/ai/ai-moderation';
 import { models } from '@/lib/ai/openrouter-client';
 import { generateObject } from 'ai';
@@ -83,7 +82,7 @@ export async function moderateBusinessInfo(
 export async function generateProjectDetails(
   prompt: string,
   businessInfo: BusinessInfo,
-  additionalContext?: Record<string, any>
+  additionalContext?: Record<string, unknown>
 ): Promise<ProjectDetails> {
   // Validate the business info with more lenient requirements
   const businessInfoSchema = z.object({
@@ -100,12 +99,26 @@ export async function generateProjectDetails(
 
   // Inject randomness and context for varied regeneration
   const randomSeed =
-    additionalContext?.randomSeed || Math.floor(Math.random() * 100000);
+    typeof additionalContext?.randomSeed === 'number'
+      ? additionalContext.randomSeed
+      : Math.floor(Math.random() * 100000);
   const timestamp = Date.now();
-  const variationIndex = additionalContext?.variationIndex || 0;
-  const chipAction = additionalContext?.chipAction || '';
-  const customPrompt = additionalContext?.customPrompt || '';
-  const previousValue = additionalContext?.previousValue || '';
+  const variationIndex =
+    typeof additionalContext?.variationIndex === 'number'
+      ? additionalContext.variationIndex
+      : 0;
+  const chipAction =
+    typeof additionalContext?.chipAction === 'string'
+      ? additionalContext.chipAction
+      : '';
+  const customPrompt =
+    typeof additionalContext?.customPrompt === 'string'
+      ? additionalContext.customPrompt
+      : '';
+  const previousValue =
+    typeof additionalContext?.previousValue === 'string'
+      ? additionalContext.previousValue
+      : '';
 
   // Build variation-specific constraints to force diversity
   const variationConstraints = buildVariationConstraints(variationIndex);
@@ -283,8 +296,9 @@ Use this exact JSON structure:
     contactPreference: z.string().optional(),
     additionalFeatures: z.string().optional(),
   });
+  type GeneratedProjectDetails = z.infer<typeof detailsSchema>;
 
-  const runOnce = async (temp: number): Promise<any> => {
+  const runOnce = async (temp: number): Promise<GeneratedProjectDetails> => {
     try {
       // @ts-ignore - deeply nested schema causes excessive type instantiation
       const result = await generateObject({
@@ -317,7 +331,7 @@ Use this exact JSON structure:
   const maxRetries = 3;
 
   // Helper to check if content meets minimum length requirements
-  const meetsMinLengthRequirements = (data: any): boolean => {
+  const meetsMinLengthRequirements = (data: GeneratedProjectDetails): boolean => {
     if (chipAction === 'makeItShorter') return true;
 
     const descLength = String(data?.description || '').trim().length;

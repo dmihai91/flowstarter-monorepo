@@ -28,7 +28,7 @@ const insertProjectSchema = z.object({
     .array(z.object({ path: z.string(), content: z.string() }))
     .optional(),
   preview_html: z.string().optional(),
-  quality_metrics: z.any().optional(),
+  quality_metrics: z.unknown().optional(),
   data: z.string().optional(),
 });
 

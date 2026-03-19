@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
@@ -6,6 +5,34 @@ import { NextRequest, NextResponse } from 'next/server';
 // Coding agent URL for cleanup operations
 const CODING_AGENT_URL =
   process.env.NEXT_PUBLIC_CODING_AGENT_URL || 'http://localhost:8000';
+
+type DraftProjectConfig = {
+  currentStep?: string | null;
+  entry_mode?: string | null;
+};
+
+function parseDraftProjectConfig(data: string | null): DraftProjectConfig {
+  if (!data) {
+    return {};
+  }
+
+  try {
+    const parsed = JSON.parse(data) as unknown;
+    if (!parsed || typeof parsed !== 'object') {
+      return {};
+    }
+
+    const config = parsed as Record<string, unknown>;
+    return {
+      currentStep:
+        typeof config.currentStep === 'string' ? config.currentStep : null,
+      entry_mode:
+        typeof config.entry_mode === 'string' ? config.entry_mode : null,
+    };
+  } catch {
+    return {};
+  }
+}
 
 /**
  * Clean up all draft-related data from Convex and Python workspace
@@ -87,14 +114,7 @@ export async function GET(request: NextRequest) {
       }
 
       // Parse chat field to extract additional metadata
-      let projectConfig: any = {};
-      if (data.data) {
-        try {
-          projectConfig = JSON.parse(data.data);
-        } catch {
-          // If parsing fails, use empty object
-        }
-      }
+      const projectConfig = parseDraftProjectConfig(data.data);
 
       // Return normalized draft response
       const normalized = {
@@ -133,14 +153,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Parse data field to extract additional metadata
-    let projectConfig: any = {};
-    if (latestDraft.data) {
-      try {
-        projectConfig = JSON.parse(latestDraft.data);
-      } catch {
-        // If parsing fails, use empty object
-      }
-    }
+    const projectConfig = parseDraftProjectConfig(latestDraft.data);
 
     // Return normalized draft response
     const normalized = {

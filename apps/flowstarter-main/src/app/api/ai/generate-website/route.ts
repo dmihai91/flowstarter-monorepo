@@ -1,10 +1,30 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 const CODING_AGENT_URL =
   process.env.NEXT_PUBLIC_CODING_AGENT_URL || 'http://localhost:8000';
+
+type CodingAgentErrorResponse = {
+  detail?: string;
+};
+
+type WebsiteGenerationResponse = {
+  response: {
+    siteId: string;
+    generatedCode: string;
+    files: unknown;
+    architecture: unknown;
+    tested: boolean;
+    orchestrated: boolean;
+    quality_metrics: unknown;
+  };
+  timestamp: string;
+};
+
+function getErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
+}
 
 // Helper to create a streaming response
 function createStreamResponse(stream: ReadableStream) {
@@ -192,11 +212,13 @@ export async function POST(request: NextRequest) {
     });
 
     if (!codingAgentResponse.ok) {
-      const errorData = await codingAgentResponse.json();
+      const errorData =
+        (await codingAgentResponse.json()) as CodingAgentErrorResponse;
       throw new Error(errorData.detail || 'Coding agent service error');
     }
 
-    const result = await codingAgentResponse.json();
+    const result =
+      (await codingAgentResponse.json()) as WebsiteGenerationResponse;
 
     return NextResponse.json({
       success: true,
@@ -209,10 +231,10 @@ export async function POST(request: NextRequest) {
       qualityMetrics: result.response.quality_metrics,
       timestamp: result.timestamp,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Website generation error:', error);
     return NextResponse.json(
-      { error: error?.message || 'Internal server error' },
+      { error: getErrorMessage(error, 'Internal server error') },
       { status: 500 }
     );
   }

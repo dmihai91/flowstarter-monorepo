@@ -19,6 +19,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
   X,
+  type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useEffect } from 'react';
@@ -64,7 +65,7 @@ export function TeamSidebar() {
     return pathname?.startsWith(href);
   };
 
-  const NavLink = ({ href, icon: Icon, label, exact, showLabel = true }: { href: string; icon: any; label: string; exact?: boolean; showLabel?: boolean }) => (
+  const NavLink = ({ href, icon: Icon, label, exact, showLabel = true }: { href: string; icon: LucideIcon; label: string; exact?: boolean; showLabel?: boolean }) => (
     <Link
       href={href}
       title={!showLabel ? label : undefined}

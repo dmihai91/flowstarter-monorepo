@@ -1,6 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { AppHeader } from '../app-header';
+import type { PropsWithChildren } from 'react';
 
 // Mock dependencies
 const mockSetIsMobileOpen = vi.fn();
@@ -17,7 +18,7 @@ vi.mock('@/contexts/SidebarContext', () => ({
 }));
 
 vi.mock('@flowstarter/flow-design-system', () => ({
-  ScrollAwareHeader: ({ children, className }: any) => (
+  ScrollAwareHeader: ({ children, className }: PropsWithChildren<{ className?: string }>) => (
     <header className={className} data-testid="header">{children}</header>
   ),
 }));

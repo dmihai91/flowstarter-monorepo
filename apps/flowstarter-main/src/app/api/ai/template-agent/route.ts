@@ -9,7 +9,7 @@ import {
 } from '@/lib/local-template-service';
 import { models } from '@/lib/ai/openrouter-client';
 import { auth } from '@clerk/nextjs/server';
-import { generateObject } from 'ai';
+import { generateObject, type CoreMessage } from 'ai';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -47,6 +47,8 @@ const TemplateJsonSchema = z.object({
   description: z.string().min(1, 'description required'),
   files: z.array(TemplateFileSchema).min(1, 'at least one file required'),
 });
+
+type TemplateJson = z.infer<typeof TemplateJsonSchema>;
 
 export async function POST(request: NextRequest) {
   try {
@@ -171,7 +173,7 @@ Make files functional but concise. Include ALL 7 files. Escape quotes. JSON only
     const model = models.templateAgent;
 
     // Generate with validation-and-retry loop
-    const baseMessages = [
+    const baseMessages: CoreMessage[] = [
       { role: 'system' as const, content: systemPrompt },
       ...messages,
       // Provide grounding context from local templates when available
@@ -197,22 +199,19 @@ Make files functional but concise. Include ALL 7 files. Escape quotes. JSON only
     let description = '';
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const go: any = generateObject as any;
-      const { object, usage } = (await go({
+      // @ts-expect-error - Vercel AI SDK + deep Zod schema inference exceeds TS instantiation limits here
+      const { object, usage } = await generateObject({
         model,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        schema: TemplateJsonSchema as any,
+        schema: TemplateJsonSchema as z.ZodType<TemplateJson>,
         mode: 'json',
         temperature: 0.6,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        messages: baseMessages as any,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      })) as { object: any; usage?: { totalTokens?: number } };
+        messages: baseMessages,
+      });
+      const typedObject = object as TemplateJson;
 
       lastTotalTokens = usage?.totalTokens;
-      description = object.description;
-      parsedFiles = object.files.map((file) => ({
+      description = typedObject.description;
+      parsedFiles = typedObject.files.map((file) => ({
         path: file.path.startsWith('/') ? file.path : '/' + file.path,
         language: file.language || 'text',
         content: file.content,

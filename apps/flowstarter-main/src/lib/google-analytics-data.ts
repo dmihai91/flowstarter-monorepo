@@ -11,7 +11,7 @@ import 'server-only';
  */
 
 import { BetaAnalyticsDataClient } from '@google-analytics/data';
-import { GoogleAuth } from 'google-auth-library';
+import { OAuth2Client } from 'google-auth-library';
 
 // Types for our analytics data
 export interface AnalyticsOverview {
@@ -80,9 +80,7 @@ class GoogleAnalyticsDataService {
    */
   private createOAuthClient(accessToken: string): BetaAnalyticsDataClient {
     // Create a client that uses the OAuth token directly in requests
-    const authClient = new GoogleAuth();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const oauth2Client = new (authClient as any).OAuth2Client();
+    const oauth2Client = new OAuth2Client();
     oauth2Client.setCredentials({
       access_token: accessToken,
     });

@@ -17,6 +17,26 @@ import {
 } from './hooks';
 import { SocialAuth } from './SocialAuth';
 
+type ClerkErrorLike = {
+  errors?: Array<{ message?: string }>;
+};
+
+function getClerkErrorMessage(error: unknown, fallback: string) {
+  if (error && typeof error === 'object' && 'errors' in error) {
+    const { errors } = error as ClerkErrorLike;
+    const message = errors?.[0]?.message;
+    if (message) {
+      return message;
+    }
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return fallback;
+}
+
 export function CustomSignIn() {
   const { signIn, setActive } = useSignIn();
   const { t } = useTranslations();
@@ -136,10 +156,8 @@ export function CustomSignIn() {
       });
       setResetStep('code');
       // toast removed - no toast lib imported
-    } catch (err: any) {
-      setError(
-        err?.errors?.[0]?.message || t('auth.errors.somethingWentWrong')
-      );
+    } catch (err: unknown) {
+      setError(getClerkErrorMessage(err, t('auth.errors.somethingWentWrong')));
     } finally {
       setIsResetLoading(false);
     }
@@ -167,10 +185,8 @@ export function CustomSignIn() {
         await setActive({ session: result.createdSessionId });
         window.location.href = getRedirectUrl(resetEmail);
       }
-    } catch (err: any) {
-      setError(
-        err?.errors?.[0]?.message || t('auth.forgotPassword.invalidCode')
-      );
+    } catch (err: unknown) {
+      setError(getClerkErrorMessage(err, t('auth.forgotPassword.invalidCode')));
     } finally {
       setIsResetLoading(false);
     }
@@ -187,10 +203,8 @@ export function CustomSignIn() {
         identifier: resetEmail,
       });
       // toast removed - no toast lib imported
-    } catch (err: any) {
-      setError(
-        err?.errors?.[0]?.message || t('auth.errors.somethingWentWrong')
-      );
+    } catch (err: unknown) {
+      setError(getClerkErrorMessage(err, t('auth.errors.somethingWentWrong')));
     } finally {
       setIsResetLoading(false);
     }

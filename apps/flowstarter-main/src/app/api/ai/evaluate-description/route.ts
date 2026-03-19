@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { auditAiEvent } from '@/lib/ai/audit';
 import { evaluateDescriptionSufficiency } from '@/lib/ai/description-sufficiency';
 import { moderateBusinessInfo } from '@/lib/ai/project-details';
@@ -19,12 +18,14 @@ const BodySchema = z.object({
 export async function POST(request: NextRequest) {
   const startedAt = Date.now();
   let userId: string | null = null;
-  let sessionClaims: Record<string, any> | undefined;
+  let sessionClaims: Record<string, unknown> | undefined;
 
   try {
     const authRes = await auth();
     userId = authRes.userId ?? null;
-    sessionClaims = (authRes as any).sessionClaims;
+    if ('sessionClaims' in authRes) {
+      sessionClaims = authRes.sessionClaims as Record<string, unknown> | undefined;
+    }
   } catch {
     // Auth failed, continue with null userId
   }
@@ -60,7 +61,7 @@ export async function POST(request: NextRequest) {
       businessType: businessInfo.businessType || 'business',
     });
 
-    if ((moderation as any)?.isProhibited) {
+    if (moderation.isProhibited) {
       await auditAiEvent({
         req: request,
         userId,
@@ -70,14 +71,14 @@ export async function POST(request: NextRequest) {
         action: 'moderation-rejected',
         status: 'error',
         context: { businessInfo },
-        meta: { reasons: (moderation as any)?.reasons },
+        meta: { reasons: moderation.reasons },
       });
       return NextResponse.json(
         {
           error: 'Content Policy Violation',
           message:
             'We cannot process your request as it appears to involve prohibited activities or content.',
-          details: (moderation as any)?.reasons || [],
+          details: moderation.reasons || [],
           code: 'CONTENT_REJECTED',
           timestamp: new Date().toISOString(),
         },

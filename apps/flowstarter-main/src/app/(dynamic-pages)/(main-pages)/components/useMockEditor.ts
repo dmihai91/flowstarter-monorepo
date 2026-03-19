@@ -18,6 +18,12 @@ interface Message {
   text: string;
 }
 
+declare global {
+  interface Window {
+    __demoInterval?: ReturnType<typeof setInterval>;
+  }
+}
+
 /**
  * Hook for the landing page mock editor demo.
  * Manages mock site state, AI response simulation, typing animation.
@@ -246,8 +252,8 @@ export function useMockEditor() {
 
       // Stop cycling after completing the sequence
       if (currentIndex === 0) {
-        if ((window as any).__demoInterval) {
-          clearInterval((window as any).__demoInterval);
+        if (window.__demoInterval) {
+          clearInterval(window.__demoInterval);
         }
         return;
       }
@@ -277,13 +283,13 @@ export function useMockEditor() {
       const intervalId = setInterval(advanceDemo, 5000);
 
       // Store interval for cleanup
-      (window as any).__demoInterval = intervalId;
+      window.__demoInterval = intervalId;
     }, 3000);
 
     return () => {
       clearTimeout(timeoutId);
-      if ((window as any).__demoInterval) {
-        clearInterval((window as any).__demoInterval);
+      if (window.__demoInterval) {
+        clearInterval(window.__demoInterval);
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

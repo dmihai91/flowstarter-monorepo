@@ -11,12 +11,13 @@ import { useTeamProjectsView } from '../useTeamProjectsView';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 const mockedUseLocalStorage = vi.mocked(useLocalStorage);
+type ViewMode = 'grid' | 'list';
 
 describe('useTeamProjectsView', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockedUseLocalStorage.mockImplementation(
-      (key: string, initial: unknown) => [initial, mockSetViewMode, vi.fn()] as any
+      (_key: string, initial: ViewMode) => [initial, mockSetViewMode, vi.fn()]
     );
   });
 
@@ -37,7 +38,7 @@ describe('useTeamProjectsView', () => {
 
   it('returns list when localStorage has list value', () => {
     mockedUseLocalStorage.mockImplementation(
-      () => ['list', mockSetViewMode, vi.fn()] as any
+      () => ['list', mockSetViewMode, vi.fn()]
     );
     const { result } = renderHook(() => useTeamProjectsView());
     expect(result.current.viewMode).toBe('list');

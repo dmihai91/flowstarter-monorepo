@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { auditAiEvent } from '@/lib/ai/audit';
 import {
   generateProjectDetails,
@@ -11,6 +10,50 @@ import { z } from 'zod';
 const CODING_AGENT_URL =
   process.env.NEXT_PUBLIC_CODING_AGENT_URL || 'http://localhost:8000';
 
+type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonValue[]
+  | { [key: string]: JsonValue };
+type JsonObject = Record<string, JsonValue>;
+type CodingAgentErrorResponse = { detail?: string };
+type BusinessInfoLike = {
+  industry?: string;
+  businessType?: string;
+  targetAudience?: string;
+  goals?: string;
+  description?: string;
+  projectId?: string;
+};
+
+function getErrorMessage(error: unknown, fallback = 'Internal server error') {
+  return error instanceof Error ? error.message : fallback;
+}
+
+function isJsonObject(value: unknown): value is JsonObject {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function toBusinessInfo(value: unknown): BusinessInfoLike {
+  if (!isJsonObject(value)) {
+    return {};
+  }
+
+  const getString = (key: keyof BusinessInfoLike) =>
+    typeof value[key] === 'string' ? value[key] : undefined;
+
+  return {
+    industry: getString('industry'),
+    businessType: getString('businessType'),
+    targetAudience: getString('targetAudience'),
+    goals: getString('goals'),
+    description: getString('description'),
+    projectId: getString('projectId'),
+  };
+}
+
 const AgentBodySchema = z.object({
   agent: z
     .enum([
@@ -22,7 +65,7 @@ const AgentBodySchema = z.object({
     ])
     .optional(),
   action: z.string(),
-  context: z.record(z.any()),
+  context: z.record(z.string(), z.unknown()),
 });
 
 export async function POST(request: NextRequest) {
@@ -60,10 +103,10 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    const { agent, action, context } = parsed.data as unknown as {
+    const { agent, action, context } = parsed.data as {
       agent?: 'project-suggestions';
       action: string;
-      context: Record<string, any>;
+      context: JsonObject;
     };
 
     // Route code-editor, template-customizer, file-analyzer, and website-generator to coding agent service
@@ -82,7 +125,8 @@ export async function POST(request: NextRequest) {
         });
 
         if (!codingAgentResponse.ok) {
-          const errorData = await codingAgentResponse.json();
+          const errorData =
+            (await codingAgentResponse.json()) as CodingAgentErrorResponse;
           throw new Error(errorData.detail || 'Coding agent service error');
         }
 
@@ -101,7 +145,7 @@ export async function POST(request: NextRequest) {
         });
 
         return NextResponse.json(result);
-      } catch (error: any) {
+      } catch (error: unknown) {
         await auditAiEvent({
           req: request,
           userId,
@@ -111,10 +155,10 @@ export async function POST(request: NextRequest) {
           action: 'coding-agent-error',
           status: 'error',
           context: { agent, action, context },
-          meta: { error: error?.message },
+          meta: { error: getErrorMessage(error) },
         });
         return NextResponse.json(
-          { error: `Coding agent error: ${error?.message}` },
+          { error: `Coding agent error: ${getErrorMessage(error)}` },
           { status: 500 }
         );
       }
@@ -141,7 +185,8 @@ export async function POST(request: NextRequest) {
     }
 
     // AI moderation on user-entered description
-    const businessInfo = context?.businessInfo ?? context;
+    const rawBusinessInfo = isJsonObject(context) ? context.businessInfo : undefined;
+    const businessInfo = toBusinessInfo(rawBusinessInfo ?? context);
     const safety = await moderateBusinessInfo(businessInfo);
     if (safety.isProhibited) {
       await auditAiEvent({
@@ -171,14 +216,17 @@ export async function POST(request: NextRequest) {
     // Build prompt and generate unified project details
     // Include customPrompt from UI if provided
     const basePrompt =
-      context?.customPrompt ||
-      context?.prompt ||
+      (typeof context.customPrompt === 'string' ? context.customPrompt : undefined) ||
+      (typeof context.prompt === 'string' ? context.prompt : undefined) ||
       `Generate project details (name, description, target users, goals) for a ${
         businessInfo.industry || 'business'
       } website based on the provided business information.`;
 
-    const userPrompt = context?.customPrompt
-      ? `${basePrompt}\n\nIMPORTANT: Follow this custom instruction: ${context.customPrompt}`
+    const customPrompt =
+      typeof context.customPrompt === 'string' ? context.customPrompt : undefined;
+
+    const userPrompt = customPrompt
+      ? `${basePrompt}\n\nIMPORTANT: Follow this custom instruction: ${customPrompt}`
       : basePrompt;
 
     const result = await generateProjectDetails(
@@ -195,17 +243,28 @@ export async function POST(request: NextRequest) {
       route: '/api/ai/agent',
       agent: 'project-suggestions',
       action,
-      projectId: context?.projectId || context?.businessInfo?.projectId || null,
-      pipelineId: context?.pipelineId || null,
+      projectId:
+        (typeof context.projectId === 'string' ? context.projectId : undefined) ||
+        businessInfo.projectId ||
+        null,
+      pipelineId:
+        typeof context.pipelineId === 'string' ? context.pipelineId : null,
       context: {
-        templateId: context?.templateId,
-        industry: context?.businessInfo?.industry,
-        businessType: context?.businessInfo?.businessType,
-        targetAudience: context?.businessInfo?.targetAudience,
-        goals: context?.businessInfo?.goals,
-        description: context?.businessInfo?.description,
-        regenerateField: context?.regenerateField,
-        previousValue: context?.previousValue,
+        templateId:
+          typeof context.templateId === 'string' ? context.templateId : undefined,
+        industry: businessInfo.industry,
+        businessType: businessInfo.businessType,
+        targetAudience: businessInfo.targetAudience,
+        goals: businessInfo.goals,
+        description: businessInfo.description,
+        regenerateField:
+          typeof context.regenerateField === 'string'
+            ? context.regenerateField
+            : undefined,
+        previousValue:
+          typeof context.previousValue === 'string'
+            ? context.previousValue
+            : undefined,
       },
       result,
       status: 'ok',
@@ -217,7 +276,7 @@ export async function POST(request: NextRequest) {
       response: result,
       timestamp: new Date().toISOString(),
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Project Suggestions API error:', error);
     try {
       await auditAiEvent({
@@ -227,13 +286,13 @@ export async function POST(request: NextRequest) {
         agent: 'project-suggestions',
         action: 'exception',
         status: 'error',
-        meta: { message: error?.message || String(error) },
+        meta: { message: getErrorMessage(error, String(error)) },
       });
     } catch {
       // Audit logging failed, but continue with error response
     }
     return NextResponse.json(
-      { error: error?.message || 'Internal server error' },
+      { error: getErrorMessage(error) },
       { status: 500 }
     );
   }

@@ -3,7 +3,7 @@
 import { useTheme } from '@/contexts/ThemeContext';
 import { ClerkProvider } from '@clerk/nextjs';
 import { experimental__simple as simple } from '@clerk/themes';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ComponentProps } from 'react';
 
 import '@/styles/auth-forms.css';
 
@@ -179,25 +179,22 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
   };
 
   const sharedCookieDomain = getSharedCookieDomain();
+  const clerkProviderProps = {
+    appearance,
+    domain: sharedCookieDomain,
+    signInUrl: '/login',
+    signUpUrl: '/login',
+    signInFallbackRedirectUrl: '/dashboard',
+    signUpFallbackRedirectUrl: '/dashboard',
+    allowedRedirectOrigins: [
+      'https://editor.flowstarter.dev',
+      'https://editor.flowstarter.app',
+      'http://localhost:5173',
+    ],
+  } as unknown as ComponentProps<typeof ClerkProvider>;
 
   return (
-    <ClerkProvider
-      appearance={appearance}
-      // Share session across subdomains (e.g., flowstarter.dev, editor.flowstarter.dev)
-      // This is the PRIMARY app - it does NOT use isSatellite
-      domain={sharedCookieDomain}
-      signInUrl="/login"
-      signUpUrl="/login"
-      signInFallbackRedirectUrl="/dashboard"
-      signUpFallbackRedirectUrl="/dashboard"
-      // Allow the satellite editor to redirect back after sign-in
-      allowedRedirectOrigins={[
-        'https://editor.flowstarter.dev',
-        'https://editor.flowstarter.app',
-        'http://localhost:5173',
-      ]}
-      {...({} as any)}
-    >
+    <ClerkProvider {...clerkProviderProps}>
       {children}
     </ClerkProvider>
   );

@@ -16,6 +16,14 @@ interface GA4Row {
   metricValues?: Array<{ value: string }>;
 }
 
+type AnalyticsProject = {
+  id: string;
+  ga_property_id: string | null;
+  ga_refresh_token_id: string | null;
+  owner_id: string | null;
+  team_id: string | null;
+};
+
 export async function GET(request: NextRequest) {
   await requireAuth();
   const projectId = request.nextUrl.searchParams.get('projectId');
@@ -25,15 +33,13 @@ export async function GET(request: NextRequest) {
 
   const supabase = createSupabaseServiceRoleClient();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: project } = await supabase
     .from('projects')
     .select('id, ga_property_id, ga_refresh_token_id, owner_id, team_id')
     .eq('id', projectId)
     .single();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const p = project as any;
+  const p = project as AnalyticsProject | null;
   if (!p) return NextResponse.json({ error: 'Project not found' }, { status: 404 });
   if (!p.ga_property_id || !p.ga_refresh_token_id) {
     return NextResponse.json({ error: 'Google Analytics not connected' }, { status: 400 });

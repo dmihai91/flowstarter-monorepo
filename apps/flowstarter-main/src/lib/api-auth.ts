@@ -9,6 +9,7 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Authentication result type
@@ -127,11 +128,7 @@ export async function requireAuthWithSupabase(request?: Request): Promise<
   | {
       authenticated: true;
       userId: string;
-      supabase: Awaited<
-        ReturnType<
-          typeof import('@/hooks/useServerSupabase').useServerSupabaseWithAuthStrict
-        >
-      >;
+      supabase: SupabaseClient;
     }
   | { authenticated: false; response: NextResponse }
 > {
@@ -150,7 +147,7 @@ export async function requireAuthWithSupabase(request?: Request): Promise<
     return {
       authenticated: true,
       userId: authResult.userId,
-      supabase: createSupabaseServiceRoleClient() as any,
+      supabase: createSupabaseServiceRoleClient(),
     };
   }
 

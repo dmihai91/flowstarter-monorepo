@@ -1,6 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { UserMenu } from '../user-menu';
+import type { ComponentProps, MouseEventHandler, PropsWithChildren } from 'react';
 
 let mockPathname = '/dashboard';
 const mockPush = vi.fn();
@@ -12,7 +13,7 @@ vi.mock('next/navigation', () => ({
 }));
 
 vi.mock('next/image', () => ({
-  default: (props: any) => <img {...props} />,
+  default: (props: ComponentProps<'img'>) => <img {...props} />,
 }));
 
 vi.mock('@clerk/nextjs', () => ({
@@ -35,28 +36,28 @@ vi.mock('@/lib/i18n', () => ({
 }));
 
 vi.mock('@/components/ui/dropdown-menu', () => ({
-  DropdownMenu: ({ children }: any) => <div data-testid="dropdown">{children}</div>,
-  DropdownMenuContent: ({ children }: any) => <div data-testid="dropdown-content">{children}</div>,
-  DropdownMenuItem: ({ children, onClick, onSelect, className, variant }: any) => (
+  DropdownMenu: ({ children }: PropsWithChildren) => <div data-testid="dropdown">{children}</div>,
+  DropdownMenuContent: ({ children }: PropsWithChildren) => <div data-testid="dropdown-content">{children}</div>,
+  DropdownMenuItem: ({ children, onClick, onSelect, className, variant }: PropsWithChildren<{ onClick?: MouseEventHandler<HTMLButtonElement>; onSelect?: MouseEventHandler<HTMLButtonElement>; className?: string; variant?: string }>) => (
     <button onClick={onClick || onSelect} className={`${className || ''} ${variant === 'destructive' ? 'text-red-600' : ''}`} data-testid="menu-item">{children}</button>
   ),
   DropdownMenuSeparator: () => <hr />,
-  DropdownMenuTrigger: ({ children }: any) => <div data-testid="trigger">{children}</div>,
+  DropdownMenuTrigger: ({ children }: PropsWithChildren) => <div data-testid="trigger">{children}</div>,
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+  Button: ({ children, ...props }: PropsWithChildren<ComponentProps<'button'>>) => <button {...props}>{children}</button>,
 }));
 
 vi.mock('@/components/ui/alert-dialog', () => ({
-  AlertDialog: ({ children, open }: any) => open ? <div data-testid="dialog">{children}</div> : null,
-  AlertDialogAction: ({ children, onClick }: any) => <button onClick={onClick} data-testid="confirm">{children}</button>,
-  AlertDialogCancel: ({ children }: any) => <button data-testid="cancel">{children}</button>,
-  AlertDialogContent: ({ children }: any) => <div>{children}</div>,
-  AlertDialogDescription: ({ children }: any) => <p>{children}</p>,
-  AlertDialogFooter: ({ children }: any) => <div>{children}</div>,
-  AlertDialogHeader: ({ children }: any) => <div>{children}</div>,
-  AlertDialogTitle: ({ children }: any) => <h2>{children}</h2>,
+  AlertDialog: ({ children, open }: PropsWithChildren<{ open?: boolean }>) => open ? <div data-testid="dialog">{children}</div> : null,
+  AlertDialogAction: ({ children, onClick }: PropsWithChildren<{ onClick?: MouseEventHandler<HTMLButtonElement> }>) => <button onClick={onClick} data-testid="confirm">{children}</button>,
+  AlertDialogCancel: ({ children }: PropsWithChildren) => <button data-testid="cancel">{children}</button>,
+  AlertDialogContent: ({ children }: PropsWithChildren) => <div>{children}</div>,
+  AlertDialogDescription: ({ children }: PropsWithChildren) => <p>{children}</p>,
+  AlertDialogFooter: ({ children }: PropsWithChildren) => <div>{children}</div>,
+  AlertDialogHeader: ({ children }: PropsWithChildren) => <div>{children}</div>,
+  AlertDialogTitle: ({ children }: PropsWithChildren) => <h2>{children}</h2>,
 }));
 
 describe('UserMenu', () => {

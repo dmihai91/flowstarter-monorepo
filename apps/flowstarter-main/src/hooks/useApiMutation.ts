@@ -9,7 +9,7 @@ interface MutationState<T> {
 }
 
 interface UseApiMutationOptions {
-  onSuccess?: (data: any) => void;
+  onSuccess?: (data: unknown) => void;
   onError?: (error: string) => void;
 }
 
@@ -18,7 +18,7 @@ interface UseApiMutationOptions {
  * Single responsibility: manages async request state.
  * Keeps fetch() out of components.
  */
-export function useApiMutation<TPayload = any, TResponse = any>(
+export function useApiMutation<TPayload = unknown, TResponse = unknown>(
   url: string,
   method: 'POST' | 'PATCH' | 'PUT' | 'DELETE' = 'POST',
   options?: UseApiMutationOptions

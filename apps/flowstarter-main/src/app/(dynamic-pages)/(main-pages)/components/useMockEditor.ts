@@ -30,6 +30,9 @@ export function useMockEditor() {
     { role: 'user' | 'ai'; text: string }[]
   >([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [typingText, setTypingText] = useState('');
+  const [isTypewriting, setIsTypewriting] = useState(false);
+  const typewriterRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Mock site state for live preview
@@ -104,6 +107,24 @@ export function useMockEditor() {
     return aiResponses.default;
   };
 
+
+  const typewrite = (text: string, onDone: () => void) => {
+    setTypingText('');
+    setIsTypewriting(true);
+    let i = 0;
+    if (typewriterRef.current) clearInterval(typewriterRef.current);
+    typewriterRef.current = setInterval(() => {
+      i++;
+      setTypingText(text.slice(0, i));
+      if (i >= text.length) {
+        clearInterval(typewriterRef.current!);
+        typewriterRef.current = null;
+        setIsTypewriting(false);
+        onDone();
+      }
+    }, 18);
+  };
+
   const handleSend = (directMessage?: string) => {
     const message = directMessage || inputValue.trim();
     if (!message || isTyping) return;
@@ -119,13 +140,11 @@ export function useMockEditor() {
       setIsTyping(true);
       setTimeout(() => {
         setIsTyping(false);
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: 'ai',
-            text: "Great idea! Let's discuss this on a discovery call. Redirecting you to book...",
-          },
-        ]);
+        const msg1 = "Great idea! Let\'s discuss this on a discovery call. Redirecting you to book...";
+        typewrite(msg1, () => {
+          setMessages((prev) => [...prev, { role: 'ai', text: msg1 }]);
+          setTypingText('');
+        });
         setTimeout(() => {
           window.open(EXTERNAL_URLS.calendly.discovery, '_blank');
         }, 1500);
@@ -138,11 +157,14 @@ export function useMockEditor() {
 
     setTimeout(() => {
       setIsTyping(false);
-      setMessages((prev) => [...prev, { role: 'ai', text: response.text }]);
-      // Trigger the site update after AI responds
-      if (response.action) {
-        setTimeout(() => response.action!(), 200);
-      }
+      const aiText = response.text;
+      typewrite(aiText, () => {
+        setMessages((prev) => [...prev, { role: 'ai', text: aiText }]);
+        setTypingText('');
+        if (response.action) {
+          setTimeout(() => response.action!(), 200);
+        }
+      });
     }, 800 + Math.random() * 400);
   };
 
@@ -237,7 +259,11 @@ export function useMockEditor() {
       // AI response after typing delay
       setTimeout(() => {
         setIsTyping(false);
-        setMessages((prev) => [...prev, { role: 'ai', text: demo.response }]);
+        const demoText = demo.response;
+        typewrite(demoText, () => {
+          setMessages((prev) => [...prev, { role: 'ai', text: demoText }]);
+          setTypingText('');
+        });
         // Update site state
         setMockSite((s) => ({ ...s, ...demo.siteState }));
       }, 800);
@@ -299,6 +325,8 @@ export function useMockEditor() {
     inputValue, setInputValue,
     messages,
     isTyping,
+    typingText,
+    isTypewriting,
     mockSite,
     messagesEndRef,
     handleSend,

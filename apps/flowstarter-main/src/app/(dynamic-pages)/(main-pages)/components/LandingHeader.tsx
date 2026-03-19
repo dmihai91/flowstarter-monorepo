@@ -160,15 +160,6 @@ export function LandingHeader() {
                   <ThemeToggle />
                 </div>
                 <a
-                  href="https://library.flowstarter.dev"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors"
-                >
-                  {LANDING_COPY.nav.templatesLabel}
-                </a>
-                <a
                   href="#process"
                   onClick={(e) => {
                     e.preventDefault();
@@ -206,6 +197,15 @@ export function LandingHeader() {
                   className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
                 >
                   {t('nav.faq')}
+                </a>
+                <a
+                  href="https://library.flowstarter.dev"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors"
+                >
+                  {LANDING_COPY.nav.templatesLabel}
                 </a>
                 <Link
                   href="/login"

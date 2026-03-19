@@ -117,7 +117,7 @@ function MobileDrawer({
           ' flex flex-col'}
       >
         <div className={'flex items-center justify-between px-4 py-4 border-b ' + (darkMode ? 'border-[#ffffff0a]' : 'border-neutral-200')}>
-          <Logo size="xs" />
+          <Logo size="sm" />
           <button onClick={onClose} className={'flex h-8 w-8 items-center justify-center rounded-full transition-colors ' + (darkMode ? 'text-neutral-400 hover:bg-white/8' : 'text-neutral-500 hover:bg-neutral-100')}>
             <XIcon />
           </button>
@@ -243,7 +243,7 @@ export function Header({
           {/* ── Desktop row (hidden on mobile) ── */}
           <div className="hidden sm:flex h-16 items-center gap-3">
             <a href="/" className="flex shrink-0 items-center no-underline">
-              <Logo size="sm" />
+              <Logo size="md" />
             </a>
 
             <div className="flex flex-1 max-w-md">

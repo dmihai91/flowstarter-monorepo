@@ -222,7 +222,7 @@ function AppContent(): React.ReactElement {
 
         <Hero templateCount={templates.length} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
-        <main className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <main className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pb-8">
           <div className="flex gap-8 items-start">
             <Sidebar
               categories={categories}
@@ -280,7 +280,7 @@ function AppContent(): React.ReactElement {
                 </div>
               ) : null}
 
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
                 {loading
                   ? Array.from({ length: 6 }).map((_: unknown, index: number) => (
                       <TemplateCardSkeleton key={`skeleton-${index}`} />

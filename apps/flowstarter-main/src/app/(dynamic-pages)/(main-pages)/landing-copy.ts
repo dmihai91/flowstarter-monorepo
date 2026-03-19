@@ -216,8 +216,8 @@ export const LANDING_COPY = {
         description: 'Give you tools, but not a real start.',
       },
       {
-        label: 'Traditional agencies',
-        description: 'Great at big projects, but not built for fast, affordable launches.',
+        label: 'DIY tools & freelancers',
+        description: 'Require time, technical knowledge, and ongoing coordination.',
       },
       {
         label: 'Flowstarter',

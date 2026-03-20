@@ -39,7 +39,7 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
           <h1 className="mb-6 font-display text-5xl font-extrabold leading-[1.08] tracking-tight text-neutral-900 dark:text-white sm:text-6xl lg:text-7xl">
             {templateCount} Templates.{' '}
             <span className="inline">
-              {'Every one earns its place.'.split(' ').map((word, i) => (
+              {'Production-ready from day one.'.split(' ').map((word, i) => (
                 <span
                   key={i}
                   className="inline-block animate-word-reveal"

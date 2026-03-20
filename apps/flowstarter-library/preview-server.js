@@ -8,6 +8,7 @@ const path = require('path');
 
 const PORT = process.env.PREVIEW_PORT || 4100;
 const DIST = path.join(__dirname, 'preview-dist');
+const TEMPLATES_SRC = path.join(__dirname, 'templates'); // fallback for thumbnails
 
 const MIME = {
   '.html':  'text/html; charset=utf-8',
@@ -42,9 +43,15 @@ http.createServer((req, res) => {
   }
 
   if (!fs.existsSync(filePath)) {
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end(`Not found: ${urlPath}`);
-    return;
+    // Fallback: serve thumbnails and static assets from source templates/ dir
+    const srcFallback = path.join(TEMPLATES_SRC, urlPath.replace(/^\/templates/, ''));
+    if (fs.existsSync(srcFallback) && !fs.statSync(srcFallback).isDirectory()) {
+      filePath = srcFallback;
+    } else {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end(`Not found: ${urlPath}`);
+      return;
+    }
   }
 
   const ext  = path.extname(filePath).toLowerCase();

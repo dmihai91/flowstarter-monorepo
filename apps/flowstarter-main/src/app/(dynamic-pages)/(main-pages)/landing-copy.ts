@@ -17,6 +17,7 @@ export interface PricingSectionCopy {
   socialProof?: string;
   plans: PricingPlan[];
   note: string;
+  relaunchNote?: string;
   guarantee: string;
 }
 
@@ -27,6 +28,7 @@ export interface PricingPlan {
   monthlyPrice: string;
   features: readonly string[];
   cta: string;
+  ctaVariant?: 'primary' | 'secondary' | 'outline';
   status: 'available' | 'coming-soon';
   badge?: string;
   recommended?: boolean;
@@ -169,6 +171,7 @@ export const LANDING_COPY = {
     socialProof: 'Only 10 founding clients accepted per month. Beta is open now.',
     note:
       'No tech skills needed. No expensive agency contracts. Full control after launch.',
+    relaunchNote: 'Already have a site? Ask about Flowstarter Relaunch on your strategy call.',
     plans: [
       {
         name: 'STARTER',
@@ -184,6 +187,22 @@ export const LANDING_COPY = {
           'Your own business dashboard',
         ],
         cta: 'Claim your Starter spot',
+        status: 'available',
+      },
+      {
+        name: 'RELAUNCH',
+        label: 'For sites that need a fresh start',
+        setupPrice: '699€–999€',
+        monthlyPrice: '39€/month',
+        features: [
+          'Full site audit before kickoff',
+          'Content migration from your existing site',
+          'SEO redirect mapping',
+          'Everything in Starter included',
+          'Complexity assessed on strategy call',
+        ],
+        cta: 'Discuss your project',
+        ctaVariant: 'outline',
         status: 'available',
       },
       {
@@ -266,6 +285,11 @@ export const LANDING_COPY = {
         question: 'What exactly do I get?',
         answer:
           'A done-for-you launch setup with your landing page, offer structure, essential tools connected, your own dashboard, and AI editing so you can manage it all after launch.',
+      },
+      {
+        question: 'Already have a site that isn\'t working for you?',
+        answer:
+          'If you have an existing site but it\'s not converting, looks outdated, or no longer reflects your business, Flowstarter Relaunch is built for you. We audit what you have, migrate your content into a production-ready template, and hand you back a site with a real foundation. Pricing starts at €699 depending on the complexity of your current setup. Book a strategy call and we\'ll assess it together.',
       },
       {
         question: 'How long does launch usually take?',

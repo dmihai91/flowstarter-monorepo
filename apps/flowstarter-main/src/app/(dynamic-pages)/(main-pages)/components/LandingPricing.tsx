@@ -123,7 +123,7 @@ export function LandingPricing() {
                         className="mt-auto block"
                       >
                         <Button
-                          variant={isHighlighted ? 'brand-gradient' : 'secondary'}
+                          variant={isHighlighted ? 'brand-gradient' : plan.ctaVariant === 'outline' ? 'outline' : 'secondary'}
                           size="lg"
                           className={`w-full rounded-xl ${isHighlighted ? 'shadow-[0_14px_40px_rgba(124,58,237,0.28)]' : ''}`}
                         >
@@ -139,6 +139,11 @@ export function LandingPricing() {
             <p className="mt-8 text-center text-base text-gray-500 dark:text-white/40">
               {pricing.note}
             </p>
+            {pricing.relaunchNote && (
+              <p className="mt-2 text-center text-sm text-gray-400 dark:text-white/30">
+                {pricing.relaunchNote}
+              </p>
+            )}
           </div>
         </section>
 

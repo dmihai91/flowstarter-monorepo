@@ -50,7 +50,7 @@ export function TemplateGallerySection() {
                 className="group relative rounded-2xl overflow-hidden bg-gray-100 dark:bg-white/[0.04] border border-gray-200/60 dark:border-white/[0.08] hover:border-[var(--purple-primary)]/40 hover:shadow-[0_8px_30px_rgba(77,93,217,0.12)] transition-all duration-300 aspect-[4/3]"
               >
                 <img
-                  src={`https://library.flowstarter.dev/templates/${template.slug}/thumbnail-light.png?v=1`}
+                  src={`https://library.flowstarter.dev/thumbs/${template.slug}.png`}
                   alt={template.name}
                   className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.04]"
                   loading="lazy"

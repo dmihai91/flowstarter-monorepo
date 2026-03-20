@@ -24,10 +24,12 @@ function Card({
       href="https://library.flowstarter.dev"
       target="_blank"
       rel="noopener noreferrer"
-      initial={{ opacity: 0, y: 28, scale: 0.97 }}
-      animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 28, scale: 0.97 }}
-      transition={{ duration: 0.55, delay: 0.06 + i * 0.09, ease: [0.25, 0.46, 0.45, 0.94] }}
-      whileHover={{ y: -5, transition: { duration: 0.2, ease: 'easeOut' } }}
+      initial={{ opacity: 0, scale: 0.92, filter: 'blur(12px)' }}
+      animate={isInView
+        ? { opacity: 1, scale: 1, filter: 'blur(0px)' }
+        : { opacity: 0, scale: 0.92, filter: 'blur(12px)' }}
+      transition={{ duration: 0.7, delay: 0.05 + i * 0.11, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ y: -6, transition: { duration: 0.2, ease: 'easeOut' } }}
       className={[
         'group relative block w-full rounded-2xl overflow-hidden',
         'border border-gray-200/60 dark:border-white/[0.08]',

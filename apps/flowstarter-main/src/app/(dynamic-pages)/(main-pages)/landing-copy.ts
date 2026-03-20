@@ -51,7 +51,7 @@ export const LANDING_COPY = {
     subheadlineBold: 'Your website, live in days. Not months.',
     subheadline:
       'We handle the build from scratch. You run it yourself from day one.',
-    primaryCta: 'Book free strategy call',
+    primaryCta: 'Talk to us. First call is free.',
     secondaryCta: 'See pricing',
     trustLine:
       'Built for creators, freelancers and small businesses who want to get online and monetize faster.',
@@ -322,6 +322,6 @@ export const LANDING_COPY = {
     headline: 'Stop waiting months to get online',
     body:
       'Get your business foundation launched in days, then manage and grow it with Flowstarter.',
-    cta: 'Book free strategy call',
+    cta: 'Talk to us. First call is free.',
   },
 };

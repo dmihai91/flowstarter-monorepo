@@ -87,7 +87,7 @@ describe('agentPipeline', () => {
     const result = await runAgentPipeline(input, templateFiles);
 
     expect(result.success).toBe(true);
-    expect(result.files.length).toBeGreaterThan(0);
+    expect(result.files?.length ?? 0).toBeGreaterThan(0);
 
     const types = events.map(e => e.type);
     expect(types).toContain('text'); // progress messages
@@ -111,8 +111,8 @@ describe('agentPipeline', () => {
     const result = await runAgentPipeline(baseInput, templateFiles);
 
     expect(result.success).toBe(true);
-    expect(result.files.length).toBe(templateFiles.length);
-    expect(result.files[0].path).toBe('src/pages/index.astro');
+    expect(result.files?.length).toBe(templateFiles.length);
+    expect(result.files?.[0]?.path).toBe('src/pages/index.astro');
   });
 
   it('handles missing onAgentEvent gracefully', async () => {

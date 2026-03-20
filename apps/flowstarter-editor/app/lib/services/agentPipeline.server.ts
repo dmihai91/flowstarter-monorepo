@@ -4,7 +4,7 @@
  * Uses the battle-tested Agent SDK (Claude Code) for both generation and editing.
  * Cost controlled via maxBudgetUsd + maxTurns.
  */
-import { query } from '@anthropic-ai/claude-agent-sdk';
+import { query, type SDKMessage } from '@anthropic-ai/claude-agent-sdk';
 import { mkdir, readFile, readdir, rm, writeFile } from 'fs/promises';
 import { tmpdir } from 'os';
 import { dirname, join } from 'path';
@@ -28,6 +28,24 @@ const INTEGRATION_COMPONENT_BLOCKLIST = [
 
 type Emit = (event: AgentActivityEvent) => void;
 type ContactInfo = { email?: string; phone?: string; address?: string };
+
+type LegacyToolUseMessage = {
+  type: 'tool_use';
+  tool_name?: string;
+  input?: { file_path?: string; path?: string };
+};
+
+type LegacyToolResultMessage = {
+  type: 'tool_result';
+  tool_name?: string;
+  input?: { file_path?: string; path?: string };
+};
+
+type LegacyUsageMessage = {
+  type: 'usage';
+  input_tokens?: number;
+  output_tokens?: number;
+};
 
 function getContactInfo(input: SiteGenerationInput): ContactInfo {
   return (input as SiteGenerationInput & { contactInfo?: ContactInfo }).contactInfo ?? input.businessInfo.contact ?? {};
@@ -212,7 +230,8 @@ CRITICAL RULES — violations cause build failures:
       },
     });
 
-    for await (const message of agentResult) {
+    for await (const rawMessage of agentResult) {
+      const message = rawMessage as SDKMessage | LegacyToolUseMessage | LegacyToolResultMessage | LegacyUsageMessage;
       switch (message.type) {
         case 'assistant':
           turns++;

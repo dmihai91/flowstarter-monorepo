@@ -183,8 +183,10 @@ export async function action({ request }: ActionFunctionArgs) {
           const { startPreviewWithPrewarmedSandbox, prewarmSandbox } = await import('~/lib/services/daytonaService.server');
           const filesMap = editResult.files.reduce((acc: Record<string, string>, f: { path: string; content: string }) => { acc[f.path] = f.content; return acc; }, {} as Record<string, string>);
           const prewarmed = await prewarmSandbox(supabaseProjectId);
-          const preview = await startPreviewWithPrewarmedSandbox(supabaseProjectId, filesMap, prewarmed, undefined, (msg: string) => console.log('[modify-sync]', msg));
-          if (preview.success) previewUrl = preview.previewUrl || `https://4321-${preview.sandboxId}.daytonaproxy01.net`;
+          if (prewarmed) {
+            const preview = await startPreviewWithPrewarmedSandbox(supabaseProjectId, filesMap, prewarmed, undefined, (msg: string) => console.log('[modify-sync]', msg));
+            if (preview.success) previewUrl = preview.previewUrl || `https://4321-${preview.sandboxId}.daytonaproxy01.net`;
+          }
         } catch (e) { console.error('[modify-sync] Preview sync failed:', e); }
 
         return json({
@@ -224,6 +226,9 @@ export async function action({ request }: ActionFunctionArgs) {
         // 2. Push to Daytona
         const { startPreviewWithPrewarmedSandbox, prewarmSandbox } = await import('~/lib/services/daytonaService.server');
         const prewarmed = await prewarmSandbox(syncProjectId);
+        if (!prewarmed) {
+          return json({ success: false, error: 'Failed to prewarm preview sandbox' }, { status: 500 });
+        }
         const previewResult = await startPreviewWithPrewarmedSandbox(
           syncProjectId, files, prewarmed, undefined,
           (msg) => console.log(`[sync-preview] ${msg}`),
@@ -247,4 +252,3 @@ export async function action({ request }: ActionFunctionArgs) {
     }, { status: 500 });
   }
 }
-

@@ -9,7 +9,7 @@
  * - Error handling and recovery
  */
 
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Page, type Route } from '@playwright/test';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -50,9 +50,8 @@ async function sendMessage(page: Page, message: string) {
   await chatInput.press('Enter');
 }
 
-
-  // Mock push-file endpoint (new streaming preview)
-  await page.route('**/api/daytona/push-file', async (route) => {
+async function setupApiMocks(page: Page) {
+  await page.route('**/api/daytona/push-file', async (route: Route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -60,8 +59,7 @@ async function sendMessage(page: Page, message: string) {
     });
   });
 
-  // Mock agent-code streaming endpoint (replaces old modify endpoint)
-  await page.route('**/api/agent-code', async (route) => {
+  await page.route('**/api/agent-code', async (route: Route) => {
     const agentEvents = [
       `event: agent-event\ndata: ${JSON.stringify({ type: 'file_write', path: 'src/index.html', lines: 120 })}\n\n`,
       `event: agent-event\ndata: ${JSON.stringify({ type: 'done', duration_ms: 5000, turns: 2, cost_usd: 0.15, input_tokens: 1500, output_tokens: 600 })}\n\n`,
@@ -73,6 +71,8 @@ async function sendMessage(page: Page, message: string) {
       body: agentEvents,
     });
   });
+}
+
 async function waitForResponse(page: Page, timeout = 30000) {
   // Wait for either success, error, or processing complete
   await page.waitForSelector(
@@ -106,6 +106,7 @@ async function getPreviewContent(page: Page): Promise<string> {
 
 test.describe('Modification Request Flow', () => {
   test.beforeEach(async ({ page }) => {
+    await setupApiMocks(page);
     await page.goto(`${BASE_URL}/p/${TEST_PROJECT.urlId}`);
     await waitForChatReady(page);
   });
@@ -477,4 +478,3 @@ test.describe('Integration with Claude Agent', () => {
     await page.unroute('**/api/agent-code');
   });
 });
-

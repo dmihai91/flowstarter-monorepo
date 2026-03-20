@@ -344,7 +344,7 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
     if (await nameInput.isVisible({ timeout: 5000 }).catch(() => false)) {
       const newName = `${name} — Renamed`;
       await nameInput.click();
-      await page.keyboard.selectAll();
+      await page.keyboard.press('ControlOrMeta+a');
       await page.keyboard.type(newName);
       await page.keyboard.press('Enter');
       await page.waitForTimeout(2000);

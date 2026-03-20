@@ -28,6 +28,24 @@ export type EditResult = {
 
 type Emit = (event: AgentActivityEvent) => void;
 
+type LegacyToolUseMessage = {
+  type: 'tool_use';
+  tool_name?: string;
+  input?: { file_path?: string; path?: string };
+};
+
+type LegacyToolResultMessage = {
+  type: 'tool_result';
+  tool_name?: string;
+  input?: { file_path?: string; path?: string };
+};
+
+type LegacyUsageMessage = {
+  type: 'usage';
+  input_tokens?: number;
+  output_tokens?: number;
+};
+
 const MODEL = 'claude-sonnet-4-6';
 const MAX_TURNS = 5;
 const MAX_BUDGET_USD = 0.50;
@@ -118,7 +136,8 @@ Keep all content in the original language. Preserve existing styles and structur
     });
 
     // 3. Stream messages and track progress
-    for await (const message of result) {
+    for await (const rawMessage of result) {
+      const message = rawMessage as SDKMessage | LegacyToolUseMessage | LegacyToolResultMessage | LegacyUsageMessage;
       switch (message.type) {
         case 'assistant':
           turns++;

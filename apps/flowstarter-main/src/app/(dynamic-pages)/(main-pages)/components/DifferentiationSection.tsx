@@ -23,17 +23,17 @@ export function DifferentiationSection() {
             <div className={`mt-3 mb-3 h-px ${card.highlighted ? 'bg-white/20' : 'bg-gray-200 dark:bg-white/10'}`} />
             <p className={`mt-2 text-sm leading-relaxed ${card.highlighted ? 'text-white/80' : 'text-gray-500 dark:text-gray-400'}`}>
               {card.description}
-              {card.bullets && (
-                <ul className="mt-3 space-y-1.5 text-left">
-                  {card.bullets.map((b: string) => (
-                    <li key={b} className="flex items-start gap-2 text-sm">
-                      <span className={`mt-0.5 shrink-0 ${card.highlighted ? "text-white/90" : "text-[var(--purple-primary)]"}`}>✓</span>
-                      <span>{b}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
             </p>
+            {card.bullets && (
+              <ul className="mt-3 space-y-1.5 text-left">
+                {card.bullets.map((b: string) => (
+                  <li key={b} className="flex items-start gap-2 text-sm">
+                    <span className={`mt-0.5 shrink-0 ${card.highlighted ? 'text-white/90' : 'text-[var(--purple-primary)]'}`}>✓</span>
+                    <span className={card.highlighted ? 'text-white/80' : 'text-gray-500 dark:text-gray-400'}>{b}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         ))}
       </div>

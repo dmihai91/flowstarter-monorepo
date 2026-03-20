@@ -199,11 +199,11 @@ Make files functional but concise. Include ALL 7 files. Escape quotes. JSON only
     let description = '';
 
     try {
-      // @ts-expect-error - Vercel AI SDK + deep Zod schema inference exceeds TS instantiation limits here
-      const { object, usage } = await generateObject({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { object, usage } = await (generateObject as any)({
         model,
         schema: TemplateJsonSchema as z.ZodType<TemplateJson>,
-        mode: 'json',
+        output: 'object',
         temperature: 0.6,
         messages: baseMessages,
       });

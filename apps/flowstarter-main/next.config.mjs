@@ -58,6 +58,10 @@ export default {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
+  turbopack: {
+    resolveExtensions: ['.tsx', '.ts', '.jsx', '.js'],
+  },
+  // Keep webpack config for production builds (turbopack covers dev)
   webpack: (config, { isServer }) => {
     // Exclude templates directory from the build
     config.watchOptions = {
@@ -70,12 +74,6 @@ export default {
       ...config.resolve.alias,
       '@/templates': false,
     };
-
-    // Mark @daytonaio/sdk as external to prevent build errors when not installed
-    if (isServer) {
-      config.externals = config.externals || [];
-      config.externals.push('@daytonaio/sdk');
-    }
 
     // Optimize caching and compilation speed
     config.cache = {
@@ -94,5 +92,5 @@ export default {
     return config;
   },
   // Exclude templates directory from being processed
-  serverExternalPackages: [],
+  serverExternalPackages: ['@daytonaio/sdk'],
 };

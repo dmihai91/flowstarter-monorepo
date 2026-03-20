@@ -82,13 +82,13 @@ export function TemplateGallerySection() {
 
           <div className="text-center mb-14">
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-[var(--purple-primary)]/10 text-[var(--purple-primary)] border border-[var(--purple-primary)]/20 mb-5">
-              Template Gallery
+              A design for every industry
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white tracking-tight mb-4 [text-wrap:balance]">
               Your site, ready to launch.
             </h2>
             <p className="text-lg text-gray-500 dark:text-neutral-400 max-w-xl mx-auto">
-              Pick a template built for your industry. We customise it to your brand, copy, and clients.
+              Pick yours. We customise it to your brand, copy, and clients.
             </p>
           </div>
 

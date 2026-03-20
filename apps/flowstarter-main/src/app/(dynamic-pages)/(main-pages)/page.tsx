@@ -84,6 +84,12 @@ export default function LandingPage() {
         <ProblemSection />
 
         {/* 5. Why experts choose Flowstarter — 3 pillars */}
+        {/* Section transition — subtle wave divider */}
+        <div className="relative h-12 overflow-hidden -mt-1 pointer-events-none select-none" aria-hidden>
+          <svg viewBox="0 0 1440 48" className="absolute bottom-0 w-full h-12 text-[var(--landing-bg-tint)] dark:text-[var(--landing-dark-surface-tint)]" preserveAspectRatio="none" fill="currentColor">
+            <path d="M0,24 C360,48 1080,0 1440,24 L1440,48 L0,48 Z" />
+          </svg>
+        </div>
         <PillarsSection />
 
         {/* 6. Positioning */}

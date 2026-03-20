@@ -46,10 +46,10 @@ export function FinalCTASection() {
               {finalCta.body}
             </p>
             <a href={EXTERNAL_URLS.calendly.discovery} target="_blank" rel="noopener noreferrer" className="inline-flex justify-center w-full sm:w-auto">
-              <Button className="relative overflow-hidden w-full sm:w-auto hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] rounded-lg px-8 h-12 text-base sm:px-12 sm:h-16 sm:text-lg font-semibold shadow-lg shadow-white/5 transition-all duration-300 hover:scale-105" variant="secondary">
+              <Button className="relative overflow-hidden w-full sm:w-auto rounded-lg px-8 h-12 text-base sm:px-12 sm:h-16 sm:text-lg font-semibold transition-all duration-300 hover:scale-105 bg-white text-gray-900 hover:bg-gray-50 shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:shadow-[0_0_50px_rgba(255,255,255,0.25)] border-0" variant="secondary">
                 {finalCta.cta}
                 <svg
-                  className="w-5 h-5 ml-3"
+                  className="w-5 h-5 ml-3 text-gray-900"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

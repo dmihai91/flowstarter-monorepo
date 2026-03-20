@@ -73,7 +73,7 @@ export function LandingHero() {
         >
           {hero.headlinePrefix}
           <br />
-          <span className="text-flow">{hero.headlineHighlight}</span>
+          <span className="text-flow"><span className="inline">{hero.headlineHighlight}</span></span>
         </h1>
 
         {/* Body */}

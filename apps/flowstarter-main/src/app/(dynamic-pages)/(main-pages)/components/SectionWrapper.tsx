@@ -34,6 +34,7 @@ export function SectionWrapper({ id, children, className = '', padding = 'py-12 
   );
 }
 
+// text-balance ensures headings never break awkwardly on mobile
 export function SectionHeading({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
     <h2 className={`font-display text-3xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-4xl lg:text-5xl ${className}`}>

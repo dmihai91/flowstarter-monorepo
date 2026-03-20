@@ -22,7 +22,7 @@ export function ProcessSection() {
           <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
             <div className="text-center mb-12 lg:mb-16">
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-3 text-gray-900 dark:text-white">
-                {process.title}
+                <span className="[text-wrap:balance]">{process.title}</span>
               </h2>
             </div>
 

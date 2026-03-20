@@ -175,7 +175,7 @@ function MobileDrawer({
 
         <div className={'px-4 py-4 border-t ' + (darkMode ? 'border-[#ffffff0a]' : 'border-neutral-200')}>
           <a href="https://flowstarter.dev/contact" className="flex items-center justify-center gap-2 w-full rounded-xl bg-purple-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-purple-700 no-underline">
-            Get Early Access
+            Start with FlowStarter
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
         </div>
@@ -269,7 +269,7 @@ export function Header({
                 href="https://flowstarter.dev/contact"
                 className="flex items-center gap-2 rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-purple-500/25 transition-colors hover:bg-purple-700 no-underline"
               >
-                Get Early Access
+                Start with FlowStarter
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </a>
             </div>

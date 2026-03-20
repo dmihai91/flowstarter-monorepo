@@ -32,14 +32,14 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
           <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-purple-200 bg-purple-50 px-3 py-1.5 dark:border-purple-500/20 dark:bg-purple-500/10 hero-fade hero-fade-1">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-purple-500" />
             <span className="text-xs font-semibold uppercase tracking-widest text-[var(--purple-primary)]">
-              Shared with clients. Built for you.
+              Handcrafted templates. Zero compromise.
             </span>
           </div>
 
           <h1 className="mb-6 font-display text-5xl font-extrabold leading-[1.08] tracking-tight text-neutral-900 dark:text-white sm:text-6xl lg:text-7xl">
             {templateCount} Templates.{' '}
             <span className="inline">
-              {'Curated, not random.'.split(' ').map((word, i) => (
+              {'Every one earns its place.'.split(' ').map((word, i) => (
                 <span
                   key={i}
                   className="inline-block animate-word-reveal"
@@ -52,7 +52,7 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
           </h1>
 
           <p className="mx-auto mb-10 max-w-xl text-xl sm:text-2xl leading-relaxed text-neutral-600 dark:text-neutral-400 hero-fade hero-fade-3">
-            Every template is built for a specific type of expert business. Each one ships with 6 colour palettes and 4 font pairings, giving your client a real choice without decision fatigue. Pick one. We handle the rest.
+            We built these for coaches, consultants, and service professionals who need to look credible on day one. Each template ships with 6 colour palettes and 4 font pairings. Every one is production-ready, Astro-powered, and designed to be handed off, not hacked together.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 hero-fade hero-fade-4">

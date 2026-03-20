@@ -6,7 +6,7 @@
  */
 
 import type { ActionFunctionArgs } from '@remix-run/node';
-import type { AgentActivityEvent } from '~/components/editor/AgentActivityPanel';
+import type { AgentActivityEvent } from '~/lib/services/claude-agent/types';
 import { routeModification, type RouteDecision } from './api.modification-router';
 
 // Import simple build logic
@@ -419,7 +419,9 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentE
           .eq('id', projectId)
           .single();
 
-        const intConfig: Record<string, unknown> = body.integrations || {};
+        const intConfig: Record<string, unknown> = Object.fromEntries(
+          (body.integrations ?? []).map((integration) => [integration.id, integration.config])
+        );
 
         // Calendly: use saved config if not passed in body
         if (projConfig?.calendly_url && !intConfig.calendly) {

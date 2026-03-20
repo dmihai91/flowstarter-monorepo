@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   const supabase = createSupabaseServiceRoleClient();
 
   let query = supabase
-    .from('leads')
+    .from('leads' as any)
     .select('*')
     .eq('project_id', projectId)
     .order('created_at', { ascending: false })
@@ -55,7 +55,7 @@ export async function PATCH(request: NextRequest) {
   if (body.status) update.status = body.status;
   if (body.notes !== undefined) update.notes = body.notes;
 
-  const { error } = await supabase.from('leads').update(update).eq('id', body.leadId);
+  const { error } = await supabase.from('leads' as any).update(update).eq('id', body.leadId);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ success: true });

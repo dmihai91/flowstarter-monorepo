@@ -141,6 +141,7 @@
   },
   "devDependencies": {
     "@blitz/eslint-plugin": "0.1.0",
+    "@clerk/testing": "2.0.5",
     "@cloudflare/workers-types": "^4.20251004.0",
     "@fal-ai/client": "^1.9.0",
     "@iconify-json/lucide": "^1.2.87",

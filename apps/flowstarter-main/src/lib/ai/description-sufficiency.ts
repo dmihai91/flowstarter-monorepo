@@ -38,7 +38,7 @@ export async function evaluateDescriptionSufficiency(input: {
     `BusinessType: ${input.businessType || ''}`,
   ].join('\n');
 
-  // @ts-expect-error - Vercel AI SDK + Zod inference exceeds TS instantiation limits here
+  // @ts-ignore
   const { object } = await generateObject({
     model: models.gpt4,
     messages: [

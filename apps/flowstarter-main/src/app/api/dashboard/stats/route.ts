@@ -234,7 +234,7 @@ export async function GET() {
       const projectIds = allProjects.map(p => p.id);
       if (projectIds.length > 0) {
         const { count: capturedLeads } = await supabase
-          .from('leads')
+          .from('leads' as any)
           .select('*', { count: 'exact', head: true })
           .in('project_id', projectIds)
           .neq('status', 'spam');

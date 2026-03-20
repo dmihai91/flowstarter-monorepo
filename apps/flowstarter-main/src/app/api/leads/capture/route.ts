@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
       (message as string) || '',
     );
 
-    const { error } = await supabase.from('leads').insert({
+    const { error } = await supabase.from('leads' as any).insert({
       project_id: projectId,
       name: (name as string) || null,
       email: (email as string) || null,

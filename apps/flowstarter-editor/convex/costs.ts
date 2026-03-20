@@ -1,5 +1,6 @@
 import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
+import type { Doc, Id } from './_generated/dataModel';
 
 /**
  * Cost tracking mutations and queries
@@ -21,7 +22,7 @@ const operationType = v.union(
 // Log a single LLM operation cost
 export const logCost = mutation({
   args: {
-    projectId: v.optional(v.string()),
+    projectId: v.optional(v.id('projects')),
     operation: operationType,
     model: v.string(),
     promptTokens: v.number(),
@@ -51,7 +52,7 @@ export const logCost = mutation({
 // Log multiple costs in a batch (for site generation with multiple LLM calls)
 export const logCostBatch = mutation({
   args: {
-    projectId: v.optional(v.string()),
+    projectId: v.optional(v.id('projects')),
     operation: operationType,
     costs: v.array(v.object({
       model: v.string(),
@@ -73,7 +74,7 @@ export const logCostBatch = mutation({
   },
   handler: async (ctx, args) => {
     const now = Date.now();
-    const ids: string[] = [];
+    const ids: Id<'costs'>[] = [];
     
     for (const cost of args.costs) {
       const id = await ctx.db.insert('costs', {
@@ -130,7 +131,7 @@ export const getCostsByOperation = query({
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    let costs;
+    let costs: Doc<'costs'>[];
     
     if (args.operation) {
       // Use filter instead of withIndex to avoid TypeScript union type issues

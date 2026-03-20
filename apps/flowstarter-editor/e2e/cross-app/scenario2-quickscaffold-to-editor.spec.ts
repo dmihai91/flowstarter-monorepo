@@ -102,7 +102,7 @@ test.describe('Scenario 2: QuickScaffold → AI Enrichment → Editor', () => {
     });
 
     expect(result.status).toBe(200);
-    const body = result.body as { status: string; siteName?: string; description?: string; industry?: string; targetAudience?: string; uvp?: string; goal?: string; offerType?: string };
+    const body = result.body as { status: string; name?: string; siteName?: string; description?: string; industry?: string; targetAudience?: string; uvp?: string; goal?: string; offerType?: string };
     expect(body.status).toBe('complete');
 
     const e = body;

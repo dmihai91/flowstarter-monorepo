@@ -1,6 +1,7 @@
 import { httpRouter } from 'convex/server';
 import { httpAction } from './_generated/server';
 import { api } from './_generated/api';
+import type { Id } from './_generated/dataModel';
 
 const http = httpRouter();
 
@@ -287,7 +288,7 @@ const costsLog = httpAction(async (ctx, request) => {
 
   try {
     // Find the Convex project by Supabase ID
-    const project = (await ctx.runQuery(api.projects.getBySupabaseId, { supabaseProjectId })) as { _id: string } | null;
+    const project = (await ctx.runQuery(api.projects.getBySupabaseId, { supabaseProjectId })) as { _id: Id<'projects'> } | null;
 
     // Log cost to Convex
     const costId = await ctx.runMutation(api.costs.logCost, {

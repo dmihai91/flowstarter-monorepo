@@ -507,7 +507,7 @@ test.describe('Full Operator Flow', () => {
     test('selecting a template updates the conversation state', async ({ page }) => {
       await setupAllMocks(page);
 
-      let templateMutationCalled = false;
+      let templateMutationCalled: boolean = false;
       await page.route('**/api/mutation**', async (route: Route) => {
         const body = await route.request().postDataJSON().catch(() => ({})) as any;
         if (JSON.stringify(body).includes('template')) {
@@ -530,7 +530,7 @@ test.describe('Full Operator Flow', () => {
         await page.waitForTimeout(1000);
         // Verify Convex state was updated (template selected)
         if (templateMutationCalled) {
-          expect(templateMutationCalled).toBe(true);
+          console.log('[Test] Template mutation tracked');
         } else {
           // Template button exists but mutation routing may differ — verify UI update instead
           const btnSelected = await page.getByText(/selected|active|chosen/i).first()
@@ -754,7 +754,7 @@ test.describe('Full Operator Flow', () => {
       const projectName = page.locator('[data-testid="project-name"], [contenteditable="true"], input[placeholder*="project"]').first();
       if (await projectName.isVisible({ timeout: 5000 }).catch(() => false)) {
         await projectName.click();
-        await page.keyboard.selectAll();
+        await page.keyboard.press('ControlOrMeta+a');
         await page.keyboard.type('Dr. Maria Dental Clinic');
         await page.keyboard.press('Enter');
 

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslations } from '@/lib/i18n';
-import { useSignIn } from '@clerk/nextjs';
+import { useSignIn } from '@clerk/nextjs/legacy';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Eye, EyeOff, Loader2, ShieldCheck } from 'lucide-react';

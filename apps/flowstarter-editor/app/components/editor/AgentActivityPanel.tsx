@@ -9,24 +9,9 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
+import type { AgentActivityEvent } from '~/lib/services/claude-agent/types';
 
-export type AgentActivityEvent =
-  // Agent (Claude) events
-  | { type: 'thinking'; text: string; duration_s?: number }
-  | { type: 'tool_call'; name: string; input: Record<string, unknown> }
-  | { type: 'tool_result'; name: string; duration_s: number }
-  | { type: 'file_write'; path: string; lines?: number; duration_s?: number }
-  | { type: 'file_read'; path: string }
-  | { type: 'file_delete'; path: string }
-  | { type: 'command'; cmd: string }
-  | { type: 'command_output'; text: string; success?: boolean }
-  | { type: 'text'; content: string }
-  | { type: 'error'; message: string }
-  | { type: 'done'; duration_ms: number; turns: number; cost_usd: number; input_tokens: number; output_tokens: number }
-  // Daytona sandbox events
-  | { type: 'sandbox_status'; message: string }
-  | { type: 'sandbox_output'; line: string; stream: 'stdout' | 'stderr' }
-  | { type: 'sandbox_exit'; code: number; cmd: string }
+export type { AgentActivityEvent };
 
 interface AgentActivityPanelProps {
   events: AgentActivityEvent[];

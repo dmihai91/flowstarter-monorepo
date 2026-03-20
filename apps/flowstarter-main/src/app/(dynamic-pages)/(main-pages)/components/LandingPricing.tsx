@@ -117,19 +117,14 @@ export function LandingPricing() {
                         {plan.cta}
                       </button>
                     ) : (
-                      <button
-                        type="button"
-                        onClick={() => setModalPlan(plan.name.toLowerCase())}
-                        className="mt-auto block w-full"
-                      >
-                        <Button
+                      <Button
                           variant={isHighlighted ? 'brand-gradient' : plan.ctaVariant === 'outline' ? 'outline' : 'secondary'}
                           size="lg"
-                          className={`w-full rounded-xl ${isHighlighted ? 'shadow-[0_14px_40px_rgba(124,58,237,0.28)]' : ''}`}
+                          onClick={() => setModalPlan(plan.name.toLowerCase())}
+                          className={`mt-auto w-full rounded-xl ${isHighlighted ? 'shadow-[0_14px_40px_rgba(124,58,237,0.28)]' : ''}`}
                         >
                           {plan.cta}
                         </Button>
-                      </button>
                     )}
                   </div>
                 );

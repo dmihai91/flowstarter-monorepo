@@ -1,8 +1,7 @@
 'use client';
 
 import { motion, useInView } from 'framer-motion';
-import { useRef, useState } from 'react';
-import { PreQualModal } from './PreQualModal';
+import { useRef } from 'react';
 
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { EXTERNAL_URLS } from '@/lib/constants';
@@ -13,7 +12,6 @@ import { LANDING_COPY, type PricingPlan, type PricingSectionCopy } from '../land
  * Landing page pricing section with plans and comparison.
  */
 export function LandingPricing() {
-  const [modalPlan, setModalPlan] = useState<string | null>(null);
   const { ref: sectionRef, isVisible } = useScrollAnimation();
   const pricing = LANDING_COPY.pricing;
 
@@ -118,14 +116,20 @@ export function LandingPricing() {
                         {plan.cta}
                       </button>
                     ) : (
-                      <Button
-                          variant={isHighlighted ? 'brand-gradient' : plan.ctaVariant === 'outline' ? 'outline' : 'secondary'}
-                          size="lg"
-                          onClick={() => setModalPlan(plan.name.toLowerCase())}
-                          className={`mt-auto w-full rounded-xl ${isHighlighted ? 'shadow-[0_14px_40px_rgba(124,58,237,0.28)]' : ''}`}
+                      <a
+                          href={`${EXTERNAL_URLS.calendly.discovery}?utm_content=${plan.name.toLowerCase()}-plan&utm_source=pricing-section&utm_medium=cta`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-auto block w-full"
                         >
-                          {plan.cta}
-                        </Button>
+                          <Button
+                            variant={isHighlighted ? 'brand-gradient' : plan.ctaVariant === 'outline' ? 'outline' : 'secondary'}
+                            size="lg"
+                            className={`w-full rounded-xl ${isHighlighted ? 'shadow-[0_14px_40px_rgba(124,58,237,0.28)]' : ''}`}
+                          >
+                            {plan.cta}
+                          </Button>
+                        </a>
                     )}
                   </div>
                 );
@@ -144,11 +148,6 @@ export function LandingPricing() {
         </section>
 
 
-    <PreQualModal
-      open={modalPlan !== null}
-      onClose={() => setModalPlan(null)}
-      source={`pricing-\${modalPlan ?? 'unknown'}`}
-    />
     </div>
   );
 }

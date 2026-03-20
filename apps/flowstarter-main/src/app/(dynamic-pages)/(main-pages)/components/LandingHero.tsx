@@ -86,7 +86,7 @@ export function LandingHero() {
 
         {/* Audience qualifier */}
         <p
-          className="text-sm sm:text-base text-gray-400 dark:text-white/40 mb-7 max-w-xl mx-auto"
+          className="text-base sm:text-lg text-gray-500 dark:text-white/60 mb-7 max-w-xl mx-auto font-medium"
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.50s' }}
         >
           {hero.trustLine}

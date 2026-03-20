@@ -1,6 +1,3 @@
-@import '@flowstarter/flow-design-system/styles';
-
-@use 'variables.scss';
 @use 'variables.scss';
 @use 'z-index.scss';
 @use 'animations.scss';
@@ -14,6 +11,8 @@
 @use '../../app/components/chat/BaseChat.module.scss';
 @use '../../app/components/chat/CodeBlock.module.scss';
 @use '../../app/components/chat/Markdown.module.scss';
+
+@import '@flowstarter/flow-design-system/styles';
 
 html,
 body {

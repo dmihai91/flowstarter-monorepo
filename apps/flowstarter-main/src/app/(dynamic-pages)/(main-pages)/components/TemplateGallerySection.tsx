@@ -146,7 +146,7 @@ export function TemplateGallerySection() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl border border-[var(--purple-primary)]/30 bg-[var(--purple-primary)]/5 text-[var(--purple-primary)] font-semibold text-sm hover:bg-[var(--purple-primary)]/10 hover:border-[var(--purple-primary)]/50 transition-all duration-200 group"
             >
-              Browse all 12 templates
+              Browse the library
               <svg className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>

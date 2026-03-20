@@ -30,7 +30,7 @@ export function Footer({ darkMode = false }: FooterProps): React.ReactElement {
               </span>
             </a>
             <p className={'text-base sm:text-sm max-w-xs leading-relaxed ' + muted}>
-              Production-ready website templates for web designers and agencies.
+              The same templates we show our clients — browse, preview, and launch.
             </p>
           </div>
 

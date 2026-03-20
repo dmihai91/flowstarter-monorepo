@@ -2,6 +2,7 @@
 
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
+import { PreQualModal } from './PreQualModal';
 
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { EXTERNAL_URLS } from '@/lib/constants';

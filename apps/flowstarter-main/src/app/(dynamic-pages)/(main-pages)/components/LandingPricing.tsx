@@ -143,6 +143,11 @@ export function LandingPricing() {
         </section>
 
 
+    <PreQualModal
+      open={modalPlan !== null}
+      onClose={() => setModalPlan(null)}
+      source={`pricing-\${modalPlan ?? 'unknown'}`}
+    />
     </div>
   );
 }

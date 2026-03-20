@@ -118,6 +118,7 @@ function MobileDrawer({
       >
         <div className={'flex items-center justify-between px-4 py-4 border-b ' + (darkMode ? 'border-[#ffffff0a]' : 'border-neutral-200')}>
           <Logo size="sm" />
+          <span className="text-[11px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-[var(--purple-primary)]/10 text-[var(--purple-primary)] border border-[var(--purple-primary)]/20">Library</span>
           <button onClick={onClose} className={'flex h-8 w-8 items-center justify-center rounded-full transition-colors ' + (darkMode ? 'text-neutral-400 hover:bg-white/8' : 'text-neutral-500 hover:bg-neutral-100')}>
             <XIcon />
           </button>
@@ -173,7 +174,7 @@ function MobileDrawer({
         </div>
 
         <div className={'px-4 py-4 border-t ' + (darkMode ? 'border-[#ffffff0a]' : 'border-neutral-200')}>
-          <a href="https://flowstarter.dev" className="flex items-center justify-center gap-2 w-full rounded-xl bg-purple-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-purple-700 no-underline">
+          <a href="https://flowstarter.dev/contact" className="flex items-center justify-center gap-2 w-full rounded-xl bg-purple-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-purple-700 no-underline">
             Get Early Access
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
@@ -242,8 +243,9 @@ export function Header({
 
           {/* ── Desktop row (hidden on mobile) ── */}
           <div className="hidden sm:flex h-16 items-center gap-3">
-            <a href="/" className="flex shrink-0 items-center no-underline">
+            <a href="/" className="flex shrink-0 items-center gap-2.5 no-underline group">
               <Logo size="md" />
+              <span className="text-[11px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-[var(--purple-primary)]/10 text-[var(--purple-primary)] border border-[var(--purple-primary)]/20 group-hover:bg-[var(--purple-primary)]/20 transition-colors">Library</span>
             </a>
 
             <div className="flex flex-1 max-w-md">
@@ -264,7 +266,7 @@ export function Header({
             <div className="ml-auto flex items-center gap-3">
               <ThemeToggle themeMode={themeMode} setThemeMode={setThemeMode} darkMode={darkMode} />
               <a
-                href="https://flowstarter.dev"
+                href="https://flowstarter.dev/contact"
                 className="flex items-center gap-2 rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-purple-500/25 transition-colors hover:bg-purple-700 no-underline"
               >
                 Get Early Access

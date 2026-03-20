@@ -46,7 +46,7 @@ export function Footer({ darkMode = false }: FooterProps): React.ReactElement {
             <div className="flex flex-col gap-3">
               <p className={'text-xs font-semibold uppercase tracking-widest mb-1 ' + muted}>Platform</p>
               <a href="https://flowstarter.dev" target="_blank" rel="noopener noreferrer" className={link}>
-                FlowStarter App <ArrowIcon />
+                Flowstarter App <ArrowIcon />
               </a>
               <a href="https://flowstarter.dev/dashboard" target="_blank" rel="noopener noreferrer" className={link}>
                 Dashboard <ArrowIcon />
@@ -61,11 +61,11 @@ export function Footer({ darkMode = false }: FooterProps): React.ReactElement {
         {/* Bottom row */}
         <div className={'mt-8 pt-5 border-t flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between ' + divider}>
           <p className={'text-sm sm:text-xs ' + muted}>
-            &copy; {new Date().getFullYear()} FlowStarter. Professional templates for operators.
+            &copy; {new Date().getFullYear()} Flowstarter. Professional templates for operators.
           </p>
           <a href="https://flowstarter.dev" target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-1.5 text-sm sm:text-xs font-medium text-purple-500 hover:text-purple-400 transition-colors no-underline">
-            Build sites with FlowStarter <ArrowIcon />
+            Build sites with Flowstarter <ArrowIcon />
           </a>
         </div>
       </div>

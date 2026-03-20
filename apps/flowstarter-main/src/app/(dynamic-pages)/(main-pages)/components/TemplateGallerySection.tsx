@@ -12,9 +12,61 @@ const TEMPLATES = [
   { slug: 'creative-portfolio', name: 'Creative Portfolio', category: 'Portfolio',           accent: '#7C3AED' },
 ];
 
+type Template = typeof TEMPLATES[0];
+
+function Card({
+  t, i, featured, isInView,
+}: {
+  t: Template; i: number; featured: boolean; isInView: boolean;
+}) {
+  return (
+    <motion.a
+      href="https://library.flowstarter.dev"
+      target="_blank"
+      rel="noopener noreferrer"
+      initial={{ opacity: 0, y: 28, scale: 0.97 }}
+      animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 28, scale: 0.97 }}
+      transition={{ duration: 0.55, delay: 0.06 + i * 0.09, ease: [0.25, 0.46, 0.45, 0.94] }}
+      whileHover={{ y: -5, transition: { duration: 0.2, ease: 'easeOut' } }}
+      className={[
+        'group relative block w-full rounded-2xl overflow-hidden',
+        'border border-gray-200/60 dark:border-white/[0.08]',
+        'shadow-[0_2px_16px_rgba(15,23,42,0.07)] dark:shadow-none',
+        'hover:shadow-[0_20px_52px_rgba(77,93,217,0.20)] dark:hover:shadow-[0_20px_52px_rgba(77,93,217,0.28)]',
+        'hover:border-[var(--purple-primary)]/50 dark:hover:border-[var(--purple-primary)]/40',
+        'transition-all duration-300',
+        featured ? 'aspect-[16/9]' : 'aspect-[4/3]',
+      ].join(' ')}
+    >
+      <img
+        src={`/thumbs/${t.slug}.png`}
+        alt={t.name}
+        className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+        loading="lazy"
+      />
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent pt-10 pb-3 px-4 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-white/55 mb-0.5">{t.category}</p>
+        <div className="flex items-center justify-between gap-2">
+          <p className={`font-bold text-white leading-tight ${featured ? 'text-base sm:text-lg' : 'text-sm sm:text-base'}`}>
+            {t.name}
+          </p>
+          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-white/75 text-xs font-medium flex items-center gap-1 shrink-0">
+            Preview
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </span>
+        </div>
+      </div>
+      <div className="absolute top-3 right-3 w-2.5 h-2.5 rounded-full ring-2 ring-white/40 shadow-sm" style={{ backgroundColor: t.accent }} />
+    </motion.a>
+  );
+}
+
 export function TemplateGallerySection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
+  const T = TEMPLATES;
 
   return (
     <motion.div
@@ -26,7 +78,6 @@ export function TemplateGallerySection() {
       <section className="py-20 sm:py-28 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
 
-          {/* Header */}
           <div className="text-center mb-14">
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase bg-[var(--purple-primary)]/10 text-[var(--purple-primary)] border border-[var(--purple-primary)]/20 mb-5">
               Template Gallery
@@ -39,61 +90,53 @@ export function TemplateGallerySection() {
             </p>
           </div>
 
-          {/* Grid — first card spans 2 cols on mobile as visual anchor */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
-            {TEMPLATES.map((template, i) => (
-              <motion.a
-                key={template.slug}
-                href="https://library.flowstarter.dev"
-                target="_blank"
-                rel="noopener noreferrer"
-                initial={{ opacity: 0, y: 24, scale: 0.97 }}
-                animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 24, scale: 0.97 }}
-                transition={{ duration: 0.55, delay: 0.08 + i * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}
-                whileHover={{ y: -6, transition: { duration: 0.22, ease: 'easeOut' } }}
-                className={[
-                  'group relative rounded-2xl overflow-hidden',
-                  'bg-gray-100 dark:bg-white/[0.04]',
-                  'border border-gray-200/60 dark:border-white/[0.08]',
-                  'shadow-[0_2px_12px_rgba(15,23,42,0.06)] dark:shadow-none',
-                  'hover:shadow-[0_20px_48px_rgba(77,93,217,0.18)] dark:hover:shadow-[0_20px_48px_rgba(77,93,217,0.25)]',
-                  'hover:border-[var(--purple-primary)]/50 dark:hover:border-[var(--purple-primary)]/40',
-                  'transition-all duration-300',
-                  i === 0 ? 'col-span-2 md:col-span-1 aspect-[16/9] md:aspect-[4/3]' : 'aspect-[4/3]',
-                ].join(' ')}
-              >
-                {/* Screenshot */}
-                <img
-                  src={`/thumbs/${template.slug}.png`}
-                  alt={template.name}
-                  className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.06]"
-                  loading="lazy"
-                />
+          {/*
+            Mobile layout (editorial):
+              [0] full-width featured  (16:9)
+              [1][2] pair              (4:3)
+              [3] full-width featured  (16:9)
+              [4][5] pair              (4:3)
 
-                {/* Bottom label — always visible, lifts on hover */}
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent pt-10 pb-3 px-4 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
-                  <p className="text-[11px] font-semibold uppercase tracking-widest text-white/55 mb-0.5">{template.category}</p>
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="text-sm sm:text-base font-bold text-white leading-tight">{template.name}</p>
-                    <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-white/75 text-xs font-medium flex items-center gap-1 shrink-0">
-                      Preview
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </span>
-                  </div>
-                </div>
+            Desktop layout (3-col):
+              [0 spans 2] [1]
+              [2] [3] [4]
+              [5 spans 2] (centered or left)
+          */}
 
-                {/* Accent dot */}
-                <div
-                  className="absolute top-3 right-3 w-2.5 h-2.5 rounded-full ring-2 ring-white/40 shadow-sm"
-                  style={{ backgroundColor: template.accent }}
-                />
-              </motion.a>
-            ))}
+          {/* ── MOBILE layout (hidden on md+) ─────────────────────────── */}
+          <div className="flex flex-col gap-4 md:hidden">
+            <Card t={T[0]} i={0} featured isInView={isInView} />
+            <div className="grid grid-cols-2 gap-4">
+              <Card t={T[1]} i={1} featured={false} isInView={isInView} />
+              <Card t={T[2]} i={2} featured={false} isInView={isInView} />
+            </div>
+            <Card t={T[3]} i={3} featured isInView={isInView} />
+            <div className="grid grid-cols-2 gap-4">
+              <Card t={T[4]} i={4} featured={false} isInView={isInView} />
+              <Card t={T[5]} i={5} featured={false} isInView={isInView} />
+            </div>
           </div>
 
-          {/* CTA */}
+          {/* ── DESKTOP layout (hidden below md) ──────────────────────── */}
+          <div className="hidden md:flex flex-col gap-5">
+            {/* Row 1: [0 wide] [1] */}
+            <div className="grid grid-cols-3 gap-5">
+              <div className="col-span-2"><Card t={T[0]} i={0} featured isInView={isInView} /></div>
+              <Card t={T[1]} i={1} featured={false} isInView={isInView} />
+            </div>
+            {/* Row 2: [2] [3] [4] */}
+            <div className="grid grid-cols-3 gap-5">
+              <Card t={T[2]} i={2} featured={false} isInView={isInView} />
+              <Card t={T[3]} i={3} featured={false} isInView={isInView} />
+              <Card t={T[4]} i={4} featured={false} isInView={isInView} />
+            </div>
+            {/* Row 3: [5 wide] */}
+            <div className="grid grid-cols-3 gap-5">
+              <div className="col-span-2"><Card t={T[5]} i={5} featured isInView={isInView} /></div>
+              <div /> {/* spacer */}
+            </div>
+          </div>
+
           <div className="text-center mt-12">
             <a
               href="https://library.flowstarter.dev"

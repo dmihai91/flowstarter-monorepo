@@ -123,12 +123,10 @@ export async function action(args: ActionFunctionArgs) {
         description: businessDescription,
         status: 'draft',
         template_id: templateSlug,
-        data: JSON.stringify({
-          ...seededData,
-          template_slug: templateSlug,
-          palette_id: paletteId,
-          font_pairing_id: fontPairingId,
-        }),
+        template_slug: templateSlug,
+        palette_id: paletteId,
+        font_pairing_id: fontPairingId,
+        data: JSON.stringify(seededData),
       })
       .select('id')
       .single();

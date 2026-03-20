@@ -13,9 +13,10 @@ export default function Footer(props: FooterProps) {
     { label: t('footer.nav.privacy'), href: '/privacy' },
     { label: t('footer.nav.terms'), href: '/terms' },
     { label: t('footer.nav.contact'), href: '/contact' },
-    { label: t('footer.nav.teamDashboard'), href: '/team/dashboard' },
-    { label: t('footer.nav.editor'), href: 'https://editor.flowstarter.dev', external: true },
-    { label: 'Template Library', href: 'https://library.flowstarter.dev', external: true },
+    // TODO(Dorin): hidden before launch — internal tooling links not for public marketing site
+    // { label: t('footer.nav.teamDashboard'), href: '/team/dashboard' },
+    // { label: t('footer.nav.editor'), href: 'https://editor.flowstarter.dev', external: true },
+    // { label: 'Template Library', href: 'https://library.flowstarter.dev', external: true },
   ];
 
   return (

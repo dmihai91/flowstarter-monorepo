@@ -81,7 +81,8 @@ export function LandingHero() {
           className="text-xl sm:text-2xl text-gray-600 dark:text-white/55 leading-relaxed mb-4 max-w-2xl mx-auto"
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.38s' }}
         >
-          {hero.subheadline}
+          <span className="font-semibold text-gray-900 dark:text-white block mb-1">{hero.subheadlineBold}</span>
+          <span>{hero.subheadline}</span>
         </p>
 
         {/* Audience qualifier */}

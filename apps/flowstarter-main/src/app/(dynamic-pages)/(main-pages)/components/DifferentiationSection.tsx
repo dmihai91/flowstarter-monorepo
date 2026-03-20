@@ -22,6 +22,16 @@ export function DifferentiationSection() {
             </h3>
             <p className={`mt-2 text-sm leading-relaxed ${card.highlighted ? 'text-white/80' : 'text-gray-500 dark:text-gray-400'}`}>
               {card.description}
+              {card.bullets && (
+                <ul className="mt-3 space-y-1.5 text-left">
+                  {card.bullets.map((b: string) => (
+                    <li key={b} className="flex items-start gap-2 text-sm">
+                      <span className="mt-0.5 text-[var(--purple-primary)] shrink-0">✓</span>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </p>
           </div>
         ))}

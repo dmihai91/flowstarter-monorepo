@@ -29,6 +29,11 @@ export function LandingPricing() {
               </h2>
               <p className="mt-3 text-base text-gray-500 dark:text-white/50">
                 {pricing.subtitle}
+        {pricing.socialProof && (
+          <p className="mt-3 text-sm font-medium text-[var(--purple-primary)]">
+            ● {pricing.socialProof}
+          </p>
+        )}
               </p>
             </div>
 

@@ -49,6 +49,7 @@ export function PricingCard({ name, price, monthly, label, features, cta, recomm
         ))}
       </ul>
 
+      {/* TODO(Dorin): Starter CTA needs same visual weight as Growth — currently 'secondary' style. Upgrade to 'primary' or a distinct high-emphasis variant once design is confirmed. */}
       <CTAButton variant={recommended ? 'primary' : 'secondary'} size="md" className="w-full">
         {cta}
       </CTAButton>

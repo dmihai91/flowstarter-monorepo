@@ -3,6 +3,7 @@
 export interface HeroCopy {
   headlinePrefix: string;
   headlineHighlight: string;
+  subheadlineBold: string;
   subheadline: string;
   primaryCta: string;
   secondaryCta: string;
@@ -13,6 +14,7 @@ export interface HeroCopy {
 export interface PricingSectionCopy {
   title: string;
   subtitle: string;
+  socialProof?: string;
   plans: PricingPlan[];
   note: string;
   guarantee: string;
@@ -33,6 +35,7 @@ export interface PricingPlan {
 export interface DifferentiationCard {
   label: string;
   description: string;
+  bullets?: string[];
   highlighted?: boolean;
 }
 
@@ -43,8 +46,9 @@ export const LANDING_COPY = {
   hero: {
     headlinePrefix: 'Launch your online business',
     headlineHighlight: 'without technical skills or expensive setup',
+    subheadlineBold: 'Your website, live in days. Not months.',
     subheadline:
-      'We build your initial setup for you, then you manage and grow everything from Flowstarter with our editor.',
+      'We handle the build from scratch. You run it yourself from day one.',
     primaryCta: 'Book free strategy call',
     secondaryCta: 'See pricing',
     trustLine:
@@ -52,7 +56,7 @@ export const LANDING_COPY = {
     guarantee: '50% setup fee refundable within 30 days. Includes a 30-day subscription trial — no risk.',
   },
   process: {
-    title: 'A done-for-you launch system with full control after',
+    title: 'We do the hard part. You stay in control permanently.',
     steps: [
       {
         number: '01',
@@ -80,14 +84,17 @@ export const LANDING_COPY = {
       {
         icon: 'clock',
         title: 'Building a website from scratch takes too much time',
+        body: 'Every hour spent on design, copy, and setup is an hour not spent on clients, sales, or the actual work that pays.',
       },
       {
         icon: 'wallet',
         title: 'Getting online takes too long and costs too much',
+        body: 'Agencies charge thousands and take months. DIY builders look simple until you hit the first technical wall.',
       },
       {
         icon: 'puzzle',
         title: 'Most website builders still leave you alone with the hard parts',
+        body: 'They give you a blank canvas and call it a product. You still have to figure out structure, copy, tools, and how it all fits together.',
       },
     ],
     closing:
@@ -127,32 +134,39 @@ export const LANDING_COPY = {
       {
         icon: 'globe',
         title: 'Landing page ready to launch',
+        description: 'A complete, designed page for your offer — built and live before you touch anything.',
       },
       {
         icon: 'layers',
         title: 'Business structure for your offer or services',
+        description: 'Your services, pricing, and positioning laid out clearly so visitors understand and convert.',
       },
       {
         icon: 'calendar',
         title: 'Online booking & contact form',
+        description: 'Clients can book a call or reach you directly without you managing a single email thread.',
       },
       {
         icon: 'creditCard',
         title: 'Payment & email tools on higher plans',
+        description: 'Accept payments and grow an email list as your business scales to Growth and Pro.',
       },
       {
         icon: 'sparkles',
-        title: 'Edit anything with AI — no tech skills',
+        title: 'Edit anything with AI, no tech skills',
+        description: 'Type what you want changed in plain English. The AI handles copy, layout tweaks, and updates.',
       },
       {
         icon: 'layout',
         title: 'One dashboard to manage it all',
+        description: 'Your site, bookings, leads, and settings in one place. No juggling tabs or third-party logins.',
       },
     ],
   },
   pricing: {
     title: 'Simple, transparent pricing',
     subtitle: 'One setup fee. One monthly subscription. Full control.',
+    socialProof: 'Only 10 founding clients accepted per month. Beta is open now.',
     note:
       'No tech skills needed. No expensive agency contracts. Full control after launch.',
     plans: [
@@ -169,7 +183,7 @@ export const LANDING_COPY = {
           'Edit your site with AI',
           'Your own business dashboard',
         ],
-        cta: 'Launch with Starter',
+        cta: 'Claim your Starter spot',
         status: 'available',
       },
       {
@@ -223,6 +237,13 @@ export const LANDING_COPY = {
         label: 'Flowstarter',
         description:
           'Launches your foundation for you and gives you control to manage and grow it.',
+        bullets: [
+          'Done-for-you setup, live in days',
+          'Your own AI editor, no tech skills needed',
+          'Landing page, booking, and structure included',
+          'One dashboard to manage everything after launch',
+          'Real humans behind it, not just a tool',
+        ],
         highlighted: true,
       },
     ],

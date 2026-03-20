@@ -18,6 +18,7 @@ export function ProblemSection() {
               <LandingIcon name={pain.icon as IconName} className="h-6 w-6" />
             </div>
             <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">{pain.title}</h3>
+            {pain.body && <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{pain.body}</p>}
           </div>
         ))}
       </div>

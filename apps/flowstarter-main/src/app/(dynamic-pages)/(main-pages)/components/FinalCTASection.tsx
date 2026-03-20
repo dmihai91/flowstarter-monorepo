@@ -7,7 +7,11 @@ import { EXTERNAL_URLS } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import { LANDING_COPY } from '../landing-copy';
 
+import { useState } from 'react';
+import { PreQualModal } from './PreQualModal';
+
 export function FinalCTASection() {
+  const [finalModalOpen, setFinalModalOpen] = useState(false);
   const finalCta = LANDING_COPY.finalCta;
 
   return (
@@ -45,7 +49,7 @@ export function FinalCTASection() {
             <p className="text-base text-white/50 mb-6 sm:mb-10 max-w-md mx-auto">
               {finalCta.body}
             </p>
-            <a href={EXTERNAL_URLS.calendly.discovery} target="_blank" rel="noopener noreferrer" className="inline-flex justify-center w-full sm:w-auto">
+            <a href="#" onClick={(e) => { e.preventDefault(); setFinalModalOpen(true); }} className="inline-flex justify-center w-full sm:w-auto">
               <Button className="relative overflow-hidden w-full sm:w-auto rounded-lg px-8 h-12 text-base sm:px-12 sm:h-16 sm:text-lg font-semibold transition-all duration-300 hover:scale-105 bg-white text-gray-900 hover:bg-gray-50 shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:shadow-[0_0_50px_rgba(255,255,255,0.25)] border-0" variant="secondary">
                 {finalCta.cta}
                 <svg
@@ -65,6 +69,7 @@ export function FinalCTASection() {
             </a>
           </div>
         </section>
+      <PreQualModal open={finalModalOpen} onClose={() => setFinalModalOpen(false)} source="final-cta" />
     </>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { EXTERNAL_URLS } from '@/lib/constants';
@@ -12,6 +12,7 @@ import { LANDING_COPY, type PricingPlan, type PricingSectionCopy } from '../land
  * Landing page pricing section with plans and comparison.
  */
 export function LandingPricing() {
+  const [modalPlan, setModalPlan] = useState<string | null>(null);
   const { ref: sectionRef, isVisible } = useScrollAnimation();
   const pricing = LANDING_COPY.pricing;
 
@@ -116,11 +117,10 @@ export function LandingPricing() {
                         {plan.cta}
                       </button>
                     ) : (
-                      <a
-                        href={`${EXTERNAL_URLS.calendly.discovery}?utm_content=${plan.name.toLowerCase()}-plan&utm_source=pricing-page&utm_medium=cta`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-auto block"
+                      <button
+                        type="button"
+                        onClick={() => setModalPlan(plan.name.toLowerCase())}
+                        className="mt-auto block w-full"
                       >
                         <Button
                           variant={isHighlighted ? 'brand-gradient' : plan.ctaVariant === 'outline' ? 'outline' : 'secondary'}
@@ -129,7 +129,7 @@ export function LandingPricing() {
                         >
                           {plan.cta}
                         </Button>
-                      </a>
+                      </button>
                     )}
                   </div>
                 );

@@ -20,8 +20,8 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
     { label: `${templateCount} Templates`, icon: <ZapIcon size={14} /> },
     { label: '6 Palettes each',            icon: <PaletteIcon size={14} /> },
     { label: '4 Font Pairings',            icon: <TypeIcon size={14} /> },
-    { label: 'Analytics Ready',            icon: <ChartIcon size={14} /> },
-    { label: 'Leads Capture',              icon: <TargetIcon size={14} /> },
+    { label: 'Built-in Analytics',            icon: <ChartIcon size={14} /> },
+    { label: 'Lead Forms Included',              icon: <TargetIcon size={14} /> },
   ];
 
   return (
@@ -39,7 +39,7 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
           <h1 className="mb-6 font-display text-5xl font-extrabold leading-[1.08] tracking-tight text-neutral-900 dark:text-white sm:text-6xl lg:text-7xl">
             {templateCount} Templates.{' '}
             <span className="inline">
-              {'Endless possibilities.'.split(' ').map((word, i) => (
+              {'Curated, not random.'.split(' ').map((word, i) => (
                 <span
                   key={i}
                   className="inline-block animate-word-reveal"
@@ -52,7 +52,7 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
           </h1>
 
           <p className="mx-auto mb-10 max-w-xl text-xl sm:text-2xl leading-relaxed text-neutral-600 dark:text-neutral-400 hero-fade hero-fade-3">
-            Browse the same templates we show our clients. Every template ships with 6 colour palettes, 4 font pairings, and is ready to launch — your client picks the look, we handle the rest.
+            Every template is built for a specific type of expert business. Each one ships with 6 colour palettes and 4 font pairings, giving your client a real choice without decision fatigue. Pick one. We handle the rest.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 hero-fade hero-fade-4">

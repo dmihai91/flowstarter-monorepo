@@ -122,10 +122,12 @@ export async function action({ request }: ActionFunctionArgs) {
         description: businessDescription,
         status: 'draft',
         template_id: templateSlug,
-        template_slug: templateSlug,
-        palette_id: paletteId,
-        font_pairing_id: fontPairingId,
-        data: JSON.stringify(seededData),
+        data: JSON.stringify({
+          ...seededData,
+          template_slug: templateSlug,
+          palette_id: paletteId,
+          font_pairing_id: fontPairingId,
+        }),
       })
       .select('id')
       .single();

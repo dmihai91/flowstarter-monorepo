@@ -58,6 +58,7 @@ export default {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
+  allowedDevOrigins: ['flowstarter.dev', 'editor.flowstarter.dev', 'library.flowstarter.dev'],
   turbopack: {
     resolveExtensions: ['.tsx', '.ts', '.jsx', '.js'],
   },

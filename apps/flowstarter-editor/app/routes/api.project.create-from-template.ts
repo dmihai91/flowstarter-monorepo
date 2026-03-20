@@ -25,12 +25,13 @@ function getRequiredEnv(name: string): string {
   return value;
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action(args: ActionFunctionArgs) {
+  const { request } = args;
   if (request.method !== 'POST') {
     return json({ error: 'Method not allowed' }, { status: 405 });
   }
 
-  const { userId } = await getAuth({ request } as any);
+  const { userId } = await getAuth(args);
   if (!userId) {
     return json({ error: 'Unauthorized' }, { status: 401 });
   }

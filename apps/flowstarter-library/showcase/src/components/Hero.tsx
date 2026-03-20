@@ -52,7 +52,7 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
           </h1>
 
           <p className="mx-auto mb-10 max-w-xl text-xl sm:text-2xl leading-relaxed text-neutral-600 dark:text-neutral-400 hero-fade hero-fade-3">
-            We built these for coaches, consultants, and service professionals who need to look credible on day one. Each template ships with 6 colour palettes and 4 font pairings, production-ready and designed to be handed off, not hacked together. Built on Astro — fast by default, easy to extend.
+            We built these for coaches, consultants, and service professionals who need to look credible on day one. Each template ships with 6 colour palettes and 4 font pairings, production-ready and designed to be handed off, not hacked together. Built on Astro: fast by default, easy to extend.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 hero-fade hero-fade-4">

@@ -55,7 +55,7 @@ export const LANDING_COPY = {
     secondaryCta: 'See pricing',
     trustLine:
       'Built for creators, freelancers and small businesses who want to get online and monetize faster.',
-    guarantee: '50% setup fee refundable within 30 days. Includes a 30-day subscription trial — no risk.',
+    guarantee: '50% setup fee refundable within 30 days. Includes a 30-day subscription trial with no risk.',
   },
   process: {
     title: 'We do the hard part. You stay in control permanently.',
@@ -136,7 +136,7 @@ export const LANDING_COPY = {
       {
         icon: 'globe',
         title: 'Landing page ready to launch',
-        description: 'A complete, designed page for your offer — built and live before you touch anything.',
+        description: 'A complete, designed page for your offer, built and live before you touch anything.',
       },
       {
         icon: 'layers',

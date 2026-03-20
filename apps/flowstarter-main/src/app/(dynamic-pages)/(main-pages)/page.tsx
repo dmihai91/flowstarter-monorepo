@@ -14,6 +14,7 @@ import { IncludedSection } from './components/IncludedSection';
 import { DifferentiationSection } from './components/DifferentiationSection';
 import { AudienceSection } from './components/AudienceSection';
 import { LandingPricing } from './components/LandingPricing';
+import { TemplateGallerySection } from './components/TemplateGallerySection';
 import { ManifestoSection } from './components/ManifestoSection';
 import { TeamSection } from './components/TeamSection';
 import { FAQSection } from './components/FAQSection';
@@ -74,6 +75,7 @@ export default function LandingPage() {
 
         {/* 2. Editor demo showcase */}
         <EditorShowcase />
+        <TemplateGallerySection />
 
         {/* 3. How it works — 3 steps */}
         <ProcessSection />

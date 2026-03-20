@@ -1336,7 +1336,7 @@ const en = {
   'landing.pillars.convert.body': 'Visitors see your work, understand your value, and book directly. No forms that go nowhere. All set up for you.',
 
   // Team Section
-  'landing.team.title': 'Built by people, not algorithms',
+  'landing.team.title': 'Built by people passionate about making the web better',
   'landing.team.subtitle': 'We started Flowstarter because we needed it ourselves.',
   'landing.team.darius.name': 'Darius',
   'landing.team.darius.role': 'Co-founder & Engineer',

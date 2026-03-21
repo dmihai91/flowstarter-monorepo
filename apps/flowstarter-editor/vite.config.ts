@@ -96,10 +96,6 @@ export default defineConfig((config) => {
         '@radix-ui/react-use-controllable-state',
       ],
       alias: {
-        // Force single React instance to prevent "useMemo null" Radix UI crashes
-        'react': path.resolve(__dirname, '../../node_modules/react'),
-        'react-dom': path.resolve(__dirname, '../../node_modules/react-dom'),
-        'scheduler': path.resolve(__dirname, '../../node_modules/scheduler'),
         // Fix undici trying to import util/types which doesn't exist in browser polyfill
         'util/types': path.resolve(__dirname, 'app/lib/utils/util-types-stub.ts'),
         'node:util/types': path.resolve(__dirname, 'app/lib/utils/util-types-stub.ts'),

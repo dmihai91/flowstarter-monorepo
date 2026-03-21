@@ -172,7 +172,6 @@ export function useWelcomeInit({
     const msg = messageHookRef.current;
     const state = initialStateRef.current;
 
-    console.log('[INIT_WELCOME] templateId:', state?.selectedTemplateId, 'palette:', !!state?.selectedPalette, 'font:', !!state?.selectedFont, 'desc:', !!(state?.businessInfo?.description || state?.projectDescription));
     if (hasPreseededTemplateBuild(state)) {
       if (state?.projectName) {
         flow.setProjectName(state.projectName);

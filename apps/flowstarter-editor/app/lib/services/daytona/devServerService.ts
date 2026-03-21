@@ -347,17 +347,22 @@ export async function runAstroCheck(
       });
     }
     
-    // Format 2: Astro check format - file on one line, error details below
-    // Look for file paths followed by error info
-    if (errors.length === 0) {
+    // Format 2: Parse the Astro check summary line "Result (N files): X errors, Y warnings, Z hints"
+    // Use this as ground truth — only treat ERRORS as failures, not warnings or hints
+    const summaryMatch = cleanOutput.match(/Result \(\d+ files?\):[^\n]*?(\d+)\s+error/);
+    const actualErrorCount = summaryMatch ? parseInt(summaryMatch[1], 10) : null;
+
+    if (errors.length === 0 && actualErrorCount === null) {
+      // No summary line found — fall back to file+error heuristic
+      // BUT: only trigger if the output explicitly contains "error" NOT just "warning" or "hint"
+      const hasActualError = /(?:error|Error)\s+[A-Z]{2}\d+/.test(cleanOutput) || // TS error codes
+                             /^\s*error:/im.test(cleanOutput);
       const filePattern = /(src\/[a-zA-Z0-9_.\-\/]+\.(?:astro|ts|tsx))/g;
       const files = new Set<string>();
       while ((match = filePattern.exec(cleanOutput)) !== null) {
         files.add(match[1]);
       }
-      
-      // If we found files and there are errors mentioned
-      if (files.size > 0 && cleanOutput.includes('error')) {
+      if (files.size > 0 && hasActualError) {
         for (const filePath of files) {
           errors.push({
             file: filePath,
@@ -368,18 +373,26 @@ export async function runAstroCheck(
         }
       }
     }
-    
-    // Format 3: General error fallback
-    if (errors.length === 0 && (cleanOutput.toLowerCase().includes('error') || cleanOutput.includes('Error'))) {
-      const generalError = cleanOutput.match(/(?:error|Error)[:\s]+(.+)/);
-      if (generalError) {
+
+    // Format 3: General error fallback — only if no summary and no other errors found
+    if (errors.length === 0 && actualErrorCount === null) {
+      // Check for actual compiler errors, not warnings/hints
+      const errorLine = cleanOutput.match(/^\s*(?:error|Error)[:\s]+(.+)/m);
+      const warnLine = cleanOutput.match(/warning|hint|\d+\s+hint/i);
+      if (errorLine && !warnLine) {
         errors.push({
           file: 'unknown',
           line: '0',
-          message: generalError[1].split('\n')[0].trim(),
+          message: errorLine[1].split('\n')[0].trim(),
           fullOutput: output.slice(0, 500),
         });
       }
+    }
+
+    // If summary says 0 errors, clear any false positives from pattern matching
+    if (actualErrorCount === 0 && errors.length > 0) {
+      log.info(` Astro check summary says 0 errors — ignoring ${errors.length} false positive(s)`);
+      errors.length = 0;
     }
     
     log.info(` Astro check found ${errors.length} errors`);

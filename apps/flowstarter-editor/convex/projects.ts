@@ -283,6 +283,39 @@ export const updateWorkspace = mutation({
   },
 });
 
+
+// Update workspace by Supabase project ID (used by build pipeline which only has the Supabase slug)
+export const updateWorkspaceBySupabaseId = mutation({
+  args: {
+    supabaseProjectId: v.string(),
+    daytonaWorkspaceId: v.optional(v.string()),
+    workspaceUrl: v.optional(v.string()),
+    workspaceStatus: v.optional(
+      v.union(
+        v.literal('creating'),
+        v.literal('ready'),
+        v.literal('building'),
+        v.literal('running'),
+        v.literal('error'),
+        v.literal('stopped'),
+      ),
+    ),
+  },
+  handler: async (ctx, args) => {
+    const { supabaseProjectId, ...updates } = args;
+    const project = await ctx.db
+      .query('projects')
+      .withIndex('by_supabaseProjectId', (q) => q.eq('supabaseProjectId', supabaseProjectId))
+      .first();
+    if (!project) {
+      console.warn('[updateWorkspaceBySupabaseId] No project found for supabaseProjectId:', supabaseProjectId);
+      return null;
+    }
+    await ctx.db.patch(project._id, { ...updates, updatedAt: Date.now() });
+    return project._id;
+  },
+});
+
 // Update contact details
 export const updateContactDetails = mutation({
   args: {

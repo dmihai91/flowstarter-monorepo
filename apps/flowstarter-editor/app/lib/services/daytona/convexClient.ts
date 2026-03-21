@@ -36,8 +36,9 @@ export async function persistPreviewUrl(
     const client = getConvexClient();
     if (!client) return false;
 
-    await client.mutation('projects:updateWorkspace' as any, {
-      projectId,
+    // Use the supabase-id variant so the Supabase slug is accepted directly
+    await client.mutation('projects:updateWorkspaceBySupabaseId' as any, {
+      supabaseProjectId: projectId,
       workspaceUrl,
       daytonaWorkspaceId: sandboxId,
       workspaceStatus: 'running',

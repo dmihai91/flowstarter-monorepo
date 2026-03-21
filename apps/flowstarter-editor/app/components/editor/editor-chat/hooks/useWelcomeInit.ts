@@ -168,6 +168,9 @@ export function useWelcomeInit({
   }, []); // Empty deps - uses refs
 
   const initializeWelcome = useCallback(async () => {
+    const state = initialStateRef.current;
+    console.log('[INIT_WELCOME] called, state keys:', Object.keys(state || {}).join(','));
+    console.log('[INIT_WELCOME] templateId:', state?.selectedTemplateId, 'palette:', !!state?.selectedPalette, 'font:', !!state?.selectedFont, 'desc:', !!(state?.businessInfo?.description || state?.projectDescription));
     const flow = flowHookRef.current;
     const msg = messageHookRef.current;
     const state = initialStateRef.current;

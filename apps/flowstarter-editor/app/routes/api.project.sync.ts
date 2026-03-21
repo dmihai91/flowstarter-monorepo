@@ -15,8 +15,9 @@ const MAIN_PLATFORM_URL = process.env.MAIN_PLATFORM_URL || (process.env.NODE_ENV
  * 
  * Body: { action: 'create' | 'update', projectData: {...} }
  */
-export async function action({ request }: ActionFunctionArgs) {
-  const { userId } = await getAuth({ request } as any);
+export async function action(args: ActionFunctionArgs) {
+  const { request } = args;
+  const { userId } = await getAuth(args);
   
   if (!userId) {
     return json({ error: 'Unauthorized' }, { status: 401 });

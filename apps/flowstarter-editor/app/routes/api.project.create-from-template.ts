@@ -8,6 +8,11 @@ interface CreateFromTemplateBody {
   template_slug?: string;
   template_name?: string;
   palette_id?: string;
+  palette_name?: string;
+  palette_colors?: Record<string, string>;
+  font_name?: string;
+  font_heading?: string;
+  font_body?: string;
   font_pairing_id?: string;
   project_name?: string;
   client_name?: string;
@@ -58,12 +63,37 @@ export async function action(args: ActionFunctionArgs) {
     );
   }
 
-  const palette = PREDEFINED_PALETTES.find((entry) => entry.id === paletteId);
+// Look up palette: check predefined list first, then accept inline colors from body
+  const predefinedPalette = PREDEFINED_PALETTES.find((entry) => entry.id === paletteId);
+  const palette = predefinedPalette ?? (body.palette_colors
+    ? {
+        id: paletteId!,
+        name: body.palette_name?.trim() || paletteId!,
+        colors: {
+          primary: body.palette_colors.primary || '#000',
+          secondary: body.palette_colors.secondary || '#fff',
+          accent: body.palette_colors.accent || body.palette_colors.primary || '#000',
+          background: body.palette_colors.background || '#fff',
+          text: body.palette_colors.text || '#000',
+        },
+      }
+    : null);
+
   if (!palette) {
     return json({ error: 'Invalid palette_id' }, { status: 400 });
   }
 
-  const fontPairing = PREDEFINED_FONT_PAIRINGS.find((entry) => entry.id === fontPairingId);
+  // Look up font: check predefined list first, then accept inline heading/body from body
+  const predefinedFont = PREDEFINED_FONT_PAIRINGS.find((entry) => entry.id === fontPairingId);
+  const fontPairing = predefinedFont ?? (body.font_heading
+    ? {
+        id: fontPairingId!,
+        name: body.font_name?.trim() || fontPairingId!,
+        heading: { family: body.font_heading, weight: 700 },
+        body: { family: body.font_body || body.font_heading, weight: 400 },
+      }
+    : null);
+
   if (!fontPairing) {
     return json({ error: 'Invalid font_pairing_id' }, { status: 400 });
   }

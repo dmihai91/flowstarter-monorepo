@@ -478,6 +478,7 @@ export function useEditorChatState({
 
     // Templates
     templates: templateHook.templates,
+    selectedTemplate: templateHook.selectedTemplate,
     templatesLoading: templateHook.templatesLoading,
     templatesError: templateHook.templatesError,
     refetchTemplates: templateHook.refetchTemplates,

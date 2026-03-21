@@ -74,6 +74,7 @@ export function EditorChatPanel({
     setSelectedPalette,
     messagesEndRef,
     templates,
+    selectedTemplate,
     templatesLoading,
     templatesError,
     refetchTemplates,
@@ -286,8 +287,8 @@ export function EditorChatPanel({
           </motion.div>
         )}
 
-        {/* Template Gallery (unified: recommendations + full catalog) */}
-        {step === 'template' && (
+        {/* Template Gallery — skipped when template pre-selected via Use Template flow */}
+        {step === 'template' && !initialState?.selectedTemplateId && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="ml-10">
             <TemplateGallery
               recommendations={recommendations}

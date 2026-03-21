@@ -87,13 +87,36 @@ export default defineConfig((config) => {
         'scheduler',
         '@remix-run/react',
         'remix-island',
+        // All Radix UI packages — prevents duplicate React instances during HMR
+        '@radix-ui/react-slot',
         '@radix-ui/react-direction',
         '@radix-ui/react-compose-refs',
         '@radix-ui/react-context',
         '@radix-ui/react-dialog',
+        '@radix-ui/react-slot',
+        '@radix-ui/react-dropdown-menu',
+        '@radix-ui/react-tooltip',
+        '@radix-ui/react-accordion',
         '@radix-ui/react-primitive',
+        '@radix-ui/react-portal',
+        '@radix-ui/react-presence',
+        '@radix-ui/react-context',
+        '@radix-ui/react-compose-refs',
+        '@radix-ui/react-dropdown-menu',
+        '@radix-ui/react-tooltip',
+        '@radix-ui/react-accordion',
+        '@radix-ui/react-primitive',
+        '@radix-ui/react-portal',
+        '@radix-ui/react-presence',
+        '@radix-ui/react-collection',
+        '@radix-ui/react-dismissable-layer',
+        '@radix-ui/react-focus-scope',
+        '@radix-ui/react-id',
         '@radix-ui/react-use-callback-ref',
         '@radix-ui/react-use-controllable-state',
+        '@radix-ui/react-use-escape-keydown',
+        '@radix-ui/react-use-layout-effect',
+        '@radix-ui/react-visually-hidden',
       ],
       alias: {
         // Fix undici trying to import util/types which doesn't exist in browser polyfill
@@ -126,6 +149,15 @@ export default defineConfig((config) => {
         // UI components
         'framer-motion',
         '@radix-ui/react-dialog',
+        '@radix-ui/react-slot',
+        '@radix-ui/react-dropdown-menu',
+        '@radix-ui/react-tooltip',
+        '@radix-ui/react-accordion',
+        '@radix-ui/react-primitive',
+        '@radix-ui/react-portal',
+        '@radix-ui/react-presence',
+        '@radix-ui/react-context',
+        '@radix-ui/react-compose-refs',
         'lucide-react',
         'react-markdown',
         'react-toastify',
@@ -163,6 +195,11 @@ export default defineConfig((config) => {
     server: {
       host: true, // Bind to all interfaces (0.0.0.0) for Tailscale access
       allowedHosts: ['.ts.net', 'editor.flowstarter.dev', 'flowstarter.dev', 'localhost'], // Allow Tailscale + dev domains
+      watch: {
+        // Ignore workspace dirs that git-reset touches — prevents spurious HMR during syncs
+        ignored: ['**/.git/**', '**/node_modules/**', '**/convex/_generated/**'],
+        usePolling: false,
+      },
       proxy: {
         // Note: /mcp-live is handled by mcpLiveProxyPlugin middleware for HTML transformation
         // Do NOT add a proxy here as it will conflict with the middleware

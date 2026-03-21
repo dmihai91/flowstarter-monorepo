@@ -172,6 +172,12 @@ export function useWelcomeInit({
     const msg = messageHookRef.current;
     const state = initialStateRef.current;
 
+    console.log('[DEBUG hasPreseededTemplateBuild]', {
+      selectedTemplateId: state?.selectedTemplateId,
+      hasPalette: !!state?.selectedPalette,
+      hasFont: !!state?.selectedFont,
+      description: state?.businessInfo?.description || state?.projectDescription,
+    });
     if (hasPreseededTemplateBuild(state)) {
       if (state?.projectName) {
         flow.setProjectName(state.projectName);

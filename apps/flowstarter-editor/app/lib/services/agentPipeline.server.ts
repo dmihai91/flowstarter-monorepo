@@ -19,8 +19,8 @@ export type { AgentActivityEvent };
 
 const logger = { error: (...args: unknown[]) => console.error('[AgentPipeline]', ...args) };
 const MODEL = 'claude-sonnet-4-6';
-const MAX_TURNS_GENERATE = 12;
-const MAX_BUDGET_GENERATE = 0.60; // Hard cap per build
+const MAX_TURNS_GENERATE = 25;
+const MAX_BUDGET_GENERATE = 1.20; // Hard cap per build
 const INTEGRATION_COMPONENT_BLOCKLIST = [
   'BookingWidget.astro', 'ContactForm.astro', 'Newsletter.astro',
   'PaymentWidget.astro', 'SocialFeed.astro',

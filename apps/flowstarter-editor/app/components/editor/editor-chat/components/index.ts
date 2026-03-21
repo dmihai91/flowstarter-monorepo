@@ -3,6 +3,7 @@ export { BusinessDetailsForm } from './BusinessDetailsForm';
 export { TemplateGallery } from './TemplateGallery';
 export { IntegrationModal } from './IntegrationModal';
 export { AgentActivityLog } from './AgentActivityLog';
+export { BuildActivityFeed } from './BuildActivityFeed';
 export type { ActivityEvent } from './AgentActivityLog';
 
 // === Kept components ===

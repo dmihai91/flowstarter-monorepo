@@ -30,6 +30,7 @@ import {
   CreatingIndicator,
   QuickProfileSelector,
   AgentActivityLog,
+  BuildActivityFeed,
 } from './components';
 import type { EditorChatPanelProps } from './types';
 import { AgentStatusMessage } from '~/components/editor/AgentStatusMessage';
@@ -358,8 +359,19 @@ export function EditorChatPanel({
           buildPhase={buildPhase}
         />
 
-        {/* Agent activity log (shown during build when events exist) */}
-        {(step === 'creating' || agentRunning) && activityEvents.length > 0 && (
+        {/* Build activity feed — shown during initial site build */}
+        {step === 'creating' && activityEvents.length > 0 && (
+          <BuildActivityFeed
+            events={activityEvents}
+            isDark={isDark}
+            buildPhase={buildPhase}
+            progress={buildProgress}
+            currentStep={buildStep || undefined}
+          />
+        )}
+
+        {/* Agent activity log — shown during post-build AI edits */}
+        {step !== 'creating' && agentRunning && activityEvents.length > 0 && (
           <AgentActivityLog
             events={activityEvents}
             isDark={isDark}

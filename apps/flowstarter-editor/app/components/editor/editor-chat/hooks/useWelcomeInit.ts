@@ -168,19 +168,11 @@ export function useWelcomeInit({
   }, []); // Empty deps - uses refs
 
   const initializeWelcome = useCallback(async () => {
-    const state = initialStateRef.current;
-    console.log('[INIT_WELCOME] called, state keys:', Object.keys(state || {}).join(','));
-    console.log('[INIT_WELCOME] templateId:', state?.selectedTemplateId, 'palette:', !!state?.selectedPalette, 'font:', !!state?.selectedFont, 'desc:', !!(state?.businessInfo?.description || state?.projectDescription));
     const flow = flowHookRef.current;
     const msg = messageHookRef.current;
     const state = initialStateRef.current;
 
-    console.log('[DEBUG hasPreseededTemplateBuild]', {
-      selectedTemplateId: state?.selectedTemplateId,
-      hasPalette: !!state?.selectedPalette,
-      hasFont: !!state?.selectedFont,
-      description: state?.businessInfo?.description || state?.projectDescription,
-    });
+    console.log('[INIT_WELCOME] templateId:', state?.selectedTemplateId, 'palette:', !!state?.selectedPalette, 'font:', !!state?.selectedFont, 'desc:', !!(state?.businessInfo?.description || state?.projectDescription));
     if (hasPreseededTemplateBuild(state)) {
       if (state?.projectName) {
         flow.setProjectName(state.projectName);

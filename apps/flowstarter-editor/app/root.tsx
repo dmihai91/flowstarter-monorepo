@@ -27,6 +27,40 @@ const reactToastifyStylesUrl = 'https://cdn.jsdelivr.net/npm/react-toastify@9/di
 const xtermStylesUrl = 'https://cdn.jsdelivr.net/npm/@xterm/xterm@5/css/xterm.min.css';
 
 import 'virtual:uno.css';
+import { Component, type ReactNode } from 'react';
+
+/**
+ * Root error boundary — catches transient null-dispatcher crashes that happen
+ * during Vite dep-optimization reloads (manifest version mismatch). Forces a
+ * clean page reload instead of rendering the broken error UI.
+ */
+class RootErrorBoundary extends Component<{ children: ReactNode }, { crashed: boolean }> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { crashed: false };
+  }
+  static getDerivedStateFromError() {
+    return { crashed: true };
+  }
+  componentDidCatch(error: Error) {
+    // If it's the transient null-dispatcher crash, reload cleanly
+    if (error.message?.includes('null') && (
+      error.message.includes('useMemo') ||
+      error.message.includes('useContext') ||
+      error.message.includes('useState') ||
+      error.message.includes('useRef')
+    )) {
+      window.location.reload();
+    }
+  }
+  render() {
+    if (this.state.crashed) {
+      return <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>Loading...</div>;
+    }
+    return this.props.children;
+  }
+}
+
 
 // Lazy singleton for Convex client - only initialized on client side
 let convexClientSingleton: ConvexReactClient | null = null;
@@ -304,7 +338,7 @@ function isSatelliteApp(): boolean {
   return hostname.startsWith('editor.') || hostname.includes('editor.flowstarter');
 }
 
-export default function App() {
+function AppInner() {
   const theme = useStore(themeStore);
   const loaderData = useLoaderData<typeof loader>();
 
@@ -330,5 +364,13 @@ export default function App() {
         <Outlet />
       </Layout>
     </ClerkProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <RootErrorBoundary>
+      <AppInner />
+    </RootErrorBoundary>
   );
 }

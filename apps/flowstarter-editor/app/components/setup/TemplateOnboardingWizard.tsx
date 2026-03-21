@@ -4,12 +4,34 @@ import { Check, ChevronLeft, Loader2, Sparkles } from 'lucide-react';
 import { PREDEFINED_PALETTES, type ColorPalette } from '~/lib/config/palettes';
 import { PREDEFINED_FONT_PAIRINGS, type FontPairing } from '~/lib/config/fonts';
 
+interface MpcPalette {
+  id: string;
+  name: string;
+  colors: {
+    primary: string;
+    secondary: string;
+    accent: string;
+    background: string;
+    text: string;
+    [key: string]: string;
+  };
+}
+
+interface MpcFont {
+  id: string;
+  name: string;
+  heading: string;
+  body: string;
+}
+
 interface TemplateSummary {
   id: string;
   name: string;
   description: string;
   thumbnail?: string;
   category?: string;
+  palettes?: MpcPalette[];
+  fonts?: MpcFont[];
 }
 
 interface TemplateOnboardingWizardProps {
@@ -72,12 +94,34 @@ function parseTemplatesResponse(payload: unknown): TemplateSummary[] {
 }
 
 function toTemplateSummary(template: any): TemplateSummary {
+  // Convert MCP palettes (colors as object) to ColorPalette-compatible shape
+  const palettes: MpcPalette[] = Array.isArray(template.palettes)
+    ? template.palettes.map((p: any) => ({
+        id: p.id,
+        name: p.name,
+        colors: typeof p.colors === 'object' && !Array.isArray(p.colors)
+          ? p.colors
+          : { primary: '#000', secondary: '#fff', accent: '#000', background: '#fff', text: '#000' },
+      }))
+    : [];
+
+  const fonts: MpcFont[] = Array.isArray(template.fonts)
+    ? template.fonts.map((f: any) => ({
+        id: f.id,
+        name: f.name,
+        heading: f.heading || f.headingFont || '',
+        body: f.body || f.bodyFont || '',
+      }))
+    : [];
+
   return {
     id: template.slug || template.id,
     name: template.displayName || template.name || template.slug || template.id,
     description: template.description || 'Template',
     thumbnail: template.thumbnailUrl || template.thumbnail || '',
     category: template.category,
+    palettes,
+    fonts,
   };
 }
 
@@ -88,6 +132,8 @@ export function TemplateOnboardingWizard({ templateSlug }: TemplateOnboardingWiz
   const [templateError, setTemplateError] = useState<string | null>(null);
   const [isTemplateLoading, setIsTemplateLoading] = useState(true);
   const [selectedPalette, setSelectedPalette] = useState<ColorPalette>(PREDEFINED_PALETTES[0]);
+  const [templatePalettes, setTemplatePalettes] = useState<ColorPalette[]>([]);
+  const [templateFonts, setTemplateFonts] = useState<FontPairing[]>([]);
   const [selectedFont, setSelectedFont] = useState<FontPairing>(PREDEFINED_FONT_PAIRINGS[0]);
   const [details, setDetails] = useState<ClientDetails>(INITIAL_DETAILS);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -120,6 +166,37 @@ export function TemplateOnboardingWizard({ templateSlug }: TemplateOnboardingWiz
                   projectName: match.name,
                 },
           );
+          // Use template-specific palettes
+          if (match.palettes && match.palettes.length > 0) {
+            const converted: ColorPalette[] = match.palettes.map((p) => ({
+              id: p.id,
+              name: p.name,
+              colors: {
+                primary: p.colors.primary || '#000',
+                secondary: p.colors.secondary || '#fff',
+                accent: p.colors.accent || p.colors.primary || '#000',
+                background: p.colors.background || '#fff',
+                text: p.colors.text || '#000',
+              },
+            }));
+            setTemplatePalettes(converted);
+            setSelectedPalette(converted[0]);
+          }
+          // Use template-specific fonts — map onto PREDEFINED_FONT_PAIRINGS structure
+          if (match.fonts && match.fonts.length > 0) {
+            const basePairing = PREDEFINED_FONT_PAIRINGS[0];
+            const convertedFonts: FontPairing[] = match.fonts.map((f, i) => ({
+              ...basePairing,
+              id: f.id,
+              name: f.name,
+              description: `${f.heading} + ${f.body}`,
+              heading: { ...basePairing.heading, family: f.heading },
+              body: { ...basePairing.body, family: f.body },
+              googleFonts: PREDEFINED_FONT_PAIRINGS[i % PREDEFINED_FONT_PAIRINGS.length]?.googleFonts ?? basePairing.googleFonts,
+            }));
+            setTemplateFonts(convertedFonts);
+            setSelectedFont(convertedFonts[0]);
+          }
           return;
         }
 
@@ -217,7 +294,7 @@ export function TemplateOnboardingWizard({ templateSlug }: TemplateOnboardingWiz
 
   if (isTemplateLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-stone-950 text-stone-50">
+      <div className="flex min-h-screen items-center justify-center bg-white text-stone-900 dark:bg-stone-950 dark:text-stone-50">
         <div className="flex items-center gap-3 text-sm">
           <Loader2 className="h-4 w-4 animate-spin" />
           Loading template setup
@@ -228,7 +305,7 @@ export function TemplateOnboardingWizard({ templateSlug }: TemplateOnboardingWiz
 
   if (templateError || !template) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-stone-950 px-6 text-stone-50">
+      <div className="flex min-h-screen items-center justify-center bg-white px-6 text-stone-900 dark:bg-stone-950 dark:text-stone-50">
         <div className="w-full max-w-lg rounded-3xl border border-white/10 bg-white/5 p-8">
           <p className="text-sm uppercase tracking-[0.3em] text-emerald-300">Use Template</p>
           <h1 className="mt-3 text-3xl font-semibold">Template unavailable</h1>
@@ -248,10 +325,10 @@ export function TemplateOnboardingWizard({ templateSlug }: TemplateOnboardingWiz
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.25),_transparent_35%),linear-gradient(160deg,#050816_0%,#111827_45%,#0b1120_100%)] text-stone-50">
+    <div className="min-h-screen bg-white text-stone-900 dark:bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.25),_transparent_35%),linear-gradient(160deg,#050816_0%,#111827_45%,#0b1120_100%)] dark:text-stone-50">
       <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-10 px-6 py-8 lg:flex-row lg:items-start lg:gap-14 lg:px-10">
         <aside className="w-full lg:sticky lg:top-8 lg:max-w-sm">
-          <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 shadow-2xl shadow-black/30 backdrop-blur">
+          <div className="overflow-hidden rounded-[2rem] border border-stone-200 bg-stone-50 shadow-2xl shadow-black/10 dark:border-white/10 dark:bg-white/5 dark:shadow-black/30 dark:backdrop-blur">
             <div className="aspect-[4/3] bg-stone-900">
               {template.thumbnail ? (
                 <img src={template.thumbnail} alt={template.name} className="h-full w-full object-cover" />
@@ -263,15 +340,15 @@ export function TemplateOnboardingWizard({ templateSlug }: TemplateOnboardingWiz
             </div>
             <div className="space-y-4 p-6">
               <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-emerald-300">{template.category || 'Template'}</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-emerald-600 dark:text-emerald-300">{template.category || 'Template'}</p>
                 <h1 className="mt-2 text-3xl font-semibold">{template.name}</h1>
-                <p className="mt-3 text-sm leading-6 text-stone-300">{template.description}</p>
+                <p className="mt-3 text-sm leading-6 text-stone-500 dark:text-stone-300">{template.description}</p>
               </div>
 
-              <div className="space-y-3 border-t border-white/10 pt-4">
+              <div className="space-y-3 border-t border-stone-200 pt-4 dark:border-white/10">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-stone-400">Palette</span>
-                  <span className="font-medium text-white">{selectedPalette.name}</span>
+                  <span className="text-stone-500 dark:text-stone-400">Palette</span>
+                  <span className="font-medium text-stone-900 dark:text-white">{selectedPalette.name}</span>
                 </div>
                 <div className="flex gap-2">
                   {Object.values(selectedPalette.colors)
@@ -285,10 +362,10 @@ export function TemplateOnboardingWizard({ templateSlug }: TemplateOnboardingWiz
                     ))}
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-stone-400">Font pairing</span>
-                  <span className="font-medium text-white">{selectedFont.name}</span>
+                  <span className="text-stone-500 dark:text-stone-400">Font pairing</span>
+                  <span className="font-medium text-stone-900 dark:text-white">{selectedFont.name}</span>
                 </div>
-                <p className="text-sm text-stone-300">
+                <p className="text-sm text-stone-500 dark:text-stone-300">
                   {selectedFont.heading.family} + {selectedFont.body.family}
                 </p>
               </div>
@@ -300,22 +377,22 @@ export function TemplateOnboardingWizard({ templateSlug }: TemplateOnboardingWiz
           <div className="flex items-center gap-2 text-xs uppercase tracking-[0.35em] text-stone-400">
             {STEPS.map((step, index) => (
               <div key={step} className="flex items-center gap-2">
-                <span className={index <= currentStepIndex ? 'text-emerald-300' : undefined}>{index + 1}</span>
-                {index < STEPS.length - 1 && <span className="text-stone-700">/</span>}
+                <span className={index <= currentStepIndex ? 'text-emerald-600 dark:text-emerald-300' : 'text-stone-400 dark:text-stone-600'}>{index + 1}</span>
+                {index < STEPS.length - 1 && <span className="text-stone-300 dark:text-stone-700">/</span>}
               </div>
             ))}
           </div>
 
-          <div className="mt-6 rounded-[2rem] border border-white/10 bg-stone-950/60 p-6 shadow-2xl shadow-black/20 backdrop-blur sm:p-8">
+          <div className="mt-6 rounded-[2rem] border border-stone-200 bg-stone-50 p-6 shadow-lg shadow-black/5 dark:border-white/10 dark:bg-stone-950/60 dark:shadow-black/20 dark:backdrop-blur sm:p-8">
             {currentStep === 'palette' && (
               <section>
                 <h2 className="text-3xl font-semibold">Pick a palette</h2>
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-300">
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-500 dark:text-stone-300">
                   Choose the color system that should be applied before the first build starts.
                 </p>
 
                 <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                  {PREDEFINED_PALETTES.map((palette) => {
+                  {(templatePalettes.length > 0 ? templatePalettes : PREDEFINED_PALETTES).map((palette) => {
                     const isSelected = selectedPalette.id === palette.id;
 
                     return (
@@ -325,14 +402,14 @@ export function TemplateOnboardingWizard({ templateSlug }: TemplateOnboardingWiz
                         onClick={() => setSelectedPalette(palette)}
                         className={`rounded-2xl border p-4 text-left transition ${
                           isSelected
-                            ? 'border-emerald-400 bg-emerald-500/10'
-                            : 'border-white/10 bg-white/[0.03] hover:border-white/25'
+                            ? 'border-emerald-500 bg-emerald-50 dark:border-emerald-400 dark:bg-emerald-500/10'
+                            : 'border-stone-200 bg-white hover:border-stone-300 dark:border-white/10 dark:bg-white/[0.03] dark:hover:border-white/25'
                         }`}
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div>
-                            <p className="font-medium text-white">{palette.name}</p>
-                            <p className="mt-1 text-sm text-stone-400">{palette.description}</p>
+                            <p className="font-medium text-stone-900 dark:text-white">{palette.name}</p>
+                            <p className="mt-1 text-sm text-stone-500 dark:text-stone-400">{palette.description}</p>
                           </div>
                           {isSelected && (
                             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-400 text-stone-950">
@@ -361,12 +438,12 @@ export function TemplateOnboardingWizard({ templateSlug }: TemplateOnboardingWiz
             {currentStep === 'font' && (
               <section>
                 <h2 className="text-3xl font-semibold">Choose a font pairing</h2>
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-300">
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-500 dark:text-stone-300">
                   This pairing is pre-seeded into the editor so the first generated build starts from the right tone.
                 </p>
 
                 <div className="mt-8 grid gap-4 lg:grid-cols-2">
-                  {PREDEFINED_FONT_PAIRINGS.map((font) => {
+                  {(templateFonts.length > 0 ? templateFonts : PREDEFINED_FONT_PAIRINGS).map((font) => {
                     const isSelected = selectedFont.id === font.id;
 
                     return (
@@ -376,14 +453,14 @@ export function TemplateOnboardingWizard({ templateSlug }: TemplateOnboardingWiz
                         onClick={() => setSelectedFont(font)}
                         className={`rounded-2xl border p-5 text-left transition ${
                           isSelected
-                            ? 'border-emerald-400 bg-emerald-500/10'
-                            : 'border-white/10 bg-white/[0.03] hover:border-white/25'
+                            ? 'border-emerald-500 bg-emerald-50 dark:border-emerald-400 dark:bg-emerald-500/10'
+                            : 'border-stone-200 bg-white hover:border-stone-300 dark:border-white/10 dark:bg-white/[0.03] dark:hover:border-white/25'
                         }`}
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div>
-                            <p className="font-medium text-white">{font.name}</p>
-                            <p className="mt-1 text-sm text-stone-400">{font.description}</p>
+                            <p className="font-medium text-stone-900 dark:text-white">{font.name}</p>
+                            <p className="mt-1 text-sm text-stone-500 dark:text-stone-400">{font.description}</p>
                           </div>
                           {isSelected && (
                             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-400 text-stone-950">
@@ -392,10 +469,10 @@ export function TemplateOnboardingWizard({ templateSlug }: TemplateOnboardingWiz
                           )}
                         </div>
                         <div className="mt-6 space-y-2">
-                          <p className="text-3xl text-white" style={{ fontFamily: font.heading.family }}>
+                          <p className="text-3xl text-stone-900 dark:text-white" style={{ fontFamily: font.heading.family }}>
                             {font.heading.family}
                           </p>
-                          <p className="text-sm text-stone-300" style={{ fontFamily: font.body.family }}>
+                          <p className="text-sm text-stone-500 dark:text-stone-300" style={{ fontFamily: font.body.family }}>
                             {font.body.family} for supporting copy and conversion sections.
                           </p>
                         </div>
@@ -409,33 +486,33 @@ export function TemplateOnboardingWizard({ templateSlug }: TemplateOnboardingWiz
             {currentStep === 'details' && (
               <section>
                 <h2 className="text-3xl font-semibold">Add client details</h2>
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-300">
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-500 dark:text-stone-300">
                   These details seed the new project, then the editor will open and start the build automatically.
                 </p>
 
                 <div className="mt-8 grid gap-4 md:grid-cols-2">
                   <label className="space-y-2">
-                    <span className="text-sm text-stone-300">Project name</span>
+                    <span className="text-sm text-stone-500 dark:text-stone-300">Project name</span>
                     <input
                       value={details.projectName}
                       onChange={(event) => setDetails((prev) => ({ ...prev, projectName: event.target.value }))}
-                      className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-emerald-400"
+                      className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition focus:border-emerald-500 dark:border-white/10 dark:bg-white/5 dark:text-white dark:focus:border-emerald-400"
                       placeholder="North Studio"
                     />
                   </label>
 
                   <label className="space-y-2">
-                    <span className="text-sm text-stone-300">Client name</span>
+                    <span className="text-sm text-stone-500 dark:text-stone-300">Client name</span>
                     <input
                       value={details.clientName}
                       onChange={(event) => setDetails((prev) => ({ ...prev, clientName: event.target.value }))}
-                      className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-emerald-400"
+                      className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition focus:border-emerald-500 dark:border-white/10 dark:bg-white/5 dark:text-white dark:focus:border-emerald-400"
                       placeholder="Daria Ionescu"
                     />
                   </label>
 
                   <label className="space-y-2 md:col-span-2">
-                    <span className="text-sm text-stone-300">Business description</span>
+                    <span className="text-sm text-stone-500 dark:text-stone-300">Business description</span>
                     <textarea
                       value={details.businessDescription}
                       onChange={(event) =>
@@ -445,7 +522,7 @@ export function TemplateOnboardingWizard({ templateSlug }: TemplateOnboardingWiz
                         }))
                       }
                       rows={5}
-                      className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-emerald-400"
+                      className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition focus:border-emerald-500 dark:border-white/10 dark:bg-white/5 dark:text-white dark:focus:border-emerald-400"
                       placeholder="Describe what the client offers, who they serve, and what the website should help them achieve."
                     />
                   </label>
@@ -456,7 +533,7 @@ export function TemplateOnboardingWizard({ templateSlug }: TemplateOnboardingWiz
                       type="email"
                       value={details.email}
                       onChange={(event) => setDetails((prev) => ({ ...prev, email: event.target.value }))}
-                      className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-emerald-400"
+                      className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition focus:border-emerald-500 dark:border-white/10 dark:bg-white/5 dark:text-white dark:focus:border-emerald-400"
                       placeholder="hello@example.com"
                     />
                   </label>
@@ -466,7 +543,7 @@ export function TemplateOnboardingWizard({ templateSlug }: TemplateOnboardingWiz
                     <input
                       value={details.phone}
                       onChange={(event) => setDetails((prev) => ({ ...prev, phone: event.target.value }))}
-                      className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-emerald-400"
+                      className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition focus:border-emerald-500 dark:border-white/10 dark:bg-white/5 dark:text-white dark:focus:border-emerald-400"
                       placeholder="+40 723 000 000"
                     />
                   </label>
@@ -476,7 +553,7 @@ export function TemplateOnboardingWizard({ templateSlug }: TemplateOnboardingWiz
                     <input
                       value={details.website}
                       onChange={(event) => setDetails((prev) => ({ ...prev, website: event.target.value }))}
-                      className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-emerald-400"
+                      className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 outline-none transition focus:border-emerald-500 dark:border-white/10 dark:bg-white/5 dark:text-white dark:focus:border-emerald-400"
                       placeholder="https://example.com"
                     />
                   </label>

@@ -42,6 +42,8 @@ export type { RouteDecision };
 
 interface BuildRequest {
   projectId: string;
+  /** Convex conversation _id from the URL — use this for Convex mutations */
+  convexConversationId?: string;
   siteName: string;
   businessInfo: {
     name: string;
@@ -308,6 +310,18 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentE
           projectId: body.projectId,
         });
         break;
+      }
+
+      // If preview succeeded and we have a convex conversation ID, re-persist with correct ID
+      const convexIdForPersist = body.convexConversationId;
+      if (previewResult?.success && convexIdForPersist) {
+        const url = resolvePreviewUrlFromResult(previewResult);
+        const sid = previewResult.sandboxId ?? sandboxId ?? '';
+        if (url) {
+          import('~/lib/services/daytona/convexClient').then(({ persistPreviewUrl }) => {
+            persistPreviewUrl(convexIdForPersist, url, sid).catch(() => {});
+          });
+        }
       }
 
       console.error('[Build:Simple] Preview attempt completed', {

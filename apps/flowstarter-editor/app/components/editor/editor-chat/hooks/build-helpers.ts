@@ -58,6 +58,7 @@ export function mapProgressMessage(
 
 interface SiteGenerationParams {
   projectId: string;
+  convexConversationId?: string;
   projectName: string;
   templateId: string;
   templateName: string;
@@ -78,7 +79,8 @@ interface SiteGenerationParams {
  */
 export function buildSiteGenerationInput(params: SiteGenerationParams) {
   const {
-    projectId, projectName, templateId, templateName, businessData,
+    projectId,
+    convexConversationId, projectName, templateId, templateName, businessData,
     projectDescription, palette, font, integrations, contactDetails,
     generateImages, signal, onProgress, onAgentEvent,
   } = params;

@@ -259,6 +259,7 @@ export function useEditorChatState({
     onProjectReady,
     onStateChange,
     existingProjectId: additionalState.convexProjectId,
+    convexConversationId: initialState?.conversationId || null,
   });
 
   useEffect(() => {

@@ -153,6 +153,7 @@ function useInitialState(
         projectName: src.projectName || null,
         businessInfo: (src.businessInfo as BusinessInfo | null) || null,
         messages: messages || initialFromNav?.messages || [],
+        conversationId: projectId,
       };
     }
   }

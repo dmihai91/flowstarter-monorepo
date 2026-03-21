@@ -35,6 +35,8 @@ export interface UseSimpleBuildHandlersProps {
   onStateChange?: (state: Partial<InitialChatState>) => void;
   /** Existing project ID if one was already created (e.g., in /new route) */
   existingProjectId?: string | null;
+  /** Convex conversation _id from the URL param — used for Convex mutations */
+  convexConversationId?: string | null;
 }
 
 export interface UseSimpleBuildHandlersReturn {

@@ -11,6 +11,7 @@ import { startDaytonaPreview } from './daytona';
 
 export interface GenerateSiteParams {
   projectId: string;
+  convexConversationId?: string;
   templateSlug: string;
   businessInfo: BusinessInfo;
   palette?: any;

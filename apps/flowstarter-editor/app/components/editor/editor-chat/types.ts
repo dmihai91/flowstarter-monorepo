@@ -242,6 +242,8 @@ export interface InitialChatState {
 
   // Convex project ID for linking with database
   convexProjectId?: string | null;
+  // Convex conversation _id from the URL param — for Convex mutations
+  conversationId?: string | null;
 }
 
 export interface EditorChatPanelProps {

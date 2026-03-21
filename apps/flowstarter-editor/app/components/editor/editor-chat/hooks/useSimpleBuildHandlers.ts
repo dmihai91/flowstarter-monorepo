@@ -42,6 +42,7 @@ export function useSimpleBuildHandlers({
   onProjectReady,
   onStateChange,
   existingProjectId,
+  convexConversationId,
 }: UseSimpleBuildHandlersProps): UseSimpleBuildHandlersReturn {
   const generateSiteMutation = useGenerateSiteStream();
   // Live agent events accumulator — drives the AgentStatusMessage in chat
@@ -194,6 +195,7 @@ export function useSimpleBuildHandlers({
               } as any);
           },
           projectId,
+          convexConversationId: convexConversationId || undefined,
           projectName,
           templateId: selectedTemplate.id || 'default',
           templateName: selectedTemplate.name,

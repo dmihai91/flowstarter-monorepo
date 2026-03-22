@@ -10,6 +10,45 @@ import { generateCompletion, generateJSON } from '../llm';
 import type { SiteGenerationInput } from './types';
 import { stripMarkdownCodeBlocks } from './sanitization';
 
+function formatAssemblyContext(input: SiteGenerationInput): string {
+  const parts: string[] = [];
+
+  if (input.projectBrief) {
+    parts.push('## Structured Project Brief');
+    parts.push(`- Industry: ${input.projectBrief.business.industry}`);
+    parts.push(`- Target Audience: ${input.projectBrief.business.targetAudience}`);
+    parts.push(`- Value Proposition: ${input.projectBrief.business.valueProposition}`);
+    parts.push(`- Goals: ${input.projectBrief.business.goals.join(', ')}`);
+    parts.push(`- Offerings: ${input.projectBrief.business.offerings.join(', ') || 'None provided'}`);
+    parts.push('');
+  }
+
+  if (input.templateSelection) {
+    parts.push('## Template Selection');
+    parts.push(`- Selected Template: ${input.templateSelection.templateSlug}`);
+    parts.push(`- Strategy: ${input.templateSelection.strategy}`);
+    parts.push(`- Reasons: ${input.templateSelection.reasons.join('; ')}`);
+    parts.push('');
+  }
+
+  if (input.assemblySpec) {
+    parts.push('## Assembly Spec');
+    for (const page of input.assemblySpec.pages) {
+      parts.push(`- ${page.path} (${page.intent}): ${page.sections.map((section) => section.blockType).join(', ')}`);
+    }
+    if (input.assemblySpec.integrations.length > 0) {
+      parts.push(
+        `- Integrations: ${input.assemblySpec.integrations
+          .map((integration) => `${integration.kind}${integration.providerHint ? `:${integration.providerHint}` : ''}`)
+          .join(', ')}`
+      );
+    }
+    parts.push('');
+  }
+
+  return parts.join('\n');
+}
+
 /**
  * Get the system prompt for site generation
  */
@@ -25,6 +64,8 @@ export function getSystemPrompt(input: SiteGenerationInput): string {
 - **Contact Email**: ${input.businessInfo.contact?.email || 'Not specified'}
 - **Contact Phone**: ${input.businessInfo.contact?.phone || 'Not specified'}
 - **Contact Address**: ${input.businessInfo.contact?.address || 'Not specified'}
+
+${formatAssemblyContext(input)}
 
 ## Template Foundation
 Using the "${input.template.name}" template (${input.template.slug})
@@ -209,6 +250,8 @@ This file comes from a high-quality template. Your job is to ELEVATE it <ï¿½�
 5. The user should look at this and think "WOW, this looks professional and polished"
 
 The template is your foundation. Build something amazing on top of it.
+
+${formatAssemblyContext(input)}
 
 ## Business Details to Use:
 - Name: ${input.businessInfo.name}
@@ -426,6 +469,5 @@ Remember:
 
   return stripMarkdownCodeBlocks(result);
 }
-
 
 

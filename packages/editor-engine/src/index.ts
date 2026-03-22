@@ -16,3 +16,6 @@ export * from './templates';
 
 // Publishing
 export * from './publishing';
+
+// Flowstarter Engine contracts + planning helpers
+export * from './engine';

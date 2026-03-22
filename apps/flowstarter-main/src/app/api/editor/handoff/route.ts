@@ -1,9 +1,17 @@
 import 'server-only';
 import { requireAuth } from '@/lib/api-auth';
+import { loadLibraryTemplateRegistry } from '@/lib/flowstarter-engine/library-template-registry';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createHmac } from 'crypto';
+import {
+  createAssemblySpec,
+  createContentMap,
+  normalizeProjectBrief,
+  selectTemplate,
+  validateFlowstarterArtifacts,
+} from '@flowstarter/editor-engine';
 
 const EDITOR_URL =
   process.env.NEXT_PUBLIC_EDITOR_URL ||
@@ -100,6 +108,13 @@ const handoffBodySchema = z
         description: z.string().optional().default(''),
         userDescription: z.string().optional(),
         industry: z.string().optional(),
+        platformType: z.string().optional(),
+        template: z
+          .object({
+            id: z.string(),
+            name: z.string().optional(),
+          })
+          .optional(),
         clientName: z.string().optional(),
         clientEmail: z.string().email().optional(),
         clientPhone: z.string().optional(),
@@ -113,6 +128,18 @@ const handoffBodySchema = z
             offerType: z.string().optional(),
             brandTone: z.string().optional(),
             offerings: z.string().optional(),
+            contactEmail: z.string().optional(),
+            contactPhone: z.string().optional(),
+            contactAddress: z.string().optional(),
+          })
+          .optional(),
+        flowstarterEngine: z
+          .object({
+            projectBrief: z.record(z.unknown()),
+            templateSelection: z.record(z.unknown()),
+            assemblySpec: z.record(z.unknown()),
+            contentMap: z.record(z.unknown()),
+            validationReport: z.record(z.unknown()),
           })
           .optional(),
         contactInfo: z
@@ -182,6 +209,7 @@ export async function POST(request: NextRequest) {
     let projectName: string;
     let projectDescription: string;
     let projectData: Record<string, unknown>;
+    let selectedTemplateSlug: string | null = null;
 
     if (projectId) {
       // ── Existing project handoff ──
@@ -222,6 +250,8 @@ export async function POST(request: NextRequest) {
         userDescription: projectConfig.userDescription,
         industry: projectConfig.industry || projectConfig.businessInfo?.industry,
         businessInfo: projectConfig.businessInfo,
+        template: projectConfig.template,
+        flowstarterEngine: projectConfig.flowstarterEngine,
         contactInfo: projectConfig.contactInfo,
         client: {
           name: projectConfig.clientName,
@@ -231,15 +261,83 @@ export async function POST(request: NextRequest) {
         mode,
       };
 
+      const projectBrief = normalizeProjectBrief({
+        source: 'concierge',
+        projectName,
+        summary: projectDescription,
+        industry:
+          projectConfig.industry || projectConfig.businessInfo?.industry || 'other',
+        targetAudience: projectConfig.businessInfo?.targetAudience,
+        valueProposition: projectConfig.businessInfo?.uvp,
+        brandTone: projectConfig.businessInfo?.brandTone,
+        offerType: projectConfig.businessInfo?.offerType,
+        offerings: projectConfig.businessInfo?.offerings,
+        goals: projectConfig.businessInfo?.goal,
+        platformType: projectConfig.platformType,
+        preferredTemplateSlug: projectConfig.template?.id,
+        contact: {
+          email:
+            projectConfig.contactInfo?.email ||
+            projectConfig.businessInfo?.contactEmail,
+          phone:
+            projectConfig.contactInfo?.phone ||
+            projectConfig.businessInfo?.contactPhone,
+          address:
+            projectConfig.contactInfo?.address ||
+            projectConfig.businessInfo?.contactAddress,
+        },
+        client: {
+          name: projectConfig.clientName,
+          email: projectConfig.clientEmail,
+          phone: projectConfig.clientPhone,
+        },
+        raw: projectData,
+      });
+      const templateRegistry = await loadLibraryTemplateRegistry();
+      const templateSelection = selectTemplate(
+        projectBrief,
+        templateRegistry,
+        projectConfig.template?.id
+      );
+      const assemblySpec = createAssemblySpec(
+        projectBrief,
+        templateSelection,
+        templateRegistry
+      );
+      const contentMap = createContentMap(projectBrief, assemblySpec);
+      const validationReport = validateFlowstarterArtifacts({
+        projectBrief,
+        templateSelection,
+        assemblySpec,
+        contentMap,
+        registry: templateRegistry,
+      });
+
+      selectedTemplateSlug = templateSelection.templateSlug;
+      projectData = {
+        ...projectData,
+        projectBrief,
+        templateSelection,
+        assemblySpec,
+        contentMap,
+        validationReport,
+      };
+
       const { data: newProject, error } = await supabase
         .from('projects')
         .insert({
           name: projectName.slice(0, 80),
           description: projectDescription.slice(0, 5000),
           data: JSON.stringify(projectData),
+          template_id:
+            selectedTemplateSlug ||
+            projectConfig.template?.id ||
+            ((projectConfig.flowstarterEngine?.templateSelection as { selectedTemplateId?: string } | undefined)
+              ?.selectedTemplateId ?? null),
           user_id: userId,
           status: 'draft',
           is_draft: true,
+          template_slug: selectedTemplateSlug,
           domain_type: 'hosted',
           domain_provider: 'platform',
         })

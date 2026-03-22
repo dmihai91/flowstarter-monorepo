@@ -2,6 +2,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
+import type { EngineArtifacts } from '@/lib/engine/contracts';
 
 const EDITOR_URL =
   process.env.NEXT_PUBLIC_EDITOR_URL ||
@@ -37,6 +38,15 @@ export interface AiStep {
   done: boolean;
 }
 
+type ConciergeResponse =
+  | {
+      status: 'needsMoreInfo';
+      followUpQuestions: string[];
+    }
+  | ({
+      status: 'complete';
+    } & EngineArtifacts);
+
 const EMPTY_CLIENT: ClientInfo = { name: '', email: '', phone: '' };
 
 const EMPTY_FIELDS: EnrichedFields = {
@@ -66,17 +76,25 @@ export function useScaffoldForm() {
   const [aiSteps, setAiSteps] = useState<AiStep[]>([]);
   const [followUpQuestions, setFollowUpQuestions] = useState<string[]>([]);
   const [clarifyAnswers, setClarifyAnswers] = useState<string[]>([]);
+  const [engineArtifacts, setEngineArtifacts] = useState<EngineArtifacts | null>(null);
 
   // ── AI enrichment mutation ──
   const enrichMutation = useMutation({
     mutationFn: async ({ description }: { description: string }) => {
-      const res = await fetch('/api/ai/enrich-project', {
+      const res = await fetch('/api/engine/concierge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description }),
+        body: JSON.stringify({
+          description,
+          client: {
+            name: clientInfo.name || undefined,
+            email: clientInfo.email || undefined,
+            phone: clientInfo.phone || undefined,
+          },
+        }),
       });
       if (!res.ok) throw new Error('Enrichment failed');
-      return res.json();
+      return res.json() as Promise<ConciergeResponse>;
     },
   });
 
@@ -101,12 +119,12 @@ export function useScaffoldForm() {
 
   // ── Handle enrichment response (shared by submit + clarify) ──
   const handleEnrichResponse = useCallback(
-    async (enriched: Record<string, unknown>, originalDesc: string) => {
+    async (enriched: ConciergeResponse, originalDesc: string) => {
       setAiSteps((prev) => prev.map((s) => ({ ...s, done: true })));
       await new Promise((r) => setTimeout(r, 300));
 
       if (enriched.status === 'needsMoreInfo') {
-        const questions = enriched.followUpQuestions as string[];
+        const questions = enriched.followUpQuestions;
         setFollowUpQuestions(questions);
         setClarifyAnswers(questions.map(() => ''));
         setAiSteps([]);
@@ -114,19 +132,28 @@ export function useScaffoldForm() {
         return;
       }
 
+      setEngineArtifacts({
+        projectBrief: enriched.projectBrief,
+        templateSelection: enriched.templateSelection,
+        assemblySpec: enriched.assemblySpec,
+        contentMap: enriched.contentMap,
+        validationReport: enriched.validationReport,
+      });
+
+      const brief = enriched.projectBrief;
       setFields({
-        siteName: (enriched.siteName as string) || '',
-        description: (enriched.description as string) || originalDesc,
-        industry: (enriched.industry as string) || '',
-        targetAudience: (enriched.targetAudience as string) || '',
-        uvp: (enriched.uvp as string) || '',
-        goal: (enriched.goal as string) || '',
-        offerType: (enriched.offerType as string) || '',
-        brandTone: (enriched.brandTone as string) || '',
-        offerings: (enriched.offerings as string) || '',
-        contactEmail: (enriched.contactEmail as string) || '',
-        contactPhone: (enriched.contactPhone as string) || '',
-        contactAddress: (enriched.contactAddress as string) || '',
+        siteName: brief.siteName || '',
+        description: brief.summary || originalDesc,
+        industry: brief.industry || '',
+        targetAudience: brief.targetAudience || '',
+        uvp: brief.usp || '',
+        goal: brief.goal || '',
+        offerType: brief.offerType || '',
+        brandTone: brief.brandTone || '',
+        offerings: brief.offerings.join(', '),
+        contactEmail: brief.contact.email || '',
+        contactPhone: brief.contact.phone || '',
+        contactAddress: brief.contact.address || '',
       });
       setReviewStep(0);
       setPhase('review');
@@ -214,17 +241,26 @@ export function useScaffoldForm() {
             return;
           }
 
+          setEngineArtifacts({
+            projectBrief: enriched.projectBrief,
+            templateSelection: enriched.templateSelection,
+            assemblySpec: enriched.assemblySpec,
+            contentMap: enriched.contentMap,
+            validationReport: enriched.validationReport,
+          });
+
+          const brief = enriched.projectBrief;
           setFields((prev) => ({
             ...prev,
-            siteName: enriched.siteName || prev.siteName,
-            description: enriched.description || prev.description,
-            industry: enriched.industry || prev.industry,
-            targetAudience: enriched.targetAudience || prev.targetAudience,
-            uvp: enriched.uvp || prev.uvp,
-            goal: enriched.goal || prev.goal,
-            offerType: enriched.offerType || prev.offerType,
-            brandTone: enriched.brandTone || prev.brandTone,
-            offerings: enriched.offerings || prev.offerings,
+            siteName: brief.siteName || prev.siteName,
+            description: brief.summary || prev.description,
+            industry: brief.industry || prev.industry,
+            targetAudience: brief.targetAudience || prev.targetAudience,
+            uvp: brief.usp || prev.uvp,
+            goal: brief.goal || prev.goal,
+            offerType: brief.offerType || prev.offerType,
+            brandTone: brief.brandTone || prev.brandTone,
+            offerings: brief.offerings.join(', ') || prev.offerings,
           }));
           setPhase('review');
           setAiSteps([]);
@@ -329,6 +365,13 @@ export function useScaffoldForm() {
           phone: fields.contactPhone,
           address: fields.contactAddress,
         },
+        flowstarterEngine: engineArtifacts || undefined,
+        template: engineArtifacts
+          ? {
+              id: engineArtifacts.templateSelection.selectedTemplateId,
+              name: engineArtifacts.templateSelection.selectedTemplateName,
+            }
+          : undefined,
       };
 
       const res = await fetch('/api/editor/handoff', {
@@ -357,7 +400,7 @@ export function useScaffoldForm() {
     (config?: Record<string, unknown>) => {
       handoffMutation.mutate(config);
     },
-    [handoffMutation]
+    [handoffMutation, engineArtifacts]
   );
 
   // ── Client info ──
@@ -382,6 +425,7 @@ export function useScaffoldForm() {
     setAiSteps([]);
     setFollowUpQuestions([]);
     setClarifyAnswers([]);
+    setEngineArtifacts(null);
   }, []);
 
   return {

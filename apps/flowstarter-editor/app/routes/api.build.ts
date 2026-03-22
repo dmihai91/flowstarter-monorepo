@@ -8,6 +8,16 @@
 import type { ActionFunctionArgs } from '@remix-run/node';
 import type { AgentActivityEvent } from '~/lib/services/claude-agent/types';
 import { routeModification, type RouteDecision } from './api.modification-router';
+import {
+  createAssemblySpec,
+  createContentMap,
+  normalizeProjectBrief,
+  validateFlowstarterArtifacts,
+  type AssemblySpec,
+  type ContentMap,
+  type ProjectBrief,
+  type TemplateSelection,
+} from '@flowstarter/editor-engine';
 
 // Import simple build logic
 import {
@@ -82,6 +92,10 @@ interface BuildRequest {
     skipReview?: boolean;
     maxFixAttempts?: number;
   };
+  projectBrief?: ProjectBrief;
+  templateSelection?: TemplateSelection;
+  assemblySpec?: AssemblySpec;
+  contentMap?: ContentMap;
 }
 
 interface GeneratedFile {
@@ -123,6 +137,49 @@ function describeBuildRequest(req: BuildRequest): string {
     parts.push(`With integrations: ${integrationNames}`);
   }
   return parts.join('. ');
+}
+
+function deriveEngineArtifacts(body: BuildRequest): {
+  projectBrief: ProjectBrief;
+  templateSelection: TemplateSelection;
+  assemblySpec: AssemblySpec;
+  contentMap: ContentMap;
+} {
+  const projectBrief =
+    body.projectBrief ??
+    normalizeProjectBrief({
+      source: 'editor',
+      projectId: body.projectId,
+      projectName: body.siteName,
+      summary: body.businessInfo.description,
+      industry: body.businessInfo.services?.[0] || 'other',
+      targetAudience: body.businessInfo.targetAudience,
+      valueProposition: body.businessInfo.tagline,
+      brandTone: body.businessInfo.brandTone,
+      goals: body.businessInfo.businessGoals,
+      offerings: body.businessInfo.services,
+      preferredTemplateSlug: body.template.slug,
+      contact: body.contactDetails,
+      raw: body as unknown as Record<string, unknown>,
+    });
+
+  const templateSelection =
+    body.templateSelection ?? {
+      version: 'v1' as const,
+      templateSlug: body.template.slug,
+      templateName: body.template.name,
+      strategy: 'manual' as const,
+      score: 100,
+      reasons: ['Template supplied by build request'],
+      alternatives: [],
+    };
+
+  const assemblySpec =
+    body.assemblySpec ?? createAssemblySpec(projectBrief, templateSelection);
+  const contentMap =
+    body.contentMap ?? createContentMap(projectBrief, assemblySpec);
+
+  return { projectBrief, templateSelection, assemblySpec, contentMap };
 }
 
 function tryRuleBasedFix(
@@ -179,6 +236,23 @@ type SandboxEventSender = (event: AgentActivityEvent) => void;
 
 async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentEvent?: SandboxEventSender): Promise<void> {
   try {
+    const engineArtifacts = deriveEngineArtifacts(body);
+    const validationReport = validateFlowstarterArtifacts(engineArtifacts);
+
+    send({
+      type: 'progress',
+      phase: 'plan',
+      message: `Planning from spec using ${engineArtifacts.templateSelection.templateSlug}...`,
+    });
+
+    if (validationReport.status === 'fail') {
+      throw new Error(
+        validationReport.checks
+          .filter((check) => check.status === 'fail')
+          .map((check) => check.message)
+          .join('; ')
+      );
+    }
 
     // Start prewarming sandbox in parallel
     send({ type: 'progress', phase: 'prewarm', message: 'Preparing build environment...' });
@@ -199,8 +273,8 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentE
         contact: body.contactDetails,
       },
       template: {
-        slug: body.template.slug,
-        name: body.template.name,
+        slug: engineArtifacts.templateSelection.templateSlug,
+        name: engineArtifacts.templateSelection.templateName,
       },
       design: {
         primaryColor: body.design?.primaryColor || '#3B82F6',
@@ -209,6 +283,10 @@ async function handleSimpleBuild(body: BuildRequest, send: SSESender, sendAgentE
         fontFamily: body.design?.fontFamily,
         headingFont: body.design?.headingFont,
       },
+      projectBrief: engineArtifacts.projectBrief,
+      templateSelection: engineArtifacts.templateSelection,
+      assemblySpec: engineArtifacts.assemblySpec,
+      contentMap: engineArtifacts.contentMap,
     };
 
     console.log('[Build:Simple] Calling generateSiteFromTemplate with:', JSON.stringify({

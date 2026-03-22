@@ -1,3 +1,10 @@
+import type {
+  AssemblySpec,
+  ContentMap,
+  ProjectBrief,
+  TemplateSelection,
+} from '@flowstarter/editor-engine';
+
 // Mirrors AgentActivityEvent from claudeAgentSDK.server.ts (inlined to avoid circular imports)
 export type AgentActivityEvent =
   | { type: 'thinking'; text: string; duration_s?: number }
@@ -75,6 +82,10 @@ export interface SiteGenerationInput {
     headingFont?: string;
   };
   integrations?: IntegrationConfig[];
+  projectBrief?: ProjectBrief;
+  templateSelection?: TemplateSelection;
+  assemblySpec?: AssemblySpec;
+  contentMap?: ContentMap;
   
   /**
    * AI-generated assets from fal.ai

@@ -414,7 +414,7 @@ export async function POST(request: NextRequest) {
     });
 
     const editorUrl = conversationId
-      ? `${EDITOR_URL}/project/${conversationId}`
+      ? `${EDITOR_URL}/project/${conversationId}?handoff=${encodeURIComponent(token)}`
       : `${EDITOR_URL}?handoff=${encodeURIComponent(token)}`;
 
     console.info('[Editor Handoff] Token issued', { userId, projectId: resolvedProjectId, mode, conversationId });

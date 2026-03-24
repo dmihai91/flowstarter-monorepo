@@ -203,14 +203,14 @@ export function LandingHeader() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors"
+                  className="px-3 py-3 text-base font-medium text-gray-700 dark:text-white/80 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors"
                 >
                   {LANDING_COPY.nav.templatesLabel}
                 </a>
                 <Link
                   href="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors"
+                  className="px-3 py-3 text-base font-medium text-gray-700 dark:text-white/80 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors"
                 >
                   {t('nav.signIn')}
                 </Link>

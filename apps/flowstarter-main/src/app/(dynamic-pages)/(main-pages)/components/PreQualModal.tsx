@@ -70,7 +70,7 @@ export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProp
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+        className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -80,9 +80,9 @@ export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProp
         role="dialog"
         aria-modal="true"
         aria-labelledby="prequal-title"
-        className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4"
+        className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
       >
-        <div className="relative w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl border border-white/10 bg-white dark:bg-[#0f1117] shadow-2xl shadow-black/30 p-5 pb-6 sm:p-8 max-h-[88vh] overflow-y-auto">
+        <div className="relative w-full max-w-md rounded-2xl border border-white/10 bg-white dark:bg-[#0f1117] shadow-2xl shadow-black/30 p-5 sm:p-8 max-h-[90vh] overflow-y-auto">
 
           {/* Drag handle — mobile only */}
           <div className="sm:hidden flex justify-center mb-4 -mt-1">

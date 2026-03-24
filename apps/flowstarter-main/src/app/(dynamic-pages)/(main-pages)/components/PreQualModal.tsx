@@ -82,7 +82,7 @@ export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProp
         aria-labelledby="prequal-title"
         className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4"
       >
-        <div className="relative w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl border border-white/10 bg-white dark:bg-[#0f1117] shadow-2xl shadow-black/30 p-6 pb-8 sm:p-8 max-h-[92vh] overflow-y-auto">
+        <div className="relative w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl border border-white/10 bg-white dark:bg-[#0f1117] shadow-2xl shadow-black/30 p-5 pb-6 sm:p-8 max-h-[88vh] overflow-y-auto">
 
           {/* Drag handle — mobile only */}
           <div className="sm:hidden flex justify-center mb-4 -mt-1">
@@ -105,16 +105,16 @@ export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProp
             <p className="text-xs font-semibold uppercase tracking-widest text-[var(--purple-primary)] mb-2">
               Free strategy call
             </p>
-            <h2 id="prequal-title" className="text-xl font-bold text-gray-900 dark:text-white">
+            <h2 id="prequal-title" className="text-2xl font-bold text-gray-900 dark:text-white">
               Which best describes your situation?
             </h2>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <p className="mt-1 text-base text-gray-500 dark:text-gray-400">
               We'll tailor the call based on your answer.
             </p>
           </div>
 
           {/* Options */}
-          <div className="space-y-2.5 mb-6">
+          <div className="space-y-2 mb-5">
             {OPTIONS.map((opt) => {
               const isSelected = selected === opt.id;
               return (
@@ -123,7 +123,7 @@ export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProp
                   type="button"
                   onClick={() => setSelected(opt.id)}
                   className={[
-                    'w-full flex items-center justify-between gap-4 rounded-xl border px-4 py-3.5 text-left transition-all duration-150',
+                    'w-full flex items-center justify-between gap-4 rounded-xl border px-4 py-4 text-left transition-all duration-150',
                     isSelected
                       ? 'border-[var(--purple-primary)] bg-[var(--purple-primary)]/8 ring-1 ring-[var(--purple-primary)]'
                       : 'border-gray-200 dark:border-white/10 hover:border-[var(--purple-primary)]/50 dark:hover:border-white/20 bg-transparent',
@@ -142,16 +142,16 @@ export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProp
                       )}
                     </span>
                     <span className="min-w-0">
-                      <span className="block text-sm font-semibold text-gray-900 dark:text-white">
+                      <span className="block text-base font-semibold text-gray-900 dark:text-white">
                         {opt.name}
                       </span>
-                      <span className="block text-xs text-gray-500 dark:text-gray-400 truncate">
+                      <span className="block text-sm text-gray-500 dark:text-gray-400 truncate">
                         {opt.desc}
                       </span>
                     </span>
                   </span>
                   {opt.price && (
-                    <span className="flex-shrink-0 text-xs font-medium text-gray-400 dark:text-white/40">
+                    <span className="flex-shrink-0 text-sm font-medium text-gray-400 dark:text-white/40">
                       {opt.price}
                     </span>
                   )}
@@ -168,7 +168,7 @@ export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProp
             onClick={!selected ? (e) => e.preventDefault() : undefined}
             aria-disabled={!selected}
             className={[
-              'flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-semibold transition-all duration-200',
+              'flex w-full items-center justify-center gap-2 rounded-xl px-6 py-4 text-base font-semibold transition-all duration-200',
               selected
                 ? 'bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] text-white shadow-lg shadow-[var(--purple-primary)]/25 hover:opacity-90'
                 : 'bg-gray-100 dark:bg-white/10 text-gray-400 dark:text-white/30 cursor-not-allowed',

@@ -199,113 +199,104 @@ export function DashboardStatsClient({
         </>
       ),
     },
-    // Website Traffic Card - Disabled icon at 25% opacity
-    {
-      content: (
-        <>
-          <div className="flex items-center justify-between w-full mb-3">
-            <span className="text-sm sm:text-base font-medium text-gray-500 dark:text-white/50">
-              {t('dashboard.analytics.websiteTraffic')}
-            </span>
-            {totalViews > 0 && (
-              <Link
-                href="/dashboard/analytics/traffic"
-                className="text-xs sm:text-sm font-medium text-[var(--purple)] hover:underline"
-              >
+    // Analytics: split when live, merged when pre-launch (CD-5)
+    ...(hasLiveProject ? [
+      // Traffic Card (live)
+      {
+        content: (
+          <>
+            <div className="flex items-center justify-between w-full mb-3">
+              <span className="text-sm font-medium text-gray-500 dark:text-white/50">
+                {t('dashboard.analytics.websiteTraffic')}
+              </span>
+              <Link href="/dashboard/analytics/traffic" className="text-xs font-medium text-[var(--purple)] hover:underline">
                 {t('dashboard.details')} →
               </Link>
-            )}
-          </div>
-
-          {totalViews > 0 ? (
+            </div>
             <div className="flex-1 flex flex-col">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center">
                   <BarChart3 className="w-5 h-5 text-[var(--purple)] opacity-80" />
                 </div>
                 <div>
-                  <p className="text-2xl font-semibold text-gray-900 dark:text-white">
-                    {totalViews.toLocaleString()}
-                  </p>
-                  <p className="text-xs sm:text-sm text-gray-500 dark:text-white/50">
-                    {t('dashboard.analytics.views')}
-                  </p>
+                  <p className="text-2xl font-semibold text-gray-900 dark:text-white">{totalViews.toLocaleString()}</p>
+                  <p className="text-xs text-gray-500 dark:text-white/50">{t('dashboard.analytics.views')}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500 dark:text-white/50 flex-wrap mt-auto">
+              <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-white/50 flex-wrap mt-auto">
                 <span>{t('dashboard.analytics.visitors', { count: uniqueVisitors.toLocaleString() })}</span>
                 <span className="text-gray-300 dark:text-white/20">•</span>
                 <span>{t('dashboard.analytics.avgSession', { minutes: Math.round(avgSessionDuration / 60) })}</span>
               </div>
             </div>
-          ) : (
-            <div className="flex-1 flex flex-col">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-[var(--purple)] opacity-25" />
-                </div>
-                <p className="text-sm sm:text-base text-gray-400 dark:text-white/40 flex-1">
-                  {t('dashboard.stats.trafficAppears')}
-                </p>
-              </div>
-              <GhostChart />
+          </>
+        ),
+      },
+      // Leads Card (live)
+      {
+        content: (
+          <>
+            <div className="flex items-center justify-between w-full mb-3">
+              <span className="text-sm font-medium text-gray-500 dark:text-white/50">
+                {t('dashboard.analytics.businessLeads')}
+              </span>
+              {totalLeads > 0 && (
+                <Link href="/dashboard/leads" className="text-xs font-medium text-[var(--purple)] hover:underline">
+                  {t('dashboard.details')} →
+                </Link>
+              )}
             </div>
-          )}
-        </>
-      ),
-    },
-    // Business Leads Card - Disabled icon at 25% opacity
-    {
-      content: (
-        <>
-          <div className="flex items-center justify-between w-full mb-3">
-            <span className="text-sm sm:text-base font-medium text-gray-500 dark:text-white/50">
-              {t('dashboard.analytics.businessLeads')}
-            </span>
-            {totalLeads > 0 && (
-              <Link
-                href="/dashboard/leads"
-                className="text-xs sm:text-sm font-medium text-[var(--purple)] hover:underline"
-              >
-                {t('dashboard.details')} →
-              </Link>
-            )}
-          </div>
-
-          {totalLeads > 0 ? (
             <div className="flex-1 flex flex-col">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center">
                   <Users className="w-5 h-5 text-[var(--purple)] opacity-80" />
                 </div>
                 <div>
-                  <p className="text-2xl font-semibold text-gray-900 dark:text-white">
-                    {totalLeads.toLocaleString()}
-                  </p>
-                  <p className="text-xs sm:text-sm text-gray-500 dark:text-white/50">
+                  <p className="text-2xl font-semibold text-gray-900 dark:text-white">{totalLeads.toLocaleString()}</p>
+                  <p className="text-xs text-gray-500 dark:text-white/50">
                     {totalLeads === 1 ? t('dashboard.analytics.prospectSingular') : t('dashboard.analytics.prospectPlural')}
                   </p>
                 </div>
               </div>
-              <p className="text-xs sm:text-sm text-gray-500 dark:text-white/50 mt-auto">
+              <p className="text-xs text-gray-500 dark:text-white/50 mt-auto">
                 {t('dashboard.analytics.conversionRateValue', { rate: conversionRate.toFixed(1) })}
               </p>
             </div>
-          ) : (
-            <div className="flex-1 flex flex-col">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
-                  <Users className="w-5 h-5 text-[var(--purple)] opacity-25" />
-                </div>
-                <p className="text-sm sm:text-base text-gray-400 dark:text-white/40 flex-1">
-                  {t('dashboard.stats.leadsActivate')}
-                </p>
-              </div>
+          </>
+        ),
+      },
+    ] : [
+      // Merged post-launch analytics card (pre-launch, CD-5)
+      {
+        content: (
+          <>
+            <div className="flex items-center justify-between w-full mb-3">
+              <span className="text-sm font-medium text-gray-500 dark:text-white/50">
+                Post-launch Analytics
+              </span>
+              <span className="text-[0.6rem] font-semibold uppercase tracking-wider text-gray-400 dark:text-white/20 bg-gray-100 dark:bg-white/[0.04] px-2 py-0.5 rounded-full border border-gray-200/50 dark:border-white/[0.06]">
+                After launch
+              </span>
             </div>
-          )}
-        </>
-      ),
-    },
+            <div className="flex-1 flex flex-col">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-8 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4 text-[var(--purple)] opacity-25" />
+                </div>
+                <div className="w-8 h-8 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
+                  <Users className="w-4 h-4 text-[var(--purple)] opacity-25" />
+                </div>
+                <p className="text-sm text-gray-400 dark:text-white/30">Traffic + leads tracking</p>
+              </div>
+              <GhostChart />
+              <p className="text-xs text-gray-400 dark:text-white/30 mt-auto">
+                Visitor counts, lead forms, and conversion data activate once your site is live.
+              </p>
+            </div>
+          </>
+        ),
+      },
+    ]),
     // AI Assistant Card - capability focused
     {
       content: (
@@ -365,20 +356,27 @@ export function DashboardStatsClient({
             </div>
           ) : (
             <div className="flex-1 flex flex-col">
-              <div className="flex items-center gap-2 mb-3 flex-wrap">
+              <div className="flex items-center gap-2 mb-3">
                 <Sparkles className="w-4 h-4 text-[var(--purple)] opacity-30" />
                 <span className="text-lg font-semibold text-gray-300 dark:text-white/20">1,000</span>
-                <span className="text-sm text-gray-400 dark:text-white/30">AI credits included in your plan</span>
+                <span className="text-sm text-gray-400 dark:text-white/30">AI credits included</span>
               </div>
-              {/* Locked progress bar */}
+              {/* Locked progress bar — full width placeholder */}
               <div className="mb-2">
-                <div className="h-1.5 bg-gray-100 dark:bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full w-full bg-gray-200 dark:bg-white/10 rounded-full" />
+                <div className="h-1.5 bg-gray-100 dark:bg-white/[0.05] rounded-full overflow-hidden">
+                  <div className="h-full w-full bg-gray-200 dark:bg-white/[0.08] rounded-full" />
                 </div>
               </div>
-              <p className="text-xs sm:text-sm sm:text-base text-gray-400 dark:text-white/30 mt-auto">
-                {t('dashboard.stats.aiUnlockedAfterSetup')}
+              <p className="text-xs text-gray-400 dark:text-white/30 mt-auto">
+                Activates when your site goes live
               </p>
+              <button
+                disabled
+                title="Available once your site is live"
+                className="mt-3 w-full py-2 rounded-lg text-xs font-medium text-white/20 bg-white/[0.04] border border-white/[0.06] cursor-not-allowed"
+              >
+                Locked until launch
+              </button>
             </div>
           )}
         </>

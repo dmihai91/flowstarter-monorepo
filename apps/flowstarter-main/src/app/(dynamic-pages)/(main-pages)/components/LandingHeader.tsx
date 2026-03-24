@@ -221,7 +221,7 @@ export function LandingHeader() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="mt-2"
                 >
-                  <Button variant="brand-gradient" size="sm" className="w-full max-w-[260px] rounded-lg shadow-lg">
+                  <Button variant="brand-gradient" size="sm" className="w-full rounded-lg">
                     {t('landing.header.cta')}
                   </Button>
                 </a>

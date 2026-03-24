@@ -92,7 +92,11 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Total Projects Card */}
-      <GlassPanel shadow="glass" padding="md">
+      <GlassPanel
+        shadow="glass"
+        padding="md"
+        className="rounded-2xl border border-white/60 bg-white/70 shadow-[0_2px_20px_rgba(0,0,0,0.06)] backdrop-blur-xl backdrop-saturate-150 dark:border-white/10 dark:bg-white/[0.06] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)]"
+      >
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm text-gray-500 dark:text-white/50">
             {t('team.dashboard.totalProjects')}
@@ -129,7 +133,7 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
 
         {/* Recent Project */}
         {recentProject && (
-          <div className="pt-3 border-t border-gray-200 dark:border-white/10">
+          <div className="pt-3 border-t border-white/50 dark:border-white/10">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center text-lg">
                 {recentProject.name?.charAt(0) || 'P'}
@@ -155,7 +159,11 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
       </GlassPanel>
 
       {/* Revenue Card */}
-      <GlassPanel shadow="glass" padding="md">
+      <GlassPanel
+        shadow="glass"
+        padding="md"
+        className="rounded-2xl border border-white/60 bg-white/70 shadow-[0_2px_20px_rgba(0,0,0,0.06)] backdrop-blur-xl backdrop-saturate-150 dark:border-white/10 dark:bg-white/[0.06] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)]"
+      >
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm text-gray-500 dark:text-white/50">
             {t('team.dashboard.revenue')}
@@ -190,7 +198,11 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
       </GlassPanel>
 
       {/* AI Usage Card */}
-      <GlassPanel shadow="glass" padding="md">
+      <GlassPanel
+        shadow="glass"
+        padding="md"
+        className="rounded-2xl border border-white/60 bg-white/70 shadow-[0_2px_20px_rgba(0,0,0,0.06)] backdrop-blur-xl backdrop-saturate-150 dark:border-white/10 dark:bg-white/[0.06] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)]"
+      >
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm text-gray-500 dark:text-white/50">
             AI Usage

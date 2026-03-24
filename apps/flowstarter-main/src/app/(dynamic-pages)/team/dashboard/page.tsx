@@ -55,6 +55,8 @@ export default function TeamDashboardPage() {
   const [isGeneratingProjectName, setIsGeneratingProjectName] = useState(false);
   const [clientErrors, setClientErrors] = useState<ClientErrors>({});
   const debounceTimers = useRef<Record<string, NodeJS.Timeout>>({});
+  const glassPanelClass =
+    'rounded-2xl border border-white/60 bg-white/70 shadow-[0_2px_20px_rgba(0,0,0,0.06)] backdrop-blur-xl backdrop-saturate-150 dark:border-white/10 dark:bg-white/[0.06] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)]';
 
   const validateField = useCallback((field: keyof ClientErrors, value: string) => {
     if (debounceTimers.current[field]) clearTimeout(debounceTimers.current[field]);
@@ -241,19 +243,12 @@ export default function TeamDashboardPage() {
       {showClientModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowClientModal(false)}>
           <div
-            className="w-full max-w-md mx-4 rounded-2xl p-6 relative backdrop-blur-2xl shadow-[var(--glass-shadow)]"
-            style={{
-              backgroundColor: 'color-mix(in srgb, var(--glass-surface) 95%, transparent)',
-              borderTop: '1px solid var(--glass-border-highlight)',
-              borderLeft: '1px solid var(--glass-border-highlight)',
-              borderBottom: '1px solid var(--glass-border-shadow)',
-              borderRight: '1px solid var(--glass-border-shadow)',
-            }}
+            className="relative mx-4 w-full max-w-md rounded-2xl border border-white/60 bg-white/75 p-6 shadow-[0_2px_20px_rgba(0,0,0,0.06)] backdrop-blur-2xl backdrop-saturate-150 dark:border-white/10 dark:bg-white/[0.08] dark:shadow-[0_2px_20px_rgba(0,0,0,0.22)]"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setShowClientModal(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+              className="absolute right-4 top-4 rounded-xl p-1.5 transition-colors hover:bg-white/55 dark:hover:bg-white/10"
             >
               <X className="w-4 h-4 text-gray-400 dark:text-white/50" />
             </button>
@@ -299,10 +294,10 @@ export default function TeamDashboardPage() {
 
               <div className="relative py-1">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200 dark:border-white/10" />
+                  <div className="w-full border-t border-white/50 dark:border-white/10" />
                 </div>
                 <div className="relative flex justify-center">
-                  <span className="bg-white px-3 text-xs font-medium uppercase tracking-[0.18em] text-gray-400 dark:bg-[color-mix(in_srgb,var(--glass-surface)_95%,transparent)] dark:text-white/40">
+                  <span className="rounded-full border border-white/60 bg-white/80 px-3 text-xs font-medium uppercase tracking-[0.18em] text-gray-400 dark:border-white/10 dark:bg-white/[0.08] dark:text-white/40">
                     Project Details
                   </span>
                 </div>
@@ -321,7 +316,7 @@ export default function TeamDashboardPage() {
                     type="button"
                     onClick={handleGenerateProjectName}
                     disabled={isGeneratingProjectName || !clientInfo.name.trim()}
-                    className="absolute right-1 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md border border-gray-200 bg-white text-gray-500 transition-colors hover:border-gray-300 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:bg-white/5 dark:text-white/60 dark:hover:border-white/20 dark:hover:text-white"
+                    className="absolute right-1 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md border border-white/60 bg-white/75 text-gray-500 transition-colors hover:border-white/80 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:bg-white/[0.08] dark:text-white/60 dark:hover:border-white/20 dark:hover:text-white"
                     aria-label="Generate project name"
                   >
                     {isGeneratingProjectName ? (
@@ -340,7 +335,7 @@ export default function TeamDashboardPage() {
                   placeholder="A website for a bakery in Bucharest specializing in sourdough bread and pastries..."
                   value={clientInfo.projectDescription}
                   onChange={(e) => setClientInfo(prev => ({ ...prev, projectDescription: e.target.value }))}
-                  className="file:text-foreground placeholder:text-muted-foreground mt-1 flex min-h-[72px] w-full min-w-0 rounded-lg border px-2.5 py-2 text-sm shadow-sm transition-[color,box-shadow,border-color,background-color] outline-none text-gray-900 dark:text-gray-100 bg-white border-gray-300/90 hover:border-gray-400 focus:border-[var(--purple)]/70 focus-visible:border-[var(--purple)]/50 focus-visible:ring-1 focus-visible:ring-[var(--purple)]/20 dark:bg-white/5 dark:backdrop-blur-sm dark:border-white/15 dark:hover:border-white/25 dark:focus-visible:ring-white/20 dark:focus-visible:border-white/40 dark:focus:border-white/40 focus:shadow-none focus-visible:shadow-none resize-none"
+                  className="file:text-foreground placeholder:text-muted-foreground mt-1 flex min-h-[72px] w-full min-w-0 rounded-xl border border-white/60 bg-white/65 px-2.5 py-2 text-sm text-gray-900 shadow-sm backdrop-blur-sm transition-[color,box-shadow,border-color,background-color] outline-none hover:border-white/80 focus:border-[var(--purple)]/70 focus-visible:border-[var(--purple)]/50 focus-visible:ring-1 focus-visible:ring-[var(--purple)]/20 dark:border-white/15 dark:bg-white/[0.08] dark:text-gray-100 dark:hover:border-white/25 dark:focus:border-white/40 dark:focus-visible:border-white/40 dark:focus-visible:ring-white/20 focus:shadow-none focus-visible:shadow-none resize-none"
                 />
               </div>
             </div>
@@ -369,8 +364,8 @@ export default function TeamDashboardPage() {
         ) : projects && projects.length > 0 ? (
           <TeamProjectsList projects={projects} />
         ) : (
-          <div className="rounded-2xl bg-white/80 dark:bg-[var(--glass-surface)]/80 backdrop-blur-2xl backdrop-saturate-150 border-t border-l border-white/40 dark:border-white/[0.08] border-b border-r border-black/[0.04] dark:border-black/[0.2] shadow-[0_8px_32px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.04),1px_1px_0_rgba(0,0,0,0.03)_inset,-1px_-1px_0_rgba(255,255,255,1)_inset,0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[0_8px_32px_rgba(0,0,0,0.35),0_2px_8px_rgba(0,0,0,0.2),1px_1px_0_rgba(0,0,0,0.3)_inset,-1px_-1px_0_rgba(255,255,255,0.08)_inset,0_1px_0_rgba(255,255,255,0.06)_inset] p-12 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-4">
+          <div className={`${glassPanelClass} p-12 text-center`}>
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/50 bg-white/55 backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.08]">
               <FolderOpen className="w-8 h-8 text-gray-400 dark:text-white/30" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">

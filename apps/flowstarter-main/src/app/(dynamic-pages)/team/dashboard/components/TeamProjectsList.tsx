@@ -61,6 +61,8 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
   const { t } = useTranslations();
   const { formatTimeAgo } = useFormatDate();
   const { viewMode, setViewMode } = useTeamProjectsView();
+  const glassPanelClass =
+    'rounded-2xl border border-white/60 bg-white/70 shadow-[0_2px_20px_rgba(0,0,0,0.06)] backdrop-blur-xl backdrop-saturate-150 dark:border-white/10 dark:bg-white/[0.06] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)]';
 
   const {
     deleteDialogOpen,
@@ -107,7 +109,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
             </p>
           </div>
         </div>
-        <div className="border border-gray-200 dark:border-white/10 rounded-lg bg-gray-50 dark:bg-white/[0.02] p-12 text-center">
+        <div className={`${glassPanelClass} p-12 text-center`}>
           <p className="text-gray-500 dark:text-white/50 text-sm">
             {t('team.dashboard.noProjects')}
           </p>
@@ -128,12 +130,12 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
             {t('team.dashboard.allProjectsDescription')}
           </p>
         </div>
-        <div className="inline-flex items-center rounded-lg border border-gray-200 dark:border-white/10 p-1 bg-gray-50 dark:bg-white/[0.02]">
+        <div className="inline-flex items-center rounded-xl border border-white/60 bg-white/60 p-1 shadow-[0_2px_20px_rgba(0,0,0,0.04)] backdrop-blur-md dark:border-white/10 dark:bg-white/[0.06] dark:shadow-[0_2px_20px_rgba(0,0,0,0.18)]">
           <button
             onClick={() => setViewMode('list')}
             className={`p-2 rounded-md transition-colors ${
               viewMode === 'list'
-                ? 'bg-white dark:bg-white/10 shadow-sm text-gray-900 dark:text-white'
+                ? 'bg-white/80 dark:bg-white/10 shadow-[0_2px_10px_rgba(0,0,0,0.06)] text-gray-900 dark:text-white'
                 : 'text-gray-500 dark:text-white/50 hover:text-gray-700 dark:hover:text-white/70'
             }`}
           >
@@ -143,7 +145,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
             onClick={() => setViewMode('grid')}
             className={`p-2 rounded-md transition-colors ${
               viewMode === 'grid'
-                ? 'bg-white dark:bg-white/10 shadow-sm text-gray-900 dark:text-white'
+                ? 'bg-white/80 dark:bg-white/10 shadow-[0_2px_10px_rgba(0,0,0,0.06)] text-gray-900 dark:text-white'
                 : 'text-gray-500 dark:text-white/50 hover:text-gray-700 dark:hover:text-white/70'
             }`}
           >
@@ -164,14 +166,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
             <div></div>
           </div>
 
-          <div className="rounded-xl overflow-hidden divide-y divide-white/10 dark:divide-white/5 backdrop-blur-xl shadow-[var(--glass-shadow)]"
-            style={{
-              backgroundColor: 'color-mix(in srgb, var(--glass-surface) 80%, transparent)',
-              borderTop: '1px solid var(--glass-border-highlight)',
-              borderLeft: '1px solid var(--glass-border-highlight)',
-              borderBottom: '1px solid var(--glass-border-shadow)',
-              borderRight: '1px solid var(--glass-border-shadow)',
-            }}>
+          <div className={`${glassPanelClass} overflow-hidden divide-y divide-white/50 dark:divide-white/10`}>
             {projects.map((project) => {
               const status =
                 typeof project.status === 'string' ? project.status : 'draft';
@@ -179,7 +174,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
               return (
                 <div
                   key={project.id}
-                  className="bg-transparent hover:bg-white/30 dark:hover:bg-white/[0.03] transition-colors cursor-pointer"
+                  className="cursor-pointer bg-transparent transition-colors hover:bg-white/40 dark:hover:bg-white/[0.04]"
                   onClick={(e) => {
                     if (
                       (e.target as HTMLElement).closest(
@@ -199,7 +194,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                 >
                   {/* Desktop Row */}
                   <div className="hidden md:grid md:grid-cols-[48px_1fr_100px_150px_100px_40px] gap-4 px-4 py-3 items-center">
-                    <div className="w-12 h-9 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/10 flex-shrink-0">
+                    <div className="h-9 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-white/50 bg-white/55 backdrop-blur-sm dark:border-white/10 dark:bg-white/10">
                       {project.thumbnailUrl ? (
                         <img src={project.thumbnailUrl} alt="" className="w-full h-full object-cover" />
                       ) : (
@@ -244,7 +239,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                   {/* Mobile Row */}
                   <div className="md:hidden p-4">
                     <div className="flex items-start justify-between gap-3">
-                      <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/10 flex-shrink-0">
+                      <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg border border-white/50 bg-white/55 backdrop-blur-sm dark:border-white/10 dark:bg-white/10">
                         {project.thumbnailUrl ? (
                           <img src={project.thumbnailUrl} alt="" className="w-full h-full object-cover" />
                         ) : (

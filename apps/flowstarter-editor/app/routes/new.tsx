@@ -4,7 +4,6 @@ import { ClientOnly } from 'remix-utils/client-only';
 import { AuthGuard } from '~/components/TeamAuthGuard';
 import { HandoffGate } from '~/components/HandoffGate';
 import { LoadingScreen } from '~/components/LoadingScreen';
-import { TemplateOnboardingWizard } from '~/components/setup/TemplateOnboardingWizard';
 import { en } from '~/lib/i18n/locales/en';
 
 export const meta: MetaFunction = () => {
@@ -14,12 +13,10 @@ export const meta: MetaFunction = () => {
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const handoffToken = url.searchParams.get('handoff');
-  const templateSlug = url.searchParams.get('template');
 
   return json({
     handoffToken,
     hasHandoff: Boolean(handoffToken),
-    templateSlug,
   });
 };
 
@@ -28,13 +25,30 @@ function LoadingFallback() {
 }
 
 function NewRouteContent() {
-  const { handoffToken, hasHandoff, templateSlug } = useLoaderData<typeof loader>();
+  const { handoffToken, hasHandoff } = useLoaderData<typeof loader>();
 
-  if (templateSlug) {
-    return <TemplateOnboardingWizard templateSlug={templateSlug} />;
+  // No handoff token — redirect to the operator dashboard to start a new project
+  if (!hasHandoff) {
+    const dashboardUrl =
+      typeof window !== 'undefined'
+        ? `${window.location.protocol}//${window.location.hostname.replace('editor.', '')}` +
+          '/team/dashboard/new'
+        : 'https://flowstarter.dev/team/dashboard/new';
+
+    if (typeof window !== 'undefined') {
+      window.location.href = dashboardUrl;
+    }
+
+    return <LoadingScreen message="Redirecting to dashboard..." />;
   }
 
-  return <HandoffGate handoffToken={handoffToken} hasHandoff={hasHandoff} loadingMessage={en.app.loadingProject} />;
+  return (
+    <HandoffGate
+      handoffToken={handoffToken}
+      hasHandoff={hasHandoff}
+      loadingMessage={en.app.loadingProject}
+    />
+  );
 }
 
 export default function NewProjectPage() {

@@ -49,8 +49,6 @@ export function AppHeader() {
           <div className="hidden sm:block">
             <ThemeToggle />
           </div>
-          <div className="w-px h-6 bg-gray-200 dark:bg-white/10 hidden sm:block" />
-          <UserMenu />
           <a
             href="https://library.flowstarter.dev"
             target="_blank"
@@ -60,6 +58,8 @@ export function AppHeader() {
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
             Templates
           </a>
+          <div className="w-px h-6 bg-gray-200 dark:bg-white/10 hidden sm:block" />
+          <UserMenu />
         </div>
       </div>
     </ScrollAwareHeader>

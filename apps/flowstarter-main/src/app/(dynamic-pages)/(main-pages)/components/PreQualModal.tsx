@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { EXTERNAL_URLS } from '@/lib/constants';
 
 const OPTIONS = [
@@ -60,13 +61,16 @@ export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProp
     return () => window.removeEventListener('keydown', handler);
   }, [open, onClose]);
 
-  if (!open) return null;
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
+  if (!open || !mounted) return null;
 
   const calendlyUrl = selected
     ? `${EXTERNAL_URLS.calendly.discovery}?utm_content=${selected}-plan&utm_source=${source}&utm_medium=prequal-modal`
     : EXTERNAL_URLS.calendly.discovery;
 
-  return (
+  return createPortal(
     <>
       {/* Backdrop */}
       <div
@@ -185,6 +189,7 @@ export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProp
           </p>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 }

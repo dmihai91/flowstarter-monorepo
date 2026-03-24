@@ -27,7 +27,7 @@ export function encodeSSEDone(): string {
 /**
  * Create SSE response headers.
  */
-export function sseHeaders(): HeadersInit {
+export function sseHeaders(): Record<string, string> {
   return {
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',

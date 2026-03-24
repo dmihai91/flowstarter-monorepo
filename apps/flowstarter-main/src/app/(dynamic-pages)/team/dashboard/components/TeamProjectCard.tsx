@@ -59,14 +59,7 @@ export function TeamProjectCard({
 
   return (
     <div
-      className="group relative p-5 rounded-2xl backdrop-blur-2xl backdrop-saturate-150 shadow-[var(--glass-shadow)] transition-all duration-300 cursor-pointer"
-            style={{
-              backgroundColor: 'color-mix(in srgb, var(--glass-surface) 80%, transparent)',
-              borderTop: '1px solid var(--glass-border-highlight)',
-              borderLeft: '1px solid var(--glass-border-highlight)',
-              borderBottom: '1px solid var(--glass-border-shadow)',
-              borderRight: '1px solid var(--glass-border-shadow)',
-            }}
+      className="group relative cursor-pointer rounded-2xl border border-white/60 bg-white/70 p-6 shadow-[0_2px_20px_rgba(0,0,0,0.06)] backdrop-blur-xl backdrop-saturate-150 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_32px_rgba(0,0,0,0.10)] dark:border-white/10 dark:bg-white/[0.06] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_16px_36px_rgba(0,0,0,0.32)]"
       onClick={() =>
         (window.location.href = `/team/dashboard/projects/${project.id}`)
       }
@@ -104,7 +97,7 @@ export function TeamProjectCard({
       {project.setup_fee !== null &&
         project.setup_fee !== undefined &&
         Number(project.setup_fee) > 0 && (
-          <div className="flex items-center gap-3 mb-4 py-2 px-3 rounded-lg bg-gray-50 dark:bg-white/5 text-sm">
+          <div className="mb-4 flex items-center gap-3 rounded-xl border border-white/60 bg-white/55 px-3 py-2 text-sm backdrop-blur-md dark:border-white/10 dark:bg-white/[0.05]">
             <span className="text-gray-600 dark:text-white/60">
               &euro;{project.setup_fee} {t('team.dashboard.setup')}
             </span>
@@ -124,7 +117,7 @@ export function TeamProjectCard({
         )}
 
       {(project.generation_cost_usd != null && project.generation_cost_usd > 0) && (
-        <div className="flex items-center gap-3 mb-4 py-2 px-3 rounded-lg bg-[var(--purple)]/5 dark:bg-[var(--purple)]/10 text-sm">
+        <div className="mb-4 flex items-center gap-3 rounded-xl border border-[var(--purple)]/15 bg-[var(--purple)]/8 px-3 py-2 text-sm backdrop-blur-md dark:border-[var(--purple)]/20 dark:bg-[var(--purple)]/12">
           <span className="text-[var(--purple)] dark:text-[var(--purple)] font-medium">
             {project.ai_credits_used || 0} {t('team.dashboard.aiCredits')}
           </span>
@@ -135,7 +128,7 @@ export function TeamProjectCard({
         </div>
       )}
 
-            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-white/40 pt-3 border-t border-gray-100 dark:border-white/5">
+      <div className="flex items-center justify-between border-t border-white/50 pt-3 text-xs text-gray-500 dark:border-white/10 dark:text-white/40">
         <span>{getOwnerDisplay(project, t('team.dashboard.unknownOwner'))}</span>
         <span>{t('team.dashboard.lastEdit', { time: timeAgo })}</span>
       </div>

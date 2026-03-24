@@ -7,9 +7,7 @@ function Card({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="card"
       className={cn(
-        // Glassy dashboard-style card to match Figma
-        // Responsive padding: smaller on mobile, standard on tablet+
-        'text-card-foreground flex flex-col items-start gap-3 sm:gap-4 md:gap-5 rounded-xl sm:rounded-[16px] border border-white/40 dark:border-white/12 bg-[rgba(243,243,243,0.30)] dark:bg-[rgba(58,58,74,0.30)] px-4 py-3 sm:px-5 sm:py-3.5 md:px-6 md:py-4 flex-1 self-stretch backdrop-blur-xl glass-shadow-card',
+        'text-card-foreground flex flex-1 flex-col items-start self-stretch gap-3 rounded-xl border border-white/45 bg-white/60 px-4 py-3 backdrop-blur-xl backdrop-saturate-150 shadow-[0_2px_20px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-white/[0.04] dark:shadow-[0_2px_20px_rgba(0,0,0,0.18)] sm:gap-4 sm:rounded-2xl sm:px-5 sm:py-3.5 md:gap-5 md:px-6 md:py-4',
         className
       )}
       {...props}

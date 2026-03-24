@@ -164,29 +164,29 @@ export function TeamSidebar() {
       {/* Mobile sidebar */}
       <aside
         className={cn(
-          'md:hidden fixed inset-y-0 left-0 z-[160] w-72',
-          'bg-white/95 dark:bg-[#101014]/95 backdrop-blur-xl backdrop-saturate-150',
-          'border-r border-white/60 dark:border-white/10',
-          'shadow-2xl shadow-black/10 dark:shadow-black/30',
+          'md:hidden fixed inset-y-0 left-0 z-[160] my-3 ml-3 w-[calc(18rem-0.75rem)] rounded-2xl',
+          'bg-white/75 dark:bg-black/40 backdrop-blur-2xl backdrop-saturate-150',
+          'border border-white/60 dark:border-white/10',
+          'shadow-[0_2px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)]',
           'transform transition-transform duration-300 ease-in-out',
           isMobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
         {/* Mobile header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200/50 dark:border-white/5">
+        <div className="flex items-center justify-between p-4 border-b border-white/60 dark:border-white/10">
           <Link href="/team/dashboard" onClick={() => setIsMobileOpen(false)}>
             <Logo size="sm" />
           </Link>
           <button
             onClick={() => setIsMobileOpen(false)}
-            className="p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5"
+            className="p-2 rounded-xl text-gray-400 hover:text-gray-600 dark:hover:text-white hover:bg-white/55 dark:hover:bg-white/10"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* ThemeToggle with label */}
-        <div className="px-4 py-3 border-b border-gray-200/50 dark:border-white/5 flex items-center justify-between">
+        <div className="px-4 py-3 border-b border-white/60 dark:border-white/10 flex items-center justify-between">
           <span className="text-sm text-gray-600 dark:text-white/70">Theme</span>
           <ThemeToggle />
         </div>
@@ -199,8 +199,8 @@ export function TeamSidebar() {
       <aside 
         className={cn(
           'hidden md:flex flex-col flex-shrink-0 overflow-hidden transition-all duration-300',
-          'bg-white/90 dark:bg-[#101014]/95 backdrop-blur-xl backdrop-saturate-150',
-          'border-r border-white/60 dark:border-white/10 shadow-[1px_0_3px_rgba(0,0,0,0.05)]',
+          'bg-white/75 dark:bg-black/40 backdrop-blur-2xl backdrop-saturate-150',
+          'border-r border-white/60 dark:border-white/10 shadow-[0_2px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)]',
           collapsed ? 'w-[68px]' : 'w-64'
         )}
       >

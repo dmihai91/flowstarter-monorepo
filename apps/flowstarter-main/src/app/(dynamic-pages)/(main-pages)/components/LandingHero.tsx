@@ -70,7 +70,7 @@ export function LandingHero() {
 
         {/* Headline */}
         <h1
-          className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-[1.1] tracking-tight mb-4 text-gray-900 dark:text-white drop-shadow-sm"
+          className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight mb-4 text-gray-900 dark:text-white drop-shadow-sm"
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.22s' }}
         >
           {hero.headlinePrefix}
@@ -83,7 +83,7 @@ export function LandingHero() {
           className="text-base sm:text-lg text-gray-500 dark:text-white/55 leading-loose mb-5 max-w-lg mx-auto"
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.38s' }}
         >
-          {hero.subheadlineBold} — {hero.subheadline}
+          {hero.subheadlineBold} {hero.subheadline}
         </p>
 
         {/* Audience qualifier — pill bubble */}

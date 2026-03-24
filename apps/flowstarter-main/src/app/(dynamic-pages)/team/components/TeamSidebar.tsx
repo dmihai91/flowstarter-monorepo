@@ -164,7 +164,7 @@ export function TeamSidebar() {
       {/* Mobile sidebar */}
       <aside
         className={cn(
-          'md:hidden fixed inset-y-0 left-0 z-[160] my-3 ml-3 w-[calc(18rem-0.75rem)] rounded-2xl',
+          'md:hidden fixed inset-y-0 left-0 z-[160] w-72 rounded-r-2xl',
           'bg-white/75 dark:bg-black/40 backdrop-blur-2xl backdrop-saturate-150',
           'border border-white/60 dark:border-white/10',
           'shadow-[0_2px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)]',

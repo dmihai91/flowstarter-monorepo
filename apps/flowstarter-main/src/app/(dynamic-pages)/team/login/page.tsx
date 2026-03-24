@@ -251,7 +251,7 @@ export default function TeamLoginPage() {
                   type="submit"
                   disabled={isLoading || !email || !password}
                   size="xl"
-                  className="w-full font-semibold shadow-md"
+                  variant="brand-gradient" className="w-full font-semibold shadow-[0_4px_20px_rgba(77,93,217,0.35)]"
                 >
                   {isLoading ? t('team.login.signingIn') : t('team.login.signIn')}
                 </Button>
@@ -307,7 +307,7 @@ export default function TeamLoginPage() {
                   type="submit"
                   disabled={isLoading || code.length !== 6}
                   size="xl"
-                  className="w-full font-semibold shadow-md"
+                  variant="brand-gradient" className="w-full font-semibold shadow-[0_4px_20px_rgba(77,93,217,0.35)]"
                 >
                   {isLoading ? t('team.login.verifying') : t('team.login.verify')}
                 </Button>

@@ -1,4 +1,11 @@
-import { ProjectFeature } from './project-types';
+export interface ProjectFeature {
+  id: string;
+  name: string;
+  description: string;
+  required: boolean;
+  category: 'frontend' | 'backend' | 'ai' | 'auth' | 'database' | 'deployment';
+}
+
 
 export type ProjectWizardStep = 'details' | 'template' | 'design' | 'review';
 

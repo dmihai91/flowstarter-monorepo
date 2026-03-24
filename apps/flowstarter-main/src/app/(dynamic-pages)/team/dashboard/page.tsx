@@ -11,6 +11,7 @@ import { useTeamProjects } from '@/hooks/useTeamProjects';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from '@/lib/i18n';
 import { useUser } from '@clerk/nextjs';
+import { useIsTeamMember } from '@/hooks/useIsTeamMember';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef, useCallback } from 'react';
@@ -79,18 +80,14 @@ export default function TeamDashboardPage() {
       setClientErrors(prev => ({ ...prev, [field]: undefined }));
     }
   }, []);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { isAdmin } = useIsTeamMember();
 
-  // Check if user is team member
+  // Redirect if not loaded
   useEffect(() => {
     if (userLoaded) {
-      const metadata = user?.publicMetadata as { role?: string } | undefined;
-      const role = metadata?.role?.toLowerCase();
-
       if (!user) {
         router.push('/login');
       } else {
-        setIsAdmin(role === 'admin');
         setIsLoading(false);
       }
     }

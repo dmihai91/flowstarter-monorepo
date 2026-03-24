@@ -10,11 +10,7 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { useSidebar } from '@/contexts/SidebarContext';
 import {
   LayoutDashboard,
-  Globe,
-  Mail,
-  Shield,
   BarChart3,
-  Wrench,
   UserPlus,
   ChevronsLeft,
   ChevronsRight,
@@ -35,11 +31,7 @@ export function TeamSidebar() {
   const isAdmin = metadata?.role?.toLowerCase() === 'admin';
 
   const configItems = [
-    { label: t('team.sidebar.domains'), href: '/team/dashboard/domains', icon: Globe },
-    { label: t('team.sidebar.email'), href: '/team/dashboard/email', icon: Mail },
     { label: t('team.sidebar.analytics'), href: '/team/dashboard/analytics', icon: BarChart3 },
-    { label: t('team.sidebar.services'), href: '/team/dashboard/services', icon: Wrench },
-    { label: t('team.sidebar.security'), href: '/team/dashboard/security', icon: Shield },
   ];
 
   const adminItems = [

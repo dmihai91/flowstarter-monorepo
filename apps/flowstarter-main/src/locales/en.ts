@@ -1255,7 +1255,7 @@ const en = {
   // Landing Page - Editor
   'landing.editor.title': 'Edit your site with our smart editor',
   'landing.editor.subtitle':
-    'Just type what you want to change. Your smart editor handles the rest.',
+    'Just type what you want to change. Our smart editor handles the rest.',
 
   // Landing Page - Pricing Card
   'landing.pricing.heading1': 'Clear',

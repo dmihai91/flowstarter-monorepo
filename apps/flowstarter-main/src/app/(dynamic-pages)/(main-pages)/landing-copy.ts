@@ -4,10 +4,10 @@ export interface HeroCopy {
   headlinePrefix: string;
   headlineHighlight: string;
   subheadlineBold: string;
-  subheadline: 'with clear messaging and clean design that turns visitors into paying clients. You run it yourself from day one.',
+  subheadline: 'with clear messaging and clean design that turns visitors into paying clients. Then take control with our smart AI editor.',
   primaryCta: string;
   secondaryCta: string;
-  trustLine: 'For coaches, consultants, and freelancers who want to show up professionally and land clients, without the tech headache.',
+  trustLine: 'For coaches, consultants, and freelancers who want to show up professionally and land clients without the tech headache.',
   guarantee: string;
 }
 
@@ -49,10 +49,10 @@ export const LANDING_COPY = {
     headlinePrefix: 'Start getting clients with a website',
     headlineHighlight: 'that actually converts',
     subheadlineBold: 'We build your website from scratch in days',
-    subheadline: 'with clear messaging and clean design that turns visitors into paying clients. You run it yourself from day one.',
+    subheadline: 'with clear messaging and clean design that turns visitors into paying clients. Then take control with our smart AI editor.',
     primaryCta: 'Book your free call',
     secondaryCta: 'See pricing',
-    trustLine: 'For coaches, consultants, and freelancers who want to show up professionally and land clients, without the tech headache.',
+    trustLine: 'For coaches, consultants, and freelancers who want to show up professionally and land clients without the tech headache.',
     guarantee: '50% setup fee refundable within 30 days. Includes a 30-day subscription trial with no risk.',
   },
   process: {

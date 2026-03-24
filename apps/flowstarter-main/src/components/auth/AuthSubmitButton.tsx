@@ -31,7 +31,7 @@ export function AuthSubmitButton({
         'shadow-[0_4px_20px_rgba(77,93,217,0.35)]',
         'hover:opacity-90 active:opacity-80',
         'transition-opacity duration-150',
-        'disabled:opacity-50 disabled:cursor-not-allowed',
+        'disabled:opacity-40 disabled:cursor-not-allowed disabled:saturate-50',
         className,
       ].join(' ')}
     >

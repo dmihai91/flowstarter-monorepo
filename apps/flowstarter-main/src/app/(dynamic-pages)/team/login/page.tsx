@@ -180,7 +180,7 @@ export default function TeamLoginPage() {
     >
       <div className="w-full max-w-[520px] mx-auto">
 
-        <div className="bg-white/95 dark:bg-[var(--surface-2)]/90 backdrop-blur-2xl backdrop-saturate-150 rounded-2xl border border-gray-200/50 dark:border-white/10 p-8 shadow-lg dark:shadow-2xl">
+        <div className="bg-white/95 dark:bg-[var(--surface-2)]/90 backdrop-blur-2xl backdrop-saturate-150 rounded-2xl border border-gray-200/50 dark:border-white/10 p-5 sm:p-8 shadow-lg dark:shadow-2xl">
           {/* Credentials Step */}
           {step === 'credentials' && (
             <>

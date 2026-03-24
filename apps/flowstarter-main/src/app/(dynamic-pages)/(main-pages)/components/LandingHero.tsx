@@ -19,7 +19,7 @@ export function LandingHero() {
   const hero = LANDING_COPY.hero;
 
   return (
-    <section className="relative pt-20 sm:pt-24 lg:pt-28 pb-6 lg:pb-10 overflow-hidden">
+    <section className="relative pt-20 sm:pt-24 lg:pt-28 pb-16 lg:pb-24 overflow-hidden">
       {/* Background gradient — premium multi-layer */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Base wash — barely tinted */}
@@ -58,7 +58,7 @@ export function LandingHero() {
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0) scale(1)' : 'translateY(28px) scale(0.97)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.1s' }}
         >
           <GlassPill dot className="mb-6">
-            Websites that perform without tech hustle
+            Done for you, fast
           </GlassPill>
         </div>
 
@@ -95,7 +95,7 @@ export function LandingHero() {
           className="flex flex-col items-center gap-4"
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.64s' }}
         >
-          <Button variant="brand-gradient" onClick={() => setModalOpen(true)} className="relative overflow-hidden bg-[length:200%_100%] animate-[shimmerBtn_3s_ease-in-out_infinite] rounded-xl px-8 sm:px-10 h-12 sm:h-13 text-base sm:text-lg shadow-[0_4px_24px_rgba(124,58,237,0.35),0_1px_4px_rgba(0,0,0,0.12)] hover:shadow-[0_8px_32px_rgba(124,58,237,0.45)] hover:scale-[1.02] active:scale-[0.98] group max-w-xs sm:max-w-none w-full sm:w-auto">
+          <Button variant="brand-gradient" onClick={() => setModalOpen(true)} className="relative overflow-hidden bg-[length:200%_100%] animate-[shimmerBtn_3s_ease-in-out_infinite] rounded-xl px-8 h-12 text-base shadow-[0_2px_12px_rgba(124,58,237,0.25),0_1px_3px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_20px_rgba(124,58,237,0.35)] hover:scale-[1.02] active:scale-[0.98] group max-w-[220px] w-full">
               {hero.primaryCta}
               <svg className="w-5 h-5 ml-2.5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -108,7 +108,7 @@ export function LandingHero() {
               event.preventDefault();
               document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="inline-flex items-center justify-center rounded-xl border border-[var(--landing-card-border)] bg-white/60 px-6 py-3 text-sm font-medium text-gray-700 shadow-[0_8px_30px_rgba(15,23,42,0.05)] backdrop-blur-md hover:border-[var(--purple-primary)]/35 hover:text-gray-900 dark:bg-white/[0.03] dark:text-white/85 dark:hover:text-white transition-colors"
+            className="text-sm font-medium text-gray-500 dark:text-white/60 underline underline-offset-4 decoration-gray-300 dark:decoration-white/20 hover:text-gray-900 dark:hover:text-white hover:decoration-gray-500 dark:hover:decoration-white/50 transition-colors py-2"
           >
             {hero.secondaryCta}
           </a>

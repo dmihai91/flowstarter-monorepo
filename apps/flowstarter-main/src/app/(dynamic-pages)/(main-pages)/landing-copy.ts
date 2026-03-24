@@ -74,7 +74,7 @@ export const LANDING_COPY = {
         number: '03',
         title: 'Keep growing, your way',
         description:
-          'Use the smart editor to refine copy, update sections, and keep your site fresh — no developer needed.',
+          'Use the smart editor to refine copy, update sections, and keep your site fresh. No developer needed.',
       },
     ],
   },

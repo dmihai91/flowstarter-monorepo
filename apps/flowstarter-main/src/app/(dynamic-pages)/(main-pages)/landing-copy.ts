@@ -47,7 +47,7 @@ export const LANDING_COPY = {
   },
   hero: {
     headlinePrefix: 'Every expert needs a great digital presence.',
-    headlineHighlight: 'We build yours. You manage it yourself, no code needed.',
+    headlineHighlight: 'We build yours.',
     subheadlineBold: 'Done for you in days.',
     subheadline:
       'We build your landing page, set up booking and structure, then hand you a smart editor so you can update everything yourself. No code, no agency, no waiting.',

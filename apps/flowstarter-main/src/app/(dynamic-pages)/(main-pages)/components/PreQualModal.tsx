@@ -191,7 +191,7 @@ export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProp
           </a>
 
           <p className="mt-3 text-center text-xs text-gray-400 dark:text-white/30">
-            Free, no commitment. 30-minute call.
+            Free, no commitment. 45-minute call.
           </p>
         </div>
       </div>

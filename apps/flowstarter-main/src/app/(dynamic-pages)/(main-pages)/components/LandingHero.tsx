@@ -92,7 +92,7 @@ export function LandingHero() {
 
         {/* CTA */}
         <div
-          className="flex flex-col items-center gap-4"
+          className="flex flex-col sm:flex-row items-center justify-center gap-4"
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.64s' }}
         >
           <Button variant="brand-gradient" onClick={() => setModalOpen(true)} className="relative overflow-hidden bg-[length:200%_100%] animate-[shimmerBtn_3s_ease-in-out_infinite] rounded-xl px-8 h-12 text-base shadow-[0_2px_12px_rgba(124,58,237,0.25),0_1px_3px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_20px_rgba(124,58,237,0.35)] hover:scale-[1.02] active:scale-[0.98] group max-w-[220px] w-full">

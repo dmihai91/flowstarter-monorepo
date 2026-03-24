@@ -7,11 +7,8 @@ import { EXTERNAL_URLS } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import { LANDING_COPY } from '../landing-copy';
 
-import { useState } from 'react';
-import { PreQualModal } from './PreQualModal';
 
-export function FinalCTASection() {
-  const [finalModalOpen, setFinalModalOpen] = useState(false);
+export function FinalCTASection({ onOpenModal }: { onOpenModal?: () => void }) {
   const finalCta = LANDING_COPY.finalCta;
 
   return (
@@ -49,7 +46,7 @@ export function FinalCTASection() {
             <p className="text-base text-white/70 dark:text-white/50 mb-6 sm:mb-10 max-w-md mx-auto">
               {finalCta.body}
             </p>
-            <a href="#" onClick={(e) => { e.preventDefault(); setFinalModalOpen(true); }} className="inline-flex justify-center w-full sm:w-auto">
+            <a href="#" onClick={(e) => { e.preventDefault(); onOpenModal?.(); }} className="inline-flex justify-center w-full sm:w-auto">
               <Button className="relative overflow-hidden w-full sm:w-auto rounded-lg px-8 h-12 text-base sm:px-12 sm:h-16 sm:text-lg font-semibold transition-all duration-300 hover:scale-105 shadow-[0_8px_30px_rgba(124,58,237,0.4)] hover:shadow-[0_12px_40px_rgba(124,58,237,0.55)] border-0" variant="brand-gradient">
                 {finalCta.cta}
                 <svg
@@ -69,7 +66,6 @@ export function FinalCTASection() {
             </a>
           </div>
         </section>
-      <PreQualModal open={finalModalOpen} onClose={() => setFinalModalOpen(false)} source="final-cta" />
     </>
   );
 }

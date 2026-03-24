@@ -112,7 +112,7 @@ export default function LandingPage() {
         <FAQSection />
 
         {/* 13. Final CTA + footer */}
-        <FinalCTASection />
+        <FinalCTASection onOpenModal={() => setModalOpen(true)} />
         <Footer />
         <CookieConsent />
       </div>

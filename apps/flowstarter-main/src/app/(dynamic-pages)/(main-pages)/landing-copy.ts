@@ -7,7 +7,7 @@ export interface HeroCopy {
   subheadline: 'with clear messaging and clean design that turns visitors into paying clients. You run it yourself from day one.',
   primaryCta: string;
   secondaryCta: string;
-  trustLine: 'For coaches, consultants, and freelancers who want to show up professionally and land clients — without the tech headache.',
+  trustLine: 'For coaches, consultants, and freelancers who want to show up professionally and land clients, without the tech headache.',
   guarantee: string;
 }
 
@@ -52,7 +52,7 @@ export const LANDING_COPY = {
     subheadline: 'with clear messaging and clean design that turns visitors into paying clients. You run it yourself from day one.',
     primaryCta: 'Book your free call',
     secondaryCta: 'See pricing',
-    trustLine: 'For coaches, consultants, and freelancers who want to show up professionally and land clients — without the tech headache.',
+    trustLine: 'For coaches, consultants, and freelancers who want to show up professionally and land clients, without the tech headache.',
     guarantee: '50% setup fee refundable within 30 days. Includes a 30-day subscription trial with no risk.',
   },
   process: {

@@ -22,7 +22,7 @@ export function TeamProjectsListSkeleton({ count = 3 }: { count?: number }) {
         {Array.from({ length: count }).map((_, i) => (
           <div
             key={i}
-            className="p-5 rounded-xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[var(--glass-surface)]/80 backdrop-blur-xl animate-pulse"
+            className="animate-pulse rounded-2xl border border-white/60 bg-white/70 p-5 shadow-[0_2px_20px_rgba(0,0,0,0.06)] backdrop-blur-xl backdrop-saturate-150 dark:border-white/10 dark:bg-white/[0.06] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)]"
             style={{ animationDelay: `${i * 100}ms` }}
           >
             {/* Card Header */}
@@ -45,7 +45,7 @@ export function TeamProjectsListSkeleton({ count = 3 }: { count?: number }) {
             </div>
 
             {/* Footer */}
-            <div className="flex items-center gap-4 pt-3 border-t border-gray-100 dark:border-white/5">
+            <div className="flex items-center gap-4 border-t border-white/50 pt-3 dark:border-white/10">
               <div className="flex items-center gap-1.5">
                 <Skeleton className="w-5 h-5 rounded-full" />
                 <Skeleton className="h-3 w-20" />

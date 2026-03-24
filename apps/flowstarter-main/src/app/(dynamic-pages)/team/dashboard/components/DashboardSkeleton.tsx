@@ -19,7 +19,7 @@ export function DashboardSkeleton() {
 
       {/* Quick Scaffold Skeleton */}
       <div className="mb-8">
-        <div className="rounded-2xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[var(--glass-surface)]/80 backdrop-blur-xl p-4">
+        <div className="rounded-2xl border border-white/60 bg-white/70 p-4 shadow-[0_2px_20px_rgba(0,0,0,0.06)] backdrop-blur-xl backdrop-saturate-150 dark:border-white/10 dark:bg-white/[0.06] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)]">
           <div className="flex items-center gap-3">
             <Skeleton className="w-10 h-10 rounded-xl" />
             <Skeleton className="h-5 w-64" />
@@ -36,7 +36,7 @@ export function DashboardSkeleton() {
           {[1, 2].map((i) => (
             <div
               key={i}
-              className="p-5 rounded-xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[var(--glass-surface)]/80 backdrop-blur-xl"
+              className="rounded-2xl border border-white/60 bg-white/70 p-5 shadow-[0_2px_20px_rgba(0,0,0,0.06)] backdrop-blur-xl backdrop-saturate-150 dark:border-white/10 dark:bg-white/[0.06] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)]"
             >
               <div className="flex items-center justify-between mb-3">
                 <Skeleton className="h-4 w-24" />
@@ -69,7 +69,7 @@ export function DashboardSkeleton() {
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="p-5 rounded-xl border border-black/[0.08] dark:border-white/[0.08] bg-white/80 dark:bg-[var(--glass-surface)]/80 backdrop-blur-xl"
+            className="rounded-2xl border border-white/60 bg-white/70 p-5 shadow-[0_2px_20px_rgba(0,0,0,0.06)] backdrop-blur-xl backdrop-saturate-150 dark:border-white/10 dark:bg-white/[0.06] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)]"
             style={{ animationDelay: `${i * 100}ms` }}
           >
             {/* Card Header */}
@@ -92,7 +92,7 @@ export function DashboardSkeleton() {
             </div>
 
             {/* Footer */}
-            <div className="flex items-center gap-4 pt-3 border-t border-gray-100 dark:border-white/5">
+            <div className="flex items-center gap-4 border-t border-white/50 pt-3 dark:border-white/10">
               <Skeleton className="h-3 w-24" />
               <Skeleton className="h-3 w-20" />
             </div>

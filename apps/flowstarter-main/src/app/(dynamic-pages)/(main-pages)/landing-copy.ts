@@ -320,7 +320,7 @@ export const LANDING_COPY = {
   finalCta: {
     headline: 'Your site could be live by next week.',
     body:
-      'Book a free 30-minute strategy call. We\'ll map out your launch, recommend the right plan, and answer every question. Free. No pressure. No commitment.',
+      'Book a free 45-minute strategy call. We\'ll map out your launch, recommend the right plan, and answer every question. Free. No pressure. No commitment.',
     cta: 'Book your free call, spots are limited',
   },
 };

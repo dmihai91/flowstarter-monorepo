@@ -66,7 +66,7 @@ export default function LandingPage() {
         .typing-container { overflow: hidden; white-space: nowrap; border-right: 2px solid var(--purple, #4D5DD9); animation: typing 2s steps(30) forwards, cursorBlink 1s step-end infinite; will-change: transform; }
       `}</style>
 
-      <div className="min-h-screen bg-[var(--landing-bg)] dark:bg-[var(--landing-dark-surface)] text-gray-900 dark:text-white font-display relative overflow-x-hidden transition-colors duration-300">
+      <div className="min-h-screen bg-[var(--landing-bg)] dark:bg-[var(--landing-dark-surface)] text-gray-900 dark:text-white font-display relative transition-colors duration-300">
         <FlowFieldBackground />
         <LandingHeader />
 

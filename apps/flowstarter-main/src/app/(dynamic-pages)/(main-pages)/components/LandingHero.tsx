@@ -25,15 +25,15 @@ export function LandingHero() {
         {/* Base wash — barely tinted */}
         <div className="absolute inset-0 bg-gradient-to-b from-[var(--hero-wash-from)] via-[var(--hero-wash-via)] to-[var(--hero-wash-to)]" />
         {/* Central halo — single radial glow behind headline area */}
-        <div className="absolute top-[10%] left-1/2 -translate-x-1/2 w-[90%] sm:w-[70%] h-[60%] rounded-full bg-[var(--hero-glow-primary)] opacity-[0.12] dark:opacity-[0.11] blur-[100px] md:blur-[140px] lg:blur-[220px] will-change-transform" />
+        <div className="absolute top-[5%] left-1/2 -translate-x-1/2 w-[100%] sm:w-[80%] h-[85%] rounded-full bg-[var(--hero-glow-primary)] opacity-[0.13] dark:opacity-[0.12] blur-[100px] md:blur-[140px] lg:blur-[220px] will-change-transform" />
         {/* Subtle secondary — slight cool shift lower */}
-        <div className="absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[60%] sm:w-[45%] h-[40%] rounded-full bg-[var(--hero-glow-secondary)] opacity-[0.07] dark:opacity-[0.06] blur-[100px] md:blur-[140px] lg:blur-[200px] will-change-transform" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[70%] sm:w-[55%] h-[50%] rounded-full bg-[var(--hero-glow-secondary)] opacity-[0.08] dark:opacity-[0.07] blur-[100px] md:blur-[140px] lg:blur-[200px] will-change-transform" />
         {/* Noise texture overlay */}
         <div className="absolute inset-0 opacity-[0.025] dark:opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")', backgroundRepeat: 'repeat', backgroundSize: '128px 128px' }} />
       </div>
 
       {/* Bottom fade — smooth transition to next section */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-[var(--landing-bg)]/50 to-[var(--landing-bg)] dark:via-[var(--landing-dark-surface)]/50 dark:to-[var(--landing-dark-surface)] pointer-events-none z-[1]" />
+      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent via-[var(--landing-bg)]/50 to-[var(--landing-bg)] dark:via-[var(--landing-dark-surface)]/50 dark:to-[var(--landing-dark-surface)] pointer-events-none z-[1]" />
 
       {/* Subtle flow lines */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">

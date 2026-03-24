@@ -48,9 +48,15 @@ interface PreQualModalProps {
 export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProps) {
   const [selected, setSelected] = useState<OptionId | null>(null);
 
-  // Reset on open
+  // Reset on open + lock scroll
   useEffect(() => {
-    if (open) setSelected(null);
+    if (open) {
+      setSelected(null);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
   }, [open]);
 
   // Close on Escape
@@ -72,7 +78,8 @@ export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProp
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-sm"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+        style={{ zIndex: 9998 }}
         onClick={onClose}
         aria-hidden="true"
       />
@@ -82,7 +89,8 @@ export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProp
         role="dialog"
         aria-modal="true"
         aria-labelledby="prequal-title"
-        className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+        className="fixed inset-0 flex items-center justify-center p-4"
+        style={{ zIndex: 9999 }}
       >
         <div className="relative w-full max-w-md rounded-2xl border border-white/10 bg-white dark:bg-[#0f1117] shadow-2xl shadow-black/30 p-5 sm:p-8 max-h-[90vh] overflow-y-auto">
 

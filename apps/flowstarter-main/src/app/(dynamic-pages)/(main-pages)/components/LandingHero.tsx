@@ -85,7 +85,7 @@ export function LandingHero() {
           className="flex justify-center mb-7"
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.50s' }}
         >
-          <GlassPill className="text-sm sm:text-base leading-relaxed">
+          <GlassPill className="text-sm sm:text-base leading-relaxed max-w-xs sm:max-w-sm text-center">
             {hero.trustLine}
           </GlassPill>
         </div>

@@ -1,4 +1,6 @@
 'use client';
+import { useState } from 'react';
+import { PreQualModal } from './components/PreQualModal';
 
 import Footer from '@/components/Footer';
 import { CookieConsent } from '@/components/CookieConsent';
@@ -21,6 +23,7 @@ import { FAQSection } from './components/FAQSection';
 import { FinalCTASection } from './components/FinalCTASection';
 
 export default function LandingPage() {
+  const [modalOpen, setModalOpen] = useState(false);
   return (
     <>
       <style jsx global>{`
@@ -68,10 +71,11 @@ export default function LandingPage() {
 
       <div className="min-h-screen bg-[var(--landing-bg)] dark:bg-[var(--landing-dark-surface)] text-gray-900 dark:text-white font-display relative transition-colors duration-300">
         <FlowFieldBackground />
-        <LandingHeader />
+        <LandingHeader onOpenModal={() => setModalOpen(true)} />
 
         {/* 1. Hero — headline + paragraph + CTA + price pill */}
-        <LandingHero />
+        <LandingHero onOpenModal={() => setModalOpen(true)} />
+        <PreQualModal open={modalOpen} onClose={() => setModalOpen(false)} source="page" />
 
         {/* 2. Editor demo showcase */}
         <EditorShowcase />

@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
-import type { ProjectPaymentUpdate } from '@/lib/stripe/invoices';
 
 function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -17,40 +15,36 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   const now = new Date().toISOString();
 
   if (invoiceType === 'deposit') {
-    const u: ProjectPaymentUpdate = { deposit_status: 'paid', deposit_paid_at: now, outstanding_payment: false };
-    await supabase.from('projects').update(u as any).eq('id', projectId);
+    await supabase.from('projects').update({ deposit_status: 'paid', deposit_paid_at: now, outstanding_payment: false }).eq('id', projectId);
   }
   if (invoiceType === 'final') {
     const trialEnd = new Date();
     trialEnd.setDate(trialEnd.getDate() + 30);
-    const u: ProjectPaymentUpdate = {
+    await supabase.from('projects').update({
       final_status: 'paid', final_paid_at: now, outstanding_payment: false,
       launched_at: now, subscription_status: 'trial', subscription_trial_ends: trialEnd.toISOString(),
-    };
-    await supabase.from('projects').update(u as any).eq('id', projectId);
+    }).eq('id', projectId);
   }
-  console.info(`[Stripe] Invoice payment_succeeded -- ${invoiceType} for project ${projectId}`);
+  console.info(`[Stripe] payment_succeeded -- ${invoiceType} for project ${projectId}`);
 }
 
 async function handleInvoiceOverdue(invoice: Stripe.Invoice) {
   const { projectId, invoiceType } = invoice.metadata ?? {};
   if (!projectId || !invoiceType) return;
   const supabase = createSupabaseServiceRoleClient();
-  const u: ProjectPaymentUpdate =
-    invoiceType === 'deposit'
-      ? { deposit_status: 'overdue', outstanding_payment: true }
-      : { final_status: 'overdue', outstanding_payment: true };
-  await supabase.from('projects').update(u as any).eq('id', projectId);
-  console.warn(`[Stripe] Invoice overdue -- ${invoiceType} for project ${projectId}`);
+  if (invoiceType === 'deposit') {
+    await supabase.from('projects').update({ deposit_status: 'overdue', outstanding_payment: true }).eq('id', projectId);
+  } else {
+    await supabase.from('projects').update({ final_status: 'overdue', outstanding_payment: true }).eq('id', projectId);
+  }
+  console.warn(`[Stripe] overdue -- ${invoiceType} for project ${projectId}`);
 }
 
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   const { projectId } = invoice.metadata ?? {};
   if (!projectId) return;
-  const supabase = createSupabaseServiceRoleClient();
-  const u: ProjectPaymentUpdate = { outstanding_payment: true };
-  await supabase.from('projects').update(u as any).eq('id', projectId);
-  console.warn(`[Stripe] Payment failed for project ${projectId}`);
+  await createSupabaseServiceRoleClient().from('projects').update({ outstanding_payment: true }).eq('id', projectId);
+  console.warn(`[Stripe] payment_failed for project ${projectId}`);
 }
 
 async function handleSubscriptionEvent(subscription: Stripe.Subscription) {
@@ -65,14 +59,14 @@ async function handleSubscriptionEvent(subscription: Stripe.Subscription) {
   const periodEnd = subscription.items?.data?.[0]?.current_period_end ?? null;
   const nextBilling = periodEnd ? new Date(periodEnd * 1000).toISOString() : null;
 
-  const u: ProjectPaymentUpdate = {
+  await supabase.from('projects').update({
     subscription_status: status,
     stripe_subscription_id: subscription.id,
     subscription_next_billing: nextBilling,
     outstanding_payment: subscription.status === 'past_due',
-  };
-  await supabase.from('projects').update(u as any).eq('id', projectId);
-  console.info(`[Stripe] Subscription ${subscription.id} -> ${status} for project ${projectId}`);
+  }).eq('id', projectId);
+
+  console.info(`[Stripe] subscription ${subscription.id} -> ${status} for project ${projectId}`);
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -91,22 +85,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   try {
     switch (event.type) {
-      case 'invoice.payment_succeeded':
-        await handleInvoicePaymentSucceeded(event.data.object as Stripe.Invoice);
-        break;
-      case 'invoice.payment_failed':
-        await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice);
-        break;
-      case 'invoice.overdue':
-        await handleInvoiceOverdue(event.data.object as Stripe.Invoice);
-        break;
+      case 'invoice.payment_succeeded': await handleInvoicePaymentSucceeded(event.data.object as Stripe.Invoice); break;
+      case 'invoice.payment_failed':    await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice);    break;
+      case 'invoice.overdue':           await handleInvoiceOverdue(event.data.object as Stripe.Invoice);          break;
       case 'customer.subscription.created':
       case 'customer.subscription.updated':
-      case 'customer.subscription.deleted':
-        await handleSubscriptionEvent(event.data.object as Stripe.Subscription);
-        break;
-      default:
-        break;
+      case 'customer.subscription.deleted': await handleSubscriptionEvent(event.data.object as Stripe.Subscription); break;
+      default: break;
     }
   } catch (err) {
     console.error(`[Stripe Webhook] Error handling ${event.type}:`, err);

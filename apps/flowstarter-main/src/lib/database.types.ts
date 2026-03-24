@@ -192,98 +192,158 @@ export type Database = {
       }
       projects: {
         Row: {
+          ai_credits_used: number | null
+          assigned_to: string | null
+          blocking_reason: string | null
+          blocking_since: string | null
+          client_last_login_at: string | null
           convex_session_id: string | null
           created_at: string
           data: string | null
+          deposit_amount: number | null
+          deposit_invoice_id: string | null
+          deposit_invoice_url: string | null
+          deposit_paid_at: string | null
+          deposit_status: string
           description: string | null
           domain_name: string | null
           domain_provider: string | null
           domain_type: string | null
+          final_amount: number | null
+          final_invoice_id: string | null
+          final_invoice_url: string | null
+          final_paid_at: string | null
+          final_status: string
+          font_pairing_id: string | null
           generated_at: string | null
           generation_completed_at: string | null
           generation_cost_usd: number | null
-          ai_credits_used: number | null
           id: string
           is_draft: boolean
+          is_paid: boolean | null
+          launched_at: string | null
+          monthly_fee: number | null
+          monthly_price: number | null
           name: string
+          outstanding_payment: boolean
+          palette_id: string | null
+          plan_name: string | null
+          project_type: string | null
+          setup_fee: number | null
           status: string | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          subscription_next_billing: string | null
+          subscription_status: string
+          subscription_trial_ends: string | null
           template_id: string | null
+          template_slug: string | null
+          total_fee: number | null
           updated_at: string
           user_id: string
-          ga_property_id: string | null
-          ga_refresh_token_id: string | null
-          ga_connected_at: string | null
-          calendly_api_key_id: string | null
-          calendly_url: string | null
-          published_url: string | null
-          custom_domain: string | null
-          domain_status: string | null
-          template_slug: string | null
-          palette_id: string | null
-          font_pairing_id: string | null
-                  }
+        }
         Insert: {
+          ai_credits_used?: number | null
+          assigned_to?: string | null
+          blocking_reason?: string | null
+          blocking_since?: string | null
+          client_last_login_at?: string | null
           convex_session_id?: string | null
           created_at?: string
           data?: string | null
+          deposit_amount?: number | null
+          deposit_invoice_id?: string | null
+          deposit_invoice_url?: string | null
+          deposit_paid_at?: string | null
+          deposit_status?: string
           description?: string | null
           domain_name?: string | null
           domain_provider?: string | null
           domain_type?: string | null
+          final_amount?: number | null
+          final_invoice_id?: string | null
+          final_invoice_url?: string | null
+          final_paid_at?: string | null
+          final_status?: string
+          font_pairing_id?: string | null
           generated_at?: string | null
           generation_completed_at?: string | null
           generation_cost_usd?: number | null
-          ai_credits_used?: number | null
           id?: string
           is_draft?: boolean
+          is_paid?: boolean | null
+          launched_at?: string | null
+          monthly_fee?: number | null
+          monthly_price?: number | null
           name: string
+          outstanding_payment?: boolean
+          palette_id?: string | null
+          plan_name?: string | null
+          project_type?: string | null
+          setup_fee?: number | null
           status?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_next_billing?: string | null
+          subscription_status?: string
+          subscription_trial_ends?: string | null
           template_id?: string | null
+          template_slug?: string | null
+          total_fee?: number | null
           updated_at?: string
           user_id: string
-          ga_property_id?: string | null
-          ga_refresh_token_id?: string | null
-          ga_connected_at?: string | null
-          calendly_api_key_id?: string | null
-          calendly_url?: string | null
-          published_url?: string | null
-          custom_domain?: string | null
-          domain_status?: string | null
-          template_slug?: string | null
-          palette_id?: string | null
-          font_pairing_id?: string | null
-                  }
+        }
         Update: {
+          ai_credits_used?: number | null
+          assigned_to?: string | null
+          blocking_reason?: string | null
+          blocking_since?: string | null
+          client_last_login_at?: string | null
           convex_session_id?: string | null
           created_at?: string
           data?: string | null
+          deposit_amount?: number | null
+          deposit_invoice_id?: string | null
+          deposit_invoice_url?: string | null
+          deposit_paid_at?: string | null
+          deposit_status?: string
           description?: string | null
           domain_name?: string | null
           domain_provider?: string | null
           domain_type?: string | null
+          final_amount?: number | null
+          final_invoice_id?: string | null
+          final_invoice_url?: string | null
+          final_paid_at?: string | null
+          final_status?: string
+          font_pairing_id?: string | null
           generated_at?: string | null
           generation_completed_at?: string | null
           generation_cost_usd?: number | null
-          ai_credits_used?: number | null
           id?: string
           is_draft?: boolean
+          is_paid?: boolean | null
+          launched_at?: string | null
+          monthly_fee?: number | null
+          monthly_price?: number | null
           name?: string
+          outstanding_payment?: boolean
+          palette_id?: string | null
+          plan_name?: string | null
+          project_type?: string | null
+          setup_fee?: number | null
           status?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_next_billing?: string | null
+          subscription_status?: string
+          subscription_trial_ends?: string | null
           template_id?: string | null
+          template_slug?: string | null
+          total_fee?: number | null
           updated_at?: string
           user_id?: string
-          ga_property_id?: string | null
-          ga_refresh_token_id?: string | null
-          ga_connected_at?: string | null
-          calendly_api_key_id?: string | null
-          calendly_url?: string | null
-          published_url?: string | null
-          custom_domain?: string | null
-          domain_status?: string | null
-          template_slug?: string | null
-          palette_id?: string | null
-          font_pairing_id?: string | null
-                  }
+        }
         Relationships: []
       }
       security_audit_logs: {
@@ -337,18 +397,7 @@ export type Database = {
           message: string
           status: string | null
           user_id: string
-          ga_property_id: string | null
-          ga_refresh_token_id: string | null
-          ga_connected_at: string | null
-          calendly_api_key_id: string | null
-          calendly_url: string | null
-          published_url: string | null
-          custom_domain: string | null
-          domain_status: string | null
-          template_slug: string | null
-          palette_id: string | null
-          font_pairing_id: string | null
-                  }
+        }
         Insert: {
           category: string
           created_at?: string | null
@@ -357,18 +406,7 @@ export type Database = {
           message: string
           status?: string | null
           user_id: string
-          ga_property_id?: string | null
-          ga_refresh_token_id?: string | null
-          ga_connected_at?: string | null
-          calendly_api_key_id?: string | null
-          calendly_url?: string | null
-          published_url?: string | null
-          custom_domain?: string | null
-          domain_status?: string | null
-          template_slug?: string | null
-          palette_id?: string | null
-          font_pairing_id?: string | null
-                  }
+        }
         Update: {
           category?: string
           created_at?: string | null
@@ -388,18 +426,7 @@ export type Database = {
           integration_id: string
           updated_at: string
           user_id: string
-          ga_property_id: string | null
-          ga_refresh_token_id: string | null
-          ga_connected_at: string | null
-          calendly_api_key_id: string | null
-          calendly_url: string | null
-          published_url: string | null
-          custom_domain: string | null
-          domain_status: string | null
-          template_slug: string | null
-          palette_id: string | null
-          font_pairing_id: string | null
-                  }
+        }
         Insert: {
           config?: Json
           created_at?: string
@@ -407,18 +434,7 @@ export type Database = {
           integration_id: string
           updated_at?: string
           user_id: string
-          ga_property_id?: string | null
-          ga_refresh_token_id?: string | null
-          ga_connected_at?: string | null
-          calendly_api_key_id?: string | null
-          calendly_url?: string | null
-          published_url?: string | null
-          custom_domain?: string | null
-          domain_status?: string | null
-          template_slug?: string | null
-          palette_id?: string | null
-          font_pairing_id?: string | null
-                  }
+        }
         Update: {
           config?: Json
           created_at?: string

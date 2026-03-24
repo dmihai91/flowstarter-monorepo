@@ -4,7 +4,7 @@ export interface HeroCopy {
   headlinePrefix: string;
   headlineHighlight: string;
   subheadlineBold: string;
-  subheadline: 'with clear messaging and clean design that turns visitors into paying clients. Then take control with our smart AI editor.',
+  subheadline: 'with clear messaging and clean design that turns visitors into paying clients. Then take control with our smart editor.',
   primaryCta: string;
   secondaryCta: string;
   trustLine: 'For coaches, consultants, and freelancers who want to show up professionally and land clients without the tech headache.',
@@ -49,7 +49,7 @@ export const LANDING_COPY = {
     headlinePrefix: 'Start getting clients with a website',
     headlineHighlight: 'that actually converts',
     subheadlineBold: 'We build your website from scratch in days',
-    subheadline: 'with clear messaging and clean design that turns visitors into paying clients. Then take control with our smart AI editor.',
+    subheadline: 'with clear messaging and clean design that turns visitors into paying clients. Then take control with our smart editor.',
     primaryCta: 'Book your free call',
     secondaryCta: 'See pricing',
     trustLine: 'For coaches, consultants, and freelancers who want to show up professionally and land clients without the tech headache.',
@@ -72,9 +72,9 @@ export const LANDING_COPY = {
       },
       {
         number: '03',
-        title: 'Grow with AI assistance',
+        title: 'Keep growing, your way',
         description:
-          'Use the AI editor to refine copy, improve structure, and evolve your online presence over time.',
+          'Use the smart editor to refine copy, update sections, and keep your site fresh — no developer needed.',
       },
     ],
   },
@@ -122,7 +122,7 @@ export const LANDING_COPY = {
       {
         icon: 'sparkles',
         title: 'Designed to evolve',
-        subtitle: 'AI-assisted growth',
+        subtitle: 'Built-in smart editor',
         body:
           'Improve copy, sharpen positioning, and keep iterating as your business grows.',
       },
@@ -153,8 +153,8 @@ export const LANDING_COPY = {
       },
       {
         icon: 'sparkles',
-        title: 'Edit anything with AI, no tech skills',
-        description: 'Type what you want changed in plain English. The AI handles copy, layout tweaks, and updates.',
+        title: 'Edit anything yourself, no tech skills',
+        description: 'Type what you want changed in plain English. The smart editor handles the rest.',
       },
       {
         icon: 'layout',
@@ -181,7 +181,7 @@ export const LANDING_COPY = {
           'Business structure',
           'Online booking setup',
           'Visitor tracking',
-          'Edit your site with AI',
+          'Edit your site with the smart editor',
           'Your own business dashboard',
         ],
         cta: 'Claim your Starter spot',
@@ -256,7 +256,7 @@ export const LANDING_COPY = {
           'Launches your foundation for you and gives you control to manage and grow it.',
         bullets: [
           'Done-for-you setup, live in days',
-          'Your own AI editor, no tech skills needed',
+          'Your own smart editor, no tech skills needed',
           'Landing page, booking, and structure included',
           'One dashboard to manage everything after launch',
           'Real humans behind it, not just a tool',
@@ -282,7 +282,7 @@ export const LANDING_COPY = {
       {
         question: 'What exactly do I get?',
         answer:
-          'A done-for-you launch setup with your landing page, offer structure, essential tools connected, your own dashboard, and AI editing so you can manage it all after launch.',
+          'A done-for-you launch setup with your landing page, offer structure, essential tools connected, your own dashboard, and a smart editor so you can manage everything after launch.',
       },
       {
         question: 'Already have a site that isn\'t working for you?',

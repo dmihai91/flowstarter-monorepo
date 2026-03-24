@@ -103,7 +103,7 @@ export function LandingHeader() {
                   href={EXTERNAL_URLS.calendly.discovery}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hidden sm:block"
+                  className="hidden lg:block"
                 >
                   <Button variant="brand-gradient" size="sm" className="rounded-lg px-6 shadow-lg">
                     {t('landing.header.cta')}

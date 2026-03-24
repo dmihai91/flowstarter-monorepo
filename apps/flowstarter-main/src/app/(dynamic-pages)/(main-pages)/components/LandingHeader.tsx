@@ -168,7 +168,7 @@ export function LandingHeader() {
                       .getElementById('process')
                       ?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
+                  className="px-3 py-3 text-base font-medium text-gray-700 dark:text-white/80 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
                 >
                   {t('nav.process')}
                 </a>
@@ -181,7 +181,7 @@ export function LandingHeader() {
                       .getElementById('pricing')
                       ?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
+                  className="px-3 py-3 text-base font-medium text-gray-700 dark:text-white/80 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
                 >
                   {t('nav.pricing')}
                 </a>
@@ -194,7 +194,7 @@ export function LandingHeader() {
                       .getElementById('faq')
                       ?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="px-3 py-2 text-sm text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
+                  className="px-3 py-3 text-base font-medium text-gray-700 dark:text-white/80 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
                 >
                   {t('nav.faq')}
                 </a>

@@ -12,34 +12,34 @@ interface PrimaryActionProps {
 export function PrimaryAction({ hasAnyProject, hasLiveProject }: PrimaryActionProps) {
   const { t } = useTranslations();
 
-  // No project yet — elevated book call CTA
+  // No project yet — book call CTA
   if (!hasAnyProject) {
     return (
-      <div className="mb-6 p-[1px] rounded-2xl bg-gradient-to-br from-[var(--purple)]/80 to-blue-600/60 shadow-[0_4px_20px_rgba(77,93,217,0.20)]">
-        <div className="bg-[#0f0d1a] rounded-[calc(16px-1px)] p-5">
+      <div className="mb-6 relative rounded-2xl overflow-hidden border border-[var(--purple)]/30 bg-[var(--purple)]/[0.06] shadow-[0_0_30px_rgba(77,93,217,0.10)]">
+        {/* Subtle purple glow strip at top */}
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[var(--purple)]/60 to-transparent" />
+        <div className="p-5">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-[var(--purple)]/30">
               <CalendarClock className="w-6 h-6 text-white" />
-              <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[var(--purple)] animate-pulse" />
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[var(--purple)] ring-2 ring-[var(--purple)]/20 animate-pulse" />
             </div>
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-0.5">
-                <h3 className="text-base font-semibold text-white">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-[0.9375rem] font-semibold text-white leading-tight">
                   {t('dashboard.action.kickoffTitle')}
                 </h3>
-                <span className="flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-wider text-[var(--purple)] bg-[var(--purple)]/15 px-2 py-0.5 rounded-full">
-                  <span className="w-1 h-1 rounded-full bg-[var(--purple)] animate-pulse" />
-                  Step 1
+                <span className="text-[0.6rem] font-bold uppercase tracking-wider text-[var(--purple)] bg-[var(--purple)]/15 px-2 py-0.5 rounded-full">
+                  Next step
                 </span>
               </div>
-              <p className="text-sm text-white/50">{t('dashboard.action.kickoffDesc')}</p>
-              <p className="text-xs text-white/30 mt-0.5">45 minutes — free, no commitment</p>
+              <p className="text-sm text-white/60 leading-relaxed">{t('dashboard.action.kickoffDesc')}</p>
             </div>
             <a
               href={EXTERNAL_URLS.calendly.discovery}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[var(--purple)] to-blue-600 text-white text-sm font-semibold transition-all hover:shadow-lg hover:shadow-[var(--purple)]/30 hover:scale-[1.02] whitespace-nowrap"
+              className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--purple)] text-white text-sm font-semibold transition-all hover:bg-[var(--purple)]/90 hover:shadow-lg hover:shadow-[var(--purple)]/25 hover:scale-[1.02] whitespace-nowrap"
             >
               {t('dashboard.stepper.bookCallButton')}
               <ArrowRight className="w-4 h-4" />

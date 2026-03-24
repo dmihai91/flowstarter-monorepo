@@ -17,10 +17,10 @@ export function FinalCTASection() {
   return (
     <>
         {/* Final CTA */}
-        <section className="py-8 lg:py-18 mt-8 lg:mt-10 relative overflow-hidden bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#3730a3] dark:from-[#0c0a1d] dark:via-[#14103a] dark:to-[#1e1b4b]">
+        <section className="py-8 lg:py-18 mt-8 lg:mt-10 relative overflow-hidden bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#3730a3] dark:from-[#0d0b2e] dark:via-[#1a1550] dark:to-[#251e6b]">
           {/* Subtle radial glow */}
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-            <div className="w-[700px] h-[450px] rounded-full bg-indigo-500/8 blur-[180px]" />
+            <div className="w-[700px] h-[450px] rounded-full bg-indigo-500/8 blur-[180px] dark:bg-indigo-400/20" />
           </div>
 
           {/* Flow lines pattern */}
@@ -50,10 +50,10 @@ export function FinalCTASection() {
               {finalCta.body}
             </p>
             <a href="#" onClick={(e) => { e.preventDefault(); setFinalModalOpen(true); }} className="inline-flex justify-center w-full sm:w-auto">
-              <Button className="relative overflow-hidden w-full sm:w-auto rounded-lg px-8 h-12 text-base sm:px-12 sm:h-16 sm:text-lg font-semibold transition-all duration-300 hover:scale-105 bg-white text-gray-900 hover:bg-gray-50 shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:shadow-[0_0_50px_rgba(255,255,255,0.25)] border-0" variant="secondary">
+              <Button className="relative overflow-hidden w-full sm:w-auto rounded-lg px-8 h-12 text-base sm:px-12 sm:h-16 sm:text-lg font-semibold transition-all duration-300 hover:scale-105 shadow-[0_8px_30px_rgba(124,58,237,0.4)] hover:shadow-[0_12px_40px_rgba(124,58,237,0.55)] border-0" variant="brand-gradient">
                 {finalCta.cta}
                 <svg
-                  className="w-5 h-5 ml-3 text-gray-900"
+                  className="w-5 h-5 ml-3 text-white"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

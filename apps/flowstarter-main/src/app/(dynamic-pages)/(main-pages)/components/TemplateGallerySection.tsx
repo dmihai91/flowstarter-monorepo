@@ -77,7 +77,7 @@ export function TemplateGallerySection() {
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 32 }}
       transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
     >
-      <section className="py-20 sm:py-28 overflow-hidden">
+      <section className="py-10 sm:py-20 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
 
           <div className="text-center mb-14">

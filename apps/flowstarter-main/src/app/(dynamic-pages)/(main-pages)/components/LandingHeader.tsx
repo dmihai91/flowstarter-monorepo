@@ -99,16 +99,14 @@ export function LandingHeader({ onOpenModal }: { onOpenModal?: () => void }) {
                 >
                   {t('nav.signIn')}
                 </Link>
-                <a
-                  href={EXTERNAL_URLS.calendly.discovery}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hidden lg:block"
+                <Button
+                  variant="brand-gradient"
+                  size="sm"
+                  className="hidden lg:flex rounded-lg px-6 shadow-lg"
+                  onClick={() => onOpenModal?.()}
                 >
-                  <Button variant="brand-gradient" size="sm" className="rounded-lg px-6 shadow-lg">
-                    {t('landing.header.cta')}
-                  </Button>
-                </a>
+                  {t('landing.header.cta')}
+                </Button>
                 {/* Mobile menu button */}
                 <button
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

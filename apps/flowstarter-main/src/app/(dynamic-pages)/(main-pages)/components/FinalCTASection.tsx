@@ -17,7 +17,7 @@ export function FinalCTASection({ onOpenModal }: { onOpenModal?: () => void }) {
         <section className="py-8 lg:py-18 mt-8 lg:mt-10 relative overflow-hidden bg-gradient-to-br from-[#3730a3] via-[#4338ca] to-[#4f46e5] dark:from-[#0d0b2e] dark:via-[#1a1550] dark:to-[#251e6b]">
           {/* Subtle radial glow */}
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-            <div className="w-[700px] h-[450px] rounded-full bg-indigo-300/20 blur-[180px] dark:bg-indigo-400/20" />
+            <div className="w-[500px] h-[300px] rounded-full bg-indigo-300/10 blur-[120px] dark:bg-indigo-400/8" />
           </div>
 
           {/* Flow lines pattern */}
@@ -47,7 +47,7 @@ export function FinalCTASection({ onOpenModal }: { onOpenModal?: () => void }) {
               {finalCta.body}
             </p>
             <a href="#" onClick={(e) => { e.preventDefault(); onOpenModal?.(); }} className="inline-flex justify-center w-full sm:w-auto">
-              <Button className="relative overflow-hidden w-full sm:w-auto rounded-lg px-8 h-12 text-base sm:px-12 sm:h-16 sm:text-lg font-semibold transition-all duration-300 hover:scale-105 shadow-[0_8px_30px_rgba(124,58,237,0.4)] hover:shadow-[0_12px_40px_rgba(124,58,237,0.55)] border-0" variant="brand-gradient">
+              <Button className="relative overflow-hidden w-full sm:w-auto rounded-lg px-8 h-12 text-base sm:px-12 sm:h-16 sm:text-lg font-semibold transition-all duration-300 hover:scale-105 shadow-[0_4px_16px_rgba(124,58,237,0.25)] hover:shadow-[0_6px_20px_rgba(124,58,237,0.30)] border-0" variant="brand-gradient">
                 {finalCta.cta}
                 <svg
                   className="w-5 h-5 ml-3 text-white"

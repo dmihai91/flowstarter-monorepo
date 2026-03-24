@@ -11,6 +11,30 @@
       "import": "./dist/index.js",
       "require": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./daytona": {
+      "types": "./dist/daytona/index.d.ts",
+      "import": "./dist/daytona/index.js",
+      "require": "./dist/daytona/index.js",
+      "default": "./dist/daytona/index.js"
+    },
+    "./publishing": {
+      "types": "./dist/publishing/index.d.ts",
+      "import": "./dist/publishing/index.js",
+      "require": "./dist/publishing/index.js",
+      "default": "./dist/publishing/index.js"
+    },
+    "./templates": {
+      "types": "./dist/templates/index.d.ts",
+      "import": "./dist/templates/index.js",
+      "require": "./dist/templates/index.js",
+      "default": "./dist/templates/index.js"
+    },
+    "./engine": {
+      "types": "./dist/engine/index.d.ts",
+      "import": "./dist/engine/index.js",
+      "require": "./dist/engine/index.js",
+      "default": "./dist/engine/index.js"
     }
   },
   "scripts": {

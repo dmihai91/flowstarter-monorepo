@@ -242,13 +242,13 @@ export function Header({
           </div>
 
           {/* ── Desktop row (hidden on mobile) ── */}
-          <div className="hidden md:flex h-16 items-center gap-3">
+          <div className="hidden md:flex h-16 items-center gap-2 lg:gap-4">
             <a href="/" className="flex shrink-0 items-center gap-2.5 no-underline group">
               <Logo size="md" />
-              <span className="text-[11px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-[var(--purple-primary)]/10 text-[var(--purple-primary)] border border-[var(--purple-primary)]/20 group-hover:bg-[var(--purple-primary)]/20 transition-colors">Library</span>
+              <span className="hidden lg:inline text-[11px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-[var(--purple-primary)]/10 text-[var(--purple-primary)] border border-[var(--purple-primary)]/20 group-hover:bg-[var(--purple-primary)]/20 transition-colors">Library</span>
             </a>
 
-            <div className="flex flex-1 max-w-md">
+            <div className="flex flex-1 max-w-[200px] lg:max-w-sm xl:max-w-md">
               <div className="relative w-full">
                 <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500 dark:text-neutral-400 pointer-events-none">
                   <SearchIcon />

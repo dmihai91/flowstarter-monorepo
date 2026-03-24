@@ -1,236 +1,121 @@
-/**
- * Stripe Webhook Handler
- *
- * Handles webhook events from Stripe for payment processing.
- * All webhooks are verified using Stripe's signature verification.
- *
- * @see https://stripe.com/docs/webhooks
- *
- * Setup:
- * 1. Go to Stripe Dashboard > Developers > Webhooks
- * 2. Add endpoint: https://your-domain.com/api/webhooks/stripe
- * 3. Copy the signing secret to STRIPE_WEBHOOK_SECRET env var
- * 4. Subscribe to events: checkout.session.completed, customer.subscription.*
- */
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  extractWebhookHeaders,
-  logWebhookEvent,
-  verifyStripeSignature,
-} from '@/lib/webhook-verification';
+import Stripe from 'stripe';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
+import type { ProjectPaymentUpdate } from '@/lib/stripe/invoices';
 
-/**
- * Stripe webhook event types we handle
- */
-type StripeWebhookEventType =
-  | 'checkout.session.completed'
-  | 'customer.subscription.created'
-  | 'customer.subscription.updated'
-  | 'customer.subscription.deleted'
-  | 'invoice.paid'
-  | 'invoice.payment_failed'
-  | 'customer.created'
-  | 'customer.updated'
-  | 'customer.deleted';
+function getStripe(): Stripe {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) throw new Error('STRIPE_SECRET_KEY not set');
+  return new Stripe(key, { apiVersion: '2026-02-25.clover' });
+}
 
-/**
- * Stripe webhook event structure
- */
-interface StripeWebhookEvent {
-  id: string;
-  type: StripeWebhookEventType;
-  data: {
-    object: Record<string, unknown>;
+async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
+  const { projectId, invoiceType } = invoice.metadata ?? {};
+  if (!projectId || !invoiceType) return;
+  const supabase = createSupabaseServiceRoleClient();
+  const now = new Date().toISOString();
+
+  if (invoiceType === 'deposit') {
+    const u: ProjectPaymentUpdate = { deposit_status: 'paid', deposit_paid_at: now, outstanding_payment: false };
+    await supabase.from('projects').update(u as any).eq('id', projectId);
+  }
+  if (invoiceType === 'final') {
+    const trialEnd = new Date();
+    trialEnd.setDate(trialEnd.getDate() + 30);
+    const u: ProjectPaymentUpdate = {
+      final_status: 'paid', final_paid_at: now, outstanding_payment: false,
+      launched_at: now, subscription_status: 'trial', subscription_trial_ends: trialEnd.toISOString(),
+    };
+    await supabase.from('projects').update(u as any).eq('id', projectId);
+  }
+  console.info(`[Stripe] Invoice payment_succeeded -- ${invoiceType} for project ${projectId}`);
+}
+
+async function handleInvoiceOverdue(invoice: Stripe.Invoice) {
+  const { projectId, invoiceType } = invoice.metadata ?? {};
+  if (!projectId || !invoiceType) return;
+  const supabase = createSupabaseServiceRoleClient();
+  const u: ProjectPaymentUpdate =
+    invoiceType === 'deposit'
+      ? { deposit_status: 'overdue', outstanding_payment: true }
+      : { final_status: 'overdue', outstanding_payment: true };
+  await supabase.from('projects').update(u as any).eq('id', projectId);
+  console.warn(`[Stripe] Invoice overdue -- ${invoiceType} for project ${projectId}`);
+}
+
+async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
+  const { projectId } = invoice.metadata ?? {};
+  if (!projectId) return;
+  const supabase = createSupabaseServiceRoleClient();
+  const u: ProjectPaymentUpdate = { outstanding_payment: true };
+  await supabase.from('projects').update(u as any).eq('id', projectId);
+  console.warn(`[Stripe] Payment failed for project ${projectId}`);
+}
+
+async function handleSubscriptionEvent(subscription: Stripe.Subscription) {
+  const { projectId } = subscription.metadata ?? {};
+  if (!projectId) return;
+  const supabase = createSupabaseServiceRoleClient();
+
+  const statusMap: Partial<Record<Stripe.Subscription.Status, string>> = {
+    trialing: 'trial', active: 'active', past_due: 'past_due', canceled: 'cancelled',
   };
-  created: number;
-  livemode: boolean;
+  const status = statusMap[subscription.status] ?? subscription.status;
+  const periodEnd = subscription.items?.data?.[0]?.current_period_end ?? null;
+  const nextBilling = periodEnd ? new Date(periodEnd * 1000).toISOString() : null;
+
+  const u: ProjectPaymentUpdate = {
+    subscription_status: status,
+    stripe_subscription_id: subscription.id,
+    subscription_next_billing: nextBilling,
+    outstanding_payment: subscription.status === 'past_due',
+  };
+  await supabase.from('projects').update(u as any).eq('id', projectId);
+  console.info(`[Stripe] Subscription ${subscription.id} -> ${status} for project ${projectId}`);
 }
 
-/**
- * Handle checkout.session.completed event
- */
-async function handleCheckoutCompleted(
-  data: Record<string, unknown>
-): Promise<void> {
-  console.info('[Stripe Webhook] Checkout completed:', data.id);
-
-  // Example: Update user subscription status
-  // const customerId = data.customer as string;
-  // const userId = await getUserIdFromStripeCustomer(customerId);
-  // await updateUserSubscription(userId, 'active');
-
-  // Log to security audit
-  const supabase = createSupabaseServiceRoleClient();
-  await supabase.from('security_audit_logs').insert({
-    event: 'payment.checkout_completed',
-    severity: 'info',
-    provider: 'stripe',
-    resource_type: 'checkout',
-    success: true,
-  });
-}
-
-/**
- * Handle subscription events
- */
-async function handleSubscriptionEvent(
-  eventType: string,
-  data: Record<string, unknown>
-): Promise<void> {
-  console.info(`[Stripe Webhook] Subscription event: ${eventType}`, data.id);
-
-  // Log to security audit
-  const supabase = createSupabaseServiceRoleClient();
-  await supabase.from('security_audit_logs').insert({
-    event: `payment.${eventType.replace('customer.', '')}`,
-    severity: 'info',
-    provider: 'stripe',
-    resource_type: 'subscription',
-    success: true,
-  });
-}
-
-/**
- * Handle invoice.payment_failed event
- */
-async function handlePaymentFailed(
-  data: Record<string, unknown>
-): Promise<void> {
-  console.warn('[Stripe Webhook] Payment failed:', data.id);
-
-  // Example: Notify user, update subscription status
-  // const customerId = data.customer as string;
-  // await sendPaymentFailedEmail(customerId);
-  // await updateUserSubscription(userId, 'past_due');
-
-  // Log to security audit
-  const supabase = createSupabaseServiceRoleClient();
-  await supabase.from('security_audit_logs').insert({
-    event: 'payment.failed',
-    severity: 'warning',
-    provider: 'stripe',
-    resource_type: 'invoice',
-    success: false,
-  });
-}
-
-/**
- * POST /api/webhooks/stripe
- *
- * Receives and processes Stripe webhook events.
- * Signature verification is mandatory - unsigned requests are rejected.
- */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!webhookSecret) return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 });
 
-  // Check if webhook secret is configured
-  if (!webhookSecret) {
-    console.error('[Stripe Webhook] STRIPE_WEBHOOK_SECRET is not configured');
-    return NextResponse.json(
-      { error: 'Webhook not configured' },
-      { status: 500 }
-    );
+  const payload = await request.text();
+  const signature = request.headers.get('stripe-signature') ?? '';
+
+  let event: Stripe.Event;
+  try {
+    event = getStripe().webhooks.constructEvent(payload, signature, webhookSecret);
+  } catch {
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
   }
 
   try {
-    // Get the raw body for signature verification
-    const payload = await request.text();
-    const headers = extractWebhookHeaders(request);
-    const signatureHeader = headers['stripe-signature'] || '';
-
-    // Log webhook received
-    logWebhookEvent('stripe', 'received', {});
-
-    // Verify the webhook signature
-    const verification = verifyStripeSignature(
-      payload,
-      signatureHeader,
-      webhookSecret
-    );
-
-    if (!verification.valid) {
-      logWebhookEvent('stripe', 'failed', {
-        error: verification.error,
-      });
-
-      // Log security event for failed verification
-      const supabase = createSupabaseServiceRoleClient();
-      await supabase.from('security_audit_logs').insert({
-        event: 'webhook.verification_failed',
-        severity: 'warning',
-        provider: 'stripe',
-        error_code: 'INVALID_SIGNATURE',
-        route: '/api/webhooks/stripe',
-        method: 'POST',
-        success: false,
-      });
-
-      return NextResponse.json({ error: verification.error }, { status: 401 });
-    }
-
-    // Parse the verified payload
-    const event = verification.payload as StripeWebhookEvent;
-
-    // Log successful verification
-    logWebhookEvent('stripe', 'verified', {
-      eventType: event.type,
-      webhookId: event.id,
-    });
-
-    // Handle the event based on type
     switch (event.type) {
-      case 'checkout.session.completed':
-        await handleCheckoutCompleted(event.data.object);
+      case 'invoice.payment_succeeded':
+        await handleInvoicePaymentSucceeded(event.data.object as Stripe.Invoice);
         break;
-
+      case 'invoice.payment_failed':
+        await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice);
+        break;
+      case 'invoice.overdue':
+        await handleInvoiceOverdue(event.data.object as Stripe.Invoice);
+        break;
       case 'customer.subscription.created':
       case 'customer.subscription.updated':
       case 'customer.subscription.deleted':
-        await handleSubscriptionEvent(event.type, event.data.object);
+        await handleSubscriptionEvent(event.data.object as Stripe.Subscription);
         break;
-
-      case 'invoice.paid':
-        console.info('[Stripe Webhook] Invoice paid:', event.data.object.id);
-        break;
-
-      case 'invoice.payment_failed':
-        await handlePaymentFailed(event.data.object);
-        break;
-
       default:
-        console.info(`[Stripe Webhook] Unhandled event type: ${event.type}`);
+        break;
     }
-
-    return NextResponse.json({ received: true });
-  } catch (error) {
-    console.error('[Stripe Webhook] Error processing webhook:', error);
-
-    // Log the error
-    logWebhookEvent('stripe', 'failed', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-    });
-
-    return NextResponse.json(
-      { error: 'Webhook processing failed' },
-      { status: 500 }
-    );
+  } catch (err) {
+    console.error(`[Stripe Webhook] Error handling ${event.type}:`, err);
+    return NextResponse.json({ error: 'Handler failed' }, { status: 500 });
   }
+
+  return NextResponse.json({ received: true });
 }
 
-/**
- * GET /api/webhooks/stripe
- *
- * Health check endpoint for webhook configuration verification.
- * Returns 405 Method Not Allowed as webhooks should only use POST.
- */
 export async function GET(): Promise<NextResponse> {
-  return NextResponse.json(
-    {
-      error: 'Method not allowed',
-      message: 'Stripe webhooks only accept POST requests',
-    },
-    { status: 405 }
-  );
+  return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
 }

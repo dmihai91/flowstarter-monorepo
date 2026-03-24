@@ -47,10 +47,10 @@ export const LANDING_COPY = {
   },
   hero: {
     headlinePrefix: 'Every expert needs a great digital presence.',
-    headlineHighlight: 'We build yours. You manage it in plain English.',
+    headlineHighlight: 'We build yours. You manage it yourself — no code needed.',
     subheadlineBold: 'Done for you in days.',
     subheadline:
-      'We build your landing page, set up booking and structure, then hand you a smart editor so you can update everything yourself in plain English. No code, no agency, no waiting.',
+      'We build your landing page, set up booking and structure, then hand you a smart editor so you can update everything yourself — without writing a single line of code.',
     primaryCta: 'Book your free call',
     secondaryCta: 'See what\'s included',
     trustLine: 'For coaches, consultants, freelancers, and founders who want to show up like they mean it — without touching code.',
@@ -154,7 +154,7 @@ export const LANDING_COPY = {
       },
       {
         icon: 'sparkles',
-        title: 'Change anything in plain English',
+        title: 'Change anything yourself, no code needed',
         description: 'Type what you want updated. The smart editor handles the rest — no code, no waiting.',
       },
       {
@@ -298,7 +298,7 @@ export const LANDING_COPY = {
       {
         question: 'Can I update the site myself after launch?',
         answer:
-          'Yes. The smart editor lets you change any section in plain English — no code, no waiting on anyone.',
+          'Yes. The smart editor lets you change any section yourself — no code, no waiting on anyone.',
       },
       {
         question: 'Do I need technical skills?',

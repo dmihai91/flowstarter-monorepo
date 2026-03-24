@@ -70,7 +70,7 @@ export function LandingHero() {
 
         {/* Headline */}
         <h1
-          className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.08] tracking-tight mb-5 text-gray-900 dark:text-white drop-shadow-sm"
+          className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-[1.1] tracking-tight mb-4 text-gray-900 dark:text-white drop-shadow-sm"
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.22s' }}
         >
           {hero.headlinePrefix}
@@ -80,20 +80,21 @@ export function LandingHero() {
 
         {/* Body */}
         <p
-          className="text-xl sm:text-2xl text-gray-600 dark:text-white/55 leading-relaxed mb-4 max-w-2xl mx-auto"
+          className="text-base sm:text-lg text-gray-500 dark:text-white/55 leading-relaxed mb-5 max-w-lg mx-auto"
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.38s' }}
         >
-          <span className="font-semibold text-gray-900 dark:text-white block mb-1">{hero.subheadlineBold}</span>
-          <span>{hero.subheadline}</span>
+          {hero.subheadlineBold} — {hero.subheadline}
         </p>
 
-        {/* Audience qualifier */}
-        <p
-          className="text-base sm:text-lg text-gray-500 dark:text-white/60 mb-7 max-w-xl mx-auto font-medium"
+        {/* Audience qualifier — pill bubble */}
+        <div
+          className="flex justify-center mb-7"
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.50s' }}
         >
-          {hero.trustLine}
-        </p>
+          <span className="inline-block px-4 py-1.5 rounded-full bg-white/70 dark:bg-white/[0.06] border border-gray-200/50 dark:border-white/[0.08] text-xs sm:text-sm text-gray-500 dark:text-white/50 font-medium backdrop-blur-sm">
+            {hero.trustLine}
+          </span>
+        </div>
 
         {/* CTA */}
         <div

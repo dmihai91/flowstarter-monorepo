@@ -108,17 +108,7 @@ export default function TeamDashboardPage() {
   ).length || 0;
 
 
-  const createNewInEditor = () => {
-    setClientInfo({
-      name: '',
-      email: '',
-      phone: '',
-      projectName: '',
-      projectDescription: '',
-    });
-    setClientErrors({});
-    setShowClientModal(true);
-  };
+  const createNewInEditor = () => router.push('/team/dashboard/new');
 
   const handleGenerateProjectName = async () => {
     if (!clientInfo.name.trim() || isGeneratingProjectName) return;

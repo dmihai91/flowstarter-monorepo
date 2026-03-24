@@ -10,7 +10,7 @@ const EDITOR_URL =
     ? 'https://editor.flowstarter.dev'
     : 'http://localhost:5173');
 
-export type ScaffoldPhase = 'client' | 'input' | 'progress' | 'clarify' | 'review';
+export type ScaffoldPhase = 'client' | 'input' | 'progress' | 'clarify' | 'review' | 'payment';
 
 export interface ClientInfo {
   name: string;
@@ -77,6 +77,8 @@ export function useScaffoldForm() {
   const [followUpQuestions, setFollowUpQuestions] = useState<string[]>([]);
   const [clarifyAnswers, setClarifyAnswers] = useState<string[]>([]);
   const [engineArtifacts, setEngineArtifacts] = useState<EngineArtifacts | null>(null);
+  const [planName, setPlanName] = useState<string>('STARTER');
+  const [setupFee, setSetupFee] = useState<number>(0);
 
   // ── AI enrichment mutation ──
   const enrichMutation = useMutation({
@@ -326,6 +328,11 @@ export function useScaffoldForm() {
     [fields, rewriteFieldMutation]
   );
 
+  // ── Proceed to payment phase ──
+  const proceedToPayment = useCallback(() => {
+    setPhase('payment');
+  }, []);
+
   // ── Step navigation ──
   const nextStep = useCallback(() => {
     setReviewStep((s) => Math.min(s + 1, REVIEW_STEP_COUNT - 1));
@@ -426,6 +433,8 @@ export function useScaffoldForm() {
     setFollowUpQuestions([]);
     setClarifyAnswers([]);
     setEngineArtifacts(null);
+    setPlanName('STARTER');
+    setSetupFee(0);
   }, []);
 
   return {
@@ -457,5 +466,11 @@ export function useScaffoldForm() {
     updateField,
     launchEditor,
     reset,
+    // Payment
+    planName,
+    setPlanName,
+    setupFee,
+    setSetupFee,
+    proceedToPayment,
   };
 }

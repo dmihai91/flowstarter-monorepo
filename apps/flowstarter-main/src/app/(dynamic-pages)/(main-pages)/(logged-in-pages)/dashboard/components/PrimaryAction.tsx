@@ -7,9 +7,10 @@ import { Sparkles, MessageSquarePlus, Upload, ArrowRight, CalendarClock } from '
 interface PrimaryActionProps {
   hasAnyProject: boolean;
   hasLiveProject: boolean;
+  onBookCall?: () => void;
 }
 
-export function PrimaryAction({ hasAnyProject, hasLiveProject }: PrimaryActionProps) {
+export function PrimaryAction({ hasAnyProject, hasLiveProject, onBookCall }: PrimaryActionProps) {
   const { t } = useTranslations();
 
   // No project yet — book call CTA
@@ -35,15 +36,13 @@ export function PrimaryAction({ hasAnyProject, hasLiveProject }: PrimaryActionPr
               </div>
               <p className="text-sm text-white/60 leading-relaxed">{t('dashboard.action.kickoffDesc')}</p>
             </div>
-            <a
-              href={EXTERNAL_URLS.calendly.discovery}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={onBookCall}
               className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--purple)] text-white text-sm font-semibold transition-all hover:bg-[var(--purple)]/90 hover:shadow-lg hover:shadow-[var(--purple)]/25 hover:scale-[1.02] whitespace-nowrap"
             >
               {t('dashboard.stepper.bookCallButton')}
               <ArrowRight className="w-4 h-4" />
-            </a>
+            </button>
           </div>
         </div>
       </div>

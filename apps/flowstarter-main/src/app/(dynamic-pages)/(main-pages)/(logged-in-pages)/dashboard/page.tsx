@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslations } from '@/lib/i18n';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useUser } from '@clerk/nextjs';
@@ -11,6 +12,7 @@ import { UpcomingMeetingsCard } from './components/UpcomingMeetingsCard';
 import { DashboardWrapper } from './components/DashboardWrapper';
 import { MilestonesTimeline } from './components/MilestonesTimeline';
 import { PrimaryAction } from './components/PrimaryAction';
+import { PreQualModal } from '../../components/PreQualModal';
 import { getTimeGreetingKey } from './hooks/useDashboardMilestones';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
@@ -115,6 +117,7 @@ export default function DashboardPage() {
   const hour = new Date().getHours();
   const greeting = t(getTimeGreetingKey(hour));
 
+  const [modalOpen, setModalOpen] = useState(false);
   const hasAnyProject = (data?.totalProjects ?? 0) > 0;
   const hasLiveProject = (data?.liveProjects ?? 0) > 0;
 
@@ -147,7 +150,7 @@ export default function DashboardPage() {
           <MilestonesTimeline hasAnyProject={hasAnyProject} hasLiveProject={hasLiveProject} />
 
           {/* Primary Action Banner */}
-          <PrimaryAction hasAnyProject={hasAnyProject} hasLiveProject={hasLiveProject} />
+          <PrimaryAction hasAnyProject={hasAnyProject} hasLiveProject={hasLiveProject} onBookCall={() => setModalOpen(true)} />
 
           {/* Stats */}
           <div className="mb-8">
@@ -163,6 +166,7 @@ export default function DashboardPage() {
         </DashboardInit>
       </div>
       )}
+      <PreQualModal open={modalOpen} onClose={() => setModalOpen(false)} source="dashboard" />
     </DashboardWrapper>
   );
 }

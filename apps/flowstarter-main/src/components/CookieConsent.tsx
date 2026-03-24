@@ -69,7 +69,7 @@ export function CookieConsent() {
                 <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
                   {t('cookie.title')}
                 </h3>
-                <p className="text-xs sm:text-sm text-gray-500 dark:text-white/50 leading-relaxed mb-4">
+                <p className="text-sm text-gray-500 dark:text-white/60 leading-relaxed mb-4">
                   {t('cookie.description')}{' '}
                   <Link href="/cookies" className="text-[var(--purple)] hover:underline">
                     {t('cookie.learnMore')}
@@ -94,7 +94,7 @@ export function CookieConsent() {
                   </Button>
                   <Link
                     href="/cookies"
-                    className="px-4 py-2 text-gray-400 dark:text-white/40 text-sm hover:text-gray-600 dark:hover:text-white/60 transition-colors"
+                    className="inline-flex items-center justify-center px-4 py-2 rounded-lg border border-gray-200 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] text-sm font-medium text-gray-700 dark:text-white/70 hover:bg-gray-50 dark:hover:bg-white/[0.08] hover:text-gray-900 dark:hover:text-white backdrop-blur-sm transition-colors"
                   >
                     {t('cookie.settings')}
                   </Link>

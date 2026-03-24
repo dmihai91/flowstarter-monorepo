@@ -1253,9 +1253,9 @@ const en = {
     'Your site goes live. New clients can find you, see what you do, and book directly. No calls needed to schedule.',
 
   // Landing Page - Editor
-  'landing.editor.title': 'Edit your site with our smart editor',
+  'landing.editor.title': 'Your site updates itself when you tell it to.',
   'landing.editor.subtitle':
-    'Just type what you want to change. Our smart editor handles the rest.',
+    'Type what you want changed in plain English. The smart editor rewrites copy, updates sections, and keeps your site current — no code, no waiting.',
 
   // Landing Page - Pricing Card
   'landing.pricing.heading1': 'Clear',
@@ -2056,13 +2056,13 @@ const en = {
   'scaffold.action.openInEditor': 'Open in Editor',
 
   // Manifesto
-  'landing.manifesto.title': 'Our mission',
-  'landing.manifesto.headline': 'Every real expert deserves to be found.',
-  'landing.manifesto.p1': 'The internet rewards volume over depth. Real expertise gets buried under louder voices and shinier packaging. Flowstarter exists to fix that.',
+  'landing.manifesto.title': 'Why we built this',
+  'landing.manifesto.headline': 'Real expertise should be easier to find.',
+  'landing.manifesto.p1': 'Too many skilled people are invisible online — not because they lack talent, but because the tools are built for developers, not for them. Flowstarter exists to close that gap.',
   'landing.manifesto.p2': '',
   'landing.manifesto.p3': '',
   'landing.manifesto.p4': '',
-  'landing.manifesto.closing': 'Your expertise changed lives. Now let people find you.',
+  'landing.manifesto.closing': 'Your work is good. Your website should say so.',
 } as const;
 
 export default en;

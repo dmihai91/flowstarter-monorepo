@@ -12,7 +12,7 @@ import { LANDING_COPY } from '../landing-copy';
 /**
  * Landing page header with scroll-aware styling and mobile menu.
  */
-export function LandingHeader() {
+export function LandingHeader({ onOpenModal }: { onOpenModal?: () => void }) {
   const { t } = useI18n();
   const { isLoaded, scrolled, mobileMenuOpen, setMobileMenuOpen } = useHeaderState();
 
@@ -214,17 +214,15 @@ export function LandingHeader() {
                 >
                   {t('nav.signIn')}
                 </Link>
-                <a
-                  href={EXTERNAL_URLS.calendly.discovery}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="mt-2"
+                <button
+                  type="button"
+                  onClick={() => { setMobileMenuOpen(false); onOpenModal?.(); }}
+                  className="mt-2 w-full text-left"
                 >
-                  <Button variant="brand-gradient" size="sm" className="w-full rounded-lg">
+                  <Button variant="brand-gradient" size="sm" className="w-full rounded-lg pointer-events-none">
                     {t('landing.header.cta')}
                   </Button>
-                </a>
+                </button>
               </nav>
             </div>
           </div>

@@ -108,7 +108,7 @@ export function LandingHero() {
               event.preventDefault();
               document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="text-sm font-medium text-gray-500 dark:text-white/60 underline underline-offset-4 decoration-gray-300 dark:decoration-white/20 hover:text-gray-900 dark:hover:text-white hover:decoration-gray-500 dark:hover:decoration-white/50 transition-colors py-2"
+            className="inline-flex items-center justify-center h-12 px-8 rounded-xl text-base font-medium text-gray-700 dark:text-white/80 bg-white/50 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 backdrop-blur-sm hover:bg-white/80 dark:hover:bg-white/[0.10] hover:text-gray-900 dark:hover:text-white transition-all max-w-[220px] w-full"
           >
             {hero.secondaryCta}
           </a>

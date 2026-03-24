@@ -214,15 +214,14 @@ export function LandingHeader({ onOpenModal }: { onOpenModal?: () => void }) {
                 >
                   {t('nav.signIn')}
                 </Link>
-                <button
-                  type="button"
+                <Button
+                  variant="brand-gradient"
+                  size="sm"
+                  className="mt-2 w-full rounded-lg"
                   onClick={() => { setMobileMenuOpen(false); onOpenModal?.(); }}
-                  className="mt-2 w-full text-left"
                 >
-                  <Button variant="brand-gradient" size="sm" className="w-full rounded-lg pointer-events-none">
-                    {t('landing.header.cta')}
-                  </Button>
-                </button>
+                  {t('landing.header.cta')}
+                </Button>
               </nav>
             </div>
           </div>

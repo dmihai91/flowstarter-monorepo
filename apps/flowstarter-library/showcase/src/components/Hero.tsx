@@ -25,7 +25,7 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
   ];
 
   return (
-    <section className="relative overflow-hidden pt-16 pb-12">
+    <section className="relative pt-14 pb-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
 
@@ -36,26 +36,16 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
             </span>
           </div>
 
-          <h1 className="mb-6 font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-neutral-900 dark:text-white sm:text-5xl md:text-6xl lg:text-7xl">
+          <h1 className="mb-6 font-display text-3xl font-extrabold leading-tight tracking-tight text-neutral-900 dark:text-white sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
             {templateCount} Templates.{' '}
-            <span className="inline">
-              {'Production-ready from day one.'.split(' ').map((word, i) => (
-                <span
-                  key={i}
-                  className="inline-block animate-word-reveal"
-                  style={{ animationDelay: `${i * 0.08}s`, animationFillMode: 'both' }}
-                >
-                  {word}&nbsp;
-                </span>
-              ))}
-            </span>
+<span className="bg-gradient-to-r from-[#4D5DD9] via-[#7C3AED] to-[#5b21b6] bg-clip-text text-transparent">Production-ready from day one.</span>
           </h1>
 
           <p className="mx-auto mb-10 max-w-xl text-base sm:text-lg md:text-xl leading-relaxed text-neutral-600 dark:text-neutral-400 hero-fade hero-fade-3">
             Built for coaches, consultants, and service professionals. Each template ships with 6 colour palettes and 4 font pairings, production-ready and designed to be handed off.
           </p>
 
-          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-2 sm:gap-3 hero-fade hero-fade-4">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 hero-fade hero-fade-4">
             {stats.map(({ label, icon }: HeroStat) => (
               <div
                 key={label}

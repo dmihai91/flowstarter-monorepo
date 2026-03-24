@@ -94,7 +94,7 @@ export function CookieConsent() {
                   </Button>
                   <Link
                     href="/cookies"
-                    className="inline-flex items-center justify-center px-4 py-2 rounded-lg border border-gray-200 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] text-sm font-medium text-gray-700 dark:text-white/70 hover:bg-gray-50 dark:hover:bg-white/[0.08] hover:text-gray-900 dark:hover:text-white backdrop-blur-sm transition-colors"
+                    className="mt-1 inline-flex items-center justify-center px-4 py-2 rounded-lg border border-gray-200 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] text-sm font-medium text-gray-700 dark:text-white/70 hover:bg-gray-50 dark:hover:bg-white/[0.08] hover:text-gray-900 dark:hover:text-white backdrop-blur-sm transition-colors"
                   >
                     {t('cookie.settings')}
                   </Link>

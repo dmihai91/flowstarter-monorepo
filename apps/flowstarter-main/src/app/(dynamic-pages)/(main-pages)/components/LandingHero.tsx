@@ -80,7 +80,7 @@ export function LandingHero() {
 
         {/* Body */}
         <p
-          className="text-base sm:text-lg text-gray-500 dark:text-white/55 leading-relaxed mb-5 max-w-lg mx-auto"
+          className="text-base sm:text-lg text-gray-500 dark:text-white/55 leading-loose mb-5 max-w-lg mx-auto"
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.38s' }}
         >
           {hero.subheadlineBold} — {hero.subheadline}
@@ -91,7 +91,7 @@ export function LandingHero() {
           className="flex justify-center mb-7"
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.50s' }}
         >
-          <span className="inline-block px-4 py-1.5 rounded-full bg-white/70 dark:bg-white/[0.06] border border-gray-200/50 dark:border-white/[0.08] text-xs sm:text-sm text-gray-500 dark:text-white/50 font-medium backdrop-blur-sm">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-white/70 dark:bg-white/[0.06] border border-gray-200/50 dark:border-white/[0.08] text-sm sm:text-base text-gray-500 dark:text-white/50 font-medium backdrop-blur-sm leading-relaxed">
             {hero.trustLine}
           </span>
         </div>

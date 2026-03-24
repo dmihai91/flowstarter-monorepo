@@ -46,12 +46,12 @@ export const LANDING_COPY = {
     templatesLabel: 'Templates',
   },
   hero: {
-    headlinePrefix: 'We build your site.',
-    headlineHighlight: 'You get clients. You stay in control.',
-    subheadlineBold: 'Done for you in days, not months.',
+    headlinePrefix: 'A website that gets you clients,',
+    headlineHighlight: 'built for you and edited in plain English.',
+    subheadlineBold: 'Done for you in days.',
     subheadline:
-      'Flowstarter builds your landing page, sets up booking and structure, then hands you a smart editor so you can update everything yourself. No agency. No developer. No waiting.',
-    primaryCta: 'Book your free strategy call',
+      'We build your landing page, set up your booking and offer structure, then hand you a smart editor so you can keep it fresh yourself. No developer. No agency. No waiting.',
+    primaryCta: 'Book your free call',
     secondaryCta: 'See what\'s included',
     trustLine: 'For coaches, consultants, freelancers, and founders who want to show up professionally and start getting clients — without touching code.',
     guarantee: '10 founding-rate spots open this month. 50% setup fee refundable within 30 days.',

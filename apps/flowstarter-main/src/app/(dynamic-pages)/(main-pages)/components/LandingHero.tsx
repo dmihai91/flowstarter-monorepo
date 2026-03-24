@@ -18,7 +18,7 @@ export function LandingHero() {
   const hero = LANDING_COPY.hero;
 
   return (
-    <section className="relative pt-20 sm:pt-24 lg:pt-28 pb-16 lg:pb-24 overflow-hidden">
+    <section className="relative pt-20 sm:pt-24 lg:pt-28 pb-6 lg:pb-10 overflow-hidden">
       {/* Background gradient — premium multi-layer */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Base wash — barely tinted */}

@@ -38,17 +38,7 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
 
           <h1 className="mb-6 font-display text-3xl font-extrabold leading-tight tracking-tight text-neutral-900 dark:text-white sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
             {templateCount} Templates.{' '}
-            <span className="inline">
-              {'Production-ready from day one.'.split(' ').map((word, i) => (
-                <span
-                  key={i}
-                  className="inline-block animate-word-reveal"
-                  style={{ animationDelay: `${i * 0.08}s`, animationFillMode: 'both' }}
-                >
-                  {word}&nbsp;
-                </span>
-              ))}
-            </span>
+<span className="bg-gradient-to-r from-[#4D5DD9] via-[#7C3AED] to-[#5b21b6] bg-clip-text text-transparent">Production-ready from day one.</span>
           </h1>
 
           <p className="mx-auto mb-10 max-w-xl text-base sm:text-lg md:text-xl leading-relaxed text-neutral-600 dark:text-neutral-400 hero-fade hero-fade-3">

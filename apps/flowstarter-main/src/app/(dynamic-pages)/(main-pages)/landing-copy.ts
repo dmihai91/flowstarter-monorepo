@@ -46,14 +46,14 @@ export const LANDING_COPY = {
     templatesLabel: 'Templates',
   },
   hero: {
-    headlinePrefix: 'A website that gets you clients,',
-    headlineHighlight: 'built for you and edited in plain English.',
+    headlinePrefix: 'Every expert needs a great digital presence.',
+    headlineHighlight: 'We build yours. You manage it in plain English.',
     subheadlineBold: 'Done for you in days.',
     subheadline:
-      'We build your landing page, set up your booking and offer structure, then hand you a smart editor so you can keep it fresh yourself. No developer. No agency. No waiting.',
+      'We build your landing page, set up booking and structure, then hand you a smart editor so you can update everything yourself in plain English. No code, no agency, no waiting.',
     primaryCta: 'Book your free call',
     secondaryCta: 'See what\'s included',
-    trustLine: 'For coaches, consultants, freelancers, and founders who want to show up professionally and start getting clients — without touching code.',
+    trustLine: 'For coaches, consultants, freelancers, and founders who want to show up like they mean it — without touching code.',
     guarantee: '10 founding-rate spots open this month. 50% setup fee refundable within 30 days.',
   },
   process: {

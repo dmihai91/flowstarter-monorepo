@@ -70,7 +70,7 @@ export function LandingHero() {
 
         {/* Headline */}
         <h1
-          className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-[1.1] tracking-tight mb-4 text-gray-900 dark:text-white drop-shadow-sm"
+          className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight mb-4 text-gray-900 dark:text-white drop-shadow-sm"
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.22s' }}
         >
           {hero.headlinePrefix}
@@ -91,7 +91,7 @@ export function LandingHero() {
           className="flex justify-center mb-7"
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.50s' }}
         >
-          <span className="inline-block px-4 py-1.5 rounded-full bg-white/70 dark:bg-white/[0.06] border border-gray-200/50 dark:border-white/[0.08] text-sm sm:text-base text-gray-500 dark:text-white/50 font-medium backdrop-blur-sm leading-relaxed">
+          <span className="inline-block px-6 py-3 rounded-full bg-white/70 dark:bg-white/[0.06] border border-gray-200/50 dark:border-white/[0.08] text-sm sm:text-base text-gray-500 dark:text-white/50 font-medium backdrop-blur-sm leading-relaxed">
             {hero.trustLine}
           </span>
         </div>

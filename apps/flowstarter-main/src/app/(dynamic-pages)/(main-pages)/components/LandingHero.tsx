@@ -58,7 +58,7 @@ export function LandingHero() {
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0) scale(1)' : 'translateY(28px) scale(0.97)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.1s' }}
         >
           <GlassPill dot className="mb-6">
-            Premium websites that convert
+            Built to convert, done for you
           </GlassPill>
         </div>
 

@@ -4,10 +4,10 @@ export interface HeroCopy {
   headlinePrefix: string;
   headlineHighlight: string;
   subheadlineBold: string;
-  subheadline: string;
+  subheadline: 'with clear messaging and clean design that turns visitors into paying clients. You run it yourself from day one.',
   primaryCta: string;
   secondaryCta: string;
-  trustLine: string;
+  trustLine: 'For coaches, consultants, and freelancers who want to show up professionally and land clients — without the tech headache.',
   guarantee: string;
 }
 
@@ -46,15 +46,13 @@ export const LANDING_COPY = {
     templatesLabel: 'Templates',
   },
   hero: {
-    headlinePrefix: 'Launch your online business',
-    headlineHighlight: 'without technical skills or expensive setup',
-    subheadlineBold: 'Your website, live in days. Not months.',
-    subheadline:
-      'We handle the build from scratch. You run it yourself from day one.',
-    primaryCta: 'Talk to us. First call is free.',
+    headlinePrefix: 'Start getting clients with a website',
+    headlineHighlight: 'that actually converts',
+    subheadlineBold: 'We build your website from scratch in days',
+    subheadline: 'with clear messaging and clean design that turns visitors into paying clients. You run it yourself from day one.',
+    primaryCta: 'Book your free call',
     secondaryCta: 'See pricing',
-    trustLine:
-      'Built for creators, freelancers and small businesses who want to get online and monetize faster.',
+    trustLine: 'For coaches, consultants, and freelancers who want to show up professionally and land clients — without the tech headache.',
     guarantee: '50% setup fee refundable within 30 days. Includes a 30-day subscription trial with no risk.',
   },
   process: {

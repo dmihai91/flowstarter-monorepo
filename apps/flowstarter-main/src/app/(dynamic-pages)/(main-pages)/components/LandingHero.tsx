@@ -63,7 +63,7 @@ export function LandingHero() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
             <span className="text-sm font-medium text-gray-600 dark:text-white/70">
-              AI-powered launch support
+              Built to get you clients
             </span>
           </div>
         </div>

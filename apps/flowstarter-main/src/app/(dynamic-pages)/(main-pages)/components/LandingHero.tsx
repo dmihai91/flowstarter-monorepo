@@ -18,7 +18,7 @@ export function LandingHero() {
   const hero = LANDING_COPY.hero;
 
   return (
-    <section className="relative pt-20 sm:pt-24 lg:pt-28 pb-2 lg:pb-6 overflow-hidden">
+    <section className="relative pt-20 sm:pt-24 lg:pt-28 pb-16 lg:pb-24 overflow-hidden">
       {/* Background gradient — premium multi-layer */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Base wash — barely tinted */}
@@ -63,7 +63,7 @@ export function LandingHero() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
             <span className="text-sm font-medium text-gray-600 dark:text-white/70">
-              Built to get you clients
+              Built to convert
             </span>
           </div>
         </div>
@@ -101,7 +101,7 @@ export function LandingHero() {
           className="flex flex-col items-center gap-4"
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.64s' }}
         >
-          <Button variant="brand-gradient" onClick={() => setModalOpen(true)} className="relative overflow-hidden bg-[length:200%_100%] animate-[shimmerBtn_3s_ease-in-out_infinite] rounded-xl px-8 sm:px-10 h-13 sm:h-14 text-base sm:text-lg shadow-[0_8px_30px_rgba(124,58,237,0.25)] hover:shadow-[0_12px_40px_rgba(124,58,237,0.35)] hover:scale-[1.03] active:scale-[0.98] group">
+          <Button variant="brand-gradient" onClick={() => setModalOpen(true)} className="relative overflow-hidden bg-[length:200%_100%] animate-[shimmerBtn_3s_ease-in-out_infinite] rounded-xl px-8 sm:px-10 h-12 sm:h-13 text-base sm:text-lg shadow-[0_4px_24px_rgba(124,58,237,0.35),0_1px_4px_rgba(0,0,0,0.12)] hover:shadow-[0_8px_32px_rgba(124,58,237,0.45)] hover:scale-[1.02] active:scale-[0.98] group max-w-xs sm:max-w-none w-full sm:w-auto">
               {hero.primaryCta}
               <svg className="w-5 h-5 ml-2.5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />

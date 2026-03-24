@@ -36,7 +36,7 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
             </span>
           </div>
 
-          <h1 className="mb-6 font-display text-5xl font-extrabold leading-[1.08] tracking-tight text-neutral-900 dark:text-white sm:text-6xl lg:text-7xl">
+          <h1 className="mb-6 font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-neutral-900 dark:text-white sm:text-5xl md:text-6xl lg:text-7xl">
             {templateCount} Templates.{' '}
             <span className="inline">
               {'Production-ready from day one.'.split(' ').map((word, i) => (
@@ -51,11 +51,11 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
             </span>
           </h1>
 
-          <p className="mx-auto mb-10 max-w-xl text-xl sm:text-2xl leading-relaxed text-neutral-600 dark:text-neutral-400 hero-fade hero-fade-3">
-            We built these for coaches, consultants, and service professionals who need to look credible on day one. Each template ships with 6 colour palettes and 4 font pairings, production-ready and designed to be handed off, not hacked together. Built on Astro: fast by default, easy to extend.
+          <p className="mx-auto mb-10 max-w-xl text-base sm:text-lg md:text-xl leading-relaxed text-neutral-600 dark:text-neutral-400 hero-fade hero-fade-3">
+            Built for coaches, consultants, and service professionals. Each template ships with 6 colour palettes and 4 font pairings, production-ready and designed to be handed off.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 hero-fade hero-fade-4">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-2 sm:gap-3 hero-fade hero-fade-4">
             {stats.map(({ label, icon }: HeroStat) => (
               <div
                 key={label}

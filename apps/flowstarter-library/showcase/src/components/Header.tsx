@@ -47,11 +47,11 @@ function ThemeToggle({ themeMode, setThemeMode, darkMode }: { themeMode: ThemeMo
     <>
       {/* Mobile: single cycle button */}
       <button onClick={cycle} aria-label={"Theme: " + themeMode} title={"Switch theme (" + themeMode + ")"}
-        className={"sm:hidden h-9 w-9 shrink-0 " + btnBase}>
+        className={"md:hidden h-9 w-9 shrink-0 " + btnBase}>
         {currentIcon}
       </button>
       {/* Desktop: full pill */}
-      <div className={"hidden sm:flex items-center rounded-full p-1 " + (darkMode ? 'bg-white/8 border border-white/12' : 'bg-neutral-100 border border-neutral-200')}>
+      <div className={"hidden md:flex items-center rounded-full p-1 " + (darkMode ? 'bg-white/8 border border-white/12' : 'bg-neutral-100 border border-neutral-200')}>
         {opts.map(({ mode, icon, label }) => {
           const active = themeMode === mode;
           return (
@@ -213,7 +213,7 @@ export function Header({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* ── Mobile row (hidden on sm+) ── */}
-          <div className="flex sm:hidden h-14 items-center gap-2">
+          <div className="flex md:hidden h-14 items-center gap-2">
             {/* Hamburger */}
             <button
               onClick={() => setDrawerOpen(true)}
@@ -242,7 +242,7 @@ export function Header({
           </div>
 
           {/* ── Desktop row (hidden on mobile) ── */}
-          <div className="hidden sm:flex h-16 items-center gap-3">
+          <div className="hidden md:flex h-16 items-center gap-3">
             <a href="/" className="flex shrink-0 items-center gap-2.5 no-underline group">
               <Logo size="md" />
               <span className="text-[11px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-[var(--purple-primary)]/10 text-[var(--purple-primary)] border border-[var(--purple-primary)]/20 group-hover:bg-[var(--purple-primary)]/20 transition-colors">Library</span>

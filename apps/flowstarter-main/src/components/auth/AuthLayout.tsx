@@ -51,7 +51,7 @@ export default function AuthLayout({
           {title && (
             <div className="text-center mb-6">
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
-                <span className="bg-gradient-to-r from-[var(--purple,#4d5dd9)] to-blue-500 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-[#4D5DD9] via-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent">
                   {title.split(' ')[0]}
                 </span>{' '}
                 <span className="text-gray-900 dark:text-white">
@@ -74,7 +74,7 @@ export default function AuthLayout({
                 ].map((stat, i) => (
                   <div key={i} className="flex items-center">
                     <div className="text-center px-4">
-                      <div className="text-lg font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
+                      <div className="text-lg font-bold bg-gradient-to-r from-[#4D5DD9] via-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent">
                         {stat.value}
                       </div>
                       <div className="text-[0.5625rem] text-gray-400 dark:text-white/30 uppercase tracking-wide font-medium">

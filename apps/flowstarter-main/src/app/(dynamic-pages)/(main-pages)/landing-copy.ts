@@ -47,13 +47,13 @@ export const LANDING_COPY = {
   },
   hero: {
     headlinePrefix: 'Every expert needs a great digital presence.',
-    headlineHighlight: 'We build yours. You manage it yourself — no code needed.',
+    headlineHighlight: 'We build yours. You manage it yourself, no code needed.',
     subheadlineBold: 'Done for you in days.',
     subheadline:
-      'We build your landing page, set up booking and structure, then hand you a smart editor so you can update everything yourself — without writing a single line of code.',
+      'We build your landing page, set up booking and structure, then hand you a smart editor so you can update everything yourself. No code, no agency, no waiting.',
     primaryCta: 'Book your free call',
     secondaryCta: 'See what\'s included',
-    trustLine: 'For coaches, consultants, freelancers, and founders who want to show up like they mean it — without touching code.',
+    trustLine: 'For coaches, consultants, freelancers, and founders who want to show up like they mean it, without touching code.',
     guarantee: '10 founding-rate spots open this month. 50% setup fee refundable within 30 days.',
   },
   process: {
@@ -69,7 +69,7 @@ export const LANDING_COPY = {
         number: '02',
         title: 'You take the wheel',
         description:
-          'Log in to your dashboard. Update your site, track visitors, and manage bookings from one place — no tech skills required.',
+          'Log in to your dashboard. Update your site, track visitors, and manage bookings from one place. No tech skills required.',
       },
       {
         number: '03',
@@ -155,12 +155,12 @@ export const LANDING_COPY = {
       {
         icon: 'sparkles',
         title: 'Change anything yourself, no code needed',
-        description: 'Type what you want updated. The smart editor handles the rest — no code, no waiting.',
+        description: 'Type what you want updated. The smart editor handles the rest. No code, no waiting.',
       },
       {
         icon: 'layout',
         title: 'One dashboard for everything',
-        description: 'Your site, leads, bookings, and settings — all in one place.',
+        description: 'Your site, leads, bookings, and settings. All in one place.',
       },
     ],
   },
@@ -182,7 +182,7 @@ export const LANDING_COPY = {
           'Offer and pricing structure set up',
           'Online booking and contact form',
           'Visitor tracking',
-          'Smart editor — update anything yourself',
+          'Smart editor: update anything yourself',
           'Your own business dashboard',
         ],
         cta: 'Claim your Starter spot',
@@ -256,8 +256,8 @@ export const LANDING_COPY = {
         description:
           'Done for you in days. Smart editor included. Full control after launch.',
         bullets: [
-          'Done-for-you setup, live in days — not months',
-          'Smart editor included — no developer needed, ever',
+          'Done-for-you setup, live in days, not months',
+          'Smart editor included, no developer needed',
           'Landing page, booking, and structure all set up',
           'One dashboard to manage everything after launch',
           'Real people behind it, not just a tool',
@@ -267,7 +267,7 @@ export const LANDING_COPY = {
     ],
   },
   audience: {
-    title: 'Built for people who are serious about their business — not their website.',
+    title: 'Built for people who are serious about their business, not their website.',
     items: [
       { icon: 'briefcase', label: 'Freelancers who want a site that gets them hired' },
       { icon: 'mic', label: 'Creators building an audience and monetizing fast' },
@@ -283,7 +283,7 @@ export const LANDING_COPY = {
       {
         question: 'What exactly do I get?',
         answer:
-          'A done-for-you launch: your landing page, offer structure, booking setup, and essential tools connected. Plus your own dashboard and smart editor so you can manage everything after launch — without a developer.',
+          'A done-for-you launch: your landing page, offer structure, booking setup, and essential tools connected. Plus your own dashboard and smart editor so you can manage everything after launch, with no developer needed.',
       },
       {
         question: 'Already have a site that isn\'t working for you?',
@@ -298,7 +298,7 @@ export const LANDING_COPY = {
       {
         question: 'Can I update the site myself after launch?',
         answer:
-          'Yes. The smart editor lets you change any section yourself — no code, no waiting on anyone.',
+          'Yes. The smart editor lets you change any section yourself, no code, no waiting on anyone.',
       },
       {
         question: 'Do I need technical skills?',
@@ -321,6 +321,6 @@ export const LANDING_COPY = {
     headline: 'Your site could be live by next week.',
     body:
       'Book a free 30-minute strategy call. We\'ll map out your launch, recommend the right plan, and answer every question. Free. No pressure. No commitment.',
-    cta: 'Book your free call — spots are limited',
+    cta: 'Book your free call, spots are limited',
   },
 };

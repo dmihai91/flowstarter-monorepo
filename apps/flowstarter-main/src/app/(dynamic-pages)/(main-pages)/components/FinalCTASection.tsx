@@ -17,7 +17,7 @@ export function FinalCTASection() {
   return (
     <>
         {/* Final CTA */}
-        <section className="py-8 lg:py-18 mt-8 lg:mt-10 relative overflow-hidden bg-gradient-to-br from-[#ede9fe] via-[#ddd6fe] to-[#c7d2fe] dark:from-[#0d0b2e] dark:via-[#1a1550] dark:to-[#251e6b]">
+        <section className="py-8 lg:py-18 mt-8 lg:mt-10 relative overflow-hidden bg-gradient-to-br from-[#4338ca] via-[#5b21b6] to-[#4f46e5] dark:from-[#0d0b2e] dark:via-[#1a1550] dark:to-[#251e6b]">
           {/* Subtle radial glow */}
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
             <div className="w-[700px] h-[450px] rounded-full bg-indigo-300/20 blur-[180px] dark:bg-indigo-400/20" />
@@ -42,11 +42,11 @@ export function FinalCTASection() {
 
           <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center relative">
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-5">
-              <span className="bg-gradient-to-r from-[#4D5DD9] via-[#7C3AED] to-[#4D5DD9] dark:from-white dark:via-blue-300 dark:to-white bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
+              <span className="bg-gradient-to-r from-white via-blue-200 to-white dark:from-white dark:via-blue-300 dark:to-white bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
                 {finalCta.headline}
               </span>
             </h2>
-            <p className="text-base text-gray-500 dark:text-white/50 mb-6 sm:mb-10 max-w-md mx-auto">
+            <p className="text-base text-white/70 dark:text-white/50 mb-6 sm:mb-10 max-w-md mx-auto">
               {finalCta.body}
             </p>
             <a href="#" onClick={(e) => { e.preventDefault(); setFinalModalOpen(true); }} className="inline-flex justify-center w-full sm:w-auto">

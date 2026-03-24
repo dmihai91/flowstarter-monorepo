@@ -1253,7 +1253,7 @@ const en = {
     'Your site goes live. New clients can find you, see what you do, and book directly. No calls needed to schedule.',
 
   // Landing Page - Editor
-  'landing.editor.title': 'Your site updates itself when you tell it to.',
+  'landing.editor.title': 'Then make it yours, anytime.',
   'landing.editor.subtitle':
     'Just describe what you want changed. The smart editor rewrites copy, updates sections, and keeps your site current. No code, no waiting.',
 

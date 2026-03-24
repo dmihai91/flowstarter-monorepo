@@ -66,7 +66,7 @@ export function LandingHero() {
         {/* Headline */}
         <h1
           className="font-bold leading-[1.1] tracking-tight mb-4 text-gray-900 dark:text-white drop-shadow-sm"
-          style={{ fontSize: 'clamp(2.75rem, 6vw, 4.5rem)', opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.22s' }}
+          style={{ fontSize: 'clamp(2.1rem, 6vw, 4.5rem)', opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.22s' }}
         >
           {hero.headlinePrefix}
           <br />

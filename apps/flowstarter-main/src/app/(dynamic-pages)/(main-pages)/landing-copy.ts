@@ -48,9 +48,9 @@ export const LANDING_COPY = {
   hero: {
     headlinePrefix: 'Every expert needs a great digital presence.',
     headlineHighlight: 'We build yours.',
-    subheadlineBold: 'Done for you in days.',
+    subheadlineBold: '',
     subheadline:
-      'We build your landing page, set up booking and structure, then hand you a smart editor so you can update everything yourself. No code, no agency, no waiting.',
+      'We build your site in days, hand you a smart editor, and you take it from there. No code, no agency, no waiting.',
     primaryCta: 'Book your free call',
     secondaryCta: 'See what\'s included',
     trustLine: 'For coaches, consultants, freelancers, and founders who want to show up like they mean it, without touching code.',

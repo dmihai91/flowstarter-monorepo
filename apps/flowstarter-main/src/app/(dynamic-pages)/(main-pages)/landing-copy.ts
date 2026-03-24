@@ -4,7 +4,7 @@ export interface HeroCopy {
   headlinePrefix: string;
   headlineHighlight: string;
   subheadlineBold: string;
-  subheadline: 'with clear messaging and clean design that turns visitors into paying clients. Then take control with our smart editor.',
+  subheadline: 'with clear messaging and clean design that turns visitors into paying clients. After launch, edit anything yourself using our smart editor.',
   primaryCta: string;
   secondaryCta: string;
   trustLine: 'For coaches, consultants, and freelancers who want to show up professionally and land clients without the tech headache.',
@@ -49,7 +49,7 @@ export const LANDING_COPY = {
     headlinePrefix: 'Start getting clients with a website',
     headlineHighlight: 'that actually converts',
     subheadlineBold: 'We build your website from scratch in days',
-    subheadline: 'with clear messaging and clean design that turns visitors into paying clients. Then take control with our smart editor.',
+    subheadline: 'with clear messaging and clean design that turns visitors into paying clients. After launch, edit anything yourself using our smart editor.',
     primaryCta: 'Book your free call',
     secondaryCta: 'See pricing',
     trustLine: 'For coaches, consultants, and freelancers who want to show up professionally and land clients without the tech headache.',

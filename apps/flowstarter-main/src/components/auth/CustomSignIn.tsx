@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { AuthSubmitButton } from './AuthSubmitButton';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslations } from '@/lib/i18n';
@@ -244,16 +245,16 @@ export function CustomSignIn() {
 
             {error && <div className="text-red-400 text-xs mt-1">{error}</div>}
 
-            <Button
+            <AuthSubmitButton
+              type="button"
               onClick={handleForgotPassword}
               disabled={isResetLoading || !resetEmail}
-              size="xl"
-              className="w-full mt-4 font-semibold shadow-md"
+              className="mt-4"
             >
               {isResetLoading
                 ? t('auth.forgotPassword.sendingCode')
                 : t('auth.forgotPassword.sendCode')}
-            </Button>
+            </AuthSubmitButton>
 
             <button
               type="button"
@@ -322,18 +323,16 @@ export function CustomSignIn() {
 
             {error && <div className="text-red-400 text-xs mt-1">{error}</div>}
 
-            <Button
+            <AuthSubmitButton
+              type="button"
               onClick={handleResetPassword}
-              disabled={
-                isResetLoading || !resetCode || !newPassword || !confirmPassword
-              }
-              size="xl"
-              className="w-full mt-4 font-semibold shadow-md"
+              disabled={isResetLoading || !resetCode || !newPassword || !confirmPassword}
+              className="mt-4"
             >
               {isResetLoading
                 ? t('auth.forgotPassword.resettingPassword')
                 : t('auth.forgotPassword.resetPassword')}
-            </Button>
+            </AuthSubmitButton>
 
             <div className="flex items-center justify-between pt-1">
               <button
@@ -453,14 +452,13 @@ export function CustomSignIn() {
 
         {error && <div className="text-red-400 text-xs mt-1">{error}</div>}
 
-        <Button
+        <AuthSubmitButton
           type="submit"
-          size="xl"
           disabled={isLoading || !formik.isValid}
-          className="w-full font-semibold mt-4 shadow-md"
+          className="mt-4"
         >
           {isLoading ? t('auth.signIn.signingIn') : t('auth.signIn')}
-        </Button>
+        </AuthSubmitButton>
       </form>
     </div>
   );

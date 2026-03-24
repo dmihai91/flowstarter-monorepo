@@ -1,7 +1,8 @@
 'use client';
 
 import AuthLayout from '@/components/auth/AuthLayout';
-import { Button } from '@/components/ui/button';
+import { AuthSubmitButton } from '@/components/auth/AuthSubmitButton';
+import { AuthFormCard } from '@/components/auth/AuthFormCard';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslations } from '@/lib/i18n';
@@ -247,14 +248,12 @@ export default function TeamLoginPage() {
 
                 {error && <div className="text-red-500 text-sm">{error}</div>}
 
-                <Button
+                <AuthSubmitButton
                   type="submit"
                   disabled={isLoading || !email || !password}
-                  size="xl"
-                  className="w-full font-semibold text-white rounded-lg bg-[linear-gradient(to_right,#4D5DD9,#7C3AED,#06B6D4)] hover:opacity-90 transition-opacity shadow-[0_4px_20px_rgba(77,93,217,0.4)] border-0"
                 >
                   {isLoading ? t('team.login.signingIn') : t('team.login.signIn')}
-                </Button>
+                </AuthSubmitButton>
               </form>
             </>
           )}
@@ -303,14 +302,12 @@ export default function TeamLoginPage() {
                   </div>
                 )}
 
-                <Button
+                <AuthSubmitButton
                   type="submit"
                   disabled={isLoading || code.length !== 6}
-                  size="xl"
-                  className="w-full font-semibold text-white rounded-lg bg-[linear-gradient(to_right,#4D5DD9,#7C3AED,#06B6D4)] hover:opacity-90 transition-opacity shadow-[0_4px_20px_rgba(77,93,217,0.4)] border-0"
                 >
                   {isLoading ? t('team.login.verifying') : t('team.login.verify')}
-                </Button>
+                </AuthSubmitButton>
 
                 <button
                   type="button"

@@ -15,12 +15,12 @@ export function PrimaryAction({ hasAnyProject, hasLiveProject }: PrimaryActionPr
   // No project yet — elevated book call CTA
   if (!hasAnyProject) {
     return (
-      <div className="mb-6 p-[1px] rounded-2xl bg-gradient-to-r from-[var(--purple)] via-blue-500 to-cyan-500 shadow-[0_8px_32px_rgba(77,93,217,0.25)]">
-        <div className="bg-white/[0.06] backdrop-blur-sm rounded-[calc(16px-1px)] p-5">
+      <div className="mb-6 p-[1px] rounded-2xl bg-gradient-to-br from-[var(--purple)]/80 to-blue-600/60 shadow-[0_4px_20px_rgba(77,93,217,0.20)]">
+        <div className="bg-[#0f0d1a] rounded-[calc(16px-1px)] p-5">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-[var(--purple)]/30">
               <CalendarClock className="w-6 h-6 text-white" />
-              <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[var(--purple)] border-2 border-[#0a0810] animate-pulse" />
+              <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[var(--purple)] animate-pulse" />
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-0.5">
@@ -82,7 +82,7 @@ export function PrimaryAction({ hasAnyProject, hasLiveProject }: PrimaryActionPr
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-[var(--purple)]/20">
           <Sparkles className="w-6 h-6 text-white" />
-          <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-blue-500 border-2 border-[#0a0810] animate-pulse" />
+          <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-blue-500 animate-pulse" />
         </div>
         <div className="flex-1">
           <h3 className="text-base font-semibold text-white mb-0.5">{t('dashboard.stats.buildPhase')}</h3>

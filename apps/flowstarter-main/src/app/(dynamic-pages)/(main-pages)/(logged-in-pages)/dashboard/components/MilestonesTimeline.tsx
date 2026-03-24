@@ -53,7 +53,7 @@ export function MilestonesTimeline({ hasAnyProject, hasLiveProject }: Milestones
                       ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white shadow-lg shadow-[var(--purple)]/40 ring-4 ring-[var(--purple)]/20'
                       : isCompleted
                       ? 'bg-gradient-to-br from-emerald-500 to-green-600 text-white shadow-md shadow-emerald-500/30 ring-3 ring-emerald-400/20'
-                      : 'bg-white/[0.04] border border-white/10 text-white/20'}
+                      : 'bg-white/[0.04] border border-white/[0.12] text-white/30'}
                   `}>
                     {isActive
                       ? <span className="text-xs font-bold">{i + 1}</span>
@@ -70,7 +70,7 @@ export function MilestonesTimeline({ hasAnyProject, hasLiveProject }: Milestones
                       ? 'bg-white/[0.07] border border-[var(--purple)]/30 shadow-[0_4px_20px_rgba(77,93,217,0.15)] ring-1 ring-[var(--purple)]/20'
                       : isCompleted
                       ? 'bg-emerald-500/[0.06] border border-emerald-500/20'
-                      : 'bg-white/[0.02] border border-white/[0.05] opacity-50'}
+                      : 'bg-white/[0.03] border border-white/[0.07]'}
                   `}>
                     <div className="flex items-center gap-2">
                       <span className={`text-[0.6rem] font-bold uppercase tracking-widest ${
@@ -107,7 +107,7 @@ export function MilestonesTimeline({ hasAnyProject, hasLiveProject }: Milestones
                 ? 'bg-white/[0.07] border border-[var(--purple)]/30 shadow-[0_4px_20px_rgba(77,93,217,0.15)]'
                 : isCompleted
                 ? 'bg-emerald-500/[0.06] border border-emerald-500/20'
-                : 'bg-white/[0.02] border border-white/[0.05] opacity-50'}
+                : 'bg-white/[0.03] border border-white/[0.07]'}
             `}>
               <div className={`
                 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold transition-all
@@ -115,7 +115,7 @@ export function MilestonesTimeline({ hasAnyProject, hasLiveProject }: Milestones
                   ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white shadow-lg shadow-[var(--purple)]/40 ring-4 ring-[var(--purple)]/20'
                   : isCompleted
                   ? 'bg-gradient-to-br from-emerald-500 to-green-600 text-white shadow-md shadow-emerald-500/30'
-                  : 'bg-white/[0.04] border border-white/10 text-white/20'}
+                  : 'bg-white/[0.04] border border-white/[0.12] text-white/30'}
               `}>
                 {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : isLocked ? <Lock className="w-4 h-4" /> : i + 1}
               </div>
@@ -163,7 +163,7 @@ export function MilestonesTimeline({ hasAnyProject, hasLiveProject }: Milestones
                       ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white shadow-[0_0_20px_rgba(77,93,217,0.5)] ring-[6px] ring-[var(--purple)]/15'
                       : isCompleted
                       ? 'bg-gradient-to-br from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-500/30 ring-4 ring-emerald-400/20'
-                      : 'bg-white/[0.04] border border-white/10 text-white/20'}
+                      : 'bg-white/[0.04] border border-white/[0.12] text-white/30'}
                   `}>
                     {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : isLocked ? <Lock className="w-4 h-4" /> : i + 1}
                   </div>
@@ -175,7 +175,7 @@ export function MilestonesTimeline({ hasAnyProject, hasLiveProject }: Milestones
                       ? 'bg-white/[0.07] border border-[var(--purple)]/30 shadow-[0_4px_24px_rgba(77,93,217,0.2)] ring-1 ring-[var(--purple)]/20'
                       : isCompleted
                       ? 'bg-emerald-500/[0.06] border border-emerald-500/20'
-                      : 'bg-white/[0.02] border border-white/[0.05] opacity-40'}
+                      : 'bg-white/[0.03] border border-white/[0.07]'}
                   `}>
                     <span className={`text-[0.6rem] font-bold uppercase tracking-widest ${
                       isActive ? 'text-[var(--purple)]' : isCompleted ? 'text-emerald-400' : 'text-white/30'

@@ -61,10 +61,8 @@ export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProp
     return () => window.removeEventListener('keydown', handler);
   }, [open, onClose]);
 
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
-
-  if (!open || !mounted) return null;
+  if (!open) return null;
+  if (typeof window === 'undefined') return null;
 
   const calendlyUrl = selected
     ? `${EXTERNAL_URLS.calendly.discovery}?utm_content=${selected}-plan&utm_source=${source}&utm_medium=prequal-modal`

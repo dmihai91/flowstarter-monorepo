@@ -75,7 +75,7 @@ export function LandingHero() {
 
         {/* Body */}
         <p
-          className="text-base sm:text-lg text-gray-500 dark:text-white/55 leading-snug mb-5 max-w-lg mx-auto"
+          className="text-base sm:text-lg text-gray-500 dark:text-white/80 leading-snug mb-5 max-w-lg mx-auto"
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.38s' }}
         >
           {hero.subheadlineBold} {hero.subheadline}
@@ -109,7 +109,7 @@ export function LandingHero() {
               event.preventDefault();
               document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="inline-flex items-center justify-center rounded-xl border border-[var(--landing-card-border)] bg-white/60 px-6 py-3 text-sm font-medium text-gray-700 shadow-[0_8px_30px_rgba(15,23,42,0.05)] backdrop-blur-md hover:border-[var(--purple-primary)]/35 hover:text-gray-900 dark:bg-white/[0.03] dark:text-white/70 dark:hover:text-white transition-colors"
+            className="inline-flex items-center justify-center rounded-xl border border-[var(--landing-card-border)] bg-white/60 px-6 py-3 text-sm font-medium text-gray-700 shadow-[0_8px_30px_rgba(15,23,42,0.05)] backdrop-blur-md hover:border-[var(--purple-primary)]/35 hover:text-gray-900 dark:bg-white/[0.03] dark:text-white/85 dark:hover:text-white transition-colors"
           >
             {hero.secondaryCta}
           </a>

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 
 import { LANDING_COPY, type HeroCopy } from '../landing-copy';
 import { PreQualModal } from './PreQualModal';
+import { GlassPill } from './GlassPill';
 
 /**
  * Landing page hero — clean, focused, high-converting.
@@ -57,15 +58,9 @@ export function LandingHero() {
         <div
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0) scale(1)' : 'translateY(28px) scale(0.97)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.1s' }}
         >
-          <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-white/60 dark:bg-white/[0.06] backdrop-blur-md border border-gray-200/40 dark:border-white/[0.08] shadow-[0_2px_20px_rgba(0,0,0,0.04)] mb-6">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-            <span className="text-sm font-medium text-gray-600 dark:text-white/70">
-              Done websites that perform without tech hustle
-            </span>
-          </div>
+          <GlassPill dot className="mb-6">
+            Done websites that perform without tech hustle
+          </GlassPill>
         </div>
 
         {/* Headline */}
@@ -91,9 +86,9 @@ export function LandingHero() {
           className="flex justify-center mb-7"
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.50s' }}
         >
-          <span className="inline-block px-6 py-3 rounded-xl bg-white/70 dark:bg-white/[0.06] border border-gray-200/50 dark:border-white/[0.08] text-sm sm:text-base text-gray-500 dark:text-white/50 font-medium backdrop-blur-sm leading-relaxed">
+          <GlassPill className="text-sm sm:text-base leading-relaxed">
             {hero.trustLine}
-          </span>
+          </GlassPill>
         </div>
 
         {/* CTA */}

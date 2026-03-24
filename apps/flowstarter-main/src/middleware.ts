@@ -332,7 +332,13 @@ export default clerkMiddleware(async (auth, req) => {
         const { userId, sessionClaims } = await auth();
         if (userId) {
           const url = req.nextUrl.clone();
-          // Check if user is a team member
+          // /team/login always goes to team dashboard — avoids stale session claims
+          // causing team members to land on client dashboard right after login.
+          if (pathname.startsWith('/team/login')) {
+            url.pathname = '/team/dashboard';
+            return NextResponse.redirect(url);
+          }
+          // For /login and /sign-up check role as before
           const role = (
             sessionClaims?.metadata as { role?: string }
           )?.role?.toLowerCase();

@@ -1255,7 +1255,7 @@ const en = {
   // Landing Page - Editor
   'landing.editor.title': 'Your site updates itself when you tell it to.',
   'landing.editor.subtitle':
-    'Type what you want changed in plain English. The smart editor rewrites copy, updates sections, and keeps your site current — no code, no waiting.',
+    'Just describe what you want changed. The smart editor rewrites copy, updates sections, and keeps your site current — no code, no waiting.',
 
   // Landing Page - Pricing Card
   'landing.pricing.heading1': 'Clear',

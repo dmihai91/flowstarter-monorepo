@@ -9,6 +9,7 @@ import { ScaffoldInput } from '../components/scaffold/ScaffoldInput';
 import { ScaffoldProgress } from '../components/scaffold/ScaffoldProgress';
 import { ScaffoldClarify } from '../components/scaffold/ScaffoldClarify';
 import { ScaffoldReview } from '../components/scaffold/ScaffoldReview';
+import { TemplatePicker, TemplateGallery } from './TemplateGallery';
 
 // ── Plan config ────────────────────────────────────────────────────────────────
 
@@ -51,7 +52,7 @@ type PlanId = typeof PLANS[number]['id'];
 
 // ── Step indicator ─────────────────────────────────────────────────────────────
 
-const STEPS = ['Client', 'Brief', 'Plan & Fee', 'Launch'];
+const STEPS = ['Client', 'Brief', 'Template', 'Payment', 'Launch'];
 
 function StepIndicator({ current }: { current: number }) {
   return (
@@ -224,6 +225,7 @@ function PaymentStep({
 export function NewProjectWizard() {
   const router = useRouter();
   const [isLaunching, setIsLaunching] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
   const [launchError, setLaunchError] = useState<string | null>(null);
 
   const form = useScaffoldForm();
@@ -231,12 +233,13 @@ export function NewProjectWizard() {
   // Map scaffold phase to step indicator index
   const stepIndex = (() => {
     switch (form.phase) {
-      case 'client': return 0;
+      case 'client':   return 0;
       case 'input':
       case 'progress':
       case 'clarify':
-      case 'review': return 1;
-      case 'payment': return 2;
+      case 'review':   return 1;
+      case 'template': return 2;
+      case 'payment':  return 3;
       default: return 0;
     }
   })();
@@ -259,6 +262,7 @@ export function NewProjectWizard() {
             clientName: form.clientInfo.name,
             clientEmail: form.clientInfo.email,
             clientPhone: form.clientInfo.phone,
+            templateId: form.selectedTemplateId ?? undefined,
             planName: form.planName,
             totalFee: form.setupFee,
             depositAmount: Math.round(form.setupFee * 0.5),
@@ -369,12 +373,47 @@ export function NewProjectWizard() {
               isFirstStep={form.isFirstStep}
               isLastStep={form.isLastStep}
               onUpdateField={form.updateField}
-              onNext={form.isLastStep ? form.proceedToPayment : form.nextStep}
+              onNext={form.isLastStep ? form.proceedToTemplate : form.nextStep}
               onPrev={form.prevStep}
               onRegenerate={form.regenerate}
               onLaunch={form.proceedToPayment}
               onReset={form.reset}
             />
+          )}
+
+          {form.phase === 'template' && (
+            <div className="space-y-4">
+              <div className="mb-2">
+                <h3 className="text-base font-semibold text-white">Choose a template</h3>
+                <p className="text-sm text-white/40 mt-0.5">
+                  {form.templateRecommendations.length > 0
+                    ? 'AI picked these based on your brief — or browse all'
+                    : 'Browse and select a template for this project'}
+                </p>
+              </div>
+              <TemplatePicker
+                selectedId={form.selectedTemplateId}
+                recommendedIds={form.templateRecommendations}
+                recommendedReasons={form.templateReasons}
+                onSelect={form.setSelectedTemplateId}
+                onBrowseAll={() => setGalleryOpen(true)}
+              />
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => form.setPhase('review')}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/70 text-sm font-medium hover:bg-white/[0.08] transition-all"
+                >
+                  <ArrowLeft className="w-4 h-4" /> Back
+                </button>
+                <button
+                  onClick={form.proceedToPayment}
+                  disabled={!form.selectedTemplateId}
+                  className="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--purple)] text-white text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--purple)]/90 transition-all"
+                >
+                  Continue <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           )}
 
           {form.phase === 'payment' && (
@@ -396,6 +435,17 @@ export function NewProjectWizard() {
           )}
         </div>
       </div>
+
+      {/* Template gallery overlay */}
+      {galleryOpen && (
+        <TemplateGallery
+          selectedId={form.selectedTemplateId}
+          recommendedIds={form.templateRecommendations}
+          recommendedReasons={form.templateReasons}
+          onSelect={form.setSelectedTemplateId}
+          onClose={() => setGalleryOpen(false)}
+        />
+      )}
     </div>
   );
 }

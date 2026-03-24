@@ -10,7 +10,7 @@ const EDITOR_URL =
     ? 'https://editor.flowstarter.dev'
     : 'http://localhost:5173');
 
-export type ScaffoldPhase = 'client' | 'input' | 'progress' | 'clarify' | 'review' | 'payment';
+export type ScaffoldPhase = 'client' | 'input' | 'progress' | 'clarify' | 'review' | 'template' | 'payment';
 
 export interface ClientInfo {
   name: string;
@@ -77,6 +77,9 @@ export function useScaffoldForm() {
   const [followUpQuestions, setFollowUpQuestions] = useState<string[]>([]);
   const [clarifyAnswers, setClarifyAnswers] = useState<string[]>([]);
   const [engineArtifacts, setEngineArtifacts] = useState<EngineArtifacts | null>(null);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
+  const [templateRecommendations, setTemplateRecommendations] = useState<string[]>([]);
+  const [templateReasons, setTemplateReasons] = useState<Record<string, string>>({});
   const [planName, setPlanName] = useState<string>('STARTER');
   const [setupFee, setSetupFee] = useState<number>(0);
 
@@ -158,6 +161,29 @@ export function useScaffoldForm() {
         contactAddress: brief.contact.address || '',
       });
       setReviewStep(0);
+
+      // Extract template recommendations from engine artifacts
+      if (enriched.templateSelection) {
+        const recs: string[] = [];
+        const reasons: Record<string, string> = {};
+        const sel = enriched.templateSelection;
+        if (sel.selectedTemplateId) {
+          recs.push(sel.selectedTemplateId);
+          reasons[sel.selectedTemplateId] = sel.reasons?.[0] ?? 'Best match for your business';
+        }
+        if (sel.alternatives) {
+          for (const alt of sel.alternatives.slice(0, 2)) {
+            if (alt.templateId && !recs.includes(alt.templateId)) {
+              recs.push(alt.templateId);
+              reasons[alt.templateId] = alt.reasons?.[0] ?? '';
+            }
+          }
+        }
+        setTemplateRecommendations(recs);
+        setTemplateReasons(reasons);
+        if (!selectedTemplateId && recs[0]) setSelectedTemplateId(recs[0]);
+      }
+
       setPhase('review');
       setAiSteps([]);
     },
@@ -328,6 +354,11 @@ export function useScaffoldForm() {
     [fields, rewriteFieldMutation]
   );
 
+  // ── Proceed to template phase ──
+  const proceedToTemplate = useCallback(() => {
+    setPhase('template');
+  }, []);
+
   // ── Proceed to payment phase ──
   const proceedToPayment = useCallback(() => {
     setPhase('payment');
@@ -435,6 +466,9 @@ export function useScaffoldForm() {
     setEngineArtifacts(null);
     setPlanName('STARTER');
     setSetupFee(0);
+    setSelectedTemplateId(null);
+    setTemplateRecommendations([]);
+    setTemplateReasons({});
   }, []);
 
   return {
@@ -466,6 +500,13 @@ export function useScaffoldForm() {
     updateField,
     launchEditor,
     reset,
+    setPhase,
+    // Template
+    selectedTemplateId,
+    setSelectedTemplateId,
+    templateRecommendations,
+    templateReasons,
+    proceedToTemplate,
     // Payment
     planName,
     setPlanName,

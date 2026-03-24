@@ -140,7 +140,7 @@ export default function PrivacyPage() {
         <main className="relative z-10 max-w-4xl mx-auto px-6 pt-28 pb-16">
           {/* Hero */}
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-base font-medium mb-6">
               <Shield className="w-4 h-4" />
               {t('privacy.badge')}
             </div>
@@ -150,7 +150,7 @@ export default function PrivacyPage() {
             <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl mx-auto mb-6">
               {t('privacy.description')}
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-gray-400 dark:text-white/30">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-base text-gray-400 dark:text-white/30">
               <span>{t('privacy.effective', { date: effectiveDate })}</span>
               <span className="hidden sm:inline">•</span>
               <span>{t('privacy.lastUpdated', { date: lastUpdated })}</span>
@@ -174,10 +174,10 @@ export default function PrivacyPage() {
                       <item.icon className="w-4 h-4 text-[var(--purple)]" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">
+                      <h3 className="font-semibold text-gray-900 dark:text-white text-base mb-1">
                         {item.title}
                       </h3>
-                      <p className="text-xs text-gray-500 dark:text-white/50">
+                      <p className="text-lg text-gray-500 dark:text-white/50">
                         {item.desc}
                       </p>
                     </div>
@@ -192,7 +192,7 @@ export default function PrivacyPage() {
             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
               {t('privacy.contents')}
             </h2>
-            <div className="grid sm:grid-cols-2 gap-2 text-sm">
+            <div className="grid sm:grid-cols-2 gap-2 text-base">
               {sections.map((section) => (
                 <a
                   key={section.id}
@@ -215,16 +215,16 @@ export default function PrivacyPage() {
                 <h3 className="font-semibold text-amber-800 dark:text-amber-300 mb-2">
                   {t('privacy.aiNotice.title')}
                 </h3>
-                <p className="text-sm text-amber-700 dark:text-amber-300/80 leading-relaxed mb-3">
+                <p className="text-lg text-amber-700 dark:text-amber-300/80 leading-relaxed mb-3">
                   {t('privacy.aiNotice.description')}
                 </p>
-                <ul className="text-sm text-amber-700 dark:text-amber-300/80 space-y-1">
+                <ul className="text-lg text-amber-700 dark:text-amber-300/80 space-y-1">
                   <li>• {t('privacy.aiNotice.item1')}</li>
                   <li>• {t('privacy.aiNotice.item2')}</li>
                   <li>• {t('privacy.aiNotice.item3')}</li>
                   <li>• {t('privacy.aiNotice.item4')}</li>
                 </ul>
-                <p className="text-sm text-amber-700 dark:text-amber-300/80 mt-3">
+                <p className="text-lg text-amber-700 dark:text-amber-300/80 mt-3">
                   {t('privacy.aiNotice.footer')}
                 </p>
               </div>
@@ -252,7 +252,7 @@ export default function PrivacyPage() {
                       <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2">
                         {item.subtitle}
                       </h3>
-                      <p className="text-gray-600 dark:text-white/60 leading-relaxed text-sm">
+                      <p className="text-gray-600 dark:text-white/60 leading-relaxed text-base">
                         {item.text}
                       </p>
                     </div>
@@ -264,7 +264,7 @@ export default function PrivacyPage() {
 
           {/* Terms of Service Reference */}
           <div className="mt-12 p-6 rounded-2xl bg-gray-100 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 text-center">
-            <p className="text-sm text-gray-500 dark:text-white/50">
+            <p className="text-lg text-gray-500 dark:text-white/50">
               {t('privacy.termsRef', { link: '' })}
               <a href="/terms" className="text-[var(--purple)] hover:underline">
                 {t('privacy.termsRefLink')}

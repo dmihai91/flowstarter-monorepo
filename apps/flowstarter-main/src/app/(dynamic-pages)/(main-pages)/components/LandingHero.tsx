@@ -27,13 +27,12 @@ export function LandingHero() {
         {/* Central halo — single radial glow behind headline area */}
         <div className="absolute top-[5%] left-1/2 -translate-x-1/2 w-[100%] sm:w-[80%] h-[85%] rounded-full bg-[var(--hero-glow-primary)] opacity-[0.13] dark:opacity-[0.12] blur-[100px] md:blur-[140px] lg:blur-[220px] will-change-transform" />
         {/* Subtle secondary — slight cool shift lower */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[70%] sm:w-[55%] h-[50%] rounded-full bg-[var(--hero-glow-secondary)] opacity-[0.08] dark:opacity-[0.07] blur-[100px] md:blur-[140px] lg:blur-[200px] will-change-transform" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[80%] sm:w-[65%] h-[65%] rounded-full bg-[var(--hero-glow-secondary)] opacity-[0.10] dark:opacity-[0.09] blur-[80px] md:blur-[120px] lg:blur-[180px] will-change-transform" />
         {/* Noise texture overlay */}
         <div className="absolute inset-0 opacity-[0.025] dark:opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")', backgroundRepeat: 'repeat', backgroundSize: '128px 128px' }} />
       </div>
 
-      {/* Bottom fade — smooth transition to next section */}
-      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent via-[var(--landing-bg)]/50 to-[var(--landing-bg)] dark:via-[var(--landing-dark-surface)]/50 dark:to-[var(--landing-dark-surface)] pointer-events-none z-[1]" />
+      
 
       {/* Subtle flow lines */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -66,7 +65,7 @@ export function LandingHero() {
         {/* Headline */}
         <h1
           className="font-bold leading-[1.1] tracking-tight mb-4 text-gray-900 dark:text-white drop-shadow-sm"
-          style={{ fontSize: 'clamp(2.1rem, 6vw, 4.5rem)', opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.22s' }}
+          style={{ fontSize: 'clamp(2.4rem, 6vw, 4.5rem)', opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.22s' }}
         >
           {hero.headlinePrefix}
           <br />

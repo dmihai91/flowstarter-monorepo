@@ -151,12 +151,12 @@ export function LandingHeader() {
             {/* Mobile menu dropdown */}
             <div
               className={`lg:hidden overflow-hidden transition-all duration-300 ${
-                mobileMenuOpen ? 'max-h-96 pb-4' : 'max-h-0'
+                mobileMenuOpen ? 'max-h-[36rem] pb-4' : 'max-h-0'
               }`}
             >
               <nav className="flex flex-col gap-1 pt-3 mt-2 border-t border-gray-200/50 dark:border-white/10">
                 <div className="flex items-center justify-between px-3 py-2">
-                  <span className="text-sm text-gray-600 dark:text-white/70">{t('nav.theme')}</span>
+                  <span className="text-base font-medium text-gray-700 dark:text-white/80">{t('nav.theme')}</span>
                   <ThemeToggle />
                 </div>
                 <a

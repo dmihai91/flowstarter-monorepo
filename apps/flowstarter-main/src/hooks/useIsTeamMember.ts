@@ -3,33 +3,37 @@
 import { useUser } from '@clerk/nextjs';
 
 /**
- * Hook to check if the current user is a team member
- * Team members have access to creation/edit features
- * Regular users (clients) only see their projects
+ * Hook to check the current user's role.
  *
- * Uses Clerk publicMetadata.role to determine access:
- * - 'team' or 'admin' = team member with full access
- * - anything else = regular user (client)
+ * Roles (Clerk publicMetadata.role):
+ *   'admin'        — full access: all projects, revenue, client stats
+ *   'team'         — team member: create/edit projects, no admin panels
+ *   'partner' /
+ *   'collaborator' — assigned projects only, read-only revenue
+ *   anything else  — regular client user
  *
- * To set a user as team member in Clerk Dashboard:
- * 1. Go to Users → Select user
- * 2. Edit publicMetadata: { "role": "team" }
+ * To set a role in Clerk Dashboard:
+ *   Users → Select user → Edit publicMetadata: { "role": "admin" }
  */
 export function useIsTeamMember(): {
   isTeamMember: boolean;
+  isAdmin: boolean;
+  isCollaborator: boolean;
+  role: string | undefined;
   isLoaded: boolean;
 } {
   const { user, isLoaded } = useUser();
 
   if (!isLoaded || !user) {
-    return { isTeamMember: false, isLoaded };
+    return { isTeamMember: false, isAdmin: false, isCollaborator: false, role: undefined, isLoaded };
   }
 
-  // Check publicMetadata for role
   const metadata = user.publicMetadata as { role?: string } | undefined;
   const role = metadata?.role?.toLowerCase();
 
+  const isAdmin = role === 'admin';
   const isTeamMember = role === 'team' || role === 'admin';
+  const isCollaborator = role === 'partner' || role === 'collaborator';
 
-  return { isTeamMember, isLoaded };
+  return { isTeamMember, isAdmin, isCollaborator, role, isLoaded };
 }

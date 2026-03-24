@@ -1255,7 +1255,7 @@ const en = {
   // Landing Page - Editor
   'landing.editor.title': 'Your site updates itself when you tell it to.',
   'landing.editor.subtitle':
-    'Just describe what you want changed. The smart editor rewrites copy, updates sections, and keeps your site current — no code, no waiting.',
+    'Just describe what you want changed. The smart editor rewrites copy, updates sections, and keeps your site current. No code, no waiting.',
 
   // Landing Page - Pricing Card
   'landing.pricing.heading1': 'Clear',
@@ -2058,7 +2058,7 @@ const en = {
   // Manifesto
   'landing.manifesto.title': 'Why we built this',
   'landing.manifesto.headline': 'Real expertise should be easier to find.',
-  'landing.manifesto.p1': 'Too many skilled people are invisible online — not because they lack talent, but because the tools are built for developers, not for them. Flowstarter exists to close that gap.',
+  'landing.manifesto.p1': 'Too many skilled people are invisible online. Not because they lack talent, but because the tools are built for developers, not for them. Flowstarter exists to close that gap.',
   'landing.manifesto.p2': '',
   'landing.manifesto.p3': '',
   'landing.manifesto.p4': '',

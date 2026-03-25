@@ -134,8 +134,8 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
           }}
         />
 
-        {/* Flow lines SVG */}
-        <svg
+        {/* Flow lines SVG — only rendered when lineOpacity > 0 */}
+        {lineOpacity > 0 && <svg
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: lineOpacity }}
           viewBox="0 0 1200 800"
           preserveAspectRatio="xMidYMid slice"
@@ -181,7 +181,7 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
             <path d="M-100,600 Q200,620 400,580 T800,620 T1300,600" />
             <path d="M-100,700 Q250,680 450,720 T850,690 T1300,730" />
           </g>
-        </svg>
+        </svg>}
       </div>
     );
   }

@@ -14,6 +14,8 @@ import {
   UserPlus,
   Users,
   ShieldCheck,
+  FolderOpen,
+  Sparkles as SparklesIcon,
   ChevronsLeft,
   ChevronsRight,
   X,
@@ -41,8 +43,10 @@ export function TeamSidebar() {
   ];
 
   const adminOnlyItems = [
-    { label: 'Clients',      href: '/team/dashboard/clients', icon: Users       },
-    { label: 'Team members', href: '/team/dashboard/team',    icon: ShieldCheck },
+    { label: 'All projects', href: '/team/dashboard/projects/list', icon: FolderOpen  },
+    { label: 'AI usage',     href: '/team/dashboard/ai-usage',      icon: SparklesIcon },
+    { label: 'Clients',      href: '/team/dashboard/clients',        icon: Users       },
+    { label: 'Team members', href: '/team/dashboard/team',           icon: ShieldCheck },
   ];
 
   // Close mobile sidebar on route change

@@ -12,6 +12,8 @@ import {
   LayoutDashboard,
   BarChart3,
   UserPlus,
+  Users,
+  ShieldCheck,
   ChevronsLeft,
   ChevronsRight,
   X,
@@ -36,6 +38,11 @@ export function TeamSidebar() {
 
   const adminItems = [
     { label: t('team.sidebar.invite'), href: '/team/dashboard/invite', icon: UserPlus },
+  ];
+
+  const adminOnlyItems = [
+    { label: 'Clients',      href: '/team/dashboard/clients', icon: Users       },
+    { label: 'Team members', href: '/team/dashboard/team',    icon: ShieldCheck },
   ];
 
   // Close mobile sidebar on route change
@@ -132,6 +139,22 @@ export function TeamSidebar() {
           )}
           <div className="space-y-1">
             {adminItems.map((item) => (
+              <NavLink key={item.href} {...item} showLabel={showLabel} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Admin-only pages */}
+      {isAdmin && (
+        <div className={cn(!showLabel && "w-full")}>
+          {showLabel && (
+            <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
+              Admin
+            </h3>
+          )}
+          <div className="space-y-1">
+            {adminOnlyItems.map((item) => (
               <NavLink key={item.href} {...item} showLabel={showLabel} />
             ))}
           </div>

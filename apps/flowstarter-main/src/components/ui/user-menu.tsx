@@ -112,7 +112,7 @@ export function UserMenu() {
 
         {isTeam ? (
           <>
-            <DropdownMenuItem onSelect={() => router.push('/profile')}>
+            <DropdownMenuItem onSelect={() => router.push('/team/dashboard/profile')}>
               <User className="h-4 w-4" />
               {t('app.profile')}
             </DropdownMenuItem>

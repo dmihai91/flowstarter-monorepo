@@ -1,5 +1,6 @@
 'use client';
 
+import { TypewriterText } from '@/components/ui/typewriter';
 import { RefreshCw, Rocket, ChevronRight, X } from 'lucide-react';
 import type { ProjectBriefDraft } from './useScaffoldForm';
 
@@ -105,7 +106,10 @@ export function ScaffoldQuickReview({
                   }}
                 />
               ) : (
-                <span className="flex-1 text-gray-800 dark:text-white/80 truncate">{displayValue}</span>
+                <TypewriterText
+                  value={displayValue}
+                  className="flex-1 text-gray-800 dark:text-white/80 truncate"
+                />
               )}
               {!missing && (
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />

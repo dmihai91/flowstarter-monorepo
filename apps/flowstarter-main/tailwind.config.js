@@ -137,6 +137,10 @@ export default {
       },
 
       keyframes: {
+        blink: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0' },
+        },
         accordionDown: {
           from: { height: 0 },
           to: { height: 'var(--radix-accordion-content-height)' },
@@ -218,6 +222,7 @@ export default {
         },
       },
       animation: {
+        blink: 'blink 0.8s step-end infinite',
         accordionDown: 'accordion-down 0.2s ease-out',
         accordionUp: 'accordion-up 0.2s ease-out',
         marquee: 'marquee 30s linear infinite',

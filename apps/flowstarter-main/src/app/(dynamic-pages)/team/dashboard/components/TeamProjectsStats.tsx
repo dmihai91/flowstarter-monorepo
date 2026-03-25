@@ -4,7 +4,6 @@ import { ProjectWithOwner } from '@/hooks/useTeamProjects';
 import { useFormatDate } from '@/hooks/useFormatDate';
 import { useTranslations } from '@/lib/i18n';
 import { GlassPanel } from '@flowstarter/flow-design-system';
-import { Button } from '@/components/ui/button';
 
 // Status groupings - single source of truth
 const LIVE_STATUSES = ['completed', 'live'] as const;
@@ -101,9 +100,9 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
           <span className="text-sm text-gray-500 dark:text-white/50">
             {t('team.dashboard.totalProjects')}
           </span>
-          <Button variant="ghost" size="xs">
+          <button onClick={() => document.getElementById('projects-list')?.scrollIntoView({ behavior: 'smooth' })} className="text-xs text-[var(--purple)] hover:underline font-medium">
             {t('team.dashboard.details')} →
-          </Button>
+          </button>
         </div>
         <p className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
           {totalProjects}
@@ -168,9 +167,9 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
           <span className="text-sm text-gray-500 dark:text-white/50">
             {t('team.dashboard.revenue')}
           </span>
-          <Button variant="ghost" size="xs">
+          <a href="/team/dashboard/analytics" className="text-xs text-[var(--purple)] hover:underline font-medium">
             {t('team.dashboard.details')} →
-          </Button>
+          </a>
         </div>
         <p className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
           {formatCurrency(totalSetupFees + monthlyRevenue)}
@@ -207,9 +206,9 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
           <span className="text-sm text-gray-500 dark:text-white/50">
             AI Usage
           </span>
-          <Button variant="ghost" size="xs">
+          <a href="/team/dashboard/analytics" className="text-xs text-[var(--purple)] hover:underline font-medium">
             {t('team.dashboard.details')} →
-          </Button>
+          </a>
         </div>
         <div className="mb-3">
           <p className="text-3xl font-bold text-gray-900 dark:text-white">

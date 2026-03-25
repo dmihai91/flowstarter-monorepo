@@ -198,6 +198,7 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
       </GlassPanel>
 
       {/* AI Usage Card */}
+      <div className="sm:col-span-2 lg:col-span-1">
       <GlassPanel
         shadow="glass"
         padding="md"
@@ -228,6 +229,7 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
           </span>
         </div>
       </GlassPanel>
+      </div>
     </div>
   );
 }

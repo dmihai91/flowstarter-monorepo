@@ -7,7 +7,7 @@ import { ScaffoldClientInfo } from './scaffold/ScaffoldClientInfo';
 import { ScaffoldClarify } from './scaffold/ScaffoldClarify';
 import { ScaffoldInput } from './scaffold/ScaffoldInput';
 import { ScaffoldProgress } from './scaffold/ScaffoldProgress';
-import { ScaffoldReview } from './scaffold/ScaffoldReview';
+import { ScaffoldQuickReview } from './scaffold/ScaffoldQuickReview';
 import { useScaffoldForm } from './scaffold/useScaffoldForm';
 
 export function QuickScaffold() {
@@ -15,7 +15,7 @@ export function QuickScaffold() {
   const [isExpanded, setIsExpanded] = useLocalStorage('scaffold-expanded', false);
   const scaffold = useScaffoldForm();
 
-  // Collapsed state
+  // Collapsed pill — shown when idle
   if (!isExpanded && (scaffold.phase === 'client' || scaffold.phase === 'input')) {
     return (
       <button
@@ -34,6 +34,7 @@ export function QuickScaffold() {
     );
   }
 
+  // Step 1 — Client details
   if (scaffold.phase === 'client') {
     return (
       <ScaffoldClientInfo
@@ -45,10 +46,23 @@ export function QuickScaffold() {
     );
   }
 
+  // Step 2 — Project description input
+  if (scaffold.phase === 'input') {
+    return (
+      <ScaffoldInput
+        onSubmit={scaffold.submitDescription}
+        onCollapse={() => setIsExpanded(false)}
+        isEnriching={scaffold.isEnriching}
+      />
+    );
+  }
+
+  // AI working
   if (scaffold.phase === 'progress') {
     return <ScaffoldProgress steps={scaffold.aiSteps} />;
   }
 
+  // AI needs more info
   if (scaffold.phase === 'clarify') {
     return (
       <ScaffoldClarify
@@ -61,30 +75,18 @@ export function QuickScaffold() {
     );
   }
 
-  if (scaffold.phase === 'review') {
+  // Quick review — compact single card, fill gaps, launch
+  if (scaffold.phase === 'review' || scaffold.phase === 'template' || scaffold.phase === 'payment') {
     return (
-      <ScaffoldReview
+      <ScaffoldQuickReview
         brief={scaffold.brief}
-        reviewStep={scaffold.reviewStep}
-        isFirstStep={scaffold.isFirstStep}
-        isLastStep={scaffold.isLastStep}
-        reviewStepCount={scaffold.reviewStepCount}
         onUpdateBrief={scaffold.updateBrief}
-        onToggleGoal={scaffold.toggleGoal}
-        onToggleIntegration={scaffold.toggleIntegration}
-        onNext={scaffold.isLastStep ? scaffold.proceedToTemplate : scaffold.nextStep}
-        onPrev={scaffold.prevStep}
+        onLaunch={() => scaffold.launchEditor()}
         onRegenerate={scaffold.regenerate}
-        onReset={scaffold.reset}
+        onReset={() => { scaffold.reset(); setIsExpanded(false); }}
       />
     );
   }
 
-  return (
-    <ScaffoldInput
-      onSubmit={scaffold.submitDescription}
-      onCollapse={() => setIsExpanded(false)}
-      isEnriching={scaffold.isEnriching}
-    />
-  );
+  return null;
 }

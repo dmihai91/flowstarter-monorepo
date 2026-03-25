@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuth, clerkClient } from '@clerk/nextjs/server';
+import { auth, clerkClient } from '@clerk/nextjs/server';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import { getOrCreateStripeCustomer, createDepositInvoice, createFinalInvoice } from '@/lib/stripe/invoices';
 
@@ -9,7 +9,7 @@ interface InvoiceRequestBody {
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  const { userId } = getAuth(request);
+  const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await request.json() as InvoiceRequestBody;

@@ -120,17 +120,20 @@ const handoffBodySchema = z
         clientPhone: z.string().optional(),
         businessInfo: z
           .object({
-            description: z.string().optional(),
-            uvp: z.string().optional(),
-            targetAudience: z.string().optional(),
-            industry: z.string().optional(),
-            goal: z.string().optional(),
-            offerType: z.string().optional(),
-            brandTone: z.string().optional(),
-            offerings: z.string().optional(),
-            contactEmail: z.string().optional(),
-            contactPhone: z.string().optional(),
-            contactAddress: z.string().optional(),
+            description:      z.string().optional(),
+            summary:          z.string().optional(),
+            uvp:              z.string().optional(),
+            valueProposition: z.string().optional(),
+            targetAudience:   z.string().optional(),
+            industry:         z.string().optional(),
+            goal:             z.string().optional(),
+            goals:            z.array(z.string()).optional(),
+            offerType:        z.string().optional(),
+            brandTone:        z.string().optional(),
+            offerings:        z.union([z.string(), z.array(z.string())]).optional(),
+            contactEmail:     z.string().optional(),
+            contactPhone:     z.string().optional(),
+            contactAddress:   z.string().optional(),
           })
           .optional(),
         flowstarterEngine: z
@@ -149,6 +152,11 @@ const handoffBodySchema = z
             address: z.string().optional(),
           })
           .optional(),
+        planName:      z.string().optional(),
+        totalFee:      z.number().optional(),
+        depositAmount: z.number().optional(),
+        finalAmount:   z.number().optional(),
+        templateId:    z.string().optional(),
       })
       .optional(),
     mode: z.enum(['interactive', 'generate']).optional().default('interactive'),
@@ -331,6 +339,7 @@ export async function POST(request: NextRequest) {
           data: JSON.stringify(projectData),
           template_id:
             selectedTemplateSlug ||
+            projectConfig.templateId ||
             projectConfig.template?.id ||
             ((projectConfig.flowstarterEngine?.templateSelection as { selectedTemplateId?: string } | undefined)
               ?.selectedTemplateId ?? null),
@@ -340,6 +349,10 @@ export async function POST(request: NextRequest) {
           template_slug: selectedTemplateSlug,
           domain_type: 'hosted',
           domain_provider: 'platform',
+          plan_name:      (projectConfig.planName as string | undefined) ?? null,
+          total_fee:      (projectConfig.totalFee as number | undefined) ?? null,
+          deposit_amount: (projectConfig.depositAmount as number | undefined) ?? null,
+          final_amount:   (projectConfig.finalAmount as number | undefined) ?? null,
         })
         .select('id')
         .single();

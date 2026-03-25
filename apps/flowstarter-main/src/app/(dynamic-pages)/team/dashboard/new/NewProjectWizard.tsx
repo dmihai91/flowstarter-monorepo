@@ -292,12 +292,16 @@ export function NewProjectWizard() {
         token: string; projectId: string; editorUrl: string;
       };
 
-      // 2. Send deposit invoice
-      await fetch('/api/projects/invoices', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ projectId, type: 'deposit' }),
-      });
+      // 2. Send deposit invoice (non-blocking — don't fail launch if invoice fails)
+      if (form.setupFee > 0) {
+        fetch('/api/projects/invoices', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ projectId, type: 'deposit' }),
+        }).catch((invoiceErr) => {
+          console.warn('[handleLaunch] Deposit invoice failed (non-fatal):', invoiceErr);
+        });
+      }
 
       // 3. Open editor + redirect to dashboard
       const EDITOR_URL = process.env.NEXT_PUBLIC_EDITOR_URL ?? 'https://editor.flowstarter.dev';

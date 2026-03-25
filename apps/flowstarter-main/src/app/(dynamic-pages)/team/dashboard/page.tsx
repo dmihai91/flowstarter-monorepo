@@ -1,6 +1,7 @@
 'use client';
 
 import { TeamProjectsList } from './components/TeamProjectsList';
+import { QuickScaffold } from './components/QuickScaffold';
 import { TeamProjectsListSkeleton } from './components/TeamProjectsListSkeleton';
 import { TeamProjectsStats } from './components/TeamProjectsStats';
 import { TeamProjectsStatsSkeleton } from './components/TeamProjectsStatsSkeleton';
@@ -211,6 +212,11 @@ export default function TeamDashboardPage() {
         </div>
       </div>
 
+
+      {/* Quick Scaffold Tool */}
+      <div className="mb-6">
+        <QuickScaffold />
+      </div>
 
       {/* Stats Row */}
       <div className="mb-8">

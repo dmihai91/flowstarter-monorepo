@@ -64,16 +64,17 @@ export function QuickScaffold() {
   if (scaffold.phase === 'review') {
     return (
       <ScaffoldReview
-        fields={scaffold.fields}
+        brief={scaffold.brief}
         reviewStep={scaffold.reviewStep}
         isFirstStep={scaffold.isFirstStep}
         isLastStep={scaffold.isLastStep}
         reviewStepCount={scaffold.reviewStepCount}
-        onUpdateField={scaffold.updateField}
-        onNext={scaffold.nextStep}
+        onUpdateBrief={scaffold.updateBrief}
+        onToggleGoal={scaffold.toggleGoal}
+        onToggleIntegration={scaffold.toggleIntegration}
+        onNext={scaffold.isLastStep ? scaffold.proceedToTemplate : scaffold.nextStep}
         onPrev={scaffold.prevStep}
         onRegenerate={scaffold.regenerate}
-        onLaunch={() => scaffold.launchEditor()}
         onReset={scaffold.reset}
       />
     );

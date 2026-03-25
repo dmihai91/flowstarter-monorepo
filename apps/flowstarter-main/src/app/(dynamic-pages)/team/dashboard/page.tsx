@@ -4,7 +4,6 @@ import { TeamProjectsList } from './components/TeamProjectsList';
 import { TeamProjectsListSkeleton } from './components/TeamProjectsListSkeleton';
 import { TeamProjectsStats } from './components/TeamProjectsStats';
 import { TeamProjectsStatsSkeleton } from './components/TeamProjectsStatsSkeleton';
-import { QuickScaffold } from './components/QuickScaffold';
 import { DashboardLoader } from './components/DashboardSkeleton';
 import { Button } from '@/components/ui/button';
 import { useTeamProjects } from '@/hooks/useTeamProjects';
@@ -212,10 +211,6 @@ export default function TeamDashboardPage() {
         </div>
       </div>
 
-      {/* Quick Scaffold Tool */}
-      <div className="mb-8">
-        <QuickScaffold />
-      </div>
 
       {/* Stats Row */}
       <div className="mb-8">
@@ -359,7 +354,7 @@ export default function TeamDashboardPage() {
               No projects yet
             </h3>
             <p className="text-gray-500 dark:text-white/50 mb-6 max-w-sm mx-auto">
-              Start a new project manually or use the scaffold generator above to create a quick draft.
+              Click "New Project" to set up your first client project.
             </p>
             <Button variant="accent" onClick={createNewInEditor}>
               <Plus className="w-4 h-4 mr-2" />

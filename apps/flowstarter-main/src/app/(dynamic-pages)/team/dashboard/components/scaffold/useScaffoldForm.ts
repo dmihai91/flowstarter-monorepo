@@ -449,6 +449,7 @@ export function useScaffoldForm() {
   }, []);
 
   const submitClientInfo = useCallback(() => setPhase('input'), []);
+  const backToInput = useCallback(() => setPhase('input'), []);
 
   // ── Reset ─────────────────────────────────────────────────────────────────
   const reset = useCallback(() => {
@@ -485,6 +486,7 @@ export function useScaffoldForm() {
     nextStep,
     prevStep,
     isFirstStep,
+    backToInput,
     isLastStep,
     reviewStepCount: REVIEW_STEP_COUNT,
     // Actions

@@ -20,7 +20,7 @@ export default function TeamLoginPage() {
   if (!mounted || !isLoaded) {
     return (
       <div
-        className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c]"
+        className="min-h-screen flex items-center justify-center"
         suppressHydrationWarning
       >
         <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)]" />

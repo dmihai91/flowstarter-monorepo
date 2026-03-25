@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 
 // Pages that should NOT show sidebar (full-width layouts)
 // These still get AppHeader + FlowBackground, just no sidebar.
-const NO_SIDEBAR_PATHS = ['/team/dashboard/new', '/team/dashboard/projects/'];
+const NO_SIDEBAR_PATHS = ['/team/dashboard/projects/'];
 
 export default function TeamDashboardLayout({
   children,

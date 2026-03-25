@@ -68,52 +68,66 @@ const STEPS = [
 ];
 
 function StepIndicator({ current }: { current: number }) {
+  const activeStep = STEPS[current];
   return (
-    <div className="w-full mb-10 rounded-[36px] border border-gray-200/60 bg-white/65 px-6 py-5 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_12px_40px_rgba(0,0,0,0.06),0_1px_0_rgba(255,255,255,0.9)_inset] dark:border-white/[0.06] dark:bg-white/[0.04] dark:shadow-[0_12px_40px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]">
-      <div className="flex items-start justify-between">
+    <div className="w-full mb-6 rounded-[28px] border border-gray-200/60 bg-white/65 px-4 sm:px-6 py-4 sm:py-5 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:border-white/[0.06] dark:bg-white/[0.04] dark:shadow-[0_8px_32px_rgba(0,0,0,0.20)]">
+
+      {/* Mobile: compact progress */}
+      <div className="sm:hidden">
+        <div className="flex items-center justify-between mb-2.5">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-full bg-[var(--purple)] flex items-center justify-center text-xs font-bold text-white ring-4 ring-[var(--purple)]/20">
+              {current + 1}
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-zinc-900 dark:text-white leading-tight">{activeStep.label}</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">{activeStep.desc}</p>
+            </div>
+          </div>
+          <span className="text-xs text-zinc-400 dark:text-zinc-500 shrink-0">{current + 1}/{STEPS.length}</span>
+        </div>
+        {/* Progress bar */}
+        <div className="h-1 w-full bg-gray-100 dark:bg-white/[0.06] rounded-full overflow-hidden">
+          <div
+            className="h-full bg-[var(--purple)] rounded-full transition-all duration-500"
+            style={{ width: `${((current + 1) / STEPS.length) * 100}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Desktop: full step row */}
+      <div className="hidden sm:flex items-start justify-between">
         {STEPS.map((step, i) => {
           const isActive = i === current;
           const isDone = i < current;
           const isLast = i === STEPS.length - 1;
-
           return (
             <div key={i} className="flex flex-1 items-start">
-              {/* Step cell */}
               <div className="flex flex-col items-center">
-                {/* Circle */}
                 <div className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-all duration-300 ${
-                  isDone
-                    ? 'bg-[var(--purple)] text-white'
-                    : isActive
-                    ? 'bg-[var(--purple)] text-white ring-4 ring-[var(--purple)]/20'
-                    : 'bg-gray-100 text-zinc-400 dark:bg-white/[0.06] dark:text-zinc-400'
+                  isDone    ? 'bg-[var(--purple)] text-white' :
+                  isActive  ? 'bg-[var(--purple)] text-white ring-4 ring-[var(--purple)]/20' :
+                              'bg-gray-100 text-zinc-400 dark:bg-white/[0.06] dark:text-zinc-400'
                 }`}>
                   {isDone ? <Check className="h-5 w-5" /> : i + 1}
                 </div>
-                {/* Label */}
                 <div className="mt-2 text-center max-w-[120px]">
-                  <p className={`text-sm font-semibold leading-5 ${
-                    isActive || isDone ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 dark:text-zinc-500'
-                  }`}>
+                  <p className={`text-sm font-semibold leading-5 ${isActive || isDone ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 dark:text-zinc-500'}`}>
                     {step.label}
                   </p>
-                  <p className={`mt-0.5 text-xs leading-4 ${
-                    isActive || isDone ? 'text-zinc-500 dark:text-zinc-400' : 'text-zinc-400 dark:text-zinc-600'
-                  }`}>
+                  <p className={`mt-0.5 text-xs leading-4 ${isActive || isDone ? 'text-zinc-500 dark:text-zinc-400' : 'text-zinc-400 dark:text-zinc-600'}`}>
                     {step.desc}
                   </p>
                 </div>
               </div>
-              {/* Connector line */}
               {!isLast && (
-                <div className={`mt-5 h-px flex-1 mx-3 transition-all duration-300 ${
-                  isDone ? 'bg-[var(--purple)]' : 'bg-gray-200 dark:bg-white/[0.06]'
-                }`} />
+                <div className={`mt-5 h-px flex-1 mx-3 transition-all duration-300 ${isDone ? 'bg-[var(--purple)]' : 'bg-gray-200 dark:bg-white/[0.06]'}`} />
               )}
             </div>
           );
         })}
       </div>
+
     </div>
   );
 }
@@ -381,7 +395,7 @@ export function NewProjectWizard() {
   }, [form, router]);
 
   return (
-    <div className="py-8 px-4 sm:px-6">
+    <div className="py-4 sm:py-8 px-3 sm:px-6">
       <div className="max-w-4xl mx-auto">
         {/* Step indicator — hide during progress/clarify */}
         {!['progress', 'clarify'].includes(form.phase) && (
@@ -389,7 +403,7 @@ export function NewProjectWizard() {
         )}
 
         {/* Content card */}
-        <div className="rounded-[36px] border border-gray-200/60 bg-white/70 px-6 py-8 backdrop-blur-2xl backdrop-saturate-150 sm:px-10 sm:py-10 shadow-[0_24px_64px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:border-white/[0.06] dark:bg-white/[0.04] dark:shadow-[0_24px_64px_rgba(0,0,0,0.30),0_1px_0_rgba(255,255,255,0.06)_inset]">
+        <div className="rounded-[28px] sm:rounded-[36px] border border-gray-200/60 bg-white/70 px-4 py-6 sm:px-10 sm:py-10 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.08)] sm:shadow-[0_24px_64px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:border-white/[0.06] dark:bg-white/[0.04] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25)]">
           {form.phase === 'client' && (
             <ScaffoldClientInfo
               clientInfo={form.clientInfo}

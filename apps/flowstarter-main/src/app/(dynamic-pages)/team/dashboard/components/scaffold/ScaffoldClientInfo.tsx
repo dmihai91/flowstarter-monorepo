@@ -110,21 +110,15 @@ export function ScaffoldClientInfo({
   };
 
   return (
-    <div className="space-y-6 md:space-y-7">
-      <div className="rounded-2xl bg-gradient-to-r from-[var(--purple)] to-blue-500 px-6 py-5 text-white shadow-[0_16px_40px_rgba(99,102,241,0.18)]">
-        <h2 className="text-lg font-semibold">New Client Project</h2>
-        <p className="text-sm text-white/80 mt-1">
-          Set up your client&apos;s website and generate a working brief in a few steps.
-        </p>
-      </div>
-
-      <div className="space-y-1">
-        <p className="text-[15px] leading-7 text-zinc-700 dark:text-zinc-200">
-          Hi {firstName}, let&apos;s set up a new project for your client.
-        </p>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400/90 leading-6">
-          Add the client basics, choose the business category, then decide whether AI should draft the brief or you want to fill it manually.
-        </p>
+    <div className="space-y-5">
+      <div className="flex items-center gap-3">
+        <div className="w-9 h-9 rounded-xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center shrink-0">
+          <User className="w-4 h-4 text-[var(--purple)]" />
+        </div>
+        <div>
+          <h2 className="text-base font-semibold text-zinc-900 dark:text-white">New client project</h2>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Add the client basics, then describe the project for AI to draft the brief</p>
+        </div>
       </div>
 
       <div className="space-y-6">

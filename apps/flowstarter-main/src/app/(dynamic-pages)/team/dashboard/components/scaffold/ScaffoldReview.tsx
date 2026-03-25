@@ -2,7 +2,7 @@
 
 import { useTypewriter } from '@/hooks/useTypewriter';
 import { cn } from '@/lib/utils';
-import { ArrowLeft, ArrowRight, RefreshCw, Sparkles, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Building2, Layers, Link2, Mail, RefreshCw, Sparkles, X } from 'lucide-react';
 import type {
   ProjectBriefDraft,
   ProjectGoal,
@@ -340,10 +340,10 @@ function Step4Contact({
 // ── Step metadata ──────────────────────────────────────────────────────────────
 
 const STEP_META = [
-  { title: 'Business',  subtitle: 'Name, industry and what you do'         },
-  { title: 'Offer',     subtitle: 'Services, goals and brand positioning'   },
-  { title: 'Structure', subtitle: 'Site layout and integrations'            },
-  { title: 'Contact',   subtitle: 'How clients reach the business'          },
+  { title: 'Business',  subtitle: 'Name, industry and what you do',        icon: <Building2 className="w-4 h-4 text-[var(--purple)]" /> },
+  { title: 'Offer',     subtitle: 'Services, goals and brand positioning',  icon: <Sparkles  className="w-4 h-4 text-[var(--purple)]" /> },
+  { title: 'Structure', subtitle: 'Site layout and integrations',           icon: <Layers    className="w-4 h-4 text-[var(--purple)]" /> },
+  { title: 'Contact',   subtitle: 'How clients reach the business',         icon: <Mail      className="w-4 h-4 text-[var(--purple)]" /> },
 ];
 
 // ── Main component ─────────────────────────────────────────────────────────────
@@ -400,8 +400,8 @@ export function ScaffoldReview({
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-2xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center shrink-0">
-            <span className="text-sm font-bold text-[var(--purple)]">{reviewStep + 1}</span>
+          <div className="w-9 h-9 rounded-2xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center shrink-0 text-base">
+            {meta.icon}
           </div>
           <div>
             <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">{meta.title}</h3>

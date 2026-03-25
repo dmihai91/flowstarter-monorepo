@@ -67,8 +67,18 @@ const STEPS = [
   { label: 'Pricing & Launch', desc: 'Set fees, plan, and create project' },
 ];
 
-function StepIndicator({ current }: { current: number }) {
+function StepIndicator({ current, reviewStep = 0, reviewStepCount = 0 }: {
+  current: number;
+  reviewStep?: number;
+  reviewStepCount?: number;
+}) {
   const activeStep = STEPS[current];
+  const isReviewPhase = current === 1 && reviewStepCount > 0;
+  // During review, show sub-step X of Y as a suffix
+  const descSuffix = isReviewPhase ? ` · ${reviewStep + 1} of ${reviewStepCount}` : '';
+  const displayDesc = activeStep.desc + descSuffix;
+  const REVIEW_STEPS = ['Business', 'Offer', 'Structure', 'Contact'];
+  const reviewLabel = isReviewPhase ? REVIEW_STEPS[reviewStep] ?? activeStep.label : activeStep.label;
   return (
     <div className="w-full mb-6 rounded-[28px] border border-gray-200/60 bg-white/65 px-4 sm:px-6 py-4 sm:py-5 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:border-white/[0.06] dark:bg-white/[0.04] dark:shadow-[0_8px_32px_rgba(0,0,0,0.20)]">
 
@@ -80,17 +90,17 @@ function StepIndicator({ current }: { current: number }) {
               {current + 1}
             </div>
             <div>
-              <p className="text-sm font-semibold text-zinc-900 dark:text-white leading-tight">{activeStep.label}</p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">{activeStep.desc}</p>
+              <p className="text-sm font-semibold text-zinc-900 dark:text-white leading-tight">{isReviewPhase ? reviewLabel : activeStep.label}</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">{displayDesc}</p>
             </div>
           </div>
-          <span className="text-xs text-zinc-400 dark:text-zinc-500 shrink-0">{current + 1}/{STEPS.length}</span>
+          <span className="text-xs text-zinc-400 dark:text-zinc-500 shrink-0">{isReviewPhase ? `${reviewStep + 1}/${reviewStepCount}` : `${current + 1}/${STEPS.length}`}</span>
         </div>
         {/* Progress bar */}
         <div className="h-1 w-full bg-gray-100 dark:bg-white/[0.06] rounded-full overflow-hidden">
           <div
             className="h-full bg-[var(--purple)] rounded-full transition-all duration-500"
-            style={{ width: `${((current + 1) / STEPS.length) * 100}%` }}
+            style={{ width: isReviewPhase ? `${((reviewStep + 1) / reviewStepCount) * 100}%` : `${((current + 1) / STEPS.length) * 100}%` }}
           />
         </div>
       </div>
@@ -399,7 +409,7 @@ export function NewProjectWizard() {
       <div className="max-w-4xl mx-auto">
         {/* Step indicator — hide during progress/clarify */}
         {!['progress', 'clarify'].includes(form.phase) && (
-          <StepIndicator current={stepIndex} />
+          <StepIndicator current={stepIndex} reviewStep={form.reviewStep} reviewStepCount={form.reviewStepCount} />
         )}
 
         {/* Content card */}

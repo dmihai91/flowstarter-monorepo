@@ -4,9 +4,10 @@ import Link from 'next/link';
 import {
   ArrowLeft, Building2, Users, Mail, Phone, Globe, MapPin,
   Loader2, Edit, ExternalLink, Sparkles, AlertCircle, CreditCard,
-  CheckCircle2, Clock, XCircle, RefreshCw,
+  CheckCircle2, Clock, XCircle, RefreshCw, FolderOpen,
 } from 'lucide-react';
 import { useProject } from './hooks/useProject';
+import { TeamDashboardShell } from '../../components/TeamDashboardShell';
 import { IntegrationSettings } from './components/IntegrationSettings';
 
 const card = 'rounded-[24px] border border-gray-200/80 bg-white/95 dark:border-white/[0.06] dark:bg-white/[0.05] shadow-[0_4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.2)]';
@@ -119,14 +120,12 @@ export default function ProjectDetailPage() {
   const projectStatus = typeof project.status === 'string' ? project.status : 'draft';
 
   return (
-    <div className="py-6 px-4 sm:px-6">
-      <div className="max-w-5xl mx-auto">
-
-        {/* Back */}
-        <Link href="/team/dashboard"
-          className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-gray-900 dark:text-white/30 dark:hover:text-white mb-6 transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Back to Dashboard
-        </Link>
+    <TeamDashboardShell
+      title={project.name ?? 'Project'}
+      subtitle={`${projectStatus.charAt(0).toUpperCase() + projectStatus.slice(1)} · ${p.plan_name ?? ''}`}
+      icon={<FolderOpen className="w-5 h-5 text-[var(--purple)]" />}
+      maxWidth="5xl"
+    >
 
         {/* Project header */}
         <div className={card + ' p-6 mb-6'}>
@@ -277,7 +276,6 @@ export default function ProjectDetailPage() {
           </Section>
 
         </div>
-      </div>
-    </div>
+    </TeamDashboardShell>
   );
 }

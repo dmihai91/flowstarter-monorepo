@@ -48,10 +48,12 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
   const [error, setError]         = useState<string | null>(null);
   const placeholder = PLACEHOLDER_DESCRIPTIONS[0];
 
+  const clientComplete = client.name.trim().length > 0 && client.email.trim().length > 0;
+
   const handleClientNext = useCallback(() => {
-    if (!client.name.trim()) return;
+    if (!clientComplete) return;
     setStep('describe');
-  }, [client.name]);
+  }, [clientComplete]);
 
   const handleGenerate = useCallback(async () => {
     if (!description.trim()) return;
@@ -138,6 +140,9 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
               onKeyDown={e => e.key === 'Enter' && handleClientNext()}
               className="w-full pl-9 pr-3 py-2.5 text-sm rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
             />
+            {client.name.trim() && !client.email.trim() && (
+              <p className="text-[0.6rem] text-amber-500 mt-1 ml-1">Email required to send invoices</p>
+            )}
           </div>
           <div className="relative">
             <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 dark:text-white/30 pointer-events-none" />
@@ -152,7 +157,7 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
           </div>
           <button
             onClick={handleClientNext}
-            disabled={!client.name.trim()}
+            disabled={!clientComplete}
             className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[var(--purple)] text-white text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--purple)]/90 transition-all"
           >
             Next <ArrowRight className="w-3.5 h-3.5" />

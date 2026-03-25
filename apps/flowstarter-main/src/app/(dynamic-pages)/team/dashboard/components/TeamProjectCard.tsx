@@ -1,4 +1,5 @@
 'use client';
+import { useRouter } from 'next/navigation';
 
 import { isLive, isBuilding, STATUS_BADGE_CLASS } from './TeamProjectsStats';
 import { TeamProjectActionMenu } from './TeamProjectActionMenu';
@@ -82,15 +83,14 @@ export function TeamProjectCard({
   onPricing,
   onDelete,
 }: TeamProjectCardProps) {
+  const router = useRouter();
   const { t } = useTranslations();
   const status = typeof project.status === 'string' ? project.status : 'draft';
 
   return (
     <div
       className="group relative cursor-pointer rounded-[28px] border border-gray-200/80 bg-white/95 p-6 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(0,0,0,0.12),0_1px_0_rgba(255,255,255,0.9)_inset] dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset] dark:hover:shadow-[0_16px_48px_rgba(0,0,0,0.35),0_1px_0_rgba(255,255,255,0.08)_inset]"
-      onClick={() =>
-        (window.location.href = `/team/dashboard/projects/${project.id}`)
-      }
+      onClick={() => router.push(`/team/dashboard/projects/${project.id}`)}
     >
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center text-lg font-semibold text-[var(--purple)] shrink-0">

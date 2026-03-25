@@ -160,10 +160,10 @@ export default function TeamSecurityPage() {
       <ShellCard>
           {/* 2FA Card */}
           <div className="p-6 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
-            <div className="flex items-start justify-between mb-6">
-              <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between gap-3 mb-6">
+              <div className="flex items-center gap-3 min-w-0">
                 <div
-                  className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                  className={`w-10 h-10 rounded-lg shrink-0 flex items-center justify-center ${
                     totpEnabled
                       ? 'bg-emerald-500/10 text-emerald-500'
                       : 'bg-gray-100 dark:bg-white/5 text-gray-400'
@@ -189,12 +189,13 @@ export default function TeamSecurityPage() {
 
               {!isSettingUp && !showDisableConfirm && (
                 <span
-                  className={`px-3 py-1 text-xs font-medium rounded-full ${
+                  className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-[0.65rem] font-semibold rounded-full whitespace-nowrap shrink-0 ${
                     totpEnabled
                       ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
                       : 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
                   }`}
                 >
+                  <span className={`w-1.5 h-1.5 rounded-full ${totpEnabled ? 'bg-emerald-500' : 'bg-amber-500'}`} />
                   {totpEnabled ? 'Enabled' : 'Not enabled'}
                 </span>
               )}

@@ -88,7 +88,7 @@ function StepIndicator({ current, reviewStep = 0, reviewStepCount = 0 }: {
         <div className="flex items-center justify-between mb-2.5">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-full bg-[var(--purple)] flex items-center justify-center text-xs font-bold text-white ring-4 ring-[var(--purple)]/20">
-              {current + 1}
+              {isReviewPhase ? reviewStep + 1 : current + 1}
             </div>
             <div>
               <p className="text-sm font-semibold text-zinc-900 dark:text-white leading-tight">{isReviewPhase ? reviewLabel : activeStep.label}</p>

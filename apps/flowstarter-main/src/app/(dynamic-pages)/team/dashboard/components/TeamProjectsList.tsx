@@ -277,7 +277,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
 
       {/* Grid View */}
       {viewMode === 'grid' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div id="projects-list" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {projects.map((project) => (
             <TeamProjectCard
               key={project.id}

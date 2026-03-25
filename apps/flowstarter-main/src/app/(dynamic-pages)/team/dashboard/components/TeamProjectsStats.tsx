@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 
 import { ProjectWithOwner } from '@/hooks/useTeamProjects';
 import { useFormatDate } from '@/hooks/useFormatDate';
@@ -100,9 +101,9 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
           <span className="text-sm text-gray-500 dark:text-white/50">
             {t('team.dashboard.totalProjects')}
           </span>
-          <button onClick={() => document.getElementById('projects-list')?.scrollIntoView({ behavior: 'smooth' })} className="text-xs text-[var(--purple)] hover:underline font-medium">
+          <Link href="/team/dashboard/projects/list" className="text-xs text-[var(--purple)] hover:underline font-medium">
             {t('team.dashboard.details')} →
-          </button>
+          </Link>
         </div>
         <p className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
           {totalProjects}
@@ -167,7 +168,7 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
           <span className="text-sm text-gray-500 dark:text-white/50">
             {t('team.dashboard.revenue')}
           </span>
-          <a href="/team/dashboard/analytics" className="text-xs text-[var(--purple)] hover:underline font-medium">
+          <a href="https://dashboard.stripe.com/test/dashboard" target="_blank" rel="noopener noreferrer" className="text-xs text-[var(--purple)] hover:underline font-medium">
             {t('team.dashboard.details')} →
           </a>
         </div>
@@ -206,9 +207,9 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
           <span className="text-sm text-gray-500 dark:text-white/50">
             AI Usage
           </span>
-          <a href="/team/dashboard/analytics" className="text-xs text-[var(--purple)] hover:underline font-medium">
+          <Link href="/team/dashboard/ai-usage" className="text-xs text-[var(--purple)] hover:underline font-medium">
             {t('team.dashboard.details')} →
-          </a>
+          </Link>
         </div>
         <div className="mb-3">
           <p className="text-3xl font-bold text-gray-900 dark:text-white">

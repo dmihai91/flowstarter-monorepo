@@ -379,6 +379,22 @@ export function ScaffoldReview({
 }: ScaffoldReviewProps) {
   const meta = STEP_META[reviewStep];
 
+  // Per-step required field validation
+  const canProceed = (() => {
+    if (reviewStep === 0) {
+      return (
+        brief.projectName.trim().length > 0 &&
+        brief.summary.trim().length > 0 &&
+        brief.targetAudience.trim().length > 0
+      );
+    }
+    if (reviewStep === 1) {
+      return brief.goals.length > 0 && brief.valueProposition.trim().length > 0;
+    }
+    // Steps 2 and 3 have no hard requirements
+    return true;
+  })();
+
   return (
     <div className="rounded-[32px] border border-gray-200/80 bg-white/95 p-6 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-2xl backdrop-saturate-150 dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]">
       {/* Header */}
@@ -452,7 +468,8 @@ export function ScaffoldReview({
         </button>
         <button
           onClick={onNext}
-          className="flex flex-1 items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-[var(--purple)] text-white text-sm font-semibold hover:bg-[var(--purple)]/90 transition-all shadow-[0_4px_12px_rgba(99,102,241,0.25)]"
+          disabled={!canProceed}
+          className="flex flex-1 items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-[var(--purple)] text-white text-sm font-semibold hover:bg-[var(--purple)]/90 transition-all shadow-[0_4px_12px_rgba(99,102,241,0.25)] disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
         >
           {isLastStep ? (
             <><Sparkles className="w-3.5 h-3.5" /> Done — pick template</>

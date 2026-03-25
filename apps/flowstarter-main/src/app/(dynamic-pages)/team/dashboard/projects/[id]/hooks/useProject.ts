@@ -108,15 +108,6 @@ export function useProject() {
     projectId: project?.id || '',
   });
 
-  // Auto-redirect incomplete drafts to team wizard
-  useEffect(() => {
-    if (isLoading || !project) return;
-    
-    if (!isComplete && project.is_draft) {
-      router.push(`/team/dashboard/new?id=${project.id}`);
-    }
-  }, [isLoading, project, isComplete, router]);
-
   // Edit project handler
   const handleEdit = () => {
     if (!project) return;

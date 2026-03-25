@@ -75,15 +75,16 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
       if (!res.ok) throw new Error('AI request failed');
       const data = await res.json();
 
-      // Store inferred data for the wizard to pick up
-      sessionStorage.setItem('quickscaffold_prefill', JSON.stringify({
-        clientInfo:  client,
-        userInput:   description,
-        aiResponse:  data,
-        createdAt:   Date.now(),
-      }));
+      // Persist prefill to Supabase, redirect wizard with the draft id
+      const prefillRes = await fetch('/api/wizard/prefill', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ clientInfo: client, userInput: description, aiResponse: data }),
+      });
+      if (!prefillRes.ok) throw new Error('Failed to save prefill');
+      const { prefillId } = await prefillRes.json() as { prefillId: string };
 
-      router.push('/team/dashboard/new');
+      router.push('/team/dashboard/new?prefill=' + prefillId);
     } catch {
       setError('Something went wrong. Try again or go to the full wizard.');
     } finally {

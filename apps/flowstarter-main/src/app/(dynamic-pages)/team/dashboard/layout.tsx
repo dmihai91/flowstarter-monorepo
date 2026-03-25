@@ -33,30 +33,8 @@ export default function TeamDashboardLayout({
   return (
     <SidebarProvider>
       <div className="h-[100dvh] flex flex-col overflow-hidden bg-[var(--landing-bg)] dark:bg-[var(--landing-dark-surface)]">
-        {/* Background — pure CSS radial gradients, no SVG lines, no banding */}
-        <div
-          className="fixed inset-0 z-0 pointer-events-none dark:hidden"
-          style={{
-            background: `
-              radial-gradient(ellipse 90% 55% at 10% 0%,   rgba(139, 92, 246, 0.11) 0%, transparent 55%),
-              radial-gradient(ellipse 70% 45% at 90% 10%,  rgba(99, 102, 241, 0.08) 0%, transparent 55%),
-              radial-gradient(ellipse 80% 50% at 50% 110%, rgba(236, 72, 153, 0.06) 0%, transparent 60%),
-              #f5f5f8
-            `,
-          }}
-        />
-        <div
-          className="fixed inset-0 z-0 pointer-events-none hidden dark:block"
-          style={{
-            background: `
-              radial-gradient(ellipse 75% 55% at 10% 0%,   rgba(109, 70, 220, 0.28) 0%, transparent 55%),
-              radial-gradient(ellipse 60% 45% at 90% 10%,  rgba(59, 100, 230, 0.18) 0%, transparent 55%),
-              radial-gradient(ellipse 80% 50% at 50% 105%, rgba(130, 60, 210, 0.16) 0%, transparent 60%),
-              radial-gradient(ellipse 50% 40% at 80% 70%,  rgba(80,  40, 180, 0.10) 0%, transparent 55%),
-              #07070f
-            `,
-          }}
-        />
+        {/* Gradient background — glows only, no SVG lines */}
+        <FlowBackground variant="dashboard" animated={false} style={{ position: 'fixed', inset: 0, zIndex: 0 }} />
 
         <AppHeader />
         <div className="h-16 flex-shrink-0" />

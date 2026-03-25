@@ -1,5 +1,6 @@
 'use client';
 
+import { useTypewriter } from '@/hooks/useTypewriter';
 import { cn } from '@/lib/utils';
 import { ArrowLeft, ArrowRight, RefreshCw, Sparkles, X } from 'lucide-react';
 import type {

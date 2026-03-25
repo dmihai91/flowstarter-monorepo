@@ -184,9 +184,9 @@ export function TeamSidebar() {
       <aside
         className={cn(
           'md:hidden fixed inset-y-0 left-0 z-[160] w-72 rounded-r-2xl',
-          'bg-white/75 dark:bg-black/40 backdrop-blur-2xl backdrop-saturate-150',
-          'border border-white/60 dark:border-white/10',
-          'shadow-[0_2px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)]',
+          'bg-white/95 dark:bg-white/[0.05] backdrop-blur-2xl backdrop-saturate-150',
+          'border border-white/80 dark:border-white/[0.06]',
+          'shadow-[8px_0_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[8px_0_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]',
           'transform transition-transform duration-300 ease-in-out',
           isMobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
@@ -218,8 +218,9 @@ export function TeamSidebar() {
       <aside 
         className={cn(
           'hidden md:flex flex-col flex-shrink-0 overflow-hidden transition-all duration-300',
-          'bg-white/75 dark:bg-black/40 backdrop-blur-2xl backdrop-saturate-150',
-          'border-r border-white/60 dark:border-white/10 shadow-[0_2px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)]',
+          'bg-white/95 dark:bg-white/[0.05] backdrop-blur-2xl backdrop-saturate-150',
+          'border-r border-white/80 dark:border-white/[0.06]',
+          'shadow-[4px_0_24px_rgba(0,0,0,0.06),inset_-1px_0_0_rgba(255,255,255,0.9)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.2),inset_-1px_0_0_rgba(255,255,255,0.04)]',
           collapsed ? 'w-[68px]' : 'w-64'
         )}
       >

@@ -283,6 +283,7 @@ function PaymentStep({
 
 export function NewProjectWizard() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isLaunching, setIsLaunching] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [launchError, setLaunchError] = useState<string | null>(null);
@@ -295,7 +296,7 @@ export function NewProjectWizard() {
   const form = useScaffoldForm();
 
   // ── Draft persistence ────────────────────────────────────────────────────────
-  const [draftId, setDraftId] = useState<string | null>(null);
+  const [draftId, setDraftId] = useState<string | null>(() => searchParams.get('draft'));
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const saveDraftMutation = useMutation({
@@ -325,6 +326,17 @@ export function NewProjectWizard() {
       if (data?.id && !draftId) setDraftId(data.id);
     },
   });
+
+  // Sync draftId into URL so state survives page loads and redirects
+  useEffect(() => {
+    if (!draftId) return;
+    const current = new URLSearchParams(window.location.search);
+    if (current.get('draft') !== draftId) {
+      const params = new URLSearchParams(current);
+      params.set('draft', draftId);
+      router.replace(`/team/dashboard/new?${params.toString()}`, { scroll: false });
+    }
+  }, [draftId, router]);
 
   // Auto-save client info 800ms after last keystroke
   const scheduleSaveDraft = useCallback((clientInfo: { name: string; email: string; phone: string }) => {

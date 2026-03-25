@@ -27,7 +27,7 @@ export default function AuthLayout({
   useTheme();
   const { t } = useTranslations();
   return (
-    <div className="min-h-screen w-full relative flex flex-col bg-[#fbf9ff] dark:bg-[#0a0810]">
+    <div className="min-h-screen w-full relative flex flex-col">
       <FlowBackground variant="dashboard" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }} />
 
       {/* Header */}

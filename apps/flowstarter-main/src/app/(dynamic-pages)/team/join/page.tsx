@@ -67,7 +67,7 @@ function JoinPageContent() {
   // Error state - no token
   if (!token) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c] px-4">
+      <div className="min-h-screen flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center">
           <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-6">
             <AlertCircle className="w-8 h-8 text-red-500" />
@@ -89,7 +89,7 @@ function JoinPageContent() {
   // Loading state
   if (isValidating) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c]">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)] mx-auto mb-4" />
           <p className="text-gray-500 dark:text-white/50">
@@ -107,7 +107,7 @@ function JoinPageContent() {
       : validationData?.error || t('team.join.invalidInvitation');
     
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c] px-4">
+      <div className="min-h-screen flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center">
           <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-6">
             <AlertCircle className="w-8 h-8 text-red-500" />
@@ -129,7 +129,7 @@ function JoinPageContent() {
   // Success state
   if (joinMutation.isSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c] px-4">
+      <div className="min-h-screen flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center">
           <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 className="w-8 h-8 text-emerald-500" />
@@ -159,7 +159,7 @@ function JoinPageContent() {
         }
       `}</style>
 
-      <div className="min-h-screen flex flex-col bg-[#FAFAFA] dark:bg-[#0a0a0c] font-display">
+      <div className="min-h-screen flex flex-col font-display">
         {/* Header */}
         <header className="p-6">
           <Link href="/" className="flex items-center gap-3 w-fit">
@@ -300,7 +300,7 @@ export default function TeamJoinPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA] dark:bg-[#0a0a0c]">
+        <div className="min-h-screen flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)]" />
         </div>
       }

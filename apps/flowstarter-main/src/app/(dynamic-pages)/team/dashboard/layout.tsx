@@ -32,7 +32,7 @@ export default function TeamDashboardLayout({
 
   return (
     <SidebarProvider>
-      <div className="h-[100dvh] flex flex-col overflow-hidden bg-[var(--landing-bg)] dark:bg-[var(--landing-dark-surface)]">
+      <div className="h-[100dvh] flex flex-col overflow-hidden">
         {/* Gradient background — glows only, no SVG lines */}
         <FlowBackground variant="dashboard" style={{ position: 'fixed', inset: 0, zIndex: 0 }} />
 

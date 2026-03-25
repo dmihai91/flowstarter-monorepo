@@ -193,12 +193,18 @@ export type Database = {
       projects: {
         Row: {
           ai_credits_used: number | null
+          analytics_fb_pixel: string | null
+          analytics_ga_measurement_id: string | null
+          analytics_ga_property_id: string | null
           assigned_to: string | null
           blocking_reason: string | null
           blocking_since: string | null
+          calendly_api_key_id: string | null
+          calendly_url: string | null
           client_last_login_at: string | null
           convex_session_id: string | null
           created_at: string
+          custom_domain: string | null
           data: string | null
           deposit_amount: number | null
           deposit_invoice_id: string | null
@@ -208,6 +214,7 @@ export type Database = {
           description: string | null
           domain_name: string | null
           domain_provider: string | null
+          domain_status: string | null
           domain_type: string | null
           final_amount: number | null
           final_invoice_id: string | null
@@ -215,6 +222,9 @@ export type Database = {
           final_paid_at: string | null
           final_status: string
           font_pairing_id: string | null
+          ga_connected_at: string | null
+          ga_property_id: string | null
+          ga_refresh_token_id: string | null
           generated_at: string | null
           generation_completed_at: string | null
           generation_cost_usd: number | null
@@ -229,6 +239,8 @@ export type Database = {
           palette_id: string | null
           plan_name: string | null
           project_type: string | null
+          published_at: string | null
+          published_url: string | null
           setup_fee: number | null
           status: string | null
           stripe_customer_id: string | null
@@ -244,12 +256,18 @@ export type Database = {
         }
         Insert: {
           ai_credits_used?: number | null
+          analytics_fb_pixel?: string | null
+          analytics_ga_measurement_id?: string | null
+          analytics_ga_property_id?: string | null
           assigned_to?: string | null
           blocking_reason?: string | null
           blocking_since?: string | null
+          calendly_api_key_id?: string | null
+          calendly_url?: string | null
           client_last_login_at?: string | null
           convex_session_id?: string | null
           created_at?: string
+          custom_domain?: string | null
           data?: string | null
           deposit_amount?: number | null
           deposit_invoice_id?: string | null
@@ -259,6 +277,7 @@ export type Database = {
           description?: string | null
           domain_name?: string | null
           domain_provider?: string | null
+          domain_status?: string | null
           domain_type?: string | null
           final_amount?: number | null
           final_invoice_id?: string | null
@@ -266,6 +285,9 @@ export type Database = {
           final_paid_at?: string | null
           final_status?: string
           font_pairing_id?: string | null
+          ga_connected_at?: string | null
+          ga_property_id?: string | null
+          ga_refresh_token_id?: string | null
           generated_at?: string | null
           generation_completed_at?: string | null
           generation_cost_usd?: number | null
@@ -280,6 +302,8 @@ export type Database = {
           palette_id?: string | null
           plan_name?: string | null
           project_type?: string | null
+          published_at?: string | null
+          published_url?: string | null
           setup_fee?: number | null
           status?: string | null
           stripe_customer_id?: string | null
@@ -295,12 +319,18 @@ export type Database = {
         }
         Update: {
           ai_credits_used?: number | null
+          analytics_fb_pixel?: string | null
+          analytics_ga_measurement_id?: string | null
+          analytics_ga_property_id?: string | null
           assigned_to?: string | null
           blocking_reason?: string | null
           blocking_since?: string | null
+          calendly_api_key_id?: string | null
+          calendly_url?: string | null
           client_last_login_at?: string | null
           convex_session_id?: string | null
           created_at?: string
+          custom_domain?: string | null
           data?: string | null
           deposit_amount?: number | null
           deposit_invoice_id?: string | null
@@ -310,6 +340,7 @@ export type Database = {
           description?: string | null
           domain_name?: string | null
           domain_provider?: string | null
+          domain_status?: string | null
           domain_type?: string | null
           final_amount?: number | null
           final_invoice_id?: string | null
@@ -317,6 +348,9 @@ export type Database = {
           final_paid_at?: string | null
           final_status?: string
           font_pairing_id?: string | null
+          ga_connected_at?: string | null
+          ga_property_id?: string | null
+          ga_refresh_token_id?: string | null
           generated_at?: string | null
           generation_completed_at?: string | null
           generation_cost_usd?: number | null
@@ -331,6 +365,8 @@ export type Database = {
           palette_id?: string | null
           plan_name?: string | null
           project_type?: string | null
+          published_at?: string | null
+          published_url?: string | null
           setup_fee?: number | null
           status?: string | null
           stripe_customer_id?: string | null

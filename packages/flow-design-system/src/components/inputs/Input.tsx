@@ -12,7 +12,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const baseStyles = `
-  w-full rounded-xl transition-all duration-200
+  w-full rounded-2xl transition-all duration-200
   focus:outline-none focus:ring-2 focus:ring-offset-0
   disabled:opacity-50 disabled:cursor-not-allowed
   placeholder:text-zinc-400 dark:placeholder:text-zinc-500

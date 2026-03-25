@@ -47,11 +47,11 @@ export default function AuthLayout({
 
       {/* Content — fills remaining space, scrolls if needed */}
       <main className="relative z-10 flex-1 flex flex-col items-center px-4 py-8">
-        <div className="w-full max-w-md my-auto">
+        <div className="w-full max-w-lg my-auto">
           {title && (
             <div className="text-center mb-6">
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
-                <span className="bg-gradient-to-r from-[#4D5DD9] via-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent pr-1">
+                <span className="pr-1" style={{ backgroundImage: "linear-gradient(to right, #4338CA, #8B5CF6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
                   {title}
                 </span>
               </h1>
@@ -71,7 +71,7 @@ export default function AuthLayout({
                 ].map((stat, i) => (
                   <div key={i} className="flex items-center">
                     <div className="text-center px-4">
-                      <div className="text-lg font-bold bg-gradient-to-r from-[#4D5DD9] via-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent">
+                      <div className="text-lg font-bold" style={{ backgroundImage: "linear-gradient(to right, #4338CA, #8B5CF6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
                         {stat.value}
                       </div>
                       <div className="text-[0.5625rem] text-gray-400 dark:text-white/30 uppercase tracking-wide font-medium">

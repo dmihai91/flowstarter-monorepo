@@ -48,7 +48,7 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
   const [error, setError]         = useState<string | null>(null);
   const placeholder = PLACEHOLDER_DESCRIPTIONS[0];
 
-  const clientComplete = client.name.trim().length > 0 && client.email.trim().length > 0;
+  const clientComplete = client.name.trim().length > 0 && client.email.trim().length > 0 && client.phone.trim().length > 0;
 
   const handleClientNext = useCallback(() => {
     if (!clientComplete) return;
@@ -134,26 +134,29 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 dark:text-white/30 pointer-events-none" />
             <input
               type="email"
-              placeholder="Email (optional)"
+              placeholder="Email *"
               value={client.email}
               onChange={e => setClient(p => ({ ...p, email: e.target.value }))}
               onKeyDown={e => e.key === 'Enter' && handleClientNext()}
               className="w-full pl-9 pr-3 py-2.5 text-sm rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
             />
             {client.name.trim() && !client.email.trim() && (
-              <p className="text-[0.6rem] text-amber-500 mt-1 ml-1">Email required to send invoices</p>
+              <p className="text-[0.6rem] text-amber-500 mt-1 ml-1">Required — used for invoices</p>
             )}
           </div>
           <div className="relative">
             <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 dark:text-white/30 pointer-events-none" />
             <input
               type="tel"
-              placeholder="Phone (optional)"
+              placeholder="Phone *"
               value={client.phone}
               onChange={e => setClient(p => ({ ...p, phone: e.target.value }))}
               onKeyDown={e => e.key === 'Enter' && handleClientNext()}
               className="w-full pl-9 pr-3 py-2.5 text-sm rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
             />
+            {client.email.trim() && !client.phone.trim() && (
+              <p className="text-[0.6rem] text-amber-500 mt-1 ml-1">Required — used for project communication</p>
+            )}
           </div>
           <button
             onClick={handleClientNext}

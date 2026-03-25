@@ -344,7 +344,7 @@ export function NewProjectWizard() {
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(() => {
       saveDraftMutation.mutate({ clientInfo });
-    }, 800);
+    }, 400);
   }, [saveDraftMutation]);
 
   const stepIndex = (() => {

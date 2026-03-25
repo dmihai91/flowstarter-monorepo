@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useCallback, useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   ArrowLeft,
   ArrowRight,

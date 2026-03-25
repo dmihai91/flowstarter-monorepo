@@ -10,7 +10,7 @@ interface AuthSubmitButtonProps {
 
 /**
  * Shared submit button for all auth forms (team login, client login, password reset).
- * Always uses the brand gradient: #4D5DD9 -> #7C3AED -> #06B6D4.
+ * Uses the design-system brand token: var(--purple).
  */
 export function AuthSubmitButton({
   children,
@@ -27,11 +27,11 @@ export function AuthSubmitButton({
       className={[
         'w-full h-12 px-6 rounded-lg',
         'font-semibold text-base text-white',
-        'bg-[linear-gradient(to_right,#4D5DD9,#7C3AED,#06B6D4)]',
-        'shadow-[0_4px_20px_rgba(77,93,217,0.35)]',
-        'hover:opacity-90 active:opacity-80',
-        'transition-opacity duration-150',
-        'disabled:opacity-40 disabled:cursor-not-allowed disabled:saturate-50',
+        'bg-[var(--purple)]',
+        'hover:brightness-110 hover:shadow-lg hover:shadow-[var(--purple)]/20',
+        'active:scale-[0.99]',
+        'transition-all duration-200',
+        'disabled:opacity-50 disabled:pointer-events-none disabled:saturate-50',
         className,
       ].join(' ')}
     >

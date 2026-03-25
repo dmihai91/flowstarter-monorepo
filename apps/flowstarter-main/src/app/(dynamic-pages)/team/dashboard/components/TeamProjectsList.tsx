@@ -26,10 +26,6 @@ import { useTeamProjectDialogs, BETA_PRICING_ENABLED, PRICING_DEFAULTS } from '.
 import { useTeamProjectActions } from '../hooks/useTeamProjectActions';
 
 interface ProjectWithOwner extends TableType<'projects'> {
-  project_type?: string | null;
-  setup_fee?: number | null;
-  monthly_fee?: number | null;
-  is_paid?: boolean | null;
   owner_email?: string | null;
   owner_name?: string | null;
   thumbnailUrl?: string | null;
@@ -62,7 +58,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
   const { formatTimeAgo } = useFormatDate();
   const { viewMode, setViewMode } = useTeamProjectsView();
   const glassPanelClass =
-    'rounded-2xl border border-white/60 bg-white/70 shadow-[0_2px_20px_rgba(0,0,0,0.06)] backdrop-blur-xl backdrop-saturate-150 dark:border-white/10 dark:bg-white/[0.06] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)]';
+    'rounded-[28px] border border-gray-200/80 bg-white/95 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-2xl backdrop-saturate-150 dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]';
 
   const {
     deleteDialogOpen,
@@ -130,7 +126,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
             {t('team.dashboard.allProjectsDescription')}
           </p>
         </div>
-        <div className="inline-flex items-center rounded-xl border border-white/60 bg-white/60 p-1 shadow-[0_2px_20px_rgba(0,0,0,0.04)] backdrop-blur-md dark:border-white/10 dark:bg-white/[0.06] dark:shadow-[0_2px_20px_rgba(0,0,0,0.18)]">
+        <div className="inline-flex items-center rounded-2xl border border-gray-200/80 bg-white/90 p-1 shadow-[0_4px_16px_rgba(0,0,0,0.06),0_1px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-xl dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_4px_16px_rgba(0,0,0,0.20),0_1px_0_rgba(255,255,255,0.06)_inset]">
           <button
             onClick={() => setViewMode('list')}
             className={`p-2 rounded-md transition-colors ${
@@ -194,7 +190,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                 >
                   {/* Desktop Row */}
                   <div className="hidden md:grid md:grid-cols-[48px_1fr_100px_150px_100px_40px] gap-4 px-4 py-3 items-center">
-                    <div className="h-9 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-white/50 bg-white/55 backdrop-blur-sm dark:border-white/10 dark:bg-white/10">
+                    <div className="h-9 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200/60 bg-white/80 backdrop-blur-sm dark:border-white/[0.06] dark:bg-white/[0.05]">
                       {project.thumbnailUrl ? (
                         <img src={project.thumbnailUrl} alt="" className="w-full h-full object-cover" />
                       ) : (
@@ -239,7 +235,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                   {/* Mobile Row */}
                   <div className="md:hidden p-4">
                     <div className="flex items-start justify-between gap-3">
-                      <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg border border-white/50 bg-white/55 backdrop-blur-sm dark:border-white/10 dark:bg-white/10">
+                      <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200/60 bg-white/80 backdrop-blur-sm dark:border-white/[0.06] dark:bg-white/[0.05]">
                         {project.thumbnailUrl ? (
                           <img src={project.thumbnailUrl} alt="" className="w-full h-full object-cover" />
                         ) : (

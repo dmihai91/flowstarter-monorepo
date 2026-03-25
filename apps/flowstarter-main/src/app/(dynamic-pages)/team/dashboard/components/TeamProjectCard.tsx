@@ -59,7 +59,7 @@ export function TeamProjectCard({
 
   return (
     <div
-      className="group relative cursor-pointer rounded-2xl border border-white/60 bg-white/70 p-6 shadow-[0_2px_20px_rgba(0,0,0,0.06)] backdrop-blur-xl backdrop-saturate-150 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_32px_rgba(0,0,0,0.10)] dark:border-white/10 dark:bg-white/[0.06] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_16px_36px_rgba(0,0,0,0.32)]"
+      className="group relative cursor-pointer rounded-[28px] border border-gray-200/80 bg-white/95 p-6 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(0,0,0,0.12),0_1px_0_rgba(255,255,255,0.9)_inset] dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset] dark:hover:shadow-[0_16px_48px_rgba(0,0,0,0.35),0_1px_0_rgba(255,255,255,0.08)_inset]"
       onClick={() =>
         (window.location.href = `/team/dashboard/projects/${project.id}`)
       }
@@ -97,7 +97,7 @@ export function TeamProjectCard({
       {project.setup_fee !== null &&
         project.setup_fee !== undefined &&
         Number(project.setup_fee) > 0 && (
-          <div className="mb-4 flex items-center gap-3 rounded-xl border border-white/60 bg-white/55 px-3 py-2 text-sm backdrop-blur-md dark:border-white/10 dark:bg-white/[0.05]">
+          <div className="mb-4 flex items-center gap-3 rounded-2xl border border-gray-200/60 bg-white/80 px-3 py-2 text-sm backdrop-blur-md dark:border-white/[0.06] dark:bg-white/[0.04]">
             <span className="text-gray-600 dark:text-white/60">
               &euro;{project.setup_fee} {t('team.dashboard.setup')}
             </span>

@@ -52,7 +52,7 @@ const INTEGRATION_OPTIONS: { value: Integration; label: string; emoji: string }[
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <label className="text-xs font-medium text-white/40 mb-1.5 block">
+    <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1.5 block">
       {children}
     </label>
   );
@@ -71,7 +71,7 @@ function TextInput({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      className="w-full px-3 py-2 text-sm bg-white/[0.04] border border-white/[0.08] rounded-lg text-white placeholder:text-white/20 focus:outline-none focus:border-[var(--purple)]/40 transition-colors"
+      className="w-full px-3.5 py-2.5 text-sm bg-white dark:bg-white/[0.05] border border-gray-200 dark:border-white/[0.06] rounded-2xl text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-[var(--purple)]/50 focus:ring-2 focus:ring-[var(--purple)]/20 transition-all"
     />
   );
 }
@@ -90,7 +90,7 @@ function TextArea({
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       rows={rows}
-      className="w-full px-3 py-2 text-sm bg-white/[0.04] border border-white/[0.08] rounded-lg text-white placeholder:text-white/20 focus:outline-none focus:border-[var(--purple)]/40 transition-colors resize-none"
+      className="w-full px-3.5 py-2.5 text-sm bg-white dark:bg-white/[0.05] border border-gray-200 dark:border-white/[0.06] rounded-2xl text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-[var(--purple)]/50 focus:ring-2 focus:ring-[var(--purple)]/20 transition-all resize-none"
     />
   );
 }
@@ -109,8 +109,8 @@ function PillButton({
       className={cn(
         'px-3 py-1.5 rounded-lg text-xs font-medium transition-all border',
         active
-          ? 'bg-[var(--purple)]/20 border-[var(--purple)]/50 text-[var(--purple-light,#a5b4fc)]'
-          : 'bg-white/[0.04] border-white/[0.08] text-white/50 hover:text-white/80 hover:bg-white/[0.07]'
+          ? 'bg-[var(--purple)]/10 border-[var(--purple)]/40 text-[var(--purple)] dark:text-[#a5b4fc]'
+          : 'bg-white dark:bg-white/[0.04] border-gray-200 dark:border-white/[0.06] text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-gray-50 dark:hover:bg-white/[0.07]'
       )}
     >
       {children}
@@ -233,14 +233,14 @@ function Step2Offer({
               className={cn(
                 'p-2.5 rounded-xl border text-left transition-all',
                 brief.brandTone === value
-                  ? 'bg-[var(--purple)]/15 border-[var(--purple)]/40'
-                  : 'bg-white/[0.03] border-white/[0.07] hover:bg-white/[0.06]'
+                  ? 'bg-[var(--purple)]/10 border-[var(--purple)]/40'
+                  : 'bg-white dark:bg-white/[0.03] border-gray-200 dark:border-white/[0.06] hover:bg-gray-50 dark:hover:bg-white/[0.06]'
               )}
             >
-              <p className={cn('text-xs font-semibold', brief.brandTone === value ? 'text-[#a5b4fc]' : 'text-white/70')}>
+              <p className={cn('text-xs font-semibold', brief.brandTone === value ? 'text-[var(--purple)] dark:text-[#a5b4fc]' : 'text-zinc-700 dark:text-zinc-300')}>
                 {label}
               </p>
-              <p className="text-[0.6rem] text-white/30 mt-0.5">{desc}</p>
+              <p className="text-[0.6rem] text-zinc-400 dark:text-zinc-500 mt-0.5">{desc}</p>
             </button>
           ))}
         </div>
@@ -269,14 +269,14 @@ function Step3Structure({
               className={cn(
                 'p-3 rounded-xl border text-left transition-all',
                 brief.pagePreference === value
-                  ? 'bg-[var(--purple)]/15 border-[var(--purple)]/40'
-                  : 'bg-white/[0.03] border-white/[0.07] hover:bg-white/[0.06]'
+                  ? 'bg-[var(--purple)]/10 border-[var(--purple)]/40'
+                  : 'bg-white dark:bg-white/[0.03] border-gray-200 dark:border-white/[0.06] hover:bg-gray-50 dark:hover:bg-white/[0.06]'
               )}
             >
-              <p className={cn('text-xs font-semibold', brief.pagePreference === value ? 'text-[#a5b4fc]' : 'text-white/70')}>
+              <p className={cn('text-xs font-semibold', brief.pagePreference === value ? 'text-[var(--purple)] dark:text-[#a5b4fc]' : 'text-zinc-700 dark:text-zinc-300')}>
                 {label}
               </p>
-              <p className="text-[0.6rem] text-white/30 mt-0.5">{desc}</p>
+              <p className="text-[0.6rem] text-zinc-400 dark:text-zinc-500 mt-0.5">{desc}</p>
             </button>
           ))}
         </div>
@@ -294,7 +294,7 @@ function Step3Structure({
             </PillButton>
           ))}
         </div>
-        <p className="text-[0.6rem] text-white/25 mt-2">Select all that apply — can be changed later</p>
+        <p className="text-[0.6rem] text-zinc-400 dark:text-zinc-500 mt-2">Select all that apply — can be changed later</p>
       </div>
     </div>
   );
@@ -379,29 +379,29 @@ export function ScaffoldReview({
   const meta = STEP_META[reviewStep];
 
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5">
+    <div className="rounded-[32px] border border-gray-200/80 bg-white/95 p-6 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-2xl backdrop-saturate-150 dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[var(--purple)]/15 border border-[var(--purple)]/20 flex items-center justify-center shrink-0">
-            <span className="text-sm font-bold text-[#a5b4fc]">{reviewStep + 1}</span>
+          <div className="w-9 h-9 rounded-2xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center shrink-0">
+            <span className="text-sm font-bold text-[var(--purple)]">{reviewStep + 1}</span>
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-white">{meta.title}</h3>
-            <p className="text-[0.6875rem] text-white/40">{meta.subtitle}</p>
+            <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">{meta.title}</h3>
+            <p className="text-[0.6875rem] text-zinc-500 dark:text-zinc-400">{meta.subtitle}</p>
           </div>
         </div>
         <div className="flex items-center gap-1">
           <button
             onClick={onRegenerate}
-            className="p-1.5 rounded-lg text-white/30 hover:text-[#a5b4fc] hover:bg-[var(--purple)]/10 transition-colors"
+            className="p-1.5 rounded-lg text-zinc-400 hover:text-[var(--purple)] hover:bg-[var(--purple)]/10 transition-colors"
             title="Re-run AI"
           >
             <RefreshCw className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={onReset}
-            className="p-1.5 rounded-lg text-white/30 hover:text-white/60 hover:bg-white/[0.05] transition-colors"
+            className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-gray-100 dark:hover:bg-white/[0.05] transition-colors"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -415,7 +415,7 @@ export function ScaffoldReview({
             key={i}
             className={cn(
               'h-0.5 flex-1 rounded-full transition-all duration-300',
-              i <= reviewStep ? 'bg-[var(--purple)]' : 'bg-white/[0.08]'
+              i <= reviewStep ? 'bg-[var(--purple)]' : 'bg-gray-200 dark:bg-white/[0.06]'
             )}
           />
         ))}
@@ -441,7 +441,7 @@ export function ScaffoldReview({
       <div className="flex gap-2">
         <button
           onClick={isFirstStep ? onReset : onPrev}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/60 text-xs font-medium hover:bg-white/[0.07] hover:text-white/80 transition-all"
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-white dark:bg-white/[0.05] border border-gray-200 dark:border-white/[0.06] text-zinc-600 dark:text-zinc-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-white/[0.07] transition-all"
         >
           {isFirstStep ? (
             'Start over'
@@ -451,7 +451,7 @@ export function ScaffoldReview({
         </button>
         <button
           onClick={onNext}
-          className="flex flex-1 items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--purple)] text-white text-xs font-semibold hover:bg-[var(--purple)]/90 transition-all"
+          className="flex flex-1 items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-[var(--purple)] text-white text-sm font-semibold hover:bg-[var(--purple)]/90 transition-all shadow-[0_4px_12px_rgba(99,102,241,0.25)]"
         >
           {isLastStep ? (
             <><Sparkles className="w-3.5 h-3.5" /> Done — pick template</>
@@ -461,7 +461,7 @@ export function ScaffoldReview({
         </button>
       </div>
 
-      <p className="text-[0.6rem] text-white/20 mt-2 text-center">
+      <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-3 text-center">
         Step {reviewStep + 1} of {reviewStepCount}
       </p>
     </div>

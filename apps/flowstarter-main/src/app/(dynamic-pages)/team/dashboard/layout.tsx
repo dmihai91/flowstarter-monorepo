@@ -8,7 +8,8 @@ import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
 // Pages that should NOT show sidebar (full-width layouts)
-const FULL_WIDTH_PATHS = ['/team/dashboard/new', '/team/dashboard/projects/'];
+// These still get AppHeader + FlowBackground, just no sidebar.
+const NO_SIDEBAR_PATHS = ['/team/dashboard/new', '/team/dashboard/projects/'];
 
 export default function TeamDashboardLayout({
   children,
@@ -16,9 +17,8 @@ export default function TeamDashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  
-  // Check if current path should be full-width (no sidebar)
-  const isFullWidth = FULL_WIDTH_PATHS.some(path => pathname?.startsWith(path));
+
+  const hideSidebar = NO_SIDEBAR_PATHS.some(path => pathname?.startsWith(path));
 
   // Prevent body scroll — sidebar must stay fixed, only <main> scrolls
   useEffect(() => {
@@ -30,16 +30,11 @@ export default function TeamDashboardLayout({
     };
   }, []);
 
-  if (isFullWidth) {
-    return children;
-  }
-
   return (
     <SidebarProvider>
       <div className="h-[100dvh] flex flex-col overflow-hidden bg-[var(--landing-bg)] dark:bg-[var(--landing-dark-surface)]">
         {/* Gradient background - behind everything */}
         <FlowBackground variant="dashboard" style={{ position: "fixed", inset: 0, zIndex: 0 }} />
-        {/* Gradient overlay with indigo + amber glows */}
         {/* Gradient overlay — light: soft pastels, dark: rich purples */}
         <div
           className="fixed inset-0 z-[1] pointer-events-none dark:hidden"
@@ -61,12 +56,12 @@ export default function TeamDashboardLayout({
             `,
           }}
         />
-        
+
         <AppHeader />
         <div className="h-16 flex-shrink-0" />
-        
+
         <div className="flex-1 flex relative z-10 min-h-0">
-          <TeamSidebar />
+          {!hideSidebar && <TeamSidebar />}
           <main className="flex-1 min-w-0 overflow-y-auto">
             {children}
           </main>

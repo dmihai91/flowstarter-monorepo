@@ -4,10 +4,6 @@ import type { Table } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export interface ProjectWithOwner extends Table<'projects'> {
-  project_type?: string | null;
-  setup_fee?: number | null;
-  monthly_fee?: number | null;
-  is_paid?: boolean | null;
   owner_email?: string | null;
   owner_name?: string | null;
   thumbnailUrl?: string | null;

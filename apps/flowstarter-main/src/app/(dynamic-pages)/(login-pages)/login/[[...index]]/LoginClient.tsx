@@ -1,7 +1,8 @@
 'use client';
 
 import AuthLayout from '@/components/auth/AuthLayout';
-import AuthTabs from '@/components/auth/AuthTabs';
+import { AuthFormCard } from '@/components/auth/AuthFormCard';
+import { LoginForm } from '@/components/auth/LoginForm';
 import { AuthRedirectWrapper } from '@/components/AuthRedirectWrapper';
 import { useTranslations } from '@/lib/i18n';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -84,7 +85,6 @@ export function LoginClient() {
   const noticeContent = getNoticeContent();
 
   useEffect(() => {
-    // Prefetch dashboard to avoid blank frame on redirect after sign-in
     router.prefetch('/team/dashboard');
   }, [router]);
 
@@ -93,7 +93,7 @@ export function LoginClient() {
       <AuthLayout title="Client Login" subtitle="Sign in to manage your website and access Flowstarter Editor." showStats={true}>
         {noticeContent ? (
           <div
-            className={`flex flex-col mb-4 mx-auto w-full max-w-[530px] rounded-xl border p-3 justify-center items-center backdrop-blur-sm ${noticeContent.style}`}
+            className={`flex flex-col mb-4 mx-auto w-full max-w-[540px] rounded-xl border p-3 justify-center items-center backdrop-blur-sm ${noticeContent.style}`}
           >
             <div className="font-medium mb-1">{noticeContent.title}</div>
             {noticeContent.desc ? (
@@ -117,7 +117,18 @@ export function LoginClient() {
             ) : null}
           </div>
         ) : null}
-        <AuthTabs />
+        <AuthFormCard
+          footer={
+            <a
+              href="/team/login"
+              className="text-sm text-gray-500 dark:text-white/50 hover:text-[var(--purple)] transition-colors"
+            >
+              Team member? Sign in here →
+            </a>
+          }
+        >
+          <LoginForm variant="client" />
+        </AuthFormCard>
       </AuthLayout>
     </AuthRedirectWrapper>
   );

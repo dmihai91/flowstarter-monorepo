@@ -89,7 +89,7 @@ export function TeamProjectCard({
 
   return (
     <div
-      className="group relative cursor-pointer rounded-[28px] border border-gray-200/80 bg-white/95 p-6 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(0,0,0,0.12),0_1px_0_rgba(255,255,255,0.9)_inset] dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset] dark:hover:shadow-[0_16px_48px_rgba(0,0,0,0.35),0_1px_0_rgba(255,255,255,0.08)_inset]"
+      className="group relative cursor-pointer rounded-[28px] p-6 transition-all duration-300 hover:-translate-y-1 bg-white/55 backdrop-blur-2xl backdrop-saturate-200 border border-white/80 shadow-[0_8px_32px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.95)] hover:shadow-[0_16px_48px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.95)] dark:bg-[rgba(18,12,42,0.55)] dark:backdrop-blur-2xl dark:border-white/[0.08] dark:shadow-[0_8px_40px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.06)] dark:hover:shadow-[0_16px_56px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.08)]"
       onClick={() => router.push(`/team/dashboard/projects/${project.id}`)}
     >
       <div className="flex items-start justify-between gap-3 mb-3">

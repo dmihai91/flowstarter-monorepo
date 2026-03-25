@@ -3,29 +3,31 @@
 import { useState, useEffect, useRef } from 'react';
 
 const EXAMPLES = [
-  'Boutique dental clinic for busy professionals. Needs a polished website focused on consultations, implants, and whitening, with online booking.',
-  'Local yoga studio offering in-person and online classes. Warm, calming vibe. Wants a simple booking system and newsletter signup.',
+  'Boutique dental clinic for busy professionals. Polished website with online booking, implants and whitening focus, strong lead capture.',
+  'Local yoga studio — in-person and online classes. Warm, calming vibe. Simple booking system and newsletter signup.',
   'Freelance graphic designer looking to showcase portfolio and attract branding clients. Minimal, modern aesthetic.',
-  'Family-run Italian restaurant in Cluj. Needs a menu, reservation form, and Google Maps integration. Warm and inviting tone.',
-  'Personal fitness coach targeting women 30-45. Sells 1-on-1 coaching and online programs. Bold, motivational energy.',
-  'Law firm specialising in corporate contracts. Professional, trustworthy tone. Needs contact form and service descriptions.',
-  'E-commerce store selling handmade ceramics. Needs product showcase, Instagram feed, and Stripe checkout.',
+  'Family-run Italian restaurant in Cluj. Needs a menu, reservation form, and Google Maps. Warm and inviting tone.',
+  'Personal fitness coach targeting women 30–45. Sells 1-on-1 coaching and online programs. Bold, motivational energy.',
+  'Law firm specialising in corporate contracts. Professional, trustworthy tone. Contact form and service descriptions.',
+  'Handmade ceramics store. Product showcase, Instagram feed integration, and Stripe checkout.',
 ];
 
 interface Options {
-  typeSpeed?:   number; // ms per char when typing
-  deleteSpeed?: number; // ms per char when deleting
-  pauseAfter?:  number; // ms to pause after full text
-  pauseBefore?: number; // ms to pause before next example
+  minSpeed?:    number; // min ms per char when typing (default 38)
+  maxSpeed?:    number; // max ms per char when typing (default 72)
+  deleteSpeed?: number; // ms per char when deleting (default 14)
+  pauseAfter?:  number; // ms pause after full text (default 2800)
+  pauseBefore?: number; // ms pause before next (default 500)
   enabled?:     boolean;
 }
 
 export function useAnimatedPlaceholder(opts: Options = {}): string {
   const {
-    typeSpeed   = 22,
-    deleteSpeed = 8,
-    pauseAfter  = 2200,
-    pauseBefore = 400,
+    minSpeed    = 38,
+    maxSpeed    = 72,
+    deleteSpeed = 14,
+    pauseAfter  = 2800,
+    pauseBefore = 500,
     enabled     = true,
   } = opts;
 
@@ -34,11 +36,25 @@ export function useAnimatedPlaceholder(opts: Options = {}): string {
     exampleIdx: number;
     charIdx: number;
     phase: 'typing' | 'pause' | 'deleting' | 'pauseBefore';
-  }>({ exampleIdx: 0, charIdx: 0, phase: 'typing' });
+    cursorVisible: boolean;
+  }>({ exampleIdx: 0, charIdx: 0, phase: 'typing', cursorVisible: true });
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cursorRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (!enabled) { setText(''); return; }
+
+    // Blinking cursor interval — toggles cursor char
+    cursorRef.current = setInterval(() => {
+      state.current.cursorVisible = !state.current.cursorVisible;
+      // Force re-render by updating cursor in text
+      const example = EXAMPLES[state.current.exampleIdx];
+      const current = example.slice(0, state.current.charIdx);
+      setText(current + (state.current.cursorVisible ? '|' : ' '));
+    }, 530);
+
+    const rand = (min: number, max: number) =>
+      Math.floor(Math.random() * (max - min + 1)) + min;
 
     const tick = () => {
       const { exampleIdx, charIdx, phase } = state.current;
@@ -46,37 +62,48 @@ export function useAnimatedPlaceholder(opts: Options = {}): string {
 
       if (phase === 'typing') {
         const next = charIdx + 1;
-        setText(example.slice(0, next));
+        state.current.charIdx = next;
+        setText(example.slice(0, next) + (state.current.cursorVisible ? '|' : ' '));
+
         if (next >= example.length) {
-          state.current = { exampleIdx, charIdx: next, phase: 'pause' };
+          state.current.phase = 'pause';
           timerRef.current = setTimeout(tick, pauseAfter);
         } else {
-          state.current = { exampleIdx, charIdx: next, phase: 'typing' };
-          timerRef.current = setTimeout(tick, typeSpeed);
+          // Natural variance — slow down at commas/periods
+          const ch = example[next - 1];
+          const delay = (ch === '.' || ch === ',') ? rand(120, 200) : rand(minSpeed, maxSpeed);
+          timerRef.current = setTimeout(tick, delay);
         }
       } else if (phase === 'pause') {
-        state.current = { exampleIdx, charIdx, phase: 'deleting' };
+        state.current.phase = 'deleting';
         timerRef.current = setTimeout(tick, deleteSpeed);
       } else if (phase === 'deleting') {
         const next = charIdx - 1;
-        setText(example.slice(0, next));
+        state.current.charIdx = next;
+        const example2 = EXAMPLES[exampleIdx];
+        setText(example2.slice(0, next) + (state.current.cursorVisible ? '|' : ' '));
+
         if (next <= 0) {
           const nextIdx = (exampleIdx + 1) % EXAMPLES.length;
-          state.current = { exampleIdx: nextIdx, charIdx: 0, phase: 'pauseBefore' };
+          state.current = { exampleIdx: nextIdx, charIdx: 0, phase: 'pauseBefore', cursorVisible: true };
           timerRef.current = setTimeout(tick, pauseBefore);
         } else {
-          state.current = { exampleIdx, charIdx: next, phase: 'deleting' };
           timerRef.current = setTimeout(tick, deleteSpeed);
         }
       } else {
-        state.current = { exampleIdx, charIdx: 0, phase: 'typing' };
-        timerRef.current = setTimeout(tick, typeSpeed);
+        state.current.phase = 'typing';
+        timerRef.current = setTimeout(tick, rand(minSpeed, maxSpeed));
       }
     };
 
-    timerRef.current = setTimeout(tick, 600);
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [enabled, typeSpeed, deleteSpeed, pauseAfter, pauseBefore]);
+    timerRef.current = setTimeout(tick, 800);
+
+    return () => {
+      if (timerRef.current)  clearTimeout(timerRef.current);
+      if (cursorRef.current) clearInterval(cursorRef.current);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled]);
 
   return text;
 }

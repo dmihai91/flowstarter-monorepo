@@ -1,8 +1,6 @@
 'use client';
 
-import { PageContainer } from '@/components/PageContainer';
-import { DashboardWrapper } from '@/app/(dynamic-pages)/(main-pages)/(logged-in-pages)/dashboard/components/DashboardWrapper';
-import { GlassCard } from '@/components/ui/glass-card';
+import { TeamDashboardShell, ShellCard } from '../components/TeamDashboardShell';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -153,44 +151,13 @@ export default function TeamSecurityPage() {
   }
 
   return (
-    <DashboardWrapper>
-
-      <PageContainer gradientVariant="dashboard">
-        <GlassCard className="p-6 sm:p-8 max-w-2xl mx-auto">
-          {/* Back button */}
-          <Link
-            href="/team/dashboard"
-            className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Dashboard
-          </Link>
-
-          {/* Header */}
-          <div className="flex items-center gap-4 mb-8">
-            <div className="p-3 rounded-xl bg-[var(--purple)]/10 text-[var(--purple)]">
-              <Shield className="w-6 h-6" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Security Settings
-              </h1>
-              <p className="text-sm text-gray-500 dark:text-white/50">
-                Manage your account security
-              </p>
-            </div>
-          </div>
-
-          {/* Success message */}
-          {setupSuccess && (
-            <div className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-              <p className="text-sm text-emerald-700 dark:text-emerald-400">
-                Two-factor authentication has been enabled successfully!
-              </p>
-            </div>
-          )}
-
+    <TeamDashboardShell
+      title="Security"
+      subtitle="Password and two-factor authentication"
+      icon={<Shield className="w-5 h-5 text-[var(--purple)]" />}
+      maxWidth="2xl"
+    >
+      <ShellCard>
           {/* 2FA Card */}
           <div className="p-6 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
             <div className="flex items-start justify-between mb-6">
@@ -436,8 +403,7 @@ export default function TeamSecurityPage() {
               <li>• Uses time-based codes that expire every 30 seconds</li>
             </ul>
           </div>
-        </GlassCard>
-      </PageContainer>
-    </DashboardWrapper>
+      </ShellCard>
+    </TeamDashboardShell>
   );
 }

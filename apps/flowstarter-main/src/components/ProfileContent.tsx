@@ -35,7 +35,7 @@ function getClerkErrorMessage(error: unknown, fallback: string) {
   return fallback;
 }
 
-export function ProfileContent() {
+export function ProfileContent({ embedded = false }: { embedded?: boolean }) {
   const { user, isLoaded } = useUser();
   const { t } = useTranslations();
   const [editingField, setEditingField] = useState<string | null>(null);
@@ -197,7 +197,7 @@ export function ProfileContent() {
   };
 
   return (
-    <div className="max-w-xl mx-auto px-4 pt-8 pb-4 max-h-[calc(100vh-4rem)] overflow-y-auto">
+    <div className={embedded ? "" : "max-w-xl mx-auto px-4 pt-8 pb-4 max-h-[calc(100vh-4rem)] overflow-y-auto"}>
       {/* Profile header */}
       <div className="flex items-center gap-3 mb-5">
         <div className="relative group">

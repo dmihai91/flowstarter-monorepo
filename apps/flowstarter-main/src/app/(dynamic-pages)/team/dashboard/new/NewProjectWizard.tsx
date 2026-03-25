@@ -1,7 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 import {
   ArrowLeft,
@@ -293,6 +294,47 @@ export function NewProjectWizard() {
 
   const form = useScaffoldForm();
 
+  // ── Draft persistence ────────────────────────────────────────────────────────
+  const [draftId, setDraftId] = useState<string | null>(null);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const saveDraftMutation = useMutation({
+    mutationFn: async (payload: {
+      clientInfo: { name: string; email: string; phone: string };
+      userInput?: string;
+    }) => {
+      if (draftId) {
+        const res = await fetch(`/api/wizard/prefill?id=${draftId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error('Failed to update draft');
+        return res.json() as Promise<{ id?: string }>;
+      } else {
+        const res = await fetch('/api/wizard/prefill', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error('Failed to create draft');
+        return res.json() as Promise<{ id?: string }>;
+      }
+    },
+    onSuccess: (data) => {
+      if (data?.id && !draftId) setDraftId(data.id);
+    },
+  });
+
+  // Auto-save client info 800ms after last keystroke
+  const scheduleSaveDraft = useCallback((clientInfo: { name: string; email: string; phone: string }) => {
+    if (!clientInfo.name && !clientInfo.email && !clientInfo.phone) return;
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      saveDraftMutation.mutate({ clientInfo });
+    }, 800);
+  }, [saveDraftMutation]);
+
   const stepIndex = (() => {
     switch (form.phase) {
       case 'client':
@@ -315,6 +357,9 @@ export function NewProjectWizard() {
     form.updateBrief('industry', industry);
     form.updateBrief('contactEmail', form.clientInfo.email);
     form.updateBrief('contactPhone', form.clientInfo.phone);
+
+    // Persist client info to Supabase draft (best-effort, non-blocking)
+    saveDraftMutation.mutateAsync({ clientInfo: form.clientInfo }).catch(() => {});
 
     if (mode === 'manual') {
       form.setPhase('review');
@@ -417,7 +462,10 @@ export function NewProjectWizard() {
           {form.phase === 'client' && (
             <ScaffoldClientInfo
               clientInfo={form.clientInfo}
-              onUpdate={form.updateClientInfo}
+              onUpdate={(field, value) => {
+                form.updateClientInfo(field, value);
+                scheduleSaveDraft({ ...form.clientInfo, [field]: value });
+              }}
               onSubmit={handleInitialStepSubmit}
               onCollapse={() => {}}
               industry={industry}

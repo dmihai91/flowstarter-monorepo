@@ -90,7 +90,7 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full min-w-0">
       {/* Total Projects Card */}
       <GlassPanel
         shadow="glass"

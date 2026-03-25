@@ -62,7 +62,7 @@ export default function TeamDashboardLayout({
 
         <div className="flex-1 flex relative z-10 min-h-0">
           {!hideSidebar && <TeamSidebar />}
-          <main className="flex-1 min-w-0 overflow-y-auto">
+          <main className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden">
             {children}
           </main>
         </div>

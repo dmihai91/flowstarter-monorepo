@@ -255,10 +255,10 @@ export function NewProjectWizard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           projectConfig: {
-            name: form.fields.siteName,
-            projectName: form.fields.siteName,
-            description: form.fields.description,
-            industry: form.fields.industry,
+            name: form.brief.projectName,
+            projectName: form.brief.projectName,
+            description: form.brief.summary,
+            industry: form.brief.industry,
             clientName: form.clientInfo.name,
             clientEmail: form.clientInfo.email,
             clientPhone: form.clientInfo.phone,
@@ -268,19 +268,19 @@ export function NewProjectWizard() {
             depositAmount: Math.round(form.setupFee * 0.5),
             finalAmount: form.setupFee - Math.round(form.setupFee * 0.5),
             businessInfo: {
-              description: form.fields.description,
-              uvp: form.fields.uvp,
-              targetAudience: form.fields.targetAudience,
-              industry: form.fields.industry,
-              goal: form.fields.goal,
-              offerType: form.fields.offerType,
-              brandTone: form.fields.brandTone,
-              offerings: form.fields.offerings,
+              summary:          form.brief.summary,
+              valueProposition: form.brief.valueProposition,
+              targetAudience:   form.brief.targetAudience,
+              industry:         form.brief.industry,
+              goals:            form.brief.goals,
+              offerType:        form.brief.offerType,
+              brandTone:        form.brief.brandTone,
+              offerings:        form.brief.offerings,
             },
             contactInfo: {
-              email: form.fields.contactEmail,
-              phone: form.fields.contactPhone,
-              address: form.fields.contactAddress,
+              email: form.brief.contactEmail,
+              phone: form.brief.contactPhone,
+              address: form.brief.contactAddress,
             },
           },
           mode: 'interactive',
@@ -367,16 +367,17 @@ export function NewProjectWizard() {
 
           {form.phase === 'review' && (
             <ScaffoldReview
-              fields={form.fields}
+              brief={form.brief}
               reviewStep={form.reviewStep}
               reviewStepCount={form.reviewStepCount}
               isFirstStep={form.isFirstStep}
               isLastStep={form.isLastStep}
-              onUpdateField={form.updateField}
+              onUpdateBrief={form.updateBrief}
+              onToggleGoal={form.toggleGoal}
+              onToggleIntegration={form.toggleIntegration}
               onNext={form.isLastStep ? form.proceedToTemplate : form.nextStep}
               onPrev={form.prevStep}
               onRegenerate={form.regenerate}
-              onLaunch={form.proceedToPayment}
               onReset={form.reset}
             />
           )}

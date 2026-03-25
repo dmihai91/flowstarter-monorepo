@@ -10,80 +10,131 @@ const EDITOR_URL =
     ? 'https://editor.flowstarter.dev'
     : 'http://localhost:5173');
 
-export type ScaffoldPhase = 'client' | 'input' | 'progress' | 'clarify' | 'review' | 'template' | 'payment';
+export type ScaffoldPhase =
+  | 'client'
+  | 'input'
+  | 'progress'
+  | 'clarify'
+  | 'review'
+  | 'template'
+  | 'payment';
+
+// ── Enums (mirrors editor-engine contracts) ────────────────────────────────────
+
+export type ProjectGoal = 'leads' | 'bookings' | 'sales' | 'newsletter' | 'awareness';
+export type OfferType   = 'premium' | 'accessible' | 'free' | 'custom';
+export type BrandTone   = 'professional' | 'bold' | 'friendly' | 'calm' | 'modern';
+export type PagePref    = 'single-page' | 'multi-page';
+export type Integration = 'booking' | 'newsletter' | 'analytics' | 'leadCapture';
+
+// ── Draft type — all fields editable, matches ProjectBrief structure ──────────
+
+export interface ProjectBriefDraft {
+  // Section 1 — Business
+  projectName:      string;
+  industry:         string;
+  summary:          string;
+  targetAudience:   string;
+  // Section 2 — Offer
+  valueProposition: string;
+  offerings:        string[];   // shown as comma-joined textarea
+  goals:            ProjectGoal[];
+  offerType:        OfferType;
+  brandTone:        BrandTone;
+  // Section 3 — Structure
+  pagePreference:   PagePref;
+  integrations:     Integration[];
+  // Section 4 — Contact
+  contactEmail:     string;
+  contactPhone:     string;
+  contactAddress:   string;
+}
 
 export interface ClientInfo {
-  name: string;
+  name:  string;
   email: string;
   phone: string;
 }
 
-export interface EnrichedFields {
-  siteName: string;
-  industry: string;
-  description: string;
-  targetAudience: string;
-  uvp: string;
-  offerings: string;
-  brandTone: string;
-  goal: string;
-  offerType: string;
-  contactEmail: string;
-  contactPhone: string;
-  contactAddress: string;
-}
-
 export interface AiStep {
   label: string;
-  done: boolean;
+  done:  boolean;
 }
 
 type ConciergeResponse =
-  | {
-      status: 'needsMoreInfo';
-      followUpQuestions: string[];
-    }
-  | ({
-      status: 'complete';
-    } & EngineArtifacts);
+  | { status: 'needsMoreInfo'; followUpQuestions: string[] }
+  | ({ status: 'complete' } & EngineArtifacts);
+
+// ── Defaults ──────────────────────────────────────────────────────────────────
 
 const EMPTY_CLIENT: ClientInfo = { name: '', email: '', phone: '' };
 
-const EMPTY_FIELDS: EnrichedFields = {
-  siteName: '',
-  industry: '',
-  description: '',
-  targetAudience: '',
-  uvp: '',
-  offerings: '',
-  brandTone: '',
-  goal: '',
-  offerType: '',
-  contactEmail: '',
-  contactPhone: '',
-  contactAddress: '',
+const EMPTY_BRIEF: ProjectBriefDraft = {
+  projectName:      '',
+  industry:         '',
+  summary:          '',
+  targetAudience:   '',
+  valueProposition: '',
+  offerings:        [],
+  goals:            [],
+  offerType:        'accessible',
+  brandTone:        'professional',
+  pagePreference:   'multi-page',
+  integrations:     [],
+  contactEmail:     '',
+  contactPhone:     '',
+  contactAddress:   '',
 };
 
 const REVIEW_STEP_COUNT = 4;
 
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function briefFromEngine(brief: EngineArtifacts['projectBrief']): ProjectBriefDraft {
+  const goal = brief.goal as ProjectGoal | undefined;
+  return {
+    projectName:      brief.siteName || '',
+    industry:         brief.industry || '',
+    summary:          brief.summary || '',
+    targetAudience:   brief.targetAudience || '',
+    valueProposition: brief.usp || '',
+    offerings:        brief.offerings || [],
+    goals:            goal ? [goal] : [],
+    offerType:        (brief.offerType as OfferType) || 'accessible',
+    brandTone:        (brief.brandTone as BrandTone) || 'professional',
+    pagePreference:   'multi-page',
+    integrations:     [],
+    contactEmail:     brief.contact.email || '',
+    contactPhone:     brief.contact.phone || '',
+    contactAddress:   brief.contact.address || '',
+  };
+}
+
+// ── Hook ──────────────────────────────────────────────────────────────────────
+
 export function useScaffoldForm() {
   const queryClient = useQueryClient();
-  const [phase, setPhase] = useState<ScaffoldPhase>('client');
-  const [clientInfo, setClientInfo] = useState<ClientInfo>(EMPTY_CLIENT);
-  const [userInput, setUserInput] = useState('');
-  const [fields, setFields] = useState<EnrichedFields>(EMPTY_FIELDS);
-  const [reviewStep, setReviewStep] = useState(0);
-  const [aiSteps, setAiSteps] = useState<AiStep[]>([]);
+
+  const [phase, setPhase]                   = useState<ScaffoldPhase>('client');
+  const [clientInfo, setClientInfo]         = useState<ClientInfo>(EMPTY_CLIENT);
+  const [userInput, setUserInput]           = useState('');
+  const [brief, setBrief]                   = useState<ProjectBriefDraft>(EMPTY_BRIEF);
+  const [reviewStep, setReviewStep]         = useState(0);
+  const [aiSteps, setAiSteps]               = useState<AiStep[]>([]);
   const [followUpQuestions, setFollowUpQuestions] = useState<string[]>([]);
   const [clarifyAnswers, setClarifyAnswers] = useState<string[]>([]);
   const [engineArtifacts, setEngineArtifacts] = useState<EngineArtifacts | null>(null);
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
-  const [templateRecommendations, setTemplateRecommendations] = useState<string[]>([]);
-  const [templateReasons, setTemplateReasons] = useState<Record<string, string>>({});
-  const [planName, setPlanName] = useState<string>('STARTER');
-  const [setupFee, setSetupFee] = useState<number>(0);
 
-  // ── AI enrichment mutation ──
+  // Template
+  const [selectedTemplateId, setSelectedTemplateId]           = useState<string | null>(null);
+  const [templateRecommendations, setTemplateRecommendations] = useState<string[]>([]);
+  const [templateReasons, setTemplateReasons]                 = useState<Record<string, string>>({});
+
+  // Payment
+  const [planName, setPlanName]   = useState<string>('STARTER');
+  const [setupFee, setSetupFee]   = useState<number>(0);
+
+  // ── AI enrichment mutation ─────────────────────────────────────────────────
   const enrichMutation = useMutation({
     mutationFn: async ({ description }: { description: string }) => {
       const res = await fetch('/api/engine/concierge', {
@@ -92,7 +143,7 @@ export function useScaffoldForm() {
         body: JSON.stringify({
           description,
           client: {
-            name: clientInfo.name || undefined,
+            name:  clientInfo.name  || undefined,
             email: clientInfo.email || undefined,
             phone: clientInfo.phone || undefined,
           },
@@ -103,7 +154,7 @@ export function useScaffoldForm() {
     },
   });
 
-  // ── Animate progress steps ──
+  // ── Animate progress steps ─────────────────────────────────────────────────
   const animateProgress = useCallback(async (labels?: string[]) => {
     const stepLabels = labels ?? [
       'Reading business description...',
@@ -113,70 +164,50 @@ export function useScaffoldForm() {
     ];
     const steps: AiStep[] = stepLabels.map((label) => ({ label, done: false }));
     setAiSteps(steps);
-
     for (let i = 0; i < steps.length; i++) {
       await new Promise((r) => setTimeout(r, 600 + Math.random() * 400));
-      setAiSteps((prev) =>
-        prev.map((s, j) => (j <= i ? { ...s, done: true } : s))
-      );
+      setAiSteps((prev) => prev.map((s, j) => (j <= i ? { ...s, done: true } : s)));
     }
   }, []);
 
-  // ── Handle enrichment response (shared by submit + clarify) ──
+  // ── Handle enrichment response ─────────────────────────────────────────────
   const handleEnrichResponse = useCallback(
-    async (enriched: ConciergeResponse, originalDesc: string) => {
+    async (enriched: ConciergeResponse, _originalDesc: string) => {
       setAiSteps((prev) => prev.map((s) => ({ ...s, done: true })));
       await new Promise((r) => setTimeout(r, 300));
 
       if (enriched.status === 'needsMoreInfo') {
-        const questions = enriched.followUpQuestions;
-        setFollowUpQuestions(questions);
-        setClarifyAnswers(questions.map(() => ''));
+        setFollowUpQuestions(enriched.followUpQuestions);
+        setClarifyAnswers(enriched.followUpQuestions.map(() => ''));
         setAiSteps([]);
         setPhase('clarify');
         return;
       }
 
       setEngineArtifacts({
-        projectBrief: enriched.projectBrief,
+        projectBrief:      enriched.projectBrief,
         templateSelection: enriched.templateSelection,
-        assemblySpec: enriched.assemblySpec,
-        contentMap: enriched.contentMap,
-        validationReport: enriched.validationReport,
+        assemblySpec:      enriched.assemblySpec,
+        contentMap:        enriched.contentMap,
+        validationReport:  enriched.validationReport,
       });
 
-      const brief = enriched.projectBrief;
-      setFields({
-        siteName: brief.siteName || '',
-        description: brief.summary || originalDesc,
-        industry: brief.industry || '',
-        targetAudience: brief.targetAudience || '',
-        uvp: brief.usp || '',
-        goal: brief.goal || '',
-        offerType: brief.offerType || '',
-        brandTone: brief.brandTone || '',
-        offerings: brief.offerings.join(', '),
-        contactEmail: brief.contact.email || '',
-        contactPhone: brief.contact.phone || '',
-        contactAddress: brief.contact.address || '',
-      });
+      setBrief(briefFromEngine(enriched.projectBrief));
       setReviewStep(0);
 
-      // Extract template recommendations from engine artifacts
+      // Extract template recommendations
       if (enriched.templateSelection) {
-        const recs: string[] = [];
+        const recs: string[]                 = [];
         const reasons: Record<string, string> = {};
         const sel = enriched.templateSelection;
         if (sel.selectedTemplateId) {
           recs.push(sel.selectedTemplateId);
           reasons[sel.selectedTemplateId] = sel.reasons?.[0] ?? 'Best match for your business';
         }
-        if (sel.alternatives) {
-          for (const alt of sel.alternatives.slice(0, 2)) {
-            if (alt.templateId && !recs.includes(alt.templateId)) {
-              recs.push(alt.templateId);
-              reasons[alt.templateId] = alt.reasons?.[0] ?? '';
-            }
+        for (const alt of (sel.alternatives ?? []).slice(0, 2)) {
+          if (alt.templateId && !recs.includes(alt.templateId)) {
+            recs.push(alt.templateId);
+            reasons[alt.templateId] = alt.reasons?.[0] ?? '';
           }
         }
         setTemplateRecommendations(recs);
@@ -187,146 +218,132 @@ export function useScaffoldForm() {
       setPhase('review');
       setAiSteps([]);
     },
-    []
+    [selectedTemplateId]
   );
 
-  // ── Submit description for enrichment ──
+  // ── Submit description ─────────────────────────────────────────────────────
   const submitDescription = useCallback(
     (description: string) => {
       if (!description.trim()) return;
       setUserInput(description);
       setPhase('progress');
       animateProgress();
-
       enrichMutation.mutate(
         { description },
         {
           onSuccess: (enriched) => handleEnrichResponse(enriched, description),
-          onError: () => {
-            setAiSteps([]);
-            launchEditor({ description, userDescription: description });
-          },
+          onError: () => { setAiSteps([]); launchEditor({ description }); },
         }
       );
     },
     [enrichMutation, animateProgress, handleEnrichResponse]
   );
 
-  // ── Submit clarification answers ──
+  // ── Submit clarification ───────────────────────────────────────────────────
   const submitClarification = useCallback(() => {
     const combined = [
       userInput,
-      ...followUpQuestions.map(
-        (q, i) => (clarifyAnswers[i]?.trim() ? `${q} ${clarifyAnswers[i]}` : '')
-      ).filter(Boolean),
+      ...followUpQuestions
+        .map((q, i) => (clarifyAnswers[i]?.trim() ? `${q} ${clarifyAnswers[i]}` : ''))
+        .filter(Boolean),
     ].join('\n');
-
     setUserInput(combined);
     setPhase('progress');
     animateProgress();
-
     enrichMutation.mutate(
       { description: combined },
       {
         onSuccess: (enriched) => handleEnrichResponse(enriched, combined),
-        onError: () => {
-          setAiSteps([]);
-          launchEditor({ description: combined, userDescription: combined });
-        },
+        onError: () => { setAiSteps([]); launchEditor({ description: combined }); },
       }
     );
   }, [userInput, followUpQuestions, clarifyAnswers, enrichMutation, animateProgress, handleEnrichResponse]);
 
-  // ── Update a single clarify answer ──
-  const updateClarifyAnswer = useCallback(
-    (index: number, value: string) => {
-      setClarifyAnswers((prev) => {
-        const next = [...prev];
-        next[index] = value;
-        return next;
-      });
-    },
-    []
-  );
+  const updateClarifyAnswer = useCallback((index: number, value: string) => {
+    setClarifyAnswers((prev) => { const n = [...prev]; n[index] = value; return n; });
+  }, []);
 
-  // ── Regenerate (re-run enrichment, keep operator contact info) ──
+  // ── Regenerate ────────────────────────────────────────────────────────────
   const regenerate = useCallback(() => {
     if (!userInput.trim()) return;
     setPhase('progress');
     animateProgress();
-
     enrichMutation.mutate(
       { description: userInput },
       {
         onSuccess: async (enriched) => {
           setAiSteps((prev) => prev.map((s) => ({ ...s, done: true })));
           await new Promise((r) => setTimeout(r, 300));
-
-          // needsMoreInfo on regenerate is unlikely, but handle it
-          if (enriched.status === 'needsMoreInfo') {
-            setAiSteps([]);
-            setPhase('review');
-            return;
-          }
-
+          if (enriched.status === 'needsMoreInfo') { setAiSteps([]); setPhase('review'); return; }
           setEngineArtifacts({
-            projectBrief: enriched.projectBrief,
+            projectBrief:      enriched.projectBrief,
             templateSelection: enriched.templateSelection,
-            assemblySpec: enriched.assemblySpec,
-            contentMap: enriched.contentMap,
-            validationReport: enriched.validationReport,
+            assemblySpec:      enriched.assemblySpec,
+            contentMap:        enriched.contentMap,
+            validationReport:  enriched.validationReport,
           });
-
-          const brief = enriched.projectBrief;
-          setFields((prev) => ({
-            ...prev,
-            siteName: brief.siteName || prev.siteName,
-            description: brief.summary || prev.description,
-            industry: brief.industry || prev.industry,
-            targetAudience: brief.targetAudience || prev.targetAudience,
-            uvp: brief.usp || prev.uvp,
-            goal: brief.goal || prev.goal,
-            offerType: brief.offerType || prev.offerType,
-            brandTone: brief.brandTone || prev.brandTone,
-            offerings: brief.offerings.join(', ') || prev.offerings,
+          setBrief((prev) => ({
+            ...briefFromEngine(enriched.projectBrief),
+            // Preserve operator-entered contact if already set
+            contactEmail:   prev.contactEmail   || briefFromEngine(enriched.projectBrief).contactEmail,
+            contactPhone:   prev.contactPhone   || briefFromEngine(enriched.projectBrief).contactPhone,
+            contactAddress: prev.contactAddress || briefFromEngine(enriched.projectBrief).contactAddress,
           }));
           setPhase('review');
           setAiSteps([]);
         },
-        onError: () => {
-          setAiSteps([]);
-          setPhase('review');
-        },
+        onError: () => { setAiSteps([]); setPhase('review'); },
       }
     );
   }, [userInput, enrichMutation, animateProgress]);
 
-  // ── Field update ──
-  const updateField = useCallback(
-    (key: keyof EnrichedFields, value: string) => {
-      setFields((prev) => ({ ...prev, [key]: value }));
-    },
-    []
-  );
+  // ── Brief field updates ────────────────────────────────────────────────────
+  const updateBrief = useCallback(<K extends keyof ProjectBriefDraft>(
+    key: K,
+    value: ProjectBriefDraft[K]
+  ) => {
+    setBrief((prev) => ({ ...prev, [key]: value }));
+  }, []);
 
-  // ── AI field rewrite ──
-  const [rewritingField, setRewritingField] = useState<keyof EnrichedFields | null>(null);
+  // Toggle helpers for array fields
+  const toggleGoal = useCallback((goal: ProjectGoal) => {
+    setBrief((prev) => ({
+      ...prev,
+      goals: prev.goals.includes(goal)
+        ? prev.goals.filter((g) => g !== goal)
+        : [...prev.goals, goal],
+    }));
+  }, []);
+
+  const toggleIntegration = useCallback((integration: Integration) => {
+    setBrief((prev) => ({
+      ...prev,
+      integrations: prev.integrations.includes(integration)
+        ? prev.integrations.filter((i) => i !== integration)
+        : [...prev.integrations, integration],
+    }));
+  }, []);
+
+  // ── AI field rewrite ───────────────────────────────────────────────────────
+  const [rewritingField, setRewritingField] = useState<keyof ProjectBriefDraft | null>(null);
 
   const rewriteFieldMutation = useMutation({
     mutationFn: async (params: {
-      key: keyof EnrichedFields;
+      key: keyof ProjectBriefDraft;
       action: string;
       customPrompt?: string;
     }) => {
+      const value = brief[params.key];
+      const strValue = Array.isArray(value) ? (value as string[]).join(', ') : String(value ?? '');
       const res = await fetch('/api/ai/rewrite-field', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          value: fields[params.key],
-          action: params.action,
-          fieldName: params.key,
-          businessContext: fields.description,
-          customPrompt: params.customPrompt,
+          value:           strValue,
+          action:          params.action,
+          fieldName:       params.key,
+          businessContext: brief.summary,
+          customPrompt:    params.customPrompt,
         }),
       });
       if (!res.ok) throw new Error('Rewrite failed');
@@ -335,87 +352,79 @@ export function useScaffoldForm() {
   });
 
   const rewriteField = useCallback(
-    (key: keyof EnrichedFields, action: string, customPrompt?: string) => {
-      if (!fields[key]?.trim()) return;
+    (key: keyof ProjectBriefDraft, action: string, customPrompt?: string) => {
+      const v = brief[key];
+      const strV = Array.isArray(v) ? (v as string[]).join(', ') : String(v ?? '');
+      if (!strV.trim()) return;
       setRewritingField(key);
       rewriteFieldMutation.mutate(
         { key, action, customPrompt },
         {
           onSuccess: (data) => {
-            if (data.rewritten) {
-              setFields((prev) => ({ ...prev, [key]: data.rewritten }));
-            }
+            if (data.rewritten) setBrief((prev) => ({ ...prev, [key]: data.rewritten }));
             setRewritingField(null);
           },
           onError: () => setRewritingField(null),
         }
       );
     },
-    [fields, rewriteFieldMutation]
+    [brief, rewriteFieldMutation]
   );
 
-  // ── Proceed to template phase ──
-  const proceedToTemplate = useCallback(() => {
-    setPhase('template');
-  }, []);
+  // ── Phase transitions ──────────────────────────────────────────────────────
+  const proceedToTemplate = useCallback(() => setPhase('template'), []);
+  const proceedToPayment  = useCallback(() => setPhase('payment'),  []);
 
-  // ── Proceed to payment phase ──
-  const proceedToPayment = useCallback(() => {
-    setPhase('payment');
-  }, []);
-
-  // ── Step navigation ──
-  const nextStep = useCallback(() => {
-    setReviewStep((s) => Math.min(s + 1, REVIEW_STEP_COUNT - 1));
-  }, []);
-
-  const prevStep = useCallback(() => {
-    setReviewStep((s) => Math.max(s - 1, 0));
-  }, []);
-
-  const isLastStep = reviewStep === REVIEW_STEP_COUNT - 1;
+  // ── Review navigation ──────────────────────────────────────────────────────
+  const nextStep = useCallback(() => setReviewStep((s) => Math.min(s + 1, REVIEW_STEP_COUNT - 1)), []);
+  const prevStep = useCallback(() => setReviewStep((s) => Math.max(s - 1, 0)), []);
+  const isLastStep  = reviewStep === REVIEW_STEP_COUNT - 1;
   const isFirstStep = reviewStep === 0;
 
-  // ── Launch editor (React Query mutation) ──
+  // ── Handoff / launch ───────────────────────────────────────────────────────
   const handoffMutation = useMutation({
     mutationFn: async (config?: Record<string, unknown>) => {
-      const projectConfig = config || {
-        name: fields.siteName,
-        projectName: fields.siteName,
-        description: fields.description,
+      const projectConfig = config ?? {
+        name:            brief.projectName,
+        projectName:     brief.projectName,
+        description:     brief.summary,
         userDescription: userInput,
-        industry: fields.industry,
-        clientName: clientInfo.name,
-        clientEmail: clientInfo.email,
-        clientPhone: clientInfo.phone,
+        industry:        brief.industry,
+        templateId:      selectedTemplateId ?? undefined,
+        clientName:      clientInfo.name,
+        clientEmail:     clientInfo.email,
+        clientPhone:     clientInfo.phone,
         businessInfo: {
-          description: fields.description,
-          uvp: fields.uvp,
-          targetAudience: fields.targetAudience,
-          industry: fields.industry,
-          goal: fields.goal,
-          offerType: fields.offerType,
-          brandTone: fields.brandTone,
-          offerings: fields.offerings,
+          summary:          brief.summary,
+          industry:         brief.industry,
+          targetAudience:   brief.targetAudience,
+          valueProposition: brief.valueProposition,
+          offerings:        brief.offerings,
+          goals:            brief.goals,
+          offerType:        brief.offerType,
+          brandTone:        brief.brandTone,
+        },
+        siteInfo: {
+          pagePreference: brief.pagePreference,
+          integrations:   brief.integrations,
         },
         contactInfo: {
-          email: fields.contactEmail,
-          phone: fields.contactPhone,
-          address: fields.contactAddress,
+          email:   brief.contactEmail,
+          phone:   brief.contactPhone,
+          address: brief.contactAddress,
         },
-        flowstarterEngine: engineArtifacts || undefined,
-        template: engineArtifacts
-          ? {
-              id: engineArtifacts.templateSelection.selectedTemplateId,
-              name: engineArtifacts.templateSelection.selectedTemplateName,
-            }
+        flowstarterEngine: engineArtifacts ?? undefined,
+        template: selectedTemplateId
+          ? { id: selectedTemplateId }
+          : engineArtifacts
+          ? { id: engineArtifacts.templateSelection.selectedTemplateId, name: engineArtifacts.templateSelection.selectedTemplateName }
           : undefined,
       };
 
       const res = await fetch('/api/editor/handoff', {
-        method: 'POST',
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ projectConfig, mode: 'interactive' }),
+        body:    JSON.stringify({ projectConfig, mode: 'interactive' }),
       });
       if (!res.ok) throw new Error('Handoff failed');
       return res.json() as Promise<{ editorUrl: string; token: string; projectId: string }>;
@@ -424,66 +433,54 @@ export function useScaffoldForm() {
       queryClient.invalidateQueries({ queryKey: ['team-projects'] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       reset();
-      window.open(
-        data.editorUrl || `${EDITOR_URL}?handoff=${data.token}`,
-        '_blank'
-      );
+      window.open(data.editorUrl || `${EDITOR_URL}?handoff=${data.token}`, '_blank');
     },
-    onError: () => {
-      window.open(EDITOR_URL, '_blank');
-    },
+    onError: () => { window.open(EDITOR_URL, '_blank'); },
   });
 
   const launchEditor = useCallback(
-    (config?: Record<string, unknown>) => {
-      handoffMutation.mutate(config);
-    },
-    [handoffMutation, engineArtifacts]
+    (config?: Record<string, unknown>) => { handoffMutation.mutate(config); },
+    [handoffMutation]
   );
 
-  // ── Client info ──
-  const updateClientInfo = useCallback(
-    (key: keyof ClientInfo, value: string) => {
-      setClientInfo((prev) => ({ ...prev, [key]: value }));
-    },
-    []
-  );
-
-  const submitClientInfo = useCallback(() => {
-    setPhase('input');
+  // ── Client info ────────────────────────────────────────────────────────────
+  const updateClientInfo = useCallback((key: keyof ClientInfo, value: string) => {
+    setClientInfo((prev) => ({ ...prev, [key]: value }));
   }, []);
 
-  // ── Reset ──
+  const submitClientInfo = useCallback(() => setPhase('input'), []);
+
+  // ── Reset ─────────────────────────────────────────────────────────────────
   const reset = useCallback(() => {
     setPhase('client');
     setClientInfo(EMPTY_CLIENT);
-    setFields(EMPTY_FIELDS);
+    setBrief(EMPTY_BRIEF);
     setUserInput('');
     setReviewStep(0);
     setAiSteps([]);
     setFollowUpQuestions([]);
     setClarifyAnswers([]);
     setEngineArtifacts(null);
-    setPlanName('STARTER');
-    setSetupFee(0);
     setSelectedTemplateId(null);
     setTemplateRecommendations([]);
     setTemplateReasons({});
+    setPlanName('STARTER');
+    setSetupFee(0);
   }, []);
 
   return {
     // State
     phase,
+    setPhase,
     clientInfo,
     userInput,
-    fields,
+    brief,
     reviewStep,
     aiSteps,
     followUpQuestions,
     clarifyAnswers,
     isEnriching: enrichMutation.isPending,
     rewritingField,
-    rewriteField,
     // Review navigation
     nextStep,
     prevStep,
@@ -497,10 +494,12 @@ export function useScaffoldForm() {
     submitClarification,
     updateClarifyAnswer,
     regenerate,
-    updateField,
+    updateBrief,
+    toggleGoal,
+    toggleIntegration,
+    rewriteField,
     launchEditor,
     reset,
-    setPhase,
     // Template
     selectedTemplateId,
     setSelectedTemplateId,

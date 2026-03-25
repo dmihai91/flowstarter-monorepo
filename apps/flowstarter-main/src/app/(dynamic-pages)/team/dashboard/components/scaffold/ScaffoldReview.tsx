@@ -458,7 +458,7 @@ export function ScaffoldReview({
       <div className="flex gap-2">
         <button
           onClick={isFirstStep ? onReset : onPrev}
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-white dark:bg-white/[0.05] border border-gray-200 dark:border-white/[0.06] text-zinc-600 dark:text-zinc-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-white/[0.07] transition-all"
+          className="flex flex-1 items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-white dark:bg-white/[0.05] border border-gray-200 dark:border-white/[0.06] text-zinc-600 dark:text-zinc-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-white/[0.07] transition-all"
         >
           {isFirstStep ? (
             'Start over'

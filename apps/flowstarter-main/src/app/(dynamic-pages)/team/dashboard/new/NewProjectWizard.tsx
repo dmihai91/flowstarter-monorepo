@@ -334,9 +334,9 @@ export function NewProjectWizard() {
     if (current.get('draft') !== draftId) {
       const params = new URLSearchParams(current);
       params.set('draft', draftId);
-      router.replace(`/team/dashboard/new?${params.toString()}`, { scroll: false });
+      window.history.replaceState(null, '', `/team/dashboard/new?${params.toString()}`);
     }
-  }, [draftId, router]);
+  }, [draftId]);
 
   // Auto-save client info 800ms after last keystroke
   const scheduleSaveDraft = useCallback((clientInfo: { name: string; email: string; phone: string }) => {

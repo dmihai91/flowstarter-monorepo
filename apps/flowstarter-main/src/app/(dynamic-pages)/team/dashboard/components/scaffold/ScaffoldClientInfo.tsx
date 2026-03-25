@@ -7,6 +7,7 @@ import type { ClientInfo } from './useScaffoldForm';
 import { useCallback, useRef, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { z } from 'zod';
+import { useAnimatedPlaceholder } from '@/hooks/useAnimatedPlaceholder';
 
 const clientSchema = z.object({
   name: z.string().min(2),
@@ -85,6 +86,7 @@ export function ScaffoldClientInfo({
   const hasValidClient =
     clientInfo.name.trim().length >= 2 && clientInfo.email.includes('@');
   const hasEnoughAiContext = mode === 'manual' || prompt.trim().length >= 20;
+  const animatedPlaceholder = useAnimatedPlaceholder({ enabled: mode === 'ai' && prompt.trim() === '' });
   const canContinue = hasValidClient && hasEnoughAiContext;
 
   const handleSubmit = () => {
@@ -269,7 +271,7 @@ export function ScaffoldClientInfo({
           <textarea
             value={prompt}
             onChange={(e) => onPromptChange?.(e.target.value)}
-            placeholder="e.g. Boutique dental clinic for busy professionals. Needs a polished, trustworthy website focused on consultations, implants, and whitening, with online booking and strong lead capture."
+            placeholder={animatedPlaceholder || "Describe the business, audience, offer, tone, or goals…"}
             rows={5}
             className="w-full rounded-[20px] border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.05] px-4 py-3 text-sm text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-40 focus:outline-none focus:border-[var(--purple)] focus:ring-2 focus:ring-[var(--purple)]/20 resize-none transition-all"
           />

@@ -357,10 +357,11 @@ interface ScaffoldReviewProps {
   onUpdateBrief:   <K extends keyof ProjectBriefDraft>(key: K, value: ProjectBriefDraft[K]) => void;
   onToggleGoal:        (goal: ProjectGoal) => void;
   onToggleIntegration: (integration: Integration) => void;
-  onNext:          () => void;
-  onPrev:          () => void;
-  onRegenerate:    () => void;
-  onReset:         () => void;
+  onNext:           () => void;
+  onPrev:           () => void;
+  onBackToInput:    () => void;
+  onRegenerate:     () => void;
+  onReset:          () => void;
 }
 
 export function ScaffoldReview({
@@ -374,6 +375,7 @@ export function ScaffoldReview({
   onToggleIntegration,
   onNext,
   onPrev,
+  onBackToInput,
   onRegenerate,
   onReset,
 }: ScaffoldReviewProps) {
@@ -457,14 +459,10 @@ export function ScaffoldReview({
       {/* Navigation */}
       <div className="flex gap-2">
         <button
-          onClick={isFirstStep ? onReset : onPrev}
+          onClick={isFirstStep ? onBackToInput : onPrev}
           className="flex flex-1 items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-white dark:bg-white/[0.05] border border-gray-200 dark:border-white/[0.06] text-zinc-600 dark:text-zinc-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-white/[0.07] transition-all"
         >
-          {isFirstStep ? (
-            'Start over'
-          ) : (
-            <><ArrowLeft className="w-3.5 h-3.5" /> Back</>
-          )}
+          <ArrowLeft className="w-3.5 h-3.5" /> Back
         </button>
         <button
           onClick={onNext}

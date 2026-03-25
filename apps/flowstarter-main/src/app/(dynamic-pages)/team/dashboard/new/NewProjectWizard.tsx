@@ -325,6 +325,9 @@ export function NewProjectWizard() {
     onSuccess: (data) => {
       if (data?.id && !draftId) setDraftId(data.id);
     },
+    onError: (err) => {
+      console.warn('[draft save]', err);
+    },
   });
 
   // Sync draftId into URL so state survives page loads and redirects
@@ -523,6 +526,7 @@ export function NewProjectWizard() {
               onToggleIntegration={form.toggleIntegration}
               onNext={form.isLastStep ? form.proceedToTemplate : form.nextStep}
               onPrev={form.prevStep}
+              onBackToInput={form.backToInput}
               onRegenerate={form.regenerate}
               onReset={form.reset}
             />

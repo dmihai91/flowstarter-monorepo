@@ -206,7 +206,7 @@ const SidebarContent = ({ showLabel, showCollapseToggle = false }: { showLabel: 
 
       {/* Pinned profile footer — mobile only */}
       {showLabel && (
-        <div className="shrink-0 p-4 pt-0">
+        <div className="shrink-0 px-4 pt-0 pb-4" style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}>
           <SidebarProfile />
         </div>
       )}
@@ -226,7 +226,7 @@ const SidebarContent = ({ showLabel, showCollapseToggle = false }: { showLabel: 
       {/* Mobile sidebar */}
       <aside
         className={cn(
-          'md:hidden fixed inset-y-0 left-0 z-[160] w-72 rounded-r-2xl',
+          'md:hidden fixed inset-y-0 left-0 z-[160] w-72 rounded-r-2xl [padding-bottom:env(safe-area-inset-bottom)]',
           'bg-white/95 dark:bg-white/[0.05] backdrop-blur-2xl backdrop-saturate-150',
           'border border-white/80 dark:border-white/[0.06]',
           'shadow-[8px_0_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[8px_0_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]',

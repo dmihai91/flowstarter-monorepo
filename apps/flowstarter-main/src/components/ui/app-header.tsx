@@ -59,7 +59,7 @@ export function AppHeader() {
             <ThemeToggle />
           </div>
           <div className="w-px h-6 bg-gray-200 dark:bg-white/10 hidden sm:block" />
-          <div className="hidden md:block"><UserMenu /></div>
+          <UserMenu />
         </div>
       </div>
     </ScrollAwareHeader>

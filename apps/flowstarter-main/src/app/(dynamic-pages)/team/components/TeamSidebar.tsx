@@ -122,7 +122,9 @@ export function TeamSidebar() {
 }
 
 const SidebarContent = ({ showLabel, showCollapseToggle = false }: { showLabel: boolean; showCollapseToggle?: boolean }) => (
-    <div className={cn("p-4 space-y-6 h-full overflow-y-auto flex flex-col", !showLabel && "items-center")}>
+    <div className={cn("h-full flex flex-col", !showLabel && "items-center")}>
+      {/* Scrollable nav area */}
+      <div className={cn("flex-1 overflow-y-auto p-4 space-y-6 flex flex-col", !showLabel && "items-center")}>
       {/* Collapse Toggle - Desktop only */}
       {showCollapseToggle && (
         <div className={cn("w-full", !showLabel ? "flex justify-center" : "flex justify-end")}>
@@ -200,11 +202,14 @@ const SidebarContent = ({ showLabel, showCollapseToggle = false }: { showLabel: 
         </div>
       )}
 
-      {/* Spacer */}
-      <div className="flex-1" />
+      </div>{/* end scrollable nav */}
 
-      {/* Profile footer — mobile only (showLabel = true on mobile sidebar) */}
-      {showLabel && <SidebarProfile />}
+      {/* Pinned profile footer — mobile only */}
+      {showLabel && (
+        <div className="shrink-0 p-4 pt-0">
+          <SidebarProfile />
+        </div>
+      )}
     </div>
   );
 

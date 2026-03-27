@@ -87,9 +87,17 @@ function getConvexClient(): ConvexReactClient | null {
 // can initialize the project before the editor route hits the AuthGuard bypass.
 export const loader = (args: LoaderFunctionArgs) => {
   const url = new URL(args.request.url);
+  const cloudflareEnv =
+    ((args.context as unknown as { cloudflare?: { env?: Record<string, string | undefined> } }).cloudflare?.env) ||
+    {};
+  const clerkPublishableKey =
+    cloudflareEnv.VITE_CLERK_PUBLISHABLE_KEY ||
+    process.env.VITE_CLERK_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+    '';
 
   if (url.searchParams.has('handoff')) {
-    return json({ skipClerk: true });
+    return json({ skipClerk: true, clerkPublishableKey });
   }
 
   return rootAuthLoader(args, {
@@ -352,8 +360,10 @@ function AppInner() {
   const loaderData = useLoaderData<typeof loader>();
   const skipClerk = typeof loaderData === 'object' && loaderData !== null && 'skipClerk' in loaderData;
   const publishableKey =
-    (import.meta.env as Record<string, string | undefined>).VITE_CLERK_PUBLISHABLE_KEY ||
-    (import.meta.env as Record<string, string | undefined>).NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+    typeof loaderData === 'object' && loaderData !== null && 'clerkPublishableKey' in loaderData
+      ? loaderData.clerkPublishableKey
+      : (import.meta.env as Record<string, string | undefined>).VITE_CLERK_PUBLISHABLE_KEY ||
+        (import.meta.env as Record<string, string | undefined>).NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
   useEffect(() => {
     logStore.logSystem('Application initialized', {

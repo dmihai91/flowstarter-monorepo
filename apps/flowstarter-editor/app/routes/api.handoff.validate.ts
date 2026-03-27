@@ -86,6 +86,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     valid: true,
     projectId: payload.projectId,
     userId: payload.userId,
+    project: payload.project,
   });
 }
 

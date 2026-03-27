@@ -54,9 +54,14 @@ function normalizeGoals(value?: string | string[]): ProjectGoal[] {
 
 function normalizeBrandTone(value?: string): BrandTone {
   const tone = value?.toLowerCase() ?? '';
-  if (tone.includes('friendly') || tone.includes('warm')) return 'friendly';
-  if (tone.includes('calm') || tone.includes('gentle')) return 'calm';
+  if (tone.includes('warm') || tone.includes('friendly')) return 'warm';
+  if (tone.includes('premium') || tone.includes('luxury')) return 'premium';
+  if (tone.includes('playful') || tone.includes('fun')) return 'playful';
+  if (tone.includes('minimal') || tone.includes('clean')) return 'minimalist';
+  if (tone.includes('calm') || tone.includes('gentle')) return 'calming';
+  if (tone.includes('trust') || tone.includes('reliable')) return 'trustworthy';
   if (tone.includes('bold') || tone.includes('energetic')) return 'bold';
+  if (tone.includes('energy')) return 'energetic';
   if (tone.includes('modern')) return 'modern';
   return 'professional';
 }
@@ -130,6 +135,7 @@ export function normalizeProjectBrief(
       pagePreference: inferPagePreference(goals, offerings),
       requiredIntegrations: Array.from(new Set(requiredIntegrations)),
     },
+    brandProfile: input.brandProfile,
     sourceData: input.raw ?? {},
   };
 }

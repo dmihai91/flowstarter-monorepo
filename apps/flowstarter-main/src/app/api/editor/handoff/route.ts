@@ -13,6 +13,46 @@ import {
   validateFlowstarterArtifacts,
 } from '@flowstarter/editor-engine';
 
+const paletteSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  colors: z.object({
+    primary: z.string(),
+    secondary: z.string(),
+    accent: z.string(),
+    background: z.string(),
+    text: z.string(),
+  }),
+});
+
+const fontSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  heading: z.object({
+    family: z.string(),
+    weight: z.number().optional(),
+  }),
+  body: z.object({
+    family: z.string(),
+    weight: z.number().optional(),
+  }),
+});
+
+const brandProfileSchema = z.object({
+  brandTone: z.object({
+    primary: z.string(),
+    secondary: z.array(z.string()).optional(),
+    notes: z.string().optional(),
+  }),
+  valueProposition: z.string().optional(),
+  primaryGoal: z.string().optional(),
+  desiredCustomerAction: z.string().optional(),
+  differentiators: z.array(z.string()).optional(),
+  trustSignals: z.array(z.string()).optional(),
+  contentStylePreference: z.string().optional(),
+  operatorNotes: z.string().optional(),
+});
+
 const EDITOR_URL =
   process.env.NEXT_PUBLIC_EDITOR_URL ||
   (process.env.NODE_ENV === 'production'
@@ -43,6 +83,23 @@ export interface HandoffPayload {
     name: string;
     description: string;
     data: Record<string, unknown>;
+  };
+}
+
+function buildTokenProjectData(projectData: Record<string, unknown>): Record<string, unknown> {
+  return {
+    userDescription: projectData.userDescription,
+    industry: projectData.industry,
+    businessInfo: projectData.businessInfo,
+    brandProfile: projectData.brandProfile,
+    template: projectData.template,
+    palette: projectData.palette,
+    font: projectData.font,
+    siteInfo: projectData.siteInfo,
+    contactInfo: projectData.contactInfo,
+    client: projectData.client,
+    mode: projectData.mode,
+    syncVersion: projectData.syncVersion,
   };
 }
 
@@ -131,9 +188,20 @@ const handoffBodySchema = z
             offerType:        z.string().optional(),
             brandTone:        z.string().optional(),
             offerings:        z.union([z.string(), z.array(z.string())]).optional(),
+            desiredCustomerAction: z.string().optional(),
+            differentiators: z.array(z.string()).optional(),
+            trustSignals: z.array(z.string()).optional(),
+            contentStylePreference: z.string().optional(),
             contactEmail:     z.string().optional(),
             contactPhone:     z.string().optional(),
             contactAddress:   z.string().optional(),
+          })
+          .optional(),
+        brandProfile: brandProfileSchema.optional(),
+        siteInfo: z
+          .object({
+            pagePreference: z.enum(['single-page', 'multi-page']).optional(),
+            integrations: z.array(z.string()).optional(),
           })
           .optional(),
         flowstarterEngine: z
@@ -145,6 +213,8 @@ const handoffBodySchema = z
             validationReport: z.record(z.unknown()),
           })
           .optional(),
+        palette: paletteSchema.optional(),
+        font: fontSchema.optional(),
         contactInfo: z
           .object({
             email: z.string().optional(),
@@ -218,6 +288,8 @@ export async function POST(request: NextRequest) {
     let projectDescription: string;
     let projectData: Record<string, unknown>;
     let selectedTemplateSlug: string | null = null;
+    let selectedTemplateName: string | null = null;
+    let requiredIntegrations: string[] = [];
 
     if (projectId) {
       // ── Existing project handoff ──
@@ -258,7 +330,11 @@ export async function POST(request: NextRequest) {
         userDescription: projectConfig.userDescription,
         industry: projectConfig.industry || projectConfig.businessInfo?.industry,
         businessInfo: projectConfig.businessInfo,
+        brandProfile: projectConfig.brandProfile,
         template: projectConfig.template,
+        palette: projectConfig.palette,
+        font: projectConfig.font,
+        siteInfo: projectConfig.siteInfo,
         flowstarterEngine: projectConfig.flowstarterEngine,
         contactInfo: projectConfig.contactInfo,
         client: {
@@ -283,6 +359,7 @@ export async function POST(request: NextRequest) {
         goals: projectConfig.businessInfo?.goal,
         platformType: projectConfig.platformType,
         preferredTemplateSlug: projectConfig.template?.id,
+        brandProfile: projectConfig.brandProfile,
         contact: {
           email:
             projectConfig.contactInfo?.email ||
@@ -300,7 +377,7 @@ export async function POST(request: NextRequest) {
           phone: projectConfig.clientPhone,
         },
         raw: projectData,
-      });
+      } as Parameters<typeof normalizeProjectBrief>[0] & { brandProfile?: unknown });
       const templateRegistry = await loadLibraryTemplateRegistry();
       const templateSelection = selectTemplate(
         projectBrief,
@@ -322,6 +399,8 @@ export async function POST(request: NextRequest) {
       });
 
       selectedTemplateSlug = templateSelection.templateSlug;
+      selectedTemplateName = templateSelection.templateName;
+      requiredIntegrations = projectBrief.constraints.requiredIntegrations;
       projectData = {
         ...projectData,
         projectBrief,
@@ -375,6 +454,11 @@ export async function POST(request: NextRequest) {
     if (CONVEX_SITE_URL) {
       try {
         const bi = (projectData?.businessInfo ?? {}) as Record<string, unknown>;
+        const bp = (projectData?.brandProfile ?? {}) as Record<string, unknown>;
+        const siteInfo = (projectData?.siteInfo ?? {}) as Record<string, unknown>;
+        const palette = (projectData?.palette ?? null) as Record<string, unknown> | null;
+        const font = (projectData?.font ?? null) as Record<string, unknown> | null;
+        const template = (projectData?.template ?? null) as Record<string, unknown> | null;
         const client = (projectData?.client ?? {}) as Record<string, unknown>;
         const ci = (projectData?.contactInfo ?? {}) as Record<string, unknown>;
         const hasBusinessData = !!(bi?.uvp || bi?.industry || bi?.pricingOffers);
@@ -387,20 +471,39 @@ export async function POST(request: NextRequest) {
             projectDescription: projectDescription!,
             businessInfo: {
               description: bi.description,
+              summary: bi.summary,
               uvp: bi.uvp,
+              valueProposition: bi.valueProposition,
               targetAudience: bi.targetAudience,
               industry: bi.industry,
               brandTone: bi.brandTone,
               businessType: bi.offerType,
-              businessGoals: bi.goal ? [bi.goal] : undefined,
+              businessGoals: bi.goals || (bi.goal ? [bi.goal] : undefined),
               sellingMethod: bi.sellingMethod,
               pricingOffers: bi.offerings,
+              desiredCustomerAction: bi.desiredCustomerAction,
+              differentiators: bi.differentiators,
+              trustSignals: bi.trustSignals,
+              contentStylePreference: bi.contentStylePreference,
               contactEmail: (bi.contactEmail as string) || (client.email as string) || (ci.email as string),
               contactPhone: (bi.contactPhone as string) || (client.phone as string) || (ci.phone as string),
               contactAddress: (bi.contactAddress as string) || (ci.address as string),
               website: (bi.website as string) || (ci.website as string),
             },
-            step: hasBusinessData ? 'template' : (projectName && projectName !== 'Untitled Project' ? 'describe' : 'welcome'),
+            brandProfile: bp,
+            selectedTemplateId:
+              selectedTemplateSlug ||
+              (template?.id as string | undefined),
+            selectedTemplateName:
+              (template?.name as string | undefined) || selectedTemplateName || undefined,
+            selectedPalette: palette,
+            selectedFont: font,
+            selectedIntegrations: {
+              required: requiredIntegrations,
+              selected: (siteInfo.integrations as string[] | undefined) || [],
+            },
+            syncVersion: Date.now(),
+            step: hasBusinessData ? 'review' : (projectName && projectName !== 'Untitled Project' ? 'describe' : 'welcome'),
           }),
         });
         if (convexRes.ok) {
@@ -422,7 +525,7 @@ export async function POST(request: NextRequest) {
         id: resolvedProjectId,
         name: projectName!,
         description: projectDescription!,
-        data: projectData!,
+        data: buildTokenProjectData(projectData!),
       },
     });
 

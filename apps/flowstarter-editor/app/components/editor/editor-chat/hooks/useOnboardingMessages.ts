@@ -1,15 +1,53 @@
 /**
  * useOnboardingMessages Hook
  *
- * Manages chat message state and operations for the onboarding wizard.
- * Handles user messages, assistant messages, and LLM-powered message generation.
+ * Manages chat message state for the supported handoff-backed editor flow.
+ * Legacy onboarding LLM calls have been removed in favor of deterministic
+ * inline copy for review/customization/build transitions.
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { useOnboardingChat, type MessageType } from '~/lib/hooks/useOnboardingChat';
 import { generateMessageId } from '../utils';
 import type { ChatMessage, SuggestedReply } from '../types';
 import type { UseOnboardingMessagesOptions, UseOnboardingMessagesReturn } from '../types/sharedState';
+
+type MessageType = string;
+
+function buildTransitionMessage(fromStep: string, toStep: string, context?: Record<string, unknown> | null): string {
+  const templateName = typeof context?.templateName === 'string' ? context.templateName : null;
+  const fontName = typeof context?.fontName === 'string' ? context.fontName : null;
+
+  if (toStep === 'review') {
+    return '**Project setup received.** Review the selected template, brand direction, and integrations below, then confirm when you want me to build the first version.';
+  }
+
+  if (fromStep === 'personalization' && toStep === 'integrations') {
+    return fontName
+      ? `Looks good. I'll keep the ${fontName} typography and move on to the integration review before we build.`
+      : "Looks good. Let's review integrations before we build.";
+  }
+
+  if (fromStep === 'integrations' && toStep === 'creating') {
+    return 'Everything is locked in. Starting the first build now.';
+  }
+
+  if (toStep === 'personalization') {
+    return templateName
+      ? `We'll keep the **${templateName}** template and adjust the palette, typography, and branding before the first build.`
+      : "Let's adjust the palette, typography, and branding before the first build.";
+  }
+
+  return 'Updated. Continue with the next step when you are ready.';
+}
+
+function buildDeterministicMessage(messageType: MessageType, context?: Record<string, unknown> | null): string {
+  switch (messageType) {
+    case 'review-reminder':
+      return 'Review the selected template, palette, font, and integrations below. Build only when you are ready.';
+    default:
+      return buildTransitionMessage('current', 'next', context);
+  }
+}
 
 export function useOnboardingMessages(options: UseOnboardingMessagesOptions = {}): UseOnboardingMessagesReturn {
   const { onMessagesChange } = options;
@@ -23,9 +61,6 @@ export function useOnboardingMessages(options: UseOnboardingMessagesOptions = {}
 
   // Track messages synchronously in a ref for immediate access (avoids async state issues)
   const messagesRef = useRef<ChatMessage[]>([]);
-
-  // ─── LLM Message Generation ───────────────────────────────────────────────
-  const { generateMessage } = useOnboardingChat();
 
   // ─── Callbacks ────────────────────────────────────────────────────────────
 
@@ -119,7 +154,6 @@ export function useOnboardingMessages(options: UseOnboardingMessagesOptions = {}
       component?: React.ReactNode | null,
       options?: { skipTypingIndicator?: boolean } | null,
     ): Promise<ChatMessage | null> => {
-      // Show typing indicator immediately
       if (!options?.skipTypingIndicator) {
         setIsTyping(true);
       }
@@ -127,10 +161,7 @@ export function useOnboardingMessages(options: UseOnboardingMessagesOptions = {}
       setIsGeneratingMessage(true);
 
       try {
-        const content = await generateMessage(
-          messageType,
-          (context ?? undefined) as Parameters<typeof generateMessage>[1],
-        );
+        const content = buildDeterministicMessage(messageType, context);
 
         const message: ChatMessage = {
           id: generateMessageId('msg'),
@@ -158,14 +189,14 @@ export function useOnboardingMessages(options: UseOnboardingMessagesOptions = {}
           }, 100);
         });
       } catch (error) {
-        console.error('[useOnboardingMessages] LLM message failed:', error);
+        console.error('[useOnboardingMessages] Deterministic message failed:', error);
         setIsTyping(false);
         setIsGeneratingMessage(false);
 
         return null;
       }
     },
-    [generateMessage, onMessagesChange],
+    [onMessagesChange],
   );
 
   /**
@@ -185,14 +216,7 @@ export function useOnboardingMessages(options: UseOnboardingMessagesOptions = {}
       setIsGeneratingMessage(true);
 
       try {
-        const content = await generateMessage(
-          'step-transition' as MessageType,
-          {
-            fromStep,
-            toStep,
-            ...context,
-          } as Parameters<typeof generateMessage>[1],
-        );
+        const content = buildTransitionMessage(fromStep, toStep, context);
 
         const message: ChatMessage = {
           id: generateMessageId('msg'),
@@ -225,7 +249,7 @@ export function useOnboardingMessages(options: UseOnboardingMessagesOptions = {}
         return null;
       }
     },
-    [generateMessage, onMessagesChange],
+    [onMessagesChange],
   );
 
 
@@ -259,4 +283,3 @@ export function useOnboardingMessages(options: UseOnboardingMessagesOptions = {}
 }
 
 export type { UseOnboardingMessagesOptions, UseOnboardingMessagesReturn };
-

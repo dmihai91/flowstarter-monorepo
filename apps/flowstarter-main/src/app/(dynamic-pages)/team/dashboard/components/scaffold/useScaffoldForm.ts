@@ -23,9 +23,59 @@ export type ScaffoldPhase =
 
 export type ProjectGoal = 'leads' | 'bookings' | 'sales' | 'newsletter' | 'awareness';
 export type OfferType   = 'premium' | 'accessible' | 'free' | 'custom';
-export type BrandTone   = 'professional' | 'bold' | 'friendly' | 'calm' | 'modern';
+export type BrandTone =
+  | 'professional'
+  | 'warm'
+  | 'premium'
+  | 'playful'
+  | 'minimalist'
+  | 'bold'
+  | 'calming'
+  | 'trustworthy'
+  | 'energetic'
+  | 'modern';
 export type PagePref    = 'single-page' | 'multi-page';
 export type Integration = 'booking' | 'newsletter' | 'analytics' | 'leadCapture';
+
+export interface TemplatePalette {
+  id: string;
+  name: string;
+  colors: {
+    primary: string;
+    secondary: string;
+    accent: string;
+    background: string;
+    text: string;
+  };
+}
+
+export interface TemplateFont {
+  id: string;
+  name: string;
+  heading: {
+    family: string;
+    weight?: number;
+  };
+  body: {
+    family: string;
+    weight?: number;
+  };
+}
+
+export interface BrandProfile {
+  brandTone: {
+    primary: BrandTone;
+    secondary?: BrandTone[];
+    notes?: string;
+  };
+  valueProposition?: string;
+  primaryGoal?: string;
+  desiredCustomerAction?: string;
+  differentiators?: string[];
+  trustSignals?: string[];
+  contentStylePreference?: string;
+  operatorNotes?: string;
+}
 
 // ── Draft type — all fields editable, matches ProjectBrief structure ──────────
 
@@ -48,6 +98,14 @@ export interface ProjectBriefDraft {
   contactEmail:     string;
   contactPhone:     string;
   contactAddress:   string;
+  valuePropositionDetail: string;
+  primaryGoal: string;
+  desiredCustomerAction: string;
+  differentiators: string[];
+  trustSignals: string[];
+  contentStylePreference: string;
+  brandSecondaryTones: BrandTone[];
+  brandNotes: string;
 }
 
 export interface ClientInfo {
@@ -84,6 +142,14 @@ const EMPTY_BRIEF: ProjectBriefDraft = {
   contactEmail:     '',
   contactPhone:     '',
   contactAddress:   '',
+  valuePropositionDetail: '',
+  primaryGoal: '',
+  desiredCustomerAction: '',
+  differentiators: [],
+  trustSignals: [],
+  contentStylePreference: '',
+  brandSecondaryTones: [],
+  brandNotes: '',
 };
 
 const REVIEW_STEP_COUNT = 4;
@@ -107,6 +173,31 @@ function briefFromEngine(brief: EngineArtifacts['projectBrief']): ProjectBriefDr
     contactEmail:     brief.contact.email || '',
     contactPhone:     brief.contact.phone || '',
     contactAddress:   brief.contact.address || '',
+    valuePropositionDetail: '',
+    primaryGoal: '',
+    desiredCustomerAction: '',
+    differentiators: [],
+    trustSignals: [],
+    contentStylePreference: '',
+    brandSecondaryTones: [],
+    brandNotes: '',
+  };
+}
+
+function toBrandProfile(brief: ProjectBriefDraft): BrandProfile {
+  return {
+    brandTone: {
+      primary: brief.brandTone,
+      secondary: brief.brandSecondaryTones.length > 0 ? brief.brandSecondaryTones : undefined,
+      notes: brief.brandNotes || undefined,
+    },
+    valueProposition: brief.valuePropositionDetail || brief.valueProposition || undefined,
+    primaryGoal: brief.primaryGoal || brief.goals[0] || undefined,
+    desiredCustomerAction: brief.desiredCustomerAction || undefined,
+    differentiators: brief.differentiators.length > 0 ? brief.differentiators : undefined,
+    trustSignals: brief.trustSignals.length > 0 ? brief.trustSignals : undefined,
+    contentStylePreference: brief.contentStylePreference || undefined,
+    operatorNotes: brief.brandNotes || undefined,
   };
 }
 
@@ -127,6 +218,8 @@ export function useScaffoldForm() {
 
   // Template
   const [selectedTemplateId, setSelectedTemplateId]           = useState<string | null>(null);
+  const [selectedPalette, setSelectedPalette]                 = useState<TemplatePalette | null>(null);
+  const [selectedFont, setSelectedFont]                       = useState<TemplateFont | null>(null);
   const [templateRecommendations, setTemplateRecommendations] = useState<string[]>([]);
   const [templateReasons, setTemplateReasons]                 = useState<Record<string, string>>({});
 
@@ -403,7 +496,12 @@ export function useScaffoldForm() {
           goals:            brief.goals,
           offerType:        brief.offerType,
           brandTone:        brief.brandTone,
+          desiredCustomerAction: brief.desiredCustomerAction,
+          differentiators: brief.differentiators,
+          trustSignals: brief.trustSignals,
+          contentStylePreference: brief.contentStylePreference,
         },
+        brandProfile: toBrandProfile(brief),
         siteInfo: {
           pagePreference: brief.pagePreference,
           integrations:   brief.integrations,
@@ -419,6 +517,8 @@ export function useScaffoldForm() {
           : engineArtifacts
           ? { id: engineArtifacts.templateSelection.selectedTemplateId, name: engineArtifacts.templateSelection.selectedTemplateName }
           : undefined,
+        palette: selectedPalette ?? undefined,
+        font: selectedFont ?? undefined,
       };
 
       const res = await fetch('/api/editor/handoff', {
@@ -451,6 +551,111 @@ export function useScaffoldForm() {
   const submitClientInfo = useCallback(() => setPhase('input'), []);
   const backToInput = useCallback(() => setPhase('input'), []);
 
+  const hydrateDraft = useCallback((draft: {
+    clientInfo?: Partial<ClientInfo>;
+    userInput?: string;
+    currentStep?: string;
+    businessInfo?: Record<string, unknown>;
+    brandProfile?: BrandProfile;
+    contactInfo?: Record<string, unknown>;
+    template?: { id?: string };
+    palette?: TemplatePalette;
+    font?: TemplateFont;
+  }) => {
+    if (draft.clientInfo) {
+      setClientInfo((prev) => ({
+        ...prev,
+        name: draft.clientInfo?.name || prev.name,
+        email: draft.clientInfo?.email || prev.email,
+        phone: draft.clientInfo?.phone || prev.phone,
+      }));
+    }
+
+    if (typeof draft.userInput === 'string') {
+      setUserInput(draft.userInput);
+    }
+
+    const businessInfo = draft.businessInfo ?? {};
+    const brandProfile = draft.brandProfile;
+    const contactInfo = draft.contactInfo ?? {};
+
+    setBrief((prev) => ({
+      ...prev,
+      projectName: (businessInfo.projectName as string | undefined) || prev.projectName,
+      industry: (businessInfo.industry as string | undefined) || prev.industry,
+      summary:
+        (businessInfo.summary as string | undefined) ||
+        (businessInfo.description as string | undefined) ||
+        prev.summary,
+      targetAudience: (businessInfo.targetAudience as string | undefined) || prev.targetAudience,
+      valueProposition:
+        (businessInfo.valueProposition as string | undefined) || prev.valueProposition,
+      offerings: Array.isArray(businessInfo.offerings)
+        ? (businessInfo.offerings as string[])
+        : prev.offerings,
+      goals: Array.isArray(businessInfo.goals)
+        ? (businessInfo.goals as ProjectGoal[])
+        : prev.goals,
+      offerType: (businessInfo.offerType as OfferType | undefined) || prev.offerType,
+      brandTone:
+        brandProfile?.brandTone.primary ||
+        (businessInfo.brandTone as BrandTone | undefined) ||
+        prev.brandTone,
+      contactEmail: (contactInfo.email as string | undefined) || prev.contactEmail,
+      contactPhone: (contactInfo.phone as string | undefined) || prev.contactPhone,
+      contactAddress: (contactInfo.address as string | undefined) || prev.contactAddress,
+      valuePropositionDetail: brandProfile?.valueProposition || prev.valuePropositionDetail,
+      primaryGoal: brandProfile?.primaryGoal || prev.primaryGoal,
+      desiredCustomerAction:
+        brandProfile?.desiredCustomerAction ||
+        (businessInfo.desiredCustomerAction as string | undefined) ||
+        prev.desiredCustomerAction,
+      differentiators:
+        brandProfile?.differentiators ||
+        (Array.isArray(businessInfo.differentiators) ? (businessInfo.differentiators as string[]) : prev.differentiators),
+      trustSignals:
+        brandProfile?.trustSignals ||
+        (Array.isArray(businessInfo.trustSignals) ? (businessInfo.trustSignals as string[]) : prev.trustSignals),
+      contentStylePreference:
+        brandProfile?.contentStylePreference ||
+        (businessInfo.contentStylePreference as string | undefined) ||
+        prev.contentStylePreference,
+      brandSecondaryTones: brandProfile?.brandTone.secondary || prev.brandSecondaryTones,
+      brandNotes:
+        brandProfile?.operatorNotes ||
+        brandProfile?.brandTone.notes ||
+        prev.brandNotes,
+    }));
+
+    if (draft.template?.id) {
+      setSelectedTemplateId(draft.template.id);
+    }
+    if (draft.palette) {
+      setSelectedPalette(draft.palette);
+    }
+    if (draft.font) {
+      setSelectedFont(draft.font);
+    }
+
+    switch (draft.currentStep) {
+      case 'template':
+      case 'payment':
+      case 'review':
+      case 'input':
+      case 'client':
+        setPhase(draft.currentStep);
+        break;
+      default:
+        if (draft.template?.id) {
+          setPhase('template');
+        } else if (businessInfo.summary || businessInfo.description) {
+          setPhase('review');
+        } else if (draft.clientInfo?.name || draft.clientInfo?.email) {
+          setPhase('client');
+        }
+    }
+  }, []);
+
   // ── Reset ─────────────────────────────────────────────────────────────────
   const reset = useCallback(() => {
     setPhase('client');
@@ -463,6 +668,8 @@ export function useScaffoldForm() {
     setClarifyAnswers([]);
     setEngineArtifacts(null);
     setSelectedTemplateId(null);
+    setSelectedPalette(null);
+    setSelectedFont(null);
     setTemplateRecommendations([]);
     setTemplateReasons({});
     setPlanName('STARTER');
@@ -492,6 +699,7 @@ export function useScaffoldForm() {
     // Actions
     submitClientInfo,
     updateClientInfo,
+    hydrateDraft,
     submitDescription,
     submitClarification,
     updateClarifyAnswer,
@@ -505,6 +713,10 @@ export function useScaffoldForm() {
     // Template
     selectedTemplateId,
     setSelectedTemplateId,
+    selectedPalette,
+    setSelectedPalette,
+    selectedFont,
+    setSelectedFont,
     templateRecommendations,
     templateReasons,
     proceedToTemplate,

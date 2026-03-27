@@ -186,26 +186,9 @@ export function useChatEffects({
    * Note: Uses refs to avoid infinite loops from unstable object references
    */
   useEffect(() => {
-    paletteHookRef.current.updateFromTemplate(
-      templateHookRef.current.selectedTemplate,
-      templateHookRef.current.selectedRecommendation,
-    );
+    paletteHookRef.current.updateFromTemplate(templateHookRef.current.selectedTemplate, null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [templateHook.selectedTemplate, templateHook.selectedRecommendation]);
-
-  /*
-   * Lazy load templates when entering template step
-   * This defers the API call until templates are actually needed
-   */
-  useEffect(() => {
-    const template = templateHookRef.current;
-    const flow = flowHookRef.current;
-
-    if (flow.step === 'template' && !template.templatesLoading && template.templates.length === 0) {
-      template.refetchTemplates();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flowHook.step, templateHook.templatesLoading, templateHook.templates.length]);
+  }, [templateHook.selectedTemplate]);
 
   // Handle agent/orchestrator completion
   useEffect(() => {
@@ -241,4 +224,3 @@ export function useChatEffects({
 }
 
 export type { UseChatEffectsProps };
-

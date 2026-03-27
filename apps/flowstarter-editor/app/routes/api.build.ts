@@ -36,7 +36,7 @@ import { tryDeterministicFix } from '~/lib/services/claude-agent/errorFixMap';
 import { healBuildErrors } from '~/lib/services/claude-agent/errorHealing';
 import { validateAndFixFiles } from '~/lib/services/claude-agent/astValidation';
 import type { BuildError } from '~/lib/services/claude-agent/types';
-import { getConvexClient } from './onboarding-chat/cost-logging';
+import { getConvexClient } from '~/lib/services/daytona/convexClient';
 import { api } from '../../convex/_generated/api';
 import { createClient } from '@supabase/supabase-js';
 import { injectIntegrations } from '~/lib/services/integrations/index';
@@ -719,7 +719,7 @@ export async function action({ request }: ActionFunctionArgs) {
                 costUSD: e.cost_usd,
                 durationMs: e.duration_ms,
                 metadata: { step: 'agent-pipeline' },
-              }).catch(err => console.error('[Build] Failed to log agent cost:', err));
+              }).catch((err: unknown) => console.error('[Build] Failed to log agent cost:', err));
             }
             // Also update Supabase project record
             const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;

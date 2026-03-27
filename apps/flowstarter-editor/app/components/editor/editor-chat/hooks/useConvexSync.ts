@@ -27,6 +27,8 @@ interface ConversationState {
   selectedFont?: SystemFont | null;
   selectedLogo?: LogoInfo | null;
   businessInfo?: any;
+  brandProfile?: any;
+  integrations?: any;
   projectUrlId?: string;
   buildPhase?: BuildPhase | string;
   orchestrationState?: 'idle' | 'running' | 'completed' | 'failed';
@@ -220,6 +222,14 @@ export function useConvexSync({
         });
       }
 
+      if (conversationState.brandProfile) {
+        stateUpdate.brandProfile = conversationState.brandProfile;
+      }
+
+      if (conversationState.integrations) {
+        stateUpdate.selectedIntegrations = conversationState.integrations;
+      }
+
       await updateState(stateUpdate);
 
       lastSyncedStateRef.current = stateHash;
@@ -395,4 +405,3 @@ export function useConvexSync({
 }
 
 export type { UseConvexSyncProps, ConversationState };
-

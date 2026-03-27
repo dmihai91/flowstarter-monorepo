@@ -37,6 +37,8 @@ export interface UseSimpleBuildHandlersProps {
   existingProjectId?: string | null;
   /** Convex conversation _id from the URL param — used for Convex mutations */
   convexConversationId?: string | null;
+  /** Integrations already selected upstream in the main-platform handoff */
+  seededIntegrations?: IntegrationConfig[];
 }
 
 export interface UseSimpleBuildHandlersReturn {

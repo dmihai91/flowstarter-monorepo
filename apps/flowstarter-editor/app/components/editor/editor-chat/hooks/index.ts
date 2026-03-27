@@ -31,15 +31,12 @@ export {
   type UseStatePersistenceReturn,
 } from './useStatePersistence';
 
-// NEW: Focused flow hooks (extracted from useEditorChatState v4)
+// Focused flow hooks
 export { useSyncCallbacks } from './useSyncCallbacks';
 export { useAdditionalState, type PreviewSource as AdditionalPreviewSource } from './useAdditionalState';
-export { useDescriptionFlow } from './useDescriptionFlow';
-export { useTemplateFlow } from './useTemplateFlow';
 export { usePersonalizationFlow } from './usePersonalizationFlow';
-export { useBusinessFlow } from './useBusinessFlow';
 
-// Handler hooks (extracted from useEditorChatState for better organization)
+// Handler hooks
 export { useBuildHandlers, type UseBuildHandlersProps, type UseBuildHandlersReturn } from './useBuildHandlers';
 export { useSimpleBuildHandlers } from './useSimpleBuildHandlers';
 export {
@@ -49,16 +46,10 @@ export {
 } from './useStateRestoration';
 export { useWelcomeInit, type UseWelcomeInitProps } from './useWelcomeInit';
 export {
-  useProjectNameHandlers,
-  type UseProjectNameHandlersProps,
-  type UseProjectNameHandlersReturn,
-} from './useProjectNameHandlers';
-export {
-  useSuggestionHandlers,
-  type UseSuggestionHandlersProps,
-  type UseSuggestionHandlersReturn,
-} from './useSuggestionHandlers';
-export { useSendHandler, type UseSendHandlerProps, type UseSendHandlerReturn } from './useSendHandler';
+  useSendHandler,
+  type UseSendHandlerProps,
+  type UseSendHandlerReturn,
+} from './useSendHandler';
 
 // Setup hooks (agent, effects)
 export { useAgentSetup, type UseAgentSetupProps, type UseAgentSetupReturn } from './useAgentSetup';
@@ -67,21 +58,8 @@ export { useChatEffects, type UseChatEffectsProps } from './useChatEffects';
 // Pagination
 export { useMessagePagination, type PaginatedMessage } from './useMessagePagination';
 
-// NEW: Streamlined onboarding utilities
-export {
-  generateOnboardingResponse,
-  getNextStepFromCurrent,
-  getSuggestedQuickProfile,
-  type OnboardingMessage,
-  type OnboardingContext,
-} from './streamlined-onboarding';
+// Streamlined onboarding utilities
+export { getSuggestedQuickProfile } from './streamlined-onboarding';
 
-// NEW: Quick Profile handlers for streamlined flow
-export {
-  useQuickProfileHandlers,
-  type UseQuickProfileHandlersOptions,
-  type UseQuickProfileHandlersReturn,
-} from './useQuickProfileHandlers';
-
-// NEW: Agent activity event adapter (AgentActivityEvent → ActivityEvent)
+// Agent activity event adapter (AgentActivityEvent → ActivityEvent)
 export { useActivityEvents } from './useActivityEvents';

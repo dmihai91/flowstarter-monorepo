@@ -38,6 +38,8 @@ vi.mock('lucide-react', () => ({
   Upload: () => <span data-testid="icon-upload">Upload</span>,
   Sparkles: () => <span data-testid="icon-sparkles">Sparkles</span>,
   ArrowRight: () => <span data-testid="icon-arrow">→</span>,
+  ChevronRight: () => <span data-testid="icon-chevron">›</span>,
+  SkipForward: () => <span data-testid="icon-skip">Skip</span>,
   ImageIcon: () => <span data-testid="icon-image">Image</span>,
   Wand2: () => <span data-testid="icon-wand">Wand</span>,
 }));
@@ -372,9 +374,8 @@ describe('PersonalizationPanel', () => {
         />,
       );
 
-      // The progress bars are the first div children of the panel
       const panel = container.querySelector('[data-testid="personalization-panel"]');
-      const progressContainer = panel?.firstChild as HTMLElement;
+      const progressContainer = panel?.firstElementChild?.firstElementChild as HTMLElement;
       const bars = progressContainer?.children;
       expect(bars).toHaveLength(3);
     });

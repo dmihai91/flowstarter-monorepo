@@ -59,6 +59,7 @@ export type OnboardingStep =
   | 'name'             // Project/business name
   | 'quick-profile'    // Goal + Offer + Tone - 3 multiple choice
   | 'business-details' // Consolidated: UVP + offerings + contact info
+  | 'review'           // Handoff-backed review before first build
   | 'template'         // Pick from recommended templates
   | 'personalization'  // Logo + Colors + Font
   | 'integrations'     // Calendly + GA integration cards
@@ -180,6 +181,21 @@ export interface LogoInfo {
   prompt?: string; // For AI-generated logos
 }
 
+export interface BrandProfileSummary {
+  brandTone?: {
+    primary?: string;
+    secondary?: string[];
+    notes?: string;
+  };
+  valueProposition?: string;
+  primaryGoal?: string;
+  desiredCustomerAction?: string;
+  differentiators?: string[];
+  trustSignals?: string[];
+  contentStylePreference?: string;
+  operatorNotes?: string;
+}
+
 export interface ContactDetails {
   email: string;
   phone?: string;
@@ -225,6 +241,7 @@ export interface InitialChatState {
 
   // Business info fields (now simplified)
   businessInfo?: BusinessInfo | null;
+  brandProfile?: BrandProfileSummary | null;
   messages: Array<{ id: string; role: string; content: string; createdAt: number }>;
 
   // Orchestration state (for resuming interrupted builds)

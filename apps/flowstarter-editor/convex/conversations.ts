@@ -42,6 +42,34 @@ const integrationsSchema = v.object({
   newsletter: v.optional(newsletterIntegrationSchema),
 });
 
+const brandProfileSchema = v.object({
+  brandTone: v.object({
+    primary: v.string(),
+    secondary: v.optional(v.array(v.string())),
+    notes: v.optional(v.string()),
+  }),
+  valueProposition: v.optional(v.string()),
+  primaryGoal: v.optional(v.string()),
+  desiredCustomerAction: v.optional(v.string()),
+  differentiators: v.optional(v.array(v.string())),
+  trustSignals: v.optional(v.array(v.string())),
+  contentStylePreference: v.optional(v.string()),
+  operatorNotes: v.optional(v.string()),
+});
+
+const selectedPaletteSchema = v.object({
+  id: v.string(),
+  name: v.string(),
+  colors: v.array(v.string()),
+});
+
+const selectedFontSchema = v.object({
+  id: v.string(),
+  name: v.string(),
+  heading: v.string(),
+  body: v.string(),
+});
+
 // Local runtime type to keep TS happy when schema allows legacy strings
 type ChatMessage = {
   id: string;
@@ -190,22 +218,12 @@ export const createWithProject = mutation({
     step: v.optional(v.string()),
     selectedTemplateId: v.optional(v.string()),
     selectedTemplateName: v.optional(v.string()),
-    selectedPalette: v.optional(
-      v.object({
-        id: v.string(),
-        name: v.string(),
-        colors: v.array(v.string()),
-      }),
-    ),
-    selectedFont: v.optional(
-      v.object({
-        id: v.string(),
-        name: v.string(),
-        heading: v.string(),
-        body: v.string(),
-      }),
-    ),
+    selectedPalette: v.optional(selectedPaletteSchema),
+    selectedFont: v.optional(selectedFontSchema),
     messages: v.optional(v.array(messageSchema)),
+    brandProfile: v.optional(brandProfileSchema),
+    selectedIntegrations: v.optional(v.any()),
+    syncVersion: v.optional(v.number()),
     businessInfo: v.optional(
       v.object({
         description: v.optional(v.string()),
@@ -246,6 +264,9 @@ export const createWithProject = mutation({
       selectedTemplateName: args.selectedTemplateName,
       selectedPalette: args.selectedPalette,
       selectedFont: args.selectedFont,
+      brandProfile: args.brandProfile,
+      selectedIntegrations: args.selectedIntegrations,
+      syncVersion: args.syncVersion,
       businessInfo: args.businessInfo,
       step: args.step || 'describe',
       messages: args.messages || [],
@@ -485,22 +506,8 @@ export const updateState = mutation({
         website: v.optional(v.string()),
       }),
     ),
-    pipelineState: v.optional(
-      v.object({
-        currentStep: v.string(),
-        previousStep: v.optional(v.string()),
-        nextStep: v.optional(v.string()),
-        completedSteps: v.array(v.string()),
-        pendingTransition: v.optional(
-          v.object({
-            fromStep: v.string(),
-            toStep: v.string(),
-            messageGenerated: v.boolean(),
-            timestamp: v.number(),
-          }),
-        ),
-      }),
-    ),
+    brandProfile: v.optional(brandProfileSchema),
+    selectedIntegrations: v.optional(v.any()),
     // Integrations can be updated via updateState too
     integrations: v.optional(integrationsSchema),
   },

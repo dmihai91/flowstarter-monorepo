@@ -31,20 +31,36 @@ const handoffInitialize = httpAction(async (ctx, request) => {
     projectName: string;
     projectDescription?: string;
     businessInfo?: Record<string, unknown>;
+    brandProfile?: Record<string, unknown>;
+    contactInfo?: Record<string, unknown>;
     step?: string;
     selectedTemplateId?: string;
     selectedTemplateName?: string;
     selectedPalette?: {
       id: string;
       name: string;
-      colors: string[];
+      colors: {
+        primary: string;
+        secondary: string;
+        accent: string;
+        background: string;
+        text: string;
+      };
     };
     selectedFont?: {
       id: string;
       name: string;
-      heading: string;
-      body: string;
+      heading: {
+        family: string;
+        weight?: number;
+      };
+      body: {
+        family: string;
+        weight?: number;
+      };
     };
+    selectedIntegrations?: Record<string, unknown>;
+    syncVersion?: number;
   };
   try {
     body = await request.json();
@@ -60,11 +76,15 @@ const handoffInitialize = httpAction(async (ctx, request) => {
     projectName,
     projectDescription = '',
     businessInfo,
+    brandProfile,
+    contactInfo,
     step = 'welcome',
     selectedTemplateId,
     selectedTemplateName,
     selectedPalette,
     selectedFont,
+    selectedIntegrations,
+    syncVersion,
   } = body;
   if (!supabaseProjectId)
     return new Response(JSON.stringify({ error: 'Missing supabaseProjectId' }), {
@@ -73,39 +93,34 @@ const handoffInitialize = httpAction(async (ctx, request) => {
     });
 
   try {
-    const existing = (await ctx.runQuery(api.projects.getBySupabaseId, { supabaseProjectId })) as {
-      _id: string;
-      urlId?: string;
-    } | null;
-    let convexProjectId: string;
-    let urlId: string;
+    const upserted = (await ctx.runMutation(api.projects.upsertFromMain, {
+      supabaseProjectId,
+      projectName,
+      projectDescription,
+      businessInfo,
+      brandProfile: brandProfile as never,
+      contactInfo,
+      selectedTemplate: selectedTemplateId
+        ? { id: selectedTemplateId, name: selectedTemplateName }
+        : undefined,
+      selectedPalette: selectedPalette as never,
+      selectedFont: selectedFont as never,
+      selectedIntegrations,
+      editorState: 'review',
+      buildState: 'idle',
+      previewState: 'unavailable',
+      syncVersion,
+    })) as { projectId: string; urlId: string; skipped?: boolean };
+    const convexProjectId = upserted.projectId;
+    const urlId = upserted.urlId;
 
-    if (existing) {
-      convexProjectId = existing._id;
-      urlId = existing.urlId || convexProjectId;
-      const convos = (await ctx.runQuery(api.conversations.getByProject, {
-        projectId: existing._id as never,
-      })) as Array<{ _id: string }> | null;
-      if (convos && convos.length > 0) {
-        return new Response(JSON.stringify({ conversationId: convos[0]._id }), {
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
-    } else {
-      const created = (await ctx.runMutation(api.projects.createEmpty, {
-        name: projectName,
-        description: projectDescription,
-        supabaseProjectId,
-        // createEmpty has strict businessDetails schema — only pass allowed fields
-        businessDetails: {
-          businessName: projectName,
-          description: (businessInfo as { description?: string })?.description || projectDescription,
-          targetAudience: (businessInfo as { targetAudience?: string })?.targetAudience,
-          goals: (businessInfo as { goal?: string })?.goal ? [(businessInfo as { goal: string }).goal] : undefined,
-        },
-      })) as { projectId: string; urlId: string };
-      convexProjectId = created.projectId;
-      urlId = created.urlId;
+    const existingConvos = (await ctx.runQuery(api.conversations.getByProject, {
+      projectId: convexProjectId as never,
+    })) as Array<{ _id: string }> | null;
+    if (existingConvos && existingConvos.length > 0) {
+      return new Response(JSON.stringify({ conversationId: existingConvos[0]._id }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     const bi = businessInfo as
@@ -132,8 +147,30 @@ const handoffInitialize = httpAction(async (ctx, request) => {
       step,
       selectedTemplateId,
       selectedTemplateName,
-      selectedPalette,
-      selectedFont,
+      selectedPalette: selectedPalette
+        ? {
+            id: selectedPalette.id,
+            name: selectedPalette.name,
+            colors: [
+              selectedPalette.colors.primary,
+              selectedPalette.colors.secondary,
+              selectedPalette.colors.accent,
+              selectedPalette.colors.background,
+              selectedPalette.colors.text,
+            ],
+          }
+        : undefined,
+      selectedFont: selectedFont
+        ? {
+            id: selectedFont.id,
+            name: selectedFont.name,
+            heading: selectedFont.heading.family,
+            body: selectedFont.body.family,
+          }
+        : undefined,
+      brandProfile: brandProfile as never,
+      selectedIntegrations,
+      syncVersion,
       businessInfo: bi
         ? {
             description: bi.description || projectDescription,

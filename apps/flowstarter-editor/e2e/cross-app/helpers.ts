@@ -22,8 +22,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 config({ path: path.resolve(__dirname, '../../.env') });
 config({ path: path.resolve(__dirname, '../../.env.local'), override: true });
 
-export const BASE   = process.env.E2E_BASE_URL   || 'https://flowstarter.dev';
-export const EDITOR = process.env.E2E_EDITOR_URL  || 'https://editor.flowstarter.dev';
+export const BASE = process.env.E2E_BASE_URL || 'https://flowstarter.dev';
+export const EDITOR =
+  process.env.PLAYWRIGHT_E2E_EDITOR_URL ||
+  'http://localhost:5173';
 
 export const HANDOFF_SECRET = process.env.HANDOFF_SECRET ||
   '9c5ff35ecdf4c9699e4749c408c1ee6bbad51552c8e66cb8e008f5c13ae48e9c';

@@ -1,5 +1,11 @@
 import { PlaywrightTestConfig, devices } from '@playwright/test'
 import path from 'path'
+import { config as loadEnv } from 'dotenv'
+
+loadEnv({ path: path.join(__dirname, '.env') })
+loadEnv({ path: path.join(__dirname, '.env.local'), override: true })
+loadEnv({ path: path.join(__dirname, '../flowstarter-editor/.env'), override: true })
+loadEnv({ path: path.join(__dirname, '../flowstarter-editor/.env.local'), override: true })
 
 // Use process.env.PORT by default and fallback to port 3000
 const PORT = process.env.PORT || 3000

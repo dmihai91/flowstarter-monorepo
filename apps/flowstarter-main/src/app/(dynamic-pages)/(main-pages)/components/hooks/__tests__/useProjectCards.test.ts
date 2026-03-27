@@ -46,7 +46,7 @@ describe('useProjectCards', () => {
     const { result } = renderHook(() => useProjectCards(projects));
 
     expect(result.current[0].isDraft).toBe(true);
-    expect(result.current[0].link).toBe('/wizard/project/proj-1');
+    expect(result.current[0].link).toBe('/team/dashboard/new?draft=proj-1');
   });
 
   it('uses placeholder name for non-string names', () => {

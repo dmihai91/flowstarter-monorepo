@@ -11,7 +11,13 @@ import { useQuery, useMutation } from 'convex/react';
 // eslint-disable-next-line no-restricted-imports
 import { api } from '../../../../convex/_generated/api';
 import type { Id } from '../../../../convex/_generated/dataModel';
-import type { OnboardingStep, InitialChatState, BusinessInfo, BuildPhase } from '~/components/editor/editor-chat/types';
+import type {
+  OnboardingStep,
+  InitialChatState,
+  BusinessInfo,
+  BuildPhase,
+  IntegrationConfig,
+} from '~/components/editor/editor-chat/types';
 import type { OrchestratorStatusDTO } from '~/lib/hooks/types/orchestrator.dto';
 import { useSupabaseSync } from './useSupabaseSync';
 
@@ -83,7 +89,9 @@ export function useProjectEditorState(projectId: Id<'conversations'>) {
   const initialState = useInitialState(projectId, conversation, messages, initialConversationFromState);
 
   // Loading / not-found flags
-  const isLoading = (conversation === undefined || messages === undefined) && !initialConversationFromState;
+  const isConversationLoading = conversation === undefined;
+  const isMessagesLoading = conversation !== null && conversation !== undefined && messages === undefined;
+  const isLoading = (isConversationLoading || isMessagesLoading) && !initialConversationFromState;
   const isNotFound = conversation === null && !initialConversationFromState;
   const activeConversation = conversation || initialConversationFromState;
 
@@ -119,6 +127,30 @@ function buildConvexUpdate(state: Partial<InitialChatState>): Record<string, unk
   return update;
 }
 
+function normalizeIntegrations(value: unknown): IntegrationConfig[] | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  if (Array.isArray(value)) {
+    return value
+      .filter((entry): entry is string => typeof entry === 'string')
+      .map((id) => ({ id, name: id, enabled: true }));
+  }
+
+  if (typeof value === 'object') {
+    const record = value as Record<string, unknown>;
+    const selected = record.selected;
+    if (Array.isArray(selected)) {
+      return selected
+        .filter((entry): entry is string => typeof entry === 'string')
+        .map((id) => ({ id, name: id, enabled: true }));
+    }
+  }
+
+  return undefined;
+}
+
 /** Capture initial state exactly once when conversation data first loads. */
 function useInitialState(
   projectId: Id<'conversations'>,
@@ -152,6 +184,8 @@ function useInitialState(
         buildPhase: (src.buildPhase as BuildPhase) || 'idle',
         projectName: src.projectName || null,
         businessInfo: (src.businessInfo as BusinessInfo | null) || null,
+        brandProfile: (src.brandProfile as InitialChatState['brandProfile']) || null,
+        integrations: normalizeIntegrations((src as Record<string, unknown>).selectedIntegrations) || undefined,
         messages: messages || initialFromNav?.messages || [],
         conversationId: projectId,
       };

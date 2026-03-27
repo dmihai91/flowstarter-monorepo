@@ -9,7 +9,17 @@ export type ProjectGoal =
 
 export type OfferType = 'premium' | 'accessible' | 'free' | 'custom';
 
-export type BrandTone = 'professional' | 'bold' | 'friendly' | 'calm' | 'modern';
+export type BrandTone =
+  | 'professional'
+  | 'warm'
+  | 'premium'
+  | 'playful'
+  | 'minimalist'
+  | 'bold'
+  | 'calming'
+  | 'trustworthy'
+  | 'energetic'
+  | 'modern';
 
 export type PageIntent =
   | 'landing'
@@ -23,6 +33,46 @@ export type IntegrationKind =
   | 'newsletter'
   | 'analytics'
   | 'leadCapture';
+
+export interface BrandProfile {
+  brandTone: {
+    primary: BrandTone;
+    secondary?: BrandTone[];
+    notes?: string;
+  };
+  valueProposition?: string;
+  primaryGoal?: string;
+  desiredCustomerAction?: string;
+  differentiators?: string[];
+  trustSignals?: string[];
+  contentStylePreference?: string;
+  operatorNotes?: string;
+}
+
+export interface TemplatePalette {
+  id: string;
+  name: string;
+  colors: {
+    primary: string;
+    secondary: string;
+    accent: string;
+    background: string;
+    text: string;
+  };
+}
+
+export interface TemplateFont {
+  id: string;
+  name: string;
+  heading: {
+    family: string;
+    weight?: number;
+  };
+  body: {
+    family: string;
+    weight?: number;
+  };
+}
 
 export interface ProjectBrief {
   version: FlowstarterEngineVersion;
@@ -55,6 +105,7 @@ export interface ProjectBrief {
     pagePreference: 'single-page' | 'multi-page';
     requiredIntegrations: IntegrationKind[];
   };
+  brandProfile?: BrandProfile;
   sourceData: Record<string, unknown>;
 }
 
@@ -66,6 +117,11 @@ export interface TemplateRegistryEntry {
   framework: string;
   features: string[];
   tags: string[];
+  previewImage?: string;
+  defaultPaletteId?: string;
+  defaultFontId?: string;
+  palettes: TemplatePalette[];
+  fonts: TemplateFont[];
   integrations: Partial<Record<IntegrationKind, { optional: boolean; providers: string[] }>>;
 }
 
@@ -160,6 +216,7 @@ export interface NormalizeProjectBriefInput {
   goals?: string | string[];
   platformType?: string;
   preferredTemplateSlug?: string;
+  brandProfile?: BrandProfile;
   contact?: ProjectBrief['contact'];
   client?: ProjectBrief['client'];
   raw?: Record<string, unknown>;

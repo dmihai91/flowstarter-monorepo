@@ -33,6 +33,12 @@ interface CloudflareEnv {
   CONVEX_ADMIN_KEY?: string;
 }
 
+type HandoffProjectData = {
+  name?: string;
+  description?: string;
+  data?: Record<string, unknown>;
+};
+
 async function convexMutation(convexUrl: string, adminKey: string, path: string, args: Record<string, unknown>) {
   const res = await fetch(`${convexUrl}/api/mutation`, {
     method: 'POST',
@@ -88,11 +94,15 @@ export async function action({ request, context }: ActionFunctionArgs) {
   if (!payload) return json({ error: 'Invalid or expired token' }, { status: 401 });
 
   const supabaseProjectId = payload.projectId as string;
-  const projectData = payload.project as { name?: string; description?: string; data?: Record<string, unknown> } | undefined;
+  const projectData = payload.project as HandoffProjectData | undefined;
   const projectName = projectData?.name || 'Untitled Project';
   const projectDescription = projectData?.description || '';
   const data = projectData?.data as Record<string, unknown> | undefined;
   const rawBusinessInfo = data?.businessInfo as Record<string, unknown> | undefined;
+  const rawBrandProfile = data?.brandProfile as Record<string, unknown> | undefined;
+  const template = data?.template as Record<string, unknown> | undefined;
+  const palette = data?.palette as Record<string, unknown> | undefined;
+  const font = data?.font as Record<string, unknown> | undefined;
   const client = data?.client as Record<string, unknown> | undefined;
   const contactInfo = data?.contactInfo as Record<string, unknown> | undefined;
   // Strip to known fields only — Convex schema rejects unknown fields
@@ -139,7 +149,35 @@ export async function action({ request, context }: ActionFunctionArgs) {
         projectName,
         projectDescription,
         businessInfo,
-        step: hasBusinessData ? 'template' : (projectName && projectName !== 'Untitled Project' ? 'describe' : 'welcome'),
+        brandProfile: rawBrandProfile,
+        selectedTemplateId: template?.id as string | undefined,
+        selectedTemplateName: template?.name as string | undefined,
+        selectedPalette: palette
+          ? {
+              id: palette.id as string,
+              name: palette.name as string,
+              colors: [
+                (palette.colors as Record<string, string> | undefined)?.primary || '',
+                (palette.colors as Record<string, string> | undefined)?.secondary || '',
+                (palette.colors as Record<string, string> | undefined)?.accent || '',
+                (palette.colors as Record<string, string> | undefined)?.background || '',
+                (palette.colors as Record<string, string> | undefined)?.text || '',
+              ],
+            }
+          : undefined,
+        selectedFont: font
+          ? {
+              id: font.id as string,
+              name: font.name as string,
+              heading: (font.heading as { family?: string } | undefined)?.family || '',
+              body: (font.body as { family?: string } | undefined)?.family || '',
+            }
+          : undefined,
+        selectedIntegrations: {
+          selected: ((data?.siteInfo as Record<string, unknown> | undefined)?.integrations as string[] | undefined) || [],
+        },
+        syncVersion: (data?.syncVersion as number | undefined) || Date.now(),
+        step: hasBusinessData ? 'review' : (projectName && projectName !== 'Untitled Project' ? 'describe' : 'welcome'),
       }),
     });
 

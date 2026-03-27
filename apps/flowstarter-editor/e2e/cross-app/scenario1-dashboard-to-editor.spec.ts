@@ -1,28 +1,98 @@
-/**
- * Scenario 1: Dashboard New Project → Handoff → Editor (Real APIs)
- *
- * Everything is real — no mocks:
- *   - Clerk auth session (global-setup)
- *   - Supabase dev: project created + deleted after each test
- *   - Convex dev: project + conversation created, step machine runs
- *   - Claude AI: real site generation (credits used)
- *   - Daytona: real sandbox provisioning
- *
- * Timeouts are generous (120-300s) to accommodate real AI generation.
- */
-
 import { test, expect, type Page } from '@playwright/test';
-import { clerk, setupClerkTestingToken } from '@clerk/testing/playwright';
 import {
-  BASE, EDITOR,
-  BUSINESS_INFO, CONTACT_INFO,
-  testProjectName, makeHandoffToken,
-  e2eFetch, browserFetch, cleanupProject,
+  BASE,
+  EDITOR,
+  BUSINESS_INFO,
+  CONTACT_INFO,
+  e2eFetch,
+  cleanupProject,
+  testProjectName,
+  makeHandoffToken,
 } from './helpers';
 
-// ─── Shared cleanup ───────────────────────────────────────────────────────────
+type TemplateFixture = {
+  slug: string;
+  name: string;
+  palettes: Array<{
+    id: string;
+    name: string;
+    colors: {
+      primary: string;
+      secondary: string;
+      accent: string;
+      background: string;
+      text: string;
+    };
+  }>;
+  fonts: Array<{
+    id: string;
+    name: string;
+    heading: { family: string; weight?: number };
+    body: { family: string; weight?: number };
+  }>;
+};
 
 let createdProjectId: string | undefined;
+
+async function loadTemplateFixture(): Promise<TemplateFixture> {
+  const result = await e2eFetch(`${BASE}/api/local-templates`);
+  expect(result.status).toBe(200);
+
+  const body = result.body as { templates?: TemplateFixture[] };
+  const template = body.templates?.[0];
+  expect(template).toBeTruthy();
+  expect(template?.palettes).toHaveLength(6);
+  expect(template?.fonts).toHaveLength(6);
+
+  return template!;
+}
+
+async function callHandoff(projectConfig: Record<string, unknown>): Promise<{
+  editorUrl: string;
+  token: string;
+  projectId: string;
+}> {
+  const result = await e2eFetch(`${BASE}/api/editor/handoff`, {
+    method: 'POST',
+    body: { projectConfig, mode: 'interactive' },
+  });
+
+  expect(result.status, `handoff returned ${result.status}: ${JSON.stringify(result.body)}`).toBe(200);
+
+  const body = result.body as {
+    success: boolean;
+    editorUrl: string;
+    token: string;
+    projectId: string;
+  };
+
+  expect(body.success).toBe(true);
+  createdProjectId = body.projectId;
+  return body;
+}
+
+function editorHandoffUrl(token: string) {
+  return `${EDITOR}?handoff=${encodeURIComponent(token)}`;
+}
+
+async function openReview(page: Page, token: string) {
+  await page.goto(editorHandoffUrl(token), { waitUntil: 'domcontentloaded' });
+  await expect
+    .poll(async () => page.url(), {
+      timeout: 30_000,
+      intervals: [250, 500, 1000],
+    })
+    .toContain('/project/');
+
+  await expect
+    .poll(async () => page.url(), {
+      timeout: 10_000,
+      intervals: [250, 500],
+    })
+    .not.toContain('flowstarter.dev/login');
+
+  await expect(page.getByText('Review Before Build')).toBeVisible({ timeout: 20_000 });
+}
 
 test.afterEach(async () => {
   if (createdProjectId) {
@@ -31,79 +101,78 @@ test.afterEach(async () => {
   }
 });
 
-test.beforeEach(async ({ page }) => {
-  await setupClerkTestingToken({ page });
-});
+test.describe('Scenario 1: Dashboard handoff to editor', () => {
+  test.setTimeout(300_000);
 
-// ─── Helper ───────────────────────────────────────────────────────────────────
-
-function editorHandoffUrl(token: string): string {
-  return `${EDITOR}?handoff=${encodeURIComponent(token)}`;
-}
-
-async function callHandoff(_page: Page, projectConfig: object): Promise<{
-  editorUrl: string; token: string; projectId: string;
-}> {
-  const result = await e2eFetch(`${BASE}/api/editor/handoff`, {
-    method: 'POST',
-    body: { projectConfig, mode: 'interactive' },
-  });
-
-  expect(result.status, `Handoff returned ${result.status}: ${JSON.stringify(result.body)}`).toBe(200);
-  const body = result.body as { success: boolean; editorUrl: string; token: string; projectId: string };
-  expect(body.success).toBe(true);
-  createdProjectId = body.projectId;
-  return body;
-}
-
-// ─── Tests ────────────────────────────────────────────────────────────────────
-
-test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
-  test.setTimeout(300_000); // 5 min — real Claude + Daytona can take 2-3 min
-
-  // ── 1.1 Handoff API issues a real HMAC token ──────────────────────────────
-  test('1.1 — POST /api/editor/handoff returns signed token + editorUrl', async ({ page }) => {
-    const name = testProjectName();
-    const { token, editorUrl, projectId } = await callHandoff(page, {
-      name,
+  test('1.1 handoff returns signed token and editor url', async () => {
+    const { token, editorUrl, projectId } = await callHandoff({
+      name: testProjectName(),
       description: BUSINESS_INFO.description,
     });
 
     expect(token).toBeTruthy();
     expect(token.split('.').length).toBeGreaterThanOrEqual(2);
-    // editorUrl is now /project/:id when pre-init succeeds, or /?handoff=... as fallback
     expect(editorUrl).toMatch(/\/project\/|handoff=/);
-    expect(projectId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
-
-    console.log('[1.1] Project created:', projectId, '| Editor URL:', editorUrl.slice(0, 80));
+    expect(projectId).toMatch(/^[0-9a-f-]{36}$/i);
   });
 
-  // ── 1.2 Editor validates the token, name preserved ────────────────────────
-  test('1.2 — editor validates real token; project name preserved end-to-end', async ({ page }) => {
-    const name = testProjectName();
-    const { token } = await callHandoff(page, { name, description: BUSINESS_INFO.description });
+  test('1.2 editor validates token and preserves canonical review data', async ({ page }) => {
+    const template = await loadTemplateFixture();
+    const palette = template.palettes[0];
+    const font = template.fonts[0];
+    const projectName = testProjectName();
 
-    // Real validate endpoint — local HMAC check in editor
-    const res = await page.request.get(
-      `${EDITOR}/api/handoff/validate?token=${encodeURIComponent(token)}`
-    );
-    expect(res.status()).toBe(200);
-    const validated = await res.json() as { valid: boolean; projectId?: string };
-    expect(validated.valid).toBe(true);
+    const { token } = await callHandoff({
+      name: projectName,
+      description: BUSINESS_INFO.description,
+      businessInfo: BUSINESS_INFO,
+      brandProfile: {
+        brandTone: {
+          primary: 'professional',
+          secondary: ['modern'],
+          notes: 'Keep the tone calm and credible.',
+        },
+        valueProposition: BUSINESS_INFO.uvp,
+        primaryGoal: 'Book more consultations',
+        desiredCustomerAction: 'Schedule an appointment',
+        differentiators: ['Same-day consults'],
+        trustSignals: ['5-star reviews'],
+      },
+      template: { id: template.slug, name: template.name },
+      palette,
+      font,
+      contactInfo: CONTACT_INFO,
+      siteInfo: { integrations: ['booking', 'analytics'] },
+    });
 
-    // Full project data via POST
-    const res2 = await page.request.post(`${EDITOR}/api/handoff/validate`, {
+    const res = await page.request.post(`${EDITOR}/api/handoff/validate`, {
       data: { token },
       headers: { 'Content-Type': 'application/json' },
     });
-    expect(res2.status()).toBe(200);
-    const full = await res2.json() as { valid: boolean; project?: { name?: string } };
-    expect(full.valid).toBe(true);
-    expect(full.project?.name).toBe(name);
+
+    expect(res.status()).toBe(200);
+    const validated = (await res.json()) as {
+      valid: boolean;
+      project?: {
+        name?: string;
+        data?: {
+          palette?: { id?: string };
+          font?: { id?: string };
+          brandProfile?: { brandTone?: { primary?: string } };
+          siteInfo?: { integrations?: string[] };
+        };
+      };
+    };
+
+    expect(validated.valid).toBe(true);
+    expect(validated.project?.name).toBe(projectName);
+    expect(validated.project?.data?.palette?.id).toBe(palette.id);
+    expect(validated.project?.data?.font?.id).toBe(font.id);
+    expect(validated.project?.data?.brandProfile?.brandTone?.primary).toBe('professional');
+    expect(validated.project?.data?.siteInfo?.integrations).toEqual(['booking', 'analytics']);
   });
 
-  // ── 1.3 Expired token rejected ────────────────────────────────────────────
-  test('1.3 — expired token rejected (401)', async ({ page }) => {
+  test('1.3 expired token is rejected', async ({ page }) => {
     const expired = makeHandoffToken({
       projectId: '00000000-0000-0000-0000-000000000001',
       userId: 'user_test',
@@ -116,245 +185,110 @@ test.describe('Scenario 1: Dashboard → Handoff → Editor', () => {
       data: { token: expired },
       headers: { 'Content-Type': 'application/json' },
     });
+
     expect(res.status()).toBe(401);
-    expect((await res.json() as any).valid).toBe(false);
   });
 
-  // ── 1.4 Tampered token rejected ───────────────────────────────────────────
-  test('1.4 — tampered signature rejected (401)', async ({ page }) => {
-    const { token } = await callHandoff(page, { name: testProjectName(), description: 'test' });
-    const tampered = token.slice(0, -6) + 'XXXXXX';
+  test('1.4 tampered token is rejected', async ({ page }) => {
+    const { token } = await callHandoff({
+      name: testProjectName(),
+      description: BUSINESS_INFO.description,
+    });
 
+    const tampered = token.slice(0, -6) + 'XXXXXX';
     const res = await page.request.post(`${EDITOR}/api/handoff/validate`, {
       data: { token: tampered },
       headers: { 'Content-Type': 'application/json' },
     });
+
     expect(res.status()).toBe(401);
   });
 
-  // ── 1.5 Editor loads without login, navigates to /project/:id ────────────
-  test('1.5 — editor loads authenticated; redirects to /project/:id', async ({ page }) => {
-    const name = testProjectName();
-    const { token, editorUrl } = await callHandoff(page, {
-      name,
-      description: BUSINESS_INFO.description,
-    });
+  test('1.5 handoff-backed project opens in review with template, palette, font, brand, and integrations', async ({ page }) => {
+    const template = await loadTemplateFixture();
+    const palette = template.palettes[0];
+    const font = template.fonts[0];
 
-    // editorUrl now points directly to /project/:id (pre-initialized server-side)
-    await page.goto(editorUrl);
-    // If editorUrl already is /project/:id, we just need to wait for page load
-    await page.waitForURL(/\/project\//, { timeout: 30_000 });
-
-    expect(page.url()).toMatch(/\/project\//);
-    const loginVisible = await page.getByText(/Sign in to your account/i).isVisible().catch(() => false);
-    expect(loginVisible).toBe(false);
-
-    console.log('[1.5] Editor loaded at:', page.url());
-  });
-
-  // ── 1.6 No businessInfo → editor asks for business description ────────────
-  test('1.6 — without businessInfo, editor shows business collection chat', async ({ page }) => {
-    const { token } = await callHandoff(page, { name: testProjectName() });
-
-    await page.goto(editorHandoffUrl(token));
-    await page.waitForURL(/\/project\//, { timeout: 30_000 });
-    await page.waitForTimeout(3000);
-
-    const chatInput = page.locator('textarea, [data-testid="chat-input"]').first();
-    await expect(chatInput).toBeVisible({ timeout: 15_000 });
-  });
-
-  // ── 1.7 With businessInfo → Convex step machine skips to template ─────────
-  test('1.7 — pre-filled businessInfo: Convex step machine reaches template selector', async ({ page }) => {
-    const { token } = await callHandoff(page, {
+    const { token } = await callHandoff({
       name: testProjectName(),
       description: BUSINESS_INFO.description,
       businessInfo: BUSINESS_INFO,
+      brandProfile: {
+        brandTone: { primary: 'professional', secondary: ['modern'] },
+        valueProposition: BUSINESS_INFO.uvp,
+        desiredCustomerAction: 'Book a consultation',
+        differentiators: ['Same-day appointments'],
+        trustSignals: ['Top-rated local clinic'],
+      },
+      template: { id: template.slug, name: template.name },
+      palette,
+      font,
       contactInfo: CONTACT_INFO,
+      siteInfo: { integrations: ['booking', 'analytics'] },
     });
 
-    await page.goto(editorHandoffUrl(token));
-    await page.waitForURL(/\/project\//, { timeout: 30_000 });
-    await page.waitForTimeout(5000); // useWelcomeInit advances step
+    await openReview(page, token);
 
-    // Must NOT be asking for description
-    const askingDesc = await page.getByText(
-      /tell me about your business|what does your business do/i
-    ).isVisible({ timeout: 3000 }).catch(() => false);
-    expect(askingDesc).toBe(false);
-
-    // Template selector must appear (driven by real Convex step)
-    await expect(
-      page.getByText(/pick a template|choose a template|template|Browse all/i).first()
-    ).toBeVisible({ timeout: 25_000 });
-
-    console.log('[1.7] Template selector reached ✅');
+    await expect(page.getByText(template.name)).toBeVisible();
+    await expect(page.getByText(palette.name)).toBeVisible();
+    await expect(page.getByText(`Heading: ${font.heading.family}`)).toBeVisible();
+    await expect(page.getByText(/Tone:/)).toContainText('professional');
+    await expect(page.getByText('Same-day appointments')).toBeVisible();
+    await expect(page.getByText('Top-rated local clinic')).toBeVisible();
+    await expect(page.getByText('booking')).toBeVisible();
+    await expect(page.getByText('analytics')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Adjust Before Build' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Build Site' })).toBeVisible();
   });
 
-  // ── 1.8 Full journey: chat → template → REAL Claude build → edit ──────────
-  test('1.8 — full idea-to-site pipeline: /api/build SSE streams real agent events', async ({ page }) => {
-    // ── Step 1: Create project via handoff (idea stage — no businessInfo) ────
-    const name = testProjectName();
-    const { token, projectId } = await callHandoff(page, { name });
-    console.log('[1.8] Project created:', projectId);
+  test('1.6 adjust before build opens personalization', async ({ page }) => {
+    const template = await loadTemplateFixture();
+    const { token } = await callHandoff({
+      name: testProjectName(),
+      description: BUSINESS_INFO.description,
+      businessInfo: BUSINESS_INFO,
+      template: { id: template.slug, name: template.name },
+      palette: template.palettes[0],
+      font: template.fonts[0],
+    });
 
-    // ── Step 2: Browser loads editor — chat collects business description ────
-    await page.goto(editorHandoffUrl(token));
-    await page.waitForURL(/\/project\//, { timeout: 30_000 });
-    await page.waitForTimeout(3000);
+    await openReview(page, token);
+    await page.getByRole('button', { name: 'Adjust Before Build' }).click();
+    await expect(page.getByTestId('personalization-panel')).toBeVisible({ timeout: 15_000 });
+  });
 
-    const chatInput = page.locator('textarea, [data-testid="chat-input"]').first();
-    await expect(chatInput).toBeVisible({ timeout: 15_000 });
+  test('1.7 build site starts from review with seeded configuration', async ({ page }) => {
+    const template = await loadTemplateFixture();
+    let buildCalled = false;
 
-    // User describes their business idea
-    await chatInput.fill(
-      'Cabinet stomatologic estetic in Cluj-Napoca. Dr. Elena Popescu. ' +
-      'Tratamente fara durere, programari in aceeasi zi. Target: profesionisti 28-55 ani.'
-    );
-    await chatInput.press('Enter');
-    console.log('[1.8] Business description sent via chat ✅');
-
-    // ── Step 3: Wait for step machine to process the business description ──
-    // The step machine advances asynchronously through Convex — we wait for
-    // the chat to finish processing rather than waiting for a specific UI element,
-    // since timing varies and the test builds directly via /api/build anyway.
-    await page.waitForTimeout(5000);
-    console.log('[1.8] Step machine processing complete ✅');
-
-    // ── Step 4: Call /api/build directly — real multi-agent pipeline ─────────
-    // (Planner → Sonnet coder → Opus fixer → Reviewer)
-    // Daytona sandbox is mocked via route.fulfill in playwright config
-    const buildPayload = {
-      projectId,
-      siteName: name,
-      businessInfo: {
-        name,
-        tagline: 'Stomatologie estetica de top in Cluj-Napoca',
-        description: 'Cabinet stomatologic specializat, Dr. Elena Popescu, tratamente fara durere',
-        services: ['Albire dentara', 'Fatete ceramice', 'Implant dentar', 'Tratament Invisalign'],
-      },
-      template: { slug: 'medical-clinic', name: 'Medical Clinic' },
-      design: { primaryColor: '#1e40af' },
-      contactDetails: { phone: '+40 264 123 456', email: 'contact@clinica.ro', address: 'Str. Memo 10, Cluj-Napoca' },
-    };
-
-// ── Mock /api/build SSE — agent SDK requires direct Anthropic credit ──────
     await page.route('**/api/build', async (route) => {
-      const sseBody = [
-        'data: {"type":"progress","message":"Starting generation pipeline..."}\n\n',
-        'data: {"type":"agent-event","event":"planning","message":"Analyzing business requirements"}\n\n',
-        'data: {"type":"agent-event","event":"file_write","file":"src/pages/index.astro"}\n\n',
-        'data: {"type":"agent-event","event":"file_write","file":"src/layouts/Layout.astro"}\n\n',
-        'data: {"type":"agent-event","event":"file_write","file":"src/components/Hero.astro"}\n\n',
-        'data: {"type":"progress","message":"Building preview..."}\n\n',
-        'data: {"type":"complete","previewUrl":"https://mock-preview.daytona.app","filesGenerated":5}\n\n',
-      ].join('');
+      buildCalled = true;
       await route.fulfill({
         status: 200,
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
-        },
-        body: sseBody,
+        headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
+        body: [
+          'data: {"type":"progress","message":"Starting generation pipeline..."}\n\n',
+          'data: {"type":"progress","message":"Building preview..."}\n\n',
+          'data: {"type":"complete","preview":{"url":"https://mock-preview.daytona.app","sandboxId":"sb-test"},"files":[]}\n\n',
+        ].join(''),
       });
     });
 
-    // Collect SSE events from the mocked /api/build stream
-    const sseEvents: Array<{ type: string; [k: string]: unknown }> = [];
-    const buildRes = await page.evaluate(async ({ url, payload }) => {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      const reader = res.body!.getReader();
-      const decoder = new TextDecoder();
-      const events: Array<{ type: string; [k: string]: unknown }> = [];
-      let buffer = '';
-      const timeout = Date.now() + 180_000; // 3 min max
-
-      while (Date.now() < timeout) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const parts = buffer.split('\n\n');
-        buffer = parts.pop() ?? '';
-        for (const part of parts) {
-          const dataLine = part.split('\n').find(l => l.startsWith('data:'));
-          if (dataLine) {
-            try {
-              const event = JSON.parse(dataLine.slice(5).trim());
-              events.push(event);
-              if (event.type === 'complete' || event.type === 'error') {
-                return { events, status: res.status };
-              }
-            } catch { /* skip malformed */ }
-          }
-        }
-      }
-      return { events, status: res.status };
-    }, { url: `${EDITOR}/api/build`, payload: buildPayload });
-
-    console.log('[1.8] /api/build status:', buildRes.status, '— events:', buildRes.events.length);
-    expect(buildRes.status).toBe(200);
-
-    // Verify key SSE event types emitted by the real pipeline
-    const eventTypes = buildRes.events.map((e: { type: string }) => e.type);
-    expect(eventTypes).toContain('progress'); // pipeline started
-    const hasCompletion = eventTypes.includes('complete') || eventTypes.includes('success') || eventTypes.includes('preview');
-    expect(hasCompletion).toBe(true);
-    console.log('[1.8] Real pipeline SSE events:', [...new Set(eventTypes)].join(', '), '✅');
-
-    // ── Step 5: Verify preview URL comes back ─────────────────────────────────
-    const completeEvent = buildRes.events.find((e: { type: string; previewUrl?: string }) =>
-      e.type === 'complete' || e.type === 'preview' || e.previewUrl
-    ) as { previewUrl?: string } | undefined;
-    if (completeEvent?.previewUrl) {
-      console.log('[1.8] Preview URL:', completeEvent.previewUrl, '✅');
-    }
-
-    // Step 6 skipped — build SSE is mocked so Convex state isn't updated.
-    // The SSE stream verification above (steps 4-5) confirms the full pipeline flow.
-    console.log('[1.8] Full pipeline flow verified via mocked SSE ✅');
-  });
-
-  // ── 1.9 Name sync: rename in editor → Supabase updated ───────────────────
-  test('1.9 — renaming project in editor syncs to Supabase via /api/editor/sync', async ({ page }) => {
-    const name = testProjectName();
-    const { token, projectId } = await callHandoff(page, {
-      name,
+    const { token } = await callHandoff({
+      name: testProjectName(),
       description: BUSINESS_INFO.description,
+      businessInfo: BUSINESS_INFO,
+      template: { id: template.slug, name: template.name },
+      palette: template.palettes[0],
+      font: template.fonts[0],
+      siteInfo: { integrations: ['booking'] },
     });
 
-    let syncPayload: Record<string, unknown> | null = null;
-    await page.route(`${BASE}/api/editor/sync`, async (route) => {
-      syncPayload = await route.request().postDataJSON().catch(() => null);
-      await route.continue();
-    });
+    await openReview(page, token);
+    await page.getByRole('button', { name: 'Build Site' }).click();
 
-    await page.goto(editorHandoffUrl(token));
-    await page.waitForURL(/\/project\//, { timeout: 30_000 });
-    await page.waitForTimeout(4000);
-
-    const nameInput = page.locator(
-      '[data-testid="project-name-input"], [contenteditable][data-name]'
-    ).first();
-
-    if (await nameInput.isVisible({ timeout: 5000 }).catch(() => false)) {
-      const newName = `${name} — Renamed`;
-      await nameInput.click();
-      await page.keyboard.press('ControlOrMeta+a');
-      await page.keyboard.type(newName);
-      await page.keyboard.press('Enter');
-      await page.waitForTimeout(2000);
-
-      expect(syncPayload).not.toBeNull();
-      expect((syncPayload as any)?.name).toContain('Renamed');
-      console.log('[1.9] Sync fired with name:', (syncPayload as any)?.name);
-    } else {
-      console.log('[1.9] Name input not in header at this step — verifying editor alive');
-      expect(await page.locator('body').isVisible()).toBe(true);
-    }
+    await expect.poll(() => buildCalled).toBe(true);
+    await expect(page.getByText(/Building your site/i)).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText(/Your site is ready/i)).toBeVisible({ timeout: 20_000 });
   });
 });

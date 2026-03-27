@@ -16,7 +16,6 @@
 import { useMemo, useCallback, useEffect, useRef } from 'react';
 import { useTemplateClone } from '~/lib/hooks/useTemplateClone';
 import { useSnapshotBlob } from '~/lib/hooks/useSnapshotBlob';
-import { useTemplateCustomization } from '~/lib/hooks/useTemplateCustomization';
 
 // Core composed hooks
 import { useOnboardingMessages } from './useOnboardingMessages';
@@ -33,17 +32,12 @@ import { useChatEffects } from './useChatEffects';
 // Focused flow & handler hooks
 import { useSyncCallbacks } from './useSyncCallbacks';
 import { useAdditionalState } from './useAdditionalState';
-import { useDescriptionFlow } from './useDescriptionFlow';
-import { useTemplateFlow } from './useTemplateFlow';
 import { usePersonalizationFlow } from './usePersonalizationFlow';
-import { useBusinessFlow } from './useBusinessFlow';
-import { useProjectNameHandlers } from './useProjectNameHandlers';
 import { useSimpleBuildHandlers } from './useSimpleBuildHandlers';
-import { useSuggestionHandlers } from './useSuggestionHandlers';
 import { useSendHandler } from './useSendHandler';
 
 // Types
-import type { PreviewInfo, InitialChatState, OnboardingStep, BusinessDetailsData } from '../types';
+import type { PreviewInfo, InitialChatState, OnboardingStep } from '../types';
 
 // Re-export PreviewSource from useAdditionalState
 export type { PreviewSource } from './useAdditionalState';
@@ -86,7 +80,7 @@ export function useEditorChatState({
   const messageHook = useOnboardingMessages();
 
   const flowHook = useOnboardingFlow({
-    initialStep: initialState?.step || 'welcome',
+    initialStep: initialState?.step || (initialState?.projectUrlId ? 'ready' : 'review'),
     initialDescription: initialState?.projectDescription || '',
     initialProjectName: initialState?.projectName || null,
     onStepChange: handleStepChange,
@@ -122,7 +116,6 @@ export function useEditorChatState({
   // ═══════════════════════════════════════════════════════════════════════
 
   const { isCloning } = useTemplateClone();
-  const { progress: customizeProgress, isCustomizing } = useTemplateCustomization();
   const { createSnapshot } = useSnapshotBlob();
 
   // ═══════════════════════════════════════════════════════════════════════
@@ -162,29 +155,6 @@ export function useEditorChatState({
     setCurrentUrlId: additionalState.setCurrentUrlId,
   });
 
-  /**
-   * Callback to fetch ALL templates for manual selection (internal flow).
-   */
-  const handleFetchTemplates = useCallback(() => {
-    // Trigger template fetch via React Query
-    templateHook.refetchTemplates();
-  }, [templateHook]);
-
-  /**
-   * Callback for internal flow (template-first) initialization.
-   * Sets business info when business details are already known.
-   */
-  const handleInternalFlowStart = useCallback(
-    (businessInfo: import('../types').BusinessInfo, projectName: string, description: string) => {
-      // Update business hook with initial state
-      businessHook.setBusinessInfo(businessInfo);
-      // Fetch AI recommendations using the pre-populated business data
-      // This gives a tailored shortlist first; full gallery is still accessible
-      templateHook.fetchRecommendations(businessInfo, projectName, description);
-    },
-    [businessHook, templateHook],
-  );
-
   const pendingSeededBuildRef = useRef(
     Boolean(
       initialState?.selectedTemplateId &&
@@ -204,8 +174,6 @@ export function useEditorChatState({
     messageHook,
     flowHook,
     hasRestoredState,
-    onFetchTemplates: handleFetchTemplates,
-    onInternalFlowStart: handleInternalFlowStart,
     onTemplateBuildStart: handleTemplateBuildStart,
   });
 
@@ -223,8 +191,8 @@ export function useEditorChatState({
     convexProjectId: additionalState.convexProjectId,
     buildPhase: additionalState.buildPhase,
     hasRestoredState,
-    isCustomizing,
-    customizeProgress,
+    isCustomizing: false,
+    customizeProgress: { phase: 'idle', progress: 0 },
     agentPhase: agentState.phase,
     orchestratorState: orchestratorStatus.state,
     orchestratorOrchestrationId: orchestratorStatus.orchestrationId,
@@ -260,6 +228,7 @@ export function useEditorChatState({
     onStateChange,
     existingProjectId: additionalState.convexProjectId,
     convexConversationId: initialState?.conversationId || null,
+    seededIntegrations: initialState?.integrations || [],
   });
 
   useEffect(() => {
@@ -275,11 +244,11 @@ export function useEditorChatState({
       return;
     }
 
-    pendingSeededBuildRef.current = false;
-    void buildHandlers.startSeededBuild();
+    flowHook.setStep('review');
   }, [
     additionalState.selectedFont,
     buildHandlers,
+    flowHook,
     hasRestoredState,
     paletteHook.selectedPalette,
     templateHook.selectedTemplate,
@@ -289,22 +258,37 @@ export function useEditorChatState({
   // Flow Handlers
   // ═══════════════════════════════════════════════════════════════════════
 
-  const { handleDescriptionSubmit, handleQuickProfileComplete, handleUvpSubmit } = useDescriptionFlow({
-    messageHook,
-    flowHook,
-    businessHook,
-    templateHook,
-    setQuickProfile: additionalState.setQuickProfile,
-    onStateChange,
-  });
+  const handleTemplateSelect = useCallback(
+    async (template: import('~/components/onboarding').Template) => {
+      templateHook.handleTemplateSelect(template);
+      onStateChange?.({
+        selectedTemplateId: template.id,
+        selectedTemplateName: template.name,
+      });
+      messageHook.addUserMessage(`I'll keep the "${template.name}" template`);
+      await messageHook.addStepTransitionMessage('review', 'personalization', {
+        templateName: template.name,
+      });
+      flowHook.setStep('personalization');
+    },
+    [flowHook, messageHook, onStateChange, templateHook],
+  );
 
-  const { handleTemplateSelect, handleRecommendationSelect, fetchRecommendationsWrapped } = useTemplateFlow({
-    messageHook,
-    flowHook,
-    templateHook,
-    businessHook,
-    onStateChange,
-  });
+  const handleRecommendationSelect = useCallback(
+    async (recommendation: import('~/components/editor/template-preview/types').TemplateRecommendation) => {
+      templateHook.handleRecommendationSelect(recommendation);
+      onStateChange?.({
+        selectedTemplateId: recommendation.template.id,
+        selectedTemplateName: recommendation.template.name,
+      });
+      messageHook.addUserMessage(`I'll keep the "${recommendation.template.name}" template`);
+      await messageHook.addStepTransitionMessage('review', 'personalization', {
+        templateName: recommendation.template.name,
+      });
+      flowHook.setStep('personalization');
+    },
+    [flowHook, messageHook, onStateChange, templateHook],
+  );
 
   const { handlePaletteSelect, handleFontSelect, handleLogoSelect, refreshSuggestions } = usePersonalizationFlow({
     messageHook,
@@ -317,106 +301,29 @@ export function useEditorChatState({
     onStateChange,
   });
 
-  const { businessDiscoveryHook, handleBusinessInfoConfirm } = useBusinessFlow({
-    messageHook,
-    flowHook,
-    businessHook,
-    templateHook,
-    onStateChange,
-  });
-
-  /**
-   * Handle the consolidated BusinessDetailsForm submission.
-   * Updates business info with UVP, offerings, contact details, then advances to template.
-   */
-  const handleBusinessDetailsComplete = useCallback(
-    async (data: BusinessDetailsData) => {
-      // Merge new business-details data into existing businessInfo
-      const currentInfo = businessHook.businessInfo || {
-        description: flowHook.projectDescription,
-        quickProfile: additionalState.quickProfile || {
-          goal: 'leads' as const,
-          offerType: 'free' as const,
-          tone: 'professional' as const,
-        },
-      };
-
-      const updatedInfo = {
-        ...currentInfo,
-        uvp: data.uvp,
-        offerings:
-          data.offerings.map((o) => `${o.name}${o.price ? ` (${o.price})` : ''}: ${o.description}`).join('; ') ||
-          undefined,
-        contactEmail: data.contactEmail,
-        contactPhone: data.contactPhone,
-        contactAddress: data.contactAddress,
-        website: data.website,
-      };
-
-      businessHook.setBusinessInfo(updatedInfo);
-      onStateChange?.({ businessInfo: updatedInfo });
-
-      // Also store contact details separately
-      if (data.contactEmail) {
-        onStateChange?.({
-          contactDetails: {
-            email: data.contactEmail,
-            phone: data.contactPhone,
-            address: data.contactAddress,
-            website: data.website,
-            ...(data.socialLinks || {}),
-          },
-        });
-      }
-
-      // Transition to template step
-      messageHook.addAssistantMessage(
-        "Great! I've got your business details. Now let's pick the perfect template for your site.",
-      );
-      flowHook.setStep('template');
-
-      // Fetch AI recommendations using the updated info
-      templateHook.fetchRecommendations(updatedInfo, flowHook.projectName!, flowHook.projectDescription);
-    },
-    [messageHook, flowHook, businessHook, templateHook, additionalState, onStateChange],
-  );
-
-  // ═══════════════════════════════════════════════════════════════════════
-  // Other Handlers
-  // ═══════════════════════════════════════════════════════════════════════
-
-  const { generateProjectName, handleNameSubmit } = useProjectNameHandlers({
-    messageHook,
-    flowHook,
-    businessHook,
-    onStateChange,
-    lastAction: additionalState.lastAction,
-    setLastAction: additionalState.setLastAction,
-  });
-
-  const { handleSuggestionAccept } = useSuggestionHandlers({
-    messageHook,
-    flowHook,
-    businessHook,
-    lastAction: additionalState.lastAction,
-    setLastAction: additionalState.setLastAction,
-    handleDescriptionSubmit,
-    handleNameSubmit,
-    generateProjectName,
-    handleBusinessInfoConfirm,
-    onStateChange,
-  });
+  const handleBusinessInfoConfirm = useCallback(async (_confirmed: boolean) => {}, []);
+  const handleSuggestionAccept = useCallback(async () => {}, []);
 
   const { handleSend } = useSendHandler({
     messageHook,
     flowHook,
     businessHook,
-    businessDiscoveryHook,
     currentUrlId: additionalState.currentUrlId,
     convexProjectId: additionalState.convexProjectId,
-    handleDescriptionSubmit,
-    handleNameSubmit,
   });
+
+  const handleReviewBuildStart = useCallback(async () => {
+    pendingSeededBuildRef.current = false;
+    messageHook.addUserMessage('Build the first version with these selections');
+    await buildHandlers.startSeededBuild();
+  }, [buildHandlers, messageHook]);
+
+  const handleReviewCustomize = useCallback(() => {
+    messageHook.addUserMessage('I want to adjust the style before building');
+    flowHook.setStep('personalization');
+  }, [flowHook, messageHook]);
+
+  const noopAsync = useCallback(async () => {}, []);
 
   // ═══════════════════════════════════════════════════════════════════════
   // Computed: Business Context (for display in UI)
@@ -443,10 +350,6 @@ export function useEditorChatState({
     };
   }, [businessHook.businessInfo, initialState, flowHook.projectName]);
 
-  /**
-   * Check if we're in internal flow (template-first) mode.
-   * This is true when business details were pre-populated from team dashboard.
-   */
   const isInternalFlow = useMemo(() => {
     return Boolean(businessContext?.description && businessContext.description.length > 10);
   }, [businessContext]);
@@ -511,11 +414,11 @@ export function useEditorChatState({
     businessInfo: businessHook.businessInfo,
     setBusinessInfo: businessHook.setBusinessInfo,
 
-    // Quick Profile (streamlined flow)
+    // Legacy onboarding fields retained as inert values during migration cleanup
     quickProfile: additionalState.quickProfile,
     suggestedQuickProfile: additionalState.suggestedQuickProfile,
-    handleQuickProfileComplete,
-    handleUvpSubmit,
+    handleQuickProfileComplete: noopAsync,
+    handleUvpSubmit: noopAsync,
 
     // Project details
     projectName: flowHook.projectName,
@@ -527,11 +430,11 @@ export function useEditorChatState({
     recommendationsLoading: templateHook.recommendationsLoading,
     recommendationsError: templateHook.recommendationsError,
     selectedRecommendation: templateHook.selectedRecommendation,
-    fetchRecommendations: fetchRecommendationsWrapped,
+    fetchRecommendations: noopAsync,
 
     // Handlers
-    handleDescriptionSubmit,
-    handleNameSubmit,
+    handleDescriptionSubmit: noopAsync,
+    handleNameSubmit: noopAsync,
     handleBusinessInfoConfirm,
     handleTemplateSelect,
     handleRecommendationSelect,
@@ -543,7 +446,9 @@ export function useEditorChatState({
     handleSkipContactDetails: buildHandlers.handleSkipContactDetails,
     handleIntegrationsComplete: buildHandlers.handleIntegrationsComplete,
     handleSkipIntegrations: buildHandlers.handleSkipIntegrations,
-    handleBusinessDetailsComplete,
+    handleBusinessDetailsComplete: noopAsync,
+    handleReviewBuildStart,
+    handleReviewCustomize,
     handleSuggestionAccept,
     handleSend,
     handleThumbnailError: templateHook.handleThumbnailError,
@@ -553,7 +458,7 @@ export function useEditorChatState({
     setPreviewRecommendation: templateHook.setPreviewRecommendation,
 
     // Business discovery
-    businessDiscoveryHook,
+    businessDiscoveryHook: null,
 
     // Selected items
     selectedFont: additionalState.selectedFont,
@@ -562,5 +467,6 @@ export function useEditorChatState({
     // Internal flow (template-first) - business context display
     businessContext,
     isInternalFlow,
+    brandProfile: initialState?.brandProfile || null,
   };
 }

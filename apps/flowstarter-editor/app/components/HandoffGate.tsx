@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from '@remix-run/react';
 import { LoadingScreen } from '~/components/LoadingScreen';
 
 interface HandoffProjectPayload {
@@ -13,7 +12,11 @@ interface HandoffProjectPayload {
       phone?: string;
     };
     businessInfo?: Record<string, unknown>;
+    brandProfile?: Record<string, unknown>;
     contactInfo?: Record<string, unknown>;
+    template?: { id?: string; name?: string };
+    palette?: Record<string, unknown>;
+    font?: Record<string, unknown>;
   };
 }
 
@@ -60,15 +63,21 @@ function buildStoredHandoffData(projectId: string, project?: HandoffProjectPaylo
   const client = data.client || {};
   const contactInfo = data.contactInfo || {};
   const businessInfo = data.businessInfo || {};
+  const brandProfile = data.brandProfile || {};
 
   return {
     projectId,
+    fromMainPlatform: true,
     id: project?.id || projectId,
     name: project?.name || 'Untitled Project',
     projectName: project?.name || 'Untitled Project',
     description: project?.description || '',
     client,
     contactInfo,
+    brandProfile,
+    template: data.template || null,
+    palette: data.palette || null,
+    font: data.font || null,
     businessInfo: {
       ...businessInfo,
       contactEmail:
@@ -90,7 +99,6 @@ function buildStoredHandoffData(projectId: string, project?: HandoffProjectPaylo
 }
 
 export function HandoffGate({ handoffToken, hasHandoff, loadingMessage }: HandoffGateProps) {
-  const navigate = useNavigate();
   const hasStarted = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const dashboardUrl = useMemo(() => getDashboardUrl() || DEFAULT_DASHBOARD_URL, []);
@@ -126,7 +134,7 @@ export function HandoffGate({ handoffToken, hasHandoff, loadingMessage }: Handof
           storeHandoffToken(handoffToken);
           storeHandoffData(buildStoredHandoffData(preProjectId, preProject));
           sessionStorage.setItem('flowstarter_handoff_session', '1');
-          navigate(`/project/${preConversationId}`, { replace: true });
+          window.location.replace(`/project/${preConversationId}?handoff=1`);
           return;
         }
 
@@ -153,14 +161,14 @@ export function HandoffGate({ handoffToken, hasHandoff, loadingMessage }: Handof
         }
 
         sessionStorage.setItem('flowstarter_handoff_session', '1');
-        navigate(`/project/${initData.conversationId}`, { replace: true });
+        window.location.replace(`/project/${initData.conversationId}?handoff=1`);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to open the project.');
       }
     };
 
     initialize();
-  }, [handoffToken, hasHandoff, navigate]);
+  }, [handoffToken, hasHandoff]);
 
   if (hasHandoff && !error) {
     return <LoadingScreen message={loadingMessage} />;

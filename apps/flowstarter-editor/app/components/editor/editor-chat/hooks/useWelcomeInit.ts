@@ -9,18 +9,10 @@ import { useEffect, useRef, useCallback } from 'react';
 import type { InitialChatState } from '../types';
 import type { UseOnboardingMessagesReturn } from './useOnboardingMessages';
 import type { UseOnboardingFlowReturn } from './useOnboardingFlow';
+import { hasPreseededTemplateBuild, isCompletedBuildState } from './handoffState';
 
 /** Fallback timeout for initialization (ms) - triggers if normal flow doesn't start */
 const WELCOME_INIT_TIMEOUT_MS = 3000;
-
-function hasPreseededTemplateBuild(state?: InitialChatState): boolean {
-  return Boolean(
-    state?.selectedTemplateId &&
-      state?.selectedPalette &&
-      state?.selectedFont &&
-      (state?.businessInfo?.description || state?.projectDescription),
-  );
-}
 
 interface UseWelcomeInitProps {
   initialState?: InitialChatState;
@@ -67,7 +59,7 @@ export function useWelcomeInit({
       flow.setProjectDescription(state.projectDescription);
     }
 
-    if (state?.projectUrlId) {
+    if (isCompletedBuildState(state)) {
       flow.setStep('ready');
       msg.setSuggestedReplies([]);
       return;

@@ -236,19 +236,38 @@ function TeamLoginRedirect() {
 }
 
 export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuardProps) {
-  const { isLoaded, isSignedIn, user } = useUser();
-  const [userMode, setUserMode] = useState<'guest' | 'team' | 'client'>('guest');
-  const [loadingTimedOut, setLoadingTimedOut] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
-
-  // Handoff session bypass — must be declared at top level (React hook rules)
   const [hasHandoffSession, setHasHandoffSession] = useState<boolean | null>(null);
   const location = useLocation();
+
   useEffect(() => {
     try {
       setHasHandoffSession(sessionStorage.getItem('flowstarter_handoff_session') === '1');
     } catch { setHasHandoffSession(false); }
   }, []);
+
+  const hasHandoffUrl = location.search.includes('handoff=');
+
+  // Bypass auth for validated handoff flows, but keep Clerk mounted at the root.
+  if (hasHandoffUrl || hasHandoffSession === true) {
+    return <>{children}</>;
+  }
+
+  if (hasHandoffSession === null) {
+    return <>{fallback ?? <LoadingFallback />}</>;
+  }
+
+  return (
+    <ClerkBackedAuthGuard fallback={fallback} requireTeam={requireTeam}>
+      {children}
+    </ClerkBackedAuthGuard>
+  );
+}
+
+function ClerkBackedAuthGuard({ children, fallback, requireTeam = false }: AuthGuardProps) {
+  const { isLoaded, isSignedIn, user } = useUser();
+  const [userMode, setUserMode] = useState<'guest' | 'team' | 'client'>('guest');
+  const [loadingTimedOut, setLoadingTimedOut] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
     if (isLoaded && isSignedIn && user) {
@@ -256,14 +275,6 @@ export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuard
       setUserMode(mode);
     }
   }, [isLoaded, isSignedIn, user]);
-
-  const hasHandoffUrl = location.search.includes('handoff=');
-
-  // Bypass Clerk entirely for validated handoff flows.
-  // The editor bootstrap already verified the signed handoff token.
-  if (hasHandoffUrl || hasHandoffSession === true) {
-    return <>{children}</>;
-  }
 
   // Timeout: if Clerk hasn't loaded after 15s, show login prompt instead of infinite loading
   useEffect(() => {
@@ -294,11 +305,6 @@ export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuard
       return requireTeam ? <TeamLoginRedirect /> : <LoginPrompt />;
     }
 
-    return <>{fallback ?? <LoadingFallback />}</>;
-  }
-
-  // While sessionStorage check is pending, show loading to avoid flash of login
-  if (hasHandoffSession === null) {
     return <>{fallback ?? <LoadingFallback />}</>;
   }
 

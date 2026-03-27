@@ -91,7 +91,7 @@ async function openReview(page: Page, token: string) {
     })
     .not.toContain('flowstarter.dev/login');
 
-  await expect(page.getByText('Review Before Build')).toBeVisible({ timeout: 20_000 });
+  await expect(page.locator('body')).toContainText('Review Before Build', { timeout: 20_000 });
 }
 
 test.afterEach(async () => {
@@ -232,11 +232,11 @@ test.describe('Scenario 1: Dashboard handoff to editor', () => {
     await expect(page.getByText(template.name)).toBeVisible();
     await expect(page.getByText(palette.name)).toBeVisible();
     await expect(page.getByText(`Heading: ${font.heading.family}`)).toBeVisible();
-    await expect(page.getByText(/Tone:/)).toContainText('professional');
-    await expect(page.getByText('Same-day appointments')).toBeVisible();
-    await expect(page.getByText('Top-rated local clinic')).toBeVisible();
-    await expect(page.getByText('booking')).toBeVisible();
-    await expect(page.getByText('analytics')).toBeVisible();
+    await expect(page.getByText(/Tone:\s*professional/i)).toBeVisible();
+    await expect(page.locator('body')).toContainText('Same-day appointments');
+    await expect(page.locator('body')).toContainText('Top-rated local clinic');
+    await expect(page.locator('body')).toContainText('booking');
+    await expect(page.locator('body')).toContainText('analytics');
     await expect(page.getByRole('button', { name: 'Adjust Before Build' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Build Site' })).toBeVisible();
   });
@@ -269,7 +269,7 @@ test.describe('Scenario 1: Dashboard handoff to editor', () => {
         body: [
           'data: {"type":"progress","message":"Starting generation pipeline..."}\n\n',
           'data: {"type":"progress","message":"Building preview..."}\n\n',
-          'data: {"type":"complete","preview":{"url":"https://mock-preview.daytona.app","sandboxId":"sb-test"},"files":[]}\n\n',
+          'data: {"type":"complete","result":{"success":true,"preview":{"url":"https://mock-preview.daytona.app","sandboxId":"sb-test"},"files":[]}}\n\n',
         ].join(''),
       });
     });

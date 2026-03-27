@@ -20,8 +20,42 @@ import type {
 } from '~/components/editor/editor-chat/types';
 import type { OrchestratorStatusDTO } from '~/lib/hooks/types/orchestrator.dto';
 import { useSupabaseSync } from './useSupabaseSync';
+import { normalizeHandoffStep } from '~/components/editor/editor-chat/hooks/handoffState';
 
 const INITIAL_MESSAGE_LIMIT = 100;
+const HANDOFF_DATA_KEY = 'flowstarter_handoff_data';
+
+function readStoredHandoffData():
+  | {
+      brandProfile?: InitialChatState['brandProfile'];
+      integrations?: IntegrationConfig[];
+    }
+  | null {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  try {
+    const raw = localStorage.getItem(HANDOFF_DATA_KEY);
+    if (!raw) {
+      return null;
+    }
+
+    const parsed = JSON.parse(raw) as {
+      brandProfile?: InitialChatState['brandProfile'];
+      integrations?: string[];
+    };
+
+    return {
+      brandProfile: parsed.brandProfile || null,
+      integrations: Array.isArray(parsed.integrations)
+        ? parsed.integrations.map((id) => ({ id, name: id, enabled: true }))
+        : undefined,
+    };
+  } catch {
+    return null;
+  }
+}
 
 export function useProjectEditorState(projectId: Id<'conversations'>) {
   const location = useLocation();
@@ -48,7 +82,17 @@ export function useProjectEditorState(projectId: Id<'conversations'>) {
   // Sync conversation → local state
   useEffect(() => {
     if (!conversation) return;
-    if (conversation.step) setOnboardingStep(conversation.step as OnboardingStep);
+    const normalizedStep = normalizeHandoffStep({
+      step: conversation.step as OnboardingStep | undefined,
+      projectUrlId: conversation.projectUrlId ?? null,
+      buildPhase: (conversation.buildPhase as BuildPhase | undefined) ?? undefined,
+      selectedTemplateId: conversation.selectedTemplateId ?? null,
+      selectedPalette: conversation.selectedPalette ?? null,
+      selectedFont: conversation.selectedFont ?? null,
+      businessInfo: (conversation.businessInfo as BusinessInfo | null) ?? null,
+      projectDescription: conversation.projectDescription ?? '',
+    });
+    setOnboardingStep(normalizedStep);
     if (conversation.projectUrlId) setLocalProjectUrlId(conversation.projectUrlId);
   }, [conversation]);
 
@@ -172,8 +216,18 @@ function useInitialState(
     const src = conversation || initialFromNav;
     hasInitialized.current = true;
     if (src) {
+      const storedHandoffData = readStoredHandoffData();
       ref.current = {
-        step: (src.step as OnboardingStep) || 'welcome',
+        step: normalizeHandoffStep({
+          step: (src.step as OnboardingStep | undefined) || undefined,
+          projectUrlId: src.projectUrlId || null,
+          buildPhase: (src.buildPhase as BuildPhase | undefined) || undefined,
+          selectedTemplateId: src.selectedTemplateId || null,
+          selectedPalette: src.selectedPalette || null,
+          selectedFont: src.selectedFont || null,
+          businessInfo: (src.businessInfo as BusinessInfo | null) || null,
+          projectDescription: src.projectDescription || '',
+        }),
         projectDescription: src.projectDescription || '',
         selectedTemplateId: src.selectedTemplateId || null,
         selectedTemplateName: src.selectedTemplateName || null,
@@ -184,8 +238,11 @@ function useInitialState(
         buildPhase: (src.buildPhase as BuildPhase) || 'idle',
         projectName: src.projectName || null,
         businessInfo: (src.businessInfo as BusinessInfo | null) || null,
-        brandProfile: (src.brandProfile as InitialChatState['brandProfile']) || null,
-        integrations: normalizeIntegrations((src as Record<string, unknown>).selectedIntegrations) || undefined,
+        brandProfile: (src.brandProfile as InitialChatState['brandProfile']) || storedHandoffData?.brandProfile || null,
+        integrations:
+          normalizeIntegrations((src as Record<string, unknown>).selectedIntegrations) ||
+          storedHandoffData?.integrations ||
+          undefined,
         messages: messages || initialFromNav?.messages || [],
         conversationId: projectId,
       };

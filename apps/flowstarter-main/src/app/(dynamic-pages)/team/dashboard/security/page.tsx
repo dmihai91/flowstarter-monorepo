@@ -232,32 +232,29 @@ export default function TeamSecurityPage() {
 
             {/* Re-verification required */}
             {needsReverification && (
-              <div className="space-y-4 mt-4 p-4 rounded-xl bg-amber-50 dark:bg-amber-500/5 border border-amber-200 dark:border-amber-500/20">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium text-amber-700 dark:text-amber-400">Verify your identity</p>
-                    <p className="text-xs text-amber-600 dark:text-amber-500 mt-0.5">For security, please confirm your password before enabling 2FA.</p>
-                  </div>
-                </div>
-                <div className="space-y-2">
+              <div className="mt-5 space-y-3">
+                <p className="text-sm text-gray-500 dark:text-white/50 flex items-center gap-2">
+                  <Shield className="w-4 h-4 shrink-0" />
+                  Confirm your password to continue
+                </p>
+                <div className="flex gap-2">
                   <Input
                     type="password"
                     placeholder="Your password"
                     value={reverifyPassword}
                     onChange={e => setReverifyPassword(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleReverify()}
-                    className="bg-white dark:bg-white/[0.04]"
+                    className="flex-1"
                     autoFocus
                   />
-                  {reverifyError && <p className="text-xs text-red-500">{reverifyError}</p>}
-                  <div className="flex gap-2">
-                    <Button onClick={handleReverify} disabled={!reverifyPassword || reverifyLoading} variant="accent" size="sm">
-                      {reverifyLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm'}
-                    </Button>
-                    <Button onClick={() => setNeedsReverification(false)} variant="outline" size="sm">Cancel</Button>
-                  </div>
+                  <Button onClick={handleReverify} disabled={!reverifyPassword || reverifyLoading} variant="accent" size="sm" className="shrink-0">
+                    {reverifyLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm'}
+                  </Button>
                 </div>
+                {reverifyError && <p className="text-xs text-red-500">{reverifyError}</p>}
+                <button onClick={() => setNeedsReverification(false)} className="text-xs text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/60 transition-colors">
+                  Cancel
+                </button>
               </div>
             )}
 

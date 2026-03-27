@@ -77,7 +77,7 @@ export function CookieConsent() {
                 </p>
 
                 {/* Buttons */}
-                <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-2">
                   <Button
                     onClick={handleAccept}
                     variant="accent"
@@ -92,12 +92,6 @@ export function CookieConsent() {
                   >
                     {t('cookie.essentialOnly')}
                   </Button>
-                  <Link
-                    href="/cookies"
-                    className="text-xs text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/60 underline underline-offset-2 transition-colors"
-                  >
-                    {t('cookie.settings')}
-                  </Link>
                 </div>
               </div>
 

@@ -815,6 +815,7 @@ const en = {
   'footer.nav.blog': 'Blog',
   'footer.nav.privacy': 'Privacy',
   'footer.nav.terms': 'Terms',
+  'footer.nav.cookies': 'Cookie settings',
   'footer.nav.contact': 'Contact',
   'footer.nav.teamDashboard': 'Team Dashboard',
   'footer.nav.editor': 'Editor',

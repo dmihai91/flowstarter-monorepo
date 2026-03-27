@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useUser } from '@clerk/nextjs';
+import { useSignIn } from '@clerk/nextjs/legacy';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -23,6 +24,11 @@ import {
 } from 'lucide-react';
 
 export default function TeamSecurityPage() {
+  const { signIn } = useSignIn();
+  const [needsReverification, setNeedsReverification] = useState(false);
+  const [reverifyPassword, setReverifyPassword] = useState('');
+  const [reverifyError, setReverifyError] = useState<string | null>(null);
+  const [reverifyLoading, setReverifyLoading] = useState(false);
   const { user, isLoaded: userLoaded } = useUser();
   const router = useRouter();
 
@@ -78,10 +84,33 @@ export default function TeamSecurityPage() {
       const totp = await user.createTOTP();
       setQrCodeUrl(totp.uri ?? null);
       setSecret(totp.secret ?? null);
-    } catch (error) {
-      console.error('Error starting TOTP setup:', error);
-      setSetupError('Failed to start authenticator setup. Please try again.');
-      setIsSettingUp(false);
+    } catch (error: unknown) {
+      const clerkError = error as { errors?: Array<{ code?: string }> };
+      const code = clerkError?.errors?.[0]?.code ?? '';
+      if (code === 'session_step_up_required' || code === 'requires_recent_sign_in' || String(error).includes('additional verification')) {
+        setNeedsReverification(true);
+        setIsSettingUp(false);
+      } else {
+        console.error('Error starting TOTP setup:', error);
+        setSetupError('Failed to start authenticator setup. Please try again.');
+        setIsSettingUp(false);
+      }
+    }
+  };
+
+  const handleReverify = async () => {
+    if (!signIn || !user) return;
+    setReverifyLoading(true);
+    setReverifyError(null);
+    try {
+      await signIn.create({ strategy: 'password', password: reverifyPassword, identifier: user.primaryEmailAddress?.emailAddress ?? '' });
+      setNeedsReverification(false);
+      setReverifyPassword('');
+      await startTotpSetup();
+    } catch {
+      setReverifyError('Incorrect password. Please try again.');
+    } finally {
+      setReverifyLoading(false);
     }
   };
 
@@ -200,6 +229,37 @@ export default function TeamSecurityPage() {
                 </span>
               )}
             </div>
+
+            {/* Re-verification required */}
+            {needsReverification && (
+              <div className="space-y-4 mt-4 p-4 rounded-xl bg-amber-50 dark:bg-amber-500/5 border border-amber-200 dark:border-amber-500/20">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-amber-700 dark:text-amber-400">Verify your identity</p>
+                    <p className="text-xs text-amber-600 dark:text-amber-500 mt-0.5">For security, please confirm your password before enabling 2FA.</p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Input
+                    type="password"
+                    placeholder="Your password"
+                    value={reverifyPassword}
+                    onChange={e => setReverifyPassword(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleReverify()}
+                    className="bg-white dark:bg-white/[0.04]"
+                    autoFocus
+                  />
+                  {reverifyError && <p className="text-xs text-red-500">{reverifyError}</p>}
+                  <div className="flex gap-2">
+                    <Button onClick={handleReverify} disabled={!reverifyPassword || reverifyLoading} variant="accent" size="sm">
+                      {reverifyLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm'}
+                    </Button>
+                    <Button onClick={() => setNeedsReverification(false)} variant="outline" size="sm">Cancel</Button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Setup Flow */}
             {isSettingUp && qrCodeUrl && (

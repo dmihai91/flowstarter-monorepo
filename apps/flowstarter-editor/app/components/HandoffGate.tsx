@@ -17,6 +17,9 @@ interface HandoffProjectPayload {
     template?: { id?: string; name?: string };
     palette?: Record<string, unknown>;
     font?: Record<string, unknown>;
+    siteInfo?: {
+      integrations?: string[];
+    };
   };
 }
 
@@ -78,6 +81,8 @@ function buildStoredHandoffData(projectId: string, project?: HandoffProjectPaylo
     template: data.template || null,
     palette: data.palette || null,
     font: data.font || null,
+    siteInfo: data.siteInfo || null,
+    integrations: Array.isArray(data.siteInfo?.integrations) ? data.siteInfo.integrations : [],
     businessInfo: {
       ...businessInfo,
       contactEmail:

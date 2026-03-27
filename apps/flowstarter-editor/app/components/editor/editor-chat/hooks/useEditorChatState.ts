@@ -35,6 +35,7 @@ import { useAdditionalState } from './useAdditionalState';
 import { usePersonalizationFlow } from './usePersonalizationFlow';
 import { useSimpleBuildHandlers } from './useSimpleBuildHandlers';
 import { useSendHandler } from './useSendHandler';
+import { normalizeHandoffStep } from './handoffState';
 
 // Types
 import type { PreviewInfo, InitialChatState, OnboardingStep } from '../types';
@@ -80,7 +81,7 @@ export function useEditorChatState({
   const messageHook = useOnboardingMessages();
 
   const flowHook = useOnboardingFlow({
-    initialStep: initialState?.step || (initialState?.projectUrlId ? 'ready' : 'review'),
+    initialStep: initialState ? normalizeHandoffStep(initialState) : 'review',
     initialDescription: initialState?.projectDescription || '',
     initialProjectName: initialState?.projectName || null,
     onStepChange: handleStepChange,

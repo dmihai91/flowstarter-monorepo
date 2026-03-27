@@ -13,43 +13,7 @@ import type { UseOnboardingFlowReturn } from './useOnboardingFlow';
 import type { UseTemplateSelectionReturn } from './useTemplateSelection';
 import type { UsePaletteSelectionReturn } from './usePaletteSelection';
 import type { UseBusinessInfoReturn } from './useBusinessInfo';
-
-function normalizeStep(state: InitialChatState): InitialChatState['step'] {
-  if (
-    state.step === 'review' ||
-    state.step === 'personalization' ||
-    state.step === 'integrations' ||
-    state.step === 'creating'
-  ) {
-    return state.step;
-  }
-
-  if (state.projectUrlId) {
-    return 'ready';
-  }
-
-  if (
-    state.step === 'welcome' ||
-    state.step === 'describe' ||
-    state.step === 'name' ||
-    state.step === 'quick-profile' ||
-    state.step === 'business-details' ||
-    state.step === 'business-uvp' ||
-    state.step === 'business-offering' ||
-    state.step === 'business-contact' ||
-    state.step === 'business-audience' ||
-    state.step === 'business-goals' ||
-    state.step === 'business-tone' ||
-    state.step === 'business-selling' ||
-    state.step === 'business-pricing' ||
-    state.step === 'business-summary' ||
-    state.step === 'template'
-  ) {
-    return 'review';
-  }
-
-  return state.step;
-}
+import { normalizeHandoffStep } from './handoffState';
 
 interface UseStateRestorationProps {
   initialState?: InitialChatState;
@@ -102,7 +66,7 @@ export function useStateRestoration({
     (state: InitialChatState) => {
       const msg = messageHookRef.current;
       const flow = flowHookRef.current;
-      const step = normalizeStep(state);
+      const step = normalizeHandoffStep(state);
       flow.setStep(step);
 
       if (step === 'review') {

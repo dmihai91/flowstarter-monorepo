@@ -86,20 +86,6 @@ function getConvexClient(): ConvexReactClient | null {
 // Handoff entry is intentionally authless at bootstrap time so the signed token
 // can initialize the project before the editor route hits the AuthGuard bypass.
 export const loader = (args: LoaderFunctionArgs) => {
-  const url = new URL(args.request.url);
-  const cloudflareEnv =
-    ((args.context as unknown as { cloudflare?: { env?: Record<string, string | undefined> } }).cloudflare?.env) ||
-    {};
-  const clerkPublishableKey =
-    cloudflareEnv.VITE_CLERK_PUBLISHABLE_KEY ||
-    process.env.VITE_CLERK_PUBLISHABLE_KEY ||
-    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
-    '';
-
-  if (url.searchParams.has('handoff')) {
-    return json({ skipClerk: true, clerkPublishableKey });
-  }
-
   return rootAuthLoader(args, {
     signInUrl: 'https://flowstarter.dev/login',
     signUpUrl: 'https://flowstarter.dev/login',
@@ -358,12 +344,6 @@ function isSatelliteApp(): boolean {
 function AppInner() {
   const theme = useStore(themeStore);
   const loaderData = useLoaderData<typeof loader>();
-  const skipClerk = typeof loaderData === 'object' && loaderData !== null && 'skipClerk' in loaderData;
-  const publishableKey =
-    typeof loaderData === 'object' && loaderData !== null && 'clerkPublishableKey' in loaderData
-      ? loaderData.clerkPublishableKey
-      : (import.meta.env as Record<string, string | undefined>).VITE_CLERK_PUBLISHABLE_KEY ||
-        (import.meta.env as Record<string, string | undefined>).NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
   useEffect(() => {
     logStore.logSystem('Application initialized', {
@@ -386,21 +366,10 @@ function AppInner() {
     </Layout>
   );
 
-  if (skipClerk) {
-    return publishableKey ? (
-      // @ts-expect-error Minimal Clerk bootstrap for local handoff entry.
-      <ClerkProvider {...({ publishableKey } as unknown as Record<string, unknown>)}>
-        {appShell}
-      </ClerkProvider>
-    ) : appShell;
-  }
-
   return (
     // @ts-expect-error ClerkProvider props are injected by rootAuthLoader at runtime
     <ClerkProvider {...(loaderData || {})}>
-      <Layout>
-        <Outlet />
-      </Layout>
+      {appShell}
     </ClerkProvider>
   );
 }

@@ -53,7 +53,7 @@ test.describe('Scenario 3: Review to build', () => {
         body: [
           'data: {"type":"progress","message":"Starting generation pipeline..."}\n\n',
           'data: {"type":"progress","message":"Building preview..."}\n\n',
-          'data: {"type":"complete","preview":{"url":"https://mock-preview.daytona.app","sandboxId":"sb-e2e"},"files":[{"path":"src/pages/index.astro","content":"<h1>Hello</h1>"}]}\n\n',
+          'data: {"type":"complete","result":{"success":true,"preview":{"url":"https://mock-preview.daytona.app","sandboxId":"sb-e2e"},"files":[{"path":"src/pages/index.astro","content":"<h1>Hello</h1>"}]}}\n\n',
         ].join(''),
       });
     });

@@ -12,6 +12,7 @@ export default function Footer(props: FooterProps) {
     { label: t('footer.nav.help'), href: '/help' },
     { label: t('footer.nav.privacy'), href: '/privacy' },
     { label: t('footer.nav.terms'), href: '/terms' },
+    { label: t('footer.nav.cookies'), href: '/cookies' },
     { label: t('footer.nav.contact'), href: '/contact' },
     { label: t('footer.nav.about'), href: '/about' },
     { label: t('footer.nav.faq'), href: '/faq' },

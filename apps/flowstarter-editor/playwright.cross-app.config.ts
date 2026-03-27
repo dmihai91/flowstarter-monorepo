@@ -22,12 +22,19 @@
  */
 import { config } from 'dotenv';
 import { defineConfig, devices } from '@playwright/test';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 config({ path: '.env' });
 config({ path: '.env.local', override: true });
 
-const BASE     = process.env.E2E_BASE_URL    || 'https://flowstarter.dev';
-const EDITOR   = process.env.E2E_EDITOR_URL  || 'https://editor.flowstarter.dev';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const storageStatePath = path.resolve(__dirname, 'e2e/cross-app/.auth/session.json');
+
+const BASE = process.env.E2E_BASE_URL || 'https://flowstarter.dev';
+const EDITOR =
+  process.env.PLAYWRIGHT_E2E_EDITOR_URL ||
+  'http://localhost:5173';
 
 export default defineConfig({
   testDir: './e2e/cross-app',
@@ -42,11 +49,20 @@ export default defineConfig({
 
   use: {
     baseURL: BASE,
-    storageState: './e2e/cross-app/.auth/session.json',  // saved by global-setup
+    storageState: storageStatePath,  // saved by global-setup
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
+
+  webServer: EDITOR.includes('localhost')
+    ? {
+        command: 'pnpm dev',
+        url: EDITOR,
+        reuseExistingServer: !process.env.CI,
+        timeout: 120_000,
+      }
+    : undefined,
 
   projects: [
     {

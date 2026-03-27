@@ -257,6 +257,14 @@ export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuard
     }
   }, [isLoaded, isSignedIn, user]);
 
+  const hasHandoffUrl = location.search.includes('handoff=');
+
+  // Bypass Clerk entirely for validated handoff flows.
+  // The editor bootstrap already verified the signed handoff token.
+  if (hasHandoffUrl || hasHandoffSession === true) {
+    return <>{children}</>;
+  }
+
   // Timeout: if Clerk hasn't loaded after 15s, show login prompt instead of infinite loading
   useEffect(() => {
     if (isLoaded) {
@@ -292,12 +300,6 @@ export function AuthGuard({ children, fallback, requireTeam = false }: AuthGuard
   // While sessionStorage check is pending, show loading to avoid flash of login
   if (hasHandoffSession === null) {
     return <>{fallback ?? <LoadingFallback />}</>;
-  }
-
-  // Bypass auth for handoff flows — HandoffGate/HandoffGate already validated the token
-  const hasHandoffUrl = location.search.includes('handoff=');
-  if (hasHandoffUrl || hasHandoffSession) {
-    return <>{children}</>;
   }
 
   // Loaded but not signed in — team flows go to team login, client flows show login prompt

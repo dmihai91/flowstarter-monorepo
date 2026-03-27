@@ -10,7 +10,7 @@ import type { OnboardingStep } from '../types';
 import type { UseOnboardingFlowOptions, UseOnboardingFlowReturn } from '../types/sharedState';
 
 export function useOnboardingFlow(options: UseOnboardingFlowOptions = {}): UseOnboardingFlowReturn {
-  const { initialStep = 'welcome', initialDescription = '', initialProjectName = null, onStepChange } = options;
+  const { initialStep = 'review', initialDescription = '', initialProjectName = null, onStepChange } = options;
 
   // ─── State ────────────────────────────────────────────────────────────────
   const [step, setStepInternal] = useState<OnboardingStep>(initialStep);
@@ -47,4 +47,3 @@ export function useOnboardingFlow(options: UseOnboardingFlowOptions = {}): UseOn
 }
 
 export type { UseOnboardingFlowOptions, UseOnboardingFlowReturn };
-

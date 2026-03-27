@@ -18,17 +18,13 @@ import { useOptionalConversationContext } from '../ConversationContext';
 import { useEditorChatState, useAttachments, useFontsLoader, useConvexSync, useMessagePagination, useActivityEvents } from './hooks';
 import { ColorPaletteToColorPalette } from './utils';
 import {
-  TemplateGallery,
-  PaletteSelector,
   CustomPaletteModal,
-  FontSelector,
   PersonalizationPanel,
   IntegrationModal,
-  BusinessDetailsForm,
   ChatInput,
   TypingIndicator,
   CreatingIndicator,
-  QuickProfileSelector,
+  ReviewLaunchPanel,
   AgentActivityLog,
   BuildActivityFeed,
 } from './components';
@@ -74,11 +70,7 @@ export function EditorChatPanel({
     setCustomColors,
     setSelectedPalette,
     messagesEndRef,
-    templates,
     selectedTemplate,
-    templatesLoading,
-    templatesError,
-    refetchTemplates,
     isCloning,
     agentRunning,
     orchestratorStatus,
@@ -87,37 +79,27 @@ export function EditorChatPanel({
     buildStep,
     buildProgress,
     buildPhase,
-    recommendations,
-    recommendationsLoading,
-    recommendationsError,
     selectedRecommendation,
-    fetchRecommendations,
     businessInfo,
+    brandProfile,
     selectedPalette,
     selectedFont,
     selectedLogo,
     projectName,
     projectDescription,
     currentUrlId,
-    quickProfile,
-    suggestedQuickProfile,
-    handleQuickProfileComplete,
     businessContext,
     isInternalFlow,
     handleTemplateSelect,
-    handleRecommendationSelect,
     handlePaletteSelect,
     handleFontSelect,
     handleLogoSelect,
-    handleContactDetailsComplete,
-    handleSkipContactDetails,
     handleIntegrationsComplete,
     handleSkipIntegrations,
-    handleBusinessDetailsComplete,
-    handleSuggestionAccept,
+    handleReviewBuildStart,
+    handleReviewCustomize,
     handleSend,
     handleThumbnailError,
-    refreshSuggestions,
     openPreview,
     setPreviewTemplate,
     previewRecommendation,
@@ -149,12 +131,13 @@ export function EditorChatPanel({
       step,
       projectDescription: projectDescription || undefined,
       projectName: projectName || undefined,
-      selectedTemplateId: initialState?.selectedTemplateId || undefined,
-      selectedTemplateName: initialState?.selectedTemplateName || undefined,
+      selectedTemplateId: selectedTemplate?.id || initialState?.selectedTemplateId || undefined,
+      selectedTemplateName: selectedTemplate?.name || initialState?.selectedTemplateName || undefined,
       selectedPalette,
       selectedFont,
       selectedLogo,
       businessInfo,
+      brandProfile: brandProfile || undefined,
       projectUrlId: currentUrlId || initialState?.projectUrlId || undefined,
       buildPhase: buildPhase || initialState?.buildPhase,
       orchestrationState: initialState?.orchestrationState,
@@ -184,9 +167,7 @@ export function EditorChatPanel({
   const agentIsActive = activeAgentMsg?.isAgentActive ?? false;
 
   // ── Determine which phases show the chat input ──
-  const chatInputVisible =
-    step === 'welcome' || step === 'describe' || step === 'name' ||
-    step === 'creating' || step === 'ready';
+  const chatInputVisible = step === 'creating' || step === 'ready';
 
   return (
     <div className="relative flex flex-col h-full overflow-hidden" style={{ background: 'transparent' }}>
@@ -266,47 +247,25 @@ export function EditorChatPanel({
 
         {/* ── Phase-specific content ── */}
 
-        {/* Quick Profile */}
-        {step === 'quick-profile' && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="ml-10">
-            <QuickProfileSelector
-              initialProfile={suggestedQuickProfile}
-              onComplete={handleQuickProfileComplete}
-              isDark={isDark}
-            />
-          </motion.div>
-        )}
-
-        {/* Business Details (consolidated form) */}
-        {(step === 'business-details' || step === 'business-uvp' || step === 'business-offering' || step === 'business-contact') && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="ml-10">
-            <BusinessDetailsForm
-              isDark={isDark}
-              businessInfo={businessInfo}
-              onComplete={handleBusinessDetailsComplete}
-            />
-          </motion.div>
-        )}
-
-        {/* Template Gallery — skipped when template pre-selected via Use Template flow */}
-        {step === 'template' && !initialState?.selectedTemplateId && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="ml-10">
-            <TemplateGallery
-              recommendations={recommendations}
-              recommendationsLoading={recommendationsLoading}
-              recommendationsError={recommendationsError}
-              onRecommendationSelect={handleRecommendationSelect}
-              onPreviewRecommendation={openPreview}
-              onRetryRecommendations={fetchRecommendations}
-              templates={templates}
-              templatesLoading={templatesLoading}
-              templatesError={templatesError}
-              onTemplateSelect={handleTemplateSelect}
-              onPreview={openPreview}
-              onRetryTemplates={refetchTemplates}
-              isDark={isDark}
-            />
-          </motion.div>
+        {step === 'review' && (
+          <ReviewLaunchPanel
+            isDark={isDark}
+            projectName={projectName || initialState?.projectName}
+            projectDescription={projectDescription || initialState?.projectDescription}
+            selectedTemplateName={
+              selectedTemplate?.name ||
+              selectedRecommendation?.template.name ||
+              initialState?.selectedTemplateName ||
+              null
+            }
+            selectedPalette={selectedPalette || initialState?.selectedPalette || null}
+            selectedFont={selectedFont || initialState?.selectedFont || null}
+            businessInfo={businessInfo || initialState?.businessInfo || null}
+            brandProfile={brandProfile}
+            integrations={initialState?.integrations || null}
+            onCustomize={handleReviewCustomize}
+            onBuild={handleReviewBuildStart}
+          />
         )}
 
         {/* Personalization Panel */}

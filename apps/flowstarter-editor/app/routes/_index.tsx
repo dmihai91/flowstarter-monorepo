@@ -98,7 +98,7 @@ function NoDashboardCard() {
             margin: '0 0 28px',
           }}
         >
-          To start a new client project, go to the dashboard and use the project wizard.
+          Start a project from the team dashboard, complete the business and template setup, then open it here through the handoff flow.
         </p>
         <a
           href={dashboardUrl}

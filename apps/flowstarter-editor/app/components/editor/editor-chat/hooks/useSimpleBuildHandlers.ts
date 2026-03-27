@@ -43,6 +43,7 @@ export function useSimpleBuildHandlers({
   onStateChange,
   existingProjectId,
   convexConversationId,
+  seededIntegrations = [],
 }: UseSimpleBuildHandlersProps): UseSimpleBuildHandlersReturn {
   const generateSiteMutation = useGenerateSiteStream();
   // Live agent events accumulator — drives the AgentStatusMessage in chat
@@ -275,15 +276,15 @@ export function useSimpleBuildHandlers({
         if (!buildCompletedSuccessfully) {
           setBuildStep('');
           setBuildProgress(BUILD_PROGRESS.INITIAL);
-          flowHook.setStep('template');
+          flowHook.setStep('review');
         }
         const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
         messageHook.addAssistantMessage(
-          `Something went wrong while building your site: ${errorMessage}\n\nPlease try again or select a different template.`,
+          `Something went wrong while building your site: ${errorMessage}\n\nPlease review the project setup and try again.`,
         );
         messageHook.setSuggestedReplies([
           { id: 'retry', text: 'Try again' },
-          { id: 'different-template', text: 'Choose different template' },
+          { id: 'review', text: 'Back to review' },
         ]);
       }
     },
@@ -337,8 +338,8 @@ export function useSimpleBuildHandlers({
   }, [messageHook, startBuild]);
 
   const startSeededBuild = useCallback(async () => {
-    await startBuild([]);
-  }, [startBuild]);
+    await startBuild(seededIntegrations);
+  }, [seededIntegrations, startBuild]);
 
   return {
     handlePersonalizationComplete,

@@ -7,10 +7,6 @@
 // Keys & Configuration
 export { queryKeys, STALE_TIME } from './keys';
 
-// Recommendations
-export { useRecommendations } from './recommendations';
-export type { RecommendationsParams } from './recommendations';
-
 // Projects
 export { useGenerateProjectName } from './projects';
 export type { GenerateNameParams, GenerateNameResult } from './projects';

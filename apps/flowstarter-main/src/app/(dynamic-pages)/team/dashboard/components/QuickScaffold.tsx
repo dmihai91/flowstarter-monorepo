@@ -77,18 +77,30 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
       if (!res.ok) throw new Error('AI request failed');
       const data = await res.json();
 
-      // Persist prefill to Supabase, redirect wizard with the draft id
-      const prefillRes = await fetch('/api/wizard/prefill', {
+      // Persist a quick scaffold draft, then continue in New Project
+      const draftRes = await fetch('/api/projects/draft', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ clientInfo: client, userInput: description, aiResponse: data }),
+        body: JSON.stringify({
+          projectConfig: {
+            name: client.name ? `${client.name} Draft` : 'Quick Draft',
+            description,
+            currentStep: 'review',
+            clientInfo: client,
+            userInput: description,
+            businessInfo: {
+              summary: description,
+            },
+            flowstarterEngine: data,
+          },
+        }),
       });
-      if (!prefillRes.ok) throw new Error('Failed to save prefill');
-      const { prefillId } = await prefillRes.json() as { prefillId: string };
+      if (!draftRes.ok) throw new Error('Failed to save draft');
+      const { projectId } = await draftRes.json() as { projectId: string };
 
-      router.push('/team/dashboard/new?prefill=' + prefillId);
+      router.push('/team/dashboard/new?draft=' + projectId);
     } catch {
-      setError('Something went wrong. Try again or go to the full wizard.');
+      setError('Something went wrong. Try again or continue in New Project.');
     } finally {
       setLoading(false);
     }

@@ -30,6 +30,7 @@ export const PIPELINE_STEPS: OnboardingStep[] = [
   'template',
   'personalization',
   'integrations',
+  'review',
   'creating',
   'ready',
 ];
@@ -52,7 +53,8 @@ const DEFAULT_NEXT_STEP: Partial<Record<OnboardingStep, OnboardingStep>> = {
   'business-summary': 'template',
   template: 'personalization',
   personalization: 'integrations',
-  integrations: 'creating',
+  integrations: 'review',
+  review: 'creating',
   creating: 'ready',
 };
 
@@ -77,6 +79,7 @@ export const STEP_LABELS: Record<OnboardingStep, string> = {
   template: 'Choose template',
   personalization: 'Customize design',
   integrations: 'Connect services',
+  review: 'Review before build',
   creating: 'Building site',
   ready: 'Complete',
 };
@@ -361,5 +364,4 @@ export function usePipelineOrchestration({
 }
 
 export type { OnboardingStep };
-
 

@@ -1,14 +1,13 @@
 /**
  * useTemplateSelection Hook
  *
- * Manages template browsing, selection, recommendations, and preview state.
- * Uses React Query for caching and deduplication.
+ * Manages deterministic template browsing and selection. Initial template
+ * choice comes from the main platform handoff; editor-side AI recommendations
+ * are retired.
  */
 
-import { useState, useCallback, useRef, useEffect } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useState, useCallback } from 'react';
 import { useTemplates } from '~/lib/hooks/useTemplates';
-import { useRecommendations, queryKeys } from '~/lib/hooks/useApiQueries';
 import type { Template } from '~/components/onboarding';
 import type { TemplateRecommendation } from '~/components/editor/template-preview/types';
 import type { BusinessInfo } from '../types';
@@ -16,13 +15,7 @@ import type { UseTemplateSelectionOptions, UseTemplateSelectionReturn } from '..
 
 export function useTemplateSelection(options: UseTemplateSelectionOptions = {}): UseTemplateSelectionReturn {
   const { onTemplateSelect, onRecommendationSelect } = options;
-  const queryClient = useQueryClient();
 
-  /*
-   * ─── Templates from API ───────────────────────────────────────────────────
-   * Note: autoFetch is false by default to improve startup performance.
-   * Templates are fetched when the user reaches the template step.
-   */
   const {
     templates,
     isLoading: templatesLoading,
@@ -30,52 +23,22 @@ export function useTemplateSelection(options: UseTemplateSelectionOptions = {}):
     refetch: refetchTemplates,
   } = useTemplates({ autoFetch: false });
 
-  // ─── State ────────────────────────────────────────────────────────────────
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
   const [thumbnailErrors, setThumbnailErrors] = useState<Set<string>>(new Set());
-
-  // Recommendations state (for manual fetch control)
-  const [recommendationParams, setRecommendationParams] = useState<{
-    businessInfo: BusinessInfo;
-    projectName: string;
-    projectDescription: string;
-  } | null>(null);
-
   const [selectedRecommendation, setSelectedRecommendation] = useState<TemplateRecommendation | null>(null);
   const [previewRecommendation, setPreviewRecommendation] = useState<TemplateRecommendation | null>(null);
-
-  // ─── React Query for Recommendations ──────────────────────────────────────
-  const {
-    data: recommendations = [],
-    isLoading: recommendationsLoading,
-    error: recommendationsQueryError,
-    refetch: refetchRecommendations,
-  } = useRecommendations(recommendationParams);
-
-  const recommendationsError = recommendationsQueryError
-    ? recommendationsQueryError instanceof Error
-      ? recommendationsQueryError.message
-      : 'Failed to fetch recommendations'
-    : null;
-
-  // ─── Callbacks ────────────────────────────────────────────────────────────
 
   const handleTemplateSelect = useCallback(
     (template: Template) => {
       setSelectedTemplate(template);
-      // Wrap template as a synthetic recommendation to preserve palettes/fonts
-      if (template.palettes && template.palettes.length > 0) {
-        setSelectedRecommendation({
-          template,
-          palettes: template.palettes || [],
-          fonts: template.fonts || [],
-          reasoning: '',
-          matchScore: 0,
-        });
-      } else {
-        setSelectedRecommendation(null);
-      }
+      setSelectedRecommendation({
+        template,
+        palettes: template.palettes || [],
+        fonts: template.fonts || [],
+        reasoning: '',
+        matchScore: 0,
+      });
       onTemplateSelect?.(template);
     },
     [onTemplateSelect],
@@ -90,24 +53,8 @@ export function useTemplateSelection(options: UseTemplateSelectionOptions = {}):
     [onRecommendationSelect],
   );
 
-  /**
-   * Fetch recommendations - triggers React Query
-   * Results are cached by business info, so repeated calls with same info are instant
-   */
   const fetchRecommendations = useCallback(
-    async (businessInfo: BusinessInfo, projectName: string, description: string) => {
-      if (!businessInfo || !description) {
-        console.warn('[fetchRecommendations] Missing businessInfo or description');
-        return;
-      }
-
-      // Set params to trigger React Query
-      setRecommendationParams({
-        businessInfo,
-        projectName: projectName || 'My Project',
-        projectDescription: description,
-      });
-    },
+    async (_businessInfo: BusinessInfo, _projectName: string, _description: string) => {},
     [],
   );
 
@@ -116,34 +63,29 @@ export function useTemplateSelection(options: UseTemplateSelectionOptions = {}):
   }, []);
 
   const openPreview = useCallback((templateOrRecommendation: Template | TemplateRecommendation) => {
-    // Check if it's a recommendation (has 'template' property)
     if ('template' in templateOrRecommendation && 'reasoning' in templateOrRecommendation) {
       const rec = templateOrRecommendation as TemplateRecommendation;
       setPreviewRecommendation(rec);
       setPreviewTemplate(rec.template);
-    } else {
-      setPreviewTemplate(templateOrRecommendation as Template);
-      setPreviewRecommendation(null);
+      return;
     }
+
+    setPreviewTemplate(templateOrRecommendation as Template);
+    setPreviewRecommendation(null);
   }, []);
 
   return {
-    // State
     templates,
     templatesLoading,
     templatesError,
     selectedTemplate,
     previewTemplate,
     thumbnailErrors,
-
-    // Recommendations
-    recommendations,
-    recommendationsLoading,
-    recommendationsError,
+    recommendations: [],
+    recommendationsLoading: false,
+    recommendationsError: null,
     selectedRecommendation,
     previewRecommendation,
-
-    // Actions
     refetchTemplates,
     handleTemplateSelect,
     handleRecommendationSelect,
@@ -156,4 +98,3 @@ export function useTemplateSelection(options: UseTemplateSelectionOptions = {}):
 }
 
 export type { UseTemplateSelectionOptions, UseTemplateSelectionReturn };
-

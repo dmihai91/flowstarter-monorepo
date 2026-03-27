@@ -69,7 +69,7 @@ export function useProjectCards(projects: Array<TableType<'projects'>>): Project
           ? p.name
           : t('dashboard.projects.draftPlaceholderName');
       const description = typeof p.description === 'string' ? p.description : '';
-      const link = isDraft ? `/wizard/project/${p.id}` : `/projects/${p.id}`;
+      const link = isDraft ? `/team/dashboard/new?draft=${p.id}` : `/projects/${p.id}`;
 
       result.push({
         id: p.id,

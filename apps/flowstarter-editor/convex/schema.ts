@@ -70,6 +70,51 @@ const integrationsSchema = v.object({
   newsletter: v.optional(newsletterIntegrationSchema),
 });
 
+const brandProfileSchema = v.object({
+  brandTone: v.object({
+    primary: v.string(),
+    secondary: v.optional(v.array(v.string())),
+    notes: v.optional(v.string()),
+  }),
+  valueProposition: v.optional(v.string()),
+  primaryGoal: v.optional(v.string()),
+  desiredCustomerAction: v.optional(v.string()),
+  differentiators: v.optional(v.array(v.string())),
+  trustSignals: v.optional(v.array(v.string())),
+  contentStylePreference: v.optional(v.string()),
+  operatorNotes: v.optional(v.string()),
+});
+
+const selectedTemplateSchema = v.object({
+  id: v.string(),
+  name: v.optional(v.string()),
+});
+
+const selectedPaletteSchema = v.object({
+  id: v.string(),
+  name: v.string(),
+  colors: v.object({
+    primary: v.string(),
+    secondary: v.string(),
+    accent: v.string(),
+    background: v.string(),
+    text: v.string(),
+  }),
+});
+
+const selectedFontSchema = v.object({
+  id: v.string(),
+  name: v.string(),
+  heading: v.object({
+    family: v.string(),
+    weight: v.optional(v.number()),
+  }),
+  body: v.object({
+    family: v.string(),
+    weight: v.optional(v.number()),
+  }),
+});
+
 export default defineSchema({
   // ═══════════════════════════════════════════════════════════════════════════
   // CLIENTS - Client accounts linked to projects
@@ -244,6 +289,17 @@ export default defineSchema({
 
     // Cross-platform linking
     supabaseProjectId: v.optional(v.string()), // UUID from Supabase projects table
+    businessInfo: v.optional(v.any()),
+    brandProfile: v.optional(brandProfileSchema),
+    contactInfo: v.optional(v.any()),
+    selectedTemplate: v.optional(selectedTemplateSchema),
+    selectedPalette: v.optional(selectedPaletteSchema),
+    selectedFont: v.optional(selectedFontSchema),
+    selectedIntegrations: v.optional(v.any()),
+    editorState: v.optional(v.string()),
+    buildState: v.optional(v.string()),
+    previewState: v.optional(v.string()),
+    syncVersion: v.optional(v.number()),
 
     // Timestamps
     createdAt: v.number(),
@@ -336,6 +392,9 @@ export default defineSchema({
         website: v.optional(v.string()),
       })
     ),
+    brandProfile: v.optional(brandProfileSchema),
+    selectedIntegrations: v.optional(v.any()),
+    syncVersion: v.optional(v.number()),
 
     // Pipeline orchestration state
     pipelineState: v.optional(

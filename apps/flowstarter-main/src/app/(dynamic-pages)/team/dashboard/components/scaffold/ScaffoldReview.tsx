@@ -25,9 +25,10 @@ const GOAL_OPTIONS: { value: ProjectGoal; label: string; emoji: string }[] = [
 const TONE_OPTIONS: { value: BrandTone; label: string; desc: string }[] = [
   { value: 'professional', label: 'Professional', desc: 'Polished, trustworthy' },
   { value: 'bold',         label: 'Bold',         desc: 'Direct, confident'    },
-  { value: 'friendly',     label: 'Friendly',     desc: 'Warm, approachable'   },
-  { value: 'calm',         label: 'Calm',         desc: 'Soft, reassuring'     },
+  { value: 'warm',         label: 'Warm',         desc: 'Approachable, human'   },
+  { value: 'calming',      label: 'Calming',      desc: 'Soft, reassuring'      },
   { value: 'modern',       label: 'Modern',       desc: 'Clean, minimal'       },
+  { value: 'premium',      label: 'Premium',      desc: 'Elevated, exclusive'   },
 ];
 
 const OFFER_OPTIONS: { value: OfferType; label: string }[] = [
@@ -245,6 +246,61 @@ function Step2Offer({
             </button>
           ))}
         </div>
+      </div>
+      <div>
+        <FieldLabel>Primary business goal</FieldLabel>
+        <TextInput
+          value={brief.primaryGoal}
+          onChange={(v) => update('primaryGoal', v)}
+          placeholder="e.g. Book more consultations"
+        />
+      </div>
+      <div>
+        <FieldLabel>Primary call to action</FieldLabel>
+        <TextInput
+          value={brief.desiredCustomerAction}
+          onChange={(v) => update('desiredCustomerAction', v)}
+          placeholder="e.g. Schedule a discovery call"
+        />
+      </div>
+      <div>
+        <FieldLabel>Differentiators (one per line)</FieldLabel>
+        <TextArea
+          value={brief.differentiators.join('\n')}
+          onChange={(v) =>
+            update('differentiators', v.split('\n').map((s) => s.trim()).filter(Boolean))
+          }
+          placeholder={"15 years of experience\nCertified specialists\nFast turnaround"}
+          rows={3}
+        />
+      </div>
+      <div>
+        <FieldLabel>Trust signals (one per line)</FieldLabel>
+        <TextArea
+          value={brief.trustSignals.join('\n')}
+          onChange={(v) =>
+            update('trustSignals', v.split('\n').map((s) => s.trim()).filter(Boolean))
+          }
+          placeholder={"5-star reviews\nRecognized partners\nMoney-back guarantee"}
+          rows={3}
+        />
+      </div>
+      <div>
+        <FieldLabel>Content style preference</FieldLabel>
+        <TextInput
+          value={brief.contentStylePreference}
+          onChange={(v) => update('contentStylePreference', v)}
+          placeholder="e.g. concise, persuasive, conversational"
+        />
+      </div>
+      <div>
+        <FieldLabel>Operator notes</FieldLabel>
+        <TextArea
+          value={brief.brandNotes}
+          onChange={(v) => update('brandNotes', v)}
+          placeholder="Anything the build agent should preserve about the client's voice or positioning"
+          rows={3}
+        />
       </div>
     </div>
   );

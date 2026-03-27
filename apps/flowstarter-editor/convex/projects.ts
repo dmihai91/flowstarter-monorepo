@@ -43,6 +43,51 @@ const integrationsSchema = v.object({
   newsletter: v.optional(newsletterIntegrationSchema),
 });
 
+const brandProfileSchema = v.object({
+  brandTone: v.object({
+    primary: v.string(),
+    secondary: v.optional(v.array(v.string())),
+    notes: v.optional(v.string()),
+  }),
+  valueProposition: v.optional(v.string()),
+  primaryGoal: v.optional(v.string()),
+  desiredCustomerAction: v.optional(v.string()),
+  differentiators: v.optional(v.array(v.string())),
+  trustSignals: v.optional(v.array(v.string())),
+  contentStylePreference: v.optional(v.string()),
+  operatorNotes: v.optional(v.string()),
+});
+
+const selectedTemplateSchema = v.object({
+  id: v.string(),
+  name: v.optional(v.string()),
+});
+
+const selectedPaletteSchema = v.object({
+  id: v.string(),
+  name: v.string(),
+  colors: v.object({
+    primary: v.string(),
+    secondary: v.string(),
+    accent: v.string(),
+    background: v.string(),
+    text: v.string(),
+  }),
+});
+
+const selectedFontSchema = v.object({
+  id: v.string(),
+  name: v.string(),
+  heading: v.object({
+    family: v.string(),
+    weight: v.optional(v.number()),
+  }),
+  body: v.object({
+    family: v.string(),
+    weight: v.optional(v.number()),
+  }),
+});
+
 // Contact details schema
 const contactDetailsSchema = v.object({
   email: v.optional(v.string()),
@@ -468,6 +513,9 @@ export const createEmpty = mutation({
       createdBy: args.createdBy,
       supabaseProjectId: args.supabaseProjectId,
       status: args.clientId ? 'draft' : undefined, // Set status if client-linked
+      editorState: 'review',
+      buildState: 'idle',
+      previewState: 'unavailable',
       createdAt: now,
       updatedAt: now,
     });
@@ -624,6 +672,115 @@ export const getBySupabaseId = query({
         q.eq('supabaseProjectId', args.supabaseProjectId)
       )
       .first();
+  },
+});
+
+export const upsertFromMain = mutation({
+  args: {
+    supabaseProjectId: v.string(),
+    projectName: v.string(),
+    projectDescription: v.optional(v.string()),
+    businessInfo: v.optional(v.any()),
+    brandProfile: v.optional(brandProfileSchema),
+    contactInfo: v.optional(v.any()),
+    selectedTemplate: v.optional(selectedTemplateSchema),
+    selectedPalette: v.optional(selectedPaletteSchema),
+    selectedFont: v.optional(selectedFontSchema),
+    selectedIntegrations: v.optional(v.any()),
+    editorState: v.optional(v.string()),
+    buildState: v.optional(v.string()),
+    previewState: v.optional(v.string()),
+    syncVersion: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const now = Date.now();
+    const existing = await ctx.db
+      .query('projects')
+      .withIndex('by_supabaseProjectId', (q) => q.eq('supabaseProjectId', args.supabaseProjectId))
+      .first();
+
+    const incomingSyncVersion = args.syncVersion ?? now;
+    if (existing?.syncVersion && existing.syncVersion > incomingSyncVersion) {
+      return { projectId: existing._id, urlId: existing.urlId, skipped: true };
+    }
+
+    const updates = {
+      name: args.projectName,
+      description: args.projectDescription || '',
+      businessDetails: {
+        businessName: args.projectName,
+        description:
+          (args.businessInfo as { summary?: string; description?: string } | undefined)?.summary ||
+          (args.businessInfo as { description?: string } | undefined)?.description ||
+          args.projectDescription ||
+          '',
+        targetAudience: (args.businessInfo as { targetAudience?: string } | undefined)?.targetAudience,
+        goals: (args.businessInfo as { goals?: string[]; businessGoals?: string[] } | undefined)?.goals ||
+          (args.businessInfo as { businessGoals?: string[] } | undefined)?.businessGoals,
+      },
+      contactDetails: args.contactInfo,
+      businessInfo: args.businessInfo,
+      brandProfile: args.brandProfile,
+      contactInfo: args.contactInfo,
+      selectedTemplate: args.selectedTemplate,
+      selectedPalette: args.selectedPalette,
+      selectedFont: args.selectedFont,
+      selectedIntegrations: args.selectedIntegrations,
+      templateId: args.selectedTemplate?.id || '',
+      templateName: args.selectedTemplate?.name,
+      editorState: args.editorState || existing?.editorState || 'review',
+      buildState: args.buildState || existing?.buildState || 'idle',
+      previewState: args.previewState || existing?.previewState || 'unavailable',
+      syncVersion: incomingSyncVersion,
+      updatedAt: now,
+    };
+
+    if (existing) {
+      await ctx.db.patch(existing._id, updates);
+      return { projectId: existing._id, urlId: existing.urlId, skipped: false };
+    }
+
+    const baseSlug = slugifyName(args.projectName) || 'project';
+    let urlId = baseSlug;
+    let attempt = 1;
+    while (attempt <= 20) {
+      const conflict = await ctx.db
+        .query('projects')
+        .withIndex('by_urlId', (q) => q.eq('urlId', urlId))
+        .first();
+      if (!conflict) {
+        break;
+      }
+      attempt += 1;
+      urlId = `${baseSlug}-${attempt}`;
+    }
+
+    const projectId = await ctx.db.insert('projects', {
+      urlId,
+      name: args.projectName,
+      description: args.projectDescription || '',
+      businessDetails: updates.businessDetails,
+      tags: [],
+      templateId: args.selectedTemplate?.id || '',
+      templateName: args.selectedTemplate?.name,
+      supabaseProjectId: args.supabaseProjectId,
+      contactDetails: args.contactInfo,
+      businessInfo: args.businessInfo,
+      brandProfile: args.brandProfile,
+      contactInfo: args.contactInfo,
+      selectedTemplate: args.selectedTemplate,
+      selectedPalette: args.selectedPalette,
+      selectedFont: args.selectedFont,
+      selectedIntegrations: args.selectedIntegrations,
+      editorState: updates.editorState,
+      buildState: updates.buildState,
+      previewState: updates.previewState,
+      syncVersion: incomingSyncVersion,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    return { projectId, urlId, skipped: false };
   },
 });
 

@@ -1,5 +1,5 @@
 import { useStore } from '@nanostores/react';
-import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/cloudflare';
+import { json, type LinksFunction, type LoaderFunctionArgs } from '@remix-run/cloudflare';
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from '@remix-run/react';
 import tailwindReset from '@unocss/reset/tailwind-compat.css?url';
 import { themeStore } from './lib/stores/theme';
@@ -82,12 +82,21 @@ function getConvexClient(): ConvexReactClient | null {
 }
 
 // Clerk auth loader with satellite configuration
-// The editor runs as a satellite app, sharing sessions with the main platform
-export const loader = (args: LoaderFunctionArgs) => rootAuthLoader(args, {
-  // Satellite app configuration
-  signInUrl: 'https://flowstarter.dev/login',
-  signUpUrl: 'https://flowstarter.dev/login',
-});
+// The editor runs as a satellite app, sharing sessions with the main platform.
+// Handoff entry is intentionally authless at bootstrap time so the signed token
+// can initialize the project before the editor route hits the AuthGuard bypass.
+export const loader = (args: LoaderFunctionArgs) => {
+  const url = new URL(args.request.url);
+
+  if (url.searchParams.has('handoff')) {
+    return json({ skipClerk: true });
+  }
+
+  return rootAuthLoader(args, {
+    signInUrl: 'https://flowstarter.dev/login',
+    signUpUrl: 'https://flowstarter.dev/login',
+  });
+};
 
 export const links: LinksFunction = () => [
   // Favicons
@@ -341,6 +350,10 @@ function isSatelliteApp(): boolean {
 function AppInner() {
   const theme = useStore(themeStore);
   const loaderData = useLoaderData<typeof loader>();
+  const skipClerk = typeof loaderData === 'object' && loaderData !== null && 'skipClerk' in loaderData;
+  const publishableKey =
+    (import.meta.env as Record<string, string | undefined>).VITE_CLERK_PUBLISHABLE_KEY ||
+    (import.meta.env as Record<string, string | undefined>).NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
   useEffect(() => {
     logStore.logSystem('Application initialized', {
@@ -356,6 +369,21 @@ function AppInner() {
   // - CLERK_SIGN_IN_URL=https://flowstarter.dev/login
   // - CLERK_SIGN_UP_URL=https://flowstarter.dev/login
   // The rootAuthLoader reads these and passes them to ClerkProvider
+
+  const appShell = (
+    <Layout>
+      <Outlet />
+    </Layout>
+  );
+
+  if (skipClerk) {
+    return publishableKey ? (
+      // @ts-expect-error Minimal Clerk bootstrap for local handoff entry.
+      <ClerkProvider {...({ publishableKey } as unknown as Record<string, unknown>)}>
+        {appShell}
+      </ClerkProvider>
+    ) : appShell;
+  }
 
   return (
     // @ts-expect-error ClerkProvider props are injected by rootAuthLoader at runtime

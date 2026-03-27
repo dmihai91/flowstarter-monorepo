@@ -11,7 +11,6 @@ export default function MainPagesLayout({ children }: { children: ReactNode }) {
     pathname?.startsWith('/dashboard') ||
     pathname?.startsWith('/profile') ||
     pathname?.startsWith('/projects/') ||
-    pathname?.startsWith('/wizard') ||
     pathname?.startsWith('/help');
 
   // Hide footer on landing page (has its own) and logged-in pages

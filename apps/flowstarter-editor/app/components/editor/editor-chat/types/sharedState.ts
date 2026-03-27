@@ -19,7 +19,8 @@ import type {
 } from '../types';
 import type { Template } from '~/components/onboarding';
 import type { TemplateRecommendation } from '~/components/editor/template-preview/types';
-import type { MessageType } from '~/lib/hooks/useOnboardingChat';
+
+export type MessageType = string;
 
 // ─── Message Hook Types ─────────────────────────────────────────────────────
 
@@ -230,4 +231,3 @@ export interface UseEditorChatStateProps {
   initialState?: InitialChatState;
   onStateChange?: (state: Partial<InitialChatState>) => void;
 }
-

@@ -10,6 +10,7 @@ import { syncProjectName } from '~/lib/services/projectSyncService';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '~/convex/_generated/api';
 import type { Id } from '~/convex/_generated/dataModel';
+import type { IntegrationConfig } from '~/components/editor/editor-chat/types';
 
 // Session ID stored in localStorage
 const SESSION_ID_KEY = 'flowstarter_session_id';
@@ -59,6 +60,31 @@ export interface ConversationState {
   buildPhase?: string | null;
   projectName?: string | null;
   businessInfo?: unknown;
+  brandProfile?: unknown;
+  integrations?: IntegrationConfig[] | null;
+}
+
+function normalizeIntegrations(value: unknown): IntegrationConfig[] | null {
+  if (!value) {
+    return null;
+  }
+
+  if (Array.isArray(value)) {
+    return value
+      .filter((entry): entry is string => typeof entry === 'string')
+      .map((id) => ({ id, name: id, enabled: true }));
+  }
+
+  if (typeof value === 'object') {
+    const record = value as Record<string, unknown>;
+    if (Array.isArray(record.selected)) {
+      return record.selected
+        .filter((entry): entry is string => typeof entry === 'string')
+        .map((id) => ({ id, name: id, enabled: true }));
+    }
+  }
+
+  return null;
 }
 
 interface UseConversationsResult {
@@ -171,6 +197,10 @@ export function useConversations(initialConversationId?: Id<'conversations'>): U
         buildPhase: effectiveActiveConversation.buildPhase,
         projectName: effectiveActiveConversation.projectName,
         businessInfo: effectiveActiveConversation.businessInfo,
+        brandProfile: effectiveActiveConversation.brandProfile,
+        integrations: normalizeIntegrations(
+          (effectiveActiveConversation as unknown as Record<string, unknown>).selectedIntegrations,
+        ),
       }
     : null;
 
@@ -410,4 +440,3 @@ export function useConversations(initialConversationId?: Id<'conversations'>): U
     updateConversationProjectName,
   };
 }
-

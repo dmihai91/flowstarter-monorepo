@@ -17,7 +17,12 @@ import { ScaffoldInput } from '../components/scaffold/ScaffoldInput';
 import { ScaffoldProgress } from '../components/scaffold/ScaffoldProgress';
 import { ScaffoldClarify } from '../components/scaffold/ScaffoldClarify';
 import { ScaffoldReview } from '../components/scaffold/ScaffoldReview';
-import { TemplatePicker, TemplateGallery } from './TemplateGallery';
+import {
+  mapRegistryTemplateToWizardTemplate,
+  TemplateGallery,
+  TemplatePicker,
+  type WizardTemplate,
+} from './TemplateGallery';
 import { Button } from '@flowstarter/flow-design-system';
 
 // ── Plan config ────────────────────────────────────────────────────────────────
@@ -287,6 +292,8 @@ export function NewProjectWizard() {
   const [isLaunching, setIsLaunching] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [launchError, setLaunchError] = useState<string | null>(null);
+  const [templates, setTemplates] = useState<WizardTemplate[]>([]);
+  const [templatesLoading, setTemplatesLoading] = useState(true);
 
   // Local state for the new combined step 1 fields
   const [industry, setIndustry] = useState('');
@@ -304,31 +311,161 @@ export function NewProjectWizard() {
       clientInfo: { name: string; email: string; phone: string };
       userInput?: string;
     }) => {
-      if (draftId) {
-        const res = await fetch(`/api/wizard/prefill?id=${draftId}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) throw new Error('Failed to update draft');
-        return res.json() as Promise<{ id?: string }>;
-      } else {
-        const res = await fetch('/api/wizard/prefill', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) throw new Error('Failed to create draft');
-        return res.json() as Promise<{ id?: string }>;
-      }
+      const res = await fetch('/api/projects/draft', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectId: draftId || undefined,
+          projectConfig: {
+            name: form.brief.projectName || payload.clientInfo.name || 'Untitled Project',
+            description: form.brief.summary || payload.userInput || '',
+            currentStep: form.phase,
+            clientInfo: payload.clientInfo,
+            userInput: payload.userInput,
+            businessInfo: {
+              summary: form.brief.summary || payload.userInput || '',
+              industry: form.brief.industry || industry || undefined,
+            },
+          },
+        }),
+      });
+      if (!res.ok) throw new Error('Failed to save draft');
+      return res.json() as Promise<{ projectId?: string }>;
     },
     onSuccess: (data) => {
-      if (data?.id && !draftId) setDraftId(data.id);
+      if (data?.projectId && !draftId) setDraftId(data.projectId);
     },
     onError: (err) => {
       console.warn('[draft save]', err);
     },
   });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadTemplates = async () => {
+      try {
+        const response = await fetch('/api/local-templates');
+        const data = (await response.json()) as {
+          templates?: Array<{
+            slug: string;
+            name: string;
+            description: string;
+            category: string;
+            palettes: WizardTemplate['palettes'];
+            fonts: WizardTemplate['fonts'];
+            defaultPaletteId?: string;
+            defaultFontId?: string;
+          }>;
+        };
+
+        if (!cancelled) {
+          setTemplates((data.templates ?? []).map(mapRegistryTemplateToWizardTemplate));
+        }
+      } catch (error) {
+        console.warn('[NewProjectWizard] Failed to load templates', error);
+      } finally {
+        if (!cancelled) {
+          setTemplatesLoading(false);
+        }
+      }
+    };
+
+    loadTemplates();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!draftId) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadDraft = async () => {
+      try {
+        const response = await fetch(`/api/projects/draft?projectId=${encodeURIComponent(draftId)}`);
+        const payload = (await response.json()) as {
+          draft?: {
+            data?: string;
+          } | null;
+        };
+
+        if (cancelled || !payload.draft?.data) {
+          return;
+        }
+
+        const raw =
+          typeof payload.draft.data === 'string'
+            ? (JSON.parse(payload.draft.data) as Record<string, unknown>)
+            : (payload.draft.data as unknown as Record<string, unknown>);
+
+        form.hydrateDraft({
+          currentStep: raw.currentStep as string | undefined,
+          userInput: raw.userInput as string | undefined,
+          clientInfo: raw.clientInfo as { name?: string; email?: string; phone?: string } | undefined,
+          businessInfo: raw.businessInfo as Record<string, unknown> | undefined,
+          brandProfile: raw.brandProfile as Parameters<typeof form.hydrateDraft>[0]['brandProfile'],
+          contactInfo: raw.contactInfo as Record<string, unknown> | undefined,
+          template: raw.template as { id?: string } | undefined,
+          palette: raw.palette as Parameters<typeof form.hydrateDraft>[0]['palette'],
+          font: raw.font as Parameters<typeof form.hydrateDraft>[0]['font'],
+        });
+
+        if (typeof raw.industry === 'string' && raw.industry) {
+          setIndustry(raw.industry);
+        }
+      } catch (error) {
+        console.warn('[NewProjectWizard] Failed to hydrate draft', error);
+      }
+    };
+
+    loadDraft();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [draftId, form]);
+
+  useEffect(() => {
+    if (!form.selectedTemplateId || templates.length === 0) {
+      return;
+    }
+
+    const selectedTemplate = templates.find((template) => template.id === form.selectedTemplateId);
+    if (!selectedTemplate) {
+      return;
+    }
+
+    if (!form.selectedPalette) {
+      const palette =
+        selectedTemplate.palettes.find(
+          (entry) => entry.id === selectedTemplate.defaultPaletteId
+        ) || selectedTemplate.palettes[0];
+      if (palette) {
+        form.setSelectedPalette(palette);
+      }
+    }
+
+    if (!form.selectedFont) {
+      const font =
+        selectedTemplate.fonts.find((entry) => entry.id === selectedTemplate.defaultFontId) ||
+        selectedTemplate.fonts[0];
+      if (font) {
+        form.setSelectedFont(font);
+      }
+    }
+  }, [
+    form.selectedFont,
+    form.selectedPalette,
+    form.selectedTemplateId,
+    form.setSelectedFont,
+    form.setSelectedPalette,
+    templates,
+  ]);
 
   // Sync draftId into URL so state survives page loads and redirects
   useEffect(() => {
@@ -348,7 +485,7 @@ export function NewProjectWizard() {
     saveTimerRef.current = setTimeout(() => {
       saveDraftMutation.mutate({ clientInfo });
     }, 400);
-  }, [saveDraftMutation]);
+  }, [form.brief.industry, form.brief.projectName, form.brief.summary, form.phase, industry, saveDraftMutation]);
 
   const stepIndex = (() => {
     switch (form.phase) {
@@ -425,12 +562,37 @@ export function NewProjectWizard() {
               offerType: form.brief.offerType,
               brandTone: form.brief.brandTone,
               offerings: form.brief.offerings,
+              desiredCustomerAction: form.brief.desiredCustomerAction,
+              differentiators: form.brief.differentiators,
+              trustSignals: form.brief.trustSignals,
+              contentStylePreference: form.brief.contentStylePreference,
+            },
+            brandProfile: {
+              brandTone: {
+                primary: form.brief.brandTone,
+                secondary: form.brief.brandSecondaryTones,
+                notes: form.brief.brandNotes || undefined,
+              },
+              valueProposition:
+                form.brief.valuePropositionDetail || form.brief.valueProposition,
+              primaryGoal: form.brief.primaryGoal || form.brief.goals[0],
+              desiredCustomerAction: form.brief.desiredCustomerAction,
+              differentiators: form.brief.differentiators,
+              trustSignals: form.brief.trustSignals,
+              contentStylePreference: form.brief.contentStylePreference,
+              operatorNotes: form.brief.brandNotes || undefined,
             },
             contactInfo: {
               email: form.brief.contactEmail,
               phone: form.brief.contactPhone,
               address: form.brief.contactAddress,
             },
+            siteInfo: {
+              pagePreference: form.brief.pagePreference,
+              integrations: form.brief.integrations,
+            },
+            palette: form.selectedPalette,
+            font: form.selectedFont,
           },
           mode: 'interactive',
         }),
@@ -463,6 +625,8 @@ export function NewProjectWizard() {
       setIsLaunching(false);
     }
   }, [form, router]);
+
+  const selectedTemplate = templates.find((template) => template.id === form.selectedTemplateId) || null;
 
   return (
     <div className="py-4 sm:py-8 px-3 sm:px-6">
@@ -536,21 +700,107 @@ export function NewProjectWizard() {
             <div className="space-y-4">
               <div className="mb-2">
                 <h3 className="text-base font-semibold text-zinc-900 dark:text-white">
-                  Choose a template
+                  Choose a template, palette, and font
                 </h3>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
                   {form.templateRecommendations.length > 0
-                    ? 'AI picked these based on your brief — or browse all'
-                    : 'Browse and select a template for this project'}
+                    ? 'AI picked these based on your brief. Confirm the template and brand direction before launch.'
+                    : 'Browse and select a template, then choose the palette and font for this project.'}
                 </p>
               </div>
               <TemplatePicker
+                templates={templates}
                 selectedId={form.selectedTemplateId}
                 recommendedIds={form.templateRecommendations}
                 recommendedReasons={form.templateReasons}
-                onSelect={form.setSelectedTemplateId}
+                onSelect={(templateId) => {
+                  form.setSelectedTemplateId(templateId);
+                  form.setSelectedPalette(null);
+                  form.setSelectedFont(null);
+                }}
                 onBrowseAll={() => setGalleryOpen(true)}
               />
+              {templatesLoading ? (
+                <div className="rounded-2xl border border-gray-200/70 bg-gray-50/70 px-4 py-3 text-sm text-zinc-500 dark:border-white/[0.06] dark:bg-white/[0.04] dark:text-zinc-400">
+                  Loading templates...
+                </div>
+              ) : null}
+              {selectedTemplate ? (
+                <div className="grid gap-4 rounded-[28px] border border-gray-200/70 bg-white/80 p-5 dark:border-white/[0.06] dark:bg-white/[0.04] md:grid-cols-2">
+                  <div className="space-y-3">
+                    <div>
+                      <h4 className="text-sm font-semibold text-zinc-900 dark:text-white">
+                        Palette variants
+                      </h4>
+                      <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                        Show these during the onboarding call and lock the preferred direction before handoff.
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      {selectedTemplate.palettes.map((palette) => (
+                        <button
+                          key={palette.id}
+                          type="button"
+                          onClick={() => form.setSelectedPalette(palette)}
+                          className={`flex w-full items-center justify-between rounded-2xl border px-3 py-3 text-left transition-all ${
+                            form.selectedPalette?.id === palette.id
+                              ? 'border-[var(--purple)]/50 bg-[var(--purple)]/8'
+                              : 'border-gray-200 bg-white hover:border-gray-300 dark:border-white/[0.06] dark:bg-white/[0.03] dark:hover:border-white/[0.12]'
+                          }`}
+                        >
+                          <div>
+                            <p className="text-sm font-medium text-zinc-900 dark:text-white">{palette.name}</p>
+                            <p className="mt-1 text-[0.7rem] text-zinc-500 dark:text-zinc-400">
+                              {palette.id}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            {Object.values(palette.colors).map((color, index) => (
+                              <span
+                                key={`${palette.id}-${index}`}
+                                className="h-4 w-4 rounded-full border border-black/10"
+                                style={{ backgroundColor: String(color) }}
+                              />
+                            ))}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div>
+                      <h4 className="text-sm font-semibold text-zinc-900 dark:text-white">
+                        Font variants
+                      </h4>
+                      <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                        Pick the font pairing that matches the client’s tone and positioning.
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      {selectedTemplate.fonts.map((font) => (
+                        <button
+                          key={font.id}
+                          type="button"
+                          onClick={() => form.setSelectedFont(font)}
+                          className={`w-full rounded-2xl border px-3 py-3 text-left transition-all ${
+                            form.selectedFont?.id === font.id
+                              ? 'border-[var(--purple)]/50 bg-[var(--purple)]/8'
+                              : 'border-gray-200 bg-white hover:border-gray-300 dark:border-white/[0.06] dark:bg-white/[0.03] dark:hover:border-white/[0.12]'
+                          }`}
+                        >
+                          <p className="text-sm font-medium text-zinc-900 dark:text-white">{font.name}</p>
+                          <p className="mt-1 text-[0.75rem] text-zinc-500 dark:text-zinc-400">
+                            Heading: {font.heading.family}
+                          </p>
+                          <p className="text-[0.75rem] text-zinc-500 dark:text-zinc-400">
+                            Body: {font.body.family}
+                          </p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : null}
               <div className="flex gap-3 pt-2">
                 <Button
                   onClick={() => form.setPhase('review')}
@@ -562,7 +812,7 @@ export function NewProjectWizard() {
                 </Button>
                 <Button
                   onClick={form.proceedToPayment}
-                  disabled={!form.selectedTemplateId}
+                  disabled={!form.selectedTemplateId || !form.selectedPalette || !form.selectedFont}
                   variant="accent"
                   size="md"
                   className="flex-1"
@@ -581,7 +831,7 @@ export function NewProjectWizard() {
               setPlanName={form.setPlanName}
               setupFee={form.setupFee}
               setSetupFee={form.setSetupFee}
-              onBack={() => form.prevStep()}
+              onBack={() => form.setPhase('template')}
               onLaunch={handleLaunch}
               isLaunching={isLaunching}
             />
@@ -597,10 +847,15 @@ export function NewProjectWizard() {
 
       {galleryOpen && (
         <TemplateGallery
+          templates={templates}
           selectedId={form.selectedTemplateId}
           recommendedIds={form.templateRecommendations}
           recommendedReasons={form.templateReasons}
-          onSelect={form.setSelectedTemplateId}
+          onSelect={(templateId) => {
+            form.setSelectedTemplateId(templateId);
+            form.setSelectedPalette(null);
+            form.setSelectedFont(null);
+          }}
           onClose={() => setGalleryOpen(false)}
         />
       )}

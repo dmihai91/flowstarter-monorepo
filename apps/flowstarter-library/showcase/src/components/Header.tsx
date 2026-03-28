@@ -266,7 +266,7 @@ export function Header({
           {/* ── Desktop row ── */}
           <div className="hidden lg:flex h-16 items-center gap-4">
             <a href="/" className="flex shrink-0 items-center gap-2.5 no-underline group">
-              <Logo size="md" />
+              <span className="text-gray-900 dark:text-white"><Logo size="md" /></span>
               <span
                 className="text-[11px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded transition-all duration-200"
                 style={{

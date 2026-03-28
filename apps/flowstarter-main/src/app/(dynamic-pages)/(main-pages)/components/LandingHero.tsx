@@ -58,6 +58,15 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
           {hero.subheadline}
         </p>
 
+        {/* Audience qualifier */}
+        <div style={fade('0.25s')} className="flex flex-wrap items-center justify-center gap-2 mb-8">
+          {['Coaches', 'Consultants', 'Therapists', 'Freelancers', 'Founders'].map((label) => (
+            <span key={label} className="text-xs font-medium px-3 py-1 rounded-full border border-gray-200 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] text-gray-500 dark:text-white/40 backdrop-blur-sm">
+              {label}
+            </span>
+          ))}
+        </div>
+
         {/* CTA row */}
         <div style={fade('0.3s')} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
           <Button

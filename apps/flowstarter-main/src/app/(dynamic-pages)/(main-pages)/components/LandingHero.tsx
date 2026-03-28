@@ -112,8 +112,8 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
             className="text-xs sm:text-sm font-bold tracking-[0.15em] uppercase px-4 py-1.5 rounded-full text-[var(--purple)] dark:text-[var(--purple)]"
             style={{
               background: 'linear-gradient(135deg, rgba(124,58,237,0.12), rgba(99,102,241,0.08))',
-              border: '1.5px solid rgba(124,58,237,0.35)',
-              boxShadow: '0 0 16px rgba(124,58,237,0.18)',
+              border: '1.5px solid rgba(124,58,237,0.45)',
+              boxShadow: '0 0 0 3px rgba(124,58,237,0.08), 0 0 20px rgba(124,58,237,0.22)',
               animation: 'badgeGlow 2.8s ease-in-out infinite',
             }}
           >

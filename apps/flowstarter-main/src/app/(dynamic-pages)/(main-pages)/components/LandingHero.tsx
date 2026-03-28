@@ -93,7 +93,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
           style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.64s' }}
         >
-          <Button variant="brand-gradient" onClick={() => onOpenModal?.()} className="relative overflow-hidden bg-[length:200%_100%] animate-[shimmerBtn_3s_ease-in-out_infinite] rounded-xl px-8 h-12 text-base shadow-[0_2px_12px_rgba(124,58,237,0.25),0_1px_3px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_20px_rgba(124,58,237,0.35)] hover:scale-[1.02] active:scale-[0.98] group w-full max-w-xs">
+          <Button variant="brand-gradient" onClick={() => onOpenModal?.()} className="relative overflow-hidden bg-[length:200%_100%] animate-[shimmerBtn_3s_ease-in-out_infinite] rounded-xl px-8 h-12 text-base shadow-[0_2px_12px_rgba(124,58,237,0.25),0_1px_3px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_20px_rgba(124,58,237,0.35)] hover:scale-[1.02] active:scale-[0.98] group w-auto">
               {hero.primaryCta}
               <svg className="w-5 h-5 ml-2.5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -105,7 +105,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
               event.preventDefault();
               document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="inline-flex items-center justify-center h-12 px-8 rounded-xl text-base font-medium text-gray-700 dark:text-white/80 bg-white/50 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 backdrop-blur-sm hover:bg-white/80 dark:hover:bg-white/[0.10] hover:text-gray-900 dark:hover:text-white transition-all w-full max-w-xs"
+            className="inline-flex items-center justify-center h-12 px-8 rounded-xl text-base font-medium text-gray-700 dark:text-white/80 bg-white/50 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 backdrop-blur-sm hover:bg-white/80 dark:hover:bg-white/[0.10] hover:text-gray-900 dark:hover:text-white transition-all w-auto"
           >
             {hero.secondaryCta}
           </a>

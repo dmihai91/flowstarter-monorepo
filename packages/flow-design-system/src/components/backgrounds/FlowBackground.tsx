@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useState, type HTMLAttributes } from 'react';
 import { getEffectiveTheme } from '../../utils/theme';
 
-export type FlowBackgroundVariant = 'dashboard' | 'editor' | 'landing' | 'wizard';
+export type FlowBackgroundVariant = 'dashboard' | 'editor' | 'landing' | 'wizard' | 'auth';
 
 export interface FlowBackgroundProps extends HTMLAttributes<HTMLDivElement> {
   variant?: FlowBackgroundVariant;
@@ -21,6 +21,7 @@ const variants: Record<FlowBackgroundVariant, VariantConfig> = {
   dashboard: { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.12, glowDark: 0.12, lineLight: 0,    lineDark: 0    },
   editor:    { bgLight: '#f8f8fa', bgDark: '#0a0a0c', glowLight: 0.14, glowDark: 0.10, lineLight: 0.04, lineDark: 0.05 },
   landing:   { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.65, glowDark: 0.15, lineLight: 0.25, lineDark: 0.08 },
+  auth:      { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.12, glowDark: 0.12, lineLight: 0.08, lineDark: 0.06 },
   wizard:    { bgLight: '#fafafa', bgDark: '#07070a', glowLight: 0.20, glowDark: 0.08, lineLight: 0.03, lineDark: 0.03 },
 };
 

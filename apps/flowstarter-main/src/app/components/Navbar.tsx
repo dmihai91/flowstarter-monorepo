@@ -16,6 +16,7 @@ export const ExternalNavigationWithAuth = () => {
   const { isSignedIn, isLoaded } = useAuth();
   const [isMounted, setIsMounted] = useState(false);
   const isScrolled = useScrolled();
+  const pathname = usePathname();
 
   // Handle mounting state to prevent hydration mismatch
   useEffect(() => {
@@ -24,6 +25,9 @@ export const ExternalNavigationWithAuth = () => {
 
   // Determine logo destination based on auth status
   const logoDestination = isSignedIn ? '/dashboard' : '/';
+
+  // Landing page has its own header — never render the global nav there
+  if (pathname === '/') return null;
 
   // Show loading state until auth is fully loaded to prevent navbar flicker
   if (!isMounted || !isLoaded) {
@@ -51,7 +55,8 @@ export const ExternalNavigation = () => {
   const pathname = usePathname();
   const isAuthRoute = pathname === '/login' || pathname === '/sign-up' || pathname?.startsWith('/login') || pathname?.startsWith('/sign-up') || pathname?.startsWith('/sign-in') || pathname?.startsWith('/editor');
 
-  if (isAuthRoute) return null;
+  const isLandingPage = pathname === '/';
+  if (isAuthRoute || isLandingPage) return null;
 
   return (
     <NavbarHeader isScrolled={isScrolled} maxWidth="6xl">

@@ -113,7 +113,7 @@ export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProp
           {/* Header */}
           <div className="mb-6">
             <p className="text-xs font-semibold uppercase tracking-widest text-[var(--purple-primary)] mb-2">
-              Free strategy call
+              Free discovery call
             </p>
             <h2 id="prequal-title" className="text-2xl font-bold text-gray-900 dark:text-white">
               Which best describes your situation?
@@ -184,7 +184,7 @@ export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProp
                 : 'bg-gray-100 dark:bg-white/10 text-gray-400 dark:text-white/30 cursor-not-allowed',
             ].join(' ')}
           >
-            Book my strategy call
+            Book my discovery call
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>

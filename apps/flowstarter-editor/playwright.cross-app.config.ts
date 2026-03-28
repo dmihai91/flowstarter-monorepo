@@ -30,6 +30,8 @@ config({ path: '.env.local', override: true });
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const storageStatePath = path.resolve(__dirname, 'e2e/cross-app/.auth/session.json');
+const viteCachePath = path.resolve(__dirname, 'node_modules/.vite');
+const viteCachePathForShell = viteCachePath.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 
 const BASE = process.env.E2E_BASE_URL || 'https://flowstarter.dev';
 const EDITOR =
@@ -58,7 +60,7 @@ export default defineConfig({
   webServer: EDITOR.includes('localhost')
     ? {
         command:
-          `node -e "require('fs').rmSync('node_modules/.vite',{ recursive: true, force: true })" ` +
+          `node -e "require('fs').rmSync('${viteCachePathForShell}',{ recursive: true, force: true })" ` +
           `&& cross-env NODE_OPTIONS=--max-old-space-size=8192 node pre-start.cjs ` +
           `&& remix vite:dev --force`,
         url: EDITOR,

@@ -109,7 +109,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
             style={{ background: 'linear-gradient(to right, transparent, rgba(124,58,237,0.7))' }}
           />
           <span
-            className="text-xs sm:text-sm font-bold tracking-[0.15em] uppercase px-4 py-1.5 rounded-full text-[var(--purple-primary)] dark:text-[rgba(167,139,250,1)]"
+            className="text-xs sm:text-sm font-bold tracking-[0.15em] uppercase px-4 py-1.5 rounded-full text-[var(--purple)] dark:text-[var(--purple)]"
             style={{
               background: 'linear-gradient(135deg, rgba(124,58,237,0.12), rgba(99,102,241,0.08))',
               border: '1.5px solid rgba(124,58,237,0.35)',
@@ -211,7 +211,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         {/* Stats */}
         <div
           style={fade('0.4s')}
-          className="flex items-start justify-center gap-4 sm:gap-14 pt-7 sm:pt-8 border-t border-gray-200 dark:border-white/[0.07] w-full"
+          className="flex items-start justify-center gap-4 sm:gap-14 pt-7 sm:pt-8 border-t border-gray-300 dark:border-white/[0.07] w-full"
         >
           {stats.map((s, i) => (
             <div key={i} className="text-center flex-1 min-w-0">

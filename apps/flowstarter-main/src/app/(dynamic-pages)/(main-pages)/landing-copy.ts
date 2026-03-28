@@ -270,11 +270,11 @@ export const LANDING_COPY = {
     title: 'This is for you if...',
     items: [
       { icon: 'users', label: 'You\'re a coach, consultant, or therapist' },
-      { icon: 'briefcase', label: 'You need a site that wins clients, not a project' },
-      { icon: 'check', label: 'You don\'t want to touch code. Ever.' },
-      { icon: 'rocket', label: 'You want it live in days, not months' },
-      { icon: 'store', label: 'You\'re a freelancer, founder, or solo professional' },
-      { icon: 'mic', label: 'You want to look established from day one' },
+      { icon: 'briefcase', label: 'You\'re a freelancer or solo professional' },
+      { icon: 'store', label: 'You\'re a founder or small business owner' },
+      { icon: 'check', label: 'You hate your current site (or don\'t have one)' },
+      { icon: 'rocket', label: 'You want it done fast, without learning anything' },
+      { icon: 'mic', label: 'You want to look like the real deal from day one' },
     ],
   },
   faq: {

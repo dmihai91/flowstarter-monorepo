@@ -126,7 +126,7 @@ function MobileSheet({
 
           {/* Search */}
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/40 pointer-events-none"><SearchIcon /></span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-white/60 pointer-events-none"><SearchIcon /></span>
             <input
               type="text"
               placeholder="Search templates..."
@@ -134,7 +134,7 @@ function MobileSheet({
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full rounded-xl py-2.5 pl-9 pr-3 text-sm
                 border border-gray-200/80 dark:border-white/[0.06]
-                bg-gray-50 dark:bg-white/[0.04]
+                bg-gray-50 dark:bg-white/[0.07]
                 text-gray-900 dark:text-white
                 placeholder:text-gray-400 dark:placeholder:text-white/30
                 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20"
@@ -253,7 +253,7 @@ export function Header({
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full rounded-xl py-2 pl-9 pr-3 text-sm transition-all
                   border border-gray-200/80 dark:border-white/[0.06]
-                  bg-gray-50 dark:bg-white/[0.04]
+                  bg-gray-50 dark:bg-white/[0.07]
                   text-gray-900 dark:text-white
                   placeholder:text-gray-400 dark:placeholder:text-white/30
                   focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20"

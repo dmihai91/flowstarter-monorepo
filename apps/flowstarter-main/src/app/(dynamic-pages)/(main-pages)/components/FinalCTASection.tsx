@@ -14,14 +14,14 @@ export function FinalCTASection({ onOpenModal }: { onOpenModal?: () => void }) {
           background: 'linear-gradient(135deg, #3730a3 0%, #6d28d9 35%, #7c3aed 60%, #0891b2 100%)',
         }} />
 
-      {/* Overlay to reduce intensity */}
-      <div className="absolute inset-0 bg-black/35" />
+      {/* Overlay — stronger on dark */}
+      <div className="absolute inset-0 bg-black/30 dark:bg-black/55" />
 
       {/* Top border */}
       <div className="absolute inset-x-0 top-0 h-px bg-white/20" />
 
       {/* Content — more padding */}
-      <div className="relative z-10 max-w-xl mx-auto px-6 pt-28 pb-32 sm:pt-36 sm:pb-40 text-center">
+      <div className="relative z-10 max-w-xl mx-auto px-6 py-16 sm:py-20 text-center">
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-[1.12] tracking-tight mb-5 [text-wrap:balance]">
           {finalCta.headline}
         </h2>

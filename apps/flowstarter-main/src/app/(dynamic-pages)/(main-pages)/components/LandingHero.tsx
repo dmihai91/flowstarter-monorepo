@@ -17,14 +17,14 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   });
 
   return (
-    <section className="relative pt-24 sm:pt-28 pb-16 sm:pb-24 overflow-hidden">
+    <section className="relative pt-28 sm:pt-36 pb-20 sm:pb-32 overflow-hidden">
 
       <FlowBackground variant="landing" style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
 
       <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-10">
 
         {/* Label */}
-        <div style={fade('0s')} className="flex items-center justify-center gap-3 mb-10">
+        <div style={fade('0s')} className="flex items-center justify-center gap-3 mb-12">
           <div className="h-px w-6 bg-[var(--purple)]/60" />
           <span className="text-xs font-semibold tracking-[0.2em] uppercase text-[var(--purple)]">
             Done-for-you websites
@@ -33,7 +33,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         </div>
 
         {/* Headline */}
-        <div style={fade('0.1s')} className="text-center mb-6">
+        <div style={fade('0.1s')} className="text-center mb-8">
           <h1 className="leading-[1.1] tracking-tight text-gray-900 dark:text-white">
             <span
               className="block font-light"
@@ -53,13 +53,13 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         {/* Body */}
         <p
           style={fade('0.2s')}
-          className="text-center text-base sm:text-lg text-gray-500 dark:text-white/55 leading-relaxed max-w-xl mx-auto mb-10"
+          className="text-center text-base sm:text-lg text-gray-500 dark:text-white/55 leading-loose max-w-xl mx-auto mb-10"
         >
           {hero.subheadline}
         </p>
 
         {/* Audience qualifier */}
-        <div style={fade('0.25s')} className="flex flex-wrap items-center justify-center gap-2 mb-8">
+        <div style={fade('0.25s')} className="flex flex-wrap items-center justify-center gap-2 mb-10">
           {['Coaches', 'Consultants', 'Therapists', 'Freelancers', 'Founders'].map((label) => (
             <span key={label} className="text-xs font-medium px-3 py-1 rounded-full border border-gray-200 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] text-gray-500 dark:text-white/40 backdrop-blur-sm">
               {label}
@@ -68,7 +68,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         </div>
 
         {/* CTA row */}
-        <div style={fade('0.3s')} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+        <div style={fade('0.3s')} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
           <Button
             variant="brand-gradient"
             onClick={() => onOpenModal?.()}
@@ -89,7 +89,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         {/* Stats */}
         <div
           style={fade('0.4s')}
-          className="flex items-center justify-center gap-8 sm:gap-14 pt-8 border-t border-gray-100 dark:border-white/[0.07]"
+          className="flex items-center justify-center gap-10 sm:gap-16 pt-10 border-t border-gray-100 dark:border-white/[0.07]"
         >
           {[
             { value: '~1 week', label: 'avg. delivery' },

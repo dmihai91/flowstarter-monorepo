@@ -42,7 +42,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   const stats = [
     { value: deliveryValue, suffix: ' days', label: 'avg. delivery' },
     { value: `${skillsCount}`, suffix: '', label: 'coding skills needed' },
-    { value: `${trialCount}`, suffix: '-day trial', label: 'partial refund if not happy' },
+    { value: `${trialCount}`, suffix: '-day trial', label: 'money-back guarantee' },
   ];
 
   const prefixWords = hero.headlinePrefix.split(' ');
@@ -114,6 +114,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
               border: '1.5px solid rgba(124,58,237,0.45)',
               color: 'rgba(167,139,250,1)',
               boxShadow: '0 0 16px rgba(124,58,237,0.25)',
+              animation: 'badgeGlow 2.8s ease-in-out infinite',
             }}
           >
             ✦ Live in 5–7 days
@@ -200,23 +201,24 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
           <a
             href="#pricing"
             onClick={e => { e.preventDefault(); document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }); }}
-            className="text-sm sm:text-base font-medium text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/70 underline underline-offset-4 transition-colors"
+            className="inline-flex items-center gap-1 text-sm sm:text-base font-medium text-gray-500 dark:text-white/50 hover:text-gray-800 dark:hover:text-white/80 underline underline-offset-4 decoration-gray-300 dark:decoration-white/20 hover:decoration-gray-500 dark:hover:decoration-white/50 transition-all"
           >
             {hero.secondaryCta}
+            <svg className="w-3.5 h-3.5 mt-0.5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
           </a>
         </div>
 
         {/* Stats */}
         <div
           style={fade('0.4s')}
-          className="flex items-start justify-center gap-8 sm:gap-14 pt-7 sm:pt-8 border-t border-gray-100 dark:border-white/[0.07]"
+          className="flex items-start justify-center gap-4 sm:gap-14 pt-7 sm:pt-8 border-t border-gray-100 dark:border-white/[0.07] w-full"
         >
           {stats.map((s, i) => (
-            <div key={i} className="text-center">
+            <div key={i} className="text-center flex-1 min-w-0">
               <p className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white leading-none tabular-nums">
                 {s.value}<span className="text-base sm:text-lg font-semibold text-[var(--purple)]">{s.suffix}</span>
               </p>
-              <p className="text-[0.55rem] sm:text-[0.65rem] uppercase tracking-widest text-gray-400 dark:text-white/30 mt-1">{s.label}</p>
+              <p className="text-[0.5rem] sm:text-[0.65rem] uppercase tracking-widest text-gray-400 dark:text-white/30 mt-1 leading-tight">{s.label}</p>
             </div>
           ))}
         </div>

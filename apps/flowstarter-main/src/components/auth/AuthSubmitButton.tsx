@@ -31,7 +31,7 @@ export function AuthSubmitButton({
         'hover:brightness-110 hover:shadow-lg hover:shadow-[var(--purple)]/20',
         'active:scale-[0.99]',
         'transition-all duration-200',
-        'disabled:opacity-50 disabled:pointer-events-none disabled:saturate-50',
+        'disabled:opacity-60 disabled:pointer-events-none disabled:cursor-not-allowed disabled:brightness-90',
         className,
       ].join(' ')}
     >

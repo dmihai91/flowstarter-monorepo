@@ -30,7 +30,7 @@ export function Footer({ darkMode = false }: FooterProps): React.ReactElement {
               </span>
             </a>
             <p className={'text-base sm:text-sm max-w-xs leading-relaxed ' + muted}>
-              Production-ready templates built with care. Used by real clients. Powered by Astro.
+              Templates built for real businesses. Pick one, customise it, ship it.
             </p>
           </div>
 
@@ -46,7 +46,7 @@ export function Footer({ darkMode = false }: FooterProps): React.ReactElement {
             <div className="flex flex-col gap-3">
               <p className={'text-xs font-semibold uppercase tracking-widest mb-1 ' + muted}>Platform</p>
               <a href="https://flowstarter.dev" target="_blank" rel="noopener noreferrer" className={link}>
-                Flowstarter App <ArrowIcon />
+                Flowstarter <ArrowIcon />
               </a>
               <a href="https://flowstarter.dev/dashboard" target="_blank" rel="noopener noreferrer" className={link}>
                 Dashboard <ArrowIcon />
@@ -65,7 +65,7 @@ export function Footer({ darkMode = false }: FooterProps): React.ReactElement {
           </p>
           <a href="https://flowstarter.dev" target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-1.5 text-sm sm:text-xs font-medium text-purple-500 hover:text-purple-400 transition-colors no-underline">
-            Build sites with Flowstarter <ArrowIcon />
+            Launch your site with Flowstarter <ArrowIcon />
           </a>
         </div>
       </div>

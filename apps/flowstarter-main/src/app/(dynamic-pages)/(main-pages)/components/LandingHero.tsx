@@ -109,11 +109,11 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
             style={{ background: 'linear-gradient(to right, transparent, rgba(124,58,237,0.7))' }}
           />
           <span
-            className="text-xs sm:text-sm font-bold tracking-[0.15em] uppercase px-4 py-1.5 rounded-full text-[var(--purple)] dark:text-[var(--purple)]"
+            className="text-xs sm:text-sm font-bold tracking-[0.15em] uppercase px-4 py-1.5 rounded-full text-[var(--purple)] dark:text-white"
             style={{
-              background: 'linear-gradient(135deg, rgba(124,58,237,0.12), rgba(99,102,241,0.08))',
-              border: '1.5px solid rgba(124,58,237,0.45)',
-              boxShadow: '0 0 0 3px rgba(124,58,237,0.08), 0 0 20px rgba(124,58,237,0.22)',
+              background: 'linear-gradient(135deg, rgba(124,58,237,0.25), rgba(99,102,241,0.18))',
+              border: '1.5px solid rgba(167,139,250,0.6)',
+              boxShadow: '0 0 0 3px rgba(124,58,237,0.12), 0 0 24px rgba(124,58,237,0.35)',
               animation: 'badgeGlow 2.8s ease-in-out infinite',
             }}
           >

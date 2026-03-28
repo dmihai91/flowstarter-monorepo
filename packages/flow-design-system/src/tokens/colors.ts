@@ -12,7 +12,7 @@ export const colors = {
     primaryLight: 'hsl(233, 65%, 68%)',
     primaryDark: 'hsl(233, 65%, 48%)',
     gradient: 'linear-gradient(135deg, #8B5CF6 0%, #06B6D4 100%)',
-    gradientHover: 'linear-gradient(135deg, #7C3AED 0%, #0891B2 100%)',
+    gradientHover: 'linear-gradient(135deg, var(--purple) 0%, #0891B2 100%)',
   },
 
   // Accent colors

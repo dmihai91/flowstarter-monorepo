@@ -11,6 +11,8 @@ interface MockSite {
   primaryColor: string;
   hasAboutPage: boolean;
   headerStyle: string;
+  hasFAQ: boolean;
+  hasNewsletter: boolean;
 }
 
 interface Message {
@@ -49,6 +51,8 @@ export function useMockEditor() {
     primaryColor: 'violet',
     hasAboutPage: false,
     headerStyle: 'default',
+    hasFAQ: false,
+    hasNewsletter: false,
   });
 
   const aiResponses: Record<string, { text: string; action?: () => void }> = {
@@ -99,6 +103,38 @@ export function useMockEditor() {
           ...s,
           headerStyle: s.headerStyle === 'default' ? 'minimal' : 'default',
         })),
+    },
+    faq: {
+      text: "FAQ section added — I've covered the 5 most common questions.",
+      action: () => setMockSite((s) => ({ ...s, hasFAQ: true })),
+    },
+    question: {
+      text: "FAQ section added — I've covered the 5 most common questions.",
+      action: () => setMockSite((s) => ({ ...s, hasFAQ: true })),
+    },
+    newsletter: {
+      text: 'Newsletter signup added. New subscribers go straight to your list.',
+      action: () => setMockSite((s) => ({ ...s, hasNewsletter: true })),
+    },
+    email: {
+      text: 'Newsletter signup added. New subscribers go straight to your list.',
+      action: () => setMockSite((s) => ({ ...s, hasNewsletter: true })),
+    },
+    about: {
+      text: 'About page created and linked in the nav.',
+      action: () => setMockSite((s) => ({ ...s, hasAboutPage: true })),
+    },
+    page: {
+      text: 'New page created and linked in the nav.',
+      action: () => setMockSite((s) => ({ ...s, hasAboutPage: true })),
+    },
+    headline: {
+      text: 'Headline rewritten. Sounds more confident and client-focused now.',
+      action: () => setMockSite((s) => ({ ...s })),
+    },
+    copy: {
+      text: 'Copy updated across the page. Fresh, professional, on-brand.',
+      action: () => setMockSite((s) => ({ ...s })),
     },
     default: { text: 'Changes applied. Check the preview!' },
   };
@@ -191,47 +227,53 @@ export function useMockEditor() {
     }
   };
 
-  // Auto-cycle demo prompts - each demo replaces the previous one
+  const initialSiteState = {
+    hasContactForm: false,
+    hasTestimonials: false,
+    hasPricingSection: false,
+    primaryColor: 'violet',
+    hasAboutPage: false,
+    headerStyle: 'default',
+    hasFAQ: false,
+    hasNewsletter: false,
+  };
+
+  // Auto-cycle demo prompts — accumulates then resets and loops
   const demoSequence = [
     {
       prompt: 'Add a testimonials section',
       response: 'Done! Added testimonials with star ratings.',
-      siteState: {
-        hasTestimonials: true,
-        hasPricingSection: false,
-        primaryColor: 'violet',
-        hasContactForm: false,
-      },
+      siteState: { ...initialSiteState, hasTestimonials: true },
     },
     {
       prompt: 'Add pricing tables',
       response: 'Pricing section added with 2 plans.',
-      siteState: {
-        hasTestimonials: true,
-        hasPricingSection: true,
-        primaryColor: 'violet',
-        hasContactForm: false,
-      },
+      siteState: { ...initialSiteState, hasTestimonials: true, hasPricingSection: true },
     },
     {
-      prompt: 'Change the color scheme',
+      prompt: 'Change the color scheme to green',
       response: 'Updated. Primary color changed across the site.',
-      siteState: {
-        hasTestimonials: true,
-        hasPricingSection: true,
-        primaryColor: 'emerald',
-        hasContactForm: false,
-      },
+      siteState: { ...initialSiteState, hasTestimonials: true, hasPricingSection: true, primaryColor: 'emerald' },
     },
     {
       prompt: 'Add a contact form',
       response: 'Done. Contact form added below hero.',
-      siteState: {
-        hasTestimonials: true,
-        hasPricingSection: true,
-        primaryColor: 'emerald',
-        hasContactForm: true,
-      },
+      siteState: { ...initialSiteState, hasTestimonials: true, hasPricingSection: true, primaryColor: 'emerald', hasContactForm: true },
+    },
+    {
+      prompt: 'Add an FAQ section',
+      response: "FAQ section added — I've covered the 5 most common questions.",
+      siteState: { ...initialSiteState, hasTestimonials: true, hasPricingSection: true, primaryColor: 'emerald', hasContactForm: true, hasFAQ: true },
+    },
+    {
+      prompt: 'Add a newsletter signup',
+      response: 'Newsletter signup added. New subscribers go straight to your list.',
+      siteState: { ...initialSiteState, hasTestimonials: true, hasPricingSection: true, primaryColor: 'emerald', hasContactForm: true, hasFAQ: true, hasNewsletter: true },
+    },
+    {
+      prompt: 'Add an about page',
+      response: 'About page created and linked in the nav.',
+      siteState: { ...initialSiteState, hasTestimonials: true, hasPricingSection: true, primaryColor: 'emerald', hasContactForm: true, hasFAQ: true, hasNewsletter: true, hasAboutPage: true },
     },
   ];
 
@@ -260,11 +302,10 @@ export function useMockEditor() {
       currentIndex = (currentIndex + 1) % demoSequence.length;
       const demo = demoSequence[currentIndex];
 
-      // Stop cycling after completing the sequence
+      // When looping back to start, reset everything cleanly
       if (currentIndex === 0) {
-        if (window.__demoInterval) {
-          clearInterval(window.__demoInterval);
-        }
+        setMessages([{ role: 'user', text: demo.prompt }, { role: 'ai', text: demo.response }]);
+        setMockSite(demo.siteState as typeof initialSiteState);
         return;
       }
 

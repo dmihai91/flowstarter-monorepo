@@ -14,9 +14,7 @@ import {
   Sparkles,
   Star,
 } from 'lucide-react';
-import { FlowBackground } from '@flowstarter/flow-design-system';
-import { SupportHeader } from '@/components/SupportHeader';
-import Footer from '@/components/Footer';
+import { PublicPageLayout } from '@/components/PublicPageLayout';
 import { useTranslations } from '@/lib/i18n';
 
 
@@ -56,9 +54,7 @@ export default function PricingPage() {
   ];
 
   return (
-    <div className="relative min-h-screen page-gradient">
-      <FlowBackground variant="dashboard" style={{ position: 'fixed', inset: 0, zIndex: 0 }} />
-      <SupportHeader />
+    <PublicPageLayout>
 
       {/* Hero Section */}
       <div className="relative z-10 overflow-hidden">
@@ -466,7 +462,6 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <Footer />
-    </div>
+    </PublicPageLayout>
   );
 }

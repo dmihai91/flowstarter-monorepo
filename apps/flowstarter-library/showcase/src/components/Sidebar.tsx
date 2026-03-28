@@ -17,11 +17,11 @@ interface SidebarProps {
 
 const categoryKeys: Record<string, string> = {
   education: 'categories.education',
-  coaching: 'categories.coaching',
-  health: 'categories.health',
-  creative: 'categories.creative',
-  business: 'categories.business',
-  other: 'categories.other',
+  coaching:  'categories.coaching',
+  health:    'categories.health',
+  creative:  'categories.creative',
+  business:  'categories.business',
+  other:     'categories.other',
 };
 
 export function Sidebar({
@@ -33,82 +33,51 @@ export function Sidebar({
   toggleFeature,
 }: SidebarProps): React.ReactElement {
   const { t } = useTranslation();
-  const allTemplatesCount = categories.reduce(
-    (total: number, category: Category) => total + category.count,
-    0,
-  );
+  const allCount = categories.reduce((n, c) => n + c.count, 0);
 
   return (
     <aside className="hidden w-60 shrink-0 lg:block">
-      <div className="sticky top-20 space-y-4">
-        <div className="rounded-2xl border border-neutral-200/80 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900">
-          <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500">
+      <div className="sticky top-20 space-y-3">
+
+        {/* ── Industry ── */}
+        <div className="glass-card px-4 py-4" style={{ borderRadius: '1rem' }}>
+          <h3 className="mb-3 text-[0.6rem] font-bold uppercase tracking-[0.24em] text-gray-400 dark:text-white/40">
             Industry
           </h3>
-          <div className="space-y-1">
-            <button
+          <div className="space-y-0.5">
+            <CategoryRow
+              label="All templates"
+              count={allCount}
+              active={!selectedCategory}
               onClick={() => setSelectedCategory(null)}
-              className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
-                !selectedCategory
-                  ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300'
-                  : 'text-neutral-600 hover:bg-neutral-50 dark:text-neutral-400 dark:hover:bg-neutral-800'
-              }`}
-            >
-              <span>All templates</span>
-              <span
-                className={`rounded-full px-2 py-0.5 text-xs ${
-                  !selectedCategory
-                    ? 'bg-purple-100 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400'
-                    : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800'
-                }`}
-              >
-                {allTemplatesCount}
-              </span>
-            </button>
-
-            {categories.map(({ name, count }: Category) => (
-              <button
+            />
+            {categories.map(({ name, count }) => (
+              <CategoryRow
                 key={name}
+                label={categoryKeys[name] ? t(categoryKeys[name]) : name}
+                count={count}
+                active={selectedCategory === name}
                 onClick={() => setSelectedCategory(name === selectedCategory ? null : name)}
-                className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm font-medium capitalize transition-colors ${
-                  selectedCategory === name
-                    ? 'bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-300'
-                    : 'text-neutral-600 hover:bg-neutral-50 dark:text-neutral-400 dark:hover:bg-neutral-800'
-                }`}
-              >
-                <span>{categoryKeys[name] ? t(categoryKeys[name]) : name}</span>
-                <span
-                  className={`rounded-full px-2 py-0.5 text-xs ${
-                    selectedCategory === name
-                      ? 'bg-purple-100 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400'
-                      : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800'
-                  }`}
-                >
-                  {count}
-                </span>
-              </button>
+                capitalize
+              />
             ))}
           </div>
         </div>
 
+        {/* ── Features ── */}
         {features.length > 0 ? (
-          <div className="rounded-2xl border border-neutral-200/80 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900">
-            <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500">
+          <div className="glass-card px-4 py-4" style={{ borderRadius: '1rem' }}>
+            <h3 className="mb-3 text-[0.6rem] font-bold uppercase tracking-[0.24em] text-gray-400 dark:text-white/40">
               Features
             </h3>
-            <div className="flex flex-wrap gap-2">
-              {features.map((feature: string) => {
-                const isSelected = selectedFeatures.includes(feature);
-
+            <div className="flex flex-wrap gap-1.5">
+              {features.map((feature) => {
+                const on = selectedFeatures.includes(feature);
                 return (
                   <button
                     key={feature}
                     onClick={() => toggleFeature(feature)}
-                    className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors ${
-                      isSelected
-                        ? 'border-purple-200 bg-purple-100 text-purple-700 dark:border-purple-500/30 dark:bg-purple-500/20 dark:text-purple-300'
-                        : 'border-transparent bg-neutral-100 text-neutral-600 hover:border-neutral-300 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:border-neutral-600'
-                    }`}
+                    className={`feature-tag ${on ? 'feature-tag--active' : 'feature-tag--inactive'}`}
                   >
                     {feature}
                   </button>
@@ -117,7 +86,30 @@ export function Sidebar({
             </div>
           </div>
         ) : null}
+
       </div>
     </aside>
+  );
+}
+
+function CategoryRow({
+  label, count, active, onClick, capitalize,
+}: {
+  label: string;
+  count: number;
+  active: boolean;
+  onClick: () => void;
+  capitalize?: boolean;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`sidebar-item ${active ? 'sidebar-item--active' : 'sidebar-item--inactive'} ${capitalize ? 'capitalize' : ''}`}
+    >
+      <span>{label}</span>
+      <span className={`sidebar-badge ${active ? 'sidebar-badge--active' : 'sidebar-badge--inactive'}`}>
+        {count}
+      </span>
+    </button>
   );
 }

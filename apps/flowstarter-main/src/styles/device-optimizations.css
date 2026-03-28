@@ -1,0 +1,87 @@
+/* ── Touch-device GPU optimizations (iPad / tablets) ── */
+/* Safari on iPad struggles with stacked blurs + backdrop-blur + fixed layers. */
+/* Use (hover: none) to target touch-primary devices without penalising desktop. */
+@media (hover: none) {
+  /* Promote blur orbs to their own layer so Safari doesn't re-rasterize on scroll */
+  .will-change-transform {
+    will-change: transform;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+
+  /* Disable expensive hero flow-line animation on touch */
+  .animate-\[flowDrift_20s_ease-in-out_infinite_alternate\] {
+    animation: none !important;
+  }
+
+  /* Disable the shimmer CTA button animation (saves a compositing layer) */
+  .animate-\[shimmerBtn_3s_ease-in-out_infinite\] {
+    animation: none !important;
+    background-position: 0 0 !important;
+  }
+
+  /* Lighten backdrop-blur globally on touch for smoother scrolling */
+  .backdrop-blur-md {
+    -webkit-backdrop-filter: blur(8px) !important;
+    backdrop-filter: blur(8px) !important;
+  }
+
+  .backdrop-blur-sm {
+    -webkit-backdrop-filter: blur(2px) !important;
+    backdrop-filter: blur(2px) !important;
+  }
+}
+
+/* iPad and tablet specific improvements */
+/* Extend down to 640px to cover iPad mini in portrait (Tailwind sm breakpoint) */
+@media (min-width: 640px) and (max-width: 1024px) {
+  /* Better touch targets for tablets */
+  button,
+  .button,
+  [role='button'] {
+    min-height: 28px;
+    min-width: 28px;
+  }
+
+  /* Improved text sizing for tablet readability */
+  .tablet\:text-base {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
+  .tablet\:text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+
+  /* Better spacing for tablet layouts */
+  .tablet\:p-6 {
+    padding: 1.5rem;
+  }
+
+  .tablet\:gap-6 {
+    gap: 1.5rem;
+  }
+
+  /* Ensure proper container widths on tablets */
+  .container {
+    max-width: 100%;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  /* Fix modal and dialog sizing on tablets */
+  [data-radix-dialog-content] {
+    max-width: min(90vw, 600px) !important;
+    max-height: 85vh !important;
+  }
+
+  /* Better grid layouts for tablets */
+  .tablet\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tablet\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

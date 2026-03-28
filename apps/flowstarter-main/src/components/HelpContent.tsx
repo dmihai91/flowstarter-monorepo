@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, Wrench, Rocket, Phone, Mail, HelpCircle, ChevronDown } from 'lucide-react';
-import { EXTERNAL_URLS } from '@/lib/constants';
 import { useTranslations } from '@/lib/i18n';
+import { PreQualModal } from '@/app/(dynamic-pages)/(main-pages)/components/PreQualModal';
 
 /**
  * Shared help page content. Used by both public /help and logged-in /dashboard/help.
@@ -14,6 +14,7 @@ import { useTranslations } from '@/lib/i18n';
 export function HelpContent({ showHero = true, showCta = true }: { showHero?: boolean; showCta?: boolean }) {
   const { t } = useTranslations();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [discoveryModalOpen, setDiscoveryModalOpen] = useState(false);
 
   const faqs = [
     { question: t('help.faq1.question'), answer: t('help.faq1.answer') },
@@ -61,16 +62,16 @@ export function HelpContent({ showHero = true, showCta = true }: { showHero?: bo
 
       {/* Quick Actions */}
       <div className="grid sm:grid-cols-2 gap-4 mb-12 sm:mb-16">
-        <a href={EXTERNAL_URLS.calendly.discovery} target="_blank" rel="noopener noreferrer" className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-[var(--purple)]/10 to-blue-500/10 border border-[var(--purple)]/20 hover:border-[var(--purple)]/40 transition-all group">
+        <button onClick={() => setDiscoveryModalOpen(true)} className="p-5 sm:p-6 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 hover:border-[var(--purple)]/40 transition-all group text-left">
           <div className="w-11 h-11 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center mb-3 group-hover:bg-[var(--purple)]/20 transition-colors">
             <Phone className="w-5 h-5 text-[var(--purple)]" />
           </div>
           <h3 className="font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-[var(--purple)] transition-colors">{t('help.quickAction.discovery.title')}</h3>
           <p className="text-sm text-gray-500 dark:text-white/50">{t('help.quickAction.discovery.desc')}</p>
-        </a>
+        </button>
         <a href="mailto:hello@flowstarter.app" className="p-5 sm:p-6 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 hover:border-[var(--purple)]/40 transition-all group">
-          <div className="w-11 h-11 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-3 group-hover:bg-[var(--purple)]/10 transition-colors">
-            <Mail className="w-5 h-5 text-gray-600 dark:text-white/60 group-hover:text-[var(--purple)] transition-colors" />
+          <div className="w-11 h-11 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center mb-3 group-hover:bg-[var(--purple)]/20 transition-colors">
+            <Mail className="w-5 h-5 text-[var(--purple)]" />
           </div>
           <h3 className="font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-[var(--purple)] transition-colors">{t('help.quickAction.email.title')}</h3>
           <p className="text-sm text-gray-500 dark:text-white/50">{t('help.quickAction.email.desc')}</p>
@@ -121,13 +122,16 @@ export function HelpContent({ showHero = true, showCta = true }: { showHero?: bo
         <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-[var(--purple)]/5 via-blue-500/5 to-cyan-500/5 border border-[var(--purple)]/10 dark:border-[var(--purple)]/20 text-center">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{t('help.cta.title')}</h2>
           <p className="text-gray-500 dark:text-white/50 mb-6">{t('help.cta.description')}</p>
-          <a href={EXTERNAL_URLS.calendly.discovery} target="_blank" rel="noopener noreferrer">
-            <Button variant="brand-gradient" className="rounded-xl px-8 h-12 shadow-lg">
-              {t('help.cta.button')}
-            </Button>
-          </a>
+          <Button variant="brand-gradient" className="rounded-xl px-8 h-12 shadow-lg" onClick={() => setDiscoveryModalOpen(true)}>
+            {t('help.cta.button')}
+          </Button>
         </div>
       )}
+      <PreQualModal
+        open={discoveryModalOpen}
+        onClose={() => setDiscoveryModalOpen(false)}
+        source="help"
+      />
     </div>
   );
 }

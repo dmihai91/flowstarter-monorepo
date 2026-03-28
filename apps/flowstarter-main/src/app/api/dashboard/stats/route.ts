@@ -33,13 +33,6 @@ interface TrendsPoint {
   Completed: number;
 }
 
-interface UserEngagementStats {
-  totalUsers: number;
-  activeUsersThisWeek: number;
-  activeUsersThisMonth: number;
-  newUsersThisMonth: number;
-}
-
 interface DashboardStatsPayload {
   totalProjects: number;
   liveProjects: number;
@@ -50,7 +43,6 @@ interface DashboardStatsPayload {
   potentialRevenue: number;
   trendsData: TrendsPoint[];
   popularTemplates: TemplateStat[];
-  userEngagement: UserEngagementStats;
   completedProjects: number;
   inProgressProjects: number;
   draftProjects: number;
@@ -161,16 +153,6 @@ export async function GET() {
       };
     });
 
-    // Calculate user engagement stats
-    // Note: In a real implementation, you'd query a users table or analytics
-    // For now, we'll provide placeholder data since the schema doesn't have user tracking
-    const userEngagement: UserEngagementStats = {
-      totalUsers: 1, // Current user
-      activeUsersThisWeek: 1,
-      activeUsersThisMonth: 1,
-      newUsersThisMonth: 0,
-    };
-
     // Calculate analytics stats from Google Analytics
     let totalLeads = 0;
     let uniqueVisitors = 0;
@@ -257,7 +239,6 @@ export async function GET() {
       potentialRevenue,
       trendsData,
       popularTemplates,
-      userEngagement,
       completedProjects,
       inProgressProjects,
       draftProjects,

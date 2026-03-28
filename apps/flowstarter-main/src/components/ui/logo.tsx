@@ -24,7 +24,7 @@ function LogoWordmark({ size = 'md' }: { size?: LogoProps['size'] }) {
         letterSpacing: '-0.025em',
       }}>
         <span style={{
-          background: 'linear-gradient(to right, var(--purple, #4D5DD9), #7C3AED)',
+          background: 'linear-gradient(to right, var(--purple), var(--purple))',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           backgroundClip: 'text',

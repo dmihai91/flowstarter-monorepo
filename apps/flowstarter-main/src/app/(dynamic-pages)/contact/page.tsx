@@ -1,15 +1,14 @@
 'use client';
 
-import Footer from '@/components/Footer';
-import { SupportHeader } from '@/components/SupportHeader';
 import { Button } from '@/components/ui/button';
 import { useContactForm } from '@/hooks/useContactForm';
 import Link from 'next/link';
 import { useState } from 'react';
-import { EXTERNAL_URLS } from '@/lib/constants';
-import { FlowBackground, GlassCard, GlassPanel } from '@flowstarter/flow-design-system';
+import { GlassCard, GlassPanel } from '@flowstarter/flow-design-system';
 import { MessageCircle, Check, Loader2, Send, Calendar, Mail, Twitter, Linkedin, Clock } from 'lucide-react';
 import { useTranslations } from '@/lib/i18n';
+import { PublicPageLayout } from '@/components/PublicPageLayout';
+import { PreQualModal } from '@/app/(dynamic-pages)/(main-pages)/components/PreQualModal';
 
 
 export default function ContactPage() {
@@ -21,6 +20,7 @@ export default function ContactPage() {
     message: '',
   });
 
+  const [discoveryModalOpen, setDiscoveryModalOpen] = useState(false);
   const contactMutation = useContactForm();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,21 +50,9 @@ export default function ContactPage() {
   const errorMessage = contactMutation.error?.message || t('contact.form.defaultError');
 
   return (
-    <>
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-        .font-display {
-          font-family: 'Outfit', system-ui, sans-serif;
-        }
-      `}</style>
-
-      <div className="min-h-screen font-display page-gradient">
-        <FlowBackground variant="dashboard" style={{ position: 'fixed', inset: 0, zIndex: 0 }} />
-
-        <SupportHeader />
-
-        {/* Content */}
-        <main className="relative z-10 max-w-5xl mx-auto px-6 pt-28 pb-16">
+    <PublicPageLayout>
+      {/* Content */}
+      <main className="relative z-10 max-w-5xl mx-auto px-6 pt-28 pb-16">
           {/* Hero */}
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium mb-6">
@@ -214,16 +202,14 @@ export default function ContactPage() {
                 <p className="text-gray-500 dark:text-white/50 mb-6">
                   {t('contact.talk.description')}
                 </p>
-                <a
-                  href={EXTERNAL_URLS.calendly.discovery}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Button
+                  variant="brand-gradient"
+                  className="w-full rounded-xl h-12 shadow-lg"
+                  onClick={() => setDiscoveryModalOpen(true)}
                 >
-                  <Button variant="brand-gradient" className="w-full rounded-xl h-12 shadow-lg">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    {t('contact.talk.button')}
-                  </Button>
-                </a>
+                  <Calendar className="w-4 h-4 mr-2" />
+                  {t('contact.talk.button')}
+                </Button>
               </div>
 
               {/* Contact Methods */}
@@ -305,8 +291,11 @@ export default function ContactPage() {
           </div>
         </main>
 
-        <Footer />
-      </div>
-    </>
+      <PreQualModal
+        open={discoveryModalOpen}
+        onClose={() => setDiscoveryModalOpen(false)}
+        source="contact"
+      />
+    </PublicPageLayout>
   );
 }

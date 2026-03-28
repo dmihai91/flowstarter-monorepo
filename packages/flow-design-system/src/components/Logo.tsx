@@ -18,8 +18,8 @@ export function LogoMark({ size = 'md', className }: { size?: LogoProps['size'];
       <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
         <defs>
           <linearGradient id={`${id}-bg`} x1="0" y1="40" x2="40" y2="0" gradientUnits="userSpaceOnUse">
-            <stop stopColor="var(--purple, #4D5DD9)" />
-            <stop offset="0.5" stopColor="#7C3AED" />
+            <stop stopColor="var(--purple)" />
+            <stop offset="0.5" stopColor="var(--purple)" />
             <stop offset="1" stopColor="#06B6D4" />
           </linearGradient>
         </defs>
@@ -50,7 +50,7 @@ export function Logo({ size = 'md', showText = true, className }: LogoProps) {
         }}>
           Flow
           <span style={{
-            background: 'linear-gradient(to right, var(--purple, #4D5DD9), #06B6D4)',
+            background: 'linear-gradient(to right, var(--purple), #06B6D4)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',

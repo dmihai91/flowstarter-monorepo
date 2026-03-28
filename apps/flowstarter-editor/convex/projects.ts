@@ -1,62 +1,16 @@
 import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
+import {
+  bookingIntegrationSchema,
+  newsletterIntegrationSchema,
+  integrationsSchema,
+  brandProfileSchema,
+} from './lib/schemas';
 
 /**
  * Simplified Project Functions
  * CRUD operations for the new simplified projects schema
  */
-
-// Integration schemas for validation
-const bookingIntegrationSchema = v.object({
-  enabled: v.boolean(),
-  provider: v.union(
-    v.literal('calendly'),
-    v.literal('calcom'),
-    v.literal('custom'),
-    v.literal('none')
-  ),
-  calendlyUrl: v.optional(v.string()),
-  calcomUrl: v.optional(v.string()),
-  title: v.optional(v.string()),
-  description: v.optional(v.string()),
-  phone: v.optional(v.string()),
-});
-
-const newsletterIntegrationSchema = v.object({
-  enabled: v.boolean(),
-  provider: v.union(
-    v.literal('mailchimp'),
-    v.literal('convertkit'),
-    v.literal('buttondown'),
-    v.literal('custom'),
-    v.literal('none')
-  ),
-  mailchimpUrl: v.optional(v.string()),
-  convertkitFormId: v.optional(v.string()),
-  buttondownUsername: v.optional(v.string()),
-  title: v.optional(v.string()),
-  description: v.optional(v.string()),
-});
-
-const integrationsSchema = v.object({
-  booking: v.optional(bookingIntegrationSchema),
-  newsletter: v.optional(newsletterIntegrationSchema),
-});
-
-const brandProfileSchema = v.object({
-  brandTone: v.object({
-    primary: v.string(),
-    secondary: v.optional(v.array(v.string())),
-    notes: v.optional(v.string()),
-  }),
-  valueProposition: v.optional(v.string()),
-  primaryGoal: v.optional(v.string()),
-  desiredCustomerAction: v.optional(v.string()),
-  differentiators: v.optional(v.array(v.string())),
-  trustSignals: v.optional(v.array(v.string())),
-  contentStylePreference: v.optional(v.string()),
-  operatorNotes: v.optional(v.string()),
-});
 
 const selectedTemplateSchema = v.object({
   id: v.string(),

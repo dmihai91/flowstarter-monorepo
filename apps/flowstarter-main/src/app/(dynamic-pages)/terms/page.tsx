@@ -1,11 +1,9 @@
 'use client';
 
-import Footer from '@/components/Footer';
-import { SupportHeader } from '@/components/SupportHeader';
 import { Sparkles, Package, DoorOpen, FileText, Mail } from 'lucide-react';
-import { FlowBackground } from '@flowstarter/flow-design-system';
 import Link from 'next/link';
 import { useTranslations } from '@/lib/i18n';
+import { PublicPageLayout } from '@/components/PublicPageLayout';
 
 export default function TermsPage() {
   const { t } = useTranslations();
@@ -53,21 +51,9 @@ export default function TermsPage() {
   ];
 
   return (
-    <>
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-        .font-display {
-          font-family: 'Outfit', system-ui, sans-serif;
-        }
-      `}</style>
-
-      <div className="min-h-screen font-display page-gradient">
-        <FlowBackground variant="dashboard" style={{ position: 'fixed', inset: 0, zIndex: 0 }} />
-
-        <SupportHeader />
-
-        {/* Content */}
-        <main className="relative z-10 max-w-4xl mx-auto px-6 pt-28 pb-16">
+    <PublicPageLayout>
+      {/* Content */}
+      <main className="relative z-10 max-w-4xl mx-auto px-6 pt-28 pb-16">
           {/* Hero */}
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium mb-6">
@@ -168,8 +154,6 @@ export default function TermsPage() {
           </div>
         </main>
 
-        <Footer />
-      </div>
-    </>
+    </PublicPageLayout>
   );
 }

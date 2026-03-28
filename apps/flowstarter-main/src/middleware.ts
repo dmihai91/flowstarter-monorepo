@@ -206,15 +206,16 @@ export default clerkMiddleware(async (auth, req) => {
       }
 
       // CSRF: rely on same-origin checks; block cross-origin unsafe methods
-      // Skip CSRF for team API routes, AI routes, and feedback (protected by Clerk auth)
+      // Skip CSRF for team API routes, AI routes, and integration routes (protected by Clerk auth)
       const isTeamApi = pathname.startsWith('/api/team/');
       const isAiApi = pathname.startsWith('/api/ai/');
-      const isFeedbackApi = pathname === '/api/feedback';
       const isAuthApi = pathname.startsWith('/api/auth/'); // Protected by Clerk auth
       const isEditorApi = pathname.startsWith('/api/editor/'); // Protected by handoff tokens / Clerk auth
       const isProjectsApi = pathname.startsWith('/api/projects/') || pathname === '/api/projects';
+      const isIntegrationsApi = pathname.startsWith('/api/integrations/'); // Protected by Clerk auth
+      const isAnalyticsApi = pathname.startsWith('/api/analytics/'); // Protected by Clerk auth
       const unsafe = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method);
-      if (unsafe && !isWebhook && !isTeamApi && !isAiApi && !isFeedbackApi && !isAuthApi && !isEditorApi && !isProjectsApi) {
+      if (unsafe && !isWebhook && !isTeamApi && !isAiApi && !isAuthApi && !isEditorApi && !isProjectsApi && !isIntegrationsApi && !isAnalyticsApi) {
         if (!isSameOrigin) {
           // Log CSRF block
           logSecurityEventEdge('security.csrf_blocked', {
@@ -338,7 +339,7 @@ export default clerkMiddleware(async (auth, req) => {
             url.pathname = '/team/dashboard';
             return NextResponse.redirect(url);
           }
-          // For /login and /sign-up check role as before
+          // For /login and /sign-up check role
           const role = (
             sessionClaims?.metadata as { role?: string }
           )?.role?.toLowerCase();

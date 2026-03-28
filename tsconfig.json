@@ -2,21 +2,5 @@
   "extends": "./tsconfig.base.json",
   "compileOnSave": false,
   "files": [],
-  "references": [
-    {
-      "path": "./packages/security"
-    },
-    {
-      "path": "./packages/auth"
-    },
-    {
-      "path": "./packages/database"
-    },
-    {
-      "path": "./packages/leads-core"
-    },
-    {
-      "path": "./packages/leads-adapters"
-    }
-  ]
+  "references": []
 }

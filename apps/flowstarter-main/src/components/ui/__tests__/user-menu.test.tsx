@@ -102,12 +102,22 @@ describe('UserMenu', () => {
     expect(signOutBtn?.className).toContain('text-red-600');
   });
 
-  it('navigates to /profile on profile click', async () => {
+  it('navigates to /profile on profile click (client)', async () => {
     const { default: userEvent } = await import('@testing-library/user-event');
     const user = userEvent.setup();
     render(<UserMenu />);
     const profileBtn = screen.getByText('app.profile').closest('button');
     if (profileBtn) await user.click(profileBtn);
     expect(mockPush).toHaveBeenCalledWith('/profile');
+  });
+
+  it('navigates to /team/dashboard/profile on profile click (team)', async () => {
+    mockPathname = '/team/dashboard';
+    const { default: userEvent } = await import('@testing-library/user-event');
+    const user = userEvent.setup();
+    render(<UserMenu />);
+    const profileBtn = screen.getByText('app.profile').closest('button');
+    if (profileBtn) await user.click(profileBtn);
+    expect(mockPush).toHaveBeenCalledWith('/team/dashboard/profile');
   });
 });

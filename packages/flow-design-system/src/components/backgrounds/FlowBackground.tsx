@@ -41,7 +41,10 @@ const animationCSS = `
 
 export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
   ({ variant = 'dashboard', animated = true, className = '', style, ...props }, ref) => {
-    const [isDark, setIsDark] = useState(true); // Default to dark for SSR
+    const [isDark, setIsDark] = useState(() => {
+      if (typeof window === 'undefined') return true; // SSR — neutral default
+      return getEffectiveTheme() === 'dark';
+    });
 
     useEffect(() => {
       const update = () => setIsDark(getEffectiveTheme() === 'dark');

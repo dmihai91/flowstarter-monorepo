@@ -28,7 +28,7 @@ export default function AuthLayout({
   const { t } = useTranslations();
   return (
     <div className="min-h-screen w-full relative flex flex-col">
-      <FlowBackground variant="dashboard" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }} />
+      <FlowBackground variant="landing" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }} />
 
       {/* Header */}
       <header className="sticky top-0 z-50 shrink-0 border-b border-gray-200/30 dark:border-white/5 bg-white/80 dark:bg-[#0a0810]/80 backdrop-blur-xl">

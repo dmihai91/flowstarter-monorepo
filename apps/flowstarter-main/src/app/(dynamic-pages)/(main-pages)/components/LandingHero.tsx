@@ -108,13 +108,15 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
             className="h-px w-8"
             style={{ background: 'linear-gradient(to right, transparent, rgba(124,58,237,0.7))' }}
           />
-          <span className="text-xs sm:text-sm font-semibold tracking-[0.18em] uppercase text-[var(--purple)] px-3 py-1 rounded-full"
+          <span className="text-xs sm:text-sm font-bold tracking-[0.15em] uppercase px-4 py-1.5 rounded-full"
             style={{
-              background: 'linear-gradient(135deg, rgba(124,58,237,0.10), rgba(99,102,241,0.07))',
-              border: '1px solid rgba(124,58,237,0.18)',
+              background: 'linear-gradient(135deg, rgba(124,58,237,0.22), rgba(99,102,241,0.15))',
+              border: '1.5px solid rgba(124,58,237,0.45)',
+              color: 'rgba(167,139,250,1)',
+              boxShadow: '0 0 16px rgba(124,58,237,0.25)',
             }}
           >
-            Done-for-you websites
+            ✦ Live in 5–7 days
           </span>
           <div
             className="h-px w-8"

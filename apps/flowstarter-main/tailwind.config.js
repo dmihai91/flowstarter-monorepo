@@ -42,7 +42,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['var(--font-inter)', 'sans-serif'],
+        sans: ['var(--font-jakarta)', 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', 'sans-serif'],
         poppins: ['var(--font-poppins)', 'sans-serif'],
         mono: ['var(--font-roboto-mono)', 'monospace'],
       },

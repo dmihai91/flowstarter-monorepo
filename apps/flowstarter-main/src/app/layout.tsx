@@ -10,10 +10,7 @@ import ro from '@/locales/ro';
 import { getServerT } from '@/lib/i18n-server';
 import en from '@/locales/en';
 import '@/styles/globals.css';
-import '@fontsource/inter/latin.css';
-import '@fontsource/poppins/400.css';
-import '@fontsource/poppins/500.css';
-import '@fontsource/poppins/600.css';
+import '@fontsource-variable/plus-jakarta-sans';
 import '@fontsource/roboto-mono/latin.css';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
@@ -21,17 +18,15 @@ import { ClerkThemeWrapper } from './components/ClerkThemeWrapper';
 import { ClientLayout } from './components/ClientLayout';
 import { NavigationWrapper } from './components/NavigationWrapper';
 
-const inter = {
-  variable: '--font-inter',
+const plusJakartaSans = {
+  variable: '--font-jakarta',
 };
 
 const roboto_mono = {
   variable: '--font-roboto-mono',
 };
 
-const poppins = {
-  variable: '--font-poppins',
-};
+
 
 export async function generateMetadata(): Promise<Metadata> {
   // Get locale from headers or use default 'en'
@@ -78,7 +73,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${poppins.variable} ${roboto_mono.variable}`}
+      className={`${plusJakartaSans.variable} ${roboto_mono.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -115,7 +110,7 @@ export default async function RootLayout({
       </head>
       <body
         className="font-sans min-h-screen bg-[var(--landing-bg)] dark:bg-[var(--landing-dark-surface,#0a0a0f)]"
-        style={{ fontFamily: 'var(--font-inter)' }}
+        style={{ fontFamily: 'var(--font-jakarta)' }}
         suppressHydrationWarning
       >
         <GoogleAnalytics

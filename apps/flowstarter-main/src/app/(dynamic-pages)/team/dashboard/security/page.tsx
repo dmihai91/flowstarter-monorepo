@@ -85,7 +85,7 @@ export default function TeamSecurityPage() {
       setQrCodeUrl(totp.uri ?? null);
       setSecret(totp.secret ?? null);
     } catch (error: unknown) {
-      const clerkError = error as { errors?: Array<{ code?: string }> };
+      const clerkError = error as { errors?: Array<{ code?: string; message?: string }> };
       const code = clerkError?.errors?.[0]?.code ?? '';
       const msg = String(clerkError?.errors?.[0]?.message ?? error);
       if (code === 'session_step_up_required' || code === 'requires_recent_sign_in' || msg.includes('additional verification')) {

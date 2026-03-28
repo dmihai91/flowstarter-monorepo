@@ -39,6 +39,7 @@
     "@daytonaio/sdk": "^0.132.0",
     "@flowstarter/editor-engine": "workspace:*",
     "@flowstarter/flow-design-system": "workspace:*",
+    "@fontsource-variable/plus-jakarta-sans": "^5.2.8",
     "@fontsource/inter": "^5.2.8",
     "@fontsource/lato": "^5.2.7",
     "@fontsource/montserrat": "^5.2.8",

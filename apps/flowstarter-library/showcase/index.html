@@ -2,6 +2,23 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+  <script>
+    (function() {
+      try {
+        // Check cookie first (synced across subdomains)
+        var cookie = document.cookie.split(';').map(function(s){ return s.trim(); })
+          .find(function(s){ return s.startsWith('flowstarter_theme='); });
+        var cookieVal = cookie ? cookie.split('=')[1] : null;
+        var stored = cookieVal || localStorage.getItem('theme') || localStorage.getItem('flowstarter_theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var isDark = stored === 'dark' || (!stored && prefersDark) || (stored === 'system' && prefersDark);
+        if (isDark) document.documentElement.classList.add('dark');
+        else document.documentElement.classList.remove('dark');
+        // Prevent flash: hide body until first paint
+        document.documentElement.style.setProperty('--theme-ready', '0');
+      } catch(e) {}
+    })();
+  </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />

@@ -1,4 +1,12 @@
 
+/* ── Smooth theme transition on key surfaces only ───────── */
+html, body,
+header, footer, aside, main, nav,
+.bg-white, .dark\:bg-\[\#080810\] {
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+
+
 /* ── Animated gradient headline ─────────────────────────── */
 @keyframes gradientShift {
   0%   { background-position: 0% 50%; }

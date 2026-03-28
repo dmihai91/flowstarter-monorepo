@@ -52,7 +52,7 @@ export function LandingPricing() {
                         ? 'border-[var(--purple-primary)]/60 bg-white/40 dark:bg-white/[0.04] backdrop-blur-2xl shadow-[0_8px_32px_rgba(124,58,237,0.12)] dark:shadow-[0_8px_32px_rgba(124,58,237,0.20)] ring-1 ring-[var(--purple-primary)]/20'
                         : 'border-white/40 dark:border-white/[0.07] bg-white/30 dark:bg-white/[0.025] backdrop-blur-2xl shadow-[0_4px_24px_rgba(15,23,42,0.06)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:border-white/60 dark:hover:border-white/[0.12] hover:bg-white/40 dark:hover:bg-white/[0.04]'
                     } ${
-                      isComingSoon ? 'opacity-[0.65] saturate-75' : ''
+                      isComingSoon ? 'opacity-50 saturate-50 pointer-events-none select-none' : ''
                     }`}
                     style={{ transitionDelay: `${index * 120}ms` }}
                   >

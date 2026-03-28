@@ -15,6 +15,7 @@ import { PillarsSection } from './components/PillarsSection';
 import { IncludedSection } from './components/IncludedSection';
 import { DifferentiationSection } from './components/DifferentiationSection';
 import { AudienceSection } from './components/AudienceSection';
+import { TestimonialsSection } from './components/TestimonialsSection';
 import { LandingPricing } from './components/LandingPricing';
 import { TemplateGallerySection } from './components/TemplateGallerySection';
 import { ManifestoSection } from './components/ManifestoSection';
@@ -105,6 +106,8 @@ export default function LandingPage() {
         <LandingPricing />
 
         {/* 10. Manifesto — emotional/mission */}
+        <TestimonialsSection />
+
         <ManifestoSection />
 
         {/* 11. Who's behind Flowstarter */}

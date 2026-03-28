@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { LANDING_COPY } from '../landing-copy';
+import { FlowBackground } from '@flowstarter/flow-design-system';
 
 export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   const [ready, setReady] = useState(false);
@@ -18,11 +19,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   return (
     <section className="relative pt-28 sm:pt-36 pb-20 sm:pb-28 overflow-hidden">
 
-      {/* Orbs */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-[var(--purple)] opacity-[0.08] dark:opacity-[0.12] blur-[120px]" />
-        <div className="absolute top-1/2 -right-40 w-[400px] h-[400px] rounded-full bg-blue-400 opacity-[0.05] blur-[100px]" />
-      </div>
+      <FlowBackground variant="landing" style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
 
       <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-10">
 

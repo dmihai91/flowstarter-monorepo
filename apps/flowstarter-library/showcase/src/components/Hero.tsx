@@ -10,12 +10,6 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
   const [ready, setReady] = useState(false);
   useEffect(() => { const t = setTimeout(() => setReady(true), 60); return () => clearTimeout(t); }, []);
 
-  const fade = (delay: string): React.CSSProperties => ({
-    opacity: ready ? 1 : 0,
-    transform: ready ? 'translateY(0)' : 'translateY(20px)',
-    transition: `opacity 0.7s ease ${delay}, transform 0.7s ease ${delay}`,
-  });
-
   const stats = [
     { value: `${templateCount}`, label: 'templates' },
     { value: '6', label: 'colour palettes' },
@@ -23,94 +17,73 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
   ];
 
   return (
-    <section style={{ position: 'relative', paddingTop: '6rem', paddingBottom: '4rem', overflow: 'hidden' }}>
+    <section className="relative overflow-hidden pt-20 pb-12">
 
-      {/* Background orbs */}
-      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
-        <div style={{
-          position: 'absolute', top: '-8rem', left: '50%', transform: 'translateX(-50%)',
-          width: '700px', height: '500px', borderRadius: '9999px',
-          background: 'var(--purple-primary)', opacity: 0.07, filter: 'blur(100px)',
-        }} />
-        <div style={{
-          position: 'absolute', top: '40%', right: '-8rem',
-          width: '350px', height: '350px', borderRadius: '9999px',
-          background: 'hsl(211 93% 61%)', opacity: 0.04, filter: 'blur(80px)',
-        }} />
+      {/* Background orb — subtle in light, stronger in dark */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div
+          className="absolute -top-32 left-1/2 -translate-x-1/2 rounded-full opacity-[0.06] dark:opacity-[0.12] blur-[100px]"
+          style={{ width: '600px', height: '500px', background: 'var(--purple-primary)' }}
+        />
       </div>
 
-      <div style={{ position: 'relative', zIndex: 10, maxWidth: '64rem', margin: '0 auto', padding: '0 1.5rem' }}>
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6">
 
         {/* Label */}
-        <div style={{ ...fade('0s'), display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '2.5rem' }}>
-          <div style={{ height: '1px', width: '1.5rem', background: 'var(--purple-primary)', opacity: 0.6 }} />
-          <span style={{
-            fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.18em',
-            textTransform: 'uppercase', color: 'var(--purple-primary)',
-          }}>
+        <div
+          className="flex items-center justify-center gap-3 mb-8 hero-fade hero-fade-1"
+        >
+          <div className="h-px w-6 opacity-60" style={{ background: 'var(--purple-primary)' }} />
+          <span className="text-[0.65rem] font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--purple-primary)' }}>
             Handcrafted templates
           </span>
-          <div style={{ height: '1px', width: '1.5rem', background: 'var(--purple-primary)', opacity: 0.6 }} />
+          <div className="h-px w-6 opacity-60" style={{ background: 'var(--purple-primary)' }} />
         </div>
 
         {/* Headline */}
-        <div style={{ ...fade('0.1s'), textAlign: 'center', marginBottom: '1.25rem' }}>
+        <div className="text-center mb-5 hero-fade hero-fade-2">
           <h1 style={{ lineHeight: 1.1, letterSpacing: '-0.02em', margin: 0 }}>
-            <span style={{
-              display: 'block', fontWeight: 300,
-              fontSize: 'clamp(2rem, 5vw, 4rem)',
-              color: 'var(--ui-text-primary, #111)',
-            }}>
+            <span
+              className="block font-light text-neutral-800 dark:text-white"
+              style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}
+            >
               Every expert deserves a site
             </span>
-            <span style={{
-              display: 'block', fontWeight: 900,
-              fontSize: 'clamp(2.2rem, 5.5vw, 4.5rem)',
-              background: 'linear-gradient(135deg, #4D5DD9, #7C3AED, #5b21b6)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}>
+            <span
+              className="block font-black"
+              style={{
+                fontSize: 'clamp(2.2rem, 5.5vw, 4.5rem)',
+                background: 'linear-gradient(135deg, #4D5DD9, #7C3AED, #5b21b6)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
               this good.
             </span>
           </h1>
         </div>
 
         {/* Subheadline */}
-        <p style={{
-          ...fade('0.2s'),
-          textAlign: 'center',
-          fontSize: '1rem',
-          lineHeight: 1.7,
-          color: 'var(--ui-text-secondary, #6b7280)',
-          maxWidth: '36rem',
-          margin: '0 auto 2.5rem',
-        }}>
+        <p className="text-center text-base sm:text-lg leading-relaxed text-neutral-500 dark:text-neutral-400 max-w-xl mx-auto mb-10 hero-fade hero-fade-3">
           Every template is built for coaches, consultants, and service professionals.
           Pick a palette, pick a font, hand it off. Done.
         </p>
 
         {/* Stats */}
-        <div style={{
-          ...fade('0.3s'),
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          gap: 'clamp(2rem, 6vw, 3.5rem)',
-          paddingTop: '2rem',
-          borderTop: '1px solid rgba(128,128,128,0.12)',
-          marginBottom: '2rem',
-        }}>
+        <div className="flex items-center justify-center gap-12 sm:gap-16 pt-8 border-t border-neutral-200 dark:border-white/[0.07] mb-6 hero-fade hero-fade-4">
           {stats.map((s, i) => (
-            <div key={i} style={{ textAlign: 'center' }}>
-              <p style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', fontWeight: 700, margin: 0, color: 'var(--ui-text-primary, #111)' }}>{s.value}</p>
-              <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.16em', color: 'var(--ui-text-secondary, #9ca3af)', marginTop: '0.125rem' }}>{s.label}</p>
+            <div key={i} className="text-center">
+              <p className="text-2xl font-bold text-neutral-900 dark:text-white">{s.value}</p>
+              <p className="text-[0.6rem] uppercase tracking-widest text-neutral-400 dark:text-neutral-500 mt-0.5">{s.label}</p>
             </div>
           ))}
         </div>
 
         {/* Mobile search */}
-        <div style={{ ...fade('0.4s'), display: 'block' }} className="sm:hidden">
-          <div style={{ position: 'relative' }}>
-            <span style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af', pointerEvents: 'none', zIndex: 1 }}>
+        <div className="sm:hidden hero-fade hero-fade-5">
+          <div className="relative">
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" style={{ zIndex: 1 }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
               </svg>
@@ -120,15 +93,7 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
               placeholder="Search templates..."
               value={searchQuery}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-              style={{
-                width: '100%', borderRadius: '0.75rem',
-                border: '1px solid rgba(128,128,128,0.25)',
-                background: 'transparent',
-                padding: '0.75rem 1rem 0.75rem 2.5rem',
-                fontSize: '0.875rem', outline: 'none',
-                color: 'inherit',
-                boxSizing: 'border-box',
-              }}
+              className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700/60 bg-white dark:bg-neutral-900/80 py-3 pl-10 pr-4 text-sm text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:border-[var(--purple-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--purple-primary)]/20 transition-all"
             />
           </div>
         </div>

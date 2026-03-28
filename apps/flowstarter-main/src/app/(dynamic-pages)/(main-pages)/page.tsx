@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PreQualModal } from './components/PreQualModal';
 
 import Footer from '@/components/Footer';
@@ -25,6 +25,18 @@ import { FinalCTASection } from './components/FinalCTASection';
 
 export default function LandingPage() {
   const [modalOpen, setModalOpen] = useState(false);
+
+  // Auto-open modal when ?book=1 is in URL (e.g. from library CTA)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('book') === '1') {
+        setModalOpen(true);
+        // Clean URL without reload
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    }
+  }, []);
   return (
     <>
       <style jsx global>{`

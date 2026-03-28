@@ -184,7 +184,7 @@ function MobileSheet({
             </div>
           )}
 
-          <a href="https://flowstarter.dev/contact"
+          <a href="https://flowstarter.dev/?book=1"
             className="btn-brand btn-shimmer flex items-center justify-center gap-2 w-full rounded-2xl px-4 py-3 text-sm font-semibold text-white no-underline">
             Start with Flowstarter <ArrowIcon />
           </a>
@@ -304,7 +304,7 @@ export function Header({
             <div className="ml-auto flex items-center gap-3">
               <ThemeToggle themeMode={themeMode} setThemeMode={setThemeMode} />
               <a
-                href="https://flowstarter.dev/contact"
+                href="https://flowstarter.dev/?book=1"
                 className="btn-brand btn-shimmer flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-semibold text-white no-underline"
               >
                 Start with Flowstarter

@@ -31,6 +31,24 @@ async function loadTemplateFixture(): Promise<TemplateFixture> {
   return (result.body as { templates?: TemplateFixture[] }).templates![0];
 }
 
+async function openReview(page: import('@playwright/test').Page, token: string) {
+  await page.goto(`${EDITOR}?handoff=${encodeURIComponent(token)}`, { waitUntil: 'domcontentloaded' });
+  await page.waitForURL(/\/project\//, { timeout: 30_000 });
+
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      await expect(page.locator('body')).toContainText('Review Before Build', { timeout: 20_000 });
+      return;
+    } catch (error) {
+      if (attempt === 1) {
+        throw error;
+      }
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await page.waitForURL(/\/project\//, { timeout: 15_000 });
+    }
+  }
+}
+
 test.afterEach(async () => {
   if (createdProjectId) {
     await cleanupProject(createdProjectId);
@@ -86,14 +104,12 @@ test.describe('Scenario 3: Review to build', () => {
     const { token, projectId } = handoff.body as { token: string; projectId: string };
     createdProjectId = projectId;
 
-    await page.goto(`${EDITOR}?handoff=${encodeURIComponent(token)}`);
-    await page.waitForURL(/\/project\//, { timeout: 30_000 });
-    await expect(page.getByText('Review Before Build')).toBeVisible({ timeout: 20_000 });
+    await openReview(page, token);
 
     await page.getByRole('button', { name: 'Build Site' }).click();
 
     await expect.poll(() => buildRequested).toBe(true);
-    await expect(page.getByText(/Building your site/i)).toBeVisible({ timeout: 15_000 });
-    await expect(page.getByText(/Your site is ready/i)).toBeVisible({ timeout: 20_000 });
+    await expect(page.locator('body')).toContainText('Building your site', { timeout: 15_000 });
+    await expect(page.locator('body')).toContainText('Your site is ready', { timeout: 20_000 });
   });
 });

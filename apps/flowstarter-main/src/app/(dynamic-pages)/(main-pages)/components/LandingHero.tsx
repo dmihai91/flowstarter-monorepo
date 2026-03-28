@@ -54,7 +54,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         {/* Label */}
         <div style={fade('0s')} className="flex items-center justify-center gap-3 mb-8 sm:mb-10">
           <div className="h-px w-6 bg-[var(--purple)]/60" />
-          <span className="text-[0.6rem] font-semibold tracking-[0.2em] uppercase text-[var(--purple)]">
+          <span className="text-xs sm:text-sm font-semibold tracking-[0.18em] uppercase text-[var(--purple)]">
             Done-for-you websites
           </span>
           <div className="h-px w-6 bg-[var(--purple)]/60" />

@@ -18,7 +18,7 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
 
   const stats = [
     { value: `${templateCount}`, label: 'templates' },
-    { value: '6', label: 'palettes each' },
+    { value: '6', label: 'colour palettes' },
     { value: '4', label: 'font pairings' },
   ];
 
@@ -61,7 +61,7 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
               fontSize: 'clamp(2rem, 5vw, 4rem)',
               color: 'var(--ui-text-primary, #111)',
             }}>
-              Production-ready from
+              Every expert deserves a site
             </span>
             <span style={{
               display: 'block', fontWeight: 900,
@@ -71,7 +71,7 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
             }}>
-              day one.
+              this good.
             </span>
           </h1>
         </div>
@@ -86,8 +86,8 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
           maxWidth: '36rem',
           margin: '0 auto 2.5rem',
         }}>
-          Built for coaches, consultants, and service professionals.
-          Each template ships with 6 colour palettes and 4 font pairings — ready to hand off.
+          Every template is built for coaches, consultants, and service professionals.
+          Pick a palette, pick a font, hand it off. Done.
         </p>
 
         {/* Stats */}

@@ -32,8 +32,8 @@
     "technologies": "Technologies",
     "features": "Features",
     "filters": "Filters",
-    "proTip": "Pro tip",
-    "proTipDescription": "Click any template to preview it with different color palettes and fonts!"
+    "proTip": "Tip",
+    "proTipDescription": "Click any template to preview it with different colour palettes and font pairings."
   },
   "categories": {
     "all": "All Templates",
@@ -66,7 +66,7 @@
   "card": {
     "free": "Free",
     "preview": "Preview",
-    "viewDemo": "View Demo",
+    "viewDemo": "Live preview",
     "palettes": "Palettes:"
   },
   "footer": {
@@ -75,10 +75,10 @@
     "github": "GitHub",
     "contact": "Contact",
     "copyright": "© {{year}} Flowstarter. All rights reserved.",
-    "tagline": "Built with Astro + Tailwind CSS"
+    "tagline": "Every template ships ready to hand off."
   },
   "errors": {
     "loadFailed": "Failed to load templates",
-    "noTemplates": "No templates found"
+    "noTemplates": "No templates match your filters. Try a different category or clear the search."
   }
 }

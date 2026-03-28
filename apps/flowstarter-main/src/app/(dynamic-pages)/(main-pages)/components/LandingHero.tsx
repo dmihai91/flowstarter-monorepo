@@ -211,7 +211,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         {/* Stats */}
         <div
           style={fade('0.4s')}
-          className="flex items-start justify-center gap-4 sm:gap-14 pt-7 sm:pt-8 border-t border-gray-100 dark:border-white/[0.07] w-full"
+          className="flex items-start justify-center gap-4 sm:gap-14 pt-7 sm:pt-8 border-t border-gray-200 dark:border-white/[0.07] w-full"
         >
           {stats.map((s, i) => (
             <div key={i} className="text-center flex-1 min-w-0">

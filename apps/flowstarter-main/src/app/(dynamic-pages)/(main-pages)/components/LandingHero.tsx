@@ -46,13 +46,13 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   ];
 
   return (
-    <section className="relative overflow-hidden pt-16 sm:pt-24 pb-12 sm:pb-20">
+    <section className="relative overflow-hidden pt-16 sm:pt-24 pb-6 sm:pb-14">
       <FlowBackground variant="landing" style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
 
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-10">
 
         {/* Label */}
-        <div style={fade('0s')} className="flex items-center justify-center gap-3 mb-7 sm:mb-10">
+        <div style={fade('0s')} className="flex items-center justify-center gap-3 mb-8 sm:mb-10">
           <div className="h-px w-6 bg-[var(--purple)]/60" />
           <span className="text-[0.6rem] font-semibold tracking-[0.2em] uppercase text-[var(--purple)]">
             Done-for-you websites
@@ -65,13 +65,13 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
           <h1 className="leading-[1.1] tracking-tight text-gray-900 dark:text-white">
             <span
               className="block font-light"
-              style={{ fontSize: 'clamp(1.6rem, 4.5vw, 3.8rem)' }}
+              style={{ fontSize: 'clamp(2rem, 5vw, 3.8rem)' }}
             >
               {hero.headlinePrefix}
             </span>
             <span
               className="block font-black text-flow"
-              style={{ fontSize: 'clamp(1.9rem, 5.5vw, 4.5rem)' }}
+              style={{ fontSize: 'clamp(2.4rem, 6vw, 4.5rem)' }}
             >
               {hero.headlineHighlight}
             </span>
@@ -81,7 +81,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         {/* Body */}
         <p
           style={fade('0.2s')}
-          className="text-center text-sm sm:text-lg text-gray-500 dark:text-white/55 leading-relaxed max-w-xl mx-auto mb-6 sm:mb-8"
+          className="text-center text-base sm:text-lg text-gray-500 dark:text-white/55 leading-relaxed max-w-xl mx-auto mb-7 sm:mb-8"
         >
           {hero.subheadline}
         </p>
@@ -117,11 +117,11 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         {/* Stats */}
         <div
           style={fade('0.4s')}
-          className="flex items-start justify-center gap-6 sm:gap-14 pt-6 sm:pt-8 border-t border-gray-100 dark:border-white/[0.07]"
+          className="flex items-start justify-center gap-8 sm:gap-14 pt-7 sm:pt-8 border-t border-gray-100 dark:border-white/[0.07]"
         >
           {stats.map((s, i) => (
             <div key={i} className="text-center">
-              <p className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white leading-none tabular-nums">
+              <p className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white leading-none tabular-nums">
                 {s.value}<span className="text-base sm:text-lg font-semibold text-[var(--purple)]">{s.suffix}</span>
               </p>
               <p className="text-[0.55rem] sm:text-[0.65rem] uppercase tracking-widest text-gray-400 dark:text-white/30 mt-1">{s.label}</p>

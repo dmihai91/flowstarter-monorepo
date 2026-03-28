@@ -118,7 +118,7 @@ function AlertDialogFooter({
     <div
       data-slot="alert-dialog-footer"
       className={cn(
-        'flex flex-col-reverse gap-2 sm:flex-row sm:justify-end border-t border-gray-200/50 dark:border-white/10 pt-4 mt-4 sm:gap-3',
+        'flex flex-col-reverse gap-3 sm:flex-row sm:justify-end border-t border-gray-200/50 dark:border-white/10 pt-5 mt-4 sm:gap-3',
         className
       )}
       {...props}
@@ -161,7 +161,7 @@ function AlertDialogAction({
 }) {
   return (
     <AlertDialogPrimitive.Action
-      className={cn(buttonVariants({ variant }), className)}
+      className={cn(buttonVariants({ variant }), 'w-full sm:w-auto h-11 sm:h-10', className)}
       {...props}
     />
   );
@@ -178,6 +178,7 @@ function AlertDialogCancel({
     <AlertDialogPrimitive.Cancel
       className={cn(
         buttonVariants({ variant }),
+        'w-full sm:w-auto h-11 sm:h-10',
         className
       )}
       {...props}

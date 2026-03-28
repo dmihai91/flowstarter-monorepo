@@ -84,7 +84,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         >
           {[
             { value: '~1 week', label: 'avg. delivery' },
-            { value: 'Zero', label: 'skills needed' },
+            { value: 'Zero', label: 'coding skills needed' },
             { value: '30-day trial', label: 'partial refund if not happy' },
           ].map((s, i) => (
             <div key={i} className="text-center">

@@ -75,7 +75,7 @@ export const LANDING_COPY = {
         number: '03',
         title: 'Keep improving as you grow',
         description:
-          'Use the smart editor to sharpen copy, add sections, or adjust your offer. Your site evolves with you. No freelancer required.',
+          'Use our smart editor to sharpen copy, add sections, or adjust your offer. Your site evolves with you. No freelancer required.',
       },
     ],
   },
@@ -155,7 +155,7 @@ export const LANDING_COPY = {
       {
         icon: 'sparkles',
         title: 'Change anything yourself, no code needed',
-        description: 'Type what you want updated. The smart editor handles the rest. No code, no waiting.',
+        description: 'Type what you want updated. Our smart editor handles the rest. No code, no waiting.',
       },
       {
         icon: 'layout',
@@ -166,7 +166,7 @@ export const LANDING_COPY = {
   },
   pricing: {
     title: 'One setup. One price. Full control from day one.',
-    subtitle: 'Pay once to launch. Stay on the monthly plan for the smart editor and dashboard. Cancel anytime.',
+    subtitle: 'Pay once to launch. Stay on the monthly plan for our smart editor and dashboard. Cancel anytime.',
     socialProof: 'Only 10 founding-rate spots available per month. Beta pricing is live now.',
     note:
       'No tech skills needed. No agency retainers. Full control after launch.',
@@ -298,7 +298,7 @@ export const LANDING_COPY = {
       {
         question: 'Can I update the site myself after launch?',
         answer:
-          'Yes. The smart editor lets you change any section yourself, no code, no waiting on anyone.',
+          'Yes. Our smart editor lets you change any section yourself, no code, no waiting on anyone.',
       },
       {
         question: 'Do I need technical skills?',
@@ -313,7 +313,7 @@ export const LANDING_COPY = {
       {
         question: 'Am I locked into a long-term contract?',
         answer:
-          'No. The setup is a one-time fee. The monthly plan keeps the smart editor and dashboard running. Cancel anytime.',
+          'No. The setup is a one-time fee. The monthly plan keeps our smart editor and dashboard running. Cancel anytime.',
       },
     ],
   },

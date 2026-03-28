@@ -123,9 +123,9 @@ export function LandingPricing() {
                           className="mt-auto block w-full"
                         >
                           <Button
-                            variant={isHighlighted ? 'brand-gradient' : plan.ctaVariant === 'outline' ? 'outline' : 'secondary'}
+                            variant={isHighlighted ? 'brand-gradient' : 'outline'}
                             size="lg"
-                            className={`w-full rounded-xl ${isHighlighted ? 'shadow-[0_14px_40px_rgba(124,58,237,0.28)]' : ''}`}
+                            className={`w-full rounded-xl ${isHighlighted ? 'shadow-[0_14px_40px_rgba(124,58,237,0.28)]' : 'border-[var(--purple-primary)] text-[var(--purple-primary)] hover:bg-[var(--purple-primary)] hover:text-white dark:border-[var(--purple-primary)] dark:text-[var(--purple-primary)] dark:hover:bg-[var(--purple-primary)] dark:hover:text-white'}`}
                           >
                             {plan.cta}
                           </Button>

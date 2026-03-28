@@ -96,7 +96,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         </div>
 
         {/* CTA row */}
-        <div style={fade('0.3s')} className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-10 sm:mb-16">
+        <div style={fade('0.3s')} className="flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-6 mb-10 sm:mb-16">
           <Button
             variant="brand-gradient"
             onClick={() => onOpenModal?.()}
@@ -108,7 +108,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
           <a
             href="#pricing"
             onClick={e => { e.preventDefault(); document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }); }}
-            className="text-xs sm:text-sm font-medium text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/70 underline underline-offset-4 transition-colors"
+            className="text-sm sm:text-base font-medium text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/70 underline underline-offset-4 transition-colors"
           >
             {hero.secondaryCta}
           </a>

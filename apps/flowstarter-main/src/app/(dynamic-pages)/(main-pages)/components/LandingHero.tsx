@@ -17,7 +17,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   });
 
   return (
-    <section className="relative pt-28 sm:pt-36 pb-20 sm:pb-28 overflow-hidden">
+    <section className="relative pt-16 sm:pt-20 pb-16 sm:pb-24 overflow-hidden">
 
       <FlowBackground variant="landing" style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
 
@@ -83,7 +83,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
           className="flex items-center justify-center gap-8 sm:gap-14 pt-8 border-t border-gray-100 dark:border-white/[0.07]"
         >
           {[
-            { value: '3 weeks', label: 'avg. delivery' },
+            { value: '~1 week', label: 'avg. delivery' },
             { value: 'Zero', label: 'skills needed' },
             { value: '30-day', label: 'money-back' },
           ].map((s, i) => (

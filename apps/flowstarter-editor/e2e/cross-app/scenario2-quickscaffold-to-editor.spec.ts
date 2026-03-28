@@ -96,15 +96,12 @@ test.afterEach(async () => {
 test.describe('Scenario 2: QuickScaffold to editor review', () => {
   test.setTimeout(180_000);
 
-  test('2.1 AI enrichment returns structured business data', async () => {
-    const result = await e2eFetch(`${BASE}/api/ai/enrich-project`, {
-      method: 'POST',
-      body: { description: QUICKSCAFFOLD_INPUT },
-    });
+  test('2.1 quick scaffold handoff accepts enriched business data and returns editor access', async () => {
+    const { token, editorUrl, projectId } = await quickScaffoldHandoff();
 
-    expect(result.status).toBe(200);
-    const body = result.body as { status: string };
-    expect(body.status).toBe('complete');
+    expect(token).toBeTruthy();
+    expect(editorUrl).toContain('handoff=');
+    expect(projectId).toMatch(/^[0-9a-f-]{36}$/i);
   });
 
   test('2.2 enriched handoff token preserves business, brand, and template data', async ({ page }) => {

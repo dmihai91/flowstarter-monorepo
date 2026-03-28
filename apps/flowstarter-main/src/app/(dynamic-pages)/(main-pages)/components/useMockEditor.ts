@@ -118,17 +118,27 @@ export function useMockEditor() {
     setTypingText('');
     setIsTypewriting(true);
     let i = 0;
-    if (typewriterRef.current) clearInterval(typewriterRef.current);
-    typewriterRef.current = setInterval(() => {
+    if (typewriterRef.current) clearTimeout(typewriterRef.current as unknown as ReturnType<typeof setTimeout>);
+
+    const typeNextChar = () => {
       i++;
       setTypingText(text.slice(0, i));
       if (i >= text.length) {
-        clearInterval(typewriterRef.current!);
         typewriterRef.current = null;
         setIsTypewriting(false);
         onDone();
+        return;
       }
-    }, 18);
+      const char = text[i - 1];
+      // Natural variance: pause longer after punctuation, random jitter otherwise
+      const isPunct = ['.', ',', '!', '?', ':'].includes(char);
+      const delay = isPunct
+        ? 180 + Math.random() * 120
+        : 35 + Math.random() * 45;
+      typewriterRef.current = setTimeout(typeNextChar, delay) as unknown as ReturnType<typeof setInterval>;
+    };
+
+    typewriterRef.current = setTimeout(typeNextChar, 40) as unknown as ReturnType<typeof setInterval>;
   };
 
   const handleSend = (directMessage?: string) => {

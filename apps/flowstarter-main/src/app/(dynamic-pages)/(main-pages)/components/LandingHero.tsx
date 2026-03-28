@@ -103,26 +103,26 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-10">
 
         {/* Label */}
-        <div style={fade('0s')} className="flex items-center justify-center gap-3 mb-8 sm:mb-10">
-          <div
-            className="h-px w-8"
-            style={{ background: 'linear-gradient(to right, transparent, rgba(124,58,237,0.7))' }}
-          />
-          <span
-            className="text-xs sm:text-sm font-bold tracking-[0.15em] uppercase px-4 py-1.5 rounded-full text-[var(--purple)] dark:text-white"
-            style={{
-              background: 'linear-gradient(135deg, rgba(124,58,237,0.25), rgba(99,102,241,0.18))',
-              border: '1.5px solid rgba(167,139,250,0.6)',
-              boxShadow: '0 0 0 3px rgba(124,58,237,0.12), 0 0 24px rgba(124,58,237,0.35)',
-              animation: 'badgeGlow 2.8s ease-in-out infinite',
-            }}
-          >
-            ✦ Live in 5–7 days
-          </span>
-          <div
-            className="h-px w-8"
-            style={{ background: 'linear-gradient(to left, transparent, rgba(124,58,237,0.7))' }}
-          />
+        <div style={fade('0s')} className="flex items-center justify-center mb-8 sm:mb-10">
+          <div className="hero-badge relative inline-flex items-center gap-2.5 px-4 py-2 rounded-full overflow-hidden">
+            {/* Shimmer sweep */}
+            <span
+              className="pointer-events-none absolute inset-0 rounded-full"
+              style={{
+                background: 'linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.65) 50%, transparent 70%)',
+                backgroundSize: '200% 100%',
+                animation: 'badgeShimmer 3.5s ease-in-out infinite',
+              }}
+            />
+            {/* Live pulse dot */}
+            <span className="relative flex h-2 w-2 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-60" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+            </span>
+            <span className="relative text-[11px] font-semibold tracking-[0.1em] uppercase" style={{ color: 'inherit' }}>
+              Live in 5–7 days
+            </span>
+          </div>
         </div>
 
         {/* Headline */}

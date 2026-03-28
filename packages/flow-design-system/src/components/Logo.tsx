@@ -46,7 +46,7 @@ export function Logo({ size = 'md', showText = true, className }: LogoProps) {
           fontWeight: 700,
           fontSize: textSizes[size!],
           letterSpacing: '-0.025em',
-          color: 'var(--text-primary, #09090b)',
+          color: 'var(--text-primary, currentColor)',
         }}>
           Flow
           <span style={{

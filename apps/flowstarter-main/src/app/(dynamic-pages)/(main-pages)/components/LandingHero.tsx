@@ -104,24 +104,16 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
 
         {/* Label */}
         <div style={fade('0s')} className="flex items-center justify-center mb-8 sm:mb-10">
-          <div className="hero-badge relative inline-flex items-center gap-2.5 px-4 py-2 rounded-full overflow-hidden">
-            {/* Shimmer sweep */}
-            <span
-              className="pointer-events-none absolute inset-0 rounded-full"
-              style={{
-                background: 'linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.65) 50%, transparent 70%)',
-                backgroundSize: '200% 100%',
-                animation: 'badgeShimmer 3.5s ease-in-out infinite',
-              }}
-            />
-            {/* Live pulse dot */}
-            <span className="relative flex h-2 w-2 shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-60" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
-            </span>
-            <span className="relative text-[11px] font-semibold tracking-[0.1em] uppercase" style={{ color: 'inherit' }}>
-              Live in 5–7 days
-            </span>
+          <div
+            className="hero-badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[var(--purple)] dark:text-white"
+            style={{
+              background: 'linear-gradient(135deg, rgba(124,58,237,0.10), rgba(99,102,241,0.07))',
+              border: '1.5px solid rgba(124,58,237,0.30)',
+              boxShadow: '0 0 10px rgba(124,58,237,0.12)',
+            }}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)] dark:bg-violet-400 shrink-0" />
+            <span className="text-[11px] font-semibold tracking-[0.12em] uppercase">Live in 5–7 days</span>
           </div>
         </div>
 
@@ -224,9 +216,13 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         </div>
 
       </div>
-      {/* Bottom fade — blend into next section on dark */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 dark:block hidden"
-        style={{ background: 'linear-gradient(to bottom, transparent, rgba(10,10,14,0.85))' }} />
+      {/* Bottom fade — blend into next section */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40"
+        style={{ background: 'linear-gradient(to bottom, transparent, var(--background, #ffffff))' }}
+      />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 hidden dark:block"
+        style={{ background: 'linear-gradient(to bottom, transparent, #0a0a0e)' }}
+      />
 
     </section>
   );

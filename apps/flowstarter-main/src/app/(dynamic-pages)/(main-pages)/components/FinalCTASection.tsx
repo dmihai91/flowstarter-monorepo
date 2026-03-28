@@ -15,7 +15,7 @@ export function FinalCTASection({ onOpenModal }: { onOpenModal?: () => void }) {
         }} />
 
       {/* Overlay — stronger on dark */}
-      <div className="absolute inset-0 bg-black/30 dark:bg-black/55" />
+      <div className="absolute inset-0 bg-white/25 dark:bg-black/70" />
 
       {/* Top border */}
       <div className="absolute inset-x-0 top-0 h-px bg-white/20" />

@@ -230,6 +230,13 @@ export function useEditorChatState({
     existingProjectId: additionalState.convexProjectId,
     convexConversationId: initialState?.conversationId || null,
     seededIntegrations: initialState?.integrations || [],
+    seededTemplate:
+      initialState?.selectedTemplateId && initialState?.selectedTemplateName
+        ? {
+            id: initialState.selectedTemplateId,
+            name: initialState.selectedTemplateName,
+          }
+        : null,
   });
 
   useEffect(() => {

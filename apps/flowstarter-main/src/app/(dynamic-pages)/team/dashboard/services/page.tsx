@@ -2,11 +2,11 @@
 import { useTranslations } from '@/lib/i18n';
 
 import { PageContainer } from '@/components/PageContainer';
-import { DashboardWrapper } from '@/app/(dynamic-pages)/(main-pages)/(logged-in-pages)/dashboard/components/DashboardWrapper';
 import { GlassCard } from '@/components/ui/glass-card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
   DialogContent,
@@ -22,10 +22,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   ArrowLeft,
   Settings,
@@ -33,6 +39,7 @@ import {
   ExternalLink,
   Calendar,
   Mail,
+  BarChart3,
   Plus,
   Trash2,
   CheckCircle2,
@@ -40,29 +47,74 @@ import {
   Eye,
   EyeOff,
   Lock,
+  RefreshCw,
+  ChevronRight,
+  Plug,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTeamProjects } from '@/hooks/useTeamProjects';
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type IntegrationType = 'calendly' | 'cal-com' | 'mailchimp';
+
 interface Integration {
   id: string;
   project_id: string;
-  integration_type: 'calendly' | 'mailchimp';
+  integration_type: IntegrationType;
   name: string;
   config: Record<string, unknown>;
   is_active: boolean;
   created_at: string;
+  updated_at: string;
 }
 
-const integrationInfo = {
+interface Project {
+  id: string;
+  name?: string | null;
+  status?: string | null;
+}
+
+// ─── Static metadata ─────────────────────────────────────────────────────────
+
+const INTEGRATION_META: Record<
+  IntegrationType,
+  {
+    name: string;
+    description: string;
+    icon: React.ElementType;
+    color: string;
+    bgColor: string;
+    borderColor: string;
+    docsUrl: string;
+    keyLabel: string;
+    keyHelp: string;
+    keyPlaceholder: string;
+  }
+> = {
   calendly: {
     name: 'Calendly',
     description: 'Appointment scheduling for client bookings',
     icon: Calendar,
     color: 'text-blue-500',
     bgColor: 'bg-blue-500/10',
+    borderColor: 'border-blue-500/30',
     docsUrl: 'https://developer.calendly.com/getting-started',
-    keyHelp: 'Get your API key from Calendly → Integrations → API & Webhooks',
+    keyLabel: 'API Key',
+    keyHelp: 'Calendly → Integrations → API & Webhooks → Generate Key',
+    keyPlaceholder: 'eyJhbGciOiJIUzI1NiJ9...',
+  },
+  'cal-com': {
+    name: 'Cal.com',
+    description: 'Open-source scheduling infrastructure',
+    icon: Calendar,
+    color: 'text-emerald-500',
+    bgColor: 'bg-emerald-500/10',
+    borderColor: 'border-emerald-500/30',
+    docsUrl: 'https://cal.com/docs/api-reference/v1/introduction',
+    keyLabel: 'API Key',
+    keyHelp: 'Cal.com → Settings → Developer → API Keys → Add',
+    keyPlaceholder: 'cal_live_...',
   },
   mailchimp: {
     name: 'Mailchimp',
@@ -70,10 +122,37 @@ const integrationInfo = {
     icon: Mail,
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-500/10',
+    borderColor: 'border-yellow-500/30',
     docsUrl: 'https://mailchimp.com/developer/marketing/api/',
-    keyHelp: 'Get your API key from Mailchimp → Account → Extras → API keys',
+    keyLabel: 'API Key',
+    keyHelp: 'Mailchimp → Account → Extras → API keys → Create A Key',
+    keyPlaceholder: 'abc123...-us1',
   },
 };
+
+const ALL_TYPES: IntegrationType[] = ['calendly', 'cal-com', 'mailchimp'];
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function IntegrationStatusBadge({ isActive }: { isActive: boolean }) {
+  return isActive ? (
+    <Badge
+      variant="outline"
+      className="text-emerald-600 border-emerald-400/50 bg-emerald-50 dark:bg-emerald-900/20 text-xs"
+    >
+      <CheckCircle2 className="w-3 h-3 mr-1" /> Connected
+    </Badge>
+  ) : (
+    <Badge
+      variant="outline"
+      className="text-amber-600 border-amber-400/50 bg-amber-50 dark:bg-amber-900/20 text-xs"
+    >
+      <AlertCircle className="w-3 h-3 mr-1" /> Inactive
+    </Badge>
+  );
+}
+
+// ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function ServicesPage() {
   const { t } = useTranslations();
@@ -81,102 +160,143 @@ export default function ServicesPage() {
   const router = useRouter();
   const { data: projects } = useTeamProjects();
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [pageReady, setPageReady] = useState(false);
   const [integrations, setIntegrations] = useState<Integration[]>([]);
   const [loadingIntegrations, setLoadingIntegrations] = useState(true);
 
-  // Dialog state
+  // Project filter
+  const [selectedProjectId, setSelectedProjectId] = useState<string>('all');
+
+  // Add/Edit dialog
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedType, setSelectedType] = useState<
-    'calendly' | 'mailchimp' | null
-  >(null);
-  const [selectedProject, setSelectedProject] = useState('');
+  const [editingIntegration, setEditingIntegration] =
+    useState<Integration | null>(null);
+  const [dialogType, setDialogType] = useState<IntegrationType>('calendly');
+  const [dialogProject, setDialogProject] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [integrationName, setIntegrationName] = useState('');
   const [showApiKey, setShowApiKey] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [testing, setTesting] = useState(false);
 
+  // Auth guard
   useEffect(() => {
-    if (userLoaded) {
-      const metadata = user?.publicMetadata as { role?: string } | undefined;
-      const role = metadata?.role?.toLowerCase();
-      const isTeam = role === 'team' || role === 'admin';
+    if (!userLoaded) return;
+    const metadata = user?.publicMetadata as { role?: string } | undefined;
+    const role = metadata?.role?.toLowerCase();
+    const isTeam = role === 'team' || role === 'admin';
 
-      if (!user) {
-        router.push('/team/login');
-      } else if (!isTeam) {
-        router.push('/dashboard');
-      } else {
-        setIsLoading(false);
-        fetchIntegrations();
-      }
+    if (!user) {
+      router.push('/team/login');
+    } else if (!isTeam) {
+      router.push('/team/dashboard');
+    } else {
+      setPageReady(true);
+      fetchIntegrations();
     }
-  }, [user, userLoaded, router]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, userLoaded]);
 
-  const fetchIntegrations = async () => {
+  const fetchIntegrations = useCallback(async () => {
+    setLoadingIntegrations(true);
     try {
       const res = await fetch('/api/team/integrations');
       if (res.ok) {
         const data = await res.json();
         setIntegrations(data.integrations || []);
       }
-    } catch (error) {
-      console.error('Failed to fetch integrations:', error);
+    } catch (err) {
+      console.error('Failed to fetch integrations:', err);
     } finally {
       setLoadingIntegrations(false);
     }
-  };
+  }, []);
 
-  const openAddDialog = (type: 'calendly' | 'mailchimp') => {
-    setSelectedType(type);
-    setSelectedProject('');
+  // ── Derived data ────────────────────────────────────────────────────────────
+
+  const filteredIntegrations =
+    selectedProjectId === 'all'
+      ? integrations
+      : integrations.filter((i) => i.project_id === selectedProjectId);
+
+  // Group integrations by project for the "by project" view
+  const byProject: Record<string, Integration[]> = {};
+  filteredIntegrations.forEach((i) => {
+    (byProject[i.project_id] ||= []).push(i);
+  });
+
+  // Which integration types are configured for a given project
+  const configuredTypes = (projectId: string): IntegrationType[] =>
+    (byProject[projectId] || []).map((i) => i.integration_type);
+
+  // ── Dialog helpers ──────────────────────────────────────────────────────────
+
+  const openAddDialog = (type: IntegrationType, projectId?: string) => {
+    setEditingIntegration(null);
+    setDialogType(type);
+    setDialogProject(projectId || '');
     setApiKey('');
     setIntegrationName('');
     setShowApiKey(false);
     setDialogOpen(true);
   };
 
-  const handleSaveIntegration = async () => {
-    if (!selectedType || !selectedProject || !apiKey) {
-      toast.error('Please fill in all fields');
+  const openEditDialog = (integration: Integration) => {
+    setEditingIntegration(integration);
+    setDialogType(integration.integration_type);
+    setDialogProject(integration.project_id);
+    setIntegrationName(integration.name);
+    setApiKey(''); // Never pre-fill secret
+    setShowApiKey(false);
+    setDialogOpen(true);
+  };
+
+  // ── CRUD ────────────────────────────────────────────────────────────────────
+
+  const handleSave = async () => {
+    if (!dialogProject || !apiKey) {
+      toast.error('Project and API key are required');
       return;
     }
 
     setSaving(true);
     try {
-      const res = await fetch('/api/team/integrations', {
-        method: 'POST',
+      const method = editingIntegration ? 'PATCH' : 'POST';
+      const url = editingIntegration
+        ? `/api/team/integrations/${editingIntegration.id}`
+        : '/api/team/integrations';
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          projectId: selectedProject,
-          integrationType: selectedType,
-          name:
-            integrationName ||
-            `${integrationInfo[selectedType].name} Integration`,
+          projectId: dialogProject,
+          integrationType: dialogType,
+          name: integrationName || `${INTEGRATION_META[dialogType].name} Integration`,
           apiKey,
           config: {},
         }),
       });
 
       if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.error || t('team.services.failedToSave'));
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to save');
       }
 
-      toast.success('Integration added successfully');
+      toast.success(
+        editingIntegration ? 'Integration updated' : 'Integration added'
+      );
       setDialogOpen(false);
       fetchIntegrations();
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : 'Failed to save integration'
-      );
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to save integration');
     } finally {
       setSaving(false);
     }
   };
 
-  const handleDeleteIntegration = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this integration?')) return;
+  const handleDelete = async (id: string) => {
+    if (!confirm('Delete this integration? This cannot be undone.')) return;
 
     try {
       const res = await fetch(`/api/team/integrations/${id}`, {
@@ -186,17 +306,44 @@ export default function ServicesPage() {
 
       toast.success('Integration deleted');
       setIntegrations((prev) => prev.filter((i) => i.id !== id));
-    } catch (error) {
+    } catch {
       toast.error('Failed to delete integration');
     }
   };
 
-  const getProjectName = (projectId: string) => {
-    const project = projects?.find((p) => p.id === projectId);
-    return project?.name || t('app.unknownProject');
+  const handleTestConnection = async (integration: Integration) => {
+    setTesting(true);
+    try {
+      // Use the type-specific resources endpoint as a connectivity test
+      const typeToPath: Record<IntegrationType, string> = {
+        calendly: 'calendly',
+        'cal-com': 'cal-com',
+        mailchimp: 'mailchimp',
+      };
+      const res = await fetch(
+        `/api/integrations/${typeToPath[integration.integration_type]}/resources`
+      );
+      if (res.ok) {
+        toast.success('Connection successful');
+      } else {
+        const data = await res.json().catch(() => ({}));
+        toast.error(`Connection failed: ${data.error || res.statusText}`);
+      }
+    } catch {
+      toast.error('Connection test failed');
+    } finally {
+      setTesting(false);
+    }
   };
 
-  if (isLoading || !userLoaded) {
+  const getProjectName = (projectId: string) => {
+    const p = (projects as Project[] | undefined)?.find((p) => p.id === projectId);
+    return p?.name || t('app.unknownProject');
+  };
+
+  // ── Loading state ────────────────────────────────────────────────────────────
+
+  if (!pageReady || !userLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)]" />
@@ -204,232 +351,489 @@ export default function ServicesPage() {
     );
   }
 
+  // ── Render ───────────────────────────────────────────────────────────────────
+
   return (
-    <DashboardWrapper>
-
+    <>
       <PageContainer gradientVariant="dashboard">
-        <GlassCard className="p-6 sm:p-8">
-          {/* Back button */}
-          <Link
-            href="/team/dashboard"
-            className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Dashboard
-          </Link>
+        <div className="space-y-6">
+          {/* ── Header ──────────────────────────────────────────────────────── */}
+          <GlassCard className="p-6 sm:p-8">
+            <Link
+              href="/team/dashboard"
+              className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Dashboard
+            </Link>
 
-          {/* Page header */}
-          <div className="flex items-center gap-4 mb-8">
-            <div className="p-3 rounded-xl bg-purple-500/10 text-purple-500">
-              <Settings className="w-6 h-6" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Services & Integrations
-              </h1>
-              <p className="text-sm text-gray-500 dark:text-white/50 mt-1">
-                Configure third-party services for client projects
-              </p>
-            </div>
-          </div>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-purple-500/10 text-purple-500">
+                  <Plug className="w-6 h-6" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    Services &amp; Integrations
+                  </h1>
+                  <p className="text-sm text-gray-500 dark:text-white/50 mt-0.5">
+                    Configure third-party services per client project
+                  </p>
+                </div>
+              </div>
 
-          {/* Security note */}
-          <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700/50 mb-8">
-            <div className="flex items-start gap-3">
-              <Lock className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-              <div>
-                <p className="font-medium text-emerald-800 dark:text-emerald-300">
-                  API keys are encrypted at rest
-                </p>
-                <p className="text-sm text-emerald-600 dark:text-emerald-400 mt-1">
-                  All API keys are securely stored using Supabase Vault
-                  encryption.
-                </p>
+              {/* Refresh */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={fetchIntegrations}
+                disabled={loadingIntegrations}
+              >
+                <RefreshCw
+                  className={`w-4 h-4 mr-2 ${loadingIntegrations ? 'animate-spin' : ''}`}
+                />
+                Refresh
+              </Button>
+            </div>
+
+            {/* Security note */}
+            <div className="mt-6 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700/50">
+              <div className="flex items-start gap-3">
+                <Lock className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-medium text-emerald-800 dark:text-emerald-300">
+                    All credentials are encrypted at rest
+                  </p>
+                  <p className="text-sm text-emerald-600 dark:text-emerald-400 mt-0.5">
+                    API keys are stored via Supabase Vault (pgsodium). Only
+                    opaque UUID references live in the database — plaintext is
+                    never persisted.
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          </GlassCard>
 
-          {/* Available integrations */}
-          <div className="mb-8">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-              Available Integrations
-            </h3>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {(['calendly', 'mailchimp'] as const).map((type) => {
-                const info = integrationInfo[type];
-                const Icon = info.icon;
+          {/* ── Tabs: "By Project" vs "By Service" ──────────────────────────── */}
+          <Tabs defaultValue="by-project">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+              <TabsList>
+                <TabsTrigger value="by-project">By Project</TabsTrigger>
+                <TabsTrigger value="by-service">By Service</TabsTrigger>
+              </TabsList>
+
+              {/* Project filter */}
+              <div className="flex items-center gap-2">
+                <Select
+                  value={selectedProjectId}
+                  onValueChange={setSelectedProjectId}
+                >
+                  <SelectTrigger className="w-52">
+                    <SelectValue placeholder="All projects" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All projects</SelectItem>
+                    {(projects as Project[] | undefined)?.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>
+                        {p.name || t('app.untitledProject')}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* ── By Project tab ─────────────────────────────────────────────── */}
+            <TabsContent value="by-project" className="space-y-4">
+              {loadingIntegrations ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                </div>
+              ) : (projects as Project[] | undefined)?.length === 0 ? (
+                <GlassCard className="p-8 text-center text-gray-500 dark:text-white/50">
+                  <Settings className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                  <p>No client projects yet.</p>
+                  <Link
+                    href="/new"
+                    className="text-sm text-[var(--purple)] hover:underline mt-2 inline-block"
+                  >
+                    Create your first project →
+                  </Link>
+                </GlassCard>
+              ) : (
+                (projects as Project[] | undefined)
+                  ?.filter(
+                    (p) =>
+                      selectedProjectId === 'all' ||
+                      p.id === selectedProjectId
+                  )
+                  .map((project) => {
+                    const projectIntegrations = byProject[project.id] || [];
+                    const missing = ALL_TYPES.filter(
+                      (t) => !configuredTypes(project.id).includes(t)
+                    );
+
+                    return (
+                      <GlassCard key={project.id} className="p-5">
+                        {/* Project header */}
+                        <div className="flex items-center justify-between mb-4">
+                          <div>
+                            <h3 className="font-semibold text-gray-900 dark:text-white">
+                              {project.name || t('app.untitledProject')}
+                            </h3>
+                            <p className="text-xs text-gray-400 dark:text-white/40 mt-0.5">
+                              {projectIntegrations.length} integration
+                              {projectIntegrations.length !== 1 ? 's' : ''}{' '}
+                              configured
+                            </p>
+                          </div>
+                          {project.status && (
+                            <Badge variant="outline" className="text-xs capitalize">
+                              {project.status}
+                            </Badge>
+                          )}
+                        </div>
+
+                        {/* Configured integrations for this project */}
+                        {projectIntegrations.length > 0 && (
+                          <div className="space-y-2 mb-4">
+                            {projectIntegrations.map((integration) => {
+                              const meta =
+                                INTEGRATION_META[integration.integration_type];
+                              const Icon = meta.icon;
+
+                              return (
+                                <div
+                                  key={integration.id}
+                                  className={`flex items-center justify-between p-3 rounded-xl bg-white dark:bg-white/[0.03] border ${meta.borderColor}`}
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <div
+                                      className={`w-8 h-8 rounded-lg ${meta.bgColor} flex items-center justify-center`}
+                                    >
+                                      <Icon
+                                        className={`w-4 h-4 ${meta.color}`}
+                                      />
+                                    </div>
+                                    <div>
+                                      <p className="font-medium text-sm text-gray-900 dark:text-white">
+                                        {integration.name}
+                                      </p>
+                                      <p className="text-xs text-gray-400 dark:text-white/40">
+                                        {meta.name}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <IntegrationStatusBadge
+                                      isActive={integration.is_active}
+                                    />
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() =>
+                                        handleTestConnection(integration)
+                                      }
+                                      disabled={testing}
+                                      title="Test connection"
+                                      className="text-gray-500 hover:text-gray-800 dark:hover:text-white"
+                                    >
+                                      {testing ? (
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                      ) : (
+                                        <RefreshCw className="w-4 h-4" />
+                                      )}
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() =>
+                                        openEditDialog(integration)
+                                      }
+                                      className="text-gray-500 hover:text-gray-800 dark:hover:text-white"
+                                    >
+                                      <Settings className="w-4 h-4" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() =>
+                                        handleDelete(integration.id)
+                                      }
+                                      className="text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* Add missing integrations */}
+                        {missing.length > 0 && (
+                          <div>
+                            <p className="text-xs text-gray-400 dark:text-white/40 mb-2">
+                              Not yet configured:
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              {missing.map((type) => {
+                                const meta = INTEGRATION_META[type];
+                                const Icon = meta.icon;
+                                return (
+                                  <button
+                                    key={type}
+                                    onClick={() =>
+                                      openAddDialog(type, project.id)
+                                    }
+                                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border border-dashed ${meta.borderColor} ${meta.color} hover:${meta.bgColor} transition-colors`}
+                                  >
+                                    <Icon className="w-3.5 h-3.5" />
+                                    <span>+ {meta.name}</span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </GlassCard>
+                    );
+                  })
+              )}
+            </TabsContent>
+
+            {/* ── By Service tab ─────────────────────────────────────────────── */}
+            <TabsContent value="by-service" className="space-y-4">
+              {ALL_TYPES.map((type) => {
+                const meta = INTEGRATION_META[type];
+                const Icon = meta.icon;
+                const typeIntegrations = filteredIntegrations.filter(
+                  (i) => i.integration_type === type
+                );
 
                 return (
-                  <div
-                    key={type}
-                    className="p-5 rounded-xl bg-white dark:bg-white/[0.03] border border-gray-200/50 dark:border-white/10"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-3">
-                        <div
-                          className={`w-10 h-10 rounded-lg ${info.bgColor} flex items-center justify-center`}
-                        >
-                          <Icon className={`w-5 h-5 ${info.color}`} />
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-gray-900 dark:text-white">
-                            {info.name}
-                          </h4>
-                          <p className="text-sm text-gray-500 dark:text-white/50 mt-0.5">
-                            {info.description}
-                          </p>
-                        </div>
-                      </div>
-                      <Button size="sm" onClick={() => openAddDialog(type)}>
-                        <Plus className="w-4 h-4 mr-1" />
-                        Add
-                      </Button>
-                    </div>
-                    <div className="mt-3 pt-3 border-t border-gray-200/50 dark:border-white/5">
-                      <a
-                        href={info.docsUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-[var(--purple)] hover:underline flex items-center gap-1"
-                      >
-                        <ExternalLink className="w-3 h-3" />
-                        View documentation
-                      </a>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Configured integrations */}
-          <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-              Configured Integrations
-            </h3>
-
-            {loadingIntegrations ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
-              </div>
-            ) : integrations.length === 0 ? (
-              <div className="text-center py-8 text-gray-500 dark:text-white/50">
-                <Settings className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                <p>{t('team.services.noIntegrations')}</p>
-                <p className="text-sm mt-1">
-                  Add an integration to a project above
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {integrations.map((integration) => {
-                  const info = integrationInfo[integration.integration_type];
-                  const Icon = info.icon;
-
-                  return (
-                    <div
-                      key={integration.id}
-                      className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5"
-                    >
+                  <GlassCard key={type} className="p-5">
+                    {/* Service header */}
+                    <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <div
-                          className={`w-8 h-8 rounded-lg ${info.bgColor} flex items-center justify-center`}
+                          className={`w-10 h-10 rounded-xl ${meta.bgColor} flex items-center justify-center`}
                         >
-                          <Icon className={`w-4 h-4 ${info.color}`} />
+                          <Icon className={`w-5 h-5 ${meta.color}`} />
                         </div>
                         <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium text-gray-900 dark:text-white">
-                              {integration.name}
-                            </span>
-                            {integration.is_active ? (
-                              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                            ) : (
-                              <AlertCircle className="w-4 h-4 text-amber-500" />
-                            )}
-                          </div>
-                          <p className="text-xs text-gray-500 dark:text-white/50">
-                            {getProjectName(integration.project_id)}
+                          <h3 className="font-semibold text-gray-900 dark:text-white">
+                            {meta.name}
+                          </h3>
+                          <p className="text-sm text-gray-500 dark:text-white/50">
+                            {meta.description}
                           </p>
                         </div>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteIntegration(integration.id)}
-                        className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={meta.docsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`text-xs ${meta.color} hover:underline flex items-center gap-1`}
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                          Docs
+                        </a>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => openAddDialog(type)}
+                        >
+                          <Plus className="w-4 h-4 mr-1" />
+                          Add to project
+                        </Button>
+                      </div>
                     </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </GlassCard>
+
+                    {loadingIntegrations ? (
+                      <div className="flex items-center gap-2 text-sm text-gray-400 py-2">
+                        <Loader2 className="w-4 h-4 animate-spin" /> Loading…
+                      </div>
+                    ) : typeIntegrations.length === 0 ? (
+                      <p className="text-sm text-gray-400 dark:text-white/40 italic">
+                        Not configured for any project yet.
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        {typeIntegrations.map((integration) => (
+                          <div
+                            key={integration.id}
+                            className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div>
+                                <p className="font-medium text-sm text-gray-900 dark:text-white">
+                                  {integration.name}
+                                </p>
+                                <p className="text-xs text-gray-400 dark:text-white/40 flex items-center gap-1">
+                                  <ChevronRight className="w-3 h-3" />
+                                  {getProjectName(integration.project_id)}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <IntegrationStatusBadge
+                                isActive={integration.is_active}
+                              />
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() =>
+                                  handleTestConnection(integration)
+                                }
+                                disabled={testing}
+                                title="Test connection"
+                                className="text-gray-500 hover:text-gray-800 dark:hover:text-white"
+                              >
+                                {testing ? (
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                  <RefreshCw className="w-4 h-4" />
+                                )}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => openEditDialog(integration)}
+                                className="text-gray-500 hover:text-gray-800 dark:hover:text-white"
+                              >
+                                <Settings className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDelete(integration.id)}
+                                className="text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </GlassCard>
+                );
+              })}
+
+              {/* Analytics — informational only (configured per-project in GA flow) */}
+              <GlassCard className="p-5 opacity-70">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center">
+                    <BarChart3 className="w-5 h-5 text-orange-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                      Google Analytics
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-white/50">
+                      Configured per-project via the Analytics section in each
+                      project's settings.
+                    </p>
+                  </div>
+                </div>
+              </GlassCard>
+            </TabsContent>
+          </Tabs>
+        </div>
       </PageContainer>
 
-      {/* Add Integration Dialog */}
+      {/* ── Add / Edit Integration Dialog ────────────────────────────────────── */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>
-              Add {selectedType && integrationInfo[selectedType].name}{' '}
-              Integration
+            <DialogTitle className="flex items-center gap-2">
+              {(() => {
+                const meta = INTEGRATION_META[dialogType];
+                const Icon = meta.icon;
+                return (
+                  <>
+                    <span
+                      className={`inline-flex w-7 h-7 rounded-lg ${meta.bgColor} items-center justify-center`}
+                    >
+                      <Icon className={`w-4 h-4 ${meta.color}`} />
+                    </span>
+                    {editingIntegration ? 'Update' : 'Add'}{' '}
+                    {INTEGRATION_META[dialogType].name}
+                  </>
+                );
+              })()}
             </DialogTitle>
             <DialogDescription>
-              {selectedType && integrationInfo[selectedType].keyHelp}
+              {INTEGRATION_META[dialogType].keyHelp}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4 py-4">
+          <div className="space-y-4 py-2">
+            {/* Project selector */}
             <div className="space-y-2">
-              <Label htmlFor="project">{t('app.projectLabel')}</Label>
+              <Label htmlFor="dialog-project">
+                {t('app.projectLabel')} <span className="text-red-500">*</span>
+              </Label>
               <Select
-                value={selectedProject}
-                onValueChange={setSelectedProject}
+                value={dialogProject}
+                onValueChange={setDialogProject}
+                disabled={!!editingIntegration}
               >
-                <SelectTrigger>
+                <SelectTrigger id="dialog-project">
                   <SelectValue placeholder={t('team.services.selectProject')} />
                 </SelectTrigger>
                 <SelectContent>
-                  {projects?.map((project) => (
-                    <SelectItem key={project.id} value={project.id}>
-                      {project.name || t('app.untitledProject')}
+                  {(projects as Project[] | undefined)?.map((p) => (
+                    <SelectItem key={p.id} value={p.id}>
+                      {p.name || t('app.untitledProject')}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
+            {/* Integration name */}
             <div className="space-y-2">
-              <Label htmlFor="name">Integration Name (optional)</Label>
+              <Label htmlFor="dialog-name">Label (optional)</Label>
               <Input
-                id="name"
-                placeholder={`My ${
-                  selectedType && integrationInfo[selectedType].name
-                }`}
+                id="dialog-name"
+                placeholder={`${INTEGRATION_META[dialogType].name} — Client Name`}
                 value={integrationName}
                 onChange={(e) => setIntegrationName(e.target.value)}
               />
             </div>
 
+            {/* API key */}
             <div className="space-y-2">
-              <Label htmlFor="apiKey">API Key</Label>
+              <Label htmlFor="dialog-key">
+                {INTEGRATION_META[dialogType].keyLabel}{' '}
+                {!editingIntegration && <span className="text-red-500">*</span>}
+              </Label>
+              {editingIntegration && (
+                <p className="text-xs text-amber-600 dark:text-amber-400">
+                  Leave blank to keep the existing key.
+                </p>
+              )}
               <div className="relative">
                 <Input
-                  id="apiKey"
+                  id="dialog-key"
                   type={showApiKey ? 'text' : 'password'}
-                  placeholder={t('team.services.enterApiKey')}
+                  placeholder={
+                    editingIntegration
+                      ? '••••••••••••••••'
+                      : INTEGRATION_META[dialogType].keyPlaceholder
+                  }
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
                   className="pr-10"
                 />
                 <button
                   type="button"
-                  onClick={() => setShowApiKey(!showApiKey)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  onClick={() => setShowApiKey((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                 >
                   {showApiKey ? (
                     <EyeOff className="w-4 h-4" />
@@ -438,29 +842,35 @@ export default function ServicesPage() {
                   )}
                 </button>
               </div>
-              <p className="text-xs text-gray-500 flex items-center gap-1">
-                <Lock className="w-3 h-3" />
-                Encrypted with Supabase Vault
+              <p className="text-xs text-gray-500 dark:text-white/40 flex items-center gap-1.5">
+                <Lock className="w-3 h-3 text-emerald-500" />
+                Encrypted with Supabase Vault — never stored in plaintext
               </p>
             </div>
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setDialogOpen(false)}
+              disabled={saving}
+            >
               Cancel
             </Button>
             <Button
-              onClick={handleSaveIntegration}
-              disabled={saving || !selectedProject || !apiKey}
+              onClick={handleSave}
+              disabled={
+                saving ||
+                !dialogProject ||
+                (!editingIntegration && !apiKey)
+              }
             >
-              {saving ? (
-                <Loader2 className="w-4 h-4 animate-spin mr-2" />
-              ) : null}
-              Save Integration
+              {saving && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+              {editingIntegration ? 'Update' : 'Save'} Integration
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </DashboardWrapper>
+    </>
   );
 }

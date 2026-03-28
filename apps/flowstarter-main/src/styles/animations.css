@@ -1,0 +1,574 @@
+/* ── Landing headline word-reveal ───────────────────────────── */
+@keyframes wordReveal {
+  0%   { opacity: 0; transform: translateY(20px) scale(0.95); filter: blur(4px); }
+  60%  { opacity: 1; filter: blur(0px); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
+}
+
+@keyframes textFlowW {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+
+@keyframes textFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+
+.text-flow {
+  background: linear-gradient(135deg, #1e3a8a, #3730a3, #5b21b6, #7C3AED, #4D5DD9, #0e7490);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: textFlow 6s ease infinite;
+}
+
+@keyframes shimmerBtn {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes sectionFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.section-fade { animation: sectionFadeUp 0.5s ease-out forwards; }
+
+/* ── Hero fade-in animation ─────────────────────────────────── */
+@keyframes heroFadeUp {
+  from { opacity: 0; transform: translateY(32px); filter: blur(10px); }
+  to   { opacity: 1; transform: translateY(0);    filter: blur(0px); }
+}
+.hero-fade {
+  opacity: 0;
+  animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.hero-fade-1 { animation-delay: 0.1s; }
+.hero-fade-2 { animation-delay: 0.25s; }
+.hero-fade-3 { animation-delay: 0.45s; }
+.hero-fade-4 { animation-delay: 0.62s; }
+.hero-fade-5 { animation-delay: 0.76s; }
+
+@keyframes bgGlow {
+  0% {
+    opacity: 0.18;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 0.28;
+    filter: brightness(1.04);
+  }
+  100% {
+    opacity: 0.18;
+    filter: brightness(1);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in ease-out;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Gentle breathing for aura layer (subtler) */
+@keyframes aura-breathe {
+  0% {
+    opacity: 0.2;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+  33% {
+    opacity: 0.28;
+    transform: translateY(-2%) scale(1.015) rotate(0.4deg);
+  }
+  66% {
+    opacity: 0.24;
+    transform: translateY(-1%) scale(1.006) rotate(-0.4deg);
+  }
+  100% {
+    opacity: 0.2;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes aura-drift {
+  0%,
+  100% {
+    transform: translate(-50%, 0) scale(1);
+  }
+  25% {
+    transform: translate(-50%, -1%) scale(1.01);
+  }
+  50% {
+    transform: translate(-50%, 1%) scale(0.99);
+  }
+  75% {
+    transform: translate(-50%, -0.5%) scale(1.005);
+  }
+}
+
+@keyframes aura-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes bgFloat {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.42;
+  }
+  50% {
+    transform: translate3d(1.1%, -1.1%, 0) scale(1.01);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate3d(-1.1%, 1%, 0) scale(1.005);
+    opacity: 0.42;
+  }
+}
+
+/* Animations */
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Sleek aurora sweep used for AI cue background */
+@keyframes aurora-sweep {
+  0% {
+    transform: translateX(-100%) rotate(15deg);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.15;
+  }
+  60% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateX(120%) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+/* Subtle shimmer for top progress bar */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-60%);
+  }
+  100% {
+    transform: translateX(160%);
+  }
+}
+
+/* Purple moving gradient animation for generate button */
+@keyframes shimmer-purple {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Breathing glow for wand icon */
+@keyframes glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0px rgba(139, 92, 246, 0))
+      drop-shadow(0 0 0px rgba(236, 72, 153, 0));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 6px rgba(139, 92, 246, 0.25))
+      drop-shadow(0 0 10px rgba(236, 72, 153, 0.18));
+    transform: scale(1.01);
+  }
+}
+
+/* Modern AI wand animation with smooth rotation and glow */
+@keyframes ai-wand {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+    /* Stronger theme-aware glow for light mode visibility */
+    filter: drop-shadow(0 0 10px hsl(211 93% 61% / 0.55))
+      drop-shadow(0 0 14px hsl(241 93% 61% / 0.35));
+  }
+  25% {
+    transform: rotate(-8deg) scale(1.05);
+    filter: drop-shadow(0 0 16px hsl(211 93% 61% / 0.6))
+      drop-shadow(0 0 20px hsl(241 93% 61% / 0.45));
+  }
+  75% {
+    transform: rotate(8deg) scale(1.05);
+    filter: drop-shadow(0 0 16px hsl(211 93% 61% / 0.6))
+      drop-shadow(0 0 20px hsl(241 93% 61% / 0.45));
+  }
+}
+
+/* Smooth pulsing animation for AI dots */
+@keyframes ai-dot {
+  0%,
+  100% {
+    transform: scale(0.8) translateY(0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.2) translateY(-4px);
+    opacity: 1;
+  }
+}
+
+/* Animated glow for generating prompt inputs */
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes glow-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-aurora {
+  animation: aurora-sweep 2.4s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 1.8s linear infinite;
+}
+
+.animate-shimmer-purple {
+  animation: shimmer-purple 3s linear infinite;
+}
+
+.animate-glow {
+  animation: glow 2.2s ease-in-out infinite;
+}
+
+.animate-ai-wand {
+  animation: ai-wand 2.5s ease-in-out infinite;
+}
+
+.animate-ai-dot {
+  animation: ai-dot 1.4s ease-in-out infinite;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+.animate-glow-rotate {
+  animation: glow-rotate 3s linear infinite;
+}
+
+/* New subtle slow spin for conic ring */
+@keyframes spin-slow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 2.2s linear infinite;
+}
+
+/* Slide up + fade in utility for smoother UI transitions */
+@keyframes fadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideDown {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* Soft pulse for equalizer bars */
+@keyframes soft-pulse {
+  0%,
+  100% {
+    transform: scaleY(0.9);
+    opacity: 0.7; /* slightly stronger in light mode */
+  }
+  50% {
+    transform: scaleY(1.15);
+    opacity: 1;
+  }
+}
+
+.animate-soft-pulse {
+  animation: soft-pulse 1.2s ease-in-out infinite;
+}
+
+/* Orbiting sparkles */
+@keyframes orbit-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-orbit-spin {
+  animation: orbit-spin 4s linear infinite;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.animate-twinkle {
+  animation: twinkle 1.6s ease-in-out infinite;
+}
+
+/* Floating particles */
+@keyframes particle-float {
+  0% {
+    transform: translate(0, 0) scale(0.8);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate(var(--tx, 40px), var(--ty, -24px)) scale(1);
+    opacity: 0;
+  }
+}
+
+.animate-particle-float {
+  animation: particle-float 2.8s ease-in-out infinite;
+}
+
+/* Variants for equalizer rhythm */
+.animate-soft-pulse-fast {
+  animation: soft-pulse 1s ease-in-out infinite;
+}
+
+.animate-soft-pulse-slow {
+  animation: soft-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-gradient {
+  background-size: 400% 400%;
+  animation: gradient 8s ease infinite;
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Refined animations for loading screen */
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse-subtle {
+  0%,
+  100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes spin-elegant {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-elegant-reverse {
+  0% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.8;
+    box-shadow: 0 0 0 0 hsl(241, 93%, 61% / 0.4);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 15px 3px hsl(241, 93%, 61% / 0.6);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out forwards;
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s ease-in-out infinite;
+}
+
+.animate-spin-elegant {
+  animation: spin-elegant 1.5s linear infinite;
+}
+
+.animate-spin-elegant-reverse {
+  animation: spin-elegant-reverse 2s linear infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Marquee animations */
+@keyframes animate-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-50% - var(--gap)));
+  }
+}
+
+.animate-marquee {
+  animation-name: animate-marquee;
+  animation-duration: var(--duration);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes animate-marquee-vertical {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(calc(-50% - var(--gap)));
+  }
+}
+
+.animate-marquee-vertical {
+  animation-name: animate-marquee-vertical;
+  animation-duration: var(--duration);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}

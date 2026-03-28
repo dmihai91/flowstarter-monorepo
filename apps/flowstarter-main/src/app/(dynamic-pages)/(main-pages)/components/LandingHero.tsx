@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { LANDING_COPY } from '../landing-copy';
 import { FlowBackground } from '@flowstarter/flow-design-system';
@@ -13,7 +13,6 @@ function useCountUp(target: number, duration: number = 1200, start: boolean = fa
     const step = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
       const progress = Math.min((timestamp - startTime) / duration, 1);
-      // Ease out
       const eased = 1 - Math.pow(1 - progress, 3);
       setCount(Math.floor(eased * target));
       if (progress < 1) requestAnimationFrame(step);
@@ -24,8 +23,7 @@ function useCountUp(target: number, duration: number = 1200, start: boolean = fa
 }
 
 export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
-  const [ready, setReady] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setReady(true), 60); return () => clearTimeout(t); }, []);
+  const [ready] = useState(true);
   const hero = LANDING_COPY.hero;
 
   const fade = (delay: string) => ({
@@ -35,43 +33,132 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   });
 
   const statsStarted = ready;
-  const weekCount = useCountUp(1, 800, statsStarted);
+  const deliveryCount = useCountUp(7, 1200, statsStarted);
+  const displayDelivery = 14 - deliveryCount;
+  const deliveryValue = displayDelivery <= 7 ? '5–7' : `${displayDelivery}`;
   const skillsCount = useCountUp(0, 600, statsStarted);
   const trialCount = useCountUp(30, 1000, statsStarted);
 
   const stats = [
-    { value: `~${weekCount}`, suffix: ' week', label: 'avg. delivery' },
+    { value: deliveryValue, suffix: ' days', label: 'avg. delivery' },
     { value: `${skillsCount}`, suffix: '', label: 'coding skills needed' },
     { value: `${trialCount}`, suffix: '-day trial', label: 'partial refund if not happy' },
   ];
+
+  const prefixWords = hero.headlinePrefix.split(' ');
 
   return (
     <section className="relative overflow-hidden pt-24 sm:pt-28 pb-6 sm:pb-14">
       <FlowBackground variant="landing" style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
 
+      {/* Top-center gradient crown */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 z-[1]"
+        style={{
+          height: '520px',
+          background: 'radial-gradient(ellipse 70% 55% at 50% -5%, rgba(124,58,237,0.18) 0%, rgba(99,102,241,0.10) 40%, transparent 70%)',
+        }}
+      />
+
+      {/* Floating gradient orbs */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden z-[1]">
+        {/* Left-purple orb */}
+        <div
+          style={{
+            position: 'absolute',
+            width: '420px', height: '420px',
+            top: '-120px', left: '-60px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(124,58,237,0.22) 0%, rgba(99,102,241,0.08) 50%, transparent 70%)',
+            filter: 'blur(48px)',
+            animation: 'flow-drift-1 22s ease-in-out infinite',
+          }}
+        />
+        {/* Right-cyan orb */}
+        <div
+          style={{
+            position: 'absolute',
+            width: '360px', height: '360px',
+            top: '-60px', right: '-40px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(6,182,212,0.18) 0%, rgba(59,130,246,0.07) 50%, transparent 70%)',
+            filter: 'blur(48px)',
+            animation: 'flow-drift-2 28s ease-in-out infinite',
+          }}
+        />
+        {/* Bottom-center warm glow */}
+        <div
+          style={{
+            position: 'absolute',
+            width: '500px', height: '200px',
+            bottom: '-40px', left: '50%', transform: 'translateX(-50%)',
+            borderRadius: '50%',
+            background: 'radial-gradient(ellipse, rgba(139,92,246,0.10) 0%, transparent 70%)',
+            filter: 'blur(40px)',
+            animation: 'flow-drift-3 18s ease-in-out infinite',
+          }}
+        />
+      </div>
+
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-10">
 
         {/* Label */}
         <div style={fade('0s')} className="flex items-center justify-center gap-3 mb-8 sm:mb-10">
-          <div className="h-px w-6 bg-[var(--purple)]/60" />
-          <span className="text-xs sm:text-sm font-semibold tracking-[0.18em] uppercase text-[var(--purple)]">
+          <div
+            className="h-px w-8"
+            style={{ background: 'linear-gradient(to right, transparent, rgba(124,58,237,0.7))' }}
+          />
+          <span className="text-xs sm:text-sm font-semibold tracking-[0.18em] uppercase text-[var(--purple)] px-3 py-1 rounded-full"
+            style={{
+              background: 'linear-gradient(135deg, rgba(124,58,237,0.10), rgba(99,102,241,0.07))',
+              border: '1px solid rgba(124,58,237,0.18)',
+            }}
+          >
             Done-for-you websites
           </span>
-          <div className="h-px w-6 bg-[var(--purple)]/60" />
+          <div
+            className="h-px w-8"
+            style={{ background: 'linear-gradient(to left, transparent, rgba(124,58,237,0.7))' }}
+          />
         </div>
 
         {/* Headline */}
-        <div style={fade('0.1s')} className="text-center mb-5 sm:mb-6">
-          <h1 className="leading-[1.15] tracking-tight text-gray-900 dark:text-white">
+        <div className="text-center mb-5 sm:mb-6" style={fade('0.05s')}>
+          <h1 className="leading-[1.15] tracking-tight">
+            {/* Prefix: word-by-word entrance */}
             <span
-              className="block font-light"
+              className="block font-light text-gray-900 dark:text-white"
               style={{ fontSize: 'clamp(2rem, 5vw, 3.8rem)' }}
             >
-              {hero.headlinePrefix}
+              {prefixWords.map((word, i) => (
+                <span
+                  key={i}
+                  className="inline-block"
+                  style={{
+                    animationName: 'wordReveal',
+                    animationDuration: '0.6s',
+                    animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                    animationFillMode: 'both',
+                    animationDelay: `${0.15 + i * 0.07}s`,
+                    marginRight: '0.25em',
+                  }}
+                >
+                  {word}
+                </span>
+              ))}
             </span>
+            {/* Highlight: animated gradient */}
             <span
-              className="block font-black text-flow"
-              style={{ fontSize: 'clamp(2.4rem, 6vw, 4.5rem)' }}
+              className="block font-black"
+              style={{
+                fontSize: 'clamp(2.4rem, 6vw, 4.5rem)',
+                background: 'linear-gradient(135deg, var(--purple) 0%, #8B5CF6 100%)',
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
+                color: 'transparent',
+                WebkitTextFillColor: 'transparent',
+                animation: `wordReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) both ${0.15 + prefixWords.length * 0.07}s, textFlow 6s ease infinite ${0.85 + prefixWords.length * 0.07}s`,
+              }}
             >
               {hero.headlineHighlight}
             </span>
@@ -89,7 +176,10 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         {/* Audience pills */}
         <div style={fade('0.25s')} className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mb-6 sm:mb-8">
           {['Coaches', 'Consultants', 'Therapists', 'Freelancers', 'Founders'].map((label) => (
-            <span key={label} className="text-[0.65rem] sm:text-xs font-medium px-2.5 sm:px-3 py-1 rounded-full border border-gray-200 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] text-gray-500 dark:text-white/40 backdrop-blur-sm">
+            <span
+              key={label}
+              className="text-[0.65rem] sm:text-xs font-medium px-2.5 sm:px-3 py-1 rounded-full border border-gray-200 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] text-gray-500 dark:text-white/40 backdrop-blur-sm transition-colors hover:border-[var(--purple)]/30 hover:text-[var(--purple)] dark:hover:text-[var(--purple)]"
+            >
               {label}
             </span>
           ))}

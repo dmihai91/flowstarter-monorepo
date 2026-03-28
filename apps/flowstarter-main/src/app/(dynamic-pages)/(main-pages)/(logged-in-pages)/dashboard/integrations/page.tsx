@@ -31,7 +31,7 @@ import { useEffect, useState } from 'react';
 import { IntegrationCard } from './components/IntegrationCard';
 import { IntegrationWizardContent } from './components/IntegrationWizardContent';
 
-type Provider = 'google-analytics' | 'calendly' | 'mailchimp';
+type Provider = 'google-analytics' | 'calendly' | 'cal-com' | 'mailchimp';
 
 export default function IntegrationsIndexPage() {
   const { t } = useTranslations();
@@ -119,6 +119,23 @@ export default function IntegrationsIndexPage() {
       iconColor: 'text-[var(--blue)]',
       iconStyle: {
         background: 'var(--blue)',
+      },
+    },
+    {
+      id: 'cal-com',
+      name: 'Cal.com',
+      description: 'Open-source scheduling — embed booking directly in your site',
+      icon: Calendar,
+      status: 'not_connected',
+      features: [
+        'Self-hosted or cloud scheduling',
+        'Embed booking widget on your site',
+        'Sync with Google, Outlook & Apple Calendar',
+      ],
+      configFields: [],
+      iconColor: 'text-emerald-500',
+      iconStyle: {
+        background: '#10b981',
       },
     },
     {
@@ -293,9 +310,9 @@ export default function IntegrationsIndexPage() {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {selectedProvider === 'google-analytics' &&
-                'Connect Google Analytics'}
+              {selectedProvider === 'google-analytics' && 'Connect Google Analytics'}
               {selectedProvider === 'calendly' && 'Connect Calendly'}
+              {selectedProvider === 'cal-com' && 'Connect Cal.com'}
               {selectedProvider === 'mailchimp' && 'Connect Mailchimp'}
             </DialogTitle>
           </DialogHeader>

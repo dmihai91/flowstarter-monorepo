@@ -184,8 +184,8 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
     domain: sharedCookieDomain,
     signInUrl: '/login',
     signUpUrl: '/login',
-    signInFallbackRedirectUrl: '/dashboard',
-    signUpFallbackRedirectUrl: '/dashboard',
+    signInFallbackRedirectUrl: '/team/dashboard',
+    signUpFallbackRedirectUrl: '/team/dashboard',
     allowedRedirectOrigins: [
       'https://editor.flowstarter.dev',
       'https://editor.flowstarter.app',

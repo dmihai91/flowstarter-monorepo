@@ -101,9 +101,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate integration type
-    if (!['calendly', 'mailchimp'].includes(integrationType)) {
+    if (!['calendly', 'mailchimp', 'cal-com'].includes(integrationType)) {
       return NextResponse.json(
-        { error: 'Invalid integration type. Supported: calendly, mailchimp' },
+        { error: 'Invalid integration type. Supported: calendly, mailchimp, cal-com' },
         { status: 400 }
       );
     }

@@ -1,0 +1,197 @@
+/* Apple Music–style section header gradient, adapted to brand colors */
+.header-brand-gradient {
+  position: relative;
+  /* Use --headerColor passed via inline style as the seed hue */
+  background: radial-gradient(
+      120% 100% at 50% -30%,
+      color-mix(in_oklab, var(--headerColor, #6f7df4) 16%, white) 10%,
+      color-mix(in_oklab, var(--headerColor, #6f7df4) 13%, white) 20%,
+      color-mix(in_oklab, var(--headerColor, #6f7df4) 10%, white) 30%,
+      color-mix(in_oklab, var(--headerColor, #6f7df4) 7%, white) 40%,
+      color-mix(in_oklab, var(--headerColor, #6f7df4) 4%, white) 50%,
+      transparent 60%
+    ),
+    radial-gradient(
+      120% 120% at 105% 0%,
+      color-mix(in_oklab, var(--headerColor, #6f7df4) 58%, white) 0%,
+      color-mix(in_oklab, var(--headerColor, #6f7df4) 46%, white) 15%,
+      color-mix(in_oklab, var(--headerColor, #6f7df4) 35%, white) 30%,
+      color-mix(in_oklab, var(--headerColor, #6f7df4) 23%, white) 45%,
+      color-mix(in_oklab, var(--headerColor, #6f7df4) 12%, white) 55%,
+      transparent 62%
+    ),
+    radial-gradient(
+      120% 120% at -5% 8%,
+      color-mix(in_oklab, var(--headerColor, #6f7df4) 48%, white) 0%,
+      color-mix(in_oklab, var(--headerColor, #6f7df4) 38%, white) 15%,
+      color-mix(in_oklab, var(--headerColor, #6f7df4) 29%, white) 30%,
+      color-mix(in_oklab, var(--headerColor, #6f7df4) 19%, white) 45%,
+      color-mix(in_oklab, var(--headerColor, #6f7df4) 10%, white) 52%,
+      transparent 60%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in_oklab, var(--headerColor, #6f7df4) 82%, black) 0%,
+      color-mix(in_oklab, var(--headerColor, #6f7df4) 77%, black) 50%,
+      color-mix(in_oklab, var(--headerColor, #6f7df4) 72%, black) 100%
+    );
+}
+
+/* Add grain texture overlay to reduce gradient banding */
+.header-brand-gradient > * {
+  position: relative;
+  z-index: 1;
+}
+
+.header-brand-gradient::before {
+  /* soft inner glow / vignette */
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+      90% 120% at 50% -20%,
+      rgba(255, 255, 255, 0.25),
+      rgba(255, 255, 255, 0.19) 20%,
+      rgba(255, 255, 255, 0.13) 35%,
+      rgba(255, 255, 255, 0.07) 50%,
+      rgba(255, 255, 255, 0) 65%
+    ),
+    radial-gradient(
+      80% 80% at 50% 120%,
+      rgba(255, 255, 255, 0.16),
+      rgba(255, 255, 255, 0.12) 20%,
+      rgba(255, 255, 255, 0.08) 40%,
+      rgba(255, 255, 255, 0.04) 55%,
+      rgba(255, 255, 255, 0) 70%
+    );
+  mix-blend-mode: screen;
+}
+
+.header-brand-gradient::after {
+  /* subtle moving sheen to add life */
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+      120deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.14) 12%,
+      transparent 24%
+    )
+    0 0 / 200% 100% no-repeat;
+  opacity: 0.6;
+  animation: header-sheen 8s ease-in-out infinite;
+}
+
+@keyframes header-sheen {
+  0% {
+    background-position: 200% 0;
+    opacity: 0.2;
+  }
+  50% {
+    background-position: 0 0;
+    opacity: 0.55;
+  }
+  100% {
+    background-position: -200% 0;
+    opacity: 0.2;
+  }
+}
+
+.dark .header-brand-gradient {
+  background: radial-gradient(
+      120% 100% at 50% -30%,
+      color-mix(in_oklab, var(--headerColor, #aab2ff) 28%, black) 10%,
+      color-mix(in_oklab, var(--headerColor, #aab2ff) 22%, black) 20%,
+      color-mix(in_oklab, var(--headerColor, #aab2ff) 17%, black) 30%,
+      color-mix(in_oklab, var(--headerColor, #aab2ff) 11%, black) 40%,
+      color-mix(in_oklab, var(--headerColor, #aab2ff) 6%, black) 50%,
+      transparent 60%
+    ),
+    radial-gradient(
+      120% 120% at 105% 0%,
+      color-mix(in_oklab, var(--headerColor, #aab2ff) 70%, black) 0%,
+      color-mix(in_oklab, var(--headerColor, #aab2ff) 56%, black) 15%,
+      color-mix(in_oklab, var(--headerColor, #aab2ff) 42%, black) 30%,
+      color-mix(in_oklab, var(--headerColor, #aab2ff) 28%, black) 45%,
+      color-mix(in_oklab, var(--headerColor, #aab2ff) 14%, black) 55%,
+      transparent 62%
+    ),
+    radial-gradient(
+      120% 120% at -5% 8%,
+      color-mix(in_oklab, var(--headerColor, #aab2ff) 60%, black) 0%,
+      color-mix(in_oklab, var(--headerColor, #aab2ff) 48%, black) 15%,
+      color-mix(in_oklab, var(--headerColor, #aab2ff) 36%, black) 30%,
+      color-mix(in_oklab, var(--headerColor, #aab2ff) 24%, black) 45%,
+      color-mix(in_oklab, var(--headerColor, #aab2ff) 12%, black) 52%,
+      transparent 60%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in_oklab, var(--headerColor, #aab2ff) 78%, black) 0%,
+      color-mix(in_oklab, var(--headerColor, #aab2ff) 73%, black) 50%,
+      color-mix(in_oklab, var(--headerColor, #aab2ff) 68%, black) 100%
+    );
+}
+
+.dark .header-brand-gradient::before {
+  background: radial-gradient(
+      90% 120% at 50% -20%,
+      rgba(255, 255, 255, 0.18),
+      rgba(255, 255, 255, 0.135) 20%,
+      rgba(255, 255, 255, 0.09) 35%,
+      rgba(255, 255, 255, 0.045) 50%,
+      rgba(255, 255, 255, 0) 65%
+    ),
+    radial-gradient(
+      80% 80% at 50% 120%,
+      rgba(255, 255, 255, 0.12),
+      rgba(255, 255, 255, 0.09) 20%,
+      rgba(255, 255, 255, 0.06) 40%,
+      rgba(255, 255, 255, 0.03) 55%,
+      rgba(255, 255, 255, 0) 70%
+    );
+  mix-blend-mode: screen;
+}
+
+/* Clerk overrides */
+.cl-internal-b3fm6y,
+.cl-socialButtonsProviderIcon__providerIcon {
+  background-color: var(--purple-primary) !important;
+}
+
+.dark .cl-internal-b3fm6y,
+.dark .cl-socialButtonsProviderIcon__providerIcon {
+  background-color: var(--purple-primary) !important;
+}
+
+/* Command item hover states */
+[cmdk-item][data-selected='true'] {
+  background-color: rgb(243 244 246) !important; /* gray-100 */
+  color: rgb(17 24 39) !important; /* gray-900 */
+}
+
+.dark [cmdk-item][data-selected='true'] {
+  background-color: rgb(55 65 81) !important; /* gray-700 */
+  color: rgb(243 244 246) !important; /* gray-100 */
+}
+
+/* Universal improvements for all screen sizes */
+.cl-card {
+  border: 1px solid hsl(var(--border)) !important;
+  background: hsl(var(--card)) !important;
+  color: hsl(var(--card-foreground)) !important;
+}
+
+.cl-formFieldInput {
+  border: 1px solid hsl(var(--border)) !important;
+  background: hsl(var(--background)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.cl-formFieldInput:focus {
+  border-color: hsl(var(--ring)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2) !important;
+}

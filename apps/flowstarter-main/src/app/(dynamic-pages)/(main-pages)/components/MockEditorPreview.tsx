@@ -9,6 +9,8 @@ interface MockSite {
   primaryColor: string;
   hasAboutPage: boolean;
   headerStyle: string;
+  hasFAQ: boolean;
+  hasNewsletter: boolean;
 }
 
 interface Message {
@@ -50,7 +52,7 @@ export function MockEditorPreview({
               >
                 {/* Title above editor */}
                 <div className="text-center mb-6">
-                  <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                  <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-5">
                     {t('landing.editor.title')}
                   </h3>
                   <p className="text-lg text-gray-500 dark:text-white/50">
@@ -104,7 +106,7 @@ export function MockEditorPreview({
                   </div>
 
                   {/* Split: Chat + Preview */}
-                  <div className="flex flex-col sm:flex-row sm:divide-x divide-gray-200/30 dark:divide-white/5 h-[900px] sm:h-[640px] lg:h-[700px]">
+                  <div className="flex flex-col sm:flex-row sm:divide-x divide-gray-200/30 dark:divide-white/5 h-[900px] sm:h-[760px] lg:h-[860px]">
                     {/* Chat Panel */}
                     <div className="w-full sm:w-1/2 p-3 sm:p-4 flex flex-col border-b sm:border-b-0 h-[420px] sm:h-auto border-gray-200/30 dark:border-white/5">
                       <div className="text-xs tracking-[0.12em] uppercase font-bold mb-2 sm:mb-3 bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
@@ -201,7 +203,14 @@ export function MockEditorPreview({
 
                         {/* Quick prompts */}
                         <div className="flex flex-wrap gap-2 mt-2.5">
-                        {[t('mockEditor.quickPrompt.pricing'), t('mockEditor.quickPrompt.contact'), t('mockEditor.quickPrompt.colors')].map(
+                        {[
+                          t('mockEditor.quickPrompt.pricing'),
+                          t('mockEditor.quickPrompt.contact'),
+                          t('mockEditor.quickPrompt.colors'),
+                          'Add a FAQ section',
+                          'Add newsletter signup',
+                          'Add an about page',
+                        ].map(
                             (prompt) => (
                               <button
                                 key={prompt}
@@ -464,6 +473,61 @@ export function MockEditorPreview({
                               </div>
                               <div className="h-1 w-full bg-gray-100 dark:bg-gray-700 rounded mt-1.5 mb-1" />
                               <div className="h-1 w-3/4 bg-gray-100 dark:bg-gray-700 rounded" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* FAQ section - animated in */}
+                      <div
+                        className={`overflow-hidden transition-all duration-500 ${
+                          mockSite.hasFAQ
+                            ? 'opacity-100 max-h-[500px]'
+                            : 'opacity-0 max-h-0 overflow-hidden'
+                        }`}
+                      >
+                        <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900/30">
+                          <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            Frequently Asked Questions
+                          </div>
+                          <div className="space-y-1.5">
+                            {['How does delivery work?', 'Can I edit it myself?', 'What if I need changes?'].map((q, i) => (
+                              <div key={i} className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+                                <span className="text-[0.625rem] text-gray-600 dark:text-gray-400">{q}</span>
+                                <svg className="w-3 h-3 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Newsletter section - animated in */}
+                      <div
+                        className={`overflow-hidden transition-all duration-500 ${
+                          mockSite.hasNewsletter
+                            ? 'opacity-100 max-h-[500px]'
+                            : 'opacity-0 max-h-0 overflow-hidden'
+                        }`}
+                      >
+                        <div className="px-4 py-3">
+                          <div className="p-3 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700">
+                            <div className="text-[0.6875rem] font-semibold text-gray-700 dark:text-gray-300 mb-0.5">Stay in the loop ✉️</div>
+                            <div className="text-[0.5625rem] text-gray-400 mb-2">Get tips & updates straight to your inbox.</div>
+                            <div className="flex gap-1.5">
+                              <div className="flex-1 h-5 bg-white dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 px-2 flex items-center">
+                                <span className="text-[0.5625rem] text-gray-400">Your email address</span>
+                              </div>
+                              <div
+                                className={`h-5 px-2 rounded text-[0.5625rem] text-white flex items-center transition-colors duration-500 ${
+                                  mockSite.primaryColor === 'violet'
+                                    ? 'bg-[var(--purple)]/50'
+                                    : 'bg-emerald-500'
+                                }`}
+                              >
+                                Subscribe
+                              </div>
                             </div>
                           </div>
                         </div>

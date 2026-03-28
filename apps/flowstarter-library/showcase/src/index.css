@@ -1,358 +1,461 @@
+/* ═══════════════════════════════════════════════════════════
+   FLOWSTARTER LIBRARY — MATCHING MAIN PLATFORM DESIGN
+   ═══════════════════════════════════════════════════════════ */
 
-/* ── Smooth theme transition on key surfaces only ───────── */
-html, body,
-header, footer, aside, main, nav,
-.bg-white, .dark\:bg-\[\#080810\] {
+/* ── Smooth theme transitions ────────────────────────────── */
+html, body, header, footer, aside, main, nav {
   transition: background-color 0.18s ease, border-color 0.18s ease;
 }
 
-
-/* ── Animated gradient headline ─────────────────────────── */
-@keyframes gradientShift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-.hero-gradient-text {
-  background: linear-gradient(130deg, #6366f1, #7C3AED, #a855f7, #6366f1);
-  background-size: 250% 250%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: gradientShift 6s ease infinite;
-}
-
-/* ── Template card scroll fade-in ───────────────────────── */
-@keyframes cardFadeUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.card-enter {
-  animation: cardFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* ── 3D floating card animation ──────────────────────────── */
-@keyframes floatCard {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-8px); }
-}
-
-/* ── Hero element fade-in (badge, subtitle, stats) ─────────── */
-@keyframes heroFadeUp {
-  from { opacity: 0; transform: translateY(32px); filter: blur(10px); }
-  to   { opacity: 1; transform: translateY(0);    filter: blur(0px); }
-}
-.hero-fade {
-  opacity: 0;
-  animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-.hero-fade-1 { animation-delay: 0.1s; }
-.hero-fade-2 { animation-delay: 0.25s; }
-.hero-fade-3 { animation-delay: 0.45s; }
-.hero-fade-4 { animation-delay: 0.62s; }
-.hero-fade-5 { animation-delay: 0.76s; }
-
-/* ── Synced design tokens from main platform ───────────── */
+/* ─── Design tokens (MATCHING main platform globals.css) ──── */
 :root {
-  --purple-primary: hsl(241 93% 61%);
-  --purple-primary-light: hsl(241 93% 61% / 0.8);
-  --purple-primary-lighter: hsl(241 93% 61% / 0.6);
-  --purple-primary-lightest: hsl(241 93% 61% / 0.1);
-  --purple-primary-dark: hsl(241 92% 57%);
+  --page-background: hsl(0, 0%, 100%);
+  --surface-1: hsl(0, 0%, 100%);
+  --surface-2: hsl(210, 40%, 98%);
+  --surface-3: hsl(210, 40%, 96%);
+  --border-subtle: rgba(2, 6, 23, 0.08);
+  --border-strong: rgba(2, 6, 23, 0.14);
+  --purple: hsl(233, 65%, 58%);
+  --blue: hsl(211, 93%, 61%);
 
-  --accent-primary: hsl(250 93% 65%);
-  --accent-light: hsl(250 93% 65% / 0.8);
-  --accent-lighter: hsl(250 93% 65% / 0.6);
-  --accent-lightest: hsl(250 93% 65% / 0.1);
-  --accent-dark: hsl(250 92% 60%);
-
-  /* Secondary colors - warm blue to complement purple */
-  --secondary-primary: hsl(211 93% 61%);
-  --secondary-light: hsl(211 93% 61% / 0.8);
-  --secondary-lighter: hsl(211 93% 61% / 0.6);
-  --secondary-lightest: hsl(211 93% 61% / 0.1);
-  --secondary-dark: hsl(213, 85%, 54%);
-
-  /* Glass surface (used for modals, cards, popovers) */
-  --glass-surface: #ffffff;
-  --glass-border-highlight: rgba(255, 255, 255, 0.95);
-  --glass-border-shadow: rgba(0, 0, 0, 0.08);
-  --glass-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04), 0 1px 0 rgba(255,255,255,1) inset, -1px -1px 0 rgba(255,255,255,0.8) inset, 0 -1px 0 rgba(0,0,0,0.04) inset;
-
-  /* Figma Design Tokens - Light Mode */
-  /* Neutral backgrounds */
-  --ui-bg-base: hsl(0 0% 100%);
-  --ui-bg-subtle: hsl(0 0% 95.3%);
-  --ui-bg-elevated: hsl(210 40% 98%);
-  --ui-bg-overlay: rgba(58, 58, 74, 0.3);
-  --ui-bg-overlay-hover: rgba(75, 75, 94, 0.3);
-  --ui-bg-input: rgba(51, 51, 61, 0.3);
-
-  /* UI Borders */
-  --ui-border-base: hsl(0 0% 34.12%);
-  --ui-border-strong: hsl(240 7% 40.78%);
-  --ui-border-focus: hsl(233 72% 74%);
-
-  /* Text colors */
-  --ui-text-primary: hsl(0 0% 100%);
-  --ui-text-secondary: hsl(240 5% 75.29%);
-  --ui-text-tertiary: hsl(240 5% 63.14%);
-  --ui-text-dark: hsl(240 17% 10.78%);
-  --ui-text-placeholder: hsl(240 4% 64.31%);
-
-  /* Accent colors */
-  --ui-accent-purple: hsl(233 65% 58%);
-  --ui-accent-purple-light: hsl(233 72% 74%);
-  --ui-accent-purple-bg: rgba(193, 200, 255, 0.2);
-  --ui-accent-green: hsl(119 100% 89.41%);
-  --ui-accent-green-bg: rgba(200, 255, 199, 0.2);
-  --ui-accent-orange: hsl(23 93% 59.41%);
-  --ui-accent-blue: hsl(211 93% 61%);
-
-  /* Status colors */
-  --status-success: hsl(119 100% 89.41%);
-  --status-warning: hsl(23 93% 59.41%);
-  --status-error: hsl(0 84% 60%);
-
-  /* ── Landing page tokens ── */
-  /* Page backgrounds */
-  --landing-bg: #fafafa;
-  --landing-bg-tint: #f7f5ff;
-  --landing-dark-surface: #0a0a0c;
-  --landing-dark-surface-tint: #0d0d14;
-
-  /* Hero gradient — base wash */
-  --hero-wash-from: #f4f1fa;
-  --hero-wash-via: #f8f6fc;
-  --hero-wash-to: #f2eff8;
-  /* Hero gradient — glow orbs (light mode: muted, professional) */
-  --hero-glow-primary: #7C3AED;
-  --hero-glow-secondary: #4D5DD9;
-  --hero-glow-accent: #06B6D4;
-  --hero-glow-focal: #7C3AED;
-
-  /* Flow-line SVG gradient stops */
-  --landing-flow-start: #4D5DD9;
-  --landing-flow-end: #7C3AED;
-  --landing-flow-alt-start: #7C3AED;
-  --landing-flow-alt-end: #06B6D4;
-  --landing-flow-end-light: #38bdf8;
-
-  /* Hero text-flow accent — matches library logo gradient */
-  --landing-text-accent: #4D5DD9;
-
-  /* CTA button gradient (deep indigo, Stripe-style) */
-  --landing-btn-from: #4D5DD9;
-  --landing-btn-via: #7C3AED;
+  /* Landing-specific (matching main) */
+  --landing-btn-from:       #4D5DD9;
+  --landing-btn-via:        #7C3AED;
   --landing-btn-hover-from: #3d4dc9;
-  --landing-btn-hover-via: #6d28d9;
-
-  /* Card surfaces */
+  --landing-btn-hover-via:  #6d28d9;
   --landing-card-bg: rgba(255, 255, 255, 0.50);
   --landing-card-border: rgba(229, 231, 235, 0.40);
 
-  /* Glow */
-  --landing-glow: rgba(96, 165, 250, 0.05);
-
-  /* Page gradient (used on marketing, auth, support pages) */
-  --page-gradient-from: hsl(226 100% 97% / 0.8);
-  --page-gradient-via: hsl(0 0% 100%);
-  --page-gradient-to: hsl(270 100% 97% / 0.6);
+  /* Flow */
+  --flow-start: #4D5DD9;
+  --flow-mid:   #7C3AED;
+  --flow-end:   #06B6D4;
 }
-
 .dark {
-  --purple-primary: hsl(241 96% 63%);
-  --purple-primary-light: hsl(241 96% 63% / 0.8);
-  --purple-primary-lighter: hsl(241 94% 67% / 0.6);
-  --purple-primary-lightest: hsl(241 94% 67% / 0.1);
-  --purple-primary-dark: hsl(241 92% 57%);
-
-  --accent-primary: hsl(250 96% 68%);
-  --accent-light: hsl(250 96% 68% / 0.8);
-  --accent-lighter: hsl(250 96% 68% / 0.6);
-  --accent-lightest: hsl(250 96% 68% / 0.1);
-  --accent-dark: hsl(250 93% 63%);
-
-  --secondary-primary: hsl(212 100% 61%);
-  --secondary-light: hsl(212 100% 61% / 0.8);
-  --secondary-lighter: hsl(212 100% 61% / 0.6);
-  --secondary-lightest: hsl(212 100% 61% / 0.1);
-  --secondary-dark: hsl(213 75% 54%);
-
-  /* Glass surface (dark) */
-  --glass-surface: #1a1a1f;
-  --glass-border-highlight: rgba(255, 255, 255, 0.12);
-  --glass-border-shadow: rgba(0, 0, 0, 0.40);
-  --glass-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.08) inset, -1px -1px 0 rgba(255,255,255,0.05) inset, 0 -1px 0 rgba(0,0,0,0.3) inset;
-
-  /* Figma Design Tokens - Dark Mode */
-  /* Neutral backgrounds */
-  --ui-bg-base: hsl(240 16% 20%);
-  --ui-bg-subtle: hsl(240 9% 22%);
-  --ui-bg-elevated: hsl(215 13% 18%);
-  --ui-bg-overlay: rgba(58, 58, 74, 0.3);
-  --ui-bg-overlay-hover: rgba(75, 75, 94, 0.3);
-  --ui-bg-input: rgba(51, 51, 61, 0.3);
-
-  /* UI Borders */
-  --ui-border-base: hsl(0 0% 34.12%);
-  --ui-border-strong: hsl(240 7% 40.78%);
-  --ui-border-focus: hsl(233 72% 74%);
-
-  /* Text colors */
-  --ui-text-primary: hsl(0 0% 100%);
-  --ui-text-secondary: hsl(240 5% 75.29%);
-  --ui-text-tertiary: hsl(240 5% 63.14%);
-  --ui-text-dark: hsl(240 17% 10.78%);
-  --ui-text-placeholder: hsl(240 4% 64.31%);
-
-  /* Accent colors */
-  --ui-accent-purple: hsl(233 65% 58%);
-  --ui-accent-purple-light: hsl(233 72% 74%);
-  --ui-accent-purple-bg: rgba(193, 200, 255, 0.2);
-  --ui-accent-green: hsl(119 100% 89.41%);
-  --ui-accent-green-bg: rgba(200, 255, 199, 0.2);
-  --ui-accent-orange: hsl(23 93% 59.41%);
-  --ui-accent-blue: hsl(211 93% 61%);
-
-  /* Status colors */
-  --status-success: hsl(119 100% 89.41%);
-  --status-warning: hsl(23 93% 59.41%);
-  --status-error: hsl(0 84% 60%);
-
-  /* ── Landing page tokens (dark overrides) ── */
-  --landing-btn-from: #6366F1;
-  --landing-btn-via: #818CF8;
+  --page-background: #0a0a0c;
+  --surface-1: hsl(215, 13%, 18%);
+  --surface-2: hsl(240, 8%, 18%);
+  --surface-3: hsl(220, 12%, 12%);
+  --border-subtle: rgba(163, 163, 163, 0.35);
+  --border-strong: rgba(163, 163, 163, 0.5);
+  --landing-btn-from:       #6366F1;
+  --landing-btn-via:        #818CF8;
   --landing-btn-hover-from: #4F46E5;
-  --landing-btn-hover-via: #6366F1;
-
-  /* Hero gradient — dark wash */
-  --hero-wash-from: #0c0516;
-  --hero-wash-via: #08060e;
-  --hero-wash-to: #0b050f;
-  /* Hero gradient — dark glow orbs */
-  --hero-glow-primary: #4D5DD9;
-  --hero-glow-secondary: #7C3AED;
-  --hero-glow-accent: #06B6D4;
-  --hero-glow-focal: #5B21B6;
-
+  --landing-btn-hover-via:  #6366F1;
   --landing-card-bg: rgba(255, 255, 255, 0.02);
-  --landing-card-border: rgba(255, 255, 255, 0.05);
-  --landing-glow: rgba(96, 165, 250, 0.08);
-
-  /* Page gradient (dark overrides) */
-  --page-gradient-from: #0a0a12;
-  --page-gradient-via: #0d0d18;
-  --page-gradient-to: #10081a;
+  --landing-card-border: rgba(255, 255, 255, 0.06);
 }
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --purple-primary: hsl(241 93% 61%);
-  --text-primary: #09090b;
-}
-
-.dark {
-  --text-primary: #fafafa;
-}
-
 @layer base {
   html { color-scheme: light; }
   html.dark { color-scheme: dark; }
   body {
-    @apply font-sans antialiased text-neutral-900 dark:text-white;
-    background: #ffffff;
-  }
-  html.dark body {
-    background: #080810;
+    @apply font-sans antialiased text-gray-900 dark:text-white;
+    /* Background is painted by FlowBackground component — body must be transparent */
+    background: transparent;
   }
 }
 
-@layer utilities {
-  .text-balance { text-wrap: balance; }
+@layer utilities { .text-balance { text-wrap: balance; } }
+
+/* ═══════════════════════════════════════════════════════════
+   HERO TEXT — matching main platform landing-effects.css
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Hero shimmer gradient (exact match of main) ─────────── */
+.hero-text-flow {
+  background: linear-gradient(
+    90deg,
+    #4D5DD9 0%,
+    #7C3AED 20%,
+    #a78bfa 35%,
+    #06B6D4 50%,
+    #a78bfa 65%,
+    #7C3AED 80%,
+    #4D5DD9 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: heroShimmer 3s linear infinite;
 }
 
-/* ─── Flow Background — fixed layer behind everything ─────── */
-
-.showcase-bg {
-  position: relative;
-  isolation: isolate;
+@keyframes heroShimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
 }
 
-/* Dot grid */
-.showcase-bg::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  background-image:
-    radial-gradient(circle, rgba(109, 78, 237, 0.07) 1px, transparent 1px);
-  background-size: 32px 32px;
+/* ── Flow reveal (blur-in text, matching main) ───────────── */
+@keyframes flowReveal {
+  0%   { opacity: 0; filter: blur(10px); letter-spacing: 0.04em; }
+  60%  { filter: blur(2px); }
+  100% { opacity: 1; filter: blur(0); letter-spacing: normal; }
+}
+.hero-text-flow-inner {
+  animation: flowReveal 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
 
-/* Light mode: strong purple glow from top */
-.showcase-bg::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(109, 78, 237, 0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 30% at 80% 90%, rgba(77, 93, 217, 0.05) 0%, transparent 55%);
-}
-
-/* Dark mode: deep purple glow */
-.dark .showcase-bg::before {
-  background-image:
-    radial-gradient(circle, rgba(139, 92, 246, 0.12) 1px, transparent 1px);
-  background-size: 28px 28px;
-}
-
-.dark .showcase-bg::after {
-  background:
-    radial-gradient(ellipse 100% 60% at 50% -10%, rgba(124, 58, 237, 0.40) 0%, rgba(109, 40, 217, 0.15) 40%, transparent 65%),
-    radial-gradient(ellipse 70% 50% at 85% 90%, rgba(77, 93, 217, 0.20) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 40% at 5%  55%, rgba(139, 92, 246, 0.12) 0%, transparent 50%);
-}
-
-/* ─── Animated text gradient ─────────────────────────────── */
-
-@keyframes wordReveal {
-  0%   { opacity: 0; transform: translateY(20px) scale(0.95); filter: blur(4px); }
-  60%  { opacity: 1; filter: blur(0px); }
-  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
-}
-
-.animate-word-reveal {
+/* ── Hero element stagger (matching main hero fade pattern) ─ */
+.hero-fade {
   opacity: 0;
-  background: linear-gradient(135deg, #1e3a8a, #3730a3, #5b21b6, #7C3AED, #4D5DD9, #0e7490);
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  animation: wordReveal 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards, text-flow 6s ease infinite;
+  transform: translateY(20px);
+}
+.hero-fade.ready {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.hero-fade-1.ready { transition-delay: 0.1s; }
+.hero-fade-2.ready { transition-delay: 0.24s; }
+.hero-fade-3.ready { transition-delay: 0.38s; }
+.hero-fade-4.ready { transition-delay: 0.52s; }
+.hero-fade-5.ready { transition-delay: 0.66s; }
+.hero-fade-6.ready { transition-delay: 0.76s; }
+
+/* ═══════════════════════════════════════════════════════════
+   GLASSMORPHISM — matching main platform glassmorphism.css
+   ═══════════════════════════════════════════════════════════ */
+.glass-surface {
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
-@keyframes text-flow {
-  0%, 100% { background-position: 0% 50%; }
-  50%       { background-position: 100% 50%; }
+/* ── Glass card shadows (exact match) ────────────────────── */
+.glass-shadow-card {
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04),
+    0 1px 3px rgba(15, 23, 42, 0.02);
+}
+.dark .glass-shadow-card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12),
+    0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
-.text-flow {
-  background: linear-gradient(135deg, #7c3aed, #a78bfa, #6d28d9, #c4b5fd, #7c3aed);
-  background-size: 300% 300%;
-  animation: text-flow 6s ease infinite;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* ─── Glass ──────────────────────────────────────────────── */
+/* ── Glass card with inset highlight (GlassCard match) ───── */
 .glass-card {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  @apply relative overflow-hidden rounded-[28px] backdrop-blur-2xl;
+  backdrop-filter: blur(40px) saturate(1.5);
+  -webkit-backdrop-filter: blur(40px) saturate(1.5);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(229, 231, 235, 0.80);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 1px 0 rgba(255,255,255,0.9) inset;
+  transition: all 0.3s ease-out;
 }
+.dark .glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 1px 0 rgba(255,255,255,0.06) inset;
+}
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.9) inset;
+}
+.dark .glass-card:hover {
+  box-shadow: 0 16px 48px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.08) inset;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BUTTON SYSTEM — matching main platform
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Brand gradient CTA (matching main hero button) ──────── */
+.btn-brand {
+  background: linear-gradient(135deg, var(--landing-btn-from), var(--landing-btn-via));
+  box-shadow: 0 4px 24px rgba(124, 58, 237, 0.3);
+  transition: all 0.2s ease;
+}
+.btn-brand:hover {
+  background: linear-gradient(135deg, var(--landing-btn-hover-from), var(--landing-btn-hover-via));
+  box-shadow: 0 6px 32px rgba(124, 58, 237, 0.45);
+  transform: scale(1.02);
+}
+.btn-brand:active { transform: scale(0.98); }
+
+/* ── Shimmer animated button (matching main CTA shimmer) ── */
+.btn-shimmer {
+  background: linear-gradient(90deg, var(--landing-btn-from), var(--landing-btn-via), var(--landing-btn-from));
+  background-size: 200% 100%;
+  animation: shimmerBtn 3s ease-in-out infinite;
+}
+@keyframes shimmerBtn {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Ghost / outline button ──────────────────────────────── */
+.btn-ghost {
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-2);
+  color: #52525b;
+  transition: all 0.2s ease;
+}
+.btn-ghost:hover {
+  border-color: color-mix(in srgb, var(--purple) 40%, transparent);
+  background: color-mix(in srgb, var(--purple) 6%, white);
+  color: var(--purple);
+}
+.dark .btn-ghost {
+  border-color: rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.60);
+}
+.dark .btn-ghost:hover {
+  border-color: color-mix(in srgb, var(--purple) 50%, transparent);
+  background: color-mix(in srgb, var(--purple) 12%, transparent);
+  color: rgba(255,255,255,0.90);
+}
+
+/* ── Ghost on dark backgrounds (for card overlays) ──────── */
+.btn-ghost-overlay {
+  border: 1px solid rgba(255,255,255,0.20);
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+}
+.btn-ghost-overlay:hover {
+  border-color: rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TEMPLATE CARD — gallery piece with hover reveal
+   ═══════════════════════════════════════════════════════════ */
+.template-card {
+  @apply relative overflow-hidden rounded-[28px];
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(229, 231, 235, 0.80);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 1px 0 rgba(255,255,255,0.9) inset;
+  transition: all 0.3s ease-out;
+}
+.dark .template-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 1px 0 rgba(255,255,255,0.06) inset;
+}
+.template-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.9) inset;
+  border-color: color-mix(in srgb, var(--purple) 30%, rgba(229,231,235,0.80));
+}
+.dark .template-card:hover {
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.08) inset;
+  border-color: color-mix(in srgb, var(--purple) 40%, rgba(255,255,255,0.06));
+}
+
+/* ── Hover reveal overlay ────────────────────────────────── */
+.card-reveal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.template-card:hover .card-reveal {
+  opacity: 1;
+}
+.card-reveal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.80) 0%,
+    rgba(0,0,0,0.50) 40%,
+    rgba(0,0,0,0.10) 70%,
+    transparent 100%
+  );
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+.card-reveal-content {
+  position: relative;
+  z-index: 1;
+  padding: 1.5rem;
+  transform: translateY(12px);
+  opacity: 0;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0.05s,
+              opacity 0.3s ease 0.05s;
+}
+.template-card:hover .card-reveal-content {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ── Card entrance animation ─────────────────────────────── */
+@keyframes cardFadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.card-enter {
+  opacity: 0;
+}
+.card-enter.is-visible {
+  animation: cardFadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SIDEBAR — brand-consistent active state
+   ═══════════════════════════════════════════════════════════ */
+.sidebar-item {
+  transition: all 0.2s ease;
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: left;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sidebar-item--active {
+  background: var(--purple);
+  color: #fff;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--purple) 40%, transparent);
+}
+.sidebar-item--inactive {
+  color: #52525b;
+  background: transparent;
+}
+.sidebar-item--inactive:hover {
+  background: var(--surface-2);
+  color: #18181b;
+}
+.dark .sidebar-item--inactive { color: #a1a1aa; }
+.dark .sidebar-item--inactive:hover {
+  background: rgba(255,255,255,0.06);
+  color: #e4e4e7;
+}
+
+/* Sidebar count badge */
+.sidebar-badge {
+  border-radius: 9999px;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.sidebar-badge--active {
+  background: rgba(255,255,255,0.22);
+  color: #fff;
+}
+.sidebar-badge--inactive {
+  background: var(--surface-2);
+  color: #71717a;
+}
+.dark .sidebar-badge--inactive {
+  background: rgba(255,255,255,0.08);
+  color: #71717a;
+}
+
+/* Feature tag */
+.feature-tag {
+  border-radius: 9999px;
+  padding: 0.375rem 0.875rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.feature-tag--active {
+  background: var(--purple);
+  color: #fff;
+  border: 1px solid transparent;
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--purple) 35%, transparent);
+}
+.feature-tag--inactive {
+  background: var(--surface-2);
+  color: #52525b;
+  border: 1px solid var(--border-subtle);
+}
+.feature-tag--inactive:hover {
+  border-color: color-mix(in srgb, var(--purple) 35%, transparent);
+  color: var(--purple);
+  background: color-mix(in srgb, var(--purple) 6%, white);
+}
+.dark .feature-tag--inactive {
+  background: rgba(255,255,255,0.05);
+  color: #a1a1aa;
+  border-color: rgba(255,255,255,0.08);
+}
+.dark .feature-tag--inactive:hover {
+  border-color: color-mix(in srgb, var(--purple) 45%, transparent);
+  color: #c4b5fd;
+  background: color-mix(in srgb, var(--purple) 12%, transparent);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CATEGORY STRIP — horizontal scroll
+   ═══════════════════════════════════════════════════════════ */
+.category-scroll {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.category-scroll::-webkit-scrollbar { display: none; }
+
+/* ═══════════════════════════════════════════════════════════
+   WIZARD AURA EFFECTS (matching main platform)
+   ═══════════════════════════════════════════════════════════ */
+.wizard-aura {
+  background: radial-gradient(
+    circle,
+    rgba(139, 92, 246, 0.15) 0%,
+    rgba(139, 92, 246, 0.08) 30%,
+    transparent 80%
+  );
+  filter: blur(80px);
+  animation: aura-pulse 8s ease-in-out infinite;
+}
+.wizard-aura-secondary {
+  background: radial-gradient(
+    circle,
+    rgba(236, 72, 153, 0.12) 0%,
+    rgba(236, 72, 153, 0.06) 30%,
+    transparent 80%
+  );
+  filter: blur(90px);
+  animation: aura-pulse 10s ease-in-out infinite;
+  animation-delay: 2s;
+}
+.wizard-aura-accent {
+  background: radial-gradient(
+    circle,
+    rgba(99, 102, 241, 0.1) 0%,
+    rgba(99, 102, 241, 0.05) 30%,
+    transparent 90%
+  );
+  filter: blur(100px);
+  animation: aura-pulse 12s ease-in-out infinite;
+  animation-delay: 4s;
+}
+@keyframes aura-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.8; transform: scale(1.05); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE BOTTOM SHEET
+   ═══════════════════════════════════════════════════════════ */
+@keyframes sheetSlideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+.bottom-sheet {
+  animation: sheetSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLLBAR HIDING
+   ═══════════════════════════════════════════════════════════ */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }

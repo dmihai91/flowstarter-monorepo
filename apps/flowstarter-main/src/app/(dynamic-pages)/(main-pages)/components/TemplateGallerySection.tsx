@@ -9,7 +9,7 @@ const TEMPLATES = [
   { slug: 'academic-tutor',     name: 'Academic Tutor',     category: 'Education',           accent: '#1A3A6B' },
   { slug: 'beauty-stylist',     name: 'Beauty Stylist',     category: 'Beauty & Style',      accent: '#C97B63' },
   { slug: 'coach-pro',          name: 'Coach Pro',          category: 'Business Coaching',   accent: '#2C5F8A' },
-  { slug: 'creative-portfolio', name: 'Creative Portfolio', category: 'Portfolio',           accent: '#7C3AED' },
+  { slug: 'creative-portfolio', name: 'Creative Portfolio', category: 'Portfolio',           accent: 'var(--purple)' },
 ];
 
 type Template = typeof TEMPLATES[0];

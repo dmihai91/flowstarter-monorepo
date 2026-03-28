@@ -122,13 +122,24 @@ export function LandingPricing() {
                           rel="noopener noreferrer"
                           className="mt-auto block w-full"
                         >
-                          <Button
-                            variant={isHighlighted ? 'brand-gradient' : 'outline'}
-                            size="lg"
-                            className={`w-full rounded-xl ${isHighlighted ? 'shadow-[0_14px_40px_rgba(124,58,237,0.28)]' : 'border-[var(--purple-primary)] text-[var(--purple-primary)] hover:bg-[var(--purple-primary)] hover:text-white dark:border-[var(--purple-primary)] dark:text-[var(--purple-primary)] dark:hover:bg-[var(--purple-primary)] dark:hover:text-white'}`}
-                          >
-                            {plan.cta}
-                          </Button>
+                          {isHighlighted ? (
+                            <Button
+                              variant="brand-gradient"
+                              size="lg"
+                              className="w-full rounded-xl shadow-[0_14px_40px_rgba(124,58,237,0.28)]"
+                            >
+                              {plan.cta}
+                            </Button>
+                          ) : (
+                            <span
+                              className="inline-flex h-12 w-full cursor-pointer items-center justify-center rounded-xl text-sm font-semibold transition-all duration-200"
+                              style={{ border: '1.5px solid var(--purple-primary)', color: 'var(--purple-primary)', background: 'transparent' }}
+                              onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = 'var(--purple-primary)'; el.style.color = '#fff'; }}
+                              onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = 'transparent'; el.style.color = 'var(--purple-primary)'; }}
+                            >
+                              {plan.cta}
+                            </span>
+                          )}
                         </a>
                     )}
                   </div>

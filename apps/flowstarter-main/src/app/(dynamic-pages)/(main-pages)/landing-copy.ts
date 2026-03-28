@@ -75,7 +75,7 @@ export const LANDING_COPY = {
         number: '03',
         title: 'You go live',
         description:
-          'Your site launches. You get access to our smart editor — update anything yourself in seconds, no code, no waiting on an agency. You\'re in control.',
+          'Your site launches. You get access to our smart editor — update anything yourself in seconds, no code, no back-and-forth. You\'re in control.',
       },
     ],
   },
@@ -118,7 +118,7 @@ export const LANDING_COPY = {
         title: 'Control without complexity',
         subtitle: 'One place to manage',
         body:
-          'Make updates, adjust content, and keep your site current without waiting on a developer or agency.',
+          'Make updates, adjust content, and keep your site sharp — on your own schedule, no dependencies.',
       },
       {
         icon: 'sparkles',
@@ -169,7 +169,7 @@ export const LANDING_COPY = {
     subtitle: 'Pay once to launch. Stay on the monthly plan for our smart editor and dashboard. Cancel anytime.',
     socialProof: 'Only 10 founding-rate spots available per month. Beta pricing is live now.',
     note:
-      'No tech skills needed. No agency retainers. Full control after launch.',
+      'No tech skills needed. No waiting on anyone. Full control after launch.',
     relaunchNote: 'Already have a site that isn\'t working? Ask about Flowstarter Relaunch on your discovery call.',
     plans: [
       {
@@ -248,8 +248,8 @@ export const LANDING_COPY = {
         description: 'Give you tools. Leave you to figure out the rest.',
       },
       {
-        label: 'Freelancers and agencies',
-        description: 'Expensive, slow, and you\'re dependent on them for every change.',
+        label: 'Going it alone',
+        description: 'DIY tools take weeks to learn and still leave you with a site that feels unfinished.',
       },
       {
         label: 'Flowstarter',

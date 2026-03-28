@@ -89,10 +89,10 @@ export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProp
         role="dialog"
         aria-modal="true"
         aria-labelledby="prequal-title"
-        className="flex items-center justify-center p-4"
-        style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100dvh", minHeight: "100vh", zIndex: 9999 }}
+        className="flex items-start sm:items-center justify-center p-4 pt-[max(1rem,env(safe-area-inset-top))]"
+        style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100dvh", zIndex: 9999, overflowY: "auto" }}
       >
-        <div className="relative w-full max-w-md max-h-[90dvh] rounded-2xl border border-white/10 bg-white dark:bg-[#0f1117] shadow-2xl shadow-black/30 p-5 sm:p-8 overflow-y-auto">
+        <div className="relative w-full max-w-md my-auto rounded-2xl border border-white/10 bg-white dark:bg-[#0f1117] shadow-2xl shadow-black/30 p-5 sm:p-8">
 
           {/* Drag handle — mobile only */}
           <div className="sm:hidden flex justify-center mb-4 -mt-1">

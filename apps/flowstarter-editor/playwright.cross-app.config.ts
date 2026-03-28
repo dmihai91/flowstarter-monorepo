@@ -57,7 +57,10 @@ export default defineConfig({
 
   webServer: EDITOR.includes('localhost')
     ? {
-        command: 'pnpm dev',
+        command:
+          `node -e "require('fs').rmSync('node_modules/.vite',{ recursive: true, force: true })" ` +
+          `&& cross-env NODE_OPTIONS=--max-old-space-size=8192 node pre-start.cjs ` +
+          `&& remix vite:dev --force`,
         url: EDITOR,
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,

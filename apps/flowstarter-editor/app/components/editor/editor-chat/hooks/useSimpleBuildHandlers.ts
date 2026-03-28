@@ -44,6 +44,7 @@ export function useSimpleBuildHandlers({
   existingProjectId,
   convexConversationId,
   seededIntegrations = [],
+  seededTemplate = null,
 }: UseSimpleBuildHandlersProps): UseSimpleBuildHandlersReturn {
   const generateSiteMutation = useGenerateSiteStream();
   // Live agent events accumulator — drives the AgentStatusMessage in chat
@@ -150,10 +151,18 @@ export function useSimpleBuildHandlers({
       setBuildProgress(BUILD_PROGRESS.INITIAL);
 
       const selectedTemplate = templateHook.selectedTemplate;
+      const effectiveTemplate =
+        selectedTemplate ||
+        (seededTemplate
+          ? {
+              id: seededTemplate.id,
+              name: seededTemplate.name,
+            }
+          : null);
       const selectedPalette = paletteHook.selectedPalette;
 
-      console.log('[BROWSER] [DEBUG] Checking template:', !!selectedTemplate);
-      if (!selectedTemplate) {
+      console.log('[BROWSER] [DEBUG] Checking template:', !!effectiveTemplate);
+      if (!effectiveTemplate) {
         flowHook.setStep('template');
         messageHook.addAssistantMessage(getMessage(MESSAGE_KEYS.BUILD_SELECT_TEMPLATE_FIRST));
         return;
@@ -173,8 +182,10 @@ export function useSimpleBuildHandlers({
 
       try {
         console.log('[BROWSER] [DEBUG] Entering try block');
-        const projectName = flowHook.projectName || selectedTemplate.name || 'My Website';
-        const projectId = existingProjectId || generateProjectSlug(projectName);
+        const resolvedTemplateName = effectiveTemplate.name;
+        const resolvedTemplateId = effectiveTemplate.id || 'default';
+        const resolvedProjectName = flowHook.projectName || resolvedTemplateName || 'My Website';
+        const projectId = existingProjectId || generateProjectSlug(resolvedProjectName);
 
         // Only set convexProjectId if we have a real Convex project ID from handoff
         // A generated slug (projectId from generateProjectSlug) is NOT a valid Convex ID
@@ -197,9 +208,9 @@ export function useSimpleBuildHandlers({
           },
           projectId,
           convexConversationId: convexConversationId || undefined,
-          projectName,
-          templateId: selectedTemplate.id || 'default',
-          templateName: selectedTemplate.name,
+          projectName: resolvedProjectName,
+          templateId: resolvedTemplateId,
+          templateName: resolvedTemplateName,
           businessData: businessHook.businessInfo,
           projectDescription: flowHook.projectDescription || '',
           palette: selectedPalette,
@@ -292,6 +303,7 @@ export function useSimpleBuildHandlers({
     [
       flowHook,
       messageHook,
+      seededTemplate,
       templateHook.selectedTemplate,
       paletteHook.selectedPalette,
       businessHook.businessInfo,

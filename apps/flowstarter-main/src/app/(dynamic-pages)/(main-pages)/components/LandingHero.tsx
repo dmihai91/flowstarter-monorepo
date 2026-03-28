@@ -1,114 +1,114 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { EXTERNAL_URLS } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
+import { LANDING_COPY } from '../landing-copy';
 
-import { LANDING_COPY, type HeroCopy } from '../landing-copy';
-import { GlassPill } from './GlassPill';
-
-/**
- * Landing page hero — clean, focused, high-converting.
- * Only: badge, headline, one paragraph, CTA.
- */
 export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   const [ready, setReady] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setReady(true), 80); return () => clearTimeout(t); }, []);
+  useEffect(() => { const t = setTimeout(() => setReady(true), 60); return () => clearTimeout(t); }, []);
   const hero = LANDING_COPY.hero;
 
+  const anim = (delay: string) => ({
+    opacity: ready ? 1 : 0,
+    transform: ready ? 'translateY(0)' : 'translateY(24px)',
+    transition: `opacity 0.75s cubic-bezier(0.16,1,0.3,1) ${delay}, transform 0.75s cubic-bezier(0.16,1,0.3,1) ${delay}`,
+  });
+
   return (
-    <section className="relative pt-20 sm:pt-24 lg:pt-28 pb-16 lg:pb-24 overflow-hidden">
-      {/* Background gradient — premium multi-layer */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Base wash — barely tinted */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[var(--hero-wash-from)] via-[var(--hero-wash-via)] to-[var(--hero-wash-to)]" />
-        {/* Central halo — single radial glow behind headline area */}
-        <div className="absolute top-[5%] left-1/2 -translate-x-1/2 w-[100%] sm:w-[80%] h-[85%] rounded-full bg-[var(--hero-glow-primary)] opacity-[0.13] dark:opacity-[0.12] blur-[100px] md:blur-[140px] lg:blur-[220px] will-change-transform" />
-        {/* Subtle secondary — slight cool shift lower */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[80%] sm:w-[65%] h-[65%] rounded-full bg-[var(--hero-glow-secondary)] opacity-[0.10] dark:opacity-[0.09] blur-[80px] md:blur-[120px] lg:blur-[180px] will-change-transform" />
-        {/* Noise texture overlay */}
-        <div className="absolute inset-0 opacity-[0.025] dark:opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")', backgroundRepeat: 'repeat', backgroundSize: '128px 128px' }} />
+    <section className="relative min-h-[90dvh] flex items-center overflow-hidden">
+
+      {/* Background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 right-0 w-[60%] h-[70%] bg-[var(--purple)] opacity-[0.07] blur-[120px] rounded-full" />
+        <div className="absolute bottom-0 left-0 w-[40%] h-[50%] bg-blue-500 opacity-[0.05] blur-[100px] rounded-full" />
       </div>
 
-      
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-24">
+        <div className="grid lg:grid-cols-[1fr_auto] gap-16 lg:gap-24 items-center">
 
-      {/* Subtle flow lines */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <svg className="absolute inset-0 w-full h-full opacity-[0.15] dark:opacity-[0.30]" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" fill="none">
-          <defs>
-            <linearGradient id="heroLine1" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="var(--purple)" stopOpacity="0" />
-              <stop offset="50%" stopColor="var(--purple)" />
-              <stop offset="100%" stopColor="var(--purple)" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <g className="animate-[flowDrift_20s_ease-in-out_infinite_alternate]">
-            <path d="M-100,200 Q200,170 500,230 T1000,190 T1400,230" stroke="url(#heroLine1)" strokeWidth="1" />
-            <path d="M-100,400 Q300,370 600,430 T1100,390 T1400,420" stroke="url(#heroLine1)" strokeWidth="0.8" />
-            <path d="M-100,600 Q250,570 550,630 T1050,590 T1400,620" stroke="url(#heroLine1)" strokeWidth="0.6" />
-          </g>
-        </svg>
-      </div>
+          {/* Left — content */}
+          <div className="max-w-2xl">
 
-      <div className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10 text-center">
-        {/* Badge */}
-        <div
-          style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0) scale(1)' : 'translateY(28px) scale(0.97)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.1s' }}
-        >
-          <GlassPill dot className="mb-6">
-            Built to convert, done for you
-          </GlassPill>
-        </div>
+            {/* Eyebrow */}
+            <div style={anim('0s')} className="flex items-center gap-3 mb-8">
+              <div className="h-px w-8 bg-[var(--purple)]" />
+              <span className="text-sm font-semibold text-[var(--purple)] tracking-widest uppercase">
+                Done-for-you websites
+              </span>
+            </div>
 
-        {/* Headline */}
-        <h1
-          className="font-bold leading-[1.1] tracking-tight mb-4 text-gray-900 dark:text-white drop-shadow-sm"
-          style={{ fontSize: 'clamp(2.4rem, 6vw, 4.5rem)', opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.22s' }}
-        >
-          {hero.headlinePrefix}
-          <br />
-          <span className="text-flow"><span className="inline">{hero.headlineHighlight}</span></span>
-        </h1>
+            {/* Headline — mixed weight, large */}
+            <h1 style={anim('0.1s')} className="mb-6 text-gray-900 dark:text-white">
+              <span className="block font-light leading-[1.1] tracking-tight" style={{ fontSize: 'clamp(2.6rem, 6vw, 5rem)' }}>
+                {hero.headlinePrefix}
+              </span>
+              <span className="block font-extrabold leading-[1.05] tracking-tight text-flow" style={{ fontSize: 'clamp(2.8rem, 6.5vw, 5.5rem)' }}>
+                {hero.headlineHighlight}
+              </span>
+            </h1>
 
-        {/* Body */}
-        <p
-          className="text-base sm:text-lg text-gray-500 dark:text-white/80 leading-snug mb-5 max-w-xl mx-auto"
-          style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.38s' }}
-        >
-          {hero.subheadlineBold} {hero.subheadline}
-        </p>
+            {/* Body */}
+            <p style={anim('0.2s')} className="text-lg sm:text-xl text-gray-500 dark:text-white/60 leading-relaxed mb-10 max-w-lg">
+              {hero.subheadline}
+            </p>
 
-        {/* Audience qualifier — pill bubble */}
-        <div
-          className="flex justify-center mb-7"
-          style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.50s' }}
-        >
-          <GlassPill className="text-sm sm:text-base leading-relaxed max-w-sm sm:max-w-md text-center opacity-60">
-            {hero.trustLine}
-          </GlassPill>
-        </div>
+            {/* CTAs */}
+            <div style={anim('0.3s')} className="flex flex-wrap items-center gap-4">
+              <Button
+                variant="brand-gradient"
+                onClick={() => onOpenModal?.()}
+                className="relative overflow-hidden bg-[length:200%_100%] animate-[shimmerBtn_3s_ease-in-out_infinite] h-13 px-7 text-base font-semibold rounded-2xl shadow-[0_4px_20px_rgba(124,58,237,0.3)] hover:shadow-[0_6px_28px_rgba(124,58,237,0.45)] hover:scale-[1.02] active:scale-[0.98] group"
+              >
+                {hero.primaryCta}
+                <svg className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+              </Button>
+              <a
+                href="#pricing"
+                onClick={e => { e.preventDefault(); document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }); }}
+                className="text-sm font-medium text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white underline underline-offset-4 decoration-gray-300 dark:decoration-white/20 hover:decoration-gray-500 dark:hover:decoration-white/50 transition-all"
+              >
+                {hero.secondaryCta}
+              </a>
+            </div>
 
-        {/* CTA */}
-        <div
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
-          style={{ opacity: ready ? 1 : 0, transform: ready ? 'translateY(0)' : 'translateY(28px)', filter: ready ? 'blur(0px)' : 'blur(8px)', transition: 'opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1)', transitionDelay: '0.64s' }}
-        >
-          <Button variant="brand-gradient" onClick={() => onOpenModal?.()} className="relative overflow-hidden bg-[length:200%_100%] animate-[shimmerBtn_3s_ease-in-out_infinite] rounded-xl px-8 h-12 text-base shadow-[0_2px_12px_rgba(124,58,237,0.25),0_1px_3px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_20px_rgba(124,58,237,0.35)] hover:scale-[1.02] active:scale-[0.98] group w-auto">
-              {hero.primaryCta}
-              <svg className="w-5 h-5 ml-2.5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Button>
-          <a
-            href="#pricing"
-            onClick={(event) => {
-              event.preventDefault();
-              document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="inline-flex items-center justify-center h-12 px-8 rounded-xl text-base font-medium text-gray-700 dark:text-white/80 bg-white/50 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 backdrop-blur-sm hover:bg-white/80 dark:hover:bg-white/[0.10] hover:text-gray-900 dark:hover:text-white transition-all w-auto"
-          >
-            {hero.secondaryCta}
-          </a>
+            {/* Social proof row */}
+            <div style={anim('0.4s')} className="mt-12 pt-8 border-t border-gray-100 dark:border-white/[0.07] flex flex-wrap items-center gap-6">
+              {[
+                { value: '3 weeks', label: 'avg. delivery' },
+                { value: '0', label: 'skills needed' },
+                { value: '30-day', label: 'money-back' },
+              ].map(s => (
+                <div key={s.label}>
+                  <p className="text-lg font-bold text-gray-900 dark:text-white">{s.value}</p>
+                  <p className="text-xs text-gray-400 dark:text-white/30 uppercase tracking-wider">{s.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right — abstract visual */}
+          <div style={anim('0.15s')} className="hidden lg:flex flex-col gap-3 w-[260px]">
+            {[
+              { icon: '🌐', label: 'Live landing page', sub: 'Mobile-first, fast' },
+              { icon: '📅', label: 'Booking & contact', sub: 'Calendly integrated' },
+              { icon: '⚡', label: 'Ready in 3 weeks', sub: 'No back-and-forth' },
+              { icon: '🔄', label: 'Monthly updates', sub: 'We handle it all' },
+            ].map((item, i) => (
+              <div
+                key={item.label}
+                style={{ ...anim(`${0.15 + i * 0.08}s`), transform: ready ? `translateX(0)` : 'translateX(20px)' }}
+                className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/70 dark:bg-white/[0.04] border border-gray-200/60 dark:border-white/[0.07] backdrop-blur-sm"
+              >
+                <span className="text-xl">{item.icon}</span>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white leading-tight">{item.label}</p>
+                  <p className="text-xs text-gray-400 dark:text-white/30">{item.sub}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
         </div>
       </div>
     </section>

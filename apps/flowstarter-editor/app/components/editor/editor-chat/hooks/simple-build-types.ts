@@ -39,6 +39,11 @@ export interface UseSimpleBuildHandlersProps {
   convexConversationId?: string | null;
   /** Integrations already selected upstream in the main-platform handoff */
   seededIntegrations?: IntegrationConfig[];
+  /** Seeded template metadata from dashboard handoff, used while template hook hydrates */
+  seededTemplate?: {
+    id: string;
+    name: string;
+  } | null;
 }
 
 export interface UseSimpleBuildHandlersReturn {

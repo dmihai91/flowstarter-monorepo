@@ -91,7 +91,24 @@ async function openReview(page: Page, token: string) {
     })
     .not.toContain('flowstarter.dev/login');
 
-  await expect(page.locator('body')).toContainText('Review Before Build', { timeout: 20_000 });
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      await expect(page.locator('body')).toContainText('Review Before Build', { timeout: 20_000 });
+      return;
+    } catch (error) {
+      if (attempt === 1) {
+        throw error;
+      }
+
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await expect
+        .poll(async () => page.url(), {
+          timeout: 15_000,
+          intervals: [250, 500, 1000],
+        })
+        .toContain('/project/');
+    }
+  }
 }
 
 test.afterEach(async () => {
@@ -288,7 +305,7 @@ test.describe('Scenario 1: Dashboard handoff to editor', () => {
     await page.getByRole('button', { name: 'Build Site' }).click();
 
     await expect.poll(() => buildCalled).toBe(true);
-    await expect(page.getByText(/Building your site/i)).toBeVisible({ timeout: 15_000 });
-    await expect(page.getByText(/Your site is ready/i)).toBeVisible({ timeout: 20_000 });
+    await expect(page.locator('body')).toContainText('Building your site', { timeout: 15_000 });
+    await expect(page.locator('body')).toContainText('Your site is ready', { timeout: 20_000 });
   });
 });

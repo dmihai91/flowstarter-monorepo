@@ -195,7 +195,7 @@ export default function TeamDashboardPage() {
             Dashboard
           </h1>
         </div>
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-4">
           <Button variant="accent" size="default" className="w-full sm:w-auto" onClick={createNewInEditor}>
               <Plus className="w-4 h-4 mr-2" />
               New Project

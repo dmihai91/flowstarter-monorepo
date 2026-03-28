@@ -1718,3 +1718,8 @@ html.dark body {
   display: inline;
 }
 
+
+/* ── Smooth theme transition ─────────────────────────────── */
+html, body {
+  transition: background-color 0.2s ease;
+}

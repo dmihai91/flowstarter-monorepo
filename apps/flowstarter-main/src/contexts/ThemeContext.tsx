@@ -65,10 +65,19 @@ const getSystemThemePreference = (): 'light' | 'dark' => {
 };
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // Start with a default state that will be the same on server and client
+  // Read initial state from the DOM (already set by the blocking inline script)
+  // This eliminates the flash between SSR default and client hydration
   const [mounted, setMounted] = useState(false);
-  const [theme, setTheme] = useState<Theme>('auto');
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === 'undefined') return 'auto';
+    const stored = getStoredTheme();
+    return stored || 'auto';
+  });
+  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window === 'undefined') return 'light';
+    // Trust what the inline script already applied to <html>
+    return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+  });
 
   // Function to get system theme preference
   const getSystemTheme = useCallback((): 'light' | 'dark' => {

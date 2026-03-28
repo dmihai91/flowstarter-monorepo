@@ -504,10 +504,6 @@ html, body {
   transition: background-color 0.2s ease;
 }
 
-@keyframes badgeGlow {
-  0%, 100% { box-shadow: 0 0 0 2px rgba(124,58,237,0.06), 0 0 10px rgba(124,58,237,0.10); }
-  50%       { box-shadow: 0 0 0 3px rgba(124,58,237,0.10), 0 0 18px rgba(124,58,237,0.20); }
-}
 
 @keyframes badgeShimmer {
   0%   { background-position: 200% center; opacity: 0; }

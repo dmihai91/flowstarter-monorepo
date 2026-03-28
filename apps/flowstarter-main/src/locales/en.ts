@@ -17,7 +17,7 @@ const en = {
   'app.failedToFetchIndustries':
     'Failed to fetch industries. Please try again.',
   'app.needHelp': 'Need help or a custom solution?',
-  'app.bookCallWithUs': 'Book a call with us',
+  'app.bookCallWithUs': 'Book a discovery call',
   'app.saveFailed': 'Save failed',
   'app.saving': 'Saving…',
   'app.offline': 'Offline',
@@ -1337,7 +1337,7 @@ const en = {
   'landing.pricing.footerNote': 'No lock-in. Cancel anytime. No hidden fees.',
   'landing.pricing.finePrint': 'No contracts. Cancel anytime. First month free.',
   'landing.pricing.cta': 'Claim Your Spot',
-  'landing.header.cta': 'Book free strategy call',
+  'landing.header.cta': 'Book a discovery call',
 
   // Landing Page - For/Not For
 

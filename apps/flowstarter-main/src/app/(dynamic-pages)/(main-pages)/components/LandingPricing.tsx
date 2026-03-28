@@ -37,7 +37,7 @@ export function LandingPricing() {
               )}
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-3 items-stretch">
+            <div className="grid gap-6 sm:grid-cols-2 items-stretch">
               {pricing.plans.map((plan, index) => {
                 const isHighlighted = plan.name === 'GROWTH';
                 const isComingSoon = plan.status === 'coming-soon';

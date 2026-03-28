@@ -1,4 +1,10 @@
 
+/* ── 3D floating card animation ──────────────────────────── */
+@keyframes floatCard {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
 /* ── Hero element fade-in (badge, subtitle, stats) ─────────── */
 @keyframes heroFadeUp {
   from { opacity: 0; transform: translateY(32px); filter: blur(10px); }

@@ -51,7 +51,7 @@ export const LANDING_COPY = {
     subheadlineBold: '',
     subheadline:
       'We build your professional site, hand you a smart editor, and you never touch code. Most clients go live in 5–7 days.',
-    primaryCta: 'Book a free discovery call',
+    primaryCta: 'Get my site live',
     secondaryCta: 'See how it works',
     trustLine: 'For coaches, consultants, freelancers, and founders who want to show up like they mean it, without touching code.',
     guarantee: 'Spots are limited to 8 new projects per month. Most clients go live within a week.',

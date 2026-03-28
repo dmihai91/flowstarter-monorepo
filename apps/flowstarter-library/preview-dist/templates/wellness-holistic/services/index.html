@@ -1,0 +1,249 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="description" content="Naturopathic medicine, nutritional counseling, massage therapy, acupuncture, and personalized wellness programs. Restore balance and reclaim vitality."><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Mulish:wght@300;400;600&display=swap" rel="stylesheet"><title>Services | Holistic Wellness Services</title><script>
+      (function() {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved === 'dark' || (!saved && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script><script type="module">function i(){const t=document.documentElement.classList.toggle("dark");localStorage.setItem("theme",t?"dark":"light")}document.getElementById("theme-toggle")?.addEventListener("click",i);document.getElementById("theme-toggle-mobile")?.addEventListener("click",i);const n=document.getElementById("mobile-menu-btn"),e=document.getElementById("mobile-menu"),d=n?.querySelector(".icon-menu"),s=n?.querySelector(".icon-close");n?.addEventListener("click",()=>{e?.classList.toggle("hidden"),d?.classList.toggle("hidden"),s?.classList.toggle("hidden")});e?.querySelectorAll("a").forEach(t=>{t.addEventListener("click",()=>{e?.classList.add("hidden"),d?.classList.remove("hidden"),s?.classList.add("hidden")})});window.addEventListener("resize",()=>{window.innerWidth>=1024&&(e?.classList.add("hidden"),d?.classList.remove("hidden"),s?.classList.add("hidden"))});</script><script>
+    // FlowStarter preview bridge — postMessage API
+    (function() {
+      if (window.self === window.top) return; // only in iframe
+      // Mark document so CSS can hide native toggles
+      document.documentElement.classList.add('fs-preview');
+
+
+
+      // Signal parent that listener is ready — more reliable than parent relying on iframe onLoad
+      window.parent.postMessage({ source: 'fs-template', type: 'ready' }, '*');
+
+      window.addEventListener('message', function(e) {
+        if (!e.data || e.data.source !== 'fs-preview') return;
+        var d = e.data;
+        if (d.type === 'setTheme') {
+          document.documentElement.classList.toggle('dark', d.value === 'dark');
+          try { localStorage.setItem('theme', d.value); } catch(_) {}
+        } else if (d.type === 'setPalette') {
+          // 1. Apply theme FIRST so html.dark is set before palette CSS is evaluated
+          if (d.dark !== undefined) {
+            document.documentElement.classList.toggle('dark', !!d.dark);
+            try { localStorage.setItem('theme', d.dark ? 'dark' : 'light'); } catch(_) {}
+          }
+          // 2. Set CSS vars directly on root (inline style = highest priority)
+          if (d.vars) {
+            var root = document.documentElement;
+            var vars = d.vars;
+            Object.keys(vars).forEach(function(k) { root.style.setProperty(k, vars[k]); });
+            if (!d.dark) {
+              if (vars['--color-background']) document.body.style.setProperty('background-color', vars['--color-background'], 'important');
+              if (vars['--color-text']) document.body.style.setProperty('color', vars['--color-text'], 'important');
+            } else {
+              // Dark mode: clear body overrides so template's own dark:bg/dark:text CSS takes over
+              document.body.style.removeProperty('background-color');
+              document.body.style.removeProperty('color');
+            }
+          }
+          // 3. Inject style tag for Tailwind utility class overrides
+          var existing = document.getElementById('fs-palette-override');
+          if (existing) existing.remove();
+          if (d.css) {
+            var style = document.createElement('style');
+            style.id = 'fs-palette-override';
+            style.textContent = d.css;
+            document.head.appendChild(style);
+          }
+        } else if (d.type === 'setFont') {
+          // swap Google Fonts link
+          var existing = document.getElementById('fs-font-override');
+          if (existing) existing.remove();
+          if (d.url) {
+            var link = document.createElement('link');
+            link.id = 'fs-font-override';
+            link.rel = 'stylesheet';
+            link.href = d.url;
+            document.head.appendChild(link);
+          }
+          // apply CSS variables
+          if (d.heading) document.documentElement.style.setProperty('--font-heading', d.heading);
+          if (d.body)    document.documentElement.style.setProperty('--font-body',    d.body);
+        }
+      });
+    })();
+  </script><link rel="stylesheet" href="/templates/wellness-holistic/_astro/about.BojgXXNN.css"></head> <body class="min-h-screen"> <!-- Navigation --> <nav class="fixed top-0 left-0 right-0 z-50 bg-cream/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-warm-200 dark:border-slate-800 transition-colors"> <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="flex items-center justify-between h-20"> <!-- Logo --> <a href="#" class="flex items-center gap-3"> <div class="w-10 h-10 bg-primary/10 dark:bg-primary/20 rounded-full flex items-center justify-center"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 text-primary" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M12 16.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 1 1 4.5 4.5 4.5 4.5 0 1 1-4.5 4.5"></path></g></svg> </div> <div> <span class="text-lg font-serif font-semibold text-slate-800 dark:text-white">Elena Rodriguez</span> <span class="hidden sm:inline text-sm text-slate-500 dark:text-slate-400 ml-2">ND</span> </div> </a> <!-- Desktop Navigation --> <div class="hidden lg:flex items-center gap-8"> <a href="#" class="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors text-sm"> Home </a><a href="#about" class="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors text-sm"> About </a><a href="#services" class="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors text-sm"> Services </a><a href="#philosophy" class="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors text-sm"> Philosophy </a><a href="#faq" class="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors text-sm"> FAQ </a><a href="#contact" class="text-slate-600 dark:text-slate-300 hover:text-primary transition-colors text-sm"> Contact </a> </div> <!-- CTA + Theme Toggle --> <div class="hidden md:flex items-center gap-4"> <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"> <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path> </svg> <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </button> <a href="#contact" class="px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-full hover:bg-primary-dark transition-colors">
+Book a Consultation
+</a> </div> <!-- Mobile Actions --> <div class="flex items-center gap-2 lg:hidden"> <button class="theme-toggle" id="theme-toggle-mobile" aria-label="Toggle dark mode"> <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path> </svg> <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </button> <button id="mobile-menu-btn" class="p-2 text-slate-700 dark:text-slate-300" aria-label="Toggle menu"> <svg class="w-6 h-6 icon-menu" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path> </svg> <svg class="w-6 h-6 icon-close hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </div> </div> </div> <!-- Mobile Menu --> <div id="mobile-menu" class="hidden lg:hidden bg-cream dark:bg-slate-900 border-t border-warm-200 dark:border-slate-800"> <div class="px-4 py-6 space-y-4"> <a href="#" class="block text-slate-600 dark:text-slate-300 hover:text-primary transition-colors"> Home </a><a href="#about" class="block text-slate-600 dark:text-slate-300 hover:text-primary transition-colors"> About </a><a href="#services" class="block text-slate-600 dark:text-slate-300 hover:text-primary transition-colors"> Services </a><a href="#philosophy" class="block text-slate-600 dark:text-slate-300 hover:text-primary transition-colors"> Philosophy </a><a href="#faq" class="block text-slate-600 dark:text-slate-300 hover:text-primary transition-colors"> FAQ </a><a href="#contact" class="block text-slate-600 dark:text-slate-300 hover:text-primary transition-colors"> Contact </a> <div class="pt-4 border-t border-warm-200 dark:border-slate-800 space-y-3"> <a href="#contact" class="block w-full text-center px-5 py-3 bg-primary text-white font-medium rounded-full">
+Book a Consultation
+</a> </div> </div> </div> </nav> <!-- Main Content --> <main>  <section class="relative overflow-hidden px-4 pb-24 pt-28 sm:px-6 lg:px-8"> <div class="absolute inset-0 bg-[linear-gradient(180deg,#fdfaf6_0%,#f7f3ee_100%)]"></div> <div class="absolute left-1/2 top-16 h-[34rem] w-[34rem] -translate-x-1/2 rounded-full blur-3xl" style="background: radial-gradient(circle, color-mix(in srgb, var(--color-primary) 22%, white) 0%, color-mix(in srgb, var(--color-accent) 18%, transparent) 46%, transparent 72%);"></div> <div class="relative mx-auto max-w-5xl text-center"> <div class="mx-auto mb-8 inline-flex items-center gap-3 rounded-full border px-5 py-2 text-sm font-medium backdrop-blur-xl" style="border-color: color-mix(in srgb, var(--color-primary) 18%, white); background: color-mix(in srgb, var(--color-surface) 72%, transparent); color: var(--color-text);"> <span class="h-2.5 w-2.5 rounded-full bg-[var(--color-accent)]"></span> <span>Certified Naturopath · 12 Years Practice · 1000+ Patients</span> </div> <div class="mx-auto mb-6 flex h-72 w-72 items-center justify-center rounded-full border border-white/55 bg-white/40 backdrop-blur-md sm:h-80 sm:w-80"> <div class="h-56 w-56 rounded-full" style="background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.92), color-mix(in srgb, var(--color-primary) 34%, white) 42%, color-mix(in srgb, var(--color-accent) 18%, transparent) 74%);"></div> </div> <h1 class="mx-auto max-w-4xl text-5xl leading-[1] text-[var(--color-text)] sm:text-6xl lg:text-7xl">Restore. Rebalance. Renew.</h1> <p class="mx-auto mt-6 max-w-3xl text-lg leading-8 text-[color:var(--color-text-muted)]">Holistic wellness programs integrating nutrition, mindfulness, and naturopathic medicine for whole-body health.</p> <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"> <a href="#contact" class="inline-flex items-center justify-center rounded-full px-7 py-4 text-sm font-semibold text-white shadow-lg shadow-black/10" style="background: var(--color-primary);">Begin Your Wellness Plan</a> <a href="#services" class="inline-flex items-center justify-center rounded-full border px-7 py-4 text-sm font-semibold" style="border-color: color-mix(in srgb, var(--color-accent) 32%, white); color: var(--color-text); background: color-mix(in srgb, var(--color-surface) 76%, transparent);">Explore Programs</a> </div> <div class="mt-12 flex flex-wrap items-center justify-center gap-4"> <div class="rounded-2xl border border-white/72 bg-white/72 px-5 py-5 text-left shadow-lg shadow-black/5 backdrop-blur-xl"> <div class="text-3xl text-[var(--color-text)]">1,000+</div> <div class="mt-1 text-sm text-[color:var(--color-text-muted)]">Patients Guided</div> </div><div class="rounded-2xl border border-white/72 bg-white/72 px-5 py-5 text-left shadow-lg shadow-black/5 backdrop-blur-xl"> <div class="text-3xl text-[var(--color-text)]">12 Years</div> <div class="mt-1 text-sm text-[color:var(--color-text-muted)]">Clinical Practice</div> </div><div class="rounded-2xl border border-white/72 bg-white/72 px-5 py-5 text-left shadow-lg shadow-black/5 backdrop-blur-xl"> <div class="text-3xl text-[var(--color-text)]">Whole-Body</div> <div class="mt-1 text-sm text-[color:var(--color-text-muted)]">Integrated Care</div> </div> </div> </div> </section> <section id="services" class="section-shell"> <div class="section-heading"> <span class="section-kicker">Services</span> <h2 class="section-title">Holistic Wellness Services</h2> <p class="section-copy">Comprehensive natural healthcare tailored to your unique needs. Each service supports your body&#39;s innate ability to heal.</p> </div> <div class="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3"> <article class="glass-card service-card p-6"> <div class="icon-chip"> <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" role="img">  <path d="M15.5 7.5c-.6-1.8.2-3.7 1.6-4.5-1.2-.2-2.9.7-3.7 1.9-.8 1.2-1.4 2.5-2.7 2.5-1.3 0-1.9-1.1-3.3-1.1-2.5 0-4.4 2.2-4.4 5.2 0 1.8.6 3.8 1.6 5.4 1 1.7 2.3 3.4 4 3.4 1.4 0 1.9-.9 3.6-.9s2.1.9 3.7.9c1.6 0 2.7-1.5 3.7-3.1.7-1.1 1.1-2.2 1.4-3.1-2.6-1-3.7-3.2-3.5-4.6Z"/><path d="M13.2 3.3c.8-1 1.2-2.1 1.1-3.3-1.2.1-2.5.8-3.3 1.7-.7.8-1.3 2-1.1 3.2 1.2.1 2.5-.6 3.3-1.6Z"/> </svg> </div> <h3 class="mt-5 text-xl font-semibold text-[var(--color-text)]">Nutritional Counseling</h3> <p class="mt-3 text-sm leading-7 text-[var(--color-text-muted)]">Custom meal plans and dietary strategies based on your unique biochemistry, food sensitivities, and health goals.</p> <div class="mt-5 inline-flex rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-[var(--color-text)]"> $175/session </div> </article><article class="glass-card service-card p-6"> <div class="icon-chip"> <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" role="img">  <path d="M7 11V5a1 1 0 0 1 2 0v5"/><path d="M11 11V4a1 1 0 0 1 2 0v7"/><path d="M15 11V6a1 1 0 0 1 2 0v8"/><path d="M5 11V8a1 1 0 0 1 2 0v7c0 3.3 2.7 6 6 6h1c2.8 0 5.2-1.9 5.8-4.6l1.1-4.4a1 1 0 0 0-1-1.2h-5"/> </svg> </div> <h3 class="mt-5 text-xl font-semibold text-[var(--color-text)]">Massage Therapy</h3> <p class="mt-3 text-sm leading-7 text-[var(--color-text-muted)]">Therapeutic deep tissue and Swedish massage to release tension, improve circulation, and promote deep relaxation.</p> <div class="mt-5 inline-flex rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-[var(--color-text)]"> $120/session </div> </article><article class="glass-card service-card p-6"> <div class="icon-chip"> <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" role="img">  <circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/> </svg> </div> <h3 class="mt-5 text-xl font-semibold text-[var(--color-text)]">Acupuncture</h3> <p class="mt-3 text-sm leading-7 text-[var(--color-text-muted)]">Traditional Chinese medicine techniques to restore energy flow, reduce pain, and support whole-body healing.</p> <div class="mt-5 inline-flex rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-[var(--color-text)]"> $150/session </div> </article><article class="glass-card service-card p-6"> <div class="icon-chip"> <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" role="img">  <circle cx="12" cy="12" r="2.2"/><path d="M12 4c2.4 0 3.5 1.6 3.5 3.2S14.3 10 12 10 8.5 8.8 8.5 7.2 9.6 4 12 4Z"/><path d="M12 14c2.4 0 3.5 1.6 3.5 3.2S14.3 20 12 20s-3.5-1.2-3.5-2.8S9.6 14 12 14Z"/><path d="M4 12c0-2.4 1.6-3.5 3.2-3.5S10 9.7 10 12s-1.2 3.5-2.8 3.5S4 14.4 4 12Z"/><path d="M14 12c0-2.4 1.6-3.5 3.2-3.5S20 9.7 20 12s-1.2 3.5-2.8 3.5S14 14.4 14 12Z"/> </svg> </div> <h3 class="mt-5 text-xl font-semibold text-[var(--color-text)]">Herbal Medicine</h3> <p class="mt-3 text-sm leading-7 text-[var(--color-text-muted)]">Custom herbal formulations using evidence-based botanicals to support your body&#39;s natural healing processes.</p> <div class="mt-5 inline-flex rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-[var(--color-text)]"> $125/consultation </div> </article><article class="glass-card service-card p-6"> <div class="icon-chip"> <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" role="img">  <path d="M9.5 3a3.5 3.5 0 0 0-3.3 4.7A3.5 3.5 0 0 0 6 14v1a3 3 0 0 0 3 3h.5"/><path d="M14.5 3a3.5 3.5 0 0 1 3.3 4.7A3.5 3.5 0 0 1 18 14v1a3 3 0 0 1-3 3h-.5"/><path d="M9.5 3V2"/><path d="M14.5 3V2"/><path d="M9.5 21v1"/><path d="M14.5 21v1"/><path d="M9 8a3 3 0 0 1 3 3v10"/><path d="M15 8a3 3 0 0 0-3 3"/> </svg> </div> <h3 class="mt-5 text-xl font-semibold text-[var(--color-text)]">Stress &amp; Mindfulness</h3> <p class="mt-3 text-sm leading-7 text-[var(--color-text-muted)]">Guided meditation, breathwork, and stress-reduction techniques for lasting calm and mental clarity.</p> <div class="mt-5 inline-flex rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-[var(--color-text)]"> $100/session </div> </article><article class="glass-card service-card p-6"> <div class="icon-chip"> <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" role="img">  <path d="M12 3 13.9 8.1 19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3Z"/><path d="m5 18 1 3 1-3 3-1-3-1-1-3-1 3-3 1 3 1Z"/><path d="m19 18 .7 2.1L22 21l-2.3.9L19 24l-.7-2.1L16 21l2.3-.9L19 18Z"/> </svg> </div> <h3 class="mt-5 text-xl font-semibold text-[var(--color-text)]">Wellness Programs</h3> <p class="mt-3 text-sm leading-7 text-[var(--color-text-muted)]">Comprehensive 8-week Holistic Reset program combining nutrition, movement, mindfulness, and accountability.</p> <div class="mt-5 inline-flex rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-[var(--color-text)]"> $899/program </div> </article> </div> </section> <section id="testimonials" class="section-shell"> <div class="section-heading"> <span class="section-kicker">Testimonials</span> <h2 class="section-title">Patient Stories</h2> <p class="section-copy">Hear from those who have experienced the transformative power of holistic wellness.</p> </div> <div class="mt-12 grid gap-6 lg:grid-cols-3"> <article class="glass-card p-6"> <div class="flex items-center justify-between gap-4"> <svg class="h-8 w-8 text-[var(--color-primary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" role="img">  <path d="M10 11H6a4 4 0 0 1 4-4"/><path d="M18 11h-4a4 4 0 0 1 4-4"/><path d="M10 11v4a2 2 0 0 1-2 2H6"/><path d="M18 11v4a2 2 0 0 1-2 2h-2"/> </svg> <span class="rounded-full bg-white/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--color-text)]"> Complete digestive transformation </span> </div> <p class="mt-6 text-base leading-8 text-[var(--color-text)]">"After years of digestive issues that no conventional doctor could solve, Dr. Rodriguez identified the root cause in our first visit. Six months later, my gut health is completely transformed."</p> <div class="mt-8 border-t border-white/15 pt-4"> <p class="text-sm font-semibold text-[var(--color-text)]">Amanda K.</p> <p class="mt-1 text-xs uppercase tracking-[0.22em] text-[var(--color-text-muted)]">Gut Health Patient</p> </div> </article><article class="glass-card p-6"> <div class="flex items-center justify-between gap-4"> <svg class="h-8 w-8 text-[var(--color-primary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" role="img">  <path d="M10 11H6a4 4 0 0 1 4-4"/><path d="M18 11h-4a4 4 0 0 1 4-4"/><path d="M10 11v4a2 2 0 0 1-2 2H6"/><path d="M18 11v4a2 2 0 0 1-2 2h-2"/> </svg> <span class="rounded-full bg-white/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--color-text)]"> Pain-free after 10 years </span> </div> <p class="mt-6 text-base leading-8 text-[var(--color-text)]">"The combination of acupuncture and herbal medicine finally gave me relief from chronic back pain I&#39;d been living with for a decade. Elena&#39;s integrative approach is truly remarkable."</p> <div class="mt-8 border-t border-white/15 pt-4"> <p class="text-sm font-semibold text-[var(--color-text)]">Robert S.</p> <p class="mt-1 text-xs uppercase tracking-[0.22em] text-[var(--color-text-muted)]">Chronic Pain Patient</p> </div> </article><article class="glass-card p-6"> <div class="flex items-center justify-between gap-4"> <svg class="h-8 w-8 text-[var(--color-primary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" role="img">  <path d="M10 11H6a4 4 0 0 1 4-4"/><path d="M18 11h-4a4 4 0 0 1 4-4"/><path d="M10 11v4a2 2 0 0 1-2 2H6"/><path d="M18 11v4a2 2 0 0 1-2 2h-2"/> </svg> <span class="rounded-full bg-white/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--color-text)]"> Complete energy restoration </span> </div> <p class="mt-6 text-base leading-8 text-[var(--color-text)]">"I came in exhausted and burned out. Through the wellness program, I discovered the nutritional deficiencies and lifestyle patterns draining my energy. I now wake up feeling vibrant every day."</p> <div class="mt-8 border-t border-white/15 pt-4"> <p class="text-sm font-semibold text-[var(--color-text)]">Jennifer L.</p> <p class="mt-1 text-xs uppercase tracking-[0.22em] text-[var(--color-text-muted)]">Wellness Program Graduate</p> </div> </article> </div> </section> <section id="contact" class="section-shell pb-20"> <div class="section-heading"> <span class="section-kicker">Contact</span> <h2 class="section-title">Begin your wellness consultation</h2> <p class="section-copy">Tell us what feels out of balance and what kind of support you are seeking. We will reply with availability and a thoughtful next step.</p> </div> <div class="mt-12 grid gap-6 lg:grid-cols-[0.88fr_1.12fr]"> <div class="space-y-6"> <article class="glass-card p-6"> <p class="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--color-primary)]">Reach Out</p> <div class="mt-5 space-y-4 text-sm text-[var(--color-text-muted)]">    </div> </article> <article class="glass-card p-6"> <p class="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--color-primary)]">Availability</p> <ul class="mt-5 space-y-3 text-sm text-[var(--color-text-muted)]"> <li class="flex items-start gap-3"> <svg class="mt-1 h-3.5 w-3.5 text-[var(--color-accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" role="img">  <path fill="currentColor" stroke="none" d="m12 2.6 2.8 5.8 6.4.9-4.6 4.5 1.1 6.4L12 17.2 6.3 20.2l1.1-6.4L2.8 9.3l6.4-.9L12 2.6Z"/> </svg> <span>Initial naturopathic consultations include in-depth intake and personalized care planning</span> </li><li class="flex items-start gap-3"> <svg class="mt-1 h-3.5 w-3.5 text-[var(--color-accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" role="img">  <path fill="currentColor" stroke="none" d="m12 2.6 2.8 5.8 6.4.9-4.6 4.5 1.1 6.4L12 17.2 6.3 20.2l1.1-6.4L2.8 9.3l6.4-.9L12 2.6Z"/> </svg> <span>Follow-up sessions are available in person and virtually where appropriate</span> </li><li class="flex items-start gap-3"> <svg class="mt-1 h-3.5 w-3.5 text-[var(--color-accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" role="img">  <path fill="currentColor" stroke="none" d="m12 2.6 2.8 5.8 6.4.9-4.6 4.5 1.1 6.4L12 17.2 6.3 20.2l1.1-6.4L2.8 9.3l6.4-.9L12 2.6Z"/> </svg> <span>Programs can combine nutrition, herbal support, and body-based care</span> </li> </ul> </article> <article class="glass-card p-6"> <p class="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--color-primary)]">Studio Hours</p> <ul class="mt-5 space-y-3 text-sm text-[var(--color-text-muted)]"> <li>Monday to Thursday: 9:00 AM to 6:00 PM</li><li>Friday: 9:00 AM to 2:00 PM</li><li>Weekends reserved for rest and select seasonal workshops</li> </ul>  </article> </div> <form class="glass-card grid gap-5 p-6"> <label class="grid gap-2 text-sm font-medium text-[var(--color-text)]"> <span>Full Name</span> <input type="text" name="name" class="glass-input" placeholder="Your name"> </label><label class="grid gap-2 text-sm font-medium text-[var(--color-text)]"> <span>Email</span> <input type="email" name="email" class="glass-input" placeholder="you@example.com"> </label><label class="grid gap-2 text-sm font-medium text-[var(--color-text)]"> <span>Phone</span> <input type="tel" name="phone" class="glass-input" placeholder="(503) 555-0142"> </label><label class="grid gap-2 text-sm font-medium text-[var(--color-text)]"> <span>Primary Wellness Goal</span> <input type="text" name="focus" class="glass-input" placeholder="Energy, digestion, hormones, stress, or another focus"> </label><label class="grid gap-2 text-sm font-medium text-[var(--color-text)]"> <span>What Would You Like Support With?</span> <textarea name="message" rows="5" class="glass-input min-h-[150px] resize-y" placeholder="Share current symptoms, goals, and anything important about your health history or schedule."></textarea> </label> <button type="submit" class="btn-primary justify-center">
+Send Inquiry
+<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" role="img">  <path d="M5 12h14"/><path d="m13 6 6 6-6 6"/> </svg> </button> </form> </div> </section>  </main> <!-- Footer --> <footer class="bg-sage-50 dark:bg-slate-950 border-t border-warm-200 dark:border-slate-800 transition-colors"> <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16"> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12"> <!-- Brand Column --> <div class="lg:col-span-2"> <a href="#" class="flex items-center gap-3 mb-6"> <div class="w-10 h-10 bg-primary/10 dark:bg-primary/20 rounded-full flex items-center justify-center"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 text-primary" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M12 16.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 1 1 4.5 4.5 4.5 4.5 0 1 1-4.5 4.5"></path></g></svg> </div> <div> <span class="text-lg font-serif font-semibold text-slate-800 dark:text-white">Elena Rodriguez</span> <span class="text-sm text-slate-500 dark:text-slate-400 ml-2">ND</span> </div> </a> <p class="text-slate-600 dark:text-slate-400 mb-6 max-w-sm">
+Holistic wellness rooted in science and guided by nature. Helping you restore balance and reclaim vitality through personalized naturopathic care.
+</p> <div class="flex gap-4"> <a href="#" class="w-10 h-10 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-primary hover:text-white transition-all shadow-sm"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5" aria-hidden="true"><path fill="currentColor" d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg> </a> <a href="#" class="w-10 h-10 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-primary hover:text-white transition-all shadow-sm"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></g></svg> </a> <a href="#" class="w-10 h-10 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-primary hover:text-white transition-all shadow-sm"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle></g></svg> </a> </div> </div> <!-- Quick Links --> <div> <h4 class="font-serif font-semibold text-slate-800 dark:text-white mb-4">Quick Links</h4> <ul class="space-y-3"> <li><a href="#about" class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">About</a></li> <li><a href="#services" class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">Services</a></li> <li><a href="#philosophy" class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">Philosophy</a></li> <li><a href="#faq" class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">FAQ</a></li> <li><a href="#contact" class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">Contact</a></li> </ul> </div> <!-- Contact Info --> <div> <h4 class="font-serif font-semibold text-slate-800 dark:text-white mb-4">Contact</h4> <ul class="space-y-3"> <li class="flex items-start gap-3"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 text-primary flex-shrink-0 mt-0.5" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></g></svg> <span class="text-slate-600 dark:text-slate-400">2847 NW Healing Way<br>Portland, OR 97210</span> </li> <li class="flex items-center gap-3"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 text-primary" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> <a href="tel:5035550142" class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">(503) 555-0142</a> </li> <li class="flex items-center gap-3"> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 text-primary" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></g></svg> <a href="mailto:elena@harmonywellness.com" class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors">elena@harmonywellness.com</a> </li> </ul> </div> </div> <div class="mt-12 pt-8 border-t border-warm-200 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4"> <p class="text-slate-500 dark:text-slate-500 text-sm">
+&copy; 2026 Elena Rodriguez. All rights reserved.
+</p> <div class="flex items-center gap-6 text-sm text-slate-500"> <a href="#" class="hover:text-primary transition-colors">Privacy Policy</a> <a href="#" class="hover:text-primary transition-colors">Terms of Service</a> </div> </div> </div> </footer> <script type="module">const t=new URLSearchParams(window.location.search),e=t.get("mode");e==="dark"?(document.documentElement.classList.add("dark"),localStorage.setItem("theme","dark")):e==="light"&&(document.documentElement.classList.remove("dark"),localStorage.setItem("theme","light"));</script> <div id="contact-form-config" data-action-url data-success-message="Thank you for reaching out! We'll be in touch within 24 hours." data-template-name="wellness-holistic" data-is-configured="false" data-is-dev="false" hidden></div> <script type="module" src="/templates/wellness-holistic/_astro/ContactScript.astro_astro_type_script_index_0_lang.BFkAZ3em.js"></script> <!-- ═══ Booking Modal (injected by FlowStarter) ═══ --> <div id="fs-booking-modal" class="fixed inset-0 z-[200] hidden items-center justify-center p-4" role="dialog" aria-modal="true"> <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="fs-booking-backdrop"></div> <div class="relative w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-2xl dark:bg-slate-900" style="max-height:90vh;overflow-y:auto;"> <!-- Progress bar --> <div class="h-1 bg-gray-100 dark:bg-slate-800"> <div id="fs-progress-bar" class="h-full bg-primary transition-all duration-500" style="width:25%"></div> </div> <!-- Header --> <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-slate-800"> <div> <p id="fs-modal-step-label" class="text-xs font-semibold uppercase tracking-widest text-primary mb-0.5">Step 1 of 3</p> <h2 id="fs-modal-title" class="text-xl font-bold text-slate-900 dark:text-white">Pick a Date</h2> </div> <button id="fs-booking-close" class="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:bg-gray-50 dark:border-slate-700 dark:hover:bg-slate-800 transition-colors" aria-label="Close"> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"></path></svg> </button> </div> <!-- Body --> <div class="px-6 py-6"> <!-- Step 1: Date --> <div id="fs-step-1"> <div id="fs-calendar-grid" class="grid grid-cols-7 gap-1.5 text-center text-sm"></div> </div> <!-- Step 2: Time --> <div id="fs-step-2" class="hidden"> <p id="fs-selected-date-label" class="mb-4 text-sm font-medium text-slate-500 dark:text-slate-400"></p> <div id="fs-time-grid" class="grid grid-cols-3 gap-2"></div> </div> <!-- Step 3: Details --> <div id="fs-step-3" class="hidden space-y-3"> <p id="fs-booking-summary" class="rounded-xl bg-gray-50 dark:bg-slate-800 px-4 py-3 text-sm text-slate-600 dark:text-slate-300"></p> <div> <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Full Name <span class="text-red-400">*</span></label> <input id="fs-name" type="text" placeholder="Your full name" autocomplete="name" class="w-full rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"> <p id="fs-err-name" class="hidden mt-1 text-xs text-red-500">Please enter your full name.</p> </div> <div> <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Email Address <span class="text-red-400">*</span></label> <input id="fs-email" type="email" placeholder="you@example.com" autocomplete="email" class="w-full rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"> <p id="fs-err-email" class="hidden mt-1 text-xs text-red-500">Please enter a valid email address.</p> </div> <div> <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Phone <span class="text-gray-400 font-normal">(optional)</span></label> <input id="fs-phone" type="tel" placeholder="+1 (555) 000-0000" autocomplete="tel" class="w-full rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"> <p id="fs-err-phone" class="hidden mt-1 text-xs text-red-500">Please enter a valid phone number.</p> </div> <div> <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Notes <span class="text-gray-400 font-normal">(optional)</span></label> <textarea id="fs-notes" rows="2" placeholder="Anything you'd like us to know..." class="w-full rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors resize-none"></textarea> </div> </div> <!-- Step 4: Confirmed --> <div id="fs-step-4" class="hidden text-center py-4"> <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30"> <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> </div> <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">You're Booked!</h3> <p id="fs-confirm-summary" class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-1"></p> <p class="text-slate-400 dark:text-slate-500 text-xs">A confirmation email has been sent to <span id="fs-confirm-email" class="font-semibold text-primary"></span></p> </div> </div> <!-- Footer --> <div id="fs-modal-footer" class="px-6 pb-6 flex gap-3"> <button id="fs-btn-back" class="hidden flex-1 rounded-xl border border-gray-200 dark:border-slate-700 px-4 py-3 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">Back</button> <button id="fs-btn-next" class="flex-1 btn-primary justify-center rounded-xl px-4 py-3 text-sm font-semibold transition-colors">Continue</button> </div> </div> </div> <script>
+    (function() {
+      var DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      var TIMES = ['9:00 AM','10:00 AM','11:00 AM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM'];
+      var UNAVAIL_DAYS = [0, 6]; // Sun, Sat
+      var step = 1, selectedDate = null, selectedTime = null;
+
+      function openModal() {
+        step = 1; selectedDate = null; selectedTime = null;
+        renderCalendar();
+        updateModal();
+        var m = document.getElementById('fs-booking-modal');
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeModal() {
+        var m = document.getElementById('fs-booking-modal');
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+        document.body.style.overflow = '';
+      }
+
+      function renderCalendar() {
+        var grid = document.getElementById('fs-calendar-grid');
+        if (!grid) return;
+        var today = new Date(); today.setHours(0,0,0,0);
+        var html = DAYS.map(function(d){ return '<div class="py-1 text-xs font-semibold text-slate-400 dark:text-slate-500">'+d+'</div>'; }).join('');
+        // start from Monday of current week
+        var start = new Date(today);
+        start.setDate(today.getDate() - today.getDay() + 1);
+        for (var i = 0; i < 21; i++) {
+          var d = new Date(start); d.setDate(start.getDate() + i);
+          var isPast = d < today;
+          var isUnavail = UNAVAIL_DAYS.indexOf(d.getDay()) !== -1 || isPast;
+          var isToday = d.toDateString() === today.toDateString();
+          var key = d.toISOString().split('T')[0];
+          var cls = 'cursor-pointer rounded-xl py-2 text-sm font-medium transition-all ';
+          if (isUnavail) cls += 'cursor-not-allowed text-gray-300 dark:text-slate-600';
+          else if (isToday) cls += 'bg-primary text-white shadow-md';
+          else cls += 'hover:bg-primary/10 dark:hover:bg-primary/20 text-slate-700 dark:text-slate-300';
+          html += '<button class="'+cls+'" '+(isUnavail?'disabled':'')+' data-date="'+key+'" data-label="'+DAYS[d.getDay()]+', '+MONTHS[d.getMonth()]+' '+d.getDate()+'">'+d.getDate()+'</button>';
+        }
+        grid.innerHTML = html;
+        grid.querySelectorAll('[data-date]').forEach(function(btn){
+          btn.addEventListener('click', function(){
+            selectedDate = { key: this.dataset.date, label: this.dataset.label };
+            step = 2; renderTimes(); updateModal();
+          });
+        });
+      }
+
+      function renderTimes() {
+        var grid = document.getElementById('fs-time-grid');
+        if (!grid) return;
+        var label = document.getElementById('fs-selected-date-label');
+        if (label && selectedDate) label.textContent = 'Available times for ' + selectedDate.label;
+        var html = TIMES.map(function(t, i){
+          var isBusy = [1,4].indexOf(i) !== -1;
+          if (isBusy) return '<button disabled class="rounded-xl border border-dashed border-gray-200 dark:border-slate-700 py-3 text-sm text-gray-300 dark:text-slate-600 cursor-not-allowed">'+t+'</button>';
+          return '<button class="rounded-xl border border-gray-200 dark:border-slate-700 py-3 text-sm font-medium text-slate-700 dark:text-slate-300 hover:border-primary hover:bg-primary/5 dark:hover:border-primary dark:hover:bg-primary/10 transition-all" data-time="'+t+'">'+t+'</button>';
+        }).join('');
+        grid.innerHTML = html;
+        grid.querySelectorAll('[data-time]').forEach(function(btn){
+          btn.addEventListener('click', function(){
+            grid.querySelectorAll('[data-time]').forEach(function(b){
+              b.classList.remove('border-primary','bg-primary/10','dark:bg-primary/20','font-bold');
+            });
+            this.classList.add('border-primary','bg-primary/10','font-bold');
+            selectedTime = this.dataset.time;
+          });
+        });
+      }
+
+      function updateModal() {
+        var titles = ['Pick a Date','Pick a Time','Your Details',''];
+        var labels = ['Step 1 of 3','Step 2 of 3','Step 3 of 3','Confirmed!'];
+        var progress = [25, 50, 75, 100];
+        document.getElementById('fs-modal-title').textContent = titles[step-1];
+        document.getElementById('fs-modal-step-label').textContent = labels[step-1];
+        document.getElementById('fs-progress-bar').style.width = progress[step-1] + '%';
+        ['fs-step-1','fs-step-2','fs-step-3','fs-step-4'].forEach(function(id, i){
+          document.getElementById(id).classList.toggle('hidden', i !== step-1);
+        });
+        var back = document.getElementById('fs-btn-back');
+        var next = document.getElementById('fs-btn-next');
+        var footer = document.getElementById('fs-modal-footer');
+        if (step === 4) { footer.classList.add('hidden'); return; }
+        footer.classList.remove('hidden');
+        back.classList.toggle('hidden', step === 1);
+        var nextLabels = ['','Continue','Confirm Booking',''];
+        next.textContent = nextLabels[step-1] || 'Continue';
+        if (step === 3) {
+          var sum = document.getElementById('fs-booking-summary');
+          if (sum && selectedDate && selectedTime) sum.textContent = '📅 ' + selectedDate.label + ' at ' + selectedTime;
+        }
+      }
+
+      function handleNext() {
+        if (step === 1) { if (!selectedDate) return; step = 2; renderTimes(); updateModal(); }
+        else if (step === 2) { if (!selectedTime) return; step = 3; updateModal(); }
+        else if (step === 3) {
+          var name  = document.getElementById('fs-name').value.trim();
+          var email = document.getElementById('fs-email').value.trim();
+          var phone = (document.getElementById('fs-phone') || {value:''}).value.trim();
+          var valid = true;
+          // helpers
+          function setErr(id, show) {
+            var el = document.getElementById(id);
+            if (el) { el.classList[show ? 'remove' : 'add']('hidden'); }
+          }
+          function setBorder(id, err) {
+            var el = document.getElementById(id);
+            if (el) {
+              el.style.borderColor = err ? '#ef4444' : '';
+              el.style.boxShadow  = err ? '0 0 0 2px rgba(239,68,68,0.2)' : '';
+            }
+          }
+          // clear previous errors
+          ['fs-err-name','fs-err-email','fs-err-phone'].forEach(function(id){ setErr(id, false); });
+          ['fs-name','fs-email','fs-phone'].forEach(function(id){ setBorder(id, false); });
+          // validate name
+          if (!name) { setErr('fs-err-name', true); setBorder('fs-name', true); valid = false; }
+          // validate email
+          var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+          if (!email || !emailOk) { setErr('fs-err-email', true); setBorder('fs-email', true); valid = false; }
+          // validate phone (optional but if filled must look like a phone)
+          if (phone && !/^[+\d][\d\s\-().]{6,}$/.test(phone)) { setErr('fs-err-phone', true); setBorder('fs-phone', true); valid = false; }
+          if (!valid) return;
+          // all good — show confirmation
+          document.getElementById('fs-confirm-summary').textContent = selectedDate.label + ' at ' + selectedTime;
+          document.getElementById('fs-confirm-email').textContent = email;
+          step = 4; updateModal();
+          setTimeout(closeModal, 4000);
+        }
+      }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('fs-booking-close')?.addEventListener('click', closeModal);
+        document.getElementById('fs-booking-backdrop')?.addEventListener('click', closeModal);
+        document.getElementById('fs-btn-next')?.addEventListener('click', handleNext);
+        document.getElementById('fs-btn-back')?.addEventListener('click', function(){
+          if (step > 1) { step--; if (step === 1) renderCalendar(); updateModal(); }
+        });
+
+        // Intercept booking CTA buttons (skip in iframe — nav links work normally there)
+        if (window.self === window.top) {
+          document.querySelectorAll('a.btn-primary, a.btn-outline, button.btn-primary').forEach(function(el){
+            var text = (el.textContent || '').toLowerCase();
+            if (text.match(/book|schedule|session|appointment|start|begin|trial/)) {
+              el.addEventListener('click', function(e){
+                e.preventDefault(); openModal();
+              });
+            }
+          });
+        }
+
+        // In preview iframe, wire explicit "Book" buttons to open modal
+        if (window.self !== window.top) {
+          document.querySelectorAll('[data-booking], .fs-book-btn').forEach(function(el){
+            el.addEventListener('click', function(e){ e.preventDefault(); openModal(); });
+          });
+        }
+      });
+    })();
+    </script> <!-- ═══ End Booking Modal ═══ --> </body></html>

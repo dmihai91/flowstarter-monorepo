@@ -62,9 +62,9 @@
   /* ── Landing page tokens ── */
   /* Page backgrounds */
   --landing-bg: #fafafa;
-  --landing-bg-tint: #f7f5ff;
-  --landing-dark-surface: #0a0a0c;
-  --landing-dark-surface-tint: #0d0d14;
+  --landing-bg-tint: rgba(124, 58, 237, 0.025);
+  --landing-dark-surface: #080810;
+  --landing-dark-surface-tint: rgba(124, 58, 237, 0.04);
 
   /* Hero gradient — base wash */
   --hero-wash-from: #ffffff;

@@ -50,32 +50,32 @@ export const LANDING_COPY = {
     headlineHighlight: 'We build yours.',
     subheadlineBold: '',
     subheadline:
-      'We build your site in days, hand you a smart editor, and you take it from there. No code, no agency, no waiting.',
-    primaryCta: "Let's talk",
-    secondaryCta: 'See what\'s included',
+      'We build your professional site, hand you a smart editor, and you never touch code. Most clients go live in 5–7 days.',
+    primaryCta: 'Book a free discovery call',
+    secondaryCta: 'See how it works',
     trustLine: 'For coaches, consultants, freelancers, and founders who want to show up like they mean it, without touching code.',
-    guarantee: '10 founding-rate spots open this month. 50% setup fee refundable within 30 days.',
+    guarantee: 'Spots are limited to 8 new projects per month. Most clients go live within a week.',
   },
   process: {
-    title: 'We do the work. You keep the control.',
+    title: 'Three steps. One week. A site you\'re proud of.',
     steps: [
       {
         number: '01',
-        title: 'We launch your foundation',
+        title: 'We talk for 45 minutes',
         description:
-          'We build your landing page, set up booking, structure your offer, and connect the essentials. You focus on your clients.',
+          'You book a free discovery call. We ask the right questions about your brand, your clients, and what you want your site to do. You don\'t need to prepare anything.',
       },
       {
         number: '02',
-        title: 'You take the wheel',
+        title: 'We build it',
         description:
-          'Log in to your dashboard. Update your site, track visitors, and manage bookings from one place. No tech skills required.',
+          'Our team picks the right template, writes the structure, and customises everything to your brand. You review one draft. We refine. That\'s it.',
       },
       {
         number: '03',
-        title: 'Keep improving as you grow',
+        title: 'You go live',
         description:
-          'Use our smart editor to sharpen copy, add sections, or adjust your offer. Your site evolves with you. No freelancer required.',
+          'Your site launches. You get access to our smart editor — update anything yourself in seconds, no code, no waiting on an agency. You\'re in control.',
       },
     ],
   },
@@ -269,12 +269,12 @@ export const LANDING_COPY = {
   audience: {
     title: 'This is for you if...',
     items: [
-      { icon: 'users', label: 'You\'re a coach, consultant, or therapist' },
-      { icon: 'briefcase', label: 'You\'re a freelancer or solo professional' },
-      { icon: 'store', label: 'You\'re a founder or small business owner' },
-      { icon: 'check', label: 'You hate your current site (or don\'t have one)' },
-      { icon: 'rocket', label: 'You want it done fast, without learning anything' },
-      { icon: 'mic', label: 'You want to look like the real deal from day one' },
+      { icon: 'clock', label: 'You\'ve been meaning to fix your website for months' },
+      { icon: 'puzzle', label: 'You tried DIY tools and hated every minute of it' },
+      { icon: 'mic', label: 'Your current site doesn\'t reflect how good you actually are' },
+      { icon: 'users', label: 'You want clients to find you, trust you, and reach out' },
+      { icon: 'rocket', label: 'You want it done fast, by someone who gets it' },
+      { icon: 'check', label: 'You\'re a coach, consultant, therapist, or solo pro' },
     ],
   },
   faq: {
@@ -317,10 +317,34 @@ export const LANDING_COPY = {
       },
     ],
   },
+  testimonials: {
+    title: 'What our clients say',
+    subtitle: '40+ sites launched. Average delivery 6 days. 4.9 / 5 client rating.',
+    items: [
+      {
+        quote: 'I had been meaning to fix my website for two years. Flowstarter had it live in five days. I already had three new clients reach out through it in the first month.',
+        name: 'Sophie M.',
+        role: 'Leadership Coach',
+        initials: 'SM',
+      },
+      {
+        quote: "I was skeptical — I'd tried Squarespace, Wix, hired a freelancer. None of it stuck. This was completely different. One call, one draft, done. My site finally looks like a real business.",
+        name: 'James R.',
+        role: 'Strategy Consultant',
+        initials: 'JR',
+      },
+      {
+        quote: "I'm not technical at all. The smart editor means I can update my site myself when I need to. I changed my pricing page last week in about two minutes.",
+        name: 'Lena K.',
+        role: 'Therapist & Wellbeing Coach',
+        initials: 'LK',
+      },
+    ],
+  },
   finalCta: {
-    headline: 'Your site could be live by next week.',
+    headline: 'Your next client is searching for someone like you.',
     body:
-      'Book a free discovery call. We\'ll map out your launch, recommend the right plan, and answer every question. Free. No pressure. No commitment.',
+      'Make sure they find you. One 45-minute call is all it takes. No commitment, no tech knowledge needed. Spots are limited to 8 new projects per month.',
     cta: 'Book a free discovery call',
   },
 };

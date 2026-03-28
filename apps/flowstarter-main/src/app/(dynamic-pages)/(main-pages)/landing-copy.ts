@@ -288,7 +288,7 @@ export const LANDING_COPY = {
       {
         question: 'Already have a site that isn\'t working for you?',
         answer:
-          'Flowstarter Relaunch is built for that. We audit your existing site, migrate your content into a production-ready template, and hand you back a site with a real structure. Pricing starts at €699 depending on complexity. Book a discovery call and we\'ll assess it together.',
+          'Flowstarter Relaunch is built for that. We audit your existing site, migrate your content into a production-ready template, and hand you back a site with a real structure. Pricing starts at €699 depending on complexity. Book a free discovery call and we\'ll assess it together.',
       },
       {
         question: 'How long does launch usually take?',
@@ -321,6 +321,6 @@ export const LANDING_COPY = {
     headline: 'Your site could be live by next week.',
     body:
       'Book a free discovery call. We\'ll map out your launch, recommend the right plan, and answer every question. Free. No pressure. No commitment.',
-    cta: 'Book a discovery call',
+    cta: 'Book a free discovery call',
   },
 };

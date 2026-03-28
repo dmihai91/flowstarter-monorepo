@@ -87,8 +87,12 @@ export default function TeamSecurityPage() {
     } catch (error: unknown) {
       const clerkError = error as { errors?: Array<{ code?: string }> };
       const code = clerkError?.errors?.[0]?.code ?? '';
-      if (code === 'session_step_up_required' || code === 'requires_recent_sign_in' || String(error).includes('additional verification')) {
+      const msg = String(clerkError?.errors?.[0]?.message ?? error);
+      if (code === 'session_step_up_required' || code === 'requires_recent_sign_in' || msg.includes('additional verification')) {
         setNeedsReverification(true);
+        setIsSettingUp(false);
+      } else if (msg.includes('not enabled') || code === 'feature_not_enabled_for_environment') {
+        setSetupError('Two-factor authentication is not enabled for this account. Contact your administrator.');
         setIsSettingUp(false);
       } else {
         console.error('Error starting TOTP setup:', error);

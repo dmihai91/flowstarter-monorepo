@@ -24,12 +24,6 @@ const OPTIONS = [
     price: '999€–1499€',
   },
   {
-    id: 'pro',
-    name: 'Pro',
-    desc: 'I need something custom',
-    price: '1999€+',
-  },
-  {
     id: 'unsure',
     name: 'Not sure yet',
     desc: 'Help me decide on the call',

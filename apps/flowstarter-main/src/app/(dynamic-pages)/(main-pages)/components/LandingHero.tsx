@@ -217,11 +217,8 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
 
       </div>
       {/* Bottom fade — blend into next section */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40"
-        style={{ background: 'linear-gradient(to bottom, transparent, var(--background, #ffffff))' }}
-      />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 hidden dark:block"
-        style={{ background: 'linear-gradient(to bottom, transparent, #0a0a0e)' }}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-48 hidden dark:block"
+        style={{ background: 'linear-gradient(to bottom, transparent 0%, #0a0a12 100%)' }}
       />
 
     </section>

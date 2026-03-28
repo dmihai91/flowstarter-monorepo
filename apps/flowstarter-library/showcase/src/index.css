@@ -194,8 +194,8 @@ html, body, header, footer, aside, main, nav {
   transition: all 0.2s ease;
 }
 .btn-ghost:hover {
-  border-color: color-mix(in srgb, var(--purple) 40%, transparent);
-  background: color-mix(in srgb, var(--purple) 6%, white);
+  border-color: color-mix(in srgb, var(--purple) 25%, transparent);
+  background: color-mix(in srgb, var(--purple) 4%, white);
   color: var(--purple);
 }
 .dark .btn-ghost {
@@ -204,8 +204,8 @@ html, body, header, footer, aside, main, nav {
   color: rgba(255,255,255,0.60);
 }
 .dark .btn-ghost:hover {
-  border-color: color-mix(in srgb, var(--purple) 50%, transparent);
-  background: color-mix(in srgb, var(--purple) 12%, transparent);
+  border-color: color-mix(in srgb, var(--purple) 35%, transparent);
+  background: color-mix(in srgb, var(--purple) 8%, transparent);
   color: rgba(255,255,255,0.90);
 }
 
@@ -246,7 +246,7 @@ html, body, header, footer, aside, main, nav {
 }
 .dark .template-card:hover {
   box-shadow: 0 20px 50px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.08) inset;
-  border-color: color-mix(in srgb, var(--purple) 40%, rgba(255,255,255,0.06));
+  border-color: color-mix(in srgb, var(--purple) 25%, rgba(255,255,255,0.06));
 }
 
 /* ── Hover reveal overlay ────────────────────────────────── */
@@ -377,9 +377,9 @@ html, body, header, footer, aside, main, nav {
   border: 1px solid var(--border-subtle);
 }
 .feature-tag--inactive:hover {
-  border-color: color-mix(in srgb, var(--purple) 35%, transparent);
+  border-color: color-mix(in srgb, var(--purple) 22%, transparent);
   color: var(--purple);
-  background: color-mix(in srgb, var(--purple) 6%, white);
+  background: color-mix(in srgb, var(--purple) 3%, white);
 }
 .dark .feature-tag--inactive {
   background: rgba(255,255,255,0.05);

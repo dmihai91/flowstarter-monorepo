@@ -43,7 +43,7 @@ function Card({
       <img
         src={`/thumbs/${t.slug}.png`}
         alt={t.name}
-        className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+        className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.06] dark:brightness-[0.72] dark:saturate-90 dark:contrast-[1.05]"
         loading="lazy"
       />
       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent pt-10 pb-3 px-4 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">

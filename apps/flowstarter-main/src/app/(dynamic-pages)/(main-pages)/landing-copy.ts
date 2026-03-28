@@ -267,14 +267,14 @@ export const LANDING_COPY = {
     ],
   },
   audience: {
-    title: 'Built for people who are serious about their business, not their website.',
+    title: 'This is for you if...',
     items: [
-      { icon: 'briefcase', label: 'Freelancers who want a site that gets them hired' },
-      { icon: 'mic', label: 'Creators building an audience and monetizing fast' },
-      { icon: 'users', label: 'Coaches and consultants launching or relaunching' },
-      { icon: 'store', label: 'Small businesses that need a clean professional presence' },
-      { icon: 'rocket', label: 'Founders testing a new idea without months of setup' },
-      { icon: 'check', label: 'Non-technical professionals who refuse to learn code' },
+      { icon: 'users', label: 'You\'re a coach, consultant, or therapist' },
+      { icon: 'briefcase', label: 'You need a site that wins clients, not a project' },
+      { icon: 'check', label: 'You don\'t want to touch code. Ever.' },
+      { icon: 'rocket', label: 'You want it live in days, not months' },
+      { icon: 'store', label: 'You\'re a freelancer, founder, or solo professional' },
+      { icon: 'mic', label: 'You want to look established from day one' },
     ],
   },
   faq: {

@@ -75,6 +75,9 @@ export default function LandingPage() {
 
         {/* 1. Hero — headline + paragraph + CTA + price pill */}
         <LandingHero onOpenModal={() => setModalOpen(true)} />
+
+        {/* 2. Audience — who this is for */}
+        <AudienceSection />
         <PreQualModal open={modalOpen} onClose={() => setModalOpen(false)} source="page" />
 
         {/* 2. Editor demo showcase */}
@@ -94,7 +97,6 @@ export default function LandingPage() {
         <DifferentiationSection />
 
         {/* 7. Who this is for */}
-        <AudienceSection />
 
         {/* 8. Everything you need — features */}
         <IncludedSection />

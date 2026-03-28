@@ -170,7 +170,7 @@ export const LANDING_COPY = {
     socialProof: 'Only 10 founding-rate spots available per month. Beta pricing is live now.',
     note:
       'No tech skills needed. No agency retainers. Full control after launch.',
-    relaunchNote: 'Already have a site that isn\'t working? Ask about Flowstarter Relaunch on your strategy call.',
+    relaunchNote: 'Already have a site that isn\'t working? Ask about Flowstarter Relaunch on your discovery call.',
     plans: [
       {
         name: 'STARTER',
@@ -198,7 +198,7 @@ export const LANDING_COPY = {
           'Content migration from your old site',
           'SEO redirect mapping',
           'Everything in Starter included',
-          'Complexity assessed on strategy call',
+          'Complexity assessed on discovery call',
         ],
         cta: 'Discuss your project',
         ctaVariant: 'outline',
@@ -288,7 +288,7 @@ export const LANDING_COPY = {
       {
         question: 'Already have a site that isn\'t working for you?',
         answer:
-          'Flowstarter Relaunch is built for that. We audit your existing site, migrate your content into a production-ready template, and hand you back a site with a real structure. Pricing starts at €699 depending on complexity. Book a strategy call and we\'ll assess it together.',
+          'Flowstarter Relaunch is built for that. We audit your existing site, migrate your content into a production-ready template, and hand you back a site with a real structure. Pricing starts at €699 depending on complexity. Book a discovery call and we\'ll assess it together.',
       },
       {
         question: 'How long does launch usually take?',
@@ -320,7 +320,7 @@ export const LANDING_COPY = {
   finalCta: {
     headline: 'Your site could be live by next week.',
     body:
-      'Book a free 45-minute strategy call. We\'ll map out your launch, recommend the right plan, and answer every question. Free. No pressure. No commitment.',
-    cta: 'Book your free call, spots are limited',
+      'Book a free discovery call. We\'ll map out your launch, recommend the right plan, and answer every question. Free. No pressure. No commitment.',
+    cta: 'Book a discovery call',
   },
 };

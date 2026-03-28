@@ -85,7 +85,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
           {[
             { value: '~1 week', label: 'avg. delivery' },
             { value: 'Zero', label: 'skills needed' },
-            { value: '30-day', label: 'money-back' },
+            { value: '30-day trial', label: 'partial refund if not happy' },
           ].map((s, i) => (
             <div key={i} className="text-center">
               <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{s.value}</p>

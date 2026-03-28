@@ -46,7 +46,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   ];
 
   return (
-    <section className="relative overflow-hidden pt-20 sm:pt-24 pb-6 sm:pb-14">
+    <section className="relative overflow-hidden pt-32 sm:pt-28 pb-6 sm:pb-14">
       <FlowBackground variant="landing" style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
 
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-10">

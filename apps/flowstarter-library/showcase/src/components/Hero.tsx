@@ -29,10 +29,10 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
         <div className="flex items-center gap-10 lg:gap-16">
 
           {/* ── Left: content ── */}
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 flex flex-col items-center lg:items-start text-center lg:text-left">
 
             {/* Label */}
-            <div className="flex items-center gap-3 mb-6 hero-fade hero-fade-1">
+            <div className="flex items-center justify-center lg:justify-start gap-3 mb-6 hero-fade hero-fade-1">
               <div className="h-px w-5" style={{ background: 'var(--purple-primary)', opacity: 0.7 }} />
               <span className="text-[0.6rem] font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--purple-primary)' }}>
                 Handcrafted templates
@@ -63,7 +63,7 @@ export function Hero({ templateCount, searchQuery, setSearchQuery }: HeroProps):
             </p>
 
             {/* Stats */}
-            <div className="flex items-center gap-6 sm:gap-8 hero-fade hero-fade-4">
+            <div className="flex items-center justify-center lg:justify-start gap-6 sm:gap-8 hero-fade hero-fade-4">
               {stats.map((s, i) => (
                 <React.Fragment key={i}>
                   <div>

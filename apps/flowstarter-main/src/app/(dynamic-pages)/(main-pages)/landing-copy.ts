@@ -51,7 +51,7 @@ export const LANDING_COPY = {
     subheadlineBold: '',
     subheadline:
       'We build your site in days, hand you a smart editor, and you take it from there. No code, no agency, no waiting.',
-    primaryCta: 'Book your free call',
+    primaryCta: "Let's talk",
     secondaryCta: 'See what\'s included',
     trustLine: 'For coaches, consultants, freelancers, and founders who want to show up like they mean it, without touching code.',
     guarantee: '10 founding-rate spots open this month. 50% setup fee refundable within 30 days.',

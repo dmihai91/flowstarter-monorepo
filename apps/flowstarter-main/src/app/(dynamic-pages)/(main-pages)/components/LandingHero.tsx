@@ -108,12 +108,12 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
             className="h-px w-8"
             style={{ background: 'linear-gradient(to right, transparent, rgba(124,58,237,0.7))' }}
           />
-          <span className="text-xs sm:text-sm font-bold tracking-[0.15em] uppercase px-4 py-1.5 rounded-full"
+          <span
+            className="text-xs sm:text-sm font-bold tracking-[0.15em] uppercase px-4 py-1.5 rounded-full text-[var(--purple-primary)] dark:text-[rgba(167,139,250,1)]"
             style={{
-              background: 'linear-gradient(135deg, rgba(124,58,237,0.22), rgba(99,102,241,0.15))',
-              border: '1.5px solid rgba(124,58,237,0.45)',
-              color: 'rgba(167,139,250,1)',
-              boxShadow: '0 0 16px rgba(124,58,237,0.25)',
+              background: 'linear-gradient(135deg, rgba(124,58,237,0.12), rgba(99,102,241,0.08))',
+              border: '1.5px solid rgba(124,58,237,0.35)',
+              boxShadow: '0 0 16px rgba(124,58,237,0.18)',
               animation: 'badgeGlow 2.8s ease-in-out infinite',
             }}
           >

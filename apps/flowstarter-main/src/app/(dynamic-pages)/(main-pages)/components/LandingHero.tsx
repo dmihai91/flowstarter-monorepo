@@ -46,7 +46,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   ];
 
   return (
-    <section className="relative overflow-hidden pt-16 sm:pt-24 pb-6 sm:pb-14">
+    <section className="relative overflow-hidden pt-20 sm:pt-24 pb-6 sm:pb-14">
       <FlowBackground variant="landing" style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
 
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-10">
@@ -62,7 +62,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
 
         {/* Headline */}
         <div style={fade('0.1s')} className="text-center mb-5 sm:mb-6">
-          <h1 className="leading-[1.1] tracking-tight text-gray-900 dark:text-white">
+          <h1 className="leading-[1.15] tracking-tight text-gray-900 dark:text-white">
             <span
               className="block font-light"
               style={{ fontSize: 'clamp(2rem, 5vw, 3.8rem)' }}

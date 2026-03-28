@@ -76,7 +76,7 @@ export function TemplateCard({ template, darkMode, onPreview }: TemplateCardProp
   }, [template.palettes, template.color]);
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-200/60 bg-white/95 shadow-[0_8px_32px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-[2px] hover:border-purple-500/20 hover:shadow-[0_12px_40px_rgba(0,0,0,0.1)] dark:border-white/10 dark:bg-white/[0.04] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] dark:hover:border-purple-500/30 dark:hover:shadow-[0_12px_40px_rgba(124,58,237,0.15)]">
+    <div className="card-enter group relative flex flex-col overflow-hidden rounded-2xl border border-gray-200/60 bg-white/95 shadow-[0_8px_32px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-[4px] hover:border-purple-500/30 hover:shadow-[0_20px_50px_rgba(0,0,0,0.12),0_0_0_1px_rgba(124,58,237,0.1)] dark:border-white/10 dark:bg-white/[0.04] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] dark:hover:border-purple-500/40 dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.4),0_0_0_1px_rgba(124,58,237,0.15)]">
 
       {/* Thumbnail — full bleed, no padding */}
       <div className="relative w-full overflow-hidden bg-neutral-100 dark:bg-neutral-800" style={{ aspectRatio: '16/10' }}>

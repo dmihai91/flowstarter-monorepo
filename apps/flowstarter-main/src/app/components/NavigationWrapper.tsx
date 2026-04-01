@@ -36,8 +36,10 @@ const noNavbarRoutes = [
   '/about',
   '/privacy',
   '/terms',
-  '/cookies',
   '/pricing',
+  '/cookies',
+  '/privacy',
+  '/terms',
 ];
 
 export function NavigationWrapper() {

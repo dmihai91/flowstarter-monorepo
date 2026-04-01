@@ -45,17 +45,17 @@ export default function CookiePolicyPage() {
   return (
     <PublicPageLayout>
       {/* Content */}
-      <main className="relative z-10 max-w-4xl mx-auto px-6 pt-28 pb-16">
+      <main className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-16 overflow-hidden">
           {/* Hero */}
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium mb-6">
               <Cookie className="w-4 h-4" />
               {t('cookies.badge')}
             </div>
-            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
               {t('cookies.title')}
             </h1>
-            <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl mx-auto mb-4">
+            <p className="text-base sm:text-lg text-gray-500 dark:text-white/50 max-w-lg mx-auto mb-4 px-2">
               {t('cookies.description')}
             </p>
             <p className="text-sm text-gray-400 dark:text-white/30">

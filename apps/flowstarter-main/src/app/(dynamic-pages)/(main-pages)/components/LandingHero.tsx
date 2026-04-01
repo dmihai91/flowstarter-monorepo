@@ -24,7 +24,30 @@ function useCountUp(target: number, duration: number = 1200, start: boolean = fa
 
 export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   const [ready] = useState(true);
+  const [useSimpleHeadlineAnimation, setUseSimpleHeadlineAnimation] = useState(false);
   const hero = LANDING_COPY.hero;
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const mediaQuery = window.matchMedia(
+      '(hover: none), (pointer: coarse), (prefers-reduced-motion: reduce)'
+    );
+
+    const updateHeadlineMode = () => {
+      setUseSimpleHeadlineAnimation(mediaQuery.matches);
+    };
+
+    updateHeadlineMode();
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', updateHeadlineMode);
+      return () => mediaQuery.removeEventListener('change', updateHeadlineMode);
+    }
+
+    mediaQuery.addListener(updateHeadlineMode);
+    return () => mediaQuery.removeListener(updateHeadlineMode);
+  }, []);
 
   const fade = (delay: string) => ({
     opacity: ready ? 1 : 0,
@@ -38,17 +61,19 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   const deliveryValue = displayDelivery <= 7 ? '5–7' : `${displayDelivery}`;
   const skillsCount = useCountUp(0, 600, statsStarted);
   const trialCount = useCountUp(30, 1000, statsStarted);
+  const integrationsCount = useCountUp(4, 800, statsStarted);
 
   const stats = [
     { value: deliveryValue, suffix: ' days', label: 'avg. delivery' },
     { value: `${skillsCount}`, suffix: '', label: 'coding skills needed' },
-    { value: `${trialCount}`, suffix: '-day trial', label: 'money-back guarantee' },
+    { value: `${trialCount}`, suffix: '-days', label: 'free trial' },
+    { value: `${integrationsCount}`, suffix: '+', label: 'integrations included' },
   ];
 
   const prefixWords = hero.headlinePrefix.split(' ');
 
   return (
-    <section className="relative overflow-hidden pt-24 sm:pt-28 pb-6 sm:pb-14">
+    <section className="relative overflow-hidden pt-24 sm:pt-28 md:pt-16 tablet:pt-18 lg:pt-28 pb-6 sm:pb-14">
       <FlowBackground variant="landing" style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
 
       {/* Top-center gradient crown */}
@@ -103,13 +128,13 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-10">
 
         {/* Label */}
-        <div style={fade('0s')} className="flex items-center justify-center mb-8 sm:mb-10">
+        <div style={fade('0s')} className="flex items-center justify-center mb-8 sm:mb-10 md:mb-6 tablet:mb-7 lg:mb-10">
           <div
             className="hero-badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[var(--purple)] dark:text-white"
             style={{
-              background: 'linear-gradient(135deg, rgba(124,58,237,0.10), rgba(99,102,241,0.07))',
-              border: '1.5px solid rgba(124,58,237,0.30)',
-              boxShadow: '0 0 10px rgba(124,58,237,0.12)',
+              background: 'linear-gradient(135deg, rgba(124,58,237,0.18), rgba(99,102,241,0.13))',
+              border: '1.5px solid rgba(124,58,237,0.55)',
+              boxShadow: '0 0 14px rgba(124,58,237,0.22), inset 0 0 0 1px rgba(255,255,255,0.6)',
             }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)] dark:bg-violet-400 shrink-0" />
@@ -131,11 +156,12 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
                   className="inline-block"
                   style={{
                     animationName: 'wordReveal',
-                    animationDuration: '0.6s',
+                    animationDuration: useSimpleHeadlineAnimation ? '0.45s' : '0.6s',
                     animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
                     animationFillMode: 'both',
                     animationDelay: `${0.15 + i * 0.07}s`,
                     marginRight: '0.25em',
+                    filter: useSimpleHeadlineAnimation ? 'none' : undefined,
                   }}
                 >
                   {word}
@@ -148,11 +174,14 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
               style={{
                 fontSize: 'clamp(2.4rem, 6vw, 4.5rem)',
                 background: 'linear-gradient(135deg, var(--purple) 0%, #8B5CF6 100%)',
+                backgroundSize: useSimpleHeadlineAnimation ? '100% 100%' : '200% 200%',
                 WebkitBackgroundClip: 'text',
                 backgroundClip: 'text',
                 color: 'transparent',
                 WebkitTextFillColor: 'transparent',
-                animation: `wordReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) both ${0.15 + prefixWords.length * 0.07}s, textFlow 6s ease infinite ${0.85 + prefixWords.length * 0.07}s`,
+                animation: useSimpleHeadlineAnimation
+                  ? `wordReveal 0.45s cubic-bezier(0.16, 1, 0.3, 1) both ${0.15 + prefixWords.length * 0.07}s`
+                  : `wordReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) both ${0.15 + prefixWords.length * 0.07}s, textFlow 6s ease infinite ${0.85 + prefixWords.length * 0.07}s`,
               }}
             >
               {hero.headlineHighlight}
@@ -185,7 +214,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
           <Button
             variant="brand-gradient"
             onClick={() => onOpenModal?.()}
-            className="relative overflow-hidden bg-[length:200%_100%] animate-[shimmerBtn_3s_ease-in-out_infinite] px-7 h-11 text-sm sm:text-base font-semibold rounded-2xl shadow-[0_4px_24px_rgba(124,58,237,0.3)] hover:shadow-[0_6px_32px_rgba(124,58,237,0.45)] hover:scale-[1.02] active:scale-[0.98] group"
+            className="relative overflow-hidden bg-[length:200%_100%] animate-[shimmerBtn_3s_ease-in-out_infinite] px-9 h-13 text-base sm:text-lg font-semibold rounded-2xl shadow-[0_4px_24px_rgba(124,58,237,0.3)] hover:shadow-[0_6px_32px_rgba(124,58,237,0.45)] hover:scale-[1.02] active:scale-[0.98] group"
           >
             {hero.primaryCta}
             <svg className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>

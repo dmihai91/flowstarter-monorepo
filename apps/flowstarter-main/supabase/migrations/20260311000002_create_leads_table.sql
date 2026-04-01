@@ -38,9 +38,7 @@ ALTER TABLE leads ENABLE ROW LEVEL SECURITY;
 -- Team members can read leads for their projects
 CREATE POLICY leads_select_policy ON leads FOR SELECT
   USING (project_id IN (
-    SELECT id FROM projects WHERE team_id IN (
-      SELECT team_id FROM team_members WHERE user_id = auth.uid()
-    )
+    SELECT id FROM projects WHERE user_id = (SELECT current_setting('request.jwt.claims', true)::json->>'sub')
   ));
 
 -- Only service role can insert (from API)

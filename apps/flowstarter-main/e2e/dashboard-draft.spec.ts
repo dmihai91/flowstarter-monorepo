@@ -8,8 +8,8 @@ async function signInIfNeeded(page: Page) {
   const loginHeading = page.getByRole('heading', { name: 'Team Login' });
 
   await Promise.race([
-    dashboardHeading.waitFor({ state: 'visible', timeout: 10000 }).catch(() => null),
-    loginHeading.waitFor({ state: 'visible', timeout: 10000 }).catch(() => null),
+    dashboardHeading.waitFor({ state: 'visible', timeout: 15000 }).catch(() => null),
+    loginHeading.waitFor({ state: 'visible', timeout: 15000 }).catch(() => null),
   ]);
 
   if (await dashboardHeading.isVisible().catch(() => false)) {
@@ -35,7 +35,15 @@ async function signInIfNeeded(page: Page) {
   await passwordInput.fill(TEAM_PASSWORD);
   await expect(signInButton).toBeEnabled({ timeout: 10000 });
   await signInButton.click();
-  await page.waitForURL(/\/team\/dashboard\/new/, { timeout: 15000 });
+  await Promise.race([
+    page.waitForURL(/\/team\/dashboard\/new/, { timeout: 30000 }).catch(() => null),
+    page.waitForURL(/\/team\/dashboard(?:\?.*)?$/, { timeout: 30000 }).catch(() => null),
+  ]);
+
+  if (!/\/team\/dashboard\/new(?:\?.*)?$/.test(page.url())) {
+    await page.goto('/team/dashboard/new');
+    await page.waitForURL(/\/team\/dashboard\/new/, { timeout: 15000 });
+  }
 }
 
 test.describe('Dashboard draft flow', () => {

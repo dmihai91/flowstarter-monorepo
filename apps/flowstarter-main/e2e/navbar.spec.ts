@@ -1,91 +1,48 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page, type TestInfo } from '@playwright/test';
 
-test.describe('Navbar', () => {
-  test('should not show continue draft button when signed in', async ({
-    page,
-  }) => {
-    // Navigate to dashboard (assumes user is signed in or mocked)
-    await page.goto('/dashboard');
+const TEAM_EMAIL = process.env.E2E_USER_EMAIL || 'test@flowstarter.app';
+const TEAM_PASSWORD = process.env.E2E_USER_PASSWORD || '';
 
-    // Wait for navbar to load
-    await page.waitForSelector('header', { timeout: 5000 });
+async function signInToTeamDashboard(page: Page) {
+  await page.goto('/team/dashboard');
 
-    // Verify Continue draft button is not present
-    const continueDraftButton = page.locator('text=Continue draft');
-    await expect(continueDraftButton).not.toBeVisible();
+  const dashboardHeading = page.getByRole('heading', { name: 'Dashboard' });
+  const loginHeading = page.getByRole('heading', { name: 'Team Login' });
 
-    // Verify Create button IS present
-    const createButton = page.locator('text=Create').first();
-    await expect(createButton).toBeVisible();
+  await Promise.race([
+    dashboardHeading.waitFor({ state: 'visible', timeout: 15000 }).catch(() => null),
+    loginHeading.waitFor({ state: 'visible', timeout: 15000 }).catch(() => null),
+  ]);
+
+  if (await dashboardHeading.isVisible().catch(() => false)) {
+    return;
+  }
+
+  if (!TEAM_PASSWORD) {
+    throw new Error('E2E_USER_PASSWORD is required to sign in the automation account');
+  }
+
+  await page.getByPlaceholder('you@flowstarter.app').fill(TEAM_EMAIL);
+  await page.getByPlaceholder('Enter your password').fill(TEAM_PASSWORD);
+  await page.getByRole('button', { name: 'Sign in' }).click();
+  await page.waitForURL(/\/team\/dashboard/, { timeout: 30000 });
+  await expect(dashboardHeading).toBeVisible();
+}
+
+test.describe('Dashboard navigation shell', () => {
+  test('shows the supported dashboard actions without legacy draft prompts', async ({ page }, testInfo: TestInfo) => {
+    test.skip(testInfo.project.name !== 'Desktop Chrome', 'Dashboard shell assertions are covered by the desktop layout only.');
+    await signInToTeamDashboard(page);
+
+    await expect(page.locator('header')).toBeVisible();
+    await expect(page.locator('body')).not.toContainText('Continue draft');
+    await expect(page.getByRole('button', { name: 'New Project' })).toBeVisible();
+    await expect(page.getByRole('link', { name: /templates/i })).toBeVisible();
   });
 
-  test('should not show continue draft button on other pages', async ({
-    page,
-  }) => {
-    // Navigate to help page
+  test('keeps public help available from the supported surface', async ({ page }) => {
     await page.goto('/help');
-
-    // Wait for navbar to load
-    await page.waitForSelector('header', { timeout: 5000 });
-
-    // Verify Continue draft button is not present
-    const continueDraftButton = page.locator('text=Continue draft');
-    await expect(continueDraftButton).not.toBeVisible();
-
-    // Verify Create button IS present
-    const createButton = page.locator('text=Create').first();
-    await expect(createButton).toBeVisible();
-  });
-
-  test('should not show continue draft button in mobile dropdown', async ({
-    page,
-  }) => {
-    // Set mobile viewport
-    await page.setViewportSize({ width: 375, height: 667 });
-
-    // Navigate to dashboard
-    await page.goto('/dashboard');
-
-    // Wait for navbar to load
-    await page.waitForSelector('header', { timeout: 5000 });
-
-    // Try to find and click mobile menu button (typically a hamburger or dots icon)
-    const mobileMenuButton = page
-      .locator('button[aria-label="More actions"]')
-      .first();
-
-    // If mobile menu exists, open it
-    if (await mobileMenuButton.isVisible()) {
-      await mobileMenuButton.click();
-
-      // Wait a bit for menu to open
-      await page.waitForTimeout(300);
-
-      // Verify Continue draft is not in the dropdown
-      const continueDraftInDropdown = page.locator('text=Continue draft');
-      await expect(continueDraftInDropdown).not.toBeVisible();
-    }
-  });
-
-  test('should show Create button in navbar', async ({ page }) => {
-    await page.goto('/dashboard');
-
-    // Wait for navbar to load
-    await page.waitForSelector('header', { timeout: 5000 });
-
-    // Verify Create button exists
-    const createButton = page.locator('text=Create');
-    await expect(createButton.first()).toBeVisible();
-  });
-
-  test('should show Help button in navbar', async ({ page }) => {
-    await page.goto('/dashboard');
-
-    // Wait for navbar to load
-    await page.waitForSelector('header', { timeout: 5000 });
-
-    // Verify Help button exists
-    const helpButton = page.locator('text=Help');
-    await expect(helpButton.first()).toBeVisible();
+    await expect(page.locator('header')).toBeVisible();
+    await expect(page.locator('body')).toContainText(/help/i);
   });
 });

@@ -1,0 +1,131 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Brand tokens ─────────────────────────────────────────── */
+:root {
+  --purple: #4338CA;
+  --violet: #8B5CF6;
+  --accent: #4D5DD9;
+
+  /* Light mode design tokens */
+  --ui-bg-base:     #f8f8fa;
+  --ui-bg-subtle:   #f0f0f4;
+  --ui-bg-elevated: #e8e8ef;
+  --ui-bg-card:     rgba(255, 255, 255, 0.85);
+
+  --ui-border-base:   rgba(0, 0, 0, 0.09);
+  --ui-border-strong: rgba(0, 0, 0, 0.16);
+  --ui-border-focus:  #4d5dd9;
+
+  --ui-text-primary:   #09090b;
+  --ui-text-secondary: #3f3f46;
+  --ui-text-tertiary:  #71717a;
+
+  --ui-accent-purple: #8B5CF6;
+  --ui-accent-blue:   #3B82F6;
+  --ui-accent-green:  #10B981;
+  --ui-accent-orange: #F59E0B;
+
+  /* Glass — light */
+  --glass-surface:          rgba(255, 255, 255, 0.80);
+  --glass-border-highlight: rgba(255, 255, 255, 0.90);
+  --glass-border-shadow:    rgba(0, 0, 0, 0.07);
+  --glass-shadow:           0 0 0 1px rgba(0,0,0,0.05) inset, 0 8px 32px rgba(0,0,0,0.07);
+
+  --input-bg:         rgba(0, 0, 0, 0.04);
+  --input-border:     rgba(0, 0, 0, 0.10);
+  --input-text:       #09090b;
+  --input-placeholder: rgba(0, 0, 0, 0.30);
+  --input-focus-ring: rgba(77, 93, 217, 0.25);
+
+  --header-bg:        rgba(248, 248, 250, 0.92);
+  --header-border:    rgba(0, 0, 0, 0.07);
+}
+
+/* ── Dark mode ─────────────────────────────────────────────── */
+.dark {
+  --ui-bg-base:     #0a0810;
+  --ui-bg-subtle:   #100e18;
+  --ui-bg-elevated: #18161f;
+  --ui-bg-card:     rgba(255, 255, 255, 0.04);
+
+  --ui-border-base:   rgba(255, 255, 255, 0.08);
+  --ui-border-strong: rgba(255, 255, 255, 0.14);
+  --ui-border-focus:  #4d5dd9;
+
+  --ui-text-primary:   #fafafa;
+  --ui-text-secondary: #d4d4d8;
+  --ui-text-tertiary:  #a1a1aa;
+
+  --glass-surface:          rgba(255, 255, 255, 0.04);
+  --glass-border-highlight: rgba(255, 255, 255, 0.08);
+  --glass-border-shadow:    rgba(0, 0, 0, 0.40);
+  --glass-shadow:           0 0 0 1px rgba(255,255,255,0.05) inset, 0 8px 32px rgba(0,0,0,0.30);
+
+  --input-bg:          rgba(255, 255, 255, 0.06);
+  --input-border:      rgba(255, 255, 255, 0.10);
+  --input-text:        #fafafa;
+  --input-placeholder: rgba(255, 255, 255, 0.25);
+  --input-focus-ring:  rgba(77, 93, 217, 0.35);
+
+  --header-bg:         rgba(7, 7, 10, 0.90);
+  --header-border:     rgba(255, 255, 255, 0.06);
+}
+
+/* Fallback: system theme via media query (no JS class applied) */
+@media (prefers-color-scheme: dark) {
+  .system-theme {
+    --ui-bg-base:     #0a0810;
+    --ui-bg-subtle:   #100e18;
+    --ui-bg-elevated: #18161f;
+    --ui-bg-card:     rgba(255, 255, 255, 0.04);
+    --ui-border-base:   rgba(255, 255, 255, 0.08);
+    --ui-border-strong: rgba(255, 255, 255, 0.14);
+    --ui-text-primary:   #fafafa;
+    --ui-text-secondary: #d4d4d8;
+    --ui-text-tertiary:  #a1a1aa;
+    --glass-surface:     rgba(255, 255, 255, 0.04);
+    --input-bg:          rgba(255, 255, 255, 0.06);
+    --input-border:      rgba(255, 255, 255, 0.10);
+    --input-text:        #fafafa;
+    --input-placeholder: rgba(255, 255, 255, 0.25);
+    --header-bg:         rgba(7, 7, 10, 0.90);
+    --header-border:     rgba(255, 255, 255, 0.06);
+  }
+}
+
+/* ── Base ──────────────────────────────────────────────────── */
+body {
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  background-color: var(--ui-bg-base);
+  color: var(--ui-text-primary);
+}
+
+/* ── Auth form inputs — adaptive ───────────────────────────── */
+.fs-input {
+  width: 100%;
+  height: 2.75rem;
+  border-radius: 0.75rem;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  padding: 0 0.875rem;
+  font-size: 0.875rem;
+  color: var(--input-text);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+}
+.fs-input::placeholder {
+  color: var(--input-placeholder);
+}
+.fs-input:focus {
+  border-color: var(--ui-border-focus);
+  box-shadow: 0 0 0 3px var(--input-focus-ring);
+}
+/* No ugly gray when the SSO redirect is in flight */
+.fs-input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: var(--input-bg);
+  color: var(--input-text);
+}

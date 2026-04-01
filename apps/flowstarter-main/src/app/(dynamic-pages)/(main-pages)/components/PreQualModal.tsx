@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { EXTERNAL_URLS } from '@/lib/constants';
+import { CalendlyEmbed } from './CalendlyEmbed';
 
 const OPTIONS = [
   {
@@ -32,48 +33,78 @@ const OPTIONS = [
 ] as const;
 
 type OptionId = (typeof OPTIONS)[number]['id'];
+type Step = 'select' | 'calendar' | 'confirmed';
 
 interface PreQualModalProps {
   open: boolean;
   onClose: () => void;
   source?: string;
+  /** Pre-select a plan when opened from pricing cards */
+  initialPlan?: string | null;
 }
 
-export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProps) {
+export function PreQualModal({ open, onClose, source = 'cta', initialPlan }: PreQualModalProps) {
   const [selected, setSelected] = useState<OptionId | null>(null);
+  const [step, setStep] = useState<Step>('select');
 
-  // Reset on open + lock scroll
+  // Reset on open + lock scroll; apply initial plan
   useEffect(() => {
     if (open) {
-      setSelected(null);
+      const match = OPTIONS.find(
+        (o) => o.id === initialPlan?.toLowerCase()
+      );
+      setSelected(match ? match.id : null);
+      setStep('select');
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
-    return () => { document.body.style.overflow = ''; };
-  }, [open]);
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [open, initialPlan]);
 
   // Close on Escape
   useEffect(() => {
     if (!open) return;
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [open, onClose]);
 
+  const handleBookClick = useCallback(() => {
+    if (selected) setStep('calendar');
+  }, [selected]);
+
+  const handleBack = useCallback(() => {
+    setStep('select');
+  }, []);
+
+  const handleEventScheduled = useCallback(() => {
+    setStep('confirmed');
+  }, []);
+
   if (!open) return null;
   if (typeof window === 'undefined') return null;
 
-  const calendlyUrl = selected
-    ? `${EXTERNAL_URLS.calendly.discovery}?utm_content=${selected}-plan&utm_source=${source}&utm_medium=prequal-modal`
-    : EXTERNAL_URLS.calendly.discovery;
+  const calendlyUrl = EXTERNAL_URLS.calendly.discovery;
 
   return createPortal(
     <>
       {/* Backdrop */}
       <div
         className="bg-black/60 backdrop-blur-sm"
-        style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100dvh", minHeight: "100vh", zIndex: 9998 }}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100dvh',
+          minHeight: '100vh',
+          zIndex: 9998,
+        }}
         onClick={onClose}
         aria-hidden="true"
       />
@@ -84,10 +115,24 @@ export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProp
         aria-modal="true"
         aria-labelledby="prequal-title"
         className="flex items-start sm:items-center justify-center p-4 pt-[max(1rem,env(safe-area-inset-top))]"
-        style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100dvh", zIndex: 9999, overflowY: "auto" }}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100dvh',
+          zIndex: 9999,
+          overflowY: 'auto',
+        }}
       >
-        <div className="relative w-full max-w-md my-auto rounded-2xl border border-white/10 bg-white dark:bg-[#0f1117] shadow-2xl shadow-black/30 p-5 sm:p-8">
-
+        <div
+          className={[
+            'relative w-full my-auto rounded-2xl border border-white/10 bg-white dark:bg-[#0f1117] shadow-2xl shadow-black/30 p-5 sm:p-8 transition-all duration-300',
+            step === 'calendar'
+              ? 'max-w-3xl'
+              : 'max-w-md sm:max-w-2xl',
+          ].join(' ')}
+        >
           {/* Drag handle — mobile only */}
           <div className="sm:hidden flex justify-center mb-4 -mt-1">
             <div className="w-10 h-1 rounded-full bg-gray-300 dark:bg-white/20" />
@@ -97,96 +142,225 @@ export function PreQualModal({ open, onClose, source = 'cta' }: PreQualModalProp
           <button
             onClick={onClose}
             aria-label="Close"
-            className="absolute right-4 top-4 rounded-lg p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors"
+            className="absolute right-4 top-4 rounded-lg p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors z-10"
           >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
 
-          {/* Header */}
-          <div className="mb-6">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[var(--purple-primary)] mb-2">
-              Free discovery call
-            </p>
-            <h2 id="prequal-title" className="text-2xl font-bold text-gray-900 dark:text-white">
-              Which best describes your situation?
-            </h2>
-            <p className="mt-1 text-base text-gray-500 dark:text-gray-400">
-              We'll tailor the call based on your answer.
-            </p>
-          </div>
-
-          {/* Options */}
-          <div className="space-y-2 mb-5">
-            {OPTIONS.map((opt) => {
-              const isSelected = selected === opt.id;
-              return (
-                <button
-                  key={opt.id}
-                  type="button"
-                  onClick={() => setSelected(opt.id)}
-                  className={[
-                    'w-full flex items-center justify-between gap-4 rounded-xl border px-4 py-4 text-left transition-all duration-150',
-                    isSelected
-                      ? 'border-[var(--purple-primary)] bg-[var(--purple-primary)]/8 ring-1 ring-[var(--purple-primary)]'
-                      : 'border-gray-200 dark:border-white/10 hover:border-[var(--purple-primary)]/50 dark:hover:border-white/20 bg-transparent',
-                  ].join(' ')}
+          {/* ─── STEP 1: Package selection ─── */}
+          {step === 'select' && (
+            <>
+              {/* Header */}
+              <div className="mb-6">
+                <p className="text-xs font-semibold uppercase tracking-widest text-[var(--purple-primary)] mb-2">
+                  Free discovery call
+                </p>
+                <h2
+                  id="prequal-title"
+                  className="text-2xl font-bold text-gray-900 dark:text-white"
                 >
-                  <span className="flex items-center gap-3 min-w-0">
-                    {/* Radio dot */}
-                    <span className={[
-                      'flex-shrink-0 h-4 w-4 rounded-full border-2 flex items-center justify-center transition-colors',
-                      isSelected
-                        ? 'border-[var(--purple-primary)]'
-                        : 'border-gray-300 dark:border-white/30',
-                    ].join(' ')}>
-                      {isSelected && (
-                        <span className="h-2 w-2 rounded-full bg-[var(--purple-primary)]" />
+                  Which best describes your situation?
+                </h2>
+                <p className="mt-1 text-base text-gray-500 dark:text-gray-400">
+                  We'll tailor the call based on your answer.
+                </p>
+              </div>
+
+              {/* Options */}
+              <div className="space-y-2 mb-5">
+                {OPTIONS.map((opt) => {
+                  const isSelected = selected === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => setSelected(opt.id)}
+                      className={[
+                        'w-full flex items-center justify-between gap-4 rounded-xl border px-4 py-4 text-left transition-all duration-150',
+                        isSelected
+                          ? 'border-[var(--purple-primary)] bg-[var(--purple-primary)]/8 ring-1 ring-[var(--purple-primary)]'
+                          : 'border-gray-200 dark:border-white/10 hover:border-[var(--purple-primary)]/50 dark:hover:border-white/20 bg-transparent',
+                      ].join(' ')}
+                    >
+                      <span className="flex items-center gap-3 min-w-0">
+                        {/* Radio dot */}
+                        <span
+                          className={[
+                            'flex-shrink-0 h-4 w-4 rounded-full border-2 flex items-center justify-center transition-colors',
+                            isSelected
+                              ? 'border-[var(--purple-primary)]'
+                              : 'border-gray-300 dark:border-white/30',
+                          ].join(' ')}
+                        >
+                          {isSelected && (
+                            <span className="h-2 w-2 rounded-full bg-[var(--purple-primary)]" />
+                          )}
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-base font-semibold text-gray-900 dark:text-white">
+                            {opt.name}
+                          </span>
+                          <span className="block text-sm text-gray-500 dark:text-gray-400 truncate">
+                            {opt.desc}
+                          </span>
+                        </span>
+                      </span>
+                      {opt.price && (
+                        <span className="flex-shrink-0 text-sm font-medium text-gray-400 dark:text-white/40">
+                          {opt.price}
+                        </span>
                       )}
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block text-base font-semibold text-gray-900 dark:text-white">
-                        {opt.name}
-                      </span>
-                      <span className="block text-sm text-gray-500 dark:text-gray-400 truncate">
-                        {opt.desc}
-                      </span>
-                    </span>
-                  </span>
-                  {opt.price && (
-                    <span className="flex-shrink-0 text-sm font-medium text-gray-400 dark:text-white/40">
-                      {opt.price}
-                    </span>
-                  )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* CTA */}
+              <button
+                type="button"
+                onClick={handleBookClick}
+                disabled={!selected}
+                aria-disabled={!selected}
+                className={[
+                  'flex w-full items-center justify-center gap-2 rounded-xl px-6 py-4 text-base font-semibold transition-all duration-200',
+                  selected
+                    ? 'bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] text-white shadow-lg shadow-[var(--purple-primary)]/25 hover:opacity-90 cursor-pointer'
+                    : 'bg-gray-100 dark:bg-white/10 text-gray-400 dark:text-white/30 cursor-not-allowed',
+                ].join(' ')}
+              >
+                Book my discovery call
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
+              </button>
+
+              <p className="mt-3 text-center text-xs text-gray-400 dark:text-white/30">
+                Free, no commitment. 45-minute call.
+              </p>
+            </>
+          )}
+
+          {/* ─── STEP 2: Calendly inline widget ─── */}
+          {step === 'calendar' && (
+            <>
+              {/* Back button + header */}
+              <div className="mb-4 flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white transition-colors"
+                >
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                  Back
                 </button>
-              );
-            })}
-          </div>
+                <div className="h-4 w-px bg-gray-200 dark:bg-white/10" />
+                <p className="text-sm text-gray-500 dark:text-white/50">
+                  <span className="font-medium text-[var(--purple-primary)]">
+                    {OPTIONS.find((o) => o.id === selected)?.name}
+                  </span>{' '}
+                  plan selected
+                </p>
+              </div>
 
-          {/* CTA */}
-          <a
-            href={selected ? calendlyUrl : undefined}
-            target={selected ? '_blank' : undefined}
-            rel="noopener noreferrer"
-            onClick={!selected ? (e) => e.preventDefault() : undefined}
-            aria-disabled={!selected}
-            className={[
-              'flex w-full items-center justify-center gap-2 rounded-xl px-6 py-4 text-base font-semibold transition-all duration-200',
-              selected
-                ? 'bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] text-white shadow-lg shadow-[var(--purple-primary)]/25 hover:opacity-90'
-                : 'bg-gray-100 dark:bg-white/10 text-gray-400 dark:text-white/30 cursor-not-allowed',
-            ].join(' ')}
-          >
-            Book my discovery call
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </a>
+              <div className="mb-2">
+                <h2
+                  id="prequal-title"
+                  className="text-xl font-bold text-gray-900 dark:text-white"
+                >
+                  Pick a time that works for you
+                </h2>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  Choose a 45-minute slot below. We'll confirm via email.
+                </p>
+              </div>
 
-          <p className="mt-3 text-center text-xs text-gray-400 dark:text-white/30">
-            Free, no commitment. 45-minute call.
-          </p>
+              {/* Calendly widget */}
+              <div className="rounded-xl overflow-hidden border border-gray-100 dark:border-white/5">
+                <CalendlyEmbed
+                  url={calendlyUrl}
+                  utmContent={`${selected}-plan`}
+                  utmSource={source}
+                  utmMedium="prequal-modal"
+                  onEventScheduled={handleEventScheduled}
+                />
+              </div>
+            </>
+          )}
+
+          {/* ─── STEP 3: Confirmation ─── */}
+          {step === 'confirmed' && (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              {/* Checkmark */}
+              <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10">
+                <svg
+                  className="h-8 w-8 text-emerald-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                You're all set!
+              </h2>
+              <p className="text-base text-gray-500 dark:text-gray-400 max-w-sm">
+                Your discovery call is booked. Check your email for the
+                confirmation and calendar invite.
+              </p>
+              <p className="mt-4 text-sm text-gray-400 dark:text-white/30">
+                We're looking forward to learning about your project.
+              </p>
+
+              <button
+                type="button"
+                onClick={onClose}
+                className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-8 py-3 text-base font-semibold text-white shadow-lg shadow-[var(--purple-primary)]/25 hover:opacity-90 transition-opacity"
+              >
+                Done
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </>,

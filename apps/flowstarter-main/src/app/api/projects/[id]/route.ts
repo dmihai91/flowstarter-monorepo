@@ -1,5 +1,4 @@
-import { useServerSupabaseWithAuthStrict } from '@/hooks/useServerSupabase';
-import { requireAuth } from '@/lib/api-auth';
+import { requireAuth, requireAuthWithSupabase } from '@/lib/api-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -12,7 +11,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const authResult = await requireAuth(request);
+  const authResult = await requireAuthWithSupabase(request);
   if (!authResult.authenticated) {
     return authResult.response;
   }
@@ -34,7 +33,7 @@ export async function PATCH(
       fields: Object.keys(body),
     });
 
-    const supabase = await useServerSupabaseWithAuthStrict();
+    const supabase = authResult.supabase;
 
     // Only allow updating certain fields
     const allowedFields = ['name', 'description', 'chat', 'is_draft', 'status'];
@@ -49,6 +48,7 @@ export async function PATCH(
       .from('projects')
       .update(updateData)
       .eq('id', id)
+      .eq('user_id', authResult.userId)
       .select()
       .single();
 
@@ -84,7 +84,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   // Verify authentication first
-  const authResult = await requireAuth(request);
+  const authResult = await requireAuthWithSupabase(request);
   if (!authResult.authenticated) {
     return authResult.response;
   }
@@ -104,13 +104,13 @@ export async function GET(
       projectId: id,
     });
 
-    // Use strict auth client that throws if no JWT
-    const supabase = await useServerSupabaseWithAuthStrict();
+    const supabase = authResult.supabase;
 
     const { data, error } = await supabase
       .from('projects')
       .select('*')
       .eq('id', id)
+      .eq('user_id', authResult.userId)
       .single();
 
     if (error) {
@@ -160,7 +160,9 @@ export async function DELETE(
   if (!authResult.authenticated) return authResult.response;
 
   const { id } = await params;
-  const { createSupabaseServiceRoleClient } = await import('@/supabase-clients/server');
+  const { createSupabaseServiceRoleClient } = await import(
+    '@/supabase-clients/server'
+  );
   const supabase = createSupabaseServiceRoleClient();
 
   // 1. Delete from Supabase (source of truth)
@@ -195,24 +197,33 @@ export async function DELETE(
         }),
       });
 
-      const result = (await convexResp.json()) as { status: string; value?: { deleted: boolean; daytonaWorkspaceIds: string[] } };
+      const result = (await convexResp.json()) as {
+        status: string;
+        value?: { deleted: boolean; daytonaWorkspaceIds: string[] };
+      };
       const data = result.value;
 
       // 3. Delete Daytona sandbox(es) using workspace IDs returned from Convex
       if (data?.daytonaWorkspaceIds?.length) {
-        const editorUrl = process.env.NEXT_PUBLIC_EDITOR_URL || 'https://editor.flowstarter.dev';
+        const editorUrl =
+          process.env.NEXT_PUBLIC_EDITOR_URL ||
+          'https://editor.flowstarter.dev';
         await fetch(`${editorUrl}/api/daytona/cleanup`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ workspaceIds: data!.daytonaWorkspaceIds }),
-        }).catch(err => console.error('[DELETE project] Daytona cleanup failed:', err));
+        }).catch((err) =>
+          console.error('[DELETE project] Daytona cleanup failed:', err)
+        );
       }
     } catch (err) {
       // Log but don't fail — Supabase delete succeeded; Convex/Daytona can be retried
       console.error('[DELETE project] Convex cascade failed:', err);
     }
   } else {
-    console.warn('[DELETE project] CONVEX_ADMIN_KEY or NEXT_PUBLIC_CONVEX_URL not set — skipping Convex cascade');
+    console.warn(
+      '[DELETE project] CONVEX_ADMIN_KEY or NEXT_PUBLIC_CONVEX_URL not set — skipping Convex cascade'
+    );
   }
 
   return NextResponse.json({ success: true });

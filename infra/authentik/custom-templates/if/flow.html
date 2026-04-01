@@ -1,0 +1,269 @@
+{% extends "base/skeleton.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load authentik_core %}
+
+{% block title %}{{ flow.title }} — {{ brand.branding_title }}{% endblock %}
+
+{% block head_before %}
+{{ block.super }}
+<link rel="prefetch" href="{{ flow_background_url }}" />
+{% if flow.compatibility_mode and not inspector %}
+<script>ShadyDOM = { force: !navigator.webdriver };</script>
+{% endif %}
+{% include "base/header_js.html" %}
+<script>
+window.authentik.flow = {
+    "layout": "{{ flow.layout }}",
+};
+</script>
+{% endblock %}
+
+{% block head %}
+<script src="{% versioned_script 'dist/flow/FlowInterface-%v.js' %}" type="module"></script>
+<style>
+:root {
+    --ak-flow-background: url("{{ flow_background_url }}");
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<ak-message-container></ak-message-container>
+<ak-flow-executor flowSlug="{{ flow.slug }}">
+    <ak-loading></ak-loading>
+</ak-flow-executor>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+  var FLOW_SLUG = '{{ flow.slug }}';
+
+  var SUBTITLE_SELECTORS = [
+    '.pf-c-login__main-header-desc',
+    'p.pf-c-login__main-header-desc',
+    '.pf-c-login__main-header > p',
+    '.pf-c-login__main-header p'
+  ];
+
+  var IS_BACK_FLOW = (FLOW_SLUG === 'flowstarter-recovery' || FLOW_SLUG === 'flowstarter-enrollment');
+  var INVALID_CREDENTIAL_PATTERNS = [
+    'invalid credentials',
+    'incorrect credentials',
+    'authentication failed',
+    'check your credentials'
+  ];
+
+  function normalizeCredentialError(root) {
+    if (FLOW_SLUG !== 'default-authentication-flow') return;
+
+    var alerts = root.querySelectorAll('.pf-c-alert.pf-m-danger');
+    alerts.forEach(function(alert) {
+      var text = (alert.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+      var matches = INVALID_CREDENTIAL_PATTERNS.some(function(pattern) {
+        return text.indexOf(pattern) !== -1;
+      });
+
+      if (!matches) return;
+
+      var title = alert.querySelector('.pf-c-alert__title');
+      if (title) {
+        title.textContent = 'Invalid credentials, please check and try again.';
+      } else {
+        alert.textContent = 'Invalid credentials, please check and try again.';
+      }
+
+      alert.querySelectorAll('.pf-c-alert__description, .pf-c-content, p').forEach(function(node) {
+        if (node !== title) {
+          node.style.setProperty('display', 'none', 'important');
+        }
+      });
+    });
+  }
+
+  // ── Cross-page success toast ──────────────────────────────────────
+  function showFsToast(message) {
+    var toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:99999;'
+      + 'display:flex;align-items:center;gap:10px;'
+      + 'font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-size:0.875rem;font-weight:500;'
+      + 'padding:13px 18px;border-radius:12px;'
+      + 'background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.28);color:#10b981;'
+      + 'box-shadow:0 4px 24px rgba(0,0,0,0.14);'
+      + 'animation:fs-toast-in 0.28s cubic-bezier(0.16,1,0.3,1) both;';
+    toast.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'
+      + '<span>' + message + '</span>';
+    var style = document.createElement('style');
+    style.textContent = '@keyframes fs-toast-in{from{opacity:0;transform:translateY(10px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}';
+    document.head.appendChild(style);
+    document.body.appendChild(toast);
+    setTimeout(function() {
+      toast.style.transition = 'opacity 0.3s, transform 0.3s';
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(8px)';
+      setTimeout(function() { toast.parentNode && toast.parentNode.removeChild(toast); }, 320);
+    }, 4500);
+  }
+
+  // On login page: consume pending toast set by recovery/enrollment flow
+  if (FLOW_SLUG === 'default-authentication-flow') {
+    var _pending = sessionStorage.getItem('fs_success_toast');
+    if (_pending) {
+      sessionStorage.removeItem('fs_success_toast');
+      // Slight delay so the page is ready
+      setTimeout(function() { showFsToast(_pending); }, 600);
+    }
+  }
+
+  // Track the final password-submit step so we can show a toast after redirect
+  function trackPasswordSubmit(root) {
+    if (!IS_BACK_FLOW) return;
+    // Only act when there's a new-password field (the actual password-change step)
+    var pwField = root.querySelector('input[name="password"], input[autocomplete="new-password"], input[type="password"]');
+    if (!pwField) return;
+    var btn = root.querySelector('button[type="submit"]');
+    if (!btn || btn._fsTracked) return;
+    btn._fsTracked = true;
+    btn.addEventListener('click', function() {
+      sessionStorage.setItem('fs_success_toast', 'Password changed successfully');
+    });
+  }
+
+  function buildBackButton() {
+    var wrap = document.createElement('div');
+    wrap.className = 'fs-back-btn';
+    wrap.style.cssText = 'text-align:center;padding:20px 0 4px;';
+    var back = document.createElement('a');
+    back.href = '/if/flow/default-authentication-flow/';
+    back.style.cssText = 'display:inline-flex;align-items:center;gap:6px;'
+      + 'font-family:"Plus Jakarta Sans",system-ui,sans-serif;'
+      + 'font-size:0.8125rem;font-weight:500;'
+      + 'color:#8B5CF6;text-decoration:none;transition:color 0.15s;';
+    back.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+      + ' stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">'
+      + '<path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back to login';
+    back.addEventListener('mouseenter', function(){ this.style.color='#6D44C0'; });
+    back.addEventListener('mouseleave', function(){ this.style.color='#8B5CF6'; });
+    wrap.appendChild(back);
+    return wrap;
+  }
+
+  // Recursively search all shadow roots for a matching selector
+  function findInAllShadows(selector) {
+    var found = null;
+    function search(root) {
+      if (found) return;
+      try {
+        var el = root.querySelector(selector);
+        if (el) { found = el; return; }
+        root.querySelectorAll('*').forEach(function(node) {
+          if (found) return;
+          if (node.shadowRoot) search(node.shadowRoot);
+        });
+      } catch(e) {}
+    }
+    search(document);
+    return found;
+  }
+
+  function tryInjectBackButton() {
+    if (!IS_BACK_FLOW) return true; // done, no-op
+    // Already injected somewhere?
+    if (findInAllShadows('.fs-back-btn')) return true;
+
+    // Priority order of injection targets
+    var TARGETS = [
+      '.pf-c-login__main-footer',
+      '.pf-c-form__actions',
+      '.pf-c-login__main-body',
+      '.pf-c-login__main',
+      '.pf-c-login'
+    ];
+
+    for (var i = 0; i < TARGETS.length; i++) {
+      var target = findInAllShadows(TARGETS[i]);
+      if (target) {
+        // For footer: prepend. For form actions / body: append after.
+        if (TARGETS[i] === '.pf-c-login__main-footer') {
+          target.insertBefore(buildBackButton(), target.firstChild);
+        } else {
+          target.appendChild(buildBackButton());
+        }
+        return true; // injected
+      }
+    }
+    return false; // not yet found, retry
+  }
+
+  // Poll until injected (shadow DOM content loads async; stop after 8 s)
+  var _backPollCount = 0;
+  var _backPollTimer = setInterval(function() {
+    _backPollCount++;
+    if (tryInjectBackButton() || _backPollCount > 40) clearInterval(_backPollTimer);
+  }, 200);
+
+  function applyToRoot(root) {
+    // 1. Hide subtitle
+    SUBTITLE_SELECTORS.forEach(function(sel) {
+      try {
+        root.querySelectorAll(sel).forEach(function(el) {
+          el.style.setProperty('display', 'none', 'important');
+          el.style.setProperty('visibility', 'hidden', 'important');
+          el.style.setProperty('height', '0', 'important');
+          el.style.setProperty('overflow', 'hidden', 'important');
+          el.style.setProperty('margin', '0', 'important');
+          el.style.setProperty('padding', '0', 'important');
+        });
+      } catch(e) {}
+    });
+
+    // 2. Track password submit for success toast
+    trackPasswordSubmit(root);
+
+    // 3. Normalize failed login copy
+    normalizeCredentialError(root);
+
+    // 4. Inject "Sign up" link on the authentication flow
+    if (FLOW_SLUG === 'default-authentication-flow') {
+      var footer = root.querySelector('.pf-c-login__main-footer');
+      if (footer && !footer.querySelector('.fs-signup-link')) {
+        var div = document.createElement('div');
+        div.className = 'fs-signup-link';
+        div.style.cssText = 'text-align:center;padding:0 0 4px;font-size:0.8125rem;';
+        div.innerHTML = '<span style="color:var(--fs-subtle,#71717a);">Don\'t have an account? </span>'
+          + '<a href="/if/flow/flowstarter-enrollment/" style="color:var(--fs-violet,#8B5CF6);font-weight:600;text-decoration:none;">Sign up</a>';
+        footer.appendChild(div);
+      }
+    }
+
+  }
+
+  function watchNode(node) {
+    if (!node || node.nodeType !== 1) return;
+    if (node.shadowRoot) {
+      applyToRoot(node.shadowRoot);
+      new MutationObserver(function() {
+        applyToRoot(node.shadowRoot);
+        node.shadowRoot.querySelectorAll('*').forEach(watchNode);
+      }).observe(node.shadowRoot, { childList: true, subtree: true });
+      node.shadowRoot.querySelectorAll('*').forEach(watchNode);
+    }
+  }
+
+  new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      m.addedNodes.forEach(function(n) {
+        if (n.nodeType === 1) {
+          watchNode(n);
+          n.querySelectorAll && n.querySelectorAll('*').forEach(watchNode);
+        }
+      });
+    });
+  }).observe(document.documentElement, { childList: true, subtree: true });
+
+  document.querySelectorAll('*').forEach(watchNode);
+})();
+</script>
+{% endblock %}

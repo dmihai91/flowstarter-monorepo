@@ -1,0 +1,28 @@
+procs:
+  "📝 Editor":
+    shell: "pnpm dev:editor"
+    autostart: true
+  "📚 Library API":
+    shell: "cross-env HTTP_PORT=3001 pnpm --dir apps/flowstarter-library/mcp-server dev:http"
+    autostart: true
+  "🖼️ Library UI":
+    shell: "pnpm dev:showcase"
+    autostart: true
+  "⚡ Convex":
+    shell: "pnpm --filter flowstarter-editor convex:dev"
+    autostart: true
+  "🏠 Main":
+    shell: "pnpm dev:main"
+    autostart: true
+  "🗄️ Supabase":
+    shell: "pnpm --filter flowstarter db:start"
+    autostart: true
+  "🔐 Auth":
+    shell: "pnpm dev:authentik"
+    autostart: true
+  "💻 Code":
+    shell: "pnpm dev:code"
+    autostart: true
+  "🌐 Tunnel":
+    shell: "cloudflared tunnel run"
+    autostart: true

@@ -1,7 +1,7 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test';
 
-test('should have text in about page', async ({ page }) => {
-  // Start from the index page (the baseURL is set via the webServer in the playwright.config.ts)
-  await page.goto('/about')
-  await expect(page.locator('h1')).toContainText('About')
-})
+test('help page is reachable from the supported public surface', async ({ page }) => {
+  await page.goto('/help');
+  await expect(page.getByRole('heading', { name: /help/i }).first()).toBeVisible();
+  await expect(page.locator('body')).toContainText(/question|support|help/i);
+});

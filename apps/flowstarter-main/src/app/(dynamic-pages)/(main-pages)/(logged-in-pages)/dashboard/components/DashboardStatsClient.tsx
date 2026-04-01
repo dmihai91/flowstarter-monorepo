@@ -373,7 +373,7 @@ export function DashboardStatsClient({
               <button
                 disabled
                 title="Available once your site is live"
-                className="mt-3 w-full py-2 rounded-lg text-xs font-medium text-white/20 bg-white/[0.04] border border-white/[0.06] cursor-not-allowed"
+                className="mt-3 w-full py-2 rounded-lg text-xs font-medium text-gray-400 dark:text-white/20 bg-gray-100 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.06] cursor-not-allowed"
               >
                 Locked until launch
               </button>

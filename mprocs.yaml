@@ -1,12 +1,16 @@
-shell: "pwsh -Command"
-
 procs:
   "📝 Editor":
     shell: "pnpm dev:editor"
     autostart: true
-  "📚 Library":
-    shell: "pnpm dev:library"
+  "📚 Library API":
+    shell: "cross-env HTTP_PORT=3001 pnpm --dir apps/flowstarter-library/mcp-server dev:http"
+    autostart: true
+  "🖼️ Library UI":
+    shell: "pnpm dev:showcase"
     autostart: true
   "⚡ Convex":
     shell: "pnpm --filter flowstarter-editor convex:dev"
+    autostart: true
+  "🌐 Tunnel":
+    shell: "cloudflared tunnel run"
     autostart: true

@@ -138,6 +138,43 @@ export const validate = query({
   },
 });
 
+/**
+ * Validate an active client session against a specific project URL.
+ */
+export const validateClientSession = query({
+  args: {
+    sessionToken: v.string(),
+    projectUrlId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const session = await ctx.db
+      .query('clientSessions')
+      .withIndex('by_token', (q) => q.eq('token', args.sessionToken))
+      .first();
+
+    if (!session) {
+      return { valid: false, error: 'Session not found' };
+    }
+
+    if (session.expiresAt < Date.now()) {
+      return { valid: false, error: 'Session expired' };
+    }
+
+    const project = await ctx.db.get(session.projectId);
+
+    if (!project || project.urlId !== args.projectUrlId) {
+      return { valid: false, error: 'Project mismatch' };
+    }
+
+    return {
+      valid: true,
+      clientId: session.clientId,
+      projectId: session.projectId,
+      accessLevel: session.accessLevel,
+    };
+  },
+});
+
 // ═══════════════════════════════════════════════════════════════════════════
 // MUTATIONS
 // ═══════════════════════════════════════════════════════════════════════════

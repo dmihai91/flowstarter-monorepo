@@ -64,7 +64,7 @@ export default function CookiePolicyPage() {
           </div>
 
           {/* Quick Summary */}
-          <div className="mb-12 p-6 rounded-2xl bg-gradient-to-br from-[var(--purple)]/5 via-white to-blue-500/5 dark:from-[var(--purple)]/10 dark:via-[#0f0f12] dark:to-blue-500/10 border border-[var(--purple)]/20">
+          <div className="mb-12 p-4 sm:p-6 rounded-2xl bg-gradient-to-br from-[var(--purple)]/5 via-white to-blue-500/5 dark:from-[var(--purple)]/10 dark:via-[#0f0f12] dark:to-blue-500/10 border border-[var(--purple)]/20">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <Cookie className="w-5 h-5 text-[var(--purple)]" />
               {t('cookies.shortVersion.title')}
@@ -90,7 +90,7 @@ export default function CookiePolicyPage() {
           </div>
 
           {/* What Are Cookies */}
-          <section className="mb-10 p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+          <section className="mb-10 p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
               {t('cookies.whatAreCookies.title')}
             </h2>
@@ -107,7 +107,7 @@ export default function CookiePolicyPage() {
             {cookieTypes.map((type, index) => (
               <section
                 key={index}
-                className="p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5"
+                className="p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5"
               >
                 <div className="flex items-start gap-4 mb-6">
                   <div className="w-12 h-12 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center flex-shrink-0">
@@ -134,8 +134,17 @@ export default function CookiePolicyPage() {
                   </div>
                 </div>
 
-                {/* Cookie Table */}
-                <div className="overflow-x-auto">
+                {/* Cookie list — cards on mobile, table on sm+ */}
+                <div className="sm:hidden space-y-3 mt-2">
+                  {type.examples.map((cookie, i) => (
+                    <div key={i} className="rounded-xl bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/5 p-3">
+                      <p className="font-mono text-xs text-[var(--purple)] mb-1">{cookie.name}</p>
+                      <p className="text-xs text-gray-600 dark:text-white/60 mb-1">{cookie.purpose}</p>
+                      <p className="text-xs text-gray-400 dark:text-white/30">{t('cookies.table.duration')}: {cookie.duration}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="hidden sm:block overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-gray-200 dark:border-white/10">
@@ -160,7 +169,7 @@ export default function CookiePolicyPage() {
           </div>
 
           {/* Third-Party Cookies */}
-          <section className="mb-10 p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+          <section className="mb-10 p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
               {t('cookies.thirdParty.title')}
             </h2>
@@ -187,7 +196,7 @@ export default function CookiePolicyPage() {
           </section>
 
           {/* Managing Cookies */}
-          <section className="mb-10 p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+          <section className="mb-10 p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
               {t('cookies.managing.title')}
             </h2>
@@ -206,7 +215,7 @@ export default function CookiePolicyPage() {
           </section>
 
           {/* Updates */}
-          <section className="mb-10 p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+          <section className="mb-10 p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
               {t('cookies.changes.title')}
             </h2>
@@ -216,7 +225,7 @@ export default function CookiePolicyPage() {
           </section>
 
           {/* Contact */}
-          <div className="p-8 rounded-2xl bg-gradient-to-r from-[var(--purple)]/5 via-blue-500/5 to-cyan-500/5 border border-[var(--purple)]/10 dark:border-[var(--purple)]/20 text-center">
+          <div className="p-5 sm:p-8 rounded-2xl bg-gradient-to-r from-[var(--purple)]/5 via-blue-500/5 to-cyan-500/5 border border-[var(--purple)]/10 dark:border-[var(--purple)]/20 text-center">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
               {t('cookies.contact.title')}
             </h2>

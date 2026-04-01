@@ -1,6 +1,6 @@
 /**
  * Team Auth Utilities
- * 
+ *
  * Handles user mode detection and capabilities for the editor.
  * Works with Clerk shared authentication across subdomains.
  */
@@ -57,8 +57,8 @@ const CAPABILITIES: Record<UserMode, ModeCapabilities> = {
   },
   client: {
     canGenerateMagicLink: false,
-    canPublish: true,
-    canEditCode: true,
+    canPublish: false,
+    canEditCode: false,
     canUseTerminal: false,
     canDeleteProject: false,
     canAccessAllProjects: false,
@@ -82,7 +82,10 @@ const TEAM_EMAIL_DOMAINS = ['flowstarter.app', 'flowstarter.dev', 'flowstarter.c
  * Safe localStorage getter (SSR-safe)
  */
 function safeGetItem(key: string): string | null {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
   try {
     return localStorage.getItem(key);
   } catch {
@@ -94,7 +97,10 @@ function safeGetItem(key: string): string | null {
  * Safe localStorage setter (SSR-safe)
  */
 function safeSetItem(key: string, value: string): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {
+    return;
+  }
+
   try {
     localStorage.setItem(key, value);
   } catch {
@@ -106,7 +112,10 @@ function safeSetItem(key: string, value: string): void {
  * Safe localStorage remover (SSR-safe)
  */
 function safeRemoveItem(key: string): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {
+    return;
+  }
+
   try {
     localStorage.removeItem(key);
   } catch {
@@ -127,9 +136,11 @@ export function isTeamEmail(email: string): boolean {
  */
 export function getUserMode(): UserMode {
   const mode = safeGetItem(STORAGE_KEYS.MODE);
+
   if (mode === 'team' || mode === 'client') {
     return mode;
   }
+
   return 'guest';
 }
 
@@ -166,7 +177,11 @@ export function getCurrentCapabilities(): ModeCapabilities {
  */
 export function getTeamUser(): TeamUser | null {
   const data = safeGetItem(STORAGE_KEYS.TEAM_USER);
-  if (!data) return null;
+
+  if (!data) {
+    return null;
+  }
+
   try {
     return JSON.parse(data) as TeamUser;
   } catch {
@@ -179,7 +194,11 @@ export function getTeamUser(): TeamUser | null {
  */
 export function getClientUser(): ClientUser | null {
   const data = safeGetItem(STORAGE_KEYS.CLIENT_USER);
-  if (!data) return null;
+
+  if (!data) {
+    return null;
+  }
+
   try {
     return JSON.parse(data) as ClientUser;
   } catch {
@@ -218,18 +237,21 @@ export function clearAuth(): void {
  * Initialize user mode from Clerk session
  * Called when Clerk auth state changes
  */
-export function initializeFromClerkUser(clerkUser: {
-  id: string;
-  primaryEmailAddress?: { emailAddress: string } | null;
-  fullName?: string | null;
-  firstName?: string | null;
-} | null): UserMode {
+export function initializeFromClerkUser(
+  clerkUser: {
+    id: string;
+    primaryEmailAddress?: { emailAddress: string } | null;
+    fullName?: string | null;
+    firstName?: string | null;
+  } | null,
+): UserMode {
   if (!clerkUser) {
     clearAuth();
     return 'guest';
   }
 
   const email = clerkUser.primaryEmailAddress?.emailAddress;
+
   if (!email) {
     clearAuth();
     return 'guest';
@@ -253,5 +275,6 @@ export function initializeFromClerkUser(clerkUser: {
     email,
     name,
   });
+
   return 'client';
 }

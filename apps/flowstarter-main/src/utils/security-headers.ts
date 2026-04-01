@@ -54,6 +54,7 @@ const ALLOWED_FRAME_DOMAINS = [
   'https://accounts.google.com', // Google OAuth
   'https://*.clerk.accounts.dev', // Clerk OAuth
   'https://challenges.cloudflare.com', // Turnstile if used
+  'https://calendly.com', // Calendly inline embed
 ];
 
 // Create headers without CSP (we'll add it dynamically with nonce)

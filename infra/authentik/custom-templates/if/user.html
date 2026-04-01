@@ -1,0 +1,174 @@
+{% extends "base/skeleton.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load authentik_core %}
+
+{% block title %}My Account — {{ brand.branding_title }}{% endblock %}
+
+{% block head_before %}
+{{ block.super }}
+{% include "base/header_js.html" %}
+{% endblock %}
+
+{% block head %}
+<script src="{% versioned_script 'dist/user/UserInterface-%v.js' %}" type="module"></script>
+<style>
+:root {
+  color-scheme: light dark;
+}
+body {
+  background: var(--fs-bg, #fafafa) !important;
+  color: var(--fs-text, #09090b) !important;
+  overflow-x: hidden;
+}
+body::before,
+body::after {
+  display: none !important;
+}
+@keyframes fs-drift-1 {
+  0%,100% { transform: translateX(-50%) translateY(0px); }
+  50%      { transform: translateX(-50%) translateY(-14px); }
+}
+@keyframes fs-drift-2 {
+  0%,100% { transform: translateY(0px) translateX(0px); }
+  50%      { transform: translateY(10px) translateX(-12px); }
+}
+@keyframes fs-toast-in {
+  from { opacity:0; transform: translateY(10px) scale(0.97); }
+  to   { opacity:1; transform: translateY(0) scale(1); }
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<!-- Ambient gradient orbs (same as flow page) -->
+<div aria-hidden="true" style="position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;">
+  <div style="position:absolute;top:-220px;left:50%;transform:translateX(-50%);
+              width:700px;height:560px;border-radius:9999px;opacity:0.07;
+              background:radial-gradient(ellipse,rgba(77,93,217,0.6) 0%,rgba(77,93,217,0.15) 40%,transparent 70%);
+              animation:fs-drift-1 22s ease-in-out infinite;"></div>
+  <div style="position:absolute;bottom:-180px;right:-100px;
+              width:560px;height:460px;border-radius:9999px;opacity:0.05;
+              background:radial-gradient(ellipse,rgba(139,92,246,0.55) 0%,transparent 70%);
+              animation:fs-drift-2 27s ease-in-out infinite;"></div>
+</div>
+
+<ak-message-container></ak-message-container>
+<ak-interface-user style="position:relative;z-index:1;display:block;min-height:100vh;"></ak-interface-user>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+
+  /* ── Recursive shadow-DOM search ─────────────────────────────── */
+  function findInAllShadows(selector) {
+    var found = null;
+    function search(root) {
+      if (found) return;
+      try {
+        var el = root.querySelector(selector);
+        if (el) { found = el; return; }
+        root.querySelectorAll('*').forEach(function(node) {
+          if (found) return;
+          if (node.shadowRoot) search(node.shadowRoot);
+        });
+      } catch(e) {}
+    }
+    search(document);
+    return found;
+  }
+
+  function findAllInAllShadows(selector) {
+    var results = [];
+    function search(root) {
+      try {
+        root.querySelectorAll(selector).forEach(function(el) { results.push(el); });
+        root.querySelectorAll('*').forEach(function(node) {
+          if (node.shadowRoot) search(node.shadowRoot);
+        });
+      } catch(e) {}
+    }
+    search(document);
+    return results;
+  }
+
+  /* ── Toast helper ────────────────────────────────────────────── */
+  function showToast(msg, type) {
+    var cfg = {
+      success: { bg:'rgba(16,185,129,0.12)', border:'rgba(16,185,129,0.28)', color:'#10b981',
+                 icon:'<path d="M20 6L9 17l-5-5"/>' },
+      info:    { bg:'rgba(77,93,217,0.10)',  border:'rgba(77,93,217,0.25)',  color:'#8B5CF6',
+                 icon:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>' }
+    };
+    var c = cfg[type] || cfg.info;
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:99999;'
+      + 'display:flex;align-items:center;gap:10px;max-width:340px;'
+      + 'font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-size:0.875rem;font-weight:500;'
+      + 'padding:13px 18px;border-radius:12px;'
+      + 'background:' + c.bg + ';border:1px solid ' + c.border + ';color:' + c.color + ';'
+      + 'box-shadow:0 4px 24px rgba(0,0,0,0.14);animation:fs-toast-in 0.28s cubic-bezier(0.16,1,0.3,1) both;';
+    t.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+      + ' stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' + c.icon + '</svg>'
+      + '<span>' + msg + '</span>';
+    document.body.appendChild(t);
+    setTimeout(function() {
+      t.style.transition = 'opacity 0.3s,transform 0.3s';
+      t.style.opacity = '0'; t.style.transform = 'translateY(8px)';
+      setTimeout(function() { t.parentNode && t.parentNode.removeChild(t); }, 320);
+    }, 4500);
+  }
+
+  /* ── Inject "Invite" button into header toolbar ──────────────── */
+  function injectInviteButton() {
+    // Look for the header tools group
+    var toolbar = findInAllShadows('.pf-c-page__header-tools');
+    if (!toolbar || toolbar.querySelector('.fs-invite-btn')) return false;
+
+    var btn = document.createElement('button');
+    btn.className = 'fs-invite-btn';
+    btn.title = 'Copy invite link';
+    btn.style.cssText = 'display:inline-flex;align-items:center;gap:6px;'
+      + 'font-family:"Plus Jakarta Sans",system-ui,sans-serif;font-size:0.8125rem;font-weight:600;'
+      + 'color:#fff;background:#4D5DD9;'
+      + 'border:1px solid rgba(77,93,217,0.9);border-radius:10px;padding:8px 14px;margin-right:10px;cursor:pointer;'
+      + 'box-shadow:0 1px 2px rgba(0,0,0,0.08);transition:background-color 0.15s,border-color 0.15s;'
+      + 'white-space:nowrap;';
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+      + ' stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">'
+      + '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>'
+      + '<circle cx="9" cy="7" r="4"/>'
+      + '<line x1="19" y1="8" x2="19" y2="14"/>'
+      + '<line x1="22" y1="11" x2="16" y2="11"/>'
+      + '</svg>Invite';
+    btn.addEventListener('mouseenter', function() {
+      this.style.background = '#4338CA'; this.style.borderColor = '#4338CA';
+    });
+    btn.addEventListener('mouseleave', function() {
+      this.style.background = '#4D5DD9'; this.style.borderColor = 'rgba(77,93,217,0.9)';
+    });
+    btn.addEventListener('click', function() {
+      var link = window.location.origin + '/if/flow/flowstarter-enrollment/';
+      navigator.clipboard.writeText(link).then(function() {
+        showToast('Invite link copied to clipboard!', 'success');
+      }).catch(function() {
+        prompt('Copy this invite link:', link);
+      });
+    });
+
+    toolbar.insertBefore(btn, toolbar.firstChild);
+    return true;
+  }
+
+  /* ── Poll until injected ─────────────────────────────────────── */
+  var _n = 0;
+  var _t = setInterval(function() {
+    _n++;
+    if (injectInviteButton() || _n > 50) clearInterval(_t);
+  }, 200);
+
+})();
+</script>
+{% endblock %}

@@ -26,6 +26,11 @@ export const BASE = process.env.E2E_BASE_URL || 'https://flowstarter.dev';
 export const EDITOR =
   process.env.PLAYWRIGHT_E2E_EDITOR_URL ||
   'http://localhost:5173';
+export const CONVEX_SITE_URL = (
+  process.env.CONVEX_SITE_URL ||
+  process.env.NEXT_PUBLIC_CONVEX_URL ||
+  'https://outstanding-otter-369.convex.cloud'
+).replace('.convex.cloud', '.convex.site');
 
 export const HANDOFF_SECRET = process.env.HANDOFF_SECRET ||
   '9c5ff35ecdf4c9699e4749c408c1ee6bbad51552c8e66cb8e008f5c13ae48e9c';
@@ -110,6 +115,24 @@ export async function e2eFetch(
   return { status: res.status, body };
 }
 
+export async function convexFetch(
+  path: string,
+  options: { method?: string } = {}
+): Promise<{ status: number; body: unknown }> {
+  const res = await fetch(`${CONVEX_SITE_URL}${path}`, {
+    method: options.method || 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-handoff-secret': HANDOFF_SECRET,
+    },
+  });
+
+  const text = await res.text();
+  let body: unknown;
+  try { body = JSON.parse(text); } catch { body = text; }
+  return { status: res.status, body };
+}
+
 // ─── Browser-based fetch (for tests that need real Clerk session in-browser) ──
 
 export async function browserFetch(
@@ -157,4 +180,60 @@ export async function cleanupProject(projectId: string) {
   } catch (e) {
     console.warn('[cleanup] Failed to delete project', projectId, e);
   }
+}
+
+export async function seedProjectIntegrations(
+  projectId: string,
+  config: {
+    calendlyUrl?: string;
+    calendlyApiKey?: string;
+    gaPropertyId?: string;
+  },
+) {
+  if (config.calendlyUrl || config.calendlyApiKey) {
+    const calendly = await e2eFetch(`${BASE}/api/projects/${projectId}/integrations`, {
+      method: 'POST',
+      body: {
+        integration: 'calendly',
+        calendlyUrl: config.calendlyUrl,
+        calendlyApiKey: config.calendlyApiKey,
+      },
+    });
+
+    if (calendly.status !== 200) {
+      throw new Error(`Failed to seed Calendly integration: ${JSON.stringify(calendly.body)}`);
+    }
+  }
+
+  if (config.gaPropertyId) {
+    const analytics = await e2eFetch(`${BASE}/api/projects/${projectId}/integrations`, {
+      method: 'POST',
+      body: {
+        integration: 'analytics',
+        gaPropertyId: config.gaPropertyId,
+      },
+    });
+
+    if (analytics.status !== 200) {
+      throw new Error(`Failed to seed analytics integration: ${JSON.stringify(analytics.body)}`);
+    }
+  }
+}
+
+export async function getProject(projectId: string) {
+  const result = await e2eFetch(`${BASE}/api/projects/${projectId}`);
+  if (result.status !== 200) {
+    throw new Error(`Failed to fetch project ${projectId}: ${JSON.stringify(result.body)}`);
+  }
+  return (result.body as { project: Record<string, unknown> }).project;
+}
+
+export async function getGeneratedFiles(projectId: string) {
+  const result = await convexFetch(`/files/list?supabaseProjectId=${encodeURIComponent(projectId)}`);
+  if (result.status !== 200) {
+    throw new Error(`Failed to fetch generated files for ${projectId}: ${JSON.stringify(result.body)}`);
+  }
+  return (result.body as {
+    files?: Array<{ path: string; content: string; updatedAt?: number }>;
+  }).files || [];
 }

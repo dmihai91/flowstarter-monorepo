@@ -8,6 +8,10 @@ interface AppContext {
 }
 
 export const loader: LoaderFunction = async ({ request, context }: LoaderFunctionArgs & { context: AppContext }) => {
+  if (process.env.NODE_ENV !== 'development') {
+    return json({ error: 'Not found' }, { status: 404 });
+  }
+
   // Get environment variables
   const envVars = {
     hasGithubToken: Boolean(process.env.GITHUB_ACCESS_TOKEN || context.env?.GITHUB_ACCESS_TOKEN),
@@ -136,4 +140,3 @@ export const loader: LoaderFunction = async ({ request, context }: LoaderFunctio
     },
   );
 };
-

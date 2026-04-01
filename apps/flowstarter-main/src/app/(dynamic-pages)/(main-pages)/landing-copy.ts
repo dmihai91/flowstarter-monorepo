@@ -46,12 +46,12 @@ export const LANDING_COPY = {
     templatesLabel: 'Templates',
   },
   hero: {
-    headlinePrefix: 'Every expert needs a great digital presence.',
-    headlineHighlight: 'We build yours.',
+    headlinePrefix: 'Every expert deserves a site that looks as good as their work.',
+    headlineHighlight: 'We build it for you.',
     subheadlineBold: '',
     subheadline:
       'We build your professional site, hand you a smart editor, and you never touch code. Most clients go live in 5–7 days.',
-    primaryCta: 'Get your site live',
+    primaryCta: "Let's build it",
     secondaryCta: "See what's included",
     trustLine: 'For coaches, consultants, freelancers, and founders who want to show up like they mean it, without touching code.',
     guarantee: 'Spots are limited to 8 new projects per month. Most clients go live within a week.',

@@ -275,6 +275,80 @@ const filesSaveBatch = httpAction(async (ctx, request) => {
 http.route({ path: '/files/save-batch', method: 'POST', handler: filesSaveBatch });
 http.route({ path: '/files/save-batch', method: 'OPTIONS', handler: filesSaveBatch });
 
+// ─── Files List ─────────────────────────────────────────────────────
+const filesList = httpAction(async (ctx, request) => {
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, X-Handoff-Secret',
+      },
+    });
+  }
+
+  const expectedSecret = process.env.HANDOFF_SECRET;
+  const incomingSecret = request.headers.get('x-handoff-secret');
+  if (!expectedSecret || incomingSecret !== expectedSecret) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  const url = new URL(request.url);
+  const supabaseProjectId = url.searchParams.get('supabaseProjectId');
+  if (!supabaseProjectId) {
+    return new Response(JSON.stringify({ error: 'Missing supabaseProjectId' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  try {
+    const project = (await ctx.runQuery(api.projects.getBySupabaseId, {
+      supabaseProjectId,
+    })) as { _id: Id<'projects'> } | null;
+
+    if (!project) {
+      return new Response(JSON.stringify({ files: [] }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const files = await ctx.runQuery(api.files.getProjectFiles, {
+      projectId: project._id,
+    });
+
+    return new Response(
+      JSON.stringify({
+        projectId: project._id,
+        files: files.map((file) => ({
+          path: file.path,
+          content: file.content,
+          updatedAt: file.updatedAt,
+        })),
+      }),
+      { headers: { 'Content-Type': 'application/json' } },
+    );
+  } catch (err) {
+    console.error('[files/list]', err);
+    return new Response(
+      JSON.stringify({
+        error: err instanceof Error ? err.message : 'Internal error',
+      }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
+  }
+});
+
+http.route({ path: '/files/list', method: 'GET', handler: filesList });
+http.route({ path: '/files/list', method: 'OPTIONS', handler: filesList });
+
 // ─── Cost Logging ───────────────────────────────────────────────────
 const costsLog = httpAction(async (ctx, request) => {
   if (request.method === 'OPTIONS') {

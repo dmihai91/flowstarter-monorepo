@@ -5,6 +5,7 @@
 import 'server-only';
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/api-auth';
+import { readProjectIntegrationSnapshot } from '@/lib/project-integrations';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import { readSecret } from '@/lib/vault';
 
@@ -16,39 +17,58 @@ interface GA4Row {
   metricValues?: Array<{ value: string }>;
 }
 
-type AnalyticsProject = {
-  id: string;
-  ga_property_id: string | null;
-  ga_refresh_token_id: string | null;
-  owner_id: string | null;
-  team_id: string | null;
-};
-
 export async function GET(request: NextRequest) {
-  await requireAuth();
+  const authResult = await requireAuth(request);
+  if (!authResult.authenticated) {
+    return authResult.response;
+  }
   const projectId = request.nextUrl.searchParams.get('projectId');
   const range = parseInt(request.nextUrl.searchParams.get('range') || '30');
 
-  if (!projectId) return NextResponse.json({ error: 'projectId required' }, { status: 400 });
+  if (!projectId)
+    return NextResponse.json({ error: 'projectId required' }, { status: 400 });
 
   const supabase = createSupabaseServiceRoleClient();
 
-  const { data: project } = await supabase
+  const { data: project, error } = await supabase
     .from('projects')
-    .select('id, ga_property_id, ga_refresh_token_id, owner_id, team_id')
+    .select('*')
     .eq('id', projectId)
     .single();
 
-  const p = project as AnalyticsProject | null;
-  if (!p) return NextResponse.json({ error: 'Project not found' }, { status: 404 });
-  if (!p.ga_property_id || !p.ga_refresh_token_id) {
-    return NextResponse.json({ error: 'Google Analytics not connected' }, { status: 400 });
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+  if (!project)
+    return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+  if (project.user_id !== authResult.userId) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
+  const snapshot = readProjectIntegrationSnapshot(
+    project as Record<string, unknown>
+  );
+
+  if (
+    !snapshot.analytics.propertyId ||
+    !snapshot.analytics.refreshTokenSecretId
+  ) {
+    return NextResponse.json(
+      { error: 'Google Analytics not connected' },
+      { status: 400 }
+    );
   }
 
   // Decrypt refresh token from Vault
-  const refreshToken = await readSecret(supabase, p.ga_refresh_token_id);
+  const refreshToken = await readSecret(
+    supabase,
+    snapshot.analytics.refreshTokenSecretId
+  );
   if (!refreshToken) {
-    return NextResponse.json({ error: 'Token not found in vault' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Token not found in vault' },
+      { status: 500 }
+    );
   }
 
   // Exchange for access token
@@ -64,18 +84,25 @@ export async function GET(request: NextRequest) {
   });
 
   if (!tokenRes.ok) {
-    return NextResponse.json({ error: 'Failed to refresh Google token' }, { status: 401 });
+    return NextResponse.json(
+      { error: 'Failed to refresh Google token' },
+      { status: 401 }
+    );
   }
 
   const { access_token } = (await tokenRes.json()) as { access_token: string };
-  const property = `properties/${p.ga_property_id}`;
+  const property = `properties/${snapshot.analytics.propertyId}`;
   const dateRange = { startDate: `${range}daysAgo`, endDate: 'today' };
 
   const [overview, pages, daily] = await Promise.all([
     ga4Report(property, access_token, {
       metrics: [
-        { name: 'totalUsers' }, { name: 'newUsers' }, { name: 'sessions' },
-        { name: 'screenPageViews' }, { name: 'averageSessionDuration' }, { name: 'bounceRate' },
+        { name: 'totalUsers' },
+        { name: 'newUsers' },
+        { name: 'sessions' },
+        { name: 'screenPageViews' },
+        { name: 'averageSessionDuration' },
+        { name: 'bounceRate' },
       ],
       dateRanges: [dateRange],
     }),
@@ -118,10 +145,17 @@ export async function GET(request: NextRequest) {
   });
 }
 
-async function ga4Report(property: string, token: string, body: Record<string, unknown>) {
+async function ga4Report(
+  property: string,
+  token: string,
+  body: Record<string, unknown>
+) {
   const res = await fetch(`${GA4_API}/${property}:runReport`, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error(`GA4 ${res.status}`);

@@ -51,9 +51,12 @@ export default function AuthLayout({
           {title && (
             <div className="text-center mb-6">
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
-                <span className="pr-1" style={{ backgroundImage: "linear-gradient(to right, #4338CA, #8B5CF6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-                  {title}
+                <span style={{ backgroundImage: "linear-gradient(to right, #4338CA, #8B5CF6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                  {title.split(' ')[0]}
                 </span>
+                {title.split(' ').length > 1 && (
+                  <span className="text-gray-900 dark:text-white"> {title.split(' ').slice(1).join(' ')}</span>
+                )}
               </h1>
               {subtitle && (
                 <p className="text-gray-500 dark:text-white/50 text-sm">{subtitle}</p>

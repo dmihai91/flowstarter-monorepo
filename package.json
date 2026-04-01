@@ -8,13 +8,16 @@
     "dev": "pnpm nx run-many -t dev --output-style=stream",
     "dev:main": "pnpm nx run flowstarter-main:dev --output-style=stream",
     "dev:editor": "pnpm nx run flowstarter-editor:dev --output-style=stream",
-    "dev:library": "pnpm --filter @flowstarter/mcp-server run dev:http",
+    "dev:library": "cross-env HTTP_PORT=3001 pnpm --dir apps/flowstarter-library/mcp-server dev:http",
     "dev:showcase": "pnpm nx run flowstarter-showcase:dev --output-style=stream",
     "dev:editor:all": "mprocs --config mprocs.yaml",
     "build:all": "pnpm nx run-many -t build --output-style=stream",
     "lint:all": "pnpm nx run-many -t lint --output-style=stream --fix",
     "dev:all": "mprocs --config mprocs-all.yaml",
-    "dev:supabase": "pnpm --filter flowstarter-main db:start"
+    "dev:supabase": "pnpm --filter flowstarter-main db:start",
+    "dev:code": "pnpm nx run flowstarter-code:dev --output-style=stream",
+    "t3:code": "npx t3",
+    "dev:authentik": "docker compose -f infra/authentik/docker-compose.yml up -d"
   },
   "devDependencies": {
     "@nx/eslint": "^22.4.5",

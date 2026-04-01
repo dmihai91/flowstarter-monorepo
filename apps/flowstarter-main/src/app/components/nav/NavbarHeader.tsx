@@ -20,10 +20,10 @@ export function NavbarHeader({
   return (
     <header
       className={`fixed top-0 z-50 w-full transition-all duration-500 ${
-        isScrolled ? "border-b bg-white/60 dark:bg-[#0a0a0c]/60 backdrop-blur-2xl backdrop-saturate-150 border-gray-200/30 dark:border-white/10 shadow-[0_1px_2px_rgba(0,0,0,0.03)]" : "border-b border-gray-200/40 dark:border-white/10 bg-white/95 dark:bg-[#0a0a0c]/95 backdrop-blur-sm"} ${
+        isScrolled ? "border-b bg-white/50 dark:bg-[#0a0a0c]/60 backdrop-blur-2xl backdrop-saturate-150 border-gray-200/20 dark:border-white/10 shadow-[0_1px_2px_rgba(0,0,0,0.03)]" : "border-b border-gray-200/20 dark:border-white/10 bg-white/60 dark:bg-[#0a0a0c]/95 backdrop-blur-xl"} ${
         isScrolled
-          ? 'border-white/60 dark:border-white/10 shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
-          : 'border-white/40 dark:border-white/5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
+          ? 'border-white/40 dark:border-white/10 shadow-[0_1px_3px_rgba(0,0,0,0.05)]'
+          : 'border-white/30 dark:border-white/5 shadow-[0_1px_2px_rgba(0,0,0,0.02)]'
       }`}
       style={{
         paddingTop: 'calc(env(safe-area-inset-top, 0px))',

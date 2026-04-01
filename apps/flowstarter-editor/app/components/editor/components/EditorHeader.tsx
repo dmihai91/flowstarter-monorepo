@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useThemeStyles, getColors } from '~/components/editor/hooks';
 import { MenuButton } from './MenuButton';
-import { Logo, LogoIcon } from './Logo';
+import { Logo } from './Logo';
 import { ProjectNameEditor } from './ProjectNameEditor';
 import { ViewToggle, type ViewMode } from './ViewToggle';
 import { PublishButton } from './PublishButton';
 import { EditorUserMenu } from './EditorUserMenu';
 import { ThemeToggle } from './ThemeToggle';
 import { Separator } from './Separator';
-import { MagicLinkButton } from './MagicLinkButton';
-import { isTeamMode, getModeCapabilities, getUserMode } from '~/lib/team-auth';
-import type { Id } from '../../../../convex/_generated/dataModel';
+import { getModeCapabilities, getUserMode } from '~/lib/team-auth';
 
 interface EditorHeaderProps {
   terminalErrorCount?: number;
   hasTerminalActivity?: boolean;
   projectName: string;
-  projectId?: Id<'projects'> | null;
   viewMode: ViewMode;
   isPublishEnabled: boolean;
   terminalOpen?: boolean;
@@ -29,7 +26,6 @@ interface EditorHeaderProps {
 
 export function EditorHeader({
   projectName,
-  projectId,
   viewMode,
   isPublishEnabled,
   onViewModeChange,
@@ -46,7 +42,8 @@ export function EditorHeader({
 
   // Client-side only mode detection
   const [isTeam, setIsTeam] = useState(false);
-  const [canGenerateMagicLink, setCanGenerateMagicLink] = useState(false);
+  const [canPublish, setCanPublish] = useState(false);
+  const [canUseTerminal, setCanUseTerminal] = useState(false);
 
   // Responsive detection
   const [isMobile, setIsMobile] = useState(false);
@@ -55,8 +52,10 @@ export function EditorHeader({
   useEffect(() => {
     const mode = getUserMode();
     setIsTeam(mode === 'team');
+
     const caps = getModeCapabilities(mode);
-    setCanGenerateMagicLink(caps.canGenerateMagicLink);
+    setCanPublish(caps.canPublish);
+    setCanUseTerminal(caps.canUseTerminal);
   }, []);
 
   useEffect(() => {
@@ -66,6 +65,7 @@ export function EditorHeader({
     };
     check();
     window.addEventListener('resize', check);
+
     return () => window.removeEventListener('resize', check);
   }, []);
 
@@ -142,8 +142,16 @@ export function EditorHeader({
             }}
           >
             {/* Folder icon */}
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ flexShrink: 0, opacity: 0.6 }}>
-              <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              style={{ flexShrink: 0, opacity: 0.6 }}
+            >
+              <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" />
             </svg>
             {projectName}
           </span>
@@ -168,19 +176,20 @@ export function EditorHeader({
 
       {/* CENTER: View toggle */}
       <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-        <ViewToggle viewMode={viewMode} onViewModeChange={onViewModeChange} isMobile={isMobile} isCompact={isCompact} terminalErrorCount={terminalErrorCount} hasTerminalActivity={hasTerminalActivity} />
+        <ViewToggle
+          viewMode={viewMode}
+          onViewModeChange={onViewModeChange}
+          isMobile={isMobile}
+          isCompact={isCompact}
+          terminalErrorCount={terminalErrorCount}
+          hasTerminalActivity={hasTerminalActivity}
+        />
       </div>
 
       {/* RIGHT: Actions */}
       <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '4px' : isCompact ? '12px' : '12px' }}>
-        {/* Magic Link button - Team only, hide on mobile */}
-        {/* Share button disabled for now
-        {false && canGenerateMagicLink && !isCompact && (
-          <MagicLinkButton projectId={projectId ?? null} />
-        )}
-
         {/* Terminal toggle — only in editor mode, shown as >_ button */}
-        {viewMode === 'editor' && onTerminalToggle && (
+        {viewMode === 'editor' && canUseTerminal && onTerminalToggle && (
           <button
             onClick={onTerminalToggle}
             title={terminalOpen ? 'Close terminal' : 'Open terminal'}
@@ -196,20 +205,26 @@ export function EditorHeader({
               fontWeight: 600,
               fontFamily: 'monospace',
               background: terminalOpen
-                ? (isDark ? 'rgba(77,93,217,0.18)' : 'rgba(77,93,217,0.1)')
-                : (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'),
-              color: terminalOpen
-                ? 'rgba(77,93,217,0.9)'
-                : (isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'),
+                ? isDark
+                  ? 'rgba(77,93,217,0.18)'
+                  : 'rgba(77,93,217,0.1)'
+                : isDark
+                  ? 'rgba(255,255,255,0.06)'
+                  : 'rgba(0,0,0,0.06)',
+              color: terminalOpen ? 'rgba(77,93,217,0.9)' : isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)',
               transition: 'all 0.15s',
             }}
           >
             {'>_'}
           </button>
         )}
-        {!isCompact && <PublishButton isEnabled={isPublishEnabled} onClick={onPublish} />}
+        {!isCompact && canPublish && <PublishButton isEnabled={isPublishEnabled} onClick={onPublish} />}
         {!isCompact && <Separator />}
-        {!isMobile && <div style={{ marginLeft: '8px' }}><ThemeToggle /></div>}
+        {!isMobile && (
+          <div style={{ marginLeft: '8px' }}>
+            <ThemeToggle />
+          </div>
+        )}
         <EditorUserMenu />
       </div>
     </header>

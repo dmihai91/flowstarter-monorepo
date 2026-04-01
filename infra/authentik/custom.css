@@ -1,0 +1,1156 @@
+/* ================================================================
+   Flowstarter Auth — Flow Design System
+   Matches flowstarter-main AuthLayout + FlowBackground (auth variant)
+   Authentik 2025.4 — shadow DOM + PatternFly variable overrides
+   ================================================================ */
+
+/* ── Font ───────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+/* ── Animations ─────────────────────────────────────────────────── */
+@keyframes flow-slide-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fs-drift-1 {
+  0%, 100% { transform: translateX(-50%) translateY(0px); }
+  50%       { transform: translateX(-50%) translateY(-12px); }
+}
+@keyframes fs-drift-2 {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  50%       { transform: translateY(8px) translateX(-10px); }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   CRITICAL: Override --ak-flow-background with !important so the
+   flow's late-injected <style>:root{--ak-flow-background:url(...)}
+   cannot override it (our !important wins regardless of order).
+   ───────────────────────────────────────────────────────────────── */
+:root {
+  color-scheme: light;
+  --ak-flow-background: none !important;
+
+  /* Brand palette — matches main platform hsl(233,65%,58%) = #4D5DD9 */
+  --fs-purple:  #4D5DD9;
+  --fs-accent:  #4338CA;
+  --fs-violet:  #8B5CF6;
+  --fs-cyan:    #06B6D4;
+
+  /* Light surfaces */
+  --fs-bg:      #fafafa;
+  --fs-card:    rgba(255, 255, 255, 0.95);
+  --fs-input:   rgba(255, 255, 255, 0.80);
+  --fs-text:    #09090b;
+  --fs-muted:   #3f3f46;
+  --fs-subtle:  #71717a;
+  --fs-border:  rgba(0, 0, 0, 0.09);
+  --fs-shadow:  0 8px 32px rgba(0,0,0,0.08), 0 1px 0 rgba(255,255,255,0.90) inset;
+  --fs-panel:   rgba(255,255,255,0.92);
+  --fs-panel-border: rgba(0,0,0,0.07);
+  --fs-panel-shadow: 0 1px 0 rgba(0,0,0,0.04);
+  --fs-search:  rgba(255,255,255,0.85);
+  --fs-search-border: rgba(0,0,0,0.10);
+  --fs-card-solid: #ffffff;
+  --fs-card-border-strong: rgba(0,0,0,0.08);
+  --fs-card-divider: rgba(0,0,0,0.05);
+  --fs-card-shadow-soft: 0 2px 8px rgba(0,0,0,0.05), 0 1px 0 rgba(255,255,255,0.8) inset;
+  --fs-loading-backdrop: rgba(250,250,250,0.78);
+  --fs-loading-fill: rgba(255,255,255,0.88);
+  --fs-radius:  16px;
+  --fs-content-max: 1180px;
+
+  /* ── PatternFly variable overrides (inherited by shadow DOM) ── */
+  --ak-accent:                              #4D5DD9;
+  --pf-global--primary-color--100:          #4338CA;
+  --pf-global--primary-color--200:          #4D5DD9;
+  --pf-global--BackgroundColor--100:        #fafafa;
+  --pf-global--BackgroundColor--200:        #f4f4f5;
+  --pf-c-login--BackgroundColor:            transparent;
+  --pf-v5-c-login--BackgroundColor:         transparent;
+
+  /* Card variables — read by PatternFly shadow DOM CSS */
+  --pf-c-login__main--BackgroundColor:      rgba(255,255,255,0.95);
+  --pf-v5-c-login__main--BackgroundColor:   rgba(255,255,255,0.95);
+  --pf-c-login__main--BoxShadow:            0 8px 32px rgba(0,0,0,0.08), 0 1px 0 rgba(255,255,255,0.90) inset;
+  --pf-v5-c-login__main--BoxShadow:         0 8px 32px rgba(0,0,0,0.08), 0 1px 0 rgba(255,255,255,0.90) inset;
+  --pf-c-login__main--BorderRadius:         16px;
+  --pf-v5-c-login__main--BorderRadius:      16px;
+  --pf-c-card--BackgroundColor:             rgba(255,255,255,0.95);
+  --pf-v5-c-card--BackgroundColor:          rgba(255,255,255,0.95);
+
+  /* Input variables */
+  --pf-c-form-control--BorderColor:         rgba(0,0,0,0.09);
+  --pf-c-form-control--BorderRadius:        12px;
+  --pf-global--BorderColor--100:            rgba(0,0,0,0.09);
+  --pf-global--BorderColor--200:            rgba(0,0,0,0.12);
+
+  /* Button variables */
+  --pf-c-button--m-primary--BackgroundColor:        #4338CA;
+  --pf-v5-c-button--m-primary--BackgroundColor:     #4338CA;
+  --pf-c-button--m-primary--hover--BackgroundColor: #4D5DD9;
+  --pf-v5-c-button--m-primary--hover--BackgroundColor: #4D5DD9;
+
+  /* Text / links */
+  --pf-global--Color--100:                  #09090b;
+  --pf-global--Color--200:                  #3f3f46;
+  --pf-global--link--Color:                 #4338CA;
+  --pf-global--link--Color--hover:          #4D5DD9;
+
+  /* PatternFly v5 variables used inside Authentik shadow DOM */
+  --pf-v5-global--BackgroundColor--100:     #fafafa;
+  --pf-v5-global--BackgroundColor--200:     #f4f4f5;
+  --pf-v5-global--Color--100:               #09090b;
+  --pf-v5-global--Color--200:               #3f3f46;
+  --pf-v5-global--BorderColor--100:         rgba(0,0,0,0.09);
+  --pf-v5-global--BorderColor--200:         rgba(0,0,0,0.12);
+  --pf-v5-global--link--Color:              #4338CA;
+  --pf-v5-global--link--Color--hover:       #4D5DD9;
+  --pf-v5-c-login__main--BackgroundColor:   rgba(255,255,255,0.95);
+  --pf-v5-c-login__main--BoxShadow:         0 8px 32px rgba(0,0,0,0.08), 0 1px 0 rgba(255,255,255,0.90) inset;
+  --pf-v5-c-login__main-footer-band--BackgroundColor: transparent;
+  --pf-v5-c-login__main-footer-band--BorderTopColor: transparent;
+  --pf-v5-c-form-control--BackgroundColor:  rgba(255,255,255,0.80);
+  --pf-v5-c-form-control--Color:            #09090b;
+  --pf-v5-c-form-control--after--BorderBottomColor: rgba(0,0,0,0.12);
+  --pf-v5-c-form-control--before--BorderTopColor: rgba(0,0,0,0.09);
+
+  /* Font */
+  --pf-global--FontFamily--sans-serif:      'Plus Jakarta Sans', system-ui, sans-serif;
+  --pf-global--FontFamily--heading--sans-serif: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --ak-font-family-sans-serif:              'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+/* ── Dark mode (prefers-color-scheme) ──────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) {
+    color-scheme: dark;
+    --fs-bg:     #07070a;
+    --fs-card:   rgba(255,255,255,0.04);
+    --fs-input:  rgba(255,255,255,0.06);
+    --fs-text:   #fafafa;
+    --fs-muted:  #a1a1aa;
+    --fs-subtle: #71717a;
+    --fs-border: rgba(255,255,255,0.10);
+    --fs-shadow: 0 8px 32px rgba(0,0,0,0.30), 0 1px 0 rgba(255,255,255,0.08) inset;
+    --fs-panel:  rgba(10,10,14,0.82);
+    --fs-panel-border: rgba(255,255,255,0.08);
+    --fs-panel-shadow: 0 1px 0 rgba(255,255,255,0.05);
+    --fs-search: rgba(255,255,255,0.06);
+    --fs-search-border: rgba(255,255,255,0.10);
+    --fs-card-solid: rgba(18,18,24,0.92);
+    --fs-card-border-strong: rgba(255,255,255,0.08);
+    --fs-card-divider: rgba(255,255,255,0.06);
+    --fs-card-shadow-soft: 0 12px 36px rgba(0,0,0,0.28), 0 1px 0 rgba(255,255,255,0.05) inset;
+    --fs-loading-backdrop: rgba(7,7,10,0.72);
+    --fs-loading-fill: rgba(24,24,27,0.92);
+
+    --pf-global--BackgroundColor--100:       #07070a;
+    --pf-global--BackgroundColor--200:       #101012;
+    --pf-c-login__main--BackgroundColor:     rgba(255,255,255,0.04);
+    --pf-v5-c-login__main--BackgroundColor:  rgba(255,255,255,0.04);
+    --pf-c-login__main--BoxShadow:           0 8px 32px rgba(0,0,0,0.30), 0 1px 0 rgba(255,255,255,0.08) inset;
+    --pf-v5-c-login__main--BoxShadow:        0 8px 32px rgba(0,0,0,0.30), 0 1px 0 rgba(255,255,255,0.08) inset;
+    --pf-c-card--BackgroundColor:            rgba(255,255,255,0.04);
+    --pf-v5-c-card--BackgroundColor:         rgba(255,255,255,0.04);
+    --pf-global--Color--100:                 #fafafa;
+    --pf-global--Color--200:                 #a1a1aa;
+    --pf-global--BorderColor--100:           rgba(255,255,255,0.10);
+    --pf-global--BorderColor--200:           rgba(255,255,255,0.14);
+
+    --pf-v5-global--BackgroundColor--100:    #07070a;
+    --pf-v5-global--BackgroundColor--200:    #101012;
+    --pf-v5-global--Color--100:              #fafafa;
+    --pf-v5-global--Color--200:              #d4d4d8;
+    --pf-v5-global--BorderColor--100:        rgba(255,255,255,0.10);
+    --pf-v5-global--BorderColor--200:        rgba(255,255,255,0.14);
+    --pf-v5-global--link--Color:             #c4b5fd;
+    --pf-v5-global--link--Color--hover:      #ddd6fe;
+    --pf-v5-c-login__main--BackgroundColor:  rgba(18,18,24,0.84);
+    --pf-v5-c-login__main--BoxShadow:        0 24px 60px rgba(0,0,0,0.42), 0 1px 0 rgba(255,255,255,0.06) inset;
+    --pf-v5-c-login__main-footer-band--BackgroundColor: transparent;
+    --pf-v5-c-login__main-footer-band--BorderTopColor: transparent;
+    --pf-v5-c-form-control--BackgroundColor: rgba(255,255,255,0.05);
+    --pf-v5-c-form-control--Color:           #fafafa;
+    --pf-v5-c-form-control--after--BorderBottomColor: rgba(255,255,255,0.12);
+    --pf-v5-c-form-control--before--BorderTopColor: rgba(255,255,255,0.10);
+  }
+}
+
+/* ── Dark mode (explicit data-theme) ───────────────────────────── */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --fs-bg:     #07070a;
+  --fs-card:   rgba(255,255,255,0.04);
+  --fs-input:  rgba(255,255,255,0.06);
+  --fs-text:   #fafafa;
+  --fs-muted:  #a1a1aa;
+  --fs-subtle: #71717a;
+  --fs-border: rgba(255,255,255,0.10);
+  --fs-shadow: 0 8px 32px rgba(0,0,0,0.30), 0 1px 0 rgba(255,255,255,0.08) inset;
+  --fs-panel:  rgba(10,10,14,0.82);
+  --fs-panel-border: rgba(255,255,255,0.08);
+  --fs-panel-shadow: 0 1px 0 rgba(255,255,255,0.05);
+  --fs-search: rgba(255,255,255,0.06);
+  --fs-search-border: rgba(255,255,255,0.10);
+  --fs-card-solid: rgba(18,18,24,0.92);
+  --fs-card-border-strong: rgba(255,255,255,0.08);
+  --fs-card-divider: rgba(255,255,255,0.06);
+  --fs-card-shadow-soft: 0 12px 36px rgba(0,0,0,0.28), 0 1px 0 rgba(255,255,255,0.05) inset;
+  --fs-loading-backdrop: rgba(7,7,10,0.72);
+  --fs-loading-fill: rgba(24,24,27,0.92);
+
+  --pf-global--BackgroundColor--100:       #07070a;
+  --pf-global--BackgroundColor--200:       #101012;
+  --pf-c-login__main--BackgroundColor:     rgba(255,255,255,0.04);
+  --pf-v5-c-login__main--BackgroundColor:  rgba(255,255,255,0.04);
+  --pf-c-login__main--BoxShadow:           0 8px 32px rgba(0,0,0,0.30), 0 1px 0 rgba(255,255,255,0.08) inset;
+  --pf-v5-c-login__main--BoxShadow:        0 8px 32px rgba(0,0,0,0.30), 0 1px 0 rgba(255,255,255,0.08) inset;
+  --pf-c-card--BackgroundColor:            rgba(255,255,255,0.04);
+  --pf-v5-c-card--BackgroundColor:         rgba(255,255,255,0.04);
+  --pf-global--Color--100:                 #fafafa;
+  --pf-global--Color--200:                 #a1a1aa;
+  --pf-global--BorderColor--100:           rgba(255,255,255,0.10);
+  --pf-global--BorderColor--200:           rgba(255,255,255,0.14);
+
+  --pf-v5-global--BackgroundColor--100:    #07070a;
+  --pf-v5-global--BackgroundColor--200:    #101012;
+  --pf-v5-global--Color--100:              #fafafa;
+  --pf-v5-global--Color--200:              #d4d4d8;
+  --pf-v5-global--BorderColor--100:        rgba(255,255,255,0.10);
+  --pf-v5-global--BorderColor--200:        rgba(255,255,255,0.14);
+  --pf-v5-global--link--Color:             #c4b5fd;
+  --pf-v5-global--link--Color--hover:      #ddd6fe;
+  --pf-v5-c-login__main--BackgroundColor:  rgba(18,18,24,0.84);
+  --pf-v5-c-login__main--BoxShadow:        0 24px 60px rgba(0,0,0,0.42), 0 1px 0 rgba(255,255,255,0.06) inset;
+  --pf-v5-c-login__main-footer-band--BackgroundColor: transparent;
+  --pf-v5-c-login__main-footer-band--BorderTopColor: transparent;
+  --pf-v5-c-form-control--BackgroundColor: rgba(255,255,255,0.05);
+  --pf-v5-c-form-control--Color:           #fafafa;
+  --pf-v5-c-form-control--after--BorderBottomColor: rgba(255,255,255,0.12);
+  --pf-v5-c-form-control--before--BorderTopColor: rgba(255,255,255,0.10);
+}
+
+html.dark {
+  color-scheme: dark;
+  --fs-bg:     #07070a;
+  --fs-card:   rgba(18,18,24,0.84);
+  --fs-input:  rgba(255,255,255,0.06);
+  --fs-text:   #fafafa;
+  --fs-muted:  #d4d4d8;
+  --fs-subtle: #a1a1aa;
+  --fs-border: rgba(255,255,255,0.10);
+  --fs-shadow: 0 24px 60px rgba(0,0,0,0.42), 0 1px 0 rgba(255,255,255,0.06) inset;
+  --pf-v5-global--BackgroundColor--100:    #07070a;
+  --pf-v5-global--BackgroundColor--200:    #101012;
+  --pf-v5-global--Color--100:              #fafafa;
+  --pf-v5-global--Color--200:              #d4d4d8;
+  --pf-v5-global--BorderColor--100:        rgba(255,255,255,0.10);
+  --pf-v5-global--BorderColor--200:        rgba(255,255,255,0.14);
+  --pf-v5-global--link--Color:             #c4b5fd;
+  --pf-v5-global--link--Color--hover:      #ddd6fe;
+  --pf-v5-c-login__main--BackgroundColor:  rgba(18,18,24,0.84);
+  --pf-v5-c-login__main--BoxShadow:        0 24px 60px rgba(0,0,0,0.42), 0 1px 0 rgba(255,255,255,0.06) inset;
+  --pf-v5-c-login__main-footer-band--BackgroundColor: transparent;
+  --pf-v5-c-login__main-footer-band--BorderTopColor: transparent;
+  --pf-v5-c-form-control--BackgroundColor: rgba(255,255,255,0.05);
+  --pf-v5-c-form-control--Color:           #fafafa;
+  --pf-v5-c-form-control--after--BorderBottomColor: rgba(255,255,255,0.12);
+  --pf-v5-c-form-control--before--BorderTopColor: rgba(255,255,255,0.10);
+}
+
+/* ── Base reset ─────────────────────────────────────────────────── */
+* { -webkit-font-smoothing: antialiased !important; box-sizing: border-box !important; }
+html { height: 100% !important; margin: 0 !important; padding: 0 !important; }
+body {
+  height: 100% !important;
+  min-height: 100dvh !important;
+  min-height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+  background: var(--fs-bg) !important;
+  color: var(--fs-text) !important;
+  /* Centering chain: body is the outermost flex container */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+/* ── Kill PatternFly's background image element (light DOM) ────── */
+.pf-c-background-image,
+.pf-c-background-image::before,
+.pf-c-background-image::after { display: none !important; }
+
+/* Nuke the flow background on every possible selector */
+ak-flow-executor,
+.pf-c-login,
+.pf-c-login.stacked,
+.pf-c-login__main {
+  background-image: none !important;
+}
+
+/* ── Glow layer 1: top-centre indigo (FlowBackground auth variant) */
+body::before {
+  content: '' !important;
+  position: fixed !important;
+  top: -180px !important;
+  left: 50% !important;
+  width: 1100px !important;
+  height: 550px !important;
+  border-radius: 9999px !important;
+  opacity: 0.12 !important;
+  background: radial-gradient(ellipse, rgba(99,102,241,0.5) 0%, rgba(99,102,241,0.15) 40%, transparent 70%) !important;
+  animation: fs-drift-1 20s ease-in-out infinite !important;
+  will-change: transform !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+
+/* ── Glow layers 2-6 + flow lines ──────────────────────────────── */
+body::after {
+  content: '' !important;
+  position: fixed !important;
+  inset: 0 !important;
+  background:
+    /* blue top-left */
+    radial-gradient(ellipse 600px 400px at -150px -50px, rgba(59,130,246,0.35) 0%, transparent 65%),
+    /* violet right */
+    radial-gradient(ellipse 550px 550px at calc(100% + 80px) 20%, rgba(139,92,246,0.4) 0%, transparent 70%),
+    /* cyan center-left */
+    radial-gradient(ellipse 450px 350px at -50px 45%, rgba(6,182,212,0.3) 0%, transparent 65%),
+    /* warm bottom-left */
+    radial-gradient(ellipse 600px 400px at -80px calc(100% + 80px), rgba(251,191,36,0.3) 0%, transparent 70%),
+    /* violet bottom-right */
+    radial-gradient(ellipse 550px 450px at 20% calc(100% + 120px), rgba(167,139,250,0.35) 0%, transparent 70%) !important;
+  opacity: 0.10 !important;
+  animation: fs-drift-2 25s ease-in-out infinite !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+
+/* ── Flow lines SVG (auth variant opacity 0.06) ─────────────────── */
+.pf-c-login::before {
+  content: '' !important;
+  position: fixed !important;
+  inset: 0 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800' preserveAspectRatio='xMidYMid slice' fill='none'%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%237C3AED'/%3E%3Cstop offset='50%25' stop-color='%233B82F6'/%3E%3Cstop offset='100%25' stop-color='%2306B6D4'/%3E%3C/linearGradient%3E%3ClinearGradient id='g2' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%2306B6D4'/%3E%3Cstop offset='50%25' stop-color='%233B82F6'/%3E%3Cstop offset='100%25' stop-color='%237C3AED'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg stroke='url(%23g1)' stroke-width='1.2'%3E%3Cpath d='M-100,150 Q200,120 400,180 T800,140 T1300,200'/%3E%3Cpath d='M-100,300 Q300,270 500,330 T900,290 T1300,350'/%3E%3Cpath d='M-100,450 Q250,420 450,480 T850,440 T1300,500'/%3E%3C/g%3E%3Cg stroke='url(%23g2)' stroke-width='0.8'%3E%3Cpath d='M-100,200 Q150,230 350,170 T750,230 T1300,190'/%3E%3Cpath d='M-100,380 Q200,350 400,410 T800,370 T1300,430'/%3E%3C/g%3E%3Cg stroke='url(%23g1)' stroke-width='0.5'%3E%3Cpath d='M-100,100 Q200,80 400,120 T800,100 T1300,140'/%3E%3Cpath d='M-100,600 Q200,620 400,580 T800,620 T1300,600'/%3E%3C/g%3E%3C/svg%3E") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  opacity: 0.06 !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+
+/* ── Login wrapper ──────────────────────────────────────────────── */
+.pf-c-login,
+.pf-c-login.stacked {
+  flex: 1 !important;
+  min-height: 100dvh !important;
+  min-height: 100vh !important;
+  /* Override PatternFly grid with flex so align-items: center works */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  /* Also cover grid layout just in case */
+  align-content: center !important;
+  justify-items: center !important;
+  background: transparent !important;
+  background-image: none !important;
+  position: relative !important;
+  z-index: 1 !important;
+  padding: 24px !important;
+  margin: 0 !important;
+}
+
+.ak-login-container,
+.pf-c-login__container {
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+  width: 100% !important;
+  max-width: 440px !important;
+  margin: 0 auto !important;
+  grid-area: unset !important;
+  align-self: unset !important;
+}
+
+/* ── Flow executor ──────────────────────────────────────────────── */
+ak-flow-executor {
+  display: flex !important;
+  flex: 1 !important;
+  flex-direction: column !important;
+  min-height: 100dvh !important;
+  min-height: 100vh !important;
+  background: transparent !important;
+  background-image: none !important;
+}
+
+ak-flow-executor,
+ak-flow-executor::part(flow-container),
+.pf-c-login,
+.pf-c-login.stacked,
+.pf-c-login__container {
+  --pf-v5-global--BackgroundColor--100: var(--pf-v5-global--BackgroundColor--100) !important;
+  --pf-v5-global--BackgroundColor--200: var(--pf-v5-global--BackgroundColor--200) !important;
+  --pf-v5-global--Color--100: var(--pf-v5-global--Color--100) !important;
+  --pf-v5-global--Color--200: var(--pf-v5-global--Color--200) !important;
+  --pf-v5-global--BorderColor--100: var(--pf-v5-global--BorderColor--100) !important;
+  --pf-v5-global--BorderColor--200: var(--pf-v5-global--BorderColor--200) !important;
+  --pf-v5-global--link--Color: var(--pf-v5-global--link--Color) !important;
+  --pf-v5-global--link--Color--hover: var(--pf-v5-global--link--Color--hover) !important;
+  --pf-v5-c-login__main--BackgroundColor: var(--pf-v5-c-login__main--BackgroundColor) !important;
+  --pf-v5-c-login__main--BoxShadow: var(--pf-v5-c-login__main--BoxShadow) !important;
+  --pf-v5-c-login__main-footer-band--BackgroundColor: var(--pf-v5-c-login__main-footer-band--BackgroundColor) !important;
+  --pf-v5-c-login__main-footer-band--BorderTopColor: var(--pf-v5-c-login__main-footer-band--BorderTopColor) !important;
+  --pf-v5-c-form-control--BackgroundColor: var(--pf-v5-c-form-control--BackgroundColor) !important;
+  --pf-v5-c-form-control--Color: var(--pf-v5-c-form-control--Color) !important;
+  --pf-v5-c-form-control--after--BorderBottomColor: var(--pf-v5-c-form-control--after--BorderBottomColor) !important;
+  --pf-v5-c-form-control--before--BorderTopColor: var(--pf-v5-c-form-control--before--BorderTopColor) !important;
+}
+
+ak-flow-executor::part(flow-container) {
+  max-width: 440px !important;
+  background: transparent !important;
+  background-image: none !important;
+}
+
+ak-flow-executor::part(locale-select) { display: none !important; }
+
+/* ── Card — glassmorphism matching AuthFormCard ─────────────────── */
+.pf-c-login__main {
+  background: var(--fs-card) !important;
+  background-image: none !important;
+  border: 1px solid var(--fs-border) !important;
+  border-radius: var(--fs-radius) !important;
+  box-shadow: var(--fs-shadow) !important;
+  backdrop-filter: blur(24px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
+  overflow: hidden !important;
+  animation: flow-slide-up 0.4s cubic-bezier(0.16,1,0.3,1) both !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) .pf-c-login__main {
+    background: rgba(18,18,24,0.84) !important;
+    border-color: rgba(255,255,255,0.10) !important;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.42), 0 1px 0 rgba(255,255,255,0.06) inset !important;
+    backdrop-filter: blur(18px) saturate(120%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(120%) !important;
+  }
+
+  html:not([data-theme='light']) .pf-c-login__main-header h1,
+  html:not([data-theme='light']) .pf-c-form__label-text,
+  html:not([data-theme='light']) label,
+  html:not([data-theme='light']) .pf-c-login__main-footer-links-item a,
+  html:not([data-theme='light']) .pf-c-login__main-body,
+  html:not([data-theme='light']) .pf-c-login__main-footer {
+    color: #f4f4f5 !important;
+  }
+
+  html:not([data-theme='light']) .pf-c-login__main-header h1 {
+    background-image: linear-gradient(180deg, #f4f4f5 0%, #a78bfa 100%) !important;
+  }
+
+  html:not([data-theme='light']) .pf-c-form-control,
+  html:not([data-theme='light']) input[type='text'],
+  html:not([data-theme='light']) input[type='email'],
+  html:not([data-theme='light']) input[type='password'] {
+    background: rgba(255,255,255,0.05) !important;
+    border-color: rgba(255,255,255,0.10) !important;
+    color: #fafafa !important;
+    -webkit-text-fill-color: #fafafa !important;
+  }
+
+  html:not([data-theme='light']) .pf-c-form-control::placeholder {
+    color: rgba(255,255,255,0.45) !important;
+  }
+
+  html:not([data-theme='light']) .pf-c-login__main-footer-links-item a,
+  html:not([data-theme='light']) .fs-signup-link span {
+    color: #c4b5fd !important;
+  }
+}
+
+html[data-theme='dark'] .pf-c-login__main,
+html.dark .pf-c-login__main {
+  background: rgba(18,18,24,0.84) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.42), 0 1px 0 rgba(255,255,255,0.06) inset !important;
+  backdrop-filter: blur(18px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(120%) !important;
+}
+
+html[data-theme='dark'] .pf-c-login__main-header h1,
+html.dark .pf-c-login__main-header h1,
+html[data-theme='dark'] .pf-c-form__label-text,
+html.dark .pf-c-form__label-text,
+html[data-theme='dark'] label,
+html.dark label,
+html[data-theme='dark'] .pf-c-login__main-footer-links-item a,
+html.dark .pf-c-login__main-footer-links-item a,
+html[data-theme='dark'] .pf-c-login__main-body,
+html.dark .pf-c-login__main-body,
+html[data-theme='dark'] .pf-c-login__main-footer,
+html.dark .pf-c-login__main-footer {
+  color: #f4f4f5 !important;
+}
+
+html[data-theme='dark'] .pf-c-login__main-header h1,
+html.dark .pf-c-login__main-header h1 {
+  background-image: linear-gradient(180deg, #f4f4f5 0%, #a78bfa 100%) !important;
+}
+
+html[data-theme='dark'] .pf-c-form-control,
+html.dark .pf-c-form-control,
+html[data-theme='dark'] input[type='text'],
+html.dark input[type='text'],
+html[data-theme='dark'] input[type='email'],
+html.dark input[type='email'],
+html[data-theme='dark'] input[type='password'],
+html.dark input[type='password'] {
+  background: rgba(255,255,255,0.05) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+  color: #fafafa !important;
+  -webkit-text-fill-color: #fafafa !important;
+}
+
+html[data-theme='dark'] .pf-c-form-control::placeholder,
+html.dark .pf-c-form-control::placeholder {
+  color: rgba(255,255,255,0.45) !important;
+}
+
+html[data-theme='dark'] .pf-c-login__main-footer-links-item a,
+html.dark .pf-c-login__main-footer-links-item a,
+html[data-theme='dark'] .fs-signup-link span,
+html.dark .fs-signup-link span {
+  color: #c4b5fd !important;
+}
+
+/* ── Override authentik.css's excessive brand padding-top ───────── */
+.pf-c-brand {
+  padding-top: 0 !important;
+  max-height: none !important;
+}
+
+/* ── Logo area — flex row: [logo mark] [Code badge] ────────────── */
+.pf-c-login__main-header.pf-c-brand.ak-brand {
+  padding: 28px 28px 16px !important;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 10px !important;
+  min-height: unset !important;
+  position: relative !important;
+  z-index: 3 !important;
+}
+.pf-c-login__main-header.pf-c-brand.ak-brand img { display: none !important; }
+
+/* ::before = logo mark (first in row) */
+.pf-c-login__main-header.pf-c-brand.ak-brand::before {
+  content: '' !important;
+  display: block !important;
+  flex-shrink: 0 !important;
+  width: 36px !important;
+  height: 36px !important;
+  background-image: url('/media/flowstarter-mark.svg') !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  filter: drop-shadow(0 4px 16px rgba(67,56,202,0.50)) drop-shadow(0 2px 6px rgba(139,92,246,0.30)) !important;
+}
+
+/* ::after = "Code" product badge (second in row) */
+.pf-c-login__main-header.pf-c-brand.ak-brand::after {
+  content: 'Code' !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 3px 9px !important;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+  font-size: 0.6875rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  color: #8B5CF6 !important;
+  background: rgba(67,56,202,0.12) !important;
+  border: 1px solid rgba(139,92,246,0.22) !important;
+  border-radius: 9999px !important;
+  pointer-events: none !important;
+  -webkit-text-fill-color: #8B5CF6 !important;
+}
+
+/* ── Typography ─────────────────────────────────────────────────── */
+body, input, button, label, p, span, div, a {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+}
+h1, h2, h3, .pf-c-title, .pf-c-login__main-header h1, .pf-c-title.pf-m-3xl {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+  font-size: 1.5rem !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+}
+.pf-c-login__main-header h1 {
+  background-image: linear-gradient(to right, #4D5DD9, #8B5CF6) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+}
+/* Hide "Login to continue to [app]" subtitle — catch every possible selector */
+.pf-c-login__main-header p,
+.pf-c-login__main-header-desc,
+p.pf-c-login__main-header-desc,
+.pf-c-login__main-header .pf-c-content p,
+.pf-c-login__main-header > p,
+ak-flow-header p,
+.ak-login-header p {
+  display: none !important;
+  visibility: hidden !important;
+  max-height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* ── Layout — spacing ───────────────────────────────────────────── */
+/* Title header: more bottom padding = gap between title and form fields */
+.pf-c-login__main-header:not(.ak-brand) { padding: 4px 28px 20px !important; margin: 0 !important; }
+/* Form body */
+.pf-c-login__main-body  { padding: 0 28px 8px !important; position: relative !important; z-index: 3 !important; }
+/* Tighten space above the submit button */
+.pf-c-form__group.pf-m-action { margin-top: 4px !important; margin-bottom: 0 !important; }
+
+/* Footer holds "Forgot password?" — transparent, no gray block */
+.pf-c-login__main-footer,
+.pf-c-login__main-footer-band {
+  padding: 0 28px 20px !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border-top: none !important;
+  box-shadow: none !important;
+  position: relative !important;
+  z-index: 3 !important;
+}
+/* Kill any inner band/container background PatternFly adds */
+.pf-c-login__main-footer > *,
+.pf-c-login__main-footer-band > * {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* "Forgot password?" link — right-aligned, small, appears right below form */
+.pf-c-login__main-footer-links {
+  display: flex !important;
+  justify-content: flex-end !important;
+  padding: 4px 0 0 !important;
+  margin: 0 !important;
+  list-style: none !important;
+}
+.pf-c-login__main-footer-links-item {
+  width: auto !important;
+}
+.pf-c-login__main-footer-links-item a {
+  display: inline !important;
+  height: auto !important;
+  width: auto !important;
+  background: none !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  font-size: 0.8125rem !important;
+  font-weight: 500 !important;
+  color: var(--fs-violet) !important;
+  text-decoration: none !important;
+  opacity: 1 !important;
+  transition: color 0.15s !important;
+}
+.pf-c-login__main-footer-links-item a:hover {
+  color: var(--fs-accent) !important;
+  background: none !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+  opacity: 1 !important;
+}
+
+/* ── Labels ─────────────────────────────────────────────────────── */
+.pf-c-form__label-text, label {
+  color: var(--fs-muted) !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+}
+
+/* ── Inputs ─────────────────────────────────────────────────────── */
+.pf-c-form-control,
+input[type="text"], input[type="email"], input[type="password"] {
+  background: var(--fs-input) !important;
+  border: 1px solid var(--fs-border) !important;
+  border-radius: 12px !important;
+  color: var(--fs-text) !important;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+  font-size: 0.9375rem !important;
+  height: 44px !important;
+  padding: 0 14px !important;
+  width: 100% !important;
+  transition: border-color 0.15s, box-shadow 0.15s !important;
+}
+.pf-c-form-control:focus, input:focus {
+  border-color: rgba(77,93,217,0.50) !important;
+  box-shadow: 0 0 0 3px rgba(77,93,217,0.18) !important;
+  outline: none !important;
+}
+.pf-c-form-control::placeholder { color: var(--fs-subtle) !important; opacity: 0.6 !important; }
+.pf-c-form__group { margin-bottom: 12px !important; }
+.pf-c-form__group:last-of-type { margin-bottom: 0 !important; }
+/* Kill the group's internal row gap that PatternFly adds above the input */
+.pf-c-form__group-label { padding-bottom: 4px !important; }
+.pf-c-form__group-control { margin-top: 0 !important; }
+
+/* ── Primary button — gradient matching LoginForm submit ────────── */
+.pf-c-button.pf-m-primary,
+button[type="submit"] {
+  background-image: linear-gradient(135deg, #4D5DD9 0%, #8B5CF6 100%) !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 12px !important;
+  color: #fff !important;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+  font-size: 0.9375rem !important;
+  font-weight: 600 !important;
+  height: 44px !important;
+  width: 100% !important;
+  cursor: pointer !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.12) inset, 0 4px 16px rgba(67,56,202,0.35) !important;
+  transition: box-shadow 0.2s, transform 0.15s, opacity 0.15s !important;
+}
+.pf-c-button.pf-m-primary:hover, button[type="submit"]:hover {
+  opacity: 0.92 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.12) inset, 0 6px 24px rgba(67,56,202,0.45) !important;
+}
+ak-flow-executor::part(button) {
+  background-image: linear-gradient(135deg, #4D5DD9 0%, #8B5CF6 100%) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+  font-weight: 600 !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.12) inset, 0 4px 16px rgba(67,56,202,0.35) !important;
+}
+
+ak-loading {
+  position: fixed !important;
+  inset: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  background: var(--fs-loading-backdrop) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  z-index: 50 !important;
+}
+
+.pf-c-spinner {
+  --pf-c-spinner--Color: #4D5DD9 !important;
+  color: #4D5DD9 !important;
+}
+
+/* ── Links ──────────────────────────────────────────────────────── */
+a { color: var(--fs-violet) !important; transition: color 0.15s !important; }
+a:hover { color: var(--fs-accent) !important; opacity: 0.85 !important; text-decoration: none !important; }
+
+/* ── Divider ────────────────────────────────────────────────────── */
+.ak-divider, hr {
+  border: none !important;
+  border-top: 1px solid var(--fs-border) !important;
+  margin: 16px 0 !important;
+}
+
+/* ── In-form error alerts ───────────────────────────────────────── */
+.pf-c-alert.pf-m-danger {
+  background: rgba(239,68,68,0.08) !important;
+  border: 1px solid rgba(239,68,68,0.20) !important;
+  border-radius: 12px !important;
+  color: #ef4444 !important;
+  font-size: 0.875rem !important;
+  padding: 10px 14px !important;
+  margin-bottom: 16px !important;
+}
+
+/* ── Toast / ak-message-container ──────────────────────────────── */
+ak-message-container {
+  position: fixed !important;
+  bottom: 24px !important;
+  right: 24px !important;
+  top: auto !important;
+  left: auto !important;
+  z-index: 9999 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  max-width: 360px !important;
+  width: calc(100vw - 48px) !important;
+  pointer-events: none !important;
+}
+
+/* Individual toast alerts */
+ak-message-container .pf-c-alert,
+.pf-c-alert.pf-m-info,
+.pf-c-alert.pf-m-success,
+.pf-c-alert.pf-m-warning,
+.pf-c-alert.pf-m-danger {
+  border-radius: 12px !important;
+  backdrop-filter: blur(16px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  padding: 12px 16px !important;
+  pointer-events: all !important;
+  animation: toast-in 0.25s cubic-bezier(0.16,1,0.3,1) both !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18), 0 1px 0 rgba(255,255,255,0.06) inset !important;
+}
+
+ak-message-container .pf-c-alert.pf-m-success {
+  background: rgba(16,185,129,0.12) !important;
+  border: 1px solid rgba(16,185,129,0.25) !important;
+  color: #10b981 !important;
+}
+ak-message-container .pf-c-alert.pf-m-info {
+  background: rgba(67,56,202,0.12) !important;
+  border: 1px solid rgba(77,93,217,0.25) !important;
+  color: #8B5CF6 !important;
+}
+ak-message-container .pf-c-alert.pf-m-warning {
+  background: rgba(245,158,11,0.10) !important;
+  border: 1px solid rgba(245,158,11,0.25) !important;
+  color: #f59e0b !important;
+}
+ak-message-container .pf-c-alert.pf-m-danger {
+  background: rgba(239,68,68,0.10) !important;
+  border: 1px solid rgba(239,68,68,0.25) !important;
+  color: #ef4444 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Title and icon inside toasts */
+ak-message-container .pf-c-alert__title { font-weight: 600 !important; }
+ak-message-container .pf-c-alert__icon { display: none !important; }
+ak-message-container .pf-c-alert__action button {
+  background: transparent !important;
+  border: none !important;
+  color: currentColor !important;
+  opacity: 0.5 !important;
+  cursor: pointer !important;
+}
+ak-message-container .pf-c-alert__action button:hover { opacity: 1 !important; }
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Helper text — collapse empty divs that add whitespace ─────── */
+.pf-c-form__helper-text {
+  color: var(--fs-subtle) !important;
+  font-size: 0.8125rem !important;
+}
+/* Collapse helper text — hide entirely to kill phantom spacing */
+.pf-c-form__helper-text,
+.pf-c-form__helper-text-desc {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* ── Form submitting / loading state ────────────────────────────── */
+/* Authentik disables all inputs + button while the API call runs.
+   Override the harsh gray so the card stays visually styled. */
+.pf-c-form-control:disabled,
+.pf-c-form-control[disabled],
+.pf-c-form-control[aria-disabled='true'] {
+  opacity: 0.6 !important;
+  background: var(--fs-input) !important;
+  color: var(--fs-text) !important;
+  -webkit-text-fill-color: var(--fs-text) !important;
+  cursor: not-allowed !important;
+}
+.pf-c-button.pf-m-primary:disabled,
+button[type="submit"]:disabled,
+.pf-c-button.pf-m-primary[aria-disabled='true'],
+button[type="submit"][aria-disabled='true'],
+.pf-c-button.pf-m-primary[aria-busy='true'],
+button[type="submit"][aria-busy='true'] {
+  opacity: 0.75 !important;
+  cursor: wait !important;
+  background-image: linear-gradient(135deg, #4D5DD9 0%, #8B5CF6 100%) !important;
+  color: #fff !important;
+  transform: none !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.12) inset, 0 2px 8px rgba(67,56,202,0.20) !important;
+}
+
+.pf-c-login__main[aria-busy='true'],
+.pf-c-login__main:has(.pf-c-spinner) {
+  background: var(--fs-loading-fill) !important;
+  border-color: var(--fs-border) !important;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────── */
+.pf-c-login__footer { display: none !important; }
+
+/* ════════════════════════════════════════════════════════════════════
+   USER INTERFACE  /if/user/   (ak-interface-user shadow DOM)
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Page shell */
+.pf-c-page {
+  background: var(--fs-bg) !important;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+  min-height: 100vh !important;
+  color: var(--fs-text) !important;
+}
+
+.pf-c-page__main {
+  width: min(var(--fs-content-max), calc(100vw - 48px)) !important;
+  margin: 0 auto !important;
+  padding: 40px 0 56px !important;
+}
+
+/* ── Header bar ─────────────────────────────────────────────────── */
+.pf-c-page__header {
+  background: var(--fs-panel) !important;
+  backdrop-filter: blur(14px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
+  border-bottom: 1px solid var(--fs-panel-border) !important;
+  box-shadow: var(--fs-panel-shadow) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 200 !important;
+}
+.pf-c-page__header-brand { gap: 10px !important; padding-left: 24px !important; }
+.pf-c-brand { height: 32px !important; }
+
+/* Header icon buttons (notifications, settings, logout) */
+.pf-c-page__header-tools .pf-c-button.pf-m-plain {
+  color: var(--fs-subtle) !important;
+  transition: color 0.15s !important;
+}
+.pf-c-page__header-tools .pf-c-button.pf-m-plain:hover {
+  color: #4D5DD9 !important;
+  background: transparent !important;
+}
+
+/* Notification badge */
+.pf-c-notification-badge__count { background: #ef4444 !important; }
+
+/* "Admin interface" pill button */
+.pf-c-button.pf-m-secondary {
+  border: 1px solid rgba(77,93,217,0.28) !important;
+  color: #4D5DD9 !important;
+  border-radius: 8px !important;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+  font-size: 0.8125rem !important;
+  font-weight: 500 !important;
+  background: transparent !important;
+  padding: 5px 12px !important;
+  transition: background 0.15s, border-color 0.15s !important;
+}
+.pf-c-button.pf-m-secondary:hover {
+  background: rgba(77,93,217,0.07) !important;
+  border-color: rgba(77,93,217,0.50) !important;
+}
+
+/* Username text in header */
+.pf-c-page__header-tools-item > span,
+.pf-c-page__header-tools .pf-c-dropdown__toggle-text {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  color: var(--fs-muted) !important;
+}
+
+/* ── Main content ───────────────────────────────────────────────── */
+.pf-c-page__main-section {
+  background: transparent !important;
+  padding: 0 0 24px !important;
+}
+.pf-c-page__main-section.pf-m-light {
+  background: transparent !important;
+}
+
+.pf-c-page__main-section:first-of-type {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 300px) !important;
+  gap: 20px 28px !important;
+  align-items: end !important;
+}
+
+.pf-c-page__main-section:first-of-type .pf-c-title {
+  margin: 0 !important;
+}
+
+.pf-c-search-input {
+  width: min(100%, 300px) !important;
+  margin-left: auto !important;
+}
+
+.pf-c-page__main-section:first-of-type .pf-c-gallery {
+  grid-column: 1 / -1 !important;
+}
+
+/* Section headings */
+.pf-c-title, h1.pf-c-title {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+  font-size: 1.875rem !important;
+  font-weight: 700 !important;
+  color: var(--fs-text) !important;
+  letter-spacing: -0.025em !important;
+}
+
+/* ── Search ─────────────────────────────────────────────────────── */
+.pf-c-search-input__text-input,
+.pf-c-form-control[type="search"] {
+  border-radius: 10px !important;
+  border: 1px solid var(--fs-search-border) !important;
+  background: var(--fs-search) !important;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+  font-size: 0.875rem !important;
+  color: var(--fs-text) !important;
+  padding: 8px 14px !important;
+  box-shadow: none !important;
+  transition: border-color 0.15s, box-shadow 0.15s !important;
+}
+.pf-c-search-input__text-input:focus,
+.pf-c-form-control[type="search"]:focus {
+  border-color: #4D5DD9 !important;
+  box-shadow: 0 0 0 3px rgba(77,93,217,0.14) !important;
+  outline: none !important;
+}
+
+/* ── Application gallery grid ───────────────────────────────────── */
+.pf-c-gallery {
+  grid-template-columns: repeat(auto-fit, minmax(248px, 280px)) !important;
+  justify-content: start !important;
+  gap: 18px !important;
+}
+
+/* ── App card ───────────────────────────────────────────────────── */
+.pf-c-card {
+  border-radius: 16px !important;
+  border: 1px solid var(--fs-card-border-strong) !important;
+  box-shadow: var(--fs-card-shadow-soft) !important;
+  background: var(--fs-card-solid) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 252px !important;
+  transition: box-shadow 0.2s, transform 0.18s !important;
+  cursor: pointer !important;
+}
+.pf-c-card:hover {
+  box-shadow: 0 10px 36px rgba(77,93,217,0.14), 0 2px 8px rgba(0,0,0,0.06) !important;
+  transform: translateY(-3px) !important;
+  border-color: rgba(77,93,217,0.18) !important;
+}
+
+/* Icon area at top of card */
+.pf-c-card__header {
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  padding: 22px 20px 16px !important;
+  background: linear-gradient(135deg, rgba(77,93,217,0.04) 0%, rgba(139,92,246,0.04) 100%) !important;
+  border-bottom: 1px solid var(--fs-card-divider) !important;
+  min-height: 112px !important;
+}
+.pf-c-card__header img {
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.14) !important;
+  object-fit: cover !important;
+}
+
+.pf-c-card__header > :not(img):not(a) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 12px !important;
+  background: linear-gradient(180deg, #18181b 0%, #27272a 100%) !important;
+  color: #fafafa !important;
+  font-size: 1.75rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.04em !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08) !important;
+}
+
+/* Card title / app name */
+.pf-c-card__title {
+  padding: 0 20px 6px !important;
+  text-align: left !important;
+}
+.pf-c-card__title a,
+.pf-c-card__title-text {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+  font-size: 0.9375rem !important;
+  font-weight: 600 !important;
+  color: var(--fs-text) !important;
+  text-decoration: none !important;
+  letter-spacing: -0.01em !important;
+  transition: color 0.15s !important;
+}
+.pf-c-card__title a:hover { color: #4D5DD9 !important; }
+
+/* Card body text */
+.pf-c-card__body {
+  padding: 0 20px 16px !important;
+  text-align: left !important;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+  font-size: 0.8125rem !important;
+  color: var(--fs-subtle) !important;
+  flex: 1 1 auto !important;
+}
+
+/* "Show more" footer row */
+.pf-c-card__footer {
+  border-top: 1px solid var(--fs-card-divider) !important;
+  padding: 12px 20px !important;
+  margin-top: auto !important;
+}
+.pf-c-card__footer .pf-c-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+  font-size: 0.8125rem !important;
+  font-weight: 500 !important;
+  color: #4D5DD9 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  border: none !important;
+}
+.pf-c-card__footer .pf-c-button:hover { color: #8B5CF6 !important; background: transparent !important; }
+
+@media (max-width: 920px) {
+  .pf-c-page__main {
+    width: calc(100vw - 32px) !important;
+    padding: 28px 0 40px !important;
+  }
+
+  .pf-c-page__main-section:first-of-type {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .pf-c-search-input {
+    width: 100% !important;
+  }
+}

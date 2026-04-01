@@ -1,67 +1,126 @@
 /**
  * POST /api/integrations/store-secret
  *
- * Stores a provider secret (API key, token, etc.) in Supabase Vault.
- * Supabase Vault uses pgsodium under the hood for envelope encryption.
- *
- * TODO: Wire up to a real Supabase client and call:
- *   const { data, error } = await supabase.rpc('vault.create_secret', {
- *     new_secret: secretValue,
- *     new_name:   secretName,
- *     // optional: new_description, new_key_id (pgsodium key)
- *   });
- *
- * Vault stores the encrypted value in vault.secrets and returns a UUID.
- * To retrieve later: SELECT * FROM vault.decrypted_secrets WHERE name = ?
+ * Stores or deletes project-scoped integration secrets in Supabase Vault.
+ * Secrets are never returned to the client after storage.
  */
 
 import { json, type ActionFunctionArgs } from '@remix-run/cloudflare';
+import { getAuth } from '@clerk/remix/ssr.server';
+import { hasServerTeamAccess } from '~/lib/auth/serverTeamAccess';
+import {
+  createProjectSecretsClient,
+  deleteProjectSecret,
+  getProjectSecretDefinition,
+  storeProjectSecret,
+  type ProjectSecretAction,
+} from '~/lib/integrations/projectSecrets.server';
 
 interface StoreSecretRequest {
+  /** Supabase project UUID */
+  projectId: string;
+
   /** Integration provider (e.g. "calendly", "google_analytics") */
   provider: string;
+
   /** Name/key under which the secret is stored in Vault */
   secretName: string;
+
   /** The actual secret value to encrypt and store */
-  secretValue: string;
+  secretValue?: string;
+
+  /** Action to perform */
+  action?: ProjectSecretAction;
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action(args: ActionFunctionArgs) {
+  const { request } = args;
+
   if (request.method !== 'POST') {
     return json({ error: 'Method not allowed' }, { status: 405 });
   }
 
+  const auth = await getAuth(args);
+
+  if (!auth.userId) {
+    return json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  if (!hasServerTeamAccess(auth.sessionClaims)) {
+    return json({ error: 'Forbidden' }, { status: 403 });
+  }
+
   let body: StoreSecretRequest;
+
   try {
     body = (await request.json()) as StoreSecretRequest;
   } catch {
     return json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const { provider, secretName, secretValue } = body;
+  const { projectId, provider, secretName, secretValue, action = 'store' } = body;
 
-  if (!provider || !secretName || !secretValue) {
+  if (!projectId || !provider || !secretName) {
+    return json({ error: 'Missing required fields: projectId, provider, secretName' }, { status: 400 });
+  }
+
+  const definition = getProjectSecretDefinition(provider, secretName);
+
+  if (!definition) {
+    return json({ error: 'Unsupported integration secret' }, { status: 400 });
+  }
+
+  if (action === 'store' && !secretValue) {
+    return json({ error: 'secretValue is required when action is store' }, { status: 400 });
+  }
+
+  let supabase;
+
+  try {
+    supabase = createProjectSecretsClient();
+  } catch (error) {
     return json(
-      { error: 'Missing required fields: provider, secretName, secretValue' },
-      { status: 400 },
+      { error: error instanceof Error ? error.message : 'Supabase Vault is not configured' },
+      { status: 500 },
     );
   }
 
-  // TODO: Authenticate the request (e.g. verify Clerk session / JWT)
-  // TODO: Initialize Supabase admin client with service role key
-  // TODO: Call vault.create_secret via supabase.rpc():
-  //
-  //   const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
-  //   const { data, error } = await supabase.rpc('vault.create_secret', {
-  //     new_secret: secretValue,
-  //     new_name:   `${provider}/${secretName}`,
-  //   });
-  //
-  //   if (error) return json({ success: false, error: error.message }, { status: 500 });
-  //   return json({ success: true, secretId: data });
+  try {
+    if (action === 'delete') {
+      const result = await deleteProjectSecret({
+        supabase,
+        projectId,
+        provider: provider as 'calendly' | 'analytics',
+        secretName: secretName as 'apiKey' | 'refreshToken',
+      });
 
-  return json({
-    success: true,
-    message: 'Secret storage not yet implemented',
-  });
+      return json({
+        success: true,
+        action,
+        provider,
+        secretName,
+        projectId,
+        deleted: result.deleted,
+      });
+    }
+
+    const result = await storeProjectSecret({
+      supabase,
+      projectId,
+      provider: provider as 'calendly' | 'analytics',
+      secretName: secretName as 'apiKey' | 'refreshToken',
+      secretValue: secretValue!,
+    });
+
+    return json({
+      success: true,
+      action,
+      provider,
+      secretName,
+      projectId,
+      secretId: result.secretId,
+    });
+  } catch (error) {
+    return json({ error: error instanceof Error ? error.message : 'Secret management failed' }, { status: 500 });
+  }
 }

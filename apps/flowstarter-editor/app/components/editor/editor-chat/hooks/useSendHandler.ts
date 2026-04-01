@@ -11,14 +11,8 @@ import { useCallback } from 'react';
 import type { UseOnboardingMessagesReturn } from './useOnboardingMessages';
 import type { UseOnboardingFlowReturn } from './useOnboardingFlow';
 import type { UseBusinessInfoReturn } from './useBusinessInfo';
-import type { AttachedImage } from '../types';
-import {
-  fileToBase64,
-  getModificationRoute,
-  applyChangesSimple,
-  applyChangesGretly,
-  type ImageData,
-} from './modification-api';
+import type { AttachedImage } from '~/components/editor/editor-chat/types';
+import { fileToBase64, getModificationRoute, applyChangesSimple, type ImageData } from './modification-api';
 
 export interface UseSendHandlerProps {
   messageHook: UseOnboardingMessagesReturn;
@@ -57,7 +51,9 @@ export function useSendHandler({
       if (step === 'ready' && currentUrlId && convexProjectId) {
         if (hasImages) {
           const imageText = images.length === 1 ? '1 image' : `${images.length} images`;
-          messageHook.addUserMessage(userInput ? `${userInput}\n\n📎 Attached: ${imageText}` : `📎 Attached: ${imageText}`);
+          messageHook.addUserMessage(
+            userInput ? `${userInput}\n\n📎 Attached: ${imageText}` : `📎 Attached: ${imageText}`,
+          );
         } else {
           messageHook.addUserMessage(userInput);
         }
@@ -68,11 +64,13 @@ export function useSendHandler({
 
         try {
           let imageData: ImageData[] | undefined;
+
           if (hasImages) {
             imageData = await Promise.all(images.map((img) => fileToBase64(img.file)));
           }
 
           let instruction = userInput;
+
           if (hasImages && !userInput) {
             instruction =
               'The user has attached images. Analyze them and ask where they should be used on the website.';
@@ -81,34 +79,13 @@ export function useSendHandler({
           }
 
           const routeDecision = await getModificationRoute(instruction);
+          messageHook.addAssistantMessage(`🛠️ ${routeDecision.reason}`);
 
-          let result;
-          if (routeDecision.route === 'gretly') {
-            messageHook.addAssistantMessage(
-              `🚀 This looks like a complex change (${routeDecision.reason}). Using multi-agent pipeline...`,
-            );
-
-            const filesResponse = await fetch('/api/modify-site', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ action: 'get-files', projectId: convexProjectId }),
-            });
-            const filesData = (await filesResponse.json()) as { files?: Record<string, string> };
-            const currentFiles = filesData.files || {};
-
-            result = await applyChangesGretly(
-              instruction,
-              convexProjectId,
-              currentFiles,
-              imageData,
-              (msg) => messageHook.addAssistantMessage(`📍 ${msg}`),
-            );
-          } else {
-            result = await applyChangesSimple(instruction, convexProjectId, imageData);
-          }
+          const result = await applyChangesSimple(instruction, convexProjectId, imageData);
 
           if (result.success) {
             let responseMsg = result.response || '✅ Changes applied successfully!';
+
             if (result.changes && result.changes.length > 0) {
               const changedFiles = result.changes.map((c) => `- ${c.path} (${c.operation})`).join('\n');
               responseMsg += `\n\n**Modified files:**\n${changedFiles}`;
@@ -116,12 +93,13 @@ export function useSendHandler({
 
             responseMsg += '\n\n🔄 The preview will update automatically.';
             messageHook.addAssistantMessage(responseMsg);
+
             return;
           }
 
           if (result.error?.includes('API key') || result.error?.includes('ANTHROPIC')) {
             messageHook.addAssistantMessage(
-              "⚠️ The AI modification feature requires an Anthropic API key to be configured.\n\n" +
+              '⚠️ The AI modification feature requires an Anthropic API key to be configured.\n\n' +
                 '**To enable this feature:**\n' +
                 '1. Get an API key from [console.anthropic.com](https://console.anthropic.com)\n' +
                 '2. Add `ANTHROPIC_API_KEY=your-key` to your environment\n' +
@@ -133,7 +111,7 @@ export function useSendHandler({
 
           if (result.error?.includes('No files found')) {
             messageHook.addAssistantMessage(
-              "⚠️ No files found for this project yet. Please wait for the initial build to complete, or try rebuilding the project.",
+              '⚠️ No files found for this project yet. Please wait for the initial build to complete, or try rebuilding the project.',
             );
             return;
           }
@@ -152,9 +130,8 @@ export function useSendHandler({
 
       if (step === 'creating') {
         messageHook.addUserMessage(userInput);
-        messageHook.addAssistantMessage(
-          "Your site is being built right now. The preview will appear once it's ready.",
-        );
+        messageHook.addAssistantMessage("Your site is being built right now. The preview will appear once it's ready.");
+
         return;
       }
 
@@ -162,6 +139,7 @@ export function useSendHandler({
         messageHook.addUserMessage(userInput);
 
         const lowerInput = userInput.toLowerCase();
+
         if (
           lowerInput.includes('build') ||
           lowerInput.includes('create') ||
@@ -180,6 +158,7 @@ export function useSendHandler({
               : 'Use the controls above to adjust the site before the first build.',
           );
         }
+
         return;
       }
 

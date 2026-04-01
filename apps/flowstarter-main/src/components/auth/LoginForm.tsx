@@ -519,18 +519,6 @@ export function LoginForm({ variant }: LoginFormProps) {
   /* ---- Credentials step (shared) ---- */
   return (
     <div className="w-full">
-      {/* Team sub-header */}
-      {isTeam && (
-        <div className="text-center mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            {t('team.login.signInTitle')}
-          </h2>
-          <p className="text-sm text-gray-500 dark:text-white/50 mt-1">
-            {t('team.login.signInSubtitle')}
-          </p>
-        </div>
-      )}
-
       {/* Social auth (client only) */}
       {isClient && (
         <SocialAuth

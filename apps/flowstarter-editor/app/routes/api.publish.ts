@@ -6,14 +6,33 @@
 
 import type { ActionFunctionArgs } from '@remix-run/cloudflare';
 import { json } from '@remix-run/cloudflare';
+import { getAuth } from '@clerk/remix/ssr.server';
 import { createClient } from '@supabase/supabase-js';
+import { api } from '~/convex/_generated/api';
+import { hasServerTeamAccess } from '~/lib/auth/serverTeamAccess';
+import { getConvexClient } from '~/lib/services/daytona/convexClient';
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action(args: ActionFunctionArgs) {
+  const { request } = args;
+
   if (request.method !== 'POST') {
     return json({ error: 'Method not allowed' }, { status: 405 });
   }
 
-  const { projectId } = await request.json() as { projectId?: string };
+  const auth = await getAuth(args);
+
+  if (!auth.userId) {
+    return json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  if (!hasServerTeamAccess(auth.sessionClaims)) {
+    return json({ error: 'Forbidden' }, { status: 403 });
+  }
+
+  const { projectId, customDomain } = (await request.json()) as {
+    projectId?: string;
+    customDomain?: string;
+  };
 
   if (!projectId) {
     return json({ error: 'projectId required' }, { status: 400 });
@@ -29,18 +48,16 @@ export async function action({ request }: ActionFunctionArgs) {
   try {
     // Dynamic imports for server-only modules
     const { getClient } = await import('@flowstarter/editor-engine/daytona');
-    const { buildProject, downloadBundle, validateBundle } = await import(
-      '@flowstarter/editor-engine/publishing'
-    );
-    const { createPagesProject, deployToPages } = await import(
-      '@flowstarter/editor-engine/publishing'
-    );
+    const { buildProject, downloadBundle, validateBundle } = await import('@flowstarter/editor-engine/publishing');
+    const { createPagesProject, deployToPages } = await import('@flowstarter/editor-engine/publishing');
 
     const client = getClient();
 
     // Find sandbox for project
     const sandboxes = await client.list();
-    const sandbox = sandboxes.find((s) => (s as unknown as { labels?: Record<string, string> }).labels?.project === projectId);
+    const sandbox = sandboxes.find(
+      (s) => (s as unknown as { labels?: Record<string, string> }).labels?.project === projectId,
+    );
 
     if (!sandbox) {
       return json({ error: 'No active workspace found' }, { status: 404 });
@@ -48,6 +65,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
     // 1. Build in sandbox
     const buildResult = await buildProject(sandbox);
+
     if (!buildResult.success) {
       return json({ error: `Build failed: ${buildResult.error}` }, { status: 500 });
     }
@@ -57,11 +75,9 @@ export async function action({ request }: ActionFunctionArgs) {
 
     // 3. Validate bundle
     const validation = validateBundle(files);
+
     if (!validation.valid) {
-      return json(
-        { error: `Invalid bundle: ${validation.errors.join(', ')}` },
-        { status: 400 },
-      );
+      return json({ error: `Invalid bundle: ${validation.errors.join(', ')}` }, { status: 400 });
     }
 
     // 4. Upload bundle to Supabase storage
@@ -95,6 +111,17 @@ export async function action({ request }: ActionFunctionArgs) {
     // 6. Deploy to Cloudflare Pages
     const deployment = await deployToPages(projectName, files, cfConfig);
 
+    const convex = getConvexClient();
+
+    if (convex) {
+      await convex.mutation(api.projects.publish, {
+        projectId: projectId as never,
+        publishedUrl: deployment.url,
+        customDomain,
+        publishedBy: auth.userId,
+      });
+    }
+
     // 7. Return result
     return json({
       success: true,
@@ -102,6 +129,8 @@ export async function action({ request }: ActionFunctionArgs) {
       deploymentId: deployment.id,
       environment: deployment.environment,
       fileCount: files.length,
+      publishedBy: auth.userId,
+      customDomain: customDomain || null,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Publishing failed';

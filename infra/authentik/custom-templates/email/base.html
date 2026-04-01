@@ -1,0 +1,142 @@
+{% load authentik_stages_email %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width">
+    <!-- Tell email clients this email supports both light and dark -->
+    <meta name="color-scheme" content="light dark">
+    <meta name="supported-color-schemes" content="light dark">
+    <style type="text/css">
+      :root { color-scheme: light dark; supported-color-schemes: light dark; }
+
+      body, table, td, a { margin: 0; padding: 0; border: 0; }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+        font-size: 14px;
+        background-color: #f4f4f5;
+        color: #09090b;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+      }
+
+      /* ── Wrapper ── */
+      .email-wrapper { background-color: #f4f4f5; width: 100%; padding: 40px 0; }
+      .container { max-width: 480px; margin: 0 auto; padding: 0 20px; }
+
+      /* ── Card ── */
+      .card { background-color: #ffffff; border: 1px solid rgba(0,0,0,0.08); border-radius: 16px; overflow: hidden; }
+      .card-header { background-color: #fafafa; border-bottom: 1px solid rgba(0,0,0,0.06); padding: 32px 40px 24px; text-align: center; }
+      .card-body { padding: 32px 40px; background-color: #ffffff; }
+      .card-footer-band { background-color: #f9fafb; border-top: 1px solid rgba(0,0,0,0.06); padding: 20px 40px; }
+
+      /* ── Brand ── */
+      .logo-mark { display: inline-block; width: 44px; height: 44px; border-radius: 11px; background: linear-gradient(135deg, #4338CA 0%, #06B6D4 100%); line-height: 44px; text-align: center; font-size: 20px; font-weight: 800; color: #ffffff; }
+      .brand-name { font-size: 17px; font-weight: 700; color: #09090b; letter-spacing: -0.025em; margin: 10px 0 0 0; }
+      .brand-accent { color: #8B5CF6; }
+
+      /* ── Typography ── */
+      .label { font-size: 12px; font-weight: 600; color: #8B5CF6; letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 10px 0; }
+      .heading { font-size: 22px; font-weight: 700; color: #09090b; letter-spacing: -0.025em; margin: 0 0 12px 0; line-height: 1.3; }
+      .body-text { font-size: 14px; line-height: 1.6; color: #52525b; margin: 0 0 24px 0; }
+      .divider { border: none; border-top: 1px solid rgba(0,0,0,0.06); margin: 20px 0; }
+      .footnote { font-size: 12px; color: #a1a1aa; line-height: 1.6; text-align: center; margin: 0; }
+      .footer-link { color: #71717a; text-decoration: none; }
+      .page-footer { margin-top: 24px; text-align: center; font-size: 12px; color: #a1a1aa; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; }
+
+      /* ── Button ── */
+      .btn-wrap { border-radius: 12px; background-color: #4338CA; }
+      .btn { display: block; padding: 14px 24px; border-radius: 12px; background-color: #4338CA; color: #ffffff !important; font-size: 15px; font-weight: 600; text-align: center; text-decoration: none; letter-spacing: -0.01em; }
+
+      /* ── URL fallback ── */
+      .url-fallback { font-size: 12px; color: #a1a1aa; word-break: break-all; }
+      .url-fallback a { color: #4338CA; }
+
+      /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         DARK MODE OVERRIDES
+         Supported by: Apple Mail, iOS Mail,
+         Samsung Mail, Gmail iOS/Android
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+      @media (prefers-color-scheme: dark) {
+        body, .email-wrapper    { background-color: #07070a !important; }
+        .card                   { background-color: #111118 !important; border-color: rgba(255,255,255,0.08) !important; }
+        .card-header            { background-color: #0d0d14 !important; border-bottom-color: rgba(255,255,255,0.06) !important; }
+        .card-body              { background-color: #111118 !important; }
+        .card-footer-band       { background-color: #0a0a0f !important; border-top-color: rgba(255,255,255,0.06) !important; }
+        .brand-name             { color: #fafafa !important; }
+        .heading                { color: #fafafa !important; }
+        .body-text              { color: #a1a1aa !important; }
+        .divider                { border-top-color: rgba(255,255,255,0.06) !important; }
+        .footnote               { color: #52525b !important; }
+        .footer-link            { color: #3f3f46 !important; }
+        .page-footer            { color: #3f3f46 !important; }
+        .url-fallback           { color: #52525b !important; }
+        .url-fallback a         { color: #8B5CF6 !important; }
+        /* Password reset content overrides */
+        .email-heading          { color: #fafafa !important; }
+        .email-body             { color: #a1a1aa !important; }
+        .email-muted            { color: #52525b !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-wrapper">
+      <div class="container">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td>
+              <!-- Card -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" class="card">
+                <!-- Header -->
+                <tr>
+                  <td class="card-header">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr><td align="center">
+                        <!-- Inline SVG logo mark — exact same paths as LogoMark component -->
+                        <svg width="48" height="48" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto 10px;">
+                          <defs>
+                            <linearGradient id="em-lg" x1="0" y1="40" x2="40" y2="0" gradientUnits="userSpaceOnUse">
+                              <stop stop-color="#4D5DD9"/>
+                              <stop offset="0.5" stop-color="#4D5DD9"/>
+                              <stop offset="1" stop-color="#06B6D4"/>
+                            </linearGradient>
+                          </defs>
+                          <rect width="40" height="40" rx="11" fill="url(#em-lg)"/>
+                          <rect x="1" y="1" width="38" height="38" rx="10" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+                          <path d="M14 10 L14 30" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                          <path d="M14 12 C18 12, 22 10, 27 12" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                          <path d="M14 20 C17 20, 20 18, 24 20" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                          <path d="M14 30 C18 30, 22 28, 28 26" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                        </svg>
+                      </td></tr>
+                      <tr><td align="center">
+                        <p class="brand-name">Flow<span class="brand-accent">starter</span></p>
+                      </td></tr>
+                    </table>
+                  </td>
+                </tr>
+                <!-- Body -->
+                <tr><td class="card-body">
+                  {% block content %}{% endblock %}
+                </td></tr>
+                <!-- Footer band -->
+                <tr><td class="card-footer-band">
+                  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                    {% block sub_content %}{% endblock %}
+                  </table>
+                </td></tr>
+              </table>
+              <!-- Page footer -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:20px;">
+                <tr><td class="page-footer">
+                  &copy; 2025 Flowstarter &nbsp;&middot;&nbsp;
+                  <a href="https://flowstarter.dev" class="footer-link">flowstarter.dev</a>
+                </td></tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

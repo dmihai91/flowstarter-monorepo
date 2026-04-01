@@ -120,14 +120,6 @@ export function useMockEditor() {
       text: 'Newsletter signup added. New subscribers go straight to your list.',
       action: () => setMockSite((s) => ({ ...s, hasNewsletter: true })),
     },
-    about: {
-      text: 'About page created and linked in the nav.',
-      action: () => setMockSite((s) => ({ ...s, hasAboutPage: true })),
-    },
-    page: {
-      text: 'New page created and linked in the nav.',
-      action: () => setMockSite((s) => ({ ...s, hasAboutPage: true })),
-    },
     headline: {
       text: 'Headline rewritten. Sounds more confident and client-focused now.',
       action: () => setMockSite((s) => ({ ...s })),

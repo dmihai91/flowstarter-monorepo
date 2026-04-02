@@ -25,7 +25,10 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint"
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": ["apps/flowstarter-library/scripts/**/*.{js,mjs}", "apps/flowstarter-library/src/**/*.ts"]
+      }
     }
   }
 }

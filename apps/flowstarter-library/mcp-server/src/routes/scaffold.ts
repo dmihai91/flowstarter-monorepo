@@ -181,7 +181,7 @@ export function createScaffoldRoutes() {
 							fileContent = fileContent.replace(/base:\s*['"][^'"]*['"]/g, "base: '/'");
 						}
 						configFiles.push({ path: '/' + configFile, content: fileContent });
-					} catch (e) {}
+					} catch { /* ignored */ }
 				}
 			}
 			const files = [...configFiles, ...srcFiles.map(f => ({ path: '/src/' + f.path, content: f.content }))];

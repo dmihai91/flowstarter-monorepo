@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import express from 'express';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -107,7 +107,7 @@ describe('http-server', () => {
   describe('asset path rewriting', () => {
     it('should rewrite /assets/ to /api/templates/:slug/assets/', () => {
       const slug = 'local-business-pro';
-      const originalPath = '/assets/index.css';
+      const _originalPath = '/assets/index.css';
       const rewrittenPath = `/api/templates/${slug}/assets/index.css`;
 
       expect(rewrittenPath).toContain(slug);
@@ -124,7 +124,7 @@ describe('http-server', () => {
     });
 
     it('should inject dark mode class when mode=dark', () => {
-      const originalHtml = '<html>';
+      const _originalHtml = '<html>';
       const darkModeHtml = '<html class="dark">';
 
       expect(darkModeHtml).toContain('class="dark"');

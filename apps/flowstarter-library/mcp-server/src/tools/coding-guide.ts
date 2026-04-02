@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import * as fs from 'fs';
+// import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -50,7 +50,7 @@ export interface CodingGuideResult {
   };
 }
 
-export function getCodingGuide(input: GetCodingGuideInput): CodingGuideResult {
+export function getCodingGuide(_input: GetCodingGuideInput): CodingGuideResult {
   const guide: CodingGuideResult = {
     overview: `
 Flowstarter templates use a markdown-based content system with TypeScript/React components.

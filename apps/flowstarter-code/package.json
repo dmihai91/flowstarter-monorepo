@@ -6,7 +6,7 @@
     "dev": "next dev -p 3100",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint src/",
     "t3": "bunx t3",
     "dev:t3": "bunx t3",
     "dev:all": "concurrently \"next dev -p 3100\" \"bunx t3\""

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { cloneTemplate, CloneTemplateSchema, CloneResult } from './clone.js';
+import { cloneTemplate, CloneTemplateSchema } from './clone.js';
 import { TemplateFetcher } from '../utils/template-fetcher.js';
 import * as path from 'path';
 import { fileURLToPath } from 'url';

@@ -129,7 +129,7 @@ export function createTemplatesRoutes() {
 					}
 					
 					// Load fonts from palettes if config has none (each palette can have fonts)
-					let fonts: Array<{ id: string; name: string; heading?: string; body?: string }> = (t.config as any)?.fonts || [];
+					const fonts: Array<{ id: string; name: string; heading?: string; body?: string }> = (t.config as any)?.fonts || [];
 					if (fonts.length === 0 && palettes.length > 0) {
 						const seen = new Set<string>();
 						for (const p of palettes) {

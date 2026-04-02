@@ -31,14 +31,14 @@ export function getTemplateConfig(templateDir: string): TemplateConfig {
 					srcDir: path.join(templateDir, 'src'),
 				};
 			}
-		} catch (e) {
+		} catch {
 			// Ignore JSON parse errors
 		}
 	}
 
 	// Check for Astro config file (new structure - sources in root)
 	if (fs.existsSync(path.join(templateDir, 'astro.config.mjs')) ||
-	    fs.existsSync(path.join(templateDir, 'astro.config.js'))) {
+		fs.existsSync(path.join(templateDir, 'astro.config.js'))) {
 		return {
 			framework: 'astro',
 			buildDir: path.join(templateDir, 'dist'),
@@ -49,7 +49,7 @@ export function getTemplateConfig(templateDir: string): TemplateConfig {
 	// Check for new structure with src/ in template root (not in start/)
 	// This handles Astro templates that may not have config.json with framework field
 	if (fs.existsSync(path.join(templateDir, 'src')) &&
-	    !fs.existsSync(path.join(templateDir, 'start'))) {
+		!fs.existsSync(path.join(templateDir, 'start'))) {
 		return {
 			framework: 'astro',
 			buildDir: path.join(templateDir, 'dist'),
@@ -59,7 +59,7 @@ export function getTemplateConfig(templateDir: string): TemplateConfig {
 
 	// Check for TanStack Start (vinxi) - legacy structure
 	if (fs.existsSync(path.join(templateDir, 'start', 'app.config.ts')) ||
-	    fs.existsSync(path.join(templateDir, '.vinxi'))) {
+		fs.existsSync(path.join(templateDir, '.vinxi'))) {
 		return {
 			framework: 'tanstack-start',
 			buildDir: path.join(templateDir, '.vinxi/build/client'),

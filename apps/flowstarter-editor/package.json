@@ -183,7 +183,6 @@
     "husky": "9.1.7",
     "jsdom": "^26.1.0",
     "node-fetch": "^3.3.2",
-    "pnpm": "^9.15.9",
     "prettier": "^3.6.2",
     "sass-embedded": "^1.93.2",
     "ts-node": "^10.9.2",
@@ -196,22 +195,5 @@
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^3.2.4",
     "wrangler": "^4.42.0"
-  },
-  "resolutions": {
-    "@typescript-eslint/utils": "^8.0.0-alpha.30"
-  },
-  "pnpm": {
-    "overrides": {
-      "wrangler": "^4.42.1",
-      "jsondiffpatch": "^0.7.2"
-    },
-    "peerDependencyRules": {
-      "allowedVersions": {
-        "wrangler": "4",
-        "react": "19",
-        "react-dom": "19"
-      }
-    }
-  },
-  "packageManager": "pnpm@9.15.9"
+  }
 }

@@ -2,8 +2,8 @@
  * Images.md Generator
  */
 
-import type { GeneratedAsset } from '../types';
-import { findAsset } from '../context';
+import type { GeneratedAsset } from '~/lib/services/claude-agent/contentGeneration/types';
+import { findAsset } from '~/lib/services/claude-agent/contentGeneration/context';
 
 export function generateImagesMd(assets?: GeneratedAsset[]): string {
   if (!assets || assets.length === 0) {

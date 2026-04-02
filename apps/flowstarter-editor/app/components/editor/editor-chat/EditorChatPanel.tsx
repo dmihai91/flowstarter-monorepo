@@ -11,9 +11,9 @@ import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { themeStore, getEffectiveTheme } from '~/lib/stores/theme';
 import { FlowBackground } from '@flowstarter/flow-design-system';
-import { EditorUserMessage, EditorAssistantMessage, EditorMessageWrapper } from '../EditorMessage';
-import { TemplatePreviewDialog } from '../TemplatePreviewDialog';
-import { useOptionalConversationContext } from '../ConversationContext';
+import { EditorUserMessage, EditorAssistantMessage, EditorMessageWrapper } from '~/components/editor/EditorMessage';
+import { TemplatePreviewDialog } from '~/components/editor/TemplatePreviewDialog';
+import { useOptionalConversationContext } from '~/components/editor/ConversationContext';
 
 import {
   useEditorChatState,

@@ -9,9 +9,9 @@
  */
 
 import { useCallback, useRef, useEffect } from 'react';
-import { getRandomServicePrompts } from '../constants';
+import { getRandomServicePrompts } from '~/components/editor/editor-chat/constants';
 
-import type { ColorPalette, SystemFont, LogoInfo, InitialChatState } from '../types';
+import type { ColorPalette, SystemFont, LogoInfo, InitialChatState } from '~/components/editor/editor-chat/types';
 import type { useOnboardingMessages } from './useOnboardingMessages';
 import type { useOnboardingFlow } from './useOnboardingFlow';
 import type { usePaletteSelection } from './usePaletteSelection';

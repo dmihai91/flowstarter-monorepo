@@ -6,8 +6,8 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-import type { InitialChatState } from '../types';
-import type { UseStatePersistenceOptions, UseStatePersistenceReturn } from '../types/sharedState';
+import type { InitialChatState } from '~/components/editor/editor-chat/types';
+import type { UseStatePersistenceOptions, UseStatePersistenceReturn } from '~/components/editor/editor-chat/types/sharedState';
 
 const DEFAULT_DEBOUNCE_MS = 500;
 

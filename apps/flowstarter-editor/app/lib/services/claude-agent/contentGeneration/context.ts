@@ -10,7 +10,7 @@ import {
   getRecommendedSections,
   getConversionSettings,
   getDesignRecommendations,
-} from '../../siteContentAgent';
+} from '~/lib/services/siteContentAgent';
 import type { ContentContext, IntegrationConfig, GeneratedAsset } from './types';
 
 /**

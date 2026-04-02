@@ -7,9 +7,9 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { generateMessageId } from '../utils';
-import type { ChatMessage, SuggestedReply } from '../types';
-import type { UseOnboardingMessagesOptions, UseOnboardingMessagesReturn } from '../types/sharedState';
+import { generateMessageId } from '~/components/editor/editor-chat/utils';
+import type { ChatMessage, SuggestedReply } from '~/components/editor/editor-chat/types';
+import type { UseOnboardingMessagesOptions, UseOnboardingMessagesReturn } from '~/components/editor/editor-chat/types/sharedState';
 
 type MessageType = string;
 

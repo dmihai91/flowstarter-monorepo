@@ -19,11 +19,11 @@ import type { UseOnboardingFlowReturn } from './useOnboardingFlow';
 import type { UseTemplateSelectionReturn } from './useTemplateSelection';
 import type { UsePaletteSelectionReturn } from './usePaletteSelection';
 import type { UseBusinessInfoReturn } from './useBusinessInfo';
-import type { SystemFont, PreviewInfo, InitialChatState } from '../types';
+import type { SystemFont, PreviewInfo, InitialChatState } from '~/components/editor/editor-chat/types';
 import type { Id } from '~/convex/_generated/dataModel';
-import { normalizePath, getEssentialConfigFiles } from '../utils';
-import { SUGGESTED_REPLIES } from '../constants';
-import { BUILD_ERRORS, formatErrorForUser, getUserFriendlyError, getErrorSuggestions } from '../errors';
+import { normalizePath, getEssentialConfigFiles } from '~/components/editor/editor-chat/utils';
+import { SUGGESTED_REPLIES } from '~/components/editor/editor-chat/constants';
+import { BUILD_ERRORS, formatErrorForUser, getUserFriendlyError, getErrorSuggestions } from '~/components/editor/editor-chat/errors';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
 
 // ─── Build Progress Constants ───────────────────────────────────────────────

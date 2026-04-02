@@ -6,8 +6,8 @@
  */
 
 import { useEffect, useRef } from 'react';
-import { getDefaultReadySuggestions } from '../constants';
-import type { InitialChatState, SystemFont } from '../types';
+import { getDefaultReadySuggestions } from '~/components/editor/editor-chat/constants';
+import type { InitialChatState, SystemFont } from '~/components/editor/editor-chat/types';
 import type { UseOnboardingMessagesReturn } from './useOnboardingMessages';
 import type { UseOnboardingFlowReturn } from './useOnboardingFlow';
 import type { UseTemplateSelectionReturn } from './useTemplateSelection';

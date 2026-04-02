@@ -13,7 +13,7 @@ import { useMutation } from 'convex/react';
 import { useMutation as useReactQueryMutation } from '@tanstack/react-query';
 import { api } from '~/convex/_generated/api';
 import type { Id } from '~/convex/_generated/dataModel';
-import type { LogoInfo, ColorPalette, SystemFont, BusinessInfo } from '../types';
+import type { LogoInfo, ColorPalette, SystemFont, BusinessInfo } from '~/components/editor/editor-chat/types';
 
 type PersonalizationSection = 'palette' | 'font' | 'logo';
 

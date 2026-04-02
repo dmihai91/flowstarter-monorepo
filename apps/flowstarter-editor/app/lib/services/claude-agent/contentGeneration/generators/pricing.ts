@@ -2,7 +2,7 @@
  * Pricing.md Generator
  */
 
-import type { ContentContext } from '../types';
+import type { ContentContext } from '~/lib/services/claude-agent/contentGeneration/types';
 
 /** Domain-specific pricing structures */
 const DOMAIN_PRICING: Record<string, { title: string; subtitle: string; guarantee: string }> = {

@@ -5,7 +5,7 @@
  * and the Convex projects.integrations schema format.
  */
 
-import type { IntegrationConfig } from '../types';
+import type { IntegrationConfig } from '~/components/editor/editor-chat/types';
 
 export interface ConvexBookingConfig {
   enabled: boolean;

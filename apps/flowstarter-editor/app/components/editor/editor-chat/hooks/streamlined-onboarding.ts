@@ -5,7 +5,7 @@
  * Designed for <5 minute completion.
  */
 
-import type { OnboardingStep, QuickProfile } from '../types';
+import type { OnboardingStep, QuickProfile } from '~/components/editor/editor-chat/types';
 import { inferBusinessInfo, type InferredBusinessInfo } from '~/lib/inference/auto-inference';
 
 /*

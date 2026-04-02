@@ -1,6 +1,6 @@
 import { memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { orbAnimations, orbTransition } from '../constants';
+import { orbAnimations, orbTransition } from '~/components/workbench/DaytonaPreview/constants';
 
 interface FloatingOrbProps {
   delay: number;

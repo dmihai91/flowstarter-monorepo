@@ -7,7 +7,7 @@
  */
 
 import { useCallback, useRef, useMemo } from 'react';
-import type { OnboardingStep, InitialChatState } from '../types';
+import type { OnboardingStep, InitialChatState } from '~/components/editor/editor-chat/types';
 
 // ─── Pipeline Definition ────────────────────────────────────────────────────
 

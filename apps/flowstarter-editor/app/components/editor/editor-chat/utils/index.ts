@@ -9,7 +9,7 @@ import type { WizardOutputDTO } from '~/lib/hooks/types/orchestrator.dto';
 import { workbenchStore } from '~/lib/stores/workbench';
 import { DEFAULT_PALETTE } from '~/lib/config/palettes';
 import { DEFAULT_FONTS, type FontPairing } from '~/lib/config/fonts';
-import type { ColorPalette } from '../types';
+import type { ColorPalette } from '~/components/editor/editor-chat/types';
 import type { ColorPalette as StoreColorPalette } from '~/lib/stores/palettes';
 
 // ─── ID Generation ──────────────────────────────────────────────────────────
@@ -349,7 +349,7 @@ const { title } = Astro.props;
   @import '../styles/globals.css';
 </style>`,
     '/src/pages/index.astro': `---
-import Layout from '../layouts/Layout.astro';
+import Layout from '~/components/editor/editor-chat/layouts/Layout.astro';
 ---
 
 <Layout title="${projectName}">

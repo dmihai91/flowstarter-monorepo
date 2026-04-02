@@ -5,7 +5,7 @@
  * Refactored into modules for maintainability.
  */
 
-import { fetchTemplateScaffold } from '../templateService';
+import { fetchTemplateScaffold } from '~/lib/services/templateService';
 
 // Re-export types
 export type { SiteGenerationInput, GeneratedFile, SiteGenerationResult, BuildError, AgentActivityEvent } from './types';

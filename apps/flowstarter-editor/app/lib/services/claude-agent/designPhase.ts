@@ -5,7 +5,7 @@
  * Opus makes creative decisions about layout, visual hierarchy, and styling.
  */
 
-import { generateJSON } from '../llm';
+import { generateJSON } from '~/lib/services/llm';
 import type { SiteGenerationInput } from './types';
 
 export interface DesignSpec {

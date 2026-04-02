@@ -8,7 +8,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Brain, Terminal, FilePlus, FileEdit, Trash2, AlertTriangle, Wrench, ChevronDown, Filter } from 'lucide-react';
-import type { BuildPhase } from '../types';
+import type { BuildPhase } from '~/components/editor/editor-chat/types';
 
 // ─── Event types ──────────────────────────────────────────────────────
 

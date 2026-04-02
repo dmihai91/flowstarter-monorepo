@@ -4,7 +4,7 @@
  * Generators for booking, contact, newsletter, payments, and social feed.
  */
 
-import type { ContentContext, IntegrationConfig } from '../types';
+import type { ContentContext, IntegrationConfig } from '~/lib/services/claude-agent/contentGeneration/types';
 
 /*
  * ============================================

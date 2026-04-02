@@ -7,8 +7,8 @@
 
 import { useState, useCallback } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import type { BusinessInfo } from '../types';
-import type { UseBusinessInfoOptions, UseBusinessInfoReturn } from '../types/sharedState';
+import type { BusinessInfo } from '~/components/editor/editor-chat/types';
+import type { UseBusinessInfoOptions, UseBusinessInfoReturn } from '~/components/editor/editor-chat/types/sharedState';
 
 // ─── Generate Business Info API ─────────────────────────────────────────────
 

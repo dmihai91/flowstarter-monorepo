@@ -1,4 +1,4 @@
-import type { SystemFont, LogoInfo, PreviewInfo, InitialChatState, IntegrationConfig, ContactDetails } from '../types';
+import type { SystemFont, LogoInfo, PreviewInfo, InitialChatState, IntegrationConfig, ContactDetails } from '~/components/editor/editor-chat/types';
 import type { UseOnboardingMessagesReturn } from './useOnboardingMessages';
 import type { UseOnboardingFlowReturn } from './useOnboardingFlow';
 import type { UseTemplateSelectionReturn } from './useTemplateSelection';

@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { AuthSubmitButton } from './AuthSubmitButton';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -326,7 +325,9 @@ export function CustomSignIn() {
             <AuthSubmitButton
               type="button"
               onClick={handleResetPassword}
-              disabled={isResetLoading || !resetCode || !newPassword || !confirmPassword}
+              disabled={
+                isResetLoading || !resetCode || !newPassword || !confirmPassword
+              }
               className="mt-4"
             >
               {isResetLoading

@@ -17,45 +17,67 @@ import {
 import { PublicPageLayout } from '@/components/PublicPageLayout';
 import { useTranslations } from '@/lib/i18n';
 
-
 export default function PricingPage() {
   const { t } = useTranslations();
 
   const quickFeatures = [
-    t('pricing.starter.feature1'), t('pricing.starter.feature2'), t('pricing.starter.feature3'),
-    t('pricing.starter.feature4'), t('pricing.starter.feature5'), t('pricing.starter.feature6'),
+    t('pricing.starter.feature1'),
+    t('pricing.starter.feature2'),
+    t('pricing.starter.feature3'),
+    t('pricing.starter.feature4'),
+    t('pricing.starter.feature5'),
+    t('pricing.starter.feature6'),
     t('pricing.starter.feature7'),
   ];
 
   const setupFeatures = [
-    t('pricing.setup.feature1'), t('pricing.setup.feature2'), t('pricing.setup.feature3'),
-    t('pricing.setup.feature4'), t('pricing.setup.feature5'), t('pricing.setup.feature6'),
-    t('pricing.setup.feature7'), t('pricing.setup.feature8'), t('pricing.setup.feature9'),
-    t('pricing.setup.feature10'), t('pricing.setup.feature11'), t('pricing.setup.feature12'),
-    t('pricing.setup.feature13'), t('pricing.setup.feature14'), t('pricing.setup.feature15'),
-    t('pricing.setup.feature16'), t('pricing.setup.feature17'), t('pricing.setup.feature18'),
+    t('pricing.setup.feature1'),
+    t('pricing.setup.feature2'),
+    t('pricing.setup.feature3'),
+    t('pricing.setup.feature4'),
+    t('pricing.setup.feature5'),
+    t('pricing.setup.feature6'),
+    t('pricing.setup.feature7'),
+    t('pricing.setup.feature8'),
+    t('pricing.setup.feature9'),
+    t('pricing.setup.feature10'),
+    t('pricing.setup.feature11'),
+    t('pricing.setup.feature12'),
+    t('pricing.setup.feature13'),
+    t('pricing.setup.feature14'),
+    t('pricing.setup.feature15'),
+    t('pricing.setup.feature16'),
+    t('pricing.setup.feature17'),
+    t('pricing.setup.feature18'),
     t('pricing.setup.feature19'),
   ];
 
   const monthlyFeatures = [
-    t('pricing.monthly.feature1'), t('pricing.monthly.feature2'), t('pricing.monthly.feature3'),
-    t('pricing.monthly.feature4'), t('pricing.monthly.feature5'), t('pricing.monthly.feature6'),
+    t('pricing.monthly.feature1'),
+    t('pricing.monthly.feature2'),
+    t('pricing.monthly.feature3'),
+    t('pricing.monthly.feature4'),
+    t('pricing.monthly.feature5'),
+    t('pricing.monthly.feature6'),
     t('pricing.monthly.feature7'),
   ];
 
   const proFeatures = [
-    t('pricing.pro.feature1'), t('pricing.pro.feature2'),
-    t('pricing.pro.feature3'), t('pricing.pro.feature4'),
+    t('pricing.pro.feature1'),
+    t('pricing.pro.feature2'),
+    t('pricing.pro.feature3'),
+    t('pricing.pro.feature4'),
   ];
 
   const businessFeatures = [
-    t('pricing.business.feature1'), t('pricing.business.feature2'),
-    t('pricing.business.feature3'), t('pricing.business.feature4'),
+    t('pricing.business.feature1'),
+    t('pricing.business.feature2'),
+    t('pricing.business.feature3'),
+    t('pricing.business.feature4'),
   ];
 
   return (
     <PublicPageLayout>
-
       {/* Hero Section */}
       <div className="relative z-10 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-36 pb-16 sm:pb-24 relative">
@@ -99,7 +121,7 @@ export default function PricingPage() {
                       <Rocket className="w-6 h-6 text-[var(--purple)]" />
                     </div>
                     <div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                         {t('pricing.starter.name')}
                       </h3>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -142,7 +164,9 @@ export default function PricingPage() {
                         <span className="text-3xl font-bold text-gray-900 dark:text-white">
                           {t('pricing.starter.monthlyPrice')}
                         </span>
-                        <span className="text-gray-500">{t('pricing.starter.monthlySuffix')}</span>
+                        <span className="text-gray-500">
+                          {t('pricing.starter.monthlySuffix')}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -177,7 +201,7 @@ export default function PricingPage() {
                   }}
                 >
                   {t('pricing.starter.cta')}
-                  <span className="ml-2">{"\u2192"}</span>
+                  <span className="ml-2">{'\u2192'}</span>
                 </a>
 
                 <p className="text-center text-xs text-gray-400 dark:text-white/40 mt-4">
@@ -270,7 +294,9 @@ export default function PricingPage() {
                   <span className="text-2xl font-bold text-gray-900 dark:text-white">
                     {t('pricing.monthly.price')}
                   </span>
-                  <span className="text-sm text-gray-500">{t('pricing.monthly.suffix')}</span>
+                  <span className="text-sm text-gray-500">
+                    {t('pricing.monthly.suffix')}
+                  </span>
                   <span className="text-sm text-[var(--purple)]">
                     {t('pricing.monthly.badge')}
                   </span>
@@ -461,7 +487,6 @@ export default function PricingPage() {
           </Card>
         </div>
       </section>
-
     </PublicPageLayout>
   );
 }

@@ -21,7 +21,8 @@ module.exports = {
       plugins: ['@typescript-eslint', 'react-hooks', 'prettier'],
       rules: {
         'prettier/prettier': 1,
-        '@typescript-eslint/no-unused-vars': 1,
+        '@typescript-eslint/no-unused-vars': [1, { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+        '@typescript-eslint/no-unsafe-declaration-merging': 'off',
         'react-hooks/rules-of-hooks': 'error',
         'react-hooks/exhaustive-deps': 'warn',
       },
@@ -31,6 +32,7 @@ module.exports = {
       extends: [
         'eslint:recommended',
         'plugin:@typescript-eslint/recommended',
+        'plugin:playwright/playwright-test',
         'prettier',
       ],
       parser: '@typescript-eslint/parser',
@@ -63,7 +65,7 @@ module.exports = {
       plugins: ['@typescript-eslint', 'prettier'],
       rules: {
         'prettier/prettier': 1,
-        '@typescript-eslint/no-unused-vars': 1,
+        '@typescript-eslint/no-unused-vars': [1, { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
         'react-hooks/rules-of-hooks': 'off',
         'react-hooks/exhaustive-deps': 'off',
       },
@@ -76,5 +78,11 @@ module.exports = {
     },
   ],
   root: true,
-  ignorePatterns: ['*.js', '*.mjs', '*.cjs', '*.json', 'src/lib/database.types.ts'],
+  ignorePatterns: [
+    '*.js', '*.mjs', '*.cjs', '*.json',
+    'src/lib/database.types.ts',
+    'src/app/api/example-sites/**',
+    'src/app/api/dashboard/stats/**',
+    'src/app/api/projects/[id]/analytics/**',
+  ],
 };

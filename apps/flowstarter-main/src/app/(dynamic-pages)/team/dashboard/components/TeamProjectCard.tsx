@@ -36,9 +36,12 @@ interface TeamProjectCardProps {
 }
 
 function paymentColor(s: string) {
-  if (s === 'paid' || s === 'active') return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400';
-  if (s === 'invoiced' || s === 'trialing') return 'bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400';
-  if (s === 'overdue') return 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400';
+  if (s === 'paid' || s === 'active')
+    return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400';
+  if (s === 'invoiced' || s === 'trialing')
+    return 'bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400';
+  if (s === 'overdue')
+    return 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400';
   return 'bg-gray-100 text-gray-500 dark:bg-white/[0.05] dark:text-white/30';
 }
 function paymentDot(s: string) {
@@ -47,10 +50,21 @@ function paymentDot(s: string) {
   if (s === 'overdue') return 'bg-red-500';
   return 'bg-gray-400';
 }
-function PaymentPill({ label, status }: { label: string; status: string | null | undefined }) {
+function PaymentPill({
+  label,
+  status,
+}: {
+  label: string;
+  status: string | null | undefined;
+}) {
   const s = status ?? 'pending';
   return (
-    <span className={'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.6rem] font-semibold ' + paymentColor(s)}>
+    <span
+      className={
+        'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.6rem] font-semibold ' +
+        paymentColor(s)
+      }
+    >
       <span className={'w-1 h-1 rounded-full ' + paymentDot(s)} />
       {label}: {s}
     </span>
@@ -98,7 +112,9 @@ export function TeamProjectCard({
         </div>
         <div className="min-w-0 flex-1">
           <span
-            className={`inline-block px-2 py-0.5 text-xs font-medium rounded mb-1 ${getStatusBadgeClass(status)}`}
+            className={`inline-block px-2 py-0.5 text-xs font-medium rounded mb-1 ${getStatusBadgeClass(
+              status
+            )}`}
           >
             {getStatusLabel(status, t)}
           </span>
@@ -131,7 +147,8 @@ export function TeamProjectCard({
             </span>
             <span className="text-gray-300 dark:text-white/20">&bull;</span>
             <span className="text-gray-600 dark:text-white/60">
-              &euro;{project.monthly_fee || 0}{t('team.dashboard.perMonth')}
+              &euro;{project.monthly_fee || 0}
+              {t('team.dashboard.perMonth')}
             </span>
             {project.is_paid && (
               <>
@@ -144,35 +161,46 @@ export function TeamProjectCard({
           </div>
         )}
 
-      {(project.generation_cost_usd != null && project.generation_cost_usd > 0) && (
-        <div className="mb-4 flex items-center gap-3 rounded-xl border border-[var(--purple)]/15 bg-[var(--purple)]/8 px-3 py-2 text-sm backdrop-blur-md dark:border-[var(--purple)]/20 dark:bg-[var(--purple)]/12">
-          <span className="text-[var(--purple)] dark:text-[var(--purple)] font-medium">
-            {project.ai_credits_used || 0} {t('team.dashboard.aiCredits')}
-          </span>
-          <span className="text-gray-300 dark:text-white/20">&bull;</span>
-          <span className="text-gray-500 dark:text-white/50">
-            &euro;{(project.generation_cost_usd * 0.92).toFixed(2)} {t('team.dashboard.cost')}
-          </span>
-        </div>
-      )}
+      {project.generation_cost_usd != null &&
+        project.generation_cost_usd > 0 && (
+          <div className="mb-4 flex items-center gap-3 rounded-xl border border-[var(--purple)]/15 bg-[var(--purple)]/8 px-3 py-2 text-sm backdrop-blur-md dark:border-[var(--purple)]/20 dark:bg-[var(--purple)]/12">
+            <span className="text-[var(--purple)] dark:text-[var(--purple)] font-medium">
+              {project.ai_credits_used || 0} {t('team.dashboard.aiCredits')}
+            </span>
+            <span className="text-gray-300 dark:text-white/20">&bull;</span>
+            <span className="text-gray-500 dark:text-white/50">
+              &euro;{(project.generation_cost_usd * 0.92).toFixed(2)}{' '}
+              {t('team.dashboard.cost')}
+            </span>
+          </div>
+        )}
 
       {/* Payment status row */}
       {(project.deposit_status || project.subscription_status) && (
         <div className="flex flex-wrap gap-1.5 mb-3">
-          {project.deposit_status && project.deposit_amount && project.deposit_amount > 0 && (
-            <PaymentPill label="Deposit" status={project.deposit_status} />
-          )}
-          {project.final_status && project.final_amount && project.final_amount > 0 && (
-            <PaymentPill label="Final" status={project.final_status} />
-          )}
+          {project.deposit_status &&
+            project.deposit_amount &&
+            project.deposit_amount > 0 && (
+              <PaymentPill label="Deposit" status={project.deposit_status} />
+            )}
+          {project.final_status &&
+            project.final_amount &&
+            project.final_amount > 0 && (
+              <PaymentPill label="Final" status={project.final_status} />
+            )}
           {project.subscription_status && (
-            <PaymentPill label={project.plan_name ?? 'Sub'} status={project.subscription_status} />
+            <PaymentPill
+              label={project.plan_name ?? 'Sub'}
+              status={project.subscription_status}
+            />
           )}
         </div>
       )}
 
       <div className="flex items-center justify-between border-t border-white/50 pt-3 text-xs text-gray-500 dark:border-white/10 dark:text-white/40">
-        <span>{getOwnerDisplay(project, t('team.dashboard.unknownOwner'))}</span>
+        <span>
+          {getOwnerDisplay(project, t('team.dashboard.unknownOwner'))}
+        </span>
         <span>{t('team.dashboard.lastEdit', { time: timeAgo })}</span>
       </div>
     </div>

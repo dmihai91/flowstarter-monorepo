@@ -57,7 +57,7 @@ async function getCalendlyUserUri(apiKey: string): Promise<string> {
  */
 export async function fetchUpcomingEvents(
   apiKey: string,
-  daysAhead: number = 30,
+  daysAhead: number = 30
 ): Promise<CalendlyEvent[]> {
   const userUri = await getCalendlyUserUri(apiKey);
 
@@ -89,15 +89,20 @@ export async function fetchUpcomingEvents(
         const eventUuid = event.uri.split('/').pop();
         const invRes = await fetch(
           `${CALENDLY_API}/scheduled_events/${eventUuid}/invitees`,
-          { headers: { Authorization: `Bearer ${apiKey}` } },
+          { headers: { Authorization: `Bearer ${apiKey}` } }
         );
         if (invRes.ok) {
           const invData = (await invRes.json()) as {
             collection: Array<{ name: string; email: string }>;
           };
-          invitees = invData.collection.map((i) => ({ name: i.name, email: i.email }));
+          invitees = invData.collection.map((i) => ({
+            name: i.name,
+            email: i.email,
+          }));
         }
-      } catch { /* invitees optional */ }
+      } catch {
+        /* invitees optional */
+      }
 
       return {
         uri: event.uri,
@@ -111,7 +116,7 @@ export async function fetchUpcomingEvents(
         cancelUrl: event.cancel_url,
         rescheduleUrl: event.reschedule_url,
       };
-    }),
+    })
   );
 
   return events;

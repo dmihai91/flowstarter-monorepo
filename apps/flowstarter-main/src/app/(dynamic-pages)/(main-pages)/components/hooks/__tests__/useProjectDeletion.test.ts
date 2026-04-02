@@ -53,7 +53,11 @@ describe('useProjectDeletion', () => {
     const { result } = renderHook(() => useProjectDeletion());
 
     act(() => {
-      result.current.openDeleteDialog({ id: 'p1', name: 'Test', status: 'active' });
+      result.current.openDeleteDialog({
+        id: 'p1',
+        name: 'Test',
+        status: 'active',
+      });
     });
     expect(result.current.deleteDialogOpen).toBe(true);
 
@@ -68,7 +72,11 @@ describe('useProjectDeletion', () => {
     const { result } = renderHook(() => useProjectDeletion());
 
     act(() => {
-      result.current.openDeleteDialog({ id: 'p1', name: 'Test', status: 'active' });
+      result.current.openDeleteDialog({
+        id: 'p1',
+        name: 'Test',
+        status: 'active',
+      });
     });
 
     await act(async () => {
@@ -86,7 +94,11 @@ describe('useProjectDeletion', () => {
     const { result } = renderHook(() => useProjectDeletion());
 
     act(() => {
-      result.current.openDeleteDialog({ id: 'p1', name: 'Test', status: 'active' });
+      result.current.openDeleteDialog({
+        id: 'p1',
+        name: 'Test',
+        status: 'active',
+      });
     });
 
     await act(async () => {

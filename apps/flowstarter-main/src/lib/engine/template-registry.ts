@@ -41,7 +41,10 @@ export async function loadTemplateRegistry(): Promise<TemplateRegistryEntry[]> {
             category?: string;
             tags?: string[];
             features?: string[];
-            integrations?: Record<string, { providers?: Array<{ id: string }> }>;
+            integrations?: Record<
+              string,
+              { providers?: Array<{ id: string }> }
+            >;
           };
 
           const features = raw.features ?? [];
@@ -67,5 +70,7 @@ export async function loadTemplateRegistry(): Promise<TemplateRegistryEntry[]> {
       })
   );
 
-  return entries.filter((entry): entry is TemplateRegistryEntry => Boolean(entry));
+  return entries.filter((entry): entry is TemplateRegistryEntry =>
+    Boolean(entry)
+  );
 }

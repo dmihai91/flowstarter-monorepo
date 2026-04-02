@@ -39,7 +39,12 @@ const templates: TemplateRegistryEntry[] = [
     description: 'Template for therapists',
     category: 'mental-health',
     tags: ['therapist', 'mental-health', 'counselor'],
-    features: ['Multi-page', 'Booking integration', 'Contact form', 'Dark mode'],
+    features: [
+      'Multi-page',
+      'Booking integration',
+      'Contact form',
+      'Dark mode',
+    ],
     integrations: ['calendly', 'mailchimp'],
     capability: {
       supportsBooking: true,
@@ -95,8 +100,12 @@ describe('Flowstarter engine core', () => {
     });
 
     expect(selection.selectedTemplateId).toBe('therapist-care');
-    expect(assemblySpec.pages.some((page) => page.route === '/contact')).toBe(true);
-    expect(contentMap.entries.some((entry) => entry.slotId.includes('headline'))).toBe(true);
+    expect(assemblySpec.pages.some((page) => page.route === '/contact')).toBe(
+      true
+    );
+    expect(
+      contentMap.entries.some((entry) => entry.slotId.includes('headline'))
+    ).toBe(true);
     expect(validationReport.valid).toBe(true);
   });
 });

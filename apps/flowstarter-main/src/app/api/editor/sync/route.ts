@@ -17,24 +17,38 @@ function parseProjectData(value: unknown): Record<string, unknown> {
   if (typeof value === 'string') {
     try {
       const parsed = JSON.parse(value) as unknown;
-      return parsed && typeof parsed === 'object' ? (parsed as Record<string, unknown>) : {};
+      return parsed && typeof parsed === 'object'
+        ? (parsed as Record<string, unknown>)
+        : {};
     } catch {
       return {};
     }
   }
 
-  return value && typeof value === 'object' ? (value as Record<string, unknown>) : {};
+  return value && typeof value === 'object'
+    ? (value as Record<string, unknown>)
+    : {};
 }
 
 async function authenticate(request: NextRequest) {
   const token = getBearerToken(request);
   if (!token) {
-    return { error: NextResponse.json({ error: 'Missing bearer token' }, { status: 401 }) };
+    return {
+      error: NextResponse.json(
+        { error: 'Missing bearer token' },
+        { status: 401 }
+      ),
+    };
   }
 
   const payload = verifyHandoffToken(token);
   if (!payload) {
-    return { error: NextResponse.json({ error: 'Invalid or expired handoff token' }, { status: 401 }) };
+    return {
+      error: NextResponse.json(
+        { error: 'Invalid or expired handoff token' },
+        { status: 401 }
+      ),
+    };
   }
 
   return { payload };
@@ -46,7 +60,8 @@ export async function GET(request: NextRequest) {
     return auth.error;
   }
 
-  const projectId = request.nextUrl.searchParams.get('projectId') || auth.payload.projectId;
+  const projectId =
+    request.nextUrl.searchParams.get('projectId') || auth.payload.projectId;
   if (projectId !== auth.payload.projectId) {
     return NextResponse.json({ error: 'Project mismatch' }, { status: 403 });
   }
@@ -54,7 +69,9 @@ export async function GET(request: NextRequest) {
   const supabase = createSupabaseServiceRoleClient();
   const { data: project, error } = await supabase
     .from('projects')
-    .select('id, name, description, data, template_id, template_slug, updated_at')
+    .select(
+      'id, name, description, data, template_id, template_slug, updated_at'
+    )
     .eq('id', projectId)
     .single();
 
@@ -82,12 +99,16 @@ export async function POST(request: NextRequest) {
     return auth.error;
   }
 
-  const body = (await request.json().catch(() => null)) as
-    | { projectId?: string; data?: Record<string, unknown> }
-    | null;
+  const body = (await request.json().catch(() => null)) as {
+    projectId?: string;
+    data?: Record<string, unknown>;
+  } | null;
 
   if (!body?.projectId || !body?.data) {
-    return NextResponse.json({ error: 'projectId and data are required' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'projectId and data are required' },
+      { status: 400 }
+    );
   }
 
   if (body.projectId !== auth.payload.projectId) {
@@ -120,7 +141,10 @@ export async function POST(request: NextRequest) {
     .eq('id', body.projectId);
 
   if (updateError) {
-    return NextResponse.json({ error: 'Failed to sync project' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to sync project' },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json({ success: true });

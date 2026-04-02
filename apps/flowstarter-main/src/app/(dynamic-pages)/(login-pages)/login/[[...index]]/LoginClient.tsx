@@ -90,7 +90,11 @@ export function LoginClient() {
 
   return (
     <AuthRedirectWrapper>
-      <AuthLayout title="Client Login" subtitle="Sign in to manage your website and access Flowstarter Editor." showStats={true}>
+      <AuthLayout
+        title="Client Login"
+        subtitle="Sign in to manage your website and access Flowstarter Editor."
+        showStats={true}
+      >
         {noticeContent ? (
           <div
             className={`flex flex-col mb-4 mx-auto w-full max-w-[540px] rounded-xl border p-3 justify-center items-center backdrop-blur-sm ${noticeContent.style}`}

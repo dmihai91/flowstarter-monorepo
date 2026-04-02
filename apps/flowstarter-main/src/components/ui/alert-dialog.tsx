@@ -161,7 +161,11 @@ function AlertDialogAction({
 }) {
   return (
     <AlertDialogPrimitive.Action
-      className={cn(buttonVariants({ variant }), 'w-full sm:w-auto h-11 sm:h-10', className)}
+      className={cn(
+        buttonVariants({ variant }),
+        'w-full sm:w-auto h-11 sm:h-10',
+        className
+      )}
       {...props}
     />
   );

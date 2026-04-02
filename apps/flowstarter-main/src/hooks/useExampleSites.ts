@@ -27,7 +27,7 @@ export function useExampleSites(filters: ExampleSitesFilters = {}) {
     queryKey: exampleSitesKeys.filtered(filters),
     queryFn: async (): Promise<ExampleSitesResponse> => {
       const params = new URLSearchParams();
-      
+
       if (filters.category && filters.category !== 'all') {
         params.set('category', filters.category);
       }
@@ -43,7 +43,7 @@ export function useExampleSites(filters: ExampleSitesFilters = {}) {
 
       const res = await fetch(`/api/example-sites?${params.toString()}`);
       if (!res.ok) throw new Error('Failed to load example sites');
-      
+
       const data = await res.json();
       return {
         sites: data.sites ?? [],

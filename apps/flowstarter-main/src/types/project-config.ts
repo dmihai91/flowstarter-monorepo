@@ -6,7 +6,6 @@ export interface ProjectFeature {
   category: 'frontend' | 'backend' | 'ai' | 'auth' | 'database' | 'deployment';
 }
 
-
 export type ProjectWizardStep = 'details' | 'template' | 'design' | 'review';
 
 export interface ProjectTemplate {

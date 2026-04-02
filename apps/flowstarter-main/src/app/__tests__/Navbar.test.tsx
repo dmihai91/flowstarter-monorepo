@@ -15,19 +15,25 @@ vi.mock('next/navigation', () => ({
 }));
 
 vi.mock('next/image', () => ({
+  // eslint-disable-next-line @next/next/no-img-element
   default: (props: ComponentProps<'img'>) => <img {...props} />,
 }));
 
 vi.mock('next/link', () => ({
-  default: ({ children, href, ...props }: PropsWithChildren<ComponentProps<'a'>>) => (
-    <a href={href} {...props}>{children}</a>
+  default: ({
+    children,
+    href,
+    ...props
+  }: PropsWithChildren<ComponentProps<'a'>>) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
   ),
 }));
 
 vi.mock('@/lib/i18n', () => ({
   useI18n: () => ({ t: (key: string) => key, locale: 'en' }),
 }));
-
 
 vi.mock('@/components/ui/theme-toggle', () => ({
   ThemeToggle: () => <div data-testid="theme-toggle" />,
@@ -36,8 +42,14 @@ vi.mock('@/components/ui/theme-toggle', () => ({
 vi.mock('../components/nav', () => ({
   AuthButtons: () => <div data-testid="auth-buttons">Auth</div>,
   DashboardNavControls: () => <div data-testid="dashboard-nav">Dashboard</div>,
-  NavbarHeader: ({ children }: PropsWithChildren) => <header>{children}</header>,
-  NavbarLogo: ({ href }: { href: string }) => <a href={href} data-testid="logo">Logo</a>,
+  NavbarHeader: ({ children }: PropsWithChildren) => (
+    <header>{children}</header>
+  ),
+  NavbarLogo: ({ href }: { href: string }) => (
+    <a href={href} data-testid="logo">
+      Logo
+    </a>
+  ),
   PublicNavLinks: () => <nav data-testid="public-links">Links</nav>,
   useCompactViewport: () => false,
   useScrolled: () => false,

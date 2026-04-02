@@ -57,6 +57,7 @@ export function IntegrationWizardContent({
     if (initialStatus === 'success') {
       void loadResources();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function startOAuth() {
@@ -87,7 +88,10 @@ export function IntegrationWizardContent({
       const verifyRes = await fetch(`/api/integrations/${provider}/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ apiKey: apiKey.trim(), eventUrl: eventUrl.trim() || undefined }),
+        body: JSON.stringify({
+          apiKey: apiKey.trim(),
+          eventUrl: eventUrl.trim() || undefined,
+        }),
       });
       const verifyData = await verifyRes.json();
       if (!verifyData.ok) {
@@ -95,16 +99,19 @@ export function IntegrationWizardContent({
       }
 
       // Save via finalize
-      const finalizeRes = await fetch(`/api/integrations/${provider}/finalize`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          config: {
-            api_key: apiKey.trim(),
-            event_url: eventUrl.trim() || undefined,
-          },
-        }),
-      });
+      const finalizeRes = await fetch(
+        `/api/integrations/${provider}/finalize`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            config: {
+              api_key: apiKey.trim(),
+              event_url: eventUrl.trim() || undefined,
+            },
+          }),
+        }
+      );
       if (!finalizeRes.ok) throw new Error('Failed to save credentials');
 
       setStep(3);
@@ -157,10 +164,10 @@ export function IntegrationWizardContent({
     provider === 'google-analytics'
       ? 'Google Analytics'
       : provider === 'calendly'
-        ? 'Calendly'
-        : provider === 'cal-com'
-          ? 'Cal.com'
-          : 'Mailchimp';
+      ? 'Calendly'
+      : provider === 'cal-com'
+      ? 'Cal.com'
+      : 'Mailchimp';
 
   return (
     <div className="space-y-6">
@@ -180,15 +187,25 @@ export function IntegrationWizardContent({
                 <p className="text-gray-700 dark:text-gray-300">
                   Click the button below to authorize {providerLabel}.
                 </p>
-                <Button onClick={startOAuth} disabled={disabled} className="gap-2">
+                <Button
+                  onClick={startOAuth}
+                  disabled={disabled}
+                  className="gap-2"
+                >
                   Authorize {providerLabel}
                 </Button>
               </div>
             )}
             {error && (
               <div className="space-y-4">
-                <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-                <Button onClick={startOAuth} disabled={disabled} className="gap-2">
+                <p className="text-sm text-red-600 dark:text-red-400">
+                  {error}
+                </p>
+                <Button
+                  onClick={startOAuth}
+                  disabled={disabled}
+                  className="gap-2"
+                >
                   Try Again
                 </Button>
               </div>
@@ -212,7 +229,8 @@ export function IntegrationWizardContent({
                   disabled={disabled}
                 />
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Get your API key from Cal.com → Settings → Developer → API Keys
+                  Get your API key from Cal.com → Settings → Developer → API
+                  Keys
                 </p>
               </div>
 
@@ -234,7 +252,9 @@ export function IntegrationWizardContent({
               </div>
 
               {error && (
-                <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                <p className="text-sm text-red-600 dark:text-red-400">
+                  {error}
+                </p>
               )}
 
               <div className="flex gap-3 pt-2">
@@ -245,7 +265,11 @@ export function IntegrationWizardContent({
                   {verifying ? 'Verifying…' : `Connect ${providerLabel}`}
                 </Button>
                 {onClose && (
-                  <Button onClick={onClose} variant="outline" disabled={disabled}>
+                  <Button
+                    onClick={onClose}
+                    variant="outline"
+                    disabled={disabled}
+                  >
                     Cancel
                   </Button>
                 )}
@@ -271,7 +295,9 @@ export function IntegrationWizardContent({
                     setSelection((s) => ({ ...s, accountId: e.target.value }))
                   }
                 >
-                  <option value="" disabled>Select account</option>
+                  <option value="" disabled>
+                    Select account
+                  </option>
                   {gaTree.map((a) => (
                     <option key={a.account.id} value={a.account.id}>
                       {a.account.name}
@@ -281,15 +307,22 @@ export function IntegrationWizardContent({
 
                 {selection.accountId && (
                   <>
-                    <label className="block text-sm font-medium">Property</label>
+                    <label className="block text-sm font-medium">
+                      Property
+                    </label>
                     <select
                       className="w-full border rounded-md p-2 bg-white/80 dark:bg-gray-900/40"
                       value={selection.propertyId || ''}
                       onChange={(e) =>
-                        setSelection((s) => ({ ...s, propertyId: e.target.value }))
+                        setSelection((s) => ({
+                          ...s,
+                          propertyId: e.target.value,
+                        }))
                       }
                     >
-                      <option value="" disabled>Select property</option>
+                      <option value="" disabled>
+                        Select property
+                      </option>
                       {gaTree
                         .filter((g) => g.account.id === selection.accountId)
                         .map((g) => (
@@ -303,21 +336,29 @@ export function IntegrationWizardContent({
 
                 {selection.propertyId && (
                   <>
-                    <label className="block text-sm font-medium">Data stream</label>
+                    <label className="block text-sm font-medium">
+                      Data stream
+                    </label>
                     <select
                       className="w-full border rounded-md p-2 bg-white/80 dark:bg-gray-900/40"
                       value={selection.streamId || ''}
                       onChange={(e) =>
-                        setSelection((s) => ({ ...s, streamId: e.target.value }))
+                        setSelection((s) => ({
+                          ...s,
+                          streamId: e.target.value,
+                        }))
                       }
                     >
-                      <option value="" disabled>Select stream</option>
+                      <option value="" disabled>
+                        Select stream
+                      </option>
                       {gaTree
                         .filter((g) => g.property.id === selection.propertyId)
                         .flatMap((g) => g.streams)
                         .map((s) => (
                           <option key={s.id} value={s.id}>
-                            {s.name} {s.measurementId ? `(${s.measurementId})` : ''}
+                            {s.name}{' '}
+                            {s.measurementId ? `(${s.measurementId})` : ''}
                           </option>
                         ))}
                     </select>
@@ -332,13 +373,19 @@ export function IntegrationWizardContent({
                     {loading ? 'Saving…' : 'Save & Connect'}
                   </Button>
                   {onClose && (
-                    <Button onClick={onClose} variant="outline" disabled={disabled}>
+                    <Button
+                      onClick={onClose}
+                      variant="outline"
+                      disabled={disabled}
+                    >
                       Cancel
                     </Button>
                   )}
                 </div>
                 {error && (
-                  <p className="text-sm text-red-600 dark:text-red-400 mt-3">{error}</p>
+                  <p className="text-sm text-red-600 dark:text-red-400 mt-3">
+                    {error}
+                  </p>
                 )}
               </div>
             )}

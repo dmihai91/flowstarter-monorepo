@@ -7,13 +7,14 @@ export const landingKeys = {
   'landing.hero.badge': 'Done for you. Managed by you.',
   'landing.hero.headline1': 'Launch your online business',
   'landing.hero.headline2': 'without tech skills or expensive agencies.',
-  'landing.hero.audience': 'Built for creators, freelancers, and small businesses who want to get online and monetize faster.',
+  'landing.hero.audience':
+    'Built for creators, freelancers, and small businesses who want to get online and monetize faster.',
   'landing.hero.pain':
     'We build your initial setup for you, then you manage and grow everything from one AI-powered dashboard.',
   'landing.hero.subheadline': '',
   'landing.hero.cta': 'Launch my business',
   'landing.hero.ctaNote':
-    'One call. We handle everything. You\'ll be live in days.',
+    "One call. We handle everything. You'll be live in days.",
   'landing.hero.priceBuild': '€499',
   'landing.hero.priceMonthly': '€39',
 
@@ -24,29 +25,22 @@ export const landingKeys = {
   'landing.included.setup.title': 'Setup',
   'landing.included.setup.label': '(one-time)',
   'landing.included.setup.desc': 'What we build for you',
-  'landing.included.setup.item1':
-    'A website that turns visitors into clients',
+  'landing.included.setup.item1': 'A website that turns visitors into clients',
   'landing.included.setup.item2':
     'Online booking so clients schedule without calling',
-  'landing.included.setup.item3':
-    'WhatsApp button for instant contact',
-  'landing.included.setup.item4':
-    'Professional email at your own domain',
-  'landing.included.setup.item5':
-    'Found on Google from day one',
+  'landing.included.setup.item3': 'WhatsApp button for instant contact',
+  'landing.included.setup.item4': 'Professional email at your own domain',
+  'landing.included.setup.item5': 'Found on Google from day one',
   'landing.included.setup.item6': '',
   'landing.included.setup.item7': '',
   'landing.included.setup.item8': '',
   'landing.included.monthly.title': 'Monthly care',
   'landing.included.monthly.label': '(ongoing)',
   'landing.included.monthly.desc': 'What stays active',
-  'landing.included.monthly.item1':
-    'Fast, secure hosting every month',
-  'landing.included.monthly.item2':
-    'Professional email included',
+  'landing.included.monthly.item1': 'Fast, secure hosting every month',
+  'landing.included.monthly.item2': 'Professional email included',
   'landing.included.monthly.item3': 'Storage for your photos and content',
-  'landing.included.monthly.item4':
-    'Monthly visitor reports',
+  'landing.included.monthly.item4': 'Monthly visitor reports',
   'landing.included.monthly.item5': 'Updates and improvements handled for you',
   'landing.included.monthly.item6': 'Support when you need it',
   'landing.included.monthly.item7': '',
@@ -132,8 +126,7 @@ export const landingKeys = {
   'landing.pricing.carePrice': '€39',
   'landing.pricing.carePeriod': '/month',
   'landing.pricing.firstMonthFree': 'First month free',
-  'landing.pricing.note':
-    'First month free. Cancel anytime.',
+  'landing.pricing.note': 'First month free. Cancel anytime.',
   'landing.pricing.refund': '50% setup refund if you change your mind',
   'landing.pricing.assets': 'All your site assets downloadable. You own them.',
 
@@ -160,14 +153,15 @@ export const landingKeys = {
   'landing.pricing.guaranteeNote':
     'The initial 50% deposit is non-refundable and covers design, setup, and infrastructure costs.',
   'landing.pricing.footerNote': 'No lock-in. Cancel anytime. No hidden fees.',
-  'landing.pricing.finePrint': 'No contracts. Cancel anytime. First month free.',
+  'landing.pricing.finePrint':
+    'No contracts. Cancel anytime. First month free.',
   'landing.pricing.cta': 'Claim Your Spot',
   'landing.header.cta': 'Book a free discovery call',
 
   // Landing Page - CTA
-  'landing.cta.title': "Stop waiting months to get online.",
+  'landing.cta.title': 'Stop waiting months to get online.',
   'landing.cta.subtitle':
-    "Get your business foundation launched in days, then manage and grow it with Flowstarter.",
+    'Get your business foundation launched in days, then manage and grow it with Flowstarter.',
   'landing.cta.button': 'Launch my business',
 
   // Landing Page - Footer CTA
@@ -177,27 +171,36 @@ export const landingKeys = {
 
   // Three Pillars
   'landing.pillars.title': 'Why experts choose Flowstarter',
-  'landing.pillars.subtitle': 'Three things every real professional needs online.',
+  'landing.pillars.subtitle':
+    'Three things every real professional needs online.',
   'landing.pillars.differentiate.title': 'Differentiate',
   'landing.pillars.differentiate.subtitle': 'Stand out from the noise',
-  'landing.pillars.differentiate.body': 'We build your site around what actually makes you different: your real experience, your results, your approach. Not stock photos and buzzwords.',
+  'landing.pillars.differentiate.body':
+    'We build your site around what actually makes you different: your real experience, your results, your approach. Not stock photos and buzzwords.',
   'landing.pillars.attract.title': 'Attract',
-  'landing.pillars.attract.subtitle': 'Get found by clients who value expertise',
-  'landing.pillars.attract.body': 'The right clients are searching for someone they can trust. We make sure they find you first.',
+  'landing.pillars.attract.subtitle':
+    'Get found by clients who value expertise',
+  'landing.pillars.attract.body':
+    'The right clients are searching for someone they can trust. We make sure they find you first.',
   'landing.pillars.convert.title': 'Convert',
   'landing.pillars.convert.subtitle': 'Turn visitors into booked appointments',
-  'landing.pillars.convert.body': 'Visitors see your work, understand your value, and book directly. No forms that go nowhere. All set up for you.',
+  'landing.pillars.convert.body':
+    'Visitors see your work, understand your value, and book directly. No forms that go nowhere. All set up for you.',
 
   // Team Section
-  'landing.team.title': 'Built by people passionate about making the web better',
-  'landing.team.subtitle': 'We started Flowstarter because we needed it ourselves.',
+  'landing.team.title':
+    'Built by people passionate about making the web better',
+  'landing.team.subtitle':
+    'We started Flowstarter because we needed it ourselves.',
   'landing.team.darius.name': 'Darius',
   'landing.team.darius.role': 'Co-founder & Engineer',
-  'landing.team.darius.bio': '10+ years building software for companies big and small.',
+  'landing.team.darius.bio':
+    '10+ years building software for companies big and small.',
   'landing.team.darius.quote': 'I build what I wished existed.',
   'landing.team.dorin.name': 'Dorin',
   'landing.team.dorin.role': 'Co-founder & Designer',
-  'landing.team.dorin.bio': 'Turns complexity into clarity, one pixel at a time.',
+  'landing.team.dorin.bio':
+    'Turns complexity into clarity, one pixel at a time.',
   'landing.team.dorin.quote': 'Good design is invisible.',
   'landing.team.linkedin': 'LinkedIn',
 
@@ -207,7 +210,8 @@ export const landingKeys = {
   'landing.hero.buildSetupLabel': 'setup',
   'landing.hero.careOriginalPrice': '€49',
   'landing.hero.monthlyLabel': '/mo',
-  'landing.hero.urgency': "This price won't last. Lock it in before it goes up.",
+  'landing.hero.urgency':
+    "This price won't last. Lock it in before it goes up.",
 
   // Landing - Process Heading
   'landing.process.heading1': 'How it',
@@ -219,7 +223,8 @@ export const landingKeys = {
 
   // Landing - Trust Section
   'landing.trust.title': "Everything's included. No hidden extras.",
-  'landing.trust.subtitle': 'Every website comes with everything you need to look professional and get found.',
+  'landing.trust.subtitle':
+    'Every website comes with everything you need to look professional and get found.',
   'landing.trust.hosting.label': 'Fast & secure hosting',
   'landing.trust.hosting.desc': 'Global CDN, lightning-fast pages',
   'landing.trust.email.label': 'Professional email',
@@ -234,7 +239,8 @@ export const landingKeys = {
   'landing.trust.maintenance.desc': 'We handle updates and security',
 
   // Landing - Included note
-  'landing.included.monthly.note': 'First month free. Billing starts 30 days after launch',
+  'landing.included.monthly.note':
+    'First month free. Billing starts 30 days after launch',
 
   // Landing hero
   'landing.hero.launchBatch': 'Launch batch: accepting only 10 clients',
@@ -242,7 +248,8 @@ export const landingKeys = {
   // Manifesto
   'landing.manifesto.title': 'Why we built this',
   'landing.manifesto.headline': 'Real expertise should be easier to find.',
-  'landing.manifesto.p1': 'Too many skilled people are invisible online. Not because they lack talent, but because the tools are built for developers, not for them. Flowstarter exists to close that gap.',
+  'landing.manifesto.p1':
+    'Too many skilled people are invisible online. Not because they lack talent, but because the tools are built for developers, not for them. Flowstarter exists to close that gap.',
   'landing.manifesto.p2': '',
   'landing.manifesto.p3': '',
   'landing.manifesto.p4': '',
@@ -318,31 +325,43 @@ export const landingKeys = {
   'faq.title': 'Frequently Asked Questions',
   'faq.subtitle': 'Everything you need to know about Flowstarter.',
   'faq.items.whatIs.q': 'What is Flowstarter?',
-  'faq.items.whatIs.a': 'Flowstarter is a website builder and management platform that helps businesses launch professional websites in days, not months. We handle the design, development, and hosting so you can focus on your business.',
+  'faq.items.whatIs.a':
+    'Flowstarter is a website builder and management platform that helps businesses launch professional websites in days, not months. We handle the design, development, and hosting so you can focus on your business.',
   'faq.items.howLong.q': 'How long does it take to launch a website?',
-  'faq.items.howLong.a': 'Most websites are live within days. After an initial discovery call, our team builds your site using proven templates and customises it to your brand. You review, approve, and we launch.',
+  'faq.items.howLong.a':
+    'Most websites are live within days. After an initial discovery call, our team builds your site using proven templates and customises it to your brand. You review, approve, and we launch.',
   'faq.items.customDomain.q': 'Can I use my own domain name?',
-  'faq.items.customDomain.a': 'Absolutely. You can connect any domain you already own, or we can help you purchase and configure a new one. SSL certificates are included at no extra cost.',
+  'faq.items.customDomain.a':
+    'Absolutely. You can connect any domain you already own, or we can help you purchase and configure a new one. SSL certificates are included at no extra cost.',
   'faq.items.editMyself.q': 'Can I edit the website myself?',
-  'faq.items.editMyself.a': 'Yes. Every client gets access to the Flowstarter Editor, where you can update text, images, and content without any coding knowledge. Our team is also available if you need help.',
+  'faq.items.editMyself.a':
+    'Yes. Every client gets access to the Flowstarter Editor, where you can update text, images, and content without any coding knowledge. Our team is also available if you need help.',
   'faq.items.pricing.q': 'How does pricing work?',
-  'faq.items.pricing.a': 'We offer simple, transparent pricing with no hidden fees. Contact us for a free quote tailored to your needs. There are no setup charges — you only pay a monthly management fee.',
+  'faq.items.pricing.a':
+    'We offer simple, transparent pricing with no hidden fees. Contact us for a free quote tailored to your needs. There are no setup charges — you only pay a monthly management fee.',
   'faq.items.support.q': 'What kind of support do you offer?',
-  'faq.items.support.a': 'We provide ongoing support through email and our help centre. Our team monitors your site, handles updates, and ensures everything runs smoothly so you never have to worry.',
+  'faq.items.support.a':
+    'We provide ongoing support through email and our help centre. Our team monitors your site, handles updates, and ensures everything runs smoothly so you never have to worry.',
 
   // About Page
   'about.title': 'We are Flowstarter',
-  'about.subtitle': 'Two co-founders. One mission — help any business have a great website, without the headache.',
+  'about.subtitle':
+    'Two co-founders. One mission — help any business have a great website, without the headache.',
   'about.story.heading': 'Why we built this',
-  'about.story.body': 'We kept seeing the same problem. Business owners needed a professional website but were stuck choosing between expensive agencies, DIY builders that never looked quite right, or waiting months for someone to finish. We knew it did not have to be that way. Darius brings the engineering to make it fast and reliable. Dorin brings the design to make it beautiful. Together we handle everything so you can focus on running your business.',
+  'about.story.body':
+    'We kept seeing the same problem. Business owners needed a professional website but were stuck choosing between expensive agencies, DIY builders that never looked quite right, or waiting months for someone to finish. We knew it did not have to be that way. Darius brings the engineering to make it fast and reliable. Dorin brings the design to make it beautiful. Together we handle everything so you can focus on running your business.',
   'about.values.heading': 'What we believe',
   'about.values.speed.title': 'Speed matters',
-  'about.values.speed.description': 'Your website should be live in days, not months. We have built a process that gets you online fast without cutting corners on quality.',
+  'about.values.speed.description':
+    'Your website should be live in days, not months. We have built a process that gets you online fast without cutting corners on quality.',
   'about.values.quality.title': 'Quality by default',
-  'about.values.quality.description': 'Every site we ship is fast, accessible, and looks great on every device. Good craft is non-negotiable.',
+  'about.values.quality.description':
+    'Every site we ship is fast, accessible, and looks great on every device. Good craft is non-negotiable.',
   'about.values.honesty.title': 'No nonsense',
-  'about.values.honesty.description': 'Transparent pricing, direct communication, and no agency fluff. You always know what you are getting and what it costs.',
+  'about.values.honesty.description':
+    'Transparent pricing, direct communication, and no agency fluff. You always know what you are getting and what it costs.',
   'about.cta.heading': 'Ready to get started?',
-  'about.cta.body': 'One call is all it takes. We will talk through what you need and get moving.',
+  'about.cta.body':
+    'One call is all it takes. We will talk through what you need and get moving.',
   'about.cta.button': 'Get in touch',
 } as const;

@@ -72,7 +72,9 @@ describe('useMockEditor', () => {
     });
 
     // User message should be added
-    const userMessages = result.current.messages.filter((m) => m.text === 'Add a contact form');
+    const userMessages = result.current.messages.filter(
+      (m) => m.text === 'Add a contact form'
+    );
     expect(userMessages.length).toBeGreaterThanOrEqual(1);
 
     // Input should be cleared
@@ -87,7 +89,9 @@ describe('useMockEditor', () => {
     });
 
     expect(result.current.isTyping).toBe(false);
-    const aiMessages = result.current.messages.filter((m) => m.text.includes('Contact form added'));
+    const aiMessages = result.current.messages.filter((m) =>
+      m.text.includes('Contact form added')
+    );
     expect(aiMessages.length).toBeGreaterThanOrEqual(1);
   });
 
@@ -104,7 +108,9 @@ describe('useMockEditor', () => {
       vi.advanceTimersByTime(1500);
     });
 
-    const aiMessages = result.current.messages.filter((m) => m.text.includes('Pricing section'));
+    const aiMessages = result.current.messages.filter((m) =>
+      m.text.includes('Pricing section')
+    );
     expect(aiMessages.length).toBeGreaterThanOrEqual(1);
   });
 
@@ -180,7 +186,10 @@ describe('useMockEditor', () => {
       vi.advanceTimersByTime(2000);
     });
 
-    expect(mockOpen).toHaveBeenCalledWith('https://calendly.example.com/discovery', '_blank');
+    expect(mockOpen).toHaveBeenCalledWith(
+      'https://calendly.example.com/discovery',
+      '_blank'
+    );
 
     vi.unstubAllGlobals();
   });

@@ -12,7 +12,8 @@ interface ProjectToDelete {
 export function useProjectDeletion() {
   const { t } = useTranslations();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [projectToDelete, setProjectToDelete] = useState<ProjectToDelete | null>(null);
+  const [projectToDelete, setProjectToDelete] =
+    useState<ProjectToDelete | null>(null);
   const deleteProjectMutation = useDeleteProject();
 
   const openDeleteDialog = useCallback((project: ProjectToDelete) => {

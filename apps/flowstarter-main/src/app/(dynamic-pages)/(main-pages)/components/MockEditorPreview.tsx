@@ -36,544 +36,595 @@ interface MockEditorPreviewProps {
  * Shows a fake website builder with chat input and live preview.
  */
 export function MockEditorPreview({
-  isLoaded, inputValue, setInputValue, messages, isTyping, typingText, isTypewriting, mockSite, messagesEndRef, handleSend,
+  isLoaded,
+  inputValue,
+  setInputValue,
+  messages,
+  isTyping,
+  typingText,
+  isTypewriting,
+  mockSite,
+  messagesEndRef,
+  handleSend,
 }: MockEditorPreviewProps) {
   const { t } = useI18n();
 
   return (
     <>
-              {/* Right: Interactive Editor */}
+      {/* Right: Interactive Editor */}
+      <div
+        className={`relative transition-all duration-500 delay-200 mb-6 ${
+          isLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        {/* Title above editor */}
+        <div className="text-center mb-6">
+          <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-5">
+            {t('landing.editor.title')}
+          </h3>
+          <p className="text-lg text-gray-500 dark:text-white/50">
+            {t('landing.editor.subtitle')}
+          </p>
+        </div>
+
+        {/* Glow effect behind editor */}
+
+        {/* Editor window */}
+        <div
+          className="relative backdrop-blur-xl rounded-3xl overflow-hidden transition-all duration-300 shadow-[var(--glass-shadow)] hover:scale-[1.01]"
+          style={{
+            backgroundColor:
+              'color-mix(in srgb, var(--glass-surface) 90%, transparent)',
+            borderTop: '1px solid var(--glass-border-highlight)',
+            borderLeft: '1px solid var(--glass-border-highlight)',
+            borderBottom: '1px solid var(--glass-border-shadow)',
+            borderRight: '1px solid var(--glass-border-shadow)',
+          }}
+        >
+          {/* Browser chrome */}
+          <div className="flex items-center justify-between px-4 py-3 bg-white/80 dark:bg-white/[0.05] backdrop-blur-sm border-b border-gray-200/50 dark:border-white/5">
+            <div className="flex items-center gap-2">
+              <div className="flex gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
+                <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
+                <div className="w-2.5 h-2.5 rounded-full bg-[#28ca42]" />
+              </div>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100/80 dark:bg-white/5 backdrop-blur text-[0.6875rem] text-gray-400 dark:text-white/30">
+              <svg
+                className="w-2.5 h-2.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
+              </svg>
+              {t('mockEditor.browserUrl')}
+            </div>
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[0.625rem] font-medium text-emerald-600 dark:text-emerald-400">
+                {t('mockEditor.liveIndicator')}
+              </span>
+            </div>
+          </div>
+
+          {/* Split: Chat + Preview */}
+          <div className="flex flex-col sm:flex-row sm:divide-x divide-gray-200/30 dark:divide-white/5 h-[900px] sm:h-[760px] lg:h-[860px]">
+            {/* Chat Panel */}
+            <div className="w-full sm:w-1/2 p-3 sm:p-4 flex flex-col border-b sm:border-b-0 h-[420px] sm:h-auto border-gray-200/30 dark:border-white/5">
+              <div className="text-xs tracking-[0.12em] uppercase font-bold mb-2 sm:mb-3 bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
+                {t('mockEditor.chatTitle')}
+              </div>
+
+              {/* Messages - grows to fill space */}
+              <div className="flex-1 space-y-2.5 sm:space-y-3 overflow-y-auto mb-2 sm:mb-3 pr-1 max-h-[240px] sm:max-h-none">
+                {messages.map((msg, i) =>
+                  msg.role === 'user' ? (
+                    <div key={i} className="flex justify-end">
+                      <div className="max-w-[95%] px-3 py-2 rounded-xl rounded-tr-sm bg-gradient-to-r from-[var(--purple)] to-blue-500 text-white text-sm shadow-sm">
+                        {msg.text}
+                      </div>
+                    </div>
+                  ) : (
+                    <div key={i} className="flex gap-2.5 items-start">
+                      <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center flex-shrink-0 shadow-sm mt-2">
+                        <svg
+                          className="w-3 h-3 text-white"
+                          viewBox="0 0 16 16"
+                          fill="currentColor"
+                        >
+                          <path d="M8 0L9.5 5.5 16 8l-6.5 1.5L8 16l-1.5-6.5L0 8l6.5-2.5z" />
+                        </svg>
+                      </div>
+                      <div className="flex-1 px-3 py-2 rounded-xl rounded-tl-sm bg-white/55 dark:bg-white/[0.05] border border-white/50 dark:border-white/10">
+                        <div className="text-[0.625rem] font-bold text-[var(--purple)] uppercase tracking-wider mb-1">
+                          {t('mockEditor.assistantName')}
+                        </div>
+                        <div className="text-sm text-gray-600 dark:text-white/70">
+                          {msg.text}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                )}
+                {isTypewriting && typingText ? (
+                  <div className="flex justify-start">
+                    <div className="rounded-2xl rounded-tl-sm bg-white dark:bg-white/10 px-3.5 py-2.5 shadow-sm ring-1 ring-black/5 dark:ring-white/10 max-w-[85%]">
+                      <div className="text-sm text-gray-600 dark:text-white/70">
+                        {typingText}
+                        <span className="inline-block w-0.5 h-3.5 bg-purple-500 ml-0.5 animate-pulse align-middle" />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  isTyping && (
+                    <div className="flex gap-2">
+                      <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 inline-flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <svg
+                          className="w-3 h-3 text-white"
+                          viewBox="0 0 16 16"
+                          fill="currentColor"
+                        >
+                          <path d="M8 0L9.5 5.5 16 8l-6.5 1.5L8 16l-1.5-6.5L0 8l6.5-2.5z" />
+                        </svg>
+                      </div>
+                      <div className="px-3 py-2 rounded-xl rounded-tl-sm bg-white/55 dark:bg-white/[0.05] border border-white/50 dark:border-white/10">
+                        <div className="flex gap-1.5">
+                          <span
+                            className="w-2 h-2 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce"
+                            style={{ animationDelay: '0ms' }}
+                          />
+                          <span
+                            className="w-2 h-2 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce"
+                            style={{ animationDelay: '150ms' }}
+                          />
+                          <span
+                            className="w-2 h-2 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce"
+                            style={{ animationDelay: '300ms' }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* Input area - stays at bottom */}
+              <div className="mt-auto">
+                {/* Input */}
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white/80 dark:bg-white/[0.06] backdrop-blur-xl border-0 shadow-[0_2px_12px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(255,255,255,0.9)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.15),inset_0_0_0_1px_rgba(255,255,255,0.1)] transition-all duration-300">
+                  <input
+                    type="text"
+                    placeholder={t('mockEditor.inputPlaceholder')}
+                    className="flex-1 bg-transparent text-sm outline-none border-none focus:outline-none focus:ring-0 px-2 placeholder:text-gray-400 dark:placeholder:text-white/30 text-gray-900 dark:text-white"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                  />
+                  <button
+                    onClick={() => handleSend()}
+                    disabled={!inputValue.trim() || isTyping}
+                    className="w-8 h-8 rounded-lg bg-gradient-to-r from-[var(--purple)] to-blue-500 text-white flex items-center justify-center disabled:opacity-30 transition-all hover:shadow-lg hover:scale-105 active:scale-95"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 12h14m-7-7l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* Quick prompts */}
+                <div className="flex flex-wrap gap-2 mt-2.5">
+                  {[
+                    t('mockEditor.quickPrompt.pricing'),
+                    t('mockEditor.quickPrompt.contact'),
+                    t('mockEditor.quickPrompt.colors'),
+                    'Add a FAQ section',
+                    'Add newsletter signup',
+                    'Add an about page',
+                  ].map((prompt) => (
+                    <button
+                      key={prompt}
+                      onClick={() => handleSend(prompt)}
+                      disabled={isTyping}
+                      className="px-3.5 py-2 text-[0.8125rem] rounded-full bg-white/55 dark:bg-white/[0.04] backdrop-blur-sm hover:bg-white/70 dark:hover:bg-white/[0.08] border border-gray-200/30 dark:border-white/10 text-gray-600 dark:text-white/50 transition-all disabled:opacity-50 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)]"
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Mock Site Preview */}
+            <div className="w-full sm:w-1/2 bg-white dark:bg-[#0f0f12] overflow-hidden overflow-y-auto relative flex flex-col">
+              {/* Right edge mask */}
+              <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white dark:from-[#0f0f12] to-transparent pointer-events-none z-10" />
+              {/* Realistic site header */}
               <div
-                className={`relative transition-all duration-500 delay-200 mb-6 ${
-                  isLoaded
-                    ? 'opacity-100'
-                    : 'opacity-0'
+                className={`flex items-center justify-between px-4 py-2.5 border-b transition-all duration-500 ${
+                  mockSite.headerStyle === 'minimal'
+                    ? 'bg-transparent border-transparent'
+                    : 'bg-gray-50/80 dark:bg-gray-900/50 border-gray-100 dark:border-gray-800'
                 }`}
               >
-                {/* Title above editor */}
-                <div className="text-center mb-6">
-                  <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-5">
-                    {t('landing.editor.title')}
-                  </h3>
-                  <p className="text-lg text-gray-500 dark:text-white/50">
-                    {t('landing.editor.subtitle')}
-                  </p>
+                <div className="flex items-center gap-2">
+                  <div
+                    className={`w-5 h-5 rounded-md flex items-center justify-center text-[0.5rem] font-bold text-white transition-colors duration-500 ${
+                      mockSite.primaryColor === 'violet'
+                        ? 'bg-[var(--purple)]/50'
+                        : 'bg-emerald-500'
+                    }`}
+                  >
+                    {t('mockEditor.site.brandInitial')}
+                  </div>
+                  <span className="text-[0.8125rem] font-semibold text-gray-800 dark:text-white">
+                    {t('mockEditor.site.brand')}
+                  </span>
                 </div>
-
-                {/* Glow effect behind editor */}
-
-
-                {/* Editor window */}
-                <div className="relative backdrop-blur-xl rounded-3xl overflow-hidden transition-all duration-300 shadow-[var(--glass-shadow)] hover:scale-[1.01]"
-                style={{
-                  backgroundColor: 'color-mix(in srgb, var(--glass-surface) 90%, transparent)',
-                  borderTop: '1px solid var(--glass-border-highlight)',
-                  borderLeft: '1px solid var(--glass-border-highlight)',
-                  borderBottom: '1px solid var(--glass-border-shadow)',
-                  borderRight: '1px solid var(--glass-border-shadow)',
-                }}>
-                  {/* Browser chrome */}
-                  <div className="flex items-center justify-between px-4 py-3 bg-white/80 dark:bg-white/[0.05] backdrop-blur-sm border-b border-gray-200/50 dark:border-white/5">
-                    <div className="flex items-center gap-2">
-                      <div className="flex gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
-                        <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
-                        <div className="w-2.5 h-2.5 rounded-full bg-[#28ca42]" />
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100/80 dark:bg-white/5 backdrop-blur text-[0.6875rem] text-gray-400 dark:text-white/30">
-                      <svg
-                        className="w-2.5 h-2.5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                        />
-                      </svg>
-                      {t('mockEditor.browserUrl')}
-                    </div>
-                    <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="text-[0.625rem] font-medium text-emerald-600 dark:text-emerald-400">
-                        {t('mockEditor.liveIndicator')}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Split: Chat + Preview */}
-                  <div className="flex flex-col sm:flex-row sm:divide-x divide-gray-200/30 dark:divide-white/5 h-[900px] sm:h-[760px] lg:h-[860px]">
-                    {/* Chat Panel */}
-                    <div className="w-full sm:w-1/2 p-3 sm:p-4 flex flex-col border-b sm:border-b-0 h-[420px] sm:h-auto border-gray-200/30 dark:border-white/5">
-                      <div className="text-xs tracking-[0.12em] uppercase font-bold mb-2 sm:mb-3 bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
-                        {t('mockEditor.chatTitle')}
-                      </div>
-
-                      {/* Messages - grows to fill space */}
-                      <div className="flex-1 space-y-2.5 sm:space-y-3 overflow-y-auto mb-2 sm:mb-3 pr-1 max-h-[240px] sm:max-h-none">
-                        {messages.map((msg, i) =>
-                          msg.role === 'user' ? (
-                            <div key={i} className="flex justify-end">
-                              <div className="max-w-[95%] px-3 py-2 rounded-xl rounded-tr-sm bg-gradient-to-r from-[var(--purple)] to-blue-500 text-white text-sm shadow-sm">
-                                {msg.text}
-                              </div>
-                            </div>
-                          ) : (
-                            <div key={i} className="flex gap-2.5 items-start">
-                              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center flex-shrink-0 shadow-sm mt-2">
-                                <svg className="w-3 h-3 text-white" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0L9.5 5.5 16 8l-6.5 1.5L8 16l-1.5-6.5L0 8l6.5-2.5z" /></svg>
-                              </div>
-                              <div className="flex-1 px-3 py-2 rounded-xl rounded-tl-sm bg-white/55 dark:bg-white/[0.05] border border-white/50 dark:border-white/10">
-                                <div className="text-[0.625rem] font-bold text-[var(--purple)] uppercase tracking-wider mb-1">{t('mockEditor.assistantName')}</div>
-                                <div className="text-sm text-gray-600 dark:text-white/70">{msg.text}</div>
-                              </div>
-                            </div>
-                          )
-                        )}
-                        {isTypewriting && typingText ? (
-                          <div className="flex justify-start">
-                            <div className="rounded-2xl rounded-tl-sm bg-white dark:bg-white/10 px-3.5 py-2.5 shadow-sm ring-1 ring-black/5 dark:ring-white/10 max-w-[85%]">
-                              <div className="text-sm text-gray-600 dark:text-white/70">
-                                {typingText}<span className="inline-block w-0.5 h-3.5 bg-purple-500 ml-0.5 animate-pulse align-middle" />
-                              </div>
-                            </div>
-                          </div>
-                        ) : isTyping && (
-                          <div className="flex gap-2">
-                            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 inline-flex items-center justify-center flex-shrink-0 shadow-sm">
-                              <svg className="w-3 h-3 text-white" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0L9.5 5.5 16 8l-6.5 1.5L8 16l-1.5-6.5L0 8l6.5-2.5z" /></svg>
-                            </div>
-                            <div className="px-3 py-2 rounded-xl rounded-tl-sm bg-white/55 dark:bg-white/[0.05] border border-white/50 dark:border-white/10">
-                              <div className="flex gap-1.5">
-                                <span
-                                  className="w-2 h-2 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce"
-                                  style={{ animationDelay: '0ms' }}
-                                />
-                                <span
-                                  className="w-2 h-2 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce"
-                                  style={{ animationDelay: '150ms' }}
-                                />
-                                <span
-                                  className="w-2 h-2 bg-gray-400 dark:bg-white/30 rounded-full animate-bounce"
-                                  style={{ animationDelay: '300ms' }}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                        <div ref={messagesEndRef} />
-                      </div>
-
-                      {/* Input area - stays at bottom */}
-                      <div className="mt-auto">
-                        {/* Input */}
-                        <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white/80 dark:bg-white/[0.06] backdrop-blur-xl border-0 shadow-[0_2px_12px_rgba(0,0,0,0.04),inset_0_0_0_1px_rgba(255,255,255,0.9)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.15),inset_0_0_0_1px_rgba(255,255,255,0.1)] transition-all duration-300">
-                          <input
-                            type="text"
-                            placeholder={t('mockEditor.inputPlaceholder')}
-                            className="flex-1 bg-transparent text-sm outline-none border-none focus:outline-none focus:ring-0 px-2 placeholder:text-gray-400 dark:placeholder:text-white/30 text-gray-900 dark:text-white"
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                          />
-                          <button
-                            onClick={() => handleSend()}
-                            disabled={!inputValue.trim() || isTyping}
-                            className="w-8 h-8 rounded-lg bg-gradient-to-r from-[var(--purple)] to-blue-500 text-white flex items-center justify-center disabled:opacity-30 transition-all hover:shadow-lg hover:scale-105 active:scale-95"
-                          >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                              strokeWidth={2}
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M5 12h14m-7-7l7 7-7 7"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-
-                        {/* Quick prompts */}
-                        <div className="flex flex-wrap gap-2 mt-2.5">
-                        {[
-                          t('mockEditor.quickPrompt.pricing'),
-                          t('mockEditor.quickPrompt.contact'),
-                          t('mockEditor.quickPrompt.colors'),
-                          'Add a FAQ section',
-                          'Add newsletter signup',
-                          'Add an about page',
-                        ].map(
-                            (prompt) => (
-                              <button
-                                key={prompt}
-                                onClick={() => handleSend(prompt)}
-                                disabled={isTyping}
-                                className="px-3.5 py-2 text-[0.8125rem] rounded-full bg-white/55 dark:bg-white/[0.04] backdrop-blur-sm hover:bg-white/70 dark:hover:bg-white/[0.08] border border-gray-200/30 dark:border-white/10 text-gray-600 dark:text-white/50 transition-all disabled:opacity-50 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)]"
-                              >
-                                {prompt}
-                              </button>
-                            )
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Mock Site Preview */}
-                    <div className="w-full sm:w-1/2 bg-white dark:bg-[#0f0f12] overflow-hidden overflow-y-auto relative flex flex-col">
-                      {/* Right edge mask */}
-                      <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white dark:from-[#0f0f12] to-transparent pointer-events-none z-10" />
-                      {/* Realistic site header */}
-                      <div
-                        className={`flex items-center justify-between px-4 py-2.5 border-b transition-all duration-500 ${
-                          mockSite.headerStyle === 'minimal'
-                            ? 'bg-transparent border-transparent'
-                            : 'bg-gray-50/80 dark:bg-gray-900/50 border-gray-100 dark:border-gray-800'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <div
-                            className={`w-5 h-5 rounded-md flex items-center justify-center text-[0.5rem] font-bold text-white transition-colors duration-500 ${
-                              mockSite.primaryColor === 'violet'
-                                ? 'bg-[var(--purple)]/50'
-                                : 'bg-emerald-500'
-                            }`}
-                          >
-                            {t('mockEditor.site.brandInitial')}
-                          </div>
-                          <span className="text-[0.8125rem] font-semibold text-gray-800 dark:text-white">
-                            {t('mockEditor.site.brand')}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-3 text-[0.6875rem] text-gray-500 dark:text-gray-400">
-                          <span className="hover:text-gray-900 dark:hover:text-white cursor-default">
-                            {t('mockEditor.site.nav.home')}
-                          </span>
-                          {mockSite.hasAboutPage && (
-                            <span
-                              className={`font-medium transition-all duration-500 ${
-                                mockSite.primaryColor === 'violet'
-                                  ? 'text-[var(--purple)]'
-                                  : 'text-emerald-500'
-                              }`}
-                            >
-                              {t('mockEditor.site.nav.about')}
-                            </span>
-                          )}
-                          <span>{t('mockEditor.site.nav.shop')}</span>
-                          <span>{t('mockEditor.site.nav.contact')}</span>
-                        </div>
-                      </div>
-
-                      {/* Hero section with image placeholder */}
-                      <div className="px-4 py-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-                        <div className="flex gap-3">
-                          <div className="flex-1">
-                            <div className="h-2.5 w-24 bg-gray-800 dark:bg-white rounded mb-1.5" />
-                            <div
-                              className={`h-3 w-20 rounded mb-2 transition-colors duration-500 ${
-                                mockSite.primaryColor === 'violet'
-                                  ? 'bg-[var(--purple)]/50'
-                                  : 'bg-emerald-500'
-                              }`}
-                            />
-                            <div className="h-1.5 w-28 bg-gray-300 dark:bg-gray-600 rounded mb-1" />
-                            <div className="h-1.5 w-24 bg-gray-300 dark:bg-gray-600 rounded mb-3" />
-                            <div
-                              className={`h-5 w-16 rounded-full text-[0.5625rem] text-white flex items-center justify-center transition-colors duration-500 ${
-                                mockSite.primaryColor === 'violet'
-                                  ? 'bg-[var(--purple)]/50'
-                                  : 'bg-emerald-500'
-                              }`}
-                            >
-                            {t('mockEditor.site.shopNow')}
-                            </div>
-                          </div>
-                          <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-amber-200 to-amber-400 dark:from-amber-700 dark:to-amber-900 flex items-center justify-center">
-                            <span className="text-2xl">☕</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Contact form - animated in */}
-                      <div
-                        className={`overflow-hidden transition-all duration-500 ${
-                          mockSite.hasContactForm
-                            ? 'opacity-100 max-h-[500px]'
-                            : 'opacity-0 max-h-0 overflow-hidden'
-                        }`}
-                      >
-                        <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900/30">
-                          <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            {t('mockEditor.site.getInTouch')}
-                          </div>
-                          <div className="grid grid-cols-2 gap-1.5 mb-1.5">
-                            <div className="h-5 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 px-2 flex items-center">
-                              <span className="text-[0.625rem] text-gray-400">
-                                {t('mockEditor.site.form.name')}
-                              </span>
-                            </div>
-                            <div className="h-5 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 px-2 flex items-center">
-                              <span className="text-[0.625rem] text-gray-400">
-                                {t('mockEditor.site.form.email')}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="h-7 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 mb-2 px-2 flex items-start pt-1">
-                            <span className="text-[0.625rem] text-gray-400">
-                              {t('mockEditor.site.form.message')}
-                            </span>
-                          </div>
-                          <div
-                            className={`h-5 w-14 rounded text-[0.5625rem] text-white flex items-center justify-center transition-colors duration-500 ${
-                              mockSite.primaryColor === 'violet'
-                                ? 'bg-[var(--purple)]/50'
-                                : 'bg-emerald-500'
-                            }`}
-                          >
-                            {t('mockEditor.site.form.send')}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Products/Features section */}
-                      <div className="px-4 py-3">
-                        <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                          {t('mockEditor.site.blends')}
-                        </div>
-                        <div className="grid grid-cols-3 gap-2">
-                          {['☕', '🫘', '✨'].map((emoji, i) => (
-                            <div
-                              key={i}
-                              className="p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 text-center"
-                            >
-                              <div className="text-base mb-1">{emoji}</div>
-                              <div className="h-1.5 w-10 mx-auto bg-gray-200 dark:bg-gray-700 rounded mb-1" />
-                              <div
-                                className={`h-1.5 w-6 mx-auto rounded transition-colors duration-500 ${
-                                  mockSite.primaryColor === 'violet'
-                                    ? 'bg-[var(--purple)]/40'
-                                    : 'bg-emerald-400'
-                                }`}
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Testimonials - animated in */}
-                      <div
-                        className={`overflow-hidden transition-all duration-500 ${
-                          mockSite.hasTestimonials
-                            ? 'opacity-100 max-h-[500px]'
-                            : 'opacity-0 max-h-0 overflow-hidden'
-                        }`}
-                      >
-                        <div className="px-4 py-3">
-                          <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            {t('mockEditor.site.testimonials')}
-                          </div>
-                          <div className="flex gap-2">
-                            {[1, 2].map((i) => (
-                              <div
-                                key={i}
-                                className="flex-1 p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700"
-                              >
-                                <div className="flex items-center gap-1.5 mb-1">
-                                  <div className="w-4 h-4 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-700" />
-                                  <div className="h-1.5 w-10 bg-gray-200 dark:bg-gray-700 rounded" />
-                                </div>
-                                <div className="h-1 w-full bg-gray-100 dark:bg-gray-700 rounded mb-1" />
-                                <div className="h-1 w-4/5 bg-gray-100 dark:bg-gray-700 rounded" />
-                                <div className="flex gap-0.5 mt-1.5">
-                                  {[1, 2, 3, 4, 5].map((s) => (
-                                    <span
-                                      key={s}
-                                      className={`text-[0.5625rem] ${
-                                        mockSite.primaryColor === 'violet'
-                                          ? 'text-[var(--purple)]'
-                                          : 'text-emerald-400'
-                                      }`}
-                                    >
-                                      ★
-                                    </span>
-                                  ))}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Pricing section - animated in */}
-                      <div
-                        className={`overflow-hidden transition-all duration-500 ${
-                          mockSite.hasPricingSection
-                            ? 'opacity-100 max-h-[500px]'
-                            : 'opacity-0 max-h-0 overflow-hidden'
-                        }`}
-                      >
-                        <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900/30">
-                          <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            {t('mockEditor.site.pricing')}
-                          </div>
-                          <div className="flex gap-2">
-                            <div className="flex-1 p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                              <div className="text-[0.6875rem] font-medium text-gray-600 dark:text-gray-400">
-                                {t('mockEditor.site.basicPlan')}
-                              </div>
-                              <div
-                                className={`text-sm font-bold transition-colors duration-500 ${
-                                  mockSite.primaryColor === 'violet'
-                                    ? 'text-[var(--purple)]'
-                                    : 'text-emerald-600'
-                                }`}
-                              >
-                                {t('mockEditor.site.basicPrice')}
-                              </div>
-                              <div className="h-1 w-full bg-gray-100 dark:bg-gray-700 rounded mt-1.5 mb-1" />
-                              <div className="h-1 w-3/4 bg-gray-100 dark:bg-gray-700 rounded" />
-                            </div>
-                            <div
-                              className={`flex-1 p-2 rounded-lg border-2 transition-colors duration-500 ${
-                                mockSite.primaryColor === 'violet'
-                                  ? 'bg-[var(--purple)]/5 dark:bg-[var(--purple)]/20 border-[var(--purple)]/30 dark:border-[var(--purple)]'
-                                  : 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-300 dark:border-emerald-700'
-                              }`}
-                            >
-                              <div className="flex items-center gap-1">
-                                <div className="text-[0.6875rem] font-medium text-gray-600 dark:text-gray-400">
-                                  {t('mockEditor.site.proPlan')}
-                                </div>
-                                <div
-                                  className={`text-[0.5rem] px-1 py-0.5 rounded-full text-white transition-colors duration-500 ${
-                                    mockSite.primaryColor === 'violet'
-                                      ? 'bg-[var(--purple)]/50'
-                                      : 'bg-emerald-500'
-                                  }`}
-                                >
-                                  {t('mockEditor.site.popular')}
-                                </div>
-                              </div>
-                              <div
-                                className={`text-sm font-bold transition-colors duration-500 ${
-                                  mockSite.primaryColor === 'violet'
-                                    ? 'text-[var(--purple)]'
-                                    : 'text-emerald-600'
-                                }`}
-                              >
-                                {t('mockEditor.site.proPrice')}
-                              </div>
-                              <div className="h-1 w-full bg-gray-100 dark:bg-gray-700 rounded mt-1.5 mb-1" />
-                              <div className="h-1 w-3/4 bg-gray-100 dark:bg-gray-700 rounded" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* FAQ section - animated in */}
-                      <div
-                        className={`overflow-hidden transition-all duration-500 ${
-                          mockSite.hasFAQ
-                            ? 'opacity-100 max-h-[500px]'
-                            : 'opacity-0 max-h-0 overflow-hidden'
-                        }`}
-                      >
-                        <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900/30">
-                          <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            Frequently Asked Questions
-                          </div>
-                          <div className="space-y-1.5">
-                            {['How does delivery work?', 'Can I edit it myself?', 'What if I need changes?'].map((q, i) => (
-                              <div key={i} className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
-                                <span className="text-[0.625rem] text-gray-600 dark:text-gray-400">{q}</span>
-                                <svg className="w-3 h-3 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                                </svg>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Newsletter section - animated in */}
-                      <div
-                        className={`overflow-hidden transition-all duration-500 ${
-                          mockSite.hasNewsletter
-                            ? 'opacity-100 max-h-[500px]'
-                            : 'opacity-0 max-h-0 overflow-hidden'
-                        }`}
-                      >
-                        <div className="px-4 py-3">
-                          <div className="p-3 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700">
-                            <div className="text-[0.6875rem] font-semibold text-gray-700 dark:text-gray-300 mb-0.5">Stay in the loop ✉️</div>
-                            <div className="text-[0.5625rem] text-gray-400 mb-2">Get tips & updates straight to your inbox.</div>
-                            <div className="flex gap-1.5">
-                              <div className="flex-1 h-5 bg-white dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 px-2 flex items-center">
-                                <span className="text-[0.5625rem] text-gray-400">Your email address</span>
-                              </div>
-                              <div
-                                className={`h-5 px-2 rounded text-[0.5625rem] text-white flex items-center transition-colors duration-500 ${
-                                  mockSite.primaryColor === 'violet'
-                                    ? 'bg-[var(--purple)]/50'
-                                    : 'bg-emerald-500'
-                                }`}
-                              >
-                                Subscribe
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Footer */}
-                      <div className="mt-auto px-4 py-2.5 bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
-                        <div className="flex items-center justify-between">
-                          <div className="text-[0.625rem] text-gray-400">
-                            © {new Date().getFullYear()} {t('mockEditor.site.brand')}
-                          </div>
-                          <div className="flex gap-2">
-                            {['📘', '📷', '✉️'].map((icon, i) => (
-                              <span key={i} className="text-xs opacity-50">
-                                {icon}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div className="flex items-center gap-3 text-[0.6875rem] text-gray-500 dark:text-gray-400">
+                  <span className="hover:text-gray-900 dark:hover:text-white cursor-default">
+                    {t('mockEditor.site.nav.home')}
+                  </span>
+                  {mockSite.hasAboutPage && (
+                    <span
+                      className={`font-medium transition-all duration-500 ${
+                        mockSite.primaryColor === 'violet'
+                          ? 'text-[var(--purple)]'
+                          : 'text-emerald-500'
+                      }`}
+                    >
+                      {t('mockEditor.site.nav.about')}
+                    </span>
+                  )}
+                  <span>{t('mockEditor.site.nav.shop')}</span>
+                  <span>{t('mockEditor.site.nav.contact')}</span>
                 </div>
+              </div>
 
-                {/* Floating elements - hidden on small mobile */}
-                <div
-                  className="absolute -bottom-3 -right-3 sm:-bottom-4 sm:-right-4 w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--purple)] to-blue-500 shadow-xl hidden xs:flex flex-col items-center justify-center animate-float text-white"
-                  style={{ animationDelay: '1s' }}
-                >
-                  <div className="text-base sm:text-lg lg:text-2xl font-bold">
-                    {t('mockEditor.floatingDraft')}
+              {/* Hero section with image placeholder */}
+              <div className="px-4 py-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+                <div className="flex gap-3">
+                  <div className="flex-1">
+                    <div className="h-2.5 w-24 bg-gray-800 dark:bg-white rounded mb-1.5" />
+                    <div
+                      className={`h-3 w-20 rounded mb-2 transition-colors duration-500 ${
+                        mockSite.primaryColor === 'violet'
+                          ? 'bg-[var(--purple)]/50'
+                          : 'bg-emerald-500'
+                      }`}
+                    />
+                    <div className="h-1.5 w-28 bg-gray-300 dark:bg-gray-600 rounded mb-1" />
+                    <div className="h-1.5 w-24 bg-gray-300 dark:bg-gray-600 rounded mb-3" />
+                    <div
+                      className={`h-5 w-16 rounded-full text-[0.5625rem] text-white flex items-center justify-center transition-colors duration-500 ${
+                        mockSite.primaryColor === 'violet'
+                          ? 'bg-[var(--purple)]/50'
+                          : 'bg-emerald-500'
+                      }`}
+                    >
+                      {t('mockEditor.site.shopNow')}
+                    </div>
                   </div>
-                  <div className="text-[0.5rem] sm:text-[0.625rem] lg:text-xs text-white/70">
-                    {t('mockEditor.floatingTime')}
-                  </div>
-                </div>
-
-                <div
-                  className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 lg:-top-6 lg:-left-6 w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/55 dark:bg-white/[0.08] backdrop-blur-xl border border-white/50 dark:border-white/10 hidden xs:flex items-center justify-center animate-float shadow-xl"
-                  style={{ animationDelay: '0s' }}
-                >
-                  <div className="text-base sm:text-lg lg:text-2xl font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
-                    98
+                  <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-amber-200 to-amber-400 dark:from-amber-700 dark:to-amber-900 flex items-center justify-center">
+                    <span className="text-2xl">☕</span>
                   </div>
                 </div>
               </div>
+
+              {/* Contact form - animated in */}
+              <div
+                className={`overflow-hidden transition-all duration-500 ${
+                  mockSite.hasContactForm
+                    ? 'opacity-100 max-h-[500px]'
+                    : 'opacity-0 max-h-0 overflow-hidden'
+                }`}
+              >
+                <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900/30">
+                  <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    {t('mockEditor.site.getInTouch')}
+                  </div>
+                  <div className="grid grid-cols-2 gap-1.5 mb-1.5">
+                    <div className="h-5 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 px-2 flex items-center">
+                      <span className="text-[0.625rem] text-gray-400">
+                        {t('mockEditor.site.form.name')}
+                      </span>
+                    </div>
+                    <div className="h-5 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 px-2 flex items-center">
+                      <span className="text-[0.625rem] text-gray-400">
+                        {t('mockEditor.site.form.email')}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="h-7 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 mb-2 px-2 flex items-start pt-1">
+                    <span className="text-[0.625rem] text-gray-400">
+                      {t('mockEditor.site.form.message')}
+                    </span>
+                  </div>
+                  <div
+                    className={`h-5 w-14 rounded text-[0.5625rem] text-white flex items-center justify-center transition-colors duration-500 ${
+                      mockSite.primaryColor === 'violet'
+                        ? 'bg-[var(--purple)]/50'
+                        : 'bg-emerald-500'
+                    }`}
+                  >
+                    {t('mockEditor.site.form.send')}
+                  </div>
+                </div>
+              </div>
+
+              {/* Products/Features section */}
+              <div className="px-4 py-3">
+                <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  {t('mockEditor.site.blends')}
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {['☕', '🫘', '✨'].map((emoji, i) => (
+                    <div
+                      key={i}
+                      className="p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 text-center"
+                    >
+                      <div className="text-base mb-1">{emoji}</div>
+                      <div className="h-1.5 w-10 mx-auto bg-gray-200 dark:bg-gray-700 rounded mb-1" />
+                      <div
+                        className={`h-1.5 w-6 mx-auto rounded transition-colors duration-500 ${
+                          mockSite.primaryColor === 'violet'
+                            ? 'bg-[var(--purple)]/40'
+                            : 'bg-emerald-400'
+                        }`}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Testimonials - animated in */}
+              <div
+                className={`overflow-hidden transition-all duration-500 ${
+                  mockSite.hasTestimonials
+                    ? 'opacity-100 max-h-[500px]'
+                    : 'opacity-0 max-h-0 overflow-hidden'
+                }`}
+              >
+                <div className="px-4 py-3">
+                  <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    {t('mockEditor.site.testimonials')}
+                  </div>
+                  <div className="flex gap-2">
+                    {[1, 2].map((i) => (
+                      <div
+                        key={i}
+                        className="flex-1 p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700"
+                      >
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <div className="w-4 h-4 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-700" />
+                          <div className="h-1.5 w-10 bg-gray-200 dark:bg-gray-700 rounded" />
+                        </div>
+                        <div className="h-1 w-full bg-gray-100 dark:bg-gray-700 rounded mb-1" />
+                        <div className="h-1 w-4/5 bg-gray-100 dark:bg-gray-700 rounded" />
+                        <div className="flex gap-0.5 mt-1.5">
+                          {[1, 2, 3, 4, 5].map((s) => (
+                            <span
+                              key={s}
+                              className={`text-[0.5625rem] ${
+                                mockSite.primaryColor === 'violet'
+                                  ? 'text-[var(--purple)]'
+                                  : 'text-emerald-400'
+                              }`}
+                            >
+                              ★
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Pricing section - animated in */}
+              <div
+                className={`overflow-hidden transition-all duration-500 ${
+                  mockSite.hasPricingSection
+                    ? 'opacity-100 max-h-[500px]'
+                    : 'opacity-0 max-h-0 overflow-hidden'
+                }`}
+              >
+                <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900/30">
+                  <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    {t('mockEditor.site.pricing')}
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="flex-1 p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                      <div className="text-[0.6875rem] font-medium text-gray-600 dark:text-gray-400">
+                        {t('mockEditor.site.basicPlan')}
+                      </div>
+                      <div
+                        className={`text-sm font-bold transition-colors duration-500 ${
+                          mockSite.primaryColor === 'violet'
+                            ? 'text-[var(--purple)]'
+                            : 'text-emerald-600'
+                        }`}
+                      >
+                        {t('mockEditor.site.basicPrice')}
+                      </div>
+                      <div className="h-1 w-full bg-gray-100 dark:bg-gray-700 rounded mt-1.5 mb-1" />
+                      <div className="h-1 w-3/4 bg-gray-100 dark:bg-gray-700 rounded" />
+                    </div>
+                    <div
+                      className={`flex-1 p-2 rounded-lg border-2 transition-colors duration-500 ${
+                        mockSite.primaryColor === 'violet'
+                          ? 'bg-[var(--purple)]/5 dark:bg-[var(--purple)]/20 border-[var(--purple)]/30 dark:border-[var(--purple)]'
+                          : 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-300 dark:border-emerald-700'
+                      }`}
+                    >
+                      <div className="flex items-center gap-1">
+                        <div className="text-[0.6875rem] font-medium text-gray-600 dark:text-gray-400">
+                          {t('mockEditor.site.proPlan')}
+                        </div>
+                        <div
+                          className={`text-[0.5rem] px-1 py-0.5 rounded-full text-white transition-colors duration-500 ${
+                            mockSite.primaryColor === 'violet'
+                              ? 'bg-[var(--purple)]/50'
+                              : 'bg-emerald-500'
+                          }`}
+                        >
+                          {t('mockEditor.site.popular')}
+                        </div>
+                      </div>
+                      <div
+                        className={`text-sm font-bold transition-colors duration-500 ${
+                          mockSite.primaryColor === 'violet'
+                            ? 'text-[var(--purple)]'
+                            : 'text-emerald-600'
+                        }`}
+                      >
+                        {t('mockEditor.site.proPrice')}
+                      </div>
+                      <div className="h-1 w-full bg-gray-100 dark:bg-gray-700 rounded mt-1.5 mb-1" />
+                      <div className="h-1 w-3/4 bg-gray-100 dark:bg-gray-700 rounded" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* FAQ section - animated in */}
+              <div
+                className={`overflow-hidden transition-all duration-500 ${
+                  mockSite.hasFAQ
+                    ? 'opacity-100 max-h-[500px]'
+                    : 'opacity-0 max-h-0 overflow-hidden'
+                }`}
+              >
+                <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900/30">
+                  <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    Frequently Asked Questions
+                  </div>
+                  <div className="space-y-1.5">
+                    {[
+                      'How does delivery work?',
+                      'Can I edit it myself?',
+                      'What if I need changes?',
+                    ].map((q, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700"
+                      >
+                        <span className="text-[0.625rem] text-gray-600 dark:text-gray-400">
+                          {q}
+                        </span>
+                        <svg
+                          className="w-3 h-3 text-gray-400 flex-shrink-0"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Newsletter section - animated in */}
+              <div
+                className={`overflow-hidden transition-all duration-500 ${
+                  mockSite.hasNewsletter
+                    ? 'opacity-100 max-h-[500px]'
+                    : 'opacity-0 max-h-0 overflow-hidden'
+                }`}
+              >
+                <div className="px-4 py-3">
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700">
+                    <div className="text-[0.6875rem] font-semibold text-gray-700 dark:text-gray-300 mb-0.5">
+                      Stay in the loop ✉️
+                    </div>
+                    <div className="text-[0.5625rem] text-gray-400 mb-2">
+                      Get tips & updates straight to your inbox.
+                    </div>
+                    <div className="flex gap-1.5">
+                      <div className="flex-1 h-5 bg-white dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 px-2 flex items-center">
+                        <span className="text-[0.5625rem] text-gray-400">
+                          Your email address
+                        </span>
+                      </div>
+                      <div
+                        className={`h-5 px-2 rounded text-[0.5625rem] text-white flex items-center transition-colors duration-500 ${
+                          mockSite.primaryColor === 'violet'
+                            ? 'bg-[var(--purple)]/50'
+                            : 'bg-emerald-500'
+                        }`}
+                      >
+                        Subscribe
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="mt-auto px-4 py-2.5 bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+                <div className="flex items-center justify-between">
+                  <div className="text-[0.625rem] text-gray-400">
+                    © {new Date().getFullYear()} {t('mockEditor.site.brand')}
+                  </div>
+                  <div className="flex gap-2">
+                    {['📘', '📷', '✉️'].map((icon, i) => (
+                      <span key={i} className="text-xs opacity-50">
+                        {icon}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Floating elements - hidden on small mobile */}
+        <div
+          className="absolute -bottom-3 -right-3 sm:-bottom-4 sm:-right-4 w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--purple)] to-blue-500 shadow-xl hidden xs:flex flex-col items-center justify-center animate-float text-white"
+          style={{ animationDelay: '1s' }}
+        >
+          <div className="text-base sm:text-lg lg:text-2xl font-bold">
+            {t('mockEditor.floatingDraft')}
+          </div>
+          <div className="text-[0.5rem] sm:text-[0.625rem] lg:text-xs text-white/70">
+            {t('mockEditor.floatingTime')}
+          </div>
+        </div>
+
+        <div
+          className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 lg:-top-6 lg:-left-6 w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/55 dark:bg-white/[0.08] backdrop-blur-xl border border-white/50 dark:border-white/10 hidden xs:flex items-center justify-center animate-float shadow-xl"
+          style={{ animationDelay: '0s' }}
+        >
+          <div className="text-base sm:text-lg lg:text-2xl font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
+            98
+          </div>
+        </div>
+      </div>
     </>
   );
 }

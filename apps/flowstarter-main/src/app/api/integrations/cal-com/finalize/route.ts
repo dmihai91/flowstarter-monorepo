@@ -19,16 +19,28 @@ export async function POST(req: Request) {
     // Extract the raw API key before vault storage
     const apiKey: string | undefined = incoming.api_key;
     if (!apiKey) {
-      return NextResponse.json({ error: 'api_key is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'api_key is required' },
+        { status: 400 }
+      );
     }
 
     // ── Store API key in Vault (encrypted at rest) ───────────────────────────
     let apiKeySecretId: string;
     try {
-      apiKeySecretId = await storeUserSecret(supabase, userId, 'cal-com', 'api_key', apiKey);
+      apiKeySecretId = await storeUserSecret(
+        supabase,
+        userId,
+        'cal-com',
+        'api_key',
+        apiKey
+      );
     } catch (vaultErr) {
       console.error('[Cal.com Finalize] Vault store failed:', vaultErr);
-      return NextResponse.json({ error: 'Failed to encrypt credentials' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to encrypt credentials' },
+        { status: 500 }
+      );
     }
 
     // ── Persist only non-sensitive config + vault UUID reference ─────────────
@@ -59,6 +71,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('[Cal.com Finalize] Error:', error);
-    return NextResponse.json({ error: 'Failed to save configuration' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to save configuration' },
+      { status: 500 }
+    );
   }
 }

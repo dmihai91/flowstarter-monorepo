@@ -9,7 +9,7 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { createSupabaseServerClient } from '@/supabase-clients/server';
 
 /**
  * Authentication result type
@@ -124,11 +124,13 @@ export async function requireAuth(request?: Request): Promise<AuthResult> {
  * }
  * ```
  */
+type ServerSupabaseClient = ReturnType<typeof createSupabaseServerClient>;
+
 export async function requireAuthWithSupabase(request?: Request): Promise<
   | {
       authenticated: true;
       userId: string;
-      supabase: SupabaseClient;
+      supabase: ServerSupabaseClient;
     }
   | { authenticated: false; response: NextResponse }
 > {
@@ -143,7 +145,9 @@ export async function requireAuthWithSupabase(request?: Request): Promise<
     process.env.E2E_SECRET &&
     request?.headers.get('x-e2e-secret') === process.env.E2E_SECRET
   ) {
-    const { createSupabaseServiceRoleClient } = await import('@/supabase-clients/server');
+    const { createSupabaseServiceRoleClient } = await import(
+      '@/supabase-clients/server'
+    );
     return {
       authenticated: true,
       userId: authResult.userId,
@@ -157,6 +161,7 @@ export async function requireAuthWithSupabase(request?: Request): Promise<
   );
 
   try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks -- server-only utility, not a React hook
     const supabase = await useServerSupabaseWithAuthStrict();
     return {
       authenticated: true,

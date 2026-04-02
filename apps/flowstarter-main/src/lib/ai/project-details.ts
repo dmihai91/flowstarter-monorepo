@@ -300,7 +300,6 @@ Use this exact JSON structure:
 
   const runOnce = async (temp: number): Promise<GeneratedProjectDetails> => {
     try {
-      // @ts-ignore - deeply nested schema causes excessive type instantiation
       const result = await generateObject({
         model: models.projectDetails,
         schema: detailsSchema,
@@ -331,7 +330,9 @@ Use this exact JSON structure:
   const maxRetries = 3;
 
   // Helper to check if content meets minimum length requirements
-  const meetsMinLengthRequirements = (data: GeneratedProjectDetails): boolean => {
+  const meetsMinLengthRequirements = (
+    data: GeneratedProjectDetails
+  ): boolean => {
     if (chipAction === 'makeItShorter') return true;
 
     const descLength = String(data?.description || '').trim().length;

@@ -53,7 +53,13 @@ export const ExternalNavigationWithAuth = () => {
 export const ExternalNavigation = () => {
   const isScrolled = useScrolled();
   const pathname = usePathname();
-  const isAuthRoute = pathname === '/login' || pathname === '/sign-up' || pathname?.startsWith('/login') || pathname?.startsWith('/sign-up') || pathname?.startsWith('/sign-in') || pathname?.startsWith('/editor');
+  const isAuthRoute =
+    pathname === '/login' ||
+    pathname === '/sign-up' ||
+    pathname?.startsWith('/login') ||
+    pathname?.startsWith('/sign-up') ||
+    pathname?.startsWith('/sign-in') ||
+    pathname?.startsWith('/editor');
 
   const isLandingPage = pathname === '/';
   if (isAuthRoute || isLandingPage) return null;

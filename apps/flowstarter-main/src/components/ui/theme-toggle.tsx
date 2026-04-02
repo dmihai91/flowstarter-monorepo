@@ -1,7 +1,10 @@
 'use client';
 
 import { useTheme } from '@/contexts/ThemeContext';
-import { ThemeToggle as SharedThemeToggle, type Theme } from '@flowstarter/flow-design-system';
+import {
+  ThemeToggle as SharedThemeToggle,
+  type Theme,
+} from '@flowstarter/flow-design-system';
 
 interface ThemeToggleProps {
   className?: string;

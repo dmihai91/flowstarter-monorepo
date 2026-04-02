@@ -28,7 +28,17 @@ export default function AuthLayout({
   const { t } = useTranslations();
   return (
     <div className="min-h-screen w-full relative flex flex-col">
-      <FlowBackground variant="auth" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }} />
+      <FlowBackground
+        variant="auth"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 0,
+        }}
+      />
 
       {/* Header */}
       <header className="sticky top-0 z-50 shrink-0 border-b border-gray-200/30 dark:border-white/5 bg-white/80 dark:bg-[#0a0810]/80 backdrop-blur-xl">
@@ -51,15 +61,28 @@ export default function AuthLayout({
           {title && (
             <div className="text-center mb-6">
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
-                <span style={{ backgroundImage: "linear-gradient(to right, #4338CA, #8B5CF6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                <span
+                  style={{
+                    backgroundImage:
+                      'linear-gradient(to right, #4338CA, #8B5CF6)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
                   {title.split(' ')[0]}
                 </span>
                 {title.split(' ').length > 1 && (
-                  <span className="text-gray-900 dark:text-white"> {title.split(' ').slice(1).join(' ')}</span>
+                  <span className="text-gray-900 dark:text-white">
+                    {' '}
+                    {title.split(' ').slice(1).join(' ')}
+                  </span>
                 )}
               </h1>
               {subtitle && (
-                <p className="text-gray-500 dark:text-white/50 text-sm">{subtitle}</p>
+                <p className="text-gray-500 dark:text-white/50 text-sm">
+                  {subtitle}
+                </p>
               )}
             </div>
           )}
@@ -68,20 +91,40 @@ export default function AuthLayout({
             <div className="mt-8 pt-6 border-t border-gray-200/50 dark:border-white/10">
               <div className="flex items-center justify-center">
                 {[
-                  { value: t('landing.stats.weeks'), label: t('landing.stats.weeksLabel') },
-                  { value: t('landing.stats.calls'), label: t('landing.stats.callsLabel') },
-                  { value: t('landing.stats.techSkills'), label: t('landing.stats.techSkillsLabel') },
+                  {
+                    value: t('landing.stats.weeks'),
+                    label: t('landing.stats.weeksLabel'),
+                  },
+                  {
+                    value: t('landing.stats.calls'),
+                    label: t('landing.stats.callsLabel'),
+                  },
+                  {
+                    value: t('landing.stats.techSkills'),
+                    label: t('landing.stats.techSkillsLabel'),
+                  },
                 ].map((stat, i) => (
                   <div key={i} className="flex items-center">
                     <div className="text-center px-4">
-                      <div className="text-lg font-bold" style={{ backgroundImage: "linear-gradient(to right, #4338CA, #8B5CF6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                      <div
+                        className="text-lg font-bold"
+                        style={{
+                          backgroundImage:
+                            'linear-gradient(to right, #4338CA, #8B5CF6)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text',
+                        }}
+                      >
                         {stat.value}
                       </div>
                       <div className="text-[0.5625rem] text-gray-400 dark:text-white/30 uppercase tracking-wide font-medium">
                         {stat.label}
                       </div>
                     </div>
-                    {i < 2 && <div className="w-px h-6 bg-gray-200 dark:bg-white/10" />}
+                    {i < 2 && (
+                      <div className="w-px h-6 bg-gray-200 dark:bg-white/10" />
+                    )}
                   </div>
                 ))}
               </div>

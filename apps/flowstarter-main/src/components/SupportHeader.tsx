@@ -29,12 +29,12 @@ export function SupportHeader() {
         <Link href="/" className="flex items-center shrink-0">
           <Logo size="md" />
         </Link>
-        
+
         <div className="flex items-center gap-1.5 sm:gap-3">
           <div className="hidden sm:block">
             <ThemeToggle />
           </div>
-          
+
           {isLoaded && isSignedIn && user && (
             <>
               <div className="hidden sm:block w-px h-6 bg-gray-200 dark:bg-white/10" />
@@ -89,10 +89,14 @@ export function SupportHeader() {
               </DropdownMenu>
             </>
           )}
-          
+
           {isLoaded && !isSignedIn && (
             <Link href="/login">
-              <Button variant="outline" size="sm" className="rounded-lg text-xs sm:text-sm">
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-lg text-xs sm:text-sm"
+              >
                 {t('header.signIn')}
               </Button>
             </Link>

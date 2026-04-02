@@ -15,7 +15,11 @@ const MobileMenu = () => {
     { href: '/', label: 'Home' },
     { href: '/pricing', label: 'Pricing' },
     { href: '/about', label: 'About' },
-    { href: 'https://library.flowstarter.dev', label: 'Template Library', external: true },
+    {
+      href: 'https://library.flowstarter.dev',
+      label: 'Template Library',
+      external: true,
+    },
   ];
 
   return (

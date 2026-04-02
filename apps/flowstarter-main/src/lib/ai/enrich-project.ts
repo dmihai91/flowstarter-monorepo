@@ -154,7 +154,8 @@ export async function enrichProject(
   if (!validGoals.includes(result.goal)) result.goal = 'leads';
 
   const validOfferTypes = ['premium', 'accessible', 'free'];
-  if (!validOfferTypes.includes(result.offerType)) result.offerType = 'accessible';
+  if (!validOfferTypes.includes(result.offerType))
+    result.offerType = 'accessible';
 
   const validTones = ['professional', 'bold', 'friendly'];
   if (!validTones.includes(result.brandTone)) result.brandTone = 'professional';

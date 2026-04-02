@@ -12,17 +12,17 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import type { Table as TableType } from '@/types';
-import {
-  LayoutGrid,
-  List,
-} from 'lucide-react';
+import { LayoutGrid, List } from 'lucide-react';
 import { useFormatDate } from '@/hooks/useFormatDate';
 import { useTranslations } from '@/lib/i18n';
 import { isLive, isBuilding } from './TeamProjectsStats';
 import { TeamProjectActionMenu } from './TeamProjectActionMenu';
 import { TeamProjectCard } from './TeamProjectCard';
 import { useTeamProjectsView } from '../hooks/useTeamProjectsView';
-import { useTeamProjectDialogs, BETA_PRICING_ENABLED, PRICING_DEFAULTS } from '../hooks/useTeamProjectDialogs';
+import {
+  useTeamProjectDialogs,
+  BETA_PRICING_ENABLED,
+} from '../hooks/useTeamProjectDialogs';
 import { useTeamProjectActions } from '../hooks/useTeamProjectActions';
 
 interface ProjectWithOwner extends TableType<'projects'> {
@@ -162,7 +162,9 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
             <div></div>
           </div>
 
-          <div className={`${glassPanelClass} overflow-hidden divide-y divide-white/50 dark:divide-white/10`}>
+          <div
+            className={`${glassPanelClass} overflow-hidden divide-y divide-white/50 dark:divide-white/10`}
+          >
             {projects.map((project) => {
               const status =
                 typeof project.status === 'string' ? project.status : 'draft';
@@ -192,7 +194,12 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                   <div className="hidden md:grid md:grid-cols-[48px_1fr_100px_150px_100px_40px] gap-4 px-4 py-3 items-center">
                     <div className="h-9 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200/60 bg-white/80 backdrop-blur-sm dark:border-white/[0.06] dark:bg-white/[0.05]">
                       {project.thumbnailUrl ? (
-                        <img src={project.thumbnailUrl} alt="" className="w-full h-full object-cover" />
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img
+                          src={project.thumbnailUrl}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-xs font-bold text-gray-400 dark:text-white/30">
                           {(project.name || 'P').charAt(0).toUpperCase()}
@@ -211,14 +218,19 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span
-                        className={`w-2 h-2 rounded-full ${getStatusColor(status)}`}
+                        className={`w-2 h-2 rounded-full ${getStatusColor(
+                          status
+                        )}`}
                       />
                       <span className="text-sm text-gray-600 dark:text-white/60">
                         {getStatusLabel(status, t)}
                       </span>
                     </div>
                     <div className="text-sm text-gray-600 dark:text-white/60 truncate">
-                      {getOwnerDisplay(project, t('team.dashboard.unknownOwner'))}
+                      {getOwnerDisplay(
+                        project,
+                        t('team.dashboard.unknownOwner')
+                      )}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-white/40">
                       {formatTimeAgo(project.updated_at || project.created_at)}
@@ -237,7 +249,12 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                     <div className="flex items-start justify-between gap-3">
                       <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200/60 bg-white/80 backdrop-blur-sm dark:border-white/[0.06] dark:bg-white/[0.05]">
                         {project.thumbnailUrl ? (
-                          <img src={project.thumbnailUrl} alt="" className="w-full h-full object-cover" />
+                          /* eslint-disable-next-line @next/next/no-img-element */
+                          <img
+                            src={project.thumbnailUrl}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-sm font-bold text-gray-400 dark:text-white/30">
                             {(project.name || 'P').charAt(0).toUpperCase()}
@@ -251,11 +268,18 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
                         <div className="flex items-center gap-3 mt-2 text-xs text-gray-500 dark:text-white/40">
                           <span className="flex items-center gap-1">
                             <span
-                              className={`w-2 h-2 rounded-full ${getStatusColor(status)}`}
+                              className={`w-2 h-2 rounded-full ${getStatusColor(
+                                status
+                              )}`}
                             />
                             {getStatusLabel(status, t)}
                           </span>
-                          <span>{getOwnerDisplay(project, t('team.dashboard.unknownOwner'))}</span>
+                          <span>
+                            {getOwnerDisplay(
+                              project,
+                              t('team.dashboard.unknownOwner')
+                            )}
+                          </span>
                         </div>
                       </div>
                       <TeamProjectActionMenu
@@ -277,7 +301,10 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
 
       {/* Grid View */}
       {viewMode === 'grid' && (
-        <div id="projects-list" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div
+          id="projects-list"
+          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"
+        >
           {projects.map((project) => (
             <TeamProjectCard
               key={project.id}
@@ -297,7 +324,9 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
         open={deleteDialogOpen}
         onOpenChangeAction={setDeleteDialogOpen}
         title={t('team.dashboard.deleteProject')}
-        description={t('team.dashboard.deleteConfirm', { name: projectToDelete?.name || '' })}
+        description={t('team.dashboard.deleteConfirm', {
+          name: projectToDelete?.name || '',
+        })}
         confirmLabel={isDeleting ? t('app.deleting') : t('app.delete')}
         cancelLabel={t('app.cancel')}
         onConfirmAction={() =>
@@ -368,7 +397,9 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
           <div className="space-y-5 py-4">
             {/* Project Type */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">{t('team.dashboard.projectType')}</Label>
+              <Label className="text-sm font-medium">
+                {t('team.dashboard.projectType')}
+              </Label>
               <div className="grid grid-cols-3 gap-2">
                 <button
                   type="button"
@@ -469,7 +500,9 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
               }`}
             >
               <div className="text-left">
-                <p className="text-sm font-medium">{t('team.dashboard.paymentReceived')}</p>
+                <p className="text-sm font-medium">
+                  {t('team.dashboard.paymentReceived')}
+                </p>
                 <p className="text-xs text-gray-500 dark:text-white/40">
                   {t('team.dashboard.paymentReceivedDesc')}
                 </p>

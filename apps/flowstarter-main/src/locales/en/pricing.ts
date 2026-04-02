@@ -3,7 +3,8 @@ export const pricingKeys = {
   'pricing.badge': 'Beta Pricing - 50% Off Everything',
   'pricing.title1': 'Simple, transparent ',
   'pricing.title2': 'pricing',
-  'pricing.description': 'Get your professional website built by our team. 50% off setup + 50% off subscription for your first year.',
+  'pricing.description':
+    'Get your professional website built by our team. 50% off setup + 50% off subscription for your first year.',
   'pricing.betaSpots': 'Limited beta spots available',
   'pricing.starter.name': 'Starter',
   'pricing.starter.subtitle': 'Everything you need',
@@ -24,9 +25,11 @@ export const pricingKeys = {
   'pricing.starter.feature6': 'AI-powered site customization',
   'pricing.starter.feature7': 'First month free',
   'pricing.starter.cta': 'Book Free Discovery Call',
-  'pricing.starter.disclaimer': 'No lock-in. Cancel anytime. 50% setup fee refund if you share feedback.',
+  'pricing.starter.disclaimer':
+    'No lock-in. Cancel anytime. 50% setup fee refund if you share feedback.',
   'pricing.details.heading': "Everything you need. Nothing you don't.",
-  'pricing.details.description': "Clear breakdown of what's included in setup vs. your monthly subscription",
+  'pricing.details.description':
+    "Clear breakdown of what's included in setup vs. your monthly subscription",
   'pricing.setup.title': 'Setup (one-time)',
   'pricing.setup.subtitle': 'What we build for you',
   'pricing.setup.originalPrice': '\u20AC299',
@@ -35,7 +38,8 @@ export const pricingKeys = {
   'pricing.setup.feature1': 'Personal discovery call with our team',
   'pricing.setup.feature2': 'AI-generated website from premium templates',
   'pricing.setup.feature3': 'Up to 7 professionally designed pages',
-  'pricing.setup.feature4': 'Mobile-responsive design (looks great on any device)',
+  'pricing.setup.feature4':
+    'Mobile-responsive design (looks great on any device)',
   'pricing.setup.feature5': 'Custom domain setup and configuration',
   'pricing.setup.feature6': 'Professional email setup (1 mailbox)',
   'pricing.setup.feature7': 'SSL certificate (HTTPS security)',
@@ -61,10 +65,12 @@ export const pricingKeys = {
   'pricing.monthly.feature2': 'Professional email (1 mailbox)',
   'pricing.monthly.feature3': '1 GB cloud storage for your files and assets',
   'pricing.monthly.feature4': 'Analytics dashboard (leads + page views)',
-  'pricing.monthly.feature5': 'AI-powered edits - content, pages, branding, SEO',
+  'pricing.monthly.feature5':
+    'AI-powered edits - content, pages, branding, SEO',
   'pricing.monthly.feature6': 'Platform updates and improvements',
   'pricing.monthly.feature7': 'Email support (48h response)',
-  'pricing.monthly.note': 'First month free - billing starts 30 days after launch',
+  'pricing.monthly.note':
+    'First month free - billing starts 30 days after launch',
   'pricing.comingSoon.heading': 'More plans coming soon',
   'pricing.comingSoon.description': "Growing? We'll grow with you.",
   'pricing.pro.name': 'Pro',
@@ -85,7 +91,8 @@ export const pricingKeys = {
   'pricing.business.cta': 'Coming Q3 2026',
   'pricing.earlyAccess.badge': 'Early Access',
   'pricing.earlyAccess.title': 'Launching beta - early adopters get 50% off',
-  'pricing.earlyAccess.description': 'Lock in beta pricing (\u20AC150 setup + \u20AC15/month) until v1.0. Regular pricing will be \u20AC299 setup + \u20AC29/month.',
+  'pricing.earlyAccess.description':
+    'Lock in beta pricing (\u20AC150 setup + \u20AC15/month) until v1.0. Regular pricing will be \u20AC299 setup + \u20AC29/month.',
   'pricing.earlyAccess.cta': 'Book Free Discovery Call',
   'pricing.earlyAccess.noCreditCard': 'No credit card required',
   'pricing.earlyAccess.consultation': '30-min consultation',

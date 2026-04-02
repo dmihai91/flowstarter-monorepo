@@ -9,7 +9,6 @@ import { useRouter } from 'next/navigation';
 import { TeamDashboardShell } from '../../components/TeamDashboardShell';
 
 function ProjectsContent() {
-  const router = useRouter();
   const { data: projects, isLoading } = useTeamProjects();
 
   if (isLoading) return <TeamProjectsListSkeleton />;

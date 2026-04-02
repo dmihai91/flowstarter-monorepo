@@ -55,7 +55,7 @@ export function LoginForm({ variant }: LoginFormProps) {
   /* ------------------------------------------------------------------ */
 
   const getRedirectTarget = (
-    userEmail?: string,
+    userEmail?: string
   ): { url: string; external: boolean } => {
     // Honour explicit redirect_url (e.g. editor subdomain)
     const redirectUrl = searchParams.get('redirect_url');
@@ -93,10 +93,7 @@ export function LoginForm({ variant }: LoginFormProps) {
     return { url: '/dashboard', external: false };
   };
 
-  const navigate = async (
-    sessionId: string | null,
-    userEmail?: string,
-  ) => {
+  const navigate = async (sessionId: string | null, userEmail?: string) => {
     if (!setActive) return;
 
     const target = getRedirectTarget(userEmail);
@@ -115,14 +112,10 @@ export function LoginForm({ variant }: LoginFormProps) {
   /* ------------------------------------------------------------------ */
 
   const defaultRedirect = getRedirectTarget().url;
-  const {
-    isGoogleLoading,
-    isAppleLoading,
-    handleGoogleAuth,
-    handleAppleAuth,
-  } = useSocialAuth(isClient ? signIn : undefined, {
-    redirectUrlComplete: defaultRedirect,
-  });
+  const { isGoogleLoading, isAppleLoading, handleGoogleAuth, handleAppleAuth } =
+    useSocialAuth(isClient ? signIn : undefined, {
+      redirectUrlComplete: defaultRedirect,
+    });
 
   /* ------------------------------------------------------------------ */
   /*  Local state                                                        */
@@ -171,14 +164,12 @@ export function LoginForm({ variant }: LoginFormProps) {
         await navigate(result.createdSessionId, email);
       } else if (isTeam && result.status === 'needs_second_factor') {
         const hasTOTP = result.supportedSecondFactors?.some(
-          (f) => f.strategy === 'totp',
+          (f) => f.strategy === 'totp'
         );
         if (hasTOTP) {
           setStep('totp');
         } else {
-          setError(
-            'Two-factor authentication required. Please contact admin.',
-          );
+          setError('Two-factor authentication required. Please contact admin.');
         }
       } else if (result.status === 'needs_first_factor') {
         setError('Password sign-in not available for this account');
@@ -195,9 +186,7 @@ export function LoginForm({ variant }: LoginFormProps) {
         setError(message);
       } else {
         const ce = err as { errors?: Array<{ message?: string }> };
-        setError(
-          ce.errors?.[0]?.message || t('team.login.invalidCredentials'),
-        );
+        setError(ce.errors?.[0]?.message || t('team.login.invalidCredentials'));
       }
     } finally {
       setIsLoading(false);
@@ -247,9 +236,7 @@ export function LoginForm({ variant }: LoginFormProps) {
       });
       setStep('forgot-code');
     } catch (err: unknown) {
-      setError(
-        clerkErrorMessage(err, t('auth.errors.somethingWentWrong')),
-      );
+      setError(clerkErrorMessage(err, t('auth.errors.somethingWentWrong')));
     } finally {
       setIsResetLoading(false);
     }
@@ -273,9 +260,7 @@ export function LoginForm({ variant }: LoginFormProps) {
         await navigate(result.createdSessionId, resetEmail);
       }
     } catch (err: unknown) {
-      setError(
-        clerkErrorMessage(err, t('auth.forgotPassword.invalidCode')),
-      );
+      setError(clerkErrorMessage(err, t('auth.forgotPassword.invalidCode')));
     } finally {
       setIsResetLoading(false);
     }
@@ -291,9 +276,7 @@ export function LoginForm({ variant }: LoginFormProps) {
         identifier: resetEmail,
       });
     } catch (err: unknown) {
-      setError(
-        clerkErrorMessage(err, t('auth.errors.somethingWentWrong')),
-      );
+      setError(clerkErrorMessage(err, t('auth.errors.somethingWentWrong')));
     } finally {
       setIsResetLoading(false);
     }
@@ -352,9 +335,7 @@ export function LoginForm({ variant }: LoginFormProps) {
             type="submit"
             disabled={isLoading || code.length !== 6}
           >
-            {isLoading
-              ? t('team.login.verifying')
-              : t('team.login.verify')}
+            {isLoading ? t('team.login.verifying') : t('team.login.verify')}
           </AuthSubmitButton>
           <button
             type="button"
@@ -618,8 +599,8 @@ export function LoginForm({ variant }: LoginFormProps) {
               ? t('team.login.signingIn')
               : t('auth.signIn.signingIn')
             : isTeam
-              ? t('team.login.signIn')
-              : t('auth.signIn')}
+            ? t('team.login.signIn')
+            : t('auth.signIn')}
         </AuthSubmitButton>
       </form>
     </div>

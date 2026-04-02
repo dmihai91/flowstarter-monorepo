@@ -23,7 +23,8 @@ export function FinalCTASection({ onOpenModal }: { onOpenModal?: () => void }) {
       <div
         className="pointer-events-none absolute inset-0 dark:hidden"
         style={{
-          background: 'radial-gradient(ellipse 70% 55% at 50% 55%, rgba(99,102,241,0.15) 0%, transparent 70%)',
+          background:
+            'radial-gradient(ellipse 70% 55% at 50% 55%, rgba(99,102,241,0.15) 0%, transparent 70%)',
         }}
       />
 
@@ -31,7 +32,8 @@ export function FinalCTASection({ onOpenModal }: { onOpenModal?: () => void }) {
       <div
         className="pointer-events-none absolute inset-0 hidden dark:block"
         style={{
-          background: 'radial-gradient(ellipse 60% 50% at 50% 55%, rgba(109,40,217,0.08) 0%, transparent 70%)',
+          background:
+            'radial-gradient(ellipse 60% 50% at 50% 55%, rgba(109,40,217,0.08) 0%, transparent 70%)',
         }}
       />
 
@@ -46,15 +48,26 @@ export function FinalCTASection({ onOpenModal }: { onOpenModal?: () => void }) {
 
         <a
           href="#"
-          onClick={(e) => { e.preventDefault(); onOpenModal?.(); }}
+          onClick={(e) => {
+            e.preventDefault();
+            onOpenModal?.();
+          }}
           className="inline-flex justify-center w-full sm:w-auto"
         >
-          <Button
-            className="w-full sm:w-auto rounded-full px-8 h-12 sm:px-10 text-base font-semibold bg-indigo-500 text-white hover:bg-indigo-400 transition-all duration-300 hover:scale-[1.02] shadow-[0_8px_30px_rgba(99,102,241,0.3)] hover:shadow-[0_12px_40px_rgba(99,102,241,0.4)] border-0 group cursor-pointer"
-          >
+          <Button className="w-full sm:w-auto rounded-full px-8 h-12 sm:px-10 text-base font-semibold bg-indigo-500 text-white hover:bg-indigo-400 transition-all duration-300 hover:scale-[1.02] shadow-[0_8px_30px_rgba(99,102,241,0.3)] hover:shadow-[0_12px_40px_rgba(99,102,241,0.4)] border-0 group cursor-pointer">
             {finalCta.cta}
-            <svg className="w-4 h-4 ml-2.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            <svg
+              className="w-4 h-4 ml-2.5 transition-transform group-hover:translate-x-0.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17 8l4 4m0 0l-4 4m4-4H3"
+              />
             </svg>
           </Button>
         </a>

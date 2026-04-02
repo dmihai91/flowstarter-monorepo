@@ -26,7 +26,11 @@ function JoinPageContent() {
   const token = searchParams.get('token');
 
   // React Query hooks
-  const { data: validationData, isLoading: isValidating, error: validationError } = useTeamJoinValidation(token);
+  const {
+    data: validationData,
+    isLoading: isValidating,
+    error: validationError,
+  } = useTeamJoinValidation(token);
   const joinMutation = useTeamJoin();
 
   const [password, setPassword] = useState('');
@@ -75,11 +79,11 @@ function JoinPageContent() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
             Invalid Invitation
           </h1>
-          <p className="text-gray-500 dark:text-white/50 mb-6">Invalid invitation link</p>
+          <p className="text-gray-500 dark:text-white/50 mb-6">
+            Invalid invitation link
+          </p>
           <Link href="/">
-            <Button variant="outline">
-              Go to Homepage
-            </Button>
+            <Button variant="outline">Go to Homepage</Button>
           </Link>
         </div>
       </div>
@@ -102,10 +106,11 @@ function JoinPageContent() {
 
   // Validation error state
   if (validationError || !validationData?.valid) {
-    const errorMessage = validationError instanceof Error 
-      ? validationError.message 
-      : validationData?.error || t('team.join.invalidInvitation');
-    
+    const errorMessage =
+      validationError instanceof Error
+        ? validationError.message
+        : validationData?.error || t('team.join.invalidInvitation');
+
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center">
@@ -115,11 +120,11 @@ function JoinPageContent() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
             Invalid Invitation
           </h1>
-          <p className="text-gray-500 dark:text-white/50 mb-6">{errorMessage}</p>
+          <p className="text-gray-500 dark:text-white/50 mb-6">
+            {errorMessage}
+          </p>
           <Link href="/">
-            <Button variant="outline">
-              Go to Homepage
-            </Button>
+            <Button variant="outline">Go to Homepage</Button>
           </Link>
         </div>
       </div>

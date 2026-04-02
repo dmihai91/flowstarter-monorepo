@@ -9,7 +9,8 @@ export function getInitials(user: {
 }): string {
   const firstName = user.firstName || '';
   const lastName = user.lastName || '';
-  if (firstName && lastName) return `${firstName[0]}${lastName[0]}`.toUpperCase();
+  if (firstName && lastName)
+    return `${firstName[0]}${lastName[0]}`.toUpperCase();
   if (firstName) return firstName[0].toUpperCase();
   if (user.emailAddresses?.[0]?.emailAddress) {
     return user.emailAddresses[0].emailAddress[0].toUpperCase();

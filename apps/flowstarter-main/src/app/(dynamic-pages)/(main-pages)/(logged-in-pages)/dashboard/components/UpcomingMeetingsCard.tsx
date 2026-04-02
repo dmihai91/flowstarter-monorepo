@@ -3,8 +3,13 @@
 import { useEffect, useState, useCallback } from 'react';
 import { GlassCard } from '@/components/ui/glass-card';
 import {
-  Calendar, Clock, Users, Video, MapPin, ExternalLink,
-  ChevronRight, RefreshCw,
+  Calendar,
+  Clock,
+  Users,
+  Video,
+  MapPin,
+  ChevronRight,
+  RefreshCw,
 } from 'lucide-react';
 
 interface CalendlyEvent {
@@ -34,15 +39,25 @@ function formatDate(iso: string): string {
 
   if (d.toDateString() === today.toDateString()) return 'Today';
   if (d.toDateString() === tomorrow.toDateString()) return 'Tomorrow';
-  return d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+  return d.toLocaleDateString([], {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  });
 }
 
 function durationMin(start: string, end: string): number {
-  return Math.round((new Date(end).getTime() - new Date(start).getTime()) / 60000);
+  return Math.round(
+    (new Date(end).getTime() - new Date(start).getTime()) / 60000
+  );
 }
 
 function LocationIcon({ type }: { type?: string }) {
-  if (type === 'google_conference' || type === 'zoom' || type === 'microsoft_teams')
+  if (
+    type === 'google_conference' ||
+    type === 'zoom' ||
+    type === 'microsoft_teams'
+  )
     return <Video className="w-3.5 h-3.5" />;
   return <MapPin className="w-3.5 h-3.5" />;
 }
@@ -55,8 +70,13 @@ export function UpcomingMeetingsCard({ projectId }: Props) {
   const fetchEvents = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/calendly/events?projectId=${projectId}&days=14`);
-      const data = (await res.json()) as { events?: CalendlyEvent[]; error?: string };
+      const res = await fetch(
+        `/api/calendly/events?projectId=${projectId}&days=14`
+      );
+      const data = (await res.json()) as {
+        events?: CalendlyEvent[];
+        error?: string;
+      };
       if (data.events) {
         setEvents(data.events);
         setError(null);
@@ -69,7 +89,9 @@ export function UpcomingMeetingsCard({ projectId }: Props) {
     setLoading(false);
   }, [projectId]);
 
-  useEffect(() => { fetchEvents(); }, [fetchEvents]);
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
 
   // Don't render if Calendly not configured
   if (error === 'Calendly not configured with API key') return null;
@@ -90,20 +112,29 @@ export function UpcomingMeetingsCard({ projectId }: Props) {
           className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
           title="Refresh"
         >
-          <RefreshCw className={`w-3.5 h-3.5 text-gray-400 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw
+            className={`w-3.5 h-3.5 text-gray-400 ${
+              loading ? 'animate-spin' : ''
+            }`}
+          />
         </button>
       </div>
 
       {loading && events.length === 0 ? (
         <div className="space-y-3">
           {[0, 1].map((i) => (
-            <div key={i} className="h-16 rounded-xl bg-gray-100 dark:bg-white/5 animate-pulse" />
+            <div
+              key={i}
+              className="h-16 rounded-xl bg-gray-100 dark:bg-white/5 animate-pulse"
+            />
           ))}
         </div>
       ) : events.length === 0 ? (
         <div className="text-center py-6">
           <Calendar className="w-8 h-8 text-gray-300 dark:text-white/20 mx-auto mb-2" />
-          <p className="text-sm text-gray-400 dark:text-white/40">No upcoming meetings</p>
+          <p className="text-sm text-gray-400 dark:text-white/40">
+            No upcoming meetings
+          </p>
           <p className="text-xs text-gray-300 dark:text-white/20 mt-1">
             New bookings will appear here automatically
           </p>
@@ -147,7 +178,9 @@ export function UpcomingMeetingsCard({ projectId }: Props) {
                   {event.location && (
                     <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-white/40">
                       <LocationIcon type={event.location.type} />
-                      {event.location.join_url ? 'Video call' : event.location.location || 'TBD'}
+                      {event.location.join_url
+                        ? 'Video call'
+                        : event.location.location || 'TBD'}
                     </span>
                   )}
                 </div>

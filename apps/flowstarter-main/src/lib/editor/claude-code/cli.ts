@@ -21,7 +21,11 @@ export interface RunResult {
   error?: string;
 }
 
-function buildCommand(prompt: string, model?: string, maxTurns?: number): string {
+function buildCommand(
+  prompt: string,
+  model?: string,
+  maxTurns?: number
+): string {
   const parts = ['claude', '--print'];
   if (model) parts.push('--model', model);
   if (maxTurns) parts.push('--max-turns', String(maxTurns));
@@ -45,11 +49,21 @@ function parseChangedFiles(output: string): string[] {
   return files;
 }
 
-export async function runClaudeCode(sandbox: Sandbox, options: RunOptions): Promise<RunResult> {
+export async function runClaudeCode(
+  sandbox: Sandbox,
+  options: RunOptions
+): Promise<RunResult> {
   const start = Date.now();
-  const command = buildCommand(options.prompt, options.model || DEFAULTS.model, options.maxTurns || DEFAULTS.maxTurns);
+  const command = buildCommand(
+    options.prompt,
+    options.model || DEFAULTS.model,
+    options.maxTurns || DEFAULTS.maxTurns
+  );
   const workDir = (await sandbox.getWorkDir()) || '/home/daytona';
-  const result = await sandbox.process.executeCommand(`cd ${DEFAULTS.workDir} && ${command}`, workDir);
+  const result = await sandbox.process.executeCommand(
+    `cd ${DEFAULTS.workDir} && ${command}`,
+    workDir
+  );
   const output = result.result || '';
   return {
     success: result.exitCode === 0,

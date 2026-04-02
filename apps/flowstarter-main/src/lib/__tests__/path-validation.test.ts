@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   validateResourceId,
   validatePathWithinBase,
@@ -130,7 +130,10 @@ describe('path-validation', () => {
 
   describe('validatePathWithinBase', () => {
     it('accepts path within base directory', () => {
-      const result = validatePathWithinBase('/app/templates', 'personal-brand-pro/index.html');
+      const result = validatePathWithinBase(
+        '/app/templates',
+        'personal-brand-pro/index.html'
+      );
       expect(result.valid).toBe(true);
       expect(result.sanitized).toContain('personal-brand-pro');
     });
@@ -141,7 +144,10 @@ describe('path-validation', () => {
     });
 
     it('rejects path traversal above base', () => {
-      const result = validatePathWithinBase('/app/templates', '../../etc/passwd');
+      const result = validatePathWithinBase(
+        '/app/templates',
+        '../../etc/passwd'
+      );
       expect(result.valid).toBe(false);
       expect(result.error).toContain('within the allowed directory');
     });
@@ -159,13 +165,20 @@ describe('path-validation', () => {
 
     it('prevents partial directory name matching', () => {
       // /app/templates-backup should not match /app/templates base
-      const result = validatePathWithinBase('/app/templates', '../templates-backup/file.txt');
+      const result = validatePathWithinBase(
+        '/app/templates',
+        '../templates-backup/file.txt'
+      );
       expect(result.valid).toBe(false);
     });
   });
 
   describe('validateTemplateId', () => {
-    const allowed = ['personal-brand-pro', 'local-business-pro', 'saas-product-pro'] as const;
+    const allowed = [
+      'personal-brand-pro',
+      'local-business-pro',
+      'saas-product-pro',
+    ] as const;
 
     it('accepts allowed template ID', () => {
       const result = validateTemplateId('personal-brand-pro', allowed);
@@ -223,11 +236,15 @@ describe('path-validation', () => {
     it('rejects malformed UUID', () => {
       expect(validateUUID('not-a-uuid').valid).toBe(false);
       expect(validateUUID('550e8400-e29b-41d4-a716').valid).toBe(false);
-      expect(validateUUID('550e8400e29b41d4a716446655440000').valid).toBe(false);
+      expect(validateUUID('550e8400e29b41d4a716446655440000').valid).toBe(
+        false
+      );
     });
 
     it('rejects UUID with invalid characters', () => {
-      expect(validateUUID('550e8400-e29b-41d4-a716-44665544000g').valid).toBe(false);
+      expect(validateUUID('550e8400-e29b-41d4-a716-44665544000g').valid).toBe(
+        false
+      );
     });
   });
 

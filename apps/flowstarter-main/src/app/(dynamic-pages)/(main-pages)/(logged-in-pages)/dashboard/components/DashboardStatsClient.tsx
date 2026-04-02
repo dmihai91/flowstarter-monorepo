@@ -16,7 +16,6 @@ import {
   Sparkles,
   TrendingUp,
   Users,
-  Zap,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -200,103 +199,132 @@ export function DashboardStatsClient({
       ),
     },
     // Analytics: split when live, merged when pre-launch (CD-5)
-    ...(hasLiveProject ? [
-      // Traffic Card (live)
-      {
-        content: (
-          <>
-            <div className="flex items-center justify-between w-full mb-3">
-              <span className="text-sm font-medium text-gray-500 dark:text-white/50">
-                {t('dashboard.analytics.websiteTraffic')}
-              </span>
-              <Link href="/dashboard/analytics/traffic" className="text-xs font-medium text-[var(--purple)] hover:underline">
-                {t('dashboard.details')} →
-              </Link>
-            </div>
-            <div className="flex-1 flex flex-col">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center">
-                  <BarChart3 className="w-5 h-5 text-[var(--purple)] opacity-80" />
+    ...(hasLiveProject
+      ? [
+          // Traffic Card (live)
+          {
+            content: (
+              <>
+                <div className="flex items-center justify-between w-full mb-3">
+                  <span className="text-sm font-medium text-gray-500 dark:text-white/50">
+                    {t('dashboard.analytics.websiteTraffic')}
+                  </span>
+                  <Link
+                    href="/dashboard/analytics/traffic"
+                    className="text-xs font-medium text-[var(--purple)] hover:underline"
+                  >
+                    {t('dashboard.details')} →
+                  </Link>
                 </div>
-                <div>
-                  <p className="text-2xl font-semibold text-gray-900 dark:text-white">{totalViews.toLocaleString()}</p>
-                  <p className="text-xs text-gray-500 dark:text-white/50">{t('dashboard.analytics.views')}</p>
+                <div className="flex-1 flex flex-col">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center">
+                      <BarChart3 className="w-5 h-5 text-[var(--purple)] opacity-80" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                        {totalViews.toLocaleString()}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-white/50">
+                        {t('dashboard.analytics.views')}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-white/50 flex-wrap mt-auto">
+                    <span>
+                      {t('dashboard.analytics.visitors', {
+                        count: uniqueVisitors.toLocaleString(),
+                      })}
+                    </span>
+                    <span className="text-gray-300 dark:text-white/20">•</span>
+                    <span>
+                      {t('dashboard.analytics.avgSession', {
+                        minutes: Math.round(avgSessionDuration / 60),
+                      })}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-white/50 flex-wrap mt-auto">
-                <span>{t('dashboard.analytics.visitors', { count: uniqueVisitors.toLocaleString() })}</span>
-                <span className="text-gray-300 dark:text-white/20">•</span>
-                <span>{t('dashboard.analytics.avgSession', { minutes: Math.round(avgSessionDuration / 60) })}</span>
-              </div>
-            </div>
-          </>
-        ),
-      },
-      // Leads Card (live)
-      {
-        content: (
-          <>
-            <div className="flex items-center justify-between w-full mb-3">
-              <span className="text-sm font-medium text-gray-500 dark:text-white/50">
-                {t('dashboard.analytics.businessLeads')}
-              </span>
-              {totalLeads > 0 && (
-                <Link href="/dashboard/leads" className="text-xs font-medium text-[var(--purple)] hover:underline">
-                  {t('dashboard.details')} →
-                </Link>
-              )}
-            </div>
-            <div className="flex-1 flex flex-col">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center">
-                  <Users className="w-5 h-5 text-[var(--purple)] opacity-80" />
+              </>
+            ),
+          },
+          // Leads Card (live)
+          {
+            content: (
+              <>
+                <div className="flex items-center justify-between w-full mb-3">
+                  <span className="text-sm font-medium text-gray-500 dark:text-white/50">
+                    {t('dashboard.analytics.businessLeads')}
+                  </span>
+                  {totalLeads > 0 && (
+                    <Link
+                      href="/dashboard/leads"
+                      className="text-xs font-medium text-[var(--purple)] hover:underline"
+                    >
+                      {t('dashboard.details')} →
+                    </Link>
+                  )}
                 </div>
-                <div>
-                  <p className="text-2xl font-semibold text-gray-900 dark:text-white">{totalLeads.toLocaleString()}</p>
-                  <p className="text-xs text-gray-500 dark:text-white/50">
-                    {totalLeads === 1 ? t('dashboard.analytics.prospectSingular') : t('dashboard.analytics.prospectPlural')}
+                <div className="flex-1 flex flex-col">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center">
+                      <Users className="w-5 h-5 text-[var(--purple)] opacity-80" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                        {totalLeads.toLocaleString()}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-white/50">
+                        {totalLeads === 1
+                          ? t('dashboard.analytics.prospectSingular')
+                          : t('dashboard.analytics.prospectPlural')}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 dark:text-white/50 mt-auto">
+                    {t('dashboard.analytics.conversionRateValue', {
+                      rate: conversionRate.toFixed(1),
+                    })}
                   </p>
                 </div>
-              </div>
-              <p className="text-xs text-gray-500 dark:text-white/50 mt-auto">
-                {t('dashboard.analytics.conversionRateValue', { rate: conversionRate.toFixed(1) })}
-              </p>
-            </div>
-          </>
-        ),
-      },
-    ] : [
-      // Merged post-launch analytics card (pre-launch, CD-5)
-      {
-        content: (
-          <>
-            <div className="flex items-center justify-between w-full mb-3">
-              <span className="text-sm font-medium text-gray-500 dark:text-white/50">
-                Post-launch Analytics
-              </span>
-              <span className="text-[0.6rem] font-semibold uppercase tracking-wider text-gray-400 dark:text-white/20 bg-gray-100 dark:bg-white/[0.04] px-2 py-0.5 rounded-full border border-gray-200/50 dark:border-white/[0.06]">
-                After launch
-              </span>
-            </div>
-            <div className="flex-1 flex flex-col">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
-                  <TrendingUp className="w-4 h-4 text-[var(--purple)] opacity-25" />
+              </>
+            ),
+          },
+        ]
+      : [
+          // Merged post-launch analytics card (pre-launch, CD-5)
+          {
+            content: (
+              <>
+                <div className="flex items-center justify-between w-full mb-3">
+                  <span className="text-sm font-medium text-gray-500 dark:text-white/50">
+                    Post-launch Analytics
+                  </span>
+                  <span className="text-[0.6rem] font-semibold uppercase tracking-wider text-gray-400 dark:text-white/20 bg-gray-100 dark:bg-white/[0.04] px-2 py-0.5 rounded-full border border-gray-200/50 dark:border-white/[0.06]">
+                    After launch
+                  </span>
                 </div>
-                <div className="w-8 h-8 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
-                  <Users className="w-4 h-4 text-[var(--purple)] opacity-25" />
+                <div className="flex-1 flex flex-col">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-8 h-8 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
+                      <TrendingUp className="w-4 h-4 text-[var(--purple)] opacity-25" />
+                    </div>
+                    <div className="w-8 h-8 rounded-xl bg-[var(--purple)]/5 border border-[var(--purple)]/10 flex items-center justify-center">
+                      <Users className="w-4 h-4 text-[var(--purple)] opacity-25" />
+                    </div>
+                    <p className="text-sm text-gray-400 dark:text-white/30">
+                      Traffic + leads tracking
+                    </p>
+                  </div>
+                  <GhostChart />
+                  <p className="text-xs text-gray-400 dark:text-white/30 mt-auto">
+                    Visitor counts, lead forms, and conversion data activate
+                    once your site is live.
+                  </p>
                 </div>
-                <p className="text-sm text-gray-400 dark:text-white/30">Traffic + leads tracking</p>
-              </div>
-              <GhostChart />
-              <p className="text-xs text-gray-400 dark:text-white/30 mt-auto">
-                Visitor counts, lead forms, and conversion data activate once your site is live.
-              </p>
-            </div>
-          </>
-        ),
-      },
-    ]),
+              </>
+            ),
+          },
+        ]),
     // AI Assistant Card - capability focused
     {
       content: (
@@ -323,16 +351,23 @@ export function DashboardStatsClient({
                     {aiCredits.remaining.toLocaleString()}
                   </p>
                   <p className="text-xs sm:text-sm text-gray-500 dark:text-white/50">
-                    {t('dashboard.stats.aiCreditsAvailable', { count: aiCredits.total.toLocaleString() })}
+                    {t('dashboard.stats.aiCreditsAvailable', {
+                      count: aiCredits.total.toLocaleString(),
+                    })}
                   </p>
                 </div>
               </div>
               {/* Progress bar */}
               <div className="mb-3">
                 <div className="h-1.5 bg-gray-100 dark:bg-white/10 rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className="h-full bg-gradient-to-r from-[var(--purple)] to-cyan-500 rounded-full transition-all duration-500"
-                    style={{ width: `${Math.min((aiCredits.remaining / aiCredits.total) * 100, 100)}%` }}
+                    style={{
+                      width: `${Math.min(
+                        (aiCredits.remaining / aiCredits.total) * 100,
+                        100
+                      )}%`,
+                    }}
                   />
                 </div>
                 <p className="text-[0.625rem] sm:text-xs sm:text-sm sm:text-base text-gray-400 dark:text-white/30 mt-1">
@@ -347,7 +382,10 @@ export function DashboardStatsClient({
                   t('dashboard.stats.aiCapability.seo'),
                   t('dashboard.stats.aiCapability.images'),
                 ].map((cap) => (
-                  <span key={cap} className="text-[0.6875rem] sm:text-xs sm:text-sm text-gray-500 dark:text-white/40 flex items-center gap-1">
+                  <span
+                    key={cap}
+                    className="text-[0.6875rem] sm:text-xs sm:text-sm text-gray-500 dark:text-white/40 flex items-center gap-1"
+                  >
                     <span className="w-1 h-1 rounded-full bg-[var(--purple)]/40" />
                     {cap}
                   </span>
@@ -358,8 +396,12 @@ export function DashboardStatsClient({
             <div className="flex-1 flex flex-col">
               <div className="flex items-center gap-2 mb-3">
                 <Sparkles className="w-4 h-4 text-[var(--purple)] opacity-30" />
-                <span className="text-lg font-semibold text-gray-300 dark:text-white/20">1,000</span>
-                <span className="text-sm text-gray-400 dark:text-white/30">AI credits included</span>
+                <span className="text-lg font-semibold text-gray-300 dark:text-white/20">
+                  1,000
+                </span>
+                <span className="text-sm text-gray-400 dark:text-white/30">
+                  AI credits included
+                </span>
               </div>
               {/* Locked progress bar — full width placeholder */}
               <div className="mb-2">
@@ -411,9 +453,15 @@ export function DashboardStatsClient({
           </p>
 
           <div className="flex items-center justify-around flex-1 pt-2 group">
-            <IntegrationLogo name={t('dashboard.stats.analytics')} icon={BarChart3} />
+            <IntegrationLogo
+              name={t('dashboard.stats.analytics')}
+              icon={BarChart3}
+            />
             <IntegrationLogo name={t('dashboard.stats.email')} icon={Mail} />
-            <IntegrationLogo name={t('dashboard.stats.calendar')} icon={Calendar} />
+            <IntegrationLogo
+              name={t('dashboard.stats.calendar')}
+              icon={Calendar}
+            />
           </div>
         </>
       ),
@@ -430,9 +478,7 @@ export function DashboardStatsClient({
             className="gap-3 min-h-[160px]"
             style={animation}
           >
-            <div className={`h-full flex flex-col`}>
-              {card.content}
-            </div>
+            <div className={`h-full flex flex-col`}>{card.content}</div>
           </GlassCard>
         );
       })}

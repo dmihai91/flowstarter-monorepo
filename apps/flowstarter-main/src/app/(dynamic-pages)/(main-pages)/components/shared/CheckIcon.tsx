@@ -3,7 +3,10 @@ interface CheckIconProps {
   strokeWidth?: number;
 }
 
-export function CheckIcon({ className = 'w-4 h-4 text-emerald-500', strokeWidth = 2.5 }: CheckIconProps) {
+export function CheckIcon({
+  className = 'w-4 h-4 text-emerald-500',
+  strokeWidth = 2.5,
+}: CheckIconProps) {
   return (
     <svg
       className={className}
@@ -12,11 +15,7 @@ export function CheckIcon({ className = 'w-4 h-4 text-emerald-500', strokeWidth 
       stroke="currentColor"
       strokeWidth={strokeWidth}
     >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M5 13l4 4L19 7"
-      />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
     </svg>
   );
 }

@@ -17,25 +17,31 @@ function isSafeRedirectUrl(url: string): boolean {
   try {
     const parsed = new URL(url);
     const hostname = parsed.hostname;
-    
+
     // Allow same-origin
-    if (typeof window !== 'undefined' && hostname === window.location.hostname) {
+    if (
+      typeof window !== 'undefined' &&
+      hostname === window.location.hostname
+    ) {
       return true;
     }
-    
+
     // Allow trusted Flowstarter subdomains
-    if (hostname.endsWith('.flowstarter.dev') || hostname.endsWith('.flowstarter.app')) {
+    if (
+      hostname.endsWith('.flowstarter.dev') ||
+      hostname.endsWith('.flowstarter.app')
+    ) {
       return true;
     }
     if (hostname === 'flowstarter.dev' || hostname === 'flowstarter.app') {
       return true;
     }
-    
+
     // Allow localhost for development
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
       return true;
     }
-    
+
     return false;
   } catch {
     return false;
@@ -53,12 +59,12 @@ export function AuthRedirectWrapper({ children }: AuthRedirectWrapperProps) {
     // If Clerk has loaded and user is signed in, show loading and redirect
     if (isLoaded && isSignedIn) {
       setShowLoading(true);
-      
+
       // Check for redirect_url parameter (e.g., from editor satellite app)
       const redirectUrl = searchParams.get('redirect_url');
       const nextUrl = searchParams.get('next');
       const targetUrl = redirectUrl || nextUrl;
-      
+
       // Add a small delay to ensure loading state is visible and smooth transition
       const redirectTimer = setTimeout(async () => {
         if (targetUrl && isSafeRedirectUrl(targetUrl)) {

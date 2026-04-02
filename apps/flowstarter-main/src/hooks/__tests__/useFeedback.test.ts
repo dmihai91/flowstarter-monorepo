@@ -12,12 +12,18 @@ beforeEach(() => {
 describe('useFeedback', () => {
   it('starts with empty form', () => {
     const { result } = renderHook(() => useFeedback());
-    expect(result.current.formData).toEqual({ category: '', message: '', email: '' });
+    expect(result.current.formData).toEqual({
+      category: '',
+      message: '',
+      email: '',
+    });
   });
 
   it('updates fields', () => {
     const { result } = renderHook(() => useFeedback());
-    act(() => { result.current.updateField('category', 'bug'); });
+    act(() => {
+      result.current.updateField('category', 'bug');
+    });
     expect(result.current.formData.category).toBe('bug');
   });
 
@@ -28,7 +34,9 @@ describe('useFeedback', () => {
 
   it('validates empty message', () => {
     const { result } = renderHook(() => useFeedback());
-    act(() => { result.current.updateField('category', 'bug'); });
+    act(() => {
+      result.current.updateField('category', 'bug');
+    });
     expect(result.current.validate()).toBe('Message is required');
   });
 
@@ -57,6 +65,10 @@ describe('useFeedback', () => {
       result.current.updateField('message', 'test message here');
       result.current.resetForm();
     });
-    expect(result.current.formData).toEqual({ category: '', message: '', email: '' });
+    expect(result.current.formData).toEqual({
+      category: '',
+      message: '',
+      email: '',
+    });
   });
 });

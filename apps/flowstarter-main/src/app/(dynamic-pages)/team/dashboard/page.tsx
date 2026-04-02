@@ -23,15 +23,22 @@ import { z } from 'zod';
 
 export const dynamic = 'force-dynamic';
 
-const EDITOR_URL = process.env.NEXT_PUBLIC_EDITOR_URL || (process.env.NODE_ENV === 'production' ? 'https://editor.flowstarter.dev' : 'http://localhost:5173');
+const EDITOR_URL =
+  process.env.NEXT_PUBLIC_EDITOR_URL ||
+  (process.env.NODE_ENV === 'production'
+    ? 'https://editor.flowstarter.dev'
+    : 'http://localhost:5173');
 
 const clientSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Please enter a valid email address'),
-  phone: z.string().optional().refine(
-    (val) => !val || /^[+]?[\d\s()-]{7,}$/.test(val),
-    'Please enter a valid phone number'
-  ),
+  phone: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || /^[+]?[\d\s()-]{7,}$/.test(val),
+      'Please enter a valid phone number'
+    ),
 });
 
 type ClientErrors = Partial<Record<keyof z.infer<typeof clientSchema>, string>>;
@@ -59,27 +66,41 @@ export default function TeamDashboardPage() {
   const glassPanelClass =
     'rounded-[28px] border border-gray-200/80 bg-white/95 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-2xl backdrop-saturate-150 dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]';
 
-  const validateField = useCallback((field: keyof ClientErrors, value: string) => {
-    if (debounceTimers.current[field]) clearTimeout(debounceTimers.current[field]);
-    debounceTimers.current[field] = setTimeout(() => {
+  const validateField = useCallback(
+    (field: keyof ClientErrors, value: string) => {
+      if (debounceTimers.current[field])
+        clearTimeout(debounceTimers.current[field]);
+      debounceTimers.current[field] = setTimeout(() => {
+        const result = clientSchema.shape[field].safeParse(value);
+        if (!result.success) {
+          setClientErrors((prev) => ({
+            ...prev,
+            [field]: result.error.issues[0].message,
+          }));
+        } else {
+          setClientErrors((prev) => ({ ...prev, [field]: undefined }));
+        }
+      }, 400);
+    },
+    []
+  );
+
+  const validateFieldImmediate = useCallback(
+    (field: keyof ClientErrors, value: string) => {
+      if (debounceTimers.current[field])
+        clearTimeout(debounceTimers.current[field]);
       const result = clientSchema.shape[field].safeParse(value);
       if (!result.success) {
-        setClientErrors(prev => ({ ...prev, [field]: result.error.issues[0].message }));
+        setClientErrors((prev) => ({
+          ...prev,
+          [field]: result.error.issues[0].message,
+        }));
       } else {
-        setClientErrors(prev => ({ ...prev, [field]: undefined }));
+        setClientErrors((prev) => ({ ...prev, [field]: undefined }));
       }
-    }, 400);
-  }, []);
-
-  const validateFieldImmediate = useCallback((field: keyof ClientErrors, value: string) => {
-    if (debounceTimers.current[field]) clearTimeout(debounceTimers.current[field]);
-    const result = clientSchema.shape[field].safeParse(value);
-    if (!result.success) {
-      setClientErrors(prev => ({ ...prev, [field]: result.error.issues[0].message }));
-    } else {
-      setClientErrors(prev => ({ ...prev, [field]: undefined }));
-    }
-  }, []);
+    },
+    []
+  );
   const { isAdmin } = useIsTeamMember();
 
   // Redirect if not loaded
@@ -100,13 +121,22 @@ export default function TeamDashboardPage() {
   const firstName = user?.firstName || 'there';
   const hour = new Date().getHours();
   const greeting =
-    hour < 12 ? t('dashboard.greeting.morning') : hour < 18 ? t('dashboard.greeting.afternoon') : hour < 21 ? t('dashboard.greeting.evening') : t('dashboard.greeting.night');
+    hour < 12
+      ? t('dashboard.greeting.morning')
+      : hour < 18
+      ? t('dashboard.greeting.afternoon')
+      : hour < 21
+      ? t('dashboard.greeting.evening')
+      : t('dashboard.greeting.night');
 
   // Count projects by status
-  const activeProjects = projects?.filter(p => 
-    p.status === 'in_progress' || p.status === 'building' || p.status === 'draft'
-  ).length || 0;
-
+  const _activeProjects =
+    projects?.filter(
+      (p) =>
+        p.status === 'in_progress' ||
+        p.status === 'building' ||
+        p.status === 'draft'
+    ).length || 0;
 
   const createNewInEditor = () => router.push('/team/dashboard/new');
 
@@ -129,7 +159,10 @@ export default function TeamDashboardPage() {
       }
 
       const data = await res.json();
-      setClientInfo(prev => ({ ...prev, projectName: data.name || prev.projectName }));
+      setClientInfo((prev) => ({
+        ...prev,
+        projectName: data.name || prev.projectName,
+      }));
     } catch {
       toast.error('Could not generate a project name');
     } finally {
@@ -156,7 +189,8 @@ export default function TeamDashboardPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           projectConfig: {
-            projectName: clientInfo.projectName || `${clientInfo.name} — Website`,
+            projectName:
+              clientInfo.projectName || `${clientInfo.name} — Website`,
             clientName: clientInfo.name,
             clientEmail: clientInfo.email,
             clientPhone: clientInfo.phone,
@@ -169,7 +203,10 @@ export default function TeamDashboardPage() {
         const data = await res.json();
         queryClient.invalidateQueries({ queryKey: ['team-projects'] });
         queryClient.invalidateQueries({ queryKey: ['projects'] });
-        window.open(data.editorUrl || `${EDITOR_URL}?handoff=${data.token}`, '_blank');
+        window.open(
+          data.editorUrl || `${EDITOR_URL}?handoff=${data.token}`,
+          '_blank'
+        );
       } else {
         window.open(EDITOR_URL, '_blank');
       }
@@ -196,13 +233,22 @@ export default function TeamDashboardPage() {
           </h1>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-4">
-          <Button variant="accent" size="default" className="w-full sm:w-auto" onClick={createNewInEditor}>
-              <Plus className="w-4 h-4 mr-2" />
-              New Project
-            </Button>
+          <Button
+            variant="accent"
+            size="default"
+            className="w-full sm:w-auto"
+            onClick={createNewInEditor}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            New Project
+          </Button>
           {isAdmin && (
             <Link href="/team/dashboard/invite" className="w-full sm:w-auto">
-              <Button variant="secondary" size="default" className="w-full sm:w-auto">
+              <Button
+                variant="secondary"
+                size="default"
+                className="w-full sm:w-auto"
+              >
                 <UserPlus className="w-4 h-4 mr-2" />
                 <span className="hidden sm:inline">Invite Member</span>
                 <span className="sm:hidden">Invite</span>
@@ -211,7 +257,6 @@ export default function TeamDashboardPage() {
           )}
         </div>
       </div>
-
 
       {/* Quick Scaffold Tool */}
       <div className="mb-6">
@@ -229,7 +274,10 @@ export default function TeamDashboardPage() {
 
       {/* Client Info Modal */}
       {showClientModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowClientModal(false)}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          onClick={() => setShowClientModal(false)}
+        >
           <div
             className="relative mx-4 w-full max-w-md rounded-2xl border border-white/60 bg-white/75 p-6 shadow-[0_2px_20px_rgba(0,0,0,0.06)] backdrop-blur-2xl backdrop-saturate-150 dark:border-white/10 dark:bg-white/[0.08] dark:shadow-[0_2px_20px_rgba(0,0,0,0.22)]"
             onClick={(e) => e.stopPropagation()}
@@ -241,43 +289,99 @@ export default function TeamDashboardPage() {
               <X className="w-4 h-4 text-gray-400 dark:text-white/50" />
             </button>
 
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">New Project</h2>
-            <p className="text-sm text-gray-500 dark:text-white/50 mb-5">Enter client details for this project</p>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+              New Project
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-white/50 mb-5">
+              Enter client details for this project
+            </p>
 
             <div className="space-y-4">
               <div>
-                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">Client Name *</Label>
+                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
+                  Client Name *
+                </Label>
                 <Input
                   placeholder={t('team.dashboard.namePlaceholder')}
                   value={clientInfo.name}
-                  onChange={(e) => { const v = e.target.value; setClientInfo(prev => ({ ...prev, name: v })); validateField('name', v); }}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setClientInfo((prev) => ({ ...prev, name: v }));
+                    validateField('name', v);
+                  }}
                   onBlur={() => validateFieldImmediate('name', clientInfo.name)}
-                  className={`mt-1 ${clientErrors.name ? 'border-red-400 dark:border-red-500/50' : ''}`}
+                  className={`mt-1 ${
+                    clientErrors.name
+                      ? 'border-red-400 dark:border-red-500/50'
+                      : ''
+                  }`}
                 />
-                {clientErrors.name && <p className="text-xs text-red-500 mt-1">{clientErrors.name}</p>}
+                {clientErrors.name && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {clientErrors.name}
+                  </p>
+                )}
               </div>
               <div>
-                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">Client Email *</Label>
+                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
+                  Client Email *
+                </Label>
                 <Input
                   type="email"
                   placeholder="john@example.com"
                   value={clientInfo.email}
-                  onChange={(e) => { const v = e.target.value; setClientInfo(prev => ({ ...prev, email: v })); validateField('email', v); }}
-                  onBlur={() => validateFieldImmediate('email', clientInfo.email)}
-                  className={`mt-1 ${clientErrors.email ? 'border-red-400 dark:border-red-500/50' : ''}`}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setClientInfo((prev) => ({ ...prev, email: v }));
+                    validateField('email', v);
+                  }}
+                  onBlur={() =>
+                    validateFieldImmediate('email', clientInfo.email)
+                  }
+                  className={`mt-1 ${
+                    clientErrors.email
+                      ? 'border-red-400 dark:border-red-500/50'
+                      : ''
+                  }`}
                 />
-                {clientErrors.email && <p className="text-xs text-red-500 mt-1">{clientErrors.email}</p>}
+                {clientErrors.email && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {clientErrors.email}
+                  </p>
+                )}
               </div>
               <div>
-                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">Client Phone</Label>
+                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
+                  Client Phone
+                </Label>
                 <Input
                   placeholder="+40 712 345 678"
                   value={clientInfo.phone}
-                  onChange={(e) => { const v = e.target.value; setClientInfo(prev => ({ ...prev, phone: v })); if (v) validateField('phone', v); else setClientErrors(prev => ({ ...prev, phone: undefined })); }}
-                  onBlur={() => { if (clientInfo.phone) validateFieldImmediate('phone', clientInfo.phone); }}
-                  className={`mt-1 ${clientErrors.phone ? 'border-red-400 dark:border-red-500/50' : ''}`}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setClientInfo((prev) => ({ ...prev, phone: v }));
+                    if (v) validateField('phone', v);
+                    else
+                      setClientErrors((prev) => ({
+                        ...prev,
+                        phone: undefined,
+                      }));
+                  }}
+                  onBlur={() => {
+                    if (clientInfo.phone)
+                      validateFieldImmediate('phone', clientInfo.phone);
+                  }}
+                  className={`mt-1 ${
+                    clientErrors.phone
+                      ? 'border-red-400 dark:border-red-500/50'
+                      : ''
+                  }`}
                 />
-                {clientErrors.phone && <p className="text-xs text-red-500 mt-1">{clientErrors.phone}</p>}
+                {clientErrors.phone && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {clientErrors.phone}
+                  </p>
+                )}
               </div>
 
               <div className="relative py-1">
@@ -292,18 +396,27 @@ export default function TeamDashboardPage() {
               </div>
 
               <div>
-                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">Project Name</Label>
+                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
+                  Project Name
+                </Label>
                 <div className="relative mt-1">
                   <Input
                     placeholder="e.g. Sunrise Bakery"
                     value={clientInfo.projectName}
-                    onChange={(e) => setClientInfo(prev => ({ ...prev, projectName: e.target.value }))}
+                    onChange={(e) =>
+                      setClientInfo((prev) => ({
+                        ...prev,
+                        projectName: e.target.value,
+                      }))
+                    }
                     className="pr-11"
                   />
                   <button
                     type="button"
                     onClick={handleGenerateProjectName}
-                    disabled={isGeneratingProjectName || !clientInfo.name.trim()}
+                    disabled={
+                      isGeneratingProjectName || !clientInfo.name.trim()
+                    }
                     className="absolute right-1 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md border border-white/60 bg-white/75 text-gray-500 transition-colors hover:border-white/80 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:bg-white/[0.08] dark:text-white/60 dark:hover:border-white/20 dark:hover:text-white"
                     aria-label="Generate project name"
                   >
@@ -317,26 +430,41 @@ export default function TeamDashboardPage() {
               </div>
 
               <div>
-                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">Describe the project</Label>
+                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
+                  Describe the project
+                </Label>
                 <textarea
                   rows={3}
                   placeholder="A website for a bakery in Bucharest specializing in sourdough bread and pastries..."
                   value={clientInfo.projectDescription}
-                  onChange={(e) => setClientInfo(prev => ({ ...prev, projectDescription: e.target.value }))}
+                  onChange={(e) =>
+                    setClientInfo((prev) => ({
+                      ...prev,
+                      projectDescription: e.target.value,
+                    }))
+                  }
                   className="file:text-foreground placeholder:text-muted-foreground mt-1 flex min-h-[72px] w-full min-w-0 rounded-xl border border-white/60 bg-white/65 px-2.5 py-2 text-sm text-gray-900 shadow-sm backdrop-blur-sm transition-[color,box-shadow,border-color,background-color] outline-none hover:border-white/80 focus:border-[var(--purple)]/70 focus-visible:border-[var(--purple)]/50 focus-visible:ring-1 focus-visible:ring-[var(--purple)]/20 dark:border-white/15 dark:bg-white/[0.08] dark:text-gray-100 dark:hover:border-white/25 dark:focus:border-white/40 dark:focus-visible:border-white/40 dark:focus-visible:ring-white/20 focus:shadow-none focus-visible:shadow-none resize-none"
                 />
               </div>
             </div>
 
             <div className="flex gap-3 mt-6">
-              <Button variant="outline" className="flex-1" onClick={() => setShowClientModal(false)}>
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setShowClientModal(false)}
+              >
                 Cancel
               </Button>
               <Button
                 variant="accent"
                 className="flex-1"
                 onClick={handleClientSubmit}
-                disabled={clientInfo.name.trim().length < 2 || !clientInfo.email.includes('@') || isSendingToEditor}
+                disabled={
+                  clientInfo.name.trim().length < 2 ||
+                  !clientInfo.email.includes('@') ||
+                  isSendingToEditor
+                }
               >
                 {isSendingToEditor ? 'Opening Editor...' : 'Continue in Editor'}
               </Button>

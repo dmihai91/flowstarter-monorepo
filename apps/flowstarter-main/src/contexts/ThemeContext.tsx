@@ -76,7 +76,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>(() => {
     if (typeof window === 'undefined') return 'light';
     // Trust what the inline script already applied to <html>
-    return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+    return document.documentElement.classList.contains('dark')
+      ? 'dark'
+      : 'light';
   });
 
   // Function to get system theme preference
@@ -183,11 +185,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       if (!mounted) return;
 
       setTheme(newTheme);
-      
+
       // Save to shared cookie (cross-subdomain) - map 'auto' to 'system'
-      const sharedTheme: SharedTheme = newTheme === 'auto' ? 'system' : newTheme;
+      const sharedTheme: SharedTheme =
+        newTheme === 'auto' ? 'system' : newTheme;
       setSharedTheme(sharedTheme);
-      
+
       // Also save to localStorage for backwards compatibility
       safeSetItem('theme', newTheme);
 

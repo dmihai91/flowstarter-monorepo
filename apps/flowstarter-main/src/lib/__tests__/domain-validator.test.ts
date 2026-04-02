@@ -5,7 +5,9 @@ describe('DomainValidator', () => {
   describe('validate', () => {
     describe('valid domains', () => {
       it('accepts simple domain', () => {
-        expect(DomainValidator.validate('mysite.com')).toEqual({ isValid: true });
+        expect(DomainValidator.validate('mysite.com')).toEqual({
+          isValid: true,
+        });
       });
 
       it('accepts subdomain', () => {
@@ -54,8 +56,12 @@ describe('DomainValidator', () => {
       });
 
       it('rejects null-like values', () => {
-        expect(DomainValidator.validate(null as unknown as string).isValid).toBe(false);
-        expect(DomainValidator.validate(undefined as unknown as string).isValid).toBe(false);
+        expect(
+          DomainValidator.validate(null as unknown as string).isValid
+        ).toBe(false);
+        expect(
+          DomainValidator.validate(undefined as unknown as string).isValid
+        ).toBe(false);
       });
     });
 
@@ -265,8 +271,12 @@ describe('DomainValidator', () => {
     });
 
     it('handles null/undefined', () => {
-      expect(DomainValidator.getValidationStatus(null as unknown as string)).toBe('empty');
-      expect(DomainValidator.getValidationStatus(undefined as unknown as string)).toBe('empty');
+      expect(
+        DomainValidator.getValidationStatus(null as unknown as string)
+      ).toBe('empty');
+      expect(
+        DomainValidator.getValidationStatus(undefined as unknown as string)
+      ).toBe('empty');
     });
   });
 });

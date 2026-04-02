@@ -5,9 +5,17 @@ import { useSearchParams } from 'next/navigation';
 import { GlassCard } from '@/components/ui/glass-card';
 import { Button } from '@/components/ui/button';
 import {
-  Users, Mail, Phone, MessageSquare, Clock, Filter,
-  CheckCircle2, Star, Archive, AlertTriangle, RefreshCw,
-  ChevronDown, ExternalLink,
+  Users,
+  Mail,
+  Phone,
+  MessageSquare,
+  Clock,
+  CheckCircle2,
+  Star,
+  Archive,
+  AlertTriangle,
+  RefreshCw,
+  ChevronDown,
 } from 'lucide-react';
 
 interface Lead {
@@ -28,13 +36,40 @@ interface StatusCount {
   count: number;
 }
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: typeof Users }> = {
-  new: { label: 'New', color: 'text-blue-600 bg-blue-50 dark:bg-blue-900/20', icon: Star },
-  contacted: { label: 'Contacted', color: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20', icon: Mail },
-  qualified: { label: 'Qualified', color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20', icon: CheckCircle2 },
-  converted: { label: 'Converted', color: 'text-purple-600 bg-purple-50 dark:bg-purple-900/20', icon: Star },
-  archived: { label: 'Archived', color: 'text-gray-500 bg-gray-50 dark:bg-gray-900/20', icon: Archive },
-  spam: { label: 'Spam', color: 'text-red-500 bg-red-50 dark:bg-red-900/20', icon: AlertTriangle },
+const STATUS_CONFIG: Record<
+  string,
+  { label: string; color: string; icon: typeof Users }
+> = {
+  new: {
+    label: 'New',
+    color: 'text-blue-600 bg-blue-50 dark:bg-blue-900/20',
+    icon: Star,
+  },
+  contacted: {
+    label: 'Contacted',
+    color: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20',
+    icon: Mail,
+  },
+  qualified: {
+    label: 'Qualified',
+    color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20',
+    icon: CheckCircle2,
+  },
+  converted: {
+    label: 'Converted',
+    color: 'text-purple-600 bg-purple-50 dark:bg-purple-900/20',
+    icon: Star,
+  },
+  archived: {
+    label: 'Archived',
+    color: 'text-gray-500 bg-gray-50 dark:bg-gray-900/20',
+    icon: Archive,
+  },
+  spam: {
+    label: 'Spam',
+    color: 'text-red-500 bg-red-50 dark:bg-red-900/20',
+    icon: AlertTriangle,
+  },
 };
 
 function timeAgo(iso: string): string {
@@ -60,15 +95,24 @@ export default function LeadsPage() {
     if (!projectId) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/leads/list?projectId=${projectId}&status=${filter}`);
-      const data = (await res.json()) as { leads: Lead[]; counts: StatusCount[] };
+      const res = await fetch(
+        `/api/leads/list?projectId=${projectId}&status=${filter}`
+      );
+      const data = (await res.json()) as {
+        leads: Lead[];
+        counts: StatusCount[];
+      };
       setLeads(data.leads || []);
       setCounts(data.counts || []);
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     setLoading(false);
   }, [projectId, filter]);
 
-  useEffect(() => { fetchLeads(); }, [fetchLeads]);
+  useEffect(() => {
+    fetchLeads();
+  }, [fetchLeads]);
 
   const updateStatus = async (leadId: string, status: string) => {
     await fetch('/api/leads/list', {
@@ -80,7 +124,10 @@ export default function LeadsPage() {
   };
 
   const totalNew = counts.find((c) => c.status === 'new')?.count || 0;
-  const totalAll = counts.reduce((sum, c) => sum + (c.status !== 'spam' ? c.count : 0), 0);
+  const totalAll = counts.reduce(
+    (sum, c) => sum + (c.status !== 'spam' ? c.count : 0),
+    0
+  );
 
   if (!projectId) {
     return (
@@ -109,45 +156,63 @@ export default function LeadsPage() {
             {totalAll} total leads from your website
           </p>
         </div>
-        <button onClick={fetchLeads} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5">
-          <RefreshCw className={`w-4 h-4 text-gray-400 ${loading ? 'animate-spin' : ''}`} />
+        <button
+          onClick={fetchLeads}
+          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5"
+        >
+          <RefreshCw
+            className={`w-4 h-4 text-gray-400 ${loading ? 'animate-spin' : ''}`}
+          />
         </button>
       </div>
 
       {/* Status filter tabs */}
       <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
-        {['all', 'new', 'contacted', 'qualified', 'converted', 'archived'].map((s) => {
-          const count = s === 'all' ? totalAll : (counts.find((c) => c.status === s)?.count || 0);
-          return (
-            <button
-              key={s}
-              onClick={() => setFilter(s)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-                filter === s
-                  ? 'bg-[var(--purple)] text-white'
-                  : 'bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-white/50 hover:bg-gray-200 dark:hover:bg-white/10'
-              }`}
-            >
-              {s === 'all' ? 'All' : STATUS_CONFIG[s]?.label || s}
-              {count > 0 && <span className="ml-1.5 opacity-75">({count})</span>}
-            </button>
-          );
-        })}
+        {['all', 'new', 'contacted', 'qualified', 'converted', 'archived'].map(
+          (s) => {
+            const count =
+              s === 'all'
+                ? totalAll
+                : counts.find((c) => c.status === s)?.count || 0;
+            return (
+              <button
+                key={s}
+                onClick={() => setFilter(s)}
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                  filter === s
+                    ? 'bg-[var(--purple)] text-white'
+                    : 'bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-white/50 hover:bg-gray-200 dark:hover:bg-white/10'
+                }`}
+              >
+                {s === 'all' ? 'All' : STATUS_CONFIG[s]?.label || s}
+                {count > 0 && (
+                  <span className="ml-1.5 opacity-75">({count})</span>
+                )}
+              </button>
+            );
+          }
+        )}
       </div>
 
       {/* Leads list */}
       {loading && leads.length === 0 ? (
         <div className="space-y-3">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-20 rounded-xl bg-gray-100 dark:bg-white/5 animate-pulse" />
+            <div
+              key={i}
+              className="h-20 rounded-xl bg-gray-100 dark:bg-white/5 animate-pulse"
+            />
           ))}
         </div>
       ) : leads.length === 0 ? (
         <GlassCard className="p-12 text-center">
           <Mail className="w-10 h-10 text-gray-300 dark:text-white/20 mx-auto mb-3" />
-          <p className="text-gray-500 dark:text-white/40 font-medium">No leads yet</p>
+          <p className="text-gray-500 dark:text-white/40 font-medium">
+            No leads yet
+          </p>
           <p className="text-sm text-gray-400 dark:text-white/30 mt-1">
-            Leads will appear here when visitors submit the contact form on your site
+            Leads will appear here when visitors submit the contact form on your
+            site
           </p>
         </GlassCard>
       ) : (
@@ -158,13 +223,18 @@ export default function LeadsPage() {
             const isExpanded = expandedLead === lead.id;
 
             return (
-              <GlassCard key={lead.id} className="p-4 hover:border-[var(--purple)]/20 transition-colors">
+              <GlassCard
+                key={lead.id}
+                className="p-4 hover:border-[var(--purple)]/20 transition-colors"
+              >
                 <div
                   className="flex items-center gap-3 cursor-pointer"
                   onClick={() => setExpandedLead(isExpanded ? null : lead.id)}
                 >
                   {/* Status badge */}
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${statusConf.color}`}>
+                  <div
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${statusConf.color}`}
+                  >
                     <StatusIcon className="w-4 h-4" />
                   </div>
 
@@ -189,8 +259,14 @@ export default function LeadsPage() {
 
                   {/* Time + expand */}
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-xs text-gray-400">{timeAgo(lead.created_at)}</span>
-                    <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                    <span className="text-xs text-gray-400">
+                      {timeAgo(lead.created_at)}
+                    </span>
+                    <ChevronDown
+                      className={`w-4 h-4 text-gray-400 transition-transform ${
+                        isExpanded ? 'rotate-180' : ''
+                      }`}
+                    />
                   </div>
                 </div>
 
@@ -199,12 +275,18 @@ export default function LeadsPage() {
                   <div className="mt-3 pt-3 border-t border-gray-100 dark:border-white/5 space-y-3">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                       {lead.email && (
-                        <a href={`mailto:${lead.email}`} className="flex items-center gap-2 text-gray-600 dark:text-white/60 hover:text-[var(--purple)]">
+                        <a
+                          href={`mailto:${lead.email}`}
+                          className="flex items-center gap-2 text-gray-600 dark:text-white/60 hover:text-[var(--purple)]"
+                        >
                           <Mail className="w-3.5 h-3.5" /> {lead.email}
                         </a>
                       )}
                       {lead.phone && (
-                        <a href={`tel:${lead.phone}`} className="flex items-center gap-2 text-gray-600 dark:text-white/60 hover:text-[var(--purple)]">
+                        <a
+                          href={`tel:${lead.phone}`}
+                          className="flex items-center gap-2 text-gray-600 dark:text-white/60 hover:text-[var(--purple)]"
+                        >
                           <Phone className="w-3.5 h-3.5" /> {lead.phone}
                         </a>
                       )}
@@ -226,7 +308,13 @@ export default function LeadsPage() {
 
                     {/* Status actions */}
                     <div className="flex gap-2 flex-wrap">
-                      {['new', 'contacted', 'qualified', 'converted', 'archived'].map((s) => {
+                      {[
+                        'new',
+                        'contacted',
+                        'qualified',
+                        'converted',
+                        'archived',
+                      ].map((s) => {
                         if (s === lead.status) return null;
                         const conf = STATUS_CONFIG[s];
                         return (
@@ -235,7 +323,10 @@ export default function LeadsPage() {
                             variant="ghost"
                             size="sm"
                             className="text-xs"
-                            onClick={(e) => { e.stopPropagation(); updateStatus(lead.id, s); }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              updateStatus(lead.id, s);
+                            }}
                           >
                             Mark as {conf?.label || s}
                           </Button>

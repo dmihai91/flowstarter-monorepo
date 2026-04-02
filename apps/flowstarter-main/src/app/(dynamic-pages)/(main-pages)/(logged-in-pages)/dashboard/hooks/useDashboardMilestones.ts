@@ -11,7 +11,8 @@ export function getMilestoneStatuses(
   hasAnyProject: boolean,
   hasLiveProject: boolean
 ): [MilestoneStatus, MilestoneStatus, MilestoneStatus, MilestoneStatus] {
-  if (hasLiveProject) return ['completed', 'completed', 'completed', 'completed'];
+  if (hasLiveProject)
+    return ['completed', 'completed', 'completed', 'completed'];
   if (hasAnyProject) return ['completed', 'active', 'locked', 'locked'];
   return ['active', 'locked', 'locked', 'locked'];
 }
@@ -23,7 +24,10 @@ export function getTimeGreetingKey(hour: number): TimeGreetingKey {
   return 'dashboard.greeting.night';
 }
 
-export function useDashboardMilestones(hasAnyProject: boolean, hasLiveProject: boolean) {
+export function useDashboardMilestones(
+  hasAnyProject: boolean,
+  hasLiveProject: boolean
+) {
   const statuses = useMemo(
     () => getMilestoneStatuses(hasAnyProject, hasLiveProject),
     [hasAnyProject, hasLiveProject]

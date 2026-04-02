@@ -16,7 +16,6 @@ import {
   createGretly,
   type GretlyConfig,
   type GretlyInput,
-  type GretlyResult,
   type GretlyPhase,
   type BusinessInfo,
   type TemplateInfo,
@@ -176,7 +175,11 @@ describe('Gretly Engine (Orchestrator)', () => {
         case 'code-generator':
           return { message: { content: JSON.stringify(mockGenerateResponse) } };
         case 'fixer':
-          return { message: { content: JSON.stringify({ success: true, fixedContent: 'fixed content', summary: 'Fixed error' }) } };
+          return {
+            message: {
+              content: JSON.stringify({ success: true, fixedContent: 'fixed content', summary: 'Fixed error' }),
+            },
+          };
         default:
           return { message: { content: '{}' } };
       }
@@ -240,20 +243,14 @@ describe('Gretly Engine (Orchestrator)', () => {
       const gretly = createGretly({ skipReview: true });
       await gretly.run(mockInput, mockBuildFn, mockPublishFn);
 
-      expect(mockRegistrySend).toHaveBeenCalledWith(
-        'planner',
-        expect.stringContaining('"type":"plan"')
-      );
+      expect(mockRegistrySend).toHaveBeenCalledWith('planner', expect.stringContaining('"type":"plan"'));
     });
 
     it('should call code-generator agent for generation', async () => {
       const gretly = createGretly({ skipReview: true });
       await gretly.run(mockInput, mockBuildFn, mockPublishFn);
 
-      expect(mockRegistrySend).toHaveBeenCalledWith(
-        'code-generator',
-        expect.stringContaining('"type":"generate"')
-      );
+      expect(mockRegistrySend).toHaveBeenCalledWith('code-generator', expect.stringContaining('"type":"generate"'));
     });
 
     it('should call build function with project ID and files', async () => {
@@ -294,11 +291,14 @@ describe('Gretly Engine (Orchestrator)', () => {
       mockRegistrySend.mockImplementation(async (agentName: string) => {
         if (agentName === 'planner') {
           callCount++;
+
           if (callCount === 1) {
             return { message: { content: JSON.stringify(mockPlanResponse) } };
           }
+
           return { message: { content: JSON.stringify(mockReviewResponse) } };
         }
+
         return { message: { content: JSON.stringify(mockGenerateResponse) } };
       });
 
@@ -338,19 +338,14 @@ describe('Gretly Engine (Orchestrator)', () => {
       };
 
       // First build fails, second succeeds
-      mockBuildFn
-        .mockResolvedValueOnce({ success: false, buildError })
-        .mockResolvedValueOnce(mockBuildSuccess);
+      mockBuildFn.mockResolvedValueOnce({ success: false, buildError }).mockResolvedValueOnce(mockBuildSuccess);
 
       const gretly = createGretly({ skipReview: true, maxFixAttempts: 3 });
       const result = await gretly.run(mockInput, mockBuildFn, mockPublishFn);
 
       expect(result.success).toBe(true);
       expect(result.fixAttempts).toBe(1);
-      expect(mockRegistrySend).toHaveBeenCalledWith(
-        'fixer',
-        expect.stringContaining('"error":"Syntax error"')
-      );
+      expect(mockRegistrySend).toHaveBeenCalledWith('fixer', expect.stringContaining('"error":"Syntax error"'));
     });
 
     it('should retry build after fix', async () => {
@@ -361,9 +356,7 @@ describe('Gretly Engine (Orchestrator)', () => {
         fullOutput: 'Type error at line 5',
       };
 
-      mockBuildFn
-        .mockResolvedValueOnce({ success: false, buildError })
-        .mockResolvedValueOnce(mockBuildSuccess);
+      mockBuildFn.mockResolvedValueOnce({ success: false, buildError }).mockResolvedValueOnce(mockBuildSuccess);
 
       const gretly = createGretly({ skipReview: true });
       await gretly.run(mockInput, mockBuildFn, mockPublishFn);
@@ -388,9 +381,15 @@ describe('Gretly Engine (Orchestrator)', () => {
         if (agentName === 'planner') {
           return { message: { content: JSON.stringify(mockPlanResponse) } };
         }
+
         if (agentName === 'fixer') {
-          return { message: { content: JSON.stringify({ success: true, fixedContent: 'attempted fix', summary: 'Tried to fix' }) } };
+          return {
+            message: {
+              content: JSON.stringify({ success: true, fixedContent: 'attempted fix', summary: 'Tried to fix' }),
+            },
+          };
         }
+
         return { message: { content: JSON.stringify(mockGenerateResponse) } };
       });
 
@@ -432,6 +431,7 @@ describe('Gretly Engine (Orchestrator)', () => {
       mockRegistrySend.mockImplementation(async (agentName: string) => {
         if (agentName === 'planner') {
           plannerCallCount++;
+
           if (plannerCallCount === 1) {
             return { message: { content: JSON.stringify(mockPlanResponse) } };
           } else if (plannerCallCount === 2) {
@@ -440,10 +440,12 @@ describe('Gretly Engine (Orchestrator)', () => {
             return { message: { content: JSON.stringify(approvedReview) } };
           }
         }
+
         if (agentName === 'code-generator') {
           generatorCallCount++;
           return { message: { content: JSON.stringify(mockGenerateResponse) } };
         }
+
         return { message: { content: '{}' } };
       });
 
@@ -457,6 +459,7 @@ describe('Gretly Engine (Orchestrator)', () => {
 
       expect(result.success).toBe(true);
       expect(result.refineIterations).toBe(1);
+
       // Generator should be called twice: initial + refine
       expect(generatorCallCount).toBe(2);
     });
@@ -488,14 +491,18 @@ describe('Gretly Engine (Orchestrator)', () => {
       mockRegistrySend.mockImplementation(async (agentName: string) => {
         if (agentName === 'planner') {
           plannerCallCount++;
+
           if (plannerCallCount === 1) {
             return { message: { content: JSON.stringify(mockPlanResponse) } };
           }
+
           return { message: { content: JSON.stringify(escalateResponse) } };
         }
+
         if (agentName === 'fixer') {
           return { message: { content: JSON.stringify({ success: false, error: 'Cannot fix' }) } };
         }
+
         return { message: { content: JSON.stringify(mockGenerateResponse) } };
       });
 
@@ -548,6 +555,7 @@ describe('Gretly Engine (Orchestrator)', () => {
         if (agentName === 'planner') {
           return { message: { content: JSON.stringify(failedPlan) } };
         }
+
         return { message: { content: '{}' } };
       });
 
@@ -570,9 +578,11 @@ describe('Gretly Engine (Orchestrator)', () => {
         if (agentName === 'planner') {
           return { message: { content: JSON.stringify(mockPlanResponse) } };
         }
+
         if (agentName === 'code-generator') {
           return { message: { content: JSON.stringify(failedGenerate) } };
         }
+
         return { message: { content: '{}' } };
       });
 
@@ -600,13 +610,7 @@ describe('Gretly Engine (Orchestrator)', () => {
       const gretly = createGretly({ skipReview: true });
       const result = await gretly.run(mockInput, mockBuildFn, mockPublishFn);
 
-      expect(result.phases).toEqual([
-        'planning',
-        'generating',
-        'building',
-        'publishing',
-        'complete',
-      ]);
+      expect(result.phases).toEqual(['planning', 'generating', 'building', 'publishing', 'complete']);
     });
 
     it('should include fixing phase when errors occur', async () => {
@@ -617,9 +621,7 @@ describe('Gretly Engine (Orchestrator)', () => {
         fullOutput: 'Error',
       };
 
-      mockBuildFn
-        .mockResolvedValueOnce({ success: false, buildError })
-        .mockResolvedValueOnce(mockBuildSuccess);
+      mockBuildFn.mockResolvedValueOnce({ success: false, buildError }).mockResolvedValueOnce(mockBuildSuccess);
 
       const gretly = createGretly({ skipReview: true });
       const result = await gretly.run(mockInput, mockBuildFn, mockPublishFn);
@@ -631,13 +633,9 @@ describe('Gretly Engine (Orchestrator)', () => {
 
 describe('Gretly Type Exports', () => {
   it('should export all types from gretly module', async () => {
-    const {
-      Gretly,
-      createGretly,
-    } = await import('~/lib/gretly');
+    const { Gretly: gretly, createGretly } = await import('~/lib/gretly');
 
-    expect(Gretly).toBeDefined();
+    expect(gretly).toBeDefined();
     expect(createGretly).toBeDefined();
   });
 });
-

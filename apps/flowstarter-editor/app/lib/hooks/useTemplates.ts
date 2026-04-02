@@ -14,10 +14,13 @@ interface MCPTemplateTheme {
   };
 }
 
-// Template from MCP server (flowstarter-library format)
-// Supports both MCP tool format and direct HTTP API format
+/*
+ * Template from MCP server (flowstarter-library format)
+ * Supports both MCP tool format and direct HTTP API format
+ */
 interface MCPTemplate {
   slug: string;
+
   // MCP format uses displayName, HTTP format uses name
   displayName?: string;
   name?: string;
@@ -26,6 +29,7 @@ interface MCPTemplate {
   useCase?: string[];
   fileCount?: number;
   totalLOC?: number;
+
   // MCP format uses thumbnailUrl, HTTP format uses thumbnail
   thumbnailUrl?: string;
   thumbnail?: string;
@@ -111,9 +115,11 @@ async function fetchTemplates(): Promise<Template[]> {
 function transformMCPTemplate(mcpTemplate: MCPTemplate): Template {
   return {
     id: mcpTemplate.slug,
+
     // Support both MCP (displayName) and HTTP (name) formats
     name: mcpTemplate.displayName || mcpTemplate.name || mcpTemplate.slug,
     description: mcpTemplate.description,
+
     // Support both MCP (thumbnailUrl) and HTTP (thumbnail) formats
     thumbnail: mcpTemplate.thumbnailUrl || mcpTemplate.thumbnail || '',
     category: mcpTemplate.category as Template['category'],
@@ -269,7 +275,9 @@ export function useTemplateDetails(slug: string | null) {
   const { data, isLoading, error } = useQuery({
     queryKey: ['template-details', slug],
     queryFn: async () => {
-      if (!slug) return null;
+      if (!slug) {
+        return null;
+      }
 
       const response = await fetch('/api/templates', {
         method: 'POST',
@@ -311,4 +319,3 @@ export function useTemplateDetails(slug: string | null) {
     error: error ? (error instanceof Error ? error.message : 'Failed to fetch details') : null,
   };
 }
-

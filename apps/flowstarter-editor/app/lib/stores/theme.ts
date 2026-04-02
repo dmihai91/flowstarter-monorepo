@@ -1,7 +1,7 @@
 import { atom } from 'nanostores';
 import { logStore } from './logs';
-import { 
-  getTheme as getSharedTheme, 
+import {
+  getTheme as getSharedTheme,
   setTheme as setSharedTheme,
   getEffectiveTheme as getSharedEffectiveTheme,
   applyTheme,
@@ -34,6 +34,7 @@ function initStore(): Theme {
   if (!import.meta.env.SSR) {
     return getSharedTheme();
   }
+
   return DEFAULT_THEME;
 }
 

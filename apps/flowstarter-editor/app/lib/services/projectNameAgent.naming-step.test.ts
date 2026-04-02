@@ -12,12 +12,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import {
-  generateProjectName,
-  generateFallbackName,
-  extractProjectName,
-  refineProjectName,
-} from './projectNameAgent';
+import { generateProjectName, generateFallbackName, extractProjectName, refineProjectName } from './projectNameAgent';
 
 // Mock the LLM module
 vi.mock('./llm', () => ({
@@ -25,11 +20,14 @@ vi.mock('./llm', () => ({
 }));
 
 import { generateCompletion } from './llm';
+
 const mockGenerateCompletion = vi.mocked(generateCompletion);
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// Fallback extraction — confirmation detection without LLM
-// ═══════════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * Fallback extraction — confirmation detection without LLM
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
 
 describe('extractProjectName: fallback confirmation detection', () => {
   beforeEach(() => {
@@ -89,9 +87,11 @@ describe('extractProjectName: fallback confirmation detection', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// Fallback extraction — pattern-based name extraction without LLM
-// ═══════════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * Fallback extraction — pattern-based name extraction without LLM
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
 
 describe('extractProjectName: fallback pattern extraction', () => {
   beforeEach(() => {
@@ -140,9 +140,11 @@ describe('extractProjectName: fallback pattern extraction', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// Banned word code-level filtering
-// ═══════════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * Banned word code-level filtering
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
 
 describe('generateProjectName: banned word code-level filtering', () => {
   beforeEach(() => {
@@ -157,6 +159,7 @@ describe('generateProjectName: banned word code-level filtering', () => {
     const result = await generateProjectName('life coach', undefined, true);
 
     expect(result.success).toBe(true);
+
     // Only "Fern" should survive the filter
     expect(result.allOptions).toEqual(['Fern']);
     expect(result.projectName).toBe('Fern');
@@ -190,6 +193,7 @@ describe('extractProjectName: banned word filtering in refinements', () => {
     });
 
     expect(result.needsFollowUp).toBe(true);
+
     // Should NOT be "Thrive Studio" — should be a safe fallback
     expect(result.suggestedName).not.toBe('Thrive Studio');
     expect(result.suggestedName).toBeDefined();
@@ -218,9 +222,11 @@ describe('refineProjectName: banned word filtering', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// Conversation context — previouslySuggested and accumulatedRequirements
-// ═══════════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * Conversation context — previouslySuggested and accumulatedRequirements
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
 
 describe('extractProjectName: conversation context', () => {
   beforeEach(() => {
@@ -239,6 +245,7 @@ describe('extractProjectName: conversation context', () => {
 
     // The system prompt should have been called with the suggested names
     expect(mockGenerateCompletion).toHaveBeenCalledTimes(1);
+
     const systemPrompt = mockGenerateCompletion.mock.calls[0][0][0].content;
     expect(systemPrompt).toContain('Willow');
     expect(systemPrompt).toContain('Atlas');
@@ -255,6 +262,7 @@ describe('extractProjectName: conversation context', () => {
     });
 
     expect(mockGenerateCompletion).toHaveBeenCalledTimes(1);
+
     const systemPrompt = mockGenerateCompletion.mock.calls[0][0][0].content;
     expect(systemPrompt).toContain('punchy');
     expect(systemPrompt).toContain('single word');
@@ -274,9 +282,11 @@ describe('extractProjectName: conversation context', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// Refinement with conversation history
-// ═══════════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * Refinement with conversation history
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
 
 describe('refineProjectName: with conversation history', () => {
   beforeEach(() => {
@@ -302,20 +312,41 @@ describe('refineProjectName: with conversation history', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// generateFallbackName: comprehensive coverage
-// ═══════════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * generateFallbackName: comprehensive coverage
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
 
 describe('generateFallbackName: industry matching', () => {
   it('generates appropriate names for each industry keyword', () => {
     const industries = [
-      'massage', 'therapy', 'spa', 'yoga', 'fitness', 'gym',
-      'restaurant', 'cafe', 'coffee', 'bakery',
-      'photography', 'design',
-      'consulting', 'coaching', 'life coach',
-      'cleaning', 'landscaping', 'plumbing',
-      'real estate', 'dental', 'medical', 'legal', 'accounting',
-      'ecommerce', 'tech', 'saas',
+      'massage',
+      'therapy',
+      'spa',
+      'yoga',
+      'fitness',
+      'gym',
+      'restaurant',
+      'cafe',
+      'coffee',
+      'bakery',
+      'photography',
+      'design',
+      'consulting',
+      'coaching',
+      'life coach',
+      'cleaning',
+      'landscaping',
+      'plumbing',
+      'real estate',
+      'dental',
+      'medical',
+      'legal',
+      'accounting',
+      'ecommerce',
+      'tech',
+      'saas',
     ];
 
     for (const industry of industries) {
@@ -339,9 +370,11 @@ describe('generateFallbackName: industry matching', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// Edge cases
-// ═══════════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * Edge cases
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
 
 describe('extractProjectName: additional edge cases', () => {
   beforeEach(() => {
@@ -362,6 +395,7 @@ describe('extractProjectName: additional edge cases', () => {
     const result = await extractProjectName(longInput, {});
 
     expect(result).toBeDefined();
+
     // Either extracts a name or gives a follow-up
     expect(result.projectName || result.suggestedName || result.needsFollowUp).toBeTruthy();
   });
@@ -372,7 +406,7 @@ describe('extractProjectName: additional edge cases', () => {
     const result = await extractProjectName('🚀🔥', {});
 
     expect(result).toBeDefined();
+
     // Should get a follow-up since emojis aren't a valid name
   });
 });
-

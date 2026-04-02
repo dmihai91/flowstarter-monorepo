@@ -61,11 +61,7 @@ Create a modification plan that:
 }`;
 }
 
-export function buildReviewPrompt(
-  request: PlanRequestDTO,
-  fileSummary: string,
-  approvalThreshold: number,
-): string {
+export function buildReviewPrompt(request: PlanRequestDTO, fileSummary: string, approvalThreshold: number): string {
   return `Review this generated website against the business requirements.
 
 ## BUSINESS BRIEF
@@ -169,28 +165,38 @@ export function buildTemplateSummary(files: Record<string, string>): string {
   const summary: string[] = [];
   const fileList = Object.keys(files);
   summary.push('File structure:');
+
   for (const path of fileList.slice(0, 20)) {
     summary.push(`  - ${path}`);
   }
+
   if (fileList.length > 20) {
     summary.push(`  ... and ${fileList.length - 20} more files`);
   }
+
   const keyFiles = ['src/pages/index.astro', 'src/components/Header.astro', 'src/components/Hero.astro'];
+
   for (const keyFile of keyFiles) {
     if (files[keyFile]) {
       summary.push(`\n=== ${keyFile} (preview) ===`);
       summary.push(files[keyFile].slice(0, 1000));
     }
   }
+
   return summary.join('\n');
 }
 
 export function buildFileSummary(files: Record<string, string>): string {
   const summary: string[] = [];
+
   for (const [path, content] of Object.entries(files)) {
-    if (path.includes('node_modules') || path.endsWith('.lock')) continue;
+    if (path.includes('node_modules') || path.endsWith('.lock')) {
+      continue;
+    }
+
     if (path.match(/\.(astro|tsx|jsx)$/)) {
       summary.push(`\n=== ${path} ===`);
+
       const lines = content.split('\n').slice(0, 100);
       summary.push(lines.join('\n').slice(0, 3000));
     } else if (path.match(/\.(json|yaml|toml)$/) && content.length < 2000) {
@@ -198,5 +204,6 @@ export function buildFileSummary(files: Record<string, string>): string {
       summary.push(content);
     }
   }
+
   return summary.join('\n');
 }

@@ -19,17 +19,19 @@ const RETRY_BACKOFF = 1.5;
 async function handleProxy(request: Request, projectId: string, path: string) {
   // Get the cached Daytona preview URL for this project (memory first, then Convex)
   let daytonaUrl = getCachedPreviewUrl(projectId);
-  
+
   // Fallback to Convex if memory cache is empty (handles worker restarts)
   if (!daytonaUrl) {
     try {
       const convexResult = await fetchPreviewUrl(projectId);
+
       if (convexResult?.workspaceUrl) {
         daytonaUrl = convexResult.workspaceUrl;
+
         // Restore to memory cache for subsequent requests
-        setCachedSandbox(projectId, { 
-          sandboxId: convexResult.sandboxId, 
-          previewUrl: daytonaUrl 
+        setCachedSandbox(projectId, {
+          sandboxId: convexResult.sandboxId,
+          previewUrl: daytonaUrl,
         });
         console.log(`[Preview Proxy] Restored preview URL from Convex for ${projectId}`);
       }
@@ -100,6 +102,7 @@ async function handleProxy(request: Request, projectId: string, path: string) {
           headers: {
             Accept: request.headers.get('Accept') || '*/*',
             'Accept-Language': request.headers.get('Accept-Language') || 'en-US,en;q=0.9',
+
             // 'Accept-Encoding': removed to avoid compression issues
             'User-Agent': request.headers.get('User-Agent') || 'Mozilla/5.0',
             'Content-Type': request.headers.get('Content-Type') || '',
@@ -143,18 +146,20 @@ async function handleProxy(request: Request, projectId: string, path: string) {
         // Detect Astro/Vite dev server error pages (500 with minimal HTML)
         if (proxyResponse.status === 500) {
           const contentType = proxyResponse.headers.get('Content-Type') || '';
+
           if (contentType.includes('text/html')) {
             const errorBody = await proxyResponse.text();
+
             // Astro error pages have <title>ErrorType</title> pattern
             const errorMatch = errorBody.match(/<title>([^<]+)<\/title>/);
             const errorType = errorMatch?.[1] || 'Unknown Error';
-            
+
             // Extract any error details from the body
             const stackMatch = errorBody.match(/class="message"[^>]*>([^<]+)/);
             const errorDetail = stackMatch?.[1] || '';
-            
+
             console.error(`[Preview Proxy] Dev server error: ${errorType}${errorDetail ? ' - ' + errorDetail : ''}`);
-            
+
             return new Response(
               `<html>
                 <head><title>Build Error</title></head>
@@ -403,4 +408,3 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   return handleProxy(request, projectId, '/' + path);
 }
-

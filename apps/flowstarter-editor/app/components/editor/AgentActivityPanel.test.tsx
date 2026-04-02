@@ -6,8 +6,12 @@ import { AgentActivityPanel, type AgentActivityEvent } from './AgentActivityPane
 
 const fileWriteEvent: AgentActivityEvent = { type: 'file_write', path: 'src/index.html', lines: 142 };
 const doneEvent: AgentActivityEvent = {
-  type: 'done', duration_ms: 12400, turns: 3,
-  cost_usd: 0.23, input_tokens: 3200, output_tokens: 1000,
+  type: 'done',
+  duration_ms: 12400,
+  turns: 3,
+  cost_usd: 0.23,
+  input_tokens: 3200,
+  output_tokens: 1000,
 };
 
 describe('AgentActivityPanel', () => {
@@ -43,6 +47,7 @@ describe('AgentActivityPanel', () => {
 
     it('renders error event with verb "error" label', () => {
       render(<AgentActivityPanel events={[{ type: 'error', message: 'Build failed' }]} />);
+
       // Multiple 'error' texts exist (verb label + header indicator)
       const errors = screen.getAllByText('error');
       expect(errors.length).toBeGreaterThanOrEqual(1);

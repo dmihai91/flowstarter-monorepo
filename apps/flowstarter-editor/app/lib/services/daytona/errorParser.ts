@@ -32,7 +32,8 @@ const ERROR_PATTERNS: Array<{
 
   // Astro/Vite SyntaxError/TypeError/ReferenceError with file path
   {
-    pattern: /(SyntaxError|TypeError|ReferenceError)[:\s]+([^\n]+)\n[\s\S]*?([a-zA-Z0-9_./-]+\.(astro|tsx?|jsx?)):(\d+)/,
+    pattern:
+      /(SyntaxError|TypeError|ReferenceError)[:\s]+([^\n]+)\n[\s\S]*?([a-zA-Z0-9_./-]+\.(astro|tsx?|jsx?)):(\d+)/,
     extract: (m) => ({ file: m[3], line: m[5], message: `${m[1]}: ${m[2]}` }),
   },
 
@@ -114,6 +115,7 @@ export function parseErrorDetails(output: string): { file: string; line: string;
       // If we have a message but no file, try to find the file from context
       if (!file && result.message) {
         const fileFromContext = extractFileFromContext(output, result.message);
+
         if (fileFromContext) {
           return {
             file: normalizeFilePath(fileFromContext, output),
@@ -161,7 +163,9 @@ export function parseAllErrors(output: string): Array<{ file: string; line: stri
     }
 
     // Limit to first 5 errors
-    if (errors.length >= 5) break;
+    if (errors.length >= 5) {
+      break;
+    }
   }
 
   return errors;
@@ -196,9 +200,7 @@ function isSourceFile(filename: string): boolean {
  */
 function normalizeFilePath(file: string, output: string): string {
   // Remove leading slashes and /home/daytona/ prefix
-  let normalized = file
-    .replace(/^\/home\/daytona\//, '')
-    .replace(/^\/+/, '');
+  let normalized = file.replace(/^\/home\/daytona\//, '').replace(/^\/+/, '');
 
   // Add src/ prefix for common directories
   if (
@@ -232,14 +234,14 @@ export function hasFatalError(output: string, serverStarted: boolean): boolean {
   if (serverStarted) {
     // Look for crashes AFTER the "ready" message
     const readyIndex = output.indexOf('ready in');
+
     if (readyIndex >= 0) {
       const postReady = output.slice(readyIndex);
       return (
-        postReady.includes('FATAL') ||
-        postReady.includes('Segmentation fault') ||
-        postReady.includes('process exited')
+        postReady.includes('FATAL') || postReady.includes('Segmentation fault') || postReady.includes('process exited')
       );
     }
+
     return false;
   }
 
@@ -247,7 +249,7 @@ export function hasFatalError(output: string, serverStarted: boolean): boolean {
   const fatalIndicators = [
     'SyntaxError',
     'ReferenceError',
-    'TypeError: ',  // Note: trailing space to avoid "TypeError" in stack traces that aren't the actual error
+    'TypeError: ', // Note: trailing space to avoid "TypeError" in stack traces that aren't the actual error
     'Cannot find module',
     'Cannot find package',
     'is not defined',
@@ -302,8 +304,10 @@ export function extractPort(output: string): number | null {
 
   for (const pattern of patterns) {
     const match = output.match(pattern);
+
     if (match) {
       const port = parseInt(match[1], 10);
+
       if (port > 0 && port < 65536) {
         return port;
       }
@@ -323,6 +327,7 @@ export function createBuildError(
   if (!errorDetails) {
     // Last-resort: try to create some error info from the raw output
     const firstError = output.match(/(?:\[ERROR\]|Error:|error:)\s*([^\n]{10,200})/);
+
     if (firstError) {
       return {
         file: '',
@@ -331,6 +336,7 @@ export function createBuildError(
         fullOutput: output,
       };
     }
+
     return undefined;
   }
 
@@ -347,7 +353,9 @@ export function createBuildError(
  * Returns null if no errors found
  */
 export function extractBuildErrorFromLog(logContent: string): BuildErrorInfo | null {
-  if (!logContent || logContent.length < 10) return null;
+  if (!logContent || logContent.length < 10) {
+    return null;
+  }
 
   // First check if the log indicates the server is actually running fine
   if (checkServerStarted(logContent) && !hasFatalError(logContent, true)) {
@@ -367,4 +375,3 @@ export function extractBuildErrorFromLog(logContent: string): BuildErrorInfo | n
 
   return null;
 }
-

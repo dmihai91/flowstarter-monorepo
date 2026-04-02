@@ -12,4 +12,3 @@ export type { MessageStyleConfig, MessageStyles, BubbleStyleConfig, BubbleStyles
 
 // Utils
 export { formatDateTime } from './utils/formatDateTime';
-

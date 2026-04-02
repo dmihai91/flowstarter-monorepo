@@ -186,4 +186,3 @@ export class PromptLibrary {
     return promptRegistryInstance.get(promptId, options);
   }
 }
-

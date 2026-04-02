@@ -32,7 +32,10 @@ type ChatMessage = {
 };
 
 function normalizeMessagesField(messages: unknown): ChatMessage[] {
-  if (Array.isArray(messages)) return messages as ChatMessage[];
+  if (Array.isArray(messages)) {
+    return messages as ChatMessage[];
+  }
+
   if (typeof messages === 'string') {
     try {
       const parsed = JSON.parse(messages);
@@ -41,6 +44,7 @@ function normalizeMessagesField(messages: unknown): ChatMessage[] {
       return [];
     }
   }
+
   return [];
 }
 
@@ -106,8 +110,10 @@ export const getMessages = query({
     const offset = args.offset ?? 0;
     const limit = args.limit ?? 50;
 
-    // For initial load optimization, we want the LAST N messages (most recent)
-    // Slice from the end of the array
+    /*
+     * For initial load optimization, we want the LAST N messages (most recent)
+     * Slice from the end of the array
+     */
     const startIdx = Math.max(0, allMessages.length - offset - limit);
     const endIdx = allMessages.length - offset;
 
@@ -121,6 +127,7 @@ export const getMessageCount = query({
   handler: async (ctx, args) => {
     const convo = await ctx.db.get(args.conversationId);
     const messages = normalizeMessagesField(convo?.messages);
+
     return messages.length;
   },
 });
@@ -141,6 +148,7 @@ export const create = mutation({
       .withIndex('by_session', (q) => q.eq('sessionId', args.sessionId))
       .filter((q) => q.eq(q.field('isActive'), true))
       .collect();
+
     for (const convo of existingActive) {
       await ctx.db.patch(convo._id, { isActive: false, updatedAt: now });
     }
@@ -157,8 +165,10 @@ export const create = mutation({
   },
 });
 
-// Create conversation with project link and initial state/messages
-// Used when user sends their first prompt - creates project + conversation atomically
+/*
+ * Create conversation with project link and initial state/messages
+ * Used when user sends their first prompt - creates project + conversation atomically
+ */
 export const createWithProject = mutation({
   args: {
     sessionId: v.string(),
@@ -199,6 +209,7 @@ export const createWithProject = mutation({
       .withIndex('by_session', (q) => q.eq('sessionId', args.sessionId))
       .filter((q) => q.eq(q.field('isActive'), true))
       .collect();
+
     for (const convo of existingActive) {
       await ctx.db.patch(convo._id, { isActive: false, updatedAt: now });
     }
@@ -232,13 +243,18 @@ export const setActive = mutation({
   args: { id: v.id('conversations') },
   handler: async (ctx, args) => {
     const convo = await ctx.db.get(args.id);
-    if (!convo) return null;
+
+    if (!convo) {
+      return null;
+    }
+
     const now = Date.now();
 
     const siblings = await ctx.db
       .query('conversations')
       .withIndex('by_session', (q) => q.eq('sessionId', convo.sessionId))
       .collect();
+
     for (const s of siblings) {
       await ctx.db.patch(s._id, { isActive: s._id === args.id, updatedAt: now });
     }
@@ -282,10 +298,12 @@ export const remove = mutation({
 
       // Get the project to find the workspace ID and supabase link
       const project = await ctx.db.get(projectId);
+
       if (project) {
         if (project.daytonaWorkspaceId) {
           daytonaWorkspaceIds.push(project.daytonaWorkspaceId);
         }
+
         supabaseProjectId = project.supabaseProjectId;
       }
 
@@ -352,7 +370,10 @@ export const addMessage = mutation({
   },
   handler: async (ctx, args) => {
     const convo = await ctx.db.get(args.conversationId);
-    if (!convo) return null;
+
+    if (!convo) {
+      return null;
+    }
 
     const messagesArr = normalizeMessagesField(convo.messages);
     const nextMessage: ChatMessage = {
@@ -403,9 +424,11 @@ export const migrateLegacyMessages = mutation({
   handler: async (ctx) => {
     const all = await ctx.db.query('conversations').collect();
     let migrated = 0;
+
     for (const c of all) {
       if (typeof c.messages === 'string') {
         let parsed: ChatMessage[] = [];
+
         try {
           const p = JSON.parse(c.messages);
           parsed = Array.isArray(p) ? (p as ChatMessage[]) : [];
@@ -414,6 +437,7 @@ export const migrateLegacyMessages = mutation({
         migrated++;
       }
     }
+
     return { migrated };
   },
 });
@@ -459,12 +483,14 @@ export const updateState = mutation({
     ),
     brandProfile: v.optional(brandProfileSchema),
     selectedIntegrations: v.optional(v.any()),
+
     // Integrations can be updated via updateState too
     integrations: v.optional(integrationsSchema),
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
     await ctx.db.patch(id, { ...updates, updatedAt: Date.now() });
+
     return id;
   },
 });
@@ -478,6 +504,7 @@ export const updateIntegrations = mutation({
   handler: async (ctx, args) => {
     const { id, integrations } = args;
     await ctx.db.patch(id, { integrations, updatedAt: Date.now() });
+
     return id;
   },
 });
@@ -491,7 +518,10 @@ export const updateBookingIntegration = mutation({
   handler: async (ctx, args) => {
     const { id, booking } = args;
     const convo = await ctx.db.get(id);
-    if (!convo) throw new Error('Conversation not found');
+
+    if (!convo) {
+      throw new Error('Conversation not found');
+    }
 
     const integrations = {
       ...convo.integrations,
@@ -499,6 +529,7 @@ export const updateBookingIntegration = mutation({
     };
 
     await ctx.db.patch(id, { integrations, updatedAt: Date.now() });
+
     return id;
   },
 });
@@ -512,7 +543,10 @@ export const updateNewsletterIntegration = mutation({
   handler: async (ctx, args) => {
     const { id, newsletter } = args;
     const convo = await ctx.db.get(id);
-    if (!convo) throw new Error('Conversation not found');
+
+    if (!convo) {
+      throw new Error('Conversation not found');
+    }
 
     const integrations = {
       ...convo.integrations,
@@ -520,6 +554,7 @@ export const updateNewsletterIntegration = mutation({
     };
 
     await ctx.db.patch(id, { integrations, updatedAt: Date.now() });
+
     return id;
   },
 });

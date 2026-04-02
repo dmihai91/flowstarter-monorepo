@@ -43,22 +43,27 @@ import type { PreviewInfo, InitialChatState, OnboardingStep } from '../types';
 // Re-export PreviewSource from useAdditionalState
 export type { PreviewSource } from './useAdditionalState';
 
-// ═══════════════════════════════════════════════════════════════════════════
-// Hook Props
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * Hook Props
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 interface UseEditorChatStateProps {
   onProjectReady?: (urlId: string) => void;
   onPreviewChange?: (preview: PreviewInfo | null) => void;
   initialState?: InitialChatState;
   onStateChange?: (state: Partial<InitialChatState>) => void;
+
   /** External project ID from parent component (e.g., from conversation context) */
   externalProjectId?: string | null;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// Main Hook
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * Main Hook
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 export function useEditorChatState({
   onProjectReady,
@@ -67,16 +72,20 @@ export function useEditorChatState({
   onStateChange,
   externalProjectId,
 }: UseEditorChatStateProps) {
-  // ═══════════════════════════════════════════════════════════════════════
-  // Sync Callbacks (stable refs for state syncing)
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * Sync Callbacks (stable refs for state syncing)
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   const { handleStepChange, handleTemplateSelectSync, handlePaletteSelectSync, handleBusinessInfoConfirmSync } =
     useSyncCallbacks({ onStateChange });
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // Core Hooks
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * Core Hooks
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   const messageHook = useOnboardingMessages();
 
@@ -102,9 +111,11 @@ export function useEditorChatState({
 
   useStatePersistence({ initialState, onStateChange });
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // Additional State (font, logo, build progress, etc.)
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * Additional State (font, logo, build progress, etc.)
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   const additionalState = useAdditionalState({
     initialState,
@@ -112,16 +123,20 @@ export function useEditorChatState({
     projectDescription: flowHook.projectDescription,
   });
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // External Hooks
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * External Hooks
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   const { isCloning } = useTemplateClone();
   const { createSnapshot } = useSnapshotBlob();
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // Agent & Orchestrator Setup
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * Agent & Orchestrator Setup
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   const { agentState, cancelAgent } = useAgentSetup({ messageHook });
 
@@ -140,9 +155,11 @@ export function useEditorChatState({
   const orchestratorRunning = false;
   const stopOrchestration = useCallback(() => {}, []);
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // State Restoration & Welcome Init
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * State Restoration & Welcome Init
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   const { hasRestoredState } = useStateRestoration({
     initialState,
@@ -178,9 +195,11 @@ export function useEditorChatState({
     onTemplateBuildStart: handleTemplateBuildStart,
   });
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // Effects
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * Effects
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   useChatEffects({
     messageHook,
@@ -205,9 +224,11 @@ export function useEditorChatState({
     createSnapshot,
   });
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // Build Handlers
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * Build Handlers
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   const buildHandlers = useSimpleBuildHandlers({
     messageHook,
@@ -262,9 +283,11 @@ export function useEditorChatState({
     templateHook.selectedTemplate,
   ]);
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // Flow Handlers
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * Flow Handlers
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   const handleTemplateSelect = useCallback(
     async (template: import('~/components/onboarding').Template) => {
@@ -333,9 +356,11 @@ export function useEditorChatState({
 
   const noopAsync = useCallback(async () => {}, []);
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // Computed: Business Context (for display in UI)
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * Computed: Business Context (for display in UI)
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   /**
    * Business context computed from initial state and business info.
@@ -343,11 +368,13 @@ export function useEditorChatState({
    */
   const businessContext = useMemo(() => {
     const info = businessHook.businessInfo;
+
     if (!info && !initialState?.businessInfo && !initialState?.projectDescription) {
       return null;
     }
 
     const source = info || initialState?.businessInfo;
+
     return {
       businessName: flowHook.projectName || source?.businessType || initialState?.projectName || undefined,
       description: source?.description || initialState?.projectDescription || undefined,
@@ -362,9 +389,11 @@ export function useEditorChatState({
     return Boolean(businessContext?.description && businessContext.description.length > 10);
   }, [businessContext]);
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // Return Public API
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * Return Public API
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   return {
     // State

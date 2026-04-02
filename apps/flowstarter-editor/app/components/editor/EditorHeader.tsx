@@ -110,9 +110,7 @@ export function EditorHeader({
 
         <div className="flex items-center gap-2">
           {firstName && (
-            <span className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-zinc-300">
-              {firstName}
-            </span>
+            <span className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-zinc-300">{firstName}</span>
           )}
           <UserButton
             appearance={{

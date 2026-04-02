@@ -1,9 +1,4 @@
-import type {
-  AssemblySpec,
-  ContentMap,
-  ProjectBrief,
-  TemplateSelection,
-} from '@flowstarter/editor-engine';
+import type { AssemblySpec, ContentMap, ProjectBrief, TemplateSelection } from '@flowstarter/editor-engine';
 
 // Mirrors AgentActivityEvent from claudeAgentSDK.server.ts (inlined to avoid circular imports)
 export type AgentActivityEvent =
@@ -55,6 +50,7 @@ export interface SiteGenerationInput {
   onAgentEvent?: (event: AgentActivityEvent) => void;
   projectId: string;
   siteName: string;
+
   /** Optional: used as fallback for businessInfo.name */
   projectName?: string;
   businessInfo: {
@@ -62,6 +58,7 @@ export interface SiteGenerationInput {
     tagline?: string;
     description?: string;
     services?: string[];
+
     /** Logo image URL or data URI, if uploaded */
     logo?: string;
     contact?: {
@@ -86,7 +83,7 @@ export interface SiteGenerationInput {
   templateSelection?: TemplateSelection;
   assemblySpec?: AssemblySpec;
   contentMap?: ContentMap;
-  
+
   /**
    * AI-generated assets from fal.ai
    * These will be used in the template instead of placeholders
@@ -115,8 +112,10 @@ export interface SiteGenerationResult {
   success: boolean;
   files?: GeneratedFile[];
   error?: string;
+
   /** Cost breakdown from the generation pipeline */
   cost?: PipelineCost;
+
   /** Assets that were generated for this site */
   generatedAssets?: GeneratedAsset[];
 }

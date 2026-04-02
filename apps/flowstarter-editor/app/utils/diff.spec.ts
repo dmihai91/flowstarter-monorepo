@@ -18,4 +18,3 @@ describe('Diff', () => {
     expect(result).toBe('index.js');
   });
 });
-

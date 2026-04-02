@@ -19,6 +19,7 @@ const handoffInitialize = httpAction(async (ctx, request) => {
 
   const expectedSecret = process.env.HANDOFF_SECRET;
   const incomingSecret = request.headers.get('x-handoff-secret');
+
   if (!expectedSecret || incomingSecret !== expectedSecret) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
@@ -62,6 +63,7 @@ const handoffInitialize = httpAction(async (ctx, request) => {
     selectedIntegrations?: Record<string, unknown>;
     syncVersion?: number;
   };
+
   try {
     body = await request.json();
   } catch {
@@ -86,11 +88,13 @@ const handoffInitialize = httpAction(async (ctx, request) => {
     selectedIntegrations,
     syncVersion,
   } = body;
-  if (!supabaseProjectId)
+
+  if (!supabaseProjectId) {
     return new Response(JSON.stringify({ error: 'Missing supabaseProjectId' }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
     });
+  }
 
   try {
     const upserted = (await ctx.runMutation(api.projects.upsertFromMain, {
@@ -100,9 +104,7 @@ const handoffInitialize = httpAction(async (ctx, request) => {
       businessInfo,
       brandProfile: brandProfile as never,
       contactInfo,
-      selectedTemplate: selectedTemplateId
-        ? { id: selectedTemplateId, name: selectedTemplateName }
-        : undefined,
+      selectedTemplate: selectedTemplateId ? { id: selectedTemplateId, name: selectedTemplateName } : undefined,
       selectedPalette: selectedPalette as never,
       selectedFont: selectedFont as never,
       selectedIntegrations,
@@ -117,6 +119,7 @@ const handoffInitialize = httpAction(async (ctx, request) => {
     const existingConvos = (await ctx.runQuery(api.conversations.getByProject, {
       projectId: convexProjectId as never,
     })) as Array<{ _id: string }> | null;
+
     if (existingConvos && existingConvos.length > 0) {
       return new Response(JSON.stringify({ conversationId: existingConvos[0]._id }), {
         headers: { 'Content-Type': 'application/json' },
@@ -216,6 +219,7 @@ const filesSaveBatch = httpAction(async (ctx, request) => {
 
   const expectedSecret = process.env.HANDOFF_SECRET;
   const incomingSecret = request.headers.get('x-handoff-secret');
+
   if (!expectedSecret || incomingSecret !== expectedSecret) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
@@ -224,6 +228,7 @@ const filesSaveBatch = httpAction(async (ctx, request) => {
   }
 
   let body: { supabaseProjectId: string; files: Array<{ path: string; content: string }> };
+
   try {
     body = await request.json();
   } catch {
@@ -234,6 +239,7 @@ const filesSaveBatch = httpAction(async (ctx, request) => {
   }
 
   const { supabaseProjectId, files } = body;
+
   if (!supabaseProjectId || !files?.length) {
     return new Response(JSON.stringify({ error: 'Missing supabaseProjectId or files' }), {
       status: 400,
@@ -244,6 +250,7 @@ const filesSaveBatch = httpAction(async (ctx, request) => {
   try {
     // Find or create the Convex project
     let project = (await ctx.runQuery(api.projects.getBySupabaseId, { supabaseProjectId })) as { _id: string } | null;
+
     if (!project) {
       // Create a minimal project
       const created = (await ctx.runMutation(api.projects.createEmpty, {
@@ -290,6 +297,7 @@ const filesList = httpAction(async (ctx, request) => {
 
   const expectedSecret = process.env.HANDOFF_SECRET;
   const incomingSecret = request.headers.get('x-handoff-secret');
+
   if (!expectedSecret || incomingSecret !== expectedSecret) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
@@ -299,6 +307,7 @@ const filesList = httpAction(async (ctx, request) => {
 
   const url = new URL(request.url);
   const supabaseProjectId = url.searchParams.get('supabaseProjectId');
+
   if (!supabaseProjectId) {
     return new Response(JSON.stringify({ error: 'Missing supabaseProjectId' }), {
       status: 400,
@@ -364,6 +373,7 @@ const costsLog = httpAction(async (ctx, request) => {
 
   const expectedSecret = process.env.HANDOFF_SECRET;
   const incomingSecret = request.headers.get('x-handoff-secret');
+
   if (!expectedSecret || incomingSecret !== expectedSecret) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
@@ -380,6 +390,7 @@ const costsLog = httpAction(async (ctx, request) => {
     costUSD: number;
     durationMs?: number;
   };
+
   try {
     body = await request.json();
   } catch {
@@ -390,6 +401,7 @@ const costsLog = httpAction(async (ctx, request) => {
   }
 
   const { supabaseProjectId, operation, model, promptTokens, completionTokens, costUSD, durationMs } = body;
+
   if (!supabaseProjectId || !model) {
     return new Response(JSON.stringify({ error: 'Missing required fields' }), {
       status: 400,
@@ -399,7 +411,9 @@ const costsLog = httpAction(async (ctx, request) => {
 
   try {
     // Find the Convex project by Supabase ID
-    const project = (await ctx.runQuery(api.projects.getBySupabaseId, { supabaseProjectId })) as { _id: Id<'projects'> } | null;
+    const project = (await ctx.runQuery(api.projects.getBySupabaseId, { supabaseProjectId })) as {
+      _id: Id<'projects'>;
+    } | null;
 
     // Log cost to Convex
     const costId = await ctx.runMutation(api.costs.logCost, {
@@ -416,6 +430,7 @@ const costsLog = httpAction(async (ctx, request) => {
     // Get updated totals for this project
     let totalCostUSD = costUSD;
     let totalCredits = Math.ceil(costUSD / 0.01);
+
     if (project) {
       const projectCosts = await ctx.runQuery(api.costs.getProjectCosts, { projectId: project._id as any });
       totalCostUSD = projectCosts.summary.totalCostUSD;
@@ -458,6 +473,7 @@ const costsTotals = httpAction(async (ctx, request) => {
 
   const expectedSecret = process.env.HANDOFF_SECRET;
   const incomingSecret = request.headers.get('x-handoff-secret');
+
   if (!expectedSecret || incomingSecret !== expectedSecret) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
@@ -467,6 +483,7 @@ const costsTotals = httpAction(async (ctx, request) => {
 
   const url = new URL(request.url);
   const supabaseProjectId = url.searchParams.get('supabaseProjectId');
+
   if (!supabaseProjectId) {
     return new Response(JSON.stringify({ error: 'Missing supabaseProjectId' }), {
       status: 400,
@@ -476,6 +493,7 @@ const costsTotals = httpAction(async (ctx, request) => {
 
   try {
     const project = (await ctx.runQuery(api.projects.getBySupabaseId, { supabaseProjectId })) as { _id: string } | null;
+
     if (!project) {
       return new Response(JSON.stringify({ totalCostUSD: 0, totalCredits: 0, operations: 0 }), {
         headers: { 'Content-Type': 'application/json' },
@@ -483,6 +501,7 @@ const costsTotals = httpAction(async (ctx, request) => {
     }
 
     const projectCosts = await ctx.runQuery(api.costs.getProjectCosts, { projectId: project._id as any });
+
     return new Response(
       JSON.stringify({
         totalCostUSD: projectCosts.summary.totalCostUSD,

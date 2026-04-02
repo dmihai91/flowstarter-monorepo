@@ -1,6 +1,6 @@
 /**
  * Fal.ai Image Generation Service
- * 
+ *
  * Uses Nano Banana Pro (Gemini 3 Pro Image) for high-quality image generation
  */
 
@@ -35,10 +35,10 @@ export async function generateImage(
     aspectRatio?: FalImageRequest['aspect_ratio'];
     resolution?: FalImageRequest['resolution'];
     count?: number;
-  } = {}
+  } = {},
 ): Promise<string[]> {
   const apiKey = process.env.FAL_KEY;
-  
+
   if (!apiKey) {
     console.warn('[FalImageService] FAL_KEY not configured, skipping image generation');
     return [];
@@ -54,11 +54,11 @@ export async function generateImage(
 
   try {
     console.log(`[FalImageService] Generating image: "${prompt.slice(0, 50)}..."`);
-    
+
     const response = await fetch(FAL_API_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Key ${apiKey}`,
+        Authorization: `Key ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(request),
@@ -67,13 +67,15 @@ export async function generateImage(
     if (!response.ok) {
       const error = await response.text();
       console.error('[FalImageService] API error:', response.status, error);
+
       return [];
     }
 
-    const data = await response.json() as FalImageResponse;
-    const urls = data.images.map(img => img.url);
-    
+    const data = (await response.json()) as FalImageResponse;
+    const urls = data.images.map((img) => img.url);
+
     console.log(`[FalImageService] Generated ${urls.length} image(s)`);
+
     return urls;
   } catch (error) {
     console.error('[FalImageService] Failed to generate image:', error);
@@ -84,14 +86,12 @@ export async function generateImage(
 /**
  * Generate all images needed for a website
  */
-export async function generateWebsiteImages(
-  businessInfo: {
-    name: string;
-    industry: string;
-    description: string;
-    tone: string;
-  }
-): Promise<{
+export async function generateWebsiteImages(businessInfo: {
+  name: string;
+  industry: string;
+  description: string;
+  tone: string;
+}): Promise<{
   hero?: string;
   about?: string;
   services: string[];
@@ -105,6 +105,7 @@ export async function generateWebsiteImages(
   // Generate hero image - wide cinematic
   const heroPrompt = `Professional ${businessInfo.industry} business, ${businessInfo.tone} atmosphere, modern high-end commercial photography, dramatic lighting, premium brand aesthetic, no text or logos, photorealistic`;
   const heroImages = await generateImage(heroPrompt, { aspectRatio: '16:9', resolution: '2K' });
+
   if (heroImages.length > 0) {
     results.hero = heroImages[0];
   }
@@ -112,6 +113,7 @@ export async function generateWebsiteImages(
   // Generate about section image
   const aboutPrompt = `Professional team working in ${businessInfo.industry}, candid authentic moment, modern workspace, natural lighting, warm welcoming atmosphere, commercial photography style`;
   const aboutImages = await generateImage(aboutPrompt, { aspectRatio: '4:3', resolution: '1K' });
+
   if (aboutImages.length > 0) {
     results.about = aboutImages[0];
   }
@@ -122,9 +124,10 @@ export async function generateWebsiteImages(
     `Detail shot of ${businessInfo.industry} equipment or tools, clean modern aesthetic, soft lighting`,
     `Happy satisfied customer after ${businessInfo.industry} service, authentic emotion, lifestyle photography`,
   ];
-  
+
   for (const prompt of servicePrompts) {
     const images = await generateImage(prompt, { aspectRatio: '1:1', resolution: '1K' });
+
     if (images.length > 0) {
       results.services.push(images[0]);
     }
@@ -142,10 +145,10 @@ export async function generateContextualImage(
     industry: string;
     tone?: string;
     customPrompt?: string;
-  }
+  },
 ): Promise<string | null> {
   const tone = context.tone || 'professional';
-  
+
   const prompts: Record<string, string> = {
     hero: `Stunning ${context.industry} hero image, ${tone} mood, cinematic wide shot, premium commercial photography, dramatic lighting, no text`,
     about: `${context.industry} team or workspace, authentic candid moment, ${tone} atmosphere, natural lighting, editorial style`,
@@ -163,11 +166,11 @@ export async function generateContextualImage(
   };
 
   const prompt = context.customPrompt || prompts[type];
-  const images = await generateImage(prompt, { 
+  const images = await generateImage(prompt, {
     aspectRatio: aspectRatios[type],
-    resolution: type === 'hero' ? '2K' : '1K'
+    resolution: type === 'hero' ? '2K' : '1K',
   });
-  
+
   return images.length > 0 ? images[0] : null;
 }
 
@@ -176,7 +179,7 @@ export async function generateContextualImage(
  */
 export async function checkFalStatus(): Promise<{ available: boolean; error?: string }> {
   const apiKey = process.env.FAL_KEY;
-  
+
   if (!apiKey) {
     return { available: false, error: 'FAL_KEY not configured' };
   }
@@ -186,7 +189,7 @@ export async function checkFalStatus(): Promise<{ available: boolean; error?: st
     const response = await fetch(FAL_API_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Key ${apiKey}`,
+        Authorization: `Key ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -198,9 +201,11 @@ export async function checkFalStatus(): Promise<{ available: boolean; error?: st
 
     if (!response.ok) {
       const error = await response.text();
+
       if (error.includes('balance') || error.includes('locked')) {
         return { available: false, error: 'Account needs credits - visit fal.ai/dashboard/billing' };
       }
+
       return { available: false, error };
     }
 
@@ -209,4 +214,3 @@ export async function checkFalStatus(): Promise<{ available: boolean; error?: st
     return { available: false, error: String(error) };
   }
 }
-

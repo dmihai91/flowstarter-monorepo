@@ -23,11 +23,7 @@ interface UsePersonalizationFlowProps {
   selectedFont: SystemFont | null;
   setSelectedFont: (font: SystemFont | null) => void;
   setSelectedLogo: (logo: LogoInfo | null) => void;
-  handlePersonalizationComplete: (
-    font: SystemFont,
-    logo: LogoInfo,
-    useAiImages?: boolean,
-  ) => Promise<void>;
+  handlePersonalizationComplete: (font: SystemFont, logo: LogoInfo, useAiImages?: boolean) => Promise<void>;
   onStateChange?: (state: Partial<InitialChatState>) => void;
 }
 
@@ -92,6 +88,7 @@ export function usePersonalizationFlow({
        * Use ref to get latest font value (avoids stale closure issue)
        */
       const currentFont = selectedFontRef.current;
+
       if (currentFont) {
         handlePersonalizationComplete(currentFont, logo, useAiImages);
       } else {

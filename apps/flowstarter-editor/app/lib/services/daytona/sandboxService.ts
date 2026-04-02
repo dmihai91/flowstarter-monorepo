@@ -163,4 +163,3 @@ export async function ensureSandboxRunning(_client: Daytona, sandbox: Sandbox): 
     return false;
   }
 }
-

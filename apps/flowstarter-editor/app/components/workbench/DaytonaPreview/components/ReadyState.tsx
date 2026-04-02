@@ -299,12 +299,7 @@ export const ReadyState = memo(({ previewUrl, displayUrl, isDark, colors, onRefr
       style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', background: colors.bgTertiary }}
     >
       {/* Address bar */}
-      <AddressBar
-        shownUrl={shownUrl}
-        colors={colors}
-        onRefresh={handleRefresh}
-        onOpenInNewTab={handleOpenInNewTab}
-      />
+      <AddressBar shownUrl={shownUrl} colors={colors} onRefresh={handleRefresh} onOpenInNewTab={handleOpenInNewTab} />
 
       {/* Preview iframe or fallback */}
       <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>

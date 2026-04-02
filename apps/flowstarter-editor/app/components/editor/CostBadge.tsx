@@ -21,9 +21,7 @@ export function CostBadge({ projectId }: CostBadgeProps) {
     return null;
   }
 
-  const formatted = data.summary.totalCostUSD < 0.01
-    ? '<$0.01'
-    : `$${data.summary.totalCostUSD.toFixed(2)}`;
+  const formatted = data.summary.totalCostUSD < 0.01 ? '<$0.01' : `$${data.summary.totalCostUSD.toFixed(2)}`;
 
   return (
     <div

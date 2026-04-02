@@ -14,16 +14,17 @@ async function getFalClient() {
       console.warn('Failed to load @fal-ai/client:', e);
     }
   }
+
   return falClient;
 }
 
 /**
  * Assets Agent API
- * 
+ *
  * Analyzes business descriptions and generates appropriate images using fal.ai
- * 
+ *
  * POST /api/assets-agent
- * 
+ *
  * Actions:
  * - analyze: Analyze business and return suggested assets
  * - generate: Generate a single asset image
@@ -82,7 +83,7 @@ async function analyzeBusinessAssets(
   businessDescription: string,
   businessName: string,
   industry?: string,
-  targetAudience?: string
+  targetAudience?: string,
 ): Promise<AssetSuggestion[]> {
   const systemPrompt = `You are an expert at analyzing businesses and suggesting appropriate imagery for their websites.
 Given a business description, suggest relevant images that would make their website look professional and appealing.
@@ -112,16 +113,19 @@ Suggest 3-5 images for this business's website. Include at least:
 2. 1-2 images related to their products/services
 3. Optional: team/about image if relevant`;
 
-  const response = await generateCompletion(
-    [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }],
-  );
+  const response = await generateCompletion([
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: userPrompt },
+  ]);
 
   try {
     // Extract JSON from response
     const jsonMatch = response.match(/\[[\s\S]*\]/);
+
     if (jsonMatch) {
       return JSON.parse(jsonMatch[0]);
     }
+
     return [];
   } catch (e) {
     console.error('Failed to parse asset suggestions:', e);
@@ -135,7 +139,7 @@ async function generateImage(
   type: string,
   width?: number,
   height?: number,
-  model?: string
+  model?: string,
 ): Promise<{ url: string; seed?: number }> {
   if (!process.env.FAL_KEY) {
     throw new Error('FAL_KEY environment variable is not set');
@@ -153,6 +157,7 @@ async function generateImage(
 
   try {
     const fal = await getFalClient();
+
     if (!fal) {
       throw new Error('fal.ai client not available');
     }
@@ -170,7 +175,7 @@ async function generateImage(
     });
 
     const data = result.data as { images?: Array<{ url: string }>; seed?: number };
-    
+
     if (!data.images?.[0]?.url) {
       throw new Error('No image returned from fal.ai');
     }
@@ -199,35 +204,36 @@ export async function action({ request }: ActionFunctionArgs) {
           body.businessDescription,
           body.businessName,
           body.industry,
-          body.targetAudience
+          body.targetAudience,
         );
         return json({ success: true, suggestions });
       }
 
       case 'generate': {
         if (!process.env.FAL_KEY) {
-          return json({
-            success: false,
-            error: 'Image generation requires FAL_KEY to be configured',
-          }, { status: 400 });
+          return json(
+            {
+              success: false,
+              error: 'Image generation requires FAL_KEY to be configured',
+            },
+            { status: 400 },
+          );
         }
 
-        const result = await generateImage(
-          body.prompt,
-          body.type,
-          body.width,
-          body.height,
-          body.model
-        );
+        const result = await generateImage(body.prompt, body.type, body.width, body.height, body.model);
+
         return json({ success: true, ...result });
       }
 
       case 'generate-batch': {
         if (!process.env.FAL_KEY) {
-          return json({
-            success: false,
-            error: 'Image generation requires FAL_KEY to be configured',
-          }, { status: 400 });
+          return json(
+            {
+              success: false,
+              error: 'Image generation requires FAL_KEY to be configured',
+            },
+            { status: 400 },
+          );
         }
 
         const results = await Promise.all(
@@ -249,10 +255,11 @@ export async function action({ request }: ActionFunctionArgs) {
                 error: error instanceof Error ? error.message : 'Unknown error',
               };
             }
-          })
+          }),
         );
 
-        const successCount = results.filter(r => r.success).length;
+        const successCount = results.filter((r) => r.success).length;
+
         return json({
           success: successCount > 0,
           total: body.assets.length,
@@ -266,10 +273,12 @@ export async function action({ request }: ActionFunctionArgs) {
     }
   } catch (error) {
     console.error('Assets agent error:', error);
-    return json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
-    }, { status: 500 });
+    return json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 },
+    );
   }
 }
-

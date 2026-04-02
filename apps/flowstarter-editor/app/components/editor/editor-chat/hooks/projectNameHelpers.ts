@@ -13,12 +13,50 @@
 // ─── Banned Words ────────────────────────────────────────────────────────────
 
 const BANNED_WORDS_ARRAY = [
-  'Thrive', 'Flourish', 'Vitality', 'Nourish', 'Elevate', 'Empower', 'Transform',
-  'Inspire', 'Aspire', 'Radiant', 'Vibrant', 'Wellness', 'Journey', 'Path',
-  'Peak', 'Summit', 'Rise', 'Glow', 'Bloom', 'Spark', 'Ignite', 'Unleash',
-  'Sterling', 'Prime', 'Edge', 'Apex', 'Pinnacle', 'Premier', 'Elite', 'Optimal',
-  'Strategic', 'Dynamic', 'Synergy', 'Leverage', 'Impact', 'Momentum', 'Catalyst',
-  'Arrow', 'Compass', 'Beacon', 'Bridge', 'Gateway', 'Pathway', 'Launchpad',
+  'Thrive',
+  'Flourish',
+  'Vitality',
+  'Nourish',
+  'Elevate',
+  'Empower',
+  'Transform',
+  'Inspire',
+  'Aspire',
+  'Radiant',
+  'Vibrant',
+  'Wellness',
+  'Journey',
+  'Path',
+  'Peak',
+  'Summit',
+  'Rise',
+  'Glow',
+  'Bloom',
+  'Spark',
+  'Ignite',
+  'Unleash',
+  'Sterling',
+  'Prime',
+  'Edge',
+  'Apex',
+  'Pinnacle',
+  'Premier',
+  'Elite',
+  'Optimal',
+  'Strategic',
+  'Dynamic',
+  'Synergy',
+  'Leverage',
+  'Impact',
+  'Momentum',
+  'Catalyst',
+  'Arrow',
+  'Compass',
+  'Beacon',
+  'Bridge',
+  'Gateway',
+  'Pathway',
+  'Launchpad',
 ];
 
 /**
@@ -26,7 +64,7 @@ const BANNED_WORDS_ARRAY = [
  */
 export function containsBannedWord(name: string): boolean {
   const lowerName = name.toLowerCase();
-  return BANNED_WORDS_ARRAY.some(word => lowerName.includes(word.toLowerCase()));
+  return BANNED_WORDS_ARRAY.some((word) => lowerName.includes(word.toLowerCase()));
 }
 
 /**
@@ -34,15 +72,23 @@ export function containsBannedWord(name: string): boolean {
  */
 export function getBannedWord(name: string): string | null {
   const lowerName = name.toLowerCase();
-  return BANNED_WORDS_ARRAY.find(word => lowerName.includes(word.toLowerCase())) || null;
+  return BANNED_WORDS_ARRAY.find((word) => lowerName.includes(word.toLowerCase())) || null;
 }
 
 // ─── Confirmation Detection ──────────────────────────────────────────────────
 
 const CONFIRMATION_WORDS = ['yes', 'yeah', 'yep', 'sure', 'ok', 'okay', 'perfect', 'great', 'good'];
 const CONFIRMATION_PHRASES = [
-  'that works', 'sounds good', 'sounds great', 'i like it', 'love it', 'that one',
-  "let's go with that", "use it", "use this", "use that",
+  'that works',
+  'sounds good',
+  'sounds great',
+  'i like it',
+  'love it',
+  'that one',
+  "let's go with that",
+  'use it',
+  'use this',
+  'use that',
 ];
 
 /**
@@ -51,8 +97,10 @@ const CONFIRMATION_PHRASES = [
 export function isConfirmation(input: string): boolean {
   const lower = input.trim().toLowerCase();
   return (
-    CONFIRMATION_WORDS.some(word => lower === word || lower.startsWith(word + ' ') || lower.startsWith(word + ',') || lower.startsWith(word + '!')) ||
-    CONFIRMATION_PHRASES.some(phrase => lower.includes(phrase))
+    CONFIRMATION_WORDS.some(
+      (word) =>
+        lower === word || lower.startsWith(word + ' ') || lower.startsWith(word + ',') || lower.startsWith(word + '!'),
+    ) || CONFIRMATION_PHRASES.some((phrase) => lower.includes(phrase))
   );
 }
 
@@ -66,7 +114,7 @@ const EXTRACTION_PATTERNS: RegExp[] = [
   /^i'?(?:ll|'d\s+like\s+to)?\s+(?:call|name)\s+it\s+["']?(.+?)["']?\s*$/i,
   /^(?:the\s+)?name\s+(?:is|should\s+be|will\s+be)\s+["']?(.+?)["']?\s*$/i,
   /^use\s+["']?(.+?)["']?\s*$/i,
-  /^["'](.+?)["']\s*$/,  // Just quoted text
+  /^["'](.+?)["']\s*$/, // Just quoted text
 ];
 
 /**
@@ -78,6 +126,7 @@ export function extractNameFromPatterns(input: string): string | null {
 
   for (const pattern of EXTRACTION_PATTERNS) {
     const match = trimmed.match(pattern);
+
     if (match && match[1]) {
       return match[1].trim();
     }
@@ -89,9 +138,20 @@ export function extractNameFromPatterns(input: string): string | null {
 // ─── Refinement Detection ────────────────────────────────────────────────────
 
 const REFINEMENT_KEYWORDS = [
-  'make it', 'more', 'different', 'try another', 'suggest',
-  'shorter', 'punchy', 'professional', 'creative', 'unique',
-  'impactful', 'warmer', 'friendlier', 'bolder',
+  'make it',
+  'more',
+  'different',
+  'try another',
+  'suggest',
+  'shorter',
+  'punchy',
+  'professional',
+  'creative',
+  'unique',
+  'impactful',
+  'warmer',
+  'friendlier',
+  'bolder',
 ];
 
 /**
@@ -99,7 +159,7 @@ const REFINEMENT_KEYWORDS = [
  */
 export function isRefinementRequest(input: string): boolean {
   const lower = input.trim().toLowerCase();
-  return REFINEMENT_KEYWORDS.some(kw => lower.includes(kw));
+  return REFINEMENT_KEYWORDS.some((kw) => lower.includes(kw));
 }
 
 // ─── Description Context ─────────────────────────────────────────────────────
@@ -146,7 +206,10 @@ export function resolveDescriptionContext(
  * Add a name to the suggestion history, avoiding duplicates.
  */
 export function addToHistory(history: string[], name: string): string[] {
-  if (history.includes(name)) return history;
+  if (history.includes(name)) {
+    return history;
+  }
+
   return [...history, name];
 }
 
@@ -164,7 +227,8 @@ export function wasAlreadySuggested(history: string[], name: string): boolean {
  * Removes excess whitespace, quotes, and truncates if too long.
  */
 export function sanitizeName(input: string): string {
-  let name = input.trim()
+  let name = input
+    .trim()
     .replace(/^[\"']|[\"']$/g, '')
     .replace(/\s+/g, ' ')
     .trim();
@@ -175,4 +239,3 @@ export function sanitizeName(input: string): string {
 
   return name;
 }
-

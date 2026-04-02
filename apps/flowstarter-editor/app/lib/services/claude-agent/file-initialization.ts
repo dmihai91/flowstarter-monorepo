@@ -60,12 +60,16 @@ export function initializeFilesMap(
   }
 
   // Handle tailwind config
-  const existingConfigPath = ['tailwind.config.mjs', 'tailwind.config.js', 'tailwind.config.cjs', 'tailwind.config.ts'].find(
-    (p) => filesMap.has(p),
-  );
+  const existingConfigPath = [
+    'tailwind.config.mjs',
+    'tailwind.config.js',
+    'tailwind.config.cjs',
+    'tailwind.config.ts',
+  ].find((p) => filesMap.has(p));
 
   if (existingConfigPath) {
     console.log(`[FlowstarterAgent] Found existing tailwind config: ${existingConfigPath}`);
+
     const configContent = filesMap.get(existingConfigPath) || '';
     filesMap.set(existingConfigPath, patchTailwindContentPaths(configContent));
   } else {
@@ -79,6 +83,7 @@ export function initializeFilesMap(
 
   // Generate new data-driven content files
   const contentFiles = generateContentFiles(input);
+
   for (const [filePath, fileContent] of Object.entries(contentFiles)) {
     if (!filesMap.has(filePath)) {
       console.log('[FlowstarterAgent] Generating', filePath);
@@ -89,7 +94,10 @@ export function initializeFilesMap(
   // Legacy content.md for backwards compatibility
   if (!filesMap.has('content.md')) {
     console.log('[FlowstarterAgent] content.md missing, generating default...');
-    filesMap.set('content.md', `# ${input.siteName}\n\n${input.businessInfo?.description || 'Welcome to our website.'}\n`);
+    filesMap.set(
+      'content.md',
+      `# ${input.siteName}\n\n${input.businessInfo?.description || 'Welcome to our website.'}\n`,
+    );
   }
 
   addDefaultStyles(filesMap, input);
@@ -176,18 +184,25 @@ function addMissingComponents(filesMap: Map<string, string>): void {
 export function fixLogoPlaceholders(files: Array<{ path: string; content: string }>, businessName: string): void {
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
-    if (!file.path.endsWith('.astro')) continue;
+
+    if (!file.path.endsWith('.astro')) {
+      continue;
+    }
 
     let content = file.content;
     let modified = false;
 
-    const logoImgPattern = /<img\s+[^>]*(?:class\s*=\s*["'][^"']*logo[^"']*["']|alt\s*=\s*["'][^"']*(?:logo|brand)[^"']*["']|src\s*=\s*["'][^"']*(?:logo|brand)[^"']*["'])[^>]*\/?>/gi;
+    const logoImgPattern =
+      /<img\s+[^>]*(?:class\s*=\s*["'][^"']*logo[^"']*["']|alt\s*=\s*["'][^"']*(?:logo|brand)[^"']*["']|src\s*=\s*["'][^"']*(?:logo|brand)[^"']*["'])[^>]*\/?>/gi;
+
     if (logoImgPattern.test(content)) {
       content = content.replace(logoImgPattern, `<span class="text-xl font-bold">${businessName}</span>`);
       modified = true;
     }
 
-    const placeholderDivPattern = /<div\s+class="[^"]*(?:w-[68]|w-1[02])\s[^"]*(?:h-[68]|h-1[02])[^"]*(?:bg-|rounded)[^"]*"[^>]*>\s*<\/div>/gi;
+    const placeholderDivPattern =
+      /<div\s+class="[^"]*(?:w-[68]|w-1[02])\s[^"]*(?:h-[68]|h-1[02])[^"]*(?:bg-|rounded)[^"]*"[^>]*>\s*<\/div>/gi;
+
     if (placeholderDivPattern.test(content)) {
       content = content.replace(placeholderDivPattern, `<span class="text-xl font-bold">${businessName}</span>`);
       modified = true;

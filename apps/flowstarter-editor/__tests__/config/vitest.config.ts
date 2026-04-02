@@ -36,13 +36,16 @@ export default defineConfig({
         },
       },
     },
-    // Browser mode disabled for now - use jsdom environment for unit tests
-    // browser: {
-    //   enabled: true,
-    //   headless: true,
-    //   provider: 'playwright',
-    //   name: 'chromium',
-    // },
+
+    /*
+     * Browser mode disabled for now - use jsdom environment for unit tests
+     * browser: {
+     *   enabled: true,
+     *   headless: true,
+     *   provider: 'playwright',
+     *   name: 'chromium',
+     * },
+     */
   },
   resolve: {
     alias: {
@@ -50,4 +53,3 @@ export default defineConfig({
     },
   },
 });
-

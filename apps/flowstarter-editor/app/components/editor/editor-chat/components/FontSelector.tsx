@@ -31,7 +31,8 @@ export function FontSelector({ isDark, fontsLoaded, onSelect, templateFonts }: F
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   // Use template-specific fonts if provided, otherwise use global fonts
-  const fonts: SystemFont[] = Array.isArray(templateFonts) && templateFonts.length > 0 ? templateFonts.map(toSystemFont) : FONT_PAIRINGS;
+  const fonts: SystemFont[] =
+    Array.isArray(templateFonts) && templateFonts.length > 0 ? templateFonts.map(toSystemFont) : FONT_PAIRINGS;
 
   const handleSelect = (font: SystemFont) => {
     setSelectedId(font.id);

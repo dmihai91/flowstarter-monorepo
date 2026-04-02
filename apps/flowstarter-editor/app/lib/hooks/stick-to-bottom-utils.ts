@@ -1,9 +1,4 @@
-import {
-  type DependencyList,
-  type MutableRefObject,
-  type RefCallback,
-  useCallback,
-} from 'react';
+import { type DependencyList, type MutableRefObject, type RefCallback, useCallback } from 'react';
 import type { Animation, SpringAnimation } from './stick-to-bottom-types';
 import { DEFAULT_SPRING_ANIMATION } from './stick-to-bottom-types';
 
@@ -29,10 +24,7 @@ export function isMouseDown() {
   return mouseDown;
 }
 
-export function useRefCallback<T extends (ref: HTMLElement | null) => unknown>(
-  callback: T,
-  deps: DependencyList,
-) {
+export function useRefCallback<T extends (ref: HTMLElement | null) => unknown>(callback: T, deps: DependencyList) {
   // biome-ignore lint/correctness/useExhaustiveDependencies: not needed
   const result = useCallback((ref: HTMLElement | null) => {
     result.current = ref;

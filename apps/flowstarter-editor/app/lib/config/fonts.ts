@@ -346,4 +346,3 @@ export function generateGoogleFontsLink(fonts: FontPairing): string {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="${generateGoogleFontsUrl(fonts)}" rel="stylesheet">`;
 }
-

@@ -4,10 +4,10 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
-import { 
-  getUserMode, 
-  getModeCapabilities, 
-  getTeamUser, 
+import {
+  getUserMode,
+  getModeCapabilities,
+  getTeamUser,
   getClientUser,
   type UserMode,
   type ModeCapabilities,
@@ -46,23 +46,26 @@ export function useUserMode(): UseUserModeReturn {
 
   useEffect(() => {
     setIsMounted(true);
-    
+
     // Read from localStorage on client only
     const currentMode = getUserMode();
     setMode(currentMode);
-    
+
     if (currentMode === 'team') {
       setTeamUser(getTeamUser());
     } else if (currentMode === 'client') {
       setClientUser(getClientUser());
     }
-    
+
     setIsLoading(false);
   }, []);
 
   // Memoize capabilities to prevent unnecessary re-renders
   const capabilities = useMemo(() => {
-    if (!isMounted) return GUEST_CAPABILITIES;
+    if (!isMounted) {
+      return GUEST_CAPABILITIES;
+    }
+
     return getModeCapabilities(mode);
   }, [mode, isMounted]);
 

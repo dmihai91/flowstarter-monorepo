@@ -371,7 +371,7 @@ import Layout from '../layouts/Layout.astro';
 
 /**
  * Sync files from orchestrator to workbench store
- * 
+ *
  * @deprecated Use `useSyncToWorkbench` hook from `~/lib/hooks/useApiQueries` instead.
  * This hook provides React Query benefits (retries, caching, loading states).
  */
@@ -404,4 +404,3 @@ export async function syncFilesToWorkbench(orchestrationId: string): Promise<voi
     console.error('Failed to sync files to workbench:', error);
   }
 }
-

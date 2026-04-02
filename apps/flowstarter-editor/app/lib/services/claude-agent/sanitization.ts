@@ -185,4 +185,3 @@ export function stripMarkdownCodeBlocks(content: string): string {
 
   return cleaned.trim();
 }
-

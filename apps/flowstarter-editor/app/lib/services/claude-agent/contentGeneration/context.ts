@@ -1,6 +1,6 @@
 /**
  * Domain Context Builder
- * 
+ *
  * Builds content context from business description using domain detection.
  */
 
@@ -39,19 +39,16 @@ export function pickRandom<T>(arr: T[]): T {
  */
 export function findIntegration(
   integrations: IntegrationConfig[] | undefined,
-  id: string
+  id: string,
 ): IntegrationConfig | undefined {
-  return integrations?.find(i => i.id === id);
+  return integrations?.find((i) => i.id === id);
 }
 
 /**
  * Helper to find an asset by type
  */
-export function findAsset(
-  assets: GeneratedAsset[] | undefined,
-  type: string
-): GeneratedAsset | undefined {
-  return assets?.find(a => a.type === type);
+export function findAsset(assets: GeneratedAsset[] | undefined, type: string): GeneratedAsset | undefined {
+  return assets?.find((a) => a.type === type);
 }
 
 /**

@@ -126,4 +126,3 @@ export async function verifySandbox(sandbox: Sandbox, workDir: string): Promise<
 
   return true;
 }
-

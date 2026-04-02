@@ -2,7 +2,7 @@
  * Supported Business Categories Configuration
  *
  * This is the SINGLE SOURCE OF TRUTH for what business types the MVP supports.
- * 
+ *
  * 🎯 MVP FOCUS: Service-based entrepreneurs who trade time for money
  *    - Coaches, consultants, therapists
  *    - Fitness trainers, wellness practitioners
@@ -24,22 +24,31 @@
 export interface BusinessCategory {
   /** Unique identifier */
   id: string;
+
   /** Display name (e.g., "Coaches & Consultants") */
   label: string;
+
   /** Short label for compact UI (e.g., "Coaching") */
   shortLabel: string;
+
   /** Emoji for visual recognition */
   emoji: string;
+
   /** Example business types within this category */
   examples: string[];
+
   /** Keywords for matching user descriptions to this category */
   keywords: string[];
+
   /** Template category IDs that best match this business type */
   preferredTemplateCategories: string[];
+
   /** Quick idea prompts for onboarding (shown as starter suggestions) */
   quickIdeas: Array<{ id: string; textKey: string }>;
+
   /** Example goals relevant to this category */
   exampleGoals: string[];
+
   /** Common selling methods for this category */
   commonSellingMethods: string[];
 }
@@ -52,7 +61,14 @@ export const SUPPORTED_CATEGORIES: BusinessCategory[] = [
     label: 'Coaches & Consultants',
     shortLabel: 'Coaching',
     emoji: '🎯',
-    examples: ['life coach', 'business coach', 'career coach', 'executive coach', 'mindset coach', 'relationship coach'],
+    examples: [
+      'life coach',
+      'business coach',
+      'career coach',
+      'executive coach',
+      'mindset coach',
+      'relationship coach',
+    ],
     keywords: ['coach', 'coaching', 'consultant', 'consulting', 'mentor', 'mentoring', 'advisor', 'strategist'],
     preferredTemplateCategories: ['business', 'health'],
     quickIdeas: [
@@ -69,7 +85,17 @@ export const SUPPORTED_CATEGORIES: BusinessCategory[] = [
     shortLabel: 'Therapy',
     emoji: '🧠',
     examples: ['psychologist', 'therapist', 'counselor', 'psychotherapist', 'marriage counselor', 'family therapist'],
-    keywords: ['psycholog', 'therap', 'counselor', 'counselling', 'counseling', 'mental health', 'psychotherapy', 'CBT', 'EMDR'],
+    keywords: [
+      'psycholog',
+      'therap',
+      'counselor',
+      'counselling',
+      'counseling',
+      'mental health',
+      'psychotherapy',
+      'CBT',
+      'EMDR',
+    ],
     preferredTemplateCategories: ['health', 'healthcare'],
     quickIdeas: [
       { id: 'psychologist', textKey: 'quickIdeas.psychologist' },
@@ -84,8 +110,26 @@ export const SUPPORTED_CATEGORIES: BusinessCategory[] = [
     label: 'Personal Trainers & Fitness',
     shortLabel: 'Fitness',
     emoji: '💪',
-    examples: ['personal trainer', 'fitness coach', 'yoga instructor', 'Pilates instructor', 'strength coach', 'online fitness coach'],
-    keywords: ['fitness', 'trainer', 'training', 'yoga', 'pilates', 'workout', 'exercise', 'strength', 'crossfit', 'HIIT'],
+    examples: [
+      'personal trainer',
+      'fitness coach',
+      'yoga instructor',
+      'Pilates instructor',
+      'strength coach',
+      'online fitness coach',
+    ],
+    keywords: [
+      'fitness',
+      'trainer',
+      'training',
+      'yoga',
+      'pilates',
+      'workout',
+      'exercise',
+      'strength',
+      'crossfit',
+      'HIIT',
+    ],
     preferredTemplateCategories: ['fitness', 'health'],
     quickIdeas: [
       { id: 'personal-trainer', textKey: 'quickIdeas.personal-trainer' },
@@ -100,8 +144,26 @@ export const SUPPORTED_CATEGORIES: BusinessCategory[] = [
     label: 'Wellness & Holistic Health',
     shortLabel: 'Wellness',
     emoji: '🌿',
-    examples: ['nutritionist', 'health coach', 'massage therapist', 'acupuncturist', 'naturopath', 'wellness practitioner'],
-    keywords: ['nutrition', 'dietitian', 'massage', 'acupunctur', 'naturopath', 'holistic', 'wellness', 'healing', 'reiki', 'chiropract'],
+    examples: [
+      'nutritionist',
+      'health coach',
+      'massage therapist',
+      'acupuncturist',
+      'naturopath',
+      'wellness practitioner',
+    ],
+    keywords: [
+      'nutrition',
+      'dietitian',
+      'massage',
+      'acupunctur',
+      'naturopath',
+      'holistic',
+      'wellness',
+      'healing',
+      'reiki',
+      'chiropract',
+    ],
     preferredTemplateCategories: ['health', 'healthcare'],
     quickIdeas: [
       { id: 'nutritionist', textKey: 'quickIdeas.nutritionist' },
@@ -117,7 +179,20 @@ export const SUPPORTED_CATEGORIES: BusinessCategory[] = [
     shortLabel: 'Beauty',
     emoji: '✨',
     examples: ['hairstylist', 'makeup artist', 'nail technician', 'personal stylist', 'esthetician', 'barber'],
-    keywords: ['stylist', 'styling', 'hair', 'makeup', 'beauty', 'nails', 'salon', 'barber', 'aesthet', 'lash', 'brow', 'skincare'],
+    keywords: [
+      'stylist',
+      'styling',
+      'hair',
+      'makeup',
+      'beauty',
+      'nails',
+      'salon',
+      'barber',
+      'aesthet',
+      'lash',
+      'brow',
+      'skincare',
+    ],
     preferredTemplateCategories: ['personal-brand', 'health'],
     quickIdeas: [
       { id: 'stylist', textKey: 'quickIdeas.stylist' },
@@ -133,7 +208,17 @@ export const SUPPORTED_CATEGORIES: BusinessCategory[] = [
     shortLabel: 'Creative',
     emoji: '🎨',
     examples: ['photographer', 'videographer', 'graphic designer', 'web designer', 'brand designer', 'illustrator'],
-    keywords: ['photographer', 'photography', 'videograph', 'designer', 'design', 'illustrat', 'creative', 'freelance', 'brand'],
+    keywords: [
+      'photographer',
+      'photography',
+      'videograph',
+      'designer',
+      'design',
+      'illustrat',
+      'creative',
+      'freelance',
+      'brand',
+    ],
     preferredTemplateCategories: ['personal-brand', 'creative'],
     quickIdeas: [
       { id: 'photographer', textKey: 'quickIdeas.photographer' },
@@ -148,8 +233,25 @@ export const SUPPORTED_CATEGORIES: BusinessCategory[] = [
     label: 'Tutors & Educators',
     shortLabel: 'Education',
     emoji: '📚',
-    examples: ['private tutor', 'music teacher', 'language tutor', 'test prep tutor', 'academic coach', 'online instructor'],
-    keywords: ['tutor', 'tutoring', 'teacher', 'teaching', 'instructor', 'lesson', 'education', 'music teacher', 'language'],
+    examples: [
+      'private tutor',
+      'music teacher',
+      'language tutor',
+      'test prep tutor',
+      'academic coach',
+      'online instructor',
+    ],
+    keywords: [
+      'tutor',
+      'tutoring',
+      'teacher',
+      'teaching',
+      'instructor',
+      'lesson',
+      'education',
+      'music teacher',
+      'language',
+    ],
     preferredTemplateCategories: ['business', 'education'],
     quickIdeas: [
       { id: 'private-tutor', textKey: 'quickIdeas.private-tutor' },
@@ -161,49 +263,77 @@ export const SUPPORTED_CATEGORIES: BusinessCategory[] = [
   },
 ];
 
-// ─── UNSUPPORTED BUSINESS TYPES (for detection) ────────────────────────
-// NOTE: These patterns should be EXPLICIT about the unsupported type
-// Avoid generic words that could appear in supported contexts
+/*
+ * ─── UNSUPPORTED BUSINESS TYPES (for detection) ────────────────────────
+ * NOTE: These patterns should be EXPLICIT about the unsupported type
+ * Avoid generic words that could appear in supported contexts
+ */
 
 export const UNSUPPORTED_KEYWORDS = {
   ecommerce: [
-    'online store', 'e-commerce', 'ecommerce', 'sell products online', 
-    'dropship', 'wholesale', 'retail store', 'merchandise store',
-    'product catalog', 'shopping cart', 'inventory management'
+    'online store',
+    'e-commerce',
+    'ecommerce',
+    'sell products online',
+    'dropship',
+    'wholesale',
+    'retail store',
+    'merchandise store',
+    'product catalog',
+    'shopping cart',
+    'inventory management',
   ],
   saas: [
-    'saas product', 'software product', 'tech startup', 'mobile app',
-    'web app', 'b2b software', 'api service', 'software company'
+    'saas product',
+    'software product',
+    'tech startup',
+    'mobile app',
+    'web app',
+    'b2b software',
+    'api service',
+    'software company',
   ],
   restaurant: [
-    'restaurant', 'cafe ', 'coffee shop', 'bar ', 'food truck', 
-    'catering company', 'bakery shop', 'pizzeria', 'bistro'
+    'restaurant',
+    'cafe ',
+    'coffee shop',
+    'bar ',
+    'food truck',
+    'catering company',
+    'bakery shop',
+    'pizzeria',
+    'bistro',
   ],
   agency: [
-    'marketing agency', 'design agency', 'digital agency', 
-    'advertising agency', 'creative agency', 'our team of',
-    'we are a team', 'agency services'
+    'marketing agency',
+    'design agency',
+    'digital agency',
+    'advertising agency',
+    'creative agency',
+    'our team of',
+    'we are a team',
+    'agency services',
   ],
-  blog: [
-    'personal blog', 'news site', 'magazine site', 'media publication',
-    'content blog', 'blogger site'
-  ],
+  blog: ['personal blog', 'news site', 'magazine site', 'media publication', 'content blog', 'blogger site'],
   nonprofit: [
-    'nonprofit', 'non-profit', 'charity organization', 'foundation',
-    'ngo ', '501c', 'charitable organization'
+    'nonprofit',
+    'non-profit',
+    'charity organization',
+    'foundation',
+    'ngo ',
+    '501c',
+    'charitable organization',
   ],
-  marketplace: [
-    'marketplace', 'directory site', 'listing site', 'classifieds site',
-    'job board', 'rental marketplace'
-  ],
+  marketplace: ['marketplace', 'directory site', 'listing site', 'classifieds site', 'job board', 'rental marketplace'],
 };
 
 export const UNSUPPORTED_MESSAGES: Record<string, string> = {
   ecommerce: "We're focused on service businesses right now. E-commerce and product-based sites are coming soon!",
   saas: "SaaS and software product sites need special features we're still building. Coming soon!",
-  restaurant: "Restaurant and food business sites need menus, ordering, and special features we're working on. Coming soon!",
+  restaurant:
+    "Restaurant and food business sites need menus, ordering, and special features we're working on. Coming soon!",
   agency: "We're built for solo service providers right now. Team/agency sites are on our roadmap!",
-  blog: "Content-focused blogs and media sites are coming in a future update!",
+  blog: 'Content-focused blogs and media sites are coming in a future update!',
   nonprofit: "Non-profit and organization sites need special features we're still developing. Coming soon!",
   marketplace: "Marketplace and directory sites are a different beast—we're focused on personal service sites for now.",
 };
@@ -221,11 +351,13 @@ export function detectCategory(description: string): BusinessCategory | undefine
 
   for (const cat of SUPPORTED_CATEGORIES) {
     let score = 0;
+
     for (const kw of cat.keywords) {
       if (lower.includes(kw.toLowerCase())) {
         score += kw.length; // Longer keyword matches are more specific
       }
     }
+
     if (score > bestScore) {
       bestScore = score;
       bestMatch = cat;
@@ -237,25 +369,28 @@ export function detectCategory(description: string): BusinessCategory | undefine
 
 /**
  * Check if a description matches an unsupported business type.
- * 
+ *
  * IMPORTANT: This function only returns unsupported if:
  * 1. The description does NOT match any supported category
  * 2. AND the description matches an explicit unsupported pattern
- * 
+ *
  * This prevents false positives where service providers mention
  * "online" or "program" or other generic words.
  */
 export function detectUnsupportedType(description: string): { type: string; message: string } | null {
   const lower = description.toLowerCase();
-  
-  // FIRST: Check if this matches a supported category
-  // If it does, it's NOT unsupported even if it has some matching keywords
+
+  /*
+   * FIRST: Check if this matches a supported category
+   * If it does, it's NOT unsupported even if it has some matching keywords
+   */
   const supportedCategory = detectCategory(description);
+
   if (supportedCategory) {
     // User clearly describes a supported service - don't flag as unsupported
     return null;
   }
-  
+
   // SECOND: Only if no supported category matched, check for unsupported patterns
   for (const [type, keywords] of Object.entries(UNSUPPORTED_KEYWORDS)) {
     for (const keyword of keywords) {
@@ -267,9 +402,11 @@ export function detectUnsupportedType(description: string): { type: string; mess
       }
     }
   }
-  
-  // Neither supported nor explicitly unsupported - let it through
-  // (The LLM will handle ambiguous cases)
+
+  /*
+   * Neither supported nor explicitly unsupported - let it through
+   * (The LLM will handle ambiguous cases)
+   */
   return null;
 }
 
@@ -281,9 +418,10 @@ export function isSupportedBusinessType(description: string): boolean {
   if (detectUnsupportedType(description)) {
     return false;
   }
-  
+
   // Then check if it matches a supported category
   const category = detectCategory(description);
+
   return category !== undefined;
 }
 
@@ -293,6 +431,7 @@ export function isSupportedBusinessType(description: string): boolean {
 export function getAllQuickIdeas(count = 4): Array<{ id: string; textKey: string }> {
   const all = SUPPORTED_CATEGORIES.flatMap((c) => c.quickIdeas);
   const shuffled = [...all].sort(() => Math.random() - 0.5);
+
   return shuffled.slice(0, count);
 }
 
@@ -304,6 +443,7 @@ export function getCategoryExamplesText(): string {
   // Pick one representative example from each category
   const examples = SUPPORTED_CATEGORIES.map((c) => c.examples[0]);
   const last = examples.pop();
+
   return `${examples.join(', ')}, or ${last}`;
 }
 
@@ -326,12 +466,15 @@ export function getCategoryLabelsText(): string {
  */
 export function getExampleGoalsText(): string {
   const goals = new Set<string>();
+
   for (const cat of SUPPORTED_CATEGORIES) {
     for (const g of cat.exampleGoals) {
       goals.add(g);
     }
   }
+
   const arr = [...goals];
+
   return arr.slice(0, 3).join(', ');
 }
 

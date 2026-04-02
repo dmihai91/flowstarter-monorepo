@@ -90,4 +90,3 @@ export function usePaletteSelection(options: UsePaletteSelectionOptions = {}): U
 }
 
 export type { UsePaletteSelectionOptions, UsePaletteSelectionReturn };
-

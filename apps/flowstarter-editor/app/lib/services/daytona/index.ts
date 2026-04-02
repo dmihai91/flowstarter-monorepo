@@ -18,7 +18,13 @@ export { getCachedPreviewUrl, clearCachedPreview } from './client';
 export { fetchPreviewUrl, persistPreviewUrl, clearPersistedPreviewUrl } from './convexClient';
 
 // Preview management (optimized)
-export { startPreview, refreshPreview, retryPreviewWithFiles, stopPreview, ensurePoolInitialized } from './previewService';
+export {
+  startPreview,
+  refreshPreview,
+  retryPreviewWithFiles,
+  stopPreview,
+  ensurePoolInitialized,
+} from './previewService';
 
 // Sandbox Pool (pre-warmed sandboxes)
 export { initializePool, getPoolStats, stopPool } from './sandboxPool';
@@ -34,4 +40,3 @@ export { cleanupAllSandboxes } from './cleanupService';
 
 // Dev server utilities
 export { runAstroCheck } from './devServerService';
-

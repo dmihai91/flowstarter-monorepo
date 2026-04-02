@@ -1,6 +1,6 @@
 /**
  * Project Sync API (Editor-side)
- * 
+ *
  * Creates/updates Supabase projects from the editor.
  * Called when projects are created or updated in the editor without handoff.
  */
@@ -8,22 +8,24 @@
 import { json, type ActionFunctionArgs } from '@remix-run/node';
 import { getAuth } from '@clerk/remix/ssr.server';
 
-const MAIN_PLATFORM_URL = process.env.MAIN_PLATFORM_URL || (process.env.NODE_ENV === 'production' ? 'https://flowstarter.app' : 'https://flowstarter.dev');
+const MAIN_PLATFORM_URL =
+  process.env.MAIN_PLATFORM_URL ||
+  (process.env.NODE_ENV === 'production' ? 'https://flowstarter.app' : 'https://flowstarter.dev');
 
 /**
  * POST /api/project/sync
- * 
+ *
  * Body: { action: 'create' | 'update', projectData: {...} }
  */
 export async function action(args: ActionFunctionArgs) {
   const { request } = args;
   const { userId } = await getAuth(args);
-  
+
   if (!userId) {
     return json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const body = await request.json() as { action?: string; projectData?: Record<string, unknown> };
+  const body = (await request.json()) as { action?: string; projectData?: Record<string, unknown> };
   const { action: syncAction, projectData } = body;
 
   if (!projectData) {
@@ -51,7 +53,8 @@ export async function action(args: ActionFunctionArgs) {
         return json({ error: (err as Record<string, unknown>).error || 'Create failed' }, { status: res.status });
       }
 
-      const data = await res.json() as { projectId?: string };
+      const data = (await res.json()) as { projectId?: string };
+
       return json({ success: true, supabaseProjectId: data.projectId });
     } catch (e) {
       console.error('[ProjectSync] Create error:', e);

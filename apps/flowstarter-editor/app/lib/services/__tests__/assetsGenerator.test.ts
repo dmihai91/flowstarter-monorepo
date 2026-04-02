@@ -20,9 +20,9 @@ vi.mock('~/lib/services/llm', () => ({
   generateCompletion: vi.fn(),
 }));
 
-import { 
-  analyzeAssetNeeds, 
-  generateSiteAssets, 
+import {
+  analyzeAssetNeeds,
+  generateSiteAssets,
   assetsToTemplateVars,
   type AssetSpec,
   type GeneratedAsset,
@@ -51,7 +51,7 @@ describe('Assets Generator', () => {
       };
 
       const specs = await analyzeAssetNeeds(input);
-      
+
       expect(specs).toHaveLength(2);
       expect(specs[0].type).toBe('hero');
       expect(specs[0].name).toBe('hero-banner');
@@ -68,7 +68,7 @@ describe('Assets Generator', () => {
       };
 
       const specs = await analyzeAssetNeeds(input);
-      
+
       expect(specs.length).toBeGreaterThan(0);
       expect(specs[0].type).toBe('hero');
     });
@@ -85,7 +85,7 @@ describe('Assets Generator', () => {
       };
 
       const specs = await analyzeAssetNeeds(input);
-      
+
       expect(specs[0].width).toBe(1920);
       expect(specs[0].height).toBe(1080);
     });
@@ -112,7 +112,7 @@ describe('Assets Generator', () => {
 
       const progressMessages: string[] = [];
       const assets = await generateSiteAssets(input, (msg) => progressMessages.push(msg));
-      
+
       expect(assets).toHaveLength(1);
       expect(assets[0].url).toBe('https://fal.ai/generated/image.jpg');
       expect(assets[0].type).toBe('hero');
@@ -121,14 +121,14 @@ describe('Assets Generator', () => {
 
     it('should return empty array when FAL_KEY not set', async () => {
       delete process.env.FAL_KEY;
-      
+
       const input: AssetsGeneratorInput = {
         businessName: 'Test',
         businessDescription: 'Test',
       };
 
       const assets = await generateSiteAssets(input);
-      
+
       expect(assets).toHaveLength(0);
     });
 
@@ -146,7 +146,7 @@ describe('Assets Generator', () => {
       };
 
       const assets = await generateSiteAssets(input);
-      
+
       // Should not throw, just return what it could generate
       expect(Array.isArray(assets)).toBe(true);
     });
@@ -172,7 +172,7 @@ describe('Assets Generator', () => {
       };
 
       const assets = await generateSiteAssets(input);
-      
+
       // Should cap at 4
       expect(assets.length).toBeLessThanOrEqual(4);
     });
@@ -186,7 +186,7 @@ describe('Assets Generator', () => {
       ];
 
       const vars = assetsToTemplateVars(assets);
-      
+
       expect(vars.heroImage).toBe('https://fal.ai/hero.jpg');
       expect(vars.hero_image_url).toBe('https://fal.ai/hero.jpg');
       expect(vars.featureImage).toBe('https://fal.ai/feature.jpg');
@@ -202,8 +202,8 @@ describe('Assets Generator', () => {
 describe('Asset Types', () => {
   it('should support all asset types', () => {
     const types = ['hero', 'product', 'team', 'background', 'feature'];
-    
-    types.forEach(type => {
+
+    types.forEach((type) => {
       const spec: AssetSpec = {
         type: type as any,
         name: `test-${type}`,
@@ -213,4 +213,3 @@ describe('Asset Types', () => {
     });
   });
 });
-

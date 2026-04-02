@@ -67,14 +67,21 @@ export const ChatboxToolbar: React.FC<ChatboxToolbarProps> = (props) => {
           <div className="i-ph:plug text-xl"></div>
         </IconButton>
 
-        <IconButton title={t.chat.chatbox.uploadFile} className="transition-all" onClick={() => props.handleFileUpload()}>
+        <IconButton
+          title={t.chat.chatbox.uploadFile}
+          className="transition-all"
+          onClick={() => props.handleFileUpload()}
+        >
           <div className="i-ph:paperclip text-xl"></div>
         </IconButton>
         <IconButton
           title={t.chat.chatbox.enhancePrompt}
           disabled={props.input.length === 0 || props.enhancingPrompt}
           className={classNames('transition-all', props.enhancingPrompt ? 'opacity-100' : '')}
-          onClick={() => { props.enhancePrompt?.(); toast.success(t.chat.chatbox.promptEnhanced); }}
+          onClick={() => {
+            props.enhancePrompt?.();
+            toast.success(t.chat.chatbox.promptEnhanced);
+          }}
         >
           {props.enhancingPrompt ? (
             <div className="i-svg-spinners:90-ring-with-bg text-flowstarter-elements-loader-progress text-xl animate-spin"></div>
@@ -116,6 +123,7 @@ export const ChatboxToolbar: React.FC<ChatboxToolbarProps> = (props) => {
               toast.info(t.chat.chatbox.webSearchPro);
               return;
             }
+
             toggleFeature('webSearch');
           }}
         >
@@ -180,8 +188,14 @@ export const ChatboxToolbar: React.FC<ChatboxToolbarProps> = (props) => {
               isStreaming={props.isStreaming}
               disabled={!props.providerList || props.providerList.length === 0}
               onClick={(event) => {
-                if (props.isStreaming) { props.handleStop?.(); return; }
-                if (props.input.length > 0 || props.uploadedFiles.length > 0) { props.handleSendMessage?.(event); }
+                if (props.isStreaming) {
+                  props.handleStop?.();
+                  return;
+                }
+
+                if (props.input.length > 0 || props.uploadedFiles.length > 0) {
+                  props.handleSendMessage?.(event);
+                }
               }}
             />
           )}

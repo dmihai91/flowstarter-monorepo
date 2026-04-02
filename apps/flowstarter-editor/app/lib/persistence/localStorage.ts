@@ -26,4 +26,3 @@ export function setLocalStorage(key: string, value: any): void {
     console.error(`Error writing to localStorage key "${key}":`, error);
   }
 }
-

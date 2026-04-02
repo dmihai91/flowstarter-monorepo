@@ -188,4 +188,3 @@ export async function action({ request }: LoaderFunctionArgs) {
   // For POST requests, proxy them too
   return loader({ request } as LoaderFunctionArgs);
 }
-

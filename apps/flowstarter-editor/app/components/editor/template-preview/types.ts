@@ -72,4 +72,3 @@ export interface TemplatePreviewDialogProps {
 }
 
 export type ViewportType = 'mobile' | 'tablet' | 'desktop';
-

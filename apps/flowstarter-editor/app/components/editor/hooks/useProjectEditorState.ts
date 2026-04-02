@@ -25,18 +25,17 @@ import { normalizeHandoffStep } from '~/components/editor/editor-chat/hooks/hand
 const INITIAL_MESSAGE_LIMIT = 100;
 const HANDOFF_DATA_KEY = 'flowstarter_handoff_data';
 
-function readStoredHandoffData():
-  | {
-      brandProfile?: InitialChatState['brandProfile'];
-      integrations?: IntegrationConfig[];
-    }
-  | null {
+function readStoredHandoffData(): {
+  brandProfile?: InitialChatState['brandProfile'];
+  integrations?: IntegrationConfig[];
+} | null {
   if (typeof window === 'undefined') {
     return null;
   }
 
   try {
     const raw = localStorage.getItem(HANDOFF_DATA_KEY);
+
     if (!raw) {
       return null;
     }
@@ -72,7 +71,9 @@ export function useProjectEditorState(projectId: Id<'conversations'>) {
   // Mutations (stored in refs for stable callback identity)
   const updateStateMutation = useMutation(api.conversations.updateState);
   const updateStateMutationRef = useRef(updateStateMutation);
-  useEffect(() => { updateStateMutationRef.current = updateStateMutation; }, [updateStateMutation]);
+  useEffect(() => {
+    updateStateMutationRef.current = updateStateMutation;
+  }, [updateStateMutation]);
 
   // UI state
   const [onboardingStep, setOnboardingStep] = useState<OnboardingStep>('welcome');
@@ -81,7 +82,10 @@ export function useProjectEditorState(projectId: Id<'conversations'>) {
 
   // Sync conversation → local state
   useEffect(() => {
-    if (!conversation) return;
+    if (!conversation) {
+      return;
+    }
+
     const normalizedStep = normalizeHandoffStep({
       step: conversation.step as OnboardingStep | undefined,
       projectUrlId: conversation.projectUrlId ?? null,
@@ -93,7 +97,10 @@ export function useProjectEditorState(projectId: Id<'conversations'>) {
       projectDescription: conversation.projectDescription ?? '',
     });
     setOnboardingStep(normalizedStep);
-    if (conversation.projectUrlId) setLocalProjectUrlId(conversation.projectUrlId);
+
+    if (conversation.projectUrlId) {
+      setLocalProjectUrlId(conversation.projectUrlId);
+    }
   }, [conversation]);
 
   // Derive Convex project ID
@@ -158,14 +165,22 @@ export function useProjectEditorState(projectId: Id<'conversations'>) {
 function buildConvexUpdate(state: Partial<InitialChatState>): Record<string, unknown> {
   const update: Record<string, unknown> = {};
   const keys: (keyof InitialChatState)[] = [
-    'step', 'projectDescription', 'projectName',
-    'selectedTemplateId', 'selectedTemplateName',
-    'selectedPalette', 'selectedFont', 'selectedLogo',
-    'buildPhase', 'businessInfo',
+    'step',
+    'projectDescription',
+    'projectName',
+    'selectedTemplateId',
+    'selectedTemplateName',
+    'selectedPalette',
+    'selectedFont',
+    'selectedLogo',
+    'buildPhase',
+    'businessInfo',
   ];
 
   for (const key of keys) {
-    if (state[key]) update[key] = state[key];
+    if (state[key]) {
+      update[key] = state[key];
+    }
   }
 
   return update;
@@ -185,6 +200,7 @@ function normalizeIntegrations(value: unknown): IntegrationConfig[] | undefined 
   if (typeof value === 'object') {
     const record = value as Record<string, unknown>;
     const selected = record.selected;
+
     if (Array.isArray(selected)) {
       return selected
         .filter((entry): entry is string => typeof entry === 'string')
@@ -212,9 +228,14 @@ function useInitialState(
     ref.current = null;
   }
 
-  if (!hasInitialized.current && (conversation || initialFromNav) && (messages !== undefined || initialFromNav?.messages)) {
+  if (
+    !hasInitialized.current &&
+    (conversation || initialFromNav) &&
+    (messages !== undefined || initialFromNav?.messages)
+  ) {
     const src = conversation || initialFromNav;
     hasInitialized.current = true;
+
     if (src) {
       const storedHandoffData = readStoredHandoffData();
       ref.current = {

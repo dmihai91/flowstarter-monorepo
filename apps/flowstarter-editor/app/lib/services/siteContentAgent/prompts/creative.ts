@@ -15,16 +15,10 @@ export const CREATIVE_CONTENT_PATTERNS = {
     'Capturing Moments That Matter',
     'Design That Tells Your Story',
     'Where Vision Meets Craft',
-    'Creating What You\'ll Treasure',
+    "Creating What You'll Treasure",
     'Art Meets Purpose',
   ],
-  ctas: [
-    'View Portfolio',
-    'Book Your Session',
-    'Start a Project',
-    'Get in Touch',
-    'Check Availability',
-  ],
+  ctas: ['View Portfolio', 'Book Your Session', 'Start a Project', 'Get in Touch', 'Check Availability'],
   services: [
     'Wedding Photography',
     'Brand Identity',
@@ -67,17 +61,39 @@ ${BASE_CONTENT_RULES}`;
 
 export function buildCreativeContentPrompt(context: BusinessContext): string {
   const parts = [`${CREATIVE_CONTENT_PROMPT}\n\nBUSINESS CONTEXT:`];
-  if (context.ownerName) parts.push(`- Creative: ${context.ownerName}`);
-  if (context.location) parts.push(`- Based in: ${context.location}`);
-  if (context.services?.length) parts.push(`- Services: ${context.services.join(', ')}`);
-  if (context.uniqueApproach) parts.push(`- Style/approach: ${context.uniqueApproach}`);
+
+  if (context.ownerName) {
+    parts.push(`- Creative: ${context.ownerName}`);
+  }
+
+  if (context.location) {
+    parts.push(`- Based in: ${context.location}`);
+  }
+
+  if (context.services?.length) {
+    parts.push(`- Services: ${context.services.join(', ')}`);
+  }
+
+  if (context.uniqueApproach) {
+    parts.push(`- Style/approach: ${context.uniqueApproach}`);
+  }
+
   return parts.join('\n');
 }
 
 export const CREATIVE_DOMAIN = {
   id: 'creative',
   name: 'Photography & Creative',
-  keywords: ['photographer', 'photography', 'designer', 'videographer', 'creative', 'artist', 'illustrator', 'filmmaker'],
+  keywords: [
+    'photographer',
+    'photography',
+    'designer',
+    'videographer',
+    'creative',
+    'artist',
+    'illustrator',
+    'filmmaker',
+  ],
   sections: CREATIVE_SECTIONS,
   contentPatterns: CREATIVE_CONTENT_PATTERNS,
   systemPrompt: CREATIVE_CONTENT_PROMPT,

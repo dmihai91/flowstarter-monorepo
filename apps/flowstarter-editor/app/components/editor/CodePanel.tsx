@@ -29,22 +29,25 @@ export function CodePanel({ projectId, files, activeFile, onFileSelect }: CodePa
   const [isLoading, setIsLoading] = useState(false);
   const [expandedDirs, setExpandedDirs] = useState<Set<string>>(new Set());
 
-  const loadFileContent = useCallback(async (filePath: string) => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(
-        `/api/files/read?projectId=${projectId}&path=${encodeURIComponent(filePath)}`,
-      );
-      if (response.ok) {
-        const data = (await response.json()) as { content?: string };
-        setFileContent(data.content || '');
+  const loadFileContent = useCallback(
+    async (filePath: string) => {
+      setIsLoading(true);
+
+      try {
+        const response = await fetch(`/api/files/read?projectId=${projectId}&path=${encodeURIComponent(filePath)}`);
+
+        if (response.ok) {
+          const data = (await response.json()) as { content?: string };
+          setFileContent(data.content || '');
+        }
+      } catch {
+        setFileContent('// Failed to load file');
+      } finally {
+        setIsLoading(false);
       }
-    } catch {
-      setFileContent('// Failed to load file');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [projectId]);
+    },
+    [projectId],
+  );
 
   useEffect(() => {
     if (activeFile) {
@@ -55,11 +58,13 @@ export function CodePanel({ projectId, files, activeFile, onFileSelect }: CodePa
   const toggleDir = (path: string) => {
     setExpandedDirs((prev) => {
       const next = new Set(prev);
+
       if (next.has(path)) {
         next.delete(path);
       } else {
         next.add(path);
       }
+
       return next;
     });
   };
@@ -83,11 +88,7 @@ export function CodePanel({ projectId, files, activeFile, onFileSelect }: CodePa
                 onToggleDir={toggleDir}
               />
             ))}
-            {!files?.length && (
-              <p className="px-4 py-3 text-xs text-gray-400 dark:text-zinc-500">
-                No files loaded
-              </p>
-            )}
+            {!files?.length && <p className="px-4 py-3 text-xs text-gray-400 dark:text-zinc-500">No files loaded</p>}
           </div>
         </div>
 
@@ -138,7 +139,9 @@ function FileTreeNode({
           }
         }}
         className={`w-full flex items-center gap-1.5 px-2 py-1 text-xs hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors ${
-          isActive ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300' : 'text-gray-600 dark:text-zinc-400'
+          isActive
+            ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300'
+            : 'text-gray-600 dark:text-zinc-400'
         }`}
         style={{ paddingLeft: `${depth * 16 + 8}px` }}
       >
@@ -155,17 +158,19 @@ function FileTreeNode({
         )}
         <span className="truncate">{node.name}</span>
       </button>
-      {isDir && isExpanded && node.children?.map((child) => (
-        <FileTreeNode
-          key={child.path}
-          node={child}
-          depth={depth + 1}
-          activeFile={activeFile}
-          expandedDirs={expandedDirs}
-          onFileSelect={onFileSelect}
-          onToggleDir={onToggleDir}
-        />
-      ))}
+      {isDir &&
+        isExpanded &&
+        node.children?.map((child) => (
+          <FileTreeNode
+            key={child.path}
+            node={child}
+            depth={depth + 1}
+            activeFile={activeFile}
+            expandedDirs={expandedDirs}
+            onFileSelect={onFileSelect}
+            onToggleDir={onToggleDir}
+          />
+        ))}
     </>
   );
 }

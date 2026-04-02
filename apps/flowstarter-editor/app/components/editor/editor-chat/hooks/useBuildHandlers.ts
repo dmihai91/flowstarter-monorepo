@@ -3,7 +3,7 @@
  *
  * Handles the main project build flow including font selection,
  * template cloning, and orchestration.
- * 
+ *
  * Uses React Query mutations for API calls with automatic retries.
  */
 
@@ -160,7 +160,8 @@ export function useBuildHandlers({
           },
         };
 
-        const fontForClone: FontPairing = PREDEFINED_FONT_PAIRINGS.find(f => f.id === font.id) || PREDEFINED_FONT_PAIRINGS[0];
+        const fontForClone: FontPairing =
+          PREDEFINED_FONT_PAIRINGS.find((f) => f.id === font.id) || PREDEFINED_FONT_PAIRINGS[0];
 
         // Phase 1: Clone template
         setBuildStep(t(EDITOR_LABEL_KEYS.BUILD_GETTING_READY));
@@ -197,15 +198,15 @@ export function useBuildHandlers({
           `${t(EDITOR_LABEL_KEYS.BUILD_BUILDING_SITE)}\n${t(EDITOR_LABEL_KEYS.BUILD_BUILDING_SITE_DESC)}`,
         );
 
-        let customizedFiles: Record<string, string> = {};
+        const customizedFiles: Record<string, string> = {};
 
         // Fetch template files using React Query mutation
         try {
-          const filesResult = await fetchTemplateFilesMutation.mutateAsync({ 
-            urlId, 
-            signal 
+          const filesResult = await fetchTemplateFilesMutation.mutateAsync({
+            urlId,
+            signal,
           });
-          
+
           for (const [path, content] of Object.entries(filesResult.files)) {
             customizedFiles[normalizePath(path)] = content;
           }
@@ -253,10 +254,10 @@ export function useBuildHandlers({
             isBinary: false,
           }));
 
-          await syncFilesToConvexMutation.mutateAsync({ 
-            projectId: clonedProjectId, 
-            files: convexFiles, 
-            signal 
+          await syncFilesToConvexMutation.mutateAsync({
+            projectId: clonedProjectId,
+            files: convexFiles,
+            signal,
           });
         }
 
@@ -355,4 +356,3 @@ export function useBuildHandlers({
 }
 
 export type { UseBuildHandlersProps, UseBuildHandlersReturn };
-

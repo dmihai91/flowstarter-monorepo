@@ -80,9 +80,20 @@ interface SiteGenerationParams {
 export function buildSiteGenerationInput(params: SiteGenerationParams) {
   const {
     projectId,
-    convexConversationId, projectName, templateId, templateName, businessData,
-    projectDescription, palette, font, integrations, contactDetails,
-    generateImages, signal, onProgress, onAgentEvent,
+    convexConversationId,
+    projectName,
+    templateId,
+    templateName,
+    businessData,
+    projectDescription,
+    palette,
+    font,
+    integrations,
+    contactDetails,
+    generateImages,
+    signal,
+    onProgress,
+    onAgentEvent,
   } = params;
 
   return {
@@ -104,9 +115,13 @@ export function buildSiteGenerationInput(params: SiteGenerationParams) {
       fontFamily: font.body,
       headingFont: font.heading,
     },
-    integrations: integrations.map(i => ({ id: i.id, name: i.name, config: i.config || {} })),
+    integrations: integrations.map((i) => ({ id: i.id, name: i.name, config: i.config || {} })),
     contactDetails: contactDetails
-      ? { email: contactDetails.email || undefined, phone: contactDetails.phone || undefined, address: contactDetails.address || undefined }
+      ? {
+          email: contactDetails.email || undefined,
+          phone: contactDetails.phone || undefined,
+          address: contactDetails.address || undefined,
+        }
       : undefined,
     deployToPreview: true,
     generateImages: generateImages || false,
@@ -118,6 +133,19 @@ export function buildSiteGenerationInput(params: SiteGenerationParams) {
 
 /** Maps ContactDetails fields to Convex-compatible format (undefined instead of empty string). */
 export function toConvexContactDetails(details: ContactDetails) {
-  const fields = ['email', 'phone', 'address', 'website', 'facebook', 'instagram', 'twitter', 'linkedin', 'youtube', 'tiktok'] as const;
-  return Object.fromEntries(fields.map(f => [f, (details as unknown as Record<string, string | undefined>)[f] || undefined]));
+  const fields = [
+    'email',
+    'phone',
+    'address',
+    'website',
+    'facebook',
+    'instagram',
+    'twitter',
+    'linkedin',
+    'youtube',
+    'tiktok',
+  ] as const;
+  return Object.fromEntries(
+    fields.map((f) => [f, (details as unknown as Record<string, string | undefined>)[f] || undefined]),
+  );
 }

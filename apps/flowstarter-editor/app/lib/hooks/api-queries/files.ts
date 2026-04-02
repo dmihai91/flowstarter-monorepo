@@ -85,12 +85,14 @@ export async function fetchTemplateFiles(params: FetchTemplateFilesParams): Prom
     throw new Error(`Failed to fetch template files: ${response.status}`);
   }
 
-  const data = await response.json() as { files?: Record<string, { content?: string } | string> };
-  
+  const data = (await response.json()) as { files?: Record<string, { content?: string } | string> };
+
   // Normalize file content
   const files: Record<string, string> = {};
+
   for (const [path, fileData] of Object.entries(data.files || {})) {
     const content = typeof fileData === 'string' ? fileData : fileData?.content;
+
     if (content) {
       files[path] = content;
     }
@@ -103,9 +105,9 @@ export async function syncFilesToConvex(params: SyncFilesToConvexParams): Promis
   const response = await fetch('/api/orchestrator?action=sync-files', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
-      projectId: params.projectId, 
-      files: params.files 
+    body: JSON.stringify({
+      projectId: params.projectId,
+      files: params.files,
     }),
     signal: params.signal,
   });

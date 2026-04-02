@@ -14,13 +14,7 @@ import {
   hasHandoffConnection,
 } from '~/lib/services/projectSyncService';
 
-import type {
-  OnboardingStep,
-  BusinessInfo,
-  Template,
-  ColorPalette,
-  InitialChatState,
-} from '../types';
+import type { OnboardingStep, BusinessInfo, Template, ColorPalette, InitialChatState } from '../types';
 
 interface UseSyncCallbacksProps {
   onStateChange?: (state: Partial<InitialChatState>) => void;

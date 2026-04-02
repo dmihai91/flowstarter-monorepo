@@ -28,8 +28,14 @@ const SystemIcon = () => (
 
 /** Inject the keyframe + ::view-transition rules once into the document head */
 function injectViewTransitionStyles() {
-  if (typeof document === 'undefined') return;
-  if (document.getElementById('theme-transition-styles')) return;
+  if (typeof document === 'undefined') {
+    return;
+  }
+
+  if (document.getElementById('theme-transition-styles')) {
+    return;
+  }
+
   const style = document.createElement('style');
   style.id = 'theme-transition-styles';
   style.textContent = `
@@ -64,7 +70,9 @@ export function ThemeToggle() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleThemeChange = (newTheme: Theme, event: React.MouseEvent<HTMLButtonElement>) => {
-    if (newTheme === theme) return;
+    if (newTheme === theme) {
+      return;
+    }
 
     // Calculate click origin for the reveal animation
     const rect = event.currentTarget.getBoundingClientRect();
@@ -74,6 +82,7 @@ export function ThemeToggle() {
     const root = document.documentElement;
     root.style.setProperty('--theme-reveal-x', `${x}px`);
     root.style.setProperty('--theme-reveal-y', `${y}px`);
+
     // Small circle on start so it expands outward from the button
     root.style.setProperty('--theme-reveal-from', `circle(0% at ${x}px ${y}px)`);
 
@@ -81,6 +90,7 @@ export function ThemeToggle() {
 
     // Use View Transitions API if available, otherwise fall back to instant switch
     const doc = document as Document & { startViewTransition?: (cb: () => void) => unknown };
+
     if (doc.startViewTransition) {
       doc.startViewTransition(() => setTheme(newTheme));
     } else {

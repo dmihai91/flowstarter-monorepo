@@ -18,7 +18,7 @@ const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173';
 
 async function mockAgentCodeWithEvents(page: Page, events: object[]) {
   await page.route('**/api/agent-code', async (route) => {
-    const lines = events.map(e => `event: agent-event\ndata: ${JSON.stringify(e)}\n\n`).join('');
+    const lines = events.map((e) => `event: agent-event\ndata: ${JSON.stringify(e)}\n\n`).join('');
     const result = `event: result\ndata: ${JSON.stringify({ success: true, files: [] })}\n\n`;
     await route.fulfill({
       status: 200,
@@ -81,12 +81,12 @@ test.describe('Terminal Tab', () => {
     await page.waitForLoadState('networkidle');
 
     const terminalTab = page.getByRole('button', { name: /terminal/i });
+
     if (await terminalTab.isVisible()) {
       await terminalTab.click();
+
       // Terminal panel content should appear
-      await expect(
-        page.getByText(/waiting for agent|agent activity/i)
-      ).toBeVisible({ timeout: 5000 });
+      await expect(page.getByText(/waiting for agent|agent activity/i)).toBeVisible({ timeout: 5000 });
     }
   });
 });
@@ -104,12 +104,12 @@ test.describe('Agent Activity Streaming', () => {
 
     // Trigger generation if possible by looking for a generate/build button
     const generateBtn = page.getByRole('button', { name: /generate|build|create/i }).first();
+
     if (await generateBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await generateBtn.click();
+
       // Streaming overlay should appear
-      await expect(
-        page.getByText(/building your site/i)
-      ).toBeVisible({ timeout: 10000 });
+      await expect(page.getByText(/building your site/i)).toBeVisible({ timeout: 10000 });
     }
   });
 });
@@ -125,12 +125,17 @@ test.describe('Terminal tab error badge', () => {
     await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
 
-    // After a failed generation, terminal tab should show error badge
-    // This checks the ViewToggle error badge rendering
+    /*
+     * After a failed generation, terminal tab should show error badge
+     * This checks the ViewToggle error badge rendering
+     */
     const terminalTab = page.getByRole('button', { name: /terminal/i });
+
     if (await terminalTab.isVisible({ timeout: 5000 }).catch(() => false)) {
-      // If we can trigger generation and it fails, the badge should appear
-      // For now just verify the tab exists
+      /*
+       * If we can trigger generation and it fails, the badge should appear
+       * For now just verify the tab exists
+       */
       await expect(terminalTab).toBeVisible();
     }
   });

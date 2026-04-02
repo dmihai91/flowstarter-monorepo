@@ -11,4 +11,3 @@ interface Performance {
     usedJSHeapSize: number;
   };
 }
-

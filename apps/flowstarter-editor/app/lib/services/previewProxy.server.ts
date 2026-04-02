@@ -20,6 +20,7 @@ export async function resolvePreviewUrl(projectId: string): Promise<string | nul
   if (!daytonaUrl) {
     try {
       const convexResult = await fetchPreviewUrl(projectId);
+
       if (convexResult?.workspaceUrl) {
         daytonaUrl = convexResult.workspaceUrl;
         setCachedSandbox(projectId, {
@@ -42,18 +43,21 @@ export async function resolvePreviewUrl(projectId: string): Promise<string | nul
 export async function resolveSlugToProjectId(slug: string): Promise<string | null> {
   try {
     const client = getConvexClient();
+
     if (!client) {
       console.error('[Preview Proxy] No Convex client for slug lookup');
       return null;
     }
 
     const project = await client.query('projects:getByUrlId' as any, { urlId: slug });
+
     if (project?._id) {
       console.log(`[Preview Proxy] Resolved slug "${slug}" → ${project._id}`);
       return project._id;
     }
 
     console.log(`[Preview Proxy] No project found for slug "${slug}"`);
+
     return null;
   } catch (e) {
     console.error('[Preview Proxy] Failed to resolve slug:', e);
@@ -62,4 +66,3 @@ export async function resolveSlugToProjectId(slug: string): Promise<string | nul
 }
 
 export { clearCachedPreview };
-

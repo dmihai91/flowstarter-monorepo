@@ -9,11 +9,18 @@ import { BaseAgent, type AgentContext, type AgentResponse } from '~/lib/flowops/
 import { generateJSON } from '~/lib/services/llm';
 import { PlanRequestSchema } from './planner-agent-schemas';
 import type {
-  PlanRequestDTO, PlanResultDTO, ReviewResultDTO, EscalateResultDTO, PlannerResponseDTO,
+  PlanRequestDTO,
+  PlanResultDTO,
+  ReviewResultDTO,
+  EscalateResultDTO,
+  PlannerResponseDTO,
 } from './planner-agent-schemas';
 import {
-  buildPlanPrompt, buildReviewPrompt, buildEscalatePrompt,
-  buildTemplateSummary, buildFileSummary,
+  buildPlanPrompt,
+  buildReviewPrompt,
+  buildEscalatePrompt,
+  buildTemplateSummary,
+  buildFileSummary,
 } from './planner-agent-prompts';
 
 // Re-export schemas and types for backward compatibility
@@ -47,38 +54,53 @@ but you make the strategic decisions.`,
 
   protected async process(message: string, context: AgentContext): Promise<AgentResponse> {
     context.onProgress?.('Parsing planner request...', 5);
+
     let request: PlanRequestDTO;
+
     try {
       const parsed = JSON.parse(message);
       const validation = PlanRequestSchema.safeParse(parsed);
+
       if (!validation.success) {
         return this.createErrorResponse(`Invalid request: ${validation.error.message}`);
       }
+
       request = validation.data;
     } catch {
       return this.createErrorResponse('Invalid JSON. Expected: { type, projectId, businessInfo, template, ... }');
     }
 
     this.logger.info(`Processing ${request.type} request for project ${request.projectId}`);
+
     switch (request.type) {
-      case 'plan': return this.handlePlan(request, context);
-      case 'review': return this.handleReview(request, context);
-      case 'escalate': return this.handleEscalate(request, context);
-      default: return this.createErrorResponse(`Unknown request type: ${request.type}`);
+      case 'plan':
+        return this.handlePlan(request, context);
+      case 'review':
+        return this.handleReview(request, context);
+      case 'escalate':
+        return this.handleEscalate(request, context);
+      default:
+        return this.createErrorResponse(`Unknown request type: ${request.type}`);
     }
   }
 
   private async handlePlan(request: PlanRequestDTO, context: AgentContext): Promise<AgentResponse> {
     context.onProgress?.('Creating modification plan with Opus 4...', 20);
+
     const templateSummary = buildTemplateSummary(request.template.files || {});
     const prompt = buildPlanPrompt(request, templateSummary);
+
     try {
       const result = await generateJSON<PlanResultDTO>([{ role: 'user', content: prompt }], {
-        model: MASTER_MODEL, temperature: 0.3, maxTokens: 16000,
+        model: MASTER_MODEL,
+        temperature: 0.3,
+        maxTokens: 16000,
       });
       this.logger.info(`Plan created with ${result.modifications.length} modifications`);
       context.onProgress?.('Plan created successfully', 100);
+
       const response: PlannerResponseDTO = { type: 'plan', result };
+
       return { message: this.createMessage('agent', JSON.stringify(response)), complete: true };
     } catch (error) {
       this.logger.error('Planning failed:', error);
@@ -88,20 +110,27 @@ but you make the strategic decisions.`,
 
   private async handleReview(request: PlanRequestDTO, context: AgentContext): Promise<AgentResponse> {
     context.onProgress?.('Reviewing generated output with Opus 4...', 20);
+
     if (!request.generatedFiles || Object.keys(request.generatedFiles).length === 0) {
       return this.createErrorResponse('No generated files provided for review');
     }
+
     const fileSummary = buildFileSummary(request.generatedFiles);
     const prompt = buildReviewPrompt(request, fileSummary, this.approvalThreshold);
+
     try {
       const result = await generateJSON<ReviewResultDTO>([{ role: 'user', content: prompt }], {
-        model: MASTER_MODEL, temperature: 0.3, maxTokens: 12000,
+        model: MASTER_MODEL,
+        temperature: 0.3,
+        maxTokens: 12000,
       });
       const hasNoCritical = !result.issues.some((i) => i.severity === 'critical');
       result.approved = result.score >= this.approvalThreshold && hasNoCritical;
       this.logger.info(`Review complete: score=${result.score}, approved=${result.approved}`);
       context.onProgress?.('Review complete', 100);
+
       const response: PlannerResponseDTO = { type: 'review', result };
+
       return { message: this.createMessage('agent', JSON.stringify(response)), complete: true };
     } catch (error) {
       this.logger.error('Review failed:', error);
@@ -111,22 +140,30 @@ but you make the strategic decisions.`,
 
   private async handleEscalate(request: PlanRequestDTO, context: AgentContext): Promise<AgentResponse> {
     context.onProgress?.('Analyzing escalation with Opus 4...', 20);
+
     if (!request.errorHistory || request.errorHistory.length === 0) {
       return this.createErrorResponse('No error history provided for escalation');
     }
+
     const errorSummary = request.errorHistory
-      .map((e) =>
-        `- ${e.file}: "${e.error}" (${e.fixAttempts} fix attempts${e.lastFixSummary ? `, last fix: ${e.lastFixSummary}` : ''})`,
+      .map(
+        (e) =>
+          `- ${e.file}: "${e.error}" (${e.fixAttempts} fix attempts${e.lastFixSummary ? `, last fix: ${e.lastFixSummary}` : ''})`,
       )
       .join('\n');
     const prompt = buildEscalatePrompt(request, errorSummary);
+
     try {
       const result = await generateJSON<EscalateResultDTO>([{ role: 'user', content: prompt }], {
-        model: MASTER_MODEL, temperature: 0.3, maxTokens: 2000,
+        model: MASTER_MODEL,
+        temperature: 0.3,
+        maxTokens: 2000,
       });
       this.logger.info(`Escalation type: ${result.escalationType}`);
       context.onProgress?.('Escalation report generated', 100);
+
       const response: PlannerResponseDTO = { type: 'escalate', result };
+
       return { message: this.createMessage('agent', JSON.stringify(response)), complete: true };
     } catch (error) {
       this.logger.error('Escalation analysis failed:', error);
@@ -153,6 +190,7 @@ export function getPlannerAgent(approvalThreshold?: number): PlannerAgent {
   if (!plannerAgentInstance) {
     plannerAgentInstance = new PlannerAgent(approvalThreshold);
   }
+
   return plannerAgentInstance;
 }
 

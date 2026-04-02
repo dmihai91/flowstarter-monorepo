@@ -23,7 +23,6 @@ type MessageAvatarProps = UserAvatarProps | AssistantAvatarProps;
  * Sparkles/AI icon for the assistant avatar
  */
 
-
 export const MessageAvatar = memo((props: MessageAvatarProps) => {
   const size = props.size ?? 32;
 

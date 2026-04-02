@@ -18,13 +18,7 @@ export const COACHING_CONTENT_PATTERNS = {
     'Your Breakthrough Starts Here',
     'Lead the Life You Were Meant to Live',
   ],
-  ctas: [
-    'Book a Discovery Call',
-    'Schedule Your Session',
-    'Start Your Transformation',
-    'Apply Now',
-    'Let\'s Talk',
-  ],
+  ctas: ['Book a Discovery Call', 'Schedule Your Session', 'Start Your Transformation', 'Apply Now', "Let's Talk"],
   specializations: [
     'Executive Coaching',
     'Career Transitions',
@@ -66,11 +60,27 @@ ${BASE_CONTENT_RULES}`;
 
 export function buildCoachingContentPrompt(context: BusinessContext): string {
   const parts = [`${COACHING_CONTENT_PROMPT}\n\nBUSINESS CONTEXT:`];
-  if (context.ownerName) parts.push(`- Coach: ${context.ownerName}`);
-  if (context.location) parts.push(`- Location: ${context.location}`);
-  if (context.services?.length) parts.push(`- Specializations: ${context.services.join(', ')}`);
-  if (context.targetAudience) parts.push(`- Ideal clients: ${context.targetAudience}`);
-  if (context.uniqueApproach) parts.push(`- Methodology: ${context.uniqueApproach}`);
+
+  if (context.ownerName) {
+    parts.push(`- Coach: ${context.ownerName}`);
+  }
+
+  if (context.location) {
+    parts.push(`- Location: ${context.location}`);
+  }
+
+  if (context.services?.length) {
+    parts.push(`- Specializations: ${context.services.join(', ')}`);
+  }
+
+  if (context.targetAudience) {
+    parts.push(`- Ideal clients: ${context.targetAudience}`);
+  }
+
+  if (context.uniqueApproach) {
+    parts.push(`- Methodology: ${context.uniqueApproach}`);
+  }
+
   return parts.join('\n');
 }
 

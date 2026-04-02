@@ -100,4 +100,3 @@ export function useBusinessInfo(options: UseBusinessInfoOptions = {}): UseBusine
 }
 
 export type { UseBusinessInfoOptions, UseBusinessInfoReturn };
-

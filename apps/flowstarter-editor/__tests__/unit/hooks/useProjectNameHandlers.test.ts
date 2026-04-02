@@ -98,7 +98,7 @@ describe('useProjectNameHandlers Generation Logic', () => {
       '/api/generate-project-name',
       expect.objectContaining({
         signal: controller.signal,
-      })
+      }),
     );
   });
 });
@@ -171,8 +171,7 @@ describe('useProjectNameHandlers AbortController', () => {
   });
 
   it('should properly identify AbortError', () => {
-    const isAbortError = (error: unknown) =>
-      error instanceof Error && error.name === 'AbortError';
+    const isAbortError = (error: unknown) => error instanceof Error && error.name === 'AbortError';
 
     const abortError = new Error('Aborted');
     abortError.name = 'AbortError';
@@ -308,8 +307,10 @@ describe('useProjectNameHandlers Manual Entry Path', () => {
   });
 
   it('should skip typing indicator for first message when already typing', () => {
-    // When in manual entry mode, typing is already true
-    // We should pass skipTypingIndicator: true to avoid a flash
+    /*
+     * When in manual entry mode, typing is already true
+     * We should pass skipTypingIndicator: true to avoid a flash
+     */
     const options = { skipTypingIndicator: true };
 
     expect(options.skipTypingIndicator).toBe(true);
@@ -402,10 +403,13 @@ describe('useProjectNameHandlers Refinement Detection', () => {
 
 describe('useProjectNameHandlers Name Acceptance Patterns', () => {
   // Test helper matching the implementation
-  const parseNameAcceptance = (input: string): { isExplicit: boolean; isGeneric: boolean; extractedName: string | null } => {
+  const parseNameAcceptance = (
+    input: string,
+  ): { isExplicit: boolean; isGeneric: boolean; extractedName: string | null } => {
     const useNameMatch = input.match(/^(?:yes,?\s*)?(?:i'll\s*)?use\s*["']?([^"']+)["']?$/i);
     const extractedNameFromUse = useNameMatch ? useNameMatch[1].trim() : null;
-    const isGenericAcceptance = extractedNameFromUse !== null && /^(this|that|the|it)\s*(name|one)?$/i.test(extractedNameFromUse);
+    const isGenericAcceptance =
+      extractedNameFromUse !== null && /^(this|that|the|it)\s*(name|one)?$/i.test(extractedNameFromUse);
     const isExplicitNameAcceptance = extractedNameFromUse !== null && !isGenericAcceptance;
 
     return {
@@ -508,7 +512,7 @@ describe('useProjectNameHandlers Refinement API', () => {
       expect.objectContaining({
         method: 'POST',
         body: expect.stringContaining('"action":"refine"'),
-      })
+      }),
     );
 
     const callBody = JSON.parse(mockFetch.mock.calls[0][1].body);
@@ -601,4 +605,3 @@ describe('useProjectNameHandlers Suggestion Detection', () => {
     expect(detectsSuggestionRequest('Use this name')).toBe(false);
   });
 });
-

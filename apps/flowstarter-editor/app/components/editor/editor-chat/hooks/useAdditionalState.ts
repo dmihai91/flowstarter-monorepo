@@ -22,23 +22,13 @@ interface UseAdditionalStateProps {
   projectDescription: string;
 }
 
-export function useAdditionalState({
-  initialState,
-  externalProjectId,
-  projectDescription,
-}: UseAdditionalStateProps) {
+export function useAdditionalState({ initialState, externalProjectId, projectDescription }: UseAdditionalStateProps) {
   // Font and logo selection
-  const [selectedFont, setSelectedFont] = useState<SystemFont | null>(
-    initialState?.selectedFont || null,
-  );
-  const [selectedLogo, setSelectedLogo] = useState<LogoInfo | null>(
-    initialState?.selectedLogo || null,
-  );
+  const [selectedFont, setSelectedFont] = useState<SystemFont | null>(initialState?.selectedFont || null);
+  const [selectedLogo, setSelectedLogo] = useState<LogoInfo | null>(initialState?.selectedLogo || null);
 
   // Project identifiers
-  const [currentUrlId, setCurrentUrlId] = useState<string | null>(
-    initialState?.projectUrlId || null,
-  );
+  const [currentUrlId, setCurrentUrlId] = useState<string | null>(initialState?.projectUrlId || null);
 
   /**
    * Initialize from externalProjectId (from parent), then initialState, then null
@@ -49,9 +39,7 @@ export function useAdditionalState({
   );
 
   // Quick Profile state (streamlined flow)
-  const [quickProfile, setQuickProfile] = useState<QuickProfile | null>(
-    initialState?.quickProfile || null,
-  );
+  const [quickProfile, setQuickProfile] = useState<QuickProfile | null>(initialState?.quickProfile || null);
 
   // Preview source
   const [previewSource] = useState<PreviewSource>('daytona');
@@ -79,7 +67,10 @@ export function useAdditionalState({
    * Suggested quick profile computed from description
    */
   const suggestedQuickProfile = useMemo(() => {
-    if (!projectDescription) return {};
+    if (!projectDescription) {
+      return {};
+    }
+
     return getSuggestedQuickProfile(projectDescription);
   }, [projectDescription]);
 

@@ -5,12 +5,7 @@
 import type { ContentContext } from '../types';
 import { pickRandom } from '../context';
 
-export function generateSiteMd(
-  siteName: string,
-  businessInfo: any,
-  year: number,
-  ctx: ContentContext
-): string {
+export function generateSiteMd(siteName: string, businessInfo: any, year: number, ctx: ContentContext): string {
   const name = businessInfo.name || siteName;
   const tagline = businessInfo.tagline || pickRandom(ctx.suggestions.headlines);
   const description = businessInfo.description || `${name} - ${tagline}`;

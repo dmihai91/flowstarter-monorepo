@@ -118,4 +118,3 @@ export function injectCSSVariables(content: string, palette: ColorPalette, fonts
 
   return content;
 }
-

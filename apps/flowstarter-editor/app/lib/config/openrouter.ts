@@ -24,4 +24,3 @@ export function getOpenRouterApiKey(): string {
 export function getOpenRouterModel(): string {
   return OPENROUTER_CONFIG.defaultModel;
 }
-

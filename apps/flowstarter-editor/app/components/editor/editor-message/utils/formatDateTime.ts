@@ -17,4 +17,3 @@ export function formatDateTime(timestamp: number): string {
     return `${dateStr}, ${time}`;
   }
 }
-

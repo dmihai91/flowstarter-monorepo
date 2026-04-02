@@ -119,9 +119,7 @@ const COLOR_PRIMITIVES = {
 
 export default defineConfig({
   content: {
-    filesystem: [
-      '../../packages/flow-design-system/src/**/*.{ts,tsx}',
-    ],
+    filesystem: ['../../packages/flow-design-system/src/**/*.{ts,tsx}'],
   },
   safelist: [
     ...Object.keys(customIconCollection[collectionName] || {}).map((x) => `i-flowstarter:${x}`),
@@ -328,4 +326,3 @@ function generateAlphaPalette(hex: string) {
     {} as Record<number, string>,
   );
 }
-

@@ -1,6 +1,6 @@
 /**
  * Magic Link Functions
- * 
+ *
  * Generate and validate magic links for client access.
  * Flow: Team creates link → Sends to client → Client clicks → Gets session
  */
@@ -12,9 +12,11 @@ import { mutation, query } from './_generated/server';
 function generateToken(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let token = '';
+
   for (let i = 0; i < 32; i++) {
     token += chars.charAt(Math.floor(Math.random() * chars.length));
   }
+
   return token;
 }
 
@@ -22,15 +24,19 @@ function generateToken(): string {
 function generateSessionToken(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let token = '';
+
   for (let i = 0; i < 64; i++) {
     token += chars.charAt(Math.floor(Math.random() * chars.length));
   }
+
   return token;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// QUERIES
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * QUERIES
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 /**
  * Get magic links for a project
@@ -44,9 +50,10 @@ export const getForProject = query({
       .query('magicLinks')
       .withIndex('by_project', (q) => q.eq('projectId', args.projectId))
       .collect();
-    
-    return links.map(link => ({
+
+    return links.map((link) => ({
       ...link,
+
       // Don't expose full token in list view
       tokenPreview: link.token.slice(0, 8) + '...',
     }));
@@ -65,7 +72,7 @@ export const getForClient = query({
       .query('magicLinks')
       .withIndex('by_client', (q) => q.eq('clientId', args.clientId))
       .collect();
-    
+
     // Get project info for each link
     const linksWithProjects = await Promise.all(
       links.map(async (link) => {
@@ -76,9 +83,9 @@ export const getForClient = query({
           projectName: project?.name,
           projectUrlId: project?.urlId,
         };
-      })
+      }),
     );
-    
+
     return linksWithProjects;
   },
 });
@@ -95,31 +102,31 @@ export const validate = query({
       .query('magicLinks')
       .withIndex('by_token', (q) => q.eq('token', args.token))
       .first();
-    
+
     if (!link) {
       return { valid: false, error: 'Link not found' };
     }
-    
+
     if (link.isRevoked) {
       return { valid: false, error: 'Link has been revoked' };
     }
-    
+
     if (link.expiresAt && link.expiresAt < Date.now()) {
       return { valid: false, error: 'Link has expired' };
     }
-    
+
     if (link.maxUses && link.useCount >= link.maxUses) {
       return { valid: false, error: 'Link has reached maximum uses' };
     }
-    
+
     // Get client and project info
     const client = await ctx.db.get(link.clientId);
     const project = await ctx.db.get(link.projectId);
-    
+
     if (!client || !project) {
       return { valid: false, error: 'Associated data not found' };
     }
-    
+
     return {
       valid: true,
       accessLevel: link.accessLevel,
@@ -175,9 +182,11 @@ export const validateClientSession = query({
   },
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// MUTATIONS
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * MUTATIONS
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 /**
  * Create a new magic link
@@ -186,35 +195,30 @@ export const create = mutation({
   args: {
     clientId: v.id('clients'),
     projectId: v.id('projects'),
-    accessLevel: v.optional(v.union(
-      v.literal('view'),
-      v.literal('customize'),
-      v.literal('full')
-    )),
+    accessLevel: v.optional(v.union(v.literal('view'), v.literal('customize'), v.literal('full'))),
     expiresInDays: v.optional(v.number()), // null = never expires
-    maxUses: v.optional(v.number()),       // null = unlimited
-    createdBy: v.optional(v.string()),     // Clerk user ID
+    maxUses: v.optional(v.number()), // null = unlimited
+    createdBy: v.optional(v.string()), // Clerk user ID
   },
   handler: async (ctx, args) => {
     const now = Date.now();
     const token = generateToken();
-    
+
     // Verify client and project exist
     const client = await ctx.db.get(args.clientId);
     const project = await ctx.db.get(args.projectId);
-    
+
     if (!client) {
       return { success: false, error: 'Client not found' };
     }
+
     if (!project) {
       return { success: false, error: 'Project not found' };
     }
-    
+
     // Calculate expiry
-    const expiresAt = args.expiresInDays 
-      ? now + args.expiresInDays * 24 * 60 * 60 * 1000
-      : undefined;
-    
+    const expiresAt = args.expiresInDays ? now + args.expiresInDays * 24 * 60 * 60 * 1000 : undefined;
+
     const linkId = await ctx.db.insert('magicLinks', {
       token,
       clientId: args.clientId,
@@ -227,11 +231,12 @@ export const create = mutation({
       createdBy: args.createdBy,
       createdAt: now,
     });
-    
+
     return {
       success: true,
       linkId,
       token,
+
       // Return the full URL for easy sharing
       url: `/access/${token}`,
     };
@@ -252,35 +257,35 @@ export const use = mutation({
       .query('magicLinks')
       .withIndex('by_token', (q) => q.eq('token', args.token))
       .first();
-    
+
     if (!link) {
       return { success: false, error: 'Link not found' };
     }
-    
+
     if (link.isRevoked) {
       return { success: false, error: 'Link has been revoked' };
     }
-    
+
     if (link.expiresAt && link.expiresAt < Date.now()) {
       return { success: false, error: 'Link has expired' };
     }
-    
+
     if (link.maxUses && link.useCount >= link.maxUses) {
       return { success: false, error: 'Link has reached maximum uses' };
     }
-    
+
     const now = Date.now();
-    
+
     // Update link usage
     await ctx.db.patch(link._id, {
       useCount: link.useCount + 1,
       usedAt: link.usedAt || now, // Only set first use time
     });
-    
+
     // Create client session
     const sessionToken = generateSessionToken();
     const sessionExpiry = now + 30 * 24 * 60 * 60 * 1000; // 30 days
-    
+
     await ctx.db.insert('clientSessions', {
       token: sessionToken,
       clientId: link.clientId,
@@ -292,19 +297,20 @@ export const use = mutation({
       lastActiveAt: now,
       createdAt: now,
     });
-    
+
     // Update client status if needed
     const client = await ctx.db.get(link.clientId);
+
     if (client && client.status === 'onboarding') {
       await ctx.db.patch(link.clientId, {
         status: 'active',
         updatedAt: now,
       });
     }
-    
+
     // Get project for redirect
     const project = await ctx.db.get(link.projectId);
-    
+
     return {
       success: true,
       sessionToken,
@@ -324,16 +330,17 @@ export const revoke = mutation({
   },
   handler: async (ctx, args) => {
     const link = await ctx.db.get(args.id);
+
     if (!link) {
       return { success: false, error: 'Link not found' };
     }
-    
+
     await ctx.db.patch(args.id, {
       isRevoked: true,
       revokedAt: Date.now(),
       revokedReason: args.reason,
     });
-    
+
     return { success: true };
   },
 });
@@ -354,37 +361,38 @@ export const completeClientAccess = mutation({
       .query('magicLinks')
       .withIndex('by_token', (q) => q.eq('token', args.token))
       .first();
-    
+
     if (!link) {
       return { success: false, error: 'Link not found' };
     }
-    
+
     if (link.isRevoked) {
       return { success: false, error: 'Link has been revoked' };
     }
-    
+
     if (link.expiresAt && link.expiresAt < Date.now()) {
       return { success: false, error: 'Link has expired' };
     }
-    
+
     const now = Date.now();
-    
+
     // Get the client record
     const client = await ctx.db.get(link.clientId);
+
     if (!client) {
       return { success: false, error: 'Client not found' };
     }
-    
+
     // Check if this Clerk user is already linked to another client
     const existingClientWithClerk = await ctx.db
       .query('clients')
       .withIndex('by_clerkUserId', (q) => q.eq('clerkUserId', args.clerkUserId))
       .first();
-    
+
     if (existingClientWithClerk && existingClientWithClerk._id !== client._id) {
       return { success: false, error: 'This account is already linked to another client' };
     }
-    
+
     // Link Clerk user to client (if not already linked)
     if (!client.clerkUserId) {
       await ctx.db.patch(client._id, {
@@ -395,17 +403,17 @@ export const completeClientAccess = mutation({
         updatedAt: now,
       });
     }
-    
+
     // Update magic link usage
     await ctx.db.patch(link._id, {
       useCount: link.useCount + 1,
       usedAt: link.usedAt || now,
     });
-    
+
     // Create client session
     const sessionToken = generateSessionToken();
     const sessionExpiry = now + 30 * 24 * 60 * 60 * 1000; // 30 days
-    
+
     await ctx.db.insert('clientSessions', {
       token: sessionToken,
       clientId: link.clientId,
@@ -416,10 +424,10 @@ export const completeClientAccess = mutation({
       lastActiveAt: now,
       createdAt: now,
     });
-    
+
     // Get project for redirect URL
     const project = await ctx.db.get(link.projectId);
-    
+
     return {
       success: true,
       sessionToken,
@@ -439,24 +447,19 @@ export const cleanupExpired = mutation({
   handler: async (ctx) => {
     const now = Date.now();
     let deletedCount = 0;
-    
+
     // Find expired links
     const expiredLinks = await ctx.db
       .query('magicLinks')
-      .filter((q) => 
-        q.and(
-          q.neq(q.field('expiresAt'), undefined),
-          q.lt(q.field('expiresAt'), now)
-        )
-      )
+      .filter((q) => q.and(q.neq(q.field('expiresAt'), undefined), q.lt(q.field('expiresAt'), now)))
       .collect();
-    
+
     // Delete them
     for (const link of expiredLinks) {
       await ctx.db.delete(link._id);
       deletedCount++;
     }
-    
+
     return { deletedCount };
   },
 });

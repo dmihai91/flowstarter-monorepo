@@ -75,4 +75,3 @@ export const getAll = async (_db?: StubDatabase): Promise<ChatHistoryItem[]> => 
 export const deleteById = async (_db?: StubDatabase, _id?: string): Promise<void> => {
   console.warn('deleteById is deprecated. Use Convex for chat deletion.');
 };
-

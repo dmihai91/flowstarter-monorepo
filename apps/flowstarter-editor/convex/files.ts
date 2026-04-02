@@ -240,4 +240,3 @@ export const syncFiles = mutation({
     return results;
   },
 });
-

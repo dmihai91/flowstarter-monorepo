@@ -249,4 +249,3 @@ export function getFilePaths(files: FileMap) {
 
   return filePaths;
 }
-

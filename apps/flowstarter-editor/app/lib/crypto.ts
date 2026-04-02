@@ -68,4 +68,3 @@ function decodeBase64(encoded: Uint8Array) {
 function encodeBase64(data: string) {
   return Uint8Array.from(atob(data), (ch) => ch.codePointAt(0)!);
 }
-

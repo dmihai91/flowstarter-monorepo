@@ -330,6 +330,7 @@ describe('PersonalizationPanel', () => {
       act(() => {
         vi.advanceTimersByTime(150);
       });
+
       return result;
     };
 
@@ -343,6 +344,7 @@ describe('PersonalizationPanel', () => {
       navigateToLogo();
       fireEvent.click(screen.getByTestId('skip-logo-button'));
       expect(mockOnLogoSelect).toHaveBeenCalledTimes(1);
+
       // Second arg is useAiImages flag (false when skipping)
       expect(mockOnLogoSelect).toHaveBeenCalledWith({ type: 'none' }, false);
     });
@@ -354,6 +356,7 @@ describe('PersonalizationPanel', () => {
 
     it('shows AI generation option', () => {
       navigateToLogo();
+
       // "Generate with AI" appears twice: as a label and as the button
       const aiElements = screen.getAllByText('Generate with AI');
       expect(aiElements.length).toBeGreaterThanOrEqual(1);

@@ -133,4 +133,3 @@ export function clearTodoList(): void {
   todoList = [];
   logger.info('Cleared todo list');
 }
-

@@ -18,7 +18,7 @@ const { title, description } = frontmatter;
 <p>{description}</p>`),
     ]);
 
-    expect(files[0].content).not.toContain("content/services.md");
+    expect(files[0].content).not.toContain('content/services.md');
     expect(files[0].content).toContain('const title = "Services";');
     expect(files[0].content).toContain('const description = "Services Description";');
   });

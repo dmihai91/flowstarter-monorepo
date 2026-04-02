@@ -92,4 +92,3 @@ export function useStatePersistence(options: UseStatePersistenceOptions = {}): U
 }
 
 export type { UseStatePersistenceOptions, UseStatePersistenceReturn };
-

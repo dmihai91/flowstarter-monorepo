@@ -26,9 +26,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
       })),
     });
   } catch (error) {
-    return json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Failed to fetch event types',
-    }, { status: 400 });
+    return json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch event types',
+      },
+      { status: 400 },
+    );
   }
 }

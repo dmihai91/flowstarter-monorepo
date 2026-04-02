@@ -108,9 +108,7 @@ export function DeleteDialog({
               </RadixDialog.Description>
 
               {/* Project data warning */}
-              {hasProject && (
-                <ProjectDataWarning isDark={isDark} colors={colors} projectName={projectName} />
-              )}
+              {hasProject && <ProjectDataWarning isDark={isDark} colors={colors} projectName={projectName} />}
 
               {/* Buttons */}
               <DialogButtons

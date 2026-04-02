@@ -23,16 +23,15 @@ interface I18nProviderProps {
 }
 
 export function I18nProvider({ locale = 'en', children }: I18nProviderProps) {
-  const value = useMemo(() => ({
-    locale,
-    t: locales[locale] || en,
-  }), [locale]);
-
-  return (
-    <I18nContext.Provider value={value}>
-      {children}
-    </I18nContext.Provider>
+  const value = useMemo(
+    () => ({
+      locale,
+      t: locales[locale] || en,
+    }),
+    [locale],
   );
+
+  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 
 export function useI18nContext() {

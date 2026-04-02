@@ -96,4 +96,3 @@ export {
   type CustomizeRequest,
   type CustomizeResponse,
 } from './customizer-agent';
-

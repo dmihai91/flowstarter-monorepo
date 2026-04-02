@@ -87,6 +87,7 @@ export default defineConfig((config) => {
         'scheduler',
         '@remix-run/react',
         'remix-island',
+
         // All Radix UI packages — prevents duplicate React instances during HMR
         '@radix-ui/react-slot',
         '@radix-ui/react-direction',
@@ -122,6 +123,7 @@ export default defineConfig((config) => {
         // Fix undici trying to import util/types which doesn't exist in browser polyfill
         'util/types': path.resolve(__dirname, 'app/lib/utils/util-types-stub.ts'),
         'node:util/types': path.resolve(__dirname, 'app/lib/utils/util-types-stub.ts'),
+
         // Convex generated files
         '../../convex/_generated': path.resolve(__dirname, 'convex/_generated'),
       },
@@ -136,16 +138,20 @@ export default defineConfig((config) => {
         'remix-island',
         'react-router',
         'react-router-dom',
+
         // Node polyfills (discovered at runtime)
         'vite-plugin-node-polyfills/shims/buffer',
         'vite-plugin-node-polyfills/shims/global',
         'vite-plugin-node-polyfills/shims/process',
+
         // State management
         'nanostores',
         '@nanostores/react',
+
         // Analytics
         '@amplitude/analytics-browser',
         '@amplitude/plugin-session-replay-browser',
+
         // UI components
         'framer-motion',
         '@radix-ui/react-dialog',
@@ -161,6 +167,7 @@ export default defineConfig((config) => {
         'lucide-react',
         'react-markdown',
         'react-toastify',
+
         // Utilities
         'js-cookie',
         'chalk',
@@ -170,11 +177,13 @@ export default defineConfig((config) => {
         'path-browserify',
         'diff',
         'pako',
+
         // Remix/Convex
         '@remix-run/cloudflare',
         'remix-utils/client-only',
         'convex/react',
         'convex/server',
+
         // AI SDK
         '@ai-sdk/openai',
         '@openrouter/ai-sdk-provider',
@@ -201,8 +210,10 @@ export default defineConfig((config) => {
         usePolling: false,
       },
       proxy: {
-        // Note: /mcp-live is handled by mcpLiveProxyPlugin middleware for HTML transformation
-        // Do NOT add a proxy here as it will conflict with the middleware
+        /*
+         * Note: /mcp-live is handled by mcpLiveProxyPlugin middleware for HTML transformation
+         * Do NOT add a proxy here as it will conflict with the middleware
+         */
 
         /*
          * Proxy template assets (JS, CSS) - these are referenced by the template HTML
@@ -268,6 +279,7 @@ export default defineConfig((config) => {
     plugins: [
       // MCP live proxy must come BEFORE Remix to intercept /mcp-live/* requests
       mcpLiveProxyPlugin(),
+
       // Stub out stream-browserify for browser (it uses CommonJS which breaks in ESM)
       {
         name: 'stub-stream-browserify',
@@ -275,15 +287,18 @@ export default defineConfig((config) => {
           if (id === 'stream-browserify' || id === 'stream') {
             return '\0virtual:stream-stub';
           }
+
           return null;
         },
         load(id: string) {
           if (id === '\0virtual:stream-stub') {
             return 'export default {}; export const Stream = {}; export const Readable = {}; export const Writable = {}; export const Duplex = {}; export const Transform = {}; export const PassThrough = {};';
           }
+
           return null;
         },
       },
+
       // Stub out util/types for browser (undici uses this Node.js built-in)
       {
         name: 'stub-util-types',
@@ -292,6 +307,7 @@ export default defineConfig((config) => {
           if (id === 'util/types' || id === 'node:util/types') {
             return path.resolve(__dirname, 'app/lib/utils/util-types-stub.ts');
           }
+
           return null;
         },
       },
@@ -415,13 +431,15 @@ function mcpLiveProxyPlugin() {
             if (contentType.includes('text/html')) {
               // Remove the base tag
               body = body.replace(/<base href="[^"]*"\s*\/?>/gi, '');
+
               // Rewrite asset paths: /api/templates/... → /mcp-live/api/templates/...
               body = body.replace(/src="\/api\/templates\//g, 'src="/mcp-live/api/templates/');
               body = body.replace(/href="\/api\/templates\//g, 'href="/mcp-live/api/templates/');
+
               // Rewrite any basepath variables to match proxy path (legacy support)
               body = body.replace(
                 /window\.__BASEPATH__\s*=\s*'\/api\/templates\//g,
-                "window.__BASEPATH__ = '/mcp-live/api/templates/"
+                "window.__BASEPATH__ = '/mcp-live/api/templates/",
               );
             }
 
@@ -436,4 +454,3 @@ function mcpLiveProxyPlugin() {
     },
   };
 }
-

@@ -189,8 +189,10 @@ function parseAndFilterNames(response: string, projectDescription: string): stri
     if (containsBannedWord(name)) {
       const bannedWord = getBannedWord(name);
       logger.warn(`Filtering out banned name "${name}" (contains "${bannedWord}")`);
+
       return false;
     }
+
     return true;
   });
 }

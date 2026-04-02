@@ -31,8 +31,7 @@ function NewRouteContent() {
   if (!hasHandoff) {
     const dashboardUrl =
       typeof window !== 'undefined'
-        ? `${window.location.protocol}//${window.location.hostname.replace('editor.', '')}` +
-          '/team/dashboard/new'
+        ? `${window.location.protocol}//${window.location.hostname.replace('editor.', '')}` + '/team/dashboard/new'
         : 'https://flowstarter.dev/team/dashboard/new';
 
     if (typeof window !== 'undefined') {
@@ -42,13 +41,7 @@ function NewRouteContent() {
     return <LoadingScreen message="Redirecting to dashboard..." />;
   }
 
-  return (
-    <HandoffGate
-      handoffToken={handoffToken}
-      hasHandoff={hasHandoff}
-      loadingMessage={en.app.loadingProject}
-    />
-  );
+  return <HandoffGate handoffToken={handoffToken} hasHandoff={hasHandoff} loadingMessage={en.app.loadingProject} />;
 }
 
 export default function NewProjectPage() {

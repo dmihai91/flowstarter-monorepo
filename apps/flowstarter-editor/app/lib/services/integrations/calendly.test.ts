@@ -55,8 +55,22 @@ import Layout from '../layouts/Layout.astro';
     const result = injectCalendly(baseFiles, {
       url: 'https://calendly.com/elena',
       eventTypes: [
-        { uri: 'u1', name: 'Consultation', slug: 'consult', duration: 30, scheduling_url: 'https://calendly.com/elena/consult', active: true },
-        { uri: 'u2', name: 'Deep Dive', slug: 'deep', duration: 60, scheduling_url: 'https://calendly.com/elena/deep', active: true },
+        {
+          uri: 'u1',
+          name: 'Consultation',
+          slug: 'consult',
+          duration: 30,
+          scheduling_url: 'https://calendly.com/elena/consult',
+          active: true,
+        },
+        {
+          uri: 'u2',
+          name: 'Deep Dive',
+          slug: 'deep',
+          duration: 60,
+          scheduling_url: 'https://calendly.com/elena/deep',
+          active: true,
+        },
       ],
     });
     const contact = result.find((f) => f.path.includes('contact.astro'))!;
@@ -80,7 +94,8 @@ import Layout from '../layouts/Layout.astro';
     const filesWithCalendly = [
       {
         path: 'src/layouts/Layout.astro',
-        content: '<html><head><link href="https://assets.calendly.com/assets/external/widget.css" /></head><body></body></html>',
+        content:
+          '<html><head><link href="https://assets.calendly.com/assets/external/widget.css" /></head><body></body></html>',
       },
     ];
     const result = injectCalendly(filesWithCalendly, { url: 'https://calendly.com/x' });
@@ -109,19 +124,35 @@ describe('fetchCalendlyEventTypes', () => {
   });
 
   it('fetches user URI then event types', async () => {
-    const mockFetch = vi.fn()
+    const mockFetch = vi
+      .fn()
       .mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ resource: { uri: 'https://api.calendly.com/users/abc123' } }),
       })
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({
-          collection: [
-            { uri: 'et1', name: '30min', slug: '30min', duration: 30, scheduling_url: 'https://calendly.com/x/30', active: true },
-            { uri: 'et2', name: 'Inactive', slug: 'inactive', duration: 15, scheduling_url: 'https://calendly.com/x/15', active: false },
-          ],
-        }),
+        json: () =>
+          Promise.resolve({
+            collection: [
+              {
+                uri: 'et1',
+                name: '30min',
+                slug: '30min',
+                duration: 30,
+                scheduling_url: 'https://calendly.com/x/30',
+                active: true,
+              },
+              {
+                uri: 'et2',
+                name: 'Inactive',
+                slug: 'inactive',
+                duration: 15,
+                scheduling_url: 'https://calendly.com/x/15',
+                active: false,
+              },
+            ],
+          }),
       });
 
     vi.stubGlobal('fetch', mockFetch);

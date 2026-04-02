@@ -16,4 +16,3 @@ export const projectDescription = atom<string | undefined>(undefined);
 // Alias for backward compatibility
 export const chatId = projectId;
 export const description = projectDescription;
-

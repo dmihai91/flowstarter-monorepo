@@ -57,10 +57,7 @@ describe('injectLeadCapture', () => {
   });
 
   it('does not modify non-contact files', () => {
-    const files = [
-      contactFile,
-      { path: 'src/pages/about.astro', content: '<h1>About</h1>' },
-    ];
+    const files = [contactFile, { path: 'src/pages/about.astro', content: '<h1>About</h1>' }];
     const result = injectLeadCapture(files, config);
     expect(result[1].content).toBe('<h1>About</h1>');
   });

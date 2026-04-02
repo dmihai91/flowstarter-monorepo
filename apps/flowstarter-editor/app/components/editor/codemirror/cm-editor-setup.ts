@@ -19,15 +19,28 @@ import { debounce } from '~/utils/debounce';
 import { getTheme } from './cm-theme';
 import { indentKeyBinding } from './indent';
 import type { EditorSettings, OnScrollCallback, OnSaveCallback } from './cm-types';
-import {
-  readOnlyTooltipStateEffect,
-  editableTooltipField,
-  editableStateField,
-} from './cm-state-fields';
+import { readOnlyTooltipStateEffect, editableTooltipField, editableStateField } from './cm-state-fields';
 
 const CODE_FILE_EXTENSIONS = [
-  '.js', '.ts', '.tsx', '.jsx', '.py', '.cpp', '.c', '.h', '.hpp',
-  '.vue', '.html', '.css', '.scss', '.sass', '.json', '.java', '.rs', '.go', '.php',
+  '.js',
+  '.ts',
+  '.tsx',
+  '.jsx',
+  '.py',
+  '.cpp',
+  '.c',
+  '.h',
+  '.hpp',
+  '.vue',
+  '.html',
+  '.css',
+  '.scss',
+  '.sass',
+  '.json',
+  '.java',
+  '.rs',
+  '.go',
+  '.php',
 ];
 
 export function newEditorState(
@@ -41,9 +54,7 @@ export function newEditorState(
   extensions: Extension[],
   filePath?: string,
 ) {
-  const isCodeFile = filePath
-    ? CODE_FILE_EXTENSIONS.some((ext) => filePath.endsWith(ext))
-    : true;
+  const isCodeFile = filePath ? CODE_FILE_EXTENSIONS.some((ext) => filePath.endsWith(ext)) : true;
 
   return EditorState.create({
     doc: content,

@@ -54,6 +54,7 @@ describe('client', () => {
       process.env.DAYTONA_API_URL = 'https://test.daytona.io/api';
 
       const { getClient } = await import('~/lib/services/daytona/client');
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       const { Daytona } = await import('@daytonaio/sdk');
 
       const client = getClient();
@@ -70,6 +71,7 @@ describe('client', () => {
       delete process.env.DAYTONA_API_URL;
 
       const { getClient } = await import('~/lib/services/daytona/client');
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       const { Daytona } = await import('@daytonaio/sdk');
 
       getClient();
@@ -77,7 +79,7 @@ describe('client', () => {
       expect(Daytona).toHaveBeenCalledWith(
         expect.objectContaining({
           apiUrl: 'https://app.daytona.io/api',
-        })
+        }),
       );
     });
 
@@ -85,6 +87,7 @@ describe('client', () => {
       process.env.DAYTONA_API_KEY = 'env-api-key';
 
       const { getClient } = await import('~/lib/services/daytona/client');
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       const { Daytona } = await import('@daytonaio/sdk');
 
       getClient({ DAYTONA_API_KEY: 'explicit-key', DAYTONA_API_URL: 'https://custom.api' });
@@ -99,6 +102,7 @@ describe('client', () => {
       process.env.DAYTONA_API_KEY = 'test-api-key';
 
       const { getClient } = await import('~/lib/services/daytona/client');
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       const { Daytona } = await import('@daytonaio/sdk');
 
       const client1 = getClient();
@@ -136,9 +140,7 @@ describe('client', () => {
     });
 
     it('should delete cached sandbox', async () => {
-      const { getCachedSandbox, setCachedSandbox, deleteCachedSandbox } = await import(
-        '~/lib/services/daytona/client'
-      );
+      const { getCachedSandbox, setCachedSandbox, deleteCachedSandbox } = await import('~/lib/services/daytona/client');
 
       setCachedSandbox('project-1', { sandboxId: 'sb-123', previewUrl: null });
       deleteCachedSandbox('project-1');
@@ -147,9 +149,7 @@ describe('client', () => {
     });
 
     it('should clear all cached sandboxes', async () => {
-      const { getCachedSandbox, setCachedSandbox, clearSandboxCache } = await import(
-        '~/lib/services/daytona/client'
-      );
+      const { getCachedSandbox, setCachedSandbox, clearSandboxCache } = await import('~/lib/services/daytona/client');
 
       setCachedSandbox('project-1', { sandboxId: 'sb-1', previewUrl: null });
       setCachedSandbox('project-2', { sandboxId: 'sb-2', previewUrl: null });
@@ -182,4 +182,3 @@ describe('client', () => {
     });
   });
 });
-

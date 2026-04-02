@@ -35,13 +35,17 @@ function ProjectEditorWrapper() {
   const { projectId } = useParams<{ projectId: string }>();
   const [searchParams] = useSearchParams();
 
-  // If opened via handoff URL, persist the session marker so AuthGuard
-  // continues to bypass auth if the user navigates within the editor.
+  /*
+   * If opened via handoff URL, persist the session marker so AuthGuard
+   * continues to bypass auth if the user navigates within the editor.
+   */
   useEffect(() => {
     if (searchParams.get('handoff')) {
       try {
         sessionStorage.setItem('flowstarter_handoff_session', '1');
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
     }
   }, [searchParams]);
 

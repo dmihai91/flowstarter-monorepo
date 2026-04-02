@@ -1,6 +1,6 @@
 /**
  * Premium Image Prompt Engine
- * 
+ *
  * Generates high-quality, non-generic prompts that produce
  * professional, authentic-looking images - NOT AI slop.
  */
@@ -9,13 +9,25 @@
  * Anti-slop keywords to AVOID in prompts (these create generic AI look)
  */
 const AVOID_KEYWORDS = [
-  'perfect', 'beautiful', 'amazing', 'stunning', 'incredible',
-  'hyper-realistic', 'ultra-detailed', '8k', '4k uhd',
-  'masterpiece', 'best quality', 'highly detailed',
+  'perfect',
+  'beautiful',
+  'amazing',
+  'stunning',
+  'incredible',
+  'hyper-realistic',
+  'ultra-detailed',
+  '8k',
+  '4k uhd',
+  'masterpiece',
+  'best quality',
+  'highly detailed',
   'professional photography', // too generic
-  'stock photo', 'getty images',
-  'smiling at camera', 'looking at viewer',
-  'perfect lighting', 'perfect composition',
+  'stock photo',
+  'getty images',
+  'smiling at camera',
+  'looking at viewer',
+  'perfect lighting',
+  'perfect composition',
 ];
 
 /**
@@ -65,7 +77,7 @@ interface BusinessContext {
 export function generateHeroPrompt(ctx: BusinessContext): string {
   const industryVisuals = getIndustryVisuals(ctx.industry);
   const toneStyle = getToneStyle(ctx.tone);
-  
+
   return `${industryVisuals.heroScene}, ${toneStyle.mood}, ${PHOTO_STYLES.cinematic}, ${LIGHTING_STYLES.dramatic}, ${CAMERA_STYLES.wide}, captured mid-action, real environment not studio, no text no logos no watermarks, slightly imperfect authentic moment`;
 }
 
@@ -75,7 +87,7 @@ export function generateHeroPrompt(ctx: BusinessContext): string {
 export function generateAboutPrompt(ctx: BusinessContext): string {
   const industryVisuals = getIndustryVisuals(ctx.industry);
   const toneStyle = getToneStyle(ctx.tone);
-  
+
   return `${industryVisuals.teamScene}, ${toneStyle.mood}, ${PHOTO_STYLES.documentary}, ${LIGHTING_STYLES.natural}, ${CAMERA_STYLES.medium}, candid unposed moment, genuine interaction, real workspace not staged, environmental context visible`;
 }
 
@@ -85,9 +97,9 @@ export function generateAboutPrompt(ctx: BusinessContext): string {
 export function generateServicePrompt(ctx: BusinessContext, serviceType?: string): string {
   const industryVisuals = getIndustryVisuals(ctx.industry);
   const toneStyle = getToneStyle(ctx.tone);
-  
+
   const scene = serviceType || industryVisuals.serviceScene;
-  
+
   return `${scene}, ${toneStyle.mood}, ${PHOTO_STYLES.lifestyle}, ${LIGHTING_STYLES.ambient}, ${CAMERA_STYLES.portrait}, focus on hands or action detail, authentic client interaction, not looking at camera, real moment`;
 }
 
@@ -96,7 +108,7 @@ export function generateServicePrompt(ctx: BusinessContext, serviceType?: string
  */
 export function generatePortraitPrompt(ctx: BusinessContext): string {
   const toneStyle = getToneStyle(ctx.tone);
-  
+
   return `professional environmental portrait, ${toneStyle.mood}, ${PHOTO_STYLES.editorial}, ${LIGHTING_STYLES.natural}, ${CAMERA_STYLES.portrait}, subject in their natural environment, relaxed confident expression, not smiling directly at camera, authentic personality`;
 }
 
@@ -109,23 +121,25 @@ function getIndustryVisuals(industry: string): {
   serviceScene: string;
 } {
   const industryLower = industry.toLowerCase();
-  
+
   if (industryLower.includes('fitness') || industryLower.includes('gym') || industryLower.includes('train')) {
     return {
-      heroScene: 'athlete mid-workout in industrial gym space, sweat visible, raw determination, chalk dust in air, weight plates and barbells',
+      heroScene:
+        'athlete mid-workout in industrial gym space, sweat visible, raw determination, chalk dust in air, weight plates and barbells',
       teamScene: 'coach and client during training session, genuine encouragement moment, gym equipment in background',
       serviceScene: 'close-up of hands gripping barbell, chalk texture, focused intensity, gym atmosphere',
     };
   }
-  
+
   if (industryLower.includes('yoga') || industryLower.includes('wellness') || industryLower.includes('meditation')) {
     return {
-      heroScene: 'yoga practitioner in difficult pose, serene studio with plants, morning light streaming through windows',
+      heroScene:
+        'yoga practitioner in difficult pose, serene studio with plants, morning light streaming through windows',
       teamScene: 'instructor adjusting student pose, gentle guidance, peaceful studio environment',
       serviceScene: 'meditation moment, closed eyes, peaceful expression, soft natural light',
     };
   }
-  
+
   if (industryLower.includes('restaurant') || industryLower.includes('food') || industryLower.includes('cafe')) {
     return {
       heroScene: 'chef plating dish in open kitchen, steam rising, intense focus, restaurant bustle behind',
@@ -133,7 +147,7 @@ function getIndustryVisuals(industry: string): {
       serviceScene: 'beautifully plated dish, natural daylight, rustic table surface, appetizing composition',
     };
   }
-  
+
   if (industryLower.includes('tech') || industryLower.includes('software') || industryLower.includes('startup')) {
     return {
       heroScene: 'developer deep in thought at minimal desk, multiple monitors with code, focused concentration',
@@ -141,7 +155,7 @@ function getIndustryVisuals(industry: string): {
       serviceScene: 'hands typing on laptop keyboard, coffee nearby, productive atmosphere',
     };
   }
-  
+
   if (industryLower.includes('salon') || industryLower.includes('beauty') || industryLower.includes('spa')) {
     return {
       heroScene: 'stylist working on client, artistic precision, salon mirrors and lighting',
@@ -149,7 +163,7 @@ function getIndustryVisuals(industry: string): {
       serviceScene: 'close-up of skilled hands at work, tools of the trade, attention to detail',
     };
   }
-  
+
   // Default professional services
   return {
     heroScene: 'professional at work in their element, modern office or workspace, focused on task',
@@ -163,27 +177,27 @@ function getIndustryVisuals(industry: string): {
  */
 function getToneStyle(tone: string): { mood: string } {
   const toneLower = tone.toLowerCase();
-  
+
   if (toneLower.includes('luxury') || toneLower.includes('premium') || toneLower.includes('elegant')) {
     return { mood: 'sophisticated atmosphere, muted color palette, refined elegance, exclusive feel' };
   }
-  
+
   if (toneLower.includes('energetic') || toneLower.includes('dynamic') || toneLower.includes('bold')) {
     return { mood: 'high energy atmosphere, dynamic composition, bold contrast, action and movement' };
   }
-  
+
   if (toneLower.includes('warm') || toneLower.includes('friendly') || toneLower.includes('welcoming')) {
     return { mood: 'warm inviting atmosphere, soft golden tones, approachable and genuine feel' };
   }
-  
+
   if (toneLower.includes('minimal') || toneLower.includes('clean') || toneLower.includes('modern')) {
     return { mood: 'minimal aesthetic, clean lines, negative space, contemporary sophistication' };
   }
-  
+
   if (toneLower.includes('professional') || toneLower.includes('corporate')) {
     return { mood: 'polished professional atmosphere, confident competence, trustworthy presence' };
   }
-  
+
   // Default motivational/professional
   return { mood: 'aspirational atmosphere, authentic professionalism, confident and capable' };
 }
@@ -193,18 +207,18 @@ function getToneStyle(tone: string): { mood: string } {
  */
 export function cleanPrompt(prompt: string): string {
   let cleaned = prompt;
-  
+
   // Remove slop keywords
   for (const keyword of AVOID_KEYWORDS) {
     const regex = new RegExp(keyword, 'gi');
     cleaned = cleaned.replace(regex, '');
   }
-  
+
   // Clean up double spaces and commas
   cleaned = cleaned.replace(/,\s*,/g, ',');
   cleaned = cleaned.replace(/\s+/g, ' ');
   cleaned = cleaned.trim();
-  
+
   return cleaned;
 }
 
@@ -226,4 +240,3 @@ export function generateAllPrompts(ctx: BusinessContext): {
     ],
   };
 }
-

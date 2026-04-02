@@ -14,9 +14,7 @@ describe('AgentStatusMessage', () => {
   });
 
   it('shows writing phase with current file', () => {
-    const events: AgentActivityEvent[] = [
-      { type: 'file_write', path: 'src/pages/index.astro', lines: 45 },
-    ];
+    const events: AgentActivityEvent[] = [{ type: 'file_write', path: 'src/pages/index.astro', lines: 45 }];
     render(<AgentStatusMessage events={events} isActive={true} />);
     expect(screen.getByText(/WRITING FILES/i)).toBeTruthy();
     expect(screen.getByText('src/pages/index.astro')).toBeTruthy();
@@ -45,9 +43,7 @@ describe('AgentStatusMessage', () => {
   });
 
   it('shows errors with red badge', () => {
-    const events: AgentActivityEvent[] = [
-      { type: 'error', message: 'Build failed: missing import' },
-    ];
+    const events: AgentActivityEvent[] = [{ type: 'error', message: 'Build failed: missing import' }];
     render(<AgentStatusMessage events={events} isActive={false} />);
     expect(screen.getByText(/ERROR/i)).toBeTruthy();
     expect(screen.getByText(/Build failed: missing import/)).toBeTruthy();
@@ -104,6 +100,7 @@ describe('AgentStatusMessage', () => {
   it('shows terminal link', () => {
     const onOpenTerminal = vi.fn();
     render(<AgentStatusMessage events={[]} isActive={true} onOpenTerminal={onOpenTerminal} />);
+
     const link = screen.getByText(/View full activity in terminal/);
     expect(link).toBeTruthy();
   });

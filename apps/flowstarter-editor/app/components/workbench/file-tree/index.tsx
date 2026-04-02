@@ -17,7 +17,12 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 import { classNames } from '~/utils/classNames';
 import { renderLogger, createScopedLogger } from '~/utils/logger';
-import { DEFAULT_HIDDEN_FILES, type FileTreeProps, type FileNode as FileNodeType, type FolderNode as FolderNodeType } from './types';
+import {
+  DEFAULT_HIDDEN_FILES,
+  type FileTreeProps,
+  type FileNode as FileNodeType,
+  type FolderNode as FolderNodeType,
+} from './types';
 import { buildFileList } from './utils';
 import { FileNode } from './FileNode';
 import { FolderNode } from './FolderNode';

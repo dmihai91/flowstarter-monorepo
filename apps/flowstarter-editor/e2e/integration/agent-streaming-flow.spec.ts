@@ -16,15 +16,13 @@ const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173';
 // ─── Mock helpers ─────────────────────────────────────────────────────────────
 
 function buildSSEStream(events: Array<{ name?: string; data: object }>): string {
-  return events.map(({ name, data }) =>
-    `${name ? `event: ${name}\n` : ''}data: ${JSON.stringify(data)}\n\n`
-  ).join('');
+  return events.map(({ name, data }) => `${name ? `event: ${name}\n` : ''}data: ${JSON.stringify(data)}\n\n`).join('');
 }
 
 async function mockAgentCodeStream(page: Page, agentEvents: object[], success = true) {
   await page.route('**/api/agent-code', async (route) => {
     const body = buildSSEStream([
-      ...agentEvents.map(e => ({ name: 'agent-event', data: e })),
+      ...agentEvents.map((e) => ({ name: 'agent-event', data: e })),
       { name: 'result', data: { success, files: agentEvents.filter((e: any) => e.type === 'file_write') } },
     ]);
     await route.fulfill({
@@ -39,13 +37,18 @@ async function trackPushFileCalls(page: Page): Promise<string[]> {
   const paths: string[] = [];
   await page.route('**/api/daytona/push-file', async (route) => {
     const body = await route.request().postDataJSON();
-    if (body?.path) paths.push(body.path);
+
+    if (body?.path) {
+      paths.push(body.path);
+    }
+
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({ success: true }),
     });
   });
+
   return paths;
 }
 
@@ -66,12 +69,17 @@ test.describe('Streaming Generation Pipeline', () => {
 
     // Trigger generation if the UI allows
     const generateBtn = page.getByRole('button', { name: /generate|build|create/i }).first();
+
     if (await generateBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await generateBtn.click();
+
       // Wait for streaming to complete
       await page.waitForTimeout(3000);
-      // Verify push-file was called for each file
-      // (actual assertion depends on sandbox being active)
+
+      /*
+       * Verify push-file was called for each file
+       * (actual assertion depends on sandbox being active)
+       */
       expect(Array.isArray(pushedPaths)).toBe(true);
     } else {
       test.skip();
@@ -90,13 +98,13 @@ test.describe('Streaming Generation Pipeline', () => {
 
     // Switch to terminal tab
     const terminalTab = page.getByRole('button', { name: /terminal/i });
+
     if (await terminalTab.isVisible({ timeout: 5000 }).catch(() => false)) {
       await terminalTab.click();
       await page.waitForTimeout(500);
+
       // Terminal panel should be visible
-      await expect(
-        page.getByText(/waiting for agent|building|write|read/i).first()
-      ).toBeVisible({ timeout: 5000 });
+      await expect(page.getByText(/waiting for agent|building|write|read/i).first()).toBeVisible({ timeout: 5000 });
     }
   });
 
@@ -111,6 +119,7 @@ test.describe('Streaming Generation Pipeline', () => {
 
     // Chat area should not contain raw agent event types
     const chatArea = page.locator('[data-testid="chat-messages"], .chat-messages, [class*="ChatMessage"]').first();
+
     if (await chatArea.isVisible({ timeout: 5000 }).catch(() => false)) {
       // Should not show raw event types in chat
       await expect(chatArea.getByText('file_write')).not.toBeVisible();
@@ -124,6 +133,7 @@ test.describe('Modification Flow (Updated)', () => {
     let capturedBody: any = null;
     await page.route('**/api/agent-code', async (route) => {
       capturedBody = await route.request().postDataJSON();
+
       const body = buildSSEStream([
         { name: 'agent-event', data: { type: 'file_write', path: 'src/index.html', lines: 100 } },
         { name: 'result', data: { success: true } },
@@ -139,6 +149,7 @@ test.describe('Modification Flow (Updated)', () => {
     await page.waitForLoadState('networkidle');
 
     const chatInput = page.locator('[data-testid="chat-input"], textarea').first();
+
     if (await chatInput.isVisible({ timeout: 5000 }).catch(() => false)) {
       await chatInput.fill('Change the hero background to blue');
       await chatInput.press('Enter');
@@ -170,6 +181,7 @@ test.describe('Modification Flow (Updated)', () => {
     await page.waitForLoadState('networkidle');
 
     const chatInput = page.locator('[data-testid="chat-input"], textarea').first();
+
     if (await chatInput.isVisible({ timeout: 5000 }).catch(() => false)) {
       await chatInput.fill('Break something intentionally');
       await chatInput.press('Enter');
@@ -177,10 +189,12 @@ test.describe('Modification Flow (Updated)', () => {
 
       // Chat should show AgentSummaryMessage error card, not raw text
       const chatArea = page.locator('[data-testid="chat-messages"], .chat-messages').first();
+
       if (await chatArea.isVisible().catch(() => false)) {
         // Should show "X error during generation" not raw event data
         const errorSummary = chatArea.getByText(/error.*generation|generation.*error/i);
         const rawEventData = chatArea.getByText('file_write');
+
         if (await errorSummary.isVisible().catch(() => false)) {
           expect(await rawEventData.isVisible().catch(() => false)).toBe(false);
         }

@@ -10,6 +10,7 @@ import type { AgentActivityEvent } from '~/lib/services/claude-agent/types';
 import type { ActivityEvent } from '../components/AgentActivityLog';
 
 let _counter = 0;
+
 function uid(): string {
   return `ae-${Date.now()}-${++_counter}`;
 }
@@ -81,8 +82,10 @@ function mapEvent(e: AgentActivityEvent): ActivityEvent | null {
         timestamp: ts,
       };
 
-    // Types we intentionally skip (no meaningful mapping):
-    // tool_result, command_output, text, auto_fix_result, sandbox_status, done
+    /*
+     * Types we intentionally skip (no meaningful mapping):
+     * tool_result, command_output, text, auto_fix_result, sandbox_status, done
+     */
     default:
       return null;
   }
@@ -93,8 +96,5 @@ function mapEvent(e: AgentActivityEvent): ActivityEvent | null {
  * suitable for the AgentActivityLog component.
  */
 export function useActivityEvents(agentEvents: AgentActivityEvent[]): ActivityEvent[] {
-  return useMemo(
-    () => agentEvents.map(mapEvent).filter((e): e is ActivityEvent => e !== null),
-    [agentEvents],
-  );
+  return useMemo(() => agentEvents.map(mapEvent).filter((e): e is ActivityEvent => e !== null), [agentEvents]);
 }

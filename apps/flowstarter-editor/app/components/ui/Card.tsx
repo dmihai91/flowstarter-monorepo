@@ -6,45 +6,51 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   noHover?: boolean;
 }
 
-const Card = forwardRef<HTMLDivElement, CardProps>(({ className, variant = 'default', noHover = false, ...props }, ref) => {
-  return (
-    <div
-      ref={ref}
-      className={classNames(
-        // Base structure
-        'group relative overflow-hidden rounded-2xl',
-        'px-6 py-5',
-        // Glassmorphism effect
-        variant === 'elevated'
-          ? 'bg-white/80 dark:bg-white/[0.06]'
-          : variant === 'glass'
-            ? 'bg-white/50 dark:bg-white/[0.03]'
-            : 'bg-white/60 dark:bg-white/[0.04]',
-        'backdrop-blur-2xl',
-        'border border-white/20 dark:border-white/10',
-        // Shadow with inner highlight
-        variant === 'elevated'
-          ? 'shadow-[0_8px_32px_rgba(0,0,0,0.1),0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.1)_inset]'
-          : 'shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.1)_inset]',
-        // Hover effects
-        'transition-all duration-300 ease-out',
-        !noHover && [
-          'hover:-translate-y-[2px]',
-          'hover:shadow-[0_12px_40px_rgba(0,0,0,0.1),0_1px_0_rgba(255,255,255,0.9)_inset]',
-          'hover:border-purple-500/20',
-          'dark:hover:shadow-[0_12px_40px_rgba(124,58,237,0.15),0_1px_0_rgba(255,255,255,0.1)_inset]',
-          'dark:hover:border-purple-500/30',
-        ],
-        // Active state
-        'active:scale-[0.99]',
-        // Text
-        'text-flowstarter-elements-textPrimary',
-        className,
-      )}
-      {...props}
-    />
-  );
-});
+const Card = forwardRef<HTMLDivElement, CardProps>(
+  ({ className, variant = 'default', noHover = false, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={classNames(
+          'group relative overflow-hidden rounded-2xl', // Base structure
+          'px-6 py-5',
+
+          // Glassmorphism effect
+          variant === 'elevated'
+            ? 'bg-white/80 dark:bg-white/[0.06]'
+            : variant === 'glass'
+              ? 'bg-white/50 dark:bg-white/[0.03]'
+              : 'bg-white/60 dark:bg-white/[0.04]',
+          'backdrop-blur-2xl',
+          'border border-white/20 dark:border-white/10',
+
+          // Shadow with inner highlight
+          variant === 'elevated'
+            ? 'shadow-[0_8px_32px_rgba(0,0,0,0.1),0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.1)_inset]'
+            : 'shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_1px_0_rgba(255,255,255,0.1)_inset]',
+
+          // Hover effects
+          'transition-all duration-300 ease-out',
+          !noHover && [
+            'hover:-translate-y-[2px]',
+            'hover:shadow-[0_12px_40px_rgba(0,0,0,0.1),0_1px_0_rgba(255,255,255,0.9)_inset]',
+            'hover:border-purple-500/20',
+            'dark:hover:shadow-[0_12px_40px_rgba(124,58,237,0.15),0_1px_0_rgba(255,255,255,0.1)_inset]',
+            'dark:hover:border-purple-500/30',
+          ],
+
+          // Active state
+          'active:scale-[0.99]',
+
+          // Text
+          'text-flowstarter-elements-textPrimary',
+          className,
+        )}
+        {...props}
+      />
+    );
+  },
+);
 Card.displayName = 'Card';
 
 const CardHeader = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => {

@@ -1,6 +1,6 @@
 /**
  * Tests for the Project Name Agent
- * 
+ *
  * Tests the main agent functions: generation, extraction, refinement.
  * Uses mocked LLM calls to test business logic.
  */
@@ -43,6 +43,7 @@ vi.mock('~/lib/i18n/api-messages', () => ({
     if (key === 'NAME_CONFIRM' && params?.name) {
       return `Is "${params.name}" the name you want?`;
     }
+
     return key;
   },
 }));
@@ -54,6 +55,7 @@ const mockGenerateCompletion = vi.mocked(generateCompletion);
 describe('generateProjectName', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+
     // Set up API key for tests
     process.env.OPEN_ROUTER_API_KEY = 'test-key';
   });
@@ -89,6 +91,7 @@ describe('generateProjectName', () => {
     const result = await generateProjectName('therapist');
 
     expect(result.success).toBe(false);
+
     // Should return a fallback name from therapist category
     expect(result.projectName).toBeTruthy();
     expect(result.category).toBe('therapist');
@@ -156,8 +159,9 @@ describe('generateProjectName', () => {
     expect(result.allOptions).toContain('Safe Ground');
     expect(result.allOptions).toContain('The Clearing');
     expect(result.allOptions).toContain('Still Point');
+
     // Should not contain numbers
-    expect(result.allOptions?.some(n => n.startsWith('1.'))).toBe(false);
+    expect(result.allOptions?.some((n) => n.startsWith('1.'))).toBe(false);
   });
 
   it('cleans quoted names from LLM', async () => {
@@ -166,8 +170,9 @@ describe('generateProjectName', () => {
     const result = await generateProjectName('therapist', undefined, true);
 
     expect(result.allOptions).toContain('Safe Ground');
+
     // Should not contain quotes
-    expect(result.allOptions?.some(n => n.includes('"'))).toBe(false);
+    expect(result.allOptions?.some((n) => n.includes('"'))).toBe(false);
   });
 });
 
@@ -201,12 +206,14 @@ describe('extractProjectName', () => {
   });
 
   it('handles refinement requests', async () => {
-    mockGenerateCompletion.mockResolvedValueOnce(JSON.stringify({
-      type: 'question',
-      name: 'Haven',
-      message: 'How about **Haven**? It feels warm and safe.',
-      extractedRequirements: ['shorter'],
-    }));
+    mockGenerateCompletion.mockResolvedValueOnce(
+      JSON.stringify({
+        type: 'question',
+        name: 'Haven',
+        message: 'How about **Haven**? It feels warm and safe.',
+        extractedRequirements: ['shorter'],
+      }),
+    );
 
     const result = await extractProjectName('make it shorter', {
       previousSuggestion: 'Safe Ground',
@@ -220,11 +227,13 @@ describe('extractProjectName', () => {
   });
 
   it('rejects banned names in refinement', async () => {
-    mockGenerateCompletion.mockResolvedValueOnce(JSON.stringify({
-      type: 'question',
-      name: 'Thrive Therapy',
-      message: 'How about **Thrive Therapy**?',
-    }));
+    mockGenerateCompletion.mockResolvedValueOnce(
+      JSON.stringify({
+        type: 'question',
+        name: 'Thrive Therapy',
+        message: 'How about **Thrive Therapy**?',
+      }),
+    );
 
     const result = await extractProjectName('try another', {
       projectDescription: 'therapist',
@@ -232,6 +241,7 @@ describe('extractProjectName', () => {
 
     expect(result.needsFollowUp).toBe(true);
     expect(result.suggestedName).not.toBe('Thrive Therapy');
+
     // Should use a fallback name instead
     expect(result.suggestedName).toBeTruthy();
   });
@@ -275,7 +285,7 @@ describe('extractProjectName', () => {
     mockGenerateCompletion.mockRejectedValueOnce(new Error('API error'));
 
     const affirmatives = ['yes', 'yeah', 'perfect', 'sounds good', 'love it'];
-    
+
     for (const affirm of affirmatives) {
       const result = await extractProjectName(affirm, {
         previousSuggestion: 'Test Name',
@@ -400,9 +410,11 @@ describe('generateFallbackName', () => {
 
   it('returns different names on multiple calls (randomness)', () => {
     const names = new Set<string>();
+
     for (let i = 0; i < 50; i++) {
       names.add(generateFallbackName('therapist'));
     }
+
     // Should have multiple unique names due to randomness
     expect(names.size).toBeGreaterThan(1);
   });
@@ -421,33 +433,36 @@ describe('Integration: Full Flow', () => {
   it('handles complete naming flow: generate -> refine -> confirm', async () => {
     // Step 1: Generate initial name
     mockGenerateCompletion.mockResolvedValueOnce('Safe Ground\nThe Clearing\nStill Point');
-    
+
     const generated = await generateProjectName('therapist helping with anxiety');
     expect(generated.success).toBe(true);
     expect(generated.category).toBe('therapist');
+
     const initialName = generated.projectName;
 
     // Step 2: User asks for refinement
-    mockGenerateCompletion.mockResolvedValueOnce(JSON.stringify({
-      type: 'question',
-      name: 'Haven',
-      message: 'How about **Haven**? It\'s shorter and still warm.',
-      extractedRequirements: ['shorter'],
-    }));
+    mockGenerateCompletion.mockResolvedValueOnce(
+      JSON.stringify({
+        type: 'question',
+        name: 'Haven',
+        message: "How about **Haven**? It's shorter and still warm.",
+        extractedRequirements: ['shorter'],
+      }),
+    );
 
     const refined = await extractProjectName('make it shorter', {
       previousSuggestion: initialName,
       projectDescription: 'therapist helping with anxiety',
       previouslySuggested: [initialName],
     });
-    
+
     expect(refined.needsFollowUp).toBe(true);
     expect(refined.suggestedName).toBe('Haven');
 
     // Step 3: User confirms
     mockGenerateCompletion.mockResolvedValueOnce('{"type":"name","name":"Haven"}');
 
-    const confirmed = await extractProjectName('yes, that\'s perfect', {
+    const confirmed = await extractProjectName("yes, that's perfect", {
       previousSuggestion: 'Haven',
     });
 
@@ -466,9 +481,11 @@ describe('Integration: Full Flow', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// PERSONALIZED GENERATION TESTS
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * PERSONALIZED GENERATION TESTS
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('generateProjectName with userContext', () => {
   beforeEach(() => {
@@ -481,7 +498,7 @@ describe('generateProjectName with userContext', () => {
   });
 
   it('accepts userContext in options object', async () => {
-    mockGenerateCompletion.mockResolvedValueOnce('Mitchell Therapy\nSarah\'s Practice\nThe Clearing');
+    mockGenerateCompletion.mockResolvedValueOnce("Mitchell Therapy\nSarah's Practice\nThe Clearing");
 
     const userContext: UserContext = {
       ownerName: 'Sarah Mitchell',
@@ -507,7 +524,7 @@ describe('generateProjectName with userContext', () => {
     // Check that the system prompt includes personalization
     const callArgs = mockGenerateCompletion.mock.calls[0][0];
     const systemPrompt = callArgs[0].content;
-    
+
     expect(systemPrompt).toContain('Sarah Mitchell');
     expect(systemPrompt).toContain('calm');
     expect(systemPrompt).toContain('clarity');
@@ -531,7 +548,7 @@ describe('generateProjectName with userContext', () => {
     const result = await generateProjectName('therapist', 'wellness-template');
 
     expect(result.success).toBe(true);
-    
+
     // Check that template name was included in user message
     const callArgs = mockGenerateCompletion.mock.calls[0][0];
     const userMessage = callArgs[1].content;
@@ -539,7 +556,7 @@ describe('generateProjectName with userContext', () => {
   });
 
   it('combines templateName and userContext', async () => {
-    mockGenerateCompletion.mockResolvedValueOnce('Mitchell Wellness\nSarah\'s Space\nCalm Ground');
+    mockGenerateCompletion.mockResolvedValueOnce("Mitchell Wellness\nSarah's Space\nCalm Ground");
 
     const result = await generateProjectName('therapist', {
       templateName: 'wellness-template',
@@ -549,12 +566,12 @@ describe('generateProjectName with userContext', () => {
     });
 
     expect(result.success).toBe(true);
-    
+
     // Check both were included
     const callArgs = mockGenerateCompletion.mock.calls[0][0];
     const systemPrompt = callArgs[0].content;
     const userMessage = callArgs[1].content;
-    
+
     expect(systemPrompt).toContain('Sarah Mitchell');
     expect(userMessage).toContain('wellness-template');
   });
@@ -612,7 +629,7 @@ describe('generateProjectName with userContext', () => {
   });
 
   it('returns all options when returnAllOptions is true with userContext', async () => {
-    mockGenerateCompletion.mockResolvedValueOnce('Mitchell Therapy\nSarah\'s Practice\nCalm Ground');
+    mockGenerateCompletion.mockResolvedValueOnce("Mitchell Therapy\nSarah's Practice\nCalm Ground");
 
     const result = await generateProjectName('therapist', {
       userContext: { ownerName: 'Sarah Mitchell' },
@@ -653,7 +670,7 @@ describe('Personalized Generation: Edge Cases', () => {
     const result = await generateProjectName('therapist', { userContext: {} });
 
     expect(result.success).toBe(true);
-    
+
     // Should NOT include personalization section
     const callArgs = mockGenerateCompletion.mock.calls[0][0];
     const systemPrompt = callArgs[0].content;
@@ -674,7 +691,7 @@ describe('Personalized Generation: Edge Cases', () => {
   });
 
   it('handles special characters in userContext', async () => {
-    mockGenerateCompletion.mockResolvedValueOnce('O\'Brien Therapy\nThe Practice\nHaven');
+    mockGenerateCompletion.mockResolvedValueOnce("O'Brien Therapy\nThe Practice\nHaven");
 
     const result = await generateProjectName('therapist', {
       userContext: {
@@ -690,7 +707,7 @@ describe('Personalized Generation: Edge Cases', () => {
     mockGenerateCompletion.mockResolvedValueOnce('Test Name\nAnother\nThird');
 
     const longApproach = 'A very detailed description of my unique approach '.repeat(10);
-    
+
     const result = await generateProjectName('therapist', {
       userContext: {
         uniqueApproach: longApproach,

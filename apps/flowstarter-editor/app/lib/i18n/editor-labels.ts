@@ -149,11 +149,12 @@ export const EDITOR_LABELS: Record<EditorLabelKey, string> = {
   [EDITOR_LABEL_KEYS.EMPTY_CODE_EDITOR]: 'Code Editor',
   [EDITOR_LABEL_KEYS.EMPTY_CODE_SUBTITLE]: 'Once your site generates, you can edit the code here',
   [EDITOR_LABEL_KEYS.EMPTY_DESCRIBE_TITLE]: "Describe the client's business",
-  [EDITOR_LABEL_KEYS.EMPTY_DESCRIBE_SUBTITLE]: "Tell me about their service in the chat and I'll build a site that gets them clients",
+  [EDITOR_LABEL_KEYS.EMPTY_DESCRIBE_SUBTITLE]:
+    "Tell me about their service in the chat and I'll build a site that gets them clients",
   [EDITOR_LABEL_KEYS.EMPTY_NAME_TITLE]: 'Name your project',
   [EDITOR_LABEL_KEYS.EMPTY_NAME_SUBTITLE]: 'Give your website a memorable name',
   [EDITOR_LABEL_KEYS.EMPTY_BUSINESS_TITLE]: "Tell me about the client's business",
-  [EDITOR_LABEL_KEYS.EMPTY_BUSINESS_SUBTITLE]: "Share details about their practice to personalize the site",
+  [EDITOR_LABEL_KEYS.EMPTY_BUSINESS_SUBTITLE]: 'Share details about their practice to personalize the site',
   [EDITOR_LABEL_KEYS.EMPTY_TEMPLATE_TITLE]: 'Pick a template',
   [EDITOR_LABEL_KEYS.EMPTY_TEMPLATE_SUBTITLE]: 'Choose a starting point and see it preview here',
   [EDITOR_LABEL_KEYS.EMPTY_PERSONALIZE_TITLE]: 'Personalize your site',
@@ -229,11 +230,13 @@ export const EDITOR_LABELS: Record<EditorLabelKey, string> = {
 /** Get translated label, with optional {{variable}} substitution. */
 export function getEditorLabel(key: EditorLabelKey, context?: Record<string, string | number>): string {
   let label = EDITOR_LABELS[key] || key;
+
   if (context) {
     for (const [varName, value] of Object.entries(context)) {
       label = label.replace(new RegExp(`\\{\\{${varName}\\}\\}`, 'g'), String(value));
     }
   }
+
   return label;
 }
 

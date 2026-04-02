@@ -4,9 +4,7 @@ import { StreamingProgressOverlay } from './StreamingProgressOverlay';
 
 describe('StreamingProgressOverlay', () => {
   it('returns null when not streaming', () => {
-    const { container } = render(
-      <StreamingProgressOverlay isStreaming={false} streamedFiles={[]} streamedCount={0} />
-    );
+    const { container } = render(<StreamingProgressOverlay isStreaming={false} streamedFiles={[]} streamedCount={0} />);
     expect(container.firstChild).toBeNull();
   });
 
@@ -29,16 +27,12 @@ describe('StreamingProgressOverlay', () => {
   });
 
   it('shows correct file count', () => {
-    render(
-      <StreamingProgressOverlay isStreaming={true} streamedFiles={['a.html']} streamedCount={12} />
-    );
+    render(<StreamingProgressOverlay isStreaming={true} streamedFiles={['a.html']} streamedCount={12} />);
     expect(screen.getByText('12 files written')).toBeTruthy();
   });
 
   it('uses singular "file" for count of 1', () => {
-    render(
-      <StreamingProgressOverlay isStreaming={true} streamedFiles={['a.html']} streamedCount={1} />
-    );
+    render(<StreamingProgressOverlay isStreaming={true} streamedFiles={['a.html']} streamedCount={1} />);
     expect(screen.getByText('1 file written')).toBeTruthy();
   });
 });

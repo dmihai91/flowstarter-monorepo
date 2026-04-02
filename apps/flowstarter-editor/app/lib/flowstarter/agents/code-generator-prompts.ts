@@ -8,11 +8,11 @@ export function buildGenerateFilePrompt(
   const originalContent = existingFiles[modification.path] || '';
   const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.ico'];
   const availableImages = Object.keys(existingFiles)
-    .filter(path => imageExtensions.some(ext => path.toLowerCase().endsWith(ext)))
-    .map(path => path.startsWith('public/') ? '/' + path.slice(7) : '/' + path);
+    .filter((path) => imageExtensions.some((ext) => path.toLowerCase().endsWith(ext)))
+    .map((path) => (path.startsWith('public/') ? '/' + path.slice(7) : '/' + path));
   const availableComponents = Object.keys(existingFiles)
-    .filter(path => path.endsWith('.astro') || path.endsWith('.tsx') || path.endsWith('.jsx'))
-    .map(path => path.replace(/^src\//, '~/'));
+    .filter((path) => path.endsWith('.astro') || path.endsWith('.tsx') || path.endsWith('.jsx'))
+    .map((path) => path.replace(/^src\//, '~/'));
 
   return `Apply the following modification to the file.
 
@@ -38,10 +38,10 @@ ${request.contentGuidelines?.keyMessages ? `- Key Messages: ${request.contentGui
 ${request.contentGuidelines?.ctaText ? `- CTA Text: ${request.contentGuidelines.ctaText}` : ''}
 
 ## AVAILABLE COMPONENTS/LAYOUTS (only import from these!):
-${availableComponents.length > 0 ? availableComponents.map(p => '- ' + p).join('\n') : '(Use standard Astro components only)'}
+${availableComponents.length > 0 ? availableComponents.map((p) => '- ' + p).join('\n') : '(Use standard Astro components only)'}
 
 ## AVAILABLE IMAGES IN TEMPLATE:
-${availableImages.length > 0 ? availableImages.map(p => '- ' + p).join('\n') : '(No images in template - use placeholder services like https://placehold.co/800x600)'}
+${availableImages.length > 0 ? availableImages.map((p) => '- ' + p).join('\n') : '(No images in template - use placeholder services like https://placehold.co/800x600)'}
 
 ## OUTPUT (JSON only):
 {

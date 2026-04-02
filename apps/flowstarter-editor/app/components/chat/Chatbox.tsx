@@ -71,7 +71,15 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
       >
         <svg className={classNames(styles.PromptEffectContainer)}>
           <defs>
-            <linearGradient id="line-gradient" x1="20%" y1="0%" x2="-14%" y2="10%" gradientUnits="userSpaceOnUse" gradientTransform="rotate(-45)">
+            <linearGradient
+              id="line-gradient"
+              x1="20%"
+              y1="0%"
+              x2="-14%"
+              y2="10%"
+              gradientUnits="userSpaceOnUse"
+              gradientTransform="rotate(-45)"
+            >
               <stop offset="0%" stopColor="#ffffff" stopOpacity="0%" />
               <stop offset="40%" stopColor="#ffffff" stopOpacity="30%" />
               <stop offset="50%" stopColor="#ffffff" stopOpacity="30%" />
@@ -142,7 +150,10 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
               </code>
               {t.chat.chatbox.selectedForInspection}
             </div>
-            <button className="bg-transparent text-accent-500 pointer-auto" onClick={() => props.setSelectedElement?.(null)}>
+            <button
+              className="bg-transparent text-accent-500 pointer-auto"
+              onClick={() => props.setSelectedElement?.(null)}
+            >
               {t.chat.chatbox.clear}
             </button>
           </div>
@@ -157,16 +168,34 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
           wrap="soft"
           rows={3}
           cols={50}
-          style={{ minHeight: props.TEXTAREA_MIN_HEIGHT, maxHeight: props.TEXTAREA_MAX_HEIGHT, width: 'calc(100% - 1px)', maxWidth: '100%', boxSizing: 'border-box', wordBreak: 'break-word', overflowWrap: 'break-word' }}
-          onDragEnter={(e) => { e.preventDefault(); e.currentTarget.style.border = '2px solid var(--flowstarter-elements-borderColorActive)'; }}
-          onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.border = '2px solid var(--flowstarter-elements-borderColorActive)'; }}
-          onDragLeave={(e) => { e.preventDefault(); e.currentTarget.style.border = '1px solid var(--flowstarter-elements-borderColor)'; }}
+          style={{
+            minHeight: props.TEXTAREA_MIN_HEIGHT,
+            maxHeight: props.TEXTAREA_MAX_HEIGHT,
+            width: 'calc(100% - 1px)',
+            maxWidth: '100%',
+            boxSizing: 'border-box',
+            wordBreak: 'break-word',
+            overflowWrap: 'break-word',
+          }}
+          onDragEnter={(e) => {
+            e.preventDefault();
+            e.currentTarget.style.border = '2px solid var(--flowstarter-elements-borderColorActive)';
+          }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.currentTarget.style.border = '2px solid var(--flowstarter-elements-borderColorActive)';
+          }}
+          onDragLeave={(e) => {
+            e.preventDefault();
+            e.currentTarget.style.border = '1px solid var(--flowstarter-elements-borderColor)';
+          }}
           onDrop={(e) => {
             e.preventDefault();
             e.currentTarget.style.border = '1px solid var(--flowstarter-elements-borderColor)';
             Array.from(e.dataTransfer.files).forEach((file) => {
               if (file.type.startsWith('image/')) {
                 const reader = new FileReader();
+
                 reader.onload = (ev) => {
                   const base64Image = ev.target?.result as string;
                   props.setUploadedFiles?.([...props.uploadedFiles, file]);
@@ -177,12 +206,26 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
             });
           }}
           onKeyDown={(event) => {
-            if (autocomplete.handleKeyDown(event)) { return; }
+            if (autocomplete.handleKeyDown(event)) {
+              return;
+            }
+
             if (event.key === 'Enter') {
-              if (event.shiftKey) { return; }
+              if (event.shiftKey) {
+                return;
+              }
+
               event.preventDefault();
-              if (props.isStreaming) { props.handleStop?.(); return; }
-              if (event.nativeEvent.isComposing) { return; }
+
+              if (props.isStreaming) {
+                props.handleStop?.();
+                return;
+              }
+
+              if (event.nativeEvent.isComposing) {
+                return;
+              }
+
               props.handleSendMessage?.(event);
             }
           }}

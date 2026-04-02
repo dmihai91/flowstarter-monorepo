@@ -107,4 +107,3 @@ export class DocumentOperations {
     this.setCurrentDocumentContent(file.content);
   }
 }
-

@@ -20,8 +20,10 @@ function getFlowstarterHTTPEndpoint(context?: unknown): string {
 
 const logger = createScopedLogger('api.templates');
 
-// ─── Server-Side Template Cache ─────────────────────────────────────────────
-// Cache templates for 5 minutes to avoid repeated MCP calls
+/*
+ * ─── Server-Side Template Cache ─────────────────────────────────────────────
+ * Cache templates for 5 minutes to avoid repeated MCP calls
+ */
 interface TemplateCache {
   data: unknown;
   timestamp: number;
@@ -31,16 +33,21 @@ const CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes
 let templateCache: TemplateCache | null = null;
 
 function getCachedTemplates(): unknown | null {
-  if (!templateCache) return null;
-  
+  if (!templateCache) {
+    return null;
+  }
+
   const age = Date.now() - templateCache.timestamp;
+
   if (age > CACHE_TTL_MS) {
     logger.info(`Template cache expired (age: ${Math.round(age / 1000)}s)`);
     templateCache = null;
+
     return null;
   }
-  
+
   logger.info(`Template cache HIT (age: ${Math.round(age / 1000)}s)`);
+
   return templateCache.data;
 }
 
@@ -52,8 +59,10 @@ function setCachedTemplates(data: unknown): void {
   logger.info('Template cache updated');
 }
 
-// ─── MCP Client ─────────────────────────────────────────────────────────────
-// MCP client singleton
+/*
+ * ─── MCP Client ─────────────────────────────────────────────────────────────
+ * MCP client singleton
+ */
 let mcpClient: Awaited<ReturnType<typeof experimental_createMCPClient>> | null = null;
 
 async function getMCPClient() {
@@ -116,19 +125,19 @@ async function callMCPTool(toolName: string, args: Record<string, unknown> = {},
 async function fetchTemplatesHTTP(context?: unknown): Promise<unknown> {
   const httpUrl = getFlowstarterHTTPEndpoint(context);
   const templatesUrl = `${httpUrl}/api/templates`;
-  
+
   logger.info(`Fetching templates from HTTP endpoint: ${templatesUrl}`);
-  
+
   const response = await fetch(templatesUrl, {
-    headers: { 'Accept': 'application/json' },
+    headers: { Accept: 'application/json' },
   });
-  
+
   if (!response.ok) {
     throw new Error(`HTTP request failed: ${response.status} ${response.statusText}`);
   }
-  
+
   const templates = await response.json();
-  
+
   // Wrap in MCP-like response format for compatibility
   return { templates };
 }
@@ -147,8 +156,10 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
     if (search) {
       // Search templates - try HTTP first, fall back to MCP
       const httpUrl = getFlowstarterHTTPEndpoint(context);
+
       try {
         const response = await fetch(`${httpUrl}/api/templates/search?q=${encodeURIComponent(search)}`);
+
         if (response.ok) {
           const templates = await response.json();
           return json({ success: true, data: { templates } });
@@ -156,13 +167,16 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
       } catch {
         // Fall back to MCP
       }
+
       const result = await callMCPTool('search_templates', { query: search });
+
       return json({ success: true, data: result });
     }
 
     // Check cache first (unless force refresh)
     if (!forceRefresh) {
       const cached = getCachedTemplates();
+
       if (cached) {
         return json({ success: true, data: cached, cached: true });
       }
@@ -172,6 +186,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
     try {
       const result = await fetchTemplatesHTTP(context);
       setCachedTemplates(result);
+
       return json({ success: true, data: result });
     } catch (httpError) {
       logger.warn('Direct HTTP failed, trying MCP:', httpError);
@@ -179,8 +194,9 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 
     // Fall back to MCP server
     logger.info('Fetching templates from MCP server...');
+
     const result = await callMCPTool('list_templates', {});
-    
+
     // Update cache
     setCachedTemplates(result);
 
@@ -232,8 +248,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
         // Try HTTP first
         const httpUrl = getFlowstarterHTTPEndpoint(context);
+
         try {
           const response = await fetch(`${httpUrl}/api/templates/${body.slug}`);
+
           if (response.ok) {
             const data = await response.json();
             return json({ success: true, data });
@@ -396,4 +414,3 @@ export async function action({ request, context }: ActionFunctionArgs) {
     );
   }
 }
-

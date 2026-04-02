@@ -1,6 +1,6 @@
 /**
  * Auto-Inference Module Tests
- * 
+ *
  * Tests for business type detection, audience extraction, tone detection,
  * and UVP extraction from user descriptions.
  */
@@ -15,9 +15,11 @@ import {
   generateProjectName,
 } from './auto-inference';
 
-// ═══════════════════════════════════════════════════════════════════════════
-// BUSINESS TYPE DETECTION
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * BUSINESS TYPE DETECTION
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('detectBusinessType', () => {
   describe('coaching category', () => {
@@ -94,10 +96,13 @@ describe('detectBusinessType', () => {
     });
 
     it('detects fitness coach pattern', () => {
-      // Pattern order matters - "fitness coach" matches "coach" category first
-      // This documents actual behavior
+      /*
+       * Pattern order matters - "fitness coach" matches "coach" category first
+       * This documents actual behavior
+       */
       const result = detectBusinessType('Online fitness coach for busy moms');
       expect(result).not.toBeNull();
+
       // Matches 'coach' before 'fitness coach' due to pattern order
       expect(['coaching', 'fitness']).toContain(result?.category);
     });
@@ -111,10 +116,13 @@ describe('detectBusinessType', () => {
     });
 
     it('detects massage therapist pattern', () => {
-      // Pattern order matters - "therapist" may match mental-health before "massage therapist"
-      // This documents actual behavior
+      /*
+       * Pattern order matters - "therapist" may match mental-health before "massage therapist"
+       * This documents actual behavior
+       */
       const result = detectBusinessType('Licensed massage therapist');
       expect(result).not.toBeNull();
+
       // May match 'therapist' (mental-health) or 'massage therapist' (wellness)
       expect(['mental-health', 'wellness']).toContain(result?.category);
     });
@@ -210,9 +218,11 @@ describe('detectBusinessType', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// TARGET AUDIENCE EXTRACTION
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * TARGET AUDIENCE EXTRACTION
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('extractTargetAudience', () => {
   describe('explicit "for" patterns', () => {
@@ -294,15 +304,19 @@ describe('extractTargetAudience', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// TONE DETECTION
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * TONE DETECTION
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('detectTone', () => {
   describe('professional tone', () => {
     it('detects professional keywords with medium confidence', () => {
-      // Score = 2 for "professional" + "certified" + "expert" + "experienced" = 2
-      // High confidence requires score >= 3
+      /*
+       * Score = 2 for "professional" + "certified" + "expert" + "experienced" = 2
+       * High confidence requires score >= 3
+       */
       const result = detectTone('Professional certified expert with 10 years experience');
       expect(result.tone).toBe('professional');
       expect(result.signals).toContain('professional keywords');
@@ -319,7 +333,7 @@ describe('detectTone', () => {
       expect(result.tone).toBe('professional');
       expect(result.signals).toContain('results-focused');
     });
-    
+
     it('detects high confidence professional with multiple signals', () => {
       // Multiple signals should push score >= 3 for high confidence
       const result = detectTone('Professional executive coaching with proven results for corporate clients');
@@ -342,7 +356,7 @@ describe('detectTone', () => {
     });
 
     it('detects superlatives', () => {
-      const result = detectTone("The best coach in the industry, #1 rated");
+      const result = detectTone('The best coach in the industry, #1 rated');
       expect(result.tone).toBe('bold');
       expect(result.signals).toContain('superlatives');
     });
@@ -350,7 +364,7 @@ describe('detectTone', () => {
 
   describe('friendly tone', () => {
     it('detects supportive language', () => {
-      const result = detectTone("I help and support people on their journey together");
+      const result = detectTone('I help and support people on their journey together');
       expect(result.tone).toBe('friendly');
       expect(result.signals).toContain('supportive language');
     });
@@ -383,9 +397,11 @@ describe('detectTone', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// UVP EXTRACTION
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * UVP EXTRACTION
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('extractUVP', () => {
   it('extracts "unique" patterns', () => {
@@ -419,27 +435,29 @@ describe('extractUVP', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// INTEGRATED INFERENCE
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * INTEGRATED INFERENCE
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('inferBusinessInfo', () => {
   it('infers business type and category from description', () => {
     const result = inferBusinessInfo("I'm a life coach");
-    
+
     expect(result.businessType?.type).toBe('life coach');
     expect(result.businessType?.category).toBe('coaching');
   });
 
   it('infers audience when for pattern is present', () => {
     const result = inferBusinessInfo("I'm a life coach for busy professionals");
-    
+
     expect(result.targetAudience?.audience).toBe('busy professionals');
   });
 
   it('infers UVP when present', () => {
-    const result = inferBusinessInfo("I offer a unique approach to executive coaching");
-    
+    const result = inferBusinessInfo('I offer a unique approach to executive coaching');
+
     expect(result.uvp).toBe('approach to executive coaching');
   });
 
@@ -473,9 +491,11 @@ describe('inferBusinessInfo', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// PROJECT NAME GENERATION
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * PROJECT NAME GENERATION
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('generateProjectName', () => {
   it('generates name from business type', () => {
@@ -497,9 +517,12 @@ describe('generateProjectName', () => {
 
   it('handles empty description with no business type', () => {
     const result = generateProjectName('', null);
-    // Empty description splits to empty array, first word is undefined
-    // Actual behavior returns ' Site' - this is a bug in the implementation
-    // Test documents actual behavior
+
+    /*
+     * Empty description splits to empty array, first word is undefined
+     * Actual behavior returns ' Site' - this is a bug in the implementation
+     * Test documents actual behavior
+     */
     expect(result).toBeDefined();
   });
 });

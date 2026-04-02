@@ -1,6 +1,6 @@
 /**
  * Assets Generator Service
- * 
+ *
  * Generates AI images for sites using fal.ai during the build process.
  * Analyzes business description and creates appropriate hero, product, and brand images.
  */
@@ -20,6 +20,7 @@ async function getFalClient() {
       console.warn('[AssetsGenerator] Failed to load @fal-ai/client:', e);
     }
   }
+
   return falClient;
 }
 
@@ -89,31 +90,37 @@ Suggest 2-4 professional images for this website.`;
 
   try {
     // Use fast model with timeout for asset analysis (simple task)
-    const timeoutPromise = new Promise<string>((_, reject) => 
-      setTimeout(() => reject(new Error('Asset analysis timeout')), 30000)
+    const timeoutPromise = new Promise<string>((_, reject) =>
+      setTimeout(() => reject(new Error('Asset analysis timeout')), 30000),
     );
-    
+
     const completionPromise = generateCompletion(
-      [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }],
-      { 
+      [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      {
         model: 'meta-llama/llama-3.3-70b-versatile', // Fast model via Groq for simple analysis
         maxTokens: 1000,
-        temperature: 0.3 
-      }
+        temperature: 0.3,
+      },
     );
-    
+
     const response = await Promise.race([completionPromise, timeoutPromise]);
 
     const jsonMatch = response.match(/\[[\s\S]*\]/);
+
     if (jsonMatch) {
       const specs = JSON.parse(jsonMatch[0]) as AssetSpec[];
+
       // Add dimensions
-      return specs.map(spec => ({
+      return specs.map((spec) => ({
         ...spec,
         width: ASSET_DIMENSIONS[spec.type]?.width || 1024,
         height: ASSET_DIMENSIONS[spec.type]?.height || 1024,
       }));
     }
+
     return [];
   } catch (e) {
     console.error('[AssetsGenerator] Failed to analyze asset needs:', e);
@@ -126,7 +133,7 @@ Suggest 2-4 professional images for this website.`;
  */
 function getDefaultAssets(input: AssetsGeneratorInput): AssetSpec[] {
   const businessKeyword = input.industry || input.businessName.split(' ')[0].toLowerCase();
-  
+
   return [
     {
       type: 'hero',
@@ -150,7 +157,7 @@ function getDefaultAssets(input: AssetsGeneratorInput): AssetSpec[] {
  */
 async function generateImage(spec: AssetSpec): Promise<GeneratedAsset | null> {
   const fal = await getFalClient();
-  
+
   if (!fal) {
     console.warn('[AssetsGenerator] fal.ai client not available, skipping image generation');
     return null;
@@ -182,7 +189,7 @@ async function generateImage(spec: AssetSpec): Promise<GeneratedAsset | null> {
       });
 
       const data = result.data as { images?: Array<{ url: string }> };
-      
+
       if (!data.images?.[0]?.url) {
         console.warn('[AssetsGenerator] No image returned for:', spec.name);
         return null;
@@ -209,39 +216,40 @@ async function generateImage(spec: AssetSpec): Promise<GeneratedAsset | null> {
  */
 export async function generateSiteAssets(
   input: AssetsGeneratorInput,
-  onProgress?: (message: string) => void
+  onProgress?: (message: string) => void,
 ): Promise<GeneratedAsset[]> {
   // Check if fal.ai is available
   const fal = await getFalClient();
+
   if (!fal) {
     onProgress?.('⚠️ Image generation not available (FAL_KEY not configured)');
     return [];
   }
 
   onProgress?.('🎨 Analyzing what images your site needs...');
-  
+
   // Analyze what assets are needed
   const specs = await analyzeAssetNeeds(input);
-  
+
   if (specs.length === 0) {
     onProgress?.('Using template default images');
     return [];
   }
 
   onProgress?.(`🖼️ Generating ${specs.length} custom images for your site...`);
-  
+
   // Generate all images in parallel (with limit)
   const results = await Promise.all(
     specs.slice(0, 4).map(async (spec, index) => {
       onProgress?.(`Generating image ${index + 1}/${specs.length}: ${spec.name}`);
       return generateImage(spec);
-    })
+    }),
   );
 
   const generated = results.filter((r): r is GeneratedAsset => r !== null);
-  
+
   onProgress?.(`✅ Generated ${generated.length} custom images`);
-  
+
   return generated;
 }
 
@@ -250,14 +258,13 @@ export async function generateSiteAssets(
  */
 export function assetsToTemplateVars(assets: GeneratedAsset[]): Record<string, string> {
   const vars: Record<string, string> = {};
-  
+
   for (const asset of assets) {
     // Create various key formats for flexibility
     vars[`${asset.type}Image`] = asset.url;
     vars[`${asset.type}_image_url`] = asset.url;
     vars[asset.name.replace(/-/g, '_')] = asset.url;
   }
-  
+
   return vars;
 }
-

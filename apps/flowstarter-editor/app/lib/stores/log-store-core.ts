@@ -25,14 +25,21 @@ export class BaseLogStore {
   }
 
   protected _ensureLogsLoaded() {
-    if (this._logsLoaded) return;
+    if (this._logsLoaded) {
+      return;
+    }
+
     this._logsLoaded = true;
     this._loadLogs();
   }
 
   protected _ensureReadLogsLoaded() {
-    if (this._readLogsLoaded) return;
+    if (this._readLogsLoaded) {
+      return;
+    }
+
     this._readLogsLoaded = true;
+
     if (typeof window !== 'undefined') {
       this._loadReadLogs();
     }
@@ -45,6 +52,7 @@ export class BaseLogStore {
 
   private _loadLogs() {
     const savedLogs = Cookies.get('eventLogs');
+
     if (savedLogs) {
       try {
         this._logs.set(JSON.parse(savedLogs));
@@ -55,8 +63,12 @@ export class BaseLogStore {
   }
 
   private _loadReadLogs() {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {
+      return;
+    }
+
     const savedReadLogs = localStorage.getItem('flowstarter_read_logs');
+
     if (savedReadLogs) {
       try {
         this._readLogs = new Set(JSON.parse(savedReadLogs));
@@ -71,7 +83,10 @@ export class BaseLogStore {
   }
 
   protected _saveReadLogs() {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {
+      return;
+    }
+
     localStorage.setItem('flowstarter_read_logs', JSON.stringify(Array.from(this._readLogs)));
   }
 
@@ -81,6 +96,7 @@ export class BaseLogStore {
 
   protected _trimLogs() {
     const currentLogs = Object.entries(this._logs.get());
+
     if (currentLogs.length > MAX_LOGS) {
       const sortedLogs = currentLogs.sort(
         ([, a], [, b]) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
@@ -101,6 +117,7 @@ export class BaseLogStore {
     this._logs.setKey(id, entry);
     this._trimLogs();
     this._saveLogs();
+
     return id;
   }
 
@@ -111,12 +128,16 @@ export class BaseLogStore {
     details: { method: string; url: string; statusCode: number; duration: number; request: unknown; response: unknown },
   ) {
     return this._addLog(message, details.statusCode >= 400 ? 'error' : 'info', 'api', details, {
-      component: 'api', action: method,
+      component: 'api',
+      action: method,
     });
   }
 
   // Basic CRUD
-  clearLogs() { this._logs.set({}); this._saveLogs(); }
+  clearLogs() {
+    this._logs.set({});
+    this._saveLogs();
+  }
 
   getLogs() {
     this._ensureLogsLoaded();
@@ -129,15 +150,29 @@ export class BaseLogStore {
     return this.getLogs().filter((log) => {
       const matchesLevel = !level || level === 'debug' || log.level === level;
       const matchesCategory = !category || log.category === category;
-      const matchesSearch = !searchQuery ||
+      const matchesSearch =
+        !searchQuery ||
         log.message.toLowerCase().includes(searchQuery.toLowerCase()) ||
         JSON.stringify(log.details).toLowerCase().includes(searchQuery.toLowerCase());
+
       return matchesLevel && matchesCategory && matchesSearch;
     });
   }
 
-  markAsRead(logId: string) { this._ensureReadLogsLoaded(); this._readLogs.add(logId); this._saveReadLogs(); }
-  isRead(logId: string): boolean { this._ensureReadLogsLoaded(); return this._readLogs.has(logId); }
-  clearReadLogs() { this._readLogs.clear(); this._saveReadLogs(); }
-  refreshLogs() { this._logs.set({ ...this._logs.get() }); }
+  markAsRead(logId: string) {
+    this._ensureReadLogsLoaded();
+    this._readLogs.add(logId);
+    this._saveReadLogs();
+  }
+  isRead(logId: string): boolean {
+    this._ensureReadLogsLoaded();
+    return this._readLogs.has(logId);
+  }
+  clearReadLogs() {
+    this._readLogs.clear();
+    this._saveReadLogs();
+  }
+  refreshLogs() {
+    this._logs.set({ ...this._logs.get() });
+  }
 }

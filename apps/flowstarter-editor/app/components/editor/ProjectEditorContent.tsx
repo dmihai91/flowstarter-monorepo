@@ -18,7 +18,7 @@ interface ProjectEditorContentProps {
   projectId: Id<'conversations'>;
 }
 
-export const ProjectEditorContent = memo(function ProjectEditorContent({ projectId }: ProjectEditorContentProps) {
+export const ProjectEditorContent = memo(({ projectId }: ProjectEditorContentProps) => {
   const {
     conversation,
     convexProjectId,

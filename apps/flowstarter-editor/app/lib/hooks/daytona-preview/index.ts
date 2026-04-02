@@ -36,10 +36,9 @@ export function useDaytonaPreview({
   maxAutoFixAttempts = 3,
 }: UseDaytonaPreviewOptions): UseDaytonaPreviewResult {
   // Query project files from Convex
-  const projectFiles = useQuery(
-    api.files.getProjectFiles,
-    projectId ? { projectId } : 'skip',
-  ) as ProjectFileData[] | undefined;
+  const projectFiles = useQuery(api.files.getProjectFiles, projectId ? { projectId } : 'skip') as
+    | ProjectFileData[]
+    | undefined;
 
   // Query project details to get the slug (urlId)
   const project = useQuery(api.projects.getById, projectId ? { projectId } : 'skip');
@@ -99,7 +98,9 @@ export function useDaytonaPreview({
     // Small delay to ensure state is reset
     await new Promise((r) => setTimeout(r, 100));
 
-    if (!isMountedRef.current) return;
+    if (!isMountedRef.current) {
+      return;
+    }
 
     // Start fresh
     await startPreview();

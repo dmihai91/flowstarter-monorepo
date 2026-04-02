@@ -16,22 +16,24 @@ export interface UseStreamingPreviewOptions {
 export interface UseStreamingPreviewResult {
   /** Push a single file to the sandbox immediately */
   pushFile: (path: string, content: string) => void;
+
   /** Recent file paths written (last 5 — for the progress overlay) */
   streamedFiles: string[];
+
   /** Total files pushed this session */
   streamedCount: number;
+
   /** Whether streaming is currently in progress */
   isStreaming: boolean;
+
   /** Call before generation starts */
   startStreaming: () => void;
+
   /** Call when generation is done */
   stopStreaming: () => void;
 }
 
-export function useStreamingPreview({
-  projectId,
-  sandboxId,
-}: UseStreamingPreviewOptions): UseStreamingPreviewResult {
+export function useStreamingPreview({ projectId, sandboxId }: UseStreamingPreviewOptions): UseStreamingPreviewResult {
   const [streamedFiles, setStreamedFiles] = useState<string[]>([]);
   const [streamedCount, setStreamedCount] = useState(0);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -39,7 +41,9 @@ export function useStreamingPreview({
 
   const pushFile = useCallback(
     (path: string, content: string) => {
-      if (!projectId) return;
+      if (!projectId) {
+        return;
+      }
 
       // Update UI state
       setStreamedFiles((prev) => [...prev.slice(-4), path]); // keep last 5

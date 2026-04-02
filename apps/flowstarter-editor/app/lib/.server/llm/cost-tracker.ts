@@ -10,8 +10,14 @@
 import { calculateCost } from '~/lib/utils/model-pricing';
 
 type Operation =
-  | 'site_generation' | 'site_modification' | 'self_healing'
-  | 'asset_generation' | 'chat' | 'router' | 'planning' | 'other';
+  | 'site_generation'
+  | 'site_modification'
+  | 'self_healing'
+  | 'asset_generation'
+  | 'chat'
+  | 'router'
+  | 'planning'
+  | 'other';
 
 interface UsageInput {
   promptTokens: number;
@@ -43,19 +49,28 @@ export function trackLLMUsage(
     `[CostTracker] ${model} (${operation}): ${usage.promptTokens}+${usage.completionTokens} tok = $${costUSD.toFixed(4)}${supabaseProjectId ? ` [${supabaseProjectId.slice(0, 8)}]` : ''}`,
   );
 
-  if (!supabaseProjectId) return;
+  if (!supabaseProjectId) {
+    return;
+  }
+
   const convexSiteUrl = getConvexSiteUrl();
   const secret = getSecret();
-  if (!convexSiteUrl || !secret) return;
+
+  if (!convexSiteUrl || !secret) {
+    return;
+  }
 
   fetch(`${convexSiteUrl}/costs/log`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-handoff-secret': secret },
     body: JSON.stringify({
-      supabaseProjectId, operation, model,
+      supabaseProjectId,
+      operation,
+      model,
       promptTokens: usage.promptTokens,
       completionTokens: usage.completionTokens,
-      costUSD, durationMs: usage.durationMs,
+      costUSD,
+      durationMs: usage.durationMs,
     }),
   }).catch((err) => console.error('[CostTracker] Convex persist failed:', err.message));
 }
@@ -67,25 +82,36 @@ export function trackLLMUsage(
 export async function syncCostsToSupabase(supabaseProjectId: string): Promise<void> {
   const convexSiteUrl = getConvexSiteUrl();
   const secret = getSecret();
-  if (!convexSiteUrl || !secret) return;
+
+  if (!convexSiteUrl || !secret) {
+    return;
+  }
 
   try {
     const res = await fetch(
       `${convexSiteUrl}/costs/totals?supabaseProjectId=${encodeURIComponent(supabaseProjectId)}`,
       { headers: { 'x-handoff-secret': secret } },
     );
-    if (!res.ok) return;
+
+    if (!res.ok) {
+      return;
+    }
+
     const { totalCostUSD, totalCredits } = (await res.json()) as { totalCostUSD: number; totalCredits: number };
 
     const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!supabaseUrl || !supabaseKey) return;
+
+    if (!supabaseUrl || !supabaseKey) {
+      return;
+    }
 
     await fetch(`${supabaseUrl}/rest/v1/projects?id=eq.${supabaseProjectId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}`,
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
         Prefer: 'return=minimal',
       },
       body: JSON.stringify({ generation_cost_usd: totalCostUSD, ai_credits_used: totalCredits }),

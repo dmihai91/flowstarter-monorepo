@@ -18,6 +18,7 @@ function processFilesForPreview(files: Record<string, string>): Record<string, s
 
   // Fix astro.config base path for preview
   const configKey = Object.keys(processed).find((k) => k.includes('astro.config'));
+
   if (configKey && processed[configKey]) {
     // Replace any base path with root for preview
     processed[configKey] = processed[configKey].replace(/base:\s*['"][^'"]*['"]/g, "base: '/'");
@@ -117,5 +118,3 @@ function normalizePath(filePath: string, workDir: string): string {
 
   return normalizedPath;
 }
-
-

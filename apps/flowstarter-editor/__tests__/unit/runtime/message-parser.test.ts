@@ -19,8 +19,8 @@ function cleanoutMarkdownSyntax(content: string) {
 
 describe('message-parser - cleanoutMarkdownSyntax', () => {
   beforeEach(() => {
-    vi.spyOn(console, 'log').mockImplementation(() => { });
-    vi.spyOn(console, 'error').mockImplementation(() => { });
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -236,4 +236,3 @@ if __name__ == "__main__":
     });
   });
 });
-

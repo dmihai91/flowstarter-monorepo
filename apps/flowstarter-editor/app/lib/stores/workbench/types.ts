@@ -86,4 +86,3 @@ export interface DaytonaPreviewState {
   url: string | null;
   sandboxId: string | null;
 }
-

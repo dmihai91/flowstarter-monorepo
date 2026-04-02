@@ -68,6 +68,7 @@ async function callHandoff(projectConfig: Record<string, unknown>): Promise<{
 
   expect(body.success).toBe(true);
   createdProjectId = body.projectId;
+
   return body;
 }
 
@@ -168,6 +169,7 @@ test.describe('Scenario 1: Dashboard handoff to editor', () => {
     });
 
     expect(res.status()).toBe(200);
+
     const validated = (await res.json()) as {
       valid: boolean;
       project?: {
@@ -221,7 +223,9 @@ test.describe('Scenario 1: Dashboard handoff to editor', () => {
     expect(res.status()).toBe(401);
   });
 
-  test('1.5 handoff-backed project opens in review with template, palette, font, brand, and integrations', async ({ page }) => {
+  test('1.5 handoff-backed project opens in review with template, palette, font, brand, and integrations', async ({
+    page,
+  }) => {
     const template = await loadTemplateFixture();
     const palette = template.palettes[0];
     const font = template.fonts[0];

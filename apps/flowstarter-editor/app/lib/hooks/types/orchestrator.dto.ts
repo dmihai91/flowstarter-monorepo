@@ -160,4 +160,3 @@ export interface DeploymentDTO {
   url: string;
   status: 'deploying' | 'deployed' | 'failed';
 }
-

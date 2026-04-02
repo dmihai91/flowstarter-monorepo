@@ -5,7 +5,7 @@ describe('api.system.diagnostics loader', () => {
 
   afterEach(() => {
     if (originalNodeEnv === undefined) {
-      delete process.env.NODE_ENV;
+      (process.env as Record<string, string | undefined>).NODE_ENV = undefined;
     } else {
       process.env.NODE_ENV = originalNodeEnv;
     }
@@ -23,7 +23,8 @@ describe('api.system.diagnostics loader', () => {
       context: {},
     } as never);
 
-    expect(response.status).toBe(404);
-    await expect(response.json()).resolves.toEqual({ error: 'Not found' });
+    const res = response as Response;
+    expect(res.status).toBe(404);
+    await expect(res.json()).resolves.toEqual({ error: 'Not found' });
   });
 });

@@ -62,9 +62,7 @@ const ErrorMessage = memo(({ error, isDark }: { error?: string; isDark: boolean 
 
   if (error?.includes('build errors') || error?.includes('missing dependencies')) {
     return (
-      <>
-        The preview server couldn't start. Check that your project has a valid package.json with a "dev" script.
-      </>
+      <>The preview server couldn't start. Check that your project has a valid package.json with a "dev" script.</>
     );
   }
 

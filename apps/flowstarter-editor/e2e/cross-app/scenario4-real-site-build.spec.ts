@@ -42,6 +42,7 @@ let createdProjectId: string | undefined;
 async function loadTemplateFixture(): Promise<TemplateFixture> {
   const result = await e2eFetch(`${BASE}/api/local-templates`);
   expect(result.status).toBe(200);
+
   return (result.body as { templates?: TemplateFixture[] }).templates![0];
 }
 
@@ -56,10 +57,7 @@ async function openReview(page: Page, token: string) {
 }
 
 test.describe('Scenario 4: Real live build with integrations', () => {
-  test.skip(
-    process.env.RUN_REAL_BUILD_E2E !== '1',
-    'Set RUN_REAL_BUILD_E2E=1 to run the live build E2E.',
-  );
+  test.skip(process.env.RUN_REAL_BUILD_E2E !== '1', 'Set RUN_REAL_BUILD_E2E=1 to run the live build E2E.');
 
   test.setTimeout(600_000);
 
@@ -70,9 +68,7 @@ test.describe('Scenario 4: Real live build with integrations', () => {
     }
   });
 
-  test('4.1 creates a real site, persists preview state, and injects integrations', async ({
-    page,
-  }) => {
+  test('4.1 creates a real site, persists preview state, and injects integrations', async ({ page }) => {
     const template = await loadTemplateFixture();
     const handoff = await e2eFetch(`${BASE}/api/editor/handoff`, {
       method: 'POST',
@@ -132,10 +128,8 @@ test.describe('Scenario 4: Real live build with integrations', () => {
         async () => {
           const project = await getProject(projectId);
           return {
-            previewUrl:
-              typeof project.preview_url === 'string' ? project.preview_url : null,
-            sandboxId:
-              typeof project.sandbox_id === 'string' ? project.sandbox_id : null,
+            previewUrl: typeof project.preview_url === 'string' ? project.preview_url : null,
+            sandboxId: typeof project.sandbox_id === 'string' ? project.sandbox_id : null,
           };
         },
         {

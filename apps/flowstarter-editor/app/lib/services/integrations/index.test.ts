@@ -49,8 +49,10 @@ describe('injectIntegrations pipeline', () => {
     expect(layout.content).toContain('plausible.io/js/script.js');
     expect(layout.content).toContain('data-domain="test.com"');
 
-    // Contact has Calendly widget (replaced form) but lead capture still works
-    // Calendly replaces the form, so lead capture script is still injected
+    /*
+     * Contact has Calendly widget (replaced form) but lead capture still works
+     * Calendly replaces the form, so lead capture script is still injected
+     */
     expect(contact.content).toContain('calendly-inline-widget');
 
     // Non-contact/layout files unchanged
@@ -59,18 +61,27 @@ describe('injectIntegrations pipeline', () => {
   });
 
   it('fetches Calendly event types when API key provided', async () => {
-    const mockFetch = vi.fn()
+    const mockFetch = vi
+      .fn()
       .mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ resource: { uri: 'https://api.calendly.com/users/u1' } }),
       })
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({
-          collection: [
-            { uri: 'e1', name: 'Call', slug: 'call', duration: 30, scheduling_url: 'https://calendly.com/x/call', active: true },
-          ],
-        }),
+        json: () =>
+          Promise.resolve({
+            collection: [
+              {
+                uri: 'e1',
+                name: 'Call',
+                slug: 'call',
+                duration: 30,
+                scheduling_url: 'https://calendly.com/x/call',
+                active: true,
+              },
+            ],
+          }),
       });
 
     vi.stubGlobal('fetch', mockFetch);
@@ -80,6 +91,7 @@ describe('injectIntegrations pipeline', () => {
     });
 
     expect(mockFetch).toHaveBeenCalledTimes(2);
+
     const contact = result.find((f) => f.path.includes('contact.astro'))!;
     expect(contact.content).toContain('Calendly.initPopupWidget');
     expect(contact.content).toContain('Call');

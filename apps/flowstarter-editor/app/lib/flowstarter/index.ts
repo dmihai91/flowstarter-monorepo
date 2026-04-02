@@ -50,4 +50,3 @@ export * from './tools';
 
 // Re-export service (main entry point for site generation)
 export * from './service';
-

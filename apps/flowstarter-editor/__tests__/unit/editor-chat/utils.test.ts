@@ -248,4 +248,3 @@ describe('buildWizardOutput', () => {
     expect(result.completedAt).toBeLessThanOrEqual(after);
   });
 });
-

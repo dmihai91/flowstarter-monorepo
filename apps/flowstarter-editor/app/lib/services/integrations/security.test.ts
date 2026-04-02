@@ -55,9 +55,11 @@ describe('XSS prevention', () => {
     const result = injectAnalytics([layoutFile], { provider: 'ga4', id: maliciousId });
     const content = result[0].content;
 
-    // The ID appears inside script content (not HTML attributes)
-    // In a real browser, this would be inside a <script> string literal
-    // Verify the closing script tag in the injection doesn't break out
+    /*
+     * The ID appears inside script content (not HTML attributes)
+     * In a real browser, this would be inside a <script> string literal
+     * Verify the closing script tag in the injection doesn't break out
+     */
     expect(content).not.toMatch(/<\/script>.*<script>/);
   });
 
@@ -78,8 +80,10 @@ describe('XSS prevention', () => {
     });
     const content = result[0].content;
 
-    // The projectId is set via: data.projectId = 'VALUE'
-    // Verify it's inside a string literal
+    /*
+     * The projectId is set via: data.projectId = 'VALUE'
+     * Verify it's inside a string literal
+     */
     expect(content).toContain("data.projectId = '");
   });
 
@@ -114,6 +118,7 @@ describe('Calendly event type injection safety', () => {
 
     // The name is inside a <span> — browser will render it as text
     expect(content).toContain('<img src=x onerror=alert(1)>');
+
     // In Astro, this would be server-rendered and escaped
   });
 

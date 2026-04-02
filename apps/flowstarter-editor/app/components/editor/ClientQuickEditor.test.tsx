@@ -17,7 +17,7 @@ describe('ClientQuickEditor', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useMutation).mockReturnValue(updateContentMock);
+    vi.mocked(useMutation).mockReturnValue(updateContentMock as never);
     vi.mocked(useQuery).mockReturnValue([
       {
         path: 'content/hero.md',

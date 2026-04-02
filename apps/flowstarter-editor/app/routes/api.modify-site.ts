@@ -25,10 +25,12 @@ async function convexQuery<T>(path: string, args: Record<string, unknown>): Prom
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ path, args }),
   });
-  const data = await response.json() as { status: string; value?: T; errorMessage?: string };
+  const data = (await response.json()) as { status: string; value?: T; errorMessage?: string };
+
   if (data.status === 'error') {
     throw new Error(data.errorMessage || 'Convex query failed');
   }
+
   return data.value as T;
 }
 
@@ -41,10 +43,12 @@ async function convexMutation<T>(path: string, args: Record<string, unknown>): P
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ path, args }),
   });
-  const data = await response.json() as { status: string; value?: T; errorMessage?: string };
+  const data = (await response.json()) as { status: string; value?: T; errorMessage?: string };
+
   if (data.status === 'error') {
     throw new Error(data.errorMessage || 'Convex mutation failed');
   }
+
   return data.value as T;
 }
 
@@ -89,21 +93,20 @@ async function getProjectFiles(projectId: string): Promise<Record<string, string
   const files = await convexQuery<ConvexFile[]>('files:list', { projectId });
 
   const fileMap: Record<string, string> = {};
+
   for (const file of files) {
     if (file.type === 'file' && !file.isBinary) {
       fileMap[file.path] = file.content;
     }
   }
+
   return fileMap;
 }
 
 /**
  * Save file changes to Convex
  */
-async function saveFileChanges(
-  projectId: string,
-  changes: FileChange[]
-): Promise<void> {
+async function saveFileChanges(projectId: string, changes: FileChange[]): Promise<void> {
   for (const change of changes) {
     if (change.operation === 'delete') {
       await convexMutation('files:remove', {
@@ -121,7 +124,6 @@ async function saveFileChanges(
     }
   }
 }
-
 
 export async function action({ request }: ActionFunctionArgs) {
   if (request.method !== 'POST') {
@@ -157,20 +159,19 @@ export async function action({ request }: ActionFunctionArgs) {
         // Get supabaseProjectId from the request or derive from Convex project
         const supabaseProjectId = (body as any).supabaseProjectId || body.projectId;
 
-        const editResult = await runEditAgent(
-          body.instruction,
-          currentFiles,
-          supabaseProjectId,
-        );
+        const editResult = await runEditAgent(body.instruction, currentFiles, supabaseProjectId);
 
         if (!editResult.success) {
           return json({ success: false, error: editResult.error }, { status: 500 });
         }
 
         // 3. Save modified files back to Convex
-        const convexSiteUrl = (process.env.CONVEX_URL || 'https://outstanding-otter-369.convex.cloud').replace('.convex.cloud', '.convex.site');
+        const convexSiteUrl = (process.env.CONVEX_URL || 'https://outstanding-otter-369.convex.cloud').replace(
+          '.convex.cloud',
+          '.convex.site',
+        );
         const handoffSecret = process.env.HANDOFF_SECRET || '';
-        
+
         await fetch(`${convexSiteUrl}/files/save-batch`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-handoff-secret': handoffSecret },
@@ -179,15 +180,36 @@ export async function action({ request }: ActionFunctionArgs) {
 
         // Auto-sync to Daytona preview after edit
         let previewUrl: string | undefined;
+
         try {
-          const { startPreviewWithPrewarmedSandbox, prewarmSandbox } = await import('~/lib/services/daytonaService.server');
-          const filesMap = editResult.files.reduce((acc: Record<string, string>, f: { path: string; content: string }) => { acc[f.path] = f.content; return acc; }, {} as Record<string, string>);
+          const { startPreviewWithPrewarmedSandbox, prewarmSandbox } = await import(
+            '~/lib/services/daytonaService.server'
+          );
+          const filesMap = editResult.files.reduce(
+            (acc: Record<string, string>, f: { path: string; content: string }) => {
+              acc[f.path] = f.content;
+              return acc;
+            },
+            {} as Record<string, string>,
+          );
           const prewarmed = await prewarmSandbox(supabaseProjectId);
+
           if (prewarmed) {
-            const preview = await startPreviewWithPrewarmedSandbox(supabaseProjectId, filesMap, prewarmed, undefined, (msg: string) => console.log('[modify-sync]', msg));
-            if (preview.success) previewUrl = preview.previewUrl || `https://4321-${preview.sandboxId}.daytonaproxy01.net`;
+            const preview = await startPreviewWithPrewarmedSandbox(
+              supabaseProjectId,
+              filesMap,
+              prewarmed,
+              undefined,
+              (msg: string) => console.log('[modify-sync]', msg),
+            );
+
+            if (preview.success) {
+              previewUrl = preview.previewUrl || `https://4321-${preview.sandboxId}.daytonaproxy01.net`;
+            }
           }
-        } catch (e) { console.error('[modify-sync] Preview sync failed:', e); }
+        } catch (e) {
+          console.error('[modify-sync] Preview sync failed:', e);
+        }
 
         return json({
           success: true,
@@ -200,11 +222,17 @@ export async function action({ request }: ActionFunctionArgs) {
 
       case 'sync-preview': {
         const { projectId: syncProjectId } = body as SyncToPreviewRequest;
-        
+
         // 1. Load files from Convex via HTTP Action
-        const convexSiteUrl = (process.env.CONVEX_URL || 'https://outstanding-otter-369.convex.cloud').replace('.convex.cloud', '.convex.site');
+        const convexSiteUrl = (process.env.CONVEX_URL || 'https://outstanding-otter-369.convex.cloud').replace(
+          '.convex.cloud',
+          '.convex.site',
+        );
         const handoffSecret = process.env.HANDOFF_SECRET;
-        if (!handoffSecret) return json({ error: 'HANDOFF_SECRET not configured' }, { status: 500 });
+
+        if (!handoffSecret) {
+          return json({ error: 'HANDOFF_SECRET not configured' }, { status: 500 });
+        }
 
         // Get files from Convex public query
         const convexUrl = process.env.CONVEX_URL || 'https://outstanding-otter-369.convex.cloud';
@@ -213,31 +241,53 @@ export async function action({ request }: ActionFunctionArgs) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ path: 'files:list', args: { projectId: syncProjectId } }),
         });
-        const filesData = await filesResp.json() as { status: string; value?: Array<{ path: string; content: string; type: string }> };
+        const filesData = (await filesResp.json()) as {
+          status: string;
+          value?: Array<{ path: string; content: string; type: string }>;
+        };
+
         if (filesData.status === 'error' || !filesData.value?.length) {
           return json({ error: 'No files found in Convex for this project' }, { status: 404 });
         }
 
-        const files = filesData.value.filter(f => f.type === 'file').reduce((acc, f) => {
-          acc[f.path] = f.content;
-          return acc;
-        }, {} as Record<string, string>);
+        const files = filesData.value
+          .filter((f) => f.type === 'file')
+          .reduce(
+            (acc, f) => {
+              acc[f.path] = f.content;
+              return acc;
+            },
+            {} as Record<string, string>,
+          );
 
         // 2. Push to Daytona
-        const { startPreviewWithPrewarmedSandbox, prewarmSandbox } = await import('~/lib/services/daytonaService.server');
+        const { startPreviewWithPrewarmedSandbox, prewarmSandbox } = await import(
+          '~/lib/services/daytonaService.server'
+        );
         const prewarmed = await prewarmSandbox(syncProjectId);
+
         if (!prewarmed) {
           return json({ success: false, error: 'Failed to prewarm preview sandbox' }, { status: 500 });
         }
+
         const previewResult = await startPreviewWithPrewarmedSandbox(
-          syncProjectId, files, prewarmed, undefined,
+          syncProjectId,
+          files,
+          prewarmed,
+          undefined,
           (msg) => console.log(`[sync-preview] ${msg}`),
         );
 
         if (previewResult.success) {
           const previewUrl = previewResult.previewUrl || `https://4321-${previewResult.sandboxId}.daytonaproxy01.net`;
-          return json({ success: true, previewUrl, sandboxId: previewResult.sandboxId, fileCount: Object.keys(files).length });
+          return json({
+            success: true,
+            previewUrl,
+            sandboxId: previewResult.sandboxId,
+            fileCount: Object.keys(files).length,
+          });
         }
+
         return json({ success: false, error: previewResult.error }, { status: 500 });
       }
 
@@ -246,9 +296,12 @@ export async function action({ request }: ActionFunctionArgs) {
     }
   } catch (error) {
     console.error('Modify site error:', error);
-    return json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
-    }, { status: 500 });
+    return json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 },
+    );
   }
 }

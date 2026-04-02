@@ -1,6 +1,6 @@
 /**
  * Therapist / Counseling / Mental Health Domain Content Agent
- * 
+ *
  * Specializes in creating website content for therapy practices.
  * Understands the unique needs: trust, safety, confidentiality,
  * reducing stigma, and making the first step feel approachable.
@@ -25,20 +25,20 @@ export const THERAPIST_CONTENT_PATTERNS = {
   heroHeadlines: [
     'Find Your Way Back to Yourself',
     'A Safe Space to Begin Again',
-    'You Don\'t Have to Face This Alone',
+    "You Don't Have to Face This Alone",
     'Healing Starts with Being Heard',
     'Where Clarity Meets Compassion',
   ],
-  
+
   // CTAs that reduce barriers
   softCtas: [
     'Schedule a Free Consultation',
     'Book Your First Session',
-    'Let\'s Start a Conversation',
-    'Reach Out When You\'re Ready',
+    "Let's Start a Conversation",
+    "Reach Out When You're Ready",
     'Take the First Step',
   ],
-  
+
   // Trust signals specific to therapy
   trustSignals: [
     'Licensed & Insured',
@@ -47,7 +47,7 @@ export const THERAPIST_CONTENT_PATTERNS = {
     'Telehealth Available',
     'Flexible Scheduling',
   ],
-  
+
   // Common specializations to highlight
   specializations: [
     'Anxiety & Stress',
@@ -124,29 +124,32 @@ CONTACT: Multiple contact options, clear response time expectations, reassurance
  */
 export function buildTherapistContentPrompt(context: BusinessContext): string {
   const contextParts: string[] = [];
-  
+
   if (context.ownerName) {
     contextParts.push(`- Therapist name: ${context.ownerName}`);
   }
+
   if (context.location) {
     contextParts.push(`- Location: ${context.location}`);
   }
+
   if (context.services && context.services.length > 0) {
     contextParts.push(`- Specializations: ${context.services.join(', ')}`);
   }
+
   if (context.targetAudience) {
     contextParts.push(`- Primary clients: ${context.targetAudience}`);
   }
+
   if (context.uniqueApproach) {
     contextParts.push(`- Therapeutic approach: ${context.uniqueApproach}`);
   }
+
   if (context.certifications && context.certifications.length > 0) {
     contextParts.push(`- Credentials: ${context.certifications.join(', ')}`);
   }
-  
-  const contextSection = contextParts.length > 0 
-    ? `\nBUSINESS CONTEXT:\n${contextParts.join('\n')}\n`
-    : '';
+
+  const contextSection = contextParts.length > 0 ? `\nBUSINESS CONTEXT:\n${contextParts.join('\n')}\n` : '';
 
   return `${THERAPIST_CONTENT_PROMPT}
 ${contextSection}
@@ -159,18 +162,30 @@ Based on this context, generate warm, professional content that will make potent
 export const THERAPIST_DOMAIN = {
   id: 'therapist',
   name: 'Therapy & Counseling',
-  
+
   keywords: [
-    'therapist', 'therapy', 'counseling', 'counselor', 'psychologist',
-    'mental health', 'psychotherapy', 'anxiety', 'depression', 'trauma',
-    'couples therapy', 'family therapy', 'lcsw', 'lmft', 'lpc',
+    'therapist',
+    'therapy',
+    'counseling',
+    'counselor',
+    'psychologist',
+    'mental health',
+    'psychotherapy',
+    'anxiety',
+    'depression',
+    'trauma',
+    'couples therapy',
+    'family therapy',
+    'lcsw',
+    'lmft',
+    'lpc',
   ],
-  
+
   sections: THERAPIST_SECTIONS,
   contentPatterns: THERAPIST_CONTENT_PATTERNS,
   systemPrompt: THERAPIST_CONTENT_PROMPT,
   buildPrompt: buildTherapistContentPrompt,
-  
+
   // Design recommendations
   design: {
     colorMoods: ['calming', 'warm', 'natural', 'soft'],
@@ -178,7 +193,7 @@ export const THERAPIST_DOMAIN = {
     imageStyle: 'warm, natural lighting, real environments',
     layoutStyle: 'spacious, breathing room, not cluttered',
   },
-  
+
   // Conversion optimization
   conversion: {
     primaryCta: 'Schedule a Consultation',

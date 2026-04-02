@@ -17,4 +17,3 @@ export const coloredText = {
   green: (text: string) => `${escapeCodes.green}${text}${reset}`,
   blue: (text: string) => `${escapeCodes.blue}${text}${reset}`,
 };
-

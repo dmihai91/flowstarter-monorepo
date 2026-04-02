@@ -29,4 +29,3 @@ export const path = {
   /** Utility to convert backslashes to forward slashes */
   toForwardSlashes,
 } as const;
-

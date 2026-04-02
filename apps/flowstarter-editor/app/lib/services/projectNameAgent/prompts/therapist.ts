@@ -1,6 +1,6 @@
 /**
  * Therapist / Counseling / Mental Health category
- * 
+ *
  * These names need to feel: warm, safe, professional but not corporate,
  * calming, like a refuge. People seeking therapy want to feel welcomed
  * and understood, not sold to.
@@ -11,15 +11,36 @@ import { BASE_RULES, OUTPUT_FORMAT } from './base';
 export const THERAPIST_CATEGORY = {
   id: 'therapist',
   keywords: [
-    'therapist', 'therapy', 'counseling', 'counselor', 'counselling',
-    'psychologist', 'psychotherapy', 'mental health', 'psychiatric',
-    'anxiety', 'depression', 'trauma', 'ptsd', 'couples therapy',
-    'marriage counseling', 'family therapy', 'child therapist',
-    'adolescent therapy', 'grief counseling', 'addiction counseling',
-    'substance abuse', 'behavioral health', 'clinical psychologist',
-    'licensed therapist', 'lmft', 'lcsw', 'lpc', 'psychotherapist'
+    'therapist',
+    'therapy',
+    'counseling',
+    'counselor',
+    'counselling',
+    'psychologist',
+    'psychotherapy',
+    'mental health',
+    'psychiatric',
+    'anxiety',
+    'depression',
+    'trauma',
+    'ptsd',
+    'couples therapy',
+    'marriage counseling',
+    'family therapy',
+    'child therapist',
+    'adolescent therapy',
+    'grief counseling',
+    'addiction counseling',
+    'substance abuse',
+    'behavioral health',
+    'clinical psychologist',
+    'licensed therapist',
+    'lmft',
+    'lcsw',
+    'lpc',
+    'psychotherapist',
   ],
-  
+
   systemPrompt: `You are a world-class brand naming expert specializing in mental health practices.
 
 YOUR TASK: Generate 3 distinctive, memorable names for a therapy/counseling practice.
@@ -62,7 +83,7 @@ ${OUTPUT_FORMAT}`,
 
   fallbackNames: [
     'Safe Ground',
-    'The Clearing', 
+    'The Clearing',
     'Still Point',
     'Open Door',
     'The Practice',
@@ -75,16 +96,16 @@ ${OUTPUT_FORMAT}`,
     'Solid Ground',
     'The Session',
     'Quiet Mind',
-    'Haven'
+    'Haven',
   ],
-  
+
   refinementHints: {
-    'warm': 'Sanctuary and comfort metaphors: Haven, The Hearth, Soft Landing, Warm Light',
-    'professional': 'Grounded and established: The Practice, Cornerstone, Foundation, Bedrock',
-    'creative': 'Unexpected but fitting: The Clearing, Still Point, Untangled, The Unburdening',
-    'shorter': 'Single powerful words: Haven, Anchor, Steady, Calm, Solace',
-    'different': 'Try a completely new direction - maybe space/room metaphors or calm concepts',
-  }
+    warm: 'Sanctuary and comfort metaphors: Haven, The Hearth, Soft Landing, Warm Light',
+    professional: 'Grounded and established: The Practice, Cornerstone, Foundation, Bedrock',
+    creative: 'Unexpected but fitting: The Clearing, Still Point, Untangled, The Unburdening',
+    shorter: 'Single powerful words: Haven, Anchor, Steady, Calm, Solace',
+    different: 'Try a completely new direction - maybe space/room metaphors or calm concepts',
+  },
 };
 
 export default THERAPIST_CATEGORY;

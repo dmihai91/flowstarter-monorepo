@@ -31,4 +31,3 @@ export function getRuntimeMode(): RuntimeMode {
 export function isDaytonaMode(): boolean {
   return true;
 }
-

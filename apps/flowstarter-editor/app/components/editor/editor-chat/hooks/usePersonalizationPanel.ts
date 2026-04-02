@@ -70,12 +70,16 @@ export function usePersonalizationPanel({
   const handleFileUpload = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
-      if (!file) return;
+
+      if (!file) {
+        return;
+      }
 
       if (file.size > 5 * 1024 * 1024) {
         setGenerationError('File size must be less than 5MB');
         return;
       }
+
       if (!file.type.startsWith('image/')) {
         setGenerationError('Please upload an image file');
         return;
@@ -92,7 +96,9 @@ export function usePersonalizationPanel({
           body: file,
         });
 
-        if (!uploadResult.ok) throw new Error('Failed to upload file');
+        if (!uploadResult.ok) {
+          throw new Error('Failed to upload file');
+        }
 
         const uploadData = (await uploadResult.json()) as { storageId: Id<'_storage'> };
         const result = await saveLogo({
@@ -131,9 +137,11 @@ export function usePersonalizationPanel({
       });
 
       const data = (await response.json()) as { success?: boolean; imageUrl?: string; error?: string };
+
       if (!data.success || !data.imageUrl) {
         throw new Error(data.error || 'Failed to generate logo');
       }
+
       return data.imageUrl;
     },
     retry: 1,
@@ -141,7 +149,9 @@ export function usePersonalizationPanel({
   });
 
   const handleGenerateLogo = useCallback(async () => {
-    if (!generationPrompt.trim()) return;
+    if (!generationPrompt.trim()) {
+      return;
+    }
 
     setGenerating(true);
     setGenerationError(null);
@@ -153,6 +163,7 @@ export function usePersonalizationPanel({
       });
 
       setGeneratedImageUrl(imageUrl);
+
       const logoInfo: LogoInfo = { type: 'generated', url: imageUrl, prompt: generationPrompt };
       setSelectedLogo(logoInfo);
       onLogoSelect(logoInfo, useAiImages);
@@ -176,8 +187,11 @@ export function usePersonalizationPanel({
     if (currentSection === 'palette') {
       // Don't call onPaletteSelect — just advance
     }
-    // Skip font if not selected
-    // Skip logo and trigger build
+
+    /*
+     * Skip font if not selected
+     * Skip logo and trigger build
+     */
     const logoInfo: LogoInfo = { type: 'none' };
     setSelectedLogo(logoInfo);
     onLogoSelect(logoInfo, useAiImages);

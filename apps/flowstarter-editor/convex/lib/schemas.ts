@@ -6,12 +6,7 @@ import { v } from 'convex/values';
 
 export const bookingIntegrationSchema = v.object({
   enabled: v.boolean(),
-  provider: v.union(
-    v.literal('calendly'),
-    v.literal('calcom'),
-    v.literal('custom'),
-    v.literal('none')
-  ),
+  provider: v.union(v.literal('calendly'), v.literal('calcom'), v.literal('custom'), v.literal('none')),
   calendlyUrl: v.optional(v.string()),
   calcomUrl: v.optional(v.string()),
   title: v.optional(v.string()),
@@ -26,7 +21,7 @@ export const newsletterIntegrationSchema = v.object({
     v.literal('convertkit'),
     v.literal('buttondown'),
     v.literal('custom'),
-    v.literal('none')
+    v.literal('none'),
   ),
   mailchimpUrl: v.optional(v.string()),
   convertkitFormId: v.optional(v.string()),

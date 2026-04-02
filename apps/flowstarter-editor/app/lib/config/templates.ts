@@ -118,4 +118,3 @@ export const TEMPLATE_MCP_CONFIG = FLOWSTARTER_MCP_CONFIG;
 export function getTemplateMCPUrl(): string {
   return getFlowstarterMCPUrl();
 }
-

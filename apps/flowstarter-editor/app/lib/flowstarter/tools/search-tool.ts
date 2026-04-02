@@ -334,4 +334,3 @@ export function getSearchTool(): SearchTool {
 export function resetSearchTool(): void {
   searchToolInstance = null;
 }
-

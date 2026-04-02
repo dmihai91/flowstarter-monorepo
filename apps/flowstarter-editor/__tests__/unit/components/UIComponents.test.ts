@@ -5,7 +5,7 @@
  * These tests verify component logic without DOM rendering.
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 // ─── Badge Variants ─────────────────────────────────────────────────────────
 
@@ -32,6 +32,7 @@ const badgeSizeClasses: Record<string, string> = {
 function getBadgeClasses(variant: string = 'default', size: string = 'default'): string {
   const variantClass = badgeVariantClasses[variant] || badgeVariantClasses.default;
   const sizeClass = badgeSizeClasses[size] || badgeSizeClasses.default;
+
   return `inline-flex items-center gap-1 ${variantClass} ${sizeClass}`;
 }
 
@@ -53,6 +54,7 @@ const buttonSizeClasses: Record<string, string> = {
 function getButtonClasses(variant: string = 'primary', size: string = 'md'): string {
   const variantClass = buttonVariantClasses[variant] || buttonVariantClasses.primary;
   const sizeClass = buttonSizeClasses[size] || buttonSizeClasses.md;
+
   return `${variantClass} ${sizeClass}`;
 }
 
@@ -199,6 +201,7 @@ describe('Class Names Utility', () => {
 
   it('should preserve empty strings in classes', () => {
     const result = classNames('a', '', 'b');
+
     // Empty string is falsy, so it should be filtered
     expect(result).toBe('a b');
   });
@@ -352,6 +355,7 @@ function setFieldValue(state: FormState, field: string, value: string): FormStat
 
 function setFieldError(state: FormState, field: string, error: string | null): FormState {
   const newErrors = { ...state.errors };
+
   if (error) {
     newErrors[field] = error;
   } else {
@@ -465,7 +469,7 @@ function createLoadingState<T>(): LoadingState<T> {
   return { data: null, isLoading: false, error: null };
 }
 
-function setLoading<T>(state: LoadingState<T>): LoadingState<T> {
+function setLoading<T>(_state: LoadingState<T>): LoadingState<T> {
   return { data: null, isLoading: true, error: null };
 }
 
@@ -514,4 +518,3 @@ describe('Loading State', () => {
     expect(state.error?.message).toBe('Failed to load');
   });
 });
-

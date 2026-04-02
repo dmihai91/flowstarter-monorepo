@@ -85,4 +85,3 @@ export async function syncFiles(files: FileMap, targetHandle: FileSystemDirector
 
   return syncedFiles;
 }
-

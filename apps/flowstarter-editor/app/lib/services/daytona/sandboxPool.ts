@@ -1,6 +1,6 @@
 /**
  * Sandbox Pool Manager
- * 
+ *
  * Maintains a pool of pre-warmed sandboxes ready for instant use.
  * Sandboxes are pre-configured with bun and common dependencies.
  */
@@ -35,15 +35,18 @@ let warmupInterval: ReturnType<typeof setInterval> | null = null;
  */
 export async function getWarmSandbox(client: Daytona): Promise<PooledSandbox | null> {
   cleanExpiredSandboxes();
-  
+
   const pooled = warmPool.shift();
+
   if (pooled) {
     log.debug(`Got pre-warmed sandbox from pool (${warmPool.length} remaining)`);
     queueMicrotask(() => refillPool(client));
+
     return pooled;
   }
-  
+
   log.debug('Pool empty, will create new sandbox');
+
   return null;
 }
 
@@ -51,27 +54,34 @@ export async function getWarmSandbox(client: Daytona): Promise<PooledSandbox | n
  * Initialize the pool with pre-warmed sandboxes
  */
 export async function initializePool(env?: DaytonaEnv): Promise<void> {
-  if (poolInitialized) return;
+  if (poolInitialized) {
+    return;
+  }
+
   poolInitialized = true;
-  
+
   log.debug('Initializing sandbox pool...');
-  
+
   try {
     const client = getClient(env);
-    
+
     // Warm up initial sandboxes in parallel
-    const warmupPromises = Array(POOL_SIZE).fill(null).map(() => 
-      createWarmSandbox(client).catch(e => {
-        log.warn('Failed to pre-warm sandbox:', e);
-        return null;
-      })
-    );
-    
+    const warmupPromises = Array(POOL_SIZE)
+      .fill(null)
+      .map(() =>
+        createWarmSandbox(client).catch((e) => {
+          log.warn('Failed to pre-warm sandbox:', e);
+          return null;
+        }),
+      );
+
     const results = await Promise.all(warmupPromises);
-    results.forEach(pooled => {
-      if (pooled) warmPool.push(pooled);
+    results.forEach((pooled) => {
+      if (pooled) {
+        warmPool.push(pooled);
+      }
     });
-    
+
     log.debug(`Pool initialized with ${warmPool.length} sandboxes`);
     startBackgroundWarmup(env);
   } catch (e) {
@@ -85,14 +95,16 @@ export async function initializePool(env?: DaytonaEnv): Promise<void> {
 async function createWarmSandbox(client: Daytona): Promise<PooledSandbox | null> {
   try {
     log.debug('Creating warm sandbox...');
+
     const sandbox = await client.create();
-    const workDir = await sandbox.getWorkDir() || '/home/daytona';
-    
+    const workDir = (await sandbox.getWorkDir()) || '/home/daytona';
+
     let hasBun = await checkBunAvailable(sandbox, workDir);
+
     if (!hasBun) {
       hasBun = await installBun(sandbox, workDir);
     }
-    
+
     return { sandbox, workDir, createdAt: Date.now(), hasBun };
   } catch (e) {
     log.error('Failed to create warm sandbox:', e);
@@ -105,21 +117,29 @@ async function createWarmSandbox(client: Daytona): Promise<PooledSandbox | null>
  */
 async function refillPool(client: Daytona): Promise<void> {
   cleanExpiredSandboxes();
-  
+
   const needed = POOL_SIZE - warmPool.length;
-  if (needed <= 0) return;
-  
+
+  if (needed <= 0) {
+    return;
+  }
+
   log.debug(`Refilling pool: need ${needed} sandboxes`);
-  
+
   for (let i = 0; i < needed; i++) {
     const pooled = await createWarmSandbox(client);
-    if (pooled) warmPool.push(pooled);
+
+    if (pooled) {
+      warmPool.push(pooled);
+    }
   }
 }
 
 function startBackgroundWarmup(env?: DaytonaEnv): void {
-  if (warmupInterval) return;
-  
+  if (warmupInterval) {
+    return;
+  }
+
   warmupInterval = setInterval(async () => {
     try {
       const client = getClient(env);
@@ -135,11 +155,13 @@ export function stopPool(): void {
     clearInterval(warmupInterval);
     warmupInterval = null;
   }
+
   poolInitialized = false;
 }
 
 function cleanExpiredSandboxes(): void {
   const now = Date.now();
+
   for (let i = warmPool.length - 1; i >= 0; i--) {
     if (now - warmPool[i].createdAt > SANDBOX_TTL_MS) {
       const removed = warmPool.splice(i, 1)[0];
@@ -152,4 +174,3 @@ function cleanExpiredSandboxes(): void {
 export function getPoolStats(): { size: number; maxSize: number } {
   return { size: warmPool.length, maxSize: POOL_SIZE };
 }
-

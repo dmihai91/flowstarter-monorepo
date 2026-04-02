@@ -1,5 +1,5 @@
-import { createEnv } from "@t3-oss/env-core";
-import { z } from "zod";
+import { createEnv } from '@t3-oss/env-core';
+import { z } from 'zod';
 
 /**
  * Server-side environment variables for the Flowstarter Editor (Remix + Vite).
@@ -21,7 +21,7 @@ export const env = createEnv({
 
     // ── Daytona Sandbox ───────────────────────────────────────────────
     DAYTONA_API_KEY: z.string().optional(),
-    DAYTONA_API_URL: z.string().url().default("https://app.daytona.io/api"),
+    DAYTONA_API_URL: z.string().url().default('https://app.daytona.io/api'),
 
     // ── FAL (Image Generation) ────────────────────────────────────────
     FAL_KEY: z.string().optional(),
@@ -48,35 +48,33 @@ export const env = createEnv({
 
     // ── LangSmith Tracing ─────────────────────────────────────────────
     LANGSMITH_API_KEY: z.string().optional(),
-    LANGSMITH_PROJECT: z.string().default("claude-code-trace"),
+    LANGSMITH_PROJECT: z.string().default('claude-code-trace'),
 
     // ── Runtime ───────────────────────────────────────────────────────
-    NODE_ENV: z
-      .enum(["development", "production", "test"])
-      .default("development"),
+    NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   },
 
   /**
    * Client-side env vars for Vite use the `VITE_` prefix.
    * These are inlined at build time by Vite and accessed via `import.meta.env`.
    */
-  clientPrefix: "VITE_",
+  clientPrefix: 'VITE_',
   client: {
     VITE_CONVEX_URL: z.string().optional(),
     VITE_MAIN_PLATFORM_URL: z.string().optional(),
-    VITE_PREVIEW_DOMAIN: z.string().default("flowstarter.app"),
+    VITE_PREVIEW_DOMAIN: z.string().default('flowstarter.app'),
     VITE_CALENDLY_DISCOVERY_URL: z.string().optional(),
     VITE_API_BASE_URL: z.string().optional(),
     VITE_SIGN_IN_URL: z.string().optional(),
     VITE_SIGN_UP_URL: z.string().optional(),
-    VITE_FLOWSTARTER_MCP_URL: z.string().default("http://localhost:3001"),
+    VITE_FLOWSTARTER_MCP_URL: z.string().default('http://localhost:3001'),
     VITE_SUPABASE_URL: z.string().optional(),
     VITE_SUPABASE_ANON_KEY: z.string().optional(),
     VITE_OPENROUTER_API_KEY: z.string().optional(),
     VITE_OPENROUTER_MODEL: z.string().optional(),
-    VITE_LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).optional(),
+    VITE_LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).optional(),
     VITE_GITHUB_ACCESS_TOKEN: z.string().optional(),
-    VITE_GITHUB_TOKEN_TYPE: z.enum(["classic", "fine-grained"]).default("classic"),
+    VITE_GITHUB_TOKEN_TYPE: z.enum(['classic', 'fine-grained']).default('classic'),
   },
 
   /*

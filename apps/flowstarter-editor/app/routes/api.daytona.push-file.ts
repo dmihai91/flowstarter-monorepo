@@ -23,8 +23,15 @@ interface PushFileBody {
 
 function normalizePath(filePath: string, workDir: string): string {
   let p = filePath;
-  if (!p.startsWith('/')) p = `/${p}`;
-  if (!p.startsWith(workDir)) p = `${workDir}${p}`;
+
+  if (!p.startsWith('/')) {
+    p = `/${p}`;
+  }
+
+  if (!p.startsWith(workDir)) {
+    p = `${workDir}${p}`;
+  }
+
   return p;
 }
 
@@ -34,6 +41,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
   }
 
   let body: PushFileBody;
+
   try {
     body = await request.json();
   } catch {
@@ -48,6 +56,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
   // Look up active sandbox for this project
   const cached = getCachedSandbox(projectId);
+
   if (!cached?.sandboxId) {
     // No active sandbox yet — file will be included in full upload when preview starts
     return json({ success: true, skipped: true, reason: 'no-active-sandbox' });
@@ -58,6 +67,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
     const client = getClient(env);
 
     const sandbox = await client.get(cached.sandboxId);
+
     if (!sandbox) {
       return json({ success: false, error: 'Sandbox not found' }, { status: 404 });
     }
@@ -67,6 +77,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
     // Ensure parent directory exists
     const dir = normalizedPath.substring(0, normalizedPath.lastIndexOf('/'));
+
     if (dir && dir !== workDir) {
       await sandbox.process.executeCommand(`mkdir -p "${dir}"`, workDir).catch(() => {});
     }
@@ -74,10 +85,12 @@ export async function action({ request, context }: ActionFunctionArgs) {
     await sandbox.fs.uploadFile(Buffer.from(content, 'utf-8'), normalizedPath);
 
     log.debug(`Pushed ${filePath} to sandbox ${cached.sandboxId}`);
+
     return json({ success: true });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     log.error(`Failed to push file ${filePath}:`, message);
+
     return json({ success: false, error: message }, { status: 500 });
   }
 }

@@ -34,7 +34,7 @@ describe('MagicLinkComplete', () => {
     });
     globalThis.fetch = vi.fn();
 
-    vi.mocked(useMutation).mockReturnValue(completeAccessMock);
+    vi.mocked(useMutation).mockReturnValue(completeAccessMock as never);
     vi.mocked(globalThis.fetch).mockResolvedValue({
       ok: true,
       json: async () => ({

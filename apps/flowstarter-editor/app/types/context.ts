@@ -29,4 +29,3 @@ export type ToolCallAnnotation = {
   toolName: string;
   toolDescription: string;
 };
-

@@ -42,4 +42,3 @@ export function createFileBatches(files: ScaffoldFile[]): ScaffoldFile[][] {
 
   return batches;
 }
-

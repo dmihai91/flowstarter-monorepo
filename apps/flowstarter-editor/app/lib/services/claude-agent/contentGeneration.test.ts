@@ -143,7 +143,9 @@ describe('contentGeneration', () => {
       const files = generateContentFiles(inputWithMailchimp);
       expect(files['content/integrations/newsletter.md']).toContain('enabled: true');
       expect(files['content/integrations/newsletter.md']).toContain('provider: "mailchimp"');
-      expect(files['content/integrations/newsletter.md']).toContain('form_action_url: "https://test.us1.list-manage.com/subscribe/post?u=abc&id=123"');
+      expect(files['content/integrations/newsletter.md']).toContain(
+        'form_action_url: "https://test.us1.list-manage.com/subscribe/post?u=abc&id=123"',
+      );
     });
 
     it('should generate enabled newsletter.md with ConvertKit URL', () => {
@@ -191,11 +193,11 @@ describe('contentGeneration', () => {
       };
 
       const files = generateContentFiles(inputWithMultiple);
-      
+
       // Booking should be enabled
       expect(files['content/integrations/booking.md']).toContain('enabled: true');
       expect(files['content/integrations/booking.md']).toContain('calendly_url:');
-      
+
       // Newsletter should be enabled
       expect(files['content/integrations/newsletter.md']).toContain('enabled: true');
       expect(files['content/integrations/newsletter.md']).toContain('form_action_url:');
@@ -215,7 +217,7 @@ describe('contentGeneration', () => {
 
       const files = generateContentFiles(therapistInput);
       const domainInfo = getDomainInfo(therapistInput.businessInfo.description!);
-      
+
       expect(domainInfo.domainId).toBe('therapist');
       expect(files['content/hero.md']).toContain('Safe & Confidential');
       expect(files['content/hero.md']).toContain('Clients Helped');
@@ -233,7 +235,7 @@ describe('contentGeneration', () => {
 
       const files = generateContentFiles(fitnessInput);
       const domainInfo = getDomainInfo(fitnessInput.businessInfo.description!);
-      
+
       expect(domainInfo.domainId).toBe('fitness');
       expect(files['content/hero.md']).toContain('Results Guaranteed');
       expect(files['content/hero.md']).toContain('Transformations');
@@ -251,7 +253,7 @@ describe('contentGeneration', () => {
 
       const files = generateContentFiles(yogaInput);
       const domainInfo = getDomainInfo(yogaInput.businessInfo.description!);
-      
+
       expect(domainInfo.domainId).toBe('yoga');
       expect(files['content/hero.md']).toContain('All Levels Welcome');
     });
@@ -268,7 +270,7 @@ describe('contentGeneration', () => {
 
       const files = generateContentFiles(restaurantInput);
       const domainInfo = getDomainInfo(restaurantInput.businessInfo.description!);
-      
+
       expect(domainInfo.domainId).toBe('food');
       expect(files['content/testimonials.md']).toContain('Guest');
     });
@@ -285,7 +287,7 @@ describe('contentGeneration', () => {
 
       const files = generateContentFiles(genericInput);
       const domainInfo = getDomainInfo(genericInput.businessInfo.description!);
-      
+
       expect(domainInfo.domainId).toBe('generic');
       expect(files['content/hero.md']).toContain('Trusted by Professionals');
     });
@@ -312,10 +314,10 @@ describe('contentGeneration', () => {
 
       // Should still generate all files
       expect(Object.keys(files)).toHaveLength(11);
-      
+
       // Should have business name
       expect(files['content/site.md']).toContain('Minimal Business');
-      
+
       // Should have domain-appropriate headline (generic domain)
       expect(files['content/hero.md']).toMatch(/headline:/);
       expect(files['content/hero.md']).toContain('cta_primary:');
@@ -331,7 +333,7 @@ describe('contentGeneration', () => {
       };
 
       const files = generateContentFiles(inputWithEmptyServices);
-      
+
       // Should still generate services.md (may be empty or have defaults)
       expect(files['content/services.md']).toBeDefined();
       expect(files['content/services.md']).toContain('services:');
@@ -347,7 +349,7 @@ describe('contentGeneration', () => {
       };
 
       const files = generateContentFiles(inputWithSpecialChars);
-      
+
       // Should properly escape/handle special characters
       expect(files['content/site.md']).toContain("Mike's Café & Bar");
     });
@@ -360,7 +362,7 @@ describe('contentGeneration', () => {
 
       // Should not throw
       expect(() => generateContentFiles(inputWithoutIntegrations)).not.toThrow();
-      
+
       const files = generateContentFiles(inputWithoutIntegrations);
       expect(files['content/integrations/booking.md']).toContain('enabled: false');
     });

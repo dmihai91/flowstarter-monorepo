@@ -45,10 +45,7 @@ describe('injectAnalytics', () => {
   });
 
   it('does not modify non-layout files', () => {
-    const files = [
-      layoutFile,
-      { path: 'src/pages/index.astro', content: '<h1>Home</h1>' },
-    ];
+    const files = [layoutFile, { path: 'src/pages/index.astro', content: '<h1>Home</h1>' }];
     const result = injectAnalytics(files, { provider: 'ga4', id: 'G-TEST' });
 
     expect(result[1].content).toBe('<h1>Home</h1>');

@@ -11,7 +11,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-// ÔöÇÔöÇÔöÇ Test Fixtures ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Test Fixtures ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 const MOCK_PROJECT = {
   urlId: 'aluat-de-casa-abc123',
@@ -31,7 +31,7 @@ const MOCK_ATTACHED_IMAGES: AttachedImage[] = [
   { id: '1', file: MOCK_IMAGE_FILE, preview: 'data:image/jpeg;base64,test' },
 ];
 
-// ÔöÇÔöÇÔöÇ Helper Functions to Test ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Helper Functions to Test ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 /**
  * Validates that a modification request has required context
@@ -40,27 +40,27 @@ function validateModificationRequest(
   input: string,
   projectId: string | null,
   urlId: string | null,
-  hasImages = false
+  hasImages = false,
 ): { valid: boolean; error?: string } {
   if (!input.trim() && !hasImages) {
     return { valid: false, error: 'No input or images provided' };
   }
+
   if (!projectId) {
     return { valid: false, error: 'No project ID' };
   }
+
   if (!urlId) {
     return { valid: false, error: 'No URL ID' };
   }
+
   return { valid: true };
 }
 
 /**
  * Builds the instruction string for the Claude Agent
  */
-function buildAgentInstruction(
-  userInput: string,
-  images: AttachedImage[]
-): string {
+function buildAgentInstruction(userInput: string, images: AttachedImage[]): string {
   const hasImages = images.length > 0;
 
   if (hasImages && !userInput) {
@@ -83,7 +83,8 @@ function formatUserMessage(input: string, images: AttachedImage[]): string {
   }
 
   const imageText = images.length === 1 ? '1 image' : `${images.length} images`;
-  return input ? `${input}\n\n­ƒôÄ Attached: ${imageText}` : `­ƒôÄ Attached: ${imageText}`;
+
+  return input ? `${input}\n\nï¿½ï¿½ï¿½ï¿½ Attached: ${imageText}` : `ï¿½ï¿½ï¿½ï¿½ Attached: ${imageText}`;
 }
 
 /**
@@ -92,7 +93,7 @@ function formatUserMessage(input: string, images: AttachedImage[]): string {
 function getErrorMessage(error: string): string {
   if (error.includes('API key') || error.includes('ANTHROPIC')) {
     return (
-      "ÔÜá´©Å The AI modification feature requires an Anthropic API key to be configured.\n\n" +
+      'ï¿½ï¿½á´©ï¿½ The AI modification feature requires an Anthropic API key to be configured.\n\n' +
       '**To enable this feature:**\n' +
       '1. Get an API key from [console.anthropic.com](https://console.anthropic.com)\n' +
       '2. Add `ANTHROPIC_API_KEY=your-key` to your environment\n' +
@@ -101,7 +102,7 @@ function getErrorMessage(error: string): string {
     );
   }
 
-  return `ÔØî Couldn't apply changes: ${error}\n\nYou can try editing the files directly in the Editor tab.`;
+  return `ï¿½ï¿½ï¿½ Couldn't apply changes: ${error}\n\nYou can try editing the files directly in the Editor tab.`;
 }
 
 /**
@@ -143,23 +144,25 @@ function parseSSELine(line: string): SSEEvent | null {
       return null;
     }
   }
+
   return null;
 }
 
-// ÔöÇÔöÇÔöÇ Tests ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Tests ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 describe('validateModificationRequest', () => {
   it('validates complete request', () => {
     const result = validateModificationRequest(
       'Change the hero background to blue',
       MOCK_PROJECT.convexProjectId,
-      MOCK_PROJECT.urlId
+      MOCK_PROJECT.urlId,
     );
     expect(result.valid).toBe(true);
   });
 
   it('rejects empty input with no images', () => {
     const result = validateModificationRequest('', MOCK_PROJECT.convexProjectId, MOCK_PROJECT.urlId, false);
+
     // This depends on whether images are attached - testing the no-images case
     expect(result.valid).toBe(false);
     expect(result.error).toContain('No input');
@@ -217,7 +220,7 @@ describe('formatUserMessage', () => {
   it('adds image indicator for single image', () => {
     const message = formatUserMessage('Use this image', MOCK_ATTACHED_IMAGES);
     expect(message).toContain('Use this image');
-    expect(message).toContain('­ƒôÄ Attached: 1 image');
+    expect(message).toContain('ï¿½ï¿½ï¿½ï¿½ Attached: 1 image');
   });
 
   it('adds image indicator for multiple images', () => {
@@ -226,12 +229,12 @@ describe('formatUserMessage', () => {
       { id: '2', file: MOCK_IMAGE_FILE, preview: '' },
     ];
     const message = formatUserMessage('Add these', multipleImages);
-    expect(message).toContain('­ƒôÄ Attached: 2 images');
+    expect(message).toContain('ï¿½ï¿½ï¿½ï¿½ Attached: 2 images');
   });
 
   it('shows only image indicator when no text', () => {
     const message = formatUserMessage('', MOCK_ATTACHED_IMAGES);
-    expect(message).toBe('­ƒôÄ Attached: 1 image');
+    expect(message).toBe('ï¿½ï¿½ï¿½ï¿½ Attached: 1 image');
   });
 });
 
@@ -328,8 +331,8 @@ describe('modification request flow states', () => {
   it('shows processing message immediately', () => {
     const hasImages = true;
     const processingMessage = hasImages
-      ? '­ƒöä Processing your images and applying changes...'
-      : '­ƒöä Applying your changes...';
+      ? 'ï¿½ï¿½ï¿½ï¿½ Processing your images and applying changes...'
+      : 'ï¿½ï¿½ï¿½ï¿½ Applying your changes...';
 
     expect(processingMessage).toContain('Processing');
     expect(processingMessage).toContain('images');
@@ -338,23 +341,23 @@ describe('modification request flow states', () => {
   it('shows text-only processing message', () => {
     const hasImages = false;
     const processingMessage = hasImages
-      ? '­ƒöä Processing your images and applying changes...'
-      : '­ƒöä Applying your changes...';
+      ? 'ï¿½ï¿½ï¿½ï¿½ Processing your images and applying changes...'
+      : 'ï¿½ï¿½ï¿½ï¿½ Applying your changes...';
 
     expect(processingMessage).not.toContain('images');
     expect(processingMessage).toContain('Applying');
   });
 
   it('shows success message with response', () => {
-    const response = 'I\'ve updated the hero section with your new image.';
-    const successMessage = response || 'Ô£à Changes applied successfully! Refresh the preview to see the updates.';
+    const response = "I've updated the hero section with your new image.";
+    const successMessage = response || 'Ô£ï¿½ Changes applied successfully! Refresh the preview to see the updates.';
 
     expect(successMessage).toContain('hero section');
   });
 
   it('shows default success message when no response', () => {
     const response = '';
-    const successMessage = response || 'Ô£à Changes applied successfully! Refresh the preview to see the updates.';
+    const successMessage = response || 'Ô£ï¿½ Changes applied successfully! Refresh the preview to see the updates.';
 
     expect(successMessage).toContain('Changes applied successfully');
   });
@@ -462,4 +465,3 @@ describe('image attachment validation', () => {
     expect(validTypes.includes(file.type)).toBe(false);
   });
 });
-

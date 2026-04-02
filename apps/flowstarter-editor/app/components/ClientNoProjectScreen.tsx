@@ -5,7 +5,15 @@
  */
 
 import { useStore } from '@nanostores/react';
-import { FlowBackground, Logo, GlassPanel, ScrollAwareHeader, Footer, ThemeToggle, type FooterLink } from '@flowstarter/flow-design-system';
+import {
+  FlowBackground,
+  Logo,
+  GlassPanel,
+  ScrollAwareHeader,
+  Footer,
+  ThemeToggle,
+  type FooterLink,
+} from '@flowstarter/flow-design-system';
 import { getCalendlyUrl, getMainPlatformHomepage } from '~/lib/config/domains';
 import { themeStore, setTheme } from '~/lib/stores/theme';
 import { useTranslation } from '~/lib/i18n/useTranslation';
@@ -28,10 +36,16 @@ export function ClientNoProjectScreen() {
 
   return (
     <div className="min-h-screen w-full font-display relative overflow-hidden flex flex-col">
-      <FlowBackground variant="dashboard" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }} />
+      <FlowBackground
+        variant="dashboard"
+        style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }}
+      />
 
       {/* Header — matches main platform AuthLayout */}
-      <ScrollAwareHeader className="z-50" scrolledClass="bg-white/80 dark:bg-[#14141a]/85 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10">
+      <ScrollAwareHeader
+        className="z-50"
+        scrolledClass="bg-white/80 dark:bg-[#14141a]/85 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/10"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <a href={homeUrl} className="flex items-center gap-2 sm:gap-3 no-underline">
             <Logo size="md" />
@@ -46,22 +60,34 @@ export function ClientNoProjectScreen() {
           {/* Title block — gradient on last word */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold tracking-tight mb-3">
-              <span className="text-gray-900 dark:text-white">{t.client.siteBeingBuilt.split(' ').slice(0, -1).join(' ')} </span>
+              <span className="text-gray-900 dark:text-white">
+                {t.client.siteBeingBuilt.split(' ').slice(0, -1).join(' ')}{' '}
+              </span>
               <span className="bg-gradient-to-r from-[var(--purple,#4d5dd9)] to-blue-500 bg-clip-text text-transparent">
                 {t.client.siteBeingBuilt.split(' ').slice(-1)}
               </span>
             </h1>
-            <p className="text-gray-500 dark:text-white/50 text-sm">
-              {t.client.siteBeingBuiltDescription}
-            </p>
+            <p className="text-gray-500 dark:text-white/50 text-sm">{t.client.siteBeingBuiltDescription}</p>
           </div>
 
           <div className="relative">
             <GlassPanel padding="lg" shadow="glass" className="text-center">
               {/* Icon */}
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--purple,#4d5dd9)]/20 to-indigo-300/10 border border-indigo-300/20 dark:border-indigo-400/15 flex items-center justify-center mx-auto mb-6">
-                <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} className="text-[var(--purple,#4d5dd9)]">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                <svg
+                  width="28"
+                  height="28"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                  className="text-[var(--purple,#4d5dd9)]"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
+                  />
                 </svg>
               </div>
 
@@ -107,9 +133,7 @@ export function ClientNoProjectScreen() {
                       {stat.label}
                     </div>
                   </div>
-                  {i < 2 && (
-                    <div className="w-px h-6 bg-gray-200 dark:bg-white/10" />
-                  )}
+                  {i < 2 && <div className="w-px h-6 bg-gray-200 dark:bg-white/10" />}
                 </div>
               ))}
             </div>

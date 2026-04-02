@@ -15,7 +15,13 @@ interface MenuDialogsProps {
   onDeleteSelected: (ids: string[]) => void;
 }
 
-export function MenuDialogs({ dialogContent, selectedItems, onClose, onDeleteItem, onDeleteSelected }: MenuDialogsProps) {
+export function MenuDialogs({
+  dialogContent,
+  selectedItems,
+  onClose,
+  onDeleteItem,
+  onDeleteSelected,
+}: MenuDialogsProps) {
   return (
     <Dialog onBackdrop={onClose} onClose={onClose}>
       {dialogContent?.type === 'delete' && (
@@ -31,7 +37,9 @@ export function MenuDialogs({ dialogContent, selectedItems, onClose, onDeleteIte
             </DialogDescription>
           </div>
           <div className="flex justify-end gap-3 px-6 py-4 bg-white/50 dark:bg-white/[0.02] border-t border-white/20 dark:border-white/5">
-            <DialogButton type="secondary" onClick={onClose}>Cancel</DialogButton>
+            <DialogButton type="secondary" onClick={onClose}>
+              Cancel
+            </DialogButton>
             <DialogButton
               type="danger"
               onClick={(event) => {
@@ -67,7 +75,9 @@ export function MenuDialogs({ dialogContent, selectedItems, onClose, onDeleteIte
             </DialogDescription>
           </div>
           <div className="flex justify-end gap-3 px-6 py-4 bg-white/50 dark:bg-white/[0.02] border-t border-white/20 dark:border-white/5">
-            <DialogButton type="secondary" onClick={onClose}>Cancel</DialogButton>
+            <DialogButton type="secondary" onClick={onClose}>
+              Cancel
+            </DialogButton>
             <DialogButton
               type="danger"
               onClick={() => {

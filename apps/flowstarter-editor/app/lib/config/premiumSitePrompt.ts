@@ -1,6 +1,6 @@
 /**
  * Premium Site Generation System Prompt
- * 
+ *
  * Guidelines for generating outstanding, non-generic websites
  */
 
@@ -105,7 +105,7 @@ Remember: A premium website doesn't look "designed" - it looks inevitable, like 
  */
 export function getIndustryGuidance(industry: string): string {
   const industryLower = industry.toLowerCase();
-  
+
   if (industryLower.includes('fitness') || industryLower.includes('gym')) {
     return `
 ### Fitness Industry Specifics:
@@ -117,7 +117,7 @@ export function getIndustryGuidance(industry: string): string {
 - Avoid: generic gym stock photos, overly muscular models, "no pain no gain"
 `;
   }
-  
+
   if (industryLower.includes('restaurant') || industryLower.includes('food')) {
     return `
 ### Restaurant Industry Specifics:
@@ -129,7 +129,7 @@ export function getIndustryGuidance(industry: string): string {
 - Avoid: generic "delicious food" copy, clipart-style graphics
 `;
   }
-  
+
   if (industryLower.includes('tech') || industryLower.includes('saas')) {
     return `
 ### Tech/SaaS Industry Specifics:
@@ -141,7 +141,7 @@ export function getIndustryGuidance(industry: string): string {
 - Avoid: buzzword soup, generic dashboard screenshots, "revolutionary" claims
 `;
   }
-  
+
   return `
 ### Professional Services:
 - Lead with expertise and results
@@ -220,4 +220,3 @@ export function generatePaletteCSS(palette: {
 }
 `;
 }
-

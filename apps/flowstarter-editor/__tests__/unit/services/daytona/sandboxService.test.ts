@@ -179,7 +179,7 @@ describe('sandboxService', () => {
     it('should create sandbox with correct config', async () => {
       const mockClient = createMockClient([]);
       mockClient.create.mockResolvedValue(
-        createMockSandbox({ id: 'sb-new', labels: { project: 'test-project', source: 'flowstarter' } })
+        createMockSandbox({ id: 'sb-new', labels: { project: 'test-project', source: 'flowstarter' } }),
       );
 
       const { createSandbox } = await import('~/lib/services/daytona/sandboxService');
@@ -200,7 +200,7 @@ describe('sandboxService', () => {
             source: 'flowstarter',
           }),
         }),
-        expect.objectContaining({ timeout: 120 })
+        expect.objectContaining({ timeout: 120 }),
       );
     });
 
@@ -244,7 +244,7 @@ describe('sandboxService', () => {
       expect(lastCall[0]).toEqual(
         expect.objectContaining({
           language: 'javascript',
-        })
+        }),
       );
     });
   });
@@ -300,6 +300,7 @@ describe('sandboxService', () => {
     it('should return false when start fails', async () => {
       const sandbox = createMockSandbox({ state: SandboxState.STOPPED });
       sandbox.start.mockRejectedValue(new Error('Start failed'));
+
       const mockClient = createMockClient([]);
 
       const { ensureSandboxRunning } = await import('~/lib/services/daytona/sandboxService');
@@ -310,4 +311,3 @@ describe('sandboxService', () => {
     });
   });
 });
-

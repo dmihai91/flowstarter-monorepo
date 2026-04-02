@@ -19,9 +19,7 @@ export function NewProjectButton({ onClick }: NewProjectButtonProps) {
           width: '100%',
           padding: '10px 14px',
           borderRadius: '8px',
-          background: isDark
-            ? 'rgba(255, 255, 255, 0.05)'
-            : 'rgba(0, 0, 0, 0.04)',
+          background: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
           border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.08)',

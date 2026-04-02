@@ -7,8 +7,8 @@
 
 import type { WritableAtom, ReadableAtom } from 'nanostores';
 import type { EditorDocument, ScrollPosition } from '~/components/editor/codemirror/CodeMirrorEditor';
-import type { EditorStore } from '../editor';
-import type { FilesStore, FileMap } from '../files';
+import type { EditorStore } from '~/lib/stores/editor';
+import type { FilesStore, FileMap } from '~/lib/stores/files';
 
 export interface DocumentOperationsConfig {
   editorStore: EditorStore;

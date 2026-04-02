@@ -6,8 +6,8 @@
  */
 
 import type { ActionCallbackData } from '~/lib/runtime/message-parser';
-import type { EditorStore } from '../editor';
-import type { FilesStore } from '../files';
+import type { EditorStore } from '~/lib/stores/editor';
+import type { FilesStore } from '~/lib/stores/files';
 import type { ArtifactStore } from './artifacts';
 import type { PendingApproval, WorkbenchViewType } from './types';
 import type { WritableAtom } from 'nanostores';
@@ -15,7 +15,7 @@ import { atom } from 'nanostores';
 import { unreachable } from '~/utils/unreachable';
 import { createScopedLogger } from '~/utils/logger';
 import { createSampler } from '~/utils/sampler';
-import { diffApprovalStore } from '../settings';
+import { diffApprovalStore } from '~/lib/stores/settings';
 
 const logger = createScopedLogger('ActionManager');
 

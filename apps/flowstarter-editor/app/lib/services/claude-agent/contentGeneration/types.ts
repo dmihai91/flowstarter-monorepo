@@ -2,14 +2,14 @@
  * Content Generation Types
  */
 
-import type { SiteGenerationInput, IntegrationConfig, GeneratedAsset } from '../types';
-import type { DomainConfig } from '../../siteContentAgent';
+import type { SiteGenerationInput, IntegrationConfig, GeneratedAsset } from '~/lib/services/claude-agent/types';
+import type { DomainConfig } from '~/lib/services/siteContentAgent';
 import {
   getContentSuggestions,
   getRecommendedSections,
   getConversionSettings,
   getDesignRecommendations,
-} from '../../siteContentAgent';
+} from '~/lib/services/siteContentAgent';
 
 // Re-export from parent types
 export type { SiteGenerationInput, IntegrationConfig, GeneratedAsset };

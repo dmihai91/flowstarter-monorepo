@@ -1,5 +1,5 @@
 import React, { memo, useState, useCallback } from 'react';
-import { useMessageStyles } from '../hooks';
+import { useMessageStyles } from '~/components/editor/editor-message/hooks';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
 import { getFileIconComponent } from './file-icons';
 import { getLanguageFromPath, highlightCode } from './syntax-highlight';

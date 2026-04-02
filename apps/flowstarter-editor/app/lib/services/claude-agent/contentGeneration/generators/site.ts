@@ -2,8 +2,8 @@
  * Site.md Generator
  */
 
-import type { ContentContext } from '../types';
-import { pickRandom } from '../context';
+import type { ContentContext } from '~/lib/services/claude-agent/contentGeneration/types';
+import { pickRandom } from '~/lib/services/claude-agent/contentGeneration/context';
 
 export function generateSiteMd(siteName: string, businessInfo: any, year: number, ctx: ContentContext): string {
   const name = businessInfo.name || siteName;

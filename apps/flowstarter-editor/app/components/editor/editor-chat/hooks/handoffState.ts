@@ -1,4 +1,4 @@
-import type { InitialChatState, OnboardingStep } from '../types';
+import type { InitialChatState, OnboardingStep } from '~/components/editor/editor-chat/types';
 
 type PartialState = Partial<
   Pick<

@@ -1,4 +1,4 @@
-import type { SystemFont, ContactDetails, IntegrationConfig, BusinessInfo } from '../types';
+import type { SystemFont, ContactDetails, IntegrationConfig, BusinessInfo } from '~/components/editor/editor-chat/types';
 import { BUILD_PROGRESS } from './simple-build-types';
 
 /**

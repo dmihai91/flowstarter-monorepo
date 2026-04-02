@@ -6,7 +6,7 @@
  * PREMIUM QUALITY: Explicit instructions to avoid AI slop!
  */
 
-import { generateCompletion, generateJSON } from '../llm';
+import { generateCompletion, generateJSON } from '~/lib/services/llm';
 import type { SiteGenerationInput } from './types';
 import { stripMarkdownCodeBlocks } from './sanitization';
 

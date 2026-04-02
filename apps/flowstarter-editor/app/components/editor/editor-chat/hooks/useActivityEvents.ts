@@ -7,7 +7,7 @@
 
 import { useMemo } from 'react';
 import type { AgentActivityEvent } from '~/lib/services/claude-agent/types';
-import type { ActivityEvent } from '../components/AgentActivityLog';
+import type { ActivityEvent } from '~/components/editor/editor-chat/components/AgentActivityLog';
 
 let _counter = 0;
 

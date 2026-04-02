@@ -20,7 +20,7 @@ export type {
   EditorChatPanelProps,
   CategoryColors,
   Template,
-} from '../types';
+} from '~/components/editor/editor-chat/types';
 
 // Shared state types for hook composition
 export type {

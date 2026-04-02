@@ -5,7 +5,7 @@
  * Enhanced with better prompts and multi-file healing.
  */
 
-import { generateCompletion } from '../llm';
+import { generateCompletion } from '~/lib/services/llm';
 import type { SiteGenerationInput, GeneratedFile, BuildError } from './types';
 import { sanitizeContent, stripMarkdownCodeBlocks } from './sanitization';
 

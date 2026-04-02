@@ -72,7 +72,7 @@ export function getPlaceholderFiles(): ScaffoldFile[] {
     {
       path: '/src/pages/index.astro',
       content: `---
-import Layout from '../layouts/Layout.astro';
+import Layout from '~/lib/hooks/layouts/Layout.astro';
 ---
 
 <Layout title="My Website">

@@ -25,7 +25,7 @@ export * from './prompts';
 
 /*
  * Import LLM (path will be adjusted when moved to actual location)
- * import { generateCompletion } from '../llm';
+ * import { generateCompletion } from '~/lib/services/llm';
  */
 
 /**

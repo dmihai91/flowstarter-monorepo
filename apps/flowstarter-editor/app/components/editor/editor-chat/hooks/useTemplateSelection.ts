@@ -10,8 +10,8 @@ import { useState, useCallback } from 'react';
 import { useTemplates } from '~/lib/hooks/useTemplates';
 import type { Template } from '~/components/onboarding';
 import type { TemplateRecommendation } from '~/components/editor/template-preview/types';
-import type { BusinessInfo } from '../types';
-import type { UseTemplateSelectionOptions, UseTemplateSelectionReturn } from '../types/sharedState';
+import type { BusinessInfo } from '~/components/editor/editor-chat/types';
+import type { UseTemplateSelectionOptions, UseTemplateSelectionReturn } from '~/components/editor/editor-chat/types/sharedState';
 
 export function useTemplateSelection(options: UseTemplateSelectionOptions = {}): UseTemplateSelectionReturn {
   const { onTemplateSelect, onRecommendationSelect } = options;

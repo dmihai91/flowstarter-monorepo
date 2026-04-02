@@ -9,7 +9,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Mail, ChevronRight, Zap } from 'lucide-react';
-import type { IntegrationConfig } from '../types';
+import type { IntegrationConfig } from '~/components/editor/editor-chat/types';
 
 interface IntegrationsPanelProps {
   isDark: boolean;
@@ -428,4 +428,4 @@ function IntegrationCard({
 }
 
 // Re-export ContactDetails type for backwards compatibility (now in types.ts)
-export type { ContactDetails } from '../types';
+export type { ContactDetails } from '~/components/editor/editor-chat/types';

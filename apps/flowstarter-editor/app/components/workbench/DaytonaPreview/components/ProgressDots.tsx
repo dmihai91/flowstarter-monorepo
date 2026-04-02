@@ -1,6 +1,6 @@
 import { memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { PROGRESS_STEPS } from '../constants';
+import { PROGRESS_STEPS } from '~/components/workbench/DaytonaPreview/constants';
 
 interface ProgressDotsProps {
   status: string;

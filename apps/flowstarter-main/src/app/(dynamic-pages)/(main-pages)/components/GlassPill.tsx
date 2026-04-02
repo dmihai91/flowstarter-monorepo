@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 interface GlassPillProps {
   children: ReactNode;
-  dot?: boolean;          // show animated green presence dot
+  dot?: boolean; // show animated green presence dot
   className?: string;
 }
 
@@ -10,7 +10,11 @@ interface GlassPillProps {
  * Reusable glassmorphism pill — used for hero badge and audience qualifier.
  * Frosted glass surface, subtle border, soft shadow.
  */
-export function GlassPill({ children, dot = false, className = '' }: GlassPillProps) {
+export function GlassPill({
+  children,
+  dot = false,
+  className = '',
+}: GlassPillProps) {
   return (
     <span
       className={[

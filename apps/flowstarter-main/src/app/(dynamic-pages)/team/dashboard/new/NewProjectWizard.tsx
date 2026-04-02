@@ -4,13 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useState, useEffect, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
-import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  Loader2,
-  Sparkles,
-} from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Loader2, Sparkles } from 'lucide-react';
 import { useScaffoldForm } from '../components/scaffold/useScaffoldForm';
 import { ScaffoldClientInfo } from '../components/scaffold/ScaffoldClientInfo';
 import { ScaffoldInput } from '../components/scaffold/ScaffoldInput';
@@ -62,8 +56,6 @@ const PLANS = [
   },
 ] as const;
 
-type PlanId = (typeof PLANS)[number]['id'];
-
 // ── Step config ────────────────────────────────────────────────────────────────
 
 const STEPS = [
@@ -73,7 +65,11 @@ const STEPS = [
   { label: 'Pricing & Launch', desc: 'Set fees, plan, and create project' },
 ];
 
-function StepIndicator({ current, reviewStep = 0, reviewStepCount = 0 }: {
+function StepIndicator({
+  current,
+  reviewStep = 0,
+  reviewStepCount = 0,
+}: {
   current: number;
   reviewStep?: number;
   reviewStepCount?: number;
@@ -81,13 +77,16 @@ function StepIndicator({ current, reviewStep = 0, reviewStepCount = 0 }: {
   const activeStep = STEPS[current];
   const isReviewPhase = current === 1 && reviewStepCount > 0;
   // During review, show sub-step X of Y as a suffix
-  const descSuffix = isReviewPhase ? ` · ${reviewStep + 1} of ${reviewStepCount}` : '';
+  const descSuffix = isReviewPhase
+    ? ` · ${reviewStep + 1} of ${reviewStepCount}`
+    : '';
   const displayDesc = activeStep.desc + descSuffix;
   const REVIEW_STEPS = ['Business', 'Offer', 'Structure', 'Contact'];
-  const reviewLabel = isReviewPhase ? REVIEW_STEPS[reviewStep] ?? activeStep.label : activeStep.label;
+  const reviewLabel = isReviewPhase
+    ? REVIEW_STEPS[reviewStep] ?? activeStep.label
+    : activeStep.label;
   return (
     <div className="w-full mb-6 rounded-[28px] border border-gray-200/60 bg-white/65 px-4 sm:px-6 py-4 sm:py-5 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:border-white/[0.06] dark:bg-white/[0.04] dark:shadow-[0_8px_32px_rgba(0,0,0,0.20)]">
-
       {/* Mobile: compact progress */}
       <div className="sm:hidden">
         <div className="flex items-center justify-between mb-2.5">
@@ -96,17 +95,29 @@ function StepIndicator({ current, reviewStep = 0, reviewStepCount = 0 }: {
               {isReviewPhase ? reviewStep + 1 : current + 1}
             </div>
             <div>
-              <p className="text-sm font-semibold text-zinc-900 dark:text-white leading-tight">{isReviewPhase ? reviewLabel : activeStep.label}</p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">{displayDesc}</p>
+              <p className="text-sm font-semibold text-zinc-900 dark:text-white leading-tight">
+                {isReviewPhase ? reviewLabel : activeStep.label}
+              </p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                {displayDesc}
+              </p>
             </div>
           </div>
-          <span className="text-xs text-zinc-400 dark:text-zinc-500 shrink-0">{isReviewPhase ? `${reviewStep + 1}/${reviewStepCount}` : `${current + 1}/${STEPS.length}`}</span>
+          <span className="text-xs text-zinc-400 dark:text-zinc-500 shrink-0">
+            {isReviewPhase
+              ? `${reviewStep + 1}/${reviewStepCount}`
+              : `${current + 1}/${STEPS.length}`}
+          </span>
         </div>
         {/* Progress bar */}
         <div className="h-1 w-full bg-gray-100 dark:bg-white/[0.06] rounded-full overflow-hidden">
           <div
             className="h-full bg-[var(--purple)] rounded-full transition-all duration-500"
-            style={{ width: isReviewPhase ? `${((reviewStep + 1) / reviewStepCount) * 100}%` : `${((current + 1) / STEPS.length) * 100}%` }}
+            style={{
+              width: isReviewPhase
+                ? `${((reviewStep + 1) / reviewStepCount) * 100}%`
+                : `${((current + 1) / STEPS.length) * 100}%`,
+            }}
           />
         </div>
       </div>
@@ -120,34 +131,54 @@ function StepIndicator({ current, reviewStep = 0, reviewStepCount = 0 }: {
           return (
             <div key={i} className="flex flex-1 items-start">
               <div className="flex flex-col items-center">
-                <div className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-all duration-300 ${
-                  isDone    ? 'bg-[var(--purple)] text-white' :
-                  isActive  ? 'bg-[var(--purple)] text-white ring-4 ring-[var(--purple)]/20' :
-                              'bg-gray-100 text-zinc-400 dark:bg-white/[0.06] dark:text-zinc-400'
-                }`}>
+                <div
+                  className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-all duration-300 ${
+                    isDone
+                      ? 'bg-[var(--purple)] text-white'
+                      : isActive
+                      ? 'bg-[var(--purple)] text-white ring-4 ring-[var(--purple)]/20'
+                      : 'bg-gray-100 text-zinc-400 dark:bg-white/[0.06] dark:text-zinc-400'
+                  }`}
+                >
                   {isDone ? <Check className="h-5 w-5" /> : i + 1}
                 </div>
                 <div className="mt-2 text-center max-w-[120px]">
-                  <p className={`text-sm font-semibold leading-5 ${isActive || isDone ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 dark:text-zinc-500'}`}>
+                  <p
+                    className={`text-sm font-semibold leading-5 ${
+                      isActive || isDone
+                        ? 'text-zinc-900 dark:text-white'
+                        : 'text-zinc-400 dark:text-zinc-500'
+                    }`}
+                  >
                     {step.label}
                   </p>
-                  <p className={`mt-0.5 text-xs leading-4 ${isActive || isDone ? 'text-zinc-500 dark:text-zinc-400' : 'text-zinc-400 dark:text-zinc-600'}`}>
+                  <p
+                    className={`mt-0.5 text-xs leading-4 ${
+                      isActive || isDone
+                        ? 'text-zinc-500 dark:text-zinc-400'
+                        : 'text-zinc-400 dark:text-zinc-600'
+                    }`}
+                  >
                     {step.desc}
                   </p>
                 </div>
               </div>
               {!isLast && (
-                <div className={`mt-5 h-px flex-1 mx-3 transition-all duration-300 ${isDone ? 'bg-[var(--purple)]' : 'bg-gray-200 dark:bg-white/[0.06]'}`} />
+                <div
+                  className={`mt-5 h-px flex-1 mx-3 transition-all duration-300 ${
+                    isDone
+                      ? 'bg-[var(--purple)]'
+                      : 'bg-gray-200 dark:bg-white/[0.06]'
+                  }`}
+                />
               )}
             </div>
           );
         })}
       </div>
-
     </div>
   );
 }
-
 
 // ── Payment step ───────────────────────────────────────────────────────────────
 
@@ -207,9 +238,15 @@ function PaymentStep({
                   <Check className="w-2.5 h-2.5 text-white" />
                 </div>
               )}
-              <p className="text-sm font-semibold text-zinc-900 dark:text-white">{plan.name}</p>
-              <p className="text-[0.6rem] text-zinc-500 dark:text-zinc-400 mt-0.5">{plan.desc}</p>
-              <p className="text-xs font-bold text-[var(--purple)] mt-1.5">€{plan.price}/mo</p>
+              <p className="text-sm font-semibold text-zinc-900 dark:text-white">
+                {plan.name}
+              </p>
+              <p className="text-[0.6rem] text-zinc-500 dark:text-zinc-400 mt-0.5">
+                {plan.desc}
+              </p>
+              <p className="text-xs font-bold text-[var(--purple)] mt-1.5">
+                €{plan.price}/mo
+              </p>
             </button>
           ))}
         </div>
@@ -220,7 +257,9 @@ function PaymentStep({
           Setup Fee (EUR)
         </label>
         <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 font-semibold">€</span>
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 font-semibold">
+            €
+          </span>
           <input
             type="number"
             min={0}
@@ -238,35 +277,60 @@ function PaymentStep({
 
       {setupFee > 0 && (
         <div className="space-y-4 rounded-[28px] border border-gray-200/80 bg-white/95 p-5 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]">
-          <p className="text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Payment breakdown</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+            Payment breakdown
+          </p>
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-sm font-semibold text-zinc-900 dark:text-white">Deposit invoice</p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">Sent immediately, due in 10 days — non-refundable</p>
+              <p className="text-sm font-semibold text-zinc-900 dark:text-white">
+                Deposit invoice
+              </p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                Sent immediately, due in 10 days — non-refundable
+              </p>
             </div>
-            <p className="text-lg font-bold text-zinc-900 dark:text-white">€{deposit}</p>
+            <p className="text-lg font-bold text-zinc-900 dark:text-white">
+              €{deposit}
+            </p>
           </div>
           <div className="h-px bg-zinc-200 dark:bg-zinc-700" />
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-sm font-semibold text-zinc-600 dark:text-zinc-300">Final invoice</p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">Sent on delivery, 30-day refund window</p>
+              <p className="text-sm font-semibold text-zinc-600 dark:text-zinc-300">
+                Final invoice
+              </p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                Sent on delivery, 30-day refund window
+              </p>
             </div>
-            <p className="text-lg font-bold text-zinc-500 dark:text-zinc-400">€{final}</p>
+            <p className="text-lg font-bold text-zinc-500 dark:text-zinc-400">
+              €{final}
+            </p>
           </div>
           <div className="h-px bg-zinc-200 dark:bg-zinc-700" />
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-sm font-semibold text-zinc-600 dark:text-zinc-300">Subscription</p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">Starts after delivery, 30-day free trial</p>
+              <p className="text-sm font-semibold text-zinc-600 dark:text-zinc-300">
+                Subscription
+              </p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                Starts after delivery, 30-day free trial
+              </p>
             </div>
-            <p className="text-sm font-bold text-[var(--purple)]">€{monthlyPrice}/mo</p>
+            <p className="text-sm font-bold text-[var(--purple)]">
+              €{monthlyPrice}/mo
+            </p>
           </div>
         </div>
       )}
 
       <div className="flex gap-3 pt-2">
-        <Button onClick={onBack} variant="outline" size="md" icon={<ArrowLeft className="w-4 h-4" />}>
+        <Button
+          onClick={onBack}
+          variant="outline"
+          size="md"
+          icon={<ArrowLeft className="w-4 h-4" />}
+        >
           Back
         </Button>
         <Button
@@ -275,9 +339,17 @@ function PaymentStep({
           variant="accent"
           size="md"
           className="flex-1"
-          icon={isLaunching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+          icon={
+            isLaunching ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Sparkles className="w-4 h-4" />
+            )
+          }
         >
-          {isLaunching ? 'Creating project...' : 'Create project & send invoice'}
+          {isLaunching
+            ? 'Creating project...'
+            : 'Create project & send invoice'}
         </Button>
       </div>
     </div>
@@ -303,7 +375,9 @@ export function NewProjectWizard() {
   const form = useScaffoldForm();
 
   // ── Draft persistence ────────────────────────────────────────────────────────
-  const [draftId, setDraftId] = useState<string | null>(() => searchParams.get('draft'));
+  const [draftId, setDraftId] = useState<string | null>(() =>
+    searchParams.get('draft')
+  );
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const saveDraftMutation = useMutation({
@@ -317,7 +391,10 @@ export function NewProjectWizard() {
         body: JSON.stringify({
           projectId: draftId || undefined,
           projectConfig: {
-            name: form.brief.projectName || payload.clientInfo.name || 'Untitled Project',
+            name:
+              form.brief.projectName ||
+              payload.clientInfo.name ||
+              'Untitled Project',
             description: form.brief.summary || payload.userInput || '',
             currentStep: form.phase,
             clientInfo: payload.clientInfo,
@@ -360,7 +437,9 @@ export function NewProjectWizard() {
         };
 
         if (!cancelled) {
-          setTemplates((data.templates ?? []).map(mapRegistryTemplateToWizardTemplate));
+          setTemplates(
+            (data.templates ?? []).map(mapRegistryTemplateToWizardTemplate)
+          );
         }
       } catch (error) {
         console.warn('[NewProjectWizard] Failed to load templates', error);
@@ -387,7 +466,9 @@ export function NewProjectWizard() {
 
     const loadDraft = async () => {
       try {
-        const response = await fetch(`/api/projects/draft?projectId=${encodeURIComponent(draftId)}`);
+        const response = await fetch(
+          `/api/projects/draft?projectId=${encodeURIComponent(draftId)}`
+        );
         const payload = (await response.json()) as {
           draft?: {
             data?: string;
@@ -406,12 +487,18 @@ export function NewProjectWizard() {
         form.hydrateDraft({
           currentStep: raw.currentStep as string | undefined,
           userInput: raw.userInput as string | undefined,
-          clientInfo: raw.clientInfo as { name?: string; email?: string; phone?: string } | undefined,
+          clientInfo: raw.clientInfo as
+            | { name?: string; email?: string; phone?: string }
+            | undefined,
           businessInfo: raw.businessInfo as Record<string, unknown> | undefined,
-          brandProfile: raw.brandProfile as Parameters<typeof form.hydrateDraft>[0]['brandProfile'],
+          brandProfile: raw.brandProfile as Parameters<
+            typeof form.hydrateDraft
+          >[0]['brandProfile'],
           contactInfo: raw.contactInfo as Record<string, unknown> | undefined,
           template: raw.template as { id?: string } | undefined,
-          palette: raw.palette as Parameters<typeof form.hydrateDraft>[0]['palette'],
+          palette: raw.palette as Parameters<
+            typeof form.hydrateDraft
+          >[0]['palette'],
           font: raw.font as Parameters<typeof form.hydrateDraft>[0]['font'],
         });
 
@@ -435,7 +522,9 @@ export function NewProjectWizard() {
       return;
     }
 
-    const selectedTemplate = templates.find((template) => template.id === form.selectedTemplateId);
+    const selectedTemplate = templates.find(
+      (template) => template.id === form.selectedTemplateId
+    );
     if (!selectedTemplate) {
       return;
     }
@@ -452,13 +541,15 @@ export function NewProjectWizard() {
 
     if (!form.selectedFont) {
       const font =
-        selectedTemplate.fonts.find((entry) => entry.id === selectedTemplate.defaultFontId) ||
-        selectedTemplate.fonts[0];
+        selectedTemplate.fonts.find(
+          (entry) => entry.id === selectedTemplate.defaultFontId
+        ) || selectedTemplate.fonts[0];
       if (font) {
         form.setSelectedFont(font);
       }
     }
   }, [
+    form,
     form.selectedFont,
     form.selectedPalette,
     form.selectedTemplateId,
@@ -474,18 +565,25 @@ export function NewProjectWizard() {
     if (current.get('draft') !== draftId) {
       const params = new URLSearchParams(current);
       params.set('draft', draftId);
-      window.history.replaceState(null, '', `/team/dashboard/new?${params.toString()}`);
+      window.history.replaceState(
+        null,
+        '',
+        `/team/dashboard/new?${params.toString()}`
+      );
     }
   }, [draftId]);
 
   // Auto-save client info 800ms after last keystroke
-  const scheduleSaveDraft = useCallback((clientInfo: { name: string; email: string; phone: string }) => {
-    if (!clientInfo.name && !clientInfo.email && !clientInfo.phone) return;
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(() => {
-      saveDraftMutation.mutate({ clientInfo });
-    }, 400);
-  }, [form.brief.industry, form.brief.projectName, form.brief.summary, form.phase, industry, saveDraftMutation]);
+  const scheduleSaveDraft = useCallback(
+    (clientInfo: { name: string; email: string; phone: string }) => {
+      if (!clientInfo.name && !clientInfo.email && !clientInfo.phone) return;
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = setTimeout(() => {
+        saveDraftMutation.mutate({ clientInfo });
+      }, 400);
+    },
+    [saveDraftMutation]
+  );
 
   const stepIndex = (() => {
     switch (form.phase) {
@@ -511,7 +609,9 @@ export function NewProjectWizard() {
     form.updateBrief('contactPhone', form.clientInfo.phone);
 
     // Persist client info to Supabase draft (best-effort, non-blocking)
-    saveDraftMutation.mutateAsync({ clientInfo: form.clientInfo }).catch(() => {});
+    saveDraftMutation
+      .mutateAsync({ clientInfo: form.clientInfo })
+      .catch(() => {});
 
     if (mode === 'manual') {
       form.setPhase('review');
@@ -529,7 +629,7 @@ export function NewProjectWizard() {
       .join('\n');
 
     form.submitDescription(description);
-  }, [form, industry, mode, prompt]);
+  }, [form, industry, mode, prompt, saveDraftMutation]);
 
   const handleLaunch = useCallback(async () => {
     setIsLaunching(true);
@@ -574,7 +674,8 @@ export function NewProjectWizard() {
                 notes: form.brief.brandNotes || undefined,
               },
               valueProposition:
-                form.brief.valuePropositionDetail || form.brief.valueProposition,
+                form.brief.valuePropositionDetail ||
+                form.brief.valueProposition,
               primaryGoal: form.brief.primaryGoal || form.brief.goals[0],
               desiredCustomerAction: form.brief.desiredCustomerAction,
               differentiators: form.brief.differentiators,
@@ -611,7 +712,10 @@ export function NewProjectWizard() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ projectId, type: 'deposit' }),
         }).catch((invoiceErr) => {
-          console.warn('[handleLaunch] Deposit invoice failed (non-fatal):', invoiceErr);
+          console.warn(
+            '[handleLaunch] Deposit invoice failed (non-fatal):',
+            invoiceErr
+          );
         });
       }
 
@@ -620,20 +724,28 @@ export function NewProjectWizard() {
       window.open(editorUrl || `${EDITOR_URL}?handoff=${token}`, '_blank');
       router.push('/team/dashboard');
     } catch (err) {
-      setLaunchError(err instanceof Error ? err.message : 'Something went wrong');
+      setLaunchError(
+        err instanceof Error ? err.message : 'Something went wrong'
+      );
     } finally {
       setIsLaunching(false);
     }
   }, [form, router]);
 
-  const selectedTemplate = templates.find((template) => template.id === form.selectedTemplateId) || null;
+  const selectedTemplate =
+    templates.find((template) => template.id === form.selectedTemplateId) ||
+    null;
 
   return (
     <div className="py-4 sm:py-8 px-3 sm:px-6">
       <div className="max-w-4xl mx-auto">
         {/* Step indicator — hide during progress/clarify */}
         {!['progress', 'clarify'].includes(form.phase) && (
-          <StepIndicator current={stepIndex} reviewStep={form.reviewStep} reviewStepCount={form.reviewStepCount} />
+          <StepIndicator
+            current={stepIndex}
+            reviewStep={form.reviewStep}
+            reviewStepCount={form.reviewStepCount}
+          />
         )}
 
         {/* Content card */}
@@ -733,7 +845,8 @@ export function NewProjectWizard() {
                         Palette variants
                       </h4>
                       <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                        Show these during the onboarding call and lock the preferred direction before handoff.
+                        Show these during the onboarding call and lock the
+                        preferred direction before handoff.
                       </p>
                     </div>
                     <div className="space-y-2">
@@ -749,19 +862,23 @@ export function NewProjectWizard() {
                           }`}
                         >
                           <div>
-                            <p className="text-sm font-medium text-zinc-900 dark:text-white">{palette.name}</p>
+                            <p className="text-sm font-medium text-zinc-900 dark:text-white">
+                              {palette.name}
+                            </p>
                             <p className="mt-1 text-[0.7rem] text-zinc-500 dark:text-zinc-400">
                               {palette.id}
                             </p>
                           </div>
                           <div className="flex items-center gap-1">
-                            {Object.values(palette.colors).map((color, index) => (
-                              <span
-                                key={`${palette.id}-${index}`}
-                                className="h-4 w-4 rounded-full border border-black/10"
-                                style={{ backgroundColor: String(color) }}
-                              />
-                            ))}
+                            {Object.values(palette.colors).map(
+                              (color, index) => (
+                                <span
+                                  key={`${palette.id}-${index}`}
+                                  className="h-4 w-4 rounded-full border border-black/10"
+                                  style={{ backgroundColor: String(color) }}
+                                />
+                              )
+                            )}
                           </div>
                         </button>
                       ))}
@@ -773,7 +890,8 @@ export function NewProjectWizard() {
                         Font variants
                       </h4>
                       <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                        Pick the font pairing that matches the client’s tone and positioning.
+                        Pick the font pairing that matches the client’s tone and
+                        positioning.
                       </p>
                     </div>
                     <div className="space-y-2">
@@ -788,7 +906,9 @@ export function NewProjectWizard() {
                               : 'border-gray-200 bg-white hover:border-gray-300 dark:border-white/[0.06] dark:bg-white/[0.03] dark:hover:border-white/[0.12]'
                           }`}
                         >
-                          <p className="text-sm font-medium text-zinc-900 dark:text-white">{font.name}</p>
+                          <p className="text-sm font-medium text-zinc-900 dark:text-white">
+                            {font.name}
+                          </p>
                           <p className="mt-1 text-[0.75rem] text-zinc-500 dark:text-zinc-400">
                             Heading: {font.heading.family}
                           </p>
@@ -812,7 +932,11 @@ export function NewProjectWizard() {
                 </Button>
                 <Button
                   onClick={form.proceedToPayment}
-                  disabled={!form.selectedTemplateId || !form.selectedPalette || !form.selectedFont}
+                  disabled={
+                    !form.selectedTemplateId ||
+                    !form.selectedPalette ||
+                    !form.selectedFont
+                  }
                   variant="accent"
                   size="md"
                   className="flex-1"

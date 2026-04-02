@@ -163,17 +163,17 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
   const getSharedCookieDomain = (): string | undefined => {
     if (typeof window === 'undefined') return undefined;
     const hostname = window.location.hostname;
-    
+
     // Production: flowstarter.app and subdomains
     if (hostname.includes('flowstarter.app')) {
       return '.flowstarter.app';
     }
-    
+
     // Development/Staging: flowstarter.dev and subdomains
     if (hostname.includes('flowstarter.dev')) {
       return '.flowstarter.dev';
     }
-    
+
     // Local development - no shared domain needed
     return undefined;
   };
@@ -193,9 +193,5 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
     ],
   } as unknown as ComponentProps<typeof ClerkProvider>;
 
-  return (
-    <ClerkProvider {...clerkProviderProps}>
-      {children}
-    </ClerkProvider>
-  );
+  return <ClerkProvider {...clerkProviderProps}>{children}</ClerkProvider>;
 }

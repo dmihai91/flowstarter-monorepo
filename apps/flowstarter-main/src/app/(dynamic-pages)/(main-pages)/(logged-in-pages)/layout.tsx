@@ -3,19 +3,20 @@
 import { FlowBackground } from '@flowstarter/flow-design-system';
 import { Sidebar } from '@/components/ui/sidebar';
 import { SidebarProvider, useSidebar } from '@/contexts/SidebarContext';
-import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { AuthCheck } from './AuthCheck';
 import { AppHeader } from '@/components/ui/app-header';
 
 function LayoutContent({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
   const { isCollapsed } = useSidebar();
 
   return (
     <div className="min-h-screen flex flex-col">
       {/* Gradient background - behind everything */}
-      <FlowBackground variant="dashboard" style={{ position: "fixed", inset: 0, zIndex: 0 }} />
+      <FlowBackground
+        variant="dashboard"
+        style={{ position: 'fixed', inset: 0, zIndex: 0 }}
+      />
       {/* Gradient overlay — light: soft pastels, dark: rich purples */}
       <div
         className="fixed inset-0 z-[1] pointer-events-none dark:hidden"
@@ -37,12 +38,12 @@ function LayoutContent({ children }: { children: ReactNode }) {
           `,
         }}
       />
-      
+
       {/* Header - always visible */}
       <AppHeader />
-      
+
       <Sidebar />
-      
+
       <main
         className={`flex-1 mt-16 relative z-10 ${
           isCollapsed ? 'md:ml-[68px]' : 'md:ml-52 lg:ml-60'

@@ -120,4 +120,3 @@ export interface UseStreamingWebsiteGenerationResult {
 }
 
 // No longer hardcoded - steps are built dynamically from agent stream
-

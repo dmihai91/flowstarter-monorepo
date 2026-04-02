@@ -20,7 +20,8 @@ export async function POST(req: Request) {
       const url = (eventUrl || '').trim();
       try {
         const u = new URL(url);
-        if (!/cal\.com$/i.test(u.hostname)) return bad('URL must be a cal.com link');
+        if (!/cal\.com$/i.test(u.hostname))
+          return bad('URL must be a cal.com link');
       } catch {
         return bad('Invalid Cal.com URL');
       }
@@ -30,11 +31,14 @@ export async function POST(req: Request) {
     const timeout = setTimeout(() => controller.abort(), 7000);
 
     // Validate API key by fetching the current user profile
-    const meRes = await fetch(`https://api.cal.com/v1/me?apiKey=${encodeURIComponent(key)}`, {
-      headers: { 'Content-Type': 'application/json' },
-      signal: controller.signal,
-      cache: 'no-store',
-    }).catch((e) => {
+    const meRes = await fetch(
+      `https://api.cal.com/v1/me?apiKey=${encodeURIComponent(key)}`,
+      {
+        headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
+        cache: 'no-store',
+      }
+    ).catch((e) => {
       if ((e as Error).name === 'AbortError')
         return bad('Cal.com request timed out', 504);
       return null;
@@ -42,7 +46,8 @@ export async function POST(req: Request) {
 
     clearTimeout(timeout);
 
-    if (!meRes || !('ok' in meRes)) return bad('Network error connecting to Cal.com', 502);
+    if (!meRes || !('ok' in meRes))
+      return bad('Network error connecting to Cal.com', 502);
     if (meRes.status === 401) return bad('Cal.com API key unauthorized', 401);
     if (!meRes.ok) return bad('Cal.com API error', 502);
 

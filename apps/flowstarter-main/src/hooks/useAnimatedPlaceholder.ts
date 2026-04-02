@@ -13,22 +13,22 @@ const EXAMPLES = [
 ];
 
 interface Options {
-  minSpeed?:    number; // min ms per char when typing (default 38)
-  maxSpeed?:    number; // max ms per char when typing (default 72)
+  minSpeed?: number; // min ms per char when typing (default 38)
+  maxSpeed?: number; // max ms per char when typing (default 72)
   deleteSpeed?: number; // ms per char when deleting (default 14)
-  pauseAfter?:  number; // ms pause after full text (default 2800)
+  pauseAfter?: number; // ms pause after full text (default 2800)
   pauseBefore?: number; // ms pause before next (default 500)
-  enabled?:     boolean;
+  enabled?: boolean;
 }
 
 export function useAnimatedPlaceholder(opts: Options = {}): string {
   const {
-    minSpeed    = 38,
-    maxSpeed    = 72,
+    minSpeed = 38,
+    maxSpeed = 72,
     deleteSpeed = 14,
-    pauseAfter  = 2800,
+    pauseAfter = 2800,
     pauseBefore = 500,
-    enabled     = true,
+    enabled = true,
   } = opts;
 
   const [text, setText] = useState('');
@@ -42,7 +42,10 @@ export function useAnimatedPlaceholder(opts: Options = {}): string {
   const cursorRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    if (!enabled) { setText(''); return; }
+    if (!enabled) {
+      setText('');
+      return;
+    }
 
     // Blinking cursor interval — toggles cursor char
     cursorRef.current = setInterval(() => {
@@ -63,7 +66,9 @@ export function useAnimatedPlaceholder(opts: Options = {}): string {
       if (phase === 'typing') {
         const next = charIdx + 1;
         state.current.charIdx = next;
-        setText(example.slice(0, next) + (state.current.cursorVisible ? '|' : ' '));
+        setText(
+          example.slice(0, next) + (state.current.cursorVisible ? '|' : ' ')
+        );
 
         if (next >= example.length) {
           state.current.phase = 'pause';
@@ -71,7 +76,10 @@ export function useAnimatedPlaceholder(opts: Options = {}): string {
         } else {
           // Natural variance — slow down at commas/periods
           const ch = example[next - 1];
-          const delay = (ch === '.' || ch === ',') ? rand(120, 200) : rand(minSpeed, maxSpeed);
+          const delay =
+            ch === '.' || ch === ','
+              ? rand(120, 200)
+              : rand(minSpeed, maxSpeed);
           timerRef.current = setTimeout(tick, delay);
         }
       } else if (phase === 'pause') {
@@ -81,11 +89,18 @@ export function useAnimatedPlaceholder(opts: Options = {}): string {
         const next = charIdx - 1;
         state.current.charIdx = next;
         const example2 = EXAMPLES[exampleIdx];
-        setText(example2.slice(0, next) + (state.current.cursorVisible ? '|' : ' '));
+        setText(
+          example2.slice(0, next) + (state.current.cursorVisible ? '|' : ' ')
+        );
 
         if (next <= 0) {
           const nextIdx = (exampleIdx + 1) % EXAMPLES.length;
-          state.current = { exampleIdx: nextIdx, charIdx: 0, phase: 'pauseBefore', cursorVisible: true };
+          state.current = {
+            exampleIdx: nextIdx,
+            charIdx: 0,
+            phase: 'pauseBefore',
+            cursorVisible: true,
+          };
           timerRef.current = setTimeout(tick, pauseBefore);
         } else {
           timerRef.current = setTimeout(tick, deleteSpeed);
@@ -99,10 +114,10 @@ export function useAnimatedPlaceholder(opts: Options = {}): string {
     timerRef.current = setTimeout(tick, 800);
 
     return () => {
-      if (timerRef.current)  clearTimeout(timerRef.current);
+      if (timerRef.current) clearTimeout(timerRef.current);
       if (cursorRef.current) clearInterval(cursorRef.current);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled]);
 
   return text;

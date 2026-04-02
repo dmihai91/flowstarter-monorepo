@@ -39,7 +39,9 @@ describe('parseCodeblocks', () => {
     ].join('\n');
     const result = parseCodeblocks(text);
     expect(result).toHaveLength(1);
-    expect(result[0].content).toBe('const a = 1;\nconst b = 2;\nconsole.log(a + b);');
+    expect(result[0].content).toBe(
+      'const a = 1;\nconst b = 2;\nconsole.log(a + b);'
+    );
   });
 
   it('handles CRLF line endings', () => {

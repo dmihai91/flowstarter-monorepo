@@ -27,7 +27,9 @@ export function AppLoader({
   );
 
   if (variant === 'inline') {
-    return <div className="flex items-center justify-center py-8">{spinner}</div>;
+    return (
+      <div className="flex items-center justify-center py-8">{spinner}</div>
+    );
   }
 
   return (
@@ -43,7 +45,10 @@ export function CardSkeleton({ count = 4 }: { count?: number }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="rounded-2xl bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl border border-gray-200/50 dark:border-white/10 p-5 min-h-[140px] animate-pulse">
+        <div
+          key={i}
+          className="rounded-2xl bg-white/60 dark:bg-white/[0.03] backdrop-blur-xl border border-gray-200/50 dark:border-white/10 p-5 min-h-[140px] animate-pulse"
+        >
           <div className="flex items-center justify-between mb-4">
             <div className="h-3 w-24 bg-gray-200 dark:bg-white/10 rounded" />
             <div className="h-8 w-8 bg-gray-200 dark:bg-white/10 rounded-xl" />

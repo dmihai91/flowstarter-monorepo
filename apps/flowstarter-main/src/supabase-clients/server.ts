@@ -5,8 +5,8 @@ import { createClient } from '@supabase/supabase-js';
 // Will work in both pages and app directory, but won't maintain auth state
 export const createSupabaseClient = () => {
   return createClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       auth: {
         persistSession: false,
@@ -25,8 +25,8 @@ export const createSupabaseServerClientWithAuth = (jwt: string) => {
     `[Auth] createSupabaseServerClientWithAuth url=${process.env.NEXT_PUBLIC_SUPABASE_URL}`
   );
   return createClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       global: {
         headers: {

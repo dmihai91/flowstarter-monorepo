@@ -43,7 +43,9 @@ export function buildPromptWithContext(
   isFirstMessage = false
 ): string {
   if (isFirstMessage) {
-    const templateCtx = templateName ? `\nYou are working with the "${templateName}" template.\n` : '';
+    const templateCtx = templateName
+      ? `\nYou are working with the "${templateName}" template.\n`
+      : '';
     return `${FRONTEND_DESIGN_SKILL}${templateCtx}\n---\n\nUser request: ${userMessage}`;
   }
   return userMessage;

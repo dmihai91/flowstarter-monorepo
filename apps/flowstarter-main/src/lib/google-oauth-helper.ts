@@ -85,7 +85,7 @@ export async function getValidGoogleCredentials(
     return null;
   }
 
-  const config = data.config as StoredGoogleCredentials;
+  const config = data.config as unknown as StoredGoogleCredentials;
   const expiresAt = new Date(config.expires_at);
   const now = new Date();
 

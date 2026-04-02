@@ -29,10 +29,16 @@ export async function GET(req: Request) {
   try {
     accessToken = await readUserSecret(supabase, config.access_token_secret_id);
   } catch {
-    return NextResponse.json({ error: 'Failed to retrieve credentials' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to retrieve credentials' },
+      { status: 500 }
+    );
   }
   if (!accessToken) {
-    return NextResponse.json({ error: 'Calendly credentials not found' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Calendly credentials not found' },
+      { status: 400 }
+    );
   }
 
   try {
@@ -52,7 +58,9 @@ export async function GET(req: Request) {
 
     // Get active event types for this user
     const etRes = await fetch(
-      `https://api.calendly.com/event_types?user=${encodeURIComponent(user.uri)}&count=20&active=true`,
+      `https://api.calendly.com/event_types?user=${encodeURIComponent(
+        user.uri
+      )}&count=20&active=true`,
       { headers: { Authorization: `Bearer ${accessToken}` } }
     );
 

@@ -1,12 +1,10 @@
 'use client';
 
-import { motion, useInView } from 'framer-motion';
-
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useI18n } from '@/lib/i18n';
 import { Linkedin } from 'lucide-react';
 import Image from 'next/image';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 
 type TranslationKey = Parameters<ReturnType<typeof useI18n>['t']>[0];
 
@@ -53,9 +51,11 @@ export function TeamSection() {
 
   return (
     <section ref={sectionRef} className="py-12 lg:py-18" id="team">
-      <div className={`max-w-3xl mx-auto px-6 sm:px-8 transition-all duration-1000 ease-out ${
-        isVisible ? 'opacity-100' : 'opacity-0'
-      }`}>
+      <div
+        className={`max-w-3xl mx-auto px-6 sm:px-8 transition-all duration-1000 ease-out ${
+          isVisible ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
         <div className="text-center mb-10 lg:mb-14">
           <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-3">
             {t('landing.team.title')}
@@ -76,21 +76,35 @@ export function TeamSection() {
 }
 
 function TeamCard({ member }: { member: TeamMember }) {
-  const { nameKey, roleKey, bioKey, quoteKey, image, linkedin, gradient, initials } = member;
+  const {
+    nameKey,
+    roleKey,
+    bioKey,
+    quoteKey,
+    image,
+    linkedin,
+    gradient,
+    initials,
+  } = member;
   const { t } = useI18n();
   const [imgError, setImgError] = useState(false);
 
   return (
-    <div className="flex flex-col items-center text-center p-8 rounded-2xl backdrop-blur-sm shadow-[var(--glass-shadow)]"
+    <div
+      className="flex flex-col items-center text-center p-8 rounded-2xl backdrop-blur-sm shadow-[var(--glass-shadow)]"
       style={{
-        backgroundColor: 'color-mix(in srgb, var(--glass-surface) 80%, transparent)',
+        backgroundColor:
+          'color-mix(in srgb, var(--glass-surface) 80%, transparent)',
         borderTop: '1px solid var(--glass-border-highlight)',
         borderLeft: '1px solid var(--glass-border-highlight)',
         borderBottom: '1px solid var(--glass-border-shadow)',
         borderRight: '1px solid var(--glass-border-shadow)',
-      }}>
+      }}
+    >
       {/* Avatar */}
-      <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${gradient} p-[2px] mb-4 shadow-lg`}>
+      <div
+        className={`w-20 h-20 rounded-full bg-gradient-to-br ${gradient} p-[2px] mb-4 shadow-lg`}
+      >
         {imgError ? (
           <div className="w-full h-full rounded-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
             <span className="text-xl font-bold text-white">{initials}</span>
@@ -106,8 +120,12 @@ function TeamCard({ member }: { member: TeamMember }) {
           />
         )}
       </div>
-      <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t(nameKey)}</h3>
-      <p className="text-sm font-medium text-[var(--purple)] mb-3">{t(roleKey)}</p>
+      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+        {t(nameKey)}
+      </h3>
+      <p className="text-sm font-medium text-[var(--purple)] mb-3">
+        {t(roleKey)}
+      </p>
       <p className="text-sm text-gray-500 dark:text-white/45 leading-relaxed max-w-[30ch]">
         {t(bioKey)}
       </p>

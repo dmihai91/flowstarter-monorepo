@@ -17,30 +17,42 @@ function LogoWordmark({ size = 'md' }: { size?: LogoProps['size'] }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
       <LogoMark size={size} />
-      <span style={{
-        fontFamily: "'Inter', ui-sans-serif, system-ui, sans-serif",
-        fontWeight: 700,
-        fontSize: textSizes[size!],
-        letterSpacing: '-0.025em',
-      }}>
-        <span style={{
-          background: 'linear-gradient(to right, var(--purple), var(--purple))',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-        }}>
+      <span
+        style={{
+          fontFamily: "'Inter', ui-sans-serif, system-ui, sans-serif",
+          fontWeight: 700,
+          fontSize: textSizes[size!],
+          letterSpacing: '-0.025em',
+        }}
+      >
+        <span
+          style={{
+            background:
+              'linear-gradient(to right, var(--purple), var(--purple))',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+          }}
+        >
           Flow
         </span>
-        <span style={{ color: 'var(--text-primary, #09090b)' }}>
-          starter
-        </span>
+        <span style={{ color: 'var(--text-primary, #09090b)' }}>starter</span>
       </span>
     </div>
   );
 }
 
-export function Logo({ href, size = 'md', showText = true, className }: LogoProps) {
-  const content = showText ? <LogoWordmark size={size} /> : <LogoMark size={size} className={className} />;
+export function Logo({
+  href,
+  size = 'md',
+  showText = true,
+  className,
+}: LogoProps) {
+  const content = showText ? (
+    <LogoWordmark size={size} />
+  ) : (
+    <LogoMark size={size} className={className} />
+  );
 
   if (href) {
     return (

@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
-const card = 'rounded-[24px] border border-gray-200/80 bg-white/95 dark:border-white/[0.06] dark:bg-white/[0.05] shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-2xl backdrop-saturate-150 dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]';
+const card =
+  'rounded-[24px] border border-gray-200/80 bg-white/95 dark:border-white/[0.06] dark:bg-white/[0.05] shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-2xl backdrop-saturate-150 dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]';
 
 interface TeamDashboardShellProps {
   icon?: React.ReactNode;
@@ -25,10 +26,10 @@ export function TeamDashboardShell({
   children,
 }: TeamDashboardShellProps) {
   const maxWidthClass = {
-    sm:  'max-w-sm',
-    md:  'max-w-md',
-    lg:  'max-w-lg',
-    xl:  'max-w-xl',
+    sm: 'max-w-sm',
+    md: 'max-w-md',
+    lg: 'max-w-lg',
+    xl: 'max-w-xl',
     '2xl': 'max-w-2xl',
     '3xl': 'max-w-3xl',
     '4xl': 'max-w-4xl',
@@ -56,8 +57,14 @@ export function TeamDashboardShell({
               </div>
             )}
             <div>
-              <h1 className="text-lg font-bold text-gray-900 dark:text-white">{title}</h1>
-              {subtitle && <p className="text-xs text-gray-500 dark:text-white/40 mt-0.5">{subtitle}</p>}
+              <h1 className="text-lg font-bold text-gray-900 dark:text-white">
+                {title}
+              </h1>
+              {subtitle && (
+                <p className="text-xs text-gray-500 dark:text-white/40 mt-0.5">
+                  {subtitle}
+                </p>
+              )}
             </div>
           </div>
         )}
@@ -69,16 +76,30 @@ export function TeamDashboardShell({
 }
 
 // Reusable section card used inside the shell
-export function ShellCard({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+export function ShellCard({
+  children,
+  className = '',
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return <div className={`${card} p-5 sm:p-6 ${className}`}>{children}</div>;
 }
 
 // Section title inside a card
-export function ShellSection({ title, children }: { title?: string; children: React.ReactNode }) {
+export function ShellSection({
+  title,
+  children,
+}: {
+  title?: string;
+  children: React.ReactNode;
+}) {
   return (
     <div>
       {title && (
-        <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">{title}</h2>
+        <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
+          {title}
+        </h2>
       )}
       {children}
     </div>

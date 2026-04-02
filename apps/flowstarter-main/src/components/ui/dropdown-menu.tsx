@@ -70,7 +70,10 @@ function DropdownMenuContent({
             )}
             viewBox="0 0 14 7"
           >
-            <path d="M7 0C7 0 8.5 4 14 7H0C5.5 4 7 0 7 0Z" className="fill-white dark:fill-[#2a2a35]" />
+            <path
+              d="M7 0C7 0 8.5 4 14 7H0C5.5 4 7 0 7 0Z"
+              className="fill-white dark:fill-[#2a2a35]"
+            />
           </svg>
         )}
         {props.children}

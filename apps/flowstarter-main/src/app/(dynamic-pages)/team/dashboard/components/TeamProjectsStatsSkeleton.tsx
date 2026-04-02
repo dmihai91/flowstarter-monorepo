@@ -26,7 +26,7 @@ export function TeamProjectsStatsSkeleton() {
               <Skeleton className="h-3 w-16" />
             </div>
           </div>
-          
+
           {/* Mini project preview */}
           <div className="mt-4 border-t border-white/50 pt-4 dark:border-white/10">
             <div className="flex items-center gap-3">

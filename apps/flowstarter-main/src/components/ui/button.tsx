@@ -22,11 +22,15 @@ export { DSButton as Button };
  * Used by shadcn primitives that need class strings without rendering.
  */
 export function buttonVariants(
-  opts: { variant?: ButtonVariant | null; size?: ButtonSize | null; className?: string } = {},
+  opts: {
+    variant?: ButtonVariant | null;
+    size?: ButtonSize | null;
+    className?: string;
+  } = {}
 ): string {
   return getButtonStyles(
     opts.variant ?? 'default',
     opts.size ?? 'md',
-    opts.className,
+    opts.className
   );
 }

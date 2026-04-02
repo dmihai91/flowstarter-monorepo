@@ -15,7 +15,10 @@ describe('useDraftStore', () => {
   describe('setDraft', () => {
     it('sets a draft object', () => {
       useDraftStore.getState().setDraft({ id: '123', chat: 'hello' });
-      expect(useDraftStore.getState().draft).toEqual({ id: '123', chat: 'hello' });
+      expect(useDraftStore.getState().draft).toEqual({
+        id: '123',
+        chat: 'hello',
+      });
     });
 
     it('sets draft to null', () => {
@@ -27,7 +30,10 @@ describe('useDraftStore', () => {
     it('replaces the full draft object', () => {
       useDraftStore.getState().setDraft({ id: '1', chat: 'first' });
       useDraftStore.getState().setDraft({ id: '2', template_id: 'tpl-1' });
-      expect(useDraftStore.getState().draft).toEqual({ id: '2', template_id: 'tpl-1' });
+      expect(useDraftStore.getState().draft).toEqual({
+        id: '2',
+        template_id: 'tpl-1',
+      });
     });
   });
 

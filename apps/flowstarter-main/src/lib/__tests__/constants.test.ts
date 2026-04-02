@@ -20,7 +20,7 @@ describe('EXTERNAL_URLS', () => {
 
 describe('ROUTES', () => {
   it('all routes start with /', () => {
-    Object.values(ROUTES).forEach(route => {
+    Object.values(ROUTES).forEach((route) => {
       expect(route).toMatch(/^\//);
     });
   });

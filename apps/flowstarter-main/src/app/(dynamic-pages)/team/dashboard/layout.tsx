@@ -18,7 +18,9 @@ export default function TeamDashboardLayout({
 }) {
   const pathname = usePathname();
 
-  const hideSidebar = NO_SIDEBAR_PATHS.some(path => pathname?.startsWith(path));
+  const hideSidebar = NO_SIDEBAR_PATHS.some((path) =>
+    pathname?.startsWith(path)
+  );
 
   // Prevent body scroll — sidebar must stay fixed, only <main> scrolls
   useEffect(() => {
@@ -34,7 +36,10 @@ export default function TeamDashboardLayout({
     <SidebarProvider>
       <div className="h-[100dvh] flex flex-col overflow-hidden">
         {/* Gradient background — glows only, no SVG lines */}
-        <FlowBackground variant="dashboard" style={{ position: 'fixed', inset: 0, zIndex: 0 }} />
+        <FlowBackground
+          variant="dashboard"
+          style={{ position: 'fixed', inset: 0, zIndex: 0 }}
+        />
 
         <AppHeader />
         <div className="h-16 flex-shrink-0" />

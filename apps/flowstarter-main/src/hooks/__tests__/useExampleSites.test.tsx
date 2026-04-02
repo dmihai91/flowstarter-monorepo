@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useExampleSites } from '../useExampleSites';
@@ -32,10 +32,12 @@ describe('useExampleSites', () => {
       industries: ['Technology', 'Healthcare'],
     };
 
-    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockResponse,
-    });
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      {
+        ok: true,
+        json: async () => mockResponse,
+      }
+    );
 
     const { result } = renderHook(() => useExampleSites(), {
       wrapper: createWrapper(),
@@ -48,10 +50,12 @@ describe('useExampleSites', () => {
   });
 
   it('should apply category filter', async () => {
-    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ sites: [], categories: [], industries: [] }),
-    });
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      {
+        ok: true,
+        json: async () => ({ sites: [], categories: [], industries: [] }),
+      }
+    );
 
     renderHook(() => useExampleSites({ category: 'portfolio' }), {
       wrapper: createWrapper(),
@@ -65,10 +69,12 @@ describe('useExampleSites', () => {
   });
 
   it('should apply industry filter', async () => {
-    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ sites: [], categories: [], industries: [] }),
-    });
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      {
+        ok: true,
+        json: async () => ({ sites: [], categories: [], industries: [] }),
+      }
+    );
 
     renderHook(() => useExampleSites({ industry: 'Technology' }), {
       wrapper: createWrapper(),
@@ -82,10 +88,12 @@ describe('useExampleSites', () => {
   });
 
   it('should apply search filter', async () => {
-    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ sites: [], categories: [], industries: [] }),
-    });
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      {
+        ok: true,
+        json: async () => ({ sites: [], categories: [], industries: [] }),
+      }
+    );
 
     renderHook(() => useExampleSites({ search: 'portfolio' }), {
       wrapper: createWrapper(),
@@ -99,10 +107,12 @@ describe('useExampleSites', () => {
   });
 
   it('should apply featured filter', async () => {
-    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ sites: [], categories: [], industries: [] }),
-    });
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      {
+        ok: true,
+        json: async () => ({ sites: [], categories: [], industries: [] }),
+      }
+    );
 
     renderHook(() => useExampleSites({ featured: true }), {
       wrapper: createWrapper(),
@@ -116,9 +126,11 @@ describe('useExampleSites', () => {
   });
 
   it('should handle fetch error', async () => {
-    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: false,
-    });
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      {
+        ok: false,
+      }
+    );
 
     const { result } = renderHook(() => useExampleSites(), {
       wrapper: createWrapper(),
@@ -129,10 +141,12 @@ describe('useExampleSites', () => {
   });
 
   it('should not include "all" category in request', async () => {
-    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ sites: [], categories: [], industries: [] }),
-    });
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      {
+        ok: true,
+        json: async () => ({ sites: [], categories: [], industries: [] }),
+      }
+    );
 
     renderHook(() => useExampleSites({ category: 'all' }), {
       wrapper: createWrapper(),

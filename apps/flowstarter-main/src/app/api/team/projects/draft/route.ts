@@ -4,13 +4,13 @@ import { NextResponse } from 'next/server';
 
 /**
  * POST /api/team/projects/draft
- * 
+ *
  * Creates a draft project for the team wizard
  */
 export async function POST() {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

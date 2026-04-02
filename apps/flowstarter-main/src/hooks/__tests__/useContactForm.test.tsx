@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useContactForm } from '../useContactForm';
@@ -24,10 +24,12 @@ describe('useContactForm', () => {
   });
 
   it('should submit contact form successfully', async () => {
-    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ success: true }),
-    });
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      {
+        ok: true,
+        json: async () => ({ success: true }),
+      }
+    );
 
     const { result } = renderHook(() => useContactForm(), {
       wrapper: createWrapper(),
@@ -41,7 +43,7 @@ describe('useContactForm', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data?.success).toBe(true);
-    
+
     expect(global.fetch).toHaveBeenCalledWith('/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -54,10 +56,12 @@ describe('useContactForm', () => {
   });
 
   it('should handle submission error', async () => {
-    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: false,
-      json: async () => ({ error: 'Invalid email' }),
-    });
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      {
+        ok: false,
+        json: async () => ({ error: 'Invalid email' }),
+      }
+    );
 
     const { result } = renderHook(() => useContactForm(), {
       wrapper: createWrapper(),
@@ -74,10 +78,12 @@ describe('useContactForm', () => {
   });
 
   it('should include optional company field', async () => {
-    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ success: true }),
-    });
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      {
+        ok: true,
+        json: async () => ({ success: true }),
+      }
+    );
 
     const { result } = renderHook(() => useContactForm(), {
       wrapper: createWrapper(),
@@ -91,9 +97,12 @@ describe('useContactForm', () => {
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    
-    expect(global.fetch).toHaveBeenCalledWith('/api/contact', expect.objectContaining({
-      body: expect.stringContaining('Acme Inc'),
-    }));
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      '/api/contact',
+      expect.objectContaining({
+        body: expect.stringContaining('Acme Inc'),
+      })
+    );
   });
 });

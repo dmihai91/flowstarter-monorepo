@@ -29,35 +29,38 @@ export function useApiMutation<TPayload = unknown, TResponse = unknown>(
     isPending: false,
   });
 
-  const mutate = useCallback(async (payload?: TPayload): Promise<TResponse | null> => {
-    setState({ data: null, error: null, isPending: true });
+  const mutate = useCallback(
+    async (payload?: TPayload): Promise<TResponse | null> => {
+      setState({ data: null, error: null, isPending: true });
 
-    try {
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: payload ? JSON.stringify(payload) : undefined,
-      });
+      try {
+        const response = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: payload ? JSON.stringify(payload) : undefined,
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (!response.ok) {
-        const errMsg = data.error || `Request failed (${response.status})`;
+        if (!response.ok) {
+          const errMsg = data.error || `Request failed (${response.status})`;
+          setState({ data: null, error: errMsg, isPending: false });
+          options?.onError?.(errMsg);
+          return null;
+        }
+
+        setState({ data, error: null, isPending: false });
+        options?.onSuccess?.(data);
+        return data;
+      } catch (err) {
+        const errMsg = err instanceof Error ? err.message : 'Network error';
         setState({ data: null, error: errMsg, isPending: false });
         options?.onError?.(errMsg);
         return null;
       }
-
-      setState({ data, error: null, isPending: false });
-      options?.onSuccess?.(data);
-      return data;
-    } catch (err) {
-      const errMsg = err instanceof Error ? err.message : 'Network error';
-      setState({ data: null, error: errMsg, isPending: false });
-      options?.onError?.(errMsg);
-      return null;
-    }
-  }, [url, method, options]);
+    },
+    [url, method, options]
+  );
 
   return { ...state, mutate };
 }

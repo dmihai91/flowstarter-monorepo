@@ -12,22 +12,41 @@ interface FieldRow {
 
 function getRows(brief: ProjectBriefDraft): FieldRow[] {
   return [
-    { label: 'Project name',   value: brief.projectName,      missing: !brief.projectName },
-    { label: 'Industry',       value: brief.industry,         missing: !brief.industry },
-    { label: 'Audience',       value: brief.targetAudience,   missing: !brief.targetAudience },
-    { label: 'Value prop',     value: brief.valueProposition, missing: !brief.valueProposition },
-    { label: 'Goals',          value: brief.goals,            missing: brief.goals.length === 0 },
-    { label: 'Brand tone',     value: brief.brandTone,        missing: !brief.brandTone },
-    { label: 'Contact email',  value: brief.contactEmail,     missing: !brief.contactEmail },
+    {
+      label: 'Project name',
+      value: brief.projectName,
+      missing: !brief.projectName,
+    },
+    { label: 'Industry', value: brief.industry, missing: !brief.industry },
+    {
+      label: 'Audience',
+      value: brief.targetAudience,
+      missing: !brief.targetAudience,
+    },
+    {
+      label: 'Value prop',
+      value: brief.valueProposition,
+      missing: !brief.valueProposition,
+    },
+    { label: 'Goals', value: brief.goals, missing: brief.goals.length === 0 },
+    { label: 'Brand tone', value: brief.brandTone, missing: !brief.brandTone },
+    {
+      label: 'Contact email',
+      value: brief.contactEmail,
+      missing: !brief.contactEmail,
+    },
   ];
 }
 
 interface ScaffoldQuickReviewProps {
-  brief:        ProjectBriefDraft;
-  onUpdateBrief: <K extends keyof ProjectBriefDraft>(key: K, value: ProjectBriefDraft[K]) => void;
-  onLaunch:     () => void;
+  brief: ProjectBriefDraft;
+  onUpdateBrief: <K extends keyof ProjectBriefDraft>(
+    key: K,
+    value: ProjectBriefDraft[K]
+  ) => void;
+  onLaunch: () => void;
   onRegenerate: () => void;
-  onReset:      () => void;
+  onReset: () => void;
 }
 
 export function ScaffoldQuickReview({
@@ -38,19 +57,22 @@ export function ScaffoldQuickReview({
   onReset,
 }: ScaffoldQuickReviewProps) {
   const rows = getRows(brief);
-  const missingCount = rows.filter(r => r.missing).length;
+  const missingCount = rows.filter((r) => r.missing).length;
 
   return (
     <div className="rounded-[28px] border border-gray-200/80 bg-white/95 p-5 shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25)]">
-
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-white">AI brief ready</h3>
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+            AI brief ready
+          </h3>
           <p className="text-xs text-gray-500 dark:text-white/40 mt-0.5">
             {missingCount === 0
               ? 'Everything inferred — ready to launch'
-              : `${missingCount} field${missingCount > 1 ? 's' : ''} couldn't be inferred — fill in or skip`}
+              : `${missingCount} field${
+                  missingCount > 1 ? 's' : ''
+                } couldn't be inferred — fill in or skip`}
           </p>
         </div>
         <div className="flex items-center gap-1">
@@ -83,7 +105,13 @@ export function ScaffoldQuickReview({
                   : 'bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/[0.05]'
               }`}
             >
-              <span className={`w-24 shrink-0 font-medium ${missing ? 'text-amber-600 dark:text-amber-400' : 'text-gray-500 dark:text-white/40'}`}>
+              <span
+                className={`w-24 shrink-0 font-medium ${
+                  missing
+                    ? 'text-amber-600 dark:text-amber-400'
+                    : 'text-gray-500 dark:text-white/40'
+                }`}
+              >
                 {label}
               </span>
               {missing ? (
@@ -94,11 +122,11 @@ export function ScaffoldQuickReview({
                   onBlur={(e) => {
                     if (!e.target.value.trim()) return;
                     const keyMap: Record<string, keyof ProjectBriefDraft> = {
-                      'Project name':  'projectName',
-                      'Industry':      'industry',
-                      'Audience':      'targetAudience',
-                      'Value prop':    'valueProposition',
-                      'Brand tone':    'brandTone',
+                      'Project name': 'projectName',
+                      Industry: 'industry',
+                      Audience: 'targetAudience',
+                      'Value prop': 'valueProposition',
+                      'Brand tone': 'brandTone',
                       'Contact email': 'contactEmail',
                     };
                     const k = keyMap[label];

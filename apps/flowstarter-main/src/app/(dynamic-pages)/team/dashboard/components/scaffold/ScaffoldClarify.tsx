@@ -68,7 +68,12 @@ export function ScaffoldClarify({
 
       {/* Actions */}
       <div className="flex gap-2">
-        <Button onClick={onReset} variant="outline" size="sm" className="flex-1">
+        <Button
+          onClick={onReset}
+          variant="outline"
+          size="sm"
+          className="flex-1"
+        >
           {t('scaffold.action.startOver')}
         </Button>
         <Button

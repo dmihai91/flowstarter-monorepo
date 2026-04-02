@@ -5,7 +5,11 @@ import { Button } from '@/components/ui/button';
 import { LANDING_COPY } from '../landing-copy';
 import { FlowBackground } from '@flowstarter/flow-design-system';
 
-function useCountUp(target: number, duration: number = 1200, start: boolean = false) {
+function useCountUp(
+  target: number,
+  duration: number = 1200,
+  start: boolean = false
+) {
   const [count, setCount] = useState(0);
   useEffect(() => {
     if (!start) return;
@@ -24,7 +28,8 @@ function useCountUp(target: number, duration: number = 1200, start: boolean = fa
 
 export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   const [ready] = useState(true);
-  const [useSimpleHeadlineAnimation, setUseSimpleHeadlineAnimation] = useState(false);
+  const [useSimpleHeadlineAnimation, setUseSimpleHeadlineAnimation] =
+    useState(false);
   const hero = LANDING_COPY.hero;
 
   useEffect(() => {
@@ -67,21 +72,29 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
     { value: deliveryValue, suffix: ' days', label: 'avg. delivery' },
     { value: `${skillsCount}`, suffix: '', label: 'coding skills needed' },
     { value: `${trialCount}`, suffix: '-days', label: 'free trial' },
-    { value: `${integrationsCount}`, suffix: '+', label: 'integrations included' },
+    {
+      value: `${integrationsCount}`,
+      suffix: '+',
+      label: 'integrations included',
+    },
   ];
 
   const prefixWords = hero.headlinePrefix.split(' ');
 
   return (
     <section className="relative overflow-hidden min-h-screen flex flex-col justify-center pt-20 pb-10">
-      <FlowBackground variant="landing" style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
+      <FlowBackground
+        variant="landing"
+        style={{ position: 'absolute', inset: 0, zIndex: 0 }}
+      />
 
       {/* Top-center gradient crown */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 z-[1]"
         style={{
           height: '520px',
-          background: 'radial-gradient(ellipse 70% 55% at 50% -5%, rgba(124,58,237,0.18) 0%, rgba(99,102,241,0.10) 40%, transparent 70%)',
+          background:
+            'radial-gradient(ellipse 70% 55% at 50% -5%, rgba(124,58,237,0.18) 0%, rgba(99,102,241,0.10) 40%, transparent 70%)',
         }}
       />
 
@@ -91,10 +104,13 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         <div
           style={{
             position: 'absolute',
-            width: '420px', height: '420px',
-            top: '-120px', left: '-60px',
+            width: '420px',
+            height: '420px',
+            top: '-120px',
+            left: '-60px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(124,58,237,0.22) 0%, rgba(99,102,241,0.08) 50%, transparent 70%)',
+            background:
+              'radial-gradient(circle, rgba(124,58,237,0.22) 0%, rgba(99,102,241,0.08) 50%, transparent 70%)',
             filter: 'blur(48px)',
             animation: 'flow-drift-1 22s ease-in-out infinite',
           }}
@@ -103,10 +119,13 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         <div
           style={{
             position: 'absolute',
-            width: '360px', height: '360px',
-            top: '-60px', right: '-40px',
+            width: '360px',
+            height: '360px',
+            top: '-60px',
+            right: '-40px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(6,182,212,0.18) 0%, rgba(59,130,246,0.07) 50%, transparent 70%)',
+            background:
+              'radial-gradient(circle, rgba(6,182,212,0.18) 0%, rgba(59,130,246,0.07) 50%, transparent 70%)',
             filter: 'blur(48px)',
             animation: 'flow-drift-2 28s ease-in-out infinite',
           }}
@@ -115,10 +134,14 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         <div
           style={{
             position: 'absolute',
-            width: '500px', height: '200px',
-            bottom: '-40px', left: '50%', transform: 'translateX(-50%)',
+            width: '500px',
+            height: '200px',
+            bottom: '-40px',
+            left: '50%',
+            transform: 'translateX(-50%)',
             borderRadius: '50%',
-            background: 'radial-gradient(ellipse, rgba(139,92,246,0.10) 0%, transparent 70%)',
+            background:
+              'radial-gradient(ellipse, rgba(139,92,246,0.10) 0%, transparent 70%)',
             filter: 'blur(40px)',
             animation: 'flow-drift-3 18s ease-in-out infinite',
           }}
@@ -126,19 +149,25 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-10">
-
         {/* Label */}
-        <div style={fade('0s')} className="flex items-center justify-center mb-8 sm:mb-10 md:mb-6 tablet:mb-7 lg:mb-10">
+        <div
+          style={fade('0s')}
+          className="flex items-center justify-center mb-8 sm:mb-10 md:mb-6 tablet:mb-7 lg:mb-10"
+        >
           <div
             className="hero-badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[var(--purple)] dark:text-white"
             style={{
-              background: 'linear-gradient(135deg, rgba(124,58,237,0.18), rgba(99,102,241,0.13))',
+              background:
+                'linear-gradient(135deg, rgba(124,58,237,0.18), rgba(99,102,241,0.13))',
               border: '1.5px solid rgba(124,58,237,0.55)',
-              boxShadow: '0 0 14px rgba(124,58,237,0.22), inset 0 0 0 1px rgba(255,255,255,0.6)',
+              boxShadow:
+                '0 0 14px rgba(124,58,237,0.22), inset 0 0 0 1px rgba(255,255,255,0.6)',
             }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)] dark:bg-violet-400 shrink-0" />
-            <span className="text-[11px] font-semibold tracking-[0.12em] uppercase">Live in 5–7 days</span>
+            <span className="text-[11px] font-semibold tracking-[0.12em] uppercase">
+              Live in 5–7 days
+            </span>
           </div>
         </div>
 
@@ -156,7 +185,9 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
                   className="inline-block"
                   style={{
                     animationName: 'wordReveal',
-                    animationDuration: useSimpleHeadlineAnimation ? '0.45s' : '0.6s',
+                    animationDuration: useSimpleHeadlineAnimation
+                      ? '0.45s'
+                      : '0.6s',
                     animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
                     animationFillMode: 'both',
                     animationDelay: `${0.15 + i * 0.07}s`,
@@ -173,15 +204,24 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
               className="block font-black"
               style={{
                 fontSize: 'clamp(2.4rem, 6vw, 4.5rem)',
-                background: 'linear-gradient(135deg, var(--purple) 0%, #8B5CF6 100%)',
-                backgroundSize: useSimpleHeadlineAnimation ? '100% 100%' : '200% 200%',
+                background:
+                  'linear-gradient(135deg, var(--purple) 0%, #8B5CF6 100%)',
+                backgroundSize: useSimpleHeadlineAnimation
+                  ? '100% 100%'
+                  : '200% 200%',
                 WebkitBackgroundClip: 'text',
                 backgroundClip: 'text',
                 color: 'transparent',
                 WebkitTextFillColor: 'transparent',
                 animation: useSimpleHeadlineAnimation
-                  ? `wordReveal 0.45s cubic-bezier(0.16, 1, 0.3, 1) both ${0.15 + prefixWords.length * 0.07}s`
-                  : `wordReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) both ${0.15 + prefixWords.length * 0.07}s, textFlow 6s ease infinite ${0.85 + prefixWords.length * 0.07}s`,
+                  ? `wordReveal 0.45s cubic-bezier(0.16, 1, 0.3, 1) both ${
+                      0.15 + prefixWords.length * 0.07
+                    }s`
+                  : `wordReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) both ${
+                      0.15 + prefixWords.length * 0.07
+                    }s, textFlow 6s ease infinite ${
+                      0.85 + prefixWords.length * 0.07
+                    }s`,
               }}
             >
               {hero.headlineHighlight}
@@ -198,8 +238,17 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         </p>
 
         {/* Audience pills */}
-        <div style={fade('0.25s')} className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mb-6 sm:mb-8">
-          {['Coaches', 'Consultants', 'Therapists', 'Freelancers', 'Founders'].map((label) => (
+        <div
+          style={fade('0.25s')}
+          className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mb-6 sm:mb-8"
+        >
+          {[
+            'Coaches',
+            'Consultants',
+            'Therapists',
+            'Freelancers',
+            'Founders',
+          ].map((label) => (
             <span
               key={label}
               className="text-[0.65rem] sm:text-xs font-medium px-2.5 sm:px-3 py-1 rounded-full border border-gray-200 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] text-gray-500 dark:text-white/40 backdrop-blur-sm transition-colors hover:border-[var(--purple)]/30 hover:text-[var(--purple)] dark:hover:text-[var(--purple)]"
@@ -210,22 +259,54 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         </div>
 
         {/* CTA row */}
-        <div style={fade('0.3s')} className="flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-6 mb-10 sm:mb-16">
+        <div
+          style={fade('0.3s')}
+          className="flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-6 mb-10 sm:mb-16"
+        >
           <Button
             variant="brand-gradient"
             onClick={() => onOpenModal?.()}
             className="relative overflow-hidden bg-[length:200%_100%] animate-[shimmerBtn_3s_ease-in-out_infinite] px-9 h-13 text-base sm:text-lg font-semibold rounded-2xl shadow-[0_4px_24px_rgba(124,58,237,0.3)] hover:shadow-[0_6px_32px_rgba(124,58,237,0.45)] hover:scale-[1.02] active:scale-[0.98] group"
           >
             {hero.primaryCta}
-            <svg className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+            <svg
+              className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-0.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17 8l4 4m0 0l-4 4m4-4H3"
+              />
+            </svg>
           </Button>
           <a
             href="#pricing"
-            onClick={e => { e.preventDefault(); document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }); }}
+            onClick={(e) => {
+              e.preventDefault();
+              document
+                .getElementById('pricing')
+                ?.scrollIntoView({ behavior: 'smooth' });
+            }}
             className="inline-flex items-center gap-1 text-sm sm:text-base font-medium text-gray-500 dark:text-white/50 hover:text-gray-800 dark:hover:text-white/80 underline underline-offset-4 decoration-gray-300 dark:decoration-white/20 hover:decoration-gray-500 dark:hover:decoration-white/50 transition-all"
           >
             {hero.secondaryCta}
-            <svg className="w-3.5 h-3.5 mt-0.5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+            <svg
+              className="w-3.5 h-3.5 mt-0.5 opacity-70"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
           </a>
         </div>
 
@@ -237,19 +318,26 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
           {stats.map((s, i) => (
             <div key={i} className="text-center flex-1 min-w-0">
               <p className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white leading-none tabular-nums">
-                {s.value}<span className="text-base sm:text-lg font-semibold text-[var(--purple)]">{s.suffix}</span>
+                {s.value}
+                <span className="text-base sm:text-lg font-semibold text-[var(--purple)]">
+                  {s.suffix}
+                </span>
               </p>
-              <p className="text-[0.5rem] sm:text-[0.65rem] uppercase tracking-widest text-gray-400 dark:text-white/30 mt-1 leading-tight">{s.label}</p>
+              <p className="text-[0.5rem] sm:text-[0.65rem] uppercase tracking-widest text-gray-400 dark:text-white/30 mt-1 leading-tight">
+                {s.label}
+              </p>
             </div>
           ))}
         </div>
-
       </div>
       {/* Bottom fade — blend into next section */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-48 hidden dark:block"
-        style={{ background: 'linear-gradient(to bottom, transparent 0%, #0a0a12 100%)' }}
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-48 hidden dark:block"
+        style={{
+          background:
+            'linear-gradient(to bottom, transparent 0%, #0a0a12 100%)',
+        }}
       />
-
     </section>
   );
 }

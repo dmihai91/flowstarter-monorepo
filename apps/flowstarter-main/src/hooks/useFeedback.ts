@@ -23,7 +23,12 @@ export function useFeedback(onSuccess?: () => void) {
   const { mutate, isPending, error } = useApiMutation<FeedbackData>(
     '/api/feedback',
     'POST',
-    { onSuccess: () => { resetForm(); onSuccess?.(); } }
+    {
+      onSuccess: () => {
+        resetForm();
+        onSuccess?.();
+      },
+    }
   );
 
   const resetForm = useCallback(() => {
@@ -34,9 +39,12 @@ export function useFeedback(onSuccess?: () => void) {
     return mutate(formData);
   }, [mutate, formData]);
 
-  const updateField = useCallback(<K extends keyof FeedbackData>(field: K, value: FeedbackData[K]) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  }, []);
+  const updateField = useCallback(
+    <K extends keyof FeedbackData>(field: K, value: FeedbackData[K]) => {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    },
+    []
+  );
 
   const validate = useCallback(() => {
     if (!formData.category) return 'Category is required';
@@ -45,5 +53,13 @@ export function useFeedback(onSuccess?: () => void) {
     return null;
   }, [formData]);
 
-  return { formData, updateField, submit, validate, isPending, error, resetForm };
+  return {
+    formData,
+    updateField,
+    submit,
+    validate,
+    isPending,
+    error,
+    resetForm,
+  };
 }

@@ -45,13 +45,15 @@ export async function POST(request: NextRequest) {
       supabase as unknown as ContactSubmissionClient;
 
     // Insert into contact_submissions table
-    const { error } = await contactSubmissionClient.from('contact_submissions').insert({
-      name,
-      email,
-      subject,
-      message,
-      created_at: new Date().toISOString(),
-    });
+    const { error } = await contactSubmissionClient
+      .from('contact_submissions')
+      .insert({
+        name,
+        email,
+        subject,
+        message,
+        created_at: new Date().toISOString(),
+      });
 
     if (error) {
       console.error('Supabase error:', error);

@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 /**
  * POST /api/leads/capture
@@ -28,14 +29,15 @@ export async function POST(request: NextRequest) {
   // CORS headers for cross-origin form submissions
   const origin = request.headers.get('origin') || '*';
 
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
-    || request.headers.get('x-real-ip')
-    || 'unknown';
+  const ip =
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    request.headers.get('x-real-ip') ||
+    'unknown';
 
   if (isRateLimited(ip)) {
     return NextResponse.json(
       { error: 'Too many submissions' },
-      { status: 429, headers: corsHeaders(origin) },
+      { status: 429, headers: corsHeaders(origin) }
     );
   }
 
@@ -46,7 +48,7 @@ export async function POST(request: NextRequest) {
     if (!projectId) {
       return NextResponse.json(
         { error: 'projectId required' },
-        { status: 400, headers: corsHeaders(origin) },
+        { status: 400, headers: corsHeaders(origin) }
       );
     }
 
@@ -66,7 +68,7 @@ export async function POST(request: NextRequest) {
     if (!project) {
       return NextResponse.json(
         { error: 'Invalid project' },
-        { status: 400, headers: corsHeaders(origin) },
+        { status: 400, headers: corsHeaders(origin) }
       );
     }
 
@@ -74,10 +76,10 @@ export async function POST(request: NextRequest) {
     const isSpam = detectSpam(
       (name as string) || '',
       (email as string) || '',
-      (message as string) || '',
+      (message as string) || ''
     );
 
-    const { error } = await supabase.from('leads' as any).insert({
+    const { error } = await supabase.from('leads').insert({
       project_id: projectId,
       name: (name as string) || null,
       email: (email as string) || null,
@@ -95,18 +97,18 @@ export async function POST(request: NextRequest) {
       console.error('[Leads] Insert failed:', error);
       return NextResponse.json(
         { error: 'Failed to save' },
-        { status: 500, headers: corsHeaders(origin) },
+        { status: 500, headers: corsHeaders(origin) }
       );
     }
 
     return NextResponse.json(
       { success: true },
-      { headers: corsHeaders(origin) },
+      { headers: corsHeaders(origin) }
     );
   } catch {
     return NextResponse.json(
       { error: 'Invalid request' },
-      { status: 400, headers: corsHeaders(origin) },
+      { status: 400, headers: corsHeaders(origin) }
     );
   }
 }
@@ -129,8 +131,13 @@ function corsHeaders(origin: string): Record<string, string> {
 function detectSpam(name: string, email: string, message: string): boolean {
   const combined = `${name} ${email} ${message}`.toLowerCase();
   const spamPatterns = [
-    /\bviagra\b/, /\bcasino\b/, /\bcrypto\b/, /\bbitcoin\b/,
-    /\bsex\b/, /\bporn\b/, /https?:\/\/[^\s]+\.[^\s]+/,
+    /\bviagra\b/,
+    /\bcasino\b/,
+    /\bcrypto\b/,
+    /\bbitcoin\b/,
+    /\bsex\b/,
+    /\bporn\b/,
+    /https?:\/\/[^\s]+\.[^\s]+/,
     /\b(buy|cheap|free|win|winner|prize|click here)\b/,
   ];
   const spamScore = spamPatterns.filter((p) => p.test(combined)).length;

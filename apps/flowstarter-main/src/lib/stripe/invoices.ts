@@ -28,10 +28,13 @@ function getStripe(): Stripe {
 export async function getOrCreateStripeCustomer(
   clientEmail: string,
   clientName: string,
-  projectId: string,
+  projectId: string
 ): Promise<string> {
   const stripe = getStripe();
-  const existing = await stripe.customers.list({ email: clientEmail, limit: 1 });
+  const existing = await stripe.customers.list({
+    email: clientEmail,
+    limit: 1,
+  });
   if (existing.data.length > 0) return existing.data[0].id;
   const customer = await stripe.customers.create({
     email: clientEmail,
@@ -55,7 +58,13 @@ export async function createDepositInvoice(params: {
   dueInDays?: number;
 }): Promise<CreateInvoiceResult> {
   const stripe = getStripe();
-  const { stripeCustomerId, amountEurCents, projectName, projectId, dueInDays = 10 } = params;
+  const {
+    stripeCustomerId,
+    amountEurCents,
+    projectName,
+    projectId,
+    dueInDays = 10,
+  } = params;
   const dueDateUnix = Math.floor(Date.now() / 1000) + dueInDays * 86400;
 
   const invoice = await stripe.invoices.create({
@@ -94,7 +103,13 @@ export async function createFinalInvoice(params: {
   dueInDays?: number;
 }): Promise<CreateInvoiceResult> {
   const stripe = getStripe();
-  const { stripeCustomerId, amountEurCents, projectName, projectId, dueInDays = 10 } = params;
+  const {
+    stripeCustomerId,
+    amountEurCents,
+    projectName,
+    projectId,
+    dueInDays = 10,
+  } = params;
   const dueDateUnix = Math.floor(Date.now() / 1000) + dueInDays * 86400;
 
   const invoice = await stripe.invoices.create({
@@ -149,9 +164,9 @@ export async function activateSubscriptionTrial(params: {
 }
 
 export const PLAN_PRICE_IDS: Record<string, string> = {
-  STARTER:     process.env.STRIPE_PRICE_STARTER      ?? '',
-  RELAUNCH_39: process.env.STRIPE_PRICE_RELAUNCH_39  ?? '',
-  RELAUNCH_59: process.env.STRIPE_PRICE_RELAUNCH_59  ?? '',
-  GROWTH:      process.env.STRIPE_PRICE_GROWTH        ?? '',
-  PRO:         process.env.STRIPE_PRICE_PRO           ?? '',
+  STARTER: process.env.STRIPE_PRICE_STARTER ?? '',
+  RELAUNCH_39: process.env.STRIPE_PRICE_RELAUNCH_39 ?? '',
+  RELAUNCH_59: process.env.STRIPE_PRICE_RELAUNCH_59 ?? '',
+  GROWTH: process.env.STRIPE_PRICE_GROWTH ?? '',
+  PRO: process.env.STRIPE_PRICE_PRO ?? '',
 };

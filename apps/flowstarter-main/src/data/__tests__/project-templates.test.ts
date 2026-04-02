@@ -101,7 +101,9 @@ describe('project-templates data', () => {
         c.templates.map((t) => t.id)
       );
       for (const template of projectTemplates) {
-        const count = allCategoryTemplateIds.filter((id) => id === template.id).length;
+        const count = allCategoryTemplateIds.filter(
+          (id) => id === template.id
+        ).length;
         expect(count).toBe(1);
       }
     });

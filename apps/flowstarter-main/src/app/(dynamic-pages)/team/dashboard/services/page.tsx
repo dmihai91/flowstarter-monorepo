@@ -22,12 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -194,7 +189,7 @@ export default function ServicesPage() {
       setPageReady(true);
       fetchIntegrations();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, userLoaded]);
 
   const fetchIntegrations = useCallback(async () => {
@@ -272,7 +267,9 @@ export default function ServicesPage() {
         body: JSON.stringify({
           projectId: dialogProject,
           integrationType: dialogType,
-          name: integrationName || `${INTEGRATION_META[dialogType].name} Integration`,
+          name:
+            integrationName ||
+            `${INTEGRATION_META[dialogType].name} Integration`,
           apiKey,
           config: {},
         }),
@@ -289,7 +286,9 @@ export default function ServicesPage() {
       setDialogOpen(false);
       fetchIntegrations();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to save integration');
+      toast.error(
+        err instanceof Error ? err.message : 'Failed to save integration'
+      );
     } finally {
       setSaving(false);
     }
@@ -321,7 +320,9 @@ export default function ServicesPage() {
         mailchimp: 'mailchimp',
       };
       const res = await fetch(
-        `/api/integrations/${typeToPath[integration.integration_type]}/resources`
+        `/api/integrations/${
+          typeToPath[integration.integration_type]
+        }/resources`
       );
       if (res.ok) {
         toast.success('Connection successful');
@@ -337,7 +338,9 @@ export default function ServicesPage() {
   };
 
   const getProjectName = (projectId: string) => {
-    const p = (projects as Project[] | undefined)?.find((p) => p.id === projectId);
+    const p = (projects as Project[] | undefined)?.find(
+      (p) => p.id === projectId
+    );
     return p?.name || t('app.unknownProject');
   };
 
@@ -390,7 +393,9 @@ export default function ServicesPage() {
                 disabled={loadingIntegrations}
               >
                 <RefreshCw
-                  className={`w-4 h-4 mr-2 ${loadingIntegrations ? 'animate-spin' : ''}`}
+                  className={`w-4 h-4 mr-2 ${
+                    loadingIntegrations ? 'animate-spin' : ''
+                  }`}
                 />
                 Refresh
               </Button>
@@ -464,8 +469,7 @@ export default function ServicesPage() {
                 (projects as Project[] | undefined)
                   ?.filter(
                     (p) =>
-                      selectedProjectId === 'all' ||
-                      p.id === selectedProjectId
+                      selectedProjectId === 'all' || p.id === selectedProjectId
                   )
                   .map((project) => {
                     const projectIntegrations = byProject[project.id] || [];
@@ -488,7 +492,10 @@ export default function ServicesPage() {
                             </p>
                           </div>
                           {project.status && (
-                            <Badge variant="outline" className="text-xs capitalize">
+                            <Badge
+                              variant="outline"
+                              className="text-xs capitalize"
+                            >
                               {project.status}
                             </Badge>
                           )}
@@ -860,9 +867,7 @@ export default function ServicesPage() {
             <Button
               onClick={handleSave}
               disabled={
-                saving ||
-                !dialogProject ||
-                (!editingIntegration && !apiKey)
+                saving || !dialogProject || (!editingIntegration && !apiKey)
               }
             >
               {saving && <Loader2 className="w-4 h-4 animate-spin mr-2" />}

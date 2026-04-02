@@ -68,7 +68,10 @@ if (!HANDOFF_SECRET && process.env.NODE_ENV === 'production') {
 
 const CONVEX_SITE_URL =
   process.env.CONVEX_SITE_URL ||
-  (process.env.NEXT_PUBLIC_CONVEX_URL || '').replace('.convex.cloud', '.convex.site');
+  (process.env.NEXT_PUBLIC_CONVEX_URL || '').replace(
+    '.convex.cloud',
+    '.convex.site'
+  );
 
 // ─── Token helpers ────────────────────────────────────────────────────────────
 
@@ -86,7 +89,9 @@ export interface HandoffPayload {
   };
 }
 
-function buildTokenProjectData(projectData: Record<string, unknown>): Record<string, unknown> {
+function buildTokenProjectData(
+  projectData: Record<string, unknown>
+): Record<string, unknown> {
   return {
     userDescription: projectData.userDescription,
     industry: projectData.industry,
@@ -109,7 +114,9 @@ function buildTokenProjectData(projectData: Record<string, unknown>): Record<str
  * No server-side storage needed — validated by signature + expiry.
  * TTL: 15 minutes.
  */
-export function createHandoffToken(payload: Omit<HandoffPayload, 'iat' | 'exp'>): string {
+export function createHandoffToken(
+  payload: Omit<HandoffPayload, 'iat' | 'exp'>
+): string {
   const now = Math.floor(Date.now() / 1000);
   const full: HandoffPayload = {
     ...payload,
@@ -144,7 +151,9 @@ export function verifyHandoffToken(token: string): HandoffPayload | null {
     }
     if (diff !== 0) return null;
 
-    const payload = JSON.parse(Buffer.from(data, 'base64url').toString()) as HandoffPayload;
+    const payload = JSON.parse(
+      Buffer.from(data, 'base64url').toString()
+    ) as HandoffPayload;
     if (Math.floor(Date.now() / 1000) > payload.exp) return null;
 
     return payload;
@@ -177,24 +186,24 @@ const handoffBodySchema = z
         clientPhone: z.string().optional(),
         businessInfo: z
           .object({
-            description:      z.string().optional(),
-            summary:          z.string().optional(),
-            uvp:              z.string().optional(),
+            description: z.string().optional(),
+            summary: z.string().optional(),
+            uvp: z.string().optional(),
             valueProposition: z.string().optional(),
-            targetAudience:   z.string().optional(),
-            industry:         z.string().optional(),
-            goal:             z.string().optional(),
-            goals:            z.array(z.string()).optional(),
-            offerType:        z.string().optional(),
-            brandTone:        z.string().optional(),
-            offerings:        z.union([z.string(), z.array(z.string())]).optional(),
+            targetAudience: z.string().optional(),
+            industry: z.string().optional(),
+            goal: z.string().optional(),
+            goals: z.array(z.string()).optional(),
+            offerType: z.string().optional(),
+            brandTone: z.string().optional(),
+            offerings: z.union([z.string(), z.array(z.string())]).optional(),
             desiredCustomerAction: z.string().optional(),
             differentiators: z.array(z.string()).optional(),
             trustSignals: z.array(z.string()).optional(),
             contentStylePreference: z.string().optional(),
-            contactEmail:     z.string().optional(),
-            contactPhone:     z.string().optional(),
-            contactAddress:   z.string().optional(),
+            contactEmail: z.string().optional(),
+            contactPhone: z.string().optional(),
+            contactAddress: z.string().optional(),
           })
           .optional(),
         brandProfile: brandProfileSchema.optional(),
@@ -222,11 +231,11 @@ const handoffBodySchema = z
             address: z.string().optional(),
           })
           .optional(),
-        planName:      z.string().optional(),
-        totalFee:      z.number().optional(),
+        planName: z.string().optional(),
+        totalFee: z.number().optional(),
         depositAmount: z.number().optional(),
-        finalAmount:   z.number().optional(),
-        templateId:    z.string().optional(),
+        finalAmount: z.number().optional(),
+        templateId: z.string().optional(),
       })
       .optional(),
     mode: z.enum(['interactive', 'generate']).optional().default('interactive'),
@@ -242,12 +251,18 @@ const handoffBodySchema = z
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get('token');
   if (!token) {
-    return NextResponse.json({ valid: false, error: 'Token required' }, { status: 400 });
+    return NextResponse.json(
+      { valid: false, error: 'Token required' },
+      { status: 400 }
+    );
   }
 
   const payload = verifyHandoffToken(token);
   if (!payload) {
-    return NextResponse.json({ valid: false, error: 'Invalid or expired token' }, { status: 401 });
+    return NextResponse.json(
+      { valid: false, error: 'Invalid or expired token' },
+      { status: 401 }
+    );
   }
 
   return NextResponse.json({
@@ -300,16 +315,20 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (error || !project) {
-        return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+        return NextResponse.json(
+          { error: 'Project not found' },
+          { status: 404 }
+        );
       }
 
       resolvedProjectId = project.id;
       projectName = project.name;
       projectDescription = project.description ?? '';
       try {
-        projectData = typeof project.data === 'string'
-          ? JSON.parse(project.data)
-          : (project.data as unknown as Record<string, unknown>) ?? {};
+        projectData =
+          typeof project.data === 'string'
+            ? JSON.parse(project.data)
+            : (project.data as unknown as Record<string, unknown>) ?? {};
       } catch {
         projectData = {};
       }
@@ -328,7 +347,8 @@ export async function POST(request: NextRequest) {
 
       projectData = {
         userDescription: projectConfig.userDescription,
-        industry: projectConfig.industry || projectConfig.businessInfo?.industry,
+        industry:
+          projectConfig.industry || projectConfig.businessInfo?.industry,
         businessInfo: projectConfig.businessInfo,
         brandProfile: projectConfig.brandProfile,
         template: projectConfig.template,
@@ -350,7 +370,9 @@ export async function POST(request: NextRequest) {
         projectName,
         summary: projectDescription,
         industry:
-          projectConfig.industry || projectConfig.businessInfo?.industry || 'other',
+          projectConfig.industry ||
+          projectConfig.businessInfo?.industry ||
+          'other',
         targetAudience: projectConfig.businessInfo?.targetAudience,
         valueProposition: projectConfig.businessInfo?.uvp,
         brandTone: projectConfig.businessInfo?.brandTone,
@@ -420,25 +442,34 @@ export async function POST(request: NextRequest) {
             selectedTemplateSlug ||
             projectConfig.templateId ||
             projectConfig.template?.id ||
-            ((projectConfig.flowstarterEngine?.templateSelection as { selectedTemplateId?: string } | undefined)
-              ?.selectedTemplateId ?? null),
+            ((
+              projectConfig.flowstarterEngine?.templateSelection as
+                | { selectedTemplateId?: string }
+                | undefined
+            )?.selectedTemplateId ??
+              null),
           user_id: userId,
           status: 'draft',
           is_draft: true,
           template_slug: selectedTemplateSlug,
           domain_type: 'hosted',
           domain_provider: 'platform',
-          plan_name:      (projectConfig.planName as string | undefined) ?? null,
-          total_fee:      (projectConfig.totalFee as number | undefined) ?? null,
-          deposit_amount: (projectConfig.depositAmount as number | undefined) ?? null,
-          final_amount:   (projectConfig.finalAmount as number | undefined) ?? null,
+          plan_name: (projectConfig.planName as string | undefined) ?? null,
+          total_fee: (projectConfig.totalFee as number | undefined) ?? null,
+          deposit_amount:
+            (projectConfig.depositAmount as number | undefined) ?? null,
+          final_amount:
+            (projectConfig.finalAmount as number | undefined) ?? null,
         })
         .select('id')
         .single();
 
       if (error) {
         console.error('[Editor Handoff] Insert error:', error);
-        return NextResponse.json({ error: 'Failed to create project draft' }, { status: 500 });
+        return NextResponse.json(
+          { error: 'Failed to create project draft' },
+          { status: 500 }
+        );
       }
 
       resolvedProjectId = newProject.id;
@@ -455,16 +486,35 @@ export async function POST(request: NextRequest) {
       try {
         const bi = (projectData?.businessInfo ?? {}) as Record<string, unknown>;
         const bp = (projectData?.brandProfile ?? {}) as Record<string, unknown>;
-        const siteInfo = (projectData?.siteInfo ?? {}) as Record<string, unknown>;
-        const palette = (projectData?.palette ?? null) as Record<string, unknown> | null;
-        const font = (projectData?.font ?? null) as Record<string, unknown> | null;
-        const template = (projectData?.template ?? null) as Record<string, unknown> | null;
+        const siteInfo = (projectData?.siteInfo ?? {}) as Record<
+          string,
+          unknown
+        >;
+        const palette = (projectData?.palette ?? null) as Record<
+          string,
+          unknown
+        > | null;
+        const font = (projectData?.font ?? null) as Record<
+          string,
+          unknown
+        > | null;
+        const template = (projectData?.template ?? null) as Record<
+          string,
+          unknown
+        > | null;
         const client = (projectData?.client ?? {}) as Record<string, unknown>;
         const ci = (projectData?.contactInfo ?? {}) as Record<string, unknown>;
-        const hasBusinessData = !!(bi?.uvp || bi?.industry || bi?.pricingOffers);
+        const hasBusinessData = !!(
+          bi?.uvp ||
+          bi?.industry ||
+          bi?.pricingOffers
+        );
         const convexRes = await fetch(`${CONVEX_SITE_URL}/handoff/initialize`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-handoff-secret': HANDOFF_SECRET || 'dev-secret' },
+          headers: {
+            'Content-Type': 'application/json',
+            'x-handoff-secret': HANDOFF_SECRET || 'dev-secret',
+          },
           body: JSON.stringify({
             supabaseProjectId: resolvedProjectId,
             projectName: projectName!,
@@ -485,17 +535,25 @@ export async function POST(request: NextRequest) {
               differentiators: bi.differentiators,
               trustSignals: bi.trustSignals,
               contentStylePreference: bi.contentStylePreference,
-              contactEmail: (bi.contactEmail as string) || (client.email as string) || (ci.email as string),
-              contactPhone: (bi.contactPhone as string) || (client.phone as string) || (ci.phone as string),
-              contactAddress: (bi.contactAddress as string) || (ci.address as string),
+              contactEmail:
+                (bi.contactEmail as string) ||
+                (client.email as string) ||
+                (ci.email as string),
+              contactPhone:
+                (bi.contactPhone as string) ||
+                (client.phone as string) ||
+                (ci.phone as string),
+              contactAddress:
+                (bi.contactAddress as string) || (ci.address as string),
               website: (bi.website as string) || (ci.website as string),
             },
             brandProfile: bp,
             selectedTemplateId:
-              selectedTemplateSlug ||
-              (template?.id as string | undefined),
+              selectedTemplateSlug || (template?.id as string | undefined),
             selectedTemplateName:
-              (template?.name as string | undefined) || selectedTemplateName || undefined,
+              (template?.name as string | undefined) ||
+              selectedTemplateName ||
+              undefined,
             selectedPalette: palette,
             selectedFont: font,
             selectedIntegrations: {
@@ -503,11 +561,17 @@ export async function POST(request: NextRequest) {
               selected: (siteInfo.integrations as string[] | undefined) || [],
             },
             syncVersion: Date.now(),
-            step: hasBusinessData ? 'review' : (projectName && projectName !== 'Untitled Project' ? 'describe' : 'welcome'),
+            step: hasBusinessData
+              ? 'review'
+              : projectName && projectName !== 'Untitled Project'
+              ? 'describe'
+              : 'welcome',
           }),
         });
         if (convexRes.ok) {
-          const convexData = await convexRes.json() as { conversationId?: string };
+          const convexData = (await convexRes.json()) as {
+            conversationId?: string;
+          };
           conversationId = convexData.conversationId;
         }
       } catch (e) {
@@ -530,10 +594,17 @@ export async function POST(request: NextRequest) {
     });
 
     const editorUrl = conversationId
-      ? `${EDITOR_URL}/project/${conversationId}?handoff=${encodeURIComponent(token)}`
+      ? `${EDITOR_URL}/project/${conversationId}?handoff=${encodeURIComponent(
+          token
+        )}`
       : `${EDITOR_URL}?handoff=${encodeURIComponent(token)}`;
 
-    console.info('[Editor Handoff] Token issued', { userId, projectId: resolvedProjectId, mode, conversationId });
+    console.info('[Editor Handoff] Token issued', {
+      userId,
+      projectId: resolvedProjectId,
+      mode,
+      conversationId,
+    });
 
     return NextResponse.json({
       success: true,

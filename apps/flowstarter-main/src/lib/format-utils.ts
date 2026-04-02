@@ -16,16 +16,25 @@ export function formatDate(
   const d = typeof date === 'string' ? new Date(date) : date;
   if (isNaN(d.getTime())) return '';
 
-  const loc = locale || (typeof navigator !== 'undefined' ? navigator.language : 'en-US');
+  const loc =
+    locale || (typeof navigator !== 'undefined' ? navigator.language : 'en-US');
 
   switch (style) {
     case 'short':
       return d.toLocaleDateString(loc);
     case 'long':
-      return d.toLocaleDateString(loc, { year: 'numeric', month: 'long', day: 'numeric' });
+      return d.toLocaleDateString(loc, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
     case 'medium':
     default:
-      return d.toLocaleDateString(loc, { year: 'numeric', month: 'short', day: 'numeric' });
+      return d.toLocaleDateString(loc, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
   }
 }
 
@@ -40,7 +49,8 @@ export function formatTime(
   const d = typeof date === 'string' ? new Date(date) : date;
   if (isNaN(d.getTime())) return '';
 
-  const loc = locale || (typeof navigator !== 'undefined' ? navigator.language : 'en-US');
+  const loc =
+    locale || (typeof navigator !== 'undefined' ? navigator.language : 'en-US');
   return d.toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit' });
 }
 

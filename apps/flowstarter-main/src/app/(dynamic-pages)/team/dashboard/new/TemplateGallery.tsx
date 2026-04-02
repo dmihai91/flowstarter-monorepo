@@ -3,7 +3,10 @@
 import { useMemo, useState } from 'react';
 import { Check, ExternalLink, X } from 'lucide-react';
 import { templateThumbnailUrl } from '@/lib/assets';
-import type { TemplateFont, TemplatePalette } from '../components/scaffold/useScaffoldForm';
+import type {
+  TemplateFont,
+  TemplatePalette,
+} from '../components/scaffold/useScaffoldForm';
 
 export interface WizardTemplate {
   id: string;
@@ -35,13 +38,15 @@ function formatCategoryLabel(category: string): string {
 function PalettePreview({ palette }: { palette: TemplatePalette }) {
   return (
     <div className="flex items-center gap-1">
-      {Object.values(palette.colors).slice(0, 5).map((color, index) => (
-        <span
-          key={`${palette.id}-${index}`}
-          className="h-3 w-3 rounded-full border border-white/10"
-          style={{ backgroundColor: String(color) }}
-        />
-      ))}
+      {Object.values(palette.colors)
+        .slice(0, 5)
+        .map((color, index) => (
+          <span
+            key={`${palette.id}-${index}`}
+            className="h-3 w-3 rounded-full border border-white/10"
+            style={{ backgroundColor: String(color) }}
+          />
+        ))}
     </div>
   );
 }
@@ -76,6 +81,7 @@ function TemplateCard({
     >
       <div className="relative aspect-[16/10] overflow-hidden bg-white/[0.04]">
         {!imgError ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
           <img
             src={thumbUrl}
             alt={template.name}
@@ -105,7 +111,9 @@ function TemplateCard({
 
       <div className="space-y-2 p-3">
         <div className="flex items-center justify-between gap-2">
-          <p className="truncate text-sm font-semibold text-white">{template.name}</p>
+          <p className="truncate text-sm font-semibold text-white">
+            {template.name}
+          </p>
           {template.demoUrl && (
             <a
               href={template.demoUrl}
@@ -118,13 +126,17 @@ function TemplateCard({
             </a>
           )}
         </div>
-        <p className="text-[0.6875rem] text-white/40">{template.categoryLabel}</p>
+        <p className="text-[0.6875rem] text-white/40">
+          {template.categoryLabel}
+        </p>
         {previewPalette ? <PalettePreview palette={previewPalette} /> : null}
         <p className="line-clamp-2 text-[0.65rem] leading-relaxed text-white/50">
           {template.description}
         </p>
         {recommended && recommendedReason ? (
-          <p className="text-[0.6rem] text-[var(--purple)]/70">{recommendedReason}</p>
+          <p className="text-[0.6rem] text-[var(--purple)]/70">
+            {recommendedReason}
+          </p>
         ) : null}
       </div>
     </button>
@@ -267,7 +279,8 @@ export function TemplatePicker({
   const recommended = templates.filter((template) =>
     recommendedIds.slice(0, 3).includes(template.id)
   );
-  const displayTemplates = recommended.length > 0 ? recommended : templates.slice(0, 3);
+  const displayTemplates =
+    recommended.length > 0 ? recommended : templates.slice(0, 3);
 
   return (
     <div className="space-y-4">

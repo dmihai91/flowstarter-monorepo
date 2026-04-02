@@ -1,10 +1,13 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 
 // Mock the useTeamProjects import so TypeScript resolves ProjectPricingData
 vi.mock('@/hooks/useTeamProjects', () => ({}));
 
-import { useTeamProjectDialogs, PRICING_DEFAULTS } from '../useTeamProjectDialogs';
+import {
+  useTeamProjectDialogs,
+  PRICING_DEFAULTS,
+} from '../useTeamProjectDialogs';
 
 describe('useTeamProjectDialogs', () => {
   it('starts with all dialogs closed and no projects selected', () => {
@@ -110,8 +113,12 @@ describe('useTeamProjectDialogs', () => {
       expect(result.current.pricingDialogOpen).toBe(true);
       expect(result.current.projectToPrice).toEqual(project);
       expect(result.current.pricingData.project_type).toBe('ecommerce');
-      expect(result.current.pricingData.setup_fee).toBe(PRICING_DEFAULTS.ecommerce.setup_fee);
-      expect(result.current.pricingData.monthly_fee).toBe(PRICING_DEFAULTS.ecommerce.monthly_fee);
+      expect(result.current.pricingData.setup_fee).toBe(
+        PRICING_DEFAULTS.ecommerce.setup_fee
+      );
+      expect(result.current.pricingData.monthly_fee).toBe(
+        PRICING_DEFAULTS.ecommerce.monthly_fee
+      );
       expect(result.current.pricingData.is_paid).toBe(false);
     });
 
@@ -148,8 +155,12 @@ describe('useTeamProjectDialogs', () => {
       });
 
       expect(result.current.pricingData.project_type).toBe('nonexistent');
-      expect(result.current.pricingData.setup_fee).toBe(PRICING_DEFAULTS.standard.setup_fee);
-      expect(result.current.pricingData.monthly_fee).toBe(PRICING_DEFAULTS.standard.monthly_fee);
+      expect(result.current.pricingData.setup_fee).toBe(
+        PRICING_DEFAULTS.standard.setup_fee
+      );
+      expect(result.current.pricingData.monthly_fee).toBe(
+        PRICING_DEFAULTS.standard.monthly_fee
+      );
     });
 
     it('openPricingDialog defaults to standard when project_type is undefined', () => {
@@ -161,7 +172,9 @@ describe('useTeamProjectDialogs', () => {
       });
 
       expect(result.current.pricingData.project_type).toBe('standard');
-      expect(result.current.pricingData.setup_fee).toBe(PRICING_DEFAULTS.standard.setup_fee);
+      expect(result.current.pricingData.setup_fee).toBe(
+        PRICING_DEFAULTS.standard.setup_fee
+      );
     });
 
     it('closePricingDialog resets dialog state', () => {
@@ -184,19 +197,29 @@ describe('useTeamProjectDialogs', () => {
       const { result } = renderHook(() => useTeamProjectDialogs());
 
       act(() => {
-        result.current.openPricingDialog({ id: 'p6', name: 'Test', project_type: 'standard' });
+        result.current.openPricingDialog({
+          id: 'p6',
+          name: 'Test',
+          project_type: 'standard',
+        });
       });
 
       expect(result.current.pricingData.project_type).toBe('standard');
-      expect(result.current.pricingData.setup_fee).toBe(PRICING_DEFAULTS.standard.setup_fee);
+      expect(result.current.pricingData.setup_fee).toBe(
+        PRICING_DEFAULTS.standard.setup_fee
+      );
 
       act(() => {
         result.current.handleProjectTypeChange('pro');
       });
 
       expect(result.current.pricingData.project_type).toBe('pro');
-      expect(result.current.pricingData.setup_fee).toBe(PRICING_DEFAULTS.pro.setup_fee);
-      expect(result.current.pricingData.monthly_fee).toBe(PRICING_DEFAULTS.pro.monthly_fee);
+      expect(result.current.pricingData.setup_fee).toBe(
+        PRICING_DEFAULTS.pro.setup_fee
+      );
+      expect(result.current.pricingData.monthly_fee).toBe(
+        PRICING_DEFAULTS.pro.monthly_fee
+      );
     });
 
     it('handleProjectTypeChange falls back to standard for unknown type', () => {
@@ -211,8 +234,12 @@ describe('useTeamProjectDialogs', () => {
       });
 
       expect(result.current.pricingData.project_type).toBe('invalid');
-      expect(result.current.pricingData.setup_fee).toBe(PRICING_DEFAULTS.standard.setup_fee);
-      expect(result.current.pricingData.monthly_fee).toBe(PRICING_DEFAULTS.standard.monthly_fee);
+      expect(result.current.pricingData.setup_fee).toBe(
+        PRICING_DEFAULTS.standard.setup_fee
+      );
+      expect(result.current.pricingData.monthly_fee).toBe(
+        PRICING_DEFAULTS.standard.monthly_fee
+      );
     });
 
     it('handleProjectTypeChange preserves is_paid', () => {

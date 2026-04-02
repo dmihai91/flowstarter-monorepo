@@ -1,24 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useI18n } from '@/lib/i18n';
 import { EXTERNAL_URLS } from '@/lib/constants';
-
-interface MockSite {
-  hasContactForm: boolean;
-  hasTestimonials: boolean;
-  hasPricingSection: boolean;
-  primaryColor: string;
-  hasAboutPage: boolean;
-  headerStyle: string;
-  hasFAQ: boolean;
-  hasNewsletter: boolean;
-}
-
-interface Message {
-  role: 'user' | 'ai';
-  text: string;
-}
 
 declare global {
   interface Window {
@@ -31,7 +15,7 @@ declare global {
  * Manages mock site state, AI response simulation, typing animation.
  */
 export function useMockEditor() {
-  const { t } = useI18n();
+  const { t: _t } = useI18n();
   const [isLoaded, setIsLoaded] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [messages, setMessages] = useState<
@@ -141,12 +125,14 @@ export function useMockEditor() {
     return aiResponses.default;
   };
 
-
   const typewrite = (text: string, onDone: () => void) => {
     setTypingText('');
     setIsTypewriting(true);
     let i = 0;
-    if (typewriterRef.current) clearTimeout(typewriterRef.current as unknown as ReturnType<typeof setTimeout>);
+    if (typewriterRef.current)
+      clearTimeout(
+        typewriterRef.current as unknown as ReturnType<typeof setTimeout>
+      );
 
     const typeNextChar = () => {
       i++;
@@ -163,10 +149,16 @@ export function useMockEditor() {
       const delay = isPunct
         ? 180 + Math.random() * 120
         : 35 + Math.random() * 45;
-      typewriterRef.current = setTimeout(typeNextChar, delay) as unknown as ReturnType<typeof setInterval>;
+      typewriterRef.current = setTimeout(
+        typeNextChar,
+        delay
+      ) as unknown as ReturnType<typeof setInterval>;
     };
 
-    typewriterRef.current = setTimeout(typeNextChar, 40) as unknown as ReturnType<typeof setInterval>;
+    typewriterRef.current = setTimeout(
+      typeNextChar,
+      40
+    ) as unknown as ReturnType<typeof setInterval>;
   };
 
   const handleSend = (directMessage?: string) => {
@@ -184,7 +176,8 @@ export function useMockEditor() {
       setIsTyping(true);
       setTimeout(() => {
         setIsTyping(false);
-        const msg1 = "Great idea! Let\'s discuss this on a discovery call. Redirecting you to book...";
+        const msg1 =
+          "Great idea! Let's discuss this on a discovery call. Redirecting you to book...";
         typewrite(msg1, () => {
           setMessages((prev) => [...prev, { role: 'ai', text: msg1 }]);
           setTypingText('');
@@ -212,13 +205,6 @@ export function useMockEditor() {
     }, 800 + Math.random() * 400);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
   const initialSiteState = {
     hasContactForm: false,
     hasTestimonials: false,
@@ -240,32 +226,72 @@ export function useMockEditor() {
     {
       prompt: 'Add pricing tables',
       response: 'Pricing section added with 2 plans.',
-      siteState: { ...initialSiteState, hasTestimonials: true, hasPricingSection: true },
+      siteState: {
+        ...initialSiteState,
+        hasTestimonials: true,
+        hasPricingSection: true,
+      },
     },
     {
       prompt: 'Change the color scheme to green',
       response: 'Updated. Primary color changed across the site.',
-      siteState: { ...initialSiteState, hasTestimonials: true, hasPricingSection: true, primaryColor: 'emerald' },
+      siteState: {
+        ...initialSiteState,
+        hasTestimonials: true,
+        hasPricingSection: true,
+        primaryColor: 'emerald',
+      },
     },
     {
       prompt: 'Add a contact form',
       response: 'Done. Contact form added below hero.',
-      siteState: { ...initialSiteState, hasTestimonials: true, hasPricingSection: true, primaryColor: 'emerald', hasContactForm: true },
+      siteState: {
+        ...initialSiteState,
+        hasTestimonials: true,
+        hasPricingSection: true,
+        primaryColor: 'emerald',
+        hasContactForm: true,
+      },
     },
     {
       prompt: 'Add an FAQ section',
       response: "FAQ section added — I've covered the 5 most common questions.",
-      siteState: { ...initialSiteState, hasTestimonials: true, hasPricingSection: true, primaryColor: 'emerald', hasContactForm: true, hasFAQ: true },
+      siteState: {
+        ...initialSiteState,
+        hasTestimonials: true,
+        hasPricingSection: true,
+        primaryColor: 'emerald',
+        hasContactForm: true,
+        hasFAQ: true,
+      },
     },
     {
       prompt: 'Add a newsletter signup',
-      response: 'Newsletter signup added. New subscribers go straight to your list.',
-      siteState: { ...initialSiteState, hasTestimonials: true, hasPricingSection: true, primaryColor: 'emerald', hasContactForm: true, hasFAQ: true, hasNewsletter: true },
+      response:
+        'Newsletter signup added. New subscribers go straight to your list.',
+      siteState: {
+        ...initialSiteState,
+        hasTestimonials: true,
+        hasPricingSection: true,
+        primaryColor: 'emerald',
+        hasContactForm: true,
+        hasFAQ: true,
+        hasNewsletter: true,
+      },
     },
     {
       prompt: 'Add an about page',
       response: 'About page created and linked in the nav.',
-      siteState: { ...initialSiteState, hasTestimonials: true, hasPricingSection: true, primaryColor: 'emerald', hasContactForm: true, hasFAQ: true, hasNewsletter: true, hasAboutPage: true },
+      siteState: {
+        ...initialSiteState,
+        hasTestimonials: true,
+        hasPricingSection: true,
+        primaryColor: 'emerald',
+        hasContactForm: true,
+        hasFAQ: true,
+        hasNewsletter: true,
+        hasAboutPage: true,
+      },
     },
   ];
 
@@ -281,13 +307,11 @@ export function useMockEditor() {
       500
     );
 
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-cycle through demos when user hasn't interacted
   useEffect(() => {
-
     let currentIndex = 0; // Start at 0, first advance goes to 1
 
     function advanceDemo() {
@@ -296,7 +320,10 @@ export function useMockEditor() {
 
       // When looping back to start, reset everything cleanly
       if (currentIndex === 0) {
-        setMessages([{ role: 'user', text: demo.prompt }, { role: 'ai', text: demo.response }]);
+        setMessages([
+          { role: 'user', text: demo.prompt },
+          { role: 'ai', text: demo.response },
+        ]);
         setMockSite(demo.siteState as typeof initialSiteState);
         return;
       }
@@ -349,29 +376,10 @@ export function useMockEditor() {
 
   // Scroll animation observer
 
-  const features = [
-    {
-      num: t('landing.steps.step1.num'),
-      title: t('landing.steps.step1.title'),
-      desc: t('landing.steps.step1.desc'),
-    },
-    {
-      num: t('landing.steps.step2.num'),
-      title: t('landing.steps.step2.title'),
-      desc: t('landing.steps.step2.desc'),
-    },
-    {
-      num: t('landing.steps.step3.num'),
-      title: t('landing.steps.step3.title'),
-      desc: t('landing.steps.step3.desc'),
-    },
-  ];
-
-
-
   return {
     isLoaded,
-    inputValue, setInputValue,
+    inputValue,
+    setInputValue,
     messages,
     isTyping,
     typingText,

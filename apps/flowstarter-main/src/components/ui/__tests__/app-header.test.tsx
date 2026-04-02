@@ -18,8 +18,13 @@ vi.mock('@/contexts/SidebarContext', () => ({
 }));
 
 vi.mock('@flowstarter/flow-design-system', () => ({
-  ScrollAwareHeader: ({ children, className }: PropsWithChildren<{ className?: string }>) => (
-    <header className={className} data-testid="header">{children}</header>
+  ScrollAwareHeader: ({
+    children,
+    className,
+  }: PropsWithChildren<{ className?: string }>) => (
+    <header className={className} data-testid="header">
+      {children}
+    </header>
   ),
 }));
 

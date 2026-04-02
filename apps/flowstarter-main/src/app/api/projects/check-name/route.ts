@@ -4,13 +4,13 @@ import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * GET /api/projects/check-name?name=xxx&excludeId=xxx
- * 
+ *
  * Checks if a project name already exists for the current user
  */
 export async function GET(request: NextRequest) {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -47,11 +47,11 @@ export async function GET(request: NextRequest) {
     }
 
     const exists = data && data.length > 0;
-    
-    return NextResponse.json({ 
+
+    return NextResponse.json({
       available: !exists,
       exists,
-      existingProject: exists ? data[0] : null 
+      existingProject: exists ? data[0] : null,
     });
   } catch (error) {
     console.error('[Check Name] Error:', error);

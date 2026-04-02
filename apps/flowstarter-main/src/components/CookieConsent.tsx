@@ -22,22 +22,28 @@ export function CookieConsent() {
   }, []);
 
   const handleAccept = () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify({
-      essential: true,
-      analytics: true,
-      functional: true,
-      timestamp: new Date().toISOString(),
-    }));
+    localStorage.setItem(
+      COOKIE_CONSENT_KEY,
+      JSON.stringify({
+        essential: true,
+        analytics: true,
+        functional: true,
+        timestamp: new Date().toISOString(),
+      })
+    );
     closeWithAnimation();
   };
 
   const handleEssentialOnly = () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify({
-      essential: true,
-      analytics: false,
-      functional: false,
-      timestamp: new Date().toISOString(),
-    }));
+    localStorage.setItem(
+      COOKIE_CONSENT_KEY,
+      JSON.stringify({
+        essential: true,
+        analytics: false,
+        functional: false,
+        timestamp: new Date().toISOString(),
+      })
+    );
     closeWithAnimation();
   };
 
@@ -56,7 +62,6 @@ export function CookieConsent() {
     >
       <div className="max-w-3xl mx-auto">
         <div className="relative bg-white/90 dark:bg-[var(--glass-surface)]/90 backdrop-blur-2xl backdrop-saturate-150 rounded-2xl border-t border-l border-white/50 dark:border-white/[0.08] border-b border-r border-black/[0.06] dark:border-black/[0.2] shadow-[0_12px_48px_rgba(0,0,0,0.12),0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[0_12px_48px_rgba(0,0,0,0.5),0_1px_0_rgba(255,255,255,0.06)_inset] overflow-hidden">
-          
           <div className="p-5 sm:p-6">
             <div className="flex items-start gap-4">
               {/* Icon */}
@@ -71,18 +76,17 @@ export function CookieConsent() {
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-white/60 leading-relaxed mb-4">
                   {t('cookie.description')}{' '}
-                  <Link href="/cookies" className="text-[var(--purple)] hover:underline">
+                  <Link
+                    href="/cookies"
+                    className="text-[var(--purple)] hover:underline"
+                  >
                     {t('cookie.learnMore')}
                   </Link>
                 </p>
 
                 {/* Buttons */}
                 <div className="flex items-center gap-2">
-                  <Button
-                    onClick={handleAccept}
-                    variant="accent"
-                    size="sm"
-                  >
+                  <Button onClick={handleAccept} variant="accent" size="sm">
                     {t('cookie.acceptAll')}
                   </Button>
                   <Button

@@ -8,7 +8,11 @@ import type { ProjectPricingData } from '@/hooks/useTeamProjects';
 import { useTranslations } from '@/lib/i18n';
 import { toast } from 'sonner';
 
-const EDITOR_URL = process.env.NEXT_PUBLIC_EDITOR_URL || (process.env.NODE_ENV === 'production' ? 'https://editor.flowstarter.dev' : 'http://localhost:5173');
+const EDITOR_URL =
+  process.env.NEXT_PUBLIC_EDITOR_URL ||
+  (process.env.NODE_ENV === 'production'
+    ? 'https://editor.flowstarter.dev'
+    : 'http://localhost:5173');
 
 interface HandoffResponse {
   success: boolean;
@@ -41,7 +45,10 @@ export function useTeamProjectActions() {
     async (projectId: string, newName: string, onSuccess?: () => void) => {
       if (!newName.trim()) return;
       try {
-        await renameProjectMutation.mutateAsync({ id: projectId, name: newName.trim() });
+        await renameProjectMutation.mutateAsync({
+          id: projectId,
+          name: newName.trim(),
+        });
         toast.success(t('team.dashboard.toast.renameSuccess'));
         onSuccess?.();
       } catch (error) {
@@ -53,9 +60,16 @@ export function useTeamProjectActions() {
   );
 
   const handleUpdatePricing = useCallback(
-    async (projectId: string, pricingData: ProjectPricingData, onSuccess?: () => void) => {
+    async (
+      projectId: string,
+      pricingData: ProjectPricingData,
+      onSuccess?: () => void
+    ) => {
       try {
-        await updatePricingMutation.mutateAsync({ id: projectId, ...pricingData });
+        await updatePricingMutation.mutateAsync({
+          id: projectId,
+          ...pricingData,
+        });
         toast.success(t('team.dashboard.toast.pricingSuccess'));
         onSuccess?.();
       } catch (error) {
@@ -66,21 +80,27 @@ export function useTeamProjectActions() {
     [updatePricingMutation, t]
   );
 
-  const openInEditor = useCallback(async (projectId: string) => {
-    try {
-      const res = await fetch('/api/editor/handoff', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ projectId }),
-      });
-      if (!res.ok) throw new Error('Handoff failed');
-      const data: HandoffResponse = await res.json();
-      window.open(data.editorUrl || `${EDITOR_URL}?handoff=${data.token}`, '_blank');
-    } catch (error) {
-      console.error('Failed to open in editor:', error);
-      toast.error(t('team.dashboard.toast.editorFailed'));
-    }
-  }, [t]);
+  const openInEditor = useCallback(
+    async (projectId: string) => {
+      try {
+        const res = await fetch('/api/editor/handoff', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ projectId }),
+        });
+        if (!res.ok) throw new Error('Handoff failed');
+        const data: HandoffResponse = await res.json();
+        window.open(
+          data.editorUrl || `${EDITOR_URL}?handoff=${data.token}`,
+          '_blank'
+        );
+      } catch (error) {
+        console.error('Failed to open in editor:', error);
+        toast.error(t('team.dashboard.toast.editorFailed'));
+      }
+    },
+    [t]
+  );
 
   return {
     handleDeleteProject,

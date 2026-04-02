@@ -22,9 +22,7 @@ function scoreTemplate(
   const categoryHints = ARCHETYPE_CATEGORY_HINTS[projectBrief.archetype] ?? [];
 
   if (
-    categoryHints.some((hint) =>
-      template.category.toLowerCase().includes(hint)
-    )
+    categoryHints.some((hint) => template.category.toLowerCase().includes(hint))
   ) {
     score += 40;
     reasons.push('Template category matches the project archetype');
@@ -32,7 +30,9 @@ function scoreTemplate(
 
   if (
     template.tags.some((tag) =>
-      `${projectBrief.industry} ${projectBrief.targetAudience}`.toLowerCase().includes(tag.toLowerCase())
+      `${projectBrief.industry} ${projectBrief.targetAudience}`
+        .toLowerCase()
+        .includes(tag.toLowerCase())
     )
   ) {
     score += 20;
@@ -50,7 +50,8 @@ function scoreTemplate(
     )
       ? 15
       : 0;
-    if (score >= 15) reasons.push('Template can present packaged offers clearly');
+    if (score >= 15)
+      reasons.push('Template can present packaged offers clearly');
   }
 
   if (projectBrief.brandTone === 'bold' && template.capability.darkMode) {

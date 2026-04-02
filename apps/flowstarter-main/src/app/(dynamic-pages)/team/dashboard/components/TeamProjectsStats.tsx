@@ -10,8 +10,10 @@ import { GlassPanel } from '@flowstarter/flow-design-system';
 const LIVE_STATUSES = ['completed', 'live'] as const;
 const BUILDING_STATUSES = ['in_progress', 'building', 'generating'] as const;
 
-const isLive = (s: string | null) => LIVE_STATUSES.includes(s as typeof LIVE_STATUSES[number]);
-const isBuilding = (s: string | null) => BUILDING_STATUSES.includes(s as typeof BUILDING_STATUSES[number]);
+const isLive = (s: string | null) =>
+  LIVE_STATUSES.includes(s as (typeof LIVE_STATUSES)[number]);
+const isBuilding = (s: string | null) =>
+  BUILDING_STATUSES.includes(s as (typeof BUILDING_STATUSES)[number]);
 
 // Badge class by status group
 const STATUS_BADGE_CLASS = {
@@ -33,14 +35,22 @@ function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
-export { LIVE_STATUSES, BUILDING_STATUSES, isLive, isBuilding, STATUS_BADGE_CLASS };
+export {
+  LIVE_STATUSES,
+  BUILDING_STATUSES,
+  isLive,
+  isBuilding,
+  STATUS_BADGE_CLASS,
+};
 
 export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
   const { formatTimeAgo } = useFormatDate();
   const { t } = useTranslations();
 
   const totalProjects = projects.length;
-  const draftCount = projects.filter((p) => !isLive(p.status) && !isBuilding(p.status)).length;
+  const draftCount = projects.filter(
+    (p) => !isLive(p.status) && !isBuilding(p.status)
+  ).length;
   const inProgressCount = projects.filter((p) => isBuilding(p.status)).length;
   const liveCount = projects.filter((p) => isLive(p.status)).length;
 
@@ -58,7 +68,7 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
     0
   );
   const totalCostEur = projects.reduce(
-    (sum, p) => sum + ((p.generation_cost_usd || 0) * 0.92),
+    (sum, p) => sum + (p.generation_cost_usd || 0) * 0.92,
     0
   );
   const sitesGenerated = projects.filter(
@@ -101,7 +111,10 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
           <span className="text-sm text-gray-500 dark:text-white/50">
             {t('team.dashboard.totalProjects')}
           </span>
-          <Link href="/team/dashboard/projects/list" className="text-xs text-[var(--purple)] hover:underline font-medium">
+          <Link
+            href="/team/dashboard/projects/list"
+            className="text-xs text-[var(--purple)] hover:underline font-medium"
+          >
             {t('team.dashboard.details')} →
           </Link>
         </div>
@@ -140,7 +153,11 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span className={`px-1.5 py-0.5 text-[0.625rem] font-medium rounded ${getStatusBadgeClass(recentProject.status)}`}>
+                  <span
+                    className={`px-1.5 py-0.5 text-[0.625rem] font-medium rounded ${getStatusBadgeClass(
+                      recentProject.status
+                    )}`}
+                  >
                     {getStatusLabel(recentProject.status)}
                   </span>
                 </div>
@@ -149,7 +166,9 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
                 </p>
                 <p className="text-xs text-gray-500 dark:text-white/40">
                   {t('team.dashboard.lastEdit', {
-                    time: formatTimeAgo(recentProject.updated_at || recentProject.created_at),
+                    time: formatTimeAgo(
+                      recentProject.updated_at || recentProject.created_at
+                    ),
                   })}
                 </p>
               </div>
@@ -168,7 +187,12 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
           <span className="text-sm text-gray-500 dark:text-white/50">
             {t('team.dashboard.revenue')}
           </span>
-          <a href="https://dashboard.stripe.com/test/dashboard" target="_blank" rel="noopener noreferrer" className="text-xs text-[var(--purple)] hover:underline font-medium">
+          <a
+            href="https://dashboard.stripe.com/test/dashboard"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-[var(--purple)] hover:underline font-medium"
+          >
             {t('team.dashboard.details')} →
           </a>
         </div>
@@ -179,13 +203,17 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-blue-500" />
             <span className="text-gray-600 dark:text-white/60">
-              {t('team.dashboard.setupFees', { amount: formatCurrency(totalSetupFees) })}
+              {t('team.dashboard.setupFees', {
+                amount: formatCurrency(totalSetupFees),
+              })}
             </span>
           </span>
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
             <span className="text-gray-600 dark:text-white/60">
-              {t('team.dashboard.monthlyRevenue', { amount: formatCurrency(monthlyRevenue) })}
+              {t('team.dashboard.monthlyRevenue', {
+                amount: formatCurrency(monthlyRevenue),
+              })}
             </span>
           </span>
           <span className="flex items-center gap-1.5">
@@ -199,36 +227,39 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
 
       {/* AI Usage Card */}
       <div className="sm:col-span-2 lg:col-span-1">
-      <GlassPanel
-        shadow="glass"
-        padding="md"
-        className="rounded-[28px] bg-white/55 backdrop-blur-2xl backdrop-saturate-200 border border-white/80 shadow-[0_8px_32px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.95)] dark:bg-[rgba(18,12,42,0.55)] dark:backdrop-blur-2xl dark:backdrop-saturate-150 dark:border-white/[0.08] dark:shadow-[0_8px_40px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.06)]"
-      >
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-500 dark:text-white/50">
-            AI Usage
-          </span>
-          <Link href="/team/dashboard/ai-usage" className="text-xs text-[var(--purple)] hover:underline font-medium">
-            {t('team.dashboard.details')} →
-          </Link>
-        </div>
-        <div className="mb-3">
-          <p className="text-3xl font-bold text-gray-900 dark:text-white">
-            {totalCredits} credits
-          </p>
-          <p className="text-lg font-semibold text-[var(--purple)] dark:text-[var(--purple)]">
-            €{totalCostEur.toFixed(2)}
-          </p>
-        </div>
-        <div className="flex items-center gap-3 text-xs">
-          <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[var(--purple)]" />
-            <span className="text-gray-600 dark:text-white/60">
-              {sitesGenerated} sites generated
+        <GlassPanel
+          shadow="glass"
+          padding="md"
+          className="rounded-[28px] bg-white/55 backdrop-blur-2xl backdrop-saturate-200 border border-white/80 shadow-[0_8px_32px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.95)] dark:bg-[rgba(18,12,42,0.55)] dark:backdrop-blur-2xl dark:backdrop-saturate-150 dark:border-white/[0.08] dark:shadow-[0_8px_40px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.06)]"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-500 dark:text-white/50">
+              AI Usage
             </span>
-          </span>
-        </div>
-      </GlassPanel>
+            <Link
+              href="/team/dashboard/ai-usage"
+              className="text-xs text-[var(--purple)] hover:underline font-medium"
+            >
+              {t('team.dashboard.details')} →
+            </Link>
+          </div>
+          <div className="mb-3">
+            <p className="text-3xl font-bold text-gray-900 dark:text-white">
+              {totalCredits} credits
+            </p>
+            <p className="text-lg font-semibold text-[var(--purple)] dark:text-[var(--purple)]">
+              €{totalCostEur.toFixed(2)}
+            </p>
+          </div>
+          <div className="flex items-center gap-3 text-xs">
+            <span className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-[var(--purple)]" />
+              <span className="text-gray-600 dark:text-white/60">
+                {sitesGenerated} sites generated
+              </span>
+            </span>
+          </div>
+        </GlassPanel>
       </div>
     </div>
   );

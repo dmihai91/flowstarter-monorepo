@@ -79,15 +79,48 @@ const BLOCKS: Record<string, BlockDefinition> = {
 };
 
 const ARCHETYPE_BLOCKS: Record<string, string[]> = {
-  'authority-builder': ['hero', 'proof', 'services', 'process', 'faq', 'cta', 'contact'],
-  'service-provider': ['hero', 'about', 'services', 'proof', 'booking', 'faq', 'contact'],
-  'portfolio-showcase': ['hero', 'portfolio', 'process', 'proof', 'cta', 'contact'],
-  'course-creator': ['hero', 'pricing', 'proof', 'faq', 'cta', 'newsletter', 'contact'],
+  'authority-builder': [
+    'hero',
+    'proof',
+    'services',
+    'process',
+    'faq',
+    'cta',
+    'contact',
+  ],
+  'service-provider': [
+    'hero',
+    'about',
+    'services',
+    'proof',
+    'booking',
+    'faq',
+    'contact',
+  ],
+  'portfolio-showcase': [
+    'hero',
+    'portfolio',
+    'process',
+    'proof',
+    'cta',
+    'contact',
+  ],
+  'course-creator': [
+    'hero',
+    'pricing',
+    'proof',
+    'faq',
+    'cta',
+    'newsletter',
+    'contact',
+  ],
   'local-expert': ['hero', 'services', 'proof', 'booking', 'faq', 'contact'],
   'event-host': ['hero', 'proof', 'pricing', 'cta', 'newsletter', 'contact'],
 };
 
-export function getBlocksForBrief(projectBrief: ProjectBrief): BlockDefinition[] {
+export function getBlocksForBrief(
+  projectBrief: ProjectBrief
+): BlockDefinition[] {
   const keys =
     ARCHETYPE_BLOCKS[projectBrief.archetype] ??
     ARCHETYPE_BLOCKS['authority-builder'];

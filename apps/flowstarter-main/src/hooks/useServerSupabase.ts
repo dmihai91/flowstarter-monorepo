@@ -3,9 +3,10 @@ import {
   createSupabaseServerClient,
   createSupabaseServerClientWithAuth,
 } from '@/supabase-clients/server';
-import { SupabaseClient } from '@supabase/supabase-js';
 
-let globalServerSupabase: SupabaseClient | null = null;
+type ServerSupabaseClient = ReturnType<typeof createSupabaseServerClient>;
+
+let globalServerSupabase: ServerSupabaseClient | null = null;
 
 // This is for pure server usage only (Server Components, API routes, etc.)
 // WARNING: This client does NOT enforce RLS. Use useServerSupabaseWithAuthStrict for protected routes.

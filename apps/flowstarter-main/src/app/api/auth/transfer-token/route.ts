@@ -30,6 +30,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ url: url.toString() });
   } catch (err) {
     console.error('[transfer-token] Failed to create sign-in token:', err);
-    return NextResponse.json({ error: 'Failed to create token' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to create token' },
+      { status: 500 }
+    );
   }
 }

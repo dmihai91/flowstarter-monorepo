@@ -3,7 +3,14 @@
 import { Button } from '@/components/ui/button';
 import { useTranslations } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
-import { ArrowRight, ChevronUp, Loader2, Paperclip, Wand2, X } from 'lucide-react';
+import {
+  ArrowRight,
+  ChevronUp,
+  Loader2,
+  Paperclip,
+  Wand2,
+  X,
+} from 'lucide-react';
 import { GlassCard } from '@flowstarter/flow-design-system';
 import { useEffect, useRef, useState } from 'react';
 
@@ -19,7 +26,11 @@ interface ScaffoldInputProps {
   isEnriching: boolean;
 }
 
-export function ScaffoldInput({ onSubmit, onCollapse, isEnriching }: ScaffoldInputProps) {
+export function ScaffoldInput({
+  onSubmit,
+  onCollapse,
+  isEnriching,
+}: ScaffoldInputProps) {
   const { t } = useTranslations();
   const [input, setInput] = useState('');
   const [isFocused, setIsFocused] = useState(false);
@@ -38,30 +49,33 @@ export function ScaffoldInput({ onSubmit, onCollapse, isEnriching }: ScaffoldInp
     if (input) return;
     const example = EXAMPLES[exampleIndex];
 
-    const timeout = setTimeout(() => {
-      if (pauseRef.current) {
-        pauseRef.current = false;
-        setIsDeleting(true);
-        return;
-      }
+    const timeout = setTimeout(
+      () => {
+        if (pauseRef.current) {
+          pauseRef.current = false;
+          setIsDeleting(true);
+          return;
+        }
 
-      if (!isDeleting) {
-        if (charIndex < example.length) {
-          setPlaceholderText(example.slice(0, charIndex + 1));
-          setCharIndex(charIndex + 1);
+        if (!isDeleting) {
+          if (charIndex < example.length) {
+            setPlaceholderText(example.slice(0, charIndex + 1));
+            setCharIndex(charIndex + 1);
+          } else {
+            pauseRef.current = true;
+          }
         } else {
-          pauseRef.current = true;
+          if (charIndex > 0) {
+            setPlaceholderText(example.slice(0, charIndex - 1));
+            setCharIndex(charIndex - 1);
+          } else {
+            setIsDeleting(false);
+            setExampleIndex((exampleIndex + 1) % EXAMPLES.length);
+          }
         }
-      } else {
-        if (charIndex > 0) {
-          setPlaceholderText(example.slice(0, charIndex - 1));
-          setCharIndex(charIndex - 1);
-        } else {
-          setIsDeleting(false);
-          setExampleIndex((exampleIndex + 1) % EXAMPLES.length);
-        }
-      }
-    }, pauseRef.current ? 2000 : isDeleting ? 20 : 40 + Math.random() * 30);
+      },
+      pauseRef.current ? 2000 : isDeleting ? 20 : 40 + Math.random() * 30
+    );
 
     return () => clearTimeout(timeout);
   }, [charIndex, isDeleting, exampleIndex, input]);
@@ -139,6 +153,7 @@ export function ScaffoldInput({ onSubmit, onCollapse, isEnriching }: ScaffoldInp
           {attachments.map((file, i) => (
             <div key={i} className="relative group">
               {file.type.startsWith('image/') ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
                 <img
                   src={URL.createObjectURL(file)}
                   alt={file.name}
@@ -178,7 +193,9 @@ export function ScaffoldInput({ onSubmit, onCollapse, isEnriching }: ScaffoldInp
           onKeyDown={handleKeyDown}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          placeholder={input ? '' : placeholderText || t('scaffold.input.placeholder')}
+          placeholder={
+            input ? '' : placeholderText || t('scaffold.input.placeholder')
+          }
           rows={3}
           className="w-full px-4 pt-4 pb-3 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 text-sm leading-relaxed resize-none focus:outline-none outline-none ring-0 focus:ring-0 border-0 shadow-none select-text"
           style={{ minHeight: '80px', maxHeight: '200px' }}
@@ -203,11 +220,17 @@ export function ScaffoldInput({ onSubmit, onCollapse, isEnriching }: ScaffoldInp
               <Paperclip className="w-4 h-4" />
             </button>
             {input.length > 0 && (
-              <span className={cn(
-                'text-[0.625rem]',
-                input.length < 50 ? 'text-amber-500' : 'text-gray-400 dark:text-white/30'
-              )}>
-                {input.length < 50 ? t('scaffold.input.moreDetail') : t('scaffold.input.charCount', { count: input.length })}
+              <span
+                className={cn(
+                  'text-[0.625rem]',
+                  input.length < 50
+                    ? 'text-amber-500'
+                    : 'text-gray-400 dark:text-white/30'
+                )}
+              >
+                {input.length < 50
+                  ? t('scaffold.input.moreDetail')
+                  : t('scaffold.input.charCount', { count: input.length })}
               </span>
             )}
           </div>

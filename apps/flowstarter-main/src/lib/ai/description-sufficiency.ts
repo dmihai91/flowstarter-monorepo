@@ -38,7 +38,6 @@ export async function evaluateDescriptionSufficiency(input: {
     `BusinessType: ${input.businessType || ''}`,
   ].join('\n');
 
-  // @ts-ignore
   const { object } = await generateObject({
     model: models.gpt4,
     messages: [

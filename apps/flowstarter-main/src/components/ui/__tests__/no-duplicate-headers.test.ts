@@ -14,14 +14,22 @@ function getAllTsxFiles(dir: string): string[] {
       const full = join(dir, entry);
       try {
         const stat = statSync(full);
-        if (stat.isDirectory() && !entry.includes('node_modules') && !entry.includes('.next')) {
+        if (
+          stat.isDirectory() &&
+          !entry.includes('node_modules') &&
+          !entry.includes('.next')
+        ) {
           files.push(...getAllTsxFiles(full));
         } else if (entry.endsWith('.tsx') || entry.endsWith('.ts')) {
           files.push(full);
         }
-      } catch { /* skip */ }
+      } catch {
+        /* skip */
+      }
     }
-  } catch { /* skip */ }
+  } catch {
+    /* skip */
+  }
   return files;
 }
 
@@ -35,7 +43,7 @@ describe('Header Architecture (no duplicates)', () => {
       if (f.includes('ClientHeader.tsx')) continue;
       if (f.includes('__tests__')) continue;
       const content = readFileSync(f, 'utf-8');
-      if (content.includes("import") && content.includes("ClientHeader")) {
+      if (content.includes('import') && content.includes('ClientHeader')) {
         violations.push(f.replace(SRC, 'src'));
       }
     }
@@ -48,7 +56,7 @@ describe('Header Architecture (no duplicates)', () => {
       if (f.includes('TeamHeader.tsx')) continue;
       if (f.includes('__tests__')) continue;
       const content = readFileSync(f, 'utf-8');
-      if (content.includes("import") && content.includes("TeamHeader")) {
+      if (content.includes('import') && content.includes('TeamHeader')) {
         violations.push(f.replace(SRC, 'src'));
       }
     }
@@ -61,7 +69,7 @@ describe('Header Architecture (no duplicates)', () => {
       if (f.includes('ClientUserMenu.tsx')) continue;
       if (f.includes('__tests__')) continue;
       const content = readFileSync(f, 'utf-8');
-      if (content.includes("import") && content.includes("ClientUserMenu")) {
+      if (content.includes('import') && content.includes('ClientUserMenu')) {
         violations.push(f.replace(SRC, 'src'));
       }
     }
@@ -74,7 +82,7 @@ describe('Header Architecture (no duplicates)', () => {
       if (f.includes('TeamUserMenu.tsx')) continue;
       if (f.includes('__tests__')) continue;
       const content = readFileSync(f, 'utf-8');
-      if (content.includes("import") && content.includes("TeamUserMenu")) {
+      if (content.includes('import') && content.includes('TeamUserMenu')) {
         violations.push(f.replace(SRC, 'src'));
       }
     }
@@ -82,16 +90,16 @@ describe('Header Architecture (no duplicates)', () => {
   });
 
   it('layout files render AppHeader only once per branch', () => {
-    const layoutFiles = allFiles.filter(f => f.endsWith('layout.tsx'));
+    const layoutFiles = allFiles.filter((f) => f.endsWith('layout.tsx'));
     for (const f of layoutFiles) {
       const content = readFileSync(f, 'utf-8');
       if (!content.includes('AppHeader')) continue;
-      
+
       // Count AppHeader usages (not imports)
       const usages = (content.match(/<AppHeader/g) || []).length;
-      const imports = (content.match(/import.*AppHeader/g) || []).length;
+      const _imports = (content.match(/import.*AppHeader/g) || []).length;
       const actualRenders = usages; // Each <AppHeader is a render
-      
+
       // A layout with conditional branches may have 2 renders (one per branch)
       // but should never have more than 2
       expect(actualRenders).toBeLessThanOrEqual(2);
@@ -101,15 +109,21 @@ describe('Header Architecture (no duplicates)', () => {
 
 describe('Loading Architecture (DRY)', () => {
   it('PageLoader re-exports from AppLoader', () => {
-    const content = readFileSync(join(SRC, 'components/ui/page-loader.tsx'), 'utf-8');
+    const content = readFileSync(
+      join(SRC, 'components/ui/page-loader.tsx'),
+      'utf-8'
+    );
     expect(content).toContain('app-loading');
   });
 
   it('all loading.tsx files use PageLoader or AppLoader', () => {
-    const loadingFiles = allFiles.filter(f => f.endsWith('loading.tsx'));
+    const loadingFiles = allFiles.filter((f) => f.endsWith('loading.tsx'));
     for (const f of loadingFiles) {
       const content = readFileSync(f, 'utf-8');
-      const usesUnified = content.includes('PageLoader') || content.includes('AppLoader') || content.includes('LoadingScreen');
+      const usesUnified =
+        content.includes('PageLoader') ||
+        content.includes('AppLoader') ||
+        content.includes('LoadingScreen');
       expect(usesUnified).toBe(true);
     }
   });

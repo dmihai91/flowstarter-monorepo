@@ -90,14 +90,24 @@ describe('getTimeGreetingKey', () => {
 describe('useDashboardMilestones', () => {
   it('returns 0 completed and 0% when no projects exist', () => {
     const { result } = renderHook(() => useDashboardMilestones(false, false));
-    expect(result.current.statuses).toEqual(['active', 'locked', 'locked', 'locked']);
+    expect(result.current.statuses).toEqual([
+      'active',
+      'locked',
+      'locked',
+      'locked',
+    ]);
     expect(result.current.completedCount).toBe(0);
     expect(result.current.progressPercent).toBe(0);
   });
 
   it('returns 1 completed and 25% when hasAnyProject', () => {
     const { result } = renderHook(() => useDashboardMilestones(true, false));
-    expect(result.current.statuses).toEqual(['completed', 'active', 'locked', 'locked']);
+    expect(result.current.statuses).toEqual([
+      'completed',
+      'active',
+      'locked',
+      'locked',
+    ]);
     expect(result.current.completedCount).toBe(1);
     expect(result.current.progressPercent).toBe(25);
   });

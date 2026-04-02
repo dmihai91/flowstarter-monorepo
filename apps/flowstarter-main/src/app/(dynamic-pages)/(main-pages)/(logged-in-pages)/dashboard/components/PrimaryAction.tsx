@@ -2,7 +2,13 @@
 
 import { useTranslations } from '@/lib/i18n';
 import { EXTERNAL_URLS } from '@/lib/constants';
-import { Sparkles, MessageSquarePlus, Upload, ArrowRight, CalendarClock } from 'lucide-react';
+import {
+  Sparkles,
+  MessageSquarePlus,
+  Upload,
+  ArrowRight,
+  CalendarClock,
+} from 'lucide-react';
 
 interface PrimaryActionProps {
   hasAnyProject: boolean;
@@ -10,7 +16,11 @@ interface PrimaryActionProps {
   onBookCall?: () => void;
 }
 
-export function PrimaryAction({ hasAnyProject, hasLiveProject, onBookCall }: PrimaryActionProps) {
+export function PrimaryAction({
+  hasAnyProject,
+  hasLiveProject,
+  onBookCall,
+}: PrimaryActionProps) {
   const { t } = useTranslations();
 
   // No project yet — book call CTA
@@ -34,7 +44,9 @@ export function PrimaryAction({ hasAnyProject, hasLiveProject, onBookCall }: Pri
                   Next step
                 </span>
               </div>
-              <p className="text-sm text-gray-500 dark:text-white/60 leading-relaxed">{t('dashboard.action.kickoffDesc')}</p>
+              <p className="text-sm text-gray-500 dark:text-white/60 leading-relaxed">
+                {t('dashboard.action.kickoffDesc')}
+              </p>
             </div>
             <button
               onClick={onBookCall}
@@ -57,8 +69,12 @@ export function PrimaryAction({ hasAnyProject, hasLiveProject, onBookCall }: Pri
             <MessageSquarePlus className="w-6 h-6 text-white" />
           </div>
           <div className="flex-1">
-            <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-0.5">{t('dashboard.action.requestChange')}</h3>
-            <p className="text-sm text-gray-500 dark:text-white/50">{t('dashboard.action.requestChangeSub')}</p>
+            <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-0.5">
+              {t('dashboard.action.requestChange')}
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-white/50">
+              {t('dashboard.action.requestChangeSub')}
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-100 dark:bg-white/[0.06] text-gray-700 dark:text-white text-sm font-medium hover:bg-gray-200 dark:hover:bg-white/[0.10] transition-all border border-gray-200 dark:border-white/[0.06]">
@@ -84,8 +100,14 @@ export function PrimaryAction({ hasAnyProject, hasLiveProject, onBookCall }: Pri
           <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-blue-500 animate-pulse" />
         </div>
         <div className="flex-1">
-          <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-0.5">{t('dashboard.stats.buildPhase')}</h3>
-          <p className="text-sm text-gray-500 dark:text-white/50">{t('dashboard.stats.currentMilestone', { phase: t('dashboard.stepper.design') })}</p>
+          <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-0.5">
+            {t('dashboard.stats.buildPhase')}
+          </h3>
+          <p className="text-sm text-gray-500 dark:text-white/50">
+            {t('dashboard.stats.currentMilestone', {
+              phase: t('dashboard.stepper.design'),
+            })}
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <span className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-500/10 px-4 py-2.5 rounded-xl border border-blue-500/20">

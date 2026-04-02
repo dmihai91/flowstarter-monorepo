@@ -52,7 +52,9 @@ export async function GET(req: Request) {
     if (error) {
       return NextResponse.redirect(
         new URL(
-          `/dashboard/integrations?provider=calendly&status=error&message=${encodeURIComponent(error)}`,
+          `/dashboard/integrations?provider=calendly&status=error&message=${encodeURIComponent(
+            error
+          )}`,
           req.url
         )
       );
@@ -86,7 +88,9 @@ export async function GET(req: Request) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
+        Authorization: `Basic ${Buffer.from(
+          `${clientId}:${clientSecret}`
+        ).toString('base64')}`,
       },
       body: new URLSearchParams({
         code,
@@ -120,8 +124,20 @@ export async function GET(req: Request) {
     let refreshTokenSecretId: string;
     try {
       [accessTokenSecretId, refreshTokenSecretId] = await Promise.all([
-        storeUserSecret(supabase, userId, 'calendly', 'access_token', tokens.access_token),
-        storeUserSecret(supabase, userId, 'calendly', 'refresh_token', tokens.refresh_token),
+        storeUserSecret(
+          supabase,
+          userId,
+          'calendly',
+          'access_token',
+          tokens.access_token
+        ),
+        storeUserSecret(
+          supabase,
+          userId,
+          'calendly',
+          'refresh_token',
+          tokens.refresh_token
+        ),
       ]);
     } catch (vaultErr) {
       console.error('Vault store failed (Calendly):', vaultErr);
@@ -138,7 +154,9 @@ export async function GET(req: Request) {
       );
     }
 
-    const expiresAt = new Date(Date.now() + tokens.expires_in * 1000).toISOString();
+    const expiresAt = new Date(
+      Date.now() + tokens.expires_in * 1000
+    ).toISOString();
 
     // ── Persist only non-sensitive metadata + vault UUID references ──────────
     const { error: dbError } = await supabase.from('user_integrations').upsert(

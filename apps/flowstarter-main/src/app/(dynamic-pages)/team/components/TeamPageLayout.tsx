@@ -86,9 +86,7 @@ export function TeamPageLayout({
         </div>
       )}
 
-      <GlassCard className="p-6 sm:p-8">
-        {children}
-      </GlassCard>
+      <GlassCard className="p-6 sm:p-8">{children}</GlassCard>
     </div>
   );
 }

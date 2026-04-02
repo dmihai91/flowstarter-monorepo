@@ -8,8 +8,13 @@ import { describe, it, expect } from 'vitest';
 function detectSpam(name: string, email: string, message: string): boolean {
   const combined = `${name} ${email} ${message}`.toLowerCase();
   const spamPatterns = [
-    /\bviagra\b/, /\bcasino\b/, /\bcrypto\b/, /\bbitcoin\b/,
-    /\bsex\b/, /\bporn\b/, /https?:\/\/[^\s]+\.[^\s]+/,
+    /\bviagra\b/,
+    /\bcasino\b/,
+    /\bcrypto\b/,
+    /\bbitcoin\b/,
+    /\bsex\b/,
+    /\bporn\b/,
+    /https?:\/\/[^\s]+\.[^\s]+/,
     /\b(buy|cheap|free|win|winner|prize|click here)\b/,
   ];
   const spamScore = spamPatterns.filter((p) => p.test(combined)).length;
@@ -18,19 +23,35 @@ function detectSpam(name: string, email: string, message: string): boolean {
 
 describe('detectSpam', () => {
   it('marks obvious spam (multiple patterns)', () => {
-    expect(detectSpam('Casino King', 'spam@crypto.com', 'Buy cheap viagra now!')).toBe(true);
+    expect(
+      detectSpam('Casino King', 'spam@crypto.com', 'Buy cheap viagra now!')
+    ).toBe(true);
   });
 
   it('marks link-heavy spam', () => {
-    expect(detectSpam('John', 'j@test.com', 'Click here https://evil.com to win free bitcoin')).toBe(true);
+    expect(
+      detectSpam(
+        'John',
+        'j@test.com',
+        'Click here https://evil.com to win free bitcoin'
+      )
+    ).toBe(true);
   });
 
   it('allows legitimate messages', () => {
-    expect(detectSpam('Elena Popescu', 'elena@salon.ro', 'I would like to book an appointment for next week')).toBe(false);
+    expect(
+      detectSpam(
+        'Elena Popescu',
+        'elena@salon.ro',
+        'I would like to book an appointment for next week'
+      )
+    ).toBe(false);
   });
 
   it('allows messages with single pattern (below threshold)', () => {
-    expect(detectSpam('John', 'john@gmail.com', 'I want to buy your service')).toBe(false);
+    expect(
+      detectSpam('John', 'john@gmail.com', 'I want to buy your service')
+    ).toBe(false);
   });
 
   it('handles empty fields', () => {
@@ -54,7 +75,9 @@ describe('CORS headers', () => {
 
   it('echoes back the origin', () => {
     const headers = corsHeaders('https://mysite.flowstarter.site');
-    expect(headers['Access-Control-Allow-Origin']).toBe('https://mysite.flowstarter.site');
+    expect(headers['Access-Control-Allow-Origin']).toBe(
+      'https://mysite.flowstarter.site'
+    );
   });
 
   it('allows POST method', () => {
@@ -120,20 +143,39 @@ describe('Lead data extraction', () => {
       preferredDate: '2026-03-15',
     };
 
-    const { name, email, phone, message, source, projectId, ...extra } = body;
+    const {
+      name,
+      email,
+      phone: _phone,
+      message: _message,
+      source: _source,
+      projectId: _projectId,
+      ...extra
+    } = body;
 
     expect(name).toBe('Elena');
     expect(email).toBe('elena@test.com');
-    expect(extra).toEqual({ company: 'Salon Elena', preferredDate: '2026-03-15' });
+    expect(extra).toEqual({
+      company: 'Salon Elena',
+      preferredDate: '2026-03-15',
+    });
   });
 
   it('handles missing fields gracefully', () => {
     const body = { projectId: 'proj-1', email: 'test@test.com' };
-    const { name, email, phone, message, source, projectId, ...extra } = body as Record<string, unknown>;
+    const {
+      name,
+      email,
+      phone: _phone,
+      message: _message,
+      source: _source,
+      projectId: _projectId,
+      ...extra
+    } = body as Record<string, unknown>;
 
     expect(name).toBeUndefined();
     expect(email).toBe('test@test.com');
-    expect(phone).toBeUndefined();
+    expect(_phone).toBeUndefined();
     expect(Object.keys(extra)).toHaveLength(0);
   });
 });

@@ -24,14 +24,18 @@ const applyBetaDiscount = (price: number): number => {
   return Math.round(price * (1 - BETA_DISCOUNT));
 };
 
-const BASE_PRICING: Record<string, { setup_fee: number; monthly_fee: number }> = {
-  standard: { setup_fee: 999, monthly_fee: 59 },
-  pro: { setup_fee: 1499, monthly_fee: 99 },
-  ecommerce: { setup_fee: 1999, monthly_fee: 149 },
-  business: { setup_fee: 1999, monthly_fee: 149 },
-};
+const BASE_PRICING: Record<string, { setup_fee: number; monthly_fee: number }> =
+  {
+    standard: { setup_fee: 999, monthly_fee: 59 },
+    pro: { setup_fee: 1499, monthly_fee: 99 },
+    ecommerce: { setup_fee: 1999, monthly_fee: 149 },
+    business: { setup_fee: 1999, monthly_fee: 149 },
+  };
 
-const PRICING_DEFAULTS: Record<string, { setup_fee: number; monthly_fee: number }> = Object.fromEntries(
+const PRICING_DEFAULTS: Record<
+  string,
+  { setup_fee: number; monthly_fee: number }
+> = Object.fromEntries(
   Object.entries(BASE_PRICING).map(([key, val]) => [
     key,
     {
@@ -46,16 +50,21 @@ export { BETA_PRICING_ENABLED, PRICING_DEFAULTS };
 export function useTeamProjectDialogs() {
   // Delete dialog
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [projectToDelete, setProjectToDelete] = useState<ProjectRef | null>(null);
+  const [projectToDelete, setProjectToDelete] = useState<ProjectRef | null>(
+    null
+  );
 
   // Rename dialog
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
-  const [projectToRename, setProjectToRename] = useState<ProjectRef | null>(null);
+  const [projectToRename, setProjectToRename] = useState<ProjectRef | null>(
+    null
+  );
   const [newName, setNewName] = useState('');
 
   // Pricing dialog
   const [pricingDialogOpen, setPricingDialogOpen] = useState(false);
-  const [projectToPrice, setProjectToPrice] = useState<ProjectWithPricing | null>(null);
+  const [projectToPrice, setProjectToPrice] =
+    useState<ProjectWithPricing | null>(null);
   const [pricingData, setPricingData] = useState<ProjectPricingData>({
     project_type: 'standard',
     setup_fee: 0,

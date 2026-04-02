@@ -48,7 +48,10 @@ export default function FooterCompact() {
               </CustomNavLink>
               <span className="text-gray-300 dark:text-gray-700">•</span>
               <a
-                href={process.env.NEXT_PUBLIC_EDITOR_URL || 'https://editor.flowstarter.dev'}
+                href={
+                  process.env.NEXT_PUBLIC_EDITOR_URL ||
+                  'https://editor.flowstarter.dev'
+                }
                 className="hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
               >
                 {t('footer.nav.editorLabel')}

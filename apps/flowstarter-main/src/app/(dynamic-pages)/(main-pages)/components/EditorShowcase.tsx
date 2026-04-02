@@ -1,8 +1,5 @@
 'use client';
 
-import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
-
 import { useI18n } from '@/lib/i18n';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useMockEditor } from './useMockEditor';
@@ -12,17 +9,22 @@ import { MockEditorPreview } from './MockEditorPreview';
  * Standalone editor showcase section with breathing room.
  */
 export function EditorShowcase() {
-  const { t } = useI18n();
+  const { t: _t } = useI18n();
   const { ref: sectionRef, isVisible } = useScrollAnimation();
   const editor = useMockEditor();
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden pt-2 pb-10 lg:pt-4 lg:pb-14">
+    <section
+      ref={sectionRef}
+      className="relative overflow-hidden pt-2 pb-10 lg:pt-4 lg:pb-14"
+    >
       <div className="relative">
         <div className="py-4 lg:py-6">
-          <div className={`max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 transition-all duration-1000 ease-out ${
-            isVisible ? 'opacity-100' : 'opacity-0'
-          }`}>
+          <div
+            className={`max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 transition-all duration-1000 ease-out ${
+              isVisible ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
             <div className="relative max-w-6xl mx-auto">
               {/* Glow behind editor */}
               <div className="absolute -inset-6 sm:-inset-10 rounded-[2rem] bg-gradient-to-br from-[var(--purple)]/8 via-blue-500/4 to-pink-500/8 dark:from-[var(--purple)]/12 dark:via-blue-500/6 dark:to-pink-500/12 blur-2xl opacity-60 pointer-events-none" />

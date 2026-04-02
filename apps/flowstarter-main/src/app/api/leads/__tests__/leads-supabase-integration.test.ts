@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 /**
  * Integration tests: Lead capture → Supabase persistence
@@ -23,10 +24,11 @@ const mockSupabase = {
       return {
         select: () => ({
           eq: () => ({
-            single: () => Promise.resolve({
-              data: selectResults.project ?? { id: 'proj-test-123' },
-              error: selectResults.projectError ?? null,
-            }),
+            single: () =>
+              Promise.resolve({
+                data: selectResults.project ?? { id: 'proj-test-123' },
+                error: selectResults.projectError ?? null,
+              }),
           }),
         }),
       };
@@ -48,7 +50,11 @@ const mockSupabase = {
         }),
       };
     }
-    return { select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null }) }) }) };
+    return {
+      select: () => ({
+        eq: () => ({ single: () => Promise.resolve({ data: null }) }),
+      }),
+    };
   }),
   rpc: vi.fn(() => Promise.resolve({ data: [], error: null })),
 };
@@ -61,8 +67,13 @@ vi.mock('@/supabase-clients/server', () => ({
 function detectSpam(name: string, email: string, message: string): boolean {
   const combined = `${name} ${email} ${message}`.toLowerCase();
   const spamPatterns = [
-    /\bviagra\b/, /\bcasino\b/, /\bcrypto\b/, /\bbitcoin\b/,
-    /\bsex\b/, /\bporn\b/, /https?:\/\/[^\s]+\.[^\s]+/,
+    /\bviagra\b/,
+    /\bcasino\b/,
+    /\bcrypto\b/,
+    /\bbitcoin\b/,
+    /\bsex\b/,
+    /\bporn\b/,
+    /https?:\/\/[^\s]+\.[^\s]+/,
     /\b(buy|cheap|free|win|winner|prize|click here)\b/,
   ];
   return spamPatterns.filter((p) => p.test(combined)).length >= 2;
@@ -73,8 +84,11 @@ async function simulateCapture(body: Record<string, unknown>, ip = '1.2.3.4') {
   if (!projectId) return { status: 400, error: 'projectId required' };
 
   // Verify project exists
-  const { data: project } = await mockSupabase.from('projects')
-    .select('id').eq('id', projectId).single();
+  const { data: project } = await mockSupabase
+    .from('projects')
+    .select('id')
+    .eq('id', projectId)
+    .single();
 
   if (!project) return { status: 400, error: 'Invalid project' };
 
@@ -84,7 +98,7 @@ async function simulateCapture(body: Record<string, unknown>, ip = '1.2.3.4') {
   const isSpam = detectSpam(
     (name as string) || '',
     (email as string) || '',
-    (message as string) || '',
+    (message as string) || ''
   );
 
   const row = {
@@ -222,7 +236,7 @@ describe('Lead capture → Supabase persistence', () => {
   it('captures IP address for rate limiting and audit', async () => {
     await simulateCapture(
       { projectId: 'proj-test-123', email: 'test@test.com' },
-      '203.0.113.42',
+      '203.0.113.42'
     );
 
     expect(insertedRows[0].ip_address).toBe('203.0.113.42');
@@ -244,13 +258,31 @@ describe('Lead capture → Supabase persistence', () => {
   });
 
   it('persists multiple leads for the same project', async () => {
-    await simulateCapture({ projectId: 'proj-test-123', name: 'Lead 1', email: 'a@test.com' });
-    await simulateCapture({ projectId: 'proj-test-123', name: 'Lead 2', email: 'b@test.com' });
-    await simulateCapture({ projectId: 'proj-test-123', name: 'Lead 3', email: 'c@test.com' });
+    await simulateCapture({
+      projectId: 'proj-test-123',
+      name: 'Lead 1',
+      email: 'a@test.com',
+    });
+    await simulateCapture({
+      projectId: 'proj-test-123',
+      name: 'Lead 2',
+      email: 'b@test.com',
+    });
+    await simulateCapture({
+      projectId: 'proj-test-123',
+      name: 'Lead 3',
+      email: 'c@test.com',
+    });
 
     expect(insertedRows).toHaveLength(3);
-    expect(insertedRows.map((r) => r.name)).toEqual(['Lead 1', 'Lead 2', 'Lead 3']);
-    expect(insertedRows.every((r) => r.project_id === 'proj-test-123')).toBe(true);
+    expect(insertedRows.map((r) => r.name)).toEqual([
+      'Lead 1',
+      'Lead 2',
+      'Lead 3',
+    ]);
+    expect(insertedRows.every((r) => r.project_id === 'proj-test-123')).toBe(
+      true
+    );
   });
 
   it('source field captures the page path', async () => {

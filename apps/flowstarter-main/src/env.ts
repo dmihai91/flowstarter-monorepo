@@ -1,5 +1,5 @@
-import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "zod";
+import { createEnv } from '@t3-oss/env-nextjs';
+import { z } from 'zod';
 
 export const env = createEnv({
   /*
@@ -14,22 +14,22 @@ export const env = createEnv({
 
     // Clerk Authentication
     CLERK_SECRET_KEY: z.string().min(1),
-    CLERK_SUPABASE_TEMPLATE: z.string().default("supabase"),
+    CLERK_SUPABASE_TEMPLATE: z.string().default('supabase'),
     CLERK_WEBHOOK_SECRET: z.string().optional(),
 
     // AI Services
     OPENROUTER_API_KEY: z.string().optional(),
     OPENAI_API_KEY: z.string().optional(),
-    OPENAI_MODEL: z.string().default("gpt-4o-mini"),
+    OPENAI_MODEL: z.string().default('gpt-4o-mini'),
     AI_AUDIT_ENC_KEY: z.string().optional(),
 
     // GoDaddy Domain API
     GODADDY_API_KEY: z.string().optional(),
     GODADDY_API_SECRET: z.string().optional(),
     GODADDY_USE_PRODUCTION: z
-      .enum(["true", "false"])
-      .default("false")
-      .transform((v) => v === "true"),
+      .enum(['true', 'false'])
+      .default('false')
+      .transform((v) => v === 'true'),
 
     // UploadThing (File Uploads)
     UPLOADTHING_SECRET: z.string().optional(),
@@ -72,8 +72,8 @@ export const env = createEnv({
 
     // Runtime
     NODE_ENV: z
-      .enum(["development", "production", "test"])
-      .default("development"),
+      .enum(['development', 'production', 'test'])
+      .default('development'),
   },
 
   /*
@@ -87,10 +87,10 @@ export const env = createEnv({
 
     // Clerk Authentication
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
-    NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string().default("/login"),
-    NEXT_PUBLIC_CLERK_SIGN_UP_URL: z.string().default("/sign-up"),
-    NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: z.string().default("/dashboard"),
-    NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z.string().default("/dashboard"),
+    NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string().default('/login'),
+    NEXT_PUBLIC_CLERK_SIGN_UP_URL: z.string().default('/sign-up'),
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: z.string().default('/dashboard'),
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z.string().default('/dashboard'),
 
     // Stripe (publishable key is safe for client)
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().optional(),

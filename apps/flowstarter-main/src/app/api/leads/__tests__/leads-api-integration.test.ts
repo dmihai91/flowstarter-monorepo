@@ -4,7 +4,7 @@
  * Tests the full request → validation → storage → response cycle.
  * Mocks Supabase at the client level.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 
 // Inline the functions we're testing (extracted from route handlers)
 // This avoids Next.js route handler bootstrap issues in unit tests
@@ -12,8 +12,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 function detectSpam(name: string, email: string, message: string): boolean {
   const combined = `${name} ${email} ${message}`.toLowerCase();
   const spamPatterns = [
-    /\bviagra\b/, /\bcasino\b/, /\bcrypto\b/, /\bbitcoin\b/,
-    /\bsex\b/, /\bporn\b/, /https?:\/\/[^\s]+\.[^\s]+/,
+    /\bviagra\b/,
+    /\bcasino\b/,
+    /\bcrypto\b/,
+    /\bbitcoin\b/,
+    /\bsex\b/,
+    /\bporn\b/,
+    /https?:\/\/[^\s]+\.[^\s]+/,
     /\b(buy|cheap|free|win|winner|prize|click here)\b/,
   ];
   return spamPatterns.filter((p) => p.test(combined)).length >= 2;
@@ -66,18 +71,39 @@ describe('Leads API integration', () => {
       expect(message).toBe('Doresc o programare pentru saptamana viitoare');
       expect(source).toBe('/contact');
       expect(projectId).toBe('proj-abc');
-      expect(extra).toEqual({ company: 'Salon Maria', preferredTime: 'dimineata' });
+      expect(extra).toEqual({
+        company: 'Salon Maria',
+        preferredTime: 'dimineata',
+      });
     });
 
     it('classifies legitimate Romanian business inquiries as non-spam', () => {
-      expect(detectSpam('Ana Popescu', 'ana@gmail.com', 'Buna ziua, doresc o programare')).toBe(false);
-      expect(detectSpam('Ion Dima', 'ion@yahoo.ro', 'Cat costa un tratament facial?')).toBe(false);
-      expect(detectSpam('Elena', 'elena@salon.ro', 'Vreau sa fac o rezervare pentru vineri')).toBe(false);
+      expect(
+        detectSpam(
+          'Ana Popescu',
+          'ana@gmail.com',
+          'Buna ziua, doresc o programare'
+        )
+      ).toBe(false);
+      expect(
+        detectSpam('Ion Dima', 'ion@yahoo.ro', 'Cat costa un tratament facial?')
+      ).toBe(false);
+      expect(
+        detectSpam(
+          'Elena',
+          'elena@salon.ro',
+          'Vreau sa fac o rezervare pentru vineri'
+        )
+      ).toBe(false);
     });
 
     it('classifies obvious spam correctly', () => {
-      expect(detectSpam('Buy Cheap', 'spam@casino.com', 'Win free bitcoin now')).toBe(true);
-      expect(detectSpam('', '', 'Buy viagra cheap at https://spam.com click here')).toBe(true);
+      expect(
+        detectSpam('Buy Cheap', 'spam@casino.com', 'Win free bitcoin now')
+      ).toBe(true);
+      expect(
+        detectSpam('', '', 'Buy viagra cheap at https://spam.com click here')
+      ).toBe(true);
     });
 
     it('handles Unicode names and messages', () => {
@@ -124,12 +150,16 @@ describe('Leads API integration', () => {
   describe('CORS integration', () => {
     it('allows cross-origin from generated sites', () => {
       const headers = corsHeaders('https://elena-beauty.flowstarter.site');
-      expect(headers['Access-Control-Allow-Origin']).toBe('https://elena-beauty.flowstarter.site');
+      expect(headers['Access-Control-Allow-Origin']).toBe(
+        'https://elena-beauty.flowstarter.site'
+      );
     });
 
     it('allows cross-origin from custom domains', () => {
       const headers = corsHeaders('https://elenabeauty.ro');
-      expect(headers['Access-Control-Allow-Origin']).toBe('https://elenabeauty.ro');
+      expect(headers['Access-Control-Allow-Origin']).toBe(
+        'https://elenabeauty.ro'
+      );
     });
 
     it('allows POST for form submission', () => {
@@ -139,11 +169,25 @@ describe('Leads API integration', () => {
   });
 
   describe('Lead status pipeline', () => {
-    const statuses = ['new', 'contacted', 'qualified', 'converted', 'archived', 'spam'];
+    const statuses = [
+      'new',
+      'contacted',
+      'qualified',
+      'converted',
+      'archived',
+      'spam',
+    ];
 
     it('all statuses are valid', () => {
       statuses.forEach((s) => {
-        expect(['new', 'contacted', 'qualified', 'converted', 'spam', 'archived']).toContain(s);
+        expect([
+          'new',
+          'contacted',
+          'qualified',
+          'converted',
+          'spam',
+          'archived',
+        ]).toContain(s);
       });
     });
 
@@ -153,7 +197,11 @@ describe('Leads API integration', () => {
     });
 
     it('spam leads get "spam" status', () => {
-      const isSpam = detectSpam('Casino', 'spam@crypto.com', 'Buy cheap viagra');
+      const isSpam = detectSpam(
+        'Casino',
+        'spam@crypto.com',
+        'Buy cheap viagra'
+      );
       expect(isSpam ? 'spam' : 'new').toBe('spam');
     });
   });

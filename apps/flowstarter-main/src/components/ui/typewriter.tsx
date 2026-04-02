@@ -14,7 +14,12 @@ interface TypewriterTextProps {
  * Renders text with a typewriter animation when value first populates.
  * Shows a blinking cursor until done.
  */
-export function TypewriterText({ value, className, speed = 18, delay = 0 }: TypewriterTextProps) {
+export function TypewriterText({
+  value,
+  className,
+  speed = 18,
+  delay = 0,
+}: TypewriterTextProps) {
   const { displayed, done } = useTypewriter(value, { speed, delay });
 
   return (
@@ -27,10 +32,11 @@ export function TypewriterText({ value, className, speed = 18, delay = 0 }: Type
   );
 }
 
-interface TypewriterInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface TypewriterInputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
   value: string;
   onValueChange: (v: string) => void;
-  aiValue?: string;  // the AI-inferred value — triggers typewriter when set
+  aiValue?: string; // the AI-inferred value — triggers typewriter when set
   speed?: number;
 }
 
@@ -38,19 +44,25 @@ interface TypewriterInputProps extends React.InputHTMLAttributes<HTMLInputElemen
  * Input that typewriters the initial AI-inferred value, then lets the user edit freely.
  */
 export function TypewriterInput({
-  value, onValueChange, aiValue, speed = 18, className, ...rest
+  value,
+  onValueChange,
+  aiValue,
+  speed = 18,
+  className,
+  ...rest
 }: TypewriterInputProps) {
-  const { displayed, done } = useTypewriter(aiValue ?? '', { speed, enabled: !!aiValue });
+  const { displayed, done } = useTypewriter(aiValue ?? '', {
+    speed,
+    enabled: !!aiValue,
+  });
 
   // Once AI value is fully typed, sync it into the controlled value (once)
-  const syncedRef = { current: false };
-
   return (
     <div className="relative">
       <input
         {...rest}
         value={!done && aiValue ? displayed : value}
-        onChange={e => onValueChange(e.target.value)}
+        onChange={(e) => onValueChange(e.target.value)}
         className={cn(className, !done && aiValue && 'caret-transparent')}
       />
       {!done && aiValue && (

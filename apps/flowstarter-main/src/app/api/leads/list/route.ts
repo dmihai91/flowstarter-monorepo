@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 /**
  * GET /api/leads/list?projectId=xxx&status=new&limit=50
@@ -15,12 +16,13 @@ export async function GET(request: NextRequest) {
   const status = request.nextUrl.searchParams.get('status');
   const limit = parseInt(request.nextUrl.searchParams.get('limit') || '50');
 
-  if (!projectId) return NextResponse.json({ error: 'projectId required' }, { status: 400 });
+  if (!projectId)
+    return NextResponse.json({ error: 'projectId required' }, { status: 400 });
 
   const supabase = createSupabaseServiceRoleClient();
 
   let query = supabase
-    .from('leads' as any)
+    .from('leads')
     .select('*')
     .eq('project_id', projectId)
     .order('created_at', { ascending: false })
@@ -35,28 +37,39 @@ export async function GET(request: NextRequest) {
 
   const { data, error } = await query;
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error)
+    return NextResponse.json({ error: error.message }, { status: 500 });
 
   // Also get counts by status
-  const { data: counts } = await supabase
-    .rpc('get_lead_counts', { p_project_id: projectId });
+  const { data: counts } = await supabase.rpc('get_lead_counts', {
+    p_project_id: projectId,
+  });
 
   return NextResponse.json({ leads: data || [], counts: counts || [] });
 }
 
 export async function PATCH(request: NextRequest) {
   await requireAuth();
-  const body = (await request.json()) as { leadId: string; status?: string; notes?: string };
+  const body = (await request.json()) as {
+    leadId: string;
+    status?: string;
+    notes?: string;
+  };
 
-  if (!body.leadId) return NextResponse.json({ error: 'leadId required' }, { status: 400 });
+  if (!body.leadId)
+    return NextResponse.json({ error: 'leadId required' }, { status: 400 });
 
   const supabase = createSupabaseServiceRoleClient();
   const update: Record<string, unknown> = {};
   if (body.status) update.status = body.status;
   if (body.notes !== undefined) update.notes = body.notes;
 
-  const { error } = await supabase.from('leads' as any).update(update).eq('id', body.leadId);
+  const { error } = await supabase
+    .from('leads')
+    .update(update)
+    .eq('id', body.leadId);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error)
+    return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ success: true });
 }

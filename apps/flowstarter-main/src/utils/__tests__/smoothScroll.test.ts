@@ -10,9 +10,13 @@ describe('smoothScroll', () => {
   describe('smoothScrollToSection', () => {
     it('does nothing if element not found', () => {
       const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      const scrollToSpy = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+      const scrollToSpy = vi
+        .spyOn(window, 'scrollTo')
+        .mockImplementation(() => {});
       smoothScrollToSection('nonexistent');
-      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('nonexistent'));
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('nonexistent')
+      );
       expect(scrollToSpy).not.toHaveBeenCalled();
     });
 
@@ -21,11 +25,20 @@ describe('smoothScroll', () => {
       el.id = 'target';
       document.body.appendChild(el);
       vi.spyOn(el, 'getBoundingClientRect').mockReturnValue({
-        top: 500, bottom: 600, left: 0, right: 100,
-        width: 100, height: 100, x: 0, y: 500, toJSON: () => {},
+        top: 500,
+        bottom: 600,
+        left: 0,
+        right: 100,
+        width: 100,
+        height: 100,
+        x: 0,
+        y: 500,
+        toJSON: () => {},
       });
       vi.spyOn(console, 'log').mockImplementation(() => {});
-      const rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockReturnValue(1);
+      const rafSpy = vi
+        .spyOn(window, 'requestAnimationFrame')
+        .mockReturnValue(1);
 
       smoothScrollToSection('target');
       expect(rafSpy).toHaveBeenCalledTimes(1);
@@ -34,7 +47,9 @@ describe('smoothScroll', () => {
 
   describe('handleSmoothScroll', () => {
     it('does nothing for non-hash links', () => {
-      const event = { preventDefault: vi.fn() } as unknown as React.MouseEvent<HTMLAnchorElement>;
+      const event = {
+        preventDefault: vi.fn(),
+      } as unknown as React.MouseEvent<HTMLAnchorElement>;
       handleSmoothScroll(event, '/about');
       expect(event.preventDefault).not.toHaveBeenCalled();
     });
@@ -44,13 +59,22 @@ describe('smoothScroll', () => {
       el.id = 'features';
       document.body.appendChild(el);
       vi.spyOn(el, 'getBoundingClientRect').mockReturnValue({
-        top: 300, bottom: 400, left: 0, right: 100,
-        width: 100, height: 100, x: 0, y: 300, toJSON: () => {},
+        top: 300,
+        bottom: 400,
+        left: 0,
+        right: 100,
+        width: 100,
+        height: 100,
+        x: 0,
+        y: 300,
+        toJSON: () => {},
       });
       vi.spyOn(console, 'log').mockImplementation(() => {});
       vi.spyOn(window, 'requestAnimationFrame').mockReturnValue(1);
 
-      const event = { preventDefault: vi.fn() } as unknown as React.MouseEvent<HTMLAnchorElement>;
+      const event = {
+        preventDefault: vi.fn(),
+      } as unknown as React.MouseEvent<HTMLAnchorElement>;
       handleSmoothScroll(event, '#features');
       expect(event.preventDefault).toHaveBeenCalled();
     });
@@ -60,14 +84,25 @@ describe('smoothScroll', () => {
       el.id = 'pricing';
       document.body.appendChild(el);
       vi.spyOn(el, 'getBoundingClientRect').mockReturnValue({
-        top: 200, bottom: 300, left: 0, right: 100,
-        width: 100, height: 100, x: 0, y: 200, toJSON: () => {},
+        top: 200,
+        bottom: 300,
+        left: 0,
+        right: 100,
+        width: 100,
+        height: 100,
+        x: 0,
+        y: 200,
+        toJSON: () => {},
       });
       vi.spyOn(console, 'log').mockImplementation(() => {});
       vi.spyOn(window, 'requestAnimationFrame').mockReturnValue(1);
-      const pushStateSpy = vi.spyOn(history, 'pushState').mockImplementation(() => {});
+      const pushStateSpy = vi
+        .spyOn(history, 'pushState')
+        .mockImplementation(() => {});
 
-      const event = { preventDefault: vi.fn() } as unknown as React.MouseEvent<HTMLAnchorElement>;
+      const event = {
+        preventDefault: vi.fn(),
+      } as unknown as React.MouseEvent<HTMLAnchorElement>;
       handleSmoothScroll(event, '#pricing');
       expect(pushStateSpy).toHaveBeenCalledWith(null, '', '#pricing');
     });

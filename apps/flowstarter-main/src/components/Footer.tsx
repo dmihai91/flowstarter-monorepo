@@ -1,8 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { Footer as DSFooter, type FooterProps, type FooterLink } from '@flowstarter/flow-design-system';
-import type { ReactNode } from 'react';
+import {
+  Footer as DSFooter,
+  type FooterProps,
+  type FooterLink,
+} from '@flowstarter/flow-design-system';
 import { useTranslations } from '@/lib/i18n';
 
 export default function Footer(props: FooterProps) {
@@ -31,7 +34,9 @@ export default function Footer(props: FooterProps) {
       byTeamLabel={t('footer.byTeam')}
       {...props}
       renderLink={(href, children, className) => (
-        <Link href={href} className={className}>{children}</Link>
+        <Link href={href} className={className}>
+          {children}
+        </Link>
       )}
     />
   );

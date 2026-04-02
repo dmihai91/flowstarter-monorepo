@@ -55,7 +55,7 @@ export async function scaffoldTemplate(
 				try {
 					fileTree = await buildFileTree(templatePath);
 					console.log(`📦 Scaffolding template from new structure: ${scaffoldPath}`);
-				} catch (rootError) {
+				} catch {
 					return {
 						scaffold: null,
 						error: `Template source not found: ${templatePath}`,

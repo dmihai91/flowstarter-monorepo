@@ -245,7 +245,7 @@ describe('supabase utilities', () => {
       vi.resetModules();
       const { createProject } = await import('./supabase.js');
 
-      const result = await createProject(newProject);
+      const _result = await createProject(newProject);
 
       expect(mockFrom).toHaveBeenCalledWith('projects');
       expect(mockInsert).toHaveBeenCalledWith(newProject);
@@ -294,7 +294,7 @@ describe('supabase utilities', () => {
       vi.resetModules();
       const { updateProject } = await import('./supabase.js');
 
-      const result = await updateProject('proj_123', updates);
+      const _result = await updateProject('proj_123', updates);
 
       expect(mockFrom).toHaveBeenCalledWith('projects');
       expect(mockUpdate).toHaveBeenCalled();

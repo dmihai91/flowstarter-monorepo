@@ -1,4 +1,5 @@
 var tsConfigs = ['./tsconfig.json'];
+var tsconfigRootDir = __dirname;
 
 var ruleOverrides = {};
 
@@ -15,6 +16,7 @@ module.exports = {
       parser: '@typescript-eslint/parser',
       parserOptions: {
         project: tsConfigs,
+        tsconfigRootDir,
       },
       plugins: ['@typescript-eslint', 'react-hooks', 'prettier'],
       rules: {
@@ -34,10 +36,11 @@ module.exports = {
       parser: '@typescript-eslint/parser',
       parserOptions: {
         project: tsConfigs,
+        tsconfigRootDir,
       },
       plugins: [
         '@typescript-eslint',
-        'plugin:playwright/playwright-test',
+        'playwright',
         'prettier',
       ],
       rules: {
@@ -55,6 +58,7 @@ module.exports = {
       parser: '@typescript-eslint/parser',
       parserOptions: {
         project: tsConfigs,
+        tsconfigRootDir,
       },
       plugins: ['@typescript-eslint', 'prettier'],
       rules: {

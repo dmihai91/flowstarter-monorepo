@@ -445,7 +445,7 @@ function generateHTML(design, isDark = false) {
         <div class="cta-secondary">Learn More</div>
       </div>
       <div class="stats">
-        ${design.stats.map((stat, i) => {
+        ${design.stats.map((stat, _i) => {
           const parts = stat.split(' ');
           const value = parts[0];
           const label = parts.slice(1).join(' ') || stat;

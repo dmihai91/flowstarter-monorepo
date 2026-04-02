@@ -46,7 +46,10 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint"
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": ["apps/flowstarter-library/mcp-server/src/**/*.ts"]
+      }
     },
     "typecheck": {
       "executor": "nx:run-commands",

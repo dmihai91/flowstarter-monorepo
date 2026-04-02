@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Use vi.hoisted to ensure mock functions are hoisted with vi.mock
 const { mockVerifyAuth, mockCheckUserPermissions } = vi.hoisted(() => ({

@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import type { NextAuthConfig } from "next-auth";
+import { env } from "@/env";
 
 export const authConfig: NextAuthConfig = {
   providers: [
@@ -7,9 +8,9 @@ export const authConfig: NextAuthConfig = {
       id: "authentik",
       name: "Flowstarter SSO",
       type: "oidc",
-      issuer: process.env.AUTHENTIK_ISSUER,
-      clientId: process.env.AUTHENTIK_CLIENT_ID,
-      clientSecret: process.env.AUTHENTIK_CLIENT_SECRET,
+      issuer: env.AUTHENTIK_ISSUER,
+      clientId: env.AUTHENTIK_CLIENT_ID,
+      clientSecret: env.AUTHENTIK_CLIENT_SECRET,
     },
   ],
   pages: {

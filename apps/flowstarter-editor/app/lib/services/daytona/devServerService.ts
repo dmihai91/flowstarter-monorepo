@@ -320,9 +320,12 @@ export async function checkDevLogForPort(sandbox: Sandbox, workDir: string): Pro
  * Read the full dev log content for error analysis
  */
 export async function readDevLog(sandbox: Sandbox, workDir: string, lines: number = 100): Promise<string> {
+  // Validate lines is a safe positive integer before shell interpolation
+  const safeLines = Math.max(1, Math.min(10000, Math.floor(Number(lines) || 100)));
+
   try {
     const result = await sandbox.process.executeCommand(
-      `tail -${lines} /tmp/dev.log 2>/dev/null || echo ""`,
+      `tail -${safeLines} /tmp/dev.log 2>/dev/null || echo ""`,
       workDir,
       undefined,
       5,

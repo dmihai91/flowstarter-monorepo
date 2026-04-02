@@ -77,4 +77,3 @@ export class TerminalStore {
     // No-op in Daytona mode - no local shell processes
   }
 }
-

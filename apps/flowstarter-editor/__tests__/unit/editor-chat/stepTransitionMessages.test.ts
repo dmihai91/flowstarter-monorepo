@@ -5,7 +5,7 @@
  * @vitest-environment jsdom
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 // ─── Message Context Types ───────────────────────────────────────────────────
 
@@ -35,24 +35,21 @@ function generateBusinessSummary(
   businessGoals?: string[],
   brandTone?: string,
   sellingMethod?: string,
-  pricingOffers?: string
+  pricingOffers?: string,
 ): string {
   const sellingMethodLabels: Record<string, string> = {
-    'ecommerce': 'E-commerce (selling products)',
-    'bookings': 'Appointment bookings',
-    'leads': 'Lead generation',
-    'subscriptions': 'Subscriptions/memberships',
-    'content': 'Content/media',
-    'other': 'Other',
+    ecommerce: 'E-commerce (selling products)',
+    bookings: 'Appointment bookings',
+    leads: 'Lead generation',
+    subscriptions: 'Subscriptions/memberships',
+    content: 'Content/media',
+    other: 'Other',
   };
 
-  const goalsFormatted = businessGoals && businessGoals.length > 0
-    ? businessGoals.map(g => `• ${g}`).join('\n')
-    : '• Not specified';
+  const goalsFormatted =
+    businessGoals && businessGoals.length > 0 ? businessGoals.map((g) => `• ${g}`).join('\n') : '• Not specified';
 
-  const pricingSection = pricingOffers
-    ? `\n\n**Pricing/Offers:**\n${pricingOffers}`
-    : '';
+  const pricingSection = pricingOffers ? `\n\n**Pricing/Offers:**\n${pricingOffers}` : '';
 
   return `Perfect! Here's a summary of **${projectName || 'your business'}**:
 
@@ -75,7 +72,8 @@ Does this look right?`;
 }
 
 function generateStepTransitionMessage(context?: ChatContext): string {
-  const { fromStep, toStep, projectName, uvp, targetAudience, businessGoals, brandTone, sellingMethod, pricingOffers } = context || {};
+  const { fromStep, toStep, projectName, uvp, targetAudience, businessGoals, brandTone, sellingMethod, pricingOffers } =
+    context || {};
 
   const transitionMessages: Record<string, string> = {
     'describe-to-name': `Got it - I'll help you build that.\n\nWhat would you like to call it? Enter your business name, or let me suggest one.`,
@@ -92,7 +90,15 @@ function generateStepTransitionMessage(context?: ChatContext): string {
 
     'business-selling-to-business-pricing': `${sellingMethod ? `Got it, ${sellingMethod === 'ecommerce' ? 'e-commerce' : sellingMethod === 'bookings' ? 'booking' : sellingMethod === 'leads' ? 'lead gen' : sellingMethod} model.` : 'Makes sense.'}\n\n**Optional:** Any specific pricing or offers to highlight? Say "skip" if not applicable.`,
 
-    'business-pricing-to-business-summary': generateBusinessSummary(projectName, uvp, targetAudience, businessGoals, brandTone, sellingMethod, pricingOffers),
+    'business-pricing-to-business-summary': generateBusinessSummary(
+      projectName,
+      uvp,
+      targetAudience,
+      businessGoals,
+      brandTone,
+      sellingMethod,
+      pricingOffers,
+    ),
 
     'business-summary-to-template': `Now let's find the perfect look. Finding templates that match your style...`,
 
@@ -104,6 +110,7 @@ function generateStepTransitionMessage(context?: ChatContext): string {
   };
 
   const transitionKey = `${fromStep}-to-${toStep}`;
+
   return transitionMessages[transitionKey] || `Let's keep going...`;
 }
 
@@ -117,9 +124,9 @@ describe('Describe to Name Transition', () => {
       projectDescription: 'A wellness studio',
     });
 
-    expect(message).toContain("Got it");
-    expect(message).toContain("build that");
-    expect(message).toContain("call it");
+    expect(message).toContain('Got it');
+    expect(message).toContain('build that');
+    expect(message).toContain('call it');
   });
 
   it('should offer to suggest a name', () => {
@@ -128,7 +135,7 @@ describe('Describe to Name Transition', () => {
       toStep: 'name',
     });
 
-    expect(message).toContain("suggest");
+    expect(message).toContain('suggest');
   });
 });
 
@@ -174,7 +181,7 @@ describe('Name to Business UVP Transition', () => {
     });
 
     expect(message).not.toContain("You've just completed");
-    expect(message).not.toContain("You have just");
+    expect(message).not.toContain('You have just');
     expect(message).not.toContain("Now, let's define");
   });
 });
@@ -182,7 +189,7 @@ describe('Name to Business UVP Transition', () => {
 // ─── Business UVP to Audience Transition Tests ───────────────────────────────
 
 describe('Business UVP to Audience Transition', () => {
-  it('should quote the user\'s UVP in the response', () => {
+  it("should quote the user's UVP in the response", () => {
     const message = generateStepTransitionMessage({
       fromStep: 'business-uvp',
       toStep: 'business-audience',
@@ -194,7 +201,8 @@ describe('Business UVP to Audience Transition', () => {
   });
 
   it('should truncate long UVP values', () => {
-    const longUvp = 'This is a very long unique value proposition that goes on and on describing all the wonderful features and benefits of the business in great detail';
+    const longUvp =
+      'This is a very long unique value proposition that goes on and on describing all the wonderful features and benefits of the business in great detail';
     const message = generateStepTransitionMessage({
       fromStep: 'business-uvp',
       toStep: 'business-audience',
@@ -232,7 +240,8 @@ describe('Business Audience to Goals Transition', () => {
   });
 
   it('should truncate long audience descriptions', () => {
-    const longAudience = 'Small business owners and entrepreneurs who are looking for affordable solutions to grow their businesses';
+    const longAudience =
+      'Small business owners and entrepreneurs who are looking for affordable solutions to grow their businesses';
     const message = generateStepTransitionMessage({
       fromStep: 'business-audience',
       toStep: 'business-goals',
@@ -546,7 +555,7 @@ describe('Message Tone and Style', () => {
       { fromStep: 'business-audience', toStep: 'business-goals', targetAudience: 'Test' },
     ];
 
-    transitions.forEach(context => {
+    transitions.forEach((context) => {
       const message = generateStepTransitionMessage(context);
       expect(message).not.toMatch(/You've just completed/i);
       expect(message).not.toMatch(/You have just defined/i);
@@ -562,7 +571,7 @@ describe('Message Tone and Style', () => {
       { fromStep: 'building', toStep: 'complete' },
     ];
 
-    contexts.forEach(context => {
+    contexts.forEach((context) => {
       const message = generateStepTransitionMessage(context);
       expect(message).not.toMatch(/^#+ /m);
     });
@@ -582,11 +591,6 @@ describe('Message Tone and Style', () => {
 // ─── LLM System Prompt Tests ─────────────────────────────────────────────────
 
 describe('LLM System Prompt Guidelines', () => {
-  const BANNED_PHRASES = [
-    "You've just completed",
-    "You have just defined",
-  ];
-
   it('should have system prompt that bans robotic phrases', () => {
     const systemPrompt = `You are a friendly website builder assistant having a casual conversation. You sound like a helpful colleague, not a formal assistant.
 
@@ -601,8 +605,8 @@ Rules:
 
     // Verify the system prompt contains instructions to avoid robotic phrases
     expect(systemPrompt.toLowerCase()).toContain("you've just completed");
-    expect(systemPrompt.toLowerCase()).toContain("you have just defined");
-    expect(systemPrompt.toLowerCase()).toContain("robotic");
+    expect(systemPrompt.toLowerCase()).toContain('you have just defined');
+    expect(systemPrompt.toLowerCase()).toContain('robotic');
   });
 
   it('should generate step-specific prompts with user context', () => {
@@ -643,6 +647,7 @@ describe('API Response Structure', () => {
       if (messageType === 'step-transition') {
         return generateStepTransitionMessage(context);
       }
+
       return 'Unknown message type';
     };
 
@@ -655,4 +660,3 @@ describe('API Response Structure', () => {
     expect(result).toContain('Great service');
   });
 });
-

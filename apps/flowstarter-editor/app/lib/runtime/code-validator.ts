@@ -129,4 +129,3 @@ function validateJSON(content: string, errors: string[]): void {
     errors.push(`Invalid JSON: ${error instanceof Error ? error.message : 'Parse error'}`);
   }
 }
-

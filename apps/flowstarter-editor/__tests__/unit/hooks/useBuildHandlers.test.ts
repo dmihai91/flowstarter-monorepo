@@ -120,7 +120,7 @@ describe('useBuildHandlers Build Flow', () => {
       '/api/orchestrator?action=files',
       expect.objectContaining({
         signal: controller.signal,
-      })
+      }),
     );
   });
 
@@ -180,8 +180,7 @@ describe('useBuildHandlers AbortController', () => {
     const error = new Error('Aborted');
     error.name = 'AbortError';
 
-    const isAbortError = (err: unknown) =>
-      err instanceof Error && err.name === 'AbortError';
+    const isAbortError = (err: unknown) => err instanceof Error && err.name === 'AbortError';
 
     expect(isAbortError(error)).toBe(true);
   });
@@ -189,8 +188,7 @@ describe('useBuildHandlers AbortController', () => {
   it('should show error message for non-abort errors', () => {
     const error = new Error('Network failure');
 
-    const isAbortError = (err: unknown) =>
-      err instanceof Error && err.name === 'AbortError';
+    const isAbortError = (err: unknown) => err instanceof Error && err.name === 'AbortError';
 
     expect(isAbortError(error)).toBe(false);
   });
@@ -256,4 +254,3 @@ describe('useBuildHandlers Font Pairing', () => {
     expect(googleFonts).toContain('Source+Sans');
   });
 });
-

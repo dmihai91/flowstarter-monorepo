@@ -24,9 +24,11 @@ interface ErrorFixRule {
  * Order matters — first match wins.
  */
 export const ERROR_FIX_RULES: ErrorFixRule[] = [
-  // ═══════════════════════════════════════════════════════════════
-  // 1. MISSING PACKAGE IMPORTS
-  // ═══════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════
+   * 1. MISSING PACKAGE IMPORTS
+   * ═══════════════════════════════════════════════════════════════
+   */
 
   {
     id: 'astro-icon',
@@ -39,8 +41,10 @@ export const ERROR_FIX_RULES: ErrorFixRule[] = [
         // Remove all astro-icon imports
         .replace(/import\s+.*?\s+from\s+['"]astro-icon[^'"]*['"];?\n?/g, '')
         // Replace <Icon name="..." /> with a placeholder span
-        .replace(/<Icon\s+name=["']([^"']*)["']\s*(?:class=["'][^"']*["'])?\s*\/?\s*>/g,
-          '<span aria-hidden="true">●</span>')
+        .replace(
+          /<Icon\s+name=["']([^"']*)["']\s*(?:class=["'][^"']*["'])?\s*\/?\s*>/g,
+          '<span aria-hidden="true">●</span>',
+        )
         // Replace <Icon ...>...</Icon> with placeholder
         .replace(/<Icon\s+[^>]*>[\s\S]*?<\/Icon>/g, '<span aria-hidden="true">●</span>')
         // Self-closing with any attributes
@@ -52,17 +56,26 @@ export const ERROR_FIX_RULES: ErrorFixRule[] = [
   {
     id: 'missing-npm-package',
     match: (error) =>
-      (error.includes('Cannot find module') || error.includes('Could not resolve') || error.includes('Failed to resolve import')) &&
+      (error.includes('Cannot find module') ||
+        error.includes('Could not resolve') ||
+        error.includes('Failed to resolve import')) &&
       !error.includes('astro-icon'), // handled above
     fix: (content, _filePath, error) => {
       const moduleMatch = error.match(/['"]([^'"]+)['"]/);
-      if (!moduleMatch) return content;
+
+      if (!moduleMatch) {
+        return content;
+      }
+
       const badModule = moduleMatch[1];
 
       // Don't remove local imports
-      if (badModule.startsWith('.') || badModule.startsWith('/')) return content;
+      if (badModule.startsWith('.') || badModule.startsWith('/')) {
+        return content;
+      }
 
       const escaped = badModule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
       return content
         .replace(new RegExp(`import\\s+[^;]*\\s+from\\s+['"]${escaped}['"];?\\n?`, 'g'), '')
         .replace(new RegExp(`import\\s+['"]${escaped}['"];?\\n?`, 'g'), '');
@@ -74,25 +87,31 @@ export const ERROR_FIX_RULES: ErrorFixRule[] = [
     global: true,
   },
 
-  // ═══════════════════════════════════════════════════════════════
-  // 2. LOCAL IMPORT PATH ISSUES
-  // ═══════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════
+   * 2. LOCAL IMPORT PATH ISSUES
+   * ═══════════════════════════════════════════════════════════════
+   */
 
   {
     id: 'missing-astro-extension',
     match: (error) =>
       (error.includes('Cannot find module') || error.includes('Could not resolve')) &&
       error.match(/['"]\.\/[^'"]*['"]/) !== null &&
-      !error.includes('.astro') && !error.includes('.ts') && !error.includes('.js'),
+      !error.includes('.astro') &&
+      !error.includes('.ts') &&
+      !error.includes('.js'),
     fix: (content, _filePath, error) => {
       const moduleMatch = error.match(/['"](\.[^'"]+)['"]/);
-      if (!moduleMatch) return content;
+
+      if (!moduleMatch) {
+        return content;
+      }
+
       const badImport = moduleMatch[1];
       const escaped = badImport.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      return content.replace(
-        new RegExp(`from\\s+['"]${escaped}['"]`, 'g'),
-        `from '${badImport}.astro'`
-      );
+
+      return content.replace(new RegExp(`from\\s+['"]${escaped}['"]`, 'g'), `from '${badImport}.astro'`);
     },
     summary: (error) => {
       const moduleMatch = error.match(/['"](\.[^'"]+)['"]/);
@@ -100,9 +119,11 @@ export const ERROR_FIX_RULES: ErrorFixRule[] = [
     },
   },
 
-  // ═══════════════════════════════════════════════════════════════
-  // 3. SYNTAX ERRORS
-  // ═══════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════
+   * 3. SYNTAX ERRORS
+   * ═══════════════════════════════════════════════════════════════
+   */
 
   {
     id: 'missing-semicolons',
@@ -111,21 +132,31 @@ export const ERROR_FIX_RULES: ErrorFixRule[] = [
       error.includes('Expected ";"') ||
       (error.includes('SyntaxError') && error.includes('import')),
     fix: (content, filePath) => {
-      if (!filePath.endsWith('.astro')) return content;
+      if (!filePath.endsWith('.astro')) {
+        return content;
+      }
 
       const lines = content.split('\n');
       let inFrontmatter = false;
+
       for (let i = 0; i < lines.length; i++) {
         const trimmed = lines[i].trim();
+
         if (trimmed === '---') {
           inFrontmatter = !inFrontmatter;
           continue;
         }
-        if (inFrontmatter && trimmed.startsWith('import ') &&
-            trimmed.match(/from\s+['"][^'"]+['"]$/) && !trimmed.endsWith(';')) {
+
+        if (
+          inFrontmatter &&
+          trimmed.startsWith('import ') &&
+          trimmed.match(/from\s+['"][^'"]+['"]$/) &&
+          !trimmed.endsWith(';')
+        ) {
           lines[i] = lines[i] + ';';
         }
       }
+
       return lines.join('\n');
     },
     summary: () => 'Added missing semicolons to import statements',
@@ -138,48 +169,49 @@ export const ERROR_FIX_RULES: ErrorFixRule[] = [
       error.includes('Unterminated') ||
       error.includes('Expected closing'),
     fix: (content, filePath) => {
-      if (!filePath.endsWith('.astro')) return content;
+      if (!filePath.endsWith('.astro')) {
+        return content;
+      }
 
       // Try to fix frontmatter brace imbalance
       const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
+
       if (fmMatch) {
         const frontmatter = fmMatch[1];
         const opens = (frontmatter.match(/\{/g) || []).length;
         const closes = (frontmatter.match(/\}/g) || []).length;
 
         if (opens > closes) {
-          return content.replace(
-            /^---\n([\s\S]*?)\n---/,
-            `---\n${frontmatter}${'\n}'.repeat(opens - closes)}\n---`
-          );
+          return content.replace(/^---\n([\s\S]*?)\n---/, `---\n${frontmatter}${'\n}'.repeat(opens - closes)}\n---`);
         } else if (closes > opens) {
           // Remove extra closing braces from end of frontmatter
           let fixed = frontmatter;
           let excess = closes - opens;
+
           while (excess > 0 && fixed.endsWith('}')) {
             fixed = fixed.slice(0, -1).trimEnd();
             excess--;
           }
-          return content.replace(
-            /^---\n([\s\S]*?)\n---/,
-            `---\n${fixed}\n---`
-          );
+
+          return content.replace(/^---\n([\s\S]*?)\n---/, `---\n${fixed}\n---`);
         }
       }
+
       return content;
     },
     summary: () => 'Fixed unmatched braces in frontmatter',
   },
 
-  // ═══════════════════════════════════════════════════════════════
-  // 4. TAILWIND / CSS ERRORS
-  // ═══════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════
+   * 4. TAILWIND / CSS ERRORS
+   * ═══════════════════════════════════════════════════════════════
+   */
 
   {
     id: 'invalid-tailwind-classes',
     match: (error) =>
-      error.includes('class does not exist') ||
-      error.includes('The `') && error.includes('` class does not exist'),
+      error.includes('class does not exist') || (error.includes('The `') && error.includes('` class does not exist')),
     fix: (content) => {
       const replacements: [RegExp, string][] = [
         // Font utilities
@@ -212,9 +244,11 @@ export const ERROR_FIX_RULES: ErrorFixRule[] = [
       ];
 
       let fixed = content;
+
       for (const [pattern, replacement] of replacements) {
         fixed = fixed.replace(pattern, replacement);
       }
+
       return fixed;
     },
     summary: () => 'Replaced invalid Tailwind class names with standard equivalents',
@@ -224,10 +258,14 @@ export const ERROR_FIX_RULES: ErrorFixRule[] = [
   {
     id: 'tailwind-config-error',
     match: (error) =>
-      error.includes('tailwind') && error.includes('config') &&
+      error.includes('tailwind') &&
+      error.includes('config') &&
       (error.includes('SyntaxError') || error.includes('Cannot read')),
     fix: (_content, filePath) => {
-      if (!filePath.includes('tailwind.config')) return _content;
+      if (!filePath.includes('tailwind.config')) {
+        return _content;
+      }
+
       // Return a known-good config
       return `/** @type {import('tailwindcss').Config} */
 export default {
@@ -242,9 +280,11 @@ export default {
     summary: () => 'Replaced broken tailwind.config with a known-good default',
   },
 
-  // ═══════════════════════════════════════════════════════════════
-  // 5. ASTRO CONFIG ERRORS
-  // ═══════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════
+   * 5. ASTRO CONFIG ERRORS
+   * ═══════════════════════════════════════════════════════════════
+   */
 
   {
     id: 'astro-config-error',
@@ -252,7 +292,10 @@ export default {
       error.includes('astro.config') &&
       (error.includes('SyntaxError') || error.includes('Cannot read') || error.includes('is not a function')),
     fix: (_content, filePath) => {
-      if (!filePath.includes('astro.config')) return _content;
+      if (!filePath.includes('astro.config')) {
+        return _content;
+      }
+
       return `import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 
@@ -265,9 +308,11 @@ export default defineConfig({
     summary: () => 'Replaced broken astro.config with a known-good default',
   },
 
-  // ═══════════════════════════════════════════════════════════════
-  // 6. RUNTIME ERRORS
-  // ═══════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════
+   * 6. RUNTIME ERRORS
+   * ═══════════════════════════════════════════════════════════════
+   */
 
   {
     id: 'undefined-variable',
@@ -275,12 +320,18 @@ export default defineConfig({
       error.includes('is not defined') ||
       (error.includes('TypeError') && error.includes('Cannot read properties of undefined')),
     fix: (content, filePath, error) => {
-      if (!filePath.endsWith('.astro')) return content;
+      if (!filePath.endsWith('.astro')) {
+        return content;
+      }
 
       // Extract the undefined variable name
-      const varMatch = error.match(/(\w+)\s+is not defined/) ||
-                       error.match(/Cannot read properties of undefined \(reading '(\w+)'\)/);
-      if (!varMatch) return content;
+      const varMatch =
+        error.match(/(\w+)\s+is not defined/) || error.match(/Cannot read properties of undefined \(reading '(\w+)'\)/);
+
+      if (!varMatch) {
+        return content;
+      }
+
       const varName = varMatch[1];
 
       // Check if it's used in the frontmatter — add a default
@@ -308,8 +359,8 @@ export default defineConfig({
       return content;
     },
     summary: (error) => {
-      const varMatch = error.match(/(\w+)\s+is not defined/) ||
-                       error.match(/Cannot read properties of undefined \(reading '(\w+)'\)/);
+      const varMatch =
+        error.match(/(\w+)\s+is not defined/) || error.match(/Cannot read properties of undefined \(reading '(\w+)'\)/);
       return `Added default for undefined variable "${varMatch?.[1] || 'unknown'}"`;
     },
   },
@@ -319,14 +370,18 @@ export default defineConfig({
     match: (error) =>
       error.includes('TypeError') &&
       (error.includes('.map is not a function') ||
-       error.includes('.filter is not a function') ||
-       error.includes('.forEach is not a function') ||
-       error.includes('.reduce is not a function')),
+        error.includes('.filter is not a function') ||
+        error.includes('.forEach is not a function') ||
+        error.includes('.reduce is not a function')),
     fix: (content, filePath) => {
-      if (!filePath.endsWith('.astro')) return content;
+      if (!filePath.endsWith('.astro')) {
+        return content;
+      }
 
-      // Wrap array method calls with optional chaining / fallback
-      // e.g., items.map(...) → (items || []).map(...)
+      /*
+       * Wrap array method calls with optional chaining / fallback
+       * e.g., items.map(...) → (items || []).map(...)
+       */
       return content
         .replace(/(\w+)(\.map\()/g, '($1 || [])$2')
         .replace(/(\w+)(\.filter\()/g, '($1 || [])$2')
@@ -336,9 +391,11 @@ export default defineConfig({
     summary: () => 'Added null-safe wrappers around array method calls',
   },
 
-  // ═══════════════════════════════════════════════════════════════
-  // 7. CONTENT COLLECTION ERRORS
-  // ═══════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════
+   * 7. CONTENT COLLECTION ERRORS
+   * ═══════════════════════════════════════════════════════════════
+   */
 
   {
     id: 'content-collection-error',
@@ -347,7 +404,9 @@ export default defineConfig({
       error.includes('content collection') ||
       (error.includes('astro:content') && error.includes('does not exist')),
     fix: (content, filePath, error) => {
-      if (!filePath.endsWith('.astro')) return content;
+      if (!filePath.endsWith('.astro')) {
+        return content;
+      }
 
       // Remove content collection imports and replace with static data
       let fixed = content;
@@ -362,9 +421,11 @@ export default defineConfig({
     summary: () => 'Replaced content collection calls with static data (no collections configured)',
   },
 
-  // ═══════════════════════════════════════════════════════════════
-  // 8. IMAGE/ASSET ERRORS
-  // ═══════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════
+   * 8. IMAGE/ASSET ERRORS
+   * ═══════════════════════════════════════════════════════════════
+   */
 
   {
     id: 'image-import-error',
@@ -374,21 +435,31 @@ export default defineConfig({
     fix: (content, _filePath, error) => {
       // Remove imports of missing images
       const imgMatch = error.match(/['"]([^'"]+\.(png|jpg|jpeg|svg|webp|gif))['"]/);
-      if (!imgMatch) return content;
+
+      if (!imgMatch) {
+        return content;
+      }
+
       const imgPath = imgMatch[1];
       const escaped = imgPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
       let fixed = content;
+
       // Remove the import statement
       fixed = fixed.replace(new RegExp(`import\\s+\\w+\\s+from\\s+['"]${escaped}['"];?\\n?`, 'g'), '');
 
       // Replace usages with a placeholder
       const importNameMatch = content.match(new RegExp(`import\\s+(\\w+)\\s+from\\s+['"]${escaped}['"]`));
+
       if (importNameMatch) {
         const varName = importNameMatch[1];
+
         // Replace {varName} with placeholder string in src attributes
         fixed = fixed.replace(new RegExp(`\\{${varName}\\}`, 'g'), '"https://placehold.co/800x600/eee/999?text=Image"');
-        fixed = fixed.replace(new RegExp(`src=\\{${varName}\\}`, 'g'), 'src="https://placehold.co/800x600/eee/999?text=Image"');
+        fixed = fixed.replace(
+          new RegExp(`src=\\{${varName}\\}`, 'g'),
+          'src="https://placehold.co/800x600/eee/999?text=Image"',
+        );
       }
 
       return fixed;
@@ -413,6 +484,7 @@ export function tryDeterministicFix(
   for (const rule of ERROR_FIX_RULES) {
     if (rule.match(errorMessage, fullOutput)) {
       const fixed = rule.fix(fileContent, filePath, errorMessage, allFiles);
+
       if (fixed !== fileContent) {
         return {
           fixedContent: fixed,
@@ -435,17 +507,25 @@ export function tryGlobalDeterministicFix(
   files: Record<string, string>,
 ): { fixedFiles: Record<string, string>; summary: string[]; ruleId: string } | null {
   for (const rule of ERROR_FIX_RULES) {
-    if (!rule.global) continue;
-    if (!rule.match(errorMessage, fullOutput)) continue;
+    if (!rule.global) {
+      continue;
+    }
+
+    if (!rule.match(errorMessage, fullOutput)) {
+      continue;
+    }
 
     const fixedFiles = { ...files };
     const summaries: string[] = [];
     let anyFixed = false;
 
     for (const [path, content] of Object.entries(files)) {
-      if (!/\.(astro|ts|tsx|js|jsx|css)$/.test(path)) continue;
+      if (!/\.(astro|ts|tsx|js|jsx|css)$/.test(path)) {
+        continue;
+      }
 
       const fixed = rule.fix(content, path, errorMessage, files);
+
       if (fixed !== content) {
         fixedFiles[path] = fixed;
         anyFixed = true;
@@ -458,8 +538,5 @@ export function tryGlobalDeterministicFix(
     }
   }
 
-
-
   return null;
 }
-

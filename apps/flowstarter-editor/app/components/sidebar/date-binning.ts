@@ -57,4 +57,3 @@ function dateCategory(date: Date) {
   // e.g., "Jan 2023" instead of "January 2023"
   return format(date, 'LLL yyyy');
 }
-

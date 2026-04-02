@@ -6,4 +6,3 @@ export interface Template {
   tags?: string[];
   icon?: string;
 }
-

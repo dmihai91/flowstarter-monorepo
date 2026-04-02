@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
-import type { FlowstarterInput, FlowstarterOptions, FlowstarterResult } from '~/lib/flowstarter/service';
+import type { FlowstarterInput, FlowstarterOptions } from '~/lib/flowstarter/service';
 
 // Mock Gretly orchestrator
 const mockGretlyRun = vi.fn();
@@ -111,6 +111,7 @@ describe('Flowstarter Service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockGretlyRun.mockResolvedValue(mockGretlyResult);
+
     // Reset mock implementations to default
     mockCreateGretly.mockImplementation(() => ({
       run: mockGretlyRun,
@@ -148,7 +149,7 @@ describe('Flowstarter Service', () => {
           maxFixAttempts: 5,
           maxRefineIterations: 3,
           approvalThreshold: 8,
-        })
+        }),
       );
     });
 
@@ -161,7 +162,7 @@ describe('Flowstarter Service', () => {
           maxFixAttempts: 3,
           maxRefineIterations: 2,
           approvalThreshold: 7,
-        })
+        }),
       );
     });
 
@@ -169,12 +170,15 @@ describe('Flowstarter Service', () => {
       const progressCallback = vi.fn();
 
       // Get the config passed to createGretly and trigger progress
-      mockCreateGretly.mockImplementation(((config: { onProgress?: (phase: string, message: string, progress: number) => void }) => {
+      mockCreateGretly.mockImplementation(((config: {
+        onProgress?: (phase: string, message: string, progress: number) => void;
+      }) => {
         // Simulate progress callbacks
         if (config.onProgress) {
           config.onProgress('planning', 'Starting planning...', 10);
           config.onProgress('generating', 'Generating code...', 50);
         }
+
         return { run: mockGretlyRun, getPhase: vi.fn().mockReturnValue('idle') };
       }) as typeof mockCreateGretly);
 
@@ -223,7 +227,7 @@ describe('Flowstarter Service', () => {
           }),
         }),
         expect.any(Function), // buildFn
-        expect.any(Function)  // publishFn
+        expect.any(Function), // publishFn
       );
     });
 
@@ -256,7 +260,7 @@ describe('Flowstarter Service', () => {
         expect.objectContaining({
           skipReview: true,
           maxRefineIterations: 0,
-        })
+        }),
       );
     });
 
@@ -268,7 +272,7 @@ describe('Flowstarter Service', () => {
           skipReview: true,
           maxRefineIterations: 0,
           maxFixAttempts: 5,
-        })
+        }),
       );
     });
   });
@@ -311,6 +315,7 @@ describe('Flowstarter Service', () => {
 
       // Capture the buildFn passed to Gretly
       type BuildFn = (projectId: string, files: Record<string, string>) => Promise<unknown>;
+
       let capturedBuildFn: BuildFn | undefined;
       mockGretlyRun.mockImplementation((input: unknown, buildFn: BuildFn) => {
         capturedBuildFn = buildFn;
@@ -336,6 +341,7 @@ describe('Flowstarter Service', () => {
 
       // Capture the buildFn passed to Gretly
       type BuildFn = (projectId: string, files: Record<string, string>) => Promise<unknown>;
+
       let capturedBuildFn: BuildFn | undefined;
       mockGretlyRun.mockImplementation((input: unknown, buildFn: BuildFn) => {
         capturedBuildFn = buildFn;
@@ -366,6 +372,7 @@ describe('Flowstarter Service', () => {
 
       // Capture the buildFn passed to Gretly
       type BuildFn = (projectId: string, files: Record<string, string>) => Promise<unknown>;
+
       let capturedBuildFn: BuildFn | undefined;
       mockGretlyRun.mockImplementation((input: unknown, buildFn: BuildFn) => {
         capturedBuildFn = buildFn;
@@ -376,7 +383,7 @@ describe('Flowstarter Service', () => {
 
       // Call the captured buildFn
       if (capturedBuildFn) {
-        const buildResult = await (capturedBuildFn as BuildFn)('test-project', {}) as {
+        const buildResult = (await (capturedBuildFn as BuildFn)('test-project', {})) as {
           success: boolean;
           buildError?: { file: string; message: string };
         };
@@ -388,4 +395,3 @@ describe('Flowstarter Service', () => {
     });
   });
 });
-

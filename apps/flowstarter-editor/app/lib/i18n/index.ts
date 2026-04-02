@@ -14,4 +14,3 @@ export { EDITOR_LABEL_KEYS, EDITOR_LABELS, getEditorLabel, t, type EditorLabelKe
 export { I18nProvider } from './provider';
 export { useTranslation, interpolate } from './useTranslation';
 export type { Translations } from './locales/en';
-

@@ -22,4 +22,3 @@ export const getLanguageFromExtension = (ext: string): string => {
   };
   return map[ext] || 'typescript';
 };
-

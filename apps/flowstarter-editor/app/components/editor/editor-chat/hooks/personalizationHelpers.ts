@@ -15,12 +15,7 @@ export function toColorPalette(palette: TemplatePalette): ColorPalette {
   return {
     id: palette.id,
     name: palette.name,
-    colors: [
-      palette.colors.primary,
-      palette.colors.secondary,
-      palette.colors.accent,
-      palette.colors.background,
-    ],
+    colors: [palette.colors.primary, palette.colors.secondary, palette.colors.accent, palette.colors.background],
   };
 }
 
@@ -40,8 +35,12 @@ export function toSystemFont(font: TemplateFont): SystemFont {
  * Validate a ColorPalette has all required fields.
  */
 export function isValidColorPalette(palette: unknown): palette is ColorPalette {
-  if (!palette || typeof palette !== 'object') return false;
+  if (!palette || typeof palette !== 'object') {
+    return false;
+  }
+
   const p = palette as Record<string, unknown>;
+
   return (
     typeof p.id === 'string' &&
     typeof p.name === 'string' &&
@@ -55,8 +54,12 @@ export function isValidColorPalette(palette: unknown): palette is ColorPalette {
  * Validate a SystemFont has all required fields.
  */
 export function isValidSystemFont(font: unknown): font is SystemFont {
-  if (!font || typeof font !== 'object') return false;
+  if (!font || typeof font !== 'object') {
+    return false;
+  }
+
   const f = font as Record<string, unknown>;
+
   return (
     typeof f.id === 'string' &&
     typeof f.name === 'string' &&
@@ -105,7 +108,10 @@ export function getSectionIndex(section: PersonalizationSection): number {
  */
 export function getNextSection(current: PersonalizationSection): PersonalizationSection | null {
   const idx = PERSONALIZATION_SECTIONS.indexOf(current);
-  if (idx < 0 || idx >= PERSONALIZATION_SECTIONS.length - 1) return null;
+
+  if (idx < 0 || idx >= PERSONALIZATION_SECTIONS.length - 1) {
+    return null;
+  }
+
   return PERSONALIZATION_SECTIONS[idx + 1];
 }
-

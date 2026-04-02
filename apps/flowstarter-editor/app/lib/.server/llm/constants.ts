@@ -40,4 +40,3 @@ export const IGNORE_PATTERNS = [
   '**/*lock.json',
   '**/*lock.yml',
 ];
-

@@ -13,17 +13,26 @@ import { validateAndFixFiles } from './claude-agent/astValidation';
 import { fixContentImports } from './postProcessAstro';
 import { buildTemplateIndex } from './templateIndex';
 import { trackLLMUsage, syncCostsToSupabase } from '~/lib/.server/llm/cost-tracker';
-import type { AgentActivityEvent, GeneratedFile, PipelineCost, SiteGenerationInput, SiteGenerationResult } from './claude-agent/types';
+import type {
+  AgentActivityEvent,
+  GeneratedFile,
+  PipelineCost,
+  SiteGenerationInput,
+  SiteGenerationResult,
+} from './claude-agent/types';
 
 export type { AgentActivityEvent };
 
 const logger = { error: (...args: unknown[]) => console.error('[AgentPipeline]', ...args) };
 const MODEL = 'claude-sonnet-4-6';
 const MAX_TURNS_GENERATE = 25;
-const MAX_BUDGET_GENERATE = 1.20; // Hard cap per build
+const MAX_BUDGET_GENERATE = 1.2; // Hard cap per build
 const INTEGRATION_COMPONENT_BLOCKLIST = [
-  'BookingWidget.astro', 'ContactForm.astro', 'Newsletter.astro',
-  'PaymentWidget.astro', 'SocialFeed.astro',
+  'BookingWidget.astro',
+  'ContactForm.astro',
+  'Newsletter.astro',
+  'PaymentWidget.astro',
+  'SocialFeed.astro',
 ];
 
 type Emit = (event: AgentActivityEvent) => void;
@@ -103,12 +112,15 @@ function buildPrompt(input: SiteGenerationInput, templateIndex: string, template
   const layoutFile = templateFiles.find((f) => f.path.includes('Layout.astro'));
   const indexFile = templateFiles.find((f) => f.path.includes('pages/index.astro'));
   let referenceSection = '';
+
   if (layoutFile) {
     referenceSection += `\n\nREFERENCE — Working Layout.astro:\n\`\`\`astro\n${layoutFile.content.slice(0, 3000)}\n\`\`\``;
   }
+
   if (indexFile) {
     referenceSection += `\n\nREFERENCE — Working index.astro:\n\`\`\`astro\n${indexFile.content.slice(0, 2000)}\n\`\`\``;
   }
+
   return `Build an Astro website. Config files (astro.config, tailwind, global.css) are ALREADY written.
 
 Business: ${input.businessInfo.name || input.siteName}
@@ -141,30 +153,54 @@ CRITICAL — ALL data arrays MUST have explicit TypeScript types. Example: const
 async function collectDir(dir: string, base = ''): Promise<GeneratedFile[]> {
   const entries = await readdir(dir, { withFileTypes: true });
   const files: GeneratedFile[] = [];
+
   for (const entry of entries) {
-    if (entry.name.startsWith('.') || entry.name === 'dist' || entry.name === 'node_modules') continue;
+    if (entry.name.startsWith('.') || entry.name === 'dist' || entry.name === 'node_modules') {
+      continue;
+    }
+
     const rel = base ? `${base}/${entry.name}` : entry.name;
-    if (entry.isDirectory()) files.push(...await collectDir(join(dir, entry.name), rel));
-    else files.push({ path: rel, content: await readFile(join(dir, entry.name), 'utf-8').catch(() => '') });
+
+    if (entry.isDirectory()) {
+      files.push(...(await collectDir(join(dir, entry.name), rel)));
+    } else {
+      files.push({ path: rel, content: await readFile(join(dir, entry.name), 'utf-8').catch(() => '') });
+    }
   }
+
   return files;
 }
 
 export async function runAgentPipeline(
-  input: SiteGenerationInput, templateFiles: GeneratedFile[], onProgress?: (msg: string) => void,
+  input: SiteGenerationInput,
+  templateFiles: GeneratedFile[],
+  onProgress?: (msg: string) => void,
 ): Promise<SiteGenerationResult> {
   const emit: Emit = input.onAgentEvent ?? (() => {});
   const startedAt = Date.now();
-  const progress = (msg: string) => { onProgress?.(msg); emit({ type: 'text', content: msg }); };
+  const progress = (msg: string) => {
+    onProgress?.(msg);
+    emit({ type: 'text', content: msg });
+  };
   const workDir = join(tmpdir(), `fs-pipeline-${input.projectId}-${Date.now()}`);
 
   await mkdir(workDir, { recursive: true });
+
   try {
     // DRY RUN: Skip LLM calls, return template files as-is
     if (process.env.DRY_RUN === 'true' || process.env.NODE_ENV === 'test') {
       progress('DRY RUN — skipping LLM, returning template files');
+
       const files = templateFiles.filter((f) => !f.path.includes('node_modules'));
-      emit({ type: 'done', duration_ms: Date.now() - startedAt, turns: 0, cost_usd: 0, input_tokens: 0, output_tokens: 0 });
+      emit({
+        type: 'done',
+        duration_ms: Date.now() - startedAt,
+        turns: 0,
+        cost_usd: 0,
+        input_tokens: 0,
+        output_tokens: 0,
+      });
+
       return { success: true, files, cost: { totalCostUSD: 0, totalTokens: 0, breakdown: [] } };
     }
 
@@ -178,6 +214,7 @@ export async function runAgentPipeline(
 
     // Pre-generate boilerplate (no LLM cost)
     const boilerplate = generateBoilerplate(input);
+
     for (const f of boilerplate) {
       const p = join(workDir, f.path);
       await mkdir(dirname(p), { recursive: true });
@@ -192,6 +229,7 @@ export async function runAgentPipeline(
 
     // Run Agent SDK
     progress('Agent generating website...');
+
     const abortController = new AbortController();
     let turns = 0;
     let resultText = '';
@@ -232,12 +270,16 @@ CRITICAL RULES — violations cause build failures:
 
     for await (const rawMessage of agentResult) {
       const message = rawMessage as SDKMessage | LegacyToolUseMessage | LegacyToolResultMessage | LegacyUsageMessage;
+
       switch (message.type) {
         case 'assistant':
           turns++;
           progress(`Turn ${turns}`);
+
           for (const block of message.message.content) {
-            if (block.type === 'text') emit({ type: 'text', content: block.text });
+            if (block.type === 'text') {
+              emit({ type: 'text', content: block.text });
+            }
           }
           break;
         case 'tool_use':
@@ -246,14 +288,20 @@ CRITICAL RULES — violations cause build failures:
         case 'tool_result':
           if ((message as any).tool_name === 'Write' || (message as any).tool_name === 'Edit') {
             const path = String((message as any).input?.file_path || (message as any).input?.path || '');
-            if (path) emit({ type: 'file_write', path, lines: 0 });
+
+            if (path) {
+              emit({ type: 'file_write', path, lines: 0 });
+            }
           }
+
           break;
         case 'result':
-          if (message.subtype === 'success') resultText = message.result || '';
-          else if (message.subtype?.startsWith('error')) {
+          if (message.subtype === 'success') {
+            resultText = message.result || '';
+          } else if (message.subtype?.startsWith('error')) {
             emit({ type: 'error', message: `Agent stopped: ${message.subtype}` });
           }
+
           break;
         case 'usage': {
           const u = message as any;
@@ -268,25 +316,37 @@ CRITICAL RULES — violations cause build failures:
 
     // Collect output files
     progress('Collecting output files...');
+
     const allFiles = await collectDir(workDir);
     const filtered = allFiles.filter((f) => !INTEGRATION_COMPONENT_BLOCKLIST.some((b) => f.path.endsWith(b)));
+
     for (const file of filtered) {
       if (file.path === 'astro.config.mjs' && file.content.includes('astro-icon')) {
-        file.content = file.content.replace(/import\s+icon\s+from\s+['"]astro-icon['"];?\n?/g, '').replace(/,?\s*icon\(\)/g, '');
+        file.content = file.content
+          .replace(/import\s+icon\s+from\s+['"]astro-icon['"];?\n?/g, '')
+          .replace(/,?\s*icon\(\)/g, '');
       }
     }
+
     const files = fixContentImports(filtered);
     const filesRecord: Record<string, string> = {};
+
     for (const file of files) {
       filesRecord[file.path] = file.content;
     }
+
     const validationResult = validateAndFixFiles(filesRecord);
+
     if (validationResult.fixCount > 0) {
       for (const file of files) {
         file.content = validationResult.fixedFiles[file.path] ?? file.content;
       }
       console.log(`[AgentPipeline] Pre-deploy validation: ${validationResult.fixCount} fixes applied`);
-      emit({ type: 'text', content: `[AgentPipeline] Pre-deploy validation: ${validationResult.fixCount} fixes applied` });
+      emit({
+        type: 'text',
+        content: `[AgentPipeline] Pre-deploy validation: ${validationResult.fixCount} fixes applied`,
+      });
+
       for (const summary of validationResult.fixSummary) {
         emit({ type: 'text', content: `[ASTValidation] ${summary}` });
       }
@@ -300,13 +360,15 @@ CRITICAL RULES — violations cause build failures:
     syncCostsToSupabase(input.projectId).catch(() => {});
 
     return {
-      success: true, files,
+      success: true,
+      files,
       cost: { totalCostUSD: 0, totalTokens: 0, breakdown: [] }, // Actual costs tracked in Convex
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Pipeline error';
     logger.error(message);
     emit({ type: 'error', message });
+
     return { success: false, files: [], error: message };
   } finally {
     await rm(workDir, { recursive: true, force: true }).catch(() => {});
@@ -315,7 +377,12 @@ CRITICAL RULES — violations cause build failures:
 
 export function isAgentPipelineAvailable(): boolean {
   try {
-    if (process.env.AGENTS_SDK_ENABLED === 'false') return false;
+    if (process.env.AGENTS_SDK_ENABLED === 'false') {
+      return false;
+    }
+
     return Boolean(process?.versions?.node && process.env.ANTHROPIC_API_KEY);
-  } catch { return false; }
+  } catch {
+    return false;
+  }
 }

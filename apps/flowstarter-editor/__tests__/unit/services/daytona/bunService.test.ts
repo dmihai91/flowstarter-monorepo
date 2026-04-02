@@ -102,13 +102,16 @@ describe('bunService', () => {
               executionOrder.push('curl');
               return Promise.resolve({ exitCode: 1, result: 'curl failed' });
             }
+
             if (command.includes('wget')) {
               executionOrder.push('wget');
               return Promise.resolve({ exitCode: 0, result: '' });
             }
+
             if (command.includes('bun --version')) {
               return Promise.resolve({ exitCode: 0, result: '1.1.0' });
             }
+
             return Promise.resolve({ exitCode: 0, result: '' });
           }),
         },
@@ -130,15 +133,19 @@ describe('bunService', () => {
             if (command.includes('curl') && command.includes('bun.sh/install')) {
               return Promise.resolve({ exitCode: 1, result: 'failed' });
             }
+
             if (command.includes('wget')) {
               return Promise.resolve({ exitCode: 1, result: 'failed' });
             }
+
             if (command.includes('bun-linux-x64.zip')) {
               return Promise.resolve({ exitCode: 0, result: '' });
             }
+
             if (command.includes('bun --version')) {
               return Promise.resolve({ exitCode: 0, result: '1.1.0' });
             }
+
             return Promise.resolve({ exitCode: 0, result: '' });
           }),
         },
@@ -173,10 +180,12 @@ describe('bunService', () => {
             if (command.includes('curl -fsSL')) {
               return Promise.resolve({ exitCode: 0, result: '' });
             }
+
             if (command.includes('bun --version')) {
               verifyCallCount.count++;
               return Promise.resolve({ exitCode: 0, result: '1.1.0' });
             }
+
             return Promise.resolve({ exitCode: 0, result: '' });
           }),
         },
@@ -206,7 +215,7 @@ describe('bunService', () => {
         expect.stringContaining('bun install'),
         '/home/daytona',
         undefined,
-        180
+        180,
       );
     });
 
@@ -231,9 +240,7 @@ describe('bunService', () => {
 
       await bunInstall(sandbox as never, '/home/daytona');
 
-      const installCall = sandbox.process.executeCommand.mock.calls.find((call) =>
-        call[0].includes('bun install')
-      );
+      const installCall = sandbox.process.executeCommand.mock.calls.find((call) => call[0].includes('bun install'));
       expect(installCall?.[0]).toContain('BUN_INSTALL');
       expect(installCall?.[0]).toContain('PATH');
     });
@@ -252,4 +259,3 @@ describe('bunService', () => {
     });
   });
 });
-

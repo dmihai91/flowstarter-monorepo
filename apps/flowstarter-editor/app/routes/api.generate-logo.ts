@@ -180,4 +180,3 @@ function buildEnhancedPrompt(userPrompt: string, businessInfo?: LogoGenerationRe
 
   return prompt;
 }
-

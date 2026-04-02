@@ -73,6 +73,7 @@ export function IntegrationModal({ isDark, onComplete, onSkip }: IntegrationModa
 
   const handleContinue = () => {
     const configs: IntegrationConfig[] = [];
+
     if (calendly.enabled) {
       configs.push({
         id: 'booking',
@@ -81,6 +82,7 @@ export function IntegrationModal({ isDark, onComplete, onSkip }: IntegrationModa
         config: { provider: 'calendly', url: calendly.url },
       });
     }
+
     if (ga.enabled) {
       configs.push({
         id: 'analytics',
@@ -89,6 +91,7 @@ export function IntegrationModal({ isDark, onComplete, onSkip }: IntegrationModa
         config: { provider: 'google-analytics', measurementId: ga.measurementId },
       });
     }
+
     onComplete(configs);
   };
 
@@ -157,14 +160,19 @@ export function IntegrationModal({ isDark, onComplete, onSkip }: IntegrationModa
           onClick={onSkip}
           data-testid="integrations-skip-button"
           style={{
-            flex: 1, padding: '12px 16px', borderRadius: '10px',
-            fontSize: '14px', fontWeight: 500,
-            background: c.cardBg, color: c.textSec,
-            border: `1px solid ${c.border}`, cursor: 'pointer',
+            flex: 1,
+            padding: '12px 16px',
+            borderRadius: '10px',
+            fontSize: '14px',
+            fontWeight: 500,
+            background: c.cardBg,
+            color: c.textSec,
+            border: `1px solid ${c.border}`,
+            cursor: 'pointer',
             transition: 'all 0.15s',
           }}
-          onMouseEnter={e => e.currentTarget.style.background = c.cardBgHover}
-          onMouseLeave={e => e.currentTarget.style.background = c.cardBg}
+          onMouseEnter={(e) => (e.currentTarget.style.background = c.cardBgHover)}
+          onMouseLeave={(e) => (e.currentTarget.style.background = c.cardBg)}
         >
           Skip for Now
         </button>
@@ -173,17 +181,32 @@ export function IntegrationModal({ isDark, onComplete, onSkip }: IntegrationModa
           disabled={!canContinue}
           data-testid="integrations-continue-button"
           style={{
-            flex: 1, padding: '12px 16px', borderRadius: '10px',
-            fontSize: '14px', fontWeight: 500,
+            flex: 1,
+            padding: '12px 16px',
+            borderRadius: '10px',
+            fontSize: '14px',
+            fontWeight: 500,
             background: `linear-gradient(135deg, ${c.accentHover}, ${c.accent})`,
-            color: '#ffffff', border: 'none',
+            color: '#ffffff',
+            border: 'none',
             cursor: canContinue ? 'pointer' : 'not-allowed',
             opacity: canContinue ? 1 : 0.5,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
             transition: 'opacity 0.2s',
           }}
-          onMouseEnter={e => { if (canContinue) e.currentTarget.style.opacity = '0.9'; }}
-          onMouseLeave={e => { if (canContinue) e.currentTarget.style.opacity = '1'; }}
+          onMouseEnter={(e) => {
+            if (canContinue) {
+              e.currentTarget.style.opacity = '0.9';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (canContinue) {
+              e.currentTarget.style.opacity = '1';
+            }
+          }}
         >
           {hasAnyIntegration ? 'Continue' : 'Build My Site'}
           <ChevronRight size={16} />
@@ -209,19 +232,33 @@ export function IntegrationModal({ isDark, onComplete, onSkip }: IntegrationModa
               type="url"
               placeholder="https://calendly.com/your-name"
               value={tempCalendlyUrl}
-              onChange={e => setTempCalendlyUrl(e.target.value)}
+              onChange={(e) => setTempCalendlyUrl(e.target.value)}
               data-testid="calendly-url-input"
               autoFocus
               style={{
-                width: '100%', padding: '12px 14px', borderRadius: '10px',
-                fontSize: '14px', background: c.inputBg,
-                border: `1px solid ${c.border}`, color: c.text, outline: 'none',
+                width: '100%',
+                padding: '12px 14px',
+                borderRadius: '10px',
+                fontSize: '14px',
+                background: c.inputBg,
+                border: `1px solid ${c.border}`,
+                color: c.text,
+                outline: 'none',
                 fontFamily: 'inherit',
               }}
-              onFocus={e => e.currentTarget.style.borderColor = '#0069FF'}
-              onBlur={e => e.currentTarget.style.borderColor = c.border}
+              onFocus={(e) => (e.currentTarget.style.borderColor = '#0069FF')}
+              onBlur={(e) => (e.currentTarget.style.borderColor = c.border)}
             />
-            <p style={{ fontSize: '12px', color: c.textTer, marginTop: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <p
+              style={{
+                fontSize: '12px',
+                color: c.textTer,
+                marginTop: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
               <ExternalLink size={12} /> Find your link at calendly.com/event-types
             </p>
           </ConfigModal>
@@ -247,19 +284,33 @@ export function IntegrationModal({ isDark, onComplete, onSkip }: IntegrationModa
               type="text"
               placeholder="G-XXXXXXXXXX"
               value={tempGAId}
-              onChange={e => setTempGAId(e.target.value)}
+              onChange={(e) => setTempGAId(e.target.value)}
               data-testid="ga-measurement-input"
               autoFocus
               style={{
-                width: '100%', padding: '12px 14px', borderRadius: '10px',
-                fontSize: '14px', fontFamily: 'monospace',
-                background: c.inputBg, border: `1px solid ${c.border}`,
-                color: c.text, outline: 'none',
+                width: '100%',
+                padding: '12px 14px',
+                borderRadius: '10px',
+                fontSize: '14px',
+                fontFamily: 'monospace',
+                background: c.inputBg,
+                border: `1px solid ${c.border}`,
+                color: c.text,
+                outline: 'none',
               }}
-              onFocus={e => e.currentTarget.style.borderColor = '#F59E0B'}
-              onBlur={e => e.currentTarget.style.borderColor = c.border}
+              onFocus={(e) => (e.currentTarget.style.borderColor = '#F59E0B')}
+              onBlur={(e) => (e.currentTarget.style.borderColor = c.border)}
             />
-            <p style={{ fontSize: '12px', color: c.textTer, marginTop: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <p
+              style={{
+                fontSize: '12px',
+                color: c.textTer,
+                marginTop: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
               <ExternalLink size={12} /> Find it in GA4 Admin &gt; Data Streams
             </p>
           </ConfigModal>
@@ -285,7 +336,19 @@ interface GlassCardProps {
   testId?: string;
 }
 
-function GlassCard({ icon, iconColor, iconBg, name, description, connected, isDark, c, onConfigure, onDisconnect, testId }: GlassCardProps) {
+function GlassCard({
+  icon,
+  iconColor,
+  iconBg,
+  name,
+  description,
+  connected,
+  isDark,
+  c,
+  onConfigure,
+  onDisconnect,
+  testId,
+}: GlassCardProps) {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -316,18 +379,30 @@ function GlassCard({ icon, iconColor, iconBg, name, description, connected, isDa
       {connected && (
         <div
           style={{
-            position: 'absolute', top: '10px', right: '10px',
-            display: 'flex', alignItems: 'center', gap: '4px',
-            padding: '2px 8px', borderRadius: '999px',
-            background: c.greenBg, fontSize: '10px', fontWeight: 600,
+            position: 'absolute',
+            top: '10px',
+            right: '10px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            padding: '2px 8px',
+            borderRadius: '999px',
+            background: c.greenBg,
+            fontSize: '10px',
+            fontWeight: 600,
             color: c.greenText,
           }}
         >
-          <span style={{
-            width: '6px', height: '6px', borderRadius: '50%',
-            background: c.greenText, display: 'inline-block',
-            animation: 'pulse 2s infinite',
-          }} />
+          <span
+            style={{
+              width: '6px',
+              height: '6px',
+              borderRadius: '50%',
+              background: c.greenText,
+              display: 'inline-block',
+              animation: 'pulse 2s infinite',
+            }}
+          />
           Connected
         </div>
       )}
@@ -337,9 +412,14 @@ function GlassCard({ icon, iconColor, iconBg, name, description, connected, isDa
         animate={{ scale: hovered ? 1.1 : 1 }}
         transition={{ duration: 0.15 }}
         style={{
-          width: '48px', height: '48px', borderRadius: '14px',
-          background: iconBg, backdropFilter: 'blur(8px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          width: '48px',
+          height: '48px',
+          borderRadius: '14px',
+          background: iconBg,
+          backdropFilter: 'blur(8px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           color: iconColor,
         }}
       >
@@ -348,34 +428,48 @@ function GlassCard({ icon, iconColor, iconBg, name, description, connected, isDa
 
       {/* Name + description */}
       <div>
-        <h4 style={{ fontSize: '14px', fontWeight: 600, color: c.text, margin: '0 0 4px' }}>
-          {name}
-        </h4>
-        <p style={{ fontSize: '12px', color: c.textSec, margin: 0 }}>
-          {description}
-        </p>
+        <h4 style={{ fontSize: '14px', fontWeight: 600, color: c.text, margin: '0 0 4px' }}>{name}</h4>
+        <p style={{ fontSize: '12px', color: c.textSec, margin: 0 }}>{description}</p>
       </div>
 
       {/* Action button */}
       {connected ? (
         <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
           <button
-            onClick={e => { e.stopPropagation(); onConfigure(); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onConfigure();
+            }}
             style={{
-              flex: 1, padding: '8px', borderRadius: '8px', fontSize: '12px',
-              fontWeight: 500, background: c.inputBg, border: `1px solid ${c.border}`,
-              color: c.textSec, cursor: 'pointer', transition: 'all 0.15s',
+              flex: 1,
+              padding: '8px',
+              borderRadius: '8px',
+              fontSize: '12px',
+              fontWeight: 500,
+              background: c.inputBg,
+              border: `1px solid ${c.border}`,
+              color: c.textSec,
+              cursor: 'pointer',
+              transition: 'all 0.15s',
             }}
           >
             Edit
           </button>
           <button
-            onClick={e => { e.stopPropagation(); onDisconnect(); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDisconnect();
+            }}
             style={{
-              padding: '8px 10px', borderRadius: '8px', fontSize: '12px',
-              fontWeight: 500, background: isDark ? 'rgba(239,68,68,0.1)' : 'rgba(239,68,68,0.06)',
-              border: 'none', color: isDark ? '#f87171' : '#dc2626',
-              cursor: 'pointer', transition: 'all 0.15s',
+              padding: '8px 10px',
+              borderRadius: '8px',
+              fontSize: '12px',
+              fontWeight: 500,
+              background: isDark ? 'rgba(239,68,68,0.1)' : 'rgba(239,68,68,0.06)',
+              border: 'none',
+              color: isDark ? '#f87171' : '#dc2626',
+              cursor: 'pointer',
+              transition: 'all 0.15s',
             }}
           >
             <X size={14} />
@@ -384,9 +478,16 @@ function GlassCard({ icon, iconColor, iconBg, name, description, connected, isDa
       ) : (
         <button
           style={{
-            width: '100%', padding: '8px', borderRadius: '8px', fontSize: '12px',
-            fontWeight: 500, background: `${iconColor}15`, border: `1px solid ${iconColor}30`,
-            color: iconColor, cursor: 'pointer', transition: 'all 0.15s',
+            width: '100%',
+            padding: '8px',
+            borderRadius: '8px',
+            fontSize: '12px',
+            fontWeight: 500,
+            background: `${iconColor}15`,
+            border: `1px solid ${iconColor}30`,
+            color: iconColor,
+            cursor: 'pointer',
+            transition: 'all 0.15s',
           }}
         >
           Configure
@@ -414,8 +515,12 @@ function ConfigModal({ isDark, c, title, icon, iconColor, onClose, onSave, child
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       style={{
-        position: 'fixed', inset: 0, zIndex: 50,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        position: 'fixed',
+        inset: 0,
+        zIndex: 50,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         background: c.overlay,
       }}
       onClick={onClose}
@@ -425,31 +530,37 @@ function ConfigModal({ isDark, c, title, icon, iconColor, onClose, onSave, child
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}
         transition={{ duration: 0.2 }}
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
         style={{
-          width: '400px', maxWidth: '90vw', padding: '24px',
-          borderRadius: '16px', background: c.glassSurface,
+          width: '400px',
+          maxWidth: '90vw',
+          padding: '24px',
+          borderRadius: '16px',
+          background: c.glassSurface,
           border: `1px solid ${c.border}`,
-          boxShadow: isDark
-            ? '0 24px 48px rgba(0,0,0,0.5)'
-            : '0 24px 48px rgba(0,0,0,0.15)',
+          boxShadow: isDark ? '0 24px 48px rgba(0,0,0,0.5)' : '0 24px 48px rgba(0,0,0,0.15)',
         }}
       >
         {/* Modal Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{ color: iconColor }}>{icon}</div>
-            <h3 style={{ fontSize: '16px', fontWeight: 600, color: c.text, margin: 0 }}>
-              {title}
-            </h3>
+            <h3 style={{ fontSize: '16px', fontWeight: 600, color: c.text, margin: 0 }}>{title}</h3>
           </div>
           <button
             onClick={onClose}
             style={{
-              width: '28px', height: '28px', borderRadius: '8px',
-              background: c.inputBg, border: 'none', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: c.textTer, transition: 'all 0.15s',
+              width: '28px',
+              height: '28px',
+              borderRadius: '8px',
+              background: c.inputBg,
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: c.textTer,
+              transition: 'all 0.15s',
             }}
           >
             <X size={14} />
@@ -457,18 +568,21 @@ function ConfigModal({ isDark, c, title, icon, iconColor, onClose, onSave, child
         </div>
 
         {/* Modal Content */}
-        <div style={{ marginBottom: '20px' }}>
-          {children}
-        </div>
+        <div style={{ marginBottom: '20px' }}>{children}</div>
 
         {/* Modal Actions */}
         <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
           <button
             onClick={onClose}
             style={{
-              padding: '10px 16px', borderRadius: '8px', fontSize: '13px',
-              fontWeight: 500, background: c.inputBg, border: `1px solid ${c.border}`,
-              color: c.textSec, cursor: 'pointer',
+              padding: '10px 16px',
+              borderRadius: '8px',
+              fontSize: '13px',
+              fontWeight: 500,
+              background: c.inputBg,
+              border: `1px solid ${c.border}`,
+              color: c.textSec,
+              cursor: 'pointer',
             }}
           >
             Cancel
@@ -476,10 +590,17 @@ function ConfigModal({ isDark, c, title, icon, iconColor, onClose, onSave, child
           <button
             onClick={onSave}
             style={{
-              padding: '10px 20px', borderRadius: '8px', fontSize: '13px',
-              fontWeight: 500, background: iconColor, color: '#ffffff',
-              border: 'none', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', gap: '6px',
+              padding: '10px 20px',
+              borderRadius: '8px',
+              fontSize: '13px',
+              fontWeight: 500,
+              background: iconColor,
+              color: '#ffffff',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
             }}
           >
             <Check size={14} /> Save

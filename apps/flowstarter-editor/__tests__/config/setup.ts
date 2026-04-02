@@ -90,4 +90,3 @@ const sessionStorageMock = {
 (globalThis as any).sessionStorage = sessionStorageMock;
 
 // Skip WebSocket mocking for now to avoid type issues
-

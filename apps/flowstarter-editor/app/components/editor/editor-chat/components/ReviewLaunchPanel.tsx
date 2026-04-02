@@ -1,11 +1,6 @@
 'use client';
 
-import type {
-  BrandProfileSummary,
-  BusinessInfo,
-  IntegrationConfig,
-  SystemFont,
-} from '../types';
+import type { BrandProfileSummary, BusinessInfo, IntegrationConfig, SystemFont } from '../types';
 
 interface ReviewLaunchPanelProps {
   isDark: boolean;
@@ -21,21 +16,11 @@ interface ReviewLaunchPanelProps {
   onBuild: () => void;
 }
 
-function Section({
-  title,
-  children,
-  isDark,
-}: {
-  title: string;
-  children: React.ReactNode;
-  isDark: boolean;
-}) {
+function Section({ title, children, isDark }: { title: string; children: React.ReactNode; isDark: boolean }) {
   return (
     <div
       className={`rounded-2xl border p-4 ${
-        isDark
-          ? 'border-white/[0.08] bg-white/[0.04]'
-          : 'border-black/10 bg-white/75'
+        isDark ? 'border-white/[0.08] bg-white/[0.04]' : 'border-black/10 bg-white/75'
       }`}
     >
       <p className={`text-xs font-semibold uppercase tracking-[0.16em] ${isDark ? 'text-white/40' : 'text-black/45'}`}>
@@ -73,7 +58,9 @@ export function ReviewLaunchPanel({
         }`}
       >
         <div className={`border-b px-6 py-5 ${isDark ? 'border-white/[0.08]' : 'border-black/8'}`}>
-          <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${isDark ? 'text-white/45' : 'text-black/45'}`}>
+          <p
+            className={`text-xs font-semibold uppercase tracking-[0.18em] ${isDark ? 'text-white/45' : 'text-black/45'}`}
+          >
             Review Before Build
           </p>
           <h3 className={`mt-2 text-xl font-semibold ${isDark ? 'text-white' : 'text-black'}`}>
@@ -93,9 +80,7 @@ export function ReviewLaunchPanel({
             </p>
             {selectedPalette ? (
               <div className="mt-3 flex items-center gap-3">
-                <span className={`text-xs ${isDark ? 'text-white/55' : 'text-black/55'}`}>
-                  {selectedPalette.name}
-                </span>
+                <span className={`text-xs ${isDark ? 'text-white/55' : 'text-black/55'}`}>{selectedPalette.name}</span>
                 <div className="flex items-center gap-1">
                   {selectedPalette.colors.slice(0, 5).map((color, index) => (
                     <span
@@ -122,8 +107,7 @@ export function ReviewLaunchPanel({
               </p>
               {brandProfile?.valueProposition || businessInfo?.uvp ? (
                 <p>
-                  <span className="font-medium">Value prop:</span>{' '}
-                  {brandProfile?.valueProposition || businessInfo?.uvp}
+                  <span className="font-medium">Value prop:</span> {brandProfile?.valueProposition || businessInfo?.uvp}
                 </p>
               ) : null}
               {brandProfile?.desiredCustomerAction ? (
@@ -136,9 +120,21 @@ export function ReviewLaunchPanel({
 
           <Section title="Business Context" isDark={isDark}>
             <div className={`space-y-2 text-sm ${isDark ? 'text-white/75' : 'text-black/70'}`}>
-              {businessInfo?.industry ? <p><span className="font-medium">Industry:</span> {businessInfo.industry}</p> : null}
-              {businessInfo?.targetAudience ? <p><span className="font-medium">Audience:</span> {businessInfo.targetAudience}</p> : null}
-              {businessInfo?.description ? <p><span className="font-medium">Summary:</span> {businessInfo.description}</p> : null}
+              {businessInfo?.industry ? (
+                <p>
+                  <span className="font-medium">Industry:</span> {businessInfo.industry}
+                </p>
+              ) : null}
+              {businessInfo?.targetAudience ? (
+                <p>
+                  <span className="font-medium">Audience:</span> {businessInfo.targetAudience}
+                </p>
+              ) : null}
+              {businessInfo?.description ? (
+                <p>
+                  <span className="font-medium">Summary:</span> {businessInfo.description}
+                </p>
+              ) : null}
             </div>
           </Section>
 
@@ -157,15 +153,15 @@ export function ReviewLaunchPanel({
                 ))}
               </div>
             ) : (
-              <p className={`text-sm ${isDark ? 'text-white/55' : 'text-black/50'}`}>
-                No integrations selected yet.
-              </p>
+              <p className={`text-sm ${isDark ? 'text-white/55' : 'text-black/50'}`}>No integrations selected yet.</p>
             )}
           </Section>
         </div>
 
-        {(differentiators.length > 0 || trustSignals.length > 0) ? (
-          <div className={`grid gap-4 border-t px-6 py-5 md:grid-cols-2 ${isDark ? 'border-white/[0.08]' : 'border-black/8'}`}>
+        {differentiators.length > 0 || trustSignals.length > 0 ? (
+          <div
+            className={`grid gap-4 border-t px-6 py-5 md:grid-cols-2 ${isDark ? 'border-white/[0.08]' : 'border-black/8'}`}
+          >
             {differentiators.length > 0 ? (
               <Section title="Differentiators" isDark={isDark}>
                 <ul className={`space-y-2 text-sm ${isDark ? 'text-white/75' : 'text-black/70'}`}>
@@ -187,7 +183,9 @@ export function ReviewLaunchPanel({
           </div>
         ) : null}
 
-        <div className={`flex flex-col gap-3 border-t px-6 py-5 sm:flex-row ${isDark ? 'border-white/[0.08]' : 'border-black/8'}`}>
+        <div
+          className={`flex flex-col gap-3 border-t px-6 py-5 sm:flex-row ${isDark ? 'border-white/[0.08]' : 'border-black/8'}`}
+        >
           <button
             type="button"
             onClick={onCustomize}

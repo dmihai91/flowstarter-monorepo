@@ -91,4 +91,3 @@ export interface FileNode extends BaseNode {
 export interface FolderNode extends BaseNode {
   kind: 'folder';
 }
-

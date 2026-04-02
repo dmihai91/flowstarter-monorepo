@@ -5,11 +5,8 @@
  * @vitest-environment jsdom
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import {
-  PIPELINE_STEPS,
-  STEP_LABELS,
-} from '~/components/editor/editor-chat/hooks/usePipelineOrchestration';
+import { describe, it, expect, vi } from 'vitest';
+import { PIPELINE_STEPS, STEP_LABELS } from '~/components/editor/editor-chat/hooks/usePipelineOrchestration';
 import type { OnboardingStep } from '~/components/editor/editor-chat/types';
 
 // ─── Pipeline Steps Tests ────────────────────────────────────────────────────
@@ -44,7 +41,7 @@ describe('Pipeline Steps Configuration', () => {
   });
 
   it('should have business discovery steps in correct order', () => {
-    const businessSteps = PIPELINE_STEPS.filter(step => step.startsWith('business-'));
+    const businessSteps = PIPELINE_STEPS.filter((step) => step.startsWith('business-'));
     expect(businessSteps).toEqual([
       'business-uvp',
       'business-audience',
@@ -61,7 +58,7 @@ describe('Pipeline Steps Configuration', () => {
 
 describe('Step Labels', () => {
   it('should have a label for every step', () => {
-    PIPELINE_STEPS.forEach(step => {
+    PIPELINE_STEPS.forEach((step) => {
       expect(STEP_LABELS[step]).toBeDefined();
       expect(typeof STEP_LABELS[step]).toBe('string');
       expect(STEP_LABELS[step].length).toBeGreaterThan(0);
@@ -69,12 +66,12 @@ describe('Step Labels', () => {
   });
 
   it('should have user-friendly labels', () => {
-    expect(STEP_LABELS['welcome']).toBe('Welcome');
-    expect(STEP_LABELS['describe']).toBe('Describe your project');
-    expect(STEP_LABELS['name']).toBe('Name your project');
+    expect(STEP_LABELS.welcome).toBe('Welcome');
+    expect(STEP_LABELS.describe).toBe('Describe your project');
+    expect(STEP_LABELS.name).toBe('Name your project');
     expect(STEP_LABELS['business-uvp']).toBe('Value proposition');
-    expect(STEP_LABELS['template']).toBe('Choose template');
-    expect(STEP_LABELS['ready']).toBe('Complete');
+    expect(STEP_LABELS.template).toBe('Choose template');
+    expect(STEP_LABELS.ready).toBe('Complete');
   });
 });
 
@@ -83,9 +80,9 @@ describe('Step Labels', () => {
 describe('Default Next Step Mapping', () => {
   // Re-define the mapping for testing (mirrors the hook)
   const DEFAULT_NEXT_STEP: Partial<Record<string, string>> = {
-    'welcome': 'describe',
-    'describe': 'name',
-    'name': 'business-uvp',
+    welcome: 'describe',
+    describe: 'name',
+    name: 'business-uvp',
     'business-uvp': 'business-audience',
     'business-audience': 'business-goals',
     'business-goals': 'business-tone',
@@ -93,15 +90,15 @@ describe('Default Next Step Mapping', () => {
     'business-selling': 'business-pricing',
     'business-pricing': 'business-summary',
     'business-summary': 'template',
-    'template': 'personalization',
-    'personalization': 'creating',
-    'creating': 'ready',
+    template: 'personalization',
+    personalization: 'creating',
+    creating: 'ready',
   };
 
   it('should map each step to the correct next step', () => {
-    expect(DEFAULT_NEXT_STEP['welcome']).toBe('describe');
-    expect(DEFAULT_NEXT_STEP['describe']).toBe('name');
-    expect(DEFAULT_NEXT_STEP['name']).toBe('business-uvp');
+    expect(DEFAULT_NEXT_STEP.welcome).toBe('describe');
+    expect(DEFAULT_NEXT_STEP.describe).toBe('name');
+    expect(DEFAULT_NEXT_STEP.name).toBe('business-uvp');
   });
 
   it('should have business discovery flow connected correctly', () => {
@@ -118,7 +115,7 @@ describe('Default Next Step Mapping', () => {
   });
 
   it('should have no next step for ready (final step)', () => {
-    expect(DEFAULT_NEXT_STEP['ready']).toBeUndefined();
+    expect(DEFAULT_NEXT_STEP.ready).toBeUndefined();
   });
 });
 
@@ -184,7 +181,9 @@ describe('Step Transition Logic', () => {
     };
 
     expect(generateTransitionMessageType('name', 'business-uvp')).toBe('transition-name-to-business-uvp');
-    expect(generateTransitionMessageType('business-uvp', 'business-audience')).toBe('transition-business-uvp-to-business-audience');
+    expect(generateTransitionMessageType('business-uvp', 'business-audience')).toBe(
+      'transition-business-uvp-to-business-audience',
+    );
   });
 
   it('should include context in transition', () => {
@@ -194,11 +193,7 @@ describe('Step Transition Logic', () => {
       targetAudience?: string;
     }
 
-    const createTransitionContext = (
-      fromStep: string,
-      toStep: string,
-      context?: StepTransitionContext
-    ) => {
+    const createTransitionContext = (fromStep: string, toStep: string, context?: StepTransitionContext) => {
       return {
         messageType: `transition-${fromStep}-to-${toStep}`,
         messageContext: {
@@ -243,7 +238,7 @@ describe('Step Transition Logic', () => {
       completedSteps = [...completedSteps, fromStep];
     }
 
-    expect(completedSteps.filter(s => s === 'name')).toHaveLength(1);
+    expect(completedSteps.filter((s) => s === 'name')).toHaveLength(1);
   });
 });
 
@@ -254,6 +249,7 @@ describe('Progress Calculation', () => {
     const calculateProgress = (currentStep: OnboardingStep) => {
       const totalSteps = PIPELINE_STEPS.length;
       const currentIndex = PIPELINE_STEPS.indexOf(currentStep);
+
       return Math.round((currentIndex / (totalSteps - 1)) * 100);
     };
 
@@ -265,6 +261,7 @@ describe('Progress Calculation', () => {
     const calculateProgress = (currentStep: OnboardingStep) => {
       const totalSteps = PIPELINE_STEPS.length;
       const currentIndex = PIPELINE_STEPS.indexOf(currentStep);
+
       return Math.round((currentIndex / (totalSteps - 1)) * 100);
     };
 
@@ -276,7 +273,11 @@ describe('Progress Calculation', () => {
   it('should return 0 for unknown step', () => {
     const calculateProgress = (currentStep: string) => {
       const currentIndex = PIPELINE_STEPS.indexOf(currentStep as OnboardingStep);
-      if (currentIndex === -1) return 0;
+
+      if (currentIndex === -1) {
+        return 0;
+      }
+
       return Math.round((currentIndex / (PIPELINE_STEPS.length - 1)) * 100);
     };
 
@@ -292,6 +293,7 @@ describe('Skip To Step Logic', () => {
       const currentIndex = PIPELINE_STEPS.indexOf(currentStep);
       const targetIndex = PIPELINE_STEPS.indexOf(targetStep);
       const skippedSteps = PIPELINE_STEPS.slice(currentIndex, targetIndex);
+
       return [...new Set([...completedSteps, ...skippedSteps])];
     };
 
@@ -312,10 +314,13 @@ describe('Skip To Step Logic', () => {
     const skipToStep = (currentStep: OnboardingStep, targetStep: OnboardingStep, completedSteps: OnboardingStep[]) => {
       const currentIndex = PIPELINE_STEPS.indexOf(currentStep);
       const targetIndex = PIPELINE_STEPS.indexOf(targetStep);
+
       if (targetIndex <= currentIndex) {
         return completedSteps; // No change for backwards skip
       }
+
       const skippedSteps = PIPELINE_STEPS.slice(currentIndex, targetIndex);
+
       return [...new Set([...completedSteps, ...skippedSteps])];
     };
 
@@ -332,16 +337,10 @@ describe('Reset To Step Logic', () => {
   it('should keep only steps before target as completed', () => {
     const resetToStep = (targetStep: OnboardingStep, completedSteps: OnboardingStep[]) => {
       const targetIndex = PIPELINE_STEPS.indexOf(targetStep);
-      return completedSteps.filter(s => PIPELINE_STEPS.indexOf(s) < targetIndex);
+      return completedSteps.filter((s) => PIPELINE_STEPS.indexOf(s) < targetIndex);
     };
 
-    const result = resetToStep('business-uvp', [
-      'welcome',
-      'describe',
-      'name',
-      'business-uvp',
-      'business-audience',
-    ]);
+    const result = resetToStep('business-uvp', ['welcome', 'describe', 'name', 'business-uvp', 'business-audience']);
 
     expect(result).toEqual(['welcome', 'describe', 'name']);
     expect(result).not.toContain('business-uvp');
@@ -351,14 +350,10 @@ describe('Reset To Step Logic', () => {
   it('should clear all steps when resetting to welcome', () => {
     const resetToStep = (targetStep: OnboardingStep, completedSteps: OnboardingStep[]) => {
       const targetIndex = PIPELINE_STEPS.indexOf(targetStep);
-      return completedSteps.filter(s => PIPELINE_STEPS.indexOf(s) < targetIndex);
+      return completedSteps.filter((s) => PIPELINE_STEPS.indexOf(s) < targetIndex);
     };
 
-    const result = resetToStep('welcome', [
-      'welcome',
-      'describe',
-      'name',
-    ]);
+    const result = resetToStep('welcome', ['welcome', 'describe', 'name']);
 
     expect(result).toEqual([]);
   });
@@ -417,9 +412,11 @@ describe('Pipeline State Persistence', () => {
     onStateChange(newState);
 
     expect(onStateChange).toHaveBeenCalledTimes(1);
-    expect(onStateChange).toHaveBeenCalledWith(expect.objectContaining({
-      step: 'business-uvp',
-    }));
+    expect(onStateChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        step: 'business-uvp',
+      }),
+    );
   });
 });
 
@@ -453,6 +450,7 @@ describe('Transition Complete Marking', () => {
       messageGenerated: boolean;
       timestamp: number;
     };
+
     let pendingTransition: PendingTransition | null = null;
 
     const markTransitionComplete = () => {
@@ -468,4 +466,3 @@ describe('Transition Complete Marking', () => {
     expect(pendingTransition).toBeNull();
   });
 });
-

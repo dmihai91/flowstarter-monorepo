@@ -33,12 +33,16 @@ export interface UseSimpleBuildHandlersProps {
   onPreviewChange?: (preview: PreviewInfo | null) => void;
   onProjectReady?: (urlId: string) => void;
   onStateChange?: (state: Partial<InitialChatState>) => void;
+
   /** Existing project ID if one was already created (e.g., in /new route) */
   existingProjectId?: string | null;
+
   /** Convex conversation _id from the URL param — used for Convex mutations */
   convexConversationId?: string | null;
+
   /** Integrations already selected upstream in the main-platform handoff */
   seededIntegrations?: IntegrationConfig[];
+
   /** Seeded template metadata from dashboard handoff, used while template hook hydrates */
   seededTemplate?: {
     id: string;

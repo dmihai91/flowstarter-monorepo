@@ -41,7 +41,11 @@ export const ColorSchemeDialog: React.FC<ColorSchemeDialogProps> = ({ setDesignS
 
   return (
     <>
-      <IconButton title={t.chat.colorScheme.title} className="transition-all" onClick={() => state.setIsDialogOpen(true)}>
+      <IconButton
+        title={t.chat.colorScheme.title}
+        className="transition-all"
+        onClick={() => state.setIsDialogOpen(true)}
+      >
         <div className="i-ph:palette text-xl"></div>
       </IconButton>
 
@@ -221,32 +225,32 @@ interface ModeToggleProps {
 const ModeToggle: React.FC<ModeToggleProps> = ({ mode, setMode }) => {
   const { t } = useTranslation();
   return (
-  <div className="flex items-center gap-1 p-1 bg-flowstarter-elements-background-depth-1 dark:bg-flowstarter-elements-background-depth-1-dark border border-flowstarter-elements-borderColor dark:border-flowstarter-elements-borderColor-dark rounded-lg">
-    <button
-      onClick={() => setMode('light')}
-      className={classNames(
-        'p-1.5 rounded-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-flowstarter-elements-ring',
-        mode === 'light'
-          ? 'bg-flowstarter-elements-item-backgroundAccent border-flowstarter-elements-borderColorActive text-white shadow-sm'
-          : 'bg-flowstarter-elements-background-depth-3 dark:bg-flowstarter-elements-background-depth-3-dark text-flowstarter-elements-textSecondary dark:text-flowstarter-elements-textSecondary-dark hover:text-flowstarter-elements-textPrimary dark:hover:text-flowstarter-elements-textPrimary-dark hover:bg-flowstarter-elements-background-depth-2 dark:hover:bg-flowstarter-elements-background-depth-2-dark',
-      )}
-      title={t.chat.colorScheme.lightMode}
-    >
-      <span className="i-ph:sun text-base" />
-    </button>
-    <button
-      onClick={() => setMode('dark')}
-      className={classNames(
-        'p-1.5 rounded-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-flowstarter-elements-ring',
-        mode === 'dark'
-          ? 'bg-flowstarter-elements-item-backgroundAccent border-flowstarter-elements-borderColorActive text-white shadow-sm'
-          : 'bg-flowstarter-elements-background-depth-3 dark:bg-flowstarter-elements-background-depth-3-dark text-flowstarter-elements-textSecondary dark:text-flowstarter-elements-textSecondary-dark hover:text-flowstarter-elements-textPrimary dark:hover:text-flowstarter-elements-textPrimary-dark hover:bg-flowstarter-elements-background-depth-2 dark:hover:bg-flowstarter-elements-background-depth-2-dark',
-      )}
-      title={t.chat.colorScheme.darkMode}
-    >
-      <span className="i-ph:moon text-base" />
-    </button>
-  </div>
+    <div className="flex items-center gap-1 p-1 bg-flowstarter-elements-background-depth-1 dark:bg-flowstarter-elements-background-depth-1-dark border border-flowstarter-elements-borderColor dark:border-flowstarter-elements-borderColor-dark rounded-lg">
+      <button
+        onClick={() => setMode('light')}
+        className={classNames(
+          'p-1.5 rounded-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-flowstarter-elements-ring',
+          mode === 'light'
+            ? 'bg-flowstarter-elements-item-backgroundAccent border-flowstarter-elements-borderColorActive text-white shadow-sm'
+            : 'bg-flowstarter-elements-background-depth-3 dark:bg-flowstarter-elements-background-depth-3-dark text-flowstarter-elements-textSecondary dark:text-flowstarter-elements-textSecondary-dark hover:text-flowstarter-elements-textPrimary dark:hover:text-flowstarter-elements-textPrimary-dark hover:bg-flowstarter-elements-background-depth-2 dark:hover:bg-flowstarter-elements-background-depth-2-dark',
+        )}
+        title={t.chat.colorScheme.lightMode}
+      >
+        <span className="i-ph:sun text-base" />
+      </button>
+      <button
+        onClick={() => setMode('dark')}
+        className={classNames(
+          'p-1.5 rounded-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-flowstarter-elements-ring',
+          mode === 'dark'
+            ? 'bg-flowstarter-elements-item-backgroundAccent border-flowstarter-elements-borderColorActive text-white shadow-sm'
+            : 'bg-flowstarter-elements-background-depth-3 dark:bg-flowstarter-elements-background-depth-3-dark text-flowstarter-elements-textSecondary dark:text-flowstarter-elements-textSecondary-dark hover:text-flowstarter-elements-textPrimary dark:hover:text-flowstarter-elements-textPrimary-dark hover:bg-flowstarter-elements-background-depth-2 dark:hover:bg-flowstarter-elements-background-depth-2-dark',
+        )}
+        title={t.chat.colorScheme.darkMode}
+      >
+        <span className="i-ph:moon text-base" />
+      </button>
+    </div>
   );
 };
 

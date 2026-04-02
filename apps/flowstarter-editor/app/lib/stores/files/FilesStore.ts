@@ -25,11 +25,7 @@ import {
   isFolderLocked,
   type FilesLockContext,
 } from './files.locks';
-import {
-  getFileModifications,
-  getModifiedFiles,
-  resetFileModifications,
-} from './files.modifications';
+import { getFileModifications, getModifiedFiles, resetFileModifications } from './files.modifications';
 
 const logger = createScopedLogger('FilesStore');
 
@@ -58,9 +54,7 @@ export class FilesStore {
     if (typeof window !== 'undefined') {
       const scheduleInit = (callback: () => void) => {
         if ('requestIdleCallback' in window) {
-          (window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(
-            callback,
-          );
+          (window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(callback);
         } else {
           setTimeout(callback, 50);
         }

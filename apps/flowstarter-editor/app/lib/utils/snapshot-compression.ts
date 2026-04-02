@@ -176,4 +176,3 @@ export async function decompressWithPako(blob: Blob): Promise<FileMap> {
 
   return JSON.parse(decompressed) as FileMap;
 }
-

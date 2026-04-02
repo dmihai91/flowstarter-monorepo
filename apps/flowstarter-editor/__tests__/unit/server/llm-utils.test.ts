@@ -13,8 +13,8 @@ import type { Message } from 'ai';
 
 describe('LLM Utils - File References', () => {
   beforeEach(() => {
-    vi.spyOn(console, 'log').mockImplementation(() => { });
-    vi.spyOn(console, 'error').mockImplementation(() => { });
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -679,4 +679,3 @@ function hello() {
     });
   });
 });
-

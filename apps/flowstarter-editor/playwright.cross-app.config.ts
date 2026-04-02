@@ -34,13 +34,11 @@ const viteCachePath = path.resolve(__dirname, 'node_modules/.vite');
 const viteCachePathForShell = viteCachePath.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 
 const BASE = process.env.E2E_BASE_URL || 'https://flowstarter.dev';
-const EDITOR =
-  process.env.PLAYWRIGHT_E2E_EDITOR_URL ||
-  'http://localhost:5173';
+const EDITOR = process.env.PLAYWRIGHT_E2E_EDITOR_URL || 'http://localhost:5173';
 
 export default defineConfig({
   testDir: './e2e/cross-app',
-  fullyParallel: false,  // sequential — tests share Convex/Supabase state
+  fullyParallel: false, // sequential — tests share Convex/Supabase state
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   workers: 1,
@@ -51,7 +49,7 @@ export default defineConfig({
 
   use: {
     baseURL: BASE,
-    storageState: storageStatePath,  // saved by global-setup
+    storageState: storageStatePath, // saved by global-setup
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',

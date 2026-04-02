@@ -1,6 +1,6 @@
 /**
  * Project Sync Service
- * 
+ *
  * Syncs project state to Supabase for persistence and dashboard visibility.
  */
 
@@ -25,10 +25,7 @@ export interface SaveResult {
 /**
  * Save or update a project in Supabase
  */
-export async function saveProject(
-  userId: string,
-  project: ProjectData
-): Promise<SaveResult> {
+export async function saveProject(userId: string, project: ProjectData): Promise<SaveResult> {
   if (!isSupabaseConfigured || !supabase) {
     console.warn('[ProjectSync] Supabase not configured, skipping save');
     return { success: false, error: 'Supabase not configured' };
@@ -60,6 +57,7 @@ export async function saveProject(
     }
 
     console.log('[ProjectSync] Project saved:', data?.id);
+
     return { success: true, projectId: data?.id };
   } catch (err) {
     console.error('[ProjectSync] Unexpected error:', err);
@@ -77,18 +75,16 @@ export async function loadProject(projectId: string): Promise<ProjectData | null
   }
 
   try {
-    const { data, error } = await supabase
-      .from('projects')
-      .select('*')
-      .eq('id', projectId)
-      .single();
+    const { data, error } = await supabase.from('projects').select('*').eq('id', projectId).single();
 
     if (error) {
       console.error('[ProjectSync] Load error:', error);
       return null;
     }
 
-    if (!data) return null;
+    if (!data) {
+      return null;
+    }
 
     return {
       id: data.id,
@@ -151,10 +147,7 @@ export async function deleteProject(projectId: string): Promise<boolean> {
   }
 
   try {
-    const { error } = await supabase
-      .from('projects')
-      .delete()
-      .eq('id', projectId);
+    const { error } = await supabase.from('projects').delete().eq('id', projectId);
 
     if (error) {
       console.error('[ProjectSync] Delete error:', error);
@@ -162,6 +155,7 @@ export async function deleteProject(projectId: string): Promise<boolean> {
     }
 
     console.log('[ProjectSync] Project deleted:', projectId);
+
     return true;
   } catch (err) {
     console.error('[ProjectSync] Unexpected error:', err);
@@ -186,6 +180,7 @@ export function createAutoSave(userId: string, debounceMs = 2000) {
 
       // Check if data actually changed
       const dataString = JSON.stringify(project);
+
       if (dataString === lastSavedData) {
         return; // No changes, skip save
       }
@@ -193,6 +188,7 @@ export function createAutoSave(userId: string, debounceMs = 2000) {
       // Schedule save
       timeoutId = setTimeout(async () => {
         const result = await saveProject(userId, project);
+
         if (result.success) {
           lastSavedData = dataString;
         }
@@ -207,9 +203,11 @@ export function createAutoSave(userId: string, debounceMs = 2000) {
       }
 
       const result = await saveProject(userId, project);
+
       if (result.success) {
         lastSavedData = JSON.stringify(project);
       }
+
       return result;
     },
 

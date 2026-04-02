@@ -12,9 +12,13 @@ const logger = createScopedLogger('Gretly:Pipeline:Review');
 
 function emptyReview(summary: string): ReviewResultDTO {
   return {
-    approved: false, score: 0, confidence: 0, summary,
+    approved: false,
+    score: 0,
+    confidence: 0,
+    summary,
     categoryScores: { requirementMatching: 0, completeness: 0, brandAlignment: 0, technicalQuality: 0, uxDesign: 0 },
-    issues: [], improvements: [],
+    issues: [],
+    improvements: [],
   };
 }
 
@@ -43,10 +47,7 @@ export async function runReview(
 }
 
 export function buildFeedback(review: ReviewResultDTO): string {
-  const parts: string[] = [
-    `Review Score: ${review.score}/10`,
-    `Summary: ${review.summary}`,
-  ];
+  const parts: string[] = [`Review Score: ${review.score}/10`, `Summary: ${review.summary}`];
 
   const mustFix = review.improvements.filter((i) => i.priority === 'must-fix');
 

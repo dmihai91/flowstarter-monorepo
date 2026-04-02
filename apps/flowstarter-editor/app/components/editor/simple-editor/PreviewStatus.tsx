@@ -47,11 +47,7 @@ const STATUS_CONFIGS: Record<string, (error: string | null) => StatusConfig> = {
   }),
 };
 
-export const PreviewStatus = memo(function PreviewStatus({
-  status,
-  error,
-  autoFixAttempts = 0,
-}: PreviewStatusProps) {
+export const PreviewStatus = memo(({ status, error, autoFixAttempts = 0 }: PreviewStatusProps) => {
   const config = useMemo(() => {
     if (status === 'syncing') {
       const isFixing = autoFixAttempts > 0;
@@ -60,11 +56,14 @@ export const PreviewStatus = memo(function PreviewStatus({
         color: isFixing ? 'text-yellow-400' : 'text-blue-400',
         text: isFixing
           ? `Auto-fixing build error (attempt ${autoFixAttempts}/3)...`
-          : (error?.includes('Fixing build error') ? error : t(EDITOR_LABEL_KEYS.STATUS_SYNCING)),
+          : error?.includes('Fixing build error')
+            ? error
+            : t(EDITOR_LABEL_KEYS.STATUS_SYNCING),
       };
     }
 
     const configFn = STATUS_CONFIGS[status] || STATUS_CONFIGS.idle;
+
     return configFn(error);
   }, [status, error, autoFixAttempts]);
 

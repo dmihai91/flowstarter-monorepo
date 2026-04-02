@@ -15,23 +15,16 @@ interface PreviewModalProps {
   domainName?: string;
 }
 
-export function PreviewModal({
-  isOpen,
-  onClose,
-  previewUrl,
-  isLive,
-  domainName,
-}: PreviewModalProps) {
-  if (!isOpen) return null;
+export function PreviewModal({ isOpen, onClose, previewUrl, isLive, domainName }: PreviewModalProps) {
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 z-50 bg-white dark:bg-zinc-950 flex flex-col animate-slide-up">
       {/* Header with close */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 dark:border-zinc-800">
-        <BrowserChrome
-          url={domainName || previewUrl || undefined}
-          isLive={isLive}
-        />
+        <BrowserChrome url={domainName || previewUrl || undefined} isLive={isLive} />
         <button
           onClick={onClose}
           className="p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-zinc-800 transition-colors ml-2"

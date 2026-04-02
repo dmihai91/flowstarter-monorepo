@@ -32,7 +32,10 @@ export function useAutoSaveSession({
 
   const save = useCallback(() => {
     const stateKey = `${workspaceId}:${previewUrl}:${lastPrompt}:${isGenerating}`;
-    if (stateKey === lastSavedRef.current) return;
+
+    if (stateKey === lastSavedRef.current) {
+      return;
+    }
 
     lastSavedRef.current = stateKey;
 

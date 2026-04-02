@@ -9,7 +9,13 @@
 import { ArrowRight } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { LogoIcon, GlassPanel } from '@flowstarter/flow-design-system';
-type ChatMessage = { role: 'user' | 'assistant'; content: string; id?: string; timestamp?: number; isStreaming?: boolean };
+type ChatMessage = {
+  role: 'user' | 'assistant';
+  content: string;
+  id?: string;
+  timestamp?: number;
+  isStreaming?: boolean;
+};
 
 interface AIChatPanelProps {
   messages: ChatMessage[];
@@ -30,12 +36,23 @@ const PLACEHOLDER_SUGGESTIONS = [
 
 function getTimeGreeting(): string {
   const hour = new Date().getHours();
-  if (hour >= 5 && hour < 12) return 'Good morning';
-  if (hour >= 12 && hour < 17) return 'Good afternoon';
-  if (hour >= 17 && hour < 21) return 'Good evening';
+
+  if (hour >= 5 && hour < 12) {
+    return 'Good morning';
+  }
+
+  if (hour >= 12 && hour < 17) {
+    return 'Good afternoon';
+  }
+
+  if (hour >= 17 && hour < 21) {
+    return 'Good evening';
+  }
+
   return 'Good night';
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export function AIChatPanel({
   messages,
   isGenerating,
@@ -68,7 +85,11 @@ export function AIChatPanel({
   const handleSubmit = useCallback(
     (e?: React.FormEvent) => {
       e?.preventDefault();
-      if (!input.trim() || isGenerating) return;
+
+      if (!input.trim() || isGenerating) {
+        return;
+      }
+
       onSendMessage(input.trim());
       setInput('');
     },
@@ -103,7 +124,8 @@ export function AIChatPanel({
           <div className="flex flex-col items-center justify-center h-full px-4">
             <GlassPanel shadow="subtle" padding="lg" className="w-full max-w-sm text-center">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-zinc-100 mb-1">
-                {greeting}{userName ? `, ${userName}` : ''}
+                {greeting}
+                {userName ? `, ${userName}` : ''}
               </h2>
               <p className="text-sm text-gray-500 dark:text-zinc-400 flex items-center justify-center gap-1.5 mb-4">
                 <span className="text-emerald-500">&#10024;</span>
@@ -123,10 +145,7 @@ export function AIChatPanel({
             {message.role === 'user' ? (
               <UserMessage content={message.content} />
             ) : (
-              <AssistantMessage
-                content={message.content}
-                isStreaming={message.isStreaming}
-              />
+              <AssistantMessage content={message.content} isStreaming={message.isStreaming} />
             )}
           </div>
         ))}
@@ -183,25 +202,13 @@ export function AIChatPanel({
 }
 
 function UserMessage({ content }: { content: string }) {
-  return (
-    <div className="bg-emerald-600 text-white rounded-xl px-5 py-3 text-sm font-medium">
-      {content}
-    </div>
-  );
+  return <div className="bg-emerald-600 text-white rounded-xl px-5 py-3 text-sm font-medium">{content}</div>;
 }
 
-function AssistantMessage({
-  content,
-  isStreaming,
-}: {
-  content: string;
-  isStreaming?: boolean;
-}) {
+function AssistantMessage({ content, isStreaming }: { content: string; isStreaming?: boolean }) {
   return (
     <div className="flex gap-2 text-gray-700 dark:text-zinc-300 text-sm">
-      <span className={`text-emerald-500 mt-0.5 shrink-0 ${isStreaming ? 'animate-pulse' : ''}`}>
-        &#10022;
-      </span>
+      <span className={`text-emerald-500 mt-0.5 shrink-0 ${isStreaming ? 'animate-pulse' : ''}`}>&#10022;</span>
       <span className="whitespace-pre-wrap">
         {content}
         {isStreaming && <span className="animate-pulse">|</span>}

@@ -100,28 +100,32 @@ export function ViewToggle({
           <TerminalIcon />
           {!isCompact && 'Terminal'}
           {terminalErrorCount > 0 && (
-            <span style={{
-              fontSize: '10px',
-              fontWeight: 600,
-              background: '#ef4444',
-              color: '#fff',
-              borderRadius: '9999px',
-              padding: '0 5px',
-              minWidth: '16px',
-              textAlign: 'center',
-              lineHeight: '16px',
-            }}>
+            <span
+              style={{
+                fontSize: '10px',
+                fontWeight: 600,
+                background: '#ef4444',
+                color: '#fff',
+                borderRadius: '9999px',
+                padding: '0 5px',
+                minWidth: '16px',
+                textAlign: 'center',
+                lineHeight: '16px',
+              }}
+            >
               {terminalErrorCount}
             </span>
           )}
           {hasTerminalActivity && viewMode !== 'terminal' && terminalErrorCount === 0 && (
-            <span style={{
-              width: 8,
-              height: 8,
-              borderRadius: 9999,
-              background: colors.textPrimary,
-              animation: 'pulse 1.5s ease-in-out infinite',
-            }} />
+            <span
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: 9999,
+                background: colors.textPrimary,
+                animation: 'pulse 1.5s ease-in-out infinite',
+              }}
+            />
           )}
         </button>
       )}

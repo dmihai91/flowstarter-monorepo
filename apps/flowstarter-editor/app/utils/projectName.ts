@@ -11,4 +11,3 @@ export function getProjectName() {
 
   return `${projectTitle}_${id}`;
 }
-

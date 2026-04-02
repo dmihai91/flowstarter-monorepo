@@ -5,7 +5,7 @@
  * These tests mock the Convex database to verify logic.
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 // ─── Mock Types ─────────────────────────────────────────────────────────────
 
@@ -238,10 +238,22 @@ describe('Update Logic', () => {
     };
 
     const updateData: Record<string, unknown> = {};
-    if (updates.status !== undefined) updateData.status = updates.status;
-    if (updates.plan !== undefined) updateData.plan = updates.plan;
-    if (updates.currentTaskId !== undefined) updateData.currentTaskId = updates.currentTaskId;
-    if (updates.error !== undefined) updateData.error = updates.error;
+
+    if (updates.status !== undefined) {
+      updateData.status = updates.status;
+    }
+
+    if (updates.plan !== undefined) {
+      updateData.plan = updates.plan;
+    }
+
+    if (updates.currentTaskId !== undefined) {
+      updateData.currentTaskId = updates.currentTaskId;
+    }
+
+    if (updates.error !== undefined) {
+      updateData.error = updates.error;
+    }
 
     expect(Object.keys(updateData)).toHaveLength(2);
     expect(updateData.status).toBe('executing');
@@ -279,9 +291,33 @@ describe('Update Logic', () => {
 describe('Task Sorting', () => {
   it('should sort tasks by taskIndex', () => {
     const tasks: MockTask[] = [
-      { _id: '3', orchestrationId: 'o1', taskId: 't3', taskIndex: 2, title: 'Third', description: '', status: 'pending' },
-      { _id: '1', orchestrationId: 'o1', taskId: 't1', taskIndex: 0, title: 'First', description: '', status: 'pending' },
-      { _id: '2', orchestrationId: 'o1', taskId: 't2', taskIndex: 1, title: 'Second', description: '', status: 'pending' },
+      {
+        _id: '3',
+        orchestrationId: 'o1',
+        taskId: 't3',
+        taskIndex: 2,
+        title: 'Third',
+        description: '',
+        status: 'pending',
+      },
+      {
+        _id: '1',
+        orchestrationId: 'o1',
+        taskId: 't1',
+        taskIndex: 0,
+        title: 'First',
+        description: '',
+        status: 'pending',
+      },
+      {
+        _id: '2',
+        orchestrationId: 'o1',
+        taskId: 't2',
+        taskIndex: 1,
+        title: 'Second',
+        description: '',
+        status: 'pending',
+      },
     ];
 
     const sorted = tasks.sort((a, b) => a.taskIndex - b.taskIndex);
@@ -348,9 +384,7 @@ describe('Active Orchestrations Filter', () => {
       { _id: '3', orchestrationId: 'o3', projectId: 'p1', status: 'reviewing', startedAt: 3 },
     ];
 
-    const active = orchestrations.filter(
-      (o) => o.status !== 'completed' && o.status !== 'failed'
-    );
+    const active = orchestrations.filter((o) => o.status !== 'completed' && o.status !== 'failed');
 
     expect(active).toHaveLength(2);
     expect(active.map((o) => o.status)).not.toContain('completed');
@@ -362,16 +396,22 @@ describe('Active Orchestrations Filter', () => {
       { _id: '2', orchestrationId: 'o2', projectId: 'p1', status: 'building', startedAt: 2 },
     ];
 
-    const active = orchestrations.filter(
-      (o) => o.status !== 'completed' && o.status !== 'failed'
-    );
+    const active = orchestrations.filter((o) => o.status !== 'completed' && o.status !== 'failed');
 
     expect(active).toHaveLength(1);
     expect(active[0].status).toBe('building');
   });
 
   it('should include all in-progress statuses', () => {
-    const inProgressStatuses = ['initializing', 'planning', 'executing', 'building', 'reviewing', 'refining', 'deploying'];
+    const inProgressStatuses = [
+      'initializing',
+      'planning',
+      'executing',
+      'building',
+      'reviewing',
+      'refining',
+      'deploying',
+    ];
 
     inProgressStatuses.forEach((status) => {
       const orch: MockOrchestration = {
@@ -509,10 +549,9 @@ describe('SitePlan JSON Handling', () => {
     const json = JSON.stringify(sampleSitePlan);
     const parsed = JSON.parse(json);
     const components = parsed.pages[0].components.sort(
-      (a: { order: number }, b: { order: number }) => a.order - b.order
+      (a: { order: number }, b: { order: number }) => a.order - b.order,
     );
     expect(components[0].component).toBe('Header');
     expect(components[1].component).toBe('Hero');
   });
 });
-

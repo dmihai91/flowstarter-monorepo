@@ -21,9 +21,7 @@ export const getByProject = query({
       .collect();
 
     // Return the most recently active non-expired session
-    const active = sessions
-      .filter((s) => s.status !== 'expired')
-      .sort((a, b) => b.lastActiveAt - a.lastActiveAt);
+    const active = sessions.filter((s) => s.status !== 'expired').sort((a, b) => b.lastActiveAt - a.lastActiveAt);
 
     return active[0] || null;
   },

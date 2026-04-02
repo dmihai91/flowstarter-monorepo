@@ -80,6 +80,7 @@ export function useChatManagement() {
       }
 
       console.log(`Starting bulk delete for ${itemsToDeleteIds.length} chats`, itemsToDeleteIds);
+
       let deletedCount = 0;
       const errors: string[] = [];
       const currentChatId = chatId.get();
@@ -89,7 +90,10 @@ export function useChatManagement() {
         try {
           await deleteChat(id);
           deletedCount++;
-          if (id === currentChatId) { shouldNavigate = true; }
+
+          if (id === currentChatId) {
+            shouldNavigate = true;
+          }
         } catch (error) {
           console.error(`Error deleting chat ${id}:`, error);
           errors.push(id);
@@ -99,7 +103,9 @@ export function useChatManagement() {
       if (errors.length === 0) {
         toast.success(`${deletedCount} chat${deletedCount === 1 ? '' : 's'} deleted successfully`);
       } else {
-        toast.warning(`Deleted ${deletedCount} of ${itemsToDeleteIds.length} chats. ${errors.length} failed.`, { autoClose: 5000 });
+        toast.warning(`Deleted ${deletedCount} of ${itemsToDeleteIds.length} chats. ${errors.length} failed.`, {
+          autoClose: 5000,
+        });
       }
 
       await loadEntries();
@@ -118,13 +124,17 @@ export function useChatManagement() {
 
   const toggleSelectionMode = () => {
     setSelectionMode(!selectionMode);
-    if (selectionMode) { setSelectedItems([]); }
+
+    if (selectionMode) {
+      setSelectedItems([]);
+    }
   };
 
   const toggleItemSelection = useCallback((id: string) => {
     setSelectedItems((prev) => {
       const newItems = prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id];
       console.log('Selected items updated:', newItems);
+
       return newItems;
     });
   }, []);
@@ -134,11 +144,14 @@ export function useChatManagement() {
       toast.info('Select at least one chat to delete');
       return;
     }
+
     const selectedChats = list.filter((item) => selectedItems.includes(item.id));
+
     if (selectedChats.length === 0) {
       toast.error('Could not find selected chats');
       return;
     }
+
     setDialogContent({ type: 'bulkDelete', items: selectedChats });
   }, [selectedItems, list]);
 
@@ -148,10 +161,17 @@ export function useChatManagement() {
   }, []);
 
   return {
-    list, loadEntries, dialogContent, closeDialog,
-    selectionMode, toggleSelectionMode,
-    selectedItems, toggleItemSelection, handleBulkDeleteClick,
-    deleteItem, deleteSelectedItems,
+    list,
+    loadEntries,
+    dialogContent,
+    closeDialog,
+    selectionMode,
+    toggleSelectionMode,
+    selectedItems,
+    toggleItemSelection,
+    handleBulkDeleteClick,
+    deleteItem,
+    deleteSelectedItems,
     setDialogContentWithLogging,
   };
 }

@@ -46,6 +46,7 @@ describe('TerminalPanel', () => {
 
     it('shows error badge count', () => {
       render(<TerminalPanel events={allEvents} />);
+
       // Error badge appears on the Errors filter button
       const badge = screen.getByText('1'); // 1 error event
       expect(badge).toBeTruthy();
@@ -79,7 +80,7 @@ describe('TerminalPanel', () => {
     });
 
     it('does not show stats footer without done event', () => {
-      render(<TerminalPanel events={allEvents.filter(e => e.type !== 'done')} />);
+      render(<TerminalPanel events={allEvents.filter((e) => e.type !== 'done')} />);
       expect(screen.queryByText(/15\.0s/)).toBeNull();
     });
   });
@@ -91,7 +92,12 @@ describe('TerminalPanel', () => {
     });
 
     it('shows "done" when not active and done event present', () => {
-      render(<TerminalPanel events={[{ type: 'done', duration_ms: 1000, turns: 1, cost_usd: 0.1, input_tokens: 100, output_tokens: 50 }]} isActive={false} />);
+      render(
+        <TerminalPanel
+          events={[{ type: 'done', duration_ms: 1000, turns: 1, cost_usd: 0.1, input_tokens: 100, output_tokens: 50 }]}
+          isActive={false}
+        />,
+      );
       expect(screen.getByText('done')).toBeTruthy();
     });
   });

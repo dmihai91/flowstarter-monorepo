@@ -56,4 +56,3 @@ export const getUnreadCount = (): number => {
     return false;
   }).length;
 };
-

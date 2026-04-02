@@ -66,4 +66,3 @@ export interface WindowSize {
   height: number;
   icon: string;
 }
-

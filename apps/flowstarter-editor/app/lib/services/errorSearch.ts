@@ -41,6 +41,7 @@ function normalizeError(error: ErrorContext): string {
   normalized = normalized.replace(/\(\d+,\d+\)/g, '(<LINE>,<COL>)');
   normalized = normalized.replace(/line \d+/gi, 'line <LINE>');
   normalized = normalized.replace(/\s+/g, ' ').trim();
+
   return normalized;
 }
 
@@ -56,11 +57,16 @@ const CACHE_TTL_MS = 1000 * 60 * 60; // 1 hour
 
 function getCachedSolutions(normalizedError: string): Solution[] | null {
   const entry = solutionCache.get(normalizedError);
-  if (!entry) return null;
+
+  if (!entry) {
+    return null;
+  }
+
   if (Date.now() - entry.timestamp > CACHE_TTL_MS) {
     solutionCache.delete(normalizedError);
     return null;
   }
+
   return entry.solutions;
 }
 
@@ -76,11 +82,14 @@ async function searchWebForSolutions(error: ErrorContext): Promise<Solution[]> {
   try {
     const searchTool = getSearchTool();
     logger.info(`Searching web for: ${error.message.slice(0, 50)}...`);
+
     const searchResult = await searchTool.searchError(error.message, error.framework);
+
     if (!searchResult || searchResult.results.length === 0) {
       logger.debug('No web search results found');
       return [];
     }
+
     const solutions: Solution[] = searchResult.results.map((r) => ({
       description: `${r.title} (score: ${(r.score * 100).toFixed(0)}%)`,
       fix: searchResult.answer
@@ -90,6 +99,7 @@ async function searchWebForSolutions(error: ErrorContext): Promise<Solution[]> {
       source: 'search' as const,
     }));
     logger.info(`Tavily search found ${solutions.length} solutions in ${searchResult.responseTimeMs}ms`);
+
     return solutions;
   } catch (err) {
     logger.warn('Web search failed:', err);
@@ -108,6 +118,7 @@ export async function searchError(
   logger.debug(`Searching for: ${normalizedError}`);
 
   const cachedSolutions = getCachedSolutions(normalizedError);
+
   if (cachedSolutions && cachedSolutions.length > 0) {
     logger.info(`Cache hit for error: ${normalizedError.slice(0, 50)}...`);
     return {
@@ -120,8 +131,10 @@ export async function searchError(
   }
 
   const solutions: Solution[] = [];
+
   for (const pattern of ERROR_PATTERNS) {
     const match = error.message.match(pattern.pattern);
+
     if (match) {
       logger.info(`Pattern match: ${pattern.solution.description}`);
       solutions.push({
@@ -137,14 +150,19 @@ export async function searchError(
   }
 
   const hasHighConfidence = solutions.some((s) => s.confidence >= 0.8);
+
   if (!hasHighConfidence && enableWebSearch) {
     logger.info('No high-confidence patterns found, searching web...');
+
     const webSolutions = await searchWebForSolutions(error);
     solutions.push(...webSolutions);
   }
 
   solutions.sort((a, b) => b.confidence - a.confidence);
-  if (solutions.length > 0) cacheSolutions(normalizedError, solutions);
+
+  if (solutions.length > 0) {
+    cacheSolutions(normalizedError, solutions);
+  }
 
   return {
     error,
@@ -159,13 +177,17 @@ export function applySolution(content: string, solution: Solution, error: ErrorC
   try {
     if (typeof solution.fix === 'function') {
       const result = solution.fix(content, error);
+
       if (result === content) {
         logger.warn('Solution did not modify content');
         return null;
       }
+
       return result;
     }
+
     logger.info(`Manual fix required: ${solution.fix}`);
+
     return null;
   } catch (err) {
     logger.error('Error applying solution:', err);
@@ -178,14 +200,20 @@ export async function getBestFix(
   content: string,
 ): Promise<{ fixed: string; solution: Solution } | null> {
   const result = await searchError(error);
+
   for (const solution of result.solutions) {
-    if (solution.confidence < 0.6) continue;
+    if (solution.confidence < 0.6) {
+      continue;
+    }
+
     const fixed = applySolution(content, solution, error);
+
     if (fixed) {
       logger.info(`Applied fix: ${solution.description} (confidence: ${solution.confidence})`);
       return { fixed, solution };
     }
   }
+
   return null;
 }
 
@@ -196,4 +224,3 @@ export const _testing = {
   solutionCache,
   searchWebForSolutions,
 };
-

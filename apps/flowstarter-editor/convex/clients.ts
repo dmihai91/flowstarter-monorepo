@@ -1,35 +1,34 @@
 /**
  * Client Management Functions
- * 
+ *
  * Handle client accounts and their projects.
  */
 
 import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
 
-// ═══════════════════════════════════════════════════════════════════════════
-// QUERIES
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * QUERIES
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 /**
  * List all clients (for team view)
  */
 export const list = query({
   args: {
-    status: v.optional(v.union(
-      v.literal('invited'),
-      v.literal('onboarding'),
-      v.literal('active'),
-      v.literal('churned')
-    )),
+    status: v.optional(
+      v.union(v.literal('invited'), v.literal('onboarding'), v.literal('active'), v.literal('churned')),
+    ),
   },
   handler: async (ctx, args) => {
     const clientQuery = args.status
       ? ctx.db.query('clients').withIndex('by_status', (q) => q.eq('status', args.status!))
       : ctx.db.query('clients');
-    
+
     const clients = await clientQuery.order('desc').collect();
-    
+
     // Get project counts for each client
     const clientsWithProjects = await Promise.all(
       clients.map(async (client) => {
@@ -37,14 +36,14 @@ export const list = query({
           .query('projects')
           .withIndex('by_client', (q) => q.eq('clientId', client._id))
           .collect();
-        
+
         return {
           ...client,
           projectCount: projects.length,
         };
-      })
+      }),
     );
-    
+
     return clientsWithProjects;
   },
 });
@@ -58,14 +57,17 @@ export const get = query({
   },
   handler: async (ctx, args) => {
     const client = await ctx.db.get(args.id);
-    if (!client) return null;
-    
+
+    if (!client) {
+      return null;
+    }
+
     // Get client's projects
     const projects = await ctx.db
       .query('projects')
       .withIndex('by_client', (q) => q.eq('clientId', client._id))
       .collect();
-    
+
     return {
       ...client,
       projects,
@@ -100,15 +102,17 @@ export const getByClerkUserId = query({
       .query('clients')
       .withIndex('by_clerkUserId', (q) => q.eq('clerkUserId', args.clerkUserId))
       .first();
-    
-    if (!client) return null;
-    
+
+    if (!client) {
+      return null;
+    }
+
     // Get their projects
     const projects = await ctx.db
       .query('projects')
       .withIndex('by_client', (q) => q.eq('clientId', client._id))
       .collect();
-    
+
     return {
       ...client,
       projects,
@@ -116,9 +120,11 @@ export const getByClerkUserId = query({
   },
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// MUTATIONS
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * MUTATIONS
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 /**
  * Create a new client
@@ -134,17 +140,17 @@ export const create = mutation({
   },
   handler: async (ctx, args) => {
     const now = Date.now();
-    
+
     // Check if client already exists
     const existing = await ctx.db
       .query('clients')
       .withIndex('by_email', (q) => q.eq('email', args.email.toLowerCase()))
       .first();
-    
+
     if (existing) {
       return { success: false, error: 'Client with this email already exists', clientId: existing._id };
     }
-    
+
     const clientId = await ctx.db.insert('clients', {
       email: args.email.toLowerCase(),
       name: args.name,
@@ -156,7 +162,7 @@ export const create = mutation({
       createdAt: now,
       updatedAt: now,
     });
-    
+
     return { success: true, clientId };
   },
 });
@@ -172,44 +178,39 @@ export const update = mutation({
     phone: v.optional(v.string()),
     company: v.optional(v.string()),
     discoveryNotes: v.optional(v.string()),
-    status: v.optional(v.union(
-      v.literal('invited'),
-      v.literal('onboarding'),
-      v.literal('active'),
-      v.literal('churned')
-    )),
-    plan: v.optional(v.union(
-      v.literal('trial'),
-      v.literal('starter'),
-      v.literal('professional'),
-      v.literal('enterprise')
-    )),
+    status: v.optional(
+      v.union(v.literal('invited'), v.literal('onboarding'), v.literal('active'), v.literal('churned')),
+    ),
+    plan: v.optional(
+      v.union(v.literal('trial'), v.literal('starter'), v.literal('professional'), v.literal('enterprise')),
+    ),
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
-    
+
     const client = await ctx.db.get(id);
+
     if (!client) {
       return { success: false, error: 'Client not found' };
     }
-    
+
     const patchData: any = {
       ...updates,
       updatedAt: Date.now(),
     };
-    
+
     // Handle email lowercase
     if (updates.email) {
       patchData.email = updates.email.toLowerCase();
     }
-    
+
     // Set plan start date if plan is being set
     if (updates.plan && updates.plan !== client.plan) {
       patchData.planStartedAt = Date.now();
     }
-    
+
     await ctx.db.patch(id, patchData);
-    
+
     return { success: true };
   },
 });
@@ -223,15 +224,16 @@ export const archive = mutation({
   },
   handler: async (ctx, args) => {
     const client = await ctx.db.get(args.id);
+
     if (!client) {
       return { success: false, error: 'Client not found' };
     }
-    
+
     await ctx.db.patch(args.id, {
       status: 'churned',
       updatedAt: Date.now(),
     });
-    
+
     return { success: true };
   },
 });

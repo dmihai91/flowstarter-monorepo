@@ -172,7 +172,8 @@ describe('File Sync to Workbench', () => {
     let syncedCount = 0;
     let syncComplete = false;
 
-    for (const file of files) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    for (const _file of files) {
       // Simulate file creation
       syncedCount++;
     }
@@ -292,6 +293,7 @@ describe('HeaderActionButtons Toggle Logic', () => {
       if (showWorkbench && !showChat) {
         showChat = true;
       }
+
       showWorkbench = !showWorkbench;
     };
 
@@ -311,6 +313,7 @@ describe('HeaderActionButtons Toggle Logic', () => {
       if (showWorkbench && !showChat) {
         showChat = true;
       }
+
       showWorkbench = !showWorkbench;
     };
 
@@ -320,4 +323,3 @@ describe('HeaderActionButtons Toggle Logic', () => {
     expect(showChat).toBe(originalShowChat);
   });
 });
-

@@ -15,16 +15,10 @@ export const BEAUTY_CONTENT_PATTERNS = {
     'Where Beauty Meets Artistry',
     'Look Good. Feel Amazing.',
     'Your Best Self, Elevated',
-    'Beauty That\'s Uniquely You',
+    "Beauty That's Uniquely You",
     'Crafted for You',
   ],
-  ctas: [
-    'Book Now',
-    'Schedule Appointment',
-    'View Services',
-    'Book Your Visit',
-    'Reserve Your Spot',
-  ],
+  ctas: ['Book Now', 'Schedule Appointment', 'View Services', 'Book Your Visit', 'Reserve Your Spot'],
   services: [
     'Hair Color & Cuts',
     'Facials & Skincare',
@@ -32,7 +26,7 @@ export const BEAUTY_CONTENT_PATTERNS = {
     'Nail Services',
     'Massage & Body',
     'Bridal Packages',
-    'Men\'s Grooming',
+    "Men's Grooming",
   ],
 };
 
@@ -67,17 +61,42 @@ ${BASE_CONTENT_RULES}`;
 
 export function buildBeautyContentPrompt(context: BusinessContext): string {
   const parts = [`${BEAUTY_CONTENT_PROMPT}\n\nBUSINESS CONTEXT:`];
-  if (context.ownerName) parts.push(`- Owner/Stylist: ${context.ownerName}`);
-  if (context.location) parts.push(`- Location: ${context.location}`);
-  if (context.services?.length) parts.push(`- Services: ${context.services.join(', ')}`);
-  if (context.uniqueApproach) parts.push(`- Specialty: ${context.uniqueApproach}`);
+
+  if (context.ownerName) {
+    parts.push(`- Owner/Stylist: ${context.ownerName}`);
+  }
+
+  if (context.location) {
+    parts.push(`- Location: ${context.location}`);
+  }
+
+  if (context.services?.length) {
+    parts.push(`- Services: ${context.services.join(', ')}`);
+  }
+
+  if (context.uniqueApproach) {
+    parts.push(`- Specialty: ${context.uniqueApproach}`);
+  }
+
   return parts.join('\n');
 }
 
 export const BEAUTY_DOMAIN = {
   id: 'beauty',
   name: 'Beauty & Wellness',
-  keywords: ['salon', 'spa', 'hair', 'stylist', 'makeup', 'esthetician', 'barber', 'nail', 'beauty', 'skincare', 'massage'],
+  keywords: [
+    'salon',
+    'spa',
+    'hair',
+    'stylist',
+    'makeup',
+    'esthetician',
+    'barber',
+    'nail',
+    'beauty',
+    'skincare',
+    'massage',
+  ],
   sections: BEAUTY_SECTIONS,
   contentPatterns: BEAUTY_CONTENT_PATTERNS,
   systemPrompt: BEAUTY_CONTENT_PROMPT,

@@ -18,7 +18,6 @@
  * @ts-nocheck
  * Preventing TS checks with files presented in the video for a better presentation.
  */
-import type { Message } from 'ai';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { ClientOnly } from 'remix-utils/client-only';
 import { Menu } from '~/components/sidebar/Menu.client';
@@ -39,17 +38,17 @@ import { CodeModeHeader } from '~/components/workbench/CodeModeHeader';
 import { workbenchStore } from '~/lib/stores/workbench';
 import { classNames } from '~/utils/classNames';
 import { PROVIDER_LIST } from '~/utils/constants';
-import { Messages } from '../Messages.client';
+import { Messages } from '~/components/chat/Messages.client';
 import { expoUrlAtom } from '~/lib/stores/qrCodeStore';
 import { useStore } from '@nanostores/react';
 import { proStore } from '~/lib/stores/pro';
 import { StickToBottom } from '~/lib/hooks';
-import { ChatBox } from '../Chatbox';
-import ChatAlert from '../ChatAlert';
-import LlmErrorAlert from '../LLMApiAlert';
-import ProgressCompilation from '../ProgressCompilation';
-import StarterTemplates from '../StarterTemplates';
-import styles from '../BaseChat.module.scss';
+import { ChatBox } from '~/components/chat/Chatbox';
+import ChatAlert from '~/components/chat/ChatAlert';
+import LlmErrorAlert from '~/components/chat/LLMApiAlert';
+import ProgressCompilation from '~/components/chat/ProgressCompilation';
+import StarterTemplates from '~/components/chat/StarterTemplates';
+import styles from '~/components/chat/BaseChat.module.scss';
 
 import type { ProviderInfo } from '~/types/model';
 import type { Template } from '~/components/onboarding';
@@ -142,15 +141,8 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
       provider,
     });
 
-    const {
-      isListening,
-      transcript,
-      recognition,
-      startListening,
-      stopListening,
-      setTranscript,
-      setIsListening,
-    } = useSpeechRecognition({ handleInputChange });
+    const { isListening, transcript, recognition, startListening, stopListening, setTranscript, setIsListening } =
+      useSpeechRecognition({ handleInputChange });
 
     const { handleFileUpload, handlePaste } = useFileUpload({
       uploadedFiles,

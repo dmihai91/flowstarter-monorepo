@@ -35,18 +35,25 @@ export interface TemplateInfo {
 export interface PipelineConfig {
   /** Maximum review-refine iterations */
   maxRefineIterations?: number;
+
   /** Maximum build self-heal attempts */
   maxBuildAttempts?: number;
+
   /** Minimum review score to approve (1-10) */
   approvalThreshold?: number;
+
   /** Enable fast typecheck before build */
   enableTypecheck?: boolean;
+
   /** Skip master review (for testing) */
   skipReview?: boolean;
+
   /** Progress callback */
   onProgress?: (phase: PipelinePhase, message: string, progress?: number) => void;
+
   /** Phase change callback */
   onPhaseChange?: (phase: PipelinePhase) => void;
+
   /** Review result callback */
   onReviewResult?: (result: ReviewResultDTO) => void;
 }

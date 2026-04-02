@@ -4,7 +4,12 @@
 
 import type { SiteGenerationInput, IntegrationConfig, GeneratedAsset } from '../types';
 import type { DomainConfig } from '../../siteContentAgent';
-import { getContentSuggestions, getRecommendedSections, getConversionSettings, getDesignRecommendations } from '../../siteContentAgent';
+import {
+  getContentSuggestions,
+  getRecommendedSections,
+  getConversionSettings,
+  getDesignRecommendations,
+} from '../../siteContentAgent';
 
 // Re-export from parent types
 export type { SiteGenerationInput, IntegrationConfig, GeneratedAsset };

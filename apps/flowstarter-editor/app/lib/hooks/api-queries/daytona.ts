@@ -35,15 +35,15 @@ export async function startDaytonaPreview(params: StartPreviewParams): Promise<S
   const response = await fetch('/api/daytona/preview', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
-      projectId: params.projectId, 
-      files: params.files 
+    body: JSON.stringify({
+      projectId: params.projectId,
+      files: params.files,
     }),
     signal: params.signal,
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({})) as { error?: string };
+    const errorData = (await response.json().catch(() => ({}))) as { error?: string };
     throw new Error(errorData.error || `Failed to start preview: ${response.status}`);
   }
 
@@ -64,6 +64,7 @@ async function syncToDaytonaWorkspace(params: SyncToDaytonaParams): Promise<Sync
   }
 
   const data = (await response.json()) as { fileCount?: number };
+
   return {
     fileCount: data.fileCount || Object.keys(params.files).length,
   };

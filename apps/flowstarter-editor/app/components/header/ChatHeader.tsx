@@ -17,7 +17,10 @@ export function ChatHeader() {
 
   return (
     <header className="flex shrink-0 select-none items-center pl-4 pr-3 h-10 bg-flowstarter-elements-background-depth-2 border-b border-flowstarter-elements-borderColor overflow-hidden">
-      <a href={mainUrl} className="flex items-center justify-center shrink-0 rounded-md h-8 px-2 bg-transparent hover:bg-flowstarter-elements-item-backgroundActive transition-all duration-200">
+      <a
+        href={mainUrl}
+        className="flex items-center justify-center shrink-0 rounded-md h-8 px-2 bg-transparent hover:bg-flowstarter-elements-item-backgroundActive transition-all duration-200"
+      >
         <LogoIcon size="sm" />
       </a>
       <span className="text-flowstarter-elements-textPrimary opacity-[.12] text-xl antialiased mx-1">/</span>

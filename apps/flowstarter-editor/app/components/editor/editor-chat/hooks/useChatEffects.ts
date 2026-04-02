@@ -126,7 +126,7 @@ export function useChatEffects({
   useEffect(() => {
     // Skip if state hasn't been restored yet
     if (!hasRestoredState.current) {
-      return;
+      return undefined;
     }
 
     /*
@@ -135,7 +135,7 @@ export function useChatEffects({
      */
     if (!hasCompletedInitialSyncRef.current) {
       hasCompletedInitialSyncRef.current = true;
-      return;
+      return undefined;
     }
 
     if (stateChangeRef.current) {

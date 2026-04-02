@@ -235,4 +235,3 @@ export function useAttachments() {
     maxFileSizeMB: MAX_FILE_SIZE_MB,
   };
 }
-

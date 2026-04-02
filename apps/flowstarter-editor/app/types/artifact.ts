@@ -9,4 +9,3 @@ export interface ThinkingArtifactData extends FlowstarterArtifactData {
   steps: string[];
   content: string;
 }
-

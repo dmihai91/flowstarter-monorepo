@@ -142,4 +142,3 @@ const limitedMarkdownPlugin: Plugin = () => {
     });
   };
 };
-

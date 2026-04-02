@@ -46,14 +46,8 @@ describe('fileService', () => {
       });
 
       expect(sandbox.fs.uploadFile).toHaveBeenCalledTimes(2);
-      expect(sandbox.fs.uploadFile).toHaveBeenCalledWith(
-        expect.any(Buffer),
-        '/home/daytona/src/index.ts'
-      );
-      expect(sandbox.fs.uploadFile).toHaveBeenCalledWith(
-        expect.any(Buffer),
-        '/home/daytona/package.json'
-      );
+      expect(sandbox.fs.uploadFile).toHaveBeenCalledWith(expect.any(Buffer), '/home/daytona/src/index.ts');
+      expect(sandbox.fs.uploadFile).toHaveBeenCalledWith(expect.any(Buffer), '/home/daytona/package.json');
     });
 
     it('should normalize paths without leading slash', async () => {
@@ -65,10 +59,7 @@ describe('fileService', () => {
         'src/app.ts': 'code',
       });
 
-      expect(sandbox.fs.uploadFile).toHaveBeenCalledWith(
-        expect.any(Buffer),
-        '/home/daytona/src/app.ts'
-      );
+      expect(sandbox.fs.uploadFile).toHaveBeenCalledWith(expect.any(Buffer), '/home/daytona/src/app.ts');
     });
 
     it('should normalize paths with leading slash', async () => {
@@ -80,10 +71,7 @@ describe('fileService', () => {
         '/src/app.ts': 'code',
       });
 
-      expect(sandbox.fs.uploadFile).toHaveBeenCalledWith(
-        expect.any(Buffer),
-        '/home/daytona/src/app.ts'
-      );
+      expect(sandbox.fs.uploadFile).toHaveBeenCalledWith(expect.any(Buffer), '/home/daytona/src/app.ts');
     });
 
     it('should create directories before uploading files', async () => {
@@ -97,10 +85,7 @@ describe('fileService', () => {
       });
 
       // Should create directories first
-      expect(sandbox.process.executeCommand).toHaveBeenCalledWith(
-        expect.stringContaining('mkdir -p'),
-        '/home/daytona'
-      );
+      expect(sandbox.process.executeCommand).toHaveBeenCalledWith(expect.stringContaining('mkdir -p'), '/home/daytona');
     });
 
     it('should handle empty files object', async () => {
@@ -124,10 +109,7 @@ describe('fileService', () => {
         'index.ts': 'code',
       });
 
-      expect(sandbox.fs.uploadFile).toHaveBeenCalledWith(
-        expect.any(Buffer),
-        '/custom/workdir/index.ts'
-      );
+      expect(sandbox.fs.uploadFile).toHaveBeenCalledWith(expect.any(Buffer), '/custom/workdir/index.ts');
     });
 
     it('should fallback to default workdir when getWorkDir returns null', async () => {
@@ -141,10 +123,7 @@ describe('fileService', () => {
         'index.ts': 'code',
       });
 
-      expect(sandbox.fs.uploadFile).toHaveBeenCalledWith(
-        expect.any(Buffer),
-        '/home/daytona/index.ts'
-      );
+      expect(sandbox.fs.uploadFile).toHaveBeenCalledWith(expect.any(Buffer), '/home/daytona/index.ts');
     });
 
     it('should handle upload failures gracefully', async () => {
@@ -160,7 +139,7 @@ describe('fileService', () => {
         uploadFiles(sandbox as never, {
           'file1.ts': 'content1',
           'file2.ts': 'content2',
-        })
+        }),
       ).resolves.not.toThrow();
     });
 
@@ -207,13 +186,10 @@ describe('fileService', () => {
       });
 
       // Check mkdir command contains all directories
-      const mkdirCall = sandbox.process.executeCommand.mock.calls.find((call) =>
-        call[0].includes('mkdir -p')
-      );
+      const mkdirCall = sandbox.process.executeCommand.mock.calls.find((call) => call[0].includes('mkdir -p'));
       expect(mkdirCall).toBeDefined();
       expect(mkdirCall?.[0]).toContain('/home/daytona/src/components/ui/Button');
       expect(mkdirCall?.[0]).toContain('/home/daytona/src/lib/utils/format');
     });
   });
 });
-

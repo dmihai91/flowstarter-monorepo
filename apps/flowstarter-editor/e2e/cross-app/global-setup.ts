@@ -13,8 +13,13 @@ config({ path: path.resolve(__dirname, '../../.env') });
 config({ path: path.resolve(__dirname, '../../.env.local'), override: true });
 
 export default async function globalSetup(_config: FullConfig) {
-  if (!process.env.E2E_SECRET) throw new Error('E2E_SECRET must be set');
-  if (!process.env.CLERK_SECRET_KEY) throw new Error('CLERK_SECRET_KEY must be set');
+  if (!process.env.E2E_SECRET) {
+    throw new Error('E2E_SECRET must be set');
+  }
+
+  if (!process.env.CLERK_SECRET_KEY) {
+    throw new Error('CLERK_SECRET_KEY must be set');
+  }
 
   // Ensure publishable key is available (might be under different env var names)
   if (!process.env.CLERK_PUBLISHABLE_KEY && process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {

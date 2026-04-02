@@ -67,4 +67,3 @@ export interface ReusableSandboxResult {
   sandbox: import('@daytonaio/sdk').Sandbox;
   needsStart: boolean;
 }
-

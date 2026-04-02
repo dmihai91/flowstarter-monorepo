@@ -3,7 +3,14 @@ import type { InitialChatState, OnboardingStep } from '../types';
 type PartialState = Partial<
   Pick<
     InitialChatState,
-    'step' | 'projectUrlId' | 'buildPhase' | 'selectedTemplateId' | 'selectedPalette' | 'selectedFont' | 'businessInfo' | 'projectDescription'
+    | 'step'
+    | 'projectUrlId'
+    | 'buildPhase'
+    | 'selectedTemplateId'
+    | 'selectedPalette'
+    | 'selectedFont'
+    | 'businessInfo'
+    | 'projectDescription'
   >
 >;
 

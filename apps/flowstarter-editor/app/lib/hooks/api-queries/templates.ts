@@ -30,7 +30,8 @@ async function fetchTemplateTheme(slug: string): Promise<TemplateTheme | null> {
     throw new Error(`Failed to fetch theme: ${response.status}`);
   }
 
-  const data = await response.json() as { businessInfo?: unknown; value?: unknown; data?: { theme?: unknown } };
+  const data = (await response.json()) as { businessInfo?: unknown; value?: unknown; data?: { theme?: unknown } };
+
   return (data.data?.theme as TemplateTheme) || null;
 }
 

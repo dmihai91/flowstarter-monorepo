@@ -7,12 +7,25 @@ import { getReviewerAgent, type ReviewResultDTO } from '~/lib/flowstarter/agents
 import { Gretly, type GretlyResult, type BuildResult } from './builder';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
 import type {
-  PipelinePhase, BusinessInfo, TemplateInfo, PipelineConfig,
-  PlanResult, GenerateResult, PipelineResult,
+  PipelinePhase,
+  BusinessInfo,
+  TemplateInfo,
+  PipelineConfig,
+  PlanResult,
+  GenerateResult,
+  PipelineResult,
 } from './pipeline-types';
 import { runReview, buildFeedback } from './pipeline-review';
 
-export type { PipelinePhase, BusinessInfo, TemplateInfo, PipelineConfig, PlanResult, GenerateResult, PipelineResult } from './pipeline-types';
+export type {
+  PipelinePhase,
+  BusinessInfo,
+  TemplateInfo,
+  PipelineConfig,
+  PlanResult,
+  GenerateResult,
+  PipelineResult,
+} from './pipeline-types';
 
 const logger = createScopedLogger('Gretly:Pipeline');
 
@@ -55,7 +68,9 @@ export class Pipeline {
     }
   }
 
-  getPhase(): PipelinePhase { return this.currentPhase; }
+  getPhase(): PipelinePhase {
+    return this.currentPhase;
+  }
 
   async run(
     projectId: string,
@@ -225,10 +240,8 @@ export class Pipeline {
       error,
     };
   }
-
 }
 
 export function createPipeline(config?: PipelineConfig): Pipeline {
   return new Pipeline(config);
 }
-

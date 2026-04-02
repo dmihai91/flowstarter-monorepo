@@ -201,10 +201,13 @@ export async function startPreviewWithPrewarmedSandbox(
     // Run astro check first to catch type errors with file info
     log.info(' Running astro type check before preview...');
     progress('Running type check...');
+
     const astroCheckResult = await runAstroCheck(sandbox, workDir);
+
     if (!astroCheckResult.success && astroCheckResult.errors.length > 0) {
       const firstError = astroCheckResult.errors[0];
       log.warn(` Astro check failed: ${firstError.message} in ${firstError.file}`);
+
       return {
         success: false,
         error: `Type error in ${firstError.file}: ${firstError.message}`,
@@ -289,6 +292,7 @@ async function getPreviewUrlFromSandbox(sandbox: Sandbox, output: string): Promi
   });
 
   const previewResult = await getPreviewUrl(sandbox, port);
+
   if (!previewResult) {
     console.error('[Daytona:prewarm] Failed to resolve preview URL from prewarmed sandbox', {
       sandboxId: sandbox.id,

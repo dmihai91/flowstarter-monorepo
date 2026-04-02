@@ -8,7 +8,6 @@
  */
 
 export {
-
   // Types
   type BuildErrorInfo,
   type PreviewResult,
@@ -19,7 +18,7 @@ export {
   // Client utilities
   getCachedPreviewUrl,
   clearCachedPreview,
-  
+
   // Convex persistence (fallback for worker restarts)
   fetchPreviewUrl,
   persistPreviewUrl,
@@ -39,4 +38,3 @@ export {
   // Cleanup
   cleanupAllSandboxes,
 } from './daytona';
-

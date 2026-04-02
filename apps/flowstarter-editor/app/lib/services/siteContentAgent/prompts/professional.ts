@@ -18,13 +18,7 @@ export const PROFESSIONAL_CONTENT_PATTERNS = {
     'Professional Excellence, Personal Service',
     'Your Partner in [Practice Area]',
   ],
-  ctas: [
-    'Schedule a Consultation',
-    'Contact Our Office',
-    'Book an Appointment',
-    'Get Started',
-    'Request a Review',
-  ],
+  ctas: ['Schedule a Consultation', 'Contact Our Office', 'Book an Appointment', 'Get Started', 'Request a Review'],
   trustSignals: [
     'Board Certified',
     'Award-Winning',
@@ -67,18 +61,46 @@ ${BASE_CONTENT_RULES}`;
 
 export function buildProfessionalContentPrompt(context: BusinessContext): string {
   const parts = [`${PROFESSIONAL_CONTENT_PROMPT}\n\nBUSINESS CONTEXT:`];
-  if (context.ownerName) parts.push(`- Principal: ${context.ownerName}`);
-  if (context.location) parts.push(`- Location: ${context.location}`);
-  if (context.services?.length) parts.push(`- Practice areas: ${context.services.join(', ')}`);
-  if (context.certifications?.length) parts.push(`- Credentials: ${context.certifications.join(', ')}`);
-  if (context.uniqueApproach) parts.push(`- Approach: ${context.uniqueApproach}`);
+
+  if (context.ownerName) {
+    parts.push(`- Principal: ${context.ownerName}`);
+  }
+
+  if (context.location) {
+    parts.push(`- Location: ${context.location}`);
+  }
+
+  if (context.services?.length) {
+    parts.push(`- Practice areas: ${context.services.join(', ')}`);
+  }
+
+  if (context.certifications?.length) {
+    parts.push(`- Credentials: ${context.certifications.join(', ')}`);
+  }
+
+  if (context.uniqueApproach) {
+    parts.push(`- Approach: ${context.uniqueApproach}`);
+  }
+
   return parts.join('\n');
 }
 
 export const PROFESSIONAL_DOMAIN = {
   id: 'professional',
   name: 'Professional Services',
-  keywords: ['lawyer', 'attorney', 'law firm', 'accountant', 'cpa', 'doctor', 'dentist', 'medical', 'clinic', 'financial advisor', 'consultant'],
+  keywords: [
+    'lawyer',
+    'attorney',
+    'law firm',
+    'accountant',
+    'cpa',
+    'doctor',
+    'dentist',
+    'medical',
+    'clinic',
+    'financial advisor',
+    'consultant',
+  ],
   sections: PROFESSIONAL_SECTIONS,
   contentPatterns: PROFESSIONAL_CONTENT_PATTERNS,
   systemPrompt: PROFESSIONAL_CONTENT_PROMPT,

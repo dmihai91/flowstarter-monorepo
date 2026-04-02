@@ -4,7 +4,7 @@
  * Tests for orchestrator state management and event handling.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -44,6 +44,7 @@ interface OrchestratorEvent {
 
 // ─── Mock State Manager ─────────────────────────────────────────────────────
 
+/* eslint-disable @typescript-eslint/naming-convention */
 class OrchestratorStateManager {
   private state: OrchestratorState = 'IDLE';
   private listeners: Set<(status: OrchestratorStatus) => void> = new Set();
@@ -149,6 +150,7 @@ class OrchestratorStateManager {
 
   updateTask(taskId: string, updates: Partial<TaskProgress>): void {
     const task = this.tasks.get(taskId);
+
     if (task) {
       Object.assign(task, updates);
       this.logEvent('task_updated', { taskId, updates });
@@ -174,6 +176,7 @@ class OrchestratorStateManager {
     this.notifyListeners();
   }
 }
+/* eslint-enable @typescript-eslint/naming-convention */
 
 // ─── State Transitions Tests ────────────────────────────────────────────────
 
@@ -242,18 +245,12 @@ describe('Progress Calculation', () => {
   });
 
   it('should report progressive values through states', () => {
-    const states: OrchestratorState[] = [
-      'INITIALIZING',
-      'PLANNING',
-      'EXECUTING',
-      'BUILDING',
-      'REVIEWING',
-      'DEPLOYING',
-    ];
+    const states: OrchestratorState[] = ['INITIALIZING', 'PLANNING', 'EXECUTING', 'BUILDING', 'REVIEWING', 'DEPLOYING'];
 
     let lastProgress = 0;
     states.forEach((state) => {
       manager.setState(state);
+
       const progress = manager.getStatus().progress;
       expect(progress).toBeGreaterThan(lastProgress);
       lastProgress = progress;
@@ -319,9 +316,7 @@ describe('Event Subscription', () => {
 
     manager.setState('PLANNING');
 
-    expect(listener).toHaveBeenCalledWith(
-      expect.objectContaining({ state: 'PLANNING' })
-    );
+    expect(listener).toHaveBeenCalledWith(expect.objectContaining({ state: 'PLANNING' }));
   });
 
   it('should notify multiple subscribers', () => {
@@ -353,9 +348,7 @@ describe('Event Subscription', () => {
 
     manager.setPreviewUrl('https://preview.test.com');
 
-    expect(listener).toHaveBeenCalledWith(
-      expect.objectContaining({ previewUrl: 'https://preview.test.com' })
-    );
+    expect(listener).toHaveBeenCalledWith(expect.objectContaining({ previewUrl: 'https://preview.test.com' }));
   });
 });
 
@@ -456,6 +449,7 @@ describe('Event Logging', () => {
   it('should include timestamps', () => {
     const before = Date.now();
     manager.setState('PLANNING');
+
     const after = Date.now();
 
     const log = manager.getEventLog();
@@ -593,4 +587,3 @@ describe('Integration Flow', () => {
     expect(tasks.every((t) => t.status === 'completed')).toBe(true);
   });
 });
-

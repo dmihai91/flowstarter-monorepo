@@ -88,11 +88,13 @@ export function useConvexSync({
    */
   const cleanObject = useCallback(<T extends Record<string, any>>(obj: T): Partial<T> => {
     const cleaned: Partial<T> = {};
+
     for (const [key, value] of Object.entries(obj)) {
       if (value !== undefined && value !== 'undefined') {
         cleaned[key as keyof T] = value;
       }
     }
+
     return cleaned;
   }, []);
 
@@ -100,7 +102,7 @@ export function useConvexSync({
    * Remove undefined values from an array
    */
   const cleanArray = useCallback(<T>(arr: T[]): T[] => {
-    return arr.filter(item => item !== undefined && item !== 'undefined');
+    return arr.filter((item) => item !== undefined && item !== 'undefined');
   }, []);
 
   /**
@@ -129,7 +131,7 @@ export function useConvexSync({
     try {
       // Filter out welcome/greeting messages — they're generated fresh each session
       const persistMessages = messages.filter(
-        (m) => !(m.role === 'assistant' && m.content.includes('Welcome to Flowstarter Editor'))
+        (m) => !(m.role === 'assistant' && m.content.includes('Welcome to Flowstarter Editor')),
       );
 
       await saveMessages({
@@ -167,8 +169,10 @@ export function useConvexSync({
     }
 
     try {
-      // Prepare state for Convex - clean out undefined values
-      // Convex throws on undefined values, so we must filter them out
+      /*
+       * Prepare state for Convex - clean out undefined values
+       * Convex throws on undefined values, so we must filter them out
+       */
       const stateUpdate: any = cleanObject({
         id: conversationId,
         step: conversationState.step,
@@ -341,7 +345,7 @@ export function useConvexSync({
    */
   useEffect(() => {
     if (!enabled || isSyncingRef.current) {
-      return;
+      return undefined;
     }
 
     // Clear existing timer

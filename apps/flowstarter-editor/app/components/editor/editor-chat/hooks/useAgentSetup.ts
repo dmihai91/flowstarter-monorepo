@@ -59,4 +59,3 @@ export function useAgentSetup({ messageHook }: UseAgentSetupProps): UseAgentSetu
 }
 
 export type { UseAgentSetupProps, UseAgentSetupReturn };
-

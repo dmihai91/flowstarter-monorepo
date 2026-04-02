@@ -19,6 +19,7 @@ interface UseWelcomeInitProps {
   messageHook: UseOnboardingMessagesReturn;
   flowHook: UseOnboardingFlowReturn;
   hasRestoredState: React.MutableRefObject<boolean>;
+
   /** Callback to move seeded handoff projects into explicit review before build */
   onTemplateBuildStart?: () => void;
 }
@@ -55,6 +56,7 @@ export function useWelcomeInit({
     if (state?.projectName) {
       flow.setProjectName(state.projectName);
     }
+
     if (state?.projectDescription) {
       flow.setProjectDescription(state.projectDescription);
     }
@@ -62,6 +64,7 @@ export function useWelcomeInit({
     if (isCompletedBuildState(state)) {
       flow.setStep('ready');
       msg.setSuggestedReplies([]);
+
       return;
     }
 
@@ -72,6 +75,7 @@ export function useWelcomeInit({
       msg.setSuggestedReplies([]);
       flow.setStep('review');
       onTemplateBuildStartRef.current?.();
+
       return;
     }
 
@@ -88,7 +92,7 @@ export function useWelcomeInit({
    */
   useEffect(() => {
     if (hasInitialized.current) {
-      return;
+      return undefined;
     }
 
     const state = initialStateRef.current;
@@ -96,7 +100,7 @@ export function useWelcomeInit({
     // Skip if we have initial state with messages
     if (state?.messages && state.messages.length > 0) {
       hasInitialized.current = true;
-      return;
+      return undefined;
     }
 
     const currentStep = flowHookRef.current.step;

@@ -18,13 +18,7 @@ export const YOGA_CONTENT_PATTERNS = {
     'Your Practice Awaits',
     'Movement as Medicine',
   ],
-  softCtas: [
-    'Begin Your Practice',
-    'Join a Class',
-    'Start Your Journey',
-    'Find Your Flow',
-    'Book Your First Session',
-  ],
+  softCtas: ['Begin Your Practice', 'Join a Class', 'Start Your Journey', 'Find Your Flow', 'Book Your First Session'],
   classTypes: [
     'Vinyasa Flow',
     'Hatha',
@@ -67,10 +61,23 @@ ${BASE_CONTENT_RULES}`;
 
 export function buildYogaContentPrompt(context: BusinessContext): string {
   const parts = [`${YOGA_CONTENT_PROMPT}\n\nBUSINESS CONTEXT:`];
-  if (context.ownerName) parts.push(`- Teacher/Owner: ${context.ownerName}`);
-  if (context.location) parts.push(`- Location: ${context.location}`);
-  if (context.services?.length) parts.push(`- Class styles: ${context.services.join(', ')}`);
-  if (context.uniqueApproach) parts.push(`- Teaching philosophy: ${context.uniqueApproach}`);
+
+  if (context.ownerName) {
+    parts.push(`- Teacher/Owner: ${context.ownerName}`);
+  }
+
+  if (context.location) {
+    parts.push(`- Location: ${context.location}`);
+  }
+
+  if (context.services?.length) {
+    parts.push(`- Class styles: ${context.services.join(', ')}`);
+  }
+
+  if (context.uniqueApproach) {
+    parts.push(`- Teaching philosophy: ${context.uniqueApproach}`);
+  }
+
   return parts.join('\n');
 }
 

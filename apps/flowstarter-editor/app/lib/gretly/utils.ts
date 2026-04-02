@@ -20,13 +20,7 @@
  * - Basename matching as fallback
  */
 export function findFilePath(filePath: string, files: Record<string, string>): string | null {
-  const pathVariations = [
-    filePath,
-    `/${filePath}`,
-    filePath.replace(/^\//, ''),
-    `src/${filePath}`,
-    `/src/${filePath}`,
-  ];
+  const pathVariations = [filePath, `/${filePath}`, filePath.replace(/^\//, ''), `src/${filePath}`, `/src/${filePath}`];
 
   for (const path of pathVariations) {
     if (files[path]) {

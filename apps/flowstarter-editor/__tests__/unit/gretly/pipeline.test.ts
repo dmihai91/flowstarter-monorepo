@@ -6,7 +6,15 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Pipeline, createPipeline, type PipelineConfig, type BusinessInfo, type TemplateInfo, type PlanResult, type GenerateResult, type PipelineResult } from '~/lib/gretly/pipeline';
+import {
+  Pipeline,
+  createPipeline,
+  type PipelineConfig,
+  type BusinessInfo,
+  type TemplateInfo,
+  type PlanResult,
+  type GenerateResult,
+} from '~/lib/gretly/pipeline';
 import type { BuildResult } from '~/lib/gretly';
 
 // Mock FlowOps
@@ -146,7 +154,7 @@ describe('Gretly Pipeline', () => {
         mockPlanFn,
         mockGenerateFn,
         mockBuildFn,
-        mockPublishFn
+        mockPublishFn,
       );
 
       expect(result.success).toBe(true);
@@ -172,7 +180,7 @@ describe('Gretly Pipeline', () => {
         mockPlanFn,
         mockGenerateFn,
         mockBuildFn,
-        mockPublishFn
+        mockPublishFn,
       );
 
       expect(mockPlanFn).toHaveBeenCalledWith(mockBusinessInfo, mockTemplate);
@@ -188,13 +196,13 @@ describe('Gretly Pipeline', () => {
         mockPlanFn,
         mockGenerateFn,
         mockBuildFn,
-        mockPublishFn
+        mockPublishFn,
       );
 
       expect(mockGenerateFn).toHaveBeenCalledWith(
         mockPlanResult,
         undefined, // No previous files on first iteration
-        undefined  // No feedback on first iteration
+        undefined, // No feedback on first iteration
       );
     });
 
@@ -208,7 +216,7 @@ describe('Gretly Pipeline', () => {
         mockPlanFn,
         mockGenerateFn,
         mockBuildFn,
-        mockPublishFn
+        mockPublishFn,
       );
 
       expect(mockBuildFn).toHaveBeenCalledWith('test-project', mockFiles);
@@ -224,7 +232,7 @@ describe('Gretly Pipeline', () => {
         mockPlanFn,
         mockGenerateFn,
         mockBuildFn,
-        mockPublishFn
+        mockPublishFn,
       );
 
       expect(mockPublishFn).toHaveBeenCalledWith('test-project', mockFiles);
@@ -232,6 +240,7 @@ describe('Gretly Pipeline', () => {
 
     it('should fail when planning fails', async () => {
       mockPlanFn.mockResolvedValue({ success: false, modifications: [], error: 'Planning error' });
+
       const pipeline = createPipeline({ skipReview: true });
 
       const result = await pipeline.run(
@@ -241,7 +250,7 @@ describe('Gretly Pipeline', () => {
         mockPlanFn,
         mockGenerateFn,
         mockBuildFn,
-        mockPublishFn
+        mockPublishFn,
       );
 
       expect(result.success).toBe(false);
@@ -252,6 +261,7 @@ describe('Gretly Pipeline', () => {
 
     it('should fail when generation fails', async () => {
       mockGenerateFn.mockResolvedValue({ success: false, files: {}, error: 'Generation error' });
+
       const pipeline = createPipeline({ skipReview: true });
 
       const result = await pipeline.run(
@@ -261,7 +271,7 @@ describe('Gretly Pipeline', () => {
         mockPlanFn,
         mockGenerateFn,
         mockBuildFn,
-        mockPublishFn
+        mockPublishFn,
       );
 
       expect(result.success).toBe(false);
@@ -271,6 +281,7 @@ describe('Gretly Pipeline', () => {
 
     it('should fail when build fails after self-healing', async () => {
       mockBuildFn.mockResolvedValue({ success: false, error: 'Build error' });
+
       const pipeline = createPipeline({ skipReview: true });
 
       const result = await pipeline.run(
@@ -280,7 +291,7 @@ describe('Gretly Pipeline', () => {
         mockPlanFn,
         mockGenerateFn,
         mockBuildFn,
-        mockPublishFn
+        mockPublishFn,
       );
 
       expect(result.success).toBe(false);
@@ -302,11 +313,11 @@ describe('Gretly Pipeline', () => {
         mockPlanFn,
         mockGenerateFn,
         mockBuildFn,
-        mockPublishFn
+        mockPublishFn,
       );
 
       expect(progressMessages.length).toBeGreaterThan(0);
-      expect(progressMessages.some(m => m.includes('plan'))).toBe(true);
+      expect(progressMessages.some((m) => m.includes('plan'))).toBe(true);
     });
   });
 
@@ -325,7 +336,7 @@ describe('Gretly Pipeline', () => {
         mockPlanFn,
         mockGenerateFn,
         mockBuildFn,
-        mockPublishFn
+        mockPublishFn,
       );
 
       expect(phaseChanges).not.toContain('reviewing');
@@ -345,7 +356,7 @@ describe('Gretly Pipeline', () => {
         mockPlanFn,
         mockGenerateFn,
         mockBuildFn,
-        mockPublishFn
+        mockPublishFn,
       );
 
       expect(phaseChanges).toContain('reviewing');
@@ -361,7 +372,7 @@ describe('Gretly Pipeline', () => {
         mockPlanFn,
         mockGenerateFn,
         mockBuildFn,
-        mockPublishFn
+        mockPublishFn,
       );
 
       expect(result.success).toBe(true);
@@ -372,9 +383,11 @@ describe('Gretly Pipeline', () => {
   });
 
   describe('Pipeline Refinement', () => {
-    // Note: Refinement tests require the mock to be set up at module level
-    // The global mock always returns approved: true, so refinement doesn't trigger
-    // These tests verify the refinement logic exists in the pipeline
+    /*
+     * Note: Refinement tests require the mock to be set up at module level
+     * The global mock always returns approved: true, so refinement doesn't trigger
+     * These tests verify the refinement logic exists in the pipeline
+     */
 
     it('should complete without refinement when review passes', async () => {
       // With the default mock (approved: true, score: 8), no refinement needed
@@ -391,7 +404,7 @@ describe('Gretly Pipeline', () => {
         mockPlanFn,
         mockGenerateFn,
         mockBuildFn,
-        mockPublishFn
+        mockPublishFn,
       );
 
       expect(result.success).toBe(true);
@@ -413,7 +426,7 @@ describe('Gretly Pipeline', () => {
         mockPlanFn,
         mockGenerateFn,
         mockBuildFn,
-        mockPublishFn
+        mockPublishFn,
       );
 
       expect(result.success).toBe(true);
@@ -425,6 +438,7 @@ describe('Gretly Pipeline', () => {
   describe('Pipeline Error Handling', () => {
     it('should handle exceptions gracefully', async () => {
       mockPlanFn.mockRejectedValue(new Error('Unexpected error'));
+
       const pipeline = createPipeline({ skipReview: true });
 
       const result = await pipeline.run(
@@ -434,7 +448,7 @@ describe('Gretly Pipeline', () => {
         mockPlanFn,
         mockGenerateFn,
         mockBuildFn,
-        mockPublishFn
+        mockPublishFn,
       );
 
       expect(result.success).toBe(false);
@@ -445,6 +459,7 @@ describe('Gretly Pipeline', () => {
     it('should preserve generated files even when build fails', async () => {
       // Generate succeeds but build fails
       mockBuildFn.mockResolvedValue({ success: false, error: 'Build error' });
+
       const pipeline = createPipeline({ skipReview: true });
 
       const result = await pipeline.run(
@@ -454,26 +469,31 @@ describe('Gretly Pipeline', () => {
         mockPlanFn,
         mockGenerateFn,
         mockBuildFn,
-        mockPublishFn
+        mockPublishFn,
       );
 
       expect(result.success).toBe(false);
-      // Gretly preserves files through the build process, so they're available
-      // even on failure (for debugging/retry purposes)
+
+      /*
+       * Gretly preserves files through the build process, so they're available
+       * even on failure (for debugging/retry purposes)
+       */
       expect(Object.keys(result.files).length).toBeGreaterThan(0);
     });
   });
 });
 
 describe('Gretly (Build Orchestrator)', () => {
-  // These tests focus on the lower-level Gretly class
-  // The Gretly class is tested through the Pipeline tests above
-  // since Pipeline uses Gretly internally
+  /*
+   * These tests focus on the lower-level Gretly class
+   * The Gretly class is tested through the Pipeline tests above
+   * since Pipeline uses Gretly internally
+   */
 
   it('should be exported from gretly module', async () => {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     const { Gretly, createGretly } = await import('~/lib/gretly');
     expect(Gretly).toBeDefined();
     expect(createGretly).toBeDefined();
   });
 });
-

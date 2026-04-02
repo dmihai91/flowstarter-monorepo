@@ -87,4 +87,3 @@ export const useDebugStatus = () => {
 
   return { hasActiveWarnings, activeIssues, acknowledgeIssue, acknowledgeAllIssues };
 };
-

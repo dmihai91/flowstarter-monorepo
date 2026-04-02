@@ -14,7 +14,7 @@ export async function action({ request }: ActionFunctionArgs) {
     return json({ error: 'Method not allowed' }, { status: 405 });
   }
 
-  const { projectId, supabaseProjectId } = await request.json() as { projectId?: string; supabaseProjectId?: string };
+  const { projectId, supabaseProjectId } = (await request.json()) as { projectId?: string; supabaseProjectId?: string };
 
   if (!projectId) {
     return json({ error: 'projectId required' }, { status: 400 });
@@ -42,7 +42,8 @@ async function aggregateContext(projectId: string): Promise<Partial<ContextData>
   // Fetch project with extended fields
   const { data: project } = await supabase
     .from('projects')
-    .select(`
+    .select(
+      `
       id,
       name,
       description,
@@ -64,7 +65,8 @@ async function aggregateContext(projectId: string): Promise<Partial<ContextData>
       client_email,
       client_phone,
       client_website
-    `)
+    `,
+    )
     .eq('id', projectId)
     .single();
 
@@ -73,10 +75,7 @@ async function aggregateContext(projectId: string): Promise<Partial<ContextData>
   }
 
   // Fetch integrations
-  const { data: integrations } = await supabase
-    .from('user_integrations')
-    .select('*')
-    .eq('project_id', projectId);
+  const { data: integrations } = await supabase.from('user_integrations').select('*').eq('project_id', projectId);
 
   const bookingIntegration = integrations?.find((i) => i.type === 'booking');
   const newsletterIntegration = integrations?.find((i) => i.type === 'newsletter');

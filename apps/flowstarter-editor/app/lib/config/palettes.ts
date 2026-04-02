@@ -511,4 +511,3 @@ export function generateTailwindColors(palette: ColorPalette): string {
       foreground: '${palette.colors.text}',
     },`;
 }
-

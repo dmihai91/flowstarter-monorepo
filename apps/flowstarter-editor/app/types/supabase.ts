@@ -29,4 +29,3 @@ export interface SupabaseCredentials {
   anonKey?: string;
   supabaseUrl?: string;
 }
-

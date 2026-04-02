@@ -265,4 +265,3 @@ export function getSpacingValue(key: string): string {
       return '1rem';
   }
 }
-

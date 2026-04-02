@@ -8,11 +8,7 @@
  */
 
 import { getAgentRegistry } from '~/lib/flowops';
-import {
-  getPlannerAgent,
-  type PlannerResponseDTO,
-  type PlanResultDTO,
-} from '~/lib/flowstarter/agents/planner-agent';
+import { getPlannerAgent, type PlannerResponseDTO, type PlanResultDTO } from '~/lib/flowstarter/agents/planner-agent';
 import { getCodeGeneratorAgent, type GenerateResultDTO } from '~/lib/flowstarter/agents/code-generator-agent';
 import { getFixerAgent, type FixerResponseDTO } from '~/lib/flowstarter/agents/fixer-agent';
 import type { BuildErrorDTO } from '~/lib/flowops/schema';
@@ -170,10 +166,7 @@ export async function callCodeGeneratorAgent(
 /**
  * Call FixerAgent for error fixing.
  */
-export async function callFixerAgent(
-  error: BuildErrorDTO,
-  files: Record<string, string>,
-): Promise<FixerResponseDTO> {
+export async function callFixerAgent(error: BuildErrorDTO, files: Record<string, string>): Promise<FixerResponseDTO> {
   const foundPath = findFilePath(error.file, files);
 
   if (!foundPath) {

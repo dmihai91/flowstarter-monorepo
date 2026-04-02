@@ -217,8 +217,6 @@ export function PaletteSelector({
             </motion.button>
           );
         })}
-
-        
       </AnimatePresence>
     </motion.div>
   );

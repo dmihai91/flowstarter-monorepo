@@ -7,20 +7,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import {
-  SearchTool,
-  getSearchTool,
-  resetSearchTool,
-  type SearchInput,
-  type SearchOutput,
-} from '~/lib/flowstarter/tools/search-tool';
-import {
-  SelfHealingTool,
-  getSelfHealingTool,
-  resetSelfHealingTool,
-  type SelfHealingInput,
-  type SelfHealingOutput,
-} from '~/lib/flowstarter/tools/self-healing-tool';
+import { SearchTool, getSearchTool, resetSearchTool } from '~/lib/flowstarter/tools/search-tool';
+import { SelfHealingTool, getSelfHealingTool, resetSelfHealingTool } from '~/lib/flowstarter/tools/self-healing-tool';
 
 // Mock fetch for SearchTool
 const mockFetch = vi.fn();
@@ -42,6 +30,7 @@ vi.mock('~/utils/logger', () => ({
 }));
 
 import { generateJSON } from '~/lib/services/llm';
+
 const mockedGenerateJSON = vi.mocked(generateJSON);
 
 describe('Flowstarter Tools', () => {
@@ -49,6 +38,7 @@ describe('Flowstarter Tools', () => {
     vi.clearAllMocks();
     resetSearchTool();
     resetSelfHealingTool();
+
     // Set env variable for tests
     process.env.TAVILY_API_KEY = 'test-api-key';
   });
@@ -58,9 +48,11 @@ describe('Flowstarter Tools', () => {
     resetSelfHealingTool();
   });
 
-  // ============================================================================
-  // SearchTool Tests
-  // ============================================================================
+  /*
+   * ============================================================================
+   * SearchTool Tests
+   * ============================================================================
+   */
 
   describe('SearchTool', () => {
     describe('Singleton Pattern', () => {
@@ -73,6 +65,7 @@ describe('Flowstarter Tools', () => {
       it('should create new instance after reset', () => {
         const tool1 = getSearchTool();
         resetSearchTool();
+
         const tool2 = getSearchTool();
         expect(tool1).not.toBe(tool2);
       });
@@ -129,6 +122,7 @@ describe('Flowstarter Tools', () => {
       it('should reject when API key is not configured', async () => {
         delete process.env.TAVILY_API_KEY;
         resetSearchTool();
+
         const tool = new SearchTool(); // No API key
 
         const result = await tool.run({ query: 'test' });
@@ -145,15 +139,13 @@ describe('Flowstarter Tools', () => {
           json: () =>
             Promise.resolve({
               query: 'test query',
-              results: [
-                { title: 'Result 1', url: 'https://example.com', content: 'Test content', score: 0.9 },
-              ],
+              results: [{ title: 'Result 1', url: 'https://example.com', content: 'Test content', score: 0.9 }],
               response_time: 0.5,
             }),
         });
 
         const tool = new SearchTool('test-key');
-        const result = await tool.run({
+        await tool.run({
           query: 'test query',
           searchDepth: 'advanced',
           maxResults: 10,
@@ -164,7 +156,7 @@ describe('Flowstarter Tools', () => {
           expect.objectContaining({
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-          })
+          }),
         );
 
         const body = JSON.parse(mockFetch.mock.calls[0][1].body);
@@ -245,6 +237,7 @@ describe('Flowstarter Tools', () => {
         await tool.searchError('/Users/dev/project/src/index.tsx:15:3 Error: Missing import');
 
         const body = JSON.parse(mockFetch.mock.calls[0][1].body);
+
         // Should remove file paths and line numbers
         expect(body.query).not.toContain('/Users');
         expect(body.query).not.toContain(':15:3');
@@ -283,9 +276,11 @@ describe('Flowstarter Tools', () => {
     });
   });
 
-  // ============================================================================
-  // SelfHealingTool Tests
-  // ============================================================================
+  /*
+   * ============================================================================
+   * SelfHealingTool Tests
+   * ============================================================================
+   */
 
   describe('SelfHealingTool', () => {
     describe('Singleton Pattern', () => {
@@ -298,6 +293,7 @@ describe('Flowstarter Tools', () => {
       it('should create new instance after reset', () => {
         const tool1 = getSelfHealingTool();
         resetSelfHealingTool();
+
         const tool2 = getSelfHealingTool();
         expect(tool1).not.toBe(tool2);
       });
@@ -433,7 +429,7 @@ import { Icon } from 'astro-icon/components';
 
         expect(result.success).toBe(true);
         expect(result.data?.fixed).toBe(true);
-        expect(result.data?.fixedContent).not.toContain("import { Icon }");
+        expect(result.data?.fixedContent).not.toContain('import { Icon }');
         expect(result.data?.fixedContent).toContain('Icon removed');
       });
 
@@ -523,13 +519,11 @@ import { Icon } from 'astro-icon/components';
       });
 
       it('should retry LLM multiple times', async () => {
-        mockedGenerateJSON
-          .mockRejectedValueOnce(new Error('LLM error'))
-          .mockResolvedValueOnce({
-            success: true,
-            fixedContent: 'fixed content here',
-            summary: 'Fixed on retry',
-          });
+        mockedGenerateJSON.mockRejectedValueOnce(new Error('LLM error')).mockResolvedValueOnce({
+          success: true,
+          fixedContent: 'fixed content here',
+          summary: 'Fixed on retry',
+        });
 
         const tool = new SelfHealingTool();
         const result = await tool.run({
@@ -669,6 +663,7 @@ import { Icon } from 'astro-icon/components';
         const schema = tool.getInputSchema();
 
         expect(schema).toHaveProperty('properties');
+
         const props = (schema as Record<string, Record<string, unknown>>).properties;
         expect(props).toHaveProperty('content');
         expect(props).toHaveProperty('file');
@@ -680,6 +675,7 @@ import { Icon } from 'astro-icon/components';
         const schema = tool.getOutputSchema();
 
         expect(schema).toHaveProperty('properties');
+
         const props = (schema as Record<string, Record<string, unknown>>).properties;
         expect(props).toHaveProperty('fixed');
         expect(props).toHaveProperty('tier');
@@ -687,4 +683,3 @@ import { Icon } from 'astro-icon/components';
     });
   });
 });
-

@@ -18,6 +18,7 @@ export class AgentRegistry {
     if (!AgentRegistry.instance) {
       AgentRegistry.instance = new AgentRegistry();
     }
+
     return AgentRegistry.instance;
   }
 
@@ -29,18 +30,22 @@ export class AgentRegistry {
 
   register(agent: BaseAgent): void {
     const name = agent.name;
+
     if (this.agents.has(name)) {
       this.logger.warn(`Agent '${name}' already registered, replacing...`);
     }
+
     this.agents.set(name, agent);
     this.logger.info(`Registered agent: ${name}`);
   }
 
   unregister(name: string): boolean {
     const removed = this.agents.delete(name);
+
     if (removed) {
       this.logger.info(`Unregistered agent: ${name}`);
     }
+
     return removed;
   }
 
@@ -62,9 +67,11 @@ export class AgentRegistry {
 
   async send(agentName: string, message: string, options?: Parameters<BaseAgent['chat']>[1]): Promise<AgentResponse> {
     const agent = this.get(agentName);
+
     if (!agent) {
       throw new Error(`Agent '${agentName}' not found`);
     }
+
     return agent.chat(message, options);
   }
 

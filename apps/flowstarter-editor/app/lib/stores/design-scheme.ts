@@ -7,4 +7,3 @@ export const designSchemeStore = atom<DesignScheme>(defaultDesignScheme);
 export function updateDesignScheme(scheme: DesignScheme) {
   designSchemeStore.set(scheme);
 }
-

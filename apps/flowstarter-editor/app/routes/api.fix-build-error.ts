@@ -150,4 +150,3 @@ function detectErrorType(message: string): SelfHealingInput['errorType'] {
 
   return 'unknown';
 }
-

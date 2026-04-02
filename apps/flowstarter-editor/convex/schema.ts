@@ -21,6 +21,7 @@ const contactDetailsSchema = v.object({
   email: v.optional(v.string()),
   phone: v.optional(v.string()),
   address: v.optional(v.string()),
+
   // Social links
   website: v.optional(v.string()),
   facebook: v.optional(v.string()),
@@ -34,12 +35,7 @@ const contactDetailsSchema = v.object({
 // Integration settings for booking systems
 const bookingIntegrationSchema = v.object({
   enabled: v.boolean(),
-  provider: v.union(
-    v.literal('calendly'),
-    v.literal('calcom'),
-    v.literal('custom'),
-    v.literal('none')
-  ),
+  provider: v.union(v.literal('calendly'), v.literal('calcom'), v.literal('custom'), v.literal('none')),
   calendlyUrl: v.optional(v.string()),
   calcomUrl: v.optional(v.string()),
   title: v.optional(v.string()),
@@ -55,7 +51,7 @@ const newsletterIntegrationSchema = v.object({
     v.literal('convertkit'),
     v.literal('buttondown'),
     v.literal('custom'),
-    v.literal('none')
+    v.literal('none'),
   ),
   mailchimpUrl: v.optional(v.string()),
   convertkitFormId: v.optional(v.string()),
@@ -116,49 +112,44 @@ const selectedFontSchema = v.object({
 });
 
 export default defineSchema({
-  // ═══════════════════════════════════════════════════════════════════════════
-  // CLIENTS - Client accounts linked to projects
-  // NOTE: Team auth is handled by Clerk in the main platform
-  // ═══════════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════════
+   * CLIENTS - Client accounts linked to projects
+   * NOTE: Team auth is handled by Clerk in the main platform
+   * ═══════════════════════════════════════════════════════════════════════════
+   */
   clients: defineTable({
     // Contact info (from team input)
     email: v.string(),
     name: v.string(),
     phone: v.optional(v.string()),
     company: v.optional(v.string()),
-    
+
     // Clerk integration - linked after client signs up via Google/Apple
-    clerkUserId: v.optional(v.string()),  // Set when client creates Clerk account
-    signupMethod: v.optional(v.union(
-      v.literal('google'),
-      v.literal('apple'),
-      v.literal('email')
-    )),
-    signedUpAt: v.optional(v.number()),   // When they completed signup
-    
+    clerkUserId: v.optional(v.string()), // Set when client creates Clerk account
+    signupMethod: v.optional(v.union(v.literal('google'), v.literal('apple'), v.literal('email'))),
+    signedUpAt: v.optional(v.number()), // When they completed signup
+
     // Status
     status: v.union(
-      v.literal('invited'),    // Magic link sent, hasn't signed up yet
+      v.literal('invited'), // Magic link sent, hasn't signed up yet
       v.literal('onboarding'), // Signed up, reviewing site
-      v.literal('active'),     // Launched, paying customer
-      v.literal('churned')     // No longer active
+      v.literal('active'), // Launched, paying customer
+      v.literal('churned'), // No longer active
     ),
-    
+
     // Notes from discovery call
     discoveryNotes: v.optional(v.string()),
-    
+
     // Subscription info (for future billing)
-    plan: v.optional(v.union(
-      v.literal('trial'),
-      v.literal('starter'),
-      v.literal('professional'),
-      v.literal('enterprise')
-    )),
+    plan: v.optional(
+      v.union(v.literal('trial'), v.literal('starter'), v.literal('professional'), v.literal('enterprise')),
+    ),
     planStartedAt: v.optional(v.number()),
-    
+
     // Created by team member (Clerk user ID)
     createdBy: v.optional(v.string()),
-    
+
     createdAt: v.number(),
     updatedAt: v.number(),
   })
@@ -166,67 +157,71 @@ export default defineSchema({
     .index('by_status', ['status'])
     .index('by_clerkUserId', ['clerkUserId']),
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // MAGIC LINKS - Secure access links for clients
-  // ═══════════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════════
+   * MAGIC LINKS - Secure access links for clients
+   * ═══════════════════════════════════════════════════════════════════════════
+   */
   magicLinks: defineTable({
     // Link details
     token: v.string(), // Unique token (UUID or similar)
-    
+
     // What this link grants access to
     clientId: v.id('clients'),
     projectId: v.id('projects'),
-    
+
     // Access level
     accessLevel: v.union(
-      v.literal('view'),       // Can only view the site
-      v.literal('customize'),  // Can make customizations (default for clients)
-      v.literal('full')        // Full access (for team sharing)
+      v.literal('view'), // Can only view the site
+      v.literal('customize'), // Can make customizations (default for clients)
+      v.literal('full'), // Full access (for team sharing)
     ),
-    
+
     // Validity
     expiresAt: v.optional(v.number()), // null = never expires
-    usedAt: v.optional(v.number()),    // First use timestamp
-    useCount: v.number(),              // How many times used
-    maxUses: v.optional(v.number()),   // null = unlimited
-    
+    usedAt: v.optional(v.number()), // First use timestamp
+    useCount: v.number(), // How many times used
+    maxUses: v.optional(v.number()), // null = unlimited
+
     // Status
     isRevoked: v.boolean(),
     revokedAt: v.optional(v.number()),
     revokedReason: v.optional(v.string()),
-    
+
     // Created by (Clerk user ID)
     createdBy: v.optional(v.string()),
-    
+
     createdAt: v.number(),
   })
     .index('by_token', ['token'])
     .index('by_client', ['clientId'])
     .index('by_project', ['projectId']),
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // CLIENT SESSIONS - Auth sessions for magic link access
-  // NOTE: Team auth sessions are handled by Clerk in the main platform
-  // ═══════════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════════
+   * CLIENT SESSIONS - Auth sessions for magic link access
+   * NOTE: Team auth sessions are handled by Clerk in the main platform
+   * ═══════════════════════════════════════════════════════════════════════════
+   */
   clientSessions: defineTable({
     // Session token (stored in cookie/localStorage)
     token: v.string(),
-    
+
     // Client this session belongs to
     clientId: v.id('clients'),
-    
+
     // For magic link sessions
     magicLinkId: v.optional(v.id('magicLinks')),
     projectId: v.id('projects'), // Scoped to specific project
     accessLevel: v.union(v.literal('view'), v.literal('customize'), v.literal('full')),
-    
+
     // Session metadata
     userAgent: v.optional(v.string()),
-    
+
     // Validity
     expiresAt: v.number(),
     lastActiveAt: v.number(),
-    
+
     createdAt: v.number(),
   })
     .index('by_token', ['token'])
@@ -241,17 +236,19 @@ export default defineSchema({
     description: v.string(),
 
     // ══════ Client & Team linking ══════
-    clientId: v.optional(v.id('clients')),  // Which client owns this
-    createdBy: v.optional(v.string()),      // Clerk user ID of team member who created it
-    
+    clientId: v.optional(v.id('clients')), // Which client owns this
+    createdBy: v.optional(v.string()), // Clerk user ID of team member who created it
+
     // Project status
-    status: v.optional(v.union(
-      v.literal('draft'),      // Being built by team
-      v.literal('review'),     // Ready for client review
-      v.literal('approved'),   // Client approved
-      v.literal('published'),  // Live on the web
-      v.literal('archived')    // No longer active
-    )),
+    status: v.optional(
+      v.union(
+        v.literal('draft'), // Being built by team
+        v.literal('review'), // Ready for client review
+        v.literal('approved'), // Client approved
+        v.literal('published'), // Live on the web
+        v.literal('archived'), // No longer active
+      ),
+    ),
 
     // Business details from onboarding
     businessDetails: businessDetailsSchema,
@@ -280,11 +277,11 @@ export default defineSchema({
         v.literal('stopped'),
       ),
     ),
-    
+
     // ══════ Publishing info ══════
-    publishedUrl: v.optional(v.string()),   // Live URL (e.g., client.flowstarter.app)
-    customDomain: v.optional(v.string()),   // Custom domain if configured
-    publishedAt: v.optional(v.number()),    // When it was published
+    publishedUrl: v.optional(v.string()), // Live URL (e.g., client.flowstarter.app)
+    customDomain: v.optional(v.string()), // Custom domain if configured
+    publishedAt: v.optional(v.number()), // When it was published
     lastPublishedBy: v.optional(v.string()), // Clerk user ID
 
     // Cross-platform linking
@@ -365,13 +362,13 @@ export default defineSchema({
       }),
     ),
     buildPhase: v.optional(v.string()),
-    
+
     // Integrations (draft state during onboarding)
     integrations: v.optional(integrationsSchema),
 
     // Contact details (draft state during onboarding)
     contactDetails: v.optional(contactDetailsSchema),
-    
+
     // Business discovery progress
     businessInfo: v.optional(
       v.object({
@@ -390,7 +387,7 @@ export default defineSchema({
         contactPhone: v.optional(v.string()),
         contactAddress: v.optional(v.string()),
         website: v.optional(v.string()),
-      })
+      }),
     ),
     brandProfile: v.optional(brandProfileSchema),
     selectedIntegrations: v.optional(v.any()),
@@ -409,9 +406,9 @@ export default defineSchema({
             toStep: v.string(),
             messageGenerated: v.boolean(),
             timestamp: v.number(),
-          })
+          }),
         ),
-      })
+      }),
     ),
 
     // Messages embedded on conversation
@@ -464,7 +461,7 @@ export default defineSchema({
       v.literal('team'),
       v.literal('background'),
       v.literal('logo'),
-      v.literal('custom')
+      v.literal('custom'),
     ),
     name: v.string(),
     prompt: v.string(),
@@ -477,14 +474,9 @@ export default defineSchema({
         height: v.optional(v.number()),
         model: v.optional(v.string()),
         seed: v.optional(v.number()),
-      })
+      }),
     ),
-    status: v.union(
-      v.literal('pending'),
-      v.literal('generating'),
-      v.literal('ready'),
-      v.literal('error')
-    ),
+    status: v.union(v.literal('pending'), v.literal('generating'), v.literal('ready'), v.literal('error')),
     errorMessage: v.optional(v.string()),
     createdAt: v.number(),
     updatedAt: v.number(),
@@ -493,54 +485,58 @@ export default defineSchema({
     .index('by_project_type', ['projectId', 'type'])
     .index('by_status', ['status']),
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // COSTS - Track LLM usage and costs for billing/analytics
-  // ═══════════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════════
+   * COSTS - Track LLM usage and costs for billing/analytics
+   * ═══════════════════════════════════════════════════════════════════════════
+   */
   costs: defineTable({
     // Link to project (optional - some costs may be pre-project)
     projectId: v.optional(v.id('projects')),
-    
+
     // Operation type for grouping
     operation: v.union(
-      v.literal('site_generation'),      // Initial site build
-      v.literal('site_modification'),    // Gretly/simple mods
-      v.literal('self_healing'),         // Build error fixes
-      v.literal('asset_generation'),     // fal.ai images
-      v.literal('chat'),                 // Onboarding chat
-      v.literal('router'),               // Modification router
-      v.literal('planning'),             // Planning with Opus
-      v.literal('other')
+      v.literal('site_generation'), // Initial site build
+      v.literal('site_modification'), // Gretly/simple mods
+      v.literal('self_healing'), // Build error fixes
+      v.literal('asset_generation'), // fal.ai images
+      v.literal('chat'), // Onboarding chat
+      v.literal('router'), // Modification router
+      v.literal('planning'), // Planning with Opus
+      v.literal('other'),
     ),
-    
+
     // Model used
     model: v.string(),
-    
+
     // Token usage
     promptTokens: v.number(),
     completionTokens: v.number(),
     totalTokens: v.number(),
-    
+
     // Cost in USD
     costUSD: v.number(),
-    
+
     // Duration in milliseconds
     durationMs: v.optional(v.number()),
-    
+
     // Anonymized query for analytics (PII removed)
     anonymizedQuery: v.optional(v.string()),
-    
+
     // Query fingerprint for grouping similar queries
     queryFingerprint: v.optional(v.string()),
-    
+
     // Additional context
-    metadata: v.optional(v.object({
-      template: v.optional(v.string()),
-      language: v.optional(v.string()),
-      selfHealAttempts: v.optional(v.number()),
-      error: v.optional(v.string()),
-      step: v.optional(v.string()),
-    })),
-    
+    metadata: v.optional(
+      v.object({
+        template: v.optional(v.string()),
+        language: v.optional(v.string()),
+        selfHealAttempts: v.optional(v.number()),
+        error: v.optional(v.string()),
+        step: v.optional(v.string()),
+      }),
+    ),
+
     createdAt: v.number(),
   })
     .index('by_project', ['projectId'])
@@ -549,9 +545,11 @@ export default defineSchema({
     .index('by_project_operation', ['projectId', 'operation'])
     .index('by_fingerprint', ['queryFingerprint']),
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // EDITOR SESSIONS - Persistent editor state for session restore
-  // ═══════════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════════
+   * EDITOR SESSIONS - Persistent editor state for session restore
+   * ═══════════════════════════════════════════════════════════════════════════
+   */
   editorSessions: defineTable({
     projectId: v.id('projects'),
     conversationId: v.optional(v.id('conversations')),
@@ -576,31 +574,35 @@ export default defineSchema({
     .index('by_workspace', ['daytonaWorkspaceId'])
     .index('by_status', ['status']),
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // UNSUPPORTED REQUESTS - Track requests for features we don't support yet
-  // ═══════════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════════
+   * UNSUPPORTED REQUESTS - Track requests for features we don't support yet
+   * ═══════════════════════════════════════════════════════════════════════════
+   */
   unsupportedRequests: defineTable({
     // Type of unsupported request (ecommerce, saas, restaurant, etc.)
     requestType: v.string(),
-    
+
     // Original user description
     userDescription: v.string(),
-    
+
     // Anonymized version (PII stripped)
     anonymizedDescription: v.optional(v.string()),
-    
+
     // Keywords that triggered the detection
     detectedKeywords: v.optional(v.array(v.string())),
-    
+
     // Session tracking
     sessionId: v.optional(v.string()),
-    
+
     // Additional metadata
-    metadata: v.optional(v.object({
-      userAgent: v.optional(v.string()),
-      referrer: v.optional(v.string()),
-    })),
-    
+    metadata: v.optional(
+      v.object({
+        userAgent: v.optional(v.string()),
+        referrer: v.optional(v.string()),
+      }),
+    ),
+
     createdAt: v.number(),
   })
     .index('by_type', ['requestType'])

@@ -292,11 +292,11 @@ export class Gretly {
       lastBuildError = buildResult.buildError;
       this.setPhase('error-detected');
       logger.warn('Build error details:', {
-          file: lastBuildError.file,
-          line: lastBuildError.line,
-          message: lastBuildError.message?.slice(0, 200),
-          fullOutput: lastBuildError.fullOutput?.slice(0, 500),
-        });
+        file: lastBuildError.file,
+        line: lastBuildError.line,
+        message: lastBuildError.message?.slice(0, 200),
+        fullOutput: lastBuildError.fullOutput?.slice(0, 500),
+      });
       this.config.onError?.(lastBuildError);
       this.config.onProgress?.(
         'error-detected',
@@ -500,4 +500,3 @@ export class Gretly {
 export function createGretly(config?: GretlyConfig): Gretly {
   return new Gretly(config);
 }
-

@@ -17,11 +17,22 @@ export function fixContentImports(files: GeneratedFile[]): GeneratedFile[] {
 }
 
 function processFile(file: GeneratedFile): GeneratedFile {
-  if (!file.path.endsWith('.astro')) return file;
+  if (!file.path.endsWith('.astro')) {
+    return file;
+  }
+
   const imports = getContentImports(file.content);
-  if (!imports.length) return file;
+
+  if (!imports.length) {
+    return file;
+  }
+
   const content = rewriteAstroContent(file.content, imports);
-  if (content === file.content) return file;
+
+  if (content === file.content) {
+    return file;
+  }
+
   return { ...file, content };
 }
 
@@ -33,13 +44,16 @@ function getContentImports(content: string): ContentImport[] {
 }
 
 function rewriteAstroContent(content: string, imports: ContentImport[]): string {
-  const withoutImports = content
-    .replace(contentImportRe(), '')
-    .replace(/\n{3,}/g, '\n\n');
+  const withoutImports = content.replace(contentImportRe(), '').replace(/\n{3,}/g, '\n\n');
   const frontmatter = withoutImports.match(FRONTMATTER_RE);
-  if (!frontmatter) return replacePropertyAccess(withoutImports, imports);
+
+  if (!frontmatter) {
+    return replacePropertyAccess(withoutImports, imports);
+  }
+
   const script = rewriteFrontmatter(frontmatter[1], imports);
   const updated = withoutImports.replace(FRONTMATTER_RE, `---\n${script}\n---`);
+
   return replacePropertyAccess(updated, imports);
 }
 
@@ -48,13 +62,13 @@ function rewriteFrontmatter(script: string, imports: ContentImport[]): string {
 }
 
 function replaceDestructuring(script: string, item: ContentImport): string {
-  const pattern = new RegExp(
-    `const\\s*\\{([\\s\\S]*?)\\}\\s*=\\s*${escapeRegExp(item.alias)}\\s*;?`,
-    'g',
-  );
+  const pattern = new RegExp(`const\\s*\\{([\\s\\S]*?)\\}\\s*=\\s*${escapeRegExp(item.alias)}\\s*;?`, 'g');
   return script.replace(pattern, (match, rawFields: string) => {
     // Nested destructuring is not supported — leave untouched rather than silently break
-    if (rawFields.includes('{')) return match;
+    if (rawFields.includes('{')) {
+      return match;
+    }
+
     return createConstBlock(rawFields, item.slug);
   });
 }
@@ -71,8 +85,13 @@ function createConstBlock(rawFields: string, slug: string): string {
 
 function createConstLine(field: string, slug: string): string {
   const [source, target] = field.split(':').map((part) => part.trim());
-  if (!source) return '';
+
+  if (!source) {
+    return '';
+  }
+
   const name = target ?? source;
+
   return `const ${name} = ${buildLiteral(source, slug)};`;
 }
 
@@ -83,15 +102,18 @@ function createConstLine(field: string, slug: string): string {
  */
 function replacePropertyAccess(content: string, imports: ContentImport[]): string {
   const closingFence = content.indexOf('\n---', content.indexOf('---') + 3);
+
   if (closingFence === -1) {
     return imports.reduce((c, item) => replaceAliasInExpressions(c, item), content);
   }
+
   const fenceEnd = content.indexOf('\n', closingFence + 1);
   const scriptPart = content.slice(0, fenceEnd);
   const templatePart = content.slice(fenceEnd);
 
   const fixedScript = imports.reduce((c, item) => replaceAliasEverywhere(c, item), scriptPart);
   const fixedTemplate = imports.reduce((c, item) => replaceAliasInExpressions(c, item), templatePart);
+
   return fixedScript + fixedTemplate;
 }
 
@@ -103,10 +125,7 @@ function replaceAliasEverywhere(content: string, item: ContentImport): string {
 
 /** Replace alias.prop only inside {...} expressions (used in template body) */
 function replaceAliasInExpressions(content: string, item: ContentImport): string {
-  const exprPattern = new RegExp(
-    `\\{([^}]*${escapeRegExp(item.alias)}\\.\\w+[^}]*)\\}`,
-    'g',
-  );
+  const exprPattern = new RegExp(`\\{([^}]*${escapeRegExp(item.alias)}\\.\\w+[^}]*)\\}`, 'g');
   return content.replace(exprPattern, (match) => {
     const propPattern = new RegExp(`${escapeRegExp(item.alias)}\\.(\\w+)`, 'g');
     return match.replace(propPattern, (_, prop: string) => buildLiteral(prop, item.slug));
@@ -115,16 +134,39 @@ function replaceAliasInExpressions(content: string, item: ContentImport): string
 
 function buildLiteral(prop: string, slug: string): string {
   const key = prop.toLowerCase();
-  if (isCollectionKey(key)) return '[]';
-  if (key.startsWith('is') || key.startsWith('has')) return 'false';
-  if (key.includes('count') || key.includes('total') || key.includes('number')) return '0';
-  if (key.includes('href') || key.includes('url') || key.includes('link')) return '"#"';
-  if (key.includes('image') || key === 'src' || key.endsWith('icon')) return `"/images/${slug}.jpg"`;
-  if (key.includes('cta') || key.includes('button') || key.includes('label')) return '"Learn more"';
-  if (key === 'title' || key === 'heading' || key === 'name') return JSON.stringify(formatSlug(slug));
+
+  if (isCollectionKey(key)) {
+    return '[]';
+  }
+
+  if (key.startsWith('is') || key.startsWith('has')) {
+    return 'false';
+  }
+
+  if (key.includes('count') || key.includes('total') || key.includes('number')) {
+    return '0';
+  }
+
+  if (key.includes('href') || key.includes('url') || key.includes('link')) {
+    return '"#"';
+  }
+
+  if (key.includes('image') || key === 'src' || key.endsWith('icon')) {
+    return `"/images/${slug}.jpg"`;
+  }
+
+  if (key.includes('cta') || key.includes('button') || key.includes('label')) {
+    return '"Learn more"';
+  }
+
+  if (key === 'title' || key === 'heading' || key === 'name') {
+    return JSON.stringify(formatSlug(slug));
+  }
+
   if (key.includes('description') || key.includes('summary') || key.includes('body') || key.includes('text')) {
     return JSON.stringify(`${formatSlug(slug)} ${formatProp(prop)}`.trim());
   }
+
   return JSON.stringify(formatProp(prop));
 }
 

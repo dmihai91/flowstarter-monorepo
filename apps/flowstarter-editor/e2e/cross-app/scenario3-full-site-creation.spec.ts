@@ -28,6 +28,7 @@ let createdProjectId: string | undefined;
 async function loadTemplateFixture(): Promise<TemplateFixture> {
   const result = await e2eFetch(`${BASE}/api/local-templates`);
   expect(result.status).toBe(200);
+
   return (result.body as { templates?: TemplateFixture[] }).templates![0];
 }
 
@@ -43,6 +44,7 @@ async function openReview(page: import('@playwright/test').Page, token: string) 
       if (attempt === 1) {
         throw error;
       }
+
       await page.reload({ waitUntil: 'domcontentloaded' });
       await page.waitForURL(/\/project\//, { timeout: 15_000 });
     }
@@ -101,6 +103,7 @@ test.describe('Scenario 3: Review to build', () => {
     });
 
     expect(handoff.status).toBe(200);
+
     const { token, projectId } = handoff.body as { token: string; projectId: string };
     createdProjectId = projectId;
 

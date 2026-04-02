@@ -212,4 +212,3 @@ REMEMBER: Use primary color for 10-15% of design only. Most elements should use 
 
   return FLOWSTARTER_SYSTEM_PROMPT + contextAddition;
 }
-

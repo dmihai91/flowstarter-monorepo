@@ -17,11 +17,13 @@ const SLUG_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 async function getProjectIdFromSlug(slug: string): Promise<string | null> {
   const cached = slugCache.get(slug);
+
   if (cached && Date.now() - cached.timestamp < SLUG_CACHE_TTL) {
     return cached.projectId;
   }
 
   const projectId = await resolveSlugToProjectId(slug);
+
   if (projectId) {
     slugCache.set(slug, { projectId, timestamp: Date.now() });
   }
@@ -81,8 +83,7 @@ async function handleLiveProxy(request: Request, slug: string, path: string) {
   try {
     let proxyResponse: Response | null = null;
     let lastError: Error | null = null;
-    const requestBody =
-      request.method !== 'GET' && request.method !== 'HEAD' ? await request.arrayBuffer() : undefined;
+    const requestBody = request.method !== 'GET' && request.method !== 'HEAD' ? await request.arrayBuffer() : undefined;
 
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
       try {
@@ -104,15 +105,19 @@ async function handleLiveProxy(request: Request, slug: string, path: string) {
             await new Promise((resolve) => setTimeout(resolve, delay));
             continue;
           }
+
           clearCachedPreview(projectId);
+
           return new Response('Preview server starting...', {
             status: 503,
             headers: { 'Retry-After': '5' },
           });
         }
+
         break;
       } catch (err) {
         lastError = err instanceof Error ? err : new Error(String(err));
+
         if (attempt < MAX_RETRIES) {
           const delay = INITIAL_RETRY_DELAY * Math.pow(RETRY_BACKOFF, attempt);
           await new Promise((resolve) => setTimeout(resolve, delay));
@@ -174,8 +179,14 @@ async function handleLiveProxy(request: Request, slug: string, path: string) {
       html = html.replace(
         /(src|href)=["'](?!data:|blob:|javascript:|#|mailto:|tel:|https?:\/\/(?!.*daytona))([^"']+)["']/gi,
         (match: string, attr: string, p: string) => {
-          if (p.startsWith('/')) return `${attr}="${basePath}${p}"`;
-          if (!p.startsWith('http')) return `${attr}="${basePath}/${p}"`;
+          if (p.startsWith('/')) {
+            return `${attr}="${basePath}${p}"`;
+          }
+
+          if (!p.startsWith('http')) {
+            return `${attr}="${basePath}/${p}"`;
+          }
+
           return match;
         },
       );
@@ -204,9 +215,13 @@ async function handleLiveProxy(request: Request, slug: string, path: string) {
 
     // Build response headers
     const headers = new Headers();
+
     for (const header of ['Content-Type', 'Cache-Control', 'ETag', 'Last-Modified', 'Content-Encoding']) {
       const value = proxyResponse.headers.get(header);
-      if (value) headers.set(header, value);
+
+      if (value) {
+        headers.set(header, value);
+      }
     }
     headers.set('Access-Control-Allow-Origin', '*');
     headers.delete('X-Frame-Options');
@@ -215,6 +230,7 @@ async function handleLiveProxy(request: Request, slug: string, path: string) {
     return new Response(body, { status: proxyResponse.status, headers });
   } catch (error) {
     console.error('[Live Proxy] Error:', error);
+
     const errorMessage = error instanceof Error ? error.message : 'Failed to load preview';
     const isConnectionError =
       errorMessage.includes('ECONNREFUSED') || errorMessage.includes('refused') || errorMessage.includes('ETIMEDOUT');
@@ -243,12 +259,13 @@ async function handleLiveProxy(request: Request, slug: string, path: string) {
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const slug = params.slug || '';
   const path = params['*'] || '';
+
   return handleLiveProxy(request, slug, '/' + path);
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
   const slug = params.slug || '';
   const path = params['*'] || '';
+
   return handleLiveProxy(request, slug, '/' + path);
 }
-

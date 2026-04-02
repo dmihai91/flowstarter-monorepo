@@ -78,4 +78,3 @@ export function createEnvMaskingExtension(getFilePath: () => string | undefined)
     },
   );
 }
-

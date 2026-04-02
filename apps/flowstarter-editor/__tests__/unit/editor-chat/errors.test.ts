@@ -5,11 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   BUILD_ERRORS,
-  NAME_GENERATION_ERRORS,
-  BUSINESS_INFO_ERRORS,
-  TEMPLATE_ERRORS,
   AGENT_ERRORS,
-  FILE_ERRORS,
   NETWORK_ERRORS,
   formatErrorForUser,
   getUserFriendlyError,
@@ -215,8 +211,10 @@ describe('getErrorSuggestions', () => {
 
   it('should have id and text for each suggestion', () => {
     const errorTypes = ['build', 'name', 'template', 'agent', 'generic'] as const;
+
     for (const type of errorTypes) {
       const suggestions = getErrorSuggestions(type);
+
       for (const suggestion of suggestions) {
         expect(suggestion.id).toBeDefined();
         expect(suggestion.text).toBeDefined();
@@ -225,4 +223,3 @@ describe('getErrorSuggestions', () => {
     }
   });
 });
-

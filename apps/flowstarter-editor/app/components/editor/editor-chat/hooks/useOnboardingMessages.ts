@@ -252,12 +252,9 @@ export function useOnboardingMessages(options: UseOnboardingMessagesOptions = {}
     [onMessagesChange],
   );
 
-
   // Update an existing message by id (e.g. live agent status card)
   const updateMessage = useCallback((id: string, patch: Partial<import('../types').ChatMessage>) => {
-    setMessagesInternal(prev =>
-      prev.map(msg => msg.id === id ? { ...msg, ...patch } : msg)
-    );
+    setMessagesInternal((prev) => prev.map((msg) => (msg.id === id ? { ...msg, ...patch } : msg)));
   }, []);
 
   return {

@@ -59,4 +59,3 @@ function appendClass(value: string, newClass: string | undefined) {
 
   return value + newClass;
 }
-

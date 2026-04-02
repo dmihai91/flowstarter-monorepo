@@ -41,13 +41,22 @@ export function ChatInput({
   // iOS/iPadOS: push input above keyboard when visual viewport shrinks
   const [keyboardOffset, setKeyboardOffset] = useState(0);
   useEffect(() => {
-    const vv = (window as Window & { visualViewport?: { height: number; addEventListener: Function; removeEventListener: Function } }).visualViewport;
-    if (!vv) return;
+    const vv = (
+      window as Window & {
+        visualViewport?: { height: number; addEventListener: Function; removeEventListener: Function };
+      }
+    ).visualViewport;
+
+    if (!vv) {
+      return undefined;
+    }
+
     const onResize = () => {
       const offset = Math.max(0, window.innerHeight - vv.height);
       setKeyboardOffset(offset);
     };
     vv.addEventListener('resize', onResize);
+
     return () => vv.removeEventListener('resize', onResize);
   }, []);
 
@@ -74,9 +83,7 @@ export function ChatInput({
     <div
       className="px-3 sm:px-4 pt-2 sm:pt-3 pb-3 sm:pb-4 relative z-[1]"
       style={{
-        paddingBottom: keyboardOffset
-          ? `${keyboardOffset + 12}px`
-          : 'max(12px, env(safe-area-inset-bottom, 12px))',
+        paddingBottom: keyboardOffset ? `${keyboardOffset + 12}px` : 'max(12px, env(safe-area-inset-bottom, 12px))',
         background: 'transparent',
         transition: 'padding-bottom 0.15s ease',
       }}

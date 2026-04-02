@@ -1,6 +1,6 @@
 /**
  * Streamlined Onboarding Tests
- * 
+ *
  * Tests for onboarding message generation, step transitions,
  * and flow logic.
  */
@@ -21,9 +21,11 @@ import {
 import { inferBusinessInfo } from '~/lib/inference/auto-inference';
 import type { QuickProfile, OnboardingStep } from '../types';
 
-// ═══════════════════════════════════════════════════════════════════════════
-// WELCOME MESSAGE
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * WELCOME MESSAGE
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('getWelcomeMessage', () => {
   it('returns a message with content', () => {
@@ -50,24 +52,26 @@ describe('getWelcomeMessage', () => {
 
   it('suggestions include coach, therapist, trainer examples', () => {
     const message = getWelcomeMessage();
-    const suggestionTexts = message.suggestions!.map(s => s.text.toLowerCase());
-    
-    expect(suggestionTexts.some(t => t.includes('coach'))).toBe(true);
-    expect(suggestionTexts.some(t => t.includes('therapist'))).toBe(true);
-    expect(suggestionTexts.some(t => t.includes('trainer'))).toBe(true);
+    const suggestionTexts = message.suggestions!.map((s) => s.text.toLowerCase());
+
+    expect(suggestionTexts.some((t) => t.includes('coach'))).toBe(true);
+    expect(suggestionTexts.some((t) => t.includes('therapist'))).toBe(true);
+    expect(suggestionTexts.some((t) => t.includes('trainer'))).toBe(true);
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// DESCRIBE ACKNOWLEDGMENT
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * DESCRIBE ACKNOWLEDGMENT
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('getDescribeAckMessage', () => {
   it('acknowledges detected business type', () => {
     const description = "I'm a life coach helping busy professionals";
     const inference = inferBusinessInfo(description);
     const message = getDescribeAckMessage(description, inference);
-    
+
     expect(message.content).toContain('life coach');
   });
 
@@ -76,7 +80,7 @@ describe('getDescribeAckMessage', () => {
     const description = "I'm a life coach for busy professionals";
     const inference = inferBusinessInfo(description);
     const message = getDescribeAckMessage(description, inference);
-    
+
     // The message should mention the business type
     expect(message.content.toLowerCase()).toContain('life coach');
   });
@@ -85,7 +89,7 @@ describe('getDescribeAckMessage', () => {
     const description = 'I help people online';
     const inference = inferBusinessInfo(description);
     const message = getDescribeAckMessage(description, inference);
-    
+
     expect(message.content).toBeDefined();
     expect(message.content.length).toBeGreaterThan(0);
   });
@@ -94,14 +98,16 @@ describe('getDescribeAckMessage', () => {
     const description = "I'm a coach";
     const inference = inferBusinessInfo(description);
     const message = getDescribeAckMessage(description, inference);
-    
+
     expect(message.showQuickProfile).toBe(true);
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// QUICK PROFILE ACKNOWLEDGMENT
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * QUICK PROFILE ACKNOWLEDGMENT
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('getQuickProfileAckMessage', () => {
   it('acknowledges leads goal', () => {
@@ -111,7 +117,7 @@ describe('getQuickProfileAckMessage', () => {
       tone: 'professional',
     };
     const message = getQuickProfileAckMessage(profile);
-    
+
     expect(message.content.toLowerCase()).toContain('lead');
   });
 
@@ -122,7 +128,7 @@ describe('getQuickProfileAckMessage', () => {
       tone: 'friendly',
     };
     const message = getQuickProfileAckMessage(profile);
-    
+
     expect(message.content.toLowerCase()).toContain('sales');
   });
 
@@ -133,7 +139,7 @@ describe('getQuickProfileAckMessage', () => {
       tone: 'friendly',
     };
     const message = getQuickProfileAckMessage(profile);
-    
+
     expect(message.content.toLowerCase()).toContain('booking');
   });
 
@@ -144,14 +150,16 @@ describe('getQuickProfileAckMessage', () => {
       tone: 'professional',
     };
     const message = getQuickProfileAckMessage(profile);
-    
+
     expect(message.showTemplateSelector).toBe(true);
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// TEMPLATE ACKNOWLEDGMENT
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * TEMPLATE ACKNOWLEDGMENT
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('getTemplateAckMessage', () => {
   it('includes template name in message', () => {
@@ -165,9 +173,11 @@ describe('getTemplateAckMessage', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// PERSONALIZATION ACKNOWLEDGMENT
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * PERSONALIZATION ACKNOWLEDGMENT
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('getPersonalizationAckMessage', () => {
   it('indicates building process will start', () => {
@@ -183,9 +193,11 @@ describe('getPersonalizationAckMessage', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// CREATING MESSAGE
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * CREATING MESSAGE
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('getCreatingMessage', () => {
   it('shows progress percentage', () => {
@@ -212,16 +224,18 @@ describe('getCreatingMessage', () => {
     const at20 = getCreatingMessage(20);
     const at60 = getCreatingMessage(60);
     const at90 = getCreatingMessage(90);
-    
+
     // Different stages should have different content
     expect(at20.content).not.toBe(at60.content);
     expect(at60.content).not.toBe(at90.content);
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// READY MESSAGE
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * READY MESSAGE
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('getReadyMessage', () => {
   it('includes preview URL', () => {
@@ -241,9 +255,11 @@ describe('getReadyMessage', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// STEP TRANSITIONS
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * STEP TRANSITIONS
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('getNextStepFromCurrent', () => {
   it('welcome -> describe', () => {
@@ -324,16 +340,18 @@ describe('getNextStepFromCurrent', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// ONBOARDING RESPONSE GENERATION
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * ONBOARDING RESPONSE GENERATION
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('generateOnboardingResponse', () => {
   it('generates welcome message for welcome step', () => {
     const response = generateOnboardingResponse({
       step: 'welcome',
     });
-    
+
     expect(response.content).toBeDefined();
     expect(response.suggestions).toBeDefined();
   });
@@ -343,7 +361,7 @@ describe('generateOnboardingResponse', () => {
       step: 'describe',
       description: "I'm a life coach for entrepreneurs",
     });
-    
+
     expect(response.content).toContain('life coach');
     expect(response.showQuickProfile).toBe(true);
   });
@@ -357,7 +375,7 @@ describe('generateOnboardingResponse', () => {
         tone: 'professional',
       },
     });
-    
+
     expect(response.showTemplateSelector).toBe(true);
   });
 
@@ -366,7 +384,7 @@ describe('generateOnboardingResponse', () => {
       step: 'template',
       templateName: 'Coach Pro',
     });
-    
+
     expect(response.content).toContain('Coach Pro');
     expect(response.showPersonalization).toBe(true);
   });
@@ -376,7 +394,7 @@ describe('generateOnboardingResponse', () => {
       step: 'creating',
       buildProgress: 50,
     });
-    
+
     expect(response.content).toContain('50%');
   });
 
@@ -386,7 +404,7 @@ describe('generateOnboardingResponse', () => {
       previewUrl: 'https://preview.flowstarter.app/123',
       projectName: 'My Site',
     });
-    
+
     expect(response.content).toContain('https://preview.flowstarter.app/123');
     expect(response.content).toContain('My Site');
   });
@@ -396,14 +414,16 @@ describe('generateOnboardingResponse', () => {
       step: 'welcome',
       userName: 'Jane',
     });
-    
+
     expect(response.content).toContain('Jane');
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// QUICK PROFILE INFERENCE
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * QUICK PROFILE INFERENCE
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('getSuggestedQuickProfile', () => {
   it('suggests bookings for coaching descriptions', () => {

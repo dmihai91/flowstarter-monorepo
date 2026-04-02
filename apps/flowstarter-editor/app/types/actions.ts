@@ -77,4 +77,3 @@ export interface FileHistory {
   // Field to track the source of changes
   changeSource?: 'user' | 'auto-save' | 'external';
 }
-

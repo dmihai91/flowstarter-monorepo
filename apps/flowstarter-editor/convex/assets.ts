@@ -14,14 +14,14 @@ const assetTypeValidator = v.union(
   v.literal('team'),
   v.literal('background'),
   v.literal('logo'),
-  v.literal('custom')
+  v.literal('custom'),
 );
 
 const assetStatusValidator = v.union(
   v.literal('pending'),
   v.literal('generating'),
   v.literal('ready'),
-  v.literal('error')
+  v.literal('error'),
 );
 
 // Create a new asset record (pending generation)
@@ -43,6 +43,7 @@ export const create = mutation({
       createdAt: now,
       updatedAt: now,
     });
+
     return assetId;
   },
 });
@@ -62,7 +63,7 @@ export const updateStatus = mutation({
         height: v.optional(v.number()),
         model: v.optional(v.string()),
         seed: v.optional(v.number()),
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {
@@ -106,9 +107,7 @@ export const listByType = query({
   handler: async (ctx, args) => {
     return await ctx.db
       .query('assets')
-      .withIndex('by_project_type', (q) => 
-        q.eq('projectId', args.projectId).eq('type', args.type)
-      )
+      .withIndex('by_project_type', (q) => q.eq('projectId', args.projectId).eq('type', args.type))
       .collect();
   },
 });
@@ -131,9 +130,11 @@ export const remove = mutation({
   },
   handler: async (ctx, args) => {
     const asset = await ctx.db.get(args.assetId);
+
     if (asset?.storageId) {
       await ctx.storage.delete(asset.storageId);
     }
+
     await ctx.db.delete(args.assetId);
   },
 });
@@ -153,6 +154,7 @@ export const removeByProject = mutation({
       if (asset.storageId) {
         await ctx.storage.delete(asset.storageId);
       }
+
       await ctx.db.delete(asset._id);
     }
 
@@ -169,7 +171,7 @@ export const createBatch = mutation({
         type: assetTypeValidator,
         name: v.string(),
         prompt: v.string(),
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {
@@ -201,8 +203,10 @@ export const getUploadUrl = mutation({
   },
 });
 
-// Store image from external URL (for downloading fal.ai results)
-// Note: This is a standalone action - use internal functions to avoid circular deps
+/*
+ * Store image from external URL (for downloading fal.ai results)
+ * Note: This is a standalone action - use internal functions to avoid circular deps
+ */
 export const storeFromUrl = action({
   args: {
     assetId: v.id('assets'),
@@ -211,6 +215,7 @@ export const storeFromUrl = action({
   handler: async (ctx, args): Promise<{ storageId: string; url: string | null }> => {
     // Fetch the image
     const response = await fetch(args.imageUrl);
+
     if (!response.ok) {
       throw new Error(`Failed to fetch image: ${response.status}`);
     }
@@ -218,11 +223,8 @@ export const storeFromUrl = action({
     const blob = await response.blob();
 
     // Upload to Convex storage using internal mutation
-    const uploadUrl: string = await ctx.runMutation(
-      'assets:getUploadUrl' as any,
-      {}
-    );
-    
+    const uploadUrl: string = await ctx.runMutation('assets:getUploadUrl' as any, {});
+
     const uploadResponse = await fetch(uploadUrl, {
       method: 'POST',
       headers: { 'Content-Type': blob.type },
@@ -233,24 +235,20 @@ export const storeFromUrl = action({
       throw new Error(`Failed to upload image: ${uploadResponse.status}`);
     }
 
-    const result = await uploadResponse.json() as { storageId: string };
+    const result = (await uploadResponse.json()) as { storageId: string };
     const storageId = result.storageId;
 
     // Get the URL for the stored file
     const url = await ctx.storage.getUrl(storageId as any);
 
     // Update the asset record using internal mutation
-    await ctx.runMutation(
-      'assets:updateStatus' as any,
-      {
-        assetId: args.assetId,
-        status: 'ready',
-        storageId,
-        url: url || undefined,
-      }
-    );
+    await ctx.runMutation('assets:updateStatus' as any, {
+      assetId: args.assetId,
+      status: 'ready',
+      storageId,
+      url: url || undefined,
+    });
 
     return { storageId, url };
   },
 });
-

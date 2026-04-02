@@ -142,4 +142,3 @@ export default class OpenRouterProvider extends BaseProvider {
     return instance;
   }
 }
-

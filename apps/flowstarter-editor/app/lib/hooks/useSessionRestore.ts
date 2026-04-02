@@ -40,7 +40,10 @@ export function useSessionRestore(projectId: string) {
 
   // Restore session on mount
   useEffect(() => {
-    if (hasRestoredRef.current || session === undefined) return;
+    if (hasRestoredRef.current || session === undefined) {
+      return;
+    }
+
     hasRestoredRef.current = true;
 
     if (session && session.status !== 'expired') {
@@ -54,13 +57,12 @@ export function useSessionRestore(projectId: string) {
           hasExistingSession: true,
           workspaceId: session.daytonaWorkspaceId,
           previewUrl: session.previewUrl || null,
-          conversationId: session.conversationId
-            ? String(session.conversationId)
-            : null,
+          conversationId: session.conversationId ? String(session.conversationId) : null,
         });
 
         // Mark as active
         markActive({ sessionId: session._id });
+
         return;
       }
     }

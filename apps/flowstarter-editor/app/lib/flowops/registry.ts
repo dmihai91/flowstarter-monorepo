@@ -244,4 +244,3 @@ export function getRegistry(): ToolRegistry {
 export function resetRegistry(): void {
   ToolRegistry.reset();
 }
-

@@ -171,4 +171,3 @@ export function useProjectByUrlId(urlId: string | null) {
     isLoading: project === undefined && urlId !== null,
   };
 }
-

@@ -67,6 +67,7 @@ export function useTemplateSelection(options: UseTemplateSelectionOptions = {}):
       const rec = templateOrRecommendation as TemplateRecommendation;
       setPreviewRecommendation(rec);
       setPreviewTemplate(rec.template);
+
       return;
     }
 

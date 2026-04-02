@@ -71,4 +71,3 @@ ${escapeFlowstarterTags(file.content)}
 
   return messages;
 };
-

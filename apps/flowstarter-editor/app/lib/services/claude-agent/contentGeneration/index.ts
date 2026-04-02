@@ -1,6 +1,6 @@
 /**
  * Content Generation Module
- * 
+ *
  * Domain-specialized content generation for website creation.
  * Generates content/*.md files with domain-appropriate messaging.
  */

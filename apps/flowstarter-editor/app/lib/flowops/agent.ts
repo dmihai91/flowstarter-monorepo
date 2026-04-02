@@ -10,12 +10,25 @@ import type { ToolResult } from './base-tool';
 import { getRegistry } from './registry';
 import { getAgentRegistry } from './agent-registry';
 import type {
-  MessageRole, AgentMessage, AgentConfig, AgentContext,
-  AgentResponse, ToolCallRequest, AgentMessageRequest,
+  MessageRole,
+  AgentMessage,
+  AgentConfig,
+  AgentContext,
+  AgentResponse,
+  ToolCallRequest,
+  AgentMessageRequest,
 } from './agent-types';
 
 // Re-export types and registry for backward compatibility
-export type { MessageRole, AgentMessage, AgentConfig, AgentContext, AgentResponse, ToolCallRequest, AgentMessageRequest } from './agent-types';
+export type {
+  MessageRole,
+  AgentMessage,
+  AgentConfig,
+  AgentContext,
+  AgentResponse,
+  ToolCallRequest,
+  AgentMessageRequest,
+} from './agent-types';
 export { AgentRegistry, getAgentRegistry, resetAgentRegistry } from './agent-registry';
 
 /**
@@ -38,9 +51,15 @@ export abstract class BaseAgent {
   /** Process a user message and generate a response. Must be implemented by subclasses. */
   protected abstract process(message: string, context: AgentContext): Promise<AgentResponse>;
 
-  getConfig(): Readonly<AgentConfig> { return this.config; }
-  get name(): string { return this.config.name; }
-  getHistory(): readonly AgentMessage[] { return this.history; }
+  getConfig(): Readonly<AgentConfig> {
+    return this.config;
+  }
+  get name(): string {
+    return this.config.name;
+  }
+  getHistory(): readonly AgentMessage[] {
+    return this.history;
+  }
 
   clearHistory(): void {
     this.history = [];
@@ -110,17 +129,33 @@ export abstract class BaseAgent {
 
     if (this.config.allowedTools && !this.config.allowedTools.includes(toolName)) {
       this.logger.warn(`Tool '${toolName}' is not allowed for this agent`);
-      return { success: false, error: `Tool '${toolName}' is not allowed`, errorCode: 'TOOL_NOT_ALLOWED', meta: { tool: toolName, executionId: context.executionId, durationMs: 0, fromCache: false } };
+      return {
+        success: false,
+        error: `Tool '${toolName}' is not allowed`,
+        errorCode: 'TOOL_NOT_ALLOWED',
+        meta: { tool: toolName, executionId: context.executionId, durationMs: 0, fromCache: false },
+      };
     }
 
     const tool = context.tools.get<TInput, TOutput>(toolName);
+
     if (!tool) {
       this.logger.warn(`Tool '${toolName}' not found`);
-      return { success: false, error: `Tool '${toolName}' not found`, errorCode: 'TOOL_NOT_FOUND', meta: { tool: toolName, executionId: context.executionId, durationMs: 0, fromCache: false } };
+      return {
+        success: false,
+        error: `Tool '${toolName}' not found`,
+        errorCode: 'TOOL_NOT_FOUND',
+        meta: { tool: toolName, executionId: context.executionId, durationMs: 0, fromCache: false },
+      };
     }
 
     this.logger.debug(`Calling tool: ${toolName}`);
-    const result = await tool.run(input as TInput, { ...options, signal: context.signal, onProgress: context.onProgress });
+
+    const result = await tool.run(input as TInput, {
+      ...options,
+      signal: context.signal,
+      onProgress: context.onProgress,
+    });
 
     const toolMessage = this.createMessage(
       'tool',
@@ -146,6 +181,7 @@ export abstract class BaseAgent {
     }
 
     const targetAgent = getAgentRegistry().get(to);
+
     if (!targetAgent) {
       this.logger.warn(`Agent '${to}' not found`);
       return null;
@@ -156,21 +192,25 @@ export abstract class BaseAgent {
     context.onMessage?.(outMessage);
 
     if (!waitForResponse) {
-      targetAgent.chat(content, { signal: context.signal, onProgress: context.onProgress })
+      targetAgent
+        .chat(content, { signal: context.signal, onProgress: context.onProgress })
         .catch((err) => this.logger.warn(`Async message to ${to} failed:`, err));
       return null;
     }
 
     this.logger.debug(`Sending message to agent: ${to}`);
+
     const response = await targetAgent.chat(content, { signal: context.signal, onProgress: context.onProgress });
     await this.onAgentMessage(to, response.message, context);
+
     return response;
   }
 
   protected createMessage(role: MessageRole, content: string, extra?: Partial<AgentMessage>): AgentMessage {
     return {
       id: `msg-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-      role, content,
+      role,
+      content,
       from: role === 'agent' ? this.name : undefined,
       timestamp: Date.now(),
       ...extra,
@@ -178,14 +218,20 @@ export abstract class BaseAgent {
   }
 
   /** Called after a tool execution. Override in subclass. */
-  protected async onToolResult(_toolName: string, _result: ToolResult<unknown>, _context: AgentContext): Promise<void> {}
+  protected async onToolResult(
+    _toolName: string,
+    _result: ToolResult<unknown>,
+    _context: AgentContext,
+  ): Promise<void> {}
 
   /** Called when receiving a message from another agent. Override in subclass. */
   protected async onAgentMessage(_fromAgent: string, _message: AgentMessage, _context: AgentContext): Promise<void> {}
 
   private addToHistory(message: AgentMessage): void {
     this.history.push(message);
+
     const maxLength = this.config.maxHistoryLength ?? 50;
+
     if (this.history.length > maxLength) {
       this.history = this.history.slice(-maxLength);
     }
@@ -195,4 +241,3 @@ export abstract class BaseAgent {
     return `${this.config.name}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   }
 }
-

@@ -101,4 +101,3 @@ export function usePromptEnhancer() {
 
   return { enhancingPrompt, promptEnhanced, enhancePrompt, resetEnhancer };
 }
-

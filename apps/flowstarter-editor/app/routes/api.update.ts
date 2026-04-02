@@ -98,4 +98,3 @@ function compareVersions(v1: string, v2: string): number {
 
   return 0;
 }
-

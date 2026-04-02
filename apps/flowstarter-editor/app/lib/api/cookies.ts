@@ -43,4 +43,3 @@ export function getProviderSettingsFromCookie(cookieHeader: string | null): Reco
     return {};
   }
 }
-

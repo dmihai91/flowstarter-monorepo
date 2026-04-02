@@ -109,6 +109,7 @@ export async function bunInstall(
   // Emit output lines to the terminal panel
   if (onOutput && installResult.result) {
     const lines = installResult.result.split('\n').filter((l: string) => l.trim());
+
     for (const line of lines) {
       onOutput(line, installResult.exitCode === 0 ? 'stdout' : 'stderr');
     }
@@ -128,4 +129,3 @@ export async function bunInstall(
 export function getBunPathSetup(): string {
   return BUN_PATH_SETUP;
 }
-

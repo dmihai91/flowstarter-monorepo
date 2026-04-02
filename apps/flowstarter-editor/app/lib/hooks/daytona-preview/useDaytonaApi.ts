@@ -75,7 +75,10 @@ export function useDaytonaApi({
       // Small delay to show creating state
       await new Promise((r) => setTimeout(r, 500));
 
-      if (!isMountedRef.current) return;
+      if (!isMountedRef.current) {
+        return;
+      }
+
       safeSetState((prev) => ({ ...prev, status: 'syncing' }));
 
       // Call the API to start preview
@@ -88,7 +91,9 @@ export function useDaytonaApi({
         }),
       });
 
-      if (!isMountedRef.current) return;
+      if (!isMountedRef.current) {
+        return;
+      }
 
       const data = (await response.json()) as PreviewApiResponse;
 
@@ -123,13 +128,18 @@ export function useDaytonaApi({
         throw new Error('Preview URL not returned from server. The Daytona sandbox may have failed to start.');
       }
 
-      if (!isMountedRef.current) return;
+      if (!isMountedRef.current) {
+        return;
+      }
+
       safeSetState((prev) => ({ ...prev, status: 'starting' }));
 
       // Small delay to show starting state
       await new Promise((r) => setTimeout(r, 1000));
 
-      if (!isMountedRef.current) return;
+      if (!isMountedRef.current) {
+        return;
+      }
 
       // Use proxy URL for iframe to avoid X-Frame-Options issues
       const proxyUrl = generateProxyUrl(projectId);
@@ -223,7 +233,9 @@ export function useDaytonaApi({
           }),
         });
 
-        if (!isMountedRef.current) return;
+        if (!isMountedRef.current) {
+          return;
+        }
 
         const data = (await response.json()) as PreviewApiResponse;
 
@@ -277,7 +289,9 @@ export function useDaytonaApi({
           }),
         });
 
-        if (!isMountedRef.current) return;
+        if (!isMountedRef.current) {
+          return;
+        }
 
         const data = (await response.json()) as PreviewApiResponse;
 
@@ -362,7 +376,9 @@ async function handleBuildError(
       // Call the onBuildError callback to get fixed files
       const fixedFiles = await onBuildError(data.buildError, files);
 
-      if (!isMountedRef.current) return false;
+      if (!isMountedRef.current) {
+        return false;
+      }
 
       if (fixedFiles) {
         console.log('[useDaytonaPreview] Got fixed files, retrying preview...');
@@ -377,7 +393,9 @@ async function handleBuildError(
           }),
         });
 
-        if (!isMountedRef.current) return false;
+        if (!isMountedRef.current) {
+          return false;
+        }
 
         const retryData = (await retryResponse.json()) as PreviewApiResponse;
 
@@ -388,6 +406,7 @@ async function handleBuildError(
 
           // Copy retry data to original data object
           Object.assign(data, retryData);
+
           return true;
         } else if (retryData.buildError && autoFixAttemptsRef.current < maxAutoFixAttempts) {
           /*

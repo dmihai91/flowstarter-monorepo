@@ -6,13 +6,7 @@
 
 export function Logo() {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="135"
-      height="47"
-      fill="none"
-      style={{ transform: 'scale(0.95)' }}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="135" height="47" fill="none" style={{ transform: 'scale(0.95)' }}>
       <path
         className="fill-[url(#a-light)] dark:fill-[url(#a-dark)]"
         fillRule="evenodd"
@@ -36,113 +30,43 @@ export function Logo() {
         d="M113.314 13.014c3.207 0 6.355 1.157 8.162 3.644l3.031-13.592H135l-8.628 38.579h-10.493l.7-2.95c-2.448 2.66-4.722 3.644-7.637 3.644-6.295 0-10.493-4.107-10.493-11.626 0-7.75 4.839-17.699 14.865-17.699Zm1.866 9.197c-3.323 0-5.888 2.718-5.888 6.304 0 2.776 2.157 4.627 4.664 4.627 1.632 0 3.031-.694 4.255-1.909l1.632-7.114c-1.107-1.214-2.798-1.909-4.663-1.909Z"
       ></path>
       <defs>
-        <linearGradient
-          id="a-light"
-          x1="76.5"
-          x2="75.895"
-          y1="55"
-          y2="-8.494"
-          gradientUnits="userSpaceOnUse"
-        >
+        <linearGradient id="a-light" x1="76.5" x2="75.895" y1="55" y2="-8.494" gradientUnits="userSpaceOnUse">
           <stop stopColor="#1488FC"></stop>
           <stop offset="1" stopColor="#03305D"></stop>
         </linearGradient>
-        <linearGradient
-          id="b-light"
-          x1="76.5"
-          x2="75.895"
-          y1="55"
-          y2="-8.494"
-          gradientUnits="userSpaceOnUse"
-        >
+        <linearGradient id="b-light" x1="76.5" x2="75.895" y1="55" y2="-8.494" gradientUnits="userSpaceOnUse">
           <stop stopColor="#1488FC"></stop>
           <stop offset="1" stopColor="#03305D"></stop>
         </linearGradient>
-        <linearGradient
-          id="c-light"
-          x1="76.5"
-          x2="75.895"
-          y1="55"
-          y2="-8.494"
-          gradientUnits="userSpaceOnUse"
-        >
+        <linearGradient id="c-light" x1="76.5" x2="75.895" y1="55" y2="-8.494" gradientUnits="userSpaceOnUse">
           <stop stopColor="#1488FC"></stop>
           <stop offset="1" stopColor="#03305D"></stop>
         </linearGradient>
-        <linearGradient
-          id="d-light"
-          x1="76.5"
-          x2="75.895"
-          y1="55"
-          y2="-8.494"
-          gradientUnits="userSpaceOnUse"
-        >
+        <linearGradient id="d-light" x1="76.5" x2="75.895" y1="55" y2="-8.494" gradientUnits="userSpaceOnUse">
           <stop stopColor="#1488FC"></stop>
           <stop offset="1" stopColor="#03305D"></stop>
         </linearGradient>
-        <linearGradient
-          id="e-light"
-          x1="76.5"
-          x2="75.895"
-          y1="55"
-          y2="-8.494"
-          gradientUnits="userSpaceOnUse"
-        >
+        <linearGradient id="e-light" x1="76.5" x2="75.895" y1="55" y2="-8.494" gradientUnits="userSpaceOnUse">
           <stop stopColor="#1488FC"></stop>
           <stop offset="1" stopColor="#03305D"></stop>
         </linearGradient>
-        <linearGradient
-          id="a-dark"
-          x1="76.5"
-          x2="75.895"
-          y1="55"
-          y2="-8.494"
-          gradientUnits="userSpaceOnUse"
-        >
+        <linearGradient id="a-dark" x1="76.5" x2="75.895" y1="55" y2="-8.494" gradientUnits="userSpaceOnUse">
           <stop stopColor="#fff"></stop>
           <stop offset="1" stopColor="#1488FC"></stop>
         </linearGradient>
-        <linearGradient
-          id="b-dark"
-          x1="76.5"
-          x2="75.895"
-          y1="55"
-          y2="-8.494"
-          gradientUnits="userSpaceOnUse"
-        >
+        <linearGradient id="b-dark" x1="76.5" x2="75.895" y1="55" y2="-8.494" gradientUnits="userSpaceOnUse">
           <stop stopColor="#fff"></stop>
           <stop offset="1" stopColor="#1488FC"></stop>
         </linearGradient>
-        <linearGradient
-          id="c-dark"
-          x1="76.5"
-          x2="75.895"
-          y1="55"
-          y2="-8.494"
-          gradientUnits="userSpaceOnUse"
-        >
+        <linearGradient id="c-dark" x1="76.5" x2="75.895" y1="55" y2="-8.494" gradientUnits="userSpaceOnUse">
           <stop stopColor="#fff"></stop>
           <stop offset="1" stopColor="#1488FC"></stop>
         </linearGradient>
-        <linearGradient
-          id="d-dark"
-          x1="76.5"
-          x2="75.895"
-          y1="55"
-          y2="-8.494"
-          gradientUnits="userSpaceOnUse"
-        >
+        <linearGradient id="d-dark" x1="76.5" x2="75.895" y1="55" y2="-8.494" gradientUnits="userSpaceOnUse">
           <stop stopColor="#fff"></stop>
           <stop offset="1" stopColor="#1488FC"></stop>
         </linearGradient>
-        <linearGradient
-          id="e-dark"
-          x1="76.5"
-          x2="75.895"
-          y1="55"
-          y2="-8.494"
-          gradientUnits="userSpaceOnUse"
-        >
+        <linearGradient id="e-dark" x1="76.5" x2="75.895" y1="55" y2="-8.494" gradientUnits="userSpaceOnUse">
           <stop stopColor="#fff"></stop>
           <stop offset="1" stopColor="#1488FC"></stop>
         </linearGradient>

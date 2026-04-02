@@ -86,19 +86,12 @@ function buildStoredHandoffData(projectId: string, project?: HandoffProjectPaylo
     businessInfo: {
       ...businessInfo,
       contactEmail:
-        (businessInfo.contactEmail as string | undefined) ||
-        client.email ||
-        (contactInfo.email as string | undefined),
+        (businessInfo.contactEmail as string | undefined) || client.email || (contactInfo.email as string | undefined),
       contactPhone:
-        (businessInfo.contactPhone as string | undefined) ||
-        client.phone ||
-        (contactInfo.phone as string | undefined),
+        (businessInfo.contactPhone as string | undefined) || client.phone || (contactInfo.phone as string | undefined),
       contactAddress:
-        (businessInfo.contactAddress as string | undefined) ||
-        (contactInfo.address as string | undefined),
-      website:
-        (businessInfo.website as string | undefined) ||
-        (contactInfo.website as string | undefined),
+        (businessInfo.contactAddress as string | undefined) || (contactInfo.address as string | undefined),
+      website: (businessInfo.website as string | undefined) || (contactInfo.website as string | undefined),
     },
   };
 }
@@ -117,11 +110,14 @@ export function HandoffGate({ handoffToken, hasHandoff, loadingMessage }: Handof
 
     const initialize = async () => {
       try {
-        // Fast path: decode token locally to check for pre-initialized conversationId
-        // Token format: base64url(json).base64url(sig)
+        /*
+         * Fast path: decode token locally to check for pre-initialized conversationId
+         * Token format: base64url(json).base64url(sig)
+         */
         let preConversationId: string | undefined;
         let preProjectId: string | undefined;
         let preProject: HandoffProjectPayload | undefined;
+
         try {
           const [dataPart] = handoffToken.split('.');
           const payload = JSON.parse(atob(dataPart.replace(/-/g, '+').replace(/_/g, '/'))) as {
@@ -132,7 +128,9 @@ export function HandoffGate({ handoffToken, hasHandoff, loadingMessage }: Handof
           preConversationId = payload.conversationId;
           preProjectId = payload.projectId;
           preProject = payload.project;
-        } catch { /* fall through to API validation */ }
+        } catch {
+          /* fall through to API validation */
+        }
 
         if (preConversationId && preProjectId) {
           // Token already has conversationId — navigate instantly, no API calls needed
@@ -140,6 +138,7 @@ export function HandoffGate({ handoffToken, hasHandoff, loadingMessage }: Handof
           storeHandoffData(buildStoredHandoffData(preProjectId, preProject));
           sessionStorage.setItem('flowstarter_handoff_session', '1');
           window.location.replace(`/project/${preConversationId}?handoff=1`);
+
           return;
         }
 
@@ -161,6 +160,7 @@ export function HandoffGate({ handoffToken, hasHandoff, loadingMessage }: Handof
         });
 
         const initData = (await initRes.json().catch(() => ({}))) as { conversationId?: string; error?: string };
+
         if (!initRes.ok || !initData.conversationId) {
           throw new Error(initData.error || 'Failed to initialize the editor conversation.');
         }

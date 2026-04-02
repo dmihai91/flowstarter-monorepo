@@ -34,4 +34,3 @@ export interface ProviderConfig {
   baseUrl?: string;
   apiTokenKey?: string;
 }
-

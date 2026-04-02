@@ -1,6 +1,6 @@
 /**
  * Fitness / Personal Training / Gym Domain Content Agent
- * 
+ *
  * Specializes in creating website content for fitness businesses.
  * Understands the unique needs: motivation, transformation stories,
  * credibility through results, and energizing calls to action.
@@ -29,7 +29,7 @@ export const FITNESS_CONTENT_PATTERNS = {
     'Unlock Your Full Potential',
     'Where Champions Are Made',
   ],
-  
+
   // CTAs that drive commitment
   actionCtas: [
     'Start Your Transformation',
@@ -38,7 +38,7 @@ export const FITNESS_CONTENT_PATTERNS = {
     'Begin Your Journey',
     'Get Your Custom Plan',
   ],
-  
+
   // Trust signals for fitness
   trustSignals: [
     'Certified Personal Trainer',
@@ -47,7 +47,7 @@ export const FITNESS_CONTENT_PATTERNS = {
     'Nutrition Guidance Included',
     'Flexible Scheduling',
   ],
-  
+
   // Common programs to highlight
   programs: [
     'Weight Loss',
@@ -126,29 +126,32 @@ CTA BANNER: Mid-page energy boost. Limited spots, start date, urgency without be
  */
 export function buildFitnessContentPrompt(context: BusinessContext): string {
   const contextParts: string[] = [];
-  
+
   if (context.ownerName) {
     contextParts.push(`- Trainer name: ${context.ownerName}`);
   }
+
   if (context.location) {
     contextParts.push(`- Location: ${context.location}`);
   }
+
   if (context.services && context.services.length > 0) {
     contextParts.push(`- Programs offered: ${context.services.join(', ')}`);
   }
+
   if (context.targetAudience) {
     contextParts.push(`- Target clients: ${context.targetAudience}`);
   }
+
   if (context.uniqueApproach) {
     contextParts.push(`- Training methodology: ${context.uniqueApproach}`);
   }
+
   if (context.certifications && context.certifications.length > 0) {
     contextParts.push(`- Certifications: ${context.certifications.join(', ')}`);
   }
-  
-  const contextSection = contextParts.length > 0 
-    ? `\nBUSINESS CONTEXT:\n${contextParts.join('\n')}\n`
-    : '';
+
+  const contextSection = contextParts.length > 0 ? `\nBUSINESS CONTEXT:\n${contextParts.join('\n')}\n` : '';
 
   return `${FITNESS_CONTENT_PROMPT}
 ${contextSection}
@@ -161,18 +164,29 @@ Based on this context, generate energetic, motivating content that will inspire 
 export const FITNESS_DOMAIN = {
   id: 'fitness',
   name: 'Fitness & Personal Training',
-  
+
   keywords: [
-    'personal trainer', 'fitness', 'gym', 'workout', 'training',
-    'strength', 'conditioning', 'crossfit', 'hiit', 'weight loss',
-    'muscle', 'bodybuilding', 'athletic', 'sports performance',
+    'personal trainer',
+    'fitness',
+    'gym',
+    'workout',
+    'training',
+    'strength',
+    'conditioning',
+    'crossfit',
+    'hiit',
+    'weight loss',
+    'muscle',
+    'bodybuilding',
+    'athletic',
+    'sports performance',
   ],
-  
+
   sections: FITNESS_SECTIONS,
   contentPatterns: FITNESS_CONTENT_PATTERNS,
   systemPrompt: FITNESS_CONTENT_PROMPT,
   buildPrompt: buildFitnessContentPrompt,
-  
+
   // Design recommendations
   design: {
     colorMoods: ['bold', 'energetic', 'powerful', 'dynamic'],
@@ -180,7 +194,7 @@ export const FITNESS_DOMAIN = {
     imageStyle: 'action shots, real training, authentic sweat',
     layoutStyle: 'bold typography, strong contrast, dynamic',
   },
-  
+
   // Conversion optimization
   conversion: {
     primaryCta: 'Start Your Transformation',

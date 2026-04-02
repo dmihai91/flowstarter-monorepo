@@ -22,7 +22,7 @@ export const saveLogo = mutation({
   handler: async (ctx, args) => {
     // Get the URL for the stored file
     const url = await ctx.storage.getUrl(args.storageId);
-    
+
     return {
       success: true,
       url,
@@ -53,4 +53,3 @@ export const deleteLogo = mutation({
     return { success: true };
   },
 });
-

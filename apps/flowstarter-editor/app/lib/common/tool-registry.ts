@@ -50,4 +50,3 @@ export class ToolRegistry {
       .filter((tool): tool is ToolDefinition => tool !== undefined);
   }
 }
-

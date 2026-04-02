@@ -75,6 +75,7 @@ export async function extractProjectName(
     if (parsed.type === 'name' && parsed.name) {
       const extractedName = parsed.name.trim();
       logger.info(`Extracted name: "${extractedName}"`);
+
       return { projectName: extractedName };
     }
 
@@ -124,10 +125,7 @@ function handleQuestionResponse(
 /**
  * Handle fallback when parsed name doesn't have a clear type
  */
-function handleFallbackName(
-  name: string,
-  context?: ConversationContext,
-): NameExtractionResult {
+function handleFallbackName(name: string, context?: ConversationContext): NameExtractionResult {
   const extractedName = name.trim();
 
   if (context?.previousSuggestion && extractedName.toLowerCase() === context.previousSuggestion.toLowerCase()) {
@@ -163,6 +161,7 @@ export function simpleFallbackExtraction(input: string, previousSuggestion?: str
     if (match && match[1]) {
       const extractedName = match[1].trim();
       logger.info(`Fallback pattern extraction: "${extractedName}"`);
+
       return { projectName: extractedName };
     }
   }

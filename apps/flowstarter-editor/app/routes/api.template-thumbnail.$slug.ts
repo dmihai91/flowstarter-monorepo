@@ -46,4 +46,3 @@ export async function loader({ params, request, context }: LoaderFunctionArgs) {
     return new Response('Failed to fetch thumbnail', { status: 500 });
   }
 }
-

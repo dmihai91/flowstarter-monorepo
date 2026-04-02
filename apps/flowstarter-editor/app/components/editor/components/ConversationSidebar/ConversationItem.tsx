@@ -65,9 +65,18 @@ export function ConversationItem({
     const now = new Date();
     const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
 
-    if (diffDays <= 0) return 'Today';
-    if (diffDays === 1) return 'Yesterday';
-    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays <= 0) {
+      return 'Today';
+    }
+
+    if (diffDays === 1) {
+      return 'Yesterday';
+    }
+
+    if (diffDays < 7) {
+      return `${diffDays} days ago`;
+    }
+
     return date.toLocaleDateString();
   };
 
@@ -80,16 +89,23 @@ export function ConversationItem({
       onMouseLeave={() => setShowActions(false)}
       onTouchStart={() => {
         // On touch, toggle actions visibility instead of immediately selecting
-        if (!isEditing) setShowActions(prev => !prev);
+        if (!isEditing) {
+          setShowActions((prev) => !prev);
+        }
       }}
       onClick={(e) => {
-        if (isEditing) return;
+        if (isEditing) {
+          return;
+        }
+
         // On touch devices, first tap shows actions, second tap selects
         if ('ontouchstart' in window && !showActions) {
           e.preventDefault();
           setShowActions(true);
+
           return;
         }
+
         onSelect();
       }}
       style={{
@@ -162,6 +178,7 @@ export function ConversationItem({
         }}
         onConfirm={async () => {
           setIsDeleting(true);
+
           try {
             await onDelete();
           } finally {
@@ -287,7 +304,12 @@ interface ActionButtonsProps {
 
 function ActionButtons({ colors, onEdit, onDelete }: ActionButtonsProps) {
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ display: 'flex', gap: '4px' }}>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      style={{ display: 'flex', gap: '4px' }}
+    >
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -303,8 +325,14 @@ function ActionButtons({ colors, onEdit, onDelete }: ActionButtonsProps) {
           transition: 'all 0.15s ease',
           WebkitTapHighlightColor: 'transparent',
         }}
-        onMouseEnter={(e) => { e.currentTarget.style.color = colors.textPrimary; e.currentTarget.style.background = colors.surfaceMedium || 'rgba(0,0,0,0.05)'; }}
-        onMouseLeave={(e) => { e.currentTarget.style.color = colors.textMuted; e.currentTarget.style.background = 'transparent'; }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.color = colors.textPrimary;
+          e.currentTarget.style.background = colors.surfaceMedium || 'rgba(0,0,0,0.05)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.color = colors.textMuted;
+          e.currentTarget.style.background = 'transparent';
+        }}
         title={t(EDITOR_LABEL_KEYS.SIDEBAR_RENAME)}
       >
         <EditIcon />

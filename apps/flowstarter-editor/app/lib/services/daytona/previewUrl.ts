@@ -19,6 +19,7 @@ export function extractPreviewUrlValue(previewLink: unknown): string | null {
   }
 
   const candidate = previewLink as PreviewLinkShape;
+
   return candidate.url || candidate.previewUrl || candidate.href || null;
 }
 

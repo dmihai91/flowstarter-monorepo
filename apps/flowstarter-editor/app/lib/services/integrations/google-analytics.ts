@@ -18,8 +18,8 @@
 
 export interface GA4ReportRequest {
   propertyId: string; // GA4 property ID (e.g., "properties/123456")
-  startDate: string;  // YYYY-MM-DD or "30daysAgo"
-  endDate: string;    // YYYY-MM-DD or "today"
+  startDate: string; // YYYY-MM-DD or "30daysAgo"
+  endDate: string; // YYYY-MM-DD or "today"
 }
 
 export interface GA4Metric {
@@ -39,7 +39,7 @@ export interface GA4Report {
     sessions: number;
     pageviews: number;
     avgSessionDuration: number; // seconds
-    bounceRate: number;         // 0-1
+    bounceRate: number; // 0-1
   };
   topPages: GA4DimensionRow[];
   trafficSources: GA4DimensionRow[];
@@ -63,8 +63,12 @@ export async function fetchGA4Report(
   const [overviewData, pagesData, dailyData] = await Promise.all([
     runGA4Report(property, accessToken, {
       metrics: [
-        { name: 'totalUsers' }, { name: 'newUsers' }, { name: 'sessions' },
-        { name: 'screenPageViews' }, { name: 'averageSessionDuration' }, { name: 'bounceRate' },
+        { name: 'totalUsers' },
+        { name: 'newUsers' },
+        { name: 'sessions' },
+        { name: 'screenPageViews' },
+        { name: 'averageSessionDuration' },
+        { name: 'bounceRate' },
       ],
       dateRanges: [dateRange],
     }),
@@ -132,9 +136,11 @@ async function runGA4Report(
     headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
+
   if (!res.ok) {
     const err = await res.text();
     throw new Error(`GA4 API error ${res.status}: ${err}`);
   }
+
   return res.json() as Promise<GA4RunReportResponse>;
 }

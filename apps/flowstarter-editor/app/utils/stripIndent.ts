@@ -21,4 +21,3 @@ function _stripIndents(value: string) {
     .trimStart()
     .replace(/[\r\n]$/, '');
 }
-

@@ -327,4 +327,3 @@ function parseBusinessInfoResponse(response: string): BusinessInfo {
     throw e;
   }
 }
-

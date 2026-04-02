@@ -50,6 +50,7 @@ describe('devServerService', () => {
 
       const resultPromise = waitForDevServer('https://preview.test', 5000);
       await vi.advanceTimersByTimeAsync(100);
+
       const result = await resultPromise;
 
       expect(result).toBe(true);
@@ -66,6 +67,7 @@ describe('devServerService', () => {
 
       const resultPromise = waitForDevServer('https://preview.test', 5000);
       await vi.advanceTimersByTimeAsync(100);
+
       const result = await resultPromise;
 
       expect(result).toBe(true);
@@ -77,9 +79,11 @@ describe('devServerService', () => {
       let callCount = 0;
       const mockFetch = vi.fn().mockImplementation(() => {
         callCount++;
+
         if (callCount < 3) {
           return Promise.resolve({ status: 502 });
         }
+
         return Promise.resolve({ status: 200 });
       });
       vi.stubGlobal('fetch', mockFetch);
@@ -105,9 +109,11 @@ describe('devServerService', () => {
       let callCount = 0;
       const mockFetch = vi.fn().mockImplementation(() => {
         callCount++;
+
         if (callCount < 2) {
           return Promise.resolve({ status: 503 });
         }
+
         return Promise.resolve({ status: 200 });
       });
       vi.stubGlobal('fetch', mockFetch);
@@ -116,6 +122,7 @@ describe('devServerService', () => {
 
       const resultPromise = waitForDevServer('https://preview.test', 10000);
       await vi.advanceTimersByTimeAsync(1000);
+
       const result = await resultPromise;
 
       expect(result).toBe(true);
@@ -127,9 +134,11 @@ describe('devServerService', () => {
       let callCount = 0;
       const mockFetch = vi.fn().mockImplementation(() => {
         callCount++;
+
         if (callCount < 3) {
           return Promise.reject(new Error('Network error'));
         }
+
         return Promise.resolve({ status: 200 });
       });
       vi.stubGlobal('fetch', mockFetch);
@@ -171,6 +180,7 @@ describe('devServerService', () => {
   describe('killExistingDevServers', () => {
     it('should execute pkill commands', async () => {
       vi.useRealTimers();
+
       const sandbox = createMockSandbox();
 
       const { killExistingDevServers } = await import('~/lib/services/daytona/devServerService');
@@ -181,12 +191,13 @@ describe('devServerService', () => {
         expect.stringContaining('pkill'),
         '/home/daytona',
         undefined,
-        10
+        10,
       );
     });
 
     it('should kill both bun and astro dev servers', async () => {
       vi.useRealTimers();
+
       const sandbox = createMockSandbox();
 
       const { killExistingDevServers } = await import('~/lib/services/daytona/devServerService');
@@ -202,6 +213,7 @@ describe('devServerService', () => {
   describe('startDevServerTest', () => {
     it('should start dev server with bun and return output', async () => {
       vi.useRealTimers();
+
       const sandbox = createMockSandbox();
       sandbox.process.executeCommand.mockResolvedValue({
         exitCode: 0,
@@ -219,6 +231,7 @@ describe('devServerService', () => {
 
     it('should include --host 0.0.0.0 flag', async () => {
       vi.useRealTimers();
+
       const sandbox = createMockSandbox();
 
       const { startDevServerTest } = await import('~/lib/services/daytona/devServerService');
@@ -231,6 +244,7 @@ describe('devServerService', () => {
 
     it('should use timeout wrapper', async () => {
       vi.useRealTimers();
+
       const sandbox = createMockSandbox();
 
       const { startDevServerTest } = await import('~/lib/services/daytona/devServerService');
@@ -245,6 +259,7 @@ describe('devServerService', () => {
   describe('startDevServerBackground', () => {
     it('should start dev server in background with nohup', async () => {
       vi.useRealTimers();
+
       const sandbox = createMockSandbox();
 
       const { startDevServerBackground } = await import('~/lib/services/daytona/devServerService');
@@ -260,6 +275,7 @@ describe('devServerService', () => {
   describe('getPreviewUrl', () => {
     it('should return URL for detected port', async () => {
       vi.useRealTimers();
+
       const sandbox = createMockSandbox();
       sandbox.getPreviewLink.mockResolvedValue({ url: 'https://preview.test:4321' });
 
@@ -273,9 +289,13 @@ describe('devServerService', () => {
 
     it('should try multiple ports when detected port fails', async () => {
       vi.useRealTimers();
+
       const sandbox = createMockSandbox();
-      // When detectedPort is 4321, portsToTry = [4321, 4321, 5173, 3000]
-      // Reject first call (4321), reject second call (fallback 4321), succeed on 5173
+
+      /*
+       * When detectedPort is 4321, portsToTry = [4321, 4321, 5173, 3000]
+       * Reject first call (4321), reject second call (fallback 4321), succeed on 5173
+       */
       sandbox.getPreviewLink
         .mockRejectedValueOnce(new Error('Port not available'))
         .mockRejectedValueOnce(new Error('Port not available'))
@@ -290,6 +310,7 @@ describe('devServerService', () => {
 
     it('should try default ports when no port detected', async () => {
       vi.useRealTimers();
+
       const sandbox = createMockSandbox();
       sandbox.getPreviewLink.mockResolvedValue({ url: 'https://preview.test:4321' });
 
@@ -302,6 +323,7 @@ describe('devServerService', () => {
 
     it('should return null when all ports fail', async () => {
       vi.useRealTimers();
+
       const sandbox = createMockSandbox();
       sandbox.getPreviewLink.mockRejectedValue(new Error('No ports available'));
 
@@ -316,6 +338,7 @@ describe('devServerService', () => {
   describe('checkDevLogForPort', () => {
     it('should extract port from dev log', async () => {
       vi.useRealTimers();
+
       const sandbox = createMockSandbox();
       sandbox.process.executeCommand.mockResolvedValue({
         exitCode: 0,
@@ -331,6 +354,7 @@ describe('devServerService', () => {
 
     it('should return null when no port in log', async () => {
       vi.useRealTimers();
+
       const sandbox = createMockSandbox();
       sandbox.process.executeCommand.mockResolvedValue({
         exitCode: 0,
@@ -345,4 +369,3 @@ describe('devServerService', () => {
     });
   });
 });
-

@@ -11,6 +11,7 @@ interface BrowserChromeProps {
   url?: string;
   isLive?: boolean;
   isLoading?: boolean;
+
   /** When showing code, display file path instead of URL */
   filePath?: string;
 }

@@ -64,4 +64,3 @@ export function useToast() {
 
   return { toast, success, error, info, warning };
 }
-

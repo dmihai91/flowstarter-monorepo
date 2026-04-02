@@ -7,7 +7,7 @@
  * @vitest-environment jsdom
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -65,6 +65,7 @@ function createMockWorkbenchStore(): WorkbenchState & {
     },
     createFile: async (path: string, content: string) => {
       state.files.set(path, { content, type: 'file' });
+
       if (!state.selectedFile) {
         state.selectedFile = path;
         state.currentDocument = { filePath: path, content };
@@ -72,8 +73,10 @@ function createMockWorkbenchStore(): WorkbenchState & {
     },
     setSelectedFile(path: string | null) {
       state.selectedFile = path;
+
       if (path) {
         const file = state.files.get(path);
+
         if (file) {
           state.currentDocument = { filePath: path, content: file.content };
         }
@@ -314,7 +317,7 @@ describe('Sync State Management', () => {
     let isSyncing = false;
     let lastSyncedAt: number | null = null;
 
-    const syncToWorkbench = async (files: FileEntry[]) => {
+    const syncToWorkbench = async (_files: FileEntry[]) => {
       isSyncing = true;
 
       // Simulate async sync
@@ -401,4 +404,3 @@ describe('Error Handling in File Sync', () => {
     expect(onError).toHaveBeenCalledWith(expect.objectContaining({ message: 'Sync failed' }));
   });
 });
-

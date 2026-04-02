@@ -32,11 +32,7 @@ export function EditorUserMenu() {
 
   return (
     <>
-      <Dropdown
-        trigger={<UserAvatar />}
-        align="end"
-        sideOffset={8}
-      >
+      <Dropdown trigger={<UserAvatar />} align="end" sideOffset={8}>
         {/* Profile header */}
         <div
           style={{
@@ -63,11 +59,7 @@ export function EditorUserMenu() {
             }}
           >
             {imageUrl ? (
-              <img
-                src={imageUrl}
-                alt=""
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
+              <img src={imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             ) : (
               (firstName?.charAt(0) || 'U').toUpperCase()
             )}

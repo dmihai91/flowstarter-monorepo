@@ -3,7 +3,7 @@
  *
  * Manages file synchronization between Convex and Daytona workspaces.
  * Since we're using Daytona for preview (not WebContainer), all file syncs go through Daytona.
- * 
+ *
  * Uses React Query mutations for API calls with automatic retries.
  */
 
@@ -48,7 +48,7 @@ export function useFileSync(options: UseFileSyncOptions = {}): UseFileSyncReturn
 
       try {
         const result = await syncToWorkbenchMutation.mutateAsync({ orchestrationId });
-        
+
         // Write each file to the workbench
         for (const [filePath, content] of Object.entries(result.files)) {
           await workbenchStore.createFile(filePath, content);
@@ -56,10 +56,10 @@ export function useFileSync(options: UseFileSyncOptions = {}): UseFileSyncReturn
 
         // Show the workbench after files are synced
         workbenchStore.setShowWorkbench(true);
-        
+
         setLastSyncedOrchestrationId(orchestrationId);
         onSyncComplete?.(result.fileCount);
-        
+
         console.log(`[useFileSync] Synced ${result.fileCount} files to workbench`);
       } catch (error) {
         console.error('[useFileSync] Failed to sync to workbench:', error);
@@ -122,4 +122,3 @@ export function useFileSync(options: UseFileSyncOptions = {}): UseFileSyncReturn
 }
 
 export type { UseFileSyncOptions, UseFileSyncReturn };
-

@@ -382,4 +382,3 @@ Key Features: ${d.features?.join(', ') || 'Not specified'}
     this.gatheringPhase = 'initial';
   }
 }
-

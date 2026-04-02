@@ -5,7 +5,7 @@
  * @vitest-environment jsdom
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -64,6 +64,7 @@ class MockOnboardingFlow {
       timestamp: Date.now(),
     };
     this.messages.push(message);
+
     return message;
   }
 
@@ -75,6 +76,7 @@ class MockOnboardingFlow {
       timestamp: Date.now(),
     };
     this.messages.push(message);
+
     return message;
   }
 
@@ -129,7 +131,7 @@ describe('Complete Business Discovery Flow', () => {
     flow.addUserMessage('We capture leads through contact forms and offer free consultations');
     flow.updateBusinessInfo({
       sellingMethod: 'leads',
-      sellingMethodDetails: 'We capture leads through contact forms and offer free consultations'
+      sellingMethodDetails: 'We capture leads through contact forms and offer free consultations',
     });
     flow.addAssistantMessage('Lead generation it is. Any pricing to highlight?');
     flow.setStep('business-pricing');
@@ -162,6 +164,7 @@ describe('Complete Business Discovery Flow', () => {
     });
 
     flow.addUserMessage('Skip');
+
     // Pricing stays undefined when skipped
     flow.setStep('business-summary');
 
@@ -170,9 +173,11 @@ describe('Complete Business Discovery Flow', () => {
   });
 
   it('should generate correct number of messages per transition', () => {
-    // Each step transition should produce:
-    // 1. User message (their answer)
-    // 2. Assistant message (acknowledgment + next question)
+    /*
+     * Each step transition should produce:
+     * 1. User message (their answer)
+     * 2. Assistant message (acknowledgment + next question)
+     */
 
     flow.addUserMessage('UVP answer');
     flow.addAssistantMessage('Transition message');
@@ -189,8 +194,8 @@ describe('Business Goals Parsing', () => {
   const parseGoals = (answer: string): string[] => {
     return answer
       .split(/[,\n•\-\d+\.\)]/g)
-      .map(g => g.trim())
-      .filter(g => g.length > 0)
+      .map((g) => g.trim())
+      .filter((g) => g.length > 0)
       .slice(0, 5);
   };
 
@@ -233,26 +238,46 @@ describe('Selling Method Extraction', () => {
   const extractSellingMethod = (answer: string): SellingMethod => {
     const lowerAnswer = answer.toLowerCase();
 
-    if (lowerAnswer.includes('ecommerce') || lowerAnswer.includes('product') ||
-        lowerAnswer.includes('shop') || lowerAnswer.includes('store')) {
+    if (
+      lowerAnswer.includes('ecommerce') ||
+      lowerAnswer.includes('product') ||
+      lowerAnswer.includes('shop') ||
+      lowerAnswer.includes('store')
+    ) {
       return 'ecommerce';
     }
-    if (lowerAnswer.includes('booking') || lowerAnswer.includes('appointment') ||
-        lowerAnswer.includes('session') || lowerAnswer.includes('consultation')) {
+
+    if (
+      lowerAnswer.includes('booking') ||
+      lowerAnswer.includes('appointment') ||
+      lowerAnswer.includes('session') ||
+      lowerAnswer.includes('consultation')
+    ) {
       return 'bookings';
     }
-    if (lowerAnswer.includes('lead') || lowerAnswer.includes('contact') ||
-        lowerAnswer.includes('inquiry') || lowerAnswer.includes('form')) {
+
+    if (
+      lowerAnswer.includes('lead') ||
+      lowerAnswer.includes('contact') ||
+      lowerAnswer.includes('inquiry') ||
+      lowerAnswer.includes('form')
+    ) {
       return 'leads';
     }
-    if (lowerAnswer.includes('subscription') || lowerAnswer.includes('membership') ||
-        lowerAnswer.includes('course')) {
+
+    if (lowerAnswer.includes('subscription') || lowerAnswer.includes('membership') || lowerAnswer.includes('course')) {
       return 'subscriptions';
     }
-    if (lowerAnswer.includes('content') || lowerAnswer.includes('blog') ||
-        lowerAnswer.includes('article') || lowerAnswer.includes('news')) {
+
+    if (
+      lowerAnswer.includes('content') ||
+      lowerAnswer.includes('blog') ||
+      lowerAnswer.includes('article') ||
+      lowerAnswer.includes('news')
+    ) {
       return 'content';
     }
+
     return 'other';
   };
 
@@ -360,7 +385,8 @@ describe('Message Sequencing', () => {
     flow.addUserMessage('Second');
     flow.addAssistantMessage('Response 2');
 
-    const timestamps = flow.messages.map(m => m.timestamp);
+    const timestamps = flow.messages.map((m) => m.timestamp);
+
     for (let i = 1; i < timestamps.length; i++) {
       expect(timestamps[i]).toBeGreaterThanOrEqual(timestamps[i - 1]);
     }
@@ -456,13 +482,14 @@ describe('Summary Confirmation Flow', () => {
 
   it('should stay on summary when user wants to edit', () => {
     flow.addUserMessage('Let me adjust something');
+
     // Stay on summary for editing
 
     expect(flow.step).toBe('business-summary');
   });
 
   it('should allow field updates during edit mode', () => {
-    flow.addUserMessage("Actually, my target audience is small businesses");
+    flow.addUserMessage('Actually, my target audience is small businesses');
     flow.updateBusinessInfo({ targetAudience: 'small businesses' });
 
     expect(flow.businessInfo.targetAudience).toBe('small businesses');
@@ -490,6 +517,7 @@ describe('Error Recovery', () => {
 
   it('should handle very long user input', () => {
     flow.setStep('business-uvp');
+
     const longInput = 'A'.repeat(10000);
     flow.addUserMessage(longInput);
 
@@ -499,6 +527,7 @@ describe('Error Recovery', () => {
 
   it('should handle special characters in input', () => {
     flow.setStep('business-uvp');
+
     const specialInput = 'Test <script>alert("XSS")</script> & "quotes" \'apostrophe\'';
     flow.addUserMessage(specialInput);
 
@@ -507,6 +536,7 @@ describe('Error Recovery', () => {
 
   it('should handle unicode characters', () => {
     flow.setStep('business-uvp');
+
     const unicodeInput = 'Test 你好 мир 🎉 emoji';
     flow.addUserMessage(unicodeInput);
 
@@ -538,6 +568,7 @@ describe('Flow Navigation', () => {
 
     expectedSequence.forEach((expectedStep, index) => {
       expect(flow.step).toBe(expectedStep);
+
       if (index < expectedSequence.length - 1) {
         flow.setStep(expectedSequence[index + 1]);
       }
@@ -576,6 +607,7 @@ describe('Name Refinement Flow Integration', () => {
     const useNameMatch = input.match(/^(?:yes,?\s*)?(?:i'll\s*)?use\s*["']?([^"']+)["']?$/i);
     const extractedName = useNameMatch ? useNameMatch[1].trim() : null;
     const isGeneric = extractedName !== null && /^(this|that|the|it)\s*(name|one)?$/i.test(extractedName);
+
     return {
       isExplicit: extractedName !== null && !isGeneric,
       isGeneric,
@@ -588,8 +620,10 @@ describe('Name Refinement Flow Integration', () => {
     const suggestInput = 'Suggest a name';
     expect(suggestInput.toLowerCase().includes('suggest')).toBe(true);
 
-    // Step 2: System suggests "Inner Peace"
-    const suggestedName = 'Inner Peace';
+    /*
+     * Step 2: System suggests "Inner Peace"
+     * suggestedName = 'Inner Peace' (context for conversation below)
+     */
 
     // Step 3: User asks for refinement
     const refinementInput = 'Make it more professional and business-like';
@@ -680,6 +714,7 @@ describe('Complete Onboarding Flow Edge Cases', () => {
     flow.setStep('business-pricing');
 
     flow.addUserMessage('Skip');
+
     // pricingOffers stays undefined
     flow.setStep('business-summary');
 
@@ -771,26 +806,22 @@ describe('Complete Onboarding Flow Edge Cases', () => {
 
 describe('Business Summary Generation', () => {
   // Helper to generate summary matching the API implementation
-  const generateBusinessSummary = (
-    projectName: string,
-    businessInfo: Partial<BusinessInfo>
-  ): string => {
+  const generateBusinessSummary = (projectName: string, businessInfo: Partial<BusinessInfo>): string => {
     const sellingMethodLabels: Record<string, string> = {
-      'ecommerce': 'E-commerce (selling products)',
-      'bookings': 'Appointment bookings',
-      'leads': 'Lead generation',
-      'subscriptions': 'Subscriptions/memberships',
-      'content': 'Content/media',
-      'other': 'Other',
+      ecommerce: 'E-commerce (selling products)',
+      bookings: 'Appointment bookings',
+      leads: 'Lead generation',
+      subscriptions: 'Subscriptions/memberships',
+      content: 'Content/media',
+      other: 'Other',
     };
 
-    const goalsFormatted = businessInfo.businessGoals && businessInfo.businessGoals.length > 0
-      ? businessInfo.businessGoals.map(g => `• ${g}`).join('\n')
-      : '• Not specified';
+    const goalsFormatted =
+      businessInfo.businessGoals && businessInfo.businessGoals.length > 0
+        ? businessInfo.businessGoals.map((g) => `• ${g}`).join('\n')
+        : '• Not specified';
 
-    const pricingSection = businessInfo.pricingOffers
-      ? `\n\n**Pricing/Offers:**\n${businessInfo.pricingOffers}`
-      : '';
+    const pricingSection = businessInfo.pricingOffers ? `\n\n**Pricing/Offers:**\n${businessInfo.pricingOffers}` : '';
 
     return `Perfect! Here's a summary of **${projectName}**:
 
@@ -914,19 +945,22 @@ describe('Step Transition Messages', () => {
   });
 
   it('should not produce duplicate acknowledgment messages', () => {
-    // Old pattern was: acknowledgment message + prompt message = 2 messages
-    // New pattern is: single unified message = 1 message
+    /*
+     * Old pattern was: acknowledgment message + prompt message = 2 messages
+     * New pattern is: single unified message = 1 message
+     */
 
     const messages: string[] = [];
 
-    // Simulate old pattern (WRONG - produces 2 messages)
-    // messages.push("Great name!");
-    // messages.push("What makes your business unique?");
+    /*
+     * Simulate old pattern (WRONG - produces 2 messages)
+     * messages.push("Great name!");
+     * messages.push("What makes your business unique?");
+     */
 
     // Simulate new pattern (CORRECT - produces 1 message)
-    messages.push("Love it! **Flow Studio** is a great name.\n\nWhat makes your business unique?");
+    messages.push('Love it! **Flow Studio** is a great name.\n\nWhat makes your business unique?');
 
     expect(messages).toHaveLength(1);
   });
 });
-

@@ -23,6 +23,7 @@ export async function waitForDevServer(
   options?: {
     sandbox?: Sandbox;
     workDir?: string;
+
     /** Check dev log for errors every N HTTP checks */
     logCheckInterval?: number;
   },
@@ -49,6 +50,7 @@ export async function waitForDevServer(
 
         if (logContent.length > 20) {
           const buildError = extractBuildErrorFromLog(logContent);
+
           if (buildError) {
             log.debug(` Dev log shows build error: ${buildError.message.slice(0, 100)}`);
             return { ready: false, buildError };
@@ -79,38 +81,46 @@ export async function waitForDevServer(
       if (response.status !== 502 && response.status !== 503 && response.status !== 504) {
         // Read body to check if this is Daytona's startup placeholder page or an Astro error page
         const body = await response.text().catch(() => '');
-        const isDaytonaStartupPage = body.includes('Preview Server Starting') || body.includes('preview server is still initializing');
+        const isDaytonaStartupPage =
+          body.includes('Preview Server Starting') || body.includes('preview server is still initializing');
 
         if (isDaytonaStartupPage) {
           if (attempts <= 3) {
             log.debug(` Got Daytona startup page (not actual app), attempt ${attempts}...`);
           }
         } else if (response.status === 500) {
-          // 500 from dev server means a runtime/build error in the generated code
-          // Extract the error type from the response (Astro returns <title>ErrorType</title>)
+          /*
+           * 500 from dev server means a runtime/build error in the generated code
+           * Extract the error type from the response (Astro returns <title>ErrorType</title>)
+           */
           const errorMatch = body.match(/<title>([^<]+)<\/title>/);
           const errorType = errorMatch?.[1] || 'Unknown Error';
           const elapsed = Date.now() - startTime;
           log.debug(` Dev server returned 500 (${errorType}) after ${elapsed}ms — treating as build error`);
+
           // Try to extract file path from Astro error page
           let file = '';
           let line = '0';
-          
+
           // Astro error page often contains file path in pre or code tags
-          const fileMatch = body.match(/(?:\/home\/daytona\/|file:\/\/)?(?:src\/[a-zA-Z0-9_.\-\/]+\.(?:astro|tsx?|jsx?))(?::(\d+))?/);
+          const fileMatch = body.match(
+            /(?:\/home\/daytona\/|file:\/\/)?(?:src\/[a-zA-Z0-9_.\-\/]+\.(?:astro|tsx?|jsx?))(?::(\d+))?/,
+          );
+
           if (fileMatch) {
             file = fileMatch[0].replace(/^(?:\/home\/daytona\/|file:\/\/)/, '').split(':')[0];
             line = fileMatch[1] || '0';
           }
-          
+
           // Also try FailedToLoadModuleSSR pattern
           const moduleMatch = body.match(/Failed to load url ([^\s<]+)/);
+
           if (moduleMatch) {
             file = moduleMatch[1].replace(/^(?:\/home\/daytona\/|file:\/\/)/, '');
           }
-          
+
           log.warn(`Astro error page (file=${file}, line=${line}): ${body.slice(0, 300)}`);
-          
+
           return {
             ready: false,
             buildError: {
@@ -123,6 +133,7 @@ export async function waitForDevServer(
         } else {
           const elapsed = Date.now() - startTime;
           log.debug(` Dev server responded with status ${response.status} after ${elapsed}ms (${attempts} attempts)`);
+
           return { ready: true };
         }
       }
@@ -151,6 +162,7 @@ export async function waitForDevServer(
       );
       const logContent = logResult.result || '';
       const buildError = extractBuildErrorFromLog(logContent);
+
       if (buildError) {
         log.debug(` Final log check found build error: ${buildError.message.slice(0, 100)}`);
         return { ready: false, buildError };
@@ -161,6 +173,7 @@ export async function waitForDevServer(
   }
 
   log.debug(` Dev server health check timed out after ${attempts} attempts`);
+
   return { ready: false };
 }
 
@@ -168,8 +181,14 @@ export async function waitForDevServer(
  * Get polling interval based on attempt count (adaptive backoff)
  */
 function getPollingInterval(attemptCount: number): number {
-  if (attemptCount < 5) return 500;
-  if (attemptCount < 10) return 1000;
+  if (attemptCount < 5) {
+    return 500;
+  }
+
+  if (attemptCount < 10) {
+    return 1000;
+  }
+
   return 2000;
 }
 
@@ -197,8 +216,10 @@ export async function startDevServerTest(
 ): Promise<{ output: string; exitCode: number }> {
   const bunPathSetup = getBunPathSetup();
 
-  // 25s timeout — enough for Astro to compile most templates
-  // The || true prevents a non-zero exit from killing the pipeline
+  /*
+   * 25s timeout — enough for Astro to compile most templates
+   * The || true prevents a non-zero exit from killing the pipeline
+   */
   const devCommand = `${bunPathSetup}timeout 25 bun run dev --host 0.0.0.0 2>&1 || true`;
 
   log.debug(' Starting dev server test run (25s max)...');
@@ -206,7 +227,9 @@ export async function startDevServerTest(
   const devResult = await sandbox.process.executeCommand(devCommand, workDir, undefined, 30);
   const output = devResult.result || '';
 
-  log.debug(` Dev server test output: exit=${devResult.exitCode}, len=${output.length}, snippet=${output.slice(0, 500)}`);
+  log.debug(
+    ` Dev server test output: exit=${devResult.exitCode}, len=${output.length}, snippet=${output.slice(0, 500)}`,
+  );
 
   return { output, exitCode: devResult.exitCode };
 }
@@ -239,6 +262,7 @@ export async function getPreviewUrl(
   for (const port of portsToTry) {
     try {
       log.debug(` Trying port ${port}...`);
+
       const previewLink = await sandbox.getPreviewLink(port);
       const previewUrl = extractPreviewUrlValue(previewLink);
 
@@ -252,6 +276,7 @@ export async function getPreviewUrl(
       }
 
       log.debug(` Got preview URL for port ${port}: ${previewUrl}`);
+
       return { url: previewUrl, port };
     } catch (error) {
       console.error('[Daytona:getPreviewUrl] getPreviewLink failed', {
@@ -268,6 +293,7 @@ export async function getPreviewUrl(
     sandboxId: sandbox.id,
     portsToTry,
   });
+
   return null;
 }
 
@@ -317,7 +343,7 @@ export async function runAstroCheck(
 ): Promise<{ success: boolean; errors: Array<{ file: string; line: string; message: string; fullOutput: string }> }> {
   try {
     log.info(' Running astro check...');
-    
+
     // Run astro check with timeout
     const result = await sandbox.process.executeCommand(
       'bun add -D @astrojs/check typescript 2>/dev/null; timeout 60 bunx astro check 2>&1 || true',
@@ -325,19 +351,21 @@ export async function runAstroCheck(
       undefined,
       90,
     );
-    
+
     const output = result.result || '';
     log.info(` Astro check output: ${output.slice(0, 500)}`);
-    
+
     // Strip ANSI codes for easier parsing
     const cleanOutput = output.replace(/\x1b\[[0-9;]*m/g, '').replace(/\[\d+m/g, '');
-    
+
     // Parse errors from astro check output - multiple formats supported
     const errors: Array<{ file: string; line: string; message: string; fullOutput: string }> = [];
-    
+
     // Format 1: "file:line:col - error TS2307: message" (TypeScript style)
-    const tsPattern = /([a-zA-Z0-9_.\-\/]+\.(?:astro|ts|tsx|js|jsx)):(\d+):(\d+)\s*-?\s*(?:error|Error)\s*[A-Z0-9]*:?\s*(.+)/g;
+    const tsPattern =
+      /([a-zA-Z0-9_.\-\/]+\.(?:astro|ts|tsx|js|jsx)):(\d+):(\d+)\s*-?\s*(?:error|Error)\s*[A-Z0-9]*:?\s*(.+)/g;
     let match;
+
     while ((match = tsPattern.exec(cleanOutput)) !== null) {
       errors.push({
         file: match[1],
@@ -346,22 +374,29 @@ export async function runAstroCheck(
         fullOutput: output.slice(Math.max(0, match.index - 100), match.index + 200),
       });
     }
-    
-    // Format 2: Parse the Astro check summary line "Result (N files): X errors, Y warnings, Z hints"
-    // Use this as ground truth — only treat ERRORS as failures, not warnings or hints
+
+    /*
+     * Format 2: Parse the Astro check summary line "Result (N files): X errors, Y warnings, Z hints"
+     * Use this as ground truth — only treat ERRORS as failures, not warnings or hints
+     */
     const summaryMatch = cleanOutput.match(/Result \(\d+ files?\):[^\n]*?(\d+)\s+error/);
     const actualErrorCount = summaryMatch ? parseInt(summaryMatch[1], 10) : null;
 
     if (errors.length === 0 && actualErrorCount === null) {
-      // No summary line found — fall back to file+error heuristic
-      // BUT: only trigger if the output explicitly contains "error" NOT just "warning" or "hint"
-      const hasActualError = /(?:error|Error)\s+[A-Z]{2}\d+/.test(cleanOutput) || // TS error codes
-                             /^\s*error:/im.test(cleanOutput);
+      /*
+       * No summary line found — fall back to file+error heuristic
+       * BUT: only trigger if the output explicitly contains "error" NOT just "warning" or "hint"
+       */
+      const hasActualError =
+        /(?:error|Error)\s+[A-Z]{2}\d+/.test(cleanOutput) || // TS error codes
+        /^\s*error:/im.test(cleanOutput);
       const filePattern = /(src\/[a-zA-Z0-9_.\-\/]+\.(?:astro|ts|tsx))/g;
       const files = new Set<string>();
+
       while ((match = filePattern.exec(cleanOutput)) !== null) {
         files.add(match[1]);
       }
+
       if (files.size > 0 && hasActualError) {
         for (const filePath of files) {
           errors.push({
@@ -379,6 +414,7 @@ export async function runAstroCheck(
       // Check for actual compiler errors, not warnings/hints
       const errorLine = cleanOutput.match(/^\s*(?:error|Error)[:\s]+(.+)/m);
       const warnLine = cleanOutput.match(/warning|hint|\d+\s+hint/i);
+
       if (errorLine && !warnLine) {
         errors.push({
           file: 'unknown',
@@ -394,9 +430,9 @@ export async function runAstroCheck(
       log.info(` Astro check summary says 0 errors — ignoring ${errors.length} false positive(s)`);
       errors.length = 0;
     }
-    
+
     log.info(` Astro check found ${errors.length} errors`);
-    
+
     return {
       success: errors.length === 0,
       errors,
@@ -405,14 +441,24 @@ export async function runAstroCheck(
     log.error(' Astro check failed:', e);
     return {
       success: false,
-      errors: [{
-        file: 'unknown',
-        line: '0',
-        message: e instanceof Error ? e.message : 'Unknown error during astro check',
-        fullOutput: '',
-      }],
+      errors: [
+        {
+          file: 'unknown',
+          line: '0',
+          message: e instanceof Error ? e.message : 'Unknown error during astro check',
+          fullOutput: '',
+        },
+      ],
     };
   }
 }
 
-export { parseErrorDetails, parseAllErrors, hasFatalError, checkServerStarted, extractPort, createBuildError, extractBuildErrorFromLog } from './errorParser';
+export {
+  parseErrorDetails,
+  parseAllErrors,
+  hasFatalError,
+  checkServerStarted,
+  extractPort,
+  createBuildError,
+  extractBuildErrorFromLog,
+} from './errorParser';

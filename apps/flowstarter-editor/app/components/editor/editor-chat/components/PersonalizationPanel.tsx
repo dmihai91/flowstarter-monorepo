@@ -64,22 +64,33 @@ export function PersonalizationPanel({
   // Auto-select first template palette to skip palette section
   const autoSelectedRef = useRef(false);
   useEffect(() => {
-    if (autoSelectedRef.current) return;
+    if (autoSelectedRef.current) {
+      return;
+    }
+
     if (templatePalettes && templatePalettes.length > 0 && panel.currentSection === 'palette') {
       autoSelectedRef.current = true;
+
       // Convert TemplatePalette to ColorPalette and auto-select
       const first = templatePalettes[0];
       const c = first.colors || {};
       const autoPalette: import('../types').ColorPalette = {
         id: first.id || 'auto-palette',
         name: first.name || 'Default',
-        colors: [c.primary || '#3B82F6', c.secondary || '#1E40AF', c.accent || '#F59E0B', c.background || '#FFFFFF', c.text || '#111827'],
+        colors: [
+          c.primary || '#3B82F6',
+          c.secondary || '#1E40AF',
+          c.accent || '#F59E0B',
+          c.background || '#FFFFFF',
+          c.text || '#111827',
+        ],
         primary: c.primary || '#3B82F6',
         secondary: c.secondary || '#1E40AF',
         accent: c.accent || '#F59E0B',
         background: c.background || '#FFFFFF',
         text: c.text || '#111827',
       };
+
       // Auto-select after a brief delay so the UI shows the transition
       setTimeout(() => panel.handlePaletteSelect(autoPalette), 300);
     } else if (templatePalette && panel.currentSection === 'palette') {
@@ -121,23 +132,23 @@ export function PersonalizationPanel({
       {/* Header: Progress + Skip to build */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <div style={{ display: 'flex', gap: '8px', flex: 1 }}>
-        {panel.sections.map((section, index) => (
-          <div
-            key={section}
-            style={{
-              flex: 1,
-              height: '4px',
-              borderRadius: '2px',
-              background:
-                index <= panel.sectionIndex
-                  ? 'linear-gradient(135deg, rgba(77, 93, 217, 0.8), rgba(6, 182, 212, 0.6))'
-                  : isDark
-                    ? 'rgba(255, 255, 255, 0.1)'
-                    : 'rgba(0, 0, 0, 0.1)',
-              transition: 'background 0.3s ease',
-            }}
-          />
-        ))}
+          {panel.sections.map((section, index) => (
+            <div
+              key={section}
+              style={{
+                flex: 1,
+                height: '4px',
+                borderRadius: '2px',
+                background:
+                  index <= panel.sectionIndex
+                    ? 'linear-gradient(135deg, rgba(77, 93, 217, 0.8), rgba(6, 182, 212, 0.6))'
+                    : isDark
+                      ? 'rgba(255, 255, 255, 0.1)'
+                      : 'rgba(0, 0, 0, 0.1)',
+                transition: 'background 0.3s ease',
+              }}
+            />
+          ))}
         </div>
         <button
           onClick={panel.handleSkipAll}
@@ -158,11 +169,11 @@ export function PersonalizationPanel({
             transition: 'all 0.15s',
             whiteSpace: 'nowrap',
           }}
-          onMouseEnter={e => {
+          onMouseEnter={(e) => {
             e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)';
             e.currentTarget.style.background = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)';
           }}
-          onMouseLeave={e => {
+          onMouseLeave={(e) => {
             e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.45)';
             e.currentTarget.style.background = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.05)';
           }}
@@ -198,8 +209,12 @@ export function PersonalizationPanel({
                   background: 'transparent',
                   transition: 'color 0.15s',
                 }}
-                onMouseEnter={e => e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'}
-                onMouseLeave={e => e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)'}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)')
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)')
+                }
               >
                 Skip <ChevronRight size={14} />
               </button>
@@ -240,8 +255,12 @@ export function PersonalizationPanel({
                   background: 'transparent',
                   transition: 'color 0.15s',
                 }}
-                onMouseEnter={e => e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'}
-                onMouseLeave={e => e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)'}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)')
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)')
+                }
               >
                 Skip <ChevronRight size={14} />
               </button>

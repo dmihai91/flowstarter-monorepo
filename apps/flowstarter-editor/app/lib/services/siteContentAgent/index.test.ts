@@ -1,6 +1,6 @@
 /**
  * Tests for Site Content Agent
- * 
+ *
  * Tests domain detection, content suggestions, and
  * domain-specific configurations.
  */
@@ -28,7 +28,7 @@ describe('Domain Detection', () => {
       'Marriage counseling services',
     ];
 
-    therapistDescriptions.forEach(desc => {
+    therapistDescriptions.forEach((desc) => {
       const domain = detectDomain(desc);
       expect(domain.id).toBe('therapist');
     });
@@ -42,21 +42,16 @@ describe('Domain Detection', () => {
       'Fitness coaching for weight loss',
     ];
 
-    fitnessDescriptions.forEach(desc => {
+    fitnessDescriptions.forEach((desc) => {
       const domain = detectDomain(desc);
       expect(domain.id).toBe('fitness');
     });
   });
 
   it('returns generic domain for unmatched descriptions', () => {
-    const genericDescriptions = [
-      'Handmade jewelry business',
-      'Consulting services',
-      'Something completely unique',
-      '',
-    ];
+    const genericDescriptions = ['Handmade jewelry business', 'Consulting services', 'Something completely unique', ''];
 
-    genericDescriptions.forEach(desc => {
+    genericDescriptions.forEach((desc) => {
       const domain = detectDomain(desc);
       expect(domain.id).toBe('generic');
     });
@@ -123,7 +118,7 @@ describe('Section Recommendations', () => {
 describe('Design Recommendations', () => {
   it('returns calming design for therapists', () => {
     const design = getDesignRecommendations('therapist');
-    
+
     expect(design.colorMoods).toContain('calming');
     expect(design.colorMoods).toContain('warm');
     expect(design.layoutStyle).toContain('spacious');
@@ -131,7 +126,7 @@ describe('Design Recommendations', () => {
 
   it('returns energetic design for fitness', () => {
     const design = getDesignRecommendations('personal trainer');
-    
+
     expect(design.colorMoods).toContain('bold');
     expect(design.colorMoods).toContain('energetic');
     expect(design.layoutStyle).toContain('dynamic');
@@ -141,7 +136,7 @@ describe('Design Recommendations', () => {
 describe('Conversion Settings', () => {
   it('uses low urgency for therapists', () => {
     const conversion = getConversionSettings('therapist');
-    
+
     expect(conversion.urgencyLevel).toBe('low');
     expect(conversion.trustPriority).toBe('high');
     expect(conversion.primaryCta).toContain('Consultation');
@@ -149,7 +144,7 @@ describe('Conversion Settings', () => {
 
   it('uses medium urgency for fitness', () => {
     const conversion = getConversionSettings('personal trainer');
-    
+
     expect(conversion.urgencyLevel).toBe('medium');
     expect(conversion.primaryCta).toContain('Transformation');
   });
@@ -158,28 +153,24 @@ describe('Conversion Settings', () => {
 describe('Sample Headlines', () => {
   it('returns warm headlines for therapists', () => {
     const headlines = getSampleHeadlines('therapist');
-    
+
     expect(headlines.length).toBeGreaterThan(0);
+
     // Therapist headlines should feel safe/supportive
-    const hasWarmTone = headlines.some(h => 
-      h.includes('Safe') || 
-      h.includes('Alone') || 
-      h.includes('Heard') ||
-      h.includes('Compassion')
+    const hasWarmTone = headlines.some(
+      (h) => h.includes('Safe') || h.includes('Alone') || h.includes('Heard') || h.includes('Compassion'),
     );
     expect(hasWarmTone).toBe(true);
   });
 
   it('returns motivating headlines for fitness', () => {
     const headlines = getSampleHeadlines('personal trainer');
-    
+
     expect(headlines.length).toBeGreaterThan(0);
+
     // Fitness headlines should feel energetic
-    const hasEnergy = headlines.some(h => 
-      h.includes('Transform') || 
-      h.includes('Strongest') || 
-      h.includes('Results') ||
-      h.includes('Potential')
+    const hasEnergy = headlines.some(
+      (h) => h.includes('Transform') || h.includes('Strongest') || h.includes('Results') || h.includes('Potential'),
     );
     expect(hasEnergy).toBe(true);
   });
@@ -188,7 +179,7 @@ describe('Sample Headlines', () => {
 describe('Content Suggestions', () => {
   it('returns comprehensive suggestions for domain', () => {
     const suggestions = getContentSuggestions('therapist helping with anxiety');
-    
+
     expect(suggestions.headlines.length).toBeGreaterThan(0);
     expect(suggestions.ctas.length).toBe(2);
     expect(suggestions.sections.length).toBeGreaterThan(3);
@@ -197,7 +188,7 @@ describe('Content Suggestions', () => {
 
   it('includes primary and secondary CTAs', () => {
     const suggestions = getContentSuggestions('personal trainer');
-    
+
     expect(suggestions.ctas).toContain('Start Your Transformation');
     expect(suggestions.ctas).toContain('See Success Stories');
   });
@@ -206,7 +197,7 @@ describe('Content Suggestions', () => {
 describe('Domain Registry', () => {
   it('lists all registered domains', () => {
     const ids = getAllDomainIds();
-    
+
     expect(ids).toContain('therapist');
     expect(ids).toContain('fitness');
     expect(ids).toContain('generic');
@@ -232,10 +223,10 @@ describe('Contrast: Domain Differences', () => {
   it('therapist vs fitness have distinctly different approaches', () => {
     const therapistDesign = getDesignRecommendations('therapist');
     const fitnessDesign = getDesignRecommendations('fitness');
-    
+
     // Colors should be different
     expect(therapistDesign.colorMoods).not.toEqual(fitnessDesign.colorMoods);
-    
+
     // Layout styles should be different
     expect(therapistDesign.layoutStyle).not.toEqual(fitnessDesign.layoutStyle);
   });
@@ -243,10 +234,10 @@ describe('Contrast: Domain Differences', () => {
   it('therapist vs fitness have different conversion strategies', () => {
     const therapistConv = getConversionSettings('therapist');
     const fitnessConv = getConversionSettings('fitness');
-    
+
     // Urgency levels should differ
     expect(therapistConv.urgencyLevel).not.toEqual(fitnessConv.urgencyLevel);
-    
+
     // CTAs should be different
     expect(therapistConv.primaryCta).not.toEqual(fitnessConv.primaryCta);
   });
@@ -254,11 +245,11 @@ describe('Contrast: Domain Differences', () => {
   it('therapist vs fitness recommend different sections', () => {
     const therapistSections = getRecommendedSections('therapist');
     const fitnessSections = getRecommendedSections('fitness');
-    
+
     // Fitness has 'results', therapist might not
     const fitnessHasResults = fitnessSections.recommended.includes('results');
     const therapistHasApproach = therapistSections.recommended.includes('approach');
-    
+
     expect(fitnessHasResults).toBe(true);
     expect(therapistHasApproach).toBe(true);
   });

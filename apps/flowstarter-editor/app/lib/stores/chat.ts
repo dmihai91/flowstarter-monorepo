@@ -5,4 +5,3 @@ export const chatStore = map({
   aborted: false,
   showChat: true,
 });
-

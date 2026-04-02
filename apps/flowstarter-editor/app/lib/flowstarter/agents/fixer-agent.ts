@@ -49,45 +49,63 @@ CRITICAL: TypeScript implicit 'any' errors are common. Fix them by:
 
   protected async process(message: string, context: AgentContext): Promise<AgentResponse> {
     context.onProgress?.('Parsing fix request...', 5);
+
     let request: FixerRequestDTO;
+
     try {
       const parsed = JSON.parse(message);
       const validation = FixerRequestSchema.safeParse(parsed);
+
       if (!validation.success) {
         return this.createErrorResponse(`Invalid request: ${validation.error.message}`, context);
       }
+
       request = validation.data;
     } catch {
       return this.createErrorResponse('Invalid JSON. Expected: { file, content, error, line?, fullOutput? }', context);
     }
 
     this.logger.info(`Fixing error in ${request.file}: ${request.error.slice(0, 100)}`);
+
     let attempts = 0;
 
     // Tier 1: Rule-based fixes (instant)
     attempts++;
     context.onProgress?.('Applying rule-based fixes...', 15);
+
     const ruleFix = applyRuleBasedFixes(request.content, request.file, request.error);
+
     if (ruleFix && validateFix(ruleFix, request.file)) {
       this.logger.info('Tier 1 (rule-based) fix applied');
       return this.createSuccessResponse({
-        success: true, fixedContent: ruleFix,
-        summary: 'Applied rule-based CSS/syntax fix', tier: 'rule', attempts,
+        success: true,
+        fixedContent: ruleFix,
+        summary: 'Applied rule-based CSS/syntax fix',
+        tier: 'rule',
+        attempts,
       });
     }
 
     // Tier 2: Search-based (via SearchTool)
     attempts++;
     context.onProgress?.('Searching for solutions...', 35);
+
     let searchContext = '';
+
     try {
       const searchTool = getSearchTool();
       const framework = detectFramework(request.file);
       const searchResult = await searchTool.searchError(request.error, framework);
+
       if (searchResult && searchResult.results.length > 0) {
-        if (searchResult.answer) searchContext += `\n\nAI ANSWER FROM SEARCH:\n${searchResult.answer}`;
-        searchContext += '\n\nRELEVANT SEARCH RESULTS:\n' +
-          searchResult.results.slice(0, 3)
+        if (searchResult.answer) {
+          searchContext += `\n\nAI ANSWER FROM SEARCH:\n${searchResult.answer}`;
+        }
+
+        searchContext +=
+          '\n\nRELEVANT SEARCH RESULTS:\n' +
+          searchResult.results
+            .slice(0, 3)
             .map((r) => `- ${r.title} (score: ${(r.score * 100).toFixed(0)}%)\n  ${r.content.slice(0, 200)}`)
             .join('\n');
         this.logger.info('Tier 2 (search-based) found context');
@@ -100,13 +118,18 @@ CRITICAL: TypeScript implicit 'any' errors are common. Fix them by:
     if (this.tryFastModelFirst) {
       attempts++;
       context.onProgress?.('Trying fast fix with Sonnet-4-6...', 50);
+
       try {
         const k2Fix = await this.applyLLMFix(request, searchContext, FAST_MODEL);
+
         if (k2Fix && validateFix(k2Fix.fixedContent, request.file)) {
           this.logger.info(`Tier 3a (Sonnet-4-6 fast) fix applied: ${k2Fix.summary}`);
           return this.createSuccessResponse({
-            success: true, fixedContent: k2Fix.fixedContent,
-            summary: `[K2] ${k2Fix.summary}`, tier: 'llm', attempts,
+            success: true,
+            fixedContent: k2Fix.fixedContent,
+            summary: `[K2] ${k2Fix.summary}`,
+            tier: 'llm',
+            attempts,
           });
         }
       } catch (err) {
@@ -116,16 +139,22 @@ CRITICAL: TypeScript implicit 'any' errors are common. Fix them by:
 
     // Tier 3b: Claude Sonnet 4 (Primary)
     const maxSonnetAttempts = 2;
+
     for (let sonnetAttempt = 1; sonnetAttempt <= maxSonnetAttempts; sonnetAttempt++) {
       attempts++;
       context.onProgress?.(`Claude Sonnet 4 analyzing error (attempt ${sonnetAttempt})...`, 60 + sonnetAttempt * 15);
+
       try {
         const sonnetFix = await this.applyLLMFix(request, searchContext, PRIMARY_MODEL);
+
         if (sonnetFix && validateFix(sonnetFix.fixedContent, request.file)) {
           this.logger.info(`Tier 3b (Sonnet 4) fix applied: ${sonnetFix.summary}`);
           return this.createSuccessResponse({
-            success: true, fixedContent: sonnetFix.fixedContent,
-            summary: sonnetFix.summary, tier: 'llm', attempts,
+            success: true,
+            fixedContent: sonnetFix.fixedContent,
+            summary: sonnetFix.summary,
+            tier: 'llm',
+            attempts,
           });
         }
       } catch (err) {
@@ -136,11 +165,14 @@ CRITICAL: TypeScript implicit 'any' errors are common. Fix them by:
     // All tiers failed
     this.logger.error(`Fix failed after ${attempts} attempts`);
     context.onProgress?.('Fix failed', 100);
+
     return this.createSuccessResponse({ success: false, tier: 'none', attempts, error: 'All fix attempts failed' });
   }
 
   private async applyLLMFix(
-    request: FixerRequestDTO, searchContext: string, model: string = PRIMARY_MODEL,
+    request: FixerRequestDTO,
+    searchContext: string,
+    model: string = PRIMARY_MODEL,
   ): Promise<{ fixedContent: string; summary: string } | null> {
     const prompt = `Fix this build error. Return ONLY the complete fixed file.
 
@@ -173,15 +205,20 @@ OUTPUT (JSON only):
 }`;
 
     const response = await generateJSON<LLMFixResponse>([{ role: 'user', content: prompt }], {
-      model, temperature: 0.1, maxTokens: 8000,
+      model,
+      temperature: 0.1,
+      maxTokens: 8000,
     });
+
     if (response.success && response.fixedContent) {
       if (response.fixedContent === request.content) {
         this.logger.warn('LLM fix did not modify content');
         return null;
       }
+
       return { fixedContent: response.fixedContent, summary: response.summary ?? 'Fixed error' };
     }
+
     return null;
   }
 
@@ -191,14 +228,21 @@ OUTPUT (JSON only):
 
   private createErrorResponse(error: string, _context: AgentContext): AgentResponse {
     const data: FixerResponseDTO = { success: false, tier: 'none', attempts: 0, error };
-    return { message: this.createMessage('agent', JSON.stringify(data)), complete: false, nextAction: 'Provide valid input' };
+    return {
+      message: this.createMessage('agent', JSON.stringify(data)),
+      complete: false,
+      nextAction: 'Provide valid input',
+    };
   }
 }
 
 let fixerAgentInstance: FixerAgent | null = null;
 
 export function getFixerAgent(tryFastModelFirst?: boolean): FixerAgent {
-  if (!fixerAgentInstance) fixerAgentInstance = new FixerAgent(tryFastModelFirst);
+  if (!fixerAgentInstance) {
+    fixerAgentInstance = new FixerAgent(tryFastModelFirst);
+  }
+
   return fixerAgentInstance;
 }
 

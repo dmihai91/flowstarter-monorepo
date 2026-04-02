@@ -9,4 +9,3 @@ export type {
   TemplateFont,
   TemplateRecommendation,
 } from '~/components/editor/template-preview/types';
-

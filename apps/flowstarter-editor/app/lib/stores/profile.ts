@@ -26,4 +26,3 @@ export const updateProfile = (updates: Partial<Profile>) => {
     localStorage.setItem('Flowstarter_profile', JSON.stringify(profileStore.get()));
   }
 };
-

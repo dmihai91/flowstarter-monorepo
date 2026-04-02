@@ -63,8 +63,7 @@ export {
  */
 
 export {
-  // Base schemas
-  FlowOpsMessageSchema,
+  FlowOpsMessageSchema, // Base schemas
   type FlowOpsMessage,
   type ToolSchema,
   type AgentMessageSchema,
@@ -100,4 +99,3 @@ export {
   validateToolOutput,
   validateAgentMessage,
 } from './schema';
-

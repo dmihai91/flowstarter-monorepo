@@ -49,4 +49,3 @@ export async function cleanupAllSandboxes(env?: DaytonaEnv): Promise<CleanupResu
     return { deleted, failed, errors };
   }
 }
-

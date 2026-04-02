@@ -39,7 +39,6 @@ export function Header() {
 
       {/* Spacer to account for fixed header */}
       <div className="h-14" />
-
     </>
   );
 }

@@ -22,8 +22,14 @@ describe('EmptyState Step Indicator Mapping', () => {
   const steps = ['describe', 'name', 'business-summary', 'template', 'personalization', 'creating'];
 
   function getMappedStep(step: string | undefined): string {
-    if (step === 'welcome') return 'describe';
-    if (step?.startsWith('business-')) return 'business-summary';
+    if (step === 'welcome') {
+      return 'describe';
+    }
+
+    if (step?.startsWith('business-')) {
+      return 'business-summary';
+    }
+
     return step || 'describe';
   }
 
@@ -146,11 +152,14 @@ describe('Project Name Generation Context', () => {
   });
 
   it('should not fallback to default when description exists', () => {
-    const DEFAULT_PROJECT_NAME_GENERATION = 'My Project';
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _DEFAULT_PROJECT_NAME_GENERATION = 'My Project';
     const projectDescription = 'A fitness trainer site';
 
-    // With the bug, projectDescription would be '' due to stale closure
-    // After fix, projectDescription correctly contains the user's input
+    /*
+     * With the bug, projectDescription would be '' due to stale closure
+     * After fix, projectDescription correctly contains the user's input
+     */
     const shouldUseFallback = !projectDescription || projectDescription.trim().length === 0;
 
     expect(shouldUseFallback).toBe(false);
@@ -165,9 +174,7 @@ describe('Project Name Generation Context', () => {
     ];
 
     // Find first user message that isn't "Suggest a name"
-    const firstUserMessage = messages.find(
-      (m) => m.role === 'user' && !m.content.includes('Suggest a name')
-    );
+    const firstUserMessage = messages.find((m) => m.role === 'user' && !m.content.includes('Suggest a name'));
 
     expect(firstUserMessage).toBeDefined();
     expect(firstUserMessage?.content).toContain('restaurant');
@@ -230,4 +237,3 @@ describe('Project Name API Fallback Logic', () => {
     }
   });
 });
-

@@ -37,7 +37,7 @@ export function TemplatePreviewDialog({
   // Handle escape key for closing
   useEffect(() => {
     if (!isOpen) {
-      return;
+      return undefined;
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -245,8 +245,7 @@ export function TemplatePreviewDialog({
               }}
               onLoad={handleIframeLoad}
               title={`Template preview: ${template?.id}`}
-              // Allow all features for proper template rendering
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" // Allow all features for proper template rendering
             />
           </div>
 

@@ -58,4 +58,3 @@ export async function clearTemplateCache(): Promise<void> {
     // Ignore errors
   }
 }
-

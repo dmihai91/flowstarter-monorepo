@@ -20,7 +20,6 @@ import {
   type PlanResultDTO,
   type ReviewResultDTO,
   type EscalateResultDTO,
-  type PlannerResponseDTO,
 } from '~/lib/flowstarter/agents/planner-agent';
 import {
   CodeGeneratorAgent,
@@ -28,14 +27,8 @@ import {
   resetCodeGeneratorAgent,
   GenerateRequestSchema,
   type GenerateRequestDTO,
-  type GenerateResultDTO,
 } from '~/lib/flowstarter/agents/code-generator-agent';
-import {
-  FixerAgent,
-  getFixerAgent,
-  resetFixerAgent,
-  type FixerResponseDTO,
-} from '~/lib/flowstarter/agents/fixer-agent';
+import { FixerAgent, getFixerAgent, resetFixerAgent } from '~/lib/flowstarter/agents/fixer-agent';
 import { FixerRequestSchema } from '~/lib/flowops/schema';
 
 // Mock the LLM service
@@ -78,9 +71,11 @@ describe('FlowOps Agents', () => {
     resetFixerAgent();
   });
 
-  // ============================================================================
-  // PlannerAgent Tests
-  // ============================================================================
+  /*
+   * ============================================================================
+   * PlannerAgent Tests
+   * ============================================================================
+   */
 
   describe('PlannerAgent', () => {
     describe('Singleton Pattern', () => {
@@ -93,6 +88,7 @@ describe('FlowOps Agents', () => {
       it('should create new instance after reset', () => {
         const agent1 = getPlannerAgent();
         resetPlannerAgent();
+
         const agent2 = getPlannerAgent();
         expect(agent1).not.toBe(agent2);
       });
@@ -190,6 +186,7 @@ describe('FlowOps Agents', () => {
       it('should reject missing required fields', () => {
         const request = {
           type: 'plan',
+
           // Missing projectId, businessInfo, template
         };
 
@@ -339,9 +336,11 @@ describe('FlowOps Agents', () => {
     });
   });
 
-  // ============================================================================
-  // CodeGeneratorAgent Tests
-  // ============================================================================
+  /*
+   * ============================================================================
+   * CodeGeneratorAgent Tests
+   * ============================================================================
+   */
 
   describe('CodeGeneratorAgent', () => {
     describe('Singleton Pattern', () => {
@@ -354,6 +353,7 @@ describe('FlowOps Agents', () => {
       it('should create new instance after reset', () => {
         const agent1 = getCodeGeneratorAgent();
         resetCodeGeneratorAgent();
+
         const agent2 = getCodeGeneratorAgent();
         expect(agent1).not.toBe(agent2);
       });
@@ -436,9 +436,11 @@ describe('FlowOps Agents', () => {
     });
   });
 
-  // ============================================================================
-  // FixerAgent Tests
-  // ============================================================================
+  /*
+   * ============================================================================
+   * FixerAgent Tests
+   * ============================================================================
+   */
 
   describe('FixerAgent', () => {
     describe('Singleton Pattern', () => {
@@ -451,12 +453,14 @@ describe('FlowOps Agents', () => {
       it('should create new instance after reset', () => {
         const agent1 = getFixerAgent();
         resetFixerAgent();
+
         const agent2 = getFixerAgent();
         expect(agent1).not.toBe(agent2);
       });
 
       it('should accept tryFastModelFirst parameter', () => {
         resetFixerAgent();
+
         const agent = getFixerAgent(true);
         expect(agent).toBeInstanceOf(FixerAgent);
       });
@@ -514,6 +518,7 @@ describe('FlowOps Agents', () => {
       it('should reject missing required fields', () => {
         const request = {
           file: 'test.ts',
+
           // Missing content and error
         };
 
@@ -579,9 +584,11 @@ describe('FlowOps Agents', () => {
     });
   });
 
-  // ============================================================================
-  // Integration Tests - Agent Communication
-  // ============================================================================
+  /*
+   * ============================================================================
+   * Integration Tests - Agent Communication
+   * ============================================================================
+   */
 
   describe('Agent Communication', () => {
     it('should have compatible agent references', () => {
@@ -615,15 +622,17 @@ describe('FlowOps Agents', () => {
     });
   });
 
-  // ============================================================================
-  // Legacy Alias Tests
-  // ============================================================================
+  /*
+   * ============================================================================
+   * Legacy Alias Tests
+   * ============================================================================
+   */
 
   describe('Legacy Aliases', () => {
     it('should export PlannerAgent class', async () => {
-      const { PlannerAgent } = await import('~/lib/flowstarter/agents/planner-agent');
-      expect(PlannerAgent).toBeDefined();
-      expect(new PlannerAgent().name).toBe('planner');
+      const { PlannerAgent: plannerAgent } = await import('~/lib/flowstarter/agents/planner-agent');
+      expect(plannerAgent).toBeDefined();
+      expect(new plannerAgent().name).toBe('planner');
     });
 
     it('should export getPlannerAgent function', async () => {
@@ -639,4 +648,3 @@ describe('FlowOps Agents', () => {
     });
   });
 });
-

@@ -75,10 +75,9 @@ async function setupApiMocks(page: Page) {
 
 async function waitForResponse(page: Page, timeout = 30000) {
   // Wait for either success, error, or processing complete
-  await page.waitForSelector(
-    'text=Changes applied, text=Couldn\'t apply, text=Your site, text=ԣ�, text=���',
-    { timeout }
-  );
+  await page.waitForSelector("text=Changes applied, text=Couldn't apply, text=Your site, text=ԣ�, text=���", {
+    timeout,
+  });
 }
 
 async function attachImage(page: Page, imagePath: string) {
@@ -116,9 +115,9 @@ test.describe('Modification Request Flow', () => {
       await sendMessage(page, 'Change the hero title to "Welcome to Our Site"');
 
       // Should show processing state
-      await expect(
-        page.locator('text=Applying your changes, text=Processing, text=����').first()
-      ).toBeVisible({ timeout: 5000 });
+      await expect(page.locator('text=Applying your changes, text=Processing, text=����').first()).toBeVisible({
+        timeout: 5000,
+      });
     });
 
     test('shows success message after modification', async ({ page }) => {
@@ -165,6 +164,7 @@ test.describe('Modification Request Flow', () => {
     test.skip('attaches image and shows preview', async ({ page }) => {
       // Skip if test image doesn't exist
       const fs = await import('fs');
+
       if (!fs.existsSync(TEST_IMAGE_PATH)) {
         test.skip();
         return;
@@ -173,13 +173,14 @@ test.describe('Modification Request Flow', () => {
       await attachImage(page, TEST_IMAGE_PATH);
 
       // Should show image preview
-      await expect(
-        page.locator('[data-testid="image-preview"], .attached-image, img[src*="blob:"]')
-      ).toBeVisible({ timeout: 5000 });
+      await expect(page.locator('[data-testid="image-preview"], .attached-image, img[src*="blob:"]')).toBeVisible({
+        timeout: 5000,
+      });
     });
 
     test.skip('sends modification with attached image', async ({ page }) => {
       const fs = await import('fs');
+
       if (!fs.existsSync(TEST_IMAGE_PATH)) {
         test.skip();
         return;
@@ -189,13 +190,14 @@ test.describe('Modification Request Flow', () => {
       await sendMessage(page, 'Use this image as the hero background');
 
       // Should show processing with image indication
-      await expect(
-        page.locator('text=Processing your images, text=���� Attached').first()
-      ).toBeVisible({ timeout: 5000 });
+      await expect(page.locator('text=Processing your images, text=���� Attached').first()).toBeVisible({
+        timeout: 5000,
+      });
     });
 
     test.skip('handles image-only submission', async ({ page }) => {
       const fs = await import('fs');
+
       if (!fs.existsSync(TEST_IMAGE_PATH)) {
         test.skip();
         return;
@@ -208,13 +210,14 @@ test.describe('Modification Request Flow', () => {
       await sendButton.click();
 
       // Should ask where to use the image
-      await expect(
-        page.locator('text=where they would like, text=hero section, text=gallery').first()
-      ).toBeVisible({ timeout: 30000 });
+      await expect(page.locator('text=where they would like, text=hero section, text=gallery').first()).toBeVisible({
+        timeout: 30000,
+      });
     });
 
     test.skip('removes attached image on cancel', async ({ page }) => {
       const fs = await import('fs');
+
       if (!fs.existsSync(TEST_IMAGE_PATH)) {
         test.skip();
         return;
@@ -229,9 +232,7 @@ test.describe('Modification Request Flow', () => {
       await removeButton.click();
 
       // Image preview should be gone
-      await expect(
-        page.locator('[data-testid="image-preview"], .attached-image')
-      ).not.toBeVisible();
+      await expect(page.locator('[data-testid="image-preview"], .attached-image')).not.toBeVisible();
     });
   });
 
@@ -250,7 +251,11 @@ test.describe('Modification Request Flow', () => {
         .isVisible()
         .catch(() => false);
 
-      const hasSuccess = await page.locator('text=ԣ�, text=Changes applied').first().isVisible().catch(() => false);
+      const hasSuccess = await page
+        .locator('text=ԣ�, text=Changes applied')
+        .first()
+        .isVisible()
+        .catch(() => false);
 
       // Either API key error (expected in test env) or success (if key is configured)
       expect(hasApiKeyError || hasSuccess).toBeTruthy();
@@ -268,7 +273,11 @@ test.describe('Modification Request Flow', () => {
         .isVisible()
         .catch(() => false);
 
-      const hasSuccess = await page.locator('text=ԣ�').first().isVisible().catch(() => false);
+      const hasSuccess = await page
+        .locator('text=ԣ�')
+        .first()
+        .isVisible()
+        .catch(() => false);
 
       // Either error with suggestion or unexpected success
       expect(hasEditorSuggestion || hasSuccess).toBeTruthy();
@@ -283,9 +292,7 @@ test.describe('Modification Request Flow', () => {
       await sendMessage(page, 'This should fail due to network');
 
       // Should show error message
-      await expect(
-        page.locator('text=���, text=Error, text=error').first()
-      ).toBeVisible({ timeout: 15000 });
+      await expect(page.locator('text=���, text=Error, text=error').first()).toBeVisible({ timeout: 15000 });
 
       // Restore routing for cleanup
       await page.unroute('**/api/agent-code');
@@ -306,8 +313,10 @@ test.describe('Modification Request Flow', () => {
 
       const updatedContent = await getPreviewContent(page);
 
-      // Content should change (or at least not error)
-      // In some cases, preview might need manual refresh
+      /*
+       * Content should change (or at least not error)
+       * In some cases, preview might need manual refresh
+       */
       expect(updatedContent.length).toBeGreaterThan(0);
     });
 
@@ -324,8 +333,10 @@ test.describe('Modification Request Flow', () => {
         .isVisible()
         .catch(() => false);
 
-      // This is optional - some implementations auto-refresh
-      // Just verify the request completed
+      /*
+       * This is optional - some implementations auto-refresh
+       * Just verify the request completed
+       */
       expect(true).toBeTruthy();
     });
   });
@@ -358,9 +369,7 @@ test.describe('Modification Request Flow', () => {
       await expect(page).not.toHaveTitle(/error|crash/i);
 
       // Chat should still be functional
-      await expect(
-        page.locator('[data-testid="chat-input"], textarea[placeholder*="message"]')
-      ).toBeVisible();
+      await expect(page.locator('[data-testid="chat-input"], textarea[placeholder*="message"]')).toBeVisible();
     });
   });
 
@@ -371,13 +380,15 @@ test.describe('Modification Request Flow', () => {
 
       // Should show suggested modification options
       const suggestions = page.locator(
-        'button:has-text("Make some changes"), button:has-text("Try different colors"), button:has-text("Add more sections")'
+        'button:has-text("Make some changes"), button:has-text("Try different colors"), button:has-text("Add more sections")',
       );
 
       const hasSuggestions = (await suggestions.count()) > 0;
 
-      // Suggestions might be hidden initially or shown based on state
-      // This is a soft assertion
+      /*
+       * Suggestions might be hidden initially or shown based on state
+       * This is a soft assertion
+       */
       if (hasSuggestions) {
         await expect(suggestions.first()).toBeVisible();
       }
@@ -471,9 +482,9 @@ test.describe('Integration with Claude Agent', () => {
     await sendMessage(page, 'Make a test change');
 
     // Should show streamed progress or final result
-    await expect(
-      page.locator('text=Changes applied, text=Analyzing, text=Modifying').first()
-    ).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('text=Changes applied, text=Analyzing, text=Modifying').first()).toBeVisible({
+      timeout: 10000,
+    });
 
     await page.unroute('**/api/agent-code');
   });

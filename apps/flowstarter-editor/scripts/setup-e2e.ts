@@ -28,6 +28,7 @@ function log(emoji: string, message: string) {
 
 function check(name: string, status: 'pass' | 'fail' | 'warn', message: string) {
   results.push({ name, status, message });
+
   const emoji = status === 'pass' ? '✅' : status === 'warn' ? '⚠️' : '❌';
   log(emoji, `${name}: ${message}`);
 }
@@ -37,20 +38,17 @@ function checkEnvVariables() {
   log('🔍', 'Checking environment variables...\n');
 
   // Load env files in order of precedence (later files override earlier)
-  const envFiles = [
-    join(ROOT_DIR, '.env'),
-    join(ROOT_DIR, '.env.local'),
-    join(ROOT_DIR, '.env.test'),
-  ];
+  const envFiles = [join(ROOT_DIR, '.env'), join(ROOT_DIR, '.env.local'), join(ROOT_DIR, '.env.test')];
 
   let envVars: Record<string, string | undefined> = {};
-  let foundFiles: string[] = [];
+  const foundFiles: string[] = [];
 
   for (const envPath of envFiles) {
     if (existsSync(envPath)) {
       const content = readFileSync(envPath, 'utf-8');
       content.split('\n').forEach((line) => {
         const match = line.match(/^([^#=]+)=(.*)$/);
+
         if (match) {
           envVars[match[1].trim()] = match[2].trim();
         }
@@ -62,7 +60,11 @@ function checkEnvVariables() {
   if (foundFiles.length > 0) {
     log('📄', `Found env files: ${foundFiles.join(', ')}`);
   } else {
-    check('Environment File', 'fail', 'No .env, .env.local, or .env.test file found. Copy .env.test.example to .env.test');
+    check(
+      'Environment File',
+      'fail',
+      'No .env, .env.local, or .env.test file found. Copy .env.test.example to .env.test',
+    );
     return;
   }
 
@@ -70,9 +72,7 @@ function checkEnvVariables() {
   envVars = { ...process.env, ...envVars };
 
   // Check required variables
-  const required = [
-    { key: 'VITE_CONVEX_URL', desc: 'Convex URL for real-time backend' },
-  ];
+  const required = [{ key: 'VITE_CONVEX_URL', desc: 'Convex URL for real-time backend' }];
 
   const aiProviders = [
     { key: 'OPEN_ROUTER_API_KEY', desc: 'OpenRouter API key' },
@@ -96,6 +96,7 @@ function checkEnvVariables() {
 
   // Check AI providers (at least one required)
   const hasAiProvider = aiProviders.some(({ key }) => envVars[key]);
+
   if (hasAiProvider) {
     for (const { key, desc } of aiProviders) {
       if (envVars[key]) {
@@ -111,6 +112,7 @@ function checkEnvVariables() {
   // Check optional
   console.log('\n');
   log('📋', 'Optional environment variables:\n');
+
   for (const { key, desc } of optional) {
     if (envVars[key]) {
       check(key, 'pass', desc);
@@ -254,4 +256,3 @@ async function main() {
 }
 
 main().catch(console.error);
-

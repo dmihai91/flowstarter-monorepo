@@ -4,7 +4,7 @@
  * Tests for Daytona workspace management, file operations, and deployment.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 
 // ─── Mock Types ─────────────────────────────────────────────────────────────
 
@@ -17,12 +17,6 @@ interface WorkspaceInfo {
   createdAt: number;
 }
 
-interface FileContent {
-  path: string;
-  content: string;
-  encoding: 'utf-8' | 'base64';
-}
-
 interface ExecResult {
   exitCode: number;
   stdout: string;
@@ -32,7 +26,9 @@ interface ExecResult {
 // ─── Mock DaytonaClient ─────────────────────────────────────────────────────
 
 class MockDaytonaClient {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private workspaces: Map<string, WorkspaceInfo> = new Map();
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private workspaceFiles: Map<string, Map<string, string>> = new Map();
 
   async createWorkspace(name: string, image: string): Promise<WorkspaceInfo> {
@@ -50,6 +46,7 @@ class MockDaytonaClient {
     // Simulate async creation
     setTimeout(() => {
       const ws = this.workspaces.get(id);
+
       if (ws) {
         ws.state = 'running';
         ws.previewUrl = `https://${id}.preview.daytona.local:8080`;
@@ -67,35 +64,41 @@ class MockDaytonaClient {
     if (!this.workspaces.has(id)) {
       return false;
     }
+
     this.workspaces.delete(id);
     this.workspaceFiles.delete(id);
+
     return true;
   }
 
   async writeFile(workspaceId: string, path: string, content: string): Promise<void> {
     const files = this.workspaceFiles.get(workspaceId);
+
     if (!files) {
       throw new Error(`Workspace not found: ${workspaceId}`);
     }
+
     files.set(path, content);
   }
 
   async readFile(workspaceId: string, path: string): Promise<string | null> {
     const files = this.workspaceFiles.get(workspaceId);
+
     if (!files) {
       throw new Error(`Workspace not found: ${workspaceId}`);
     }
+
     return files.get(path) || null;
   }
 
   async listFiles(workspaceId: string, directory: string = '/'): Promise<string[]> {
     const files = this.workspaceFiles.get(workspaceId);
+
     if (!files) {
       throw new Error(`Workspace not found: ${workspaceId}`);
     }
-    return Array.from(files.keys()).filter((path) =>
-      path.startsWith(directory === '/' ? '' : directory)
-    );
+
+    return Array.from(files.keys()).filter((path) => path.startsWith(directory === '/' ? '' : directory));
   }
 
   async exec(workspaceId: string, command: string): Promise<ExecResult> {
@@ -107,9 +110,11 @@ class MockDaytonaClient {
     if (command.includes('npm run build')) {
       return { exitCode: 0, stdout: 'Build successful', stderr: '' };
     }
+
     if (command.includes('npm install')) {
       return { exitCode: 0, stdout: 'Dependencies installed', stderr: '' };
     }
+
     if (command.includes('npm start')) {
       return { exitCode: 0, stdout: 'Server started on port 8080', stderr: '' };
     }
@@ -211,6 +216,7 @@ describe('Daytona File Operations', () => {
 
   beforeEach(async () => {
     client = new MockDaytonaClient();
+
     const ws = await client.createWorkspace('test', 'node:20');
     workspaceId = ws.id;
   });
@@ -218,6 +224,7 @@ describe('Daytona File Operations', () => {
   describe('writeFile', () => {
     it('should write file content', async () => {
       await client.writeFile(workspaceId, '/src/index.ts', 'export const x = 1;');
+
       const content = await client.readFile(workspaceId, '/src/index.ts');
       expect(content).toBe('export const x = 1;');
     });
@@ -225,20 +232,20 @@ describe('Daytona File Operations', () => {
     it('should overwrite existing file', async () => {
       await client.writeFile(workspaceId, '/src/index.ts', 'old content');
       await client.writeFile(workspaceId, '/src/index.ts', 'new content');
+
       const content = await client.readFile(workspaceId, '/src/index.ts');
       expect(content).toBe('new content');
     });
 
     it('should throw for non-existent workspace', async () => {
-      await expect(
-        client.writeFile('ws_nonexistent', '/test.ts', 'content')
-      ).rejects.toThrow('Workspace not found');
+      await expect(client.writeFile('ws_nonexistent', '/test.ts', 'content')).rejects.toThrow('Workspace not found');
     });
   });
 
   describe('readFile', () => {
     it('should read existing file', async () => {
       await client.writeFile(workspaceId, '/package.json', '{"name": "test"}');
+
       const content = await client.readFile(workspaceId, '/package.json');
       expect(content).toBe('{"name": "test"}');
     });
@@ -279,6 +286,7 @@ describe('Daytona Command Execution', () => {
 
   beforeEach(async () => {
     client = new MockDaytonaClient();
+
     const ws = await client.createWorkspace('test', 'node:20');
     workspaceId = ws.id;
   });
@@ -297,9 +305,7 @@ describe('Daytona Command Execution', () => {
     });
 
     it('should throw for non-existent workspace', async () => {
-      await expect(
-        client.exec('ws_nonexistent', 'npm install')
-      ).rejects.toThrow('Workspace not found');
+      await expect(client.exec('ws_nonexistent', 'npm install')).rejects.toThrow('Workspace not found');
     });
   });
 });
@@ -312,6 +318,7 @@ describe('Daytona File Sync', () => {
 
   beforeEach(async () => {
     client = new MockDaytonaClient();
+
     const ws = await client.createWorkspace('test', 'node:20');
     workspaceId = ws.id;
   });
@@ -362,6 +369,7 @@ describe('Daytona Build Process', () => {
 
   beforeEach(async () => {
     client = new MockDaytonaClient();
+
     const ws = await client.createWorkspace('test', 'node:20');
     workspaceId = ws.id;
   });
@@ -427,13 +435,9 @@ describe('Daytona Error Handling', () => {
   });
 
   it('should throw on file operations with invalid workspace', async () => {
-    await expect(
-      client.writeFile('ws_invalid', '/test.ts', 'content')
-    ).rejects.toThrow();
+    await expect(client.writeFile('ws_invalid', '/test.ts', 'content')).rejects.toThrow();
 
-    await expect(
-      client.readFile('ws_invalid', '/test.ts')
-    ).rejects.toThrow();
+    await expect(client.readFile('ws_invalid', '/test.ts')).rejects.toThrow();
   });
 
   it('should handle destroy of non-existent workspace', async () => {
@@ -461,6 +465,7 @@ describe('Daytona Concurrent Operations', () => {
     const workspaces = await Promise.all(promises);
 
     expect(workspaces).toHaveLength(3);
+
     const ids = workspaces.map((ws) => ws.id);
     expect(new Set(ids).size).toBe(3); // All unique IDs
   });
@@ -480,4 +485,3 @@ describe('Daytona Concurrent Operations', () => {
     expect(files).toHaveLength(3);
   });
 });
-

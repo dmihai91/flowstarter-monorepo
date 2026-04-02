@@ -31,4 +31,3 @@ export const DEFAULT_PALETTE: ColorPalette = {
   name: 'Default Theme',
   colors: ['#4D5DD9', '#C1C8FF', '#4D5DD9', '#0F0F1A'],
 };
-

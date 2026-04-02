@@ -22,4 +22,3 @@ export { useProjectDelete, useConversationDelete } from './useProjectDelete';
 
 // Auth and mode detection
 export { useUserMode } from './useUserMode';
-

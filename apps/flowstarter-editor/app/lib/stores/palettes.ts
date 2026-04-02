@@ -101,4 +101,3 @@ export function getFilteredPalettes(templatePalette: PaletteWithColors | ColorPa
 export function getAllPalettes(templatePalette: ColorPalette | null): ColorPalette[] {
   return getFilteredPalettes(templatePalette);
 }
-

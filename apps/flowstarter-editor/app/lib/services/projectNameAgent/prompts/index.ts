@@ -1,6 +1,6 @@
 /**
  * Prompt Index - Category Detection & Selection
- * 
+ *
  * Detects the business category from a description and returns
  * the appropriate system prompt for name generation.
  */
@@ -27,18 +27,25 @@ export * from './base';
 export interface UserContext {
   /** Owner's name (e.g., "Sarah Mitchell") */
   ownerName?: string;
+
   /** Initials to incorporate (e.g., "SM") */
   initials?: string;
+
   /** Preferred style/vibe (e.g., "warm", "modern", "playful", "professional") */
   preferredStyle?: string;
+
   /** Keywords to try to incorporate */
   keywords?: string[];
+
   /** What makes their business unique */
   uniqueApproach?: string;
+
   /** Target audience */
   targetAudience?: string;
+
   /** Location if relevant */
   location?: string;
+
   /** Any specific words to avoid */
   avoidWords?: string[];
 }
@@ -47,44 +54,48 @@ export interface UserContext {
  * Build personalized context section for prompts
  */
 export function buildPersonalizedContext(userContext?: UserContext): string {
-  if (!userContext) return '';
-  
+  if (!userContext) {
+    return '';
+  }
+
   const parts: string[] = [];
-  
+
   if (userContext.ownerName) {
     parts.push(`- Owner's name: "${userContext.ownerName}" (can incorporate into name)`);
   }
-  
+
   if (userContext.initials) {
     parts.push(`- Initials to consider: "${userContext.initials}"`);
   }
-  
+
   if (userContext.preferredStyle) {
     parts.push(`- Preferred style/vibe: ${userContext.preferredStyle}`);
   }
-  
+
   if (userContext.keywords && userContext.keywords.length > 0) {
     parts.push(`- Keywords to incorporate if possible: ${userContext.keywords.join(', ')}`);
   }
-  
+
   if (userContext.uniqueApproach) {
     parts.push(`- What makes them unique: "${userContext.uniqueApproach}"`);
   }
-  
+
   if (userContext.targetAudience) {
     parts.push(`- Target audience: ${userContext.targetAudience}`);
   }
-  
+
   if (userContext.location) {
     parts.push(`- Location: ${userContext.location}`);
   }
-  
+
   if (userContext.avoidWords && userContext.avoidWords.length > 0) {
     parts.push(`- Words to AVOID: ${userContext.avoidWords.join(', ')}`);
   }
-  
-  if (parts.length === 0) return '';
-  
+
+  if (parts.length === 0) {
+    return '';
+  }
+
   return `
 ═══════════════════════════════════════════════════════════════════════
 PERSONALIZATION CONTEXT (IMPORTANT - use these to create a UNIQUE name):
@@ -133,24 +144,24 @@ const CATEGORIES: CategoryPrompt[] = [
   THERAPIST_CATEGORY,
   YOGA_CATEGORY,
   FITNESS_CATEGORY,
-  
+
   // Service professionals
   COACHING_CATEGORY,
   BEAUTY_CATEGORY,
-  
+
   // Creative
   CREATIVE_CATEGORY,
-  
+
   // Food & hospitality
   FOOD_CATEGORY,
-  
+
   // Professional services
   PROFESSIONAL_CATEGORY,
   REALESTATE_CATEGORY,
-  
+
   // Tech
   TECH_CATEGORY,
-  
+
   // Generic fallback (always last)
   GENERIC_CATEGORY,
 ];
@@ -165,7 +176,7 @@ export function detectCategory(description: string): CategoryPrompt {
   }
 
   const lowerDesc = description.toLowerCase();
-  
+
   // Find the first category that matches any keyword
   for (const category of CATEGORIES) {
     for (const keyword of category.keywords) {
@@ -174,7 +185,7 @@ export function detectCategory(description: string): CategoryPrompt {
       }
     }
   }
-  
+
   return GENERIC_CATEGORY;
 }
 
@@ -185,21 +196,23 @@ export function detectCategory(description: string): CategoryPrompt {
 export function getGenerationPrompt(description: string, userContext?: UserContext): string {
   const category = detectCategory(description);
   const personalizedSection = buildPersonalizedContext(userContext);
-  
+
   if (!personalizedSection) {
     return category.systemPrompt;
   }
-  
-  // Insert personalization before the output format
-  // Find where the base rules end and add personalization
+
+  /*
+   * Insert personalization before the output format
+   * Find where the base rules end and add personalization
+   */
   const prompt = category.systemPrompt;
   const rulesIndex = prompt.indexOf('RULES (apply to ALL names)');
-  
+
   if (rulesIndex > 0) {
     // Insert personalization before the rules
     return prompt.slice(0, rulesIndex) + personalizedSection + '\n' + prompt.slice(rulesIndex);
   }
-  
+
   // Fallback: append to end (before output format)
   return prompt + '\n' + personalizedSection;
 }
@@ -236,15 +249,15 @@ export function buildRefinementPrompt(
   refinementFeedback: string,
   projectDescription?: string,
   previouslySuggested?: string[],
-  accumulatedRequirements?: string[]
+  accumulatedRequirements?: string[],
 ): string {
   const category = detectCategory(projectDescription || '');
   const hints = category.refinementHints;
-  
+
   // Find relevant hints based on feedback
   const lowerFeedback = refinementFeedback.toLowerCase();
   let hintSection = '';
-  
+
   for (const [key, hint] of Object.entries(hints)) {
     if (lowerFeedback.includes(key)) {
       hintSection = `\nSTYLE GUIDANCE: ${hint}\n`;
@@ -252,13 +265,13 @@ export function buildRefinementPrompt(
     }
   }
 
-  const allPrevious = previouslySuggested && previouslySuggested.length > 0 
-    ? previouslySuggested.join('", "') 
-    : previousName;
-  
-  const requirementsSection = accumulatedRequirements && accumulatedRequirements.length > 0
-    ? `\nACCUMULATED USER REQUIREMENTS (must respect ALL of these):\n${accumulatedRequirements.map(r => `- ${r}`).join('\n')}\n`
-    : '';
+  const allPrevious =
+    previouslySuggested && previouslySuggested.length > 0 ? previouslySuggested.join('", "') : previousName;
+
+  const requirementsSection =
+    accumulatedRequirements && accumulatedRequirements.length > 0
+      ? `\nACCUMULATED USER REQUIREMENTS (must respect ALL of these):\n${accumulatedRequirements.map((r) => `- ${r}`).join('\n')}\n`
+      : '';
 
   return `You are a world-class brand naming expert helping refine a business name.
 
@@ -288,30 +301,31 @@ export function buildExtractionPrompt(
   previousSuggestion?: string,
   projectDescription?: string,
   previouslySuggested?: string[],
-  accumulatedRequirements?: string[]
+  accumulatedRequirements?: string[],
 ): string {
   const category = detectCategory(projectDescription || '');
   const hints = category.refinementHints;
-  
+
   const contextParts: string[] = [];
-  
+
   if (previousSuggestion) {
     contextParts.push(`- Last suggested name: "${previousSuggestion}"`);
   }
+
   if (projectDescription) {
     contextParts.push(`- Project description: "${projectDescription}"`);
     contextParts.push(`- Detected category: ${category.id.toUpperCase()}`);
   }
+
   if (previouslySuggested && previouslySuggested.length > 0) {
     contextParts.push(`- Names already suggested (DO NOT repeat): "${previouslySuggested.join('", "')}"`);
   }
+
   if (accumulatedRequirements && accumulatedRequirements.length > 0) {
     contextParts.push(`- User requirements to respect: ${accumulatedRequirements.join('; ')}`);
   }
-  
-  const contextSection = contextParts.length > 0 
-    ? `CONTEXT:\n${contextParts.join('\n')}\n\n` 
-    : '';
+
+  const contextSection = contextParts.length > 0 ? `CONTEXT:\n${contextParts.join('\n')}\n\n` : '';
 
   // Build hint examples from category
   const hintExamples = Object.entries(hints)
@@ -363,12 +377,12 @@ Respond with ONLY valid JSON.`;
  * Get all category IDs (for debugging/testing)
  */
 export function getAllCategoryIds(): string[] {
-  return CATEGORIES.map(c => c.id);
+  return CATEGORIES.map((c) => c.id);
 }
 
 /**
  * Get a category by ID
  */
 export function getCategoryById(id: string): CategoryPrompt | undefined {
-  return CATEGORIES.find(c => c.id === id);
+  return CATEGORIES.find((c) => c.id === id);
 }

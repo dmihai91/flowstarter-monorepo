@@ -196,4 +196,3 @@ Please provide a summary of the chat till now including the hitorical summary of
 
   return response;
 }
-

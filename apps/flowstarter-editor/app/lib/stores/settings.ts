@@ -272,4 +272,3 @@ export const closeSettings = () => {
 export const setSelectedTab = (tab: string) => {
   settingsSelectedTab.set(tab);
 };
-

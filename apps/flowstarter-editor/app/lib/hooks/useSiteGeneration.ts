@@ -115,20 +115,27 @@ export function useSiteGeneration(): UseSiteGenerationReturn {
       }
 
       const contentType = response.headers.get('content-type') || '';
-      
+
       // Handle SSE stream
       if (contentType.includes('text/event-stream')) {
         const reader = response.body?.getReader();
-        if (!reader) throw new Error('No response body');
+
+        if (!reader) {
+          throw new Error('No response body');
+        }
 
         const decoder = new TextDecoder();
         let buffer = '';
 
         while (true) {
           const { done, value } = await reader.read();
-          if (done) break;
+
+          if (done) {
+            break;
+          }
 
           buffer += decoder.decode(value, { stream: true });
+
           const lines = buffer.split('\n');
           buffer = lines.pop() || '';
 
@@ -136,9 +143,9 @@ export function useSiteGeneration(): UseSiteGenerationReturn {
             if (line.startsWith('data: ')) {
               try {
                 const data = JSON.parse(line.slice(6));
-                
+
                 if (data.type === 'progress') {
-                  setState(prev => ({
+                  setState((prev) => ({
                     ...prev,
                     progress: data.message,
                     phase: data.phase,
@@ -150,25 +157,29 @@ export function useSiteGeneration(): UseSiteGenerationReturn {
                     files: result.files || [],
                     preview: result.preview || null,
                     error: result.previewError || null,
-                    progress: result.preview 
-                      ? 'Site is ready! Preview available.' 
+                    progress: result.preview
+                      ? 'Site is ready! Preview available.'
                       : 'Site generated! Deploy when ready.',
                     phase: 'complete',
                   });
+
                   return result.success;
                 } else if (data.type === 'error') {
                   throw new Error(data.error);
                 }
               } catch (e) {
                 // Skip malformed JSON
-                if (!(e instanceof SyntaxError)) throw e;
+                if (!(e instanceof SyntaxError)) {
+                  throw e;
+                }
               }
             }
           }
         }
+
         return true;
       }
-      
+
       // Fallback: Handle JSON response
       const result = (await response.json()) as {
         success: boolean;

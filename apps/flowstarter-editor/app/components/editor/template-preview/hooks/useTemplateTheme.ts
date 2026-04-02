@@ -66,15 +66,12 @@ export function useTemplateTheme(
   const lastTemplateIdRef = useRef<string | null>(null);
 
   // ─── React Query for Theme ────────────────────────────────────────────────
-  const {
-    data: fetchedTheme,
-    isLoading: isLoadingTheme,
-  } = useQuery({
+  const { data: fetchedTheme, isLoading: isLoadingTheme } = useQuery({
     queryKey: ['templateTheme', template?.id],
     queryFn: () => fetchTemplateTheme(template!.id),
     enabled: !!template?.id && isOpen,
     staleTime: 30 * 60 * 1000, // 30 minutes - themes rarely change
-    gcTime: 60 * 60 * 1000,    // 1 hour
+    gcTime: 60 * 60 * 1000, // 1 hour
   });
 
   // Compute template palette from fetched theme or template data
@@ -108,7 +105,9 @@ export function useTemplateTheme(
 
   // Update selected palette when theme is fetched
   useEffect(() => {
-    if (!isOpen || !template?.id) return;
+    if (!isOpen || !template?.id) {
+      return;
+    }
 
     // Handle template change - reset to initial palette
     if (lastTemplateIdRef.current !== template.id) {
@@ -120,6 +119,7 @@ export function useTemplateTheme(
     // When theme is fetched, update selected palette if using default
     if (fetchedTheme && !hasInitializedRef.current) {
       hasInitializedRef.current = true;
+
       if (safeInitialPalette.id === 'default') {
         setSelectedPalette(fetchedTheme);
       }
@@ -138,4 +138,3 @@ export function useTemplateTheme(
     isLoadingTheme,
   };
 }
-

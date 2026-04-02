@@ -325,4 +325,3 @@ export function getTemplateRecommenderAgent(): TemplateRecommenderAgent {
 export function resetTemplateRecommenderAgent(): void {
   templateRecommenderAgentInstance = null;
 }
-

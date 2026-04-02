@@ -1,6 +1,6 @@
 /**
  * Content Generators
- * 
+ *
  * Domain-specialized generators for each content file.
  */
 

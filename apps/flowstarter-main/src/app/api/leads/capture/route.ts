@@ -1,13 +1,23 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 /**
  * POST /api/leads/capture
  * Public endpoint — called from generated client sites.
- * No auth required. Rate-limited by projectId + IP.
+ * No auth required. Rate-limited by IP.
  * Stores lead in Supabase.
  */
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { DatabaseExtended } from '@/lib/database-extensions.types';
+
+const LeadCaptureSchema = z.object({
+  projectId: z.string().uuid('Invalid project ID'),
+  name: z.string().max(200).optional(),
+  email: z.string().email('Invalid email').optional(),
+  phone: z.string().max(50).optional(),
+  message: z.string().max(5000).optional(),
+  source: z.string().max(100).optional(),
+}).passthrough(); // allow extra fields to land in `extra`
 
 // Simple in-memory rate limit (per IP, 10 submissions per minute)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -25,10 +35,21 @@ function isRateLimited(ip: string): boolean {
   return entry.count > RATE_LIMIT;
 }
 
-export async function POST(request: NextRequest) {
-  // CORS headers for cross-origin form submissions
-  const origin = request.headers.get('origin') || '*';
+function detectSpam(name: string, email: string, message: string): boolean {
+  const combined = `${name} ${email} ${message}`.toLowerCase();
+  const spamPatterns = [
+    /\bviagra\b/,
+    /\bcasino\b/,
+    /\bsex\b/,
+    /\bporn\b/,
+    /https?:\/\/[^\s]+\.[^\s]+/,
+    /\b(buy now|cheap|click here|free money|you've won)\b/,
+  ];
+  return spamPatterns.filter((p) => p.test(combined)).length >= 2;
+}
 
+export async function POST(request: NextRequest) {
+  const origin = request.headers.get('origin') || '*';
   const ip =
     request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
     request.headers.get('x-real-ip') ||
@@ -41,24 +62,29 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  let body: unknown;
   try {
-    const body = (await request.json()) as Record<string, unknown>;
+    body = await request.json();
+  } catch {
+    return NextResponse.json(
+      { error: 'Invalid JSON' },
+      { status: 400, headers: corsHeaders(origin) }
+    );
+  }
 
-    const projectId = body.projectId as string;
-    if (!projectId) {
-      return NextResponse.json(
-        { error: 'projectId required' },
-        { status: 400, headers: corsHeaders(origin) }
-      );
-    }
+  const result = LeadCaptureSchema.safeParse(body);
+  if (!result.success) {
+    return NextResponse.json(
+      { error: result.error.errors[0].message },
+      { status: 400, headers: corsHeaders(origin) }
+    );
+  }
 
-    // Extract known fields, put the rest in extra
-    const { name, email, phone, message, source, ...extra } = body;
-    delete extra.projectId;
+  const { projectId, name, email, phone, message, source, ...extra } = result.data;
 
-    const supabase = createSupabaseServiceRoleClient();
+  try {
+    const supabase = createSupabaseServiceRoleClient() as unknown as SupabaseClient<DatabaseExtended>;
 
-    // Verify project exists
     const { data: project } = await supabase
       .from('projects')
       .select('id')
@@ -72,24 +98,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Basic spam detection
-    const isSpam = detectSpam(
-      (name as string) || '',
-      (email as string) || '',
-      (message as string) || ''
-    );
+    const isSpam = detectSpam(name || '', email || '', message || '');
 
     const { error } = await supabase.from('leads').insert({
       project_id: projectId,
-      name: (name as string) || null,
-      email: (email as string) || null,
-      phone: (phone as string) || null,
-      message: (message as string) || null,
-      source: (source as string) || null,
+      name: name ?? null,
+      email: email ?? null,
+      phone: phone ?? null,
+      message: message ?? null,
+      source: source ?? null,
       ip_address: ip,
       user_agent: request.headers.get('user-agent') || null,
       referrer: request.headers.get('referer') || null,
-      extra: Object.keys(extra).length > 0 ? extra : {},
+      extra: (Object.keys(extra).length > 0 ? extra : {}) as Record<string, string | number | boolean | null>,
       status: isSpam ? 'spam' : 'new',
     });
 
@@ -101,10 +122,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(
-      { success: true },
-      { headers: corsHeaders(origin) }
-    );
+    return NextResponse.json({ success: true }, { headers: corsHeaders(origin) });
   } catch {
     return NextResponse.json(
       { error: 'Invalid request' },
@@ -113,10 +131,9 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// CORS preflight
 export async function OPTIONS(request: NextRequest) {
   const origin = request.headers.get('origin') || '*';
-  return new NextResponse(null, { status: 204, headers: corsHeaders(origin) });
+  return new Response(null, { status: 204, headers: corsHeaders(origin) });
 }
 
 function corsHeaders(origin: string): Record<string, string> {
@@ -126,20 +143,4 @@ function corsHeaders(origin: string): Record<string, string> {
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Max-Age': '86400',
   };
-}
-
-function detectSpam(name: string, email: string, message: string): boolean {
-  const combined = `${name} ${email} ${message}`.toLowerCase();
-  const spamPatterns = [
-    /\bviagra\b/,
-    /\bcasino\b/,
-    /\bcrypto\b/,
-    /\bbitcoin\b/,
-    /\bsex\b/,
-    /\bporn\b/,
-    /https?:\/\/[^\s]+\.[^\s]+/,
-    /\b(buy|cheap|free|win|winner|prize|click here)\b/,
-  ];
-  const spamScore = spamPatterns.filter((p) => p.test(combined)).length;
-  return spamScore >= 2;
 }

@@ -7,6 +7,8 @@ import nxPlugin from '@nx/eslint-plugin';
  *   export default [...baseConfig, ...projectRules];
  */
 export default [
+  // Only apply to packages/ — apps use their own per-project ESLint configs
+  { ignores: ['apps/**', 'node_modules/**', 'dist/**', '.nx/**'] },
   ...nxPlugin.configs['flat/base'],
   ...nxPlugin.configs['flat/typescript'],
   ...nxPlugin.configs['flat/javascript'],

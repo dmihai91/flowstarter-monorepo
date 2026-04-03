@@ -2,7 +2,7 @@
  * Testimonials.md Generator
  */
 
-import type { ContentContext } from '../types';
+import type { ContentContext } from '~/lib/services/claude-agent/contentGeneration/types';
 
 interface Testimonial {
   quote: string;

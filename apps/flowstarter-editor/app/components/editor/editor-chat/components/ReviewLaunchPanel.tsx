@@ -1,6 +1,6 @@
 'use client';
 
-import type { BrandProfileSummary, BusinessInfo, IntegrationConfig, SystemFont } from '../types';
+import type { BrandProfileSummary, BusinessInfo, IntegrationConfig, SystemFont } from '~/components/editor/editor-chat/types';
 
 interface ReviewLaunchPanelProps {
   isDark: boolean;

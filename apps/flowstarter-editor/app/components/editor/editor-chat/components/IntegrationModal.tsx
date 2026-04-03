@@ -9,7 +9,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, BarChart3, ChevronRight, ExternalLink, Check, X } from 'lucide-react';
-import type { IntegrationConfig } from '../types';
+import type { IntegrationConfig } from '~/components/editor/editor-chat/types';
 
 interface IntegrationModalProps {
   isDark: boolean;

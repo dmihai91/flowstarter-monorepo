@@ -14,8 +14,8 @@ import { Palette, Type, ImageIcon, SkipForward, ChevronRight } from 'lucide-reac
 import { PaletteSelector } from './PaletteSelector';
 import { FontSelector } from './FontSelector';
 import { LogoSection } from './LogoSection';
-import { usePersonalizationPanel } from '../hooks/usePersonalizationPanel';
-import type { LogoInfo, ColorPalette, SystemFont, BusinessInfo } from '../types';
+import { usePersonalizationPanel } from '~/components/editor/editor-chat/hooks/usePersonalizationPanel';
+import type { LogoInfo, ColorPalette, SystemFont, BusinessInfo } from '~/components/editor/editor-chat/types';
 import type { TemplatePalette, TemplateFont } from '~/components/editor/template-preview/types';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
 

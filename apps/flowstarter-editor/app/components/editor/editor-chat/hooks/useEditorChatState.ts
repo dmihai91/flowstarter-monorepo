@@ -38,7 +38,7 @@ import { useSendHandler } from './useSendHandler';
 import { normalizeHandoffStep } from './handoffState';
 
 // Types
-import type { PreviewInfo, InitialChatState, OnboardingStep } from '../types';
+import type { PreviewInfo, InitialChatState, OnboardingStep } from '~/components/editor/editor-chat/types';
 
 // Re-export PreviewSource from useAdditionalState
 export type { PreviewSource } from './useAdditionalState';

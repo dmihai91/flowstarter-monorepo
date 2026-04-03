@@ -14,7 +14,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { useMutation } from 'convex/react';
 import { api } from '~/convex/_generated/api';
 import type { Id } from '~/convex/_generated/dataModel';
-import type { ChatMessage, ColorPalette, SystemFont, LogoInfo, BuildPhase } from '../types';
+import type { ChatMessage, ColorPalette, SystemFont, LogoInfo, BuildPhase } from '~/components/editor/editor-chat/types';
 import { syncProjectName } from '~/lib/services/projectSyncService';
 
 interface ConversationState {

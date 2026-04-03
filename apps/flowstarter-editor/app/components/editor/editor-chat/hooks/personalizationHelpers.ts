@@ -6,7 +6,7 @@
  */
 
 import type { TemplatePalette, TemplateFont } from '~/components/editor/template-preview/types';
-import type { ColorPalette, SystemFont, LogoInfo } from '../types';
+import type { ColorPalette, SystemFont, LogoInfo } from '~/components/editor/editor-chat/types';
 
 /**
  * Convert TemplatePalette to the app's ColorPalette format.

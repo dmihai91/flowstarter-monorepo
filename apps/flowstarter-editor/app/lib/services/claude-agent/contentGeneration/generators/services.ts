@@ -2,7 +2,7 @@
  * Services.md Generator
  */
 
-import type { ContentContext, GeneratedAsset } from '../types';
+import type { ContentContext, GeneratedAsset } from '~/lib/services/claude-agent/contentGeneration/types';
 
 /** Domain-specific icons */
 const DOMAIN_ICONS: Record<string, string[]> = {

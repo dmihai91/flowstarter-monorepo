@@ -6,8 +6,8 @@
  */
 
 import { useEffect, useRef, useCallback } from 'react';
-import { getRandomServicePrompts, getDefaultReadySuggestions } from '../constants';
-import type { ChatMessage, InitialChatState, Template } from '../types';
+import { getRandomServicePrompts, getDefaultReadySuggestions } from '~/components/editor/editor-chat/constants';
+import type { ChatMessage, InitialChatState, Template } from '~/components/editor/editor-chat/types';
 import type { UseOnboardingMessagesReturn } from './useOnboardingMessages';
 import type { UseOnboardingFlowReturn } from './useOnboardingFlow';
 import type { UseTemplateSelectionReturn } from './useTemplateSelection';

@@ -16,7 +16,7 @@ import type {
   PreviewInfo,
   BuildPhase,
   InitialChatState,
-} from '../types';
+} from '~/components/editor/editor-chat/types';
 import type { Template } from '~/components/onboarding';
 import type { TemplateRecommendation } from '~/components/editor/template-preview/types';
 

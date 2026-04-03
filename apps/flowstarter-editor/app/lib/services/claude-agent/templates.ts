@@ -166,8 +166,8 @@ const { title, description = '${input.businessInfo.description || 'Welcome to ou
  */
 export function generateIndexAstro(input: SiteGenerationInput): string {
   return `---
-import Layout from '../layouts/Layout.astro';
-import { loadContent } from '../lib/content';
+import Layout from '~/lib/services/layouts/Layout.astro';
+import { loadContent } from '~/lib/services/lib/content';
 
 let content;
 try {

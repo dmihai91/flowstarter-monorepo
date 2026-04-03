@@ -8,8 +8,8 @@
 import type { WritableAtom } from 'nanostores';
 import type { EditorDocument } from '~/components/editor/codemirror/CodeMirrorEditor';
 import { path } from '~/utils/path';
-import type { EditorStore } from '../editor';
-import type { FilesStore } from '../files';
+import type { EditorStore } from '~/lib/stores/editor';
+import type { FilesStore } from '~/lib/stores/files';
 
 export interface FileOperationsConfig {
   filesStore: FilesStore;

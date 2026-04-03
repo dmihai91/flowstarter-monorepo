@@ -10,7 +10,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { workbenchStore } from '~/lib/stores/workbench';
 import { useSyncToWorkbench, useSyncToDaytona } from '~/lib/hooks/useApiQueries';
-import type { UseFileSyncOptions, UseFileSyncReturn } from '../types/sharedState';
+import type { UseFileSyncOptions, UseFileSyncReturn } from '~/components/editor/editor-chat/types/sharedState';
 
 export function useFileSync(options: UseFileSyncOptions = {}): UseFileSyncReturn {
   const { onSyncComplete } = options;

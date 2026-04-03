@@ -12,7 +12,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { getSuggestedQuickProfile } from './streamlined-onboarding';
 
-import type { SystemFont, LogoInfo, QuickProfile, InitialChatState } from '../types';
+import type { SystemFont, LogoInfo, QuickProfile, InitialChatState } from '~/components/editor/editor-chat/types';
 
 export type PreviewSource = 'daytona';
 

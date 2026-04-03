@@ -6,7 +6,7 @@
  */
 
 // eslint-disable-next-line no-restricted-imports
-import { generateCompletion } from '../llm';
+import { generateCompletion } from '~/lib/services/llm';
 import { createScopedLogger } from '~/utils/logger';
 import { API_MESSAGE_KEYS, getApiMessage } from '~/lib/i18n/api-messages';
 import { buildExtractionPrompt, containsBannedWord, getBannedWord, getRandomFallbackName } from './prompts';

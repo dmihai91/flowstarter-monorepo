@@ -104,7 +104,7 @@ Example:
 \`\`\`astro
 ---
 // Frontmatter - runs at build time
-import Layout from '../layouts/Layout.astro';
+import Layout from '~/lib/layouts/Layout.astro';
 interface Props {
   title: string;
 }

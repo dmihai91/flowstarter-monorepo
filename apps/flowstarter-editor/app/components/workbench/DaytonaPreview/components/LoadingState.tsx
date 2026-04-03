@@ -1,11 +1,11 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { STATUS_CONFIG } from '../constants';
+import { STATUS_CONFIG } from '~/components/workbench/DaytonaPreview/constants';
 import { FloatingOrb } from './FloatingOrb';
 import { GridPattern } from './GridPattern';
 import { PulsingRings } from './PulsingRings';
 import { ProgressDots } from './ProgressDots';
-import type { PreviewStatus } from '../types';
+import type { PreviewStatus } from '~/components/workbench/DaytonaPreview/types';
 
 interface LoadingStateProps {
   status: Exclude<PreviewStatus, 'ready' | 'error'>;

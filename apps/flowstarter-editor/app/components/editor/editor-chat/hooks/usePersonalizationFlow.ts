@@ -10,8 +10,9 @@
 
 import { useCallback, useRef, useEffect } from 'react';
 import { createScopedLogger } from '~/utils/logger';
+import { getRandomServicePrompts } from '~/components/editor/editor-chat/constants';
 
-import type { ColorPalette, SystemFont, LogoInfo, InitialChatState } from '../types';
+import type { ColorPalette, SystemFont, LogoInfo, InitialChatState } from '~/components/editor/editor-chat/types';
 
 const logger = createScopedLogger('usePersonalizationFlow');
 import type { useOnboardingMessages } from './useOnboardingMessages';

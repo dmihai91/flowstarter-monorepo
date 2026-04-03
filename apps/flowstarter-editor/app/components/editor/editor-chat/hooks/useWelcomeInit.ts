@@ -6,7 +6,7 @@
  */
 
 import { useEffect, useRef, useCallback } from 'react';
-import type { InitialChatState } from '../types';
+import type { InitialChatState } from '~/components/editor/editor-chat/types';
 import type { UseOnboardingMessagesReturn } from './useOnboardingMessages';
 import type { UseOnboardingFlowReturn } from './useOnboardingFlow';
 import { hasPreseededTemplateBuild, isCompletedBuildState } from './handoffState';

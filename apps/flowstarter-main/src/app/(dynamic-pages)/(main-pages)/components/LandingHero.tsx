@@ -82,9 +82,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   const prefixWords = hero.headlinePrefix.split(' ');
 
   return (
-    <section className="relative overflow-hidden min-h-screen flex flex-col justify-center pb-10">
-      {/* Spacer to push content below the fixed navbar (h-16 = 64px) */}
-      <div className="h-16 shrink-0" aria-hidden="true" />
+    <section className="relative overflow-hidden" style={{ height: '100dvh', paddingTop: '64px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
       <FlowBackground
         variant="landing"
         style={{ position: 'absolute', inset: 0, zIndex: 0 }}

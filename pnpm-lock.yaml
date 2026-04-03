@@ -1205,6 +1205,12 @@ importers:
         specifier: ^5.0.0
         version: 5.9.3
 
+  packages/supabase-utils:
+    dependencies:
+      '@supabase/supabase-js':
+        specifier: ^2.49.4
+        version: 2.97.0
+
 packages:
 
   '@0no-co/graphql.web@1.2.0':

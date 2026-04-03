@@ -1,0 +1,10 @@
+{
+  "name": "@flowstarter/supabase-utils",
+  "version": "0.1.0",
+  "description": "Shared Supabase client factories for the Flowstarter monorepo",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.4"
+  }
+}

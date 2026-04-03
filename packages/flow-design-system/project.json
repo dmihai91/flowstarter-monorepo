@@ -1,0 +1,17 @@
+{
+  "name": "@flowstarter/flow-design-system",
+  "projectType": "library",
+  "tags": ["pkg:shared"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit",
+        "cwd": "packages/flow-design-system"
+      }
+    }
+  }
+}

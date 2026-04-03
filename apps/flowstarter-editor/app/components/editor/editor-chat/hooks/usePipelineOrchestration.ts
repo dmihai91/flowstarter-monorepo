@@ -16,21 +16,9 @@ import type { OnboardingStep, InitialChatState } from '../types';
  * Each step knows what comes next in the default flow.
  */
 export const PIPELINE_STEPS: OnboardingStep[] = [
-  'welcome',
-  'describe',
-  'name',
-  'business-uvp',
-  'business-audience',
-  'business-goals',
-  'business-tone',
-  'business-selling',
-  'business-pricing',
-  'business-contact',
-  'business-summary',
-  'template',
+  'review',
   'personalization',
   'integrations',
-  'review',
   'creating',
   'ready',
 ];
@@ -40,21 +28,9 @@ export const PIPELINE_STEPS: OnboardingStep[] = [
  * Some transitions may be conditional (handled in transition logic).
  */
 const DEFAULT_NEXT_STEP: Partial<Record<OnboardingStep, OnboardingStep>> = {
-  welcome: 'describe',
-  describe: 'name',
-  name: 'business-uvp',
-  'business-uvp': 'business-audience',
-  'business-audience': 'business-goals',
-  'business-goals': 'business-tone',
-  'business-tone': 'business-selling',
-  'business-selling': 'business-pricing',
-  'business-pricing': 'business-contact',
-  'business-contact': 'business-summary',
-  'business-summary': 'template',
-  template: 'personalization',
+  review: 'personalization',
   personalization: 'integrations',
-  integrations: 'review',
-  review: 'creating',
+  integrations: 'creating',
   creating: 'ready',
 };
 
@@ -62,24 +38,9 @@ const DEFAULT_NEXT_STEP: Partial<Record<OnboardingStep, OnboardingStep>> = {
  * Human-readable labels for each step (used in progress indicators).
  */
 export const STEP_LABELS: Record<OnboardingStep, string> = {
-  welcome: 'Welcome',
-  describe: 'Describe your project',
-  name: 'Name your project',
-  'quick-profile': 'Quick profile',
-  'business-details': 'Business details',
-  'business-uvp': 'Value proposition',
-  'business-offering': 'Your offering',
-  'business-audience': 'Target audience',
-  'business-goals': 'Business goals',
-  'business-tone': 'Brand tone',
-  'business-selling': 'How clients engage',
-  'business-pricing': 'Pricing',
-  'business-contact': 'Contact info',
-  'business-summary': 'Review details',
-  template: 'Choose template',
+  review: 'Review before build',
   personalization: 'Customize design',
   integrations: 'Connect services',
-  review: 'Review before build',
   creating: 'Building site',
   ready: 'Complete',
 };
@@ -175,7 +136,7 @@ export interface UsePipelineOrchestrationReturn {
 // ─── Hook Implementation ────────────────────────────────────────────────────
 
 export function usePipelineOrchestration({
-  initialStep = 'welcome',
+  initialStep = 'review',
   initialCompletedSteps = [],
   onStateChange,
 }: UsePipelineOrchestrationProps): UsePipelineOrchestrationReturn {

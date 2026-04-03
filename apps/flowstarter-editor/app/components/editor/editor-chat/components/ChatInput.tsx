@@ -320,11 +320,7 @@ export function ChatInput({
                 handleSend();
               }
             }}
-            placeholder={
-              step === 'describe'
-                ? t(EDITOR_LABEL_KEYS.CHAT_PLACEHOLDER_DESCRIBE)
-                : t(EDITOR_LABEL_KEYS.CHAT_PLACEHOLDER_CHANGES)
-            }
+            placeholder={t(EDITOR_LABEL_KEYS.CHAT_PLACEHOLDER_CHANGES)}
             rows={1}
             style={{
               flex: 1,

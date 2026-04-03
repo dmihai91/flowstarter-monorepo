@@ -132,8 +132,8 @@ export function useSimpleBuildHandlers({
       }
 
       onStateChangeRef.current?.({ contactDetails } as Partial<InitialChatState>);
-      await messageHook.addStepTransitionMessage('business-contact', 'business-summary', { hasContactDetails: true });
-      flowHook.setStep('business-summary');
+      await messageHook.addStepTransitionMessage('review', 'review', { hasContactDetails: true });
+      flowHook.setStep('review');
       messageHook.setSuggestedReplies([
         { id: 'confirm', text: 'Looks good!' },
         { id: 'edit', text: 'Let me change something' },
@@ -144,8 +144,8 @@ export function useSimpleBuildHandlers({
 
   const handleSkipContactDetails = useCallback(async () => {
     messageHook.addUserMessage('Skip contact details for now');
-    await messageHook.addStepTransitionMessage('business-contact', 'business-summary', { hasContactDetails: false });
-    flowHook.setStep('business-summary');
+    await messageHook.addStepTransitionMessage('review', 'review', { hasContactDetails: false });
+    flowHook.setStep('review');
     messageHook.setSuggestedReplies([
       { id: 'confirm', text: 'Looks good!' },
       { id: 'edit', text: 'Let me change something' },
@@ -178,7 +178,7 @@ export function useSimpleBuildHandlers({
       console.log('[BROWSER] [DEBUG] Checking template:', !!effectiveTemplate);
 
       if (!effectiveTemplate) {
-        flowHook.setStep('template');
+        flowHook.setStep('review');
         messageHook.addAssistantMessage(getMessage(MESSAGE_KEYS.BUILD_SELECT_TEMPLATE_FIRST));
 
         return;

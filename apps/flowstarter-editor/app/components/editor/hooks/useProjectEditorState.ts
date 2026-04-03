@@ -76,7 +76,7 @@ export function useProjectEditorState(projectId: Id<'conversations'>) {
   }, [updateStateMutation]);
 
   // UI state
-  const [onboardingStep, setOnboardingStep] = useState<OnboardingStep>('welcome');
+  const [onboardingStep, setOnboardingStep] = useState<OnboardingStep>('review');
   const [orchestrationStatus, setOrchestrationStatus] = useState<OrchestratorStatusDTO | null>(null);
   const [localProjectUrlId, setLocalProjectUrlId] = useState<string | null>(null);
 

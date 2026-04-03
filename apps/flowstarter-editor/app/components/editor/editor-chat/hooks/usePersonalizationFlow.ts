@@ -9,9 +9,11 @@
  */
 
 import { useCallback, useRef, useEffect } from 'react';
-import { getRandomServicePrompts } from '../constants';
+import { createScopedLogger } from '~/utils/logger';
 
 import type { ColorPalette, SystemFont, LogoInfo, InitialChatState } from '../types';
+
+const logger = createScopedLogger('usePersonalizationFlow');
 import type { useOnboardingMessages } from './useOnboardingMessages';
 import type { useOnboardingFlow } from './useOnboardingFlow';
 import type { usePaletteSelection } from './usePaletteSelection';
@@ -92,7 +94,7 @@ export function usePersonalizationFlow({
       if (currentFont) {
         handlePersonalizationComplete(currentFont, logo, useAiImages);
       } else {
-        console.warn('Logo selected but no font selected yet - font ref is null');
+        logger.warn('Logo selected but no font selected yet - font ref is null');
       }
     },
     [setSelectedLogo, handlePersonalizationComplete, onStateChange],
@@ -102,10 +104,8 @@ export function usePersonalizationFlow({
    * Refresh suggested replies based on current step
    */
   const refreshSuggestions = useCallback(() => {
-    if (flowHook.step === 'welcome' || flowHook.step === 'describe') {
-      messageHook.setSuggestedReplies(getRandomServicePrompts(5));
-    }
-  }, [flowHook.step, messageHook]);
+    // No-op: suggestions only applied during build phases
+  }, []);
 
   return {
     handlePaletteSelect,

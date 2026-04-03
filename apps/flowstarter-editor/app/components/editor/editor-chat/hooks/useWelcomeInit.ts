@@ -68,22 +68,16 @@ export function useWelcomeInit({
       return;
     }
 
-    if (hasPreseededTemplateBuild(state)) {
-      msg.addAssistantMessage(
-        '**Project setup received.** Review the selected template, brand direction, and integrations below, then confirm when you want me to build the first version.',
-      );
-      msg.setSuggestedReplies([]);
-      flow.setStep('review');
-      onTemplateBuildStartRef.current?.();
-
-      return;
-    }
-
     msg.addAssistantMessage(
-      'This editor only supports dashboard handoff projects. Re-open the project from the main dashboard to continue.',
+      hasPreseededTemplateBuild(state)
+        ? '**Project setup received.** Review the selected template, brand direction, and integrations below, then confirm when you want me to build the first version.'
+        : '**Welcome!** Review your project details below to get started.',
     );
     msg.setSuggestedReplies([]);
     flow.setStep('review');
+    if (hasPreseededTemplateBuild(state)) {
+      onTemplateBuildStartRef.current?.();
+    }
   }, []);
 
   /*

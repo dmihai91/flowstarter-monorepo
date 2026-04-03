@@ -262,38 +262,8 @@ describe('getReadyMessage', () => {
  */
 
 describe('getNextStepFromCurrent', () => {
-  it('welcome -> describe', () => {
-    const next = getNextStepFromCurrent('welcome', false, false, false, false, false);
-    expect(next).toBe('describe');
-  });
-
-  it('describe -> describe when no description', () => {
-    const next = getNextStepFromCurrent('describe', false, false, false, false, false);
-    expect(next).toBe('describe');
-  });
-
-  it('describe -> quick-profile when has description', () => {
-    const next = getNextStepFromCurrent('describe', true, false, false, false, false);
-    expect(next).toBe('quick-profile');
-  });
-
-  it('quick-profile -> quick-profile when no profile', () => {
-    const next = getNextStepFromCurrent('quick-profile', true, false, false, false, false);
-    expect(next).toBe('quick-profile');
-  });
-
-  it('quick-profile -> template when has profile', () => {
-    const next = getNextStepFromCurrent('quick-profile', true, true, false, false, false);
-    expect(next).toBe('template');
-  });
-
-  it('template -> template when no template', () => {
-    const next = getNextStepFromCurrent('template', true, true, false, false, false);
-    expect(next).toBe('template');
-  });
-
-  it('template -> personalization when has template', () => {
-    const next = getNextStepFromCurrent('template', true, true, true, false, false);
+  it('review -> personalization', () => {
+    const next = getNextStepFromCurrent('review', false, false, false, false, false);
     expect(next).toBe('personalization');
   });
 
@@ -307,6 +277,11 @@ describe('getNextStepFromCurrent', () => {
     expect(next).toBe('creating');
   });
 
+  it('integrations -> creating', () => {
+    const next = getNextStepFromCurrent('integrations', false, false, false, false, false);
+    expect(next).toBe('creating');
+  });
+
   it('creating -> ready', () => {
     const next = getNextStepFromCurrent('creating', true, true, true, true, true);
     expect(next).toBe('ready');
@@ -317,26 +292,9 @@ describe('getNextStepFromCurrent', () => {
     expect(next).toBe('ready');
   });
 
-  describe('legacy step migration', () => {
-    it('name -> describe', () => {
-      const next = getNextStepFromCurrent('name' as OnboardingStep, false, false, false, false, false);
-      expect(next).toBe('describe');
-    });
-
-    it('business-uvp -> quick-profile', () => {
-      const next = getNextStepFromCurrent('business-uvp' as OnboardingStep, false, false, false, false, false);
-      expect(next).toBe('quick-profile');
-    });
-
-    it('business-summary -> template', () => {
-      const next = getNextStepFromCurrent('business-summary' as OnboardingStep, false, false, false, false, false);
-      expect(next).toBe('template');
-    });
-
-    it('integrations -> ready', () => {
-      const next = getNextStepFromCurrent('integrations' as OnboardingStep, false, false, false, false, false);
-      expect(next).toBe('ready');
-    });
+  it('unknown step falls back to review', () => {
+    const next = getNextStepFromCurrent('unknown-step' as OnboardingStep, false, false, false, false, false);
+    expect(next).toBe('review');
   });
 });
 
@@ -347,46 +305,31 @@ describe('getNextStepFromCurrent', () => {
  */
 
 describe('generateOnboardingResponse', () => {
-  it('generates welcome message for welcome step', () => {
+  it('generates review message for review step', () => {
     const response = generateOnboardingResponse({
-      step: 'welcome',
+      step: 'review',
     });
 
     expect(response.content).toBeDefined();
-    expect(response.suggestions).toBeDefined();
+    expect(response.content).toContain('Review');
   });
 
-  it('generates describe ack when description provided', () => {
+  it('generates personalization message with showPersonalization flag', () => {
     const response = generateOnboardingResponse({
-      step: 'describe',
-      description: "I'm a life coach for entrepreneurs",
+      step: 'personalization',
     });
 
-    expect(response.content).toContain('life coach');
-    expect(response.showQuickProfile).toBe(true);
-  });
-
-  it('generates quick-profile ack when profile provided', () => {
-    const response = generateOnboardingResponse({
-      step: 'quick-profile',
-      quickProfile: {
-        goal: 'leads',
-        offerType: 'high-ticket',
-        tone: 'professional',
-      },
-    });
-
-    expect(response.showTemplateSelector).toBe(true);
-  });
-
-  it('generates template ack when template selected', () => {
-    const response = generateOnboardingResponse({
-      step: 'template',
-      templateName: 'Coach Pro',
-    });
-
-    expect(response.content).toContain('Coach Pro');
+    expect(response.content).toBeDefined();
     expect(response.showPersonalization).toBe(true);
+  });
+
+  it('generates integrations message', () => {
+    const response = generateOnboardingResponse({
+      step: 'integrations',
+    });
+
+    expect(response.content).toBeDefined();
+    expect(response.content.toLowerCase()).toContain('connect');
   });
 
   it('generates creating message with progress', () => {
@@ -407,15 +350,6 @@ describe('generateOnboardingResponse', () => {
 
     expect(response.content).toContain('https://preview.flowstarter.app/123');
     expect(response.content).toContain('My Site');
-  });
-
-  it('personalizes welcome with userName', () => {
-    const response = generateOnboardingResponse({
-      step: 'welcome',
-      userName: 'Jane',
-    });
-
-    expect(response.content).toContain('Jane');
   });
 });
 

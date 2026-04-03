@@ -1,32 +1,28 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Create mock functions BEFORE any imports
 const mockGenerateText = vi.fn();
 const mockOpenai = vi.fn(() => 'mock-openai-model');
 
 // Mock AI SDK - must be before imports
-vi.mock('ai', async () => ({
+vi.mock('ai', () => ({
   generateText: mockGenerateText,
 }));
 
-vi.mock('@ai-sdk/openai', async () => ({
+vi.mock('@ai-sdk/openai', () => ({
   openai: mockOpenai,
 }));
 
-// Use dynamic import to ensure mocks are applied
-let aiModerateContent: typeof import('../ai-moderation').aiModerateContent;
-
-beforeEach(async () => {
-  const moderationModule = await import('../ai-moderation');
-  aiModerateContent = moderationModule.aiModerateContent;
-});
+// Import once — mocks are already in place via vi.mock hoisting
+import { aiModerateContent } from '../ai-moderation';
 
 describe('AI Content Moderation', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.clearAllMocks();
-    // Reload module to ensure fresh state
-    const moderationModule = await import('../ai-moderation');
-    aiModerateContent = moderationModule.aiModerateContent;
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   describe('Keyword Pre-screening', () => {

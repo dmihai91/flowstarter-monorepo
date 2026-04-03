@@ -14,7 +14,7 @@
     "test:e2e": "playwright test",
     "test": "vitest --root src --run",
     "test:watch": "vitest --root src",
-    "lint": "pnpm eslint --fix src",
+    "lint": "ESLINT_USE_FLAT_CONFIG=false pnpm eslint --fix src",
     "lint:prettier": "prettier --write src",
     "tsc": "tsc",
     "postbuild": "next-sitemap --config next-sitemap.config.cjs",

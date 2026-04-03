@@ -50,6 +50,8 @@ jobs:
       - name: Lint — flowstarter-main
         run: pnpm --dir apps/flowstarter-main lint
         continue-on-error: true
+        env:
+          ESLINT_USE_FLAT_CONFIG: 'false'
 
       - name: Lint — flowstarter-editor
         run: pnpm --dir apps/flowstarter-editor lint

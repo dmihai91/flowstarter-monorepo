@@ -1,6 +1,28 @@
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+
+const DomainConfigSchema = z.object({
+  domainType: z.enum(['custom', 'hosted']).optional(),
+  domain: z.string().max(253).optional(),
+  provider: z.string().max(100).optional(),
+});
+
+const ProjectConfigSchema = z.object({
+  name: z.string().max(200).optional(),
+  description: z.string().max(5000).optional(),
+  currentStep: z.string().max(100).optional(),
+  entry_mode: z.string().max(50).optional(),
+  platformType: z.string().max(100).optional(),
+  template: z.object({ id: z.string().optional() }).optional(),
+  domainConfig: DomainConfigSchema.optional(),
+}).passthrough();
+
+const DraftPostSchema = z.object({
+  projectId: z.string().uuid().optional(),
+  projectConfig: ProjectConfigSchema,
+});
 
 // Coding agent URL for cleanup operations
 const CODING_AGENT_URL =
@@ -70,7 +92,7 @@ async function cleanupDraftData(
     }
 
     const result = await response.json();
-    console.log('[Draft Cleanup] Cleanup result:', result);
+    console.info('[Draft Cleanup] Cleanup result:', result);
     return { success: true };
   } catch (error) {
     console.warn('[Draft Cleanup] Cleanup endpoint error:', error);
@@ -180,27 +202,34 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('[Draft API] POST request received');
+    console.info('[Draft API] POST request received');
     const { userId } = await auth();
     if (!userId) {
-      console.log('[Draft API] Unauthorized - no userId');
+      console.info('[Draft API] Unauthorized - no userId');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    console.log('[Draft API] User authenticated:', userId);
+    console.info('[Draft API] User authenticated:', userId);
 
-    const body = await request.json();
-    const projectConfig = body?.projectConfig;
-    const projectId = body?.projectId; // Optional project ID for updating existing project
+    let rawBody: unknown;
+    try {
+      rawBody = await request.json();
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+    }
 
-    if (!projectConfig || typeof projectConfig !== 'object') {
-      console.log('[Draft API] Invalid payload');
+    const parseResult = DraftPostSchema.safeParse(rawBody);
+    if (!parseResult.success) {
+      console.info('[Draft API] Invalid payload:', parseResult.error.flatten());
       return NextResponse.json(
-        { error: 'Invalid payload: projectConfig required' },
+        { error: 'Validation error', details: parseResult.error.flatten().fieldErrors },
         { status: 400 }
       );
     }
 
-    console.log('[Draft API] Project config received:', {
+    const projectConfig = parseResult.data.projectConfig;
+    const projectId = parseResult.data.projectId;
+
+    console.info('[Draft API] Project config received:', {
       projectId,
       name: projectConfig.name,
       description: projectConfig.description?.substring(0, 50),
@@ -224,7 +253,7 @@ export async function POST(request: NextRequest) {
 
     // If creating a new draft (not updating) and nothing is selected, don't save
     if (!projectId && !hasAnySelection) {
-      console.log('[Draft API] No selection made, skipping draft save');
+      console.info('[Draft API] No selection made, skipping draft save');
       return NextResponse.json({ success: false, skipped: true });
     }
 
@@ -243,11 +272,11 @@ export async function POST(request: NextRequest) {
       user_id: userId,
     } as const;
 
-    console.log('[Draft API] Saving with user_id:', userId);
+    console.info('[Draft API] Saving with user_id:', userId);
 
     // If projectId is provided, update that specific project
     if (projectId) {
-      console.log('[Draft API] Updating project draft:', projectId);
+      console.info('[Draft API] Updating project draft:', projectId);
 
       // First check if the project exists and belongs to the user
       const existing = await supabase
@@ -270,7 +299,7 @@ export async function POST(request: NextRequest) {
       }
 
       if (!existing.data) {
-        console.log('[Draft API] Project not found, creating new one instead');
+        console.info('[Draft API] Project not found, creating new one instead');
         // Project doesn't exist, create a new one
         const insert = await supabase
           .from('projects')
@@ -285,7 +314,7 @@ export async function POST(request: NextRequest) {
             { status: 500 }
           );
         }
-        console.log('[Draft API] ✅ New draft created:', insert.data.id);
+        console.info('[Draft API] ✅ New draft created:', insert.data.id);
         return NextResponse.json({ success: true, projectId: insert.data.id });
       }
 
@@ -305,12 +334,12 @@ export async function POST(request: NextRequest) {
           { status: 500 }
         );
       }
-      console.log('[Draft API] ✅ Project draft updated successfully');
+      console.info('[Draft API] ✅ Project draft updated successfully');
       return NextResponse.json({ success: true, projectId: update.data.id });
     }
 
     // Create new draft project
-    console.log('[Draft API] Creating new draft project');
+    console.info('[Draft API] Creating new draft project');
     const insert = await supabase
       .from('projects')
       .insert(payload)
@@ -324,7 +353,7 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-    console.log(
+    console.info(
       '[Draft API] ✅ Draft project created successfully:',
       insert.data.id
     );

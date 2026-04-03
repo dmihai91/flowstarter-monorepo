@@ -7,6 +7,7 @@
 
 import type { ActionFunctionArgs } from '@remix-run/node';
 import type { AgentActivityEvent } from '~/lib/services/claude-agent/types';
+import { checkRateLimit, getRateLimitKey } from '~/lib/rateLimit';
 import {
   createAssemblySpec,
   createContentMap,
@@ -684,6 +685,15 @@ async function handleSimpleBuild(
 export async function action({ request }: ActionFunctionArgs) {
   if (request.method !== 'POST') {
     return Response.json({ error: 'Method not allowed' }, { status: 405 });
+  }
+
+  const rlKey = getRateLimitKey(request, 'api.build');
+  const rl = checkRateLimit(rlKey, 10, 60 * 60 * 1000);
+  if (rl.limited) {
+    return Response.json(
+      { error: 'Rate limit exceeded' },
+      { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } }
+    );
   }
 
   try {

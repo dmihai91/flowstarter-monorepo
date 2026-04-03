@@ -1,6 +1,12 @@
 'use server';
 
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
+
+const VerifyBodySchema = z.object({
+  apiKey: z.string().min(1, 'Missing API key').max(500),
+  eventUrl: z.string().url('Invalid Cal.com URL').optional(),
+});
 
 function bad(message: string, status = 400) {
   return NextResponse.json({ ok: false, error: message }, { status });
@@ -8,12 +14,20 @@ function bad(message: string, status = 400) {
 
 export async function POST(req: Request) {
   try {
-    const { apiKey, eventUrl } = (await req.json()) as {
-      apiKey?: string;
-      eventUrl?: string;
-    };
+    let rawBody: unknown;
+    try {
+      rawBody = await req.json();
+    } catch {
+      return bad('Invalid JSON');
+    }
 
-    const key = (apiKey || '').trim();
+    const parseResult = VerifyBodySchema.safeParse(rawBody);
+    if (!parseResult.success) {
+      return bad(parseResult.error.errors[0].message);
+    }
+
+    const { apiKey, eventUrl } = parseResult.data;
+    const key = apiKey.trim();
     if (!key) return bad('Missing API key');
 
     if (eventUrl) {

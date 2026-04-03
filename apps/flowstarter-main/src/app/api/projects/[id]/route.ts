@@ -1,5 +1,14 @@
 import { requireAuth, requireAuthWithSupabase } from '@/lib/api-auth';
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+
+const PatchProjectSchema = z.object({
+  name: z.string().min(1).max(200).optional(),
+  description: z.string().max(5000).optional(),
+  chat: z.string().optional(),
+  is_draft: z.boolean().optional(),
+  status: z.string().max(50).optional(),
+});
 
 /**
  * PATCH /api/projects/[id]
@@ -18,7 +27,6 @@ export async function PATCH(
 
   try {
     const { id } = await params;
-    const body = await request.json();
 
     if (!id) {
       return NextResponse.json(
@@ -26,6 +34,23 @@ export async function PATCH(
         { status: 400 }
       );
     }
+
+    let rawBody: unknown;
+    try {
+      rawBody = await request.json();
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+    }
+
+    const parseResult = PatchProjectSchema.safeParse(rawBody);
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: 'Validation error', details: parseResult.error.flatten().fieldErrors },
+        { status: 400 }
+      );
+    }
+
+    const body = parseResult.data;
 
     console.info('[Projects] PATCH starting:', {
       userId: authResult.userId,
@@ -35,14 +60,12 @@ export async function PATCH(
 
     const supabase = authResult.supabase;
 
-    // Only allow updating certain fields
-    const allowedFields = ['name', 'description', 'chat', 'is_draft', 'status'];
     const updateData: Record<string, unknown> = {};
-    for (const field of allowedFields) {
-      if (body[field] !== undefined) {
-        updateData[field] = body[field];
-      }
-    }
+    if (body.name !== undefined) updateData.name = body.name;
+    if (body.description !== undefined) updateData.description = body.description;
+    if (body.chat !== undefined) updateData.chat = body.chat;
+    if (body.is_draft !== undefined) updateData.is_draft = body.is_draft;
+    if (body.status !== undefined) updateData.status = body.status;
 
     const { data, error } = await supabase
       .from('projects')

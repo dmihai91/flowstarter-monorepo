@@ -80,17 +80,20 @@ describe('useStreamingPreview', () => {
   });
 
   it('pushFile does not throw when fetch fails', async () => {
+    vi.useFakeTimers();
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network error')));
 
     const { result } = renderHook(() => useStreamingPreview({ projectId: PROJECT_ID, sandboxId: SANDBOX_ID }));
 
-    // Should not throw
+    // Should not throw — advance fake timers instead of real setTimeout to avoid post-teardown state updates
     await expect(
       act(async () => {
         result.current.pushFile('a.ts', 'x');
-        await new Promise((r) => setTimeout(r, 10));
+        await vi.runAllTimersAsync();
       }),
     ).resolves.toBeUndefined();
+
+    vi.useRealTimers();
   });
 
   it('pushFile does not call fetch when projectId is null', async () => {

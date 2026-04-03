@@ -91,6 +91,7 @@ export function ScaffoldClientInfo({
   const hasEnoughAiContext = mode === 'manual' || prompt.trim().length >= 20;
   const animatedPlaceholder = useAnimatedPlaceholder({
     enabled: mode === 'ai' && prompt.trim() === '',
+    industry: industry || undefined,
   });
   const canContinue = hasValidClient && hasEnoughAiContext;
 

@@ -45,10 +45,9 @@ export default defineConfig({
     },
   ],
 
-  // Only spin up the editor dev server when secrets are available.
-  // When secrets are missing (CI without configured secrets), the global-setup
-  // returns early and all tests skip via skipIfSecretsUnavailable() — no server needed.
-  ...(process.env.E2E_SECRETS_AVAILABLE === 'false' || (!process.env.CLERK_SECRET_KEY && !!process.env.CI)
+  // In CI: editor URL comes from PLAYWRIGHT_E2E_EDITOR_URL (deployed instance).
+  // Locally: spin up the dev server.
+  ...(process.env.CI
     ? {}
     : {
         webServer: {

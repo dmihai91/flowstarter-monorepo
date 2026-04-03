@@ -1,7 +1,7 @@
 {
   "name": "@flowstarter/library",
   "projectType": "library",
-  "tags": ["type:library", "scope:templates"],
+  "tags": ["app:library", "scope:templates"],
   "targets": {
     "build:templates": {
       "executor": "nx:run-commands",

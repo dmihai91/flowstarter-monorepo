@@ -9,7 +9,7 @@ export default defineConfig({
   reporter: [['html', { open: 'never' }], ['list']],
   
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
     trace: 'on-first-retry',
     screenshot: 'on',
     video: 'on-first-retry',
@@ -22,18 +22,22 @@ export default defineConfig({
     },
   ],
 
-  webServer: [
-    {
-      command: 'cd apps/flowstarter-main && npx next dev -p 3000',
-      url: 'http://localhost:3000',
-      reuseExistingServer: true,
-      timeout: 120000,
-    },
-    {
-      command: 'cd apps/flowstarter-editor && pnpm dev',
-      url: 'http://localhost:5175',
-      reuseExistingServer: true,
-      timeout: 120000,
-    },
-  ],
+  ...(process.env.CI
+    ? {}
+    : {
+        webServer: [
+          {
+            command: 'cd apps/flowstarter-main && npx next dev -p 3000',
+            url: 'http://localhost:3000',
+            reuseExistingServer: true,
+            timeout: 120000,
+          },
+          {
+            command: 'cd apps/flowstarter-editor && pnpm dev',
+            url: 'http://localhost:5175',
+            reuseExistingServer: true,
+            timeout: 120000,
+          },
+        ],
+      }),
 });

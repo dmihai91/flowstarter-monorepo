@@ -1,5 +1,5 @@
 /**
- * useEditorChatState Hook (Refactored v4)
+ * useEditorChatState Hook (Refactored v5)
  *
  * Main composite hook that orchestrates the editor chat experience.
  * Updated to use focused sub-hooks for better organization.
@@ -9,7 +9,8 @@
  * - Core: useOnboardingMessages, useOnboardingFlow, useTemplateSelection, usePaletteSelection, useBusinessInfo
  * - State: useStatePersistence, useStateRestoration, useWelcomeInit, useAdditionalState
  * - Flow: useDescriptionFlow, useTemplateFlow, usePersonalizationFlow, useBusinessFlow
- * - Handlers: useProjectNameHandlers, useSimpleBuildHandlers, useSuggestionHandlers, useSendHandler
+ * - Handlers: useFlowHandlers, useSimpleBuildHandlers, useSendHandler
+ * - Computed: useBusinessContext
  * - Setup: useAgentSetup, useChatEffects
  */
 
@@ -35,6 +36,8 @@ import { useAdditionalState } from './useAdditionalState';
 import { usePersonalizationFlow } from './usePersonalizationFlow';
 import { useSimpleBuildHandlers } from './useSimpleBuildHandlers';
 import { useSendHandler } from './useSendHandler';
+import { useFlowHandlers } from './useFlowHandlers';
+import { useBusinessContext } from './useBusinessContext';
 import { normalizeHandoffStep } from './handoffState';
 
 // Types
@@ -285,41 +288,26 @@ export function useEditorChatState({
 
   /*
    * ═══════════════════════════════════════════════════════════════════════
-   * Flow Handlers
+   * Flow Handlers (extracted)
    * ═══════════════════════════════════════════════════════════════════════
    */
 
-  const handleTemplateSelect = useCallback(
-    async (template: import('~/components/onboarding').Template) => {
-      templateHook.handleTemplateSelect(template);
-      onStateChange?.({
-        selectedTemplateId: template.id,
-        selectedTemplateName: template.name,
-      });
-      messageHook.addUserMessage(`I'll keep the "${template.name}" template`);
-      await messageHook.addStepTransitionMessage('review', 'personalization', {
-        templateName: template.name,
-      });
-      flowHook.setStep('personalization');
-    },
-    [flowHook, messageHook, onStateChange, templateHook],
-  );
-
-  const handleRecommendationSelect = useCallback(
-    async (recommendation: import('~/components/editor/template-preview/types').TemplateRecommendation) => {
-      templateHook.handleRecommendationSelect(recommendation);
-      onStateChange?.({
-        selectedTemplateId: recommendation.template.id,
-        selectedTemplateName: recommendation.template.name,
-      });
-      messageHook.addUserMessage(`I'll keep the "${recommendation.template.name}" template`);
-      await messageHook.addStepTransitionMessage('review', 'personalization', {
-        templateName: recommendation.template.name,
-      });
-      flowHook.setStep('personalization');
-    },
-    [flowHook, messageHook, onStateChange, templateHook],
-  );
+  const {
+    handleTemplateSelect,
+    handleRecommendationSelect,
+    handleReviewBuildStart,
+    handleReviewCustomize,
+    handleBusinessInfoConfirm,
+    handleSuggestionAccept,
+  } = useFlowHandlers({
+    messageHook,
+    flowHook,
+    templateHook,
+    paletteHook,
+    onStateChange,
+    buildHandlers,
+    pendingSeededBuildRef,
+  });
 
   const { handlePaletteSelect, handleFontSelect, handleLogoSelect, refreshSuggestions } = usePersonalizationFlow({
     messageHook,
@@ -332,9 +320,6 @@ export function useEditorChatState({
     onStateChange,
   });
 
-  const handleBusinessInfoConfirm = useCallback(async (_confirmed: boolean) => {}, []);
-  const handleSuggestionAccept = useCallback(async () => {}, []);
-
   const { handleSend } = useSendHandler({
     messageHook,
     flowHook,
@@ -343,51 +328,19 @@ export function useEditorChatState({
     convexProjectId: additionalState.convexProjectId,
   });
 
-  const handleReviewBuildStart = useCallback(async () => {
-    pendingSeededBuildRef.current = false;
-    messageHook.addUserMessage('Build the first version with these selections');
-    await buildHandlers.startSeededBuild();
-  }, [buildHandlers, messageHook]);
-
-  const handleReviewCustomize = useCallback(() => {
-    messageHook.addUserMessage('I want to adjust the style before building');
-    flowHook.setStep('personalization');
-  }, [flowHook, messageHook]);
-
   const noopAsync = useCallback(async () => {}, []);
 
   /*
    * ═══════════════════════════════════════════════════════════════════════
-   * Computed: Business Context (for display in UI)
+   * Computed: Business Context (extracted)
    * ═══════════════════════════════════════════════════════════════════════
    */
 
-  /**
-   * Business context computed from initial state and business info.
-   * Used to display business details in the UI for the internal flow.
-   */
-  const businessContext = useMemo(() => {
-    const info = businessHook.businessInfo;
-
-    if (!info && !initialState?.businessInfo && !initialState?.projectDescription) {
-      return null;
-    }
-
-    const source = info || initialState?.businessInfo;
-
-    return {
-      businessName: flowHook.projectName || source?.businessType || initialState?.projectName || undefined,
-      description: source?.description || initialState?.projectDescription || undefined,
-      targetAudience: source?.targetAudience || undefined,
-      goals: source?.businessGoals || undefined,
-      industry: source?.industry || undefined,
-      uvp: source?.uvp || undefined,
-    };
-  }, [businessHook.businessInfo, initialState, flowHook.projectName]);
-
-  const isInternalFlow = useMemo(() => {
-    return Boolean(businessContext?.description && businessContext.description.length > 10);
-  }, [businessContext]);
+  const { businessContext, isInternalFlow } = useBusinessContext({
+    businessHook,
+    initialState,
+    flowHook,
+  });
 
   /*
    * ═══════════════════════════════════════════════════════════════════════

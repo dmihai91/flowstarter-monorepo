@@ -45,10 +45,17 @@ export default defineConfig({
     },
   ],
 
-  webServer: {
-    command: 'pnpm run dev',
-    url: 'http://localhost:5173',
-    reuseExistingServer: true,
-    timeout: 120_000,
-  },
+  // Only spin up the editor dev server when secrets are available.
+  // When secrets are missing (CI without configured secrets), the global-setup
+  // returns early and all tests skip via skipIfSecretsUnavailable() — no server needed.
+  ...(process.env.E2E_SECRETS_AVAILABLE === 'false' || (!process.env.CLERK_SECRET_KEY && !!process.env.CI)
+    ? {}
+    : {
+        webServer: {
+          command: 'pnpm run dev',
+          url: 'http://localhost:5173',
+          reuseExistingServer: true,
+          timeout: 120_000,
+        },
+      }),
 });

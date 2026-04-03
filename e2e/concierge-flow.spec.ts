@@ -2,7 +2,8 @@
  * Concierge Flow — Smoke Tests (Root Level)
  *
  * Quick sanity checks on the main platform.
- * Runs against flowstarter-main (localhost:3000).
+ * In CI: runs against PLAYWRIGHT_BASE_URL (deployed staging/preview URL).
+ * Locally: runs against localhost:3000.
  *
  * These do NOT require auth and do NOT hit real AI/Daytona.
  * Full flow tests live in apps/flowstarter-editor/e2e/cross-app/.
@@ -10,12 +11,15 @@
 
 import { test, expect } from '@playwright/test';
 
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
+const isExternalUrl = BASE_URL.startsWith('https://');
+
 test.describe('Concierge Flow — Platform Smoke', () => {
   test.describe('Main Platform', () => {
     test('Landing page loads with header', async ({ page }) => {
       await page.goto('/');
       const header = page.locator('header').first();
-      await expect(header).toBeVisible();
+      await expect(header).toBeVisible({ timeout: 15000 });
       await page.screenshot({ path: 'e2e/screenshots/01-landing-page.png', fullPage: true });
     });
 
@@ -54,6 +58,10 @@ test.describe('Concierge Flow — Platform Smoke', () => {
 
   test.describe('Editor', () => {
     test('Editor redirects to signin when not authenticated', async ({ page }) => {
+      // In CI against an external URL the editor runs on a separate domain —
+      // skip this test and rely on cross-app E2E for editor auth coverage.
+      test.skip(isExternalUrl || !!process.env.CI, 'Editor localhost check skipped in CI — covered by cross-app E2E');
+
       await page.goto('http://localhost:5175');
       await page.waitForTimeout(3000);
       const url = page.url();
@@ -64,7 +72,6 @@ test.describe('Concierge Flow — Platform Smoke', () => {
         url.includes('localhost:3000');
       await page.screenshot({ path: 'e2e/screenshots/06-editor-auth-redirect.png', fullPage: true });
       console.log('Editor redirect URL:', url);
-      // Document behavior — not a hard failure if editor isn't running
       expect(typeof isRedirected).toBe('boolean');
     });
   });

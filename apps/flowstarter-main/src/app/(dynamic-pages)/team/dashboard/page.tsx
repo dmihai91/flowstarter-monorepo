@@ -8,99 +8,26 @@ import { TeamProjectsStatsSkeleton } from './components/TeamProjectsStatsSkeleto
 import { DashboardLoader } from './components/DashboardSkeleton';
 import { Button } from '@/components/ui/button';
 import { useTeamProjects } from '@/hooks/useTeamProjects';
-import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from '@/lib/i18n';
 import { useUser } from '@clerk/nextjs';
 import { useIsTeamMember } from '@/hooks/useIsTeamMember';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useRef, useCallback } from 'react';
-import { Plus, UserPlus, FolderOpen, X, Sparkles, Loader2 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
-import { z } from 'zod';
+import { useEffect, useState } from 'react';
+import { Plus, UserPlus, FolderOpen } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
-
-const EDITOR_URL =
-  process.env.NEXT_PUBLIC_EDITOR_URL ||
-  (process.env.NODE_ENV === 'production'
-    ? 'https://editor.flowstarter.dev'
-    : 'http://localhost:5173');
-
-const clientSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Please enter a valid email address'),
-  phone: z
-    .string()
-    .optional()
-    .refine(
-      (val) => !val || /^[+]?[\d\s()-]{7,}$/.test(val),
-      'Please enter a valid phone number'
-    ),
-});
-
-type ClientErrors = Partial<Record<keyof z.infer<typeof clientSchema>, string>>;
 
 export default function TeamDashboardPage() {
   const { user, isLoaded: userLoaded } = useUser();
   const { t } = useTranslations();
   const router = useRouter();
   const { data: projects, isLoading: projectsLoading } = useTeamProjects();
-  const queryClient = useQueryClient();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [showClientModal, setShowClientModal] = useState(false);
-  const [clientInfo, setClientInfo] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    projectName: '',
-    projectDescription: '',
-  });
-  const [isSendingToEditor, setIsSendingToEditor] = useState(false);
-  const [isGeneratingProjectName, setIsGeneratingProjectName] = useState(false);
-  const [clientErrors, setClientErrors] = useState<ClientErrors>({});
-  const debounceTimers = useRef<Record<string, NodeJS.Timeout>>({});
   const glassPanelClass =
     'rounded-[28px] border border-gray-200/80 bg-white/95 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-2xl backdrop-saturate-150 dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]';
 
-  const validateField = useCallback(
-    (field: keyof ClientErrors, value: string) => {
-      if (debounceTimers.current[field])
-        clearTimeout(debounceTimers.current[field]);
-      debounceTimers.current[field] = setTimeout(() => {
-        const result = clientSchema.shape[field].safeParse(value);
-        if (!result.success) {
-          setClientErrors((prev) => ({
-            ...prev,
-            [field]: result.error.issues[0].message,
-          }));
-        } else {
-          setClientErrors((prev) => ({ ...prev, [field]: undefined }));
-        }
-      }, 400);
-    },
-    []
-  );
-
-  const validateFieldImmediate = useCallback(
-    (field: keyof ClientErrors, value: string) => {
-      if (debounceTimers.current[field])
-        clearTimeout(debounceTimers.current[field]);
-      const result = clientSchema.shape[field].safeParse(value);
-      if (!result.success) {
-        setClientErrors((prev) => ({
-          ...prev,
-          [field]: result.error.issues[0].message,
-        }));
-      } else {
-        setClientErrors((prev) => ({ ...prev, [field]: undefined }));
-      }
-    },
-    []
-  );
   const { isAdmin } = useIsTeamMember();
 
   // Redirect if not loaded
@@ -139,83 +66,6 @@ export default function TeamDashboardPage() {
     ).length || 0;
 
   const createNewInEditor = () => router.push('/team/dashboard/new');
-
-  const handleGenerateProjectName = async () => {
-    if (!clientInfo.name.trim() || isGeneratingProjectName) return;
-
-    setIsGeneratingProjectName(true);
-    try {
-      const res = await fetch('/api/ai/generate-name', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          clientName: clientInfo.name,
-          description: clientInfo.projectDescription,
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error('Failed to generate project name');
-      }
-
-      const data = await res.json();
-      setClientInfo((prev) => ({
-        ...prev,
-        projectName: data.name || prev.projectName,
-      }));
-    } catch {
-      toast.error('Could not generate a project name');
-    } finally {
-      setIsGeneratingProjectName(false);
-    }
-  };
-
-  const handleClientSubmit = async () => {
-    const result = clientSchema.safeParse(clientInfo);
-    if (!result.success) {
-      const fieldErrors: ClientErrors = {};
-      for (const issue of result.error.issues) {
-        const field = issue.path[0] as keyof ClientErrors;
-        if (!fieldErrors[field]) fieldErrors[field] = issue.message;
-      }
-      setClientErrors(fieldErrors);
-      return;
-    }
-    setClientErrors({});
-    setIsSendingToEditor(true);
-    try {
-      const res = await fetch('/api/editor/handoff', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          projectConfig: {
-            projectName:
-              clientInfo.projectName || `${clientInfo.name} — Website`,
-            clientName: clientInfo.name,
-            clientEmail: clientInfo.email,
-            clientPhone: clientInfo.phone,
-            description: clientInfo.projectDescription,
-          },
-          mode: 'interactive',
-        }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        queryClient.invalidateQueries({ queryKey: ['team-projects'] });
-        queryClient.invalidateQueries({ queryKey: ['projects'] });
-        window.open(
-          data.editorUrl || `${EDITOR_URL}?handoff=${data.token}`,
-          '_blank'
-        );
-      } else {
-        window.open(EDITOR_URL, '_blank');
-      }
-    } catch {
-      window.open(EDITOR_URL, '_blank');
-    }
-    setIsSendingToEditor(false);
-    setShowClientModal(false);
-  };
 
   return (
     <div className="p-4 sm:p-5 max-w-7xl mx-auto min-h-full pb-0 w-full">
@@ -271,207 +121,6 @@ export default function TeamDashboardPage() {
           <TeamProjectsStats projects={projects || []} />
         )}
       </div>
-
-      {/* Client Info Modal */}
-      {showClientModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-          onClick={() => setShowClientModal(false)}
-        >
-          <div
-            className="relative mx-4 w-full max-w-md rounded-2xl border border-white/60 bg-white/75 p-6 shadow-[0_2px_20px_rgba(0,0,0,0.06)] backdrop-blur-2xl backdrop-saturate-150 dark:border-white/10 dark:bg-white/[0.08] dark:shadow-[0_2px_20px_rgba(0,0,0,0.22)]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setShowClientModal(false)}
-              className="absolute right-4 top-4 rounded-xl p-1.5 transition-colors hover:bg-white/55 dark:hover:bg-white/10"
-            >
-              <X className="w-4 h-4 text-gray-400 dark:text-white/50" />
-            </button>
-
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
-              New Project
-            </h2>
-            <p className="text-sm text-gray-500 dark:text-white/50 mb-5">
-              Enter client details for this project
-            </p>
-
-            <div className="space-y-4">
-              <div>
-                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
-                  Client Name *
-                </Label>
-                <Input
-                  placeholder={t('team.dashboard.namePlaceholder')}
-                  value={clientInfo.name}
-                  onChange={(e) => {
-                    const v = e.target.value;
-                    setClientInfo((prev) => ({ ...prev, name: v }));
-                    validateField('name', v);
-                  }}
-                  onBlur={() => validateFieldImmediate('name', clientInfo.name)}
-                  className={`mt-1 ${
-                    clientErrors.name
-                      ? 'border-red-400 dark:border-red-500/50'
-                      : ''
-                  }`}
-                />
-                {clientErrors.name && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {clientErrors.name}
-                  </p>
-                )}
-              </div>
-              <div>
-                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
-                  Client Email *
-                </Label>
-                <Input
-                  type="email"
-                  placeholder="john@example.com"
-                  value={clientInfo.email}
-                  onChange={(e) => {
-                    const v = e.target.value;
-                    setClientInfo((prev) => ({ ...prev, email: v }));
-                    validateField('email', v);
-                  }}
-                  onBlur={() =>
-                    validateFieldImmediate('email', clientInfo.email)
-                  }
-                  className={`mt-1 ${
-                    clientErrors.email
-                      ? 'border-red-400 dark:border-red-500/50'
-                      : ''
-                  }`}
-                />
-                {clientErrors.email && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {clientErrors.email}
-                  </p>
-                )}
-              </div>
-              <div>
-                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
-                  Client Phone
-                </Label>
-                <Input
-                  placeholder="+40 712 345 678"
-                  value={clientInfo.phone}
-                  onChange={(e) => {
-                    const v = e.target.value;
-                    setClientInfo((prev) => ({ ...prev, phone: v }));
-                    if (v) validateField('phone', v);
-                    else
-                      setClientErrors((prev) => ({
-                        ...prev,
-                        phone: undefined,
-                      }));
-                  }}
-                  onBlur={() => {
-                    if (clientInfo.phone)
-                      validateFieldImmediate('phone', clientInfo.phone);
-                  }}
-                  className={`mt-1 ${
-                    clientErrors.phone
-                      ? 'border-red-400 dark:border-red-500/50'
-                      : ''
-                  }`}
-                />
-                {clientErrors.phone && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {clientErrors.phone}
-                  </p>
-                )}
-              </div>
-
-              <div className="relative py-1">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-white/50 dark:border-white/10" />
-                </div>
-                <div className="relative flex justify-center">
-                  <span className="rounded-full border border-white/60 bg-white/80 px-3 text-xs font-medium uppercase tracking-[0.18em] text-gray-400 dark:border-white/10 dark:bg-white/[0.08] dark:text-white/40">
-                    Project Details
-                  </span>
-                </div>
-              </div>
-
-              <div>
-                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
-                  Project Name
-                </Label>
-                <div className="relative mt-1">
-                  <Input
-                    placeholder="e.g. Sunrise Bakery"
-                    value={clientInfo.projectName}
-                    onChange={(e) =>
-                      setClientInfo((prev) => ({
-                        ...prev,
-                        projectName: e.target.value,
-                      }))
-                    }
-                    className="pr-11"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleGenerateProjectName}
-                    disabled={
-                      isGeneratingProjectName || !clientInfo.name.trim()
-                    }
-                    className="absolute right-1 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md border border-white/60 bg-white/75 text-gray-500 transition-colors hover:border-white/80 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:bg-white/[0.08] dark:text-white/60 dark:hover:border-white/20 dark:hover:text-white"
-                    aria-label="Generate project name"
-                  >
-                    {isGeneratingProjectName ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <Sparkles className="h-3.5 w-3.5" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <Label className="text-sm font-medium text-gray-700 dark:text-white/70">
-                  Describe the project
-                </Label>
-                <textarea
-                  rows={3}
-                  placeholder="A website for a bakery in Bucharest specializing in sourdough bread and pastries..."
-                  value={clientInfo.projectDescription}
-                  onChange={(e) =>
-                    setClientInfo((prev) => ({
-                      ...prev,
-                      projectDescription: e.target.value,
-                    }))
-                  }
-                  className="file:text-foreground placeholder:text-muted-foreground mt-1 flex min-h-[72px] w-full min-w-0 rounded-xl border border-white/60 bg-white/65 px-2.5 py-2 text-sm text-gray-900 shadow-sm backdrop-blur-sm transition-[color,box-shadow,border-color,background-color] outline-none hover:border-white/80 focus:border-[var(--purple)]/70 focus-visible:border-[var(--purple)]/50 focus-visible:ring-1 focus-visible:ring-[var(--purple)]/20 dark:border-white/15 dark:bg-white/[0.08] dark:text-gray-100 dark:hover:border-white/25 dark:focus:border-white/40 dark:focus-visible:border-white/40 dark:focus-visible:ring-white/20 focus:shadow-none focus-visible:shadow-none resize-none"
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-3 mt-6">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={() => setShowClientModal(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="accent"
-                className="flex-1"
-                onClick={handleClientSubmit}
-                disabled={
-                  clientInfo.name.trim().length < 2 ||
-                  !clientInfo.email.includes('@') ||
-                  isSendingToEditor
-                }
-              >
-                {isSendingToEditor ? 'Opening Editor...' : 'Continue in Editor'}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* All Projects */}
       <div className="mb-8">

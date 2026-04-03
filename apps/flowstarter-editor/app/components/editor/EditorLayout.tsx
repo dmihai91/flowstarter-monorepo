@@ -161,7 +161,6 @@ export function EditorLayout({
     conversations,
     activeConversation,
     isLoadingConversations,
-    createConversation,
     selectConversation,
     renameConversation,
     deleteConversation,
@@ -183,16 +182,6 @@ export function EditorLayout({
   } = useResizablePanel(PANEL_CONFIG);
 
   const navigate = useNavigate();
-
-  const handleNewConversation = async () => {
-    const newConversationId = await createConversation();
-    closeSidebar();
-
-    // Navigate to the new conversation URL
-    if (newConversationId) {
-      navigate(`/project/${newConversationId}`);
-    }
-  };
 
   const handleSelectConversation = async (id: Parameters<typeof selectConversation>[0]) => {
     closeSidebar();
@@ -226,7 +215,6 @@ export function EditorLayout({
         isLoading={isLoadingConversations}
         onClose={closeSidebar}
         onSelectConversation={handleSelectConversation}
-        onNewConversation={handleNewConversation}
         onRenameConversation={renameConversation}
         onProjectNameChange={updateConversationProjectName}
         onDeleteConversation={deleteConversation}

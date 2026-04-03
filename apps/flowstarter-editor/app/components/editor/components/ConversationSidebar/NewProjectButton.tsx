@@ -1,20 +1,23 @@
 import React from 'react';
+import { ExternalLink } from 'lucide-react';
 import { useThemeStyles, getColors } from '~/components/editor/hooks';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
 import { PlusIcon } from './Icons';
 
-interface NewProjectButtonProps {
-  onClick: () => void;
-}
+const DASHBOARD_URL =
+  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_MAIN_PLATFORM_URL) ||
+  'https://flowstarter.dev';
 
-export function NewProjectButton({ onClick }: NewProjectButtonProps) {
+export function DashboardLinkButton() {
   const { isDark } = useThemeStyles();
   const colors = getColors(isDark);
 
   return (
     <div style={{ padding: '12px 16px' }}>
-      <button
-        onClick={onClick}
+      <a
+        href={`${DASHBOARD_URL}/team/dashboard/new`}
+        target="_blank"
+        rel="noopener noreferrer"
         style={{
           width: '100%',
           padding: '10px 14px',
@@ -32,11 +35,13 @@ export function NewProjectButton({ onClick }: NewProjectButtonProps) {
           fontSize: '13px',
           fontWeight: 500,
           transition: 'all 0.15s ease',
+          textDecoration: 'none',
         }}
       >
         <PlusIcon />
         {t(EDITOR_LABEL_KEYS.SIDEBAR_NEW_PROJECT)}
-      </button>
+        <ExternalLink size={10} style={{ opacity: 0.6 }} />
+      </a>
     </div>
   );
 }

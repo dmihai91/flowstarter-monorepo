@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useThemeStyles, getColors } from '~/components/editor/hooks';
 import { SidebarHeader } from './SidebarHeader';
 import { ConversationList } from './ConversationList';
+import { DashboardLinkButton } from './NewProjectButton';
 import type { ConversationSidebarProps } from './types';
 
 export type { ConversationSidebarProps } from './types';
@@ -77,6 +78,7 @@ export function ConversationSidebar({
               onProjectNameChange={onProjectNameChange}
               onDeleteConversation={onDeleteConversation}
             />
+            <DashboardLinkButton />
           </motion.div>
         </>
       )}

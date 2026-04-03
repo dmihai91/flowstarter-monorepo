@@ -6,7 +6,7 @@ const EXAMPLES = [
   'Boutique dental clinic for busy professionals. Polished website with online booking, implants and whitening focus, strong lead capture.',
   'Local yoga studio — in-person and online classes. Warm, calming vibe. Simple booking system and newsletter signup.',
   'Freelance graphic designer looking to showcase portfolio and attract branding clients. Minimal, modern aesthetic.',
-  'Family-run Italian restaurant in Cluj. Needs a menu, reservation form, and Google Maps. Warm and inviting tone.',
+  'Life coach helping burned-out professionals find clarity and purpose. Warm, empowering tone. Discovery call booking and lead capture.',
   'Personal fitness coach targeting women 30–45. Sells 1-on-1 coaching and online programs. Bold, motivational energy.',
   'Law firm specialising in corporate contracts. Professional, trustworthy tone. Contact form and service descriptions.',
   'Handmade ceramics store. Product showcase, Instagram feed integration, and Stripe checkout.',

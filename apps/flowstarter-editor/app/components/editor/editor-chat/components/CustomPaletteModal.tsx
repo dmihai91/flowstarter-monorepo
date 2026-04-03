@@ -51,7 +51,7 @@ export function CustomPaletteModal({
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e: React.MouseEvent) => e.stopPropagation()}
         className="w-full max-w-md p-6 rounded-2xl"
         style={{
           background: isDark ? '#14141e' : '#ffffff',

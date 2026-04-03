@@ -368,13 +368,11 @@ export function ConvexCodeEditor({ projectId, onSaveComplete }: ConvexCodeEditor
               background: colors.surfaceSubtle,
               transition: 'background 0.2s',
             }}
-            onMouseEnter={(e) => {
-              const target = e.currentTarget as unknown as HTMLElement;
-              target.style.background = isDark ? 'rgba(99, 102, 241, 0.5)' : 'rgba(99, 102, 241, 0.3)';
+            onMouseEnter={(e: React.MouseEvent<HTMLElement>) => {
+              e.currentTarget.style.background = isDark ? 'rgba(99, 102, 241, 0.5)' : 'rgba(99, 102, 241, 0.3)';
             }}
-            onMouseLeave={(e) => {
-              const target = e.currentTarget as unknown as HTMLElement;
-              target.style.background = colors.surfaceSubtle;
+            onMouseLeave={(e: React.MouseEvent<HTMLElement>) => {
+              e.currentTarget.style.background = colors.surfaceSubtle;
             }}
           />
 

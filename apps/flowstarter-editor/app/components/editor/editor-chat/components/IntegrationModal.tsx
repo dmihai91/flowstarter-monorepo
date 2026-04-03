@@ -530,7 +530,7 @@ function ConfigModal({ isDark, c, title, icon, iconColor, onClose, onSave, child
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}
         transition={{ duration: 0.2 }}
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e: React.MouseEvent) => e.stopPropagation()}
         style={{
           width: '400px',
           maxWidth: '90vw',

@@ -93,7 +93,7 @@ export function ConversationItem({
           setShowActions((prev) => !prev);
         }
       }}
-      onClick={(e) => {
+      onClick={(e: React.MouseEvent<HTMLDivElement>) => {
         if (isEditing) {
           return;
         }

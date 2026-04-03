@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 /**
  * POST /api/leads/capture
  * Public endpoint — called from generated client sites.
@@ -8,6 +6,8 @@
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { DatabaseExtended } from '@/lib/database-extensions.types';
 
 // Simple in-memory rate limit (per IP, 10 submissions per minute)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     const { name, email, phone, message, source, ...extra } = body;
     delete extra.projectId;
 
-    const supabase = createSupabaseServiceRoleClient();
+    const supabase = createSupabaseServiceRoleClient() as unknown as SupabaseClient<DatabaseExtended>;
 
     // Verify project exists
     const { data: project } = await supabase
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
       ip_address: ip,
       user_agent: request.headers.get('user-agent') || null,
       referrer: request.headers.get('referer') || null,
-      extra: Object.keys(extra).length > 0 ? extra : {},
+      extra: (Object.keys(extra).length > 0 ? extra : {}) as Record<string, string | number | boolean | null>,
       status: isSpam ? 'spam' : 'new',
     });
 

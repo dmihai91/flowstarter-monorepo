@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 /**
  * GET /api/leads/list?projectId=xxx&status=new&limit=50
  * Lists leads for a project. Requires auth.
@@ -9,6 +7,8 @@ import 'server-only';
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/api-auth';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { DatabaseExtended } from '@/lib/database-extensions.types';
 
 export async function GET(request: NextRequest) {
   await requireAuth();
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
   if (!projectId)
     return NextResponse.json({ error: 'projectId required' }, { status: 400 });
 
-  const supabase = createSupabaseServiceRoleClient();
+  const supabase = createSupabaseServiceRoleClient() as unknown as SupabaseClient<DatabaseExtended>;
 
   let query = supabase
     .from('leads')
@@ -59,7 +59,7 @@ export async function PATCH(request: NextRequest) {
   if (!body.leadId)
     return NextResponse.json({ error: 'leadId required' }, { status: 400 });
 
-  const supabase = createSupabaseServiceRoleClient();
+  const supabase = createSupabaseServiceRoleClient() as unknown as SupabaseClient<DatabaseExtended>;
   const update: Record<string, unknown> = {};
   if (body.status) update.status = body.status;
   if (body.notes !== undefined) update.notes = body.notes;

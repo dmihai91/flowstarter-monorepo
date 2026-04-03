@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 /**
  * Integration tests: Lead capture → Supabase persistence
  *
@@ -18,12 +16,13 @@ vi.mock('server-only', () => ({}));
 const insertedRows: Record<string, unknown>[] = [];
 const selectResults: Record<string, unknown> = {};
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const mockSupabase = {
   from: vi.fn((table: string) => {
     if (table === 'projects') {
       return {
-        select: () => ({
-          eq: () => ({
+        select: (..._args: any[]) => ({
+          eq: (..._eqArgs: any[]) => ({
             single: () =>
               Promise.resolve({
                 data: selectResults.project ?? { id: 'proj-test-123' },
@@ -39,11 +38,12 @@ const mockSupabase = {
           insertedRows.push(row);
           return Promise.resolve({ error: null });
         },
-        select: () => ({
-          eq: () => ({
-            order: () => ({
-              limit: () => ({
-                neq: () => Promise.resolve({ data: insertedRows, error: null }),
+        select: (..._args: any[]) => ({
+          eq: (..._eqArgs: any[]) => ({
+            order: (..._orderArgs: any[]) => ({
+              limit: (..._limitArgs: any[]) => ({
+                neq: (..._neqArgs: any[]) =>
+                  Promise.resolve({ data: insertedRows, error: null }),
               }),
             }),
           }),
@@ -51,13 +51,16 @@ const mockSupabase = {
       };
     }
     return {
-      select: () => ({
-        eq: () => ({ single: () => Promise.resolve({ data: null }) }),
+      select: (..._args: any[]) => ({
+        eq: (..._eqArgs: any[]) => ({
+          single: () => Promise.resolve({ data: null }),
+        }),
       }),
     };
   }),
-  rpc: vi.fn(() => Promise.resolve({ data: [], error: null })),
+  rpc: vi.fn((..._args: any[]) => Promise.resolve({ data: [], error: null })),
 };
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 vi.mock('@/supabase-clients/server', () => ({
   createSupabaseServiceRoleClient: () => mockSupabase,
@@ -115,7 +118,7 @@ async function simulateCapture(body: Record<string, unknown>, ip = '1.2.3.4') {
     status: isSpam ? 'spam' : 'new',
   };
 
-  const result = await mockSupabase.from('leads').insert(row);
+  const result = await (mockSupabase.from('leads') as { insert: (r: Record<string, unknown>) => Promise<{ error: string | null }> }).insert(row);
   if (result.error) return { status: 500, error: 'Failed to save' };
 
   return { status: 200, success: true, row };

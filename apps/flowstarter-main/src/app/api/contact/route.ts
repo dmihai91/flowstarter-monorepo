@@ -1,21 +1,7 @@
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import { NextRequest, NextResponse } from 'next/server';
-
-type ContactSubmissionInsert = {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-  created_at: string;
-};
-
-type ContactSubmissionClient = {
-  from: (table: 'contact_submissions') => {
-    insert: (
-      values: ContactSubmissionInsert
-    ) => Promise<{ error: { message: string } | null }>;
-  };
-};
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { DatabaseExtended } from '@/lib/database-extensions.types';
 
 export async function POST(request: NextRequest) {
   try {
@@ -40,12 +26,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Create Supabase client with service role (bypasses RLS)
-    const supabase = createSupabaseServiceRoleClient();
-    const contactSubmissionClient =
-      supabase as unknown as ContactSubmissionClient;
+    const supabase = createSupabaseServiceRoleClient() as unknown as SupabaseClient<DatabaseExtended>;
 
     // Insert into contact_submissions table
-    const { error } = await contactSubmissionClient
+    const { error } = await supabase
       .from('contact_submissions')
       .insert({
         name,

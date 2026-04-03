@@ -102,20 +102,11 @@ function needsWorkspaceRestoration(state: Partial<InitialChatState> & Record<str
  */
 function getSuggestedRepliesForStep(step: string, state: Partial<InitialChatState>): string[] {
   switch (step) {
-    case 'welcome':
-    case 'describe':
-      return ['I run a fitness studio', 'I have a restaurant', 'I offer consulting services'];
-    case 'name':
-      if (state.projectName) {
-        return ['Use this name', 'Make it punchy', 'Try another'];
-      }
-
-      return ['Suggest a name', 'I have my own'];
-    case 'business-summary':
-      return state.businessInfo ? ['Looks good!', 'Let me adjust something'] : ['Skip and continue'];
-    case 'template':
+    case 'review':
       return [];
     case 'personalization':
+      return [];
+    case 'integrations':
       return [];
     case 'ready':
       return ['Make some changes', 'Try different colors', 'Add more sections'];
@@ -167,7 +158,7 @@ describe('validateInitialState', () => {
     expect(result.missing).toContain('projectUrlId');
   });
   it('accepts minimal valid state', () => {
-    const minimalState = { step: 'describe' as const, projectUrlId: 'test-123' };
+    const minimalState = { step: 'review' as const, projectUrlId: 'test-123' };
     const result = validateInitialState(minimalState);
     expect(result.valid).toBe(true);
   });
@@ -213,31 +204,10 @@ describe('needsWorkspaceRestoration', () => {
   });
 });
 describe('getSuggestedRepliesForStep', () => {
-  it('returns service prompts for welcome/describe steps', () => {
-    const replies = getSuggestedRepliesForStep('describe', {});
-    expect(replies.length).toBeGreaterThan(0);
-    expect(replies.some((r) => r.includes('fitness') || r.includes('restaurant'))).toBe(true);
-  });
-  it('returns name suggestions when name exists', () => {
-    const replies = getSuggestedRepliesForStep('name', { projectName: 'My Bakery' });
-    expect(replies).toContain('Use this name');
-    expect(replies).toContain('Try another');
-  });
-  it('returns generate option when no name', () => {
-    const replies = getSuggestedRepliesForStep('name', {});
-    expect(replies).toContain('Suggest a name');
-  });
-  it('returns confirmation options for business-summary with info', () => {
-    const replies = getSuggestedRepliesForStep('business-summary', { businessInfo: MOCK_BUSINESS_INFO });
-    expect(replies).toContain('Looks good!');
-  });
-  it('returns skip option for business-summary without info', () => {
-    const replies = getSuggestedRepliesForStep('business-summary', {});
-    expect(replies).toContain('Skip and continue');
-  });
-  it('returns empty for template and personalization steps', () => {
-    expect(getSuggestedRepliesForStep('template', {})).toHaveLength(0);
+  it('returns empty for review, personalization, integrations steps', () => {
+    expect(getSuggestedRepliesForStep('review', {})).toHaveLength(0);
     expect(getSuggestedRepliesForStep('personalization', {})).toHaveLength(0);
+    expect(getSuggestedRepliesForStep('integrations', {})).toHaveLength(0);
   });
   it('returns modification options for ready step', () => {
     const replies = getSuggestedRepliesForStep('ready', FULL_INITIAL_STATE);
@@ -320,7 +290,7 @@ describe('business info restoration', () => {
     expect(partial.uvp).toBe('Just the basics');
   });
   it('handles undefined business info', () => {
-    const state: Partial<InitialChatState> = { step: 'template' };
+    const state: Partial<InitialChatState> = { step: 'review' };
     expect(state.businessInfo).toBeUndefined();
   });
 });

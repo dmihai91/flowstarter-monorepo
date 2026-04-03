@@ -50,38 +50,21 @@ export interface AttachedImage {
  */
 
 /**
- * Streamlined onboarding flow:
- * welcome → describe → name → quick-profile → business-uvp → template → personalization → creating → ready
+ * Handoff-only onboarding flow:
+ * review → personalization → integrations → creating → ready
  *
- * Legacy steps are preserved for backward compatibility but deprecated.
+ * Projects are always created from the dashboard via handoff.
  */
 export type OnboardingStep =
-  | 'welcome' // Greeting + showcase (=== STREAMLINED FLOW ===)
-  | 'describe' // What do you sell + who is it for?
-  | 'name' // Project/business name
-  | 'quick-profile' // Goal + Offer + Tone - 3 multiple choice
-  | 'business-details' // Consolidated: UVP + offerings + contact info
   | 'review' // Handoff-backed review before first build
-  | 'template' // Pick from recommended templates
   | 'personalization' // Logo + Colors + Font
   | 'integrations' // Calendly + GA integration cards
   | 'creating' // Build in progress
-  | 'ready' // Done!
-
-  // === LEGACY STEPS (deprecated, kept for migration) ===
-  | 'business-uvp' // @deprecated - merged into business-details
-  | 'business-offering' // @deprecated - merged into business-details
-  | 'business-contact' // @deprecated - merged into business-details
-  | 'business-audience' // @deprecated - merged into describe
-  | 'business-goals' // @deprecated - merged into quick-profile
-  | 'business-tone' // @deprecated - merged into quick-profile
-  | 'business-selling' // @deprecated - merged into quick-profile
-  | 'business-pricing' // @deprecated - merged into quick-profile
-  | 'business-summary'; // @deprecated - removed
+  | 'ready'; // Done!
 
 /*
  * ═══════════════════════════════════════════════════════════════════════════
- * QUICK PROFILE - Replaces 8 business discovery steps
+ * QUICK PROFILE (used by build-phase inference & templates)
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -95,33 +78,14 @@ export type OfferType = 'high-ticket' | 'low-ticket' | 'free';
 export type BrandTone = 'professional' | 'bold' | 'friendly';
 
 /**
- * QuickProfile - The 3 essential choices collected in one step
- * Everything else is auto-inferred from the description
+ * QuickProfile - The 3 essential choices collected during dashboard project creation.
+ * Used by build-phase inference and structural templates.
  */
 export interface QuickProfile {
-  goal: BusinessGoal; // leads | sales | bookings
-  offerType: OfferType; // high-ticket | low-ticket | free
-  tone: BrandTone; // professional | bold | friendly
+  goal: BusinessGoal;
+  offerType: OfferType;
+  tone: BrandTone;
 }
-
-/** Display labels for quick profile options (icons are Lucide icon names) */
-export const QUICK_PROFILE_OPTIONS = {
-  goal: {
-    leads: { label: 'Get Leads', description: 'Collect inquiries & contact info', icon: 'mail' },
-    sales: { label: 'Make Sales', description: 'Sell products or services directly', icon: 'credit-card' },
-    bookings: { label: 'Get Bookings', description: 'Schedule appointments & sessions', icon: 'calendar' },
-  },
-  offerType: {
-    'high-ticket': { label: 'Premium', description: '€500+ per client', icon: 'gem' },
-    'low-ticket': { label: 'Accessible', description: 'Under €500 per client', icon: 'tag' },
-    free: { label: 'Free First', description: 'Free consultation or trial', icon: 'gift' },
-  },
-  tone: {
-    professional: { label: 'Professional', description: 'Polished & trustworthy', icon: 'briefcase' },
-    bold: { label: 'Bold', description: 'Energetic & confident', icon: 'zap' },
-    friendly: { label: 'Friendly', description: 'Warm & approachable', icon: 'smile' },
-  },
-} as const;
 
 /*
  * ═══════════════════════════════════════════════════════════════════════════
@@ -319,14 +283,9 @@ export interface CategoryColors {
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-/** New streamlined step order */
+/** Handoff-only step order */
 export const STREAMLINED_STEPS: OnboardingStep[] = [
-  'welcome',
-  'describe',
-  'name',
-  'quick-profile',
-  'business-details',
-  'template',
+  'review',
   'personalization',
   'integrations',
   'creating',

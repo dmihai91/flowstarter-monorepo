@@ -214,47 +214,19 @@ export function getNextStepFromCurrent(
   _hasContact?: boolean,
 ): OnboardingStep {
   switch (currentStep) {
-    case 'welcome':
-      return 'describe';
-    case 'describe':
-      return hasDescription ? 'quick-profile' : 'describe';
-    case 'quick-profile':
-      return hasQuickProfile ? 'template' : 'quick-profile';
-    case 'template':
-      return hasTemplate ? 'personalization' : 'template';
+    case 'review':
+      return 'personalization';
     case 'personalization':
       return hasPersonalization ? 'creating' : 'personalization';
+    case 'integrations':
+      return 'creating';
     case 'creating':
       return 'ready';
     case 'ready':
       return 'ready';
-
-    // Legacy steps — redirect
-    case 'business-offering':
-    case 'business-contact':
-      return 'template';
     default:
-      return migrateFromLegacyStep(currentStep);
+      return 'review';
   }
-}
-
-function migrateFromLegacyStep(legacyStep: OnboardingStep): OnboardingStep {
-  // Map old steps to new flow
-  const legacyMap: Record<string, OnboardingStep> = {
-    name: 'describe',
-    'business-uvp': 'quick-profile', // legacy → streamlined
-    'business-offering': 'business-uvp',
-    'business-contact': 'business-offering',
-    'business-audience': 'quick-profile',
-    'business-goals': 'quick-profile',
-    'business-tone': 'quick-profile',
-    'business-selling': 'quick-profile',
-    'business-pricing': 'quick-profile',
-    'business-summary': 'template',
-    integrations: 'ready',
-  };
-
-  return legacyMap[legacyStep] || 'welcome';
 }
 
 /*
@@ -297,71 +269,20 @@ export function generateOnboardingResponse(context: OnboardingContext): Onboardi
   } = context;
 
   switch (step) {
-    case 'welcome':
-      return getWelcomeMessage(userName);
-
-    case 'describe':
-      if (description) {
-        const inference = inferBusinessInfo(description);
-        return getDescribeAckMessage(description, inference);
-      }
-
-      return getWelcomeMessage(userName);
-
-    case 'quick-profile':
-      if (quickProfile) {
-        return getQuickProfileAckMessage(quickProfile);
-      }
-
-      // Show quick profile selector (handled by component)
+    case 'review':
       return {
-        content: "Let's personalize your site with 3 quick choices:",
-        showQuickProfile: true,
-      };
-
-    case 'business-uvp':
-      if (uvp || uvpSkipped) {
-        return getUvpAckMessage(uvp || '', uvpSkipped || false);
-      }
-
-      return getUvpPromptMessage();
-
-    case 'business-offering':
-      if (offerings) {
-        return {
-          content: `Got it! I'll make sure your site highlights your offering clearly.\n\nNow, how should visitors reach you?`,
-        };
-      }
-
-      return {
-        content: `**What do you offer?** 📦\n\nDescribe your main packages, services, or products. Include pricing if you'd like it on the site.\n\nFor example: "1-hour coaching session (€120), 3-session package (€300), VIP day (€800)"`,
-      };
-
-    case 'business-contact':
-      if (contactInfo) {
-        return {
-          content: `Perfect, I have your contact details! Let\'s pick a template for your site.`,
-        };
-      }
-
-      return {
-        content: `**How can clients reach you?** 📬\n\nShare your business contact details (we\'ll add these to your site):\n- Email\n- Phone number\n- Address (optional)\n- Website (optional)`,
-      };
-
-    case 'template':
-      if (templateName) {
-        return getTemplateAckMessage(templateName);
-      }
-
-      return {
-        content: 'Pick a template that fits your style:',
-        showTemplateSelector: true,
+        content: 'Review your project setup below, then confirm when ready to build.',
       };
 
     case 'personalization':
       return {
         content: 'Add your brand touches - logo, colors, and fonts:',
         showPersonalization: true,
+      };
+
+    case 'integrations':
+      return {
+        content: 'Connect your services - booking, newsletter, and more.',
       };
 
     case 'creating':
@@ -377,8 +298,9 @@ export function generateOnboardingResponse(context: OnboardingContext): Onboardi
       };
 
     default:
-      // Handle any legacy steps
-      return getWelcomeMessage(userName);
+      return {
+        content: 'Review your project setup below, then confirm when ready to build.',
+      };
   }
 }
 

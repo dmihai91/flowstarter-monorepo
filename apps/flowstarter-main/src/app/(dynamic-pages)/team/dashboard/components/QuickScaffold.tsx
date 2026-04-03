@@ -6,7 +6,6 @@ import {
   Wand2,
   ChevronDown,
   ArrowRight,
-  Loader2,
   X,
   User,
   Mail,
@@ -61,8 +60,6 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
   });
   const [description, setDescription] = useState('');
   const [step, setStep] = useState<'client' | 'describe'>('client');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const placeholder = PLACEHOLDER_DESCRIPTIONS[0];
 
   const clientComplete =
@@ -75,55 +72,17 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
     setStep('describe');
   }, [clientComplete]);
 
-  const handleGenerate = useCallback(async () => {
+  const handleGenerate = useCallback(() => {
     if (!description.trim()) return;
-    setLoading(true);
-    setError(null);
-
     try {
-      const res = await fetch('/api/engine/concierge', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          description,
-          client: {
-            name: client.name || undefined,
-            email: client.email || undefined,
-            phone: client.phone || undefined,
-          },
-        }),
-      });
-
-      if (!res.ok) throw new Error('AI request failed');
-      const data = await res.json();
-
-      // Persist a quick scaffold draft, then continue in New Project
-      const draftRes = await fetch('/api/projects/draft', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          projectConfig: {
-            name: client.name ? `${client.name} Draft` : 'Quick Draft',
-            description,
-            currentStep: 'review',
-            clientInfo: client,
-            userInput: description,
-            businessInfo: {
-              summary: description,
-            },
-            flowstarterEngine: data,
-          },
-        }),
-      });
-      if (!draftRes.ok) throw new Error('Failed to save draft');
-      const { projectId } = (await draftRes.json()) as { projectId: string };
-
-      router.push('/team/dashboard/new?draft=' + projectId);
+      sessionStorage.setItem(
+        'flowstarter_quick_scaffold_data',
+        JSON.stringify({ clientInfo: client, description })
+      );
     } catch {
-      setError('Something went wrong. Try again or continue in New Project.');
-    } finally {
-      setLoading(false);
+      // sessionStorage unavailable — will fall through to wizard without pre-fill
     }
+    router.push('/team/dashboard/new');
   }, [description, client, router]);
 
   return (
@@ -227,7 +186,6 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
             rows={4}
             className="w-full px-3 py-2.5 text-sm rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/20 focus:outline-none focus:border-[var(--purple)]/50 transition-colors resize-none"
           />
-          {error && <p className="text-xs text-red-500">{error}</p>}
           <div className="flex gap-2">
             <button
               onClick={() => setStep('client')}
@@ -237,18 +195,10 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
             </button>
             <button
               onClick={handleGenerate}
-              disabled={!description.trim() || loading}
+              disabled={!description.trim()}
               className="flex flex-1 items-center justify-center gap-2 py-2.5 rounded-xl bg-[var(--purple)] text-white text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--purple)]/90 transition-all"
             >
-              {loading ? (
-                <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" /> Analysing...
-                </>
-              ) : (
-                <>
-                  <Wand2 className="w-3.5 h-3.5" /> Generate brief
-                </>
-              )}
+              <ArrowRight className="w-3.5 h-3.5" /> Continue to wizard
             </button>
           </div>
           <p className="text-[0.6rem] text-gray-400 dark:text-white/25 text-center">

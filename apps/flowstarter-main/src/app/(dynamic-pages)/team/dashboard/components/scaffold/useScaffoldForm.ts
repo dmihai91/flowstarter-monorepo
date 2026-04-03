@@ -17,7 +17,8 @@ export type ScaffoldPhase =
   | 'clarify'
   | 'review'
   | 'template'
-  | 'payment';
+  | 'personalization'
+  | 'build';
 
 // ── Enums (mirrors editor-engine contracts) ────────────────────────────────────
 
@@ -538,7 +539,11 @@ export function useScaffoldForm() {
 
   // ── Phase transitions ──────────────────────────────────────────────────────
   const proceedToTemplate = useCallback(() => setPhase('template'), []);
-  const proceedToPayment = useCallback(() => setPhase('payment'), []);
+  const proceedToPersonalization = useCallback(
+    () => setPhase('personalization'),
+    []
+  );
+  const proceedToBuild = useCallback(() => setPhase('build'), []);
 
   // ── Review navigation ──────────────────────────────────────────────────────
   const nextStep = useCallback(
@@ -750,11 +755,15 @@ export function useScaffoldForm() {
 
       switch (draft.currentStep) {
         case 'template':
-        case 'payment':
+        case 'personalization':
+        case 'build':
         case 'review':
         case 'input':
         case 'client':
           setPhase(draft.currentStep);
+          break;
+        case 'payment':
+          setPhase('build');
           break;
         default:
           if (draft.template?.id) {
@@ -833,11 +842,12 @@ export function useScaffoldForm() {
     templateRecommendations,
     templateReasons,
     proceedToTemplate,
-    // Payment
+    proceedToPersonalization,
+    proceedToBuild,
+    // Payment (kept for handoff payload)
     planName,
     setPlanName,
     setupFee,
     setSetupFee,
-    proceedToPayment,
   };
 }

@@ -41,5 +41,21 @@
   "dependencies": {
     "@fontsource-variable/plus-jakarta-sans": "^5.2.8",
     "stripe": "^20.4.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.1.0",
+      "@types/react-dom": "19.1.2",
+      "wrangler": "^4.42.1",
+      "jsondiffpatch": "^0.7.2",
+      "@typescript-eslint/utils": "^8.0.0"
+    },
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "wrangler": "4",
+        "react": "19",
+        "react-dom": "19"
+      }
+    }
   }
 }

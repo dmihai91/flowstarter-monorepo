@@ -5,6 +5,7 @@
  */
 
 import { type ActionFunctionArgs, json } from '@remix-run/cloudflare';
+import { checkRateLimit, getRateLimitKey } from '~/lib/rateLimit';
 
 const OPENROUTER_API_KEY = process.env.OPEN_ROUTER_API_KEY;
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
@@ -28,6 +29,15 @@ interface LogoGenerationResponse {
 }
 
 export async function action({ request }: ActionFunctionArgs): Promise<Response> {
+  const rlKey = getRateLimitKey(request, 'api.generate-logo');
+  const rl = checkRateLimit(rlKey, 10, 60 * 60 * 1000);
+  if (rl.limited) {
+    return json<LogoGenerationResponse>(
+      { success: false, error: 'Rate limit exceeded' },
+      { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } }
+    );
+  }
+
   if (!OPENROUTER_API_KEY) {
     return json<LogoGenerationResponse>(
       {

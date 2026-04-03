@@ -5,6 +5,25 @@
 import 'server-only';
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/api-auth';
+import { z } from 'zod';
+
+const CalendlySchema = z.object({
+  integration: z.literal('calendly'),
+  action: z.enum(['connect', 'disconnect']).optional(),
+  calendlyUrl: z.string().url().optional(),
+  calendlyApiKey: z.string().max(500).optional(),
+});
+
+const AnalyticsSchema = z.object({
+  integration: z.literal('analytics'),
+  action: z.enum(['connect', 'disconnect']).optional(),
+  gaPropertyId: z.string().max(50).optional(),
+});
+
+const IntegrationBodySchema = z.discriminatedUnion('integration', [
+  CalendlySchema,
+  AnalyticsSchema,
+]);
 import {
   buildProjectIntegrationUpdate,
   readProjectIntegrationSnapshot,
@@ -68,14 +87,23 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
   const { userId } = authResult;
   const { id: projectId } = await context.params;
-  const body = (await request.json()) as {
-    integration: 'calendly' | 'analytics';
-    calendlyUrl?: string;
-    calendlyApiKey?: string;
-    gaPropertyId?: string;
-    action?: 'connect' | 'disconnect';
-  };
 
+  let rawBody: unknown;
+  try {
+    rawBody = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
+
+  const parseResult = IntegrationBodySchema.safeParse(rawBody);
+  if (!parseResult.success) {
+    return NextResponse.json(
+      { error: 'Validation error', details: parseResult.error.flatten().fieldErrors },
+      { status: 400 }
+    );
+  }
+
+  const body = parseResult.data;
   const supabase = createSupabaseServiceRoleClient();
 
   // Verify project exists

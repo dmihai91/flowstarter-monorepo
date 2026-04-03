@@ -133,7 +133,7 @@ export function useConversations(initialConversationId?: Id<'conversations'>): U
   const [localMessages, setLocalMessages] = useState<ConversationMessage[]>([]);
   const syncDebounceRef = useRef<NodeJS.Timeout | null>(null);
   const pendingMessagesRef = useRef<ConversationMessage[] | null>(null);
-  const _hasInitializedRef = useRef(false);
+  const hasInitializedRef = useRef(false);
 
   // Queries - if initialConversationId is provided, use it directly
   const conversationsData = useQuery(api.conversations.getBySessionId, { sessionId });
@@ -275,7 +275,7 @@ export function useConversations(initialConversationId?: Id<'conversations'>): U
     async (id: Id<'conversations'>) => {
       // Look up conversation to get supabaseProjectId before deleting
       const convo = conversationsData?.find((c) => c._id === id);
-      const _project = convo?.projectId ? await null : null; // project info comes from Convex mutation
+      const project = convo?.projectId ? await null : null; // project info comes from Convex mutation
 
       // The mutation returns any associated workspace IDs that need cleanup
       const result = await deleteMutation({ id });

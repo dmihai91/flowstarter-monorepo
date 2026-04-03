@@ -85,7 +85,7 @@ function extractImports(content: string): ImportInfo[] {
   }
 
   // Match import statements
-  const _importRegex =
+  const importRegex =
     /^(import\s+(?:(?:\{[^}]*\}|\*\s+as\s+\w+|\w+)(?:\s*,\s*(?:\{[^}]*\}|\w+))?\s+from\s+)?['"]([^'"]+)['"];?\s*)$/gm;
 
   for (let i = 0; i < frontmatterEnd; i++) {

@@ -10,11 +10,11 @@ import type {
   ChatMessage,
   SuggestedReply,
   ColorPalette,
-  _SystemFont,
+  SystemFont,
   OnboardingStep,
   BusinessInfo,
   PreviewInfo,
-  _BuildPhase,
+  BuildPhase,
   InitialChatState,
 } from '~/components/editor/editor-chat/types';
 import type { Template } from '~/components/onboarding';

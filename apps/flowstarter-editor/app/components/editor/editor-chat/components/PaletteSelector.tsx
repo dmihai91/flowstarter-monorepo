@@ -31,8 +31,8 @@ export function PaletteSelector({
   templatePalette,
   isDark,
   onSelect,
-  _onCustomClick,
-  _customColors,
+  onCustomClick,
+  customColors,
   templatePalettes,
 }: PaletteSelectorProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);

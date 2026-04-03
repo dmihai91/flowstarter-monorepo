@@ -29,7 +29,6 @@ export * from './planner-agent-schemas';
 const MASTER_MODEL = 'anthropic/claude-opus-4-6';
 
 export class PlannerAgent extends BaseAgent {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private readonly approvalThreshold: number;
 
   constructor(approvalThreshold: number = 7) {
@@ -85,7 +84,6 @@ but you make the strategic decisions.`,
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async handlePlan(request: PlanRequestDTO, context: AgentContext): Promise<AgentResponse> {
     context.onProgress?.('Creating modification plan with Opus 4...', 20);
 
@@ -110,7 +108,6 @@ but you make the strategic decisions.`,
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async handleReview(request: PlanRequestDTO, context: AgentContext): Promise<AgentResponse> {
     context.onProgress?.('Reviewing generated output with Opus 4...', 20);
 
@@ -141,7 +138,6 @@ but you make the strategic decisions.`,
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async handleEscalate(request: PlanRequestDTO, context: AgentContext): Promise<AgentResponse> {
     context.onProgress?.('Analyzing escalation with Opus 4...', 20);
 
@@ -175,7 +171,6 @@ but you make the strategic decisions.`,
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private createErrorResponse(error: string): AgentResponse {
     const response: PlannerResponseDTO = {
       type: 'plan',

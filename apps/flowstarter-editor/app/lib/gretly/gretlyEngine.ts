@@ -31,11 +31,8 @@ const logger = createScopedLogger('Gretly');
  * Phase execution is delegated to standalone functions in gretly-phases.ts.
  */
 export class Gretly {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private config: ResolvedConfig;
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private currentPhase: GretlyPhase = 'idle';
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private phases: GretlyPhase[] = [];
 
   constructor(config: GretlyConfig = {}) {
@@ -252,7 +249,6 @@ export class Gretly {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private setPhase(phase: GretlyPhase): void {
     this.currentPhase = phase;
     this.phases.push(phase);

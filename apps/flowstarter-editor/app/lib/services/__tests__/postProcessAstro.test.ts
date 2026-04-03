@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { fixContentImports } from '~/lib/services/postProcessAstro';
-import type { GeneratedFile } from '~/lib/services/claude-agent/types';
+import { fixContentImports } from '../postProcessAstro';
+import type { GeneratedFile } from '../claude-agent/types';
 
 function astroFile(content: string, path = 'src/pages/index.astro'): GeneratedFile {
   return { path, content };

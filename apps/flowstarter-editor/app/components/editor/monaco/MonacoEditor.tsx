@@ -6,8 +6,8 @@
  */
 
 import { memo, useCallback, useRef, useState, useEffect } from 'react';
-import Editor, { type OnMount, type OnChange, type _Monaco } from '@monaco-editor/react';
-import { _getLanguageFromExtension } from '~/utils/getLanguageFromExtension';
+import Editor, { type OnMount, type OnChange, type Monaco } from '@monaco-editor/react';
+import { getLanguageFromExtension } from '~/utils/getLanguageFromExtension';
 
 // Type alias for Monaco editor instance
 type MonacoEditor = Parameters<OnMount>[0];

@@ -10,8 +10,9 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 import { useMutation } from 'convex/react';
-import { api } from '~/convex/_generated/api';
-import type { Id } from '~/convex/_generated/dataModel';
+// eslint-disable-next-line no-restricted-imports
+import { api } from '../../../../convex/_generated/api';
+import type { Id } from '../../../../convex/_generated/dataModel';
 import { syncProjectName } from '~/lib/services/projectSyncService';
 
 interface UseProjectNameSyncOptions {

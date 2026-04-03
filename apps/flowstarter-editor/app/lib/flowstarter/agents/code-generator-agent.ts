@@ -79,7 +79,6 @@ you execute them precisely.`,
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async handleGenerate(request: GenerateRequestDTO, context: AgentContext): Promise<AgentResponse> {
     context.onProgress?.('Generating code with Kimi K2 (Groq)...', 10);
 
@@ -119,7 +118,6 @@ you execute them precisely.`,
     return { message: this.createMessage('agent', JSON.stringify(result)), complete: true };
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async handleRefine(request: GenerateRequestDTO, context: AgentContext): Promise<AgentResponse> {
     context.onProgress?.('Refining code based on feedback...', 10);
 
@@ -165,7 +163,6 @@ you execute them precisely.`,
     return { message: this.createMessage('agent', JSON.stringify(result)), complete: true };
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async handleFixApply(request: GenerateRequestDTO, context: AgentContext): Promise<AgentResponse> {
     context.onProgress?.('Applying fix...', 50);
 
@@ -188,7 +185,6 @@ you execute them precisely.`,
     return { message: this.createMessage('agent', JSON.stringify(result)), complete: true };
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async generateFile(
     modification: { path: string; instructions: string },
     request: GenerateRequestDTO,
@@ -215,7 +211,6 @@ you execute them precisely.`,
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async refineFile(
     path: string,
     originalContent: string,
@@ -237,7 +232,6 @@ you execute them precisely.`,
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private createErrorResponse(error: string): AgentResponse {
     const result: GenerateResultDTO = { success: false, files: {}, error };
     return {

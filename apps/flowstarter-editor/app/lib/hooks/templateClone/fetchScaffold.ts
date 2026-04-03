@@ -98,7 +98,7 @@ async function fetchScaffoldDataStreaming(
               console.log(`✓ Cloned ${msg.count} files for "${templateSlug}"`);
               break;
           }
-        } catch (_parseError) {
+        } catch (parseError) {
           console.warn('Failed to parse streaming message:', line);
         }
       }

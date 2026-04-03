@@ -7,7 +7,7 @@
  */
 
 import { useCallback, useEffect, useRef } from 'react';
-import type { Id } from '~/convex/_generated/dataModel';
+import type { Id } from '../../../../convex/_generated/dataModel';
 import type { InitialChatState } from '~/components/editor/editor-chat/types';
 import { createScopedLogger } from '~/utils/logger';
 

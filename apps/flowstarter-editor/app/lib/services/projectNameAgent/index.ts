@@ -173,7 +173,7 @@ function resolveOptions(
 /**
  * Parse LLM response into name options and filter banned words
  */
-function parseAndFilterNames(response: string, _projectDescription: string): string[] {
+function parseAndFilterNames(response: string, projectDescription: string): string[] {
   const rawOptions = response
     .split('\n')
     .map((line) =>

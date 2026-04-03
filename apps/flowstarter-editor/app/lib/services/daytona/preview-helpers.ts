@@ -282,7 +282,7 @@ export async function setupPreviewUrl(
     return null;
   }
 
-  const { url: previewUrl, port: workingPort } = previewResult;
+  let { url: previewUrl, port: workingPort } = previewResult;
 
   log.debug(` Preview URL: ${previewUrl} (port ${workingPort})`);
 

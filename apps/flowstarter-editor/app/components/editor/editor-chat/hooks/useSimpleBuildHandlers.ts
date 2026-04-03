@@ -30,7 +30,7 @@ export function useSimpleBuildHandlers({
   paletteHook,
   businessHook,
   selectedFont,
-  _selectedLogo,
+  selectedLogo,
   setSelectedFont,
   setSelectedLogo,
   setConvexProjectId,
@@ -336,9 +336,6 @@ export function useSimpleBuildHandlers({
         ]);
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       flowHook,

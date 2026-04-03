@@ -227,7 +227,6 @@ export abstract class BaseAgent {
   /** Called when receiving a message from another agent. Override in subclass. */
   protected async onAgentMessage(_fromAgent: string, _message: AgentMessage, _context: AgentContext): Promise<void> {}
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private addToHistory(message: AgentMessage): void {
     this.history.push(message);
 
@@ -238,7 +237,6 @@ export abstract class BaseAgent {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private generateExecutionId(): string {
     return `${this.config.name}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   }

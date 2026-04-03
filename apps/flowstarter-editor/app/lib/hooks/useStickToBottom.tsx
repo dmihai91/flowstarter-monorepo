@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState, type _MutableRefObject } from 'react';
+import { useCallback, useMemo, useRef, useState, type MutableRefObject } from 'react';
 import type { StickToBottomOptions, StickToBottomState } from './stick-to-bottom-types';
 import {
   STICK_TO_BOTTOM_OFFSET_PX,

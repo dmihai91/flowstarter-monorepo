@@ -41,7 +41,7 @@ import { useBusinessContext } from './useBusinessContext';
 import { normalizeHandoffStep } from './handoffState';
 
 // Types
-import type { PreviewInfo, InitialChatState, _OnboardingStep } from '~/components/editor/editor-chat/types';
+import type { PreviewInfo, InitialChatState, OnboardingStep } from '~/components/editor/editor-chat/types';
 
 // Re-export PreviewSource from useAdditionalState
 export type { PreviewSource } from './useAdditionalState';

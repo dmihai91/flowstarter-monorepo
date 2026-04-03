@@ -28,8 +28,7 @@ export interface BusinessInfo {
   pricingOffers?: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-interface _BusinessInfoResponse {
+interface BusinessInfoResponse {
   success: true;
   info: BusinessInfo;
 }

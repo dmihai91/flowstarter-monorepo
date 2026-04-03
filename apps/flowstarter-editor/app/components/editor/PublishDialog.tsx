@@ -166,7 +166,7 @@ function StepIndicator({ step, currentStep, label }: { step: PublishStep; curren
 
   const isDone = currentStep === 'done' || currentIdx > stepIdx;
   const isActive = currentStep === step;
-  const _isPending = currentIdx < stepIdx && currentStep !== 'done';
+  const isPending = currentIdx < stepIdx && currentStep !== 'done';
 
   return (
     <div className="flex items-center gap-3">

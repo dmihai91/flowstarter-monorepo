@@ -316,7 +316,7 @@ success:
  * ============================================
  */
 
-export function generateSocialFeedMd(_businessInfo: any): string {
+export function generateSocialFeedMd(businessInfo: any): string {
   return `---
 enabled: false
 provider: null

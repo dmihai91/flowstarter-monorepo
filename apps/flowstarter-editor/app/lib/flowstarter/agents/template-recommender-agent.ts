@@ -12,7 +12,7 @@ import { generateCompletion } from '~/lib/services/llm';
 import { createScopedLogger } from '~/utils/logger';
 import type { Template } from '~/components/editor/template-preview/types';
 
-const _logger = createScopedLogger('TemplateRecommenderAgent');
+const logger = createScopedLogger('TemplateRecommenderAgent');
 
 /*
  * ============================================================================
@@ -183,7 +183,6 @@ export class TemplateRecommenderAgent extends BaseAgent {
    * ──────────────────────────────────────────────────────────────────────────
    */
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private buildSystemPrompt(templates: Template[]): string {
     const templateDescriptions = templates
       .map((t) => `- **${t.id}** (${t.name}): ${t.description} [Category: ${t.category}]`)
@@ -225,7 +224,6 @@ Respond with ONLY valid JSON (no markdown code blocks):
 IMPORTANT: You MUST include ALL ${templates.length} templates in your response, sorted by matchScore descending.`;
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private buildUserPrompt(
     projectDescription: string,
     projectName: string | undefined,
@@ -252,7 +250,6 @@ Rank the templates for this business.`;
    * ──────────────────────────────────────────────────────────────────────────
    */
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private parseResponse(response: string): TemplateRecommendation[] {
     let cleaned = response.trim();
 
@@ -286,7 +283,6 @@ Rank the templates for this business.`;
    * ──────────────────────────────────────────────────────────────────────────
    */
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private createSuccessResponse(data: RecommendResponse): AgentResponse {
     return {
       message: this.createMessage('agent', JSON.stringify(data)),
@@ -295,7 +291,6 @@ Rank the templates for this business.`;
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private createErrorResponse(error: string): AgentResponse {
     const data: RecommendResponse = {
       success: false,

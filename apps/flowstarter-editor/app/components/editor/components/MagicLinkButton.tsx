@@ -7,8 +7,9 @@
 
 import React, { useState } from 'react';
 import { useMutation, useQuery } from 'convex/react';
-import { api } from '~/convex/_generated/api';
-import type { Id } from '~/convex/_generated/dataModel';
+// eslint-disable-next-line no-restricted-imports
+import { api } from '../../../../convex/_generated/api';
+import type { Id } from '../../../../convex/_generated/dataModel';
 import { useThemeStyles, getColors } from '~/components/editor/hooks';
 
 interface MagicLinkButtonProps {

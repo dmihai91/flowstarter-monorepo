@@ -16,7 +16,6 @@ import { z } from 'zod';
 /**
  * Base schema for all FlowOps messages.
  */
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const FlowOpsMessageSchema = z.object({
   /** Unique message ID */
   id: z.string(),
@@ -67,7 +66,6 @@ export interface AgentMessageSchema<T> {
  * ============================================================================
  */
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const SearchInputSchema = z.object({
   query: z.string().min(1).max(400),
   searchDepth: z.enum(['basic', 'advanced']).default('basic'),
@@ -80,7 +78,6 @@ export const SearchInputSchema = z.object({
 
 export type SearchInputDTO = z.infer<typeof SearchInputSchema>;
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const SearchResultSchema = z.object({
   title: z.string(),
   url: z.string().url(),
@@ -89,7 +86,6 @@ export const SearchResultSchema = z.object({
   rawContent: z.string().optional(),
 });
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const SearchOutputSchema = z.object({
   query: z.string(),
   results: z.array(SearchResultSchema),
@@ -100,7 +96,6 @@ export const SearchOutputSchema = z.object({
 
 export type SearchOutputDTO = z.infer<typeof SearchOutputSchema>;
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const SearchToolSchema = {
   name: 'search',
   description: 'Web search using Tavily API for error solutions and documentation',
@@ -114,7 +109,6 @@ export const SearchToolSchema = {
  * ============================================================================
  */
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const SelfHealingInputSchema = z.object({
   content: z.string().min(1),
   file: z.string().min(1),
@@ -135,7 +129,6 @@ export const SelfHealingInputSchema = z.object({
 
 export type SelfHealingInputDTO = z.infer<typeof SelfHealingInputSchema>;
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const SelfHealingOutputSchema = z.object({
   fixed: z.boolean(),
   fixedContent: z.string().optional(),
@@ -147,7 +140,6 @@ export const SelfHealingOutputSchema = z.object({
 
 export type SelfHealingOutputDTO = z.infer<typeof SelfHealingOutputSchema>;
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const SelfHealingToolSchema = {
   name: 'self-healing',
   description: 'Three-tier self-healing for build errors (rule → search → LLM)',
@@ -161,7 +153,6 @@ export const SelfHealingToolSchema = {
  * ============================================================================
  */
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const FixerRequestSchema = z.object({
   file: z.string().min(1),
   content: z.string().min(1),
@@ -173,7 +164,6 @@ export const FixerRequestSchema = z.object({
 
 export type FixerRequestDTO = z.infer<typeof FixerRequestSchema>;
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const FixerResponseSchema = z.object({
   success: z.boolean(),
   fixedContent: z.string().optional(),
@@ -185,7 +175,6 @@ export const FixerResponseSchema = z.object({
 
 export type FixerResponseDTO = z.infer<typeof FixerResponseSchema>;
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const FixerAgentSchema: AgentMessageSchema<FixerRequestDTO> = {
   type: 'fixer.request',
   description: 'Request to fix a build error in a file',
@@ -198,7 +187,6 @@ export const FixerAgentSchema: AgentMessageSchema<FixerRequestDTO> = {
  * ============================================================================
  */
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const BuildErrorSchema = z.object({
   file: z.string(),
   line: z.string(),
@@ -209,7 +197,6 @@ export const BuildErrorSchema = z.object({
 
 export type BuildErrorDTO = z.infer<typeof BuildErrorSchema>;
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const TypeCheckResultSchema = z.object({
   success: z.boolean(),
   errors: z.array(
@@ -235,7 +222,6 @@ export type TypeCheckResultDTO = z.infer<typeof TypeCheckResultSchema>;
 /**
  * Registry of all FlowOps schemas for validation.
  */
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const SchemaRegistry = {
   tools: {
     search: SearchToolSchema,

@@ -12,7 +12,7 @@
 import {
   createGretly,
   type GretlyInput,
-  type _GretlyResult,
+  type GretlyResult,
   type GretlyConfig,
   type BusinessInfo,
   type TemplateInfo,

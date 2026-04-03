@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { generateContentFiles, getDomainInfo } from './contentGeneration';
-import type { SiteGenerationInput, _IntegrationConfig } from './types';
+import type { SiteGenerationInput, IntegrationConfig } from './types';
 
 describe('contentGeneration', () => {
   const baseInput: SiteGenerationInput = {

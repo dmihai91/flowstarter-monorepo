@@ -31,13 +31,9 @@ const logger = createScopedLogger('Gretly:Pipeline');
 
 /** Deterministic pipeline for site generation with master review. */
 export class Pipeline {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private config: Required<Omit<PipelineConfig, 'onProgress' | 'onPhaseChange' | 'onReviewResult'>> & PipelineConfig;
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private currentPhase: PipelinePhase = 'idle';
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private phases: PipelinePhase[] = [];
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private gretly: Gretly;
 
   constructor(config: PipelineConfig = {}) {
@@ -224,7 +220,6 @@ export class Pipeline {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private setPhase(phase: PipelinePhase): void {
     this.currentPhase = phase;
     this.phases.push(phase);
@@ -232,7 +227,6 @@ export class Pipeline {
     logger.debug(`Phase: ${phase}`);
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private fail(error: string, partial: Partial<PipelineResult>): PipelineResult {
     this.setPhase('failed');
     return {

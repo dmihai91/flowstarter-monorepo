@@ -85,7 +85,7 @@ interface SiteGenerationParams {
 export function buildSiteGenerationInput(params: SiteGenerationParams) {
   const {
     projectId,
-    _convexConversationId,
+    convexConversationId,
     projectName,
     templateId,
     templateName,

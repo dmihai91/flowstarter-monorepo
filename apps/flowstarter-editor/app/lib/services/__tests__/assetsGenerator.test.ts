@@ -27,7 +27,7 @@ import {
   type AssetSpec,
   type GeneratedAsset,
   type AssetsGeneratorInput,
-} from '~/lib/services/assetsGenerator.server';
+} from '../assetsGenerator.server';
 import { generateCompletion } from '~/lib/services/llm';
 
 describe('Assets Generator', () => {

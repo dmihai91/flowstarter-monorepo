@@ -290,7 +290,6 @@ export class SelfHealingTool extends BaseTool<SelfHealingInput, SelfHealingOutpu
    * ──────────────────────────────────────────────────────────────────────────
    */
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private applyRuleBasedFixes(content: string, file: string, error: string): string | null {
     if (!file.match(/\.(css|scss|astro|tsx?|jsx?)$/)) {
       return null;
@@ -330,7 +329,6 @@ export class SelfHealingTool extends BaseTool<SelfHealingInput, SelfHealingOutpu
    * ──────────────────────────────────────────────────────────────────────────
    */
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async applyLLMFix(
     input: SelfHealingInput,
     searchContext?: SearchOutput,
@@ -409,7 +407,6 @@ OUTPUT (JSON only):
    * ──────────────────────────────────────────────────────────────────────────
    */
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private validateFix(content: string | undefined, filePath: string): boolean {
     if (!content) {
       return false;

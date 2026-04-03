@@ -16,7 +16,7 @@ import { PROFESSIONAL_CATEGORY } from './professional';
 import { REALESTATE_CATEGORY } from './realestate';
 import { TECH_CATEGORY } from './tech';
 import { GENERIC_CATEGORY } from './generic';
-import { BASE_RULES, _OUTPUT_FORMAT, OUTPUT_FORMAT_SINGLE, _BANNED_WORDS } from './base';
+import { BASE_RULES, OUTPUT_FORMAT, OUTPUT_FORMAT_SINGLE, BANNED_WORDS } from './base';
 
 // Re-export base utilities
 export * from './base';

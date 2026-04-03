@@ -82,7 +82,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   const prefixWords = hero.headlinePrefix.split(' ');
 
   return (
-    <section className="relative overflow-hidden min-h-screen flex flex-col justify-center pt-20 pb-10">
+    <section className="relative overflow-hidden min-h-screen flex flex-col justify-center pt-10 sm:pt-14 tablet:pt-16 lg:pt-20 pb-10">
       <FlowBackground
         variant="landing"
         style={{ position: 'absolute', inset: 0, zIndex: 0 }}

@@ -9,7 +9,7 @@
  * - Error recovery and fallback messaging
  */
 
-import { describe, it, expect, _vi, _beforeEach, _afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // ��������� Test Fixtures ������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������
 

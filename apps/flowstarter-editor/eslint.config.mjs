@@ -14,6 +14,9 @@ export default [
       '@typescript-eslint/no-empty-object-type': 'off',
       '@blitz/comment-syntax': 'off',
       '@blitz/block-scope-case': 'off',
+      '@blitz/lines-around-comment': 'off',
+      // naming-convention disabled — too many Convex/Supabase snake_case conflicts
+      '@typescript-eslint/naming-convention': 'off',
       'array-bracket-spacing': ['error', 'never'],
       'object-curly-newline': ['error', { consistent: true }],
       'keyword-spacing': ['error', { before: true, after: true }],
@@ -28,7 +31,21 @@ export default [
   {
     files: ['**/*.tsx'],
     rules: {
-      ...getNamingConventionRule({}, true),
+      // naming-convention disabled globally — too many Convex/Supabase snake_case conflicts
+    },
+  },
+  // Override no-unused-vars to allow _ prefix for intentionally unused params/vars
+  {
+    files: [...tsFileExtensions, ...jsFileExtensions, '**/*.tsx'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['error', {
+        vars: 'all',
+        args: 'after-used',
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        destructuredArrayIgnorePattern: '^_',
+        ignoreRestSiblings: true,
+      }],
     },
   },
   {

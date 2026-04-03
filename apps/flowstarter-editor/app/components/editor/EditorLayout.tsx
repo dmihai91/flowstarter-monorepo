@@ -18,7 +18,7 @@ import type { OnboardingStep } from './editor-chat/types';
 import { TerminalPanel } from './TerminalPanel';
 import type { AgentActivityEvent } from './AgentActivityPanel';
 import type { OrchestratorStatusDTO } from '~/lib/hooks/types/orchestrator.dto';
-import type { Id } from '~/convex/_generated/dataModel';
+import type { Id } from '../../../convex/_generated/dataModel';
 
 // Lazy load the Monaco-based code editor (no WebContainer dependency)
 const ConvexCodeEditor = lazy(() =>
@@ -51,10 +51,10 @@ export function EditorLayout({
   projectId,
   children,
   isPublishEnabled = false,
-  _hasProject = false,
+  hasProject = false,
   onboardingStep,
   onPublish,
-  _orchestrationStatus,
+  orchestrationStatus,
   agentEvents = [],
   isAgentActive = false,
 }: EditorLayoutProps) {
@@ -62,7 +62,7 @@ export function EditorLayout({
   const colors = getColors(isDark);
   const [viewMode, setViewMode] = useState<ViewMode>('preview');
   const [terminalOpen, setTerminalOpen] = useState(false);
-  const [terminalHeight, _setTerminalHeight] = useState(240);
+  const [terminalHeight, setTerminalHeight] = useState(240);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
 
@@ -102,7 +102,7 @@ export function EditorLayout({
     startPreview,
     refreshPreview,
     retryPreview,
-    _autoFixAttempts,
+    autoFixAttempts,
   } = useDaytonaPreview({
     projectId: projectId || null,
     autoStart: shouldAutoStartPreview,
@@ -300,11 +300,9 @@ export function EditorLayout({
               {() => (
                 <Suspense fallback={<LoadingSpinner message="Loading editor..." />}>
                   {viewMode === 'preview' ? (
-
                     // Preview mode: show Daytona preview or loading state
                     <DaytonaPreview state={daytonaState} onRefresh={refreshPreview} onRetry={retryPreview} />
                   ) : (
-
                     // Editor mode: code editor + integrated terminal panel at bottom
                     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                       <div style={{ flex: 1, overflow: 'hidden', minHeight: 0 }}>

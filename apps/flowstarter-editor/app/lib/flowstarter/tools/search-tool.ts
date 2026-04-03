@@ -105,9 +105,7 @@ interface TavilyResponse {
  * - Supports domain filtering
  */
 export class SearchTool extends BaseTool<SearchInput, SearchOutput> {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private readonly apiKey: string;
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private readonly baseUrl = 'https://api.tavily.com';
 
   constructor(apiKey?: string) {

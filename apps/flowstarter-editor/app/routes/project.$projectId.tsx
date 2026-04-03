@@ -3,7 +3,7 @@ import { json, type MetaFunction, type LoaderFunctionArgs } from '@remix-run/clo
 import { useParams, useSearchParams } from '@remix-run/react';
 import { useEffect } from 'react';
 import { ClientOnly } from 'remix-utils/client-only';
-import type { Id } from '~/convex/_generated/dataModel';
+import type { Id } from '../../convex/_generated/dataModel';
 import { ProjectEditorContent } from '~/components/editor/ProjectEditorContent';
 import { AuthGuard } from '~/components/TeamAuthGuard';
 import { ProjectNotFoundRedirect } from '~/components/editor/ProjectNotFoundRedirect';

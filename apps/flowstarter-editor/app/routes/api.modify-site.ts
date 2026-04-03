@@ -106,7 +106,7 @@ async function getProjectFiles(projectId: string): Promise<Record<string, string
 /**
  * Save file changes to Convex
  */
-async function _saveFileChanges(projectId: string, changes: FileChange[]): Promise<void> {
+async function saveFileChanges(projectId: string, changes: FileChange[]): Promise<void> {
   for (const change of changes) {
     if (change.operation === 'delete') {
       await convexMutation('files:remove', {
@@ -224,7 +224,7 @@ export async function action({ request }: ActionFunctionArgs) {
         const { projectId: syncProjectId } = body as SyncToPreviewRequest;
 
         // 1. Load files from Convex via HTTP Action
-        const _convexSiteUrl = (process.env.CONVEX_URL || 'https://outstanding-otter-369.convex.cloud').replace(
+        const convexSiteUrl = (process.env.CONVEX_URL || 'https://outstanding-otter-369.convex.cloud').replace(
           '.convex.cloud',
           '.convex.site',
         );

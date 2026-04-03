@@ -19,7 +19,7 @@ import {
   getSuggestedQuickProfile,
 } from './streamlined-onboarding';
 import { inferBusinessInfo } from '~/lib/inference/auto-inference';
-import type { QuickProfile, OnboardingStep } from '~/components/editor/editor-chat/types';
+import type { QuickProfile, OnboardingStep } from '../types';
 
 /*
  * ═══════════════════════════════════════════════════════════════════════════

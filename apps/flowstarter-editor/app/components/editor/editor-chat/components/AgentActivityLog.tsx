@@ -103,7 +103,7 @@ function matchesFilter(event: ActivityEvent, filter: FilterType): boolean {
 
 // ─── Component ────────────────────────────────────────────────────────
 
-export function AgentActivityLog({ events, isDark, isActive, progress = 0, _buildPhase }: AgentActivityLogProps) {
+export function AgentActivityLog({ events, isDark, isActive, progress = 0, buildPhase }: AgentActivityLogProps) {
   const logRef = useRef<HTMLDivElement>(null);
   const [filter, setFilter] = useState<FilterType>('all');
   const [expandedThinking, setExpandedThinking] = useState<Set<string>>(new Set());

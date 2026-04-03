@@ -43,7 +43,7 @@ const BUILD_PROGRESS = {
 } as const;
 
 // ─── Font Weight Constants ──────────────────────────────────────────────────
-const _FONT_WEIGHTS = {
+const FONT_WEIGHTS = {
   HEADING: 700,
   BODY: 400,
 } as const;
@@ -334,9 +334,6 @@ export function useBuildHandlers({
      * Note: onPreviewChange, onProjectReady, onStateChange are accessed via refs
      * to avoid infinite loops from unstable callback identity
      */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       flowHook,

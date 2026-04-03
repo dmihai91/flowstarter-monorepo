@@ -68,7 +68,7 @@ export function useBusinessInfo(options: UseBusinessInfoOptions = {}): UseBusine
       try {
         const result = await generateMutation.mutateAsync({ description, projectName });
         return result;
-      } catch (_error) {
+      } catch (error) {
         // Error already logged by mutation
         return null;
       }

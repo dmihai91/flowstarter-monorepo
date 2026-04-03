@@ -10,7 +10,7 @@
 
 import { useCallback, useRef, useEffect } from 'react';
 import { createScopedLogger } from '~/utils/logger';
-import { _getRandomServicePrompts } from '~/components/editor/editor-chat/constants';
+import { getRandomServicePrompts } from '~/components/editor/editor-chat/constants';
 
 import type { ColorPalette, SystemFont, LogoInfo, InitialChatState } from '~/components/editor/editor-chat/types';
 
@@ -31,8 +31,8 @@ interface UsePersonalizationFlowProps {
 }
 
 export function usePersonalizationFlow({
-  _messageHook,
-  _flowHook,
+  messageHook,
+  flowHook,
   paletteHook,
   selectedFont,
   setSelectedFont,

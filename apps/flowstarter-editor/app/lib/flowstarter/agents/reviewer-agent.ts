@@ -22,7 +22,6 @@ import { generateJSON } from '~/lib/services/llm';
  * ============================================================================
  */
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const ReviewRequestSchema = z.object({
   /** Generated files to review */
   files: z.record(z.string()),
@@ -50,7 +49,6 @@ export const ReviewRequestSchema = z.object({
 
 export type ReviewRequestDTO = z.infer<typeof ReviewRequestSchema>;
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const ReviewResultSchema = z.object({
   /** Overall approval */
   approved: z.boolean(),
@@ -104,7 +102,6 @@ export type ReviewResultDTO = z.infer<typeof ReviewResultSchema>;
 
 export class ReviewerAgent extends BaseAgent {
   /** Minimum score to auto-approve */
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private readonly approvalThreshold: number;
 
   constructor(approvalThreshold: number = 7) {
@@ -190,7 +187,6 @@ Be thorough but fair. A score of 7+ means acceptable, 8+ means good, 9+ means ex
    * ──────────────────────────────────────────────────────────────────────────
    */
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private buildFileSummary(files: Record<string, string>): string {
     const summary: string[] = [];
 
@@ -218,7 +214,6 @@ Be thorough but fair. A score of 7+ means acceptable, 8+ means good, 9+ means ex
     return summary.join('\n');
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async runMasterReview(
     request: ReviewRequestDTO,
     fileSummary: string,
@@ -320,7 +315,6 @@ ${fileSummary}
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private createErrorResponse(error: string): AgentResponse {
     const result: ReviewResultDTO = {
       approved: false,

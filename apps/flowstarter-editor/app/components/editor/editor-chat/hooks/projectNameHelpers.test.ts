@@ -421,8 +421,8 @@ describe('naming conversation flow (logic)', () => {
   });
 
   it('generate → user provides own name flow', () => {
-    const history: string[] = [];
-    _history = addToHistory(history, 'Fern');
+    let history: string[] = [];
+    history = addToHistory(history, 'Fern');
 
     // User provides their own name
     const userInput = 'Call it FitPro Studio';

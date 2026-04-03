@@ -24,7 +24,6 @@ export type {
 
 // Shared state types for hook composition
 export type {
-
   // Message hook
   UseOnboardingMessagesOptions,
   UseOnboardingMessagesReturn,

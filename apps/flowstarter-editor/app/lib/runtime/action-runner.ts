@@ -6,7 +6,7 @@
  * Build/start operations are handled by Daytona cloud sandboxes.
  */
 
-import { path as _nodePath } from '~/utils/path';
+import { path as nodePath } from '~/utils/path';
 import { atom, map, type MapStore } from 'nanostores';
 import type { ActionAlert, BoltAction, DeployAlert, FileHistory } from '~/types/actions';
 import { createScopedLogger } from '~/utils/logger';

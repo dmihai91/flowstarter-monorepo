@@ -9,7 +9,7 @@ import { persistPreviewUrl, clearPersistedPreviewUrl } from './convexClient';
 import { ensureSandboxRunning } from './sandboxService';
 import { uploadFiles } from './fileService';
 import { checkBunAvailable, installBun, bunInstall } from './bunService';
-import type { PreviewResult as _PreviewResultType } from './types';
+import type { PreviewResult as PreviewResultType } from './types';
 import { runNpmFallback } from './npmFallbackService';
 import { getOrCreateSandbox, verifySandbox } from './sandboxHelpers';
 import { getWarmSandbox, initializePool } from './sandboxPool';

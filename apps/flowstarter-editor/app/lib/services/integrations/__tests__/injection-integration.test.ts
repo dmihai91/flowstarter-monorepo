@@ -5,7 +5,7 @@
  * all integrations injected correctly and produces valid HTML.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { injectIntegrations } from '~/lib/services/integrations/index';
+import { injectIntegrations } from '../index';
 
 // Realistic generated site files (coach-pro template structure)
 const generatedSite = [

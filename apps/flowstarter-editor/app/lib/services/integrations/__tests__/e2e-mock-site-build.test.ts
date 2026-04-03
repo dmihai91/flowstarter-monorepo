@@ -12,7 +12,7 @@
  * This tests the EXACT same flow as api.build.ts lines 380-415.
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { injectIntegrations } from '~/lib/services/integrations/index';
+import { injectIntegrations } from '../index';
 
 // --- Mock Data: Supabase project config ---
 

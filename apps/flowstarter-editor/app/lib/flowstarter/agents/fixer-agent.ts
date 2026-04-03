@@ -24,7 +24,6 @@ interface LLMFixResponse {
 }
 
 export class FixerAgent extends BaseAgent {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private tryFastModelFirst: boolean;
 
   constructor(tryFastModelFirst: boolean = false) {
@@ -170,7 +169,6 @@ CRITICAL: TypeScript implicit 'any' errors are common. Fix them by:
     return this.createSuccessResponse({ success: false, tier: 'none', attempts, error: 'All fix attempts failed' });
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async applyLLMFix(
     request: FixerRequestDTO,
     searchContext: string,
@@ -224,12 +222,10 @@ OUTPUT (JSON only):
     return null;
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private createSuccessResponse(data: FixerResponseDTO): AgentResponse {
     return { message: this.createMessage('agent', JSON.stringify(data)), complete: true, toolCalls: [] };
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private createErrorResponse(error: string, _context: AgentContext): AgentResponse {
     const data: FixerResponseDTO = { success: false, tier: 'none', attempts: 0, error };
     return {

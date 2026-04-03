@@ -6,8 +6,8 @@
  */
 
 import { useEffect, useRef, useCallback } from 'react';
-import { _getRandomServicePrompts, getDefaultReadySuggestions } from '~/components/editor/editor-chat/constants';
-import type { ChatMessage, InitialChatState, _Template } from '~/components/editor/editor-chat/types';
+import { getRandomServicePrompts, getDefaultReadySuggestions } from '~/components/editor/editor-chat/constants';
+import type { ChatMessage, InitialChatState, Template } from '~/components/editor/editor-chat/types';
 import type { UseOnboardingMessagesReturn } from './useOnboardingMessages';
 import type { UseOnboardingFlowReturn } from './useOnboardingFlow';
 import type { UseTemplateSelectionReturn } from './useTemplateSelection';
@@ -179,9 +179,6 @@ export function useStateRestoration({
     // Handle step-specific restoration
     restoreStepState(state);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Restore pending template when templates load
@@ -201,9 +198,6 @@ export function useStateRestoration({
     } else {
       pendingTemplateRestoreRef.current = null;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [templateHook.templates.length]);
 

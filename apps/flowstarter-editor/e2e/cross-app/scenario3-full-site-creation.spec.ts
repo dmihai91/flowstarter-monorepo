@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { BASE, EDITOR, BUSINESS_INFO, CONTACT_INFO, cleanupProject, e2eFetch, testProjectName skipIfSecretsUnavailable,
+import { BASE, EDITOR, BUSINESS_INFO, CONTACT_INFO, cleanupProject, e2eFetch, testProjectName, skipIfSecretsUnavailable,
 } from './helpers';
 
 type TemplateFixture = {

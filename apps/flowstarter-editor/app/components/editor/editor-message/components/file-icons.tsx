@@ -40,7 +40,6 @@ export const JavaScriptIcon = ({ size = 16 }: { size?: number }) => (
   </svg>
 );
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const CSSIcon = ({ size = 16 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <rect x="2" y="2" width="20" height="20" rx="2" fill="#264de4" />
@@ -50,7 +49,6 @@ export const CSSIcon = ({ size = 16 }: { size?: number }) => (
   </svg>
 );
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const JSONIcon = ({ size = 16 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <rect x="2" y="2" width="20" height="20" rx="2" fill="#5a5a5a" />
@@ -69,7 +67,6 @@ export const MarkdownIcon = ({ size = 16 }: { size?: number }) => (
   </svg>
 );
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const HTMLIcon = ({ size = 16 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <rect x="2" y="2" width="20" height="20" rx="2" fill="#e34c26" />

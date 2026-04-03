@@ -38,11 +38,8 @@ export interface ChatMessage {
 }
 
 export class BusinessAgent {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private conversationHistory: ChatMessage[] = [];
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private businessDetails: Partial<BusinessDetails> = {};
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private gatheringPhase: 'initial' | 'uvp' | 'audience' | 'goals' | 'pricing' | 'tone' | 'summary' = 'initial';
 
   /**
@@ -103,7 +100,6 @@ export class BusinessAgent {
   /**
    * Get the next question to ask based on what information is missing
    */
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async getNextQuestion(): Promise<string> {
     const missing = this.getMissingFields();
 
@@ -130,7 +126,6 @@ Priority order: business description, unique value proposition, target audience,
   /**
    * Get list of missing required fields
    */
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private getMissingFields(): string[] {
     const missing: string[] = [];
 
@@ -160,7 +155,6 @@ Priority order: business description, unique value proposition, target audience,
   /**
    * Extract information from user message using LLM
    */
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async extractInformation(userMessage: string): Promise<void> {
     const extractionPrompt = `Extract business information from this conversation message:
 
@@ -252,7 +246,6 @@ Respond with JSON (use null for fields not mentioned in this message):
   /**
    * Check if we have enough information to proceed
    */
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private hasEnoughInformation(): boolean {
     const hasRequired = !!(
       this.businessDetails.businessName &&
@@ -270,7 +263,6 @@ Respond with JSON (use null for fields not mentioned in this message):
   /**
    * Generate summary of gathered information
    */
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private generateSummary(): string {
     const details = this.businessDetails;
     return `I've gathered the key information about your project:
@@ -326,7 +318,6 @@ This will help me find the perfect template and customize it for your brand!`;
   /**
    * Format business info for LLM prompts
    */
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private formatBusinessInfoForLLM(): string {
     const d = this.businessDetails;
     return `

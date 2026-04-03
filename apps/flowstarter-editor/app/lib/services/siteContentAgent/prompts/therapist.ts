@@ -6,7 +6,7 @@
  * reducing stigma, and making the first step feel approachable.
  */
 
-import { BASE_CONTENT_RULES, type BusinessContext, type _SiteContent } from './base';
+import { BASE_CONTENT_RULES, type BusinessContext, type SiteContent } from './base';
 
 /**
  * Therapist-specific section recommendations

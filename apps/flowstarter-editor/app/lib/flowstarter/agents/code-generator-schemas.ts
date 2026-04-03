@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const GenerateRequestSchema = z.object({
   type: z.enum(['generate', 'refine', 'fix-apply']),
   projectId: z.string(),
@@ -55,7 +54,6 @@ export const GenerateRequestSchema = z.object({
 
 export type GenerateRequestDTO = z.infer<typeof GenerateRequestSchema>;
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const GenerateResultSchema = z.object({
   success: z.boolean(),
   files: z.record(z.string()),

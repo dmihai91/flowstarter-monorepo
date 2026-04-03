@@ -28,7 +28,7 @@ export function useWelcomeInit({
   initialState,
   messageHook,
   flowHook,
-  _hasRestoredState,
+  hasRestoredState,
   onTemplateBuildStart,
 }: UseWelcomeInitProps): void {
   const hasInitialized = useRef(false);
@@ -98,7 +98,7 @@ export function useWelcomeInit({
       return undefined;
     }
 
-    const _currentStep = flowHookRef.current.step;
+    const currentStep = flowHookRef.current.step;
     const currentMessages = messageHookRef.current.messages;
 
     // Timeout fallback
@@ -134,9 +134,6 @@ export function useWelcomeInit({
      * Empty dependency array - uses refs for all state access
      * This ensures the effect runs exactly once on mount
      */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }

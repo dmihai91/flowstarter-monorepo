@@ -255,16 +255,16 @@ export interface OnboardingContext {
 export function generateOnboardingResponse(context: OnboardingContext): OnboardingMessage {
   const {
     step,
-    _description,
-    _quickProfile,
-    _uvp,
-    _uvpSkipped,
-    _offerings,
-    _contactInfo,
-    _templateName,
+    description,
+    quickProfile,
+    uvp,
+    uvpSkipped,
+    offerings,
+    contactInfo,
+    templateName,
     previewUrl,
     projectName,
-    _userName,
+    userName,
     buildProgress,
   } = context;
 

@@ -1,6 +1,6 @@
 import { type MutableRefObject, type Dispatch, type SetStateAction, useCallback } from 'react';
 import type { StickToBottomState } from './stick-to-bottom-types';
-import { _useRefCallback } from './stick-to-bottom-utils';
+import { useRefCallback } from './stick-to-bottom-utils';
 
 export function useScrollEventHandlers(
   state: StickToBottomState,

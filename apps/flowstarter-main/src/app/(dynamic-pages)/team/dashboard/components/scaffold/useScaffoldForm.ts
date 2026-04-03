@@ -18,6 +18,7 @@ export type ScaffoldPhase =
   | 'review'
   | 'template'
   | 'personalization'
+  | 'payment'
   | 'build';
 
 // ── Enums (mirrors editor-engine contracts) ────────────────────────────────────
@@ -843,6 +844,7 @@ export function useScaffoldForm() {
     templateReasons,
     proceedToTemplate,
     proceedToPersonalization,
+    proceedToPayment: () => setPhase('payment'),
     proceedToBuild,
     // Payment (kept for handoff payload)
     planName,

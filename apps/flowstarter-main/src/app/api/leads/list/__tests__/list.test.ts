@@ -47,8 +47,9 @@ const mockSupabase = {
     }
     return {};
   }),
-  rpc: vi.fn(() => Promise.resolve({ data: [], error: null })),
-};
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  rpc: vi.fn((_fn: string, _args?: any) => Promise.resolve({ data: [], error: null })),
+} as any;
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 vi.mock('@/supabase-clients/server', () => ({

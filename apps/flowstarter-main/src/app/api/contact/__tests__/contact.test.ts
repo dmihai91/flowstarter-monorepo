@@ -18,11 +18,13 @@ const ContactSchema = z.object({
 // ── Mock Supabase ────────────────────────────────────────────────────────────
 let supabaseInsertError: { message: string } | null = null;
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const mockSupabase = {
-  from: vi.fn(() => ({
-    insert: vi.fn(() => Promise.resolve({ error: supabaseInsertError })),
+  from: vi.fn((_table: string) => ({
+    insert: vi.fn((_values: any) => Promise.resolve({ error: supabaseInsertError })),
   })),
-};
+} as any;
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 vi.mock('@/supabase-clients/server', () => ({
   createSupabaseServiceRoleClient: () => mockSupabase,

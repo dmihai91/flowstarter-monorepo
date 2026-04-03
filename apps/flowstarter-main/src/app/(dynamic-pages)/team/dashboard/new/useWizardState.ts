@@ -406,5 +406,6 @@ export function useWizardState(form: ScaffoldForm) {
     handleInitialStepSubmit,
     handleLaunch,
     selectedTemplate,
+    proceedToPayment: () => form.setPhase('payment'),
   };
 }

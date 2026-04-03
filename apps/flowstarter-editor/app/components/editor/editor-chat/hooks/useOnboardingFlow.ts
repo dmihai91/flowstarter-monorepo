@@ -7,7 +7,10 @@
 
 import { useState, useCallback } from 'react';
 import type { OnboardingStep } from '~/components/editor/editor-chat/types';
-import type { UseOnboardingFlowOptions, UseOnboardingFlowReturn } from '~/components/editor/editor-chat/types/sharedState';
+import type {
+  UseOnboardingFlowOptions,
+  UseOnboardingFlowReturn,
+} from '~/components/editor/editor-chat/types/sharedState';
 
 export function useOnboardingFlow(options: UseOnboardingFlowOptions = {}): UseOnboardingFlowReturn {
   const { initialStep = 'review', initialDescription = '', initialProjectName = null, onStepChange } = options;

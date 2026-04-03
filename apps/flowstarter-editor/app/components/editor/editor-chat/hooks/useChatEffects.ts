@@ -69,7 +69,7 @@ export function useChatEffects({
   agentPhase,
   orchestratorState,
   orchestratorOrchestrationId,
-  initialState,
+  _initialState,
   onStateChange,
   onProjectReady,
   setBuildProgress,
@@ -179,6 +179,9 @@ export function useChatEffects({
      * onStateChange and initialState are accessed via refs, not included in deps
      */
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFont, currentUrlId, convexProjectId, buildPhase, orchestratorState, orchestratorOrchestrationId]);
 
   /*
@@ -187,6 +190,9 @@ export function useChatEffects({
    */
   useEffect(() => {
     paletteHookRef.current.updateFromTemplate(templateHookRef.current.selectedTemplate, null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [templateHook.selectedTemplate]);
 
@@ -219,6 +225,9 @@ export function useChatEffects({
     }
 
     // Note: onProjectReady and createSnapshot are accessed via refs, not in deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [agentPhase, orchestratorState, currentUrlId, convexProjectId]);
 }

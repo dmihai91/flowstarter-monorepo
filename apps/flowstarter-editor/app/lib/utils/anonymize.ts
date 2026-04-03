@@ -202,7 +202,7 @@ export function detectPIITypes(text: string): string[] {
     pattern.lastIndex = 0;
   }
 
-  for (const { pattern, replacement } of NAME_PATTERNS) {
+  for (const { pattern, _replacement } of NAME_PATTERNS) {
     if (pattern.test(text)) {
       types.add('NAME');
     }

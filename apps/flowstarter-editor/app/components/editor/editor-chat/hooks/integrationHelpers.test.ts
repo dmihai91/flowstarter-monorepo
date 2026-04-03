@@ -15,7 +15,7 @@ import {
   getEnabledIntegrations,
   buildIntegrationsMessage,
 } from './integrationHelpers';
-import type { IntegrationConfig } from '../types';
+import type { IntegrationConfig } from '~/components/editor/editor-chat/types';
 
 // ─── Test Fixtures ────────────────────────────────────────────────────────────
 

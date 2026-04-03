@@ -7,8 +7,13 @@
  */
 
 import { useCallback, type MutableRefObject } from 'react';
-import type { UseOnboardingMessagesReturn, UseOnboardingFlowReturn, UseTemplateSelectionReturn, UsePaletteSelectionReturn } from '../types/sharedState';
-import type { InitialChatState } from '../types';
+import type {
+  UseOnboardingMessagesReturn,
+  UseOnboardingFlowReturn,
+  UseTemplateSelectionReturn,
+  UsePaletteSelectionReturn,
+} from '~/components/editor/editor-chat/types/sharedState';
+import type { InitialChatState } from '~/components/editor/editor-chat/types';
 import type { UseSimpleBuildHandlersReturn } from './simple-build-types';
 
 interface UseFlowHandlersProps {

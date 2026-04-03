@@ -130,7 +130,8 @@ export async function generateCode(
             hooks: [
               async (hookInput) => {
                 if (hookInput.hook_event_name === 'PostToolUse') {
-                  const { tool_name, tool_input, tool_response } = hookInput;
+                  // eslint-disable-next-line @typescript-eslint/naming-convention
+                  const { tool_name, tool_input, _tool_response } = hookInput;
 
                   // Track file writes
                   if (tool_name === 'Write' || tool_name === 'Edit') {
@@ -388,8 +389,9 @@ For saving user-uploaded images:
  */
 export async function quickGenerate(
   prompt: string,
+
   workingDirectory: string,
-  model: string = 'claude-sonnet-4-6', // override with opus for quality-critical tasks
+  _model: string = 'claude-sonnet-4-6', // override with opus for quality-critical tasks
 ): Promise<CodeGenerationResult> {
   return generateCode({
     projectId: 'quick-generate',

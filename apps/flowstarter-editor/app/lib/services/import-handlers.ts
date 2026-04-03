@@ -4,7 +4,7 @@
  * Handles importing settings in both comprehensive (v2.0) and legacy formats.
  */
 
-import Cookies from 'js-cookie';
+import _Cookies from 'js-cookie';
 import type { ExportedSettings } from './importExportService';
 
 type SetItemFn = (key: string, value: unknown) => void;

@@ -689,10 +689,11 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const rlKey = getRateLimitKey(request, 'api.build');
   const rl = checkRateLimit(rlKey, 10, 60 * 60 * 1000);
+
   if (rl.limited) {
     return Response.json(
       { error: 'Rate limit exceeded' },
-      { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } }
+      { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } },
     );
   }
 

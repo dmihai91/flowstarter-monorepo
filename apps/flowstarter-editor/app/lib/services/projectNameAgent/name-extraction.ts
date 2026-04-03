@@ -5,7 +5,6 @@
  * Handles confirmations, explicit names, and refinement requests.
  */
 
-// eslint-disable-next-line no-restricted-imports
 import { generateCompletion } from '~/lib/services/llm';
 import { createScopedLogger } from '~/utils/logger';
 import { API_MESSAGE_KEYS, getApiMessage } from '~/lib/i18n/api-messages';

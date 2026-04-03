@@ -59,12 +59,12 @@ export async function generateSiteContent(
 
   try {
     // Get domain-specific prompt
-    const systemPrompt = getContentPrompt(context);
+    const _systemPrompt = getContentPrompt(context);
     const sections = getRecommendedSections(context.description);
     const conversion = getConversionSettings(context.description);
 
     // Build user message with specific section requirements
-    const userMessage = buildUserMessage(context, sections, conversion);
+    const _userMessage = buildUserMessage(context, sections, conversion);
 
     /*
      * This would call the LLM
@@ -98,9 +98,9 @@ export async function generateSectionContent(
   // generateCompletion: (messages: any[], options: any) => Promise<string>,
 ): Promise<SectionContent | null> {
   const { sectionType, context, existingSections } = options;
-  const domain = detectDomain(context.description);
+  const _domain = detectDomain(context.description);
 
-  const systemPrompt = `${getContentPrompt(context)}
+  const _systemPrompt = `${getContentPrompt(context)}
 
 TASK: Generate content for the ${sectionType.toUpperCase()} section only.
 ${existingSections ? `\nExisting sections for context: ${existingSections.map((s) => s.type).join(', ')}` : ''}
@@ -176,7 +176,7 @@ export function getContentSuggestions(description: string): {
   sections: string[];
   designNotes: string[];
 } {
-  const domain = detectDomain(description);
+  const _domain = detectDomain(description);
   const sections = getRecommendedSections(description);
   const design = getDesignRecommendations(description);
   const conversion = getConversionSettings(description);
@@ -197,7 +197,7 @@ export function getContentSuggestions(description: string): {
  * Validate content against domain best practices
  */
 export function validateContent(content: SiteContent, description: string): { valid: boolean; warnings: string[] } {
-  const domain = detectDomain(description);
+  const _domain = detectDomain(description);
   const sections = getRecommendedSections(description);
   const warnings: string[] = [];
 

@@ -138,7 +138,7 @@ function transformMCPTemplate(mcpTemplate: MCPTemplate): Template {
  */
 export function useTemplates(options: UseTemplatesOptions = {}): UseTemplatesResult {
   const { autoFetch = false } = options;
-  const queryClient = useQueryClient();
+  const _queryClient = useQueryClient();
 
   const {
     data: templates = [],

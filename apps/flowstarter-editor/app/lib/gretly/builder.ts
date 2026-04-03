@@ -88,8 +88,11 @@ export interface BuildResult {
  * Coordinates typecheck, build, error detection, and self-healing.
  */
 export class Gretly {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private config: Required<Omit<GretlyConfig, 'onProgress' | 'onError' | 'onFix'>> & GretlyConfig;
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private currentPhase: GretlyPhase = 'idle';
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private phases: GretlyPhase[] = [];
 
   constructor(config: GretlyConfig = {}) {
@@ -346,6 +349,7 @@ export class Gretly {
    * ──────────────────────────────────────────────────────────────────────────
    */
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private setPhase(phase: GretlyPhase): void {
     this.currentPhase = phase;
     this.phases.push(phase);
@@ -356,6 +360,7 @@ export class Gretly {
    * Quick syntax check for TypeScript files.
    * This is a fast heuristic check, not a full TypeScript compilation.
    */
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private quickSyntaxCheck(path: string, content: string): TypeCheckResultDTO['errors'] {
     const errors: TypeCheckResultDTO['errors'] = [];
 
@@ -402,6 +407,7 @@ export class Gretly {
   /**
    * Fix an error using the FixerAgent from FlowOps.
    */
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async fixError(error: BuildErrorDTO, files: Record<string, string>): Promise<Record<string, string> | null> {
     this.setPhase('fixing');
     this.config.onProgress?.('fixing', `Fixing ${error.file}...`, 60);

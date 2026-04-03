@@ -11,15 +11,15 @@ import {
   extractProjectName,
   refineProjectName,
   generateFallbackName,
-  type NameGenerationResult,
-  type NameExtractionResult,
-  type ConversationContext,
-  type RefinementContext,
+  type _NameGenerationResult,
+  type _NameExtractionResult,
+  type _ConversationContext,
+  type _RefinementContext,
   type UserContext,
 } from './index';
 
 // Mock the LLM module
-vi.mock('../llm', () => ({
+vi.mock('~/lib/services/llm', () => ({
   generateCompletion: vi.fn(),
 }));
 
@@ -48,7 +48,7 @@ vi.mock('~/lib/i18n/api-messages', () => ({
   },
 }));
 
-import { generateCompletion } from '../llm';
+import { generateCompletion } from '~/lib/services/llm';
 
 const mockGenerateCompletion = vi.mocked(generateCompletion);
 

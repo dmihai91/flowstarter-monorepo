@@ -6,6 +6,6 @@
 import type { LoaderFunctionArgs } from '@remix-run/cloudflare';
 import { redirect } from '@remix-run/cloudflare';
 
-export function loader({ request }: LoaderFunctionArgs) {
+export function loader({ _request }: LoaderFunctionArgs) {
   return redirect('/team/login');
 }

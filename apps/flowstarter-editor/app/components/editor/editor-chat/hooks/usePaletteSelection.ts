@@ -8,7 +8,10 @@ import { useState, useCallback } from 'react';
 import type { Template } from '~/components/onboarding';
 import type { TemplateRecommendation } from '~/components/editor/template-preview/types';
 import type { ColorPalette } from '~/components/editor/editor-chat/types';
-import type { UsePaletteSelectionOptions, UsePaletteSelectionReturn } from '~/components/editor/editor-chat/types/sharedState';
+import type {
+  UsePaletteSelectionOptions,
+  UsePaletteSelectionReturn,
+} from '~/components/editor/editor-chat/types/sharedState';
 import { DEFAULT_PALETTE } from '~/lib/config/palettes';
 
 export function usePaletteSelection(options: UsePaletteSelectionOptions = {}): UsePaletteSelectionReturn {
@@ -39,6 +42,7 @@ export function usePaletteSelection(options: UsePaletteSelectionOptions = {}): U
     if (recommendation?.palettes?.[0]) {
       // Use first palette from recommendation
       const recPalette = recommendation.palettes[0];
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       const ColorPalette: ColorPalette = {
         id: recPalette.id,
         name: recPalette.name,
@@ -54,6 +58,7 @@ export function usePaletteSelection(options: UsePaletteSelectionOptions = {}): U
     } else if (template?.theme?.colors) {
       // Extract palette from template theme, using DEFAULT_PALETTE for fallbacks
       const themeColors = template.theme.colors;
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       const ColorPalette: ColorPalette = {
         id: `${template.id}-theme`,
         name: `${template.name} Theme`,

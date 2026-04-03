@@ -403,7 +403,7 @@ export default defineConfig({
       error.includes('getCollection') ||
       error.includes('content collection') ||
       (error.includes('astro:content') && error.includes('does not exist')),
-    fix: (content, filePath, error) => {
+    fix: (content, filePath, _error) => {
       if (!filePath.endsWith('.astro')) {
         return content;
       }

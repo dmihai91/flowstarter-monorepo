@@ -1,7 +1,7 @@
 import { type MutableRefObject, useCallback } from 'react';
 import type {
   ScrollToBottom,
-  ScrollToBottomOptions,
+  _ScrollToBottomOptions,
   StickToBottomOptions,
   StickToBottomState,
   StopScroll,

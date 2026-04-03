@@ -113,7 +113,7 @@ export class LLMManager {
     provider: BaseProvider,
     apiKeys?: Record<string, string>,
     serverEnv?: Record<string, string>,
-    providerSettings?: Record<string, IProviderSetting>,
+    _providerSettings?: Record<string, IProviderSetting>,
   ): boolean {
     // Check if provider has API key configuration
     const config = provider.config;

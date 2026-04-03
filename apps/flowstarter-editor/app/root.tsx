@@ -1,11 +1,11 @@
 import { useStore } from '@nanostores/react';
-import { json, type LinksFunction, type LoaderFunctionArgs } from '@remix-run/cloudflare';
+import { _json, type LinksFunction, type LoaderFunctionArgs } from '@remix-run/cloudflare';
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from '@remix-run/react';
 import tailwindReset from '@unocss/reset/tailwind-compat.css?url';
 import { themeStore } from './lib/stores/theme';
 import { stripIndents } from './utils/stripIndent';
 import { createHead } from 'remix-island';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, _useState, useMemo } from 'react';
 
 import { ClientOnly } from 'remix-utils/client-only';
 import { ToastContainer } from 'react-toastify';
@@ -322,7 +322,7 @@ import { logStore } from './lib/stores/logs';
 /**
  * Helper functions for cross-subdomain auth configuration
  */
-function getMainPlatformUrl(): string {
+function _getMainPlatformUrl(): string {
   if (typeof window === 'undefined') {
     return 'https://flowstarter.dev';
   }
@@ -340,7 +340,7 @@ function getMainPlatformUrl(): string {
   return 'https://flowstarter.dev';
 }
 
-function getSharedCookieDomain(): string | undefined {
+function _getSharedCookieDomain(): string | undefined {
   if (typeof window === 'undefined') {
     return undefined;
   }
@@ -358,7 +358,7 @@ function getSharedCookieDomain(): string | undefined {
   return undefined;
 }
 
-function isSatelliteApp(): boolean {
+function _isSatelliteApp(): boolean {
   if (typeof window === 'undefined') {
     return false;
   }
@@ -396,6 +396,7 @@ function AppInner() {
   );
 
   return (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error ClerkProvider props are injected by rootAuthLoader at runtime
     <ClerkProvider {...(loaderData || {})}>{appShell}</ClerkProvider>
   );

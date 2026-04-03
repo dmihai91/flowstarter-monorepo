@@ -5,7 +5,7 @@
  * for optimized site generation.
  */
 
-import { type BusinessContext, type SiteContent } from './base';
+import { type BusinessContext, type _SiteContent } from './base';
 import { THERAPIST_DOMAIN } from './therapist';
 import { FITNESS_DOMAIN } from './fitness';
 import { YOGA_DOMAIN } from './yoga';

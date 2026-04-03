@@ -218,7 +218,7 @@ export async function generateJSON<T>(messages: LLMMessage[], options: LLMOption
     const jsonStr = jsonMatch ? jsonMatch[1] : result;
 
     return JSON.parse(jsonStr.trim());
-  } catch (error) {
+  } catch (_error) {
     console.error('Failed to parse JSON response:', result);
     throw new Error('Invalid JSON response from LLM');
   }

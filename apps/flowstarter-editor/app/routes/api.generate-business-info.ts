@@ -28,7 +28,8 @@ export interface BusinessInfo {
   pricingOffers?: string;
 }
 
-interface BusinessInfoResponse {
+// eslint-disable-next-line @typescript-eslint/naming-convention
+interface _BusinessInfoResponse {
   success: true;
   info: BusinessInfo;
 }
@@ -44,10 +45,17 @@ interface BusinessInfoError {
 export async function action({ context, request }: ActionFunctionArgs) {
   const rlKey = getRateLimitKey(request, 'api.generate-business-info');
   const rl = checkRateLimit(rlKey, 30, 60 * 60 * 1000);
+
   if (rl.limited) {
     return json<BusinessInfoError>(
-      { success: false, error: 'Rate limit exceeded', errorType: 'unknown', message: 'Too many requests. Please try again later.', canRetry: true },
-      { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } }
+      {
+        success: false,
+        error: 'Rate limit exceeded',
+        errorType: 'unknown',
+        message: 'Too many requests. Please try again later.',
+        canRetry: true,
+      },
+      { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } },
     );
   }
 

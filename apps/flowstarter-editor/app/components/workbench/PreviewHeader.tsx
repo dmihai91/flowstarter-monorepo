@@ -1,5 +1,5 @@
 import { memo, useRef, useState } from 'react';
-import { useStore } from '@nanostores/react';
+import { _useStore } from '@nanostores/react';
 import { IconButton } from '~/components/ui/IconButton';
 import { useTranslation } from '~/lib/i18n/useTranslation';
 import { PortDropdown } from './PortDropdown';

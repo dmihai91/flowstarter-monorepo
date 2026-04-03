@@ -2,7 +2,11 @@
  * Hero.md Generator
  */
 
-import type { ContentContext, IntegrationConfig, GeneratedAsset } from '~/lib/services/claude-agent/contentGeneration/types';
+import type {
+  ContentContext,
+  IntegrationConfig,
+  GeneratedAsset,
+} from '~/lib/services/claude-agent/contentGeneration/types';
 import { pickRandom, findAsset } from '~/lib/services/claude-agent/contentGeneration/context';
 
 /** Domain-specific badge text */

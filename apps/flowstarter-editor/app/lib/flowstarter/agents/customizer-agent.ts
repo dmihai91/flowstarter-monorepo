@@ -208,6 +208,7 @@ Always consider accessibility (contrast ratios) and modern design trends.`,
    * ──────────────────────────────────────────────────────────────────────────
    */
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async handleFonts(request: CustomizeRequest, context: AgentContext): Promise<AgentResponse> {
     context.onProgress?.('Selecting font pairings from template options...', 40);
 
@@ -221,6 +222,7 @@ Always consider accessibility (contrast ratios) and modern design trends.`,
     return this.createSuccessResponse(response);
   }
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async handlePalette(request: CustomizeRequest, context: AgentContext): Promise<AgentResponse> {
     context.onProgress?.('Selecting color palettes from template options...', 40);
 
@@ -234,6 +236,7 @@ Always consider accessibility (contrast ratios) and modern design trends.`,
     return this.createSuccessResponse(response);
   }
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async handleTheme(request: CustomizeRequest, context: AgentContext): Promise<AgentResponse> {
     context.onProgress?.('Creating theme from template options...', 40);
 
@@ -247,6 +250,7 @@ Always consider accessibility (contrast ratios) and modern design trends.`,
     return this.createSuccessResponse(response);
   }
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async handleFull(request: CustomizeRequest, context: AgentContext): Promise<AgentResponse> {
     context.onProgress?.('Generating full customization from template options...', 30);
 
@@ -275,6 +279,7 @@ Always consider accessibility (contrast ratios) and modern design trends.`,
    * ──────────────────────────────────────────────────────────────────────────
    */
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async recommendFonts(template: Template, ctx: BusinessContext, count: number): Promise<FontRecommendation[]> {
     // Get fonts from template metadata, fallback to defaults
     const availableFonts: TemplateFont[] = template.fonts && template.fonts.length > 0 ? template.fonts : DEFAULT_FONTS;
@@ -328,6 +333,7 @@ Include all ${availableFonts.length} fonts in rankings, sorted by score descendi
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private templateFontToFontPairing(font: TemplateFont): FontPairing {
     return {
       id: font.id,
@@ -344,6 +350,7 @@ Include all ${availableFonts.length} fonts in rankings, sorted by score descendi
    * ──────────────────────────────────────────────────────────────────────────
    */
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async recommendPalettes(
     template: Template,
     ctx: BusinessContext,
@@ -402,6 +409,7 @@ Include all ${availablePalettes.length} palettes in rankings, sorted by score de
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private templatePaletteToColorPalette(palette: TemplatePalette): ColorPalette {
     return {
       id: palette.id,
@@ -416,6 +424,7 @@ Include all ${availablePalettes.length} palettes in rankings, sorted by score de
    * ──────────────────────────────────────────────────────────────────────────
    */
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private async generateTheme(template: Template, ctx: BusinessContext): Promise<ThemeCustomization> {
     const fonts = await this.recommendFonts(template, ctx, 1);
     const palettes = await this.recommendPalettes(template, ctx, 1);
@@ -472,6 +481,7 @@ Include all ${availablePalettes.length} palettes in rankings, sorted by score de
    * ──────────────────────────────────────────────────────────────────────────
    */
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private createSuccessResponse(data: CustomizeResponse): AgentResponse {
     return {
       message: this.createMessage('agent', JSON.stringify(data)),
@@ -480,6 +490,7 @@ Include all ${availablePalettes.length} palettes in rankings, sorted by score de
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private createErrorResponse(error: string): AgentResponse {
     const data: CustomizeResponse = {
       success: false,

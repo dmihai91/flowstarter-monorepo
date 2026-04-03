@@ -6,8 +6,8 @@
  */
 
 import { useMemo } from 'react';
-import type { UseBusinessInfoReturn, UseOnboardingFlowReturn } from '../types/sharedState';
-import type { InitialChatState } from '../types';
+import type { UseBusinessInfoReturn, UseOnboardingFlowReturn } from '~/components/editor/editor-chat/types/sharedState';
+import type { InitialChatState } from '~/components/editor/editor-chat/types';
 
 interface UseBusinessContextProps {
   businessHook: UseBusinessInfoReturn;

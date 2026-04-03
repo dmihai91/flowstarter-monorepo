@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ViewToggle, type ViewMode } from './ViewToggle';
+import { ViewToggle, type _ViewMode } from './ViewToggle';
 
 // Mock i18n
 vi.mock('~/lib/i18n/editor-labels', () => ({

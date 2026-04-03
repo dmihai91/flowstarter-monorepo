@@ -8,7 +8,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { PersonalizationPanel } from './PersonalizationPanel';
-import type { ColorPalette, SystemFont } from '../types';
+import type { _ColorPalette, _SystemFont } from '~/components/editor/editor-chat/types';
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 

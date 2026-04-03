@@ -14,6 +14,7 @@ import { findReusableSandbox, createSandbox } from './sandboxService';
  */
 export async function getOrCreateSandbox(client: Daytona, projectId: string): Promise<Sandbox | null> {
   validateProjectId(projectId);
+
   let sandbox: Sandbox | null = null;
   const cached = getCachedSandbox(projectId);
   log.debug(` Cached sandboxId: ${cached?.sandboxId || 'none'}`);
@@ -42,6 +43,7 @@ export async function getOrCreateSandbox(client: Daytona, projectId: string): Pr
 async function verifyCachedSandbox(client: Daytona, sandboxId: string, projectId: string): Promise<Sandbox | null> {
   try {
     validateWorkspaceId(sandboxId);
+
     const sandbox = await client.get(sandboxId);
     await sandbox.refreshData();
 

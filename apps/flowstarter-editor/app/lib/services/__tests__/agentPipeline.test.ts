@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import type { AgentActivityEvent, SiteGenerationInput, GeneratedFile } from '../../services/claude-agent/types';
+import type { AgentActivityEvent, SiteGenerationInput, GeneratedFile } from '~/lib/services/claude-agent/types';
 
 // Mock the Claude Agent SDK
 const mockQuery = vi.fn();

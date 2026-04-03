@@ -80,7 +80,7 @@ const BUSINESS_TYPE_PATTERNS: Array<{
 ];
 
 export function detectBusinessType(description: string): BusinessTypeMatch | null {
-  const lower = description.toLowerCase();
+  const _lower = description.toLowerCase();
 
   for (const { pattern, type, category } of BUSINESS_TYPE_PATTERNS) {
     if (pattern.test(description)) {

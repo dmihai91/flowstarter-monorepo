@@ -1,10 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  validateWorkspaceId,
-  validateProjectId,
-  resolveSandboxPath,
-  shellEscape,
-} from './sanitize';
+import { validateWorkspaceId, validateProjectId, resolveSandboxPath, shellEscape } from './sanitize';
 
 describe('validateWorkspaceId', () => {
   it('accepts valid alphanumeric IDs', () => {
@@ -15,7 +10,7 @@ describe('validateWorkspaceId', () => {
 
   it('rejects empty or missing IDs', () => {
     expect(() => validateWorkspaceId('')).toThrow('Workspace ID is required');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     expect(() => validateWorkspaceId(null as any)).toThrow('Workspace ID is required');
   });
 
@@ -71,15 +66,11 @@ describe('resolveSandboxPath', () => {
   });
 
   it('accepts absolute paths within sandbox', () => {
-    expect(resolveSandboxPath('/home/daytona/src/app.ts', sandboxRoot)).toBe(
-      '/home/daytona/src/app.ts',
-    );
+    expect(resolveSandboxPath('/home/daytona/src/app.ts', sandboxRoot)).toBe('/home/daytona/src/app.ts');
   });
 
   it('blocks path traversal with ../../etc/passwd', () => {
-    expect(() => resolveSandboxPath('../../etc/passwd', sandboxRoot)).toThrow(
-      'Path traversal blocked',
-    );
+    expect(() => resolveSandboxPath('../../etc/passwd', sandboxRoot)).toThrow('Path traversal blocked');
   });
 
   it('blocks path traversal with absolute path outside root', () => {
@@ -87,23 +78,17 @@ describe('resolveSandboxPath', () => {
   });
 
   it('blocks path traversal with nested ../ sequences', () => {
-    expect(() =>
-      resolveSandboxPath('src/../../../etc/shadow', sandboxRoot),
-    ).toThrow('Path traversal blocked');
+    expect(() => resolveSandboxPath('src/../../../etc/shadow', sandboxRoot)).toThrow('Path traversal blocked');
   });
 
   it('blocks traversal via encoded-style patterns after normalization', () => {
     // path.posix.normalize will collapse these
-    expect(() => resolveSandboxPath('../../../etc/passwd', sandboxRoot)).toThrow(
-      'Path traversal blocked',
-    );
+    expect(() => resolveSandboxPath('../../../etc/passwd', sandboxRoot)).toThrow('Path traversal blocked');
   });
 
   it('allows paths with .. that still resolve within sandbox', () => {
     // src/../lib/util.ts resolves to /home/daytona/lib/util.ts — still inside
-    expect(resolveSandboxPath('src/../lib/util.ts', sandboxRoot)).toBe(
-      '/home/daytona/lib/util.ts',
-    );
+    expect(resolveSandboxPath('src/../lib/util.ts', sandboxRoot)).toBe('/home/daytona/lib/util.ts');
   });
 
   it('blocks traversal to sandbox root parent', () => {

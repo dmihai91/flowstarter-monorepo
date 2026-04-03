@@ -7,7 +7,7 @@
 
 import { createScopedLogger } from '~/utils/logger';
 import type { BuildErrorDTO } from '~/lib/flowops/schema';
-import type { PlanResultDTO, ReviewResultDTO } from '~/lib/flowstarter/agents/planner-agent';
+import type { PlanResultDTO, _ReviewResultDTO } from '~/lib/flowstarter/agents/planner-agent';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
 import type { GretlyPhase, GretlyInput, ResolvedConfig, ErrorHistoryEntry } from './types';
 import { callPlannerAgentEscalate, callCodeGeneratorAgent, callFixerAgent } from './agent-communication';

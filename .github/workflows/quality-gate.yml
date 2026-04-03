@@ -51,7 +51,7 @@ jobs:
         run: pnpm --dir packages/editor-engine build
 
       - name: Lint all projects
-        run: pnpm nx run-many -t lint --output-style=errors-only
+        run: pnpm nx run-many -t lint --output-style=stream-without-prefixes
 
   # ── 2. Typecheck ──────────────────────────────────────────────────────────
   typecheck:
@@ -73,7 +73,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build packages (editor-engine, flow-design-system)
-        run: pnpm nx run-many -t build --projects=editor-engine,flow-design-system --output-style=errors-only
+        run: pnpm nx run-many -t build --projects=editor-engine,flow-design-system --output-style=stream-without-prefixes
 
       - name: Typecheck — flowstarter-main
         run: pnpm nx run flowstarter-main:typecheck

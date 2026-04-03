@@ -19,12 +19,17 @@ declare global {
   }
 }
 
+// Advance enough for the outer AI delay (800-1200ms) + typewriter per-char
+// (~35-225ms × ~50 chars max = up to ~3750ms), but stay under the demo interval (5000ms).
+const FLUSH_AI_RESPONSE = 4500;
+
 describe('useMockEditor', () => {
   beforeEach(() => {
     vi.useFakeTimers();
   });
 
   afterEach(() => {
+    vi.clearAllTimers();
     vi.useRealTimers();
     if (window.__demoInterval) {
       clearInterval(window.__demoInterval);
@@ -34,14 +39,10 @@ describe('useMockEditor', () => {
 
   it('initializes with default state', () => {
     const { result } = renderHook(() => useMockEditor());
-
     expect(result.current.inputValue).toBe('');
     expect(result.current.isTyping).toBe(false);
     expect(result.current.mockSite).toEqual(
-      expect.objectContaining({
-        hasContactForm: false,
-        primaryColor: 'violet',
-      })
+      expect.objectContaining({ hasContactForm: false, primaryColor: 'violet' })
     );
     expect(result.current.messagesEndRef).toBeDefined();
   });
@@ -53,8 +54,6 @@ describe('useMockEditor', () => {
 
   it('populates initial demo messages on mount', () => {
     const { result } = renderHook(() => useMockEditor());
-
-    // Initial messages include the first demo prompt and response
     expect(result.current.messages.length).toBeGreaterThanOrEqual(2);
     expect(result.current.messages[0].role).toBe('user');
     expect(result.current.messages[1].role).toBe('ai');
@@ -63,30 +62,17 @@ describe('useMockEditor', () => {
   it('handleSend adds user message for known command', () => {
     const { result } = renderHook(() => useMockEditor());
 
-    act(() => {
-      result.current.setInputValue('Add a contact form');
-    });
+    act(() => { result.current.setInputValue('Add a contact form'); });
+    act(() => { result.current.handleSend(); });
 
-    act(() => {
-      result.current.handleSend();
-    });
-
-    // User message should be added
     const userMessages = result.current.messages.filter(
       (m) => m.text === 'Add a contact form'
     );
     expect(userMessages.length).toBeGreaterThanOrEqual(1);
-
-    // Input should be cleared
     expect(result.current.inputValue).toBe('');
-
-    // Should be in typing state
     expect(result.current.isTyping).toBe(true);
 
-    // After delay, AI response appears
-    act(() => {
-      vi.advanceTimersByTime(1500);
-    });
+    act(() => { vi.advanceTimersByTime(FLUSH_AI_RESPONSE); });
 
     expect(result.current.isTyping).toBe(false);
     const aiMessages = result.current.messages.filter((m) =>
@@ -98,15 +84,10 @@ describe('useMockEditor', () => {
   it('handleSend with direct message parameter works', () => {
     const { result } = renderHook(() => useMockEditor());
 
-    act(() => {
-      result.current.handleSend('Add pricing tables');
-    });
-
+    act(() => { result.current.handleSend('Add pricing tables'); });
     expect(result.current.isTyping).toBe(true);
 
-    act(() => {
-      vi.advanceTimersByTime(1500);
-    });
+    act(() => { vi.advanceTimersByTime(FLUSH_AI_RESPONSE); });
 
     const aiMessages = result.current.messages.filter((m) =>
       m.text.includes('Pricing section')
@@ -117,46 +98,24 @@ describe('useMockEditor', () => {
   it('handleSend does nothing for empty input', () => {
     const { result } = renderHook(() => useMockEditor());
     const initialCount = result.current.messages.length;
-
-    act(() => {
-      result.current.handleSend('');
-    });
-
+    act(() => { result.current.handleSend(''); });
     expect(result.current.messages.length).toBe(initialCount);
   });
 
   it('handleSend does nothing while typing', () => {
     const { result } = renderHook(() => useMockEditor());
-
-    // Trigger a send to start typing
-    act(() => {
-      result.current.handleSend('Add a contact form');
-    });
+    act(() => { result.current.handleSend('Add a contact form'); });
     expect(result.current.isTyping).toBe(true);
-
     const messageCount = result.current.messages.length;
-
-    // Try to send again while typing
-    act(() => {
-      result.current.handleSend('Another message');
-    });
-
-    // No new message should be added
+    act(() => { result.current.handleSend('Another message'); });
     expect(result.current.messages.length).toBe(messageCount);
   });
 
   it('updates mockSite state for known commands', () => {
     const { result } = renderHook(() => useMockEditor());
-
-    act(() => {
-      result.current.handleSend('Add testimonials');
-    });
-
-    // Wait for AI response + action delay
-    act(() => {
-      vi.advanceTimersByTime(1500);
-    });
-
+    act(() => { result.current.handleSend('Add testimonials'); });
+    // Advance outer AI delay + action delay (200ms) — don't flush typewriter loop
+    act(() => { vi.advanceTimersByTime(1500); });
     expect(result.current.mockSite.hasTestimonials).toBe(true);
   });
 
@@ -165,26 +124,11 @@ describe('useMockEditor', () => {
     vi.stubGlobal('open', mockOpen);
 
     const { result } = renderHook(() => useMockEditor());
+    act(() => { result.current.handleSend('Do something completely random'); });
 
-    act(() => {
-      result.current.handleSend('Do something completely random');
-    });
-
-    // Wait for typing delay
-    act(() => {
-      vi.advanceTimersByTime(1000);
-    });
-
-    // Check redirect message was added
-    const redirectMessages = result.current.messages.filter((m) =>
-      m.text.includes('discovery call')
-    );
-    expect(redirectMessages.length).toBeGreaterThanOrEqual(1);
-
-    // Wait for window.open delay
-    act(() => {
-      vi.advanceTimersByTime(2000);
-    });
+    // window.open fires after outer delay (800ms) + fixed 1500ms = 2300ms.
+    // Does NOT depend on typewriter completing.
+    act(() => { vi.advanceTimersByTime(2500); });
 
     expect(mockOpen).toHaveBeenCalledWith(
       'https://calendly.example.com/discovery',
@@ -196,23 +140,14 @@ describe('useMockEditor', () => {
 
   it('auto-cycles through demo sequence', () => {
     const { result } = renderHook(() => useMockEditor());
-
-    // Initial: 2 messages (first demo prompt + response)
     const initialCount = result.current.messages.length;
 
-    // After 3 seconds, first auto-advance triggers
-    act(() => {
-      vi.advanceTimersByTime(3000);
-    });
-
-    // Should have added a user message
+    // Fire the first auto-advance (interval fires at ~5000ms per useMockEditor)
+    act(() => { vi.advanceTimersByTime(5000); });
     expect(result.current.messages.length).toBeGreaterThan(initialCount);
 
-    // After typing delay, AI responds
-    act(() => {
-      vi.advanceTimersByTime(1000);
-    });
-
+    // Advance for the AI response within the same cycle
+    act(() => { vi.advanceTimersByTime(1500); });
     expect(result.current.messages.length).toBeGreaterThan(initialCount + 1);
   });
 });

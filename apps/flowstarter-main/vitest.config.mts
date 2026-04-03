@@ -1,6 +1,7 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 import path from 'path';
+import { readFileSync } from 'fs';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -9,6 +10,9 @@ export default defineConfig({
     environment: 'jsdom',
     exclude: ['e2e/**', 'node_modules/**', 'dist/**', '.next/**', 'templates/**'],
     setupFiles: ['./test/setup.ts'],
+    typecheck: {
+      tsconfig: './tsconfig.test.json',
+    },
     pool: 'forks',
     poolOptions: {
       forks: {
@@ -49,5 +53,8 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
+    // Dedupe React to prevent "Invalid hook call" from multiple React copies
+    // (happens when @flowstarter/flow-design-system pulls its own React instance)
+    dedupe: ['react', 'react-dom', 'react/jsx-runtime'],
   },
 });

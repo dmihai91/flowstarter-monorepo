@@ -20,7 +20,7 @@ export function getMilestoneStatuses(
 export function getTimeGreetingKey(hour: number): TimeGreetingKey {
   if (hour >= 5 && hour < 12) return 'dashboard.greeting.morning';
   if (hour >= 12 && hour < 18) return 'dashboard.greeting.afternoon';
-  if (hour >= 18 && hour < 21) return 'dashboard.greeting.evening';
+  if (hour >= 18 && hour <= 21) return 'dashboard.greeting.evening';
   return 'dashboard.greeting.night';
 }
 

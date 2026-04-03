@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ExternalNavigationWithAuth } from '../components/Navbar';
 import { useAuth } from '@clerk/nextjs';
@@ -9,8 +9,9 @@ vi.mock('@clerk/nextjs', () => ({
   useUser: vi.fn(() => ({ user: null, isLoaded: true })),
 }));
 
+// Return '/about' so the Navbar doesn't short-circuit with `return null` for '/'
 vi.mock('next/navigation', () => ({
-  usePathname: vi.fn(() => '/'),
+  usePathname: vi.fn(() => '/about'),
   useRouter: vi.fn(() => ({ push: vi.fn(), back: vi.fn() })),
 }));
 
@@ -63,44 +64,57 @@ describe('ExternalNavigationWithAuth', () => {
   });
 
   describe('Loading state', () => {
-    it('returns null when auth is not loaded', () => {
+    it('returns null when auth is not loaded', async () => {
       mockUseAuth.mockReturnValue({ isSignedIn: false, isLoaded: false });
-      const { container } = render(<ExternalNavigationWithAuth />);
+      let container!: HTMLElement;
+      await act(async () => {
+        ({ container } = render(<ExternalNavigationWithAuth />));
+      });
       expect(container.innerHTML).toBe('');
     });
   });
 
   describe('Signed out', () => {
-    it('renders auth buttons and theme toggle', () => {
+    it('renders auth buttons and theme toggle', async () => {
       mockUseAuth.mockReturnValue({ isSignedIn: false, isLoaded: true });
-      render(<ExternalNavigationWithAuth />);
+      await act(async () => {
+        render(<ExternalNavigationWithAuth />);
+      });
       expect(screen.getByTestId('auth-buttons')).toBeInTheDocument();
       expect(screen.getByTestId('theme-toggle')).toBeInTheDocument();
     });
 
-    it('links logo to home', () => {
+    it('links logo to home', async () => {
       mockUseAuth.mockReturnValue({ isSignedIn: false, isLoaded: true });
-      render(<ExternalNavigationWithAuth />);
+      await act(async () => {
+        render(<ExternalNavigationWithAuth />);
+      });
       expect(screen.getByTestId('logo')).toHaveAttribute('href', '/');
     });
   });
 
   describe('Signed in', () => {
-    it('renders dashboard nav controls', () => {
+    it('renders dashboard nav controls', async () => {
       mockUseAuth.mockReturnValue({ isSignedIn: true, isLoaded: true });
-      render(<ExternalNavigationWithAuth />);
+      await act(async () => {
+        render(<ExternalNavigationWithAuth />);
+      });
       expect(screen.getByTestId('dashboard-nav')).toBeInTheDocument();
     });
 
-    it('links logo to dashboard', () => {
+    it('links logo to dashboard', async () => {
       mockUseAuth.mockReturnValue({ isSignedIn: true, isLoaded: true });
-      render(<ExternalNavigationWithAuth />);
+      await act(async () => {
+        render(<ExternalNavigationWithAuth />);
+      });
       expect(screen.getByTestId('logo')).toHaveAttribute('href', '/dashboard');
     });
 
-    it('does not render auth buttons when signed in', () => {
+    it('does not render auth buttons when signed in', async () => {
       mockUseAuth.mockReturnValue({ isSignedIn: true, isLoaded: true });
-      render(<ExternalNavigationWithAuth />);
+      await act(async () => {
+        render(<ExternalNavigationWithAuth />);
+      });
       expect(screen.queryByTestId('auth-buttons')).not.toBeInTheDocument();
     });
   });

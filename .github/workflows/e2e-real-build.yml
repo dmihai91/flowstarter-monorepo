@@ -52,14 +52,16 @@ jobs:
     steps:
       - id: check
         run: |
-          if [[ "${{ github.event_name }}" == "schedule" ]]; then
-            echo "should-run=true" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "should-run=true" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.event.label.name }}" == "run-real-build-e2e" ]]; then
-            echo "should-run=true" >> $GITHUB_OUTPUT
+          EVENT_NAME="${{ github.event_name }}"
+          LABEL_NAME="${{ github.event.label.name }}"
+          if [[ "${EVENT_NAME}" == "schedule" ]]; then
+            echo "should-run=true" >> "$GITHUB_OUTPUT"
+          elif [[ "${EVENT_NAME}" == "workflow_dispatch" ]]; then
+            echo "should-run=true" >> "$GITHUB_OUTPUT"
+          elif [[ "${LABEL_NAME}" == "run-real-build-e2e" ]]; then
+            echo "should-run=true" >> "$GITHUB_OUTPUT"
           else
-            echo "should-run=false" >> $GITHUB_OUTPUT
+            echo "should-run=false" >> "$GITHUB_OUTPUT"
           fi
 
   real-build:

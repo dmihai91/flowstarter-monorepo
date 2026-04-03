@@ -61,13 +61,14 @@ jobs:
       - name: Deploy flowstarter-main preview
         id: deploy-main
         run: |
+          PR_NUM="${{ github.event.pull_request.number }}"
           URL=$(railway up \
             --service flowstarter-main \
-            --environment pr-${{ github.event.pull_request.number }} \
+            --environment "pr-${PR_NUM}" \
             --detach \
             --json | jq -r '.url')
-          echo "url=$URL" >> $GITHUB_OUTPUT
-          echo "Main preview: $URL"
+          echo "url=${URL}" >> "$GITHUB_OUTPUT"
+          echo "Main preview: ${URL}"
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
@@ -76,13 +77,14 @@ jobs:
       - name: Deploy flowstarter-editor preview
         id: deploy-editor
         run: |
+          PR_NUM="${{ github.event.pull_request.number }}"
           URL=$(railway up \
             --service flowstarter-editor \
-            --environment pr-${{ github.event.pull_request.number }} \
+            --environment "pr-${PR_NUM}" \
             --detach \
             --json | jq -r '.url')
-          echo "url=$URL" >> $GITHUB_OUTPUT
-          echo "Editor preview: $URL"
+          echo "url=${URL}" >> "$GITHUB_OUTPUT"
+          echo "Editor preview: ${URL}"
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}

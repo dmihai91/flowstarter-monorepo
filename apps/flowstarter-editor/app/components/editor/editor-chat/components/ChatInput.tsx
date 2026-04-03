@@ -26,7 +26,7 @@ export function ChatInput({
   inputValue,
   onInputChange,
   onSend,
-  step,
+  _step,
   isDark,
   attachedImages,
   attachmentMenuOpen,

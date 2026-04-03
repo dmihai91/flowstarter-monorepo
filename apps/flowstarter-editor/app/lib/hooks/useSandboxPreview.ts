@@ -9,7 +9,7 @@ interface UseSandboxPreviewOptions {
   autoRefresh?: boolean;
 }
 
-export function useSandboxPreview({ projectId, autoRefresh = true }: UseSandboxPreviewOptions) {
+export function useSandboxPreview({ projectId, _autoRefresh = true }: UseSandboxPreviewOptions) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

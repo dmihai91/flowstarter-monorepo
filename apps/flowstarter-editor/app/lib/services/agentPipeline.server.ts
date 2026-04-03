@@ -16,7 +16,7 @@ import { trackLLMUsage, syncCostsToSupabase } from '~/lib/.server/llm/cost-track
 import type {
   AgentActivityEvent,
   GeneratedFile,
-  PipelineCost,
+  _PipelineCost,
   SiteGenerationInput,
   SiteGenerationResult,
 } from './claude-agent/types';
@@ -232,7 +232,7 @@ export async function runAgentPipeline(
 
     const abortController = new AbortController();
     let turns = 0;
-    let resultText = '';
+    const _resultText = '';
 
     const agentResult = query({
       prompt,
@@ -297,7 +297,7 @@ CRITICAL RULES — violations cause build failures:
           break;
         case 'result':
           if (message.subtype === 'success') {
-            resultText = message.result || '';
+            _resultText = message.result || '';
           } else if (message.subtype?.startsWith('error')) {
             emit({ type: 'error', message: `Agent stopped: ${message.subtype}` });
           }

@@ -8,7 +8,7 @@
 import type { WizardOutputDTO } from '~/lib/hooks/types/orchestrator.dto';
 import { workbenchStore } from '~/lib/stores/workbench';
 import { DEFAULT_PALETTE } from '~/lib/config/palettes';
-import { DEFAULT_FONTS, type FontPairing } from '~/lib/config/fonts';
+import { DEFAULT_FONTS, type _FontPairing } from '~/lib/config/fonts';
 import type { ColorPalette } from '~/components/editor/editor-chat/types';
 import type { ColorPalette as StoreColorPalette } from '~/lib/stores/palettes';
 
@@ -30,6 +30,7 @@ export function generateMessageId(prefix: 'user' | 'msg'): string {
  * Convert ColorPalette (string[] colors) to StoreColorPalette (tuple colors).
  * Returns a default palette if the input is null or has insufficient colors.
  */
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export function ColorPaletteToColorPalette(palette: ColorPalette | null): StoreColorPalette {
   if (!palette || palette.colors.length < 4) {
     return {

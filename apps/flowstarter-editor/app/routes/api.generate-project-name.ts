@@ -8,11 +8,11 @@ import {
   type ConversationContext,
   type UserContext,
 } from '~/lib/services/projectNameAgent';
-import { API_MESSAGE_KEYS, getApiMessage } from '~/lib/i18n/api-messages';
+import { _API_MESSAGE_KEYS, _getApiMessage } from '~/lib/i18n/api-messages';
 
 const logger = createScopedLogger('api.generate-project-name');
 
-export async function action({ context, request }: ActionFunctionArgs) {
+export async function action({ _context, request }: ActionFunctionArgs) {
   let projectDescription: string | undefined;
 
   try {

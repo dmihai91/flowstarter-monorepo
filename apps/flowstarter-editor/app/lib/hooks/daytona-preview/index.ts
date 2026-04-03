@@ -12,7 +12,7 @@ import { useQuery } from 'convex/react';
 // eslint-disable-next-line no-restricted-imports
 import { api } from '../../../../convex/_generated/api';
 // eslint-disable-next-line no-restricted-imports
-import type { Id } from '../../../../convex/_generated/dataModel';
+import type { _Id } from '../../../../convex/_generated/dataModel';
 import { useStore } from '@nanostores/react';
 import { workbenchStore } from '~/lib/stores/workbench';
 

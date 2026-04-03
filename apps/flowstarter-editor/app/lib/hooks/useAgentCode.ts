@@ -148,7 +148,7 @@ export function useAgentCode(options: UseAgentCodeOptions = {}): UseAgentCodeRet
                       callbacks.onAgentEvent?.(data as AgentActivityEvent);
                       break;
                   }
-                } catch (e) {
+                } catch (_e) {
                   console.warn('Failed to parse SSE data:', currentData);
                 }
 

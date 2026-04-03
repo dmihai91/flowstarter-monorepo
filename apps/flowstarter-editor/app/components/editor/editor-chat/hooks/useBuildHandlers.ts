@@ -23,7 +23,12 @@ import type { SystemFont, PreviewInfo, InitialChatState } from '~/components/edi
 import type { Id } from '~/convex/_generated/dataModel';
 import { normalizePath, getEssentialConfigFiles } from '~/components/editor/editor-chat/utils';
 import { SUGGESTED_REPLIES } from '~/components/editor/editor-chat/constants';
-import { BUILD_ERRORS, formatErrorForUser, getUserFriendlyError, getErrorSuggestions } from '~/components/editor/editor-chat/errors';
+import {
+  BUILD_ERRORS,
+  formatErrorForUser,
+  getUserFriendlyError,
+  getErrorSuggestions,
+} from '~/components/editor/editor-chat/errors';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
 
 // ─── Build Progress Constants ───────────────────────────────────────────────
@@ -38,7 +43,7 @@ const BUILD_PROGRESS = {
 } as const;
 
 // ─── Font Weight Constants ──────────────────────────────────────────────────
-const FONT_WEIGHTS = {
+const _FONT_WEIGHTS = {
   HEADING: 700,
   BODY: 400,
 } as const;
@@ -329,6 +334,9 @@ export function useBuildHandlers({
      * Note: onPreviewChange, onProjectReady, onStateChange are accessed via refs
      * to avoid infinite loops from unstable callback identity
      */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       flowHook,

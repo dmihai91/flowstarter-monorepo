@@ -284,13 +284,7 @@ export interface CategoryColors {
  */
 
 /** Handoff-only step order */
-export const STREAMLINED_STEPS: OnboardingStep[] = [
-  'review',
-  'personalization',
-  'integrations',
-  'creating',
-  'ready',
-];
+export const STREAMLINED_STEPS: OnboardingStep[] = ['review', 'personalization', 'integrations', 'creating', 'ready'];
 
 /** Check if a step is part of the new streamlined flow */
 export function isStreamlinedStep(step: OnboardingStep): boolean {

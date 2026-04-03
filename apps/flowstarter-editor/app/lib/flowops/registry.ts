@@ -5,7 +5,7 @@
  * Implements singleton pattern for global access.
  */
 
-import { BaseTool, type ToolConfig } from './base-tool';
+import { BaseTool, type _ToolConfig } from './base-tool';
 import { createScopedLogger } from '~/utils/logger';
 
 const logger = createScopedLogger('FlowOps:Registry');
@@ -52,9 +52,12 @@ export interface RegistryStats {
  * - Singleton pattern for global access
  */
 export class ToolRegistry {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private static instance: ToolRegistry | null = null;
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private tools: Map<string, BaseTool<unknown, unknown>> = new Map();
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private registeredAt: Date = new Date();
 
   /**

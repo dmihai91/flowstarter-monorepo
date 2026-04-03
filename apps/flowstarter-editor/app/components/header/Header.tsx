@@ -7,7 +7,7 @@ import { Logo, ScrollAwareHeader } from '@flowstarter/flow-design-system';
 
 export function Header() {
   const chat = useStore(chatStore);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [_isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   if (chat.started) {
     return null;
@@ -17,7 +17,7 @@ export function Header() {
     setIsSettingsOpen(true);
   };
 
-  const handleSettingsClose = () => {
+  const _handleSettingsClose = () => {
     setIsSettingsOpen(false);
   };
 

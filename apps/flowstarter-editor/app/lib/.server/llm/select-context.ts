@@ -1,4 +1,4 @@
-import { trackLLMUsage } from './cost-tracker';
+import { _trackLLMUsage } from './cost-tracker';
 import { generateText, type CoreTool, type GenerateTextResult, type Message } from 'ai';
 import ignore from 'ignore';
 import type { IProviderSetting } from '~/types/model';

@@ -31,10 +31,11 @@ interface LogoGenerationResponse {
 export async function action({ request }: ActionFunctionArgs): Promise<Response> {
   const rlKey = getRateLimitKey(request, 'api.generate-logo');
   const rl = checkRateLimit(rlKey, 10, 60 * 60 * 1000);
+
   if (rl.limited) {
     return json<LogoGenerationResponse>(
       { success: false, error: 'Rate limit exceeded' },
-      { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } }
+      { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } },
     );
   }
 

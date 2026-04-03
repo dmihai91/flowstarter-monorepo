@@ -11,8 +11,8 @@
  * We test that our injection produces valid embeds that Calendly's JS will handle.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { injectCalendly, fetchCalendlyEventTypes } from '../calendly';
-import { injectIntegrations } from '../index';
+import { injectCalendly, fetchCalendlyEventTypes } from '~/lib/services/integrations/calendly';
+import { injectIntegrations } from '~/lib/services/integrations/index';
 
 const contactPage = {
   path: 'src/pages/contact.astro',

@@ -20,11 +20,7 @@ export interface RateLimitResult {
  * Returns { limited: true, retryAfter } if over-limit,
  * or { limited: false, retryAfter: 0 } if within limit.
  */
-export function checkRateLimit(
-  key: string,
-  limit: number,
-  windowMs: number,
-): RateLimitResult {
+export function checkRateLimit(key: string, limit: number, windowMs: number): RateLimitResult {
   const now = Date.now();
   const entry = store.get(key);
 
@@ -49,14 +45,13 @@ export function checkRateLimit(
  */
 export function getRateLimitKey(request: Request, route: string): string {
   const userId = request.headers.get('x-user-id');
+
   if (userId) {
     return `user:${userId}:${route}`;
   }
 
   const ip =
-    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-    request.headers.get('x-real-ip') ||
-    'unknown';
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown';
 
   return `ip:${ip}:${route}`;
 }

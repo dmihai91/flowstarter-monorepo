@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-imports */
 /**
  * EditorChatPanel — Phase Router
  *
@@ -68,7 +67,7 @@ export function EditorChatPanel({
     inputValue,
     setInputValue,
     step,
-    suggestedReplies,
+    _suggestedReplies,
     isTyping,
     previewTemplate,
     previewPalette,
@@ -84,7 +83,7 @@ export function EditorChatPanel({
     agentRunning,
     orchestratorStatus,
     orchestratorRunning,
-    stopOrchestration,
+    _stopOrchestration,
     buildStep,
     buildProgress,
     buildPhase,
@@ -97,8 +96,8 @@ export function EditorChatPanel({
     projectName,
     projectDescription,
     currentUrlId,
-    businessContext,
-    isInternalFlow,
+    _businessContext,
+    _isInternalFlow,
     handleTemplateSelect,
     handlePaletteSelect,
     handleFontSelect,
@@ -108,8 +107,8 @@ export function EditorChatPanel({
     handleReviewBuildStart,
     handleReviewCustomize,
     handleSend,
-    handleThumbnailError,
-    openPreview,
+    _handleThumbnailError,
+    _openPreview,
     setPreviewTemplate,
     previewRecommendation,
     setPreviewRecommendation,

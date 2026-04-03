@@ -65,14 +65,14 @@ export const Workbench = memo(
   ({
     chatStarted,
     isStreaming,
-    actionRunner,
-    metadata,
-    updateChatMestaData,
+    _actionRunner,
+    _metadata,
+    _updateChatMestaData,
     renderHeader: _renderHeader,
   }: WorkspaceProps) => {
     renderLogger.trace('Workbench');
 
-    const [fileHistory, setFileHistory] = useState<Record<string, FileHistory>>({});
+    const [fileHistory, _setFileHistory] = useState<Record<string, FileHistory>>({});
 
     // Terminal state
 

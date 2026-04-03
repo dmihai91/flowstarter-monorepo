@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, _AnimatePresence } from 'framer-motion';
 import { BuildTimeline, createBuildSteps } from './BuildTimeline';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
 

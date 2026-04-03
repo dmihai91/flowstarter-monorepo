@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const PlanRequestSchema = z.object({
   type: z.enum(['plan', 'review', 'escalate']),
   projectId: z.string(),
@@ -39,6 +40,7 @@ export const PlanRequestSchema = z.object({
 
 export type PlanRequestDTO = z.infer<typeof PlanRequestSchema>;
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const PlanResultSchema = z.object({
   success: z.boolean(),
   modifications: z.array(
@@ -60,6 +62,7 @@ export const PlanResultSchema = z.object({
 
 export type PlanResultDTO = z.infer<typeof PlanResultSchema>;
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const ReviewResultSchema = z.object({
   approved: z.boolean(),
   score: z.number().min(1).max(10),
@@ -92,6 +95,7 @@ export const ReviewResultSchema = z.object({
 
 export type ReviewResultDTO = z.infer<typeof ReviewResultSchema>;
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const EscalateResultSchema = z.object({
   escalationType: z.enum(['user-intervention', 'manual-fix', 'skip-file', 'abort']),
   explanation: z.string(),

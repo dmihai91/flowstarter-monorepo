@@ -17,11 +17,12 @@ const agentSessions = new Map<string, BusinessAgent>();
 export async function action({ request }: ActionFunctionArgs) {
   const rlKey = getRateLimitKey(request, 'api.businessAgent');
   const rl = checkRateLimit(rlKey, 20, 60 * 60 * 1000);
+
   if (rl.limited) {
-    return new Response(
-      JSON.stringify({ success: false, error: 'Rate limit exceeded' }),
-      { status: 429, headers: { 'Content-Type': 'application/json', 'Retry-After': String(rl.retryAfter) } }
-    );
+    return new Response(JSON.stringify({ success: false, error: 'Rate limit exceeded' }), {
+      status: 429,
+      headers: { 'Content-Type': 'application/json', 'Retry-After': String(rl.retryAfter) },
+    });
   }
 
   try {

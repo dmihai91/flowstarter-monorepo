@@ -15,13 +15,7 @@ import type { OnboardingStep, InitialChatState } from '~/components/editor/edito
  * Ordered list of all pipeline steps.
  * Each step knows what comes next in the default flow.
  */
-export const PIPELINE_STEPS: OnboardingStep[] = [
-  'review',
-  'personalization',
-  'integrations',
-  'creating',
-  'ready',
-];
+export const PIPELINE_STEPS: OnboardingStep[] = ['review', 'personalization', 'integrations', 'creating', 'ready'];
 
 /**
  * Map of step to its default next step.

@@ -8,9 +8,8 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useLocation } from '@remix-run/react';
 import { useQuery, useMutation } from 'convex/react';
-// eslint-disable-next-line no-restricted-imports
-import { api } from '../../../../convex/_generated/api';
-import type { Id } from '../../../../convex/_generated/dataModel';
+import { api } from '~/convex/_generated/api';
+import type { Id } from '~/convex/_generated/dataModel';
 import type {
   OnboardingStep,
   InitialChatState,

@@ -13,7 +13,7 @@
  * - Summary approval
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, _vi, _beforeEach } from 'vitest';
 
 /*
  * ═══════════════════════════════════════════════════════════════════════════════
@@ -509,7 +509,7 @@ describe('Romanian Business Descriptions', () => {
     },
   ];
 
-  ROMANIAN_BUSINESS_DESCRIPTIONS.forEach(({ input, expectedKeywords, industry }) => {
+  ROMANIAN_BUSINESS_DESCRIPTIONS.forEach(({ input, expectedKeywords, _industry }) => {
     it(`extracts keywords from "${input.slice(0, 40)}..."`, () => {
       expectedKeywords.forEach((keyword) => {
         // Normalize for diacritics comparison
@@ -702,7 +702,7 @@ describe('Full Romanian Flow Simulation', () => {
     },
   ];
 
-  FULL_FLOW.forEach(({ step, userInput, expectedIntent, expectedNextStep }) => {
+  FULL_FLOW.forEach(({ step, userInput, expectedIntent, _expectedNextStep }) => {
     it(`${step}: "${userInput.slice(0, 30)}..." → ${expectedIntent}`, () => {
       let detectedIntent: string;
 

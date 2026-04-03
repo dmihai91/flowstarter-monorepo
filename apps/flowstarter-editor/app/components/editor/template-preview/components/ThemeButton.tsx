@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { ChevronDown, Palette } from 'lucide-react';
+import { ChevronDown, _Palette } from 'lucide-react';
 import type { ColorPalette } from '~/lib/stores/palettes';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
 

@@ -10,8 +10,11 @@ import type { BaseAgent } from './agent';
 import type { AgentResponse } from './agent-types';
 
 export class AgentRegistry {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private static instance: AgentRegistry | null = null;
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private agents: Map<string, BaseAgent> = new Map();
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   private logger = createScopedLogger('FlowOps:AgentRegistry');
 
   static getInstance(): AgentRegistry {

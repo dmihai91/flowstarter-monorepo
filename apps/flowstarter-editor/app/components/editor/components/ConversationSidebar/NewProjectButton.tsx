@@ -5,8 +5,7 @@ import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
 import { PlusIcon } from './Icons';
 
 const DASHBOARD_URL =
-  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_MAIN_PLATFORM_URL) ||
-  'https://flowstarter.dev';
+  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_MAIN_PLATFORM_URL) || 'https://flowstarter.dev';
 
 export function DashboardLinkButton() {
   const { isDark } = useThemeStyles();

@@ -198,11 +198,9 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const rlKey = getRateLimitKey(request, 'api.assets-agent');
   const rl = checkRateLimit(rlKey, 15, 60 * 60 * 1000);
+
   if (rl.limited) {
-    return json(
-      { error: 'Rate limit exceeded' },
-      { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } }
-    );
+    return json({ error: 'Rate limit exceeded' }, { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } });
   }
 
   try {

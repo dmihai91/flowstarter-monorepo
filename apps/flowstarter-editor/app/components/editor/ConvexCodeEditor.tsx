@@ -367,6 +367,7 @@ export function ConvexCodeEditor({ projectId, onSaveComplete }: ConvexCodeEditor
               width: '4px',
               background: colors.surfaceSubtle,
               transition: 'background 0.2s',
+
               // CSS hover handled via global style injection — avoids typed event handler incompatibility with PanelResizeHandle
             }}
             className="convex-resize-handle"

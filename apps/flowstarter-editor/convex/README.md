@@ -85,6 +85,33 @@ function handleButtonPress() {
 }
 ```
 
+## Generated types (`_generated/`)
+
+The `_generated/` directory is **committed to git** so that CI builds and fresh
+installs work without requiring a running Convex backend. The files are:
+
+| File | Purpose |
+|------|---------|
+| `api.d.ts` / `api.js` | Typed references to all public & internal functions |
+| `dataModel.d.ts` | `Doc<T>` and `Id<T>` types derived from `schema.ts` |
+| `server.d.ts` / `server.js` | Typed `query`, `mutation`, `action`, `httpAction` builders |
+
+### When to regenerate
+
+Re-run codegen whenever you change `schema.ts` or add/remove/rename exported
+functions:
+
+```bash
+# From apps/flowstarter-editor:
+npx convex codegen          # types only — no deploy
+# or
+npx convex dev              # types + live sync to dev backend
+```
+
+After regenerating, commit the updated `_generated/` files.
+
+---
+
 Use the Convex CLI to push your functions to a deployment. See everything
 the Convex CLI can do by running `npx convex -h` in your project root
 directory. To learn more, launch the docs with `npx convex docs`.

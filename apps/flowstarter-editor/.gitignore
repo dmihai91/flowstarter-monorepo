@@ -33,8 +33,10 @@ functions/build/
 .wrangler
 _worker.bundle
 
-# Convex
-convex/_generated/
+# Convex — _generated/ is committed so CI and fresh installs work without
+# running `npx convex dev`. Regenerate with `npx convex codegen` after
+# schema changes.
+# convex/_generated/
 
 Modelfile
 modelfiles

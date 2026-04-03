@@ -108,11 +108,20 @@ jobs:
         run: pnpm --dir packages/editor-engine build
 
       - name: Run unit tests — ${{ matrix.app }}
-        run: pnpm nx run ${{ matrix.app }}:test
+        run: pnpm nx run ${{ matrix.app }}:test -- --coverage
         env:
           # Vitest needs these even for unit tests that mock Supabase
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.app }}
+          path: |
+            apps/${{ matrix.app }}/coverage/
+          retention-days: 14
 
       - name: Upload test results
         if: failure()

@@ -16,14 +16,14 @@ export default defineConfig({
     pool: 'forks',
     poolOptions: {
       forks: {
-        singleFork: true, // Use single worker to prevent OOM
+        singleFork: false, // allow parallel forks
         isolate: false, // Disable isolation for faster cleanup
-        execArgv: ['--max-old-space-size=8192'],
+        execArgv: ['--max-old-space-size=4096'], // lower per-fork limit
       },
     },
-    // Run tests within files concurrently, but files sequentially to prevent OOM
+    // Run tests within files concurrently and files in parallel
     maxConcurrency: 20,
-    fileParallelism: false,
+    fileParallelism: true, // re-enable parallelism
     testTimeout: 10000,
     hookTimeout: 10000,
     coverage: {

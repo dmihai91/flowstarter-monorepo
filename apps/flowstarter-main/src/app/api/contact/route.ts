@@ -9,10 +9,10 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { DatabaseExtended } from '@/lib/database-extensions.types';
 
 const ContactSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(100),
-  email: z.string().email('Please enter a valid email address'),
-  subject: z.string().min(1, 'Subject is required').max(200),
-  message: z.string().min(1, 'Message is required').max(5000),
+  name: z.string({ required_error: 'Name is required' }).min(1, 'Name is required').max(100),
+  email: z.string({ required_error: 'Email is required' }).email('Please enter a valid email address'),
+  subject: z.string({ required_error: 'Subject is required' }).min(1, 'Subject is required').max(200),
+  message: z.string({ required_error: 'Message is required' }).min(1, 'Message is required').max(5000),
 });
 
 export async function POST(request: NextRequest) {

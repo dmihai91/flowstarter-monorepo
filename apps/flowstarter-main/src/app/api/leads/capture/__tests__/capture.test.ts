@@ -2,7 +2,7 @@
  * Tests for POST /api/leads/capture
  * Tests Zod validation, spam detection, CORS, and rate limiting logic.
  */
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { z } from 'zod';
 
 // Mirror schema from route

@@ -103,6 +103,7 @@ function matchesFilter(event: ActivityEvent, filter: FilterType): boolean {
 
 // ─── Component ────────────────────────────────────────────────────────
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function AgentActivityLog({ events, isDark, isActive, progress = 0, buildPhase }: AgentActivityLogProps) {
   const logRef = useRef<HTMLDivElement>(null);
   const [filter, setFilter] = useState<FilterType>('all');

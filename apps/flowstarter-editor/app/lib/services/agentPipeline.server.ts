@@ -16,6 +16,7 @@ import { trackLLMUsage, syncCostsToSupabase } from '~/lib/.server/llm/cost-track
 import type {
   AgentActivityEvent,
   GeneratedFile,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   PipelineCost,
   SiteGenerationInput,
   SiteGenerationResult,
@@ -297,6 +298,7 @@ CRITICAL RULES — violations cause build failures:
           break;
         case 'result':
           if (message.subtype === 'success') {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             resultText = message.result || '';
           } else if (message.subtype?.startsWith('error')) {
             emit({ type: 'error', message: `Agent stopped: ${message.subtype}` });

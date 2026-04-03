@@ -148,6 +148,7 @@ export function useAgentCode(options: UseAgentCodeOptions = {}): UseAgentCodeRet
                       callbacks.onAgentEvent?.(data as AgentActivityEvent);
                       break;
                   }
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 } catch (e) {
                   console.warn('Failed to parse SSE data:', currentData);
                 }

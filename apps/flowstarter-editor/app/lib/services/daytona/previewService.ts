@@ -9,6 +9,7 @@ import { persistPreviewUrl, clearPersistedPreviewUrl } from './convexClient';
 import { ensureSandboxRunning } from './sandboxService';
 import { uploadFiles } from './fileService';
 import { checkBunAvailable, installBun, bunInstall } from './bunService';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { PreviewResult as PreviewResultType } from './types';
 import { runNpmFallback } from './npmFallbackService';
 import { getOrCreateSandbox, verifySandbox } from './sandboxHelpers';

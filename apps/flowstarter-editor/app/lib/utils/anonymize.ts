@@ -202,6 +202,7 @@ export function detectPIITypes(text: string): string[] {
     pattern.lastIndex = 0;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   for (const { pattern, replacement } of NAME_PATTERNS) {
     if (pattern.test(text)) {
       types.add('NAME');

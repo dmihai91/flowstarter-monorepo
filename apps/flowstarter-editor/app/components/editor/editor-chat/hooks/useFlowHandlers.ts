@@ -12,8 +12,8 @@ import type {
   UseOnboardingFlowReturn,
   UseTemplateSelectionReturn,
   UsePaletteSelectionReturn,
-} from '../types/sharedState';
-import type { InitialChatState } from '../types';
+} from '~/components/editor/editor-chat/types/sharedState';
+import type { InitialChatState } from '~/components/editor/editor-chat/types';
 import type { UseSimpleBuildHandlersReturn } from './simple-build-types';
 
 interface UseFlowHandlersProps {

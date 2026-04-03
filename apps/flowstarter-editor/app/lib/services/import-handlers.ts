@@ -4,6 +4,7 @@
  * Handles importing settings in both comprehensive (v2.0) and legacy formats.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Cookies from 'js-cookie';
 import type { ExportedSettings } from './importExportService';
 

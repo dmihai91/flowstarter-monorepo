@@ -9,7 +9,7 @@ import type { Sandbox } from '@daytonaio/sdk';
 import { getClient, setCachedSandbox, log } from './client';
 import { ensureSandboxRunning } from './sandboxService';
 import { uploadFiles } from './fileService';
-import { checkBunAvailable, bunInstall, getBunPathSetup } from './bunService';
+import { checkBunAvailable, bunInstall } from './bunService';
 import {
   killExistingDevServers,
   startDevServerTest,

@@ -7,6 +7,7 @@
 
 import { createScopedLogger } from '~/utils/logger';
 import type { BuildErrorDTO } from '~/lib/flowops/schema';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { PlanResultDTO, ReviewResultDTO } from '~/lib/flowstarter/agents/planner-agent';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
 import type { GretlyPhase, GretlyInput, ResolvedConfig, ErrorHistoryEntry } from './types';

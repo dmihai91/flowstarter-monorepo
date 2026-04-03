@@ -173,6 +173,7 @@ function resolveOptions(
 /**
  * Parse LLM response into name options and filter banned words
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function parseAndFilterNames(response: string, projectDescription: string): string[] {
   const rawOptions = response
     .split('\n')

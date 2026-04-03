@@ -11,7 +11,7 @@ import { useCallback } from 'react';
 import { useQuery } from 'convex/react';
 // eslint-disable-next-line no-restricted-imports
 import { api } from '../../../../convex/_generated/api';
-// eslint-disable-next-line no-restricted-imports
+// eslint-disable-next-line no-restricted-imports, @typescript-eslint/no-unused-vars
 import type { Id } from '../../../../convex/_generated/dataModel';
 import { useStore } from '@nanostores/react';
 import { workbenchStore } from '~/lib/stores/workbench';

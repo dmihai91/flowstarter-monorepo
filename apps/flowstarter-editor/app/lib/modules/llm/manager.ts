@@ -113,6 +113,7 @@ export class LLMManager {
     provider: BaseProvider,
     apiKeys?: Record<string, string>,
     serverEnv?: Record<string, string>,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     providerSettings?: Record<string, IProviderSetting>,
   ): boolean {
     // Check if provider has API key configuration

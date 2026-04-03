@@ -9,6 +9,7 @@ interface UseSandboxPreviewOptions {
   autoRefresh?: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function useSandboxPreview({ projectId, autoRefresh = true }: UseSandboxPreviewOptions) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);

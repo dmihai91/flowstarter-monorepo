@@ -52,7 +52,6 @@ function getTimeGreeting(): string {
   return 'Good night';
 }
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export function AIChatPanel({
   messages,
   isGenerating,

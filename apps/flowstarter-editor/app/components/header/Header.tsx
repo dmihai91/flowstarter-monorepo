@@ -7,6 +7,7 @@ import { Logo, ScrollAwareHeader } from '@flowstarter/flow-design-system';
 
 export function Header() {
   const chat = useStore(chatStore);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   if (chat.started) {
@@ -17,7 +18,7 @@ export function Header() {
     setIsSettingsOpen(true);
   };
 
-  const handleSettingsClose = () => {
+  const _handleSettingsClose = () => {
     setIsSettingsOpen(false);
   };
 

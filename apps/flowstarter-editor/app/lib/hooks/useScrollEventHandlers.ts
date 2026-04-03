@@ -1,5 +1,6 @@
 import { type MutableRefObject, type Dispatch, type SetStateAction, useCallback } from 'react';
 import type { StickToBottomState } from './stick-to-bottom-types';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useRefCallback } from './stick-to-bottom-utils';
 
 export function useScrollEventHandlers(

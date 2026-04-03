@@ -10,10 +10,12 @@ import type {
   ChatMessage,
   SuggestedReply,
   ColorPalette,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   SystemFont,
   OnboardingStep,
   BusinessInfo,
   PreviewInfo,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   BuildPhase,
   InitialChatState,
 } from '~/components/editor/editor-chat/types';

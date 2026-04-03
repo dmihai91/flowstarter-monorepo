@@ -422,6 +422,7 @@ describe('naming conversation flow (logic)', () => {
 
   it('generate → user provides own name flow', () => {
     let history: string[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     history = addToHistory(history, 'Fern');
 
     // User provides their own name

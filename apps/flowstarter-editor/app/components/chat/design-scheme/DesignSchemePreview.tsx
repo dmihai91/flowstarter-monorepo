@@ -247,7 +247,6 @@ const PricingSection: React.FC<SectionProps> = ({ palette, fontFamily, features 
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 const FAQSection: React.FC<SectionProps> = ({ palette, fontFamily }) => {
   const questions = [
     'How do I get started with the platform?',

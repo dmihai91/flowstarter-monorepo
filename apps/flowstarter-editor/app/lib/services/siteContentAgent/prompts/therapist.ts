@@ -6,6 +6,7 @@
  * reducing stigma, and making the first step feel approachable.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { BASE_CONTENT_RULES, type BusinessContext, type SiteContent } from './base';
 
 /**

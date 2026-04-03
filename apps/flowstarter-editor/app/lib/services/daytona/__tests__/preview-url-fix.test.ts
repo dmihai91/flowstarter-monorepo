@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { getPreviewUrl } from '../devServerService';
-import { extractPreviewUrlValue, resolvePreviewUrlFromResult } from '../previewUrl';
+import { getPreviewUrl } from '~/lib/services/daytona/devServerService';
+import { extractPreviewUrlValue, resolvePreviewUrlFromResult } from '~/lib/services/daytona/previewUrl';
 
 describe('preview URL fix', () => {
   it('extracts preview URLs from Daytona preview link shapes', () => {

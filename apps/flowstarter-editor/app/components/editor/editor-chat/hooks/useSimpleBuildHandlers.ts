@@ -30,6 +30,7 @@ export function useSimpleBuildHandlers({
   paletteHook,
   businessHook,
   selectedFont,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   selectedLogo,
   setSelectedFont,
   setSelectedLogo,
@@ -336,7 +337,6 @@ export function useSimpleBuildHandlers({
         ]);
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       flowHook,
       messageHook,

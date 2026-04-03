@@ -282,6 +282,7 @@ export async function setupPreviewUrl(
     return null;
   }
 
+  // eslint-disable-next-line prefer-const
   let { url: previewUrl, port: workingPort } = previewResult;
 
   log.debug(` Preview URL: ${previewUrl} (port ${workingPort})`);

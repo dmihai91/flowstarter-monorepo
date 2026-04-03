@@ -274,7 +274,7 @@ describe('Dependency array correctness (stale closure regression)', () => {
     let capturedDescription = '';
 
     // BAD: captured at creation time (stale closure)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     const _staleCallback = () => capturedDescription;
 
     capturedDescription = 'A fitness coaching site';

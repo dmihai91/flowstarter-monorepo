@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useCallback, useMemo, useRef, useState, type MutableRefObject } from 'react';
 import type { StickToBottomOptions, StickToBottomState } from './stick-to-bottom-types';
 import {

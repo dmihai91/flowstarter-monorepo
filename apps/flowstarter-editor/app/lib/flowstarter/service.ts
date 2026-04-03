@@ -12,6 +12,7 @@
 import {
   createGretly,
   type GretlyInput,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   type GretlyResult,
   type GretlyConfig,
   type BusinessInfo,

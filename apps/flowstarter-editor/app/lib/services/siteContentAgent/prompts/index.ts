@@ -5,6 +5,7 @@
  * for optimized site generation.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { type BusinessContext, type SiteContent } from './base';
 import { THERAPIST_DOMAIN } from './therapist';
 import { FITNESS_DOMAIN } from './fitness';

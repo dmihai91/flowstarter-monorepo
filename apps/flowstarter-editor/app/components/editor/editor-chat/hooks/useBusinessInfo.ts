@@ -68,6 +68,7 @@ export function useBusinessInfo(options: UseBusinessInfoOptions = {}): UseBusine
       try {
         const result = await generateMutation.mutateAsync({ description, projectName });
         return result;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         // Error already logged by mutation
         return null;

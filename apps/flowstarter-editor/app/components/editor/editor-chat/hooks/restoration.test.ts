@@ -8,8 +8,8 @@
  * - Handling interrupted builds
  * - Template restoration when templates load asynchronously
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { InitialChatState } from '../types';
+import { describe, it, expect } from 'vitest';
+import type { InitialChatState } from '~/components/editor/editor-chat/types';
 
 // ��������� Test Fixtures ������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������
 const MOCK_MESSAGES = [
@@ -100,6 +100,7 @@ function needsWorkspaceRestoration(state: Partial<InitialChatState> & Record<str
 /**
  * Gets suggested replies based on the restored step
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getSuggestedRepliesForStep(step: string, state: Partial<InitialChatState>): string[] {
   switch (step) {
     case 'review':

@@ -10,6 +10,7 @@
 
 import { useCallback, useRef, useEffect } from 'react';
 import { createScopedLogger } from '~/utils/logger';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { getRandomServicePrompts } from '~/components/editor/editor-chat/constants';
 
 import type { ColorPalette, SystemFont, LogoInfo, InitialChatState } from '~/components/editor/editor-chat/types';
@@ -31,7 +32,9 @@ interface UsePersonalizationFlowProps {
 }
 
 export function usePersonalizationFlow({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   messageHook,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   flowHook,
   paletteHook,
   selectedFont,

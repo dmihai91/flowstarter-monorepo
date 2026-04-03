@@ -69,6 +69,7 @@ export function useChatEffects({
   agentPhase,
   orchestratorState,
   orchestratorOrchestrationId,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   initialState,
   onStateChange,
   onProjectReady,
@@ -178,7 +179,6 @@ export function useChatEffects({
      * Only primitive values that actually change should trigger persistence
      * onStateChange and initialState are accessed via refs, not included in deps
      */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFont, currentUrlId, convexProjectId, buildPhase, orchestratorState, orchestratorOrchestrationId]);
 
   /*
@@ -187,7 +187,6 @@ export function useChatEffects({
    */
   useEffect(() => {
     paletteHookRef.current.updateFromTemplate(templateHookRef.current.selectedTemplate, null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [templateHook.selectedTemplate]);
 
   // Handle agent/orchestrator completion
@@ -219,7 +218,6 @@ export function useChatEffects({
     }
 
     // Note: onProjectReady and createSnapshot are accessed via refs, not in deps
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [agentPhase, orchestratorState, currentUrlId, convexProjectId]);
 }
 

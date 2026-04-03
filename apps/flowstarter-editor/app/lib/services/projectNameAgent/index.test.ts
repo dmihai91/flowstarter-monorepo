@@ -11,15 +11,19 @@ import {
   extractProjectName,
   refineProjectName,
   generateFallbackName,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   type NameGenerationResult,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   type NameExtractionResult,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   type ConversationContext,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   type RefinementContext,
   type UserContext,
 } from './index';
 
 // Mock the LLM module
-vi.mock('../llm', () => ({
+vi.mock('~/lib/services/llm', () => ({
   generateCompletion: vi.fn(),
 }));
 
@@ -48,7 +52,7 @@ vi.mock('~/lib/i18n/api-messages', () => ({
   },
 }));
 
-import { generateCompletion } from '../llm';
+import { generateCompletion } from '~/lib/services/llm';
 
 const mockGenerateCompletion = vi.mocked(generateCompletion);
 

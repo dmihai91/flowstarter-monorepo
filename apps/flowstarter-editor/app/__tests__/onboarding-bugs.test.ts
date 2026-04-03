@@ -152,7 +152,6 @@ describe('Project Name Generation Context', () => {
   });
 
   it('should not fallback to default when description exists', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const _DEFAULT_PROJECT_NAME_GENERATION = 'My Project';
     const projectDescription = 'A fitness trainer site';
 

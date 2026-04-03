@@ -316,6 +316,7 @@ success:
  * ============================================
  */
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function generateSocialFeedMd(businessInfo: any): string {
   return `---
 enabled: false

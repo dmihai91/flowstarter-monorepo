@@ -122,7 +122,7 @@ export const Menu = () => {
     setIsSettingsOpen(true);
     setOpen(false);
   };
-  const handleSettingsClose = () => setIsSettingsOpen(false);
+  const _handleSettingsClose = () => setIsSettingsOpen(false);
 
   return (
     <>

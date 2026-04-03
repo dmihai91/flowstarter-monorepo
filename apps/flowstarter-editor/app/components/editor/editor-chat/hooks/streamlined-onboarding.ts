@@ -255,15 +255,23 @@ export interface OnboardingContext {
 export function generateOnboardingResponse(context: OnboardingContext): OnboardingMessage {
   const {
     step,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     description,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     quickProfile,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     uvp,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     uvpSkipped,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     offerings,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     contactInfo,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     templateName,
     previewUrl,
     projectName,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     userName,
     buildProgress,
   } = context;

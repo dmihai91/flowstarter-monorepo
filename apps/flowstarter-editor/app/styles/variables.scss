@@ -2,7 +2,7 @@
 :root[data-theme='light'] {
   /* Shared brand color - from design system */
   --purple: var(--purple-primary);
-  
+
   /* Custom Brand Purple */
   --flowstarter-accent-purple: var(--flow-start, #4d5dd9);
   --flowstarter-accent-purple-rgb: 77, 93, 217;
@@ -182,7 +182,7 @@
 :root[data-theme='dark'] {
   /* Shared brand color - from design system */
   --purple: var(--purple-primary);
-  
+
   /* Custom Brand Purple */
   --flowstarter-accent-purple: #c1c8ff;
   --flowstarter-accent-purple-rgb: 193, 200, 255;

@@ -98,6 +98,7 @@ async function fetchScaffoldDataStreaming(
               console.log(`✓ Cloned ${msg.count} files for "${templateSlug}"`);
               break;
           }
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (parseError) {
           console.warn('Failed to parse streaming message:', line);
         }

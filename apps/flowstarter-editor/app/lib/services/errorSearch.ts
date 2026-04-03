@@ -141,7 +141,8 @@ export async function searchError(
         description: pattern.solution.description,
         fix:
           typeof pattern.solution.fix === 'function'
-            ? (content: string) => (pattern.solution.fix as Function)(content, error, match)
+            ? // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+              (content: string) => (pattern.solution.fix as Function)(content, error, match)
             : pattern.solution.fix,
         confidence: pattern.solution.confidence,
         source: 'pattern',

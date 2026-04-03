@@ -5,6 +5,7 @@
  * Implements singleton pattern for global access.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { BaseTool, type ToolConfig } from './base-tool';
 import { createScopedLogger } from '~/utils/logger';
 

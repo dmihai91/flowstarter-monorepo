@@ -8,10 +8,12 @@ import {
   type ConversationContext,
   type UserContext,
 } from '~/lib/services/projectNameAgent';
-import { API_MESSAGE_KEYS, getApiMessage } from '~/lib/i18n/api-messages';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { API_MESSAGE_KEYS } from '~/lib/i18n/api-messages';
 
 const logger = createScopedLogger('api.generate-project-name');
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function action({ context, request }: ActionFunctionArgs) {
   let projectDescription: string | undefined;
 

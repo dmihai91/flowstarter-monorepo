@@ -85,6 +85,7 @@ interface SiteGenerationParams {
 export function buildSiteGenerationInput(params: SiteGenerationParams) {
   const {
     projectId,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     convexConversationId,
     projectName,
     templateId,

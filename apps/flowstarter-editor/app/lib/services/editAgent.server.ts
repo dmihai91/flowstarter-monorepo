@@ -184,6 +184,7 @@ Keep all content in the original language. Preserve existing styles and structur
 
         case 'usage':
           // Track token usage for cost
+          // eslint-disable-next-line no-case-declarations
           const usage = message as any;
 
           if (usage.input_tokens || usage.output_tokens) {

@@ -6,7 +6,9 @@
  */
 
 import { memo, useCallback, useRef, useState, useEffect } from 'react';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Editor, { type OnMount, type OnChange, type Monaco } from '@monaco-editor/react';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { getLanguageFromExtension } from '~/utils/getLanguageFromExtension';
 
 // Type alias for Monaco editor instance

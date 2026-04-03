@@ -8,8 +8,9 @@
  * - LLM-based intent detection
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { renderHook } from '@testing-library/react';
 
 // ─── Test Helpers ─────────────────────────────────────────────────────────────
 
@@ -221,7 +222,7 @@ describe('LLM Confirmation Detection', () => {
 
     Object.entries(CONFIRMATION_PATTERNS).forEach(([input, isConfirmation]) => {
       if (isConfirmation) {
-        const hasPositiveKeyword = positiveKeywords.some((kw) => input.toLowerCase().includes(kw.toLowerCase()));
+        const _hasPositiveKeyword = positiveKeywords.some((kw) => input.toLowerCase().includes(kw.toLowerCase()));
 
         /*
          * Most confirmations should contain a positive keyword
@@ -289,7 +290,7 @@ describe('Skip Intent Detection', () => {
 
     Object.entries(SKIP_PATTERNS).forEach(([input, isSkip]) => {
       if (isSkip) {
-        const hasSkipKeyword = skipKeywords.some((kw) => input.toLowerCase().includes(kw.toLowerCase()));
+        const _hasSkipKeyword = skipKeywords.some((kw) => input.toLowerCase().includes(kw.toLowerCase()));
 
         /*
          * Most skip patterns should match

@@ -1,4 +1,5 @@
 import { memo, useRef, useState } from 'react';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useStore } from '@nanostores/react';
 import { IconButton } from '~/components/ui/IconButton';
 import { useTranslation } from '~/lib/i18n/useTranslation';

@@ -7,7 +7,7 @@
 
 import { memo } from 'react';
 import { LoadingScreen } from '@flowstarter/flow-design-system';
-import type { Id } from '../../../convex/_generated/dataModel';
+import type { Id } from '~/convex/_generated/dataModel';
 import { EditorLayout, ConversationProvider } from '~/components/editor';
 import { EditorChatPanel } from '~/components/editor/EditorChatPanel';
 import { useProjectEditorState } from '~/components/editor/hooks/useProjectEditorState';

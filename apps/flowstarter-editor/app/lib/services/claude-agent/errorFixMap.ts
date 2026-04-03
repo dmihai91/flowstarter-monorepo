@@ -403,6 +403,7 @@ export default defineConfig({
       error.includes('getCollection') ||
       error.includes('content collection') ||
       (error.includes('astro:content') && error.includes('does not exist')),
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     fix: (content, filePath, error) => {
       if (!filePath.endsWith('.astro')) {
         return content;

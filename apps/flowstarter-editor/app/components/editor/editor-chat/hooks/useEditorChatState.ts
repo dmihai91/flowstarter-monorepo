@@ -41,6 +41,7 @@ import { useBusinessContext } from './useBusinessContext';
 import { normalizeHandoffStep } from './handoffState';
 
 // Types
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { PreviewInfo, InitialChatState, OnboardingStep } from '~/components/editor/editor-chat/types';
 
 // Re-export PreviewSource from useAdditionalState

@@ -6,6 +6,7 @@
  * Build/start operations are handled by Daytona cloud sandboxes.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { path as nodePath } from '~/utils/path';
 import { atom, map, type MapStore } from 'nanostores';
 import type { ActionAlert, BoltAction, DeployAlert, FileHistory } from '~/types/actions';

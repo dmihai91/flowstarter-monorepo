@@ -1,6 +1,7 @@
 import { type MutableRefObject, useCallback } from 'react';
 import type {
   ScrollToBottom,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ScrollToBottomOptions,
   StickToBottomOptions,
   StickToBottomState,

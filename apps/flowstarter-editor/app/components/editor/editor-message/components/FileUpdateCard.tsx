@@ -19,6 +19,7 @@ const MONO_FONT = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liber
  * Used in chat to show AI-modified template files
  */
 export const FileUpdateCard = memo(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ({ filePath, content, isDark, isNew = false, onOpenInEditor }: FileUpdateCardProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [isCopied, setIsCopied] = useState(false);

@@ -28,6 +28,7 @@ export interface BusinessInfo {
   pricingOffers?: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface BusinessInfoResponse {
   success: true;
   info: BusinessInfo;

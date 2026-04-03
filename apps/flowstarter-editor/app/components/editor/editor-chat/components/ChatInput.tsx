@@ -26,6 +26,7 @@ export function ChatInput({
   inputValue,
   onInputChange,
   onSend,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   step,
   isDark,
   attachedImages,
@@ -43,6 +44,7 @@ export function ChatInput({
   useEffect(() => {
     const vv = (
       window as Window & {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
         visualViewport?: { height: number; addEventListener: Function; removeEventListener: Function };
       }
     ).visualViewport;

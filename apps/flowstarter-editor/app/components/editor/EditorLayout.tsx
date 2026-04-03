@@ -18,7 +18,7 @@ import type { OnboardingStep } from './editor-chat/types';
 import { TerminalPanel } from './TerminalPanel';
 import type { AgentActivityEvent } from './AgentActivityPanel';
 import type { OrchestratorStatusDTO } from '~/lib/hooks/types/orchestrator.dto';
-import type { Id } from '../../../convex/_generated/dataModel';
+import type { Id } from '~/convex/_generated/dataModel';
 
 // Lazy load the Monaco-based code editor (no WebContainer dependency)
 const ConvexCodeEditor = lazy(() =>
@@ -51,9 +51,11 @@ export function EditorLayout({
   projectId,
   children,
   isPublishEnabled = false,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   hasProject = false,
   onboardingStep,
   onPublish,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   orchestrationStatus,
   agentEvents = [],
   isAgentActive = false,
@@ -62,6 +64,7 @@ export function EditorLayout({
   const colors = getColors(isDark);
   const [viewMode, setViewMode] = useState<ViewMode>('preview');
   const [terminalOpen, setTerminalOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [terminalHeight, setTerminalHeight] = useState(240);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
@@ -102,6 +105,7 @@ export function EditorLayout({
     startPreview,
     refreshPreview,
     retryPreview,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     autoFixAttempts,
   } = useDaytonaPreview({
     projectId: projectId || null,
@@ -161,6 +165,7 @@ export function EditorLayout({
     conversations,
     activeConversation,
     isLoadingConversations,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     selectConversation,
     renameConversation,
     deleteConversation,

@@ -90,7 +90,7 @@ function ErrorState({ message }: { message: string }) {
 
 function MagicLinkAccessContent() {
   const { token } = useParams();
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
   const [status, setStatus] = useState<'validating' | 'signup' | 'linking' | 'error'>('validating');
   const [error, setError] = useState<string | null>(null);
   const [validationData, setValidationData] = useState<any>(null);
@@ -99,7 +99,7 @@ function MagicLinkAccessContent() {
   const validation = useQuery(api.magicLinks.validate, token ? { token } : 'skip');
 
   // Mutation to link Clerk user to client and complete access
-  const completeAccess = useMutation(api.magicLinks.completeClientAccess);
+  const _completeAccess = useMutation(api.magicLinks.completeClientAccess);
 
   useEffect(() => {
     if (!token) {

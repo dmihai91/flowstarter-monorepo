@@ -67,6 +67,7 @@ export function EditorChatPanel({
     inputValue,
     setInputValue,
     step,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     suggestedReplies,
     isTyping,
     previewTemplate,
@@ -83,6 +84,7 @@ export function EditorChatPanel({
     agentRunning,
     orchestratorStatus,
     orchestratorRunning,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     stopOrchestration,
     buildStep,
     buildProgress,
@@ -96,7 +98,9 @@ export function EditorChatPanel({
     projectName,
     projectDescription,
     currentUrlId,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     businessContext,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isInternalFlow,
     handleTemplateSelect,
     handlePaletteSelect,
@@ -107,7 +111,9 @@ export function EditorChatPanel({
     handleReviewBuildStart,
     handleReviewCustomize,
     handleSend,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     handleThumbnailError,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     openPreview,
     setPreviewTemplate,
     previewRecommendation,

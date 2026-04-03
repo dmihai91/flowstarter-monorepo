@@ -206,6 +206,7 @@ No explanations, no markdown code blocks - just the raw fixed code.`;
 /**
  * Try to fix common syntax errors without LLM
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function tryRuleBasedSyntaxFix(filePath: string, content: string, errorMessage: string): string | null {
   const lowerError = errorMessage.toLowerCase();
 

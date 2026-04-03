@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ViewToggle, type ViewMode } from './ViewToggle';
 
 // Mock i18n

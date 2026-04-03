@@ -27,7 +27,6 @@ export function useSpeechRecognition({ handleInputChange }: UseSpeechRecognition
 
   useEffect(() => {
     if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognitionInstance = new SpeechRecognition();
       recognitionInstance.continuous = true;

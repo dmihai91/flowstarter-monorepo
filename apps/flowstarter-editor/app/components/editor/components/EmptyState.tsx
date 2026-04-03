@@ -11,7 +11,7 @@ interface EmptyStateProps {
 }
 
 // Animated background orbs
-const FloatingOrb = ({
+const _FloatingOrb = ({
   delay,
   size,
   x,
@@ -53,7 +53,7 @@ const FloatingOrb = ({
 );
 
 // Animated grid pattern
-const GridPattern = ({ isDark }: { isDark: boolean }) => (
+const _GridPattern = ({ isDark }: { isDark: boolean }) => (
   <div
     style={{
       position: 'absolute',
@@ -252,7 +252,7 @@ const getStepConfig = (step: OnboardingStep | undefined, type: 'preview' | 'edit
 
 export function EmptyState({ type, step }: EmptyStateProps) {
   const { isDark } = useThemeStyles();
-  const colors = getColors(isDark);
+  const _colors = getColors(isDark);
   const config = getStepConfig(step, type);
   const IconComponent = config.icon;
 

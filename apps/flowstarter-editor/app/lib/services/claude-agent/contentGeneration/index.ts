@@ -6,7 +6,7 @@
  */
 
 import type { SiteGenerationInput, GeneratedContentFiles } from './types';
-import { buildDomainContext, findIntegration, getDomainInfo } from './context';
+import { buildDomainContext, findIntegration } from './context';
 import {
   generateSiteMd,
   generateHeroMd,

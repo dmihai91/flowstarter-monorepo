@@ -8,6 +8,7 @@
 import type { WizardOutputDTO } from '~/lib/hooks/types/orchestrator.dto';
 import { workbenchStore } from '~/lib/stores/workbench';
 import { DEFAULT_PALETTE } from '~/lib/config/palettes';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { DEFAULT_FONTS, type FontPairing } from '~/lib/config/fonts';
 import type { ColorPalette } from '~/components/editor/editor-chat/types';
 import type { ColorPalette as StoreColorPalette } from '~/lib/stores/palettes';

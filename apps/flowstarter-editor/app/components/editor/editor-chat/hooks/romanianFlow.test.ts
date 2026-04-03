@@ -13,7 +13,7 @@
  * - Summary approval
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 /*
  * ═══════════════════════════════════════════════════════════════════════════════
@@ -509,6 +509,7 @@ describe('Romanian Business Descriptions', () => {
     },
   ];
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ROMANIAN_BUSINESS_DESCRIPTIONS.forEach(({ input, expectedKeywords, industry }) => {
     it(`extracts keywords from "${input.slice(0, 40)}..."`, () => {
       expectedKeywords.forEach((keyword) => {
@@ -702,6 +703,7 @@ describe('Full Romanian Flow Simulation', () => {
     },
   ];
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   FULL_FLOW.forEach(({ step, userInput, expectedIntent, expectedNextStep }) => {
     it(`${step}: "${userInput.slice(0, 30)}..." → ${expectedIntent}`, () => {
       let detectedIntent: string;

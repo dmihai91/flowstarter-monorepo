@@ -174,6 +174,7 @@ export function parseAllErrors(output: string): Array<{ file: string; line: stri
 /**
  * Try to extract a file name from surrounding context
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function extractFileFromContext(output: string, errorMessage: string): string | null {
   // Look for source file paths near the error
   const filePattern = /([a-zA-Z0-9_./-]*(?:src\/)?[a-zA-Z0-9_.-]+\.(astro|tsx?|jsx?|css|mjs))/g;

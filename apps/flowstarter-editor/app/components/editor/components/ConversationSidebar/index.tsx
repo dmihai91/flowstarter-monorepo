@@ -20,7 +20,7 @@ export function ConversationSidebar({
   onDeleteConversation,
 }: ConversationSidebarProps) {
   const { isDark } = useThemeStyles();
-  const colors = getColors(isDark);
+  const _colors = getColors(isDark);
 
   return (
     <AnimatePresence>

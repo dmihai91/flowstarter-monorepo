@@ -1,0 +1,123 @@
+##############################################################################
+# quality-gate.yml
+#
+# Runs on every PR and push to main/feature branches.
+# Blocks merge if lint, typecheck, or unit tests fail.
+#
+# Steps:
+#   1. Lint (all apps + packages)
+#   2. Typecheck (editor-engine built first, then apps)
+#   3. Unit tests — flowstarter-main (vitest)
+#   4. Unit tests — flowstarter-editor (vitest)
+##############################################################################
+
+name: Quality Gate
+
+on:
+  push:
+    branches: [main, master, 'feature/**', 'fix/**', 'chore/**']
+  pull_request:
+    branches: [main, master]
+
+concurrency:
+  group: quality-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '10'
+
+jobs:
+  # ── 1. Lint ────────────────────────────────────────────────────────────────
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build editor-engine (required for lint imports)
+        run: pnpm --dir packages/editor-engine build
+
+      - name: Lint all projects
+        run: pnpm nx run-many -t lint --output-style=errors-only
+
+  # ── 2. Typecheck ──────────────────────────────────────────────────────────
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages (editor-engine, flow-design-system)
+        run: pnpm nx run-many -t build --projects=editor-engine,flow-design-system --output-style=errors-only
+
+      - name: Typecheck — flowstarter-main
+        run: pnpm nx run flowstarter-main:typecheck
+
+      - name: Typecheck — flowstarter-editor
+        run: pnpm nx run flowstarter-editor:typecheck
+
+  # ── 3. Unit tests ─────────────────────────────────────────────────────────
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [flowstarter-main, flowstarter-editor]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build editor-engine
+        run: pnpm --dir packages/editor-engine build
+
+      - name: Run unit tests — ${{ matrix.app }}
+        run: pnpm nx run ${{ matrix.app }}:test
+        env:
+          # Vitest needs these even for unit tests that mock Supabase
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results-${{ matrix.app }}
+          path: apps/${{ matrix.app }}/test-results/
+          retention-days: 7

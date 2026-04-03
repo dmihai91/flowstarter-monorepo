@@ -18,8 +18,10 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './e2e',
 
-  /* Only run the main full-site-build test by default */
-  testMatch: '*.spec.ts',
+  /* Default: integration tests only (mocked, fast).
+   * Use playwright.config.cross-app.ts for cross-app scenarios.
+   * Use pnpm test:e2e:all for everything. */
+  testMatch: '{integration,smoke}/**/*.spec.ts',
 
   /* Global teardown - cleanup Daytona sandboxes after all tests */
   globalTeardown: './e2e/global-teardown.ts',

@@ -6,6 +6,14 @@
     "production": ["default"],
     "sharedGlobals": []
   },
+  "targetDefaults": {
+    "typecheck": {
+      "dependsOn": ["^build"]
+    },
+    "build": {
+      "dependsOn": ["^build"]
+    }
+  },
   "plugins": [
     {
       "plugin": "@nx/js/typescript",

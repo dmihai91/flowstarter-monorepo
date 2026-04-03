@@ -1,0 +1,151 @@
+##############################################################################
+# deploy-preview.yml
+#
+# Creates a Railway preview environment for every PR.
+# The preview URL is posted as a PR comment and consumed by e2e-smoke.yml.
+#
+# Requirements (Railway CLI):
+#   RAILWAY_TOKEN     — service account token with deploy access
+#   RAILWAY_PROJECT_ID — project ID (same for all preview envs)
+#
+# The preview deployment is torn down when the PR closes.
+##############################################################################
+
+name: Deploy Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: [main, master]
+
+concurrency:
+  group: deploy-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '10'
+
+jobs:
+  deploy:
+    name: Deploy PR Preview
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      preview-url-main: ${{ steps.deploy-main.outputs.url }}
+      preview-url-editor: ${{ steps.deploy-editor.outputs.url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm --dir packages/editor-engine build
+
+      # ── Deploy flowstarter-main ──────────────────────────────────────────
+      - name: Deploy flowstarter-main preview
+        id: deploy-main
+        run: |
+          URL=$(railway up \
+            --service flowstarter-main \
+            --environment pr-${{ github.event.pull_request.number }} \
+            --detach \
+            --json | jq -r '.url')
+          echo "url=$URL" >> $GITHUB_OUTPUT
+          echo "Main preview: $URL"
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+
+      # ── Deploy flowstarter-editor ────────────────────────────────────────
+      - name: Deploy flowstarter-editor preview
+        id: deploy-editor
+        run: |
+          URL=$(railway up \
+            --service flowstarter-editor \
+            --environment pr-${{ github.event.pull_request.number }} \
+            --detach \
+            --json | jq -r '.url')
+          echo "url=$URL" >> $GITHUB_OUTPUT
+          echo "Editor preview: $URL"
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+
+      # ── Comment on PR with preview URLs ─────────────────────────────────
+      - name: Comment preview URLs on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const mainUrl = '${{ steps.deploy-main.outputs.url }}';
+            const editorUrl = '${{ steps.deploy-editor.outputs.url }}';
+            const body = [
+              '## 🚀 Preview Deployments',
+              '',
+              '| Service | URL |',
+              '|---------|-----|',
+              `| flowstarter-main | [${mainUrl}](${mainUrl}) |`,
+              `| flowstarter-editor | [${editorUrl}](${editorUrl}) |`,
+              '',
+              '> These previews are torn down when the PR closes.',
+              '> E2E smoke tests will run against these URLs automatically.',
+            ].join('\n');
+
+            // Update existing comment or create new one
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c =>
+              c.user?.login === 'github-actions[bot]' &&
+              c.body?.includes('Preview Deployments')
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+  # ── Teardown preview on PR close ─────────────────────────────────────────
+  teardown:
+    name: Teardown PR Preview
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Remove preview environment
+        run: |
+          railway environment delete pr-${{ github.event.pull_request.number }} --yes || true
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}

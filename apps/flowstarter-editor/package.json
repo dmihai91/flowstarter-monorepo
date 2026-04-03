@@ -26,6 +26,8 @@
     "test:e2e:all": "playwright test --test-match '**/*.spec.ts'",
     "test:e2e:smoke": "playwright test --test-match '**/smoke/*.spec.ts'",
     "test:e2e:integration": "playwright test --test-match '**/integration/*.spec.ts'",
+    "test:e2e:cross-app": "playwright test --config playwright.config.cross-app.ts",
+    "test:e2e:real-build": "RUN_REAL_BUILD_E2E=1 playwright test --config playwright.config.cross-app.ts --grep 'Scenario 4'",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:setup": "tsx scripts/setup-e2e.ts",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint app",

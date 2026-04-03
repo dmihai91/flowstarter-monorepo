@@ -6,6 +6,7 @@
 
 import type { Sandbox } from '@daytonaio/sdk';
 import { log } from './client';
+import { resolveSandboxPath, shellEscape } from './sanitize';
 
 const CONCURRENCY_LIMIT = 5;
 
@@ -61,7 +62,7 @@ export async function uploadFiles(sandbox: Sandbox, files: Record<string, string
     log.debug(` Creating ${directories.size} directories`);
 
     const sortedDirs = Array.from(directories).sort();
-    const mkdirCommand = `mkdir -p ${sortedDirs.map((d) => `"${d}"`).join(' ')}`;
+    const mkdirCommand = `mkdir -p ${sortedDirs.map((d) => `"${shellEscape(d)}"`).join(' ')}`;
 
     try {
       await sandbox.process.executeCommand(mkdirCommand, workDir);
@@ -103,18 +104,9 @@ export async function uploadFiles(sandbox: Sandbox, files: Record<string, string
 }
 
 /**
- * Normalize file path to absolute path in sandbox
+ * Normalize file path to absolute path in sandbox.
+ * Uses resolveSandboxPath to prevent path traversal attacks.
  */
 function normalizePath(filePath: string, workDir: string): string {
-  let normalizedPath = filePath;
-
-  if (!normalizedPath.startsWith('/')) {
-    normalizedPath = `/${normalizedPath}`;
-  }
-
-  if (!normalizedPath.startsWith(workDir)) {
-    normalizedPath = `${workDir}${normalizedPath}`;
-  }
-
-  return normalizedPath;
+  return resolveSandboxPath(filePath, workDir);
 }

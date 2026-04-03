@@ -1,24 +1,43 @@
 /**
  * GET /api/leads/list?projectId=xxx&status=new&limit=50
  * Lists leads for a project. Requires auth.
- * PATCH /api/leads/list — update lead status/notes
+ *
+ * PATCH /api/leads/list
+ * Updates lead status/notes. Requires auth.
  */
 import 'server-only';
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { requireAuth } from '@/lib/api-auth';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { DatabaseExtended } from '@/lib/database-extensions.types';
 
+const GetLeadsSchema = z.object({
+  projectId: z.string().uuid('Invalid project ID'),
+  status: z.string().optional(),
+  limit: z.coerce.number().int().min(1).max(200).default(50),
+});
+
+const PatchLeadSchema = z.object({
+  leadId: z.string().uuid('Invalid lead ID'),
+  status: z.enum(['new', 'contacted', 'qualified', 'closed', 'spam']).optional(),
+  notes: z.string().max(5000).optional(),
+});
+
 export async function GET(request: NextRequest) {
   await requireAuth();
-  const projectId = request.nextUrl.searchParams.get('projectId');
-  const status = request.nextUrl.searchParams.get('status');
-  const limit = parseInt(request.nextUrl.searchParams.get('limit') || '50');
 
-  if (!projectId)
-    return NextResponse.json({ error: 'projectId required' }, { status: 400 });
+  const params = Object.fromEntries(request.nextUrl.searchParams);
+  const result = GetLeadsSchema.safeParse(params);
+  if (!result.success) {
+    return NextResponse.json(
+      { error: result.error.errors[0].message },
+      { status: 400 }
+    );
+  }
 
+  const { projectId, status, limit } = result.data;
   const supabase = createSupabaseServiceRoleClient() as unknown as SupabaseClient<DatabaseExtended>;
 
   let query = supabase
@@ -31,16 +50,14 @@ export async function GET(request: NextRequest) {
   if (status && status !== 'all') {
     query = query.eq('status', status);
   } else {
-    // Exclude spam by default
     query = query.neq('status', 'spam');
   }
 
   const { data, error } = await query;
-
-  if (error)
+  if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 
-  // Also get counts by status
   const { data: counts } = await supabase.rpc('get_lead_counts', {
     p_project_id: projectId,
   });
@@ -50,26 +67,37 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   await requireAuth();
-  const body = (await request.json()) as {
-    leadId: string;
-    status?: string;
-    notes?: string;
-  };
 
-  if (!body.leadId)
-    return NextResponse.json({ error: 'leadId required' }, { status: 400 });
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
+
+  const result = PatchLeadSchema.safeParse(body);
+  if (!result.success) {
+    return NextResponse.json(
+      { error: result.error.errors[0].message },
+      { status: 400 }
+    );
+  }
+
+  const { leadId, status, notes } = result.data;
+  const update: Record<string, unknown> = {};
+  if (status !== undefined) update.status = status;
+  if (notes !== undefined) update.notes = notes;
+
+  if (Object.keys(update).length === 0) {
+    return NextResponse.json({ error: 'Nothing to update' }, { status: 400 });
+  }
 
   const supabase = createSupabaseServiceRoleClient() as unknown as SupabaseClient<DatabaseExtended>;
-  const update: Record<string, unknown> = {};
-  if (body.status) update.status = body.status;
-  if (body.notes !== undefined) update.notes = body.notes;
+  const { error } = await supabase.from('leads').update(update).eq('id', leadId);
 
-  const { error } = await supabase
-    .from('leads')
-    .update(update)
-    .eq('id', body.leadId);
-
-  if (error)
+  if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
   return NextResponse.json({ success: true });
 }

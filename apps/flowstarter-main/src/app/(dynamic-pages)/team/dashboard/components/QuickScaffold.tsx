@@ -72,17 +72,32 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
     setStep('describe');
   }, [clientComplete]);
 
-  const handleGenerate = useCallback(() => {
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleGenerate = useCallback(async () => {
     if (!description.trim()) return;
+    setIsSaving(true);
     try {
-      sessionStorage.setItem(
-        'flowstarter_quick_scaffold_data',
-        JSON.stringify({ clientInfo: client, description })
-      );
+      const res = await fetch('/api/team/projects/draft', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectConfig: {
+            name: client.name || 'Untitled Project',
+            clientInfo: client,
+            userInput: description,
+            businessInfo: { summary: description },
+          },
+        }),
+      });
+      const data = res.ok ? (await res.json() as { projectId?: string }) : {};
+      const draftId = data.projectId;
+      router.push(draftId ? `/team/dashboard/new?draft=${draftId}` : '/team/dashboard/new');
     } catch {
-      // sessionStorage unavailable — will fall through to wizard without pre-fill
+      router.push('/team/dashboard/new');
+    } finally {
+      setIsSaving(false);
     }
-    router.push('/team/dashboard/new');
   }, [description, client, router]);
 
   return (
@@ -195,10 +210,11 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
             </button>
             <button
               onClick={handleGenerate}
-              disabled={!description.trim()}
+              disabled={!description.trim() || isSaving}
               className="flex flex-1 items-center justify-center gap-2 py-2.5 rounded-xl bg-[var(--purple)] text-white text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--purple)]/90 transition-all"
             >
-              <ArrowRight className="w-3.5 h-3.5" /> Continue to wizard
+              <ArrowRight className="w-3.5 h-3.5" />
+              {isSaving ? 'Saving...' : 'Continue to wizard'}
             </button>
           </div>
           <p className="text-[0.6rem] text-gray-400 dark:text-white/25 text-center">

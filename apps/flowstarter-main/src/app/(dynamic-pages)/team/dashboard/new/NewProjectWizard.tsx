@@ -400,29 +400,7 @@ export function NewProjectWizard() {
     };
   }, []);
 
-  // Hydrate from QuickScaffold sessionStorage data
-  useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem('flowstarter_quick_scaffold_data');
-      if (!raw) return;
-      sessionStorage.removeItem('flowstarter_quick_scaffold_data');
-      const data = JSON.parse(raw) as {
-        clientInfo?: { name?: string; email?: string; phone?: string };
-        description?: string;
-      };
-      if (data.clientInfo) {
-        form.updateClientInfo('name', data.clientInfo.name ?? '');
-        form.updateClientInfo('email', data.clientInfo.email ?? '');
-        form.updateClientInfo('phone', data.clientInfo.phone ?? '');
-      }
-      if (data.description) {
-        form.submitDescription(data.description);
-      }
-    } catch {
-      // ignore malformed data
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
 
   useEffect(() => {
     if (!draftId) {

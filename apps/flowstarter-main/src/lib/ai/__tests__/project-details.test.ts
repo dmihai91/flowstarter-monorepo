@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Create mock functions BEFORE any imports
-const mockAiModerateContent = vi.fn();
-const mockGenerateObject = vi.fn();
-const mockModels = {
-  projectDetails: 'mock-model',
-};
+// vi.hoisted ensures these variables are initialized BEFORE vi.mock factory runs,
+// preventing TDZ errors when fileParallelism=true transforms hoist vi.mock calls.
+const { mockAiModerateContent, mockGenerateObject, mockModels } = vi.hoisted(() => ({
+  mockAiModerateContent: vi.fn(),
+  mockGenerateObject: vi.fn(),
+  mockModels: { projectDetails: 'mock-model' },
+}));
 
-// Mock dependencies - must be before imports
 vi.mock('../ai-moderation', () => ({
   aiModerateContent: mockAiModerateContent,
 }));

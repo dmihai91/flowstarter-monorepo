@@ -1,10 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Create mock functions BEFORE any imports
-const mockGenerateText = vi.fn();
-const mockOpenai = vi.fn(() => 'mock-openai-model');
+// vi.hoisted prevents TDZ errors when fileParallelism=true hoists vi.mock calls
+const { mockGenerateText, mockOpenai } = vi.hoisted(() => ({
+  mockGenerateText: vi.fn(),
+  mockOpenai: vi.fn(() => 'mock-openai-model'),
+}));
 
-// Mock AI SDK - must be before imports
 vi.mock('ai', () => ({
   generateText: mockGenerateText,
 }));

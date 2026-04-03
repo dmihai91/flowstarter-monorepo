@@ -8,6 +8,7 @@ import {
   QUICKSCAFFOLD_INPUT,
   cleanupProject,
   e2eFetch,
+skipIfSecretsUnavailable,
 } from './helpers';
 
 type TemplateFixture = {
@@ -98,6 +99,7 @@ test.afterEach(async () => {
 });
 
 test.describe('Scenario 2: QuickScaffold to editor review', () => {
+  skipIfSecretsUnavailable();
   test.setTimeout(180_000);
 
   test('2.1 quick scaffold handoff accepts enriched business data and returns editor access', async () => {

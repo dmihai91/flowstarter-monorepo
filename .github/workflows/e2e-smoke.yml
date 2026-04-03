@@ -79,6 +79,8 @@ jobs:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           DAYTONA_API_KEY: ${{ secrets.DAYTONA_API_KEY }}
+          # Flag for tests to skip when secrets unavailable
+          E2E_SECRETS_AVAILABLE: ${{ secrets.CLERK_SECRET_KEY != '' && 'true' || 'false' }}
 
       # ── Editor integration tests (fully mocked, no external services) ──────
 

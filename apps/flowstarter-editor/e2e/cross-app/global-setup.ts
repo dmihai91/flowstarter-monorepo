@@ -13,12 +13,11 @@ config({ path: path.resolve(__dirname, '../../.env') });
 config({ path: path.resolve(__dirname, '../../.env.local'), override: true });
 
 export default async function globalSetup(_config: FullConfig) {
-  if (!process.env.E2E_SECRET) {
-    throw new Error('E2E_SECRET must be set');
-  }
-
-  if (!process.env.CLERK_SECRET_KEY) {
-    throw new Error('CLERK_SECRET_KEY must be set');
+  // In CI without secrets configured, skip setup gracefully.
+  // Tests themselves will be skipped via E2E_SECRETS_AVAILABLE=false.
+  if (!process.env.CLERK_SECRET_KEY || !process.env.E2E_SECRET) {
+    console.warn('[global-setup] Required secrets not set — skipping Clerk setup. E2E tests will be skipped.');
+    return;
   }
 
   // Ensure publishable key is available (might be under different env var names)

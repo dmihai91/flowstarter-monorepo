@@ -35,3 +35,8 @@
   --editor-text-muted: #6b7280;
   --editor-border: #27272a;
 }
+
+/* ConvexCodeEditor resize handle hover */
+.convex-resize-handle:hover {
+  background: rgba(99, 102, 241, 0.4) !important;
+}

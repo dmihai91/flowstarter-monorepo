@@ -8,6 +8,7 @@ import {
   cleanupProject,
   testProjectName,
   makeHandoffToken,
+skipIfSecretsUnavailable,
 } from './helpers';
 
 type TemplateFixture = {
@@ -120,6 +121,7 @@ test.afterEach(async () => {
 });
 
 test.describe('Scenario 1: Dashboard handoff to editor', () => {
+  skipIfSecretsUnavailable();
   test.setTimeout(300_000);
 
   test('1.1 handoff returns signed token and editor url', async () => {

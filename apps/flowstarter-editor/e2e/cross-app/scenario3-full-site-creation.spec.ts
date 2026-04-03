@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { BASE, EDITOR, BUSINESS_INFO, CONTACT_INFO, cleanupProject, e2eFetch, testProjectName } from './helpers';
+import { BASE, EDITOR, BUSINESS_INFO, CONTACT_INFO, cleanupProject, e2eFetch, testProjectName skipIfSecretsUnavailable,
+} from './helpers';
 
 type TemplateFixture = {
   slug: string;
@@ -59,6 +60,7 @@ test.afterEach(async () => {
 });
 
 test.describe('Scenario 3: Review to build', () => {
+  skipIfSecretsUnavailable();
   test.setTimeout(300_000);
 
   test('3.1 review-first flow can start a seeded build and surface completion', async ({ page }) => {

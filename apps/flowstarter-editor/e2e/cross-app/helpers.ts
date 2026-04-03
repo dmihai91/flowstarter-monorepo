@@ -12,8 +12,21 @@
  *   ✅ /api/build, /api/agent-code, /api/ai/enrich-project — all real
  */
 
-import { type Page } from '@playwright/test';
+import { test, type Page } from '@playwright/test';
 import { createHmac } from 'crypto';
+
+/**
+ * Call at the top of each cross-app describe block.
+ * Skips all tests in CI when required secrets are not configured.
+ */
+export function skipIfSecretsUnavailable() {
+  test.skip(
+    process.env.E2E_SECRETS_AVAILABLE === 'false' ||
+      (!process.env.CLERK_SECRET_KEY && !!process.env.CI),
+    'Skipping cross-app E2E — secrets not configured in this environment.'
+  );
+}
+
 import { config } from 'dotenv';
 import * as path from 'path';
 import { fileURLToPath } from 'url';

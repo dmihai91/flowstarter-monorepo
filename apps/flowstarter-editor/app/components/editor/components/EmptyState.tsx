@@ -212,20 +212,6 @@ const getStepConfig = (step: OnboardingStep | undefined, type: 'preview' | 'edit
   }
 
   switch (step) {
-    case 'personalization':
-      return {
-        icon: PaletteIcon,
-        title: t(EDITOR_LABEL_KEYS.EMPTY_PERSONALIZE_TITLE),
-        subtitle: t(EDITOR_LABEL_KEYS.EMPTY_PERSONALIZE_SUBTITLE),
-        accentColor: 'rgba(236, 72, 153, 0.5)',
-      };
-    case 'integrations':
-      return {
-        icon: IntegrationsIcon,
-        title: 'Connect Your Services',
-        subtitle: 'Add booking and newsletter integrations to enhance your site',
-        accentColor: 'rgba(14, 165, 233, 0.5)',
-      };
     case 'creating':
       return {
         icon: GeneratingIcon,

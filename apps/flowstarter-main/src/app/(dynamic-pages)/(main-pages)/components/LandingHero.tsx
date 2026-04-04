@@ -82,7 +82,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   const prefixWords = hero.headlinePrefix.split(' ');
 
   return (
-    <section className="relative overflow-hidden" style={{ height: '100dvh', paddingTop: '64px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+    <section className="relative overflow-hidden flex flex-col justify-center pb-16 sm:pb-20 lg:pb-0 lg:h-[100dvh]" style={{ paddingTop: '96px', boxSizing: 'border-box' }}>
       <FlowBackground
         variant="landing"
         style={{ position: 'absolute', inset: 0, zIndex: 0 }}
@@ -152,7 +152,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         {/* Label */}
         <div
           style={fade('0s')}
-          className="flex items-center justify-center mb-8 sm:mb-10 md:mb-6 tablet:mb-7 lg:mb-10"
+          className="flex items-center justify-center mb-5 sm:mb-6 md:mb-5 tablet:mb-5 lg:mb-6"
         >
           <div
             className="hero-badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[var(--purple)] dark:text-white"
@@ -232,7 +232,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         {/* Body */}
         <p
           style={fade('0.2s')}
-          className="text-center text-base sm:text-lg text-gray-500 dark:text-white/55 leading-relaxed max-w-xl mx-auto mb-7 sm:mb-8"
+          className="text-center text-base sm:text-lg text-gray-500 dark:text-white/55 leading-relaxed max-w-xl mx-auto mb-5 sm:mb-6"
         >
           {hero.subheadline}
         </p>
@@ -240,7 +240,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         {/* Audience pills */}
         <div
           style={fade('0.25s')}
-          className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mb-6 sm:mb-8"
+          className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mb-5 sm:mb-6"
         >
           {[
             'Coaches',
@@ -261,7 +261,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         {/* CTA row */}
         <div
           style={fade('0.3s')}
-          className="flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-6 mb-10 sm:mb-16"
+          className="flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-6 mb-7 sm:mb-10"
         >
           <Button
             variant="brand-gradient"

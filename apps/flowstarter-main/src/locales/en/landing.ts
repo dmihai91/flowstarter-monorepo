@@ -63,7 +63,7 @@ export const landingKeys = {
     'Zero. We handle the entire setup. You just review and approve.',
   'landing.faq.q6': 'What happens when the beta ends?',
   'landing.faq.a6':
-    'Your €39/month rate is locked in for as long as you stay subscribed. After launch, new clients pay €699 setup + €49/month. You get 30 days notice before anything changes.',
+    'Your €39/month rate is locked in for as long as you stay subscribed. After launch, new clients pay €499 setup + €49/month. You get 30 days notice before anything changes.',
   'landing.faq.q7': "What's included in the email?",
   'landing.faq.a7':
     'One professional email address with your domain (e.g. you@yourbusiness.com). Need more? We can add additional mailboxes.',
@@ -116,7 +116,7 @@ export const landingKeys = {
     'One fee to build. One fee to maintain. Cancel anytime.',
   'landing.pricing.limitedBadge': 'Launch pricing',
   'landing.pricing.limitedNote':
-    'Prices go up after launch (€699 + €49/mo). Lock in current rates.',
+    'Monthly rate goes up after launch (€49/mo). Lock in €39/mo for life.',
   'landing.pricing.buildLabel': 'Setup:',
   'landing.pricing.buildOriginalPrice': '€699',
   'landing.pricing.buildPrice': '€499',

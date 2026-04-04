@@ -24,12 +24,9 @@ import {
 import { ColorPaletteToColorPalette } from './utils';
 import {
   CustomPaletteModal,
-  PersonalizationPanel,
-  IntegrationModal,
   ChatInput,
   TypingIndicator,
   CreatingIndicator,
-  ReviewLaunchPanel,
   AgentActivityLog,
   BuildActivityFeed,
 } from './components';
@@ -97,11 +94,7 @@ export function EditorChatPanel({
     handlePaletteSelect,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     handleFontSelect,
-    handleLogoSelect,
-    handleIntegrationsComplete,
-    handleSkipIntegrations,
     handleReviewBuildStart,
-    handleReviewCustomize,
     handleSend,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     handleThumbnailError,
@@ -277,43 +270,7 @@ export function EditorChatPanel({
 
         {/* ── Phase-specific content ── */}
 
-        {step === 'review' && (
-          <ReviewLaunchPanel
-            isDark={isDark}
-            projectName={projectName || initialState?.projectName}
-            projectDescription={projectDescription || initialState?.projectDescription}
-            selectedTemplateName={
-              selectedTemplate?.name ||
-              selectedRecommendation?.template.name ||
-              initialState?.selectedTemplateName ||
-              null
-            }
-            selectedPalette={selectedPalette || initialState?.selectedPalette || null}
-            selectedFont={selectedFont || initialState?.selectedFont || null}
-            businessInfo={businessInfo || initialState?.businessInfo || null}
-            brandProfile={brandProfile}
-            integrations={initialState?.integrations || null}
-            onCustomize={handleReviewCustomize}
-            onBuild={handleReviewBuildStart}
-          />
-        )}
 
-        {/* Personalization Panel */}
-        {step === 'personalization' && (
-          <PersonalizationPanel
-            isDark={isDark}
-            businessInfo={businessInfo || undefined}
-            initialUseAiImages={initialState?.useAiImages}
-            onLogoSelect={handleLogoSelect}
-          />
-        )}
-
-        {/* Integrations (modal-based cards) */}
-        {step === 'integrations' && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="ml-10">
-            <IntegrationModal isDark={isDark} onComplete={handleIntegrationsComplete} onSkip={handleSkipIntegrations} />
-          </motion.div>
-        )}
 
         {/* Custom Palette Modal */}
         <CustomPaletteModal

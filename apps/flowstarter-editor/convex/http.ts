@@ -116,12 +116,12 @@ const handoffInitialize = httpAction(async (ctx, request) => {
     const convexProjectId = upserted.projectId;
     const urlId = upserted.urlId;
 
-    const existingConvos = (await ctx.runQuery(api.conversations.getByProject, {
+    const defaultThread = (await ctx.runQuery(api.conversations.getDefaultThread, {
       projectId: convexProjectId as never,
-    })) as Array<{ _id: string }> | null;
+    })) as { _id: string } | null;
 
-    if (existingConvos && existingConvos.length > 0) {
-      return new Response(JSON.stringify({ conversationId: existingConvos[0]._id }), {
+    if (defaultThread) {
+      return new Response(JSON.stringify({ conversationId: defaultThread._id }), {
         headers: { 'Content-Type': 'application/json' },
       });
     }

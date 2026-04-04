@@ -42,6 +42,9 @@ export interface ConversationMessage {
 export interface Conversation {
   id: Id<'conversations'>;
   title: string;
+  threadName?: string | null;
+  threadOrder?: number | null;
+  isDefaultThread?: boolean;
   isActive: boolean;
   projectId?: Id<'projects'>;
   projectName?: string | null;
@@ -103,9 +106,10 @@ interface UseConversationsResult {
 
   // Actions
   createConversation: (title?: string, projectId?: Id<'projects'>) => Promise<Id<'conversations'>>;
+  createProjectThread: (threadName?: string) => Promise<Id<'conversations'>>;
   selectConversation: (id: Id<'conversations'>) => Promise<void>;
   renameConversation: (id: Id<'conversations'>, title: string) => Promise<void>;
-  deleteConversation: (id: Id<'conversations'>) => Promise<void>;
+  deleteConversation: (id: Id<'conversations'>) => Promise<Id<'conversations'> | null>;
   linkConversationToProject: (
     id: Id<'conversations'>,
     projectId: Id<'projects'>,
@@ -147,6 +151,11 @@ export function useConversations(initialConversationId?: Id<'conversations'>): U
 
   // Determine which conversation to use as active
   const effectiveActiveConversation = initialConversationId ? specificConversation : activeConversationData;
+  const activeProjectId = effectiveActiveConversation?.projectId;
+  const projectThreadsData = useQuery(
+    api.conversations.listByProject,
+    activeProjectId ? { projectId: activeProjectId } : 'skip',
+  );
 
   // Get messages for active conversation
   const activeConvId = effectiveActiveConversation?._id;
@@ -157,6 +166,7 @@ export function useConversations(initialConversationId?: Id<'conversations'>): U
 
   // Mutations
   const createConversationMutation = useMutation(api.conversations.create);
+  const createProjectThreadMutation = useMutation(api.conversations.createThread);
   const setActiveMutation = useMutation(api.conversations.setActive);
   const renameMutation = useMutation(api.conversations.rename);
   const deleteMutation = useMutation(api.conversations.remove);
@@ -168,9 +178,13 @@ export function useConversations(initialConversationId?: Id<'conversations'>): U
   const updateProjectNameMutation = useMutation(api.conversations.updateProjectName);
 
   // Transform conversations data
-  const conversations: Conversation[] = (conversationsData || []).map((c) => ({
+  const visibleConversationsData = projectThreadsData || conversationsData || [];
+  const conversations: Conversation[] = visibleConversationsData.map((c) => ({
     id: c._id,
     title: c.title,
+    threadName: c.threadName,
+    threadOrder: c.threadOrder,
+    isDefaultThread: c.isDefaultThread,
     isActive: c.isActive,
     projectId: c.projectId,
     projectName: c.projectName,
@@ -182,6 +196,9 @@ export function useConversations(initialConversationId?: Id<'conversations'>): U
     ? {
         id: effectiveActiveConversation._id,
         title: effectiveActiveConversation.title,
+        threadName: effectiveActiveConversation.threadName,
+        threadOrder: effectiveActiveConversation.threadOrder,
+        isDefaultThread: effectiveActiveConversation.isDefaultThread,
         isActive: effectiveActiveConversation.isActive,
         projectId: effectiveActiveConversation.projectId,
         createdAt: effectiveActiveConversation.createdAt,
@@ -243,6 +260,24 @@ export function useConversations(initialConversationId?: Id<'conversations'>): U
     [createConversationMutation, setActiveMutation, sessionId],
   );
 
+  const createProjectThread = useCallback(
+    async (threadName?: string) => {
+      if (!activeProjectId) {
+        throw new Error('Cannot create a thread without an active project');
+      }
+
+      const result = await createProjectThreadMutation({
+        projectId: activeProjectId,
+        sessionId,
+        sourceConversationId: activeConvId,
+        threadName,
+      });
+
+      return result.conversationId;
+    },
+    [activeConvId, activeProjectId, createProjectThreadMutation, sessionId],
+  );
+
   // Select active conversation
   const selectConversation = useCallback(
     async (id: Id<'conversations'>) => {
@@ -273,10 +308,6 @@ export function useConversations(initialConversationId?: Id<'conversations'>): U
   // Delete conversation
   const deleteConversation = useCallback(
     async (id: Id<'conversations'>) => {
-      // Look up conversation to get supabaseProjectId before deleting
-      const convo = conversationsData?.find((c) => c._id === id);
-      const _project = convo?.projectId ? await null : null; // project info comes from Convex mutation
-
       // The mutation returns any associated workspace IDs that need cleanup
       const result = await deleteMutation({ id });
 
@@ -322,8 +353,12 @@ export function useConversations(initialConversationId?: Id<'conversations'>): U
           ).catch((e) => console.error('Error in workspace cleanup:', e));
         }
       }
+
+      return result && typeof result === 'object' && 'fallbackConversationId' in result
+        ? ((result as { fallbackConversationId?: Id<'conversations'> }).fallbackConversationId ?? null)
+        : null;
     },
-    [deleteMutation],
+    [conversationsData, deleteMutation],
   );
 
   // Link conversation to project
@@ -426,10 +461,11 @@ export function useConversations(initialConversationId?: Id<'conversations'>): U
     sessionId,
     conversations,
     activeConversation,
-    isLoadingConversations: conversationsData === undefined,
+    isLoadingConversations: activeProjectId ? projectThreadsData === undefined : conversationsData === undefined,
     messages: localMessages,
     isLoadingMessages: messagesData === undefined,
     createConversation,
+    createProjectThread,
     selectConversation,
     renameConversation,
     deleteConversation,

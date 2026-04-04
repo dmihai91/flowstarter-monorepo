@@ -12,11 +12,11 @@ export function ConversationItem({
   colors,
   onSelect,
   onRename,
-  onProjectNameChange,
   onDelete,
 }: ConversationItemProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const editableValue = conversation.projectName || conversation.title;
+  const displayTitle = conversation.threadName || conversation.title || conversation.projectName || 'Untitled thread';
+  const editableValue = displayTitle;
   const [editValue, setEditValue] = useState(editableValue);
   const [showActions, setShowActions] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -26,9 +26,9 @@ export function ConversationItem({
   // Sync edit value when conversation changes
   useEffect(() => {
     if (!isEditing) {
-      setEditValue(conversation.projectName || conversation.title);
+      setEditValue(displayTitle);
     }
-  }, [conversation.projectName, conversation.title, isEditing]);
+  }, [conversation.projectName, conversation.threadName, conversation.title, displayTitle, isEditing]);
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -41,11 +41,7 @@ export function ConversationItem({
     const trimmedValue = editValue.trim();
 
     if (trimmedValue && trimmedValue !== editableValue) {
-      if (conversation.projectName && onProjectNameChange) {
-        onProjectNameChange(trimmedValue);
-      } else {
-        onRename(trimmedValue);
-      }
+      onRename(trimmedValue);
     }
 
     setIsEditing(false);
@@ -145,8 +141,8 @@ export function ConversationItem({
           ) : (
             <ConversationDetails
               conversation={conversation}
-              isActive={isActive}
               colors={colors}
+              displayTitle={displayTitle}
               formatDate={formatDate}
             />
           )}
@@ -167,7 +163,7 @@ export function ConversationItem({
       {/* Delete Confirmation Dialog */}
       <DeleteDialog
         isOpen={showDeleteConfirm}
-        title={conversation.projectName || conversation.title}
+        title={displayTitle}
         hasProject={!!conversation.projectId}
         projectName={conversation.projectName}
         isDeleting={isDeleting}
@@ -245,44 +241,40 @@ function EditInput({ inputRef, editValue, setEditValue, isDark, colors, onSave, 
 
 interface ConversationDetailsProps {
   conversation: ConversationItemProps['conversation'];
-  isActive: boolean;
   colors: ReturnType<typeof import('~/components/editor/hooks').getColors>;
+  displayTitle: string;
   formatDate: (timestamp: number) => string;
 }
 
-function ConversationDetails({ conversation, isActive, colors, formatDate }: ConversationDetailsProps) {
+function ConversationDetails({ conversation, colors, displayTitle, formatDate }: ConversationDetailsProps) {
   return (
     <>
-      {/* Project Name (if set) */}
-      {conversation.projectName && (
+      <div
+        style={{
+          fontSize: '13px',
+          fontWeight: 500,
+          color: colors.textPrimary,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {displayTitle}
+      </div>
+      {conversation.projectName && conversation.projectName !== displayTitle && (
         <div
           style={{
-            fontSize: '13px',
-            fontWeight: isActive ? 500 : 400,
-            color: colors.textPrimary,
+            fontSize: '11px',
+            color: colors.textMuted,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
+            marginTop: '1px',
           }}
         >
           {conversation.projectName}
         </div>
       )}
-      {/* Title as secondary (or primary if no project name) */}
-      <div
-        style={{
-          fontSize: conversation.projectName ? '11px' : '13px',
-          fontWeight: conversation.projectName ? 400 : isActive ? 500 : 400,
-          color: conversation.projectName ? colors.textMuted : colors.textPrimary,
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-          marginTop: conversation.projectName ? '1px' : '0',
-        }}
-      >
-        {conversation.title}
-      </div>
-      {/* Date */}
       <div
         style={{
           fontSize: '11px',

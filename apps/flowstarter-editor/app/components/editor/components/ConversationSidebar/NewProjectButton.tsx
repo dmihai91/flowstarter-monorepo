@@ -44,3 +44,35 @@ export function DashboardLinkButton() {
     </div>
   );
 }
+
+export function CreateThreadButton({ onClick }: { onClick: () => void | Promise<void> }) {
+  const { isDark } = useThemeStyles();
+  const colors = getColors(isDark);
+
+  return (
+    <div style={{ padding: '0 16px 12px' }}>
+      <button
+        onClick={() => void onClick()}
+        style={{
+          width: '100%',
+          padding: '10px 14px',
+          borderRadius: '8px',
+          background: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.03)',
+          border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.08)',
+          color: colors.textPrimary,
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          fontSize: '13px',
+          fontWeight: 500,
+          transition: 'all 0.15s ease',
+        }}
+      >
+        <PlusIcon />
+        New thread
+      </button>
+    </div>
+  );
+}

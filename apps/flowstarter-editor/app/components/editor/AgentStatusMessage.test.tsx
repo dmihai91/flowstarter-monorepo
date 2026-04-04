@@ -26,7 +26,7 @@ describe('AgentStatusMessage', () => {
       { type: 'tool_call', name: 'write_file', input: { path: 'tailwind.config.mjs' } },
     ];
     render(<AgentStatusMessage events={events} isActive={true} />);
-    expect(screen.getByText(/write_file\(tailwind\.config\.mjs\)/)).toBeTruthy();
+    expect(screen.getByText(/Write file: tailwind\.config\.mjs/)).toBeTruthy();
   });
 
   it('counts files and tool calls in header', () => {

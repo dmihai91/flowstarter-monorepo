@@ -13,7 +13,6 @@ interface ConversationListProps {
   isLoading?: boolean;
   onSelectConversation: (id: Id<'conversations'>) => void;
   onRenameConversation: (id: Id<'conversations'>, title: string) => void;
-  onProjectNameChange?: (id: Id<'conversations'>, name: string) => void;
   onDeleteConversation: (id: Id<'conversations'>) => void | Promise<void>;
 }
 
@@ -23,7 +22,6 @@ export function ConversationList({
   isLoading,
   onSelectConversation,
   onRenameConversation,
-  onProjectNameChange,
   onDeleteConversation,
 }: ConversationListProps) {
   const { isDark } = useThemeStyles();
@@ -56,7 +54,6 @@ export function ConversationList({
                   colors={colors}
                   onSelect={() => onSelectConversation(conv.id)}
                   onRename={(title) => onRenameConversation(conv.id, title)}
-                  onProjectNameChange={onProjectNameChange ? (name) => onProjectNameChange(conv.id, name) : undefined}
                   onDelete={() => onDeleteConversation(conv.id)}
                 />
               ))}

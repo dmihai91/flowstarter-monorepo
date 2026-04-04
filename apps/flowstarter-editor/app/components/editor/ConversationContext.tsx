@@ -31,9 +31,10 @@ interface ConversationContextValue {
 
   // Conversation actions
   createConversation: (title?: string, projectId?: Id<'projects'>) => Promise<Id<'conversations'>>;
+  createProjectThread: (threadName?: string) => Promise<Id<'conversations'>>;
   selectConversation: (id: Id<'conversations'>) => Promise<void>;
   renameConversation: (id: Id<'conversations'>, title: string) => Promise<void>;
-  deleteConversation: (id: Id<'conversations'>) => Promise<void>;
+  deleteConversation: (id: Id<'conversations'>) => Promise<Id<'conversations'> | null>;
   linkConversationToProject: (id: Id<'conversations'>, projectId: Id<'projects'>) => Promise<void>;
 
   // Message actions
@@ -98,6 +99,7 @@ export function ConversationProvider({ children, initialConversationId }: Conver
     messages,
     isLoadingMessages,
     createConversation,
+    createProjectThread,
     selectConversation,
     renameConversation,
     deleteConversation,
@@ -135,6 +137,7 @@ export function ConversationProvider({ children, initialConversationId }: Conver
       messages,
       isLoadingMessages,
       createConversation,
+      createProjectThread,
       selectConversation,
       renameConversation,
       deleteConversation,
@@ -160,6 +163,7 @@ export function ConversationProvider({ children, initialConversationId }: Conver
       messages,
       isLoadingMessages,
       createConversation,
+      createProjectThread,
       selectConversation,
       renameConversation,
       deleteConversation,

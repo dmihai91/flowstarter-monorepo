@@ -24,7 +24,7 @@ export interface ThinkingEvent {
 export interface ToolCallEvent {
   type: 'tool_call';
   id: string;
-  action: 'create' | 'edit' | 'delete' | 'command';
+  action: 'create' | 'edit' | 'delete' | 'read' | 'command';
   path: string;
   detail?: string;
   timestamp: number;
@@ -361,6 +361,7 @@ function ToolCallRow({ event, c }: { event: ToolCallEvent; c: Record<string, str
   const actionConfig = {
     create: { icon: <FilePlus size={14} />, color: c.createColor, label: 'Creating' },
     edit: { icon: <FileEdit size={14} />, color: c.editColor, label: 'Editing' },
+    read: { icon: <FileEdit size={14} />, color: c.commandColor, label: 'Reading' },
     delete: { icon: <Trash2 size={14} />, color: c.deleteColor, label: 'Deleting' },
     command: { icon: <Terminal size={14} />, color: c.commandColor, label: 'Running' },
   };

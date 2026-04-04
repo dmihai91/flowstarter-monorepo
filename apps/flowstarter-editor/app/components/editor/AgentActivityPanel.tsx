@@ -10,6 +10,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import type { AgentActivityEvent } from '~/lib/services/claude-agent/types';
+import { summarizeToolCall } from '~/lib/services/claude-agent/toolCallFormatter';
 
 export type { AgentActivityEvent };
 
@@ -126,6 +127,22 @@ function EventRow({ event }: { event: AgentActivityEvent }) {
         </div>
       );
 
+    case 'tool_call': {
+      const summary = summarizeToolCall(event.name, event.input);
+
+      return (
+        <div className="flex gap-3 items-start py-0.5">
+          <span className="w-16 shrink-0 text-right text-xs font-mono font-medium text-[#71717a]">tool</span>
+          <div className="flex-1 min-w-0">
+            <div className="text-xs font-mono text-[#d4d4d8] truncate">{summary.label}</div>
+            {summary.detail ? (
+              <div className="text-[11px] font-mono text-[#71717a] break-all whitespace-pre-wrap">{summary.detail}</div>
+            ) : null}
+          </div>
+        </div>
+      );
+    }
+
     case 'command_output':
       return (
         <div className="flex gap-3 items-baseline py-0.5">
@@ -182,6 +199,16 @@ function EventRow({ event }: { event: AgentActivityEvent }) {
           <span className="w-16 shrink-0" />
           <span className={`text-[11px] font-mono ${event.code === 0 ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>
             → exited {event.code === 0 ? 'successfully' : `with code ${event.code}`}
+          </span>
+        </div>
+      );
+
+    case 'tool_result':
+      return (
+        <div className="flex gap-3 items-baseline py-0.5">
+          <span className="w-16 shrink-0" />
+          <span className="text-[10px] font-mono text-[#52525b]">
+            {event.name} completed in {formatDuration(event.duration_s)}
           </span>
         </div>
       );

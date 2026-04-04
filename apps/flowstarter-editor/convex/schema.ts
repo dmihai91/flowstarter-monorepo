@@ -332,6 +332,9 @@ export default defineSchema({
     projectId: v.optional(v.id('projects')),
     projectName: v.optional(v.string()),
     projectUrlId: v.optional(v.string()),
+    threadName: v.optional(v.string()),
+    threadOrder: v.optional(v.number()),
+    isDefaultThread: v.optional(v.boolean()),
 
     // Onboarding state
     step: v.optional(v.string()),
@@ -433,7 +436,8 @@ export default defineSchema({
   })
     .index('by_session', ['sessionId'])
     .index('by_session_updated', ['sessionId', 'updatedAt'])
-    .index('by_project', ['projectId']),
+    .index('by_project', ['projectId'])
+    .index('by_project_order', ['projectId', 'threadOrder']),
 
   // Snapshots - for saving project state at key milestones
   snapshots: defineTable({

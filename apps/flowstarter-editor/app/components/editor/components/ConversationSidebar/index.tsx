@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useThemeStyles, getColors } from '~/components/editor/hooks';
 import { SidebarHeader } from './SidebarHeader';
 import { ConversationList } from './ConversationList';
-import { DashboardLinkButton } from './NewProjectButton';
+import { CreateThreadButton, DashboardLinkButton } from './NewProjectButton';
 import type { ConversationSidebarProps } from './types';
 
 export type { ConversationSidebarProps } from './types';
@@ -13,10 +13,11 @@ export function ConversationSidebar({
   conversations,
   activeConversationId,
   isLoading,
+  canCreateThread = false,
   onClose,
+  onCreateThread,
   onSelectConversation,
   onRenameConversation,
-  onProjectNameChange,
   onDeleteConversation,
 }: ConversationSidebarProps) {
   const { isDark } = useThemeStyles();
@@ -75,9 +76,9 @@ export function ConversationSidebar({
               isLoading={isLoading}
               onSelectConversation={onSelectConversation}
               onRenameConversation={onRenameConversation}
-              onProjectNameChange={onProjectNameChange}
               onDeleteConversation={onDeleteConversation}
             />
+            {canCreateThread && onCreateThread ? <CreateThreadButton onClick={onCreateThread} /> : null}
             <DashboardLinkButton />
           </motion.div>
         </>

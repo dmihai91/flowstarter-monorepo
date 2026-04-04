@@ -8,6 +8,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { AgentActivityEvent } from '~/lib/services/claude-agent/types';
+import { summarizeToolCall } from '~/lib/services/claude-agent/toolCallFormatter';
 
 interface Props {
   events: AgentActivityEvent[];
@@ -132,15 +133,8 @@ function cost(usd: number) {
 }
 
 function toolCallSummary(tc: { name: string; input: Record<string, unknown> }): string {
-  if (tc.name === 'write_file') {
-    return `write_file(${tc.input.path || '?'})`;
-  }
-
-  if (tc.name === 'read_file') {
-    return `read_file(${tc.input.path || '?'})`;
-  }
-
-  return tc.name;
+  const summary = summarizeToolCall(tc.name, tc.input);
+  return summary.detail ? `${summary.label}: ${summary.detail}` : summary.label;
 }
 
 export function AgentStatusMessage({ events, isActive, onOpenTerminal }: Props) {

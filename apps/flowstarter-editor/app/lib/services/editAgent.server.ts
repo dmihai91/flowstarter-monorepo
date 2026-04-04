@@ -17,6 +17,7 @@ import { tmpdir } from 'os';
 import { dirname, join } from 'path';
 import { trackLLMUsage, syncCostsToSupabase } from '~/lib/.server/llm/cost-tracker';
 import type { AgentActivityEvent, GeneratedFile } from './claude-agent/types';
+import { extractToolCommand, extractToolPath } from './claude-agent/toolCallFormatter';
 
 export type EditResult = {
   success: boolean;
@@ -31,13 +32,13 @@ type Emit = (event: AgentActivityEvent) => void;
 type LegacyToolUseMessage = {
   type: 'tool_use';
   tool_name?: string;
-  input?: { file_path?: string; path?: string };
+  input?: Record<string, unknown>;
 };
 
 type LegacyToolResultMessage = {
   type: 'tool_result';
   tool_name?: string;
-  input?: { file_path?: string; path?: string };
+  input?: Record<string, unknown>;
 };
 
 type LegacyUsageMessage = {
@@ -49,6 +50,33 @@ type LegacyUsageMessage = {
 const MODEL = 'claude-sonnet-4-6';
 const MAX_TURNS = 5;
 const MAX_BUDGET_USD = 0.5;
+
+function emitToolLifecycleEvent(emit: Emit, toolName: string | undefined, input: Record<string, unknown> | undefined) {
+  if (!toolName) {
+    return;
+  }
+
+  const nextInput = input ?? {};
+  const path = extractToolPath(nextInput);
+  const command = extractToolCommand(nextInput);
+
+  if ((toolName === 'Write' || toolName === 'Edit') && path) {
+    emit({ type: 'file_write', path });
+    return;
+  }
+
+  if (toolName === 'Read' && path) {
+    emit({ type: 'file_read', path });
+    return;
+  }
+
+  if (toolName === 'Bash' && command) {
+    emit({ type: 'command', cmd: command });
+    return;
+  }
+
+  emit({ type: 'tool_call', name: toolName, input: nextInput });
+}
 
 /** Write files from Convex into a temp directory for the agent to work on. */
 async function setupWorkDir(files: GeneratedFile[]): Promise<string> {
@@ -155,15 +183,11 @@ Keep all content in the original language. Preserve existing styles and structur
           break;
 
         case 'tool_use':
-          emit({ type: 'tool_call', name: message.tool_name || 'unknown', input: {} });
+          emitToolLifecycleEvent(emit, message.tool_name, (message as any).input);
           break;
 
         case 'tool_result':
-          // Track file writes
-          if (message.tool_name === 'Edit' || message.tool_name === 'Write') {
-            emit({ type: 'file_write', path: String((message as any).input?.file_path || ''), lines: 0 });
-          }
-
+          emitToolLifecycleEvent(emit, message.tool_name, (message as any).input);
           break;
 
         case 'result':

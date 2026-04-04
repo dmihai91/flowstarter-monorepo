@@ -40,8 +40,7 @@ const STEPS = [
   { label: 'Client & Brief', desc: 'Client info, industry, and AI brief' },
   { label: 'Review Brief', desc: 'Edit business details and goals' },
   { label: 'Pick Template', desc: 'Choose a site design for the client' },
-  { label: 'Personalization', desc: 'Select brand tone for the project' },
-  { label: 'Logo', desc: 'Upload or skip a logo' },
+  { label: 'Personalization', desc: 'Brand tone and logo' },
   { label: 'Integrations & Domain', desc: 'Calendly, Analytics, and custom domain' },
   { label: 'Payment', desc: 'Plan, fee, and launch' },
 ];
@@ -50,18 +49,29 @@ function StepIndicator({
   current,
   reviewStep = 0,
   reviewStepCount = 0,
+  personalizationSubStep = 'tone',
 }: {
   current: number;
   reviewStep?: number;
   reviewStepCount?: number;
+  personalizationSubStep?: 'tone' | 'logo';
 }) {
   const activeStep = STEPS[current];
   const isReviewPhase = current === 1 && reviewStepCount > 0;
+  const isPersonalizationPhase = current === 3;
   // During review, show sub-step X of Y as a suffix
   const descSuffix = isReviewPhase
     ? ` · ${reviewStep + 1} of ${reviewStepCount}`
     : '';
-  const displayDesc = activeStep.desc + descSuffix;
+  const personalizationDesc =
+    isPersonalizationPhase
+      ? personalizationSubStep === 'tone'
+        ? 'Brand tone · 1 of 2'
+        : 'Logo · 2 of 2'
+      : '';
+  const displayDesc = isPersonalizationPhase
+    ? personalizationDesc
+    : activeStep.desc + descSuffix;
   const REVIEW_STEPS = ['Business', 'Offer', 'Structure', 'Contact'];
   const reviewLabel = isReviewPhase
     ? REVIEW_STEPS[reviewStep] ?? activeStep.label
@@ -557,13 +567,12 @@ export function NewProjectWizard() {
       case 'template':
         return 2;
       case 'personalization':
-        return 3;
       case 'logo':
-        return 4;
+        return 3;
       case 'integrations':
-        return 5;
+        return 4;
       case 'payment':
-        return 6;
+        return 5;
       default:
         return 0;
     }
@@ -714,6 +723,7 @@ export function NewProjectWizard() {
             current={stepIndex}
             reviewStep={form.reviewStep}
             reviewStepCount={form.reviewStepCount}
+            personalizationSubStep={form.phase === 'logo' ? 'logo' : 'tone'}
           />
         )}
 

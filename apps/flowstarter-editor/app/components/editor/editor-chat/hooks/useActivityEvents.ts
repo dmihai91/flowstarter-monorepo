@@ -8,6 +8,7 @@
 import { useMemo } from 'react';
 import type { AgentActivityEvent } from '~/lib/services/claude-agent/types';
 import type { ActivityEvent } from '~/components/editor/editor-chat/components/AgentActivityLog';
+import { summarizeToolCall } from '~/lib/services/claude-agent/toolCallFormatter';
 
 let _counter = 0;
 
@@ -23,12 +24,14 @@ function mapEvent(e: AgentActivityEvent): ActivityEvent | null {
       return { type: 'thinking', id: uid(), text: e.text, timestamp: ts };
 
     case 'tool_call':
+      const summary = summarizeToolCall(e.name, e.input);
+
       return {
         type: 'tool_call',
         id: uid(),
-        action: 'command',
-        path: e.name,
-        detail: JSON.stringify(e.input).slice(0, 120),
+        action: summary.action,
+        path: summary.path || summary.command || summary.label,
+        detail: summary.detail,
         timestamp: ts,
       };
 
@@ -36,7 +39,7 @@ function mapEvent(e: AgentActivityEvent): ActivityEvent | null {
       return {
         type: 'tool_call',
         id: uid(),
-        action: e.path.endsWith('/') ? 'create' : 'edit',
+        action: 'edit',
         path: e.path,
         detail: e.lines != null ? `${e.lines} lines` : undefined,
         timestamp: ts,
@@ -46,7 +49,7 @@ function mapEvent(e: AgentActivityEvent): ActivityEvent | null {
       return {
         type: 'tool_call',
         id: uid(),
-        action: 'command',
+        action: 'read',
         path: e.path,
         detail: 'read',
         timestamp: ts,

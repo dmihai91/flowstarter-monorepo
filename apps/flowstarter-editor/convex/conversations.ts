@@ -48,6 +48,11 @@ function normalizeMessagesField(messages: unknown): ChatMessage[] {
   return [];
 }
 
+function getThreadLabel(threadName: string | undefined, fallback: string): string {
+  const trimmed = threadName?.trim();
+  return trimmed && trimmed.length > 0 ? trimmed : fallback;
+}
+
 // List conversations by session (most recent first)
 
 export const getByProject = query({
@@ -59,6 +64,40 @@ export const getByProject = query({
       .collect();
   },
 });
+
+export const listByProject = query({
+  args: { projectId: v.id('projects') },
+  handler: async (ctx, args) => {
+    const threads = await ctx.db
+      .query('conversations')
+      .withIndex('by_project_order', (q) => q.eq('projectId', args.projectId))
+      .collect();
+
+    return threads.map((thread, index) => ({
+      ...thread,
+      threadName: getThreadLabel(thread.threadName, `Thread ${index + 1}`),
+      threadOrder: thread.threadOrder ?? index,
+      isDefaultThread: thread.isDefaultThread ?? index === 0,
+    }));
+  },
+});
+
+export const getDefaultThread = query({
+  args: { projectId: v.id('projects') },
+  handler: async (ctx, args) => {
+    const threads = await ctx.db
+      .query('conversations')
+      .withIndex('by_project_order', (q) => q.eq('projectId', args.projectId))
+      .collect();
+
+    if (threads.length === 0) {
+      return null;
+    }
+
+    return threads.find((thread) => thread.isDefaultThread) ?? threads[0];
+  },
+});
+
 export const getBySessionId = query({
   args: { sessionId: v.string() },
   handler: async (ctx, args) => {
@@ -158,6 +197,9 @@ export const create = mutation({
       title: args.title,
       isActive: true,
       projectId: args.projectId,
+      threadName: args.projectId ? 'Thread 1' : undefined,
+      threadOrder: args.projectId ? 0 : undefined,
+      isDefaultThread: args.projectId ? true : undefined,
       messages: [],
       createdAt: now,
       updatedAt: now,
@@ -221,6 +263,9 @@ export const createWithProject = mutation({
       projectId: args.projectId,
       projectName: args.projectName,
       projectUrlId: args.projectUrlId,
+      threadName: 'Thread 1',
+      threadOrder: 0,
+      isDefaultThread: true,
       projectDescription: args.projectDescription,
       selectedTemplateId: args.selectedTemplateId,
       selectedTemplateName: args.selectedTemplateName,
@@ -235,6 +280,80 @@ export const createWithProject = mutation({
       createdAt: now,
       updatedAt: now,
     });
+  },
+});
+
+export const createThread = mutation({
+  args: {
+    projectId: v.id('projects'),
+    sessionId: v.string(),
+    sourceConversationId: v.optional(v.id('conversations')),
+    threadName: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const now = Date.now();
+    const project = await ctx.db.get(args.projectId);
+
+    if (!project) {
+      throw new Error('Project not found');
+    }
+
+    const existingThreads = await ctx.db
+      .query('conversations')
+      .withIndex('by_project_order', (q) => q.eq('projectId', args.projectId))
+      .collect();
+
+    const threadOrder = existingThreads.length;
+    const threadName = getThreadLabel(args.threadName, `Thread ${threadOrder + 1}`);
+
+    const sourceConversation = args.sourceConversationId ? await ctx.db.get(args.sourceConversationId) : null;
+    const shouldCopySource = sourceConversation?.projectId === args.projectId;
+
+    const activeSessionConversations = await ctx.db
+      .query('conversations')
+      .withIndex('by_session', (q) => q.eq('sessionId', args.sessionId))
+      .filter((q) => q.eq(q.field('isActive'), true))
+      .collect();
+
+    for (const convo of activeSessionConversations) {
+      await ctx.db.patch(convo._id, { isActive: false, updatedAt: now });
+    }
+
+    const conversationId = await ctx.db.insert('conversations', {
+      sessionId: args.sessionId,
+      title: threadName,
+      isActive: true,
+      projectId: args.projectId,
+      projectName: sourceConversation?.projectName ?? project.name,
+      projectUrlId: sourceConversation?.projectUrlId ?? project.urlId,
+      threadName,
+      threadOrder,
+      isDefaultThread: false,
+      step: shouldCopySource ? sourceConversation?.step : 'ready',
+      projectDescription: shouldCopySource ? sourceConversation?.projectDescription : undefined,
+      selectedTemplateId: shouldCopySource ? sourceConversation?.selectedTemplateId : undefined,
+      selectedTemplateName: shouldCopySource ? sourceConversation?.selectedTemplateName : undefined,
+      selectedPalette: shouldCopySource ? sourceConversation?.selectedPalette : undefined,
+      selectedFont: shouldCopySource ? sourceConversation?.selectedFont : undefined,
+      selectedLogo: shouldCopySource ? sourceConversation?.selectedLogo : undefined,
+      buildPhase: shouldCopySource ? sourceConversation?.buildPhase : 'idle',
+      integrations: shouldCopySource ? sourceConversation?.integrations : undefined,
+      contactDetails: shouldCopySource ? sourceConversation?.contactDetails : undefined,
+      businessInfo: shouldCopySource ? sourceConversation?.businessInfo : undefined,
+      brandProfile: shouldCopySource ? sourceConversation?.brandProfile : undefined,
+      selectedIntegrations: shouldCopySource ? sourceConversation?.selectedIntegrations : undefined,
+      syncVersion: shouldCopySource ? sourceConversation?.syncVersion : undefined,
+      pipelineState: shouldCopySource ? sourceConversation?.pipelineState : undefined,
+      messages: [],
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    return {
+      conversationId,
+      threadName,
+      threadOrder,
+    };
   },
 });
 
@@ -267,7 +386,11 @@ export const setActive = mutation({
 export const rename = mutation({
   args: { id: v.id('conversations'), title: v.string() },
   handler: async (ctx, args) => {
-    await ctx.db.patch(args.id, { title: args.title, updatedAt: Date.now() });
+    await ctx.db.patch(args.id, {
+      title: args.title,
+      threadName: args.title,
+      updatedAt: Date.now(),
+    });
     return args.id;
   },
 });
@@ -293,8 +416,28 @@ export const remove = mutation({
 
     let supabaseProjectId: string | undefined;
 
+    let fallbackConversationId: string | undefined;
+
     if (conversation && conversation.projectId) {
       const projectId = conversation.projectId;
+      const siblingThreads = await ctx.db
+        .query('conversations')
+        .withIndex('by_project_order', (q) => q.eq('projectId', projectId))
+        .collect();
+      const remainingThreads = siblingThreads.filter((thread) => thread._id !== args.id);
+
+      if (remainingThreads.length > 0) {
+        const fallbackThread = remainingThreads[0];
+        fallbackConversationId = fallbackThread?._id;
+
+        if (fallbackThread) {
+          await ctx.db.patch(fallbackThread._id, { isActive: true, updatedAt: Date.now() });
+        }
+
+        await ctx.db.delete(args.id);
+
+        return { success: true, daytonaWorkspaceIds, supabaseProjectId, fallbackConversationId };
+      }
 
       // Get the project to find the workspace ID and supabase link
       const project = await ctx.db.get(projectId);
@@ -338,7 +481,7 @@ export const remove = mutation({
       await ctx.db.delete(args.id);
     }
 
-    return { success: true, daytonaWorkspaceIds, supabaseProjectId };
+    return { success: true, daytonaWorkspaceIds, supabaseProjectId, fallbackConversationId };
   },
 });
 

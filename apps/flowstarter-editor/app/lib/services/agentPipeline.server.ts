@@ -10,6 +10,7 @@ import { tmpdir } from 'os';
 import { dirname, join } from 'path';
 
 import { validateAndFixFiles } from './claude-agent/astValidation';
+import { extractToolCommand, extractToolPath } from './claude-agent/toolCallFormatter';
 import { fixContentImports } from './postProcessAstro';
 import { buildTemplateIndex } from './templateIndex';
 import { trackLLMUsage, syncCostsToSupabase } from '~/lib/.server/llm/cost-tracker';
@@ -42,13 +43,13 @@ type ContactInfo = { email?: string; phone?: string; address?: string };
 type LegacyToolUseMessage = {
   type: 'tool_use';
   tool_name?: string;
-  input?: { file_path?: string; path?: string };
+  input?: Record<string, unknown>;
 };
 
 type LegacyToolResultMessage = {
   type: 'tool_result';
   tool_name?: string;
-  input?: { file_path?: string; path?: string };
+  input?: Record<string, unknown>;
 };
 
 type LegacyUsageMessage = {
@@ -56,6 +57,33 @@ type LegacyUsageMessage = {
   input_tokens?: number;
   output_tokens?: number;
 };
+
+function emitToolLifecycleEvent(emit: Emit, toolName: string | undefined, input: Record<string, unknown> | undefined) {
+  if (!toolName) {
+    return;
+  }
+
+  const nextInput = input ?? {};
+  const path = extractToolPath(nextInput);
+  const command = extractToolCommand(nextInput);
+
+  if ((toolName === 'Write' || toolName === 'Edit') && path) {
+    emit({ type: 'file_write', path });
+    return;
+  }
+
+  if (toolName === 'Read' && path) {
+    emit({ type: 'file_read', path });
+    return;
+  }
+
+  if (toolName === 'Bash' && command) {
+    emit({ type: 'command', cmd: command });
+    return;
+  }
+
+  emit({ type: 'tool_call', name: toolName, input: nextInput });
+}
 
 function getContactInfo(input: SiteGenerationInput): ContactInfo {
   return (input as SiteGenerationInput & { contactInfo?: ContactInfo }).contactInfo ?? input.businessInfo.contact ?? {};
@@ -284,17 +312,10 @@ CRITICAL RULES — violations cause build failures:
           }
           break;
         case 'tool_use':
-          emit({ type: 'tool_call', name: (message as any).tool_name || 'tool', input: {} });
+          emitToolLifecycleEvent(emit, (message as any).tool_name, (message as any).input);
           break;
         case 'tool_result':
-          if ((message as any).tool_name === 'Write' || (message as any).tool_name === 'Edit') {
-            const path = String((message as any).input?.file_path || (message as any).input?.path || '');
-
-            if (path) {
-              emit({ type: 'file_write', path, lines: 0 });
-            }
-          }
-
+          emitToolLifecycleEvent(emit, (message as any).tool_name, (message as any).input);
           break;
         case 'result':
           if (message.subtype === 'success') {

@@ -8,6 +8,7 @@
 
 import { useRef, useEffect, useState } from 'react';
 import type { AgentActivityEvent } from './AgentActivityPanel';
+import { summarizeToolCall } from '~/lib/services/claude-agent/toolCallFormatter';
 
 interface TerminalPanelProps {
   events: AgentActivityEvent[];
@@ -169,10 +170,17 @@ function EventLine({ event }: { event: AgentActivityEvent }) {
       );
 
     case 'tool_call':
+      const summary = summarizeToolCall(event.name, event.input);
+
       return (
-        <div className="flex gap-3 py-0.5">
+        <div className="flex gap-3 py-0.5 items-start">
           <span className="w-[88px] shrink-0 text-right text-[11px] font-mono text-[#71717a]">tool</span>
-          <span className="flex-1 text-[11px] font-mono text-[#71717a]">{event.name}</span>
+          <div className="flex-1 min-w-0">
+            <div className="text-[11px] font-mono text-[#d4d4d8]">{summary.label}</div>
+            {summary.detail ? (
+              <div className="text-[11px] font-mono text-[#52525b] break-all whitespace-pre-wrap">{summary.detail}</div>
+            ) : null}
+          </div>
         </div>
       );
 

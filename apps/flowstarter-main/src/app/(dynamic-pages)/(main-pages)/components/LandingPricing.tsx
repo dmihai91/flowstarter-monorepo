@@ -77,26 +77,30 @@ export function LandingPricing() {
                     <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-[var(--purple-primary)] to-transparent" />
                   )}
 
-                  <div className="mb-8 flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-xs font-semibold tracking-[0.24em] text-[var(--landing-text-accent)]">
-                        {plan.name}
-                      </p>
-                      <h3 className="mt-3 text-xl font-semibold text-gray-900 dark:text-white">
-                        {plan.label}
-                      </h3>
-                    </div>
-                    {plan.badge && (
+                  {plan.badge && (
+                    <div className="mb-4 -mt-1">
                       <span
-                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
                           isHighlighted
-                            ? 'bg-[var(--purple-primary)] text-white shadow-[0_8px_24px_rgba(124,58,237,0.3)]'
+                            ? 'bg-[var(--purple-primary)] text-white shadow-[0_4px_14px_rgba(124,58,237,0.35)]'
                             : 'bg-gray-900/8 text-gray-700 dark:bg-white/10 dark:text-white/70'
                         }`}
                       >
+                        {isHighlighted && (
+                          <span className="h-1.5 w-1.5 rounded-full bg-white/80 animate-pulse" />
+                        )}
                         {plan.badge}
                       </span>
-                    )}
+                    </div>
+                  )}
+
+                  <div className="mb-8">
+                    <p className="text-xs font-semibold tracking-[0.24em] text-[var(--landing-text-accent)]">
+                      {plan.name}
+                    </p>
+                    <h3 className="mt-3 text-xl font-semibold text-gray-900 dark:text-white">
+                      {plan.label}
+                    </h3>
                   </div>
 
                   <div className="mb-8 border-b border-[var(--landing-card-border)] pb-8">

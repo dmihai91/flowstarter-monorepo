@@ -165,13 +165,13 @@ export function EditorLayout({
     conversations,
     activeConversation,
     isLoadingConversations,
+    createProjectThread,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     selectConversation,
     renameConversation,
     deleteConversation,
     projectName: contextProjectName,
     updateProjectName,
-    updateConversationProjectName,
   } = useConversationContext();
 
   // Use context project name or prop fallback
@@ -193,6 +193,21 @@ export function EditorLayout({
 
     // Navigate to the conversation URL
     navigate(`/project/${id}`);
+  };
+
+  const handleCreateThread = async () => {
+    const newConversationId = await createProjectThread();
+    closeSidebar();
+    navigate(`/project/${newConversationId}`);
+  };
+
+  const handleDeleteConversation = async (id: Parameters<typeof deleteConversation>[0]) => {
+    const fallbackConversationId = await deleteConversation(id);
+    closeSidebar();
+
+    if (activeConversation?.id === id && fallbackConversationId) {
+      navigate(`/project/${fallbackConversationId}`);
+    }
   };
 
   return (
@@ -218,11 +233,12 @@ export function EditorLayout({
         conversations={conversations}
         activeConversationId={activeConversation?.id}
         isLoading={isLoadingConversations}
+        canCreateThread={Boolean(activeConversation?.projectId)}
         onClose={closeSidebar}
+        onCreateThread={handleCreateThread}
         onSelectConversation={handleSelectConversation}
         onRenameConversation={renameConversation}
-        onProjectNameChange={updateConversationProjectName}
-        onDeleteConversation={deleteConversation}
+        onDeleteConversation={handleDeleteConversation}
       />
 
       <EditorHeader

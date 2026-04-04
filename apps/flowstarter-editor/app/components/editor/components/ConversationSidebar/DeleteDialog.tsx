@@ -158,7 +158,7 @@ function ProjectDataWarning({ isDark, colors, projectName }: ProjectDataWarningP
         {t(EDITOR_LABEL_KEYS.DELETE_WARNING)}
       </div>
       <div style={{ fontSize: '12px', color: colors.textMuted, lineHeight: 1.5 }}>
-        This will permanently delete{projectName && ` "${projectName}"`} including:
+        If this is the last thread for{projectName && ` "${projectName}"`}, deleting it will also remove:
       </div>
       <ul
         style={{

@@ -70,6 +70,14 @@ export function useWelcomeInit({
       return;
     }
 
+    // Concierge mode → team has already built the site, open in chat mode
+    if (state?.mode === 'concierge') {
+      flow.setStep('ready');
+      msg.setSuggestedReplies([]);
+
+      return;
+    }
+
     // Preseeded handoff → auto-start build immediately
     if (hasPreseededTemplateBuild(state)) {
       msg.addAssistantMessage(

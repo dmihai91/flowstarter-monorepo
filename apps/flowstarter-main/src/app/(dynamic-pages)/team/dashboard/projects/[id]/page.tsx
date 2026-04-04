@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 import {
   Building2,
   Users,
@@ -19,6 +20,9 @@ import {
   XCircle,
   RefreshCw,
   FolderOpen,
+  Share,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { useProject } from './hooks/useProject';
 import { TeamDashboardShell } from '../../components/TeamDashboardShell';
@@ -182,6 +186,41 @@ export default function ProjectDetailPage() {
   const { project, parsedChat, isLoading, error, isComplete, handleEdit } =
     useProject();
 
+  const [isSending, setIsSending] = useState(false);
+  const [clientUrl, setClientUrl] = useState<string | null>(null);
+  const [sendError, setSendError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const handleSendToClient = async () => {
+    if (!project || !parsedChat?.clientInfo?.email) return;
+    setIsSending(true);
+    setSendError(null);
+    try {
+      const res = await fetch(`/api/projects/${project.id}/send-to-client`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clientEmail: parsedChat.clientInfo.email,
+          clientName: parsedChat.clientInfo.name ?? 'Client',
+        }),
+      });
+      if (!res.ok) throw new Error('Failed to create client link');
+      const data = (await res.json()) as { editorUrl?: string };
+      setClientUrl(data.editorUrl ?? null);
+    } catch (err) {
+      setSendError(err instanceof Error ? err.message : 'Something went wrong');
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const handleCopyUrl = () => {
+    if (!clientUrl) return;
+    navigator.clipboard.writeText(clientUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-32">
@@ -277,17 +316,52 @@ export default function ProjectDetailPage() {
               </p>
             </div>
           </div>
-          <button
-            onClick={handleEdit}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-gray-200 dark:border-white/[0.08] text-sm font-medium text-gray-700 dark:text-white/70 hover:bg-gray-50 dark:hover:bg-white/[0.04] transition-all shrink-0"
-          >
-            <Edit className="w-4 h-4" /> Edit
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={handleSendToClient}
+              disabled={isSending || !parsedChat?.clientInfo?.email}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--purple)] text-white text-sm font-medium hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {isSending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Share className="w-4 h-4" />
+              )}
+              Send to client
+            </button>
+            <button
+              onClick={handleEdit}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-gray-200 dark:border-white/[0.08] text-sm font-medium text-gray-700 dark:text-white/70 hover:bg-gray-50 dark:hover:bg-white/[0.04] transition-all"
+            >
+              <Edit className="w-4 h-4" /> Edit
+            </button>
+          </div>
         </div>
         {project.description && (
           <p className="text-sm text-gray-600 dark:text-white/60 mt-4 leading-relaxed">
             {project.description}
           </p>
+        )}
+        {sendError && (
+          <p className="mt-4 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-2xl px-4 py-3">
+            {sendError}
+          </p>
+        )}
+        {clientUrl && (
+          <div className="mt-4 flex items-center gap-2 rounded-2xl border border-[var(--purple)]/20 bg-[var(--purple)]/5 px-4 py-3">
+            <input
+              readOnly
+              value={clientUrl}
+              className="flex-1 bg-transparent text-sm text-zinc-800 dark:text-white/80 outline-none truncate"
+            />
+            <button
+              onClick={handleCopyUrl}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--purple)] text-white text-xs font-medium hover:opacity-90 transition-all shrink-0"
+            >
+              {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+              {copied ? 'Copied' : 'Copy'}
+            </button>
+          </div>
         )}
       </div>
 

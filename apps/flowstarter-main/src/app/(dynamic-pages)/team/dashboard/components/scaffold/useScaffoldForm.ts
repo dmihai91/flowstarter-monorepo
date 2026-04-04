@@ -246,15 +246,10 @@ export function useScaffoldForm() {
   const [clientInfo, setClientInfo] = useState<ClientInfo>(EMPTY_CLIENT);
   const [userInput, setUserInput] = useState('');
   const [brief, setBrief] = useState<ProjectBriefDraft>(EMPTY_BRIEF);
-  const [reviewStep, setReviewStepState] = useState(0);
-  const reviewStepRef = useRef(0);
-  const setReviewStep = useCallback((val: number | ((s: number) => number)) => {
-    setReviewStepState((prev) => {
-      const next = typeof val === 'function' ? val(prev) : val;
-      reviewStepRef.current = next;
-      return next;
-    });
-  }, []);
+  const [reviewStep, setReviewStep] = useState(0);
+  // Mutable ref updated at render time — always reflects current reviewStep when read in callbacks
+  const reviewStepRef = useRef(reviewStep);
+  reviewStepRef.current = reviewStep; // update every render, no useEffect needed
   const [aiSteps, setAiSteps] = useState<AiStep[]>([]);
   const [followUpQuestions, setFollowUpQuestions] = useState<string[]>([]);
   const [clarifyAnswers, setClarifyAnswers] = useState<string[]>([]);

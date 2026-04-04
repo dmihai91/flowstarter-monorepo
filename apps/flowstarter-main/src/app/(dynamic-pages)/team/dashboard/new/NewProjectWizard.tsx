@@ -18,6 +18,8 @@ import {
   type WizardTemplate,
 } from './TemplateGallery';
 import { Button } from '@flowstarter/flow-design-system';
+import { LogoStep } from './LogoStep';
+import { IntegrationsStep } from './IntegrationsStep';
 
 // ── Brand tone options for personalization step ───────────────────────────────
 
@@ -37,6 +39,8 @@ const STEPS = [
   { label: 'Review Brief', desc: 'Edit business details and goals' },
   { label: 'Pick Template', desc: 'Choose a site design for the client' },
   { label: 'Personalization', desc: 'Select brand tone for the project' },
+  { label: 'Logo', desc: 'Upload or skip a logo' },
+  { label: 'Integrations', desc: 'Calendly & Analytics setup' },
   { label: 'Build', desc: 'Review summary and launch the build' },
 ];
 
@@ -231,6 +235,8 @@ function BuildStep({
   paletteName,
   fontName,
   brandTone,
+  logoLabel,
+  integrationsLabel,
   onBack,
   onLaunch,
   isLaunching,
@@ -240,6 +246,8 @@ function BuildStep({
   paletteName: string;
   fontName: string;
   brandTone: string;
+  logoLabel: string;
+  integrationsLabel: string;
   onBack: () => void;
   onLaunch: () => void;
   isLaunching: boolean;
@@ -250,6 +258,8 @@ function BuildStep({
     { label: 'Palette', value: paletteName },
     { label: 'Font', value: fontName },
     { label: 'Brand Tone', value: brandTone },
+    { label: 'Logo', value: logoLabel },
+    { label: 'Integrations', value: integrationsLabel },
   ];
 
   return (
@@ -543,8 +553,12 @@ export function NewProjectWizard() {
         return 2;
       case 'personalization':
         return 3;
-      case 'build':
+      case 'logo':
         return 4;
+      case 'integrations':
+        return 5;
+      case 'build':
+        return 6;
       default:
         return 0;
     }
@@ -641,6 +655,8 @@ export function NewProjectWizard() {
             },
             palette: form.selectedPalette,
             font: form.selectedFont,
+            logo: form.selectedLogo ?? undefined,
+            integrations: form.selectedIntegrations ?? undefined,
           },
           mode: 'interactive',
         }),
@@ -901,7 +917,31 @@ export function NewProjectWizard() {
               selectedTone={form.brief.brandTone}
               onSelect={(tone) => form.updateBrief('brandTone', tone as import('../components/scaffold/useScaffoldForm').BrandTone)}
               onBack={() => form.setPhase('template')}
-              onNext={form.proceedToBuild}
+              onNext={form.proceedToLogo}
+            />
+          )}
+
+          {form.phase === 'logo' && (
+            <LogoStep
+              onLogoSelected={(logo) => {
+                form.setSelectedLogo(logo);
+                form.proceedToIntegrations();
+              }}
+              onSkip={() => {
+                form.setSelectedLogo({ type: 'none' });
+                form.proceedToIntegrations();
+              }}
+              onBack={() => form.setPhase('personalization')}
+            />
+          )}
+
+          {form.phase === 'integrations' && (
+            <IntegrationsStep
+              onComplete={(integrations) => {
+                form.setSelectedIntegrations(integrations);
+                form.proceedToBuild();
+              }}
+              onBack={() => form.setPhase('logo')}
             />
           )}
 
@@ -912,7 +952,18 @@ export function NewProjectWizard() {
               paletteName={form.selectedPalette?.name ?? ''}
               fontName={form.selectedFont?.name ?? ''}
               brandTone={form.brief.brandTone}
-              onBack={() => form.setPhase('personalization')}
+              logoLabel={
+                form.selectedLogo?.type === 'uploaded'
+                  ? form.selectedLogo.name ?? 'Uploaded'
+                  : form.selectedLogo?.type === 'text'
+                  ? 'Text logo'
+                  : 'None'
+              }
+              integrationsLabel={[
+                form.selectedIntegrations?.calendly?.enabled ? 'Calendly' : '',
+                form.selectedIntegrations?.googleAnalytics?.enabled ? 'GA4' : '',
+              ].filter(Boolean).join(', ') || 'None'}
+              onBack={() => form.setPhase('integrations')}
               onLaunch={handleLaunch}
               isLaunching={isLaunching}
             />

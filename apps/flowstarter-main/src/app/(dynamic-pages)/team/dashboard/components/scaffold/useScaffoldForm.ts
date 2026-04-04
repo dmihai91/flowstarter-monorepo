@@ -18,8 +18,21 @@ export type ScaffoldPhase =
   | 'review'
   | 'template'
   | 'personalization'
+  | 'logo'
+  | 'integrations'
   | 'payment'
   | 'build';
+
+export interface SelectedLogo {
+  type: 'uploaded' | 'text' | 'none';
+  url?: string;
+  name?: string;
+}
+
+export interface IntegrationsConfig {
+  calendly?: { enabled: boolean; url: string };
+  googleAnalytics?: { enabled: boolean; measurementId: string };
+}
 
 // ── Enums (mirrors editor-engine contracts) ────────────────────────────────────
 
@@ -249,6 +262,11 @@ export function useScaffoldForm() {
   const [templateReasons, setTemplateReasons] = useState<
     Record<string, string>
   >({});
+
+  // Logo & Integrations
+  const [selectedLogo, setSelectedLogo] = useState<SelectedLogo | null>(null);
+  const [selectedIntegrations, setSelectedIntegrations] =
+    useState<IntegrationsConfig | null>(null);
 
   // Payment
   const [planName, setPlanName] = useState<string>('STARTER');
@@ -544,6 +562,11 @@ export function useScaffoldForm() {
     () => setPhase('personalization'),
     []
   );
+  const proceedToLogo = useCallback(() => setPhase('logo'), []);
+  const proceedToIntegrations = useCallback(
+    () => setPhase('integrations'),
+    []
+  );
   const proceedToBuild = useCallback(() => setPhase('build'), []);
 
   // ── Review navigation ──────────────────────────────────────────────────────
@@ -606,6 +629,8 @@ export function useScaffoldForm() {
           : undefined,
         palette: selectedPalette ?? undefined,
         font: selectedFont ?? undefined,
+        logo: selectedLogo ?? undefined,
+        integrations: selectedIntegrations ?? undefined,
       };
 
       const res = await fetch('/api/editor/handoff', {
@@ -757,6 +782,8 @@ export function useScaffoldForm() {
       switch (draft.currentStep) {
         case 'template':
         case 'personalization':
+        case 'logo':
+        case 'integrations':
         case 'build':
         case 'review':
         case 'input':
@@ -793,6 +820,8 @@ export function useScaffoldForm() {
     setSelectedTemplateId(null);
     setSelectedPalette(null);
     setSelectedFont(null);
+    setSelectedLogo(null);
+    setSelectedIntegrations(null);
     setTemplateRecommendations([]);
     setTemplateReasons({});
     setPlanName('STARTER');
@@ -844,8 +873,15 @@ export function useScaffoldForm() {
     templateReasons,
     proceedToTemplate,
     proceedToPersonalization,
+    proceedToLogo,
+    proceedToIntegrations,
     proceedToPayment: () => setPhase('payment'),
     proceedToBuild,
+    // Logo & Integrations
+    selectedLogo,
+    setSelectedLogo,
+    selectedIntegrations,
+    setSelectedIntegrations,
     // Payment (kept for handoff payload)
     planName,
     setPlanName,

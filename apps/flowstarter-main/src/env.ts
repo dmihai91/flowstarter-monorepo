@@ -31,6 +31,14 @@ export const env = createEnv({
       .default('false')
       .transform((v) => v === 'true'),
 
+    // name.com Domain API
+    NAME_COM_USERNAME: z.string().optional(),
+    NAME_COM_TOKEN: z.string().optional(),
+    NAME_COM_SANDBOX: z.string().optional(),
+
+    // Cloudflare Nameservers (comma-separated)
+    CLOUDFLARE_NAMESERVERS: z.string().optional(),
+
     // UploadThing (File Uploads)
     UPLOADTHING_SECRET: z.string().optional(),
     UPLOADTHING_APP_ID: z.string().optional(),
@@ -126,6 +134,10 @@ export const env = createEnv({
     GODADDY_API_KEY: process.env.GODADDY_API_KEY,
     GODADDY_API_SECRET: process.env.GODADDY_API_SECRET,
     GODADDY_USE_PRODUCTION: process.env.GODADDY_USE_PRODUCTION,
+    NAME_COM_USERNAME: process.env.NAME_COM_USERNAME,
+    NAME_COM_TOKEN: process.env.NAME_COM_TOKEN,
+    NAME_COM_SANDBOX: process.env.NAME_COM_SANDBOX,
+    CLOUDFLARE_NAMESERVERS: process.env.CLOUDFLARE_NAMESERVERS,
     UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
     UPLOADTHING_APP_ID: process.env.UPLOADTHING_APP_ID,
     UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,

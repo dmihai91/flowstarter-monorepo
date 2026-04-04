@@ -20,6 +20,7 @@ import {
 import { Button } from '@flowstarter/flow-design-system';
 import { LogoStep } from './LogoStep';
 import { IntegrationsStep } from './IntegrationsStep';
+import { DomainStep } from './DomainStep';
 
 // ── Brand tone options for personalization step ───────────────────────────────
 
@@ -41,6 +42,7 @@ const STEPS = [
   { label: 'Personalization', desc: 'Select brand tone for the project' },
   { label: 'Logo', desc: 'Upload or skip a logo' },
   { label: 'Integrations', desc: 'Calendly & Analytics setup' },
+  { label: 'Domain', desc: 'Register a custom domain' },
   { label: 'Build', desc: 'Review summary and launch the build' },
 ];
 
@@ -236,6 +238,7 @@ function BuildStep({
   fontName,
   brandTone,
   logoLabel,
+  domainLabel,
   integrationsLabel,
   onBack,
   onLaunch,
@@ -247,6 +250,7 @@ function BuildStep({
   fontName: string;
   brandTone: string;
   logoLabel: string;
+  domainLabel: string;
   integrationsLabel: string;
   onBack: () => void;
   onLaunch: () => void;
@@ -259,6 +263,7 @@ function BuildStep({
     { label: 'Font', value: fontName },
     { label: 'Brand Tone', value: brandTone },
     { label: 'Logo', value: logoLabel },
+    { label: 'Domain', value: domainLabel },
     { label: 'Integrations', value: integrationsLabel },
   ];
 
@@ -557,8 +562,10 @@ export function NewProjectWizard() {
         return 4;
       case 'integrations':
         return 5;
-      case 'build':
+      case 'domain':
         return 6;
+      case 'build':
+        return 7;
       default:
         return 0;
     }
@@ -657,6 +664,7 @@ export function NewProjectWizard() {
             font: form.selectedFont,
             logo: form.selectedLogo ?? undefined,
             integrations: form.selectedIntegrations ?? undefined,
+            selectedDomain: form.selectedDomain ?? undefined,
           },
           mode: 'interactive',
         }),
@@ -939,9 +947,21 @@ export function NewProjectWizard() {
             <IntegrationsStep
               onComplete={(integrations) => {
                 form.setSelectedIntegrations(integrations);
-                form.proceedToBuild();
+                form.proceedToDomain();
               }}
               onBack={() => form.setPhase('logo')}
+            />
+          )}
+
+          {form.phase === 'domain' && (
+            <DomainStep
+              projectName={form.brief.projectName}
+              clientName={form.clientInfo.name}
+              onDomainSelected={(domain) => {
+                form.setSelectedDomain(domain);
+                form.proceedToBuild();
+              }}
+              onBack={() => form.setPhase('integrations')}
             />
           )}
 
@@ -959,11 +979,12 @@ export function NewProjectWizard() {
                   ? 'Text logo'
                   : 'None'
               }
+              domainLabel={form.selectedDomain ?? 'None'}
               integrationsLabel={[
                 form.selectedIntegrations?.calendly?.enabled ? 'Calendly' : '',
                 form.selectedIntegrations?.googleAnalytics?.enabled ? 'GA4' : '',
               ].filter(Boolean).join(', ') || 'None'}
-              onBack={() => form.setPhase('integrations')}
+              onBack={() => form.setPhase('domain')}
               onLaunch={handleLaunch}
               isLaunching={isLaunching}
             />

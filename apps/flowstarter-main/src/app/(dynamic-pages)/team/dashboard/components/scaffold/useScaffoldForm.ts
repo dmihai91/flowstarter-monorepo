@@ -20,6 +20,7 @@ export type ScaffoldPhase =
   | 'personalization'
   | 'logo'
   | 'integrations'
+  | 'domain'
   | 'payment'
   | 'build';
 
@@ -267,6 +268,9 @@ export function useScaffoldForm() {
   const [selectedLogo, setSelectedLogo] = useState<SelectedLogo | null>(null);
   const [selectedIntegrations, setSelectedIntegrations] =
     useState<IntegrationsConfig | null>(null);
+
+  // Domain
+  const [selectedDomain, setSelectedDomain] = useState<string | null>(null);
 
   // Payment
   const [planName, setPlanName] = useState<string>('STARTER');
@@ -567,6 +571,7 @@ export function useScaffoldForm() {
     () => setPhase('integrations'),
     []
   );
+  const proceedToDomain = useCallback(() => setPhase('domain'), []);
   const proceedToBuild = useCallback(() => setPhase('build'), []);
 
   // ── Review navigation ──────────────────────────────────────────────────────
@@ -784,6 +789,7 @@ export function useScaffoldForm() {
         case 'personalization':
         case 'logo':
         case 'integrations':
+        case 'domain':
         case 'build':
         case 'review':
         case 'input':
@@ -822,6 +828,7 @@ export function useScaffoldForm() {
     setSelectedFont(null);
     setSelectedLogo(null);
     setSelectedIntegrations(null);
+    setSelectedDomain(null);
     setTemplateRecommendations([]);
     setTemplateReasons({});
     setPlanName('STARTER');
@@ -875,6 +882,7 @@ export function useScaffoldForm() {
     proceedToPersonalization,
     proceedToLogo,
     proceedToIntegrations,
+    proceedToDomain,
     proceedToPayment: () => setPhase('payment'),
     proceedToBuild,
     // Logo & Integrations
@@ -882,6 +890,9 @@ export function useScaffoldForm() {
     setSelectedLogo,
     selectedIntegrations,
     setSelectedIntegrations,
+    // Domain
+    selectedDomain,
+    setSelectedDomain,
     // Payment (kept for handoff payload)
     planName,
     setPlanName,

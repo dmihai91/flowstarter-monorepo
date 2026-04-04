@@ -11,3 +11,16 @@ export {
   downloadBundle,
   validateBundle,
 } from './bundle';
+
+export {
+  searchDomains,
+  registerDomain,
+  setNameservers,
+  getDomain,
+} from './namecom';
+
+export type {
+  NameComConfig,
+  DomainSearchResult,
+  DomainRegistration,
+} from './namecom';

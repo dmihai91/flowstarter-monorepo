@@ -1,16 +1,13 @@
 /**
  * PersonalizationPanel Component Tests
  *
- * Tests the combined palette → font → logo step transitions
- * and callback behaviors.
+ * Tests the font → logo step transitions and callback behaviors.
+ * Palette selection is now dashboard-only.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { PersonalizationPanel } from './PersonalizationPanel';
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { ColorPalette, SystemFont } from '~/components/editor/editor-chat/types';
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
@@ -70,26 +67,6 @@ vi.mock('@tanstack/react-query', () => ({
   }),
 }));
 
-// Mock PaletteSelector
-vi.mock('./PaletteSelector', () => ({
-  PaletteSelector: ({ onSelect }: any) => (
-    <div data-testid="palette-selector">
-      <button
-        data-testid="palette-option-ocean"
-        onClick={() =>
-          onSelect({
-            id: 'ocean',
-            name: 'Ocean',
-            colors: ['#0ea5e9', '#06b6d4', '#3b82f6', '#0f172a'],
-          })
-        }
-      >
-        Ocean Palette
-      </button>
-    </div>
-  ),
-}));
-
 // Mock FontSelector
 vi.mock('./FontSelector', () => ({
   FontSelector: ({ onSelect }: any) => (
@@ -145,7 +122,6 @@ vi.mock('~/lib/i18n/editor-labels', () => ({
 }));
 
 describe('PersonalizationPanel', () => {
-  const mockOnPaletteSelect = vi.fn();
   const mockOnFontSelect = vi.fn();
   const mockOnLogoSelect = vi.fn();
 
@@ -158,7 +134,7 @@ describe('PersonalizationPanel', () => {
     vi.useRealTimers();
   });
 
-  // ─── Initial Render (Palette Section) ─────────────────────────────────────
+  // ─── Initial Render (Font Section) ──────────────────────────────────────
 
   describe('initial render', () => {
     it('renders personalization panel', () => {
@@ -166,7 +142,6 @@ describe('PersonalizationPanel', () => {
         <PersonalizationPanel
           isDark={false}
           fontsLoaded={true}
-          onPaletteSelect={mockOnPaletteSelect}
           onFontSelect={mockOnFontSelect}
           onLogoSelect={mockOnLogoSelect}
         />,
@@ -174,44 +149,29 @@ describe('PersonalizationPanel', () => {
       expect(screen.getByTestId('personalization-panel')).toBeTruthy();
     });
 
-    it('starts on palette section', () => {
+    it('starts on font section', () => {
       render(
         <PersonalizationPanel
           isDark={false}
           fontsLoaded={true}
-          onPaletteSelect={mockOnPaletteSelect}
           onFontSelect={mockOnFontSelect}
           onLogoSelect={mockOnLogoSelect}
         />,
       );
-      expect(screen.getByTestId('palette-section')).toBeTruthy();
-      expect(screen.getByText('Choose Your Colors')).toBeTruthy();
+      expect(screen.getByTestId('font-section')).toBeTruthy();
+      expect(screen.getByText('Choose Your Fonts')).toBeTruthy();
     });
 
-    it('renders palette selector', () => {
+    it('does not render palette or logo sections initially', () => {
       render(
         <PersonalizationPanel
           isDark={false}
           fontsLoaded={true}
-          onPaletteSelect={mockOnPaletteSelect}
           onFontSelect={mockOnFontSelect}
           onLogoSelect={mockOnLogoSelect}
         />,
       );
-      expect(screen.getByTestId('palette-selector')).toBeTruthy();
-    });
-
-    it('does not render font or logo sections initially', () => {
-      render(
-        <PersonalizationPanel
-          isDark={false}
-          fontsLoaded={true}
-          onPaletteSelect={mockOnPaletteSelect}
-          onFontSelect={mockOnFontSelect}
-          onLogoSelect={mockOnLogoSelect}
-        />,
-      );
-      expect(screen.queryByTestId('font-section')).toBeNull();
+      expect(screen.queryByTestId('palette-section')).toBeNull();
       expect(screen.queryByTestId('logo-section')).toBeNull();
     });
   });
@@ -219,60 +179,15 @@ describe('PersonalizationPanel', () => {
   // ─── Step Transitions ─────────────────────────────────────────────────────
 
   describe('step transitions', () => {
-    it('transitions to font section after palette selection', () => {
-      render(
-        <PersonalizationPanel
-          isDark={false}
-          fontsLoaded={true}
-          onPaletteSelect={mockOnPaletteSelect}
-          onFontSelect={mockOnFontSelect}
-          onLogoSelect={mockOnLogoSelect}
-        />,
-      );
-
-      // Select a palette
-      fireEvent.click(screen.getByTestId('palette-option-ocean'));
-
-      // Should transition to font section
-      expect(screen.getByTestId('font-section')).toBeTruthy();
-      expect(screen.getByText('Choose Your Fonts')).toBeTruthy();
-      expect(screen.queryByTestId('palette-section')).toBeNull();
-    });
-
-    it('calls onPaletteSelect when palette is selected', () => {
-      render(
-        <PersonalizationPanel
-          isDark={false}
-          fontsLoaded={true}
-          onPaletteSelect={mockOnPaletteSelect}
-          onFontSelect={mockOnFontSelect}
-          onLogoSelect={mockOnLogoSelect}
-        />,
-      );
-
-      fireEvent.click(screen.getByTestId('palette-option-ocean'));
-
-      expect(mockOnPaletteSelect).toHaveBeenCalledTimes(1);
-      expect(mockOnPaletteSelect).toHaveBeenCalledWith({
-        id: 'ocean',
-        name: 'Ocean',
-        colors: ['#0ea5e9', '#06b6d4', '#3b82f6', '#0f172a'],
-      });
-    });
-
     it('transitions to logo section after font selection', () => {
       render(
         <PersonalizationPanel
           isDark={false}
           fontsLoaded={true}
-          onPaletteSelect={mockOnPaletteSelect}
           onFontSelect={mockOnFontSelect}
           onLogoSelect={mockOnLogoSelect}
         />,
       );
-
-      // Select palette first
-      fireEvent.click(screen.getByTestId('palette-option-ocean'));
 
       // Select font
       fireEvent.click(screen.getByTestId('font-option-modern'));
@@ -292,14 +207,10 @@ describe('PersonalizationPanel', () => {
         <PersonalizationPanel
           isDark={false}
           fontsLoaded={true}
-          onPaletteSelect={mockOnPaletteSelect}
           onFontSelect={mockOnFontSelect}
           onLogoSelect={mockOnLogoSelect}
         />,
       );
-
-      // Navigate to font section
-      fireEvent.click(screen.getByTestId('palette-option-ocean'));
 
       // Select font
       fireEvent.click(screen.getByTestId('font-option-modern'));
@@ -322,12 +233,10 @@ describe('PersonalizationPanel', () => {
         <PersonalizationPanel
           isDark={false}
           fontsLoaded={true}
-          onPaletteSelect={mockOnPaletteSelect}
           onFontSelect={mockOnFontSelect}
           onLogoSelect={mockOnLogoSelect}
         />,
       );
-      fireEvent.click(screen.getByTestId('palette-option-ocean'));
       fireEvent.click(screen.getByTestId('font-option-modern'));
       act(() => {
         vi.advanceTimersByTime(150);
@@ -368,12 +277,11 @@ describe('PersonalizationPanel', () => {
   // ─── Progress Indicator ───────────────────────────────────────────────────
 
   describe('progress indicator', () => {
-    it('renders 3 progress bars', () => {
+    it('renders 2 progress bars', () => {
       const { container } = render(
         <PersonalizationPanel
           isDark={false}
           fontsLoaded={true}
-          onPaletteSelect={mockOnPaletteSelect}
           onFontSelect={mockOnFontSelect}
           onLogoSelect={mockOnLogoSelect}
         />,
@@ -382,7 +290,7 @@ describe('PersonalizationPanel', () => {
       const panel = container.querySelector('[data-testid="personalization-panel"]');
       const progressContainer = panel?.firstElementChild?.firstElementChild as HTMLElement;
       const bars = progressContainer?.children;
-      expect(bars).toHaveLength(3);
+      expect(bars).toHaveLength(2);
     });
   });
 
@@ -394,7 +302,6 @@ describe('PersonalizationPanel', () => {
         <PersonalizationPanel
           isDark={true}
           fontsLoaded={true}
-          onPaletteSelect={mockOnPaletteSelect}
           onFontSelect={mockOnFontSelect}
           onLogoSelect={mockOnLogoSelect}
         />,

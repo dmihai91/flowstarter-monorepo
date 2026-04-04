@@ -72,7 +72,7 @@ export function EditorChatPanel({
     isTyping,
     previewTemplate,
     previewPalette,
-    templatePalette,
+    templatePalette: _templatePalette,
     showCustomPalette,
     setShowCustomPalette,
     customColors,
@@ -311,13 +311,9 @@ export function EditorChatPanel({
           <PersonalizationPanel
             isDark={isDark}
             fontsLoaded={fontsLoaded}
-            templatePalette={templatePalette || null}
-            templatePalettes={selectedRecommendation?.palettes}
             templateFonts={selectedRecommendation?.fonts}
             businessInfo={businessInfo || undefined}
             initialUseAiImages={initialState?.useAiImages}
-            onPaletteSelect={handlePaletteSelect}
-            onCustomPaletteClick={() => setShowCustomPalette(true)}
             onFontSelect={handleFontSelect}
             onLogoSelect={handleLogoSelect}
           />

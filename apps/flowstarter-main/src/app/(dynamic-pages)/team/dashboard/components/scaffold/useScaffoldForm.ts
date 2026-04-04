@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import type { EngineArtifacts } from '@/lib/engine/contracts';
 
 const EDITOR_URL =
@@ -246,9 +246,15 @@ export function useScaffoldForm() {
   const [clientInfo, setClientInfo] = useState<ClientInfo>(EMPTY_CLIENT);
   const [userInput, setUserInput] = useState('');
   const [brief, setBrief] = useState<ProjectBriefDraft>(EMPTY_BRIEF);
-  const [reviewStep, setReviewStep] = useState(0);
+  const [reviewStep, setReviewStepState] = useState(0);
   const reviewStepRef = useRef(0);
-  useEffect(() => { reviewStepRef.current = reviewStep; }, [reviewStep]);
+  const setReviewStep = useCallback((val: number | ((s: number) => number)) => {
+    setReviewStepState((prev) => {
+      const next = typeof val === 'function' ? val(prev) : val;
+      reviewStepRef.current = next;
+      return next;
+    });
+  }, []);
   const [aiSteps, setAiSteps] = useState<AiStep[]>([]);
   const [followUpQuestions, setFollowUpQuestions] = useState<string[]>([]);
   const [clarifyAnswers, setClarifyAnswers] = useState<string[]>([]);

@@ -3,20 +3,31 @@ import type { AgentActivityEvent, SiteGenerationInput, GeneratedFile } from '~/l
 
 // Mock the Claude Agent SDK
 const mockQuery = vi.fn();
+const mockMkdir = vi.fn();
+const mockWriteFile = vi.fn();
+const mockReadFile = vi.fn();
+const mockReaddir = vi.fn();
+const mockRm = vi.fn();
+
 vi.mock('@anthropic-ai/claude-agent-sdk', () => ({
   query: (...args: unknown[]) => mockQuery(...args),
 }));
 
 // Mock fs/promises
-vi.mock('fs/promises', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('fs/promises')>();
+vi.mock('fs/promises', () => {
   return {
-    ...actual,
-    mkdir: vi.fn().mockResolvedValue(undefined),
-    writeFile: vi.fn().mockResolvedValue(undefined),
-    readFile: vi.fn().mockResolvedValue('file content'),
-    readdir: vi.fn().mockResolvedValue([]),
-    rm: vi.fn().mockResolvedValue(undefined),
+    default: {
+      mkdir: mockMkdir,
+      writeFile: mockWriteFile,
+      readFile: mockReadFile,
+      readdir: mockReaddir,
+      rm: mockRm,
+    },
+    mkdir: mockMkdir,
+    writeFile: mockWriteFile,
+    readFile: mockReadFile,
+    readdir: mockReaddir,
+    rm: mockRm,
   };
 });
 
@@ -52,6 +63,11 @@ describe('agentPipeline', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockMkdir.mockResolvedValue(undefined);
+    mockWriteFile.mockResolvedValue(undefined);
+    mockReadFile.mockResolvedValue('file content');
+    mockReaddir.mockResolvedValue([]);
+    mockRm.mockResolvedValue(undefined);
     process.env.ANTHROPIC_API_KEY = 'test-key';
     process.env.NODE_ENV = 'test';
   });

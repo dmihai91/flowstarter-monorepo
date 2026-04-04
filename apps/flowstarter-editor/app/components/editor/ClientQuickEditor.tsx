@@ -159,7 +159,9 @@ export function ClientQuickEditor({
     : null;
 
   const hasChanges =
-    draft && savedDraft ? JSON.stringify(draft) !== JSON.stringify(savedDraft) : JSON.stringify(draft) !== JSON.stringify(parsedContent);
+    draft && savedDraft
+      ? JSON.stringify(draft) !== JSON.stringify(savedDraft)
+      : JSON.stringify(draft) !== JSON.stringify(parsedContent);
 
   const updateField = (key: keyof ClientEditableContentState, value: string) => {
     setStatusMessage(null);
@@ -277,8 +279,8 @@ export function ClientQuickEditor({
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">Client Editor</p>
               <h1 className="mt-2 text-2xl font-semibold text-stone-900">{projectName}</h1>
               <p className="mt-2 text-sm leading-6 text-stone-600">
-                Make fast content updates without touching code. Templates, layout structure, and engineering changes stay
-                with the Flowstarter team.
+                Make fast content updates without touching code. Templates, layout structure, and engineering changes
+                stay with the Flowstarter team.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -334,10 +336,12 @@ export function ClientQuickEditor({
 
             {!hasEditableContent ? (
               <div className="rounded-[24px] border border-amber-200 bg-amber-50 p-4">
-                <p className="text-sm font-medium text-amber-900">This template is not configured for self-serve editing yet.</p>
+                <p className="text-sm font-medium text-amber-900">
+                  This template is not configured for self-serve editing yet.
+                </p>
                 <p className="mt-2 text-sm leading-6 text-amber-800">
-                  Your site can still be reviewed here, but Flowstarter needs to make the next changes on your behalf because
-                  the safe editable content files are missing from this template.
+                  Your site can still be reviewed here, but Flowstarter needs to make the next changes on your behalf
+                  because the safe editable content files are missing from this template.
                 </p>
               </div>
             ) : null}
@@ -445,6 +449,10 @@ export function ClientQuickEditor({
                 New sections, deeper layout changes, template swaps, integrations, and custom code still go through the
                 Flowstarter team. This beta editor stays intentionally scoped so your live site stays stable.
               </p>
+              <p className="mt-2 text-sm leading-6 text-stone-600">
+                If you need more advanced features, contact Flowstarter and we will handle the next round of changes for
+                you.
+              </p>
             </div>
           </div>
 
@@ -507,8 +515,8 @@ export function ClientQuickEditor({
             />
           ) : (
             <div className="flex h-[calc(100vh-11rem)] min-h-[680px] items-center justify-center bg-stone-50 p-8 text-center text-sm text-stone-500">
-              Your Flowstarter team has not published this site yet. Once the site is published, this panel will show the
-              live version that clients see.
+              Your Flowstarter team has not published this site yet. Once the site is published, this panel will show
+              the live version that clients see.
             </div>
           )}
         </section>

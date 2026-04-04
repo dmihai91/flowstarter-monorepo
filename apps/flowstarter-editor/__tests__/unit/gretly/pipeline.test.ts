@@ -71,6 +71,11 @@ vi.mock('~/utils/logger', () => ({
 }));
 
 describe('Gretly Pipeline', () => {
+  type PipelinePlanFn = Parameters<Pipeline['run']>[3];
+  type PipelineGenerateFn = Parameters<Pipeline['run']>[4];
+  type PipelineBuildFn = Parameters<Pipeline['run']>[5];
+  type PipelinePublishFn = Parameters<Pipeline['run']>[6];
+
   const mockBusinessInfo: BusinessInfo = {
     name: 'Test Business',
     description: 'A test business for unit tests',
@@ -108,17 +113,21 @@ describe('Gretly Pipeline', () => {
   };
 
   // Mock functions
-  let mockPlanFn: ReturnType<typeof vi.fn>;
-  let mockGenerateFn: ReturnType<typeof vi.fn>;
-  let mockBuildFn: ReturnType<typeof vi.fn>;
-  let mockPublishFn: ReturnType<typeof vi.fn>;
+  const mockPlanFn = vi.fn<PipelinePlanFn>();
+  const mockGenerateFn = vi.fn<PipelineGenerateFn>();
+  const mockBuildFn = vi.fn<PipelineBuildFn>();
+  const mockPublishFn = vi.fn<PipelinePublishFn>();
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockPlanFn = vi.fn().mockResolvedValue(mockPlanResult);
-    mockGenerateFn = vi.fn().mockResolvedValue(mockGenerateResult);
-    mockBuildFn = vi.fn().mockResolvedValue(mockBuildResult);
-    mockPublishFn = vi.fn().mockResolvedValue(undefined);
+    mockPlanFn.mockReset();
+    mockGenerateFn.mockReset();
+    mockBuildFn.mockReset();
+    mockPublishFn.mockReset();
+    mockPlanFn.mockResolvedValue(mockPlanResult);
+    mockGenerateFn.mockResolvedValue(mockGenerateResult);
+    mockBuildFn.mockResolvedValue(mockBuildResult);
+    mockPublishFn.mockResolvedValue(undefined);
   });
 
   describe('createPipeline', () => {

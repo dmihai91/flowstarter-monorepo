@@ -108,7 +108,7 @@ describe('ClientQuickEditor', () => {
       body: JSON.stringify({ projectId: 'project_123' }),
     });
 
-    expect(await screen.findByText('Site published. The live preview has been refreshed.')).toBeInTheDocument();
+    expect(await screen.findByText('Site published. The live preview has been refreshed.')).toBeTruthy();
   });
 
   it('shows a guarded fallback when the template has no client-editable content files', () => {
@@ -121,8 +121,8 @@ describe('ClientQuickEditor', () => {
 
     render(<ClientQuickEditor projectId={'project_123' as never} projectName="Client Site" accessLevel="customize" />);
 
-    expect(screen.getByText('This template is not configured for self-serve editing yet.')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Save Changes' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Publish Site' })).toBeDisabled();
+    expect(screen.getByText('This template is not configured for self-serve editing yet.')).toBeTruthy();
+    expect((screen.getByRole('button', { name: 'Save Changes' }) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByRole('button', { name: 'Publish Site' }) as HTMLButtonElement).disabled).toBe(true);
   });
 });

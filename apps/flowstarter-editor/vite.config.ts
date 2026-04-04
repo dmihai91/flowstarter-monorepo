@@ -1,6 +1,6 @@
 import { vitePlugin as remixVitePlugin } from '@remix-run/dev';
 import UnoCSS from 'unocss/vite';
-import { defineConfig, type ViteDevServer } from 'vite';
+import { defineConfig, type PluginOption, type ViteDevServer } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { optimizeCssModules } from 'vite-plugin-optimize-css-modules';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -77,6 +77,78 @@ const pkg = getPackageJson();
 const gitInfo = getGitInfo();
 
 export default defineConfig((config) => {
+  const plugins = [
+    // MCP live proxy must come BEFORE Remix to intercept /mcp-live/* requests
+    mcpLiveProxyPlugin(),
+
+    // Stub out stream-browserify for browser (it uses CommonJS which breaks in ESM)
+    {
+      name: 'stub-stream-browserify',
+      resolveId(id: string) {
+        if (id === 'stream-browserify' || id === 'stream') {
+          return '\0virtual:stream-stub';
+        }
+
+        return null;
+      },
+      load(id: string) {
+        if (id === '\0virtual:stream-stub') {
+          return 'export default {}; export const Stream = {}; export const Readable = {}; export const Writable = {}; export const Duplex = {}; export const Transform = {}; export const PassThrough = {};';
+        }
+
+        return null;
+      },
+    },
+
+    // Stub out util/types for browser (undici uses this Node.js built-in)
+    {
+      name: 'stub-util-types',
+      enforce: 'pre' as const,
+      resolveId(id: string) {
+        if (id === 'util/types' || id === 'node:util/types') {
+          return path.resolve(__dirname, 'app/lib/utils/util-types-stub.ts');
+        }
+
+        return null;
+      },
+    },
+    nodePolyfills({
+      include: ['buffer', 'process', 'util'],
+      globals: {
+        Buffer: true,
+        process: true,
+        global: true,
+      },
+      protocolImports: true,
+      exclude: ['child_process', 'fs', 'path', 'stream'],
+    }),
+    {
+      name: 'buffer-polyfill',
+      transform(code: string, id: string) {
+        if (id.includes('env.mjs')) {
+          return {
+            code: `import { Buffer } from 'buffer';\n${code}`,
+            map: null,
+          };
+        }
+
+        return null;
+      },
+    },
+    remixVitePlugin({
+      future: {
+        v3_fetcherPersist: true,
+        v3_relativeSplatPath: true,
+        v3_throwAbortReason: true,
+        v3_lazyRouteDiscovery: true,
+      },
+    }) as unknown as PluginOption,
+    UnoCSS(),
+    tsconfigPaths(),
+    chrome129IssuePlugin(),
+    config.mode === 'production' ? optimizeCssModules({ apply: 'build' }) : null,
+  ].filter(Boolean) as PluginOption[];
+
   return {
     resolve: {
       dedupe: [
@@ -276,77 +348,7 @@ export default defineConfig((config) => {
     build: {
       target: 'esnext',
     },
-    plugins: [
-      // MCP live proxy must come BEFORE Remix to intercept /mcp-live/* requests
-      mcpLiveProxyPlugin(),
-
-      // Stub out stream-browserify for browser (it uses CommonJS which breaks in ESM)
-      {
-        name: 'stub-stream-browserify',
-        resolveId(id: string) {
-          if (id === 'stream-browserify' || id === 'stream') {
-            return '\0virtual:stream-stub';
-          }
-
-          return null;
-        },
-        load(id: string) {
-          if (id === '\0virtual:stream-stub') {
-            return 'export default {}; export const Stream = {}; export const Readable = {}; export const Writable = {}; export const Duplex = {}; export const Transform = {}; export const PassThrough = {};';
-          }
-
-          return null;
-        },
-      },
-
-      // Stub out util/types for browser (undici uses this Node.js built-in)
-      {
-        name: 'stub-util-types',
-        enforce: 'pre' as const,
-        resolveId(id: string) {
-          if (id === 'util/types' || id === 'node:util/types') {
-            return path.resolve(__dirname, 'app/lib/utils/util-types-stub.ts');
-          }
-
-          return null;
-        },
-      },
-      nodePolyfills({
-        include: ['buffer', 'process', 'util'],
-        globals: {
-          Buffer: true,
-          process: true,
-          global: true,
-        },
-        protocolImports: true,
-        exclude: ['child_process', 'fs', 'path', 'stream'],
-      }),
-      {
-        name: 'buffer-polyfill',
-        transform(code: string, id: string) {
-          if (id.includes('env.mjs')) {
-            return {
-              code: `import { Buffer } from 'buffer';\n${code}`,
-              map: null,
-            };
-          }
-
-          return null;
-        },
-      },
-      remixVitePlugin({
-        future: {
-          v3_fetcherPersist: true,
-          v3_relativeSplatPath: true,
-          v3_throwAbortReason: true,
-          v3_lazyRouteDiscovery: true,
-        },
-      }),
-      UnoCSS(),
-      tsconfigPaths(),
-      chrome129IssuePlugin(),
-      config.mode === 'production' && optimizeCssModules({ apply: 'build' }),
-    ].filter(Boolean),
+    plugins,
     envPrefix: ['VITE_'],
     css: {
       preprocessorOptions: {

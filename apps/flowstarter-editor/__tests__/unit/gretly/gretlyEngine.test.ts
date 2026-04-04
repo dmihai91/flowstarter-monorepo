@@ -87,6 +87,9 @@ vi.mock('~/lib/i18n/editor-labels', () => ({
 }));
 
 describe('Gretly Engine (Orchestrator)', () => {
+  type GretlyBuildFn = Parameters<Gretly['run']>[1];
+  type GretlyPublishFn = Parameters<Gretly['run']>[2];
+
   const mockBusinessInfo: BusinessInfo = {
     name: 'Test Business',
     description: 'A test business for unit testing',
@@ -158,14 +161,16 @@ describe('Gretly Engine (Orchestrator)', () => {
     sandboxId: 'sandbox-123',
   };
 
-  let mockBuildFn: ReturnType<typeof vi.fn>;
-  let mockPublishFn: ReturnType<typeof vi.fn>;
+  const mockBuildFn = vi.fn<GretlyBuildFn>();
+  const mockPublishFn = vi.fn<GretlyPublishFn>();
 
   beforeEach(() => {
     vi.clearAllMocks();
 
-    mockBuildFn = vi.fn().mockResolvedValue(mockBuildSuccess);
-    mockPublishFn = vi.fn().mockResolvedValue(undefined);
+    mockBuildFn.mockReset();
+    mockPublishFn.mockReset();
+    mockBuildFn.mockResolvedValue(mockBuildSuccess);
+    mockPublishFn.mockResolvedValue(undefined);
 
     // Setup default registry responses
     mockRegistrySend.mockImplementation(async (agentName: string, _message: string) => {

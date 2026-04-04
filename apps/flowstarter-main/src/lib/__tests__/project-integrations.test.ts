@@ -45,6 +45,14 @@ describe('project-integrations', () => {
         customDomain: 'example.com',
         status: 'active',
       },
+      mailchimp: {
+        apiKeySecretId: null,
+        audienceId: null,
+      },
+      stripe: {
+        publishableKeySecretId: null,
+        priceId: null,
+      },
     });
   });
 

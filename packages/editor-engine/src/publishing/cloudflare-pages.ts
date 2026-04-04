@@ -100,6 +100,52 @@ export async function deployToPages(
 }
 
 /**
+ * Attach a custom domain to a Cloudflare Pages project.
+ * This enables TLS automatically via Cloudflare.
+ */
+export async function attachCustomDomain(
+  pagesProjectName: string,
+  domain: string,
+  config: CloudflareConfig,
+): Promise<{ domain: string; status: string }> {
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/pages/projects/${pagesProjectName}/domains`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${config.apiToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name: domain }),
+    },
+  );
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(`Failed to attach domain: ${JSON.stringify(error)}`);
+  }
+  const data = await response.json() as { result: { name: string; status: string } };
+  return { domain: data.result.name, status: data.result.status };
+}
+
+/**
+ * Get custom domains attached to a Cloudflare Pages project.
+ */
+export async function getCustomDomains(
+  pagesProjectName: string,
+  config: CloudflareConfig,
+): Promise<Array<{ domain: string; status: string }>> {
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/pages/projects/${pagesProjectName}/domains`,
+    {
+      headers: { Authorization: `Bearer ${config.apiToken}` },
+    },
+  );
+  if (!response.ok) throw new Error('Failed to get domains');
+  const data = await response.json() as { result: Array<{ name: string; status: string }> };
+  return data.result.map(d => ({ domain: d.name, status: d.status }));
+}
+
+/**
  * Get deployment status.
  */
 export async function getDeploymentStatus(

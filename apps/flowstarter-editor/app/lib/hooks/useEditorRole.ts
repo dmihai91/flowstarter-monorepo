@@ -26,7 +26,7 @@ export function useEditorRole(): EditorPermissions {
     return {
       role,
       canViewCode: role === 'team',
-      canPublish: role === 'team',
+      canPublish: true,
       canEditSettings: role === 'team',
       canTogglePreviewCode: role === 'team',
     };

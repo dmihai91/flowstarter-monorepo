@@ -2,6 +2,8 @@ export {
   createPagesProject,
   deployToPages,
   getDeploymentStatus,
+  attachCustomDomain,
+  getCustomDomains,
 } from './cloudflare-pages';
 
 export {

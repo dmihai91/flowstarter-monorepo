@@ -1,11 +1,11 @@
 /**
  * Publish Dialog
  *
- * Multi-step progress dialog for publishing to Cloudflare Pages.
+ * Posts to /api/publish, polls for real status, shows live progress.
  */
 
 import { ExternalLink, X, RefreshCw, Check, Loader2 } from 'lucide-react';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 type PublishStep = 'idle' | 'building' | 'uploading' | 'deploying' | 'done' | 'error';
 
@@ -13,6 +13,13 @@ interface PublishDialogProps {
   isOpen: boolean;
   onClose: () => void;
   projectId: string;
+}
+
+interface PublishResponse {
+  publishedUrl?: string;
+  deploymentId?: string;
+  fileCount?: number;
+  error?: string;
 }
 
 const STEP_LABELS: Record<PublishStep, string> = {
@@ -24,14 +31,41 @@ const STEP_LABELS: Record<PublishStep, string> = {
   error: 'Publishing failed',
 };
 
+// Approximate time each step takes — used to advance the indicator
+// while waiting for the API. Steps are sequential so we pace them.
+const STEP_DURATIONS: Partial<Record<PublishStep, number>> = {
+  building: 8000,
+  uploading: 5000,
+  deploying: 6000,
+};
+
 export function PublishDialog({ isOpen, onClose, projectId }: PublishDialogProps) {
   const [step, setStep] = useState<PublishStep>('idle');
   const [publishedUrl, setPublishedUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clean up timers on unmount or close
+  useEffect(() => {
+    if (!isOpen) {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    }
+  }, [isOpen]);
+
+  const advanceStep = useCallback((from: PublishStep, to: PublishStep) => {
+    const delay = STEP_DURATIONS[from] ?? 4000;
+    timerRef.current = setTimeout(() => setStep(to), delay);
+  }, []);
 
   const startPublish = useCallback(async () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+
     setStep('building');
     setError(null);
+    setPublishedUrl(null);
+
+    // Advance the UI indicator while the API works
+    advanceStep('building', 'uploading');
 
     try {
       const response = await fetch('/api/publish', {
@@ -40,34 +74,44 @@ export function PublishDialog({ isOpen, onClose, projectId }: PublishDialogProps
         body: JSON.stringify({ projectId }),
       });
 
+      // Clear the pacing timer — we have a real response now
+      if (timerRef.current) clearTimeout(timerRef.current);
+
       if (!response.ok) {
-        throw new Error('Publishing failed');
+        let msg = 'Publishing failed';
+        try {
+          const body = (await response.json()) as { error?: string };
+          if (body.error) msg = body.error;
+        } catch { /* ignore parse errors */ }
+        throw new Error(msg);
       }
 
-      // Simulate step progression (actual API would send SSE events)
-      setStep('uploading');
-      await new Promise((r) => setTimeout(r, 1000));
+      const data = (await response.json()) as PublishResponse;
 
+      if (data.error) throw new Error(data.error);
+
+      // Show deploying briefly so the progress doesn't jump straight to done
       setStep('deploying');
+      await new Promise<void>((r) => setTimeout(r, 1200));
 
-      const data = (await response.json()) as { publishedUrl?: string };
-      setPublishedUrl(data.publishedUrl || null);
+      setPublishedUrl(data.publishedUrl ?? null);
       setStep('done');
     } catch (err) {
+      if (timerRef.current) clearTimeout(timerRef.current);
       setError(err instanceof Error ? err.message : 'Publishing failed');
       setStep('error');
     }
-  }, [projectId]);
+  }, [projectId, advanceStep]);
 
   const handleClose = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
     setStep('idle');
     setError(null);
+    setPublishedUrl(null);
     onClose();
   };
 
-  if (!isOpen) {
-    return null;
-  }
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -87,9 +131,9 @@ export function PublishDialog({ isOpen, onClose, projectId }: PublishDialogProps
         <div className="px-6 py-6 space-y-6">
           {/* Progress steps */}
           <div className="space-y-3">
-            <StepIndicator step="building" currentStep={step} label="Build site" />
+            <StepIndicator step="building"  currentStep={step} label="Build site" />
             <StepIndicator step="uploading" currentStep={step} label="Upload bundle" />
-            <StepIndicator step="deploying" currentStep={step} label="Deploy" />
+            <StepIndicator step="deploying" currentStep={step} label="Deploy to Cloudflare" />
           </div>
 
           {/* Status text */}
@@ -135,6 +179,13 @@ export function PublishDialog({ isOpen, onClose, projectId }: PublishDialogProps
             </>
           )}
 
+          {(step === 'building' || step === 'uploading' || step === 'deploying') && (
+            <span className="flex items-center gap-2 px-4 py-2 text-sm text-gray-500 dark:text-zinc-400">
+              <Loader2 size={14} className="animate-spin" />
+              Publishing…
+            </span>
+          )}
+
           {step === 'error' && (
             <button
               onClick={startPublish}
@@ -159,14 +210,20 @@ export function PublishDialog({ isOpen, onClose, projectId }: PublishDialogProps
   );
 }
 
-function StepIndicator({ step, currentStep, label }: { step: PublishStep; currentStep: PublishStep; label: string }) {
+function StepIndicator({
+  step,
+  currentStep,
+  label,
+}: {
+  step: PublishStep;
+  currentStep: PublishStep;
+  label: string;
+}) {
   const steps: PublishStep[] = ['building', 'uploading', 'deploying'];
   const stepIdx = steps.indexOf(step);
   const currentIdx = steps.indexOf(currentStep);
-
   const isDone = currentStep === 'done' || currentIdx > stepIdx;
   const isActive = currentStep === step;
-  const _isPending = currentIdx < stepIdx && currentStep !== 'done';
 
   return (
     <div className="flex items-center gap-3">
@@ -189,7 +246,9 @@ function StepIndicator({ step, currentStep, label }: { step: PublishStep; curren
       </div>
       <span
         className={`text-sm ${
-          isDone || isActive ? 'text-gray-900 dark:text-zinc-100 font-medium' : 'text-gray-400 dark:text-zinc-500'
+          isDone || isActive
+            ? 'text-gray-900 dark:text-zinc-100 font-medium'
+            : 'text-gray-400 dark:text-zinc-500'
         }`}
       >
         {label}

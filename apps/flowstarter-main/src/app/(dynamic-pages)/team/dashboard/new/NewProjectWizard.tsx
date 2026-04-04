@@ -21,7 +21,6 @@ import { Button } from '@flowstarter/flow-design-system';
 import { LogoStep } from './LogoStep';
 import { IntegrationsStep } from './IntegrationsStep';
 import { PaymentStep } from './PaymentStep';
-import { DomainStep } from './DomainStep';
 
 // ── Brand tone options for personalization step ───────────────────────────────
 
@@ -156,10 +155,10 @@ function StepIndicator({
               </div>
               {!isLast && (
                 <div
-                  className={`mt-5 h-px flex-1 mx-3 transition-all duration-300 ${
+                  className={`mt-5 h-[2px] flex-1 mx-3 rounded-full transition-all duration-300 ${
                     isDone
                       ? 'bg-[var(--purple)]'
-                      : 'bg-gray-200 dark:bg-white/[0.06]'
+                      : 'bg-gray-200 dark:bg-white/[0.10]'
                   }`}
                 />
               )}

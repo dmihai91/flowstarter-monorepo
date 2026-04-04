@@ -98,12 +98,16 @@ function ClientProjectRouteContent() {
     return <ClientAccessRequired />;
   }
 
-  if (sessionValidation === undefined || project === undefined) {
+  if (sessionValidation === undefined) {
     return <LoadingFallback />;
   }
 
   if (!sessionValidation?.valid) {
     return <ClientAccessRequired />;
+  }
+
+  if (project === undefined) {
+    return <LoadingFallback />;
   }
 
   if (!project) {
@@ -115,6 +119,12 @@ function ClientProjectRouteContent() {
       projectId={project._id as Id<'projects'>}
       projectName={project.name}
       publishedUrl={project.publishedUrl}
+      publishedAt={project.publishedAt}
+      templateName={project.selectedTemplate?.name ?? project.templateName}
+      paletteName={project.selectedPalette?.name}
+      paletteColors={project.selectedPalette ? Object.values(project.selectedPalette.colors) : []}
+      fontName={project.selectedFont?.name}
+      accessLevel={sessionValidation.accessLevel}
     />
   );
 }

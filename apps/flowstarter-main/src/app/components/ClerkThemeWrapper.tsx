@@ -3,6 +3,7 @@
 import { useTheme } from '@/contexts/ThemeContext';
 import { ClerkProvider } from '@clerk/nextjs';
 import { experimental__simple as simple } from '@clerk/themes';
+import { ui } from '@clerk/ui';
 import { useEffect, useState, type ComponentProps } from 'react';
 
 import '@/styles/auth-forms.css';
@@ -193,5 +194,5 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
     ],
   } as unknown as ComponentProps<typeof ClerkProvider>;
 
-  return <ClerkProvider {...clerkProviderProps}>{children}</ClerkProvider>;
+  return <ClerkProvider {...clerkProviderProps} ui={ui}>{children}</ClerkProvider>;
 }

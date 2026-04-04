@@ -224,6 +224,7 @@ export interface InitialChatState {
   projectUrlId: string | null;
   buildPhase?: BuildPhase;
   projectName?: string | null;
+  mode?: 'concierge' | 'interactive' | 'generate';
 
   // NEW: Quick profile for streamlined flow
   quickProfile?: QuickProfile | null;

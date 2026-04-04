@@ -21,6 +21,7 @@ import { Button } from '@flowstarter/flow-design-system';
 import { LogoStep } from './LogoStep';
 import { IntegrationsStep } from './IntegrationsStep';
 import { DomainStep } from './DomainStep';
+import { PaymentStep } from './PaymentStep';
 
 // ── Brand tone options for personalization step ───────────────────────────────
 
@@ -43,7 +44,7 @@ const STEPS = [
   { label: 'Logo', desc: 'Upload or skip a logo' },
   { label: 'Integrations', desc: 'Calendly & Analytics setup' },
   { label: 'Domain', desc: 'Register a custom domain' },
-  { label: 'Build', desc: 'Review summary and launch the build' },
+  { label: 'Payment', desc: 'Plan, fee, and launch' },
 ];
 
 function StepIndicator({
@@ -564,7 +565,7 @@ export function NewProjectWizard() {
         return 5;
       case 'domain':
         return 6;
-      case 'build':
+      case 'payment':
         return 7;
       default:
         return 0;
@@ -666,7 +667,7 @@ export function NewProjectWizard() {
             integrations: form.selectedIntegrations ?? undefined,
             selectedDomain: form.selectedDomain ?? undefined,
           },
-          mode: 'interactive',
+          mode: 'concierge',
         }),
       });
 
@@ -959,31 +960,18 @@ export function NewProjectWizard() {
               clientName={form.clientInfo.name}
               onDomainSelected={(domain) => {
                 form.setSelectedDomain(domain);
-                form.proceedToBuild();
+                form.proceedToPayment();
               }}
               onBack={() => form.setPhase('integrations')}
             />
           )}
 
-          {form.phase === 'build' && (
-            <BuildStep
-              clientName={form.clientInfo.name}
-              templateName={selectedTemplate?.name ?? form.selectedTemplateId ?? ''}
-              paletteName={form.selectedPalette?.name ?? ''}
-              fontName={form.selectedFont?.name ?? ''}
-              brandTone={form.brief.brandTone}
-              logoLabel={
-                form.selectedLogo?.type === 'uploaded'
-                  ? form.selectedLogo.name ?? 'Uploaded'
-                  : form.selectedLogo?.type === 'text'
-                  ? 'Text logo'
-                  : 'None'
-              }
-              domainLabel={form.selectedDomain ?? 'None'}
-              integrationsLabel={[
-                form.selectedIntegrations?.calendly?.enabled ? 'Calendly' : '',
-                form.selectedIntegrations?.googleAnalytics?.enabled ? 'GA4' : '',
-              ].filter(Boolean).join(', ') || 'None'}
+          {form.phase === 'payment' && (
+            <PaymentStep
+              planName={form.planName}
+              setPlanName={form.setPlanName}
+              setupFee={form.setupFee}
+              setSetupFee={form.setSetupFee}
               onBack={() => form.setPhase('domain')}
               onLaunch={handleLaunch}
               isLaunching={isLaunching}

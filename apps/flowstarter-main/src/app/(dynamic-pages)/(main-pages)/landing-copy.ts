@@ -51,11 +51,11 @@ export const LANDING_COPY = {
     headlineHighlight: "Let's make sure they find you.",
     subheadlineBold: '',
     subheadline:
-      'One call. We build your site in 5–7 days. You stay in control with a smart editor. No code, no waiting, no back and forth.',
+      'Starting from scratch or tired of a site that isn\'t working? One call. We build or rebuild your site in 5–7 days. You stay in control with a smart editor. No code, no waiting, no back and forth.',
     primaryCta: 'Start getting clients',
     secondaryCta: 'See plans and pricing',
     trustLine:
-      'For coaches, consultants, therapists, freelancers and founders who are serious about their online presence.',
+      'For coaches, consultants, therapists, freelancers and founders — whether you\'re starting from scratch or ready to relaunch.',
     guarantee:
       'First month free. Not happy in 30 days? We refund 50% of your setup fee. No questions asked.',
   },
@@ -83,12 +83,17 @@ export const LANDING_COPY = {
     ],
   },
   problem: {
-    title: "Getting online shouldn't cost you months of your life.",
+    title: "Whether you're starting fresh or starting over — getting it right shouldn't take months.",
     pains: [
       {
-        icon: 'clock',
-        title: 'Every hour on your website is an hour not spent on clients.',
-        body: 'Design decisions. Copy rewrites. Broken forms. It eats weeks, and your competitors are already showing up in Google.',
+        icon: 'globe',
+        title: "No website yet? Every day you wait is a client that found someone else.",
+        body: "You know you need a proper online presence. But between templates, copy, tech, and design decisions, it never gets done. Flowstarter does it for you in a week.",
+      },
+      {
+        icon: 'puzzle',
+        title: "Already have a site? If it's not getting you clients, it's not working.",
+        body: "A site that looks outdated or doesn't convert is costing you leads every day. A fresh start with the right structure changes that.",
       },
       {
         icon: 'wallet',
@@ -96,14 +101,9 @@ export const LANDING_COPY = {
           "Traditional website projects take weeks and cost more than expected. DIY tools look easy, until they're not.",
         body: "You hit the first technical wall and you're suddenly watching YouTube tutorials at midnight. Still not live.",
       },
-      {
-        icon: 'puzzle',
-        title: "Already have a site? If it's not getting you clients, it's not working.",
-        body: "A site that looks outdated or doesn't convert is costing you leads every day. A fresh start with the right structure changes that.",
-      },
     ],
     closing:
-      'Flowstarter skips all of that. One call, and your site is live within a week.',
+      'Flowstarter skips all of that. One call, and your site is live within a week — whether it\'s your first or your best.',
   },
   pillars: {
     title: 'Built to help you launch, manage, and improve',
@@ -272,9 +272,9 @@ export const LANDING_COPY = {
       {
         label: 'Flowstarter',
         description:
-          'Done for you in days. Smart editor included. Rate locked forever.',
+          'Done for you in days — whether it\'s your first site or a full relaunch. Smart editor included. Rate locked forever.',
         bullets: [
-          'Live in 5–7 days from one 45-min call',
+          'New site or relaunch — both done in 5–7 days from one 45-min call',
           'Smart editor: update anything yourself, no code',
           'Booking, contact form, and analytics all connected',
           'One dashboard for your leads, your site, your control',
@@ -288,28 +288,28 @@ export const LANDING_COPY = {
     title: 'This is for you if...',
     items: [
       {
-        icon: 'clock',
-        label: "Your website has been on the to-do list for too long",
-      },
-      {
-        icon: 'puzzle',
-        label: 'You want a professional result without doing it yourself',
+        icon: 'globe',
+        label: "You don't have a website yet and want to get online properly from day one",
       },
       {
         icon: 'mic',
         label: "You have a site but it's not bringing in clients, and you've tried to fix it",
       },
       {
+        icon: 'clock',
+        label: "Your website has been on the to-do list for too long",
+      },
+      {
         icon: 'users',
         label: 'You want clients to find you, trust you, and reach out',
       },
       {
-        icon: 'rocket',
-        label: 'You want it done fast and done properly',
+        icon: 'puzzle',
+        label: 'You want a professional result without doing it yourself',
       },
       {
-        icon: 'globe',
-        label: "You don't have a website yet and want to get online properly from day one",
+        icon: 'rocket',
+        label: 'You want it done fast and done properly',
       },
       {
         icon: 'check',

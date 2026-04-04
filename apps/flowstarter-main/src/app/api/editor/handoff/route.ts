@@ -238,7 +238,7 @@ const handoffBodySchema = z
         templateId: z.string().optional(),
       })
       .optional(),
-    mode: z.enum(['interactive', 'generate']).optional().default('interactive'),
+    mode: z.enum(['interactive', 'generate', 'concierge']).optional().default('concierge'),
   })
   .refine((d) => d.projectId || d.projectConfig, {
     message: 'Either projectId or projectConfig is required',

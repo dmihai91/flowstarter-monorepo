@@ -58,10 +58,7 @@ export interface UseSimpleBuildHandlersProps {
 }
 
 export interface UseSimpleBuildHandlersReturn {
-  handlePersonalizationComplete: (font: SystemFont, logo: LogoInfo, useAiImages?: boolean) => Promise<void>;
   handleContactDetailsComplete: (contactDetails: ContactDetails) => Promise<void>;
   handleSkipContactDetails: () => Promise<void>;
-  handleIntegrationsComplete: (integrations: IntegrationConfig[]) => Promise<void>;
-  handleSkipIntegrations: () => Promise<void>;
   startSeededBuild: () => Promise<void>;
 }

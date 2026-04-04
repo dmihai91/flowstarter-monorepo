@@ -15,16 +15,12 @@ import type { OnboardingStep, InitialChatState } from '~/components/editor/edito
  * Ordered list of all pipeline steps.
  * Each step knows what comes next in the default flow.
  */
-export const PIPELINE_STEPS: OnboardingStep[] = ['review', 'personalization', 'integrations', 'creating', 'ready'];
+export const PIPELINE_STEPS: OnboardingStep[] = ['creating', 'ready'];
 
 /**
  * Map of step to its default next step.
- * Some transitions may be conditional (handled in transition logic).
  */
 const DEFAULT_NEXT_STEP: Partial<Record<OnboardingStep, OnboardingStep>> = {
-  review: 'personalization',
-  personalization: 'integrations',
-  integrations: 'creating',
   creating: 'ready',
 };
 
@@ -32,9 +28,6 @@ const DEFAULT_NEXT_STEP: Partial<Record<OnboardingStep, OnboardingStep>> = {
  * Human-readable labels for each step (used in progress indicators).
  */
 export const STEP_LABELS: Record<OnboardingStep, string> = {
-  review: 'Review before build',
-  personalization: 'Customize design',
-  integrations: 'Connect services',
   creating: 'Building site',
   ready: 'Complete',
 };
@@ -130,7 +123,7 @@ export interface UsePipelineOrchestrationReturn {
 // ─── Hook Implementation ────────────────────────────────────────────────────
 
 export function usePipelineOrchestration({
-  initialStep = 'review',
+  initialStep = 'creating',
   initialCompletedSteps = [],
   onStateChange,
 }: UsePipelineOrchestrationProps): UsePipelineOrchestrationReturn {

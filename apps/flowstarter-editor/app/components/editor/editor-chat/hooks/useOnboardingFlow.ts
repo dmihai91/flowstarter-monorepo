@@ -13,7 +13,7 @@ import type {
 } from '~/components/editor/editor-chat/types/sharedState';
 
 export function useOnboardingFlow(options: UseOnboardingFlowOptions = {}): UseOnboardingFlowReturn {
-  const { initialStep = 'review', initialDescription = '', initialProjectName = null, onStepChange } = options;
+  const { initialStep = 'creating', initialDescription = '', initialProjectName = null, onStepChange } = options;
 
   // ─── State ────────────────────────────────────────────────────────────────
   const [step, setStepInternal] = useState<OnboardingStep>(initialStep);

@@ -103,11 +103,7 @@ function needsWorkspaceRestoration(state: Partial<InitialChatState> & Record<str
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getSuggestedRepliesForStep(step: string, state: Partial<InitialChatState>): string[] {
   switch (step) {
-    case 'review':
-      return [];
-    case 'personalization':
-      return [];
-    case 'integrations':
+    case 'creating':
       return [];
     case 'ready':
       return ['Make some changes', 'Try different colors', 'Add more sections'];
@@ -159,7 +155,7 @@ describe('validateInitialState', () => {
     expect(result.missing).toContain('projectUrlId');
   });
   it('accepts minimal valid state', () => {
-    const minimalState = { step: 'review' as const, projectUrlId: 'test-123' };
+    const minimalState = { step: 'creating' as const, projectUrlId: 'test-123' };
     const result = validateInitialState(minimalState);
     expect(result.valid).toBe(true);
   });
@@ -205,10 +201,8 @@ describe('needsWorkspaceRestoration', () => {
   });
 });
 describe('getSuggestedRepliesForStep', () => {
-  it('returns empty for review, personalization, integrations steps', () => {
-    expect(getSuggestedRepliesForStep('review', {})).toHaveLength(0);
-    expect(getSuggestedRepliesForStep('personalization', {})).toHaveLength(0);
-    expect(getSuggestedRepliesForStep('integrations', {})).toHaveLength(0);
+  it('returns empty for creating step', () => {
+    expect(getSuggestedRepliesForStep('creating', {})).toHaveLength(0);
   });
   it('returns modification options for ready step', () => {
     const replies = getSuggestedRepliesForStep('ready', FULL_INITIAL_STATE);
@@ -291,7 +285,7 @@ describe('business info restoration', () => {
     expect(partial.uvp).toBe('Just the basics');
   });
   it('handles undefined business info', () => {
-    const state: Partial<InitialChatState> = { step: 'review' };
+    const state: Partial<InitialChatState> = { step: 'creating' };
     expect(state.businessInfo).toBeUndefined();
   });
 });

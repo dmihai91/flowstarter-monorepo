@@ -13,21 +13,15 @@ import type { OnboardingStep } from '~/components/editor/editor-chat/types';
 
 describe('Pipeline Steps Configuration', () => {
   it('should have all expected steps in order', () => {
-    expect(PIPELINE_STEPS).toEqual([
-      'review',
-      'personalization',
-      'integrations',
-      'creating',
-      'ready',
-    ]);
+    expect(PIPELINE_STEPS).toEqual(['creating', 'ready']);
   });
 
-  it('should have 5 total steps', () => {
-    expect(PIPELINE_STEPS).toHaveLength(5);
+  it('should have 2 total steps', () => {
+    expect(PIPELINE_STEPS).toHaveLength(2);
   });
 
-  it('should start with review and end with ready', () => {
-    expect(PIPELINE_STEPS[0]).toBe('review');
+  it('should start with creating and end with ready', () => {
+    expect(PIPELINE_STEPS[0]).toBe('creating');
     expect(PIPELINE_STEPS[PIPELINE_STEPS.length - 1]).toBe('ready');
   });
 });
@@ -44,9 +38,6 @@ describe('Step Labels', () => {
   });
 
   it('should have user-friendly labels', () => {
-    expect(STEP_LABELS.review).toBe('Review before build');
-    expect(STEP_LABELS.personalization).toBe('Customize design');
-    expect(STEP_LABELS.integrations).toBe('Connect services');
     expect(STEP_LABELS.creating).toBe('Building site');
     expect(STEP_LABELS.ready).toBe('Complete');
   });
@@ -55,19 +46,9 @@ describe('Step Labels', () => {
 // ─── Default Next Step Mapping Tests ─────────────────────────────────────────
 
 describe('Default Next Step Mapping', () => {
-  // Re-define the mapping for testing (mirrors the hook)
   const DEFAULT_NEXT_STEP: Partial<Record<string, string>> = {
-    review: 'personalization',
-    personalization: 'integrations',
-    integrations: 'creating',
     creating: 'ready',
   };
-
-  it('should map each step to the correct next step', () => {
-    expect(DEFAULT_NEXT_STEP.review).toBe('personalization');
-    expect(DEFAULT_NEXT_STEP.personalization).toBe('integrations');
-    expect(DEFAULT_NEXT_STEP.integrations).toBe('creating');
-  });
 
   it('should transition from creating to ready', () => {
     expect(DEFAULT_NEXT_STEP.creating).toBe('ready');
@@ -96,37 +77,37 @@ describe('Pipeline State Structure', () => {
 
   it('should have correct initial state shape', () => {
     const initialState: PipelineState = {
-      currentStep: 'review',
+      currentStep: 'creating',
       previousStep: null,
-      nextStep: 'personalization',
+      nextStep: 'ready',
       completedSteps: [],
       pendingTransition: null,
     };
 
-    expect(initialState.currentStep).toBe('review');
+    expect(initialState.currentStep).toBe('creating');
     expect(initialState.previousStep).toBeNull();
-    expect(initialState.nextStep).toBe('personalization');
+    expect(initialState.nextStep).toBe('ready');
     expect(initialState.completedSteps).toEqual([]);
     expect(initialState.pendingTransition).toBeNull();
   });
 
   it('should track pending transitions', () => {
     const stateWithTransition: PipelineState = {
-      currentStep: 'integrations',
-      previousStep: 'personalization',
-      nextStep: 'creating',
-      completedSteps: ['review', 'personalization'],
+      currentStep: 'ready',
+      previousStep: 'creating',
+      nextStep: null,
+      completedSteps: ['creating'],
       pendingTransition: {
-        fromStep: 'personalization',
-        toStep: 'integrations',
+        fromStep: 'creating',
+        toStep: 'ready',
         messageGenerated: false,
         timestamp: Date.now(),
       },
     };
 
     expect(stateWithTransition.pendingTransition).not.toBeNull();
-    expect(stateWithTransition.pendingTransition?.fromStep).toBe('personalization');
-    expect(stateWithTransition.pendingTransition?.toStep).toBe('integrations');
+    expect(stateWithTransition.pendingTransition?.fromStep).toBe('creating');
+    expect(stateWithTransition.pendingTransition?.toStep).toBe('ready');
     expect(stateWithTransition.pendingTransition?.messageGenerated).toBe(false);
   });
 });
@@ -139,10 +120,7 @@ describe('Step Transition Logic', () => {
       return `transition-${fromStep}-to-${toStep}`;
     };
 
-    expect(generateTransitionMessageType('review', 'personalization')).toBe('transition-review-to-personalization');
-    expect(generateTransitionMessageType('personalization', 'integrations')).toBe(
-      'transition-personalization-to-integrations',
-    );
+    expect(generateTransitionMessageType('creating', 'ready')).toBe('transition-creating-to-ready');
   });
 
   it('should include context in transition', () => {
@@ -165,39 +143,39 @@ describe('Step Transition Logic', () => {
       };
     };
 
-    const result = createTransitionContext('review', 'personalization', { projectName: 'My Awesome Site' });
+    const result = createTransitionContext('creating', 'ready', { projectName: 'My Awesome Site' });
 
-    expect(result.messageType).toBe('transition-review-to-personalization');
-    expect(result.messageContext.fromStep).toBe('review');
-    expect(result.messageContext.toStep).toBe('personalization');
-    expect(result.messageContext.fromStepLabel).toBe('Review before build');
-    expect(result.messageContext.toStepLabel).toBe('Customize design');
+    expect(result.messageType).toBe('transition-creating-to-ready');
+    expect(result.messageContext.fromStep).toBe('creating');
+    expect(result.messageContext.toStep).toBe('ready');
+    expect(result.messageContext.fromStepLabel).toBe('Building site');
+    expect(result.messageContext.toStepLabel).toBe('Complete');
     expect(result.messageContext.projectName).toBe('My Awesome Site');
   });
 
   it('should add completed step on transition', () => {
-    let completedSteps: string[] = ['review', 'personalization'];
-    const fromStep = 'integrations';
+    let completedSteps: string[] = [];
+    const fromStep = 'creating';
 
     // Simulate transition
     if (!completedSteps.includes(fromStep)) {
       completedSteps = [...completedSteps, fromStep];
     }
 
-    expect(completedSteps).toContain('integrations');
-    expect(completedSteps).toHaveLength(3);
+    expect(completedSteps).toContain('creating');
+    expect(completedSteps).toHaveLength(1);
   });
 
   it('should not duplicate completed steps', () => {
-    let completedSteps: string[] = ['review', 'personalization', 'integrations'];
-    const fromStep = 'integrations';
+    let completedSteps: string[] = ['creating'];
+    const fromStep = 'creating';
 
     // Try to add again
     if (!completedSteps.includes(fromStep)) {
       completedSteps = [...completedSteps, fromStep];
     }
 
-    expect(completedSteps.filter((s) => s === 'integrations')).toHaveLength(1);
+    expect(completedSteps.filter((s) => s === 'creating')).toHaveLength(1);
   });
 });
 
@@ -212,21 +190,8 @@ describe('Progress Calculation', () => {
       return Math.round((currentIndex / (totalSteps - 1)) * 100);
     };
 
-    expect(calculateProgress('review')).toBe(0);
+    expect(calculateProgress('creating')).toBe(0);
     expect(calculateProgress('ready')).toBe(100);
-  });
-
-  it('should calculate intermediate progress correctly', () => {
-    const calculateProgress = (currentStep: OnboardingStep) => {
-      const totalSteps = PIPELINE_STEPS.length;
-      const currentIndex = PIPELINE_STEPS.indexOf(currentStep);
-
-      return Math.round((currentIndex / (totalSteps - 1)) * 100);
-    };
-
-    // With 5 steps, each step is 25% progress
-    expect(calculateProgress('personalization')).toBe(Math.round((1 / 4) * 100)); // 25%
-    expect(calculateProgress('creating')).toBe(Math.round((3 / 4) * 100)); // 75%
   });
 
   it('should return 0 for unknown step', () => {
@@ -256,12 +221,9 @@ describe('Skip To Step Logic', () => {
       return [...new Set([...completedSteps, ...skippedSteps])];
     };
 
-    const result = skipToStep('review', 'creating', []);
+    const result = skipToStep('creating', 'ready', []);
 
-    // Should include all steps between review and creating
-    expect(result).toContain('review');
-    expect(result).toContain('personalization');
-    expect(result).toContain('integrations');
+    expect(result).toContain('creating');
   });
 
   it('should not skip backwards', () => {
@@ -278,10 +240,10 @@ describe('Skip To Step Logic', () => {
       return [...new Set([...completedSteps, ...skippedSteps])];
     };
 
-    const result = skipToStep('creating', 'review', ['review', 'personalization', 'integrations']);
+    const result = skipToStep('ready', 'creating', ['creating']);
 
     // Should not change anything when skipping backwards
-    expect(result).toEqual(['review', 'personalization', 'integrations']);
+    expect(result).toEqual(['creating']);
   });
 });
 
@@ -294,20 +256,19 @@ describe('Reset To Step Logic', () => {
       return completedSteps.filter((s) => PIPELINE_STEPS.indexOf(s) < targetIndex);
     };
 
-    const result = resetToStep('integrations', ['review', 'personalization', 'integrations', 'creating']);
+    const result = resetToStep('ready', ['creating']);
 
-    expect(result).toEqual(['review', 'personalization']);
-    expect(result).not.toContain('integrations');
-    expect(result).not.toContain('creating');
+    expect(result).toEqual(['creating']);
+    expect(result).not.toContain('ready');
   });
 
-  it('should clear all steps when resetting to review', () => {
+  it('should clear all steps when resetting to creating', () => {
     const resetToStep = (targetStep: OnboardingStep, completedSteps: OnboardingStep[]) => {
       const targetIndex = PIPELINE_STEPS.indexOf(targetStep);
       return completedSteps.filter((s) => PIPELINE_STEPS.indexOf(s) < targetIndex);
     };
 
-    const result = resetToStep('review', ['review', 'personalization', 'integrations']);
+    const result = resetToStep('creating', ['creating']);
 
     expect(result).toEqual([]);
   });
@@ -317,14 +278,11 @@ describe('Reset To Step Logic', () => {
 
 describe('Step Completion Check', () => {
   it('should correctly identify completed steps', () => {
-    const completedSteps = ['review', 'personalization'];
+    const completedSteps = ['creating'];
 
     const isStepCompleted = (step: string) => completedSteps.includes(step);
 
-    expect(isStepCompleted('review')).toBe(true);
-    expect(isStepCompleted('personalization')).toBe(true);
-    expect(isStepCompleted('integrations')).toBe(false);
-    expect(isStepCompleted('creating')).toBe(false);
+    expect(isStepCompleted('creating')).toBe(true);
     expect(isStepCompleted('ready')).toBe(false);
   });
 });
@@ -334,10 +292,10 @@ describe('Step Completion Check', () => {
 describe('Pipeline State Persistence', () => {
   it('should serialize state for Convex sync', () => {
     const pipelineState = {
-      currentStep: 'integrations',
-      previousStep: 'personalization',
-      nextStep: 'creating',
-      completedSteps: ['review', 'personalization'],
+      currentStep: 'creating',
+      previousStep: null,
+      nextStep: 'ready',
+      completedSteps: [] as string[],
       pendingTransition: null,
     };
 
@@ -353,12 +311,12 @@ describe('Pipeline State Persistence', () => {
 
     // Simulate transition
     const newState = {
-      step: 'integrations',
+      step: 'ready',
       pipelineState: {
-        currentStep: 'integrations',
-        previousStep: 'personalization',
-        nextStep: 'creating',
-        completedSteps: ['review', 'personalization'],
+        currentStep: 'ready',
+        previousStep: 'creating',
+        nextStep: null,
+        completedSteps: ['creating'],
         pendingTransition: null,
       },
     };
@@ -368,7 +326,7 @@ describe('Pipeline State Persistence', () => {
     expect(onStateChange).toHaveBeenCalledTimes(1);
     expect(onStateChange).toHaveBeenCalledWith(
       expect.objectContaining({
-        step: 'integrations',
+        step: 'ready',
       }),
     );
   });
@@ -379,8 +337,8 @@ describe('Pipeline State Persistence', () => {
 describe('Transition Complete Marking', () => {
   it('should mark transition as having message generated', () => {
     let pendingTransition = {
-      fromStep: 'review',
-      toStep: 'personalization',
+      fromStep: 'creating',
+      toStep: 'ready',
       messageGenerated: false,
       timestamp: Date.now(),
     };

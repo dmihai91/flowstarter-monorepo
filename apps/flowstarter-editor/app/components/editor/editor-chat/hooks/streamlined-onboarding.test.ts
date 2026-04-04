@@ -262,26 +262,6 @@ describe('getReadyMessage', () => {
  */
 
 describe('getNextStepFromCurrent', () => {
-  it('review -> personalization', () => {
-    const next = getNextStepFromCurrent('review', false, false, false, false, false);
-    expect(next).toBe('personalization');
-  });
-
-  it('personalization -> personalization when not personalized', () => {
-    const next = getNextStepFromCurrent('personalization', true, true, true, false, false);
-    expect(next).toBe('personalization');
-  });
-
-  it('personalization -> creating when personalized', () => {
-    const next = getNextStepFromCurrent('personalization', true, true, true, true, true);
-    expect(next).toBe('creating');
-  });
-
-  it('integrations -> creating', () => {
-    const next = getNextStepFromCurrent('integrations', false, false, false, false, false);
-    expect(next).toBe('creating');
-  });
-
   it('creating -> ready', () => {
     const next = getNextStepFromCurrent('creating', true, true, true, true, true);
     expect(next).toBe('ready');
@@ -292,9 +272,9 @@ describe('getNextStepFromCurrent', () => {
     expect(next).toBe('ready');
   });
 
-  it('unknown step falls back to review', () => {
+  it('unknown step falls back to creating', () => {
     const next = getNextStepFromCurrent('unknown-step' as OnboardingStep, false, false, false, false, false);
-    expect(next).toBe('review');
+    expect(next).toBe('creating');
   });
 });
 
@@ -305,33 +285,6 @@ describe('getNextStepFromCurrent', () => {
  */
 
 describe('generateOnboardingResponse', () => {
-  it('generates review message for review step', () => {
-    const response = generateOnboardingResponse({
-      step: 'review',
-    });
-
-    expect(response.content).toBeDefined();
-    expect(response.content).toContain('Review');
-  });
-
-  it('generates personalization message with showPersonalization flag', () => {
-    const response = generateOnboardingResponse({
-      step: 'personalization',
-    });
-
-    expect(response.content).toBeDefined();
-    expect(response.showPersonalization).toBe(true);
-  });
-
-  it('generates integrations message', () => {
-    const response = generateOnboardingResponse({
-      step: 'integrations',
-    });
-
-    expect(response.content).toBeDefined();
-    expect(response.content.toLowerCase()).toContain('connect');
-  });
-
   it('generates creating message with progress', () => {
     const response = generateOnboardingResponse({
       step: 'creating',

@@ -143,6 +143,10 @@ export function HandoffGate({ handoffToken, hasHandoff, loadingMessage }: Handof
         }
 
         // Slow path: validate token + initialize via API (fallback for old tokens)
+        console.error(
+          '[HandoffGate] Slow path triggered — conversationId missing from token. This should not happen in production.',
+          { tokenPreview: handoffToken?.slice(0, 20) }
+        );
         const validateRes = await fetch(`/api/handoff/validate?token=${encodeURIComponent(handoffToken)}`);
         const validateData = (await validateRes.json().catch(() => ({}))) as HandoffValidateResponse;
 

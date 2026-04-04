@@ -182,6 +182,37 @@ export const validateClientSession = query({
   },
 });
 
+/**
+ * Validate a client session token and return session info.
+ * Unlike validateClientSession, this matches by projectId (Convex ID) not urlId.
+ */
+export const validateClientSessionToken = query({
+  args: {
+    sessionToken: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const session = await ctx.db
+      .query('clientSessions')
+      .withIndex('by_token', (q) => q.eq('token', args.sessionToken))
+      .first();
+
+    if (!session) {
+      return { valid: false as const, error: 'Session not found' };
+    }
+
+    if (session.expiresAt < Date.now()) {
+      return { valid: false as const, error: 'Session expired' };
+    }
+
+    return {
+      valid: true as const,
+      clientId: session.clientId,
+      projectId: session.projectId,
+      accessLevel: session.accessLevel,
+    };
+  },
+});
+
 /*
  * ═══════════════════════════════════════════════════════════════════════════
  * MUTATIONS

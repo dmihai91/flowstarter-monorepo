@@ -169,6 +169,12 @@ export const LANDING_COPY = {
         description:
           'Your site, leads, bookings, and settings. All in one place.',
       },
+      {
+        icon: 'briefcase',
+        title: 'Integrations built in',
+        description:
+          'Calendly for bookings, Google Analytics for traffic insights, and more — all connected at launch, no setup needed on your end.',
+      },
     ],
   },
   pricing: {
@@ -314,6 +320,10 @@ export const LANDING_COPY = {
       {
         icon: 'check',
         label: "You're a coach, consultant, therapist, or solo pro",
+      },
+      {
+        icon: 'calendar',
+        label: 'You want booking, analytics, and email all connected and ready from day one',
       },
     ],
   },

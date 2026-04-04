@@ -232,6 +232,14 @@ const handoffBodySchema = z
             address: z.string().optional(),
           })
           .optional(),
+        integrations: z
+          .object({
+            calendly: z.object({ enabled: z.boolean().optional(), url: z.string().optional() }).optional(),
+            googleAnalytics: z.object({ enabled: z.boolean().optional(), measurementId: z.string().optional() }).optional(),
+            mailchimp: z.object({ enabled: z.boolean().optional(), apiKey: z.string().optional(), audienceId: z.string().optional() }).optional(),
+            stripe: z.object({ enabled: z.boolean().optional(), publishableKey: z.string().optional(), priceId: z.string().optional() }).optional(),
+          })
+          .optional(),
         planName: z.string().optional(),
         totalFee: z.number().optional(),
         depositAmount: z.number().optional(),

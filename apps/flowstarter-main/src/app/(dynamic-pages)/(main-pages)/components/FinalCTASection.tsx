@@ -54,7 +54,7 @@ export function FinalCTASection({ onOpenModal }: { onOpenModal?: () => void }) {
           }}
           className="inline-flex justify-center w-full sm:w-auto"
         >
-          <Button className="w-full sm:w-auto rounded-full px-8 h-12 sm:px-10 text-base font-semibold bg-indigo-500 text-white hover:bg-indigo-400 transition-all duration-300 hover:scale-[1.02] shadow-[0_8px_30px_rgba(99,102,241,0.3)] hover:shadow-[0_12px_40px_rgba(99,102,241,0.4)] border-0 group cursor-pointer">
+          <Button className="w-full sm:w-auto rounded-xl px-8 h-12 sm:px-10 text-base font-semibold bg-indigo-500 text-white hover:bg-indigo-400 transition-all duration-300 hover:scale-[1.02] shadow-[0_8px_30px_rgba(99,102,241,0.3)] hover:shadow-[0_12px_40px_rgba(99,102,241,0.4)] border-0 group cursor-pointer">
             {finalCta.cta}
             <svg
               className="w-4 h-4 ml-2.5 transition-transform group-hover:translate-x-0.5"

@@ -2,12 +2,11 @@
  * usePersonalizationPanel Hook
  *
  * Manages state and callbacks for the PersonalizationPanel component:
- * - Section navigation (font → logo)
  * - Logo upload to Convex
  * - AI logo generation via React Query
  * - AI images toggle
  *
- * Note: Palette selection is now dashboard-only (handled by NewProjectWizard).
+ * Note: Palette and font selection are now dashboard-only (handled by NewProjectWizard).
  */
 
 import { useState, useRef, useCallback } from 'react';
@@ -15,24 +14,22 @@ import { useMutation } from 'convex/react';
 import { useMutation as useReactQueryMutation } from '@tanstack/react-query';
 import { api } from '~/convex/_generated/api';
 import type { Id } from '~/convex/_generated/dataModel';
-import type { LogoInfo, SystemFont, BusinessInfo } from '~/components/editor/editor-chat/types';
+import type { LogoInfo, BusinessInfo } from '~/components/editor/editor-chat/types';
 
-type PersonalizationSection = 'font' | 'logo';
+type PersonalizationSection = 'logo';
 
 interface UsePersonalizationPanelProps {
   initialUseAiImages?: boolean;
   businessInfo?: Partial<BusinessInfo>;
-  onFontSelect: (font: SystemFont) => void;
   onLogoSelect: (logo: LogoInfo, useAiImages?: boolean) => void;
 }
 
 export function usePersonalizationPanel({
   initialUseAiImages = false,
   businessInfo,
-  onFontSelect,
   onLogoSelect,
 }: UsePersonalizationPanelProps) {
-  const [currentSection, setCurrentSection] = useState<PersonalizationSection>('font');
+  const [currentSection, setCurrentSection] = useState<PersonalizationSection>('logo');
   const [selectedLogo, setSelectedLogo] = useState<LogoInfo | null>(null);
   const [uploading, setUploading] = useState(false);
   const [generating, setGenerating] = useState(false);
@@ -46,18 +43,8 @@ export function usePersonalizationPanel({
   const generateUploadUrl = useMutation(api.logos.generateUploadUrl);
   const saveLogo = useMutation(api.logos.saveLogo);
 
-  const sections: PersonalizationSection[] = ['font', 'logo'];
+  const sections: PersonalizationSection[] = ['logo'];
   const sectionIndex = sections.indexOf(currentSection);
-
-  const handleFontSelect = useCallback(
-    (font: SystemFont) => {
-      onFontSelect(font);
-      setTimeout(() => {
-        setCurrentSection('logo');
-      }, 100);
-    },
-    [onFontSelect],
-  );
 
   const handleFileUpload = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -182,9 +169,7 @@ export function usePersonalizationPanel({
 
   /** Skip current section only */
   const handleSkipSection = useCallback(() => {
-    if (currentSection === 'font') {
-      setCurrentSection('logo');
-    } else if (currentSection === 'logo') {
+    if (currentSection === 'logo') {
       handleSkipLogo();
     }
   }, [currentSection, handleSkipLogo]);
@@ -203,7 +188,6 @@ export function usePersonalizationPanel({
     useAiImages,
     setUseAiImages,
     fileInputRef,
-    handleFontSelect,
     handleFileUpload,
     handleGenerateLogo,
     handleSkipLogo,

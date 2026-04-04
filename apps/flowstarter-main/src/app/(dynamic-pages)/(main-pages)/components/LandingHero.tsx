@@ -71,12 +71,8 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   const stats = [
     { value: deliveryValue, suffix: ' days', label: 'avg. delivery' },
     { value: `${skillsCount}`, suffix: '', label: 'coding skills needed' },
-    { value: `${trialCount}`, suffix: '-days', label: 'free trial' },
-    {
-      value: `${integrationsCount}`,
-      suffix: '+',
-      label: 'integrations included',
-    },
+    { value: `${trialCount}`, suffix: '-day', label: 'free first month' },
+    { value: '50', suffix: '%', label: 'setup refund if not happy' },
   ];
 
   const prefixWords = hero.headlinePrefix.split(' ');
@@ -166,7 +162,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
           >
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)] dark:bg-violet-400 shrink-0" />
             <span className="text-[11px] font-semibold tracking-[0.12em] uppercase">
-              Live in 5–7 days
+              Your site live in 5–7 days
             </span>
           </div>
         </div>
@@ -309,6 +305,14 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
             </svg>
           </a>
         </div>
+
+        {/* Guarantee line */}
+        <p
+          style={fade('0.35s')}
+          className="text-center text-xs sm:text-sm text-gray-400 dark:text-white/35 mb-7 sm:mb-8"
+        >
+          {hero.guarantee}
+        </p>
 
         {/* Stats */}
         <div

@@ -149,9 +149,9 @@ export const landingKeys = {
   'landing.pricing.careFeature4': 'Bigger changes quoted separately',
   'landing.pricing.guaranteeTitle': "Pay only when you're happy",
   'landing.pricing.guaranteeDesc':
-    "We collect 50% upfront to start your project. You only pay the remaining 50% when you're happy with the result.",
+    "We collect 50% upfront to start your project. You only pay the remaining 50% when you're happy with the result. First month free on all plans.",
   'landing.pricing.guaranteeNote':
-    'The initial 50% deposit is non-refundable and covers design, setup, and infrastructure costs.',
+    'Not happy within the first 30 days? We refund 50% of your setup fee. No questions asked.',
   'landing.pricing.footerNote': 'No lock-in. Cancel anytime. No hidden fees.',
   'landing.pricing.finePrint':
     'No contracts. Cancel anytime. First month free.',
@@ -338,7 +338,7 @@ export const landingKeys = {
     'Yes. Every client gets access to the Flowstarter Editor, where you can update text, images, and content without any coding knowledge. Our team is also available if you need help.',
   'faq.items.pricing.q': 'How does pricing work?',
   'faq.items.pricing.a':
-    'We offer simple, transparent pricing with no hidden fees. Contact us for a free quote tailored to your needs. There are no setup charges — you only pay a monthly management fee.',
+    'We offer simple, transparent pricing with no hidden fees. Contact us for a free quote tailored to your needs. There are no setup charges. You only pay a monthly management fee.',
   'faq.items.support.q': 'What kind of support do you offer?',
   'faq.items.support.a':
     'We provide ongoing support through email and our help centre. Our team monitors your site, handles updates, and ensures everything runs smoothly so you never have to worry.',
@@ -346,7 +346,7 @@ export const landingKeys = {
   // About Page
   'about.title': 'We are Flowstarter',
   'about.subtitle':
-    'Two co-founders. One mission — help any business have a great website, without the headache.',
+    'Two co-founders. One mission: help any business have a great website, without the headache.',
   'about.story.heading': 'Why we built this',
   'about.story.body':
     'We kept seeing the same problem. Business owners needed a professional website but were stuck choosing between expensive agencies, DIY builders that never looked quite right, or waiting months for someone to finish. We knew it did not have to be that way. Darius brings the engineering to make it fast and reliable. Dorin brings the design to make it beautiful. Together we handle everything so you can focus on running your business.',

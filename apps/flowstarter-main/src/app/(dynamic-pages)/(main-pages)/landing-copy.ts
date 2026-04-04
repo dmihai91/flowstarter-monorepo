@@ -47,17 +47,17 @@ export const LANDING_COPY = {
   },
   hero: {
     headlinePrefix:
-      'Your clients are searching for someone exactly like you.',
-    headlineHighlight: 'Make sure they find you.',
+      'The right clients are out there looking for you.',
+    headlineHighlight: "Let's make sure they find you.",
     subheadlineBold: '',
     subheadline:
-      'One call. We build your professional site in 5–7 days. You manage it with a smart editor. No code, no agency, no waiting.',
-    primaryCta: "Let's build it",
-    secondaryCta: 'See plans & pricing',
+      'One call. We build your site in 5–7 days. You stay in control with a smart editor. No code, no waiting, no back and forth.',
+    primaryCta: 'Start getting clients',
+    secondaryCta: 'See plans and pricing',
     trustLine:
-      'For coaches, consultants, therapists, freelancers, and founders who want to look as good online as they are in real life.',
+      'For coaches, consultants, therapists, freelancers and founders who are serious about their online presence.',
     guarantee:
-      'Only 8 new projects per month — and we take 50% upfront, the rest only when you love it. Book your spot before it fills.',
+      'First month free. Not happy in 30 days? We refund 50% of your setup fee. No questions asked.',
   },
   process: {
     title: "Three steps. One week. A site you're proud of.",
@@ -78,7 +78,7 @@ export const LANDING_COPY = {
         number: '03',
         title: 'You go live',
         description:
-          "Your site launches. You get access to our smart editor — update anything yourself in seconds, no code, no back-and-forth. You're in control.",
+          "Your site launches. You get access to our smart editor so you can update anything yourself in seconds, no code, no waiting. You're in control.",
       },
     ],
   },
@@ -88,18 +88,18 @@ export const LANDING_COPY = {
       {
         icon: 'clock',
         title: 'Every hour on your website is an hour not spent on clients.',
-        body: 'Design decisions. Copy rewrites. Broken forms. It eats weeks — and your competitors are already showing up in Google.',
+        body: 'Design decisions. Copy rewrites. Broken forms. It eats weeks, and your competitors are already showing up in Google.',
       },
       {
         icon: 'wallet',
         title:
-          "Agencies charge €3,000–€10,000. DIY tools look easy — until they're not.",
+          "Traditional website projects take weeks and cost more than expected. DIY tools look easy, until they're not.",
         body: "You hit the first technical wall and you're suddenly watching YouTube tutorials at midnight. Still not live.",
       },
       {
         icon: 'puzzle',
-        title: 'Website builders give you a blank canvas. Not a business.',
-        body: "Choosing fonts, layouts, and plugins for weeks isn't getting you clients. It's just procrastination with extra steps.",
+        title: "Already have a site? If it's not getting you clients, it's not working.",
+        body: "A site that looks outdated or doesn't convert is costing you leads every day. A fresh start with the right structure changes that.",
       },
     ],
     closing:
@@ -120,7 +120,7 @@ export const LANDING_COPY = {
         icon: 'layout',
         title: 'Control without complexity',
         subtitle: 'One place to manage',
-        body: 'Make updates, adjust content, and keep your site sharp — on your own schedule, no dependencies.',
+        body: 'Make updates, adjust content, and keep your site sharp. On your own schedule, no dependencies.',
       },
       {
         icon: 'sparkles',
@@ -174,10 +174,10 @@ export const LANDING_COPY = {
   pricing: {
     title: 'Clear pricing. No surprises. Rate locked forever.',
     subtitle:
-      'Pay once to launch. €39/month keeps everything running — and that rate is yours for life. Cancel anytime.',
+      'Pay once to launch. €39/month keeps everything running, and that rate is yours for life. First month is free. If you are not happy within 30 days, we refund 50% of the setup fee.',
     socialProof:
-      'Only 8 spots available per month. We take 50% upfront, the rest only when you love the result.',
-    note: 'No tech skills needed. No waiting on anyone. Full control after launch.',
+      'Only 8 spots per month. First month free. 50% setup refund if not happy in the first 30 days.',
+    note: 'No tech skills needed. Full control after launch.',
     relaunchNote:
       "Already have a site that isn't working? Ask about Flowstarter Relaunch on your discovery call.",
     plans: [
@@ -185,7 +185,7 @@ export const LANDING_COPY = {
         name: 'STARTER',
         label: 'Get online fast',
         setupPrice: '€499',
-        monthlyPrice: '€39/month — locked in forever',
+        monthlyPrice: '€39/month, locked in forever',
         features: [
           'Live landing page for your offer',
           'Offer and pricing structure set up',
@@ -193,23 +193,27 @@ export const LANDING_COPY = {
           'Visitor tracking and analytics',
           'Smart editor: update anything yourself',
           'Your own business dashboard',
+          'First month free',
+          '50% setup refund if not happy in 30 days',
         ],
         cta: 'Claim your Starter spot',
         status: 'available',
       },
       {
         name: 'RELAUNCH',
-        label: 'Already have a site?',
+        label: 'Your existing site, rebuilt to convert',
         setupPrice: '€699–€999',
-        monthlyPrice: '€39/month — locked in forever',
+        monthlyPrice: '€39/month, locked in forever',
         features: [
-          'Full audit of your existing site',
-          'Content migration from your old site',
-          'SEO redirect mapping',
+          'Full audit of what is costing you leads',
+          'Content migration from your existing site',
+          'SEO redirect mapping so you keep your rankings',
+          'New structure built to convert visitors',
           'Everything in Starter included',
-          'Complexity assessed on discovery call',
+          'First month free',
+          '50% setup refund if not happy in 30 days',
         ],
-        cta: 'Discuss your project',
+        cta: 'Discuss your relaunch',
         ctaVariant: 'outline',
         status: 'available',
       },
@@ -217,14 +221,15 @@ export const LANDING_COPY = {
         name: 'GROWTH',
         label: 'Turn visitors into paying clients',
         setupPrice: '€999–€1,499',
-        monthlyPrice: '€59/month — locked in forever',
+        monthlyPrice: '€59/month, locked in forever',
         features: [
           'Everything in Starter',
           'Email list setup and newsletters',
           'Online payment setup',
           'Sales page built to convert',
           'Visitor and revenue insights',
-          'Built to turn traffic into clients',
+          'First month free',
+          '50% setup refund if not happy in 30 days',
         ],
         cta: 'Claim your Growth spot',
         badge: 'Most popular',
@@ -249,7 +254,7 @@ export const LANDING_COPY = {
       },
     ],
     guarantee:
-      'We collect 50% upfront to start your project. You only pay the remaining 50% when you love the result. Your €39/month rate is locked in for life — new clients after launch pay more.',
+      'We collect 50% upfront to start. The remaining 50% is due only when you love the result. Your first month is free. If you are not happy within 30 days, we refund 50% of your setup fee. No questions asked.',
   },
   differentiation: {
     title: 'A completely different kind of website launch.',
@@ -260,9 +265,9 @@ export const LANDING_COPY = {
           'Give you a blank canvas and a 47-tab tutorial. You do all the work.',
       },
       {
-        label: 'Web agencies',
+        label: 'Traditional approach',
         description:
-          '€3,000–€10,000 upfront. Weeks of back-and-forth. Then you still need someone to update it.',
+          'Longer timelines, higher budgets, and you still need to go back whenever something needs updating.',
       },
       {
         label: 'Flowstarter',
@@ -272,7 +277,7 @@ export const LANDING_COPY = {
           'Live in 5–7 days from one 45-min call',
           'Smart editor: update anything yourself, no code',
           'Booking, contact form, and analytics all connected',
-          'One dashboard — your leads, your site, your control',
+          'One dashboard for your leads, your site, your control',
           '50% upfront. Rest only when you love the result.',
         ],
         highlighted: true,
@@ -284,15 +289,15 @@ export const LANDING_COPY = {
     items: [
       {
         icon: 'clock',
-        label: "You've been meaning to fix your website for months",
+        label: "Your website has been on the to-do list for too long",
       },
       {
         icon: 'puzzle',
-        label: 'You tried DIY tools and hated every minute of it',
+        label: 'You want a professional result without doing it yourself',
       },
       {
         icon: 'mic',
-        label: "Your current site doesn't reflect how good you actually are",
+        label: "You have a site but it's not bringing in clients, and you've tried to fix it",
       },
       {
         icon: 'users',
@@ -300,7 +305,11 @@ export const LANDING_COPY = {
       },
       {
         icon: 'rocket',
-        label: 'You want it done fast, by someone who gets it',
+        label: 'You want it done fast and done properly',
+      },
+      {
+        icon: 'globe',
+        label: "You don't have a website yet and want to get online properly from day one",
       },
       {
         icon: 'check',
@@ -314,17 +323,17 @@ export const LANDING_COPY = {
       {
         question: 'What exactly do I get?',
         answer:
-          'A done-for-you launch: your landing page, offer structure, booking setup, and analytics — all connected. Plus your own dashboard and smart editor so you can manage everything after launch, no developer needed. Most clients are live within 5–7 days.',
+          'A done-for-you launch: your landing page, offer structure, booking setup, and analytics, all connected. Plus your own dashboard and smart editor so you can manage everything after launch, no developer needed. Most clients are live within 5 to 7 days.',
       },
       {
-        question: 'How does payment work?',
+        question: 'How does payment work? Is there a guarantee?',
         answer:
-          'We collect 50% upfront (€249.50 for Starter) to start your project. You only pay the remaining 50% when you are happy with the result. Your monthly rate (€39/mo for Starter) is locked in for as long as you stay subscribed — new clients who join after launch will pay a higher rate.',
+          'We collect 50% upfront to start your project. You only pay the remaining 50% when you are happy with the result. Your first month of subscription is free. If you are not satisfied within the first 30 days, we refund 50% of the setup fee. No questions asked. Your monthly rate is also locked in for life. New clients who join later pay more.',
       },
       {
-        question: "Already have a site that isn't working for you?",
+        question: 'My current site exists but it is not getting me clients. Can you help?',
         answer:
-          "Flowstarter Relaunch is built for that. We audit your existing site, migrate your content into a production-ready template, and hand you back a site with a real structure. Pricing starts at €699 depending on complexity. Book a free discovery call and we'll assess it together.",
+          "Yes, that is exactly what the Relaunch plan is for. We audit what is costing you leads, migrate your content, set up proper SEO redirects so you keep your rankings, and rebuild the structure around converting visitors. Pricing starts at €699 depending on complexity. Book a free discovery call and we will assess it together.",
       },
       {
         question: 'How long does launch usually take?',
@@ -334,7 +343,7 @@ export const LANDING_COPY = {
       {
         question: 'Can I update the site myself after launch?',
         answer:
-          'Yes. Our smart editor lets you rewrite copy, update images, add sections, or change anything — all by describing what you want in plain language. No code, no waiting on anyone.',
+          'Yes. Our smart editor lets you rewrite copy, update images, add sections, or change anything, just by describing what you want in plain language. No code, no waiting on anyone.',
       },
       {
         question: 'Do I need technical skills?',
@@ -349,7 +358,7 @@ export const LANDING_COPY = {
       {
         question: 'Am I locked into a long-term contract?',
         answer:
-          'No contracts. The setup is a one-time fee. The monthly plan keeps your site, smart editor, and dashboard running. Cancel anytime — and you keep all your site files no matter what.',
+          'No contracts. The setup is a one-time fee. The monthly plan keeps your site, smart editor, and dashboard running. Cancel anytime and you keep all your site files no matter what.',
       },
     ],
   },
@@ -367,7 +376,7 @@ export const LANDING_COPY = {
       },
       {
         quote:
-          "I was skeptical — I'd tried Squarespace, Wix, hired a freelancer. None of it stuck. This was completely different. One call, one draft, done. My site finally looks like a real business.",
+          "I was skeptical. I had tried Squarespace, Wix, even hired a freelancer. None of it stuck. This was completely different. One call, one draft, done. My site finally looks like a real business.",
         name: 'James R.',
         role: 'Strategy Consultant',
         initials: 'JR',
@@ -383,7 +392,7 @@ export const LANDING_COPY = {
   },
   finalCta: {
     headline: 'Your next client is searching for someone like you right now.',
-    body: 'Make sure they find you. One 45-minute call is all it takes. No tech skills, no commitment needed. Only 8 spots per month — and we only ask for 50% until you love the result.',
+    body: 'Make sure they find you. One 45-minute call is all it takes. No tech skills, no commitment needed. Only 8 spots per month, and we only ask for 50% until you love the result.',
     cta: 'Book a free discovery call',
   },
 };

@@ -9,25 +9,25 @@ const OPTIONS = [
   {
     id: 'starter',
     name: 'Starter',
-    desc: 'I need a solid site fast',
-    price: '499€',
+    desc: 'Get a professional site live in 5–7 days',
+    price: '€499',
   },
   {
     id: 'relaunch',
     name: 'Relaunch',
-    desc: 'I have a site that needs a fresh start',
-    price: '699€–999€',
+    desc: 'My site exists but is not getting me clients',
+    price: '€699–€999',
   },
   {
     id: 'growth',
     name: 'Growth',
-    desc: 'I want the full setup + editor access',
-    price: '999€–1499€',
+    desc: 'I want bookings, payments & email all set up',
+    price: '€999–€1,499',
   },
   {
     id: 'unsure',
     name: 'Not sure yet',
-    desc: 'Help me decide on the call',
+    desc: 'I\'ll explain my situation on the call',
     price: null,
   },
 ] as const;

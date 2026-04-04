@@ -137,7 +137,7 @@ export function useBuildHandlers({
       const selectedPalette = paletteHook.selectedPalette;
 
       if (!selectedTemplate) {
-        flowHook.setStep('review');
+        flowHook.setStep('ready');
         messageHook.addAssistantMessage(formatErrorForUser(BUILD_ERRORS.MISSING_TEMPLATE));
         messageHook.setSuggestedReplies(getErrorSuggestions('template'));
 
@@ -145,7 +145,7 @@ export function useBuildHandlers({
       }
 
       if (!selectedPalette) {
-        flowHook.setStep('personalization');
+        flowHook.setStep('ready');
         messageHook.addAssistantMessage(formatErrorForUser(BUILD_ERRORS.MISSING_PALETTE));
         messageHook.setSuggestedReplies(getErrorSuggestions('build'));
 
@@ -322,7 +322,7 @@ export function useBuildHandlers({
         console.error('Failed to create project:', error);
         setBuildStep('');
         setBuildProgress(BUILD_PROGRESS.INITIAL);
-        flowHook.setStep('review');
+        flowHook.setStep('ready');
 
         const userError = getUserFriendlyError(error);
         messageHook.addAssistantMessage(formatErrorForUser(userError));

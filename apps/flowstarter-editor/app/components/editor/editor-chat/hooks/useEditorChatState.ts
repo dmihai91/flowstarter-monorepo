@@ -94,7 +94,7 @@ export function useEditorChatState({
   const messageHook = useOnboardingMessages();
 
   const flowHook = useOnboardingFlow({
-    initialStep: initialState ? normalizeHandoffStep(initialState) : 'review',
+    initialStep: initialState ? normalizeHandoffStep(initialState) : 'creating',
     initialDescription: initialState?.projectDescription || '',
     initialProjectName: initialState?.projectName || null,
     onStepChange: handleStepChange,
@@ -264,6 +264,7 @@ export function useEditorChatState({
         : null,
   });
 
+  // Auto-start seeded build once state is restored and all selections are available
   useEffect(() => {
     if (!pendingSeededBuildRef.current) {
       return;
@@ -277,11 +278,11 @@ export function useEditorChatState({
       return;
     }
 
-    flowHook.setStep('review');
+    pendingSeededBuildRef.current = false;
+    buildHandlers.startSeededBuild();
   }, [
     additionalState.selectedFont,
     buildHandlers,
-    flowHook,
     hasRestoredState,
     paletteHook.selectedPalette,
     templateHook.selectedTemplate,
@@ -297,7 +298,6 @@ export function useEditorChatState({
     handleTemplateSelect,
     handleRecommendationSelect,
     handleReviewBuildStart,
-    handleReviewCustomize,
     handleBusinessInfoConfirm,
     handleSuggestionAccept,
   } = useFlowHandlers({
@@ -310,14 +310,9 @@ export function useEditorChatState({
     pendingSeededBuildRef,
   });
 
-  const { handlePaletteSelect, handleFontSelect, handleLogoSelect, refreshSuggestions } = usePersonalizationFlow({
-    messageHook,
-    flowHook,
+  const { handlePaletteSelect, handleFontSelect, refreshSuggestions } = usePersonalizationFlow({
     paletteHook,
-    selectedFont: additionalState.selectedFont,
     setSelectedFont: additionalState.setSelectedFont,
-    setSelectedLogo: additionalState.setSelectedLogo,
-    handlePersonalizationComplete: buildHandlers.handlePersonalizationComplete,
     onStateChange,
   });
 
@@ -431,15 +426,10 @@ export function useEditorChatState({
     handleRecommendationSelect,
     handlePaletteSelect,
     handleFontSelect,
-    handleLogoSelect,
-    handlePersonalizationComplete: buildHandlers.handlePersonalizationComplete,
     handleContactDetailsComplete: buildHandlers.handleContactDetailsComplete,
     handleSkipContactDetails: buildHandlers.handleSkipContactDetails,
-    handleIntegrationsComplete: buildHandlers.handleIntegrationsComplete,
-    handleSkipIntegrations: buildHandlers.handleSkipIntegrations,
     handleBusinessDetailsComplete: noopAsync,
     handleReviewBuildStart,
-    handleReviewCustomize,
     handleSuggestionAccept,
     handleSend,
     handleThumbnailError: templateHook.handleThumbnailError,

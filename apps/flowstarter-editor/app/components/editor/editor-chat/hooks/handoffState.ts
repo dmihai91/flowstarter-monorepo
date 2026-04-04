@@ -37,7 +37,7 @@ export function isCompletedBuildState(state?: PartialState | null): boolean {
   return Boolean(state.buildPhase && COMPLETED_BUILD_PHASES.has(state.buildPhase));
 }
 
-const VALID_STEPS = new Set<string>(['review', 'personalization', 'integrations', 'creating', 'ready']);
+const VALID_STEPS = new Set<string>(['creating', 'ready']);
 
 export function normalizeHandoffStep(state: PartialState): OnboardingStep {
   if (state.step && VALID_STEPS.has(state.step)) {
@@ -48,5 +48,6 @@ export function normalizeHandoffStep(state: PartialState): OnboardingStep {
     return 'ready';
   }
 
-  return 'review';
+  // All pre-build decisions happen on the dashboard; editor starts building immediately
+  return 'creating';
 }

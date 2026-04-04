@@ -135,36 +135,9 @@ export function useSendHandler({
         return;
       }
 
-      if (step === 'review' || step === 'personalization' || step === 'integrations') {
-        messageHook.addUserMessage(userInput);
-
-        const lowerInput = userInput.toLowerCase();
-
-        if (
-          lowerInput.includes('build') ||
-          lowerInput.includes('create') ||
-          lowerInput.includes('start') ||
-          lowerInput.includes('ready')
-        ) {
-          messageHook.addAssistantMessage(
-            step === 'review'
-              ? "I'm ready to build. Use the review panel above to confirm the first build when you're set."
-              : "Finish the selections above, then click the build button when you're set.",
-          );
-        } else {
-          messageHook.addAssistantMessage(
-            step === 'review'
-              ? 'Review the project summary above. You can confirm the build or switch to customization before starting.'
-              : 'Use the controls above to adjust the site before the first build.',
-          );
-        }
-
-        return;
-      }
-
       messageHook.addUserMessage(userInput);
       messageHook.addAssistantMessage(
-        'This editor no longer starts projects on its own. Open the project from the team dashboard handoff flow, or use the controls above to continue.',
+        'This editor no longer starts projects on its own. Open the project from the team dashboard handoff flow.',
       );
     },
     [convexProjectId, currentUrlId, flowHook, messageHook],

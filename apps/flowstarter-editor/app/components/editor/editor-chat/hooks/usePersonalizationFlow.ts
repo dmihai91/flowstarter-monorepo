@@ -1,54 +1,27 @@
 /**
  * usePersonalizationFlow Hook
  *
- * Handles personalization selection flow:
- * - handlePaletteSelect: Select color palette
- * - handleFontSelect: Select system font
- * - handleLogoSelect: Select logo and trigger build
- * - refreshSuggestions: Refresh suggested replies
+ * Handles post-build palette/font selection (used by ColorSchemeDialog).
+ * Logo selection and build triggering removed — build starts automatically.
  */
 
-import { useCallback, useRef, useEffect } from 'react';
-import { createScopedLogger } from '~/utils/logger';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { getRandomServicePrompts } from '~/components/editor/editor-chat/constants';
+import { useCallback } from 'react';
 
-import type { ColorPalette, SystemFont, LogoInfo, InitialChatState } from '~/components/editor/editor-chat/types';
+import type { ColorPalette, SystemFont, InitialChatState } from '~/components/editor/editor-chat/types';
 
-const logger = createScopedLogger('usePersonalizationFlow');
-import type { useOnboardingMessages } from './useOnboardingMessages';
-import type { useOnboardingFlow } from './useOnboardingFlow';
 import type { usePaletteSelection } from './usePaletteSelection';
 
 interface UsePersonalizationFlowProps {
-  messageHook: ReturnType<typeof useOnboardingMessages>;
-  flowHook: ReturnType<typeof useOnboardingFlow>;
   paletteHook: ReturnType<typeof usePaletteSelection>;
-  selectedFont: SystemFont | null;
   setSelectedFont: (font: SystemFont | null) => void;
-  setSelectedLogo: (logo: LogoInfo | null) => void;
-  handlePersonalizationComplete: (font: SystemFont, logo: LogoInfo, useAiImages?: boolean) => Promise<void>;
   onStateChange?: (state: Partial<InitialChatState>) => void;
 }
 
 export function usePersonalizationFlow({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  messageHook,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  flowHook,
   paletteHook,
-  selectedFont,
   setSelectedFont,
-  setSelectedLogo,
-  handlePersonalizationComplete,
   onStateChange,
 }: UsePersonalizationFlowProps) {
-  // Use ref to always have the latest font value (avoids stale closure in handleLogoSelect)
-  const selectedFontRef = useRef<SystemFont | null>(selectedFont);
-  useEffect(() => {
-    selectedFontRef.current = selectedFont;
-  }, [selectedFont]);
-
   /**
    * Handle palette selection
    * Syncs customization data to Convex as it's selected
@@ -78,33 +51,6 @@ export function usePersonalizationFlow({
   );
 
   /**
-   * Handle logo selection
-   * This is the final personalization step - triggers the build
-   */
-  const handleLogoSelect = useCallback(
-    (logo: LogoInfo, useAiImages?: boolean) => {
-      setSelectedLogo(logo);
-
-      // Sync logo and AI images preference to state
-      onStateChange?.({ selectedLogo: logo, useAiImages });
-
-      /**
-       * After logo is selected, we have all personalization done
-       * Now trigger the build
-       * Use ref to get latest font value (avoids stale closure issue)
-       */
-      const currentFont = selectedFontRef.current;
-
-      if (currentFont) {
-        handlePersonalizationComplete(currentFont, logo, useAiImages);
-      } else {
-        logger.warn('Logo selected but no font selected yet - font ref is null');
-      }
-    },
-    [setSelectedLogo, handlePersonalizationComplete, onStateChange],
-  );
-
-  /**
    * Refresh suggested replies based on current step
    */
   const refreshSuggestions = useCallback(() => {
@@ -114,7 +60,6 @@ export function usePersonalizationFlow({
   return {
     handlePaletteSelect,
     handleFontSelect,
-    handleLogoSelect,
     refreshSuggestions,
   };
 }

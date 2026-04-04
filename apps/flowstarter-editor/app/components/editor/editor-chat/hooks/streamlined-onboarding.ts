@@ -214,18 +214,12 @@ export function getNextStepFromCurrent(
   _hasContact?: boolean,
 ): OnboardingStep {
   switch (currentStep) {
-    case 'review':
-      return 'personalization';
-    case 'personalization':
-      return hasPersonalization ? 'creating' : 'personalization';
-    case 'integrations':
-      return 'creating';
     case 'creating':
       return 'ready';
     case 'ready':
       return 'ready';
     default:
-      return 'review';
+      return 'creating';
   }
 }
 
@@ -277,22 +271,6 @@ export function generateOnboardingResponse(context: OnboardingContext): Onboardi
   } = context;
 
   switch (step) {
-    case 'review':
-      return {
-        content: 'Review your project setup below, then confirm when ready to build.',
-      };
-
-    case 'personalization':
-      return {
-        content: 'Add your brand touches - logo, colors, and fonts:',
-        showPersonalization: true,
-      };
-
-    case 'integrations':
-      return {
-        content: 'Connect your services - booking, newsletter, and more.',
-      };
-
     case 'creating':
       return getCreatingMessage(buildProgress || 0);
 
@@ -307,7 +285,7 @@ export function generateOnboardingResponse(context: OnboardingContext): Onboardi
 
     default:
       return {
-        content: 'Review your project setup below, then confirm when ready to build.',
+        content: 'Building your site...',
       };
   }
 }

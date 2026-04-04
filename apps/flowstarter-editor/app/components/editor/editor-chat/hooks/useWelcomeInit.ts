@@ -1,8 +1,8 @@
 /**
  * useWelcomeInit Hook
  *
- * Handles initialization for the supported handoff-only flow.
- * New projects now start in review, existing built projects resume in ready.
+ * Build-only init: preseeded handoff → 'creating' (auto-build),
+ * existing/completed project → 'ready' (chat mode).
  */
 
 import { useEffect, useRef, useCallback } from 'react';
@@ -20,7 +20,7 @@ interface UseWelcomeInitProps {
   flowHook: UseOnboardingFlowReturn;
   hasRestoredState: React.MutableRefObject<boolean>;
 
-  /** Callback to move seeded handoff projects into explicit review before build */
+  /** Callback to auto-start seeded build immediately */
   onTemplateBuildStart?: () => void;
 }
 
@@ -62,6 +62,7 @@ export function useWelcomeInit({
       flow.setProjectDescription(state.projectDescription);
     }
 
+    // Existing/completed project → chat mode
     if (isCompletedBuildState(state)) {
       flow.setStep('ready');
       msg.setSuggestedReplies([]);
@@ -69,17 +70,21 @@ export function useWelcomeInit({
       return;
     }
 
-    msg.addAssistantMessage(
-      hasPreseededTemplateBuild(state)
-        ? '**Project setup received.** Review the selected template, brand direction, and integrations below, then confirm when you want me to build the first version.'
-        : '**Welcome!** Review your project details below to get started.',
-    );
-    msg.setSuggestedReplies([]);
-    flow.setStep('review');
-
+    // Preseeded handoff → auto-start build immediately
     if (hasPreseededTemplateBuild(state)) {
+      msg.addAssistantMessage(
+        '**Building your site...** Using the template, palette, and font selected on the dashboard.',
+      );
+      msg.setSuggestedReplies([]);
+      flow.setStep('creating');
       onTemplateBuildStartRef.current?.();
+
+      return;
     }
+
+    // Direct URL with no state → ready (chat mode for existing project)
+    flow.setStep('ready');
+    msg.setSuggestedReplies([]);
   }, []);
 
   /*

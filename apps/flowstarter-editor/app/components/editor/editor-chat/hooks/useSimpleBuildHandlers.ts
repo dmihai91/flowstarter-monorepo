@@ -15,7 +15,7 @@ import type { ContactDetails, InitialChatState, IntegrationConfig } from '~/comp
 import type { Id } from '~/convex/_generated/dataModel';
 import type { AgentActivityEvent } from '~/components/editor/AgentActivityPanel';
 import { MESSAGE_KEYS, getMessage } from '~/components/editor/editor-chat/constants';
-import { toConvexIntegrations, buildIntegrationsMessage } from './integrationHelpers';
+
 import { BUILD_PROGRESS } from './simple-build-types';
 import { mapProgressMessage, buildSiteGenerationInput, toConvexContactDetails } from './build-helpers';
 import type { UseSimpleBuildHandlersProps, UseSimpleBuildHandlersReturn } from './simple-build-types';
@@ -32,7 +32,9 @@ export function useSimpleBuildHandlers({
   selectedFont,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   selectedLogo,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setSelectedFont,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setSelectedLogo,
   setConvexProjectId,
   setCurrentUrlId,
@@ -52,7 +54,6 @@ export function useSimpleBuildHandlers({
   // Live agent events accumulator — drives the AgentStatusMessage in chat
   const agentEventsRef = useRef<AgentActivityEvent[]>([]);
   const chatMsgIdRef = useRef<string | null>(null);
-  const updateIntegrations = useMutation(api.projects.updateIntegrations);
   const updateContactDetails = useMutation(api.projects.updateContactDetails);
 
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -70,42 +71,7 @@ export function useSimpleBuildHandlers({
     [],
   );
 
-  const useAiImagesRef = useRef<boolean>(false);
   const contactDetailsRef = useRef<ContactDetails | undefined>(undefined);
-
-  const handlePersonalizationComplete = useCallback(
-    async (
-      font: Parameters<UseSimpleBuildHandlersReturn['handlePersonalizationComplete']>[0],
-      logo: Parameters<UseSimpleBuildHandlersReturn['handlePersonalizationComplete']>[1],
-      useAiImages?: boolean,
-    ) => {
-      setSelectedFont(font);
-      setSelectedLogo(logo);
-      useAiImagesRef.current = useAiImages || false;
-
-      let userMessage = `Perfect! I'll use the "${font.name}" font`;
-
-      if (logo.type === 'uploaded') {
-        userMessage += ' and my uploaded logo';
-      } else if (logo.type === 'generated') {
-        userMessage += ' and the AI-generated logo';
-      }
-
-      if (useAiImages) {
-        userMessage += '. Generate AI images for my site.';
-      }
-
-      messageHook.addUserMessage(userMessage);
-      onStateChangeRef.current?.({ useAiImages } as Partial<InitialChatState>);
-      await messageHook.addStepTransitionMessage('personalization', 'integrations', {
-        fontName: font.name,
-        logoType: logo.type,
-        useAiImages,
-      });
-      flowHook.setStep('integrations');
-    },
-    [flowHook, messageHook, setSelectedFont, setSelectedLogo],
-  );
 
   const handleContactDetailsComplete = useCallback(
     async (contactDetails: ContactDetails) => {
@@ -133,8 +99,8 @@ export function useSimpleBuildHandlers({
       }
 
       onStateChangeRef.current?.({ contactDetails } as Partial<InitialChatState>);
-      await messageHook.addStepTransitionMessage('review', 'review', { hasContactDetails: true });
-      flowHook.setStep('review');
+      await messageHook.addStepTransitionMessage('ready', 'ready', { hasContactDetails: true });
+      flowHook.setStep('ready');
       messageHook.setSuggestedReplies([
         { id: 'confirm', text: 'Looks good!' },
         { id: 'edit', text: 'Let me change something' },
@@ -145,8 +111,8 @@ export function useSimpleBuildHandlers({
 
   const handleSkipContactDetails = useCallback(async () => {
     messageHook.addUserMessage('Skip contact details for now');
-    await messageHook.addStepTransitionMessage('review', 'review', { hasContactDetails: false });
-    flowHook.setStep('review');
+    await messageHook.addStepTransitionMessage('ready', 'ready', { hasContactDetails: false });
+    flowHook.setStep('ready');
     messageHook.setSuggestedReplies([
       { id: 'confirm', text: 'Looks good!' },
       { id: 'edit', text: 'Let me change something' },
@@ -179,21 +145,21 @@ export function useSimpleBuildHandlers({
       console.log('[BROWSER] [DEBUG] Checking template:', !!effectiveTemplate);
 
       if (!effectiveTemplate) {
-        flowHook.setStep('review');
+        flowHook.setStep('ready');
         messageHook.addAssistantMessage(getMessage(MESSAGE_KEYS.BUILD_SELECT_TEMPLATE_FIRST));
 
         return;
       }
 
       if (!selectedPalette) {
-        flowHook.setStep('personalization');
+        flowHook.setStep('ready');
         messageHook.addAssistantMessage(getMessage(MESSAGE_KEYS.BUILD_SELECT_PALETTE_FIRST));
 
         return;
       }
 
       if (!selectedFont) {
-        flowHook.setStep('personalization');
+        flowHook.setStep('ready');
         messageHook.addAssistantMessage('Please select a font first.');
 
         return;
@@ -320,11 +286,11 @@ export function useSimpleBuildHandlers({
 
         console.error('[SimpleBuildHandlers] Failed to create project:', error);
 
-        // Don't reset to template if the build already completed — only reset on pre-build failures
+        // Don't reset if the build already completed — only reset on pre-build failures
         if (!buildCompletedSuccessfully) {
           setBuildStep('');
           setBuildProgress(BUILD_PROGRESS.INITIAL);
-          flowHook.setStep('review');
+          flowHook.setStep('ready');
         }
 
         const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
@@ -333,7 +299,6 @@ export function useSimpleBuildHandlers({
         );
         messageHook.setSuggestedReplies([
           { id: 'retry', text: 'Try again' },
-          { id: 'review', text: 'Back to review' },
         ]);
       }
     },
@@ -355,47 +320,13 @@ export function useSimpleBuildHandlers({
     ],
   );
 
-  const handleIntegrationsComplete = useCallback(
-    async (integrations: IntegrationConfig[]) => {
-      console.log('[BROWSER] [DEBUG] handleIntegrationsComplete called', integrations);
-      messageHook.addUserMessage(buildIntegrationsMessage(integrations));
-
-      if (existingProjectId) {
-        try {
-          console.log('[BROWSER] [DEBUG] Entering try block');
-          await updateIntegrations({
-            projectId: existingProjectId as Id<'projects'>,
-            integrations: toConvexIntegrations(integrations),
-          });
-          console.log('[useSimpleBuildHandlers] ✅ Integrations saved to Convex');
-        } catch (error) {
-          console.error('[useSimpleBuildHandlers] ❌ Failed to save integrations to Convex:', error);
-        }
-      }
-
-      onStateChangeRef.current?.({
-        integrations: integrations.map((i) => ({ id: i.id, name: i.name, enabled: i.enabled, config: i.config })),
-      } as Partial<InitialChatState>);
-      await startBuild(integrations, contactDetailsRef.current, useAiImagesRef.current);
-    },
-    [messageHook, startBuild, existingProjectId, updateIntegrations],
-  );
-
-  const handleSkipIntegrations = useCallback(async () => {
-    messageHook.addUserMessage("Skip integrations for now - let's build!");
-    await startBuild([]);
-  }, [messageHook, startBuild]);
-
   const startSeededBuild = useCallback(async () => {
     await startBuild(seededIntegrations);
   }, [seededIntegrations, startBuild]);
 
   return {
-    handlePersonalizationComplete,
     handleContactDetailsComplete,
     handleSkipContactDetails,
-    handleIntegrationsComplete,
-    handleSkipIntegrations,
     startSeededBuild,
   };
 }

@@ -1,9 +1,9 @@
 /**
  * useFlowHandlers Hook
  *
- * Extracts flow-related handler callbacks from useEditorChatState,
- * including template selection, recommendation selection, review actions,
- * and no-op stubs.
+ * Extracts flow-related handler callbacks from useEditorChatState.
+ * Simplified: review/personalization/integrations steps removed.
+ * Template and recommendation selection now go straight to building.
  */
 
 import { useCallback, type MutableRefObject } from 'react';
@@ -41,13 +41,9 @@ export function useFlowHandlers({
         selectedTemplateId: template.id,
         selectedTemplateName: template.name,
       });
-      messageHook.addUserMessage(`I'll keep the "${template.name}" template`);
-      await messageHook.addStepTransitionMessage('review', 'personalization', {
-        templateName: template.name,
-      });
-      flowHook.setStep('personalization');
+      messageHook.addUserMessage(`I'll use the "${template.name}" template`);
     },
-    [flowHook, messageHook, onStateChange, templateHook],
+    [messageHook, onStateChange, templateHook],
   );
 
   const handleRecommendationSelect = useCallback(
@@ -57,13 +53,9 @@ export function useFlowHandlers({
         selectedTemplateId: recommendation.template.id,
         selectedTemplateName: recommendation.template.name,
       });
-      messageHook.addUserMessage(`I'll keep the "${recommendation.template.name}" template`);
-      await messageHook.addStepTransitionMessage('review', 'personalization', {
-        templateName: recommendation.template.name,
-      });
-      flowHook.setStep('personalization');
+      messageHook.addUserMessage(`I'll use the "${recommendation.template.name}" template`);
     },
-    [flowHook, messageHook, onStateChange, templateHook],
+    [messageHook, onStateChange, templateHook],
   );
 
   const handleReviewBuildStart = useCallback(async () => {
@@ -72,11 +64,6 @@ export function useFlowHandlers({
     await buildHandlers.startSeededBuild();
   }, [buildHandlers, messageHook, pendingSeededBuildRef]);
 
-  const handleReviewCustomize = useCallback(() => {
-    messageHook.addUserMessage('I want to adjust the style before building');
-    flowHook.setStep('personalization');
-  }, [flowHook, messageHook]);
-
   const handleBusinessInfoConfirm = useCallback(async (_confirmed: boolean) => {}, []);
   const handleSuggestionAccept = useCallback(async () => {}, []);
 
@@ -84,7 +71,6 @@ export function useFlowHandlers({
     handleTemplateSelect,
     handleRecommendationSelect,
     handleReviewBuildStart,
-    handleReviewCustomize,
     handleBusinessInfoConfirm,
     handleSuggestionAccept,
   };

@@ -70,9 +70,7 @@ export function useStateRestoration({
       const step = normalizeHandoffStep(state);
       flow.setStep(step);
 
-      if (step === 'review') {
-        msg.setSuggestedReplies([]);
-      } else if (step === 'ready') {
+      if (step === 'ready') {
         msg.setSuggestedReplies(getDefaultReadySuggestions());
       } else {
         msg.setSuggestedReplies([]);

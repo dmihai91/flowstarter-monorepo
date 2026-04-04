@@ -50,15 +50,13 @@ export interface AttachedImage {
  */
 
 /**
- * Handoff-only onboarding flow:
- * review → personalization → integrations → creating → ready
+ * Build-only onboarding flow:
+ * creating → ready
  *
- * Projects are always created from the dashboard via handoff.
+ * All pre-build decisions are made on the dashboard.
+ * The editor's job is purely: build the site, then chat to modify it.
  */
 export type OnboardingStep =
-  | 'review' // Handoff-backed review before first build
-  | 'personalization' // Logo + Colors + Font
-  | 'integrations' // Calendly + GA integration cards
   | 'creating' // Build in progress
   | 'ready'; // Done!
 
@@ -283,8 +281,8 @@ export interface CategoryColors {
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-/** Handoff-only step order */
-export const STREAMLINED_STEPS: OnboardingStep[] = ['review', 'personalization', 'integrations', 'creating', 'ready'];
+/** Build-only step order */
+export const STREAMLINED_STEPS: OnboardingStep[] = ['creating', 'ready'];
 
 /** Check if a step is part of the new streamlined flow */
 export function isStreamlinedStep(step: OnboardingStep): boolean {

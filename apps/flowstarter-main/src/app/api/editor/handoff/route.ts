@@ -480,103 +480,155 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Pre-initialize Convex project + conversation so the editor can navigate instantly
+    // Convex init is required — no token without conversationId
     let conversationId: string | undefined;
-    if (CONVEX_SITE_URL) {
-      try {
-        const bi = (projectData?.businessInfo ?? {}) as Record<string, unknown>;
-        const bp = (projectData?.brandProfile ?? {}) as Record<string, unknown>;
-        const siteInfo = (projectData?.siteInfo ?? {}) as Record<
-          string,
-          unknown
-        >;
-        const palette = (projectData?.palette ?? null) as Record<
-          string,
-          unknown
-        > | null;
-        const font = (projectData?.font ?? null) as Record<
-          string,
-          unknown
-        > | null;
-        const template = (projectData?.template ?? null) as Record<
-          string,
-          unknown
-        > | null;
-        const client = (projectData?.client ?? {}) as Record<string, unknown>;
-        const ci = (projectData?.contactInfo ?? {}) as Record<string, unknown>;
-        const hasBusinessData = !!(
-          bi?.uvp ||
-          bi?.industry ||
-          bi?.pricingOffers
-        );
-        const convexRes = await fetch(`${CONVEX_SITE_URL}/handoff/initialize`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-handoff-secret': HANDOFF_SECRET || 'dev-secret',
-          },
-          body: JSON.stringify({
-            supabaseProjectId: resolvedProjectId,
-            projectName: projectName!,
-            projectDescription: projectDescription!,
-            businessInfo: {
-              description: bi.description,
-              summary: bi.summary,
-              uvp: bi.uvp,
-              valueProposition: bi.valueProposition,
-              targetAudience: bi.targetAudience,
-              industry: bi.industry,
-              brandTone: bi.brandTone,
-              businessType: bi.offerType,
-              businessGoals: bi.goals || (bi.goal ? [bi.goal] : undefined),
-              sellingMethod: bi.sellingMethod,
-              pricingOffers: bi.offerings,
-              desiredCustomerAction: bi.desiredCustomerAction,
-              differentiators: bi.differentiators,
-              trustSignals: bi.trustSignals,
-              contentStylePreference: bi.contentStylePreference,
-              contactEmail:
-                (bi.contactEmail as string) ||
-                (client.email as string) ||
-                (ci.email as string),
-              contactPhone:
-                (bi.contactPhone as string) ||
-                (client.phone as string) ||
-                (ci.phone as string),
-              contactAddress:
-                (bi.contactAddress as string) || (ci.address as string),
-              website: (bi.website as string) || (ci.website as string),
-            },
-            brandProfile: bp,
-            selectedTemplateId:
-              selectedTemplateSlug || (template?.id as string | undefined),
-            selectedTemplateName:
-              (template?.name as string | undefined) ||
-              selectedTemplateName ||
-              undefined,
-            selectedPalette: palette,
-            selectedFont: font,
-            selectedIntegrations: {
-              required: requiredIntegrations,
-              selected: (siteInfo.integrations as string[] | undefined) || [],
-            },
-            syncVersion: Date.now(),
-            step: hasBusinessData
-              ? 'review'
-              : projectName && projectName !== 'Untitled Project'
-              ? 'describe'
-              : 'welcome',
-          }),
-        });
-        if (convexRes.ok) {
-          const convexData = (await convexRes.json()) as {
-            conversationId?: string;
-          };
-          conversationId = convexData.conversationId;
+    if (!CONVEX_SITE_URL) {
+      console.error('[Editor Handoff] CONVEX_SITE_URL is not configured');
+      return NextResponse.json(
+        { error: 'Failed to initialize editor session. Please try again.' },
+        { status: 502 }
+      );
+    }
+
+    {
+      const bi = (projectData?.businessInfo ?? {}) as Record<string, unknown>;
+      const bp = (projectData?.brandProfile ?? {}) as Record<string, unknown>;
+      const siteInfo = (projectData?.siteInfo ?? {}) as Record<
+        string,
+        unknown
+      >;
+      const palette = (projectData?.palette ?? null) as Record<
+        string,
+        unknown
+      > | null;
+      const font = (projectData?.font ?? null) as Record<
+        string,
+        unknown
+      > | null;
+      const template = (projectData?.template ?? null) as Record<
+        string,
+        unknown
+      > | null;
+      const client = (projectData?.client ?? {}) as Record<string, unknown>;
+      const ci = (projectData?.contactInfo ?? {}) as Record<string, unknown>;
+      const hasBusinessData = !!(
+        bi?.uvp ||
+        bi?.industry ||
+        bi?.pricingOffers
+      );
+
+      const convexBody = JSON.stringify({
+        supabaseProjectId: resolvedProjectId,
+        projectName: projectName!,
+        projectDescription: projectDescription!,
+        businessInfo: {
+          description: bi.description,
+          summary: bi.summary,
+          uvp: bi.uvp,
+          valueProposition: bi.valueProposition,
+          targetAudience: bi.targetAudience,
+          industry: bi.industry,
+          brandTone: bi.brandTone,
+          businessType: bi.offerType,
+          businessGoals: bi.goals || (bi.goal ? [bi.goal] : undefined),
+          sellingMethod: bi.sellingMethod,
+          pricingOffers: bi.offerings,
+          desiredCustomerAction: bi.desiredCustomerAction,
+          differentiators: bi.differentiators,
+          trustSignals: bi.trustSignals,
+          contentStylePreference: bi.contentStylePreference,
+          contactEmail:
+            (bi.contactEmail as string) ||
+            (client.email as string) ||
+            (ci.email as string),
+          contactPhone:
+            (bi.contactPhone as string) ||
+            (client.phone as string) ||
+            (ci.phone as string),
+          contactAddress:
+            (bi.contactAddress as string) || (ci.address as string),
+          website: (bi.website as string) || (ci.website as string),
+        },
+        brandProfile: bp,
+        selectedTemplateId:
+          selectedTemplateSlug || (template?.id as string | undefined),
+        selectedTemplateName:
+          (template?.name as string | undefined) ||
+          selectedTemplateName ||
+          undefined,
+        selectedPalette: palette,
+        selectedFont: font,
+        selectedIntegrations: {
+          required: requiredIntegrations,
+          selected: (siteInfo.integrations as string[] | undefined) || [],
+        },
+        syncVersion: Date.now(),
+        step: hasBusinessData
+          ? 'review'
+          : projectName && projectName !== 'Untitled Project'
+          ? 'describe'
+          : 'welcome',
+      });
+
+      // Retry up to 3 times (1 initial + 2 retries) with 500ms delay
+      const MAX_ATTEMPTS = 3;
+      let lastError: unknown;
+
+      for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+        try {
+          const convexRes = await fetch(
+            `${CONVEX_SITE_URL}/handoff/initialize`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'x-handoff-secret': HANDOFF_SECRET || 'dev-secret',
+              },
+              body: convexBody,
+            }
+          );
+
+          if (convexRes.ok) {
+            const convexData = (await convexRes.json()) as {
+              conversationId?: string;
+            };
+            if (convexData.conversationId) {
+              conversationId = convexData.conversationId;
+              break;
+            }
+            lastError = new Error(
+              `Convex returned OK but no conversationId (attempt ${attempt}/${MAX_ATTEMPTS})`
+            );
+          } else {
+            lastError = new Error(
+              `Convex returned ${convexRes.status} (attempt ${attempt}/${MAX_ATTEMPTS})`
+            );
+          }
+        } catch (e) {
+          lastError = e;
         }
-      } catch (e) {
-        // Non-fatal — editor will initialize itself as fallback
-        console.warn('[Editor Handoff] Convex pre-init failed:', e);
+
+        if (attempt < MAX_ATTEMPTS) {
+          console.warn(
+            `[Editor Handoff] Convex init attempt ${attempt}/${MAX_ATTEMPTS} failed, retrying in 500ms...`,
+            lastError
+          );
+          await new Promise((r) => setTimeout(r, 500));
+        }
+      }
+
+      if (!conversationId) {
+        console.error(
+          `[Editor Handoff] Convex init failed after ${MAX_ATTEMPTS} attempts. Orphaned Supabase project: ${resolvedProjectId}`,
+          lastError
+        );
+        return NextResponse.json(
+          {
+            error:
+              'Failed to initialize editor session. Please try again.',
+          },
+          { status: 502 }
+        );
       }
     }
 

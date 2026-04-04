@@ -17,6 +17,14 @@ type ProjectIntegrationSection = {
     customDomain?: string | null;
     status?: string | null;
   };
+  mailchimp?: {
+    apiKeySecretId?: string | null;
+    audienceId?: string | null;
+  };
+  stripe?: {
+    publishableKeySecretId?: string | null;
+    priceId?: string | null;
+  };
 };
 
 export type ProjectIntegrationSnapshot = {
@@ -33,6 +41,14 @@ export type ProjectIntegrationSnapshot = {
     publishedUrl: string | null;
     customDomain: string | null;
     status: string | null;
+  };
+  mailchimp: {
+    apiKeySecretId: string | null;
+    audienceId: string | null;
+  };
+  stripe: {
+    publishableKeySecretId: string | null;
+    priceId: string | null;
   };
 };
 
@@ -72,16 +88,10 @@ export function readProjectIntegrationSnapshot(
   if (!project) {
     return {
       calendly: { url: null, apiKeySecretId: null },
-      analytics: {
-        propertyId: null,
-        refreshTokenSecretId: null,
-        connectedAt: null,
-      },
-      domain: {
-        publishedUrl: null,
-        customDomain: null,
-        status: null,
-      },
+      analytics: { propertyId: null, refreshTokenSecretId: null, connectedAt: null },
+      domain: { publishedUrl: null, customDomain: null, status: null },
+      mailchimp: { apiKeySecretId: null, audienceId: null },
+      stripe: { publishableKeySecretId: null, priceId: null },
     };
   }
 
@@ -127,6 +137,26 @@ export function readProjectIntegrationSnapshot(
         asString(stored.domain?.status) ??
         null,
     },
+    mailchimp: {
+      apiKeySecretId:
+        asString(project.mailchimp_api_key_id) ??
+        asString(stored.mailchimp?.apiKeySecretId) ??
+        null,
+      audienceId:
+        asString(project.mailchimp_audience_id) ??
+        asString(stored.mailchimp?.audienceId) ??
+        null,
+    },
+    stripe: {
+      publishableKeySecretId:
+        asString(project.stripe_pk_id) ??
+        asString(stored.stripe?.publishableKeySecretId) ??
+        null,
+      priceId:
+        asString(project.stripe_price_id) ??
+        asString(stored.stripe?.priceId) ??
+        null,
+    },
   };
 }
 
@@ -144,6 +174,14 @@ type IntegrationPatch = {
     publishedUrl?: string | null;
     customDomain?: string | null;
     status?: string | null;
+  };
+  mailchimp?: {
+    apiKeySecretId?: string | null;
+    audienceId?: string | null;
+  };
+  stripe?: {
+    publishableKeySecretId?: string | null;
+    priceId?: string | null;
   };
 };
 
@@ -165,6 +203,8 @@ export function buildProjectIntegrationUpdate(
     calendly: mergeSection(existing.calendly, patch.calendly),
     analytics: mergeSection(existing.analytics, patch.analytics),
     domain: mergeSection(existing.domain, patch.domain),
+    mailchimp: mergeSection(existing.mailchimp, patch.mailchimp),
+    stripe: mergeSection(existing.stripe, patch.stripe),
   };
 
   const update: Record<string, unknown> = {
@@ -209,6 +249,24 @@ export function buildProjectIntegrationUpdate(
     }
     if (Object.prototype.hasOwnProperty.call(project, 'domain_status')) {
       update.domain_status = patch.domain.status ?? null;
+    }
+  }
+
+  if (patch.mailchimp) {
+    if (Object.prototype.hasOwnProperty.call(project, 'mailchimp_api_key_id')) {
+      update.mailchimp_api_key_id = patch.mailchimp.apiKeySecretId ?? null;
+    }
+    if (Object.prototype.hasOwnProperty.call(project, 'mailchimp_audience_id')) {
+      update.mailchimp_audience_id = patch.mailchimp.audienceId ?? null;
+    }
+  }
+
+  if (patch.stripe) {
+    if (Object.prototype.hasOwnProperty.call(project, 'stripe_pk_id')) {
+      update.stripe_pk_id = patch.stripe.publishableKeySecretId ?? null;
+    }
+    if (Object.prototype.hasOwnProperty.call(project, 'stripe_price_id')) {
+      update.stripe_price_id = patch.stripe.priceId ?? null;
     }
   }
 

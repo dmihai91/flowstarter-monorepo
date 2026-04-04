@@ -5,6 +5,7 @@ import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createHmac } from 'crypto';
+import { storeSecret } from '@/lib/vault';
 import {
   createAssemblySpec,
   createContentMap,
@@ -473,6 +474,49 @@ export async function POST(request: NextRequest) {
       }
 
       resolvedProjectId = newProject.id;
+
+      // ── Store integration secrets in Vault (non-fatal, best-effort) ──────
+      // Keys collected in the wizard are encrypted at rest via pgsodium.
+      // We store secret UUIDs back to the project row for later retrieval.
+      const wizardIntegrations = projectConfig.integrations as {
+        calendly?: { enabled?: boolean; url?: string };
+        googleAnalytics?: { enabled?: boolean; measurementId?: string };
+        mailchimp?: { enabled?: boolean; apiKey?: string; audienceId?: string };
+        stripe?: { enabled?: boolean; publishableKey?: string; priceId?: string };
+      } | null | undefined;
+
+      if (wizardIntegrations) {
+        const vaultUpdates: Record<string, unknown> = {};
+        try {
+          if (wizardIntegrations.mailchimp?.apiKey) {
+            const mcSecretId = await storeSecret(
+              supabase, resolvedProjectId, 'mailchimp_api_key',
+              wizardIntegrations.mailchimp.apiKey, 'Mailchimp API key'
+            );
+            vaultUpdates.mailchimp_api_key_id = mcSecretId;
+            vaultUpdates.mailchimp_audience_id = wizardIntegrations.mailchimp.audienceId ?? null;
+          }
+          if (wizardIntegrations.stripe?.publishableKey) {
+            const stripeSecretId = await storeSecret(
+              supabase, resolvedProjectId, 'stripe_publishable_key',
+              wizardIntegrations.stripe.publishableKey, 'Stripe publishable key'
+            );
+            vaultUpdates.stripe_pk_id = stripeSecretId;
+            vaultUpdates.stripe_price_id = wizardIntegrations.stripe.priceId ?? null;
+          }
+          if (wizardIntegrations.calendly?.url) {
+            vaultUpdates.calendly_url = wizardIntegrations.calendly.url;
+          }
+          if (wizardIntegrations.googleAnalytics?.measurementId) {
+            vaultUpdates.analytics_ga_measurement_id = wizardIntegrations.googleAnalytics.measurementId;
+          }
+          if (Object.keys(vaultUpdates).length > 0) {
+            await supabase.from('projects').update(vaultUpdates).eq('id', resolvedProjectId);
+          }
+        } catch (vaultErr) {
+          console.warn('[Editor Handoff] Non-fatal: vault storage failed:', vaultErr);
+        }
+      }
     } else {
       return NextResponse.json(
         { error: 'Either projectId or projectConfig is required' },

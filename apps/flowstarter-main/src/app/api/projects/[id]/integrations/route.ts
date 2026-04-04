@@ -20,9 +20,25 @@ const AnalyticsSchema = z.object({
   gaPropertyId: z.string().max(50).optional(),
 });
 
+const MailchimpSchema = z.object({
+  integration: z.literal('mailchimp'),
+  action: z.enum(['connect', 'disconnect']).optional(),
+  apiKey: z.string().max(500).optional(),
+  audienceId: z.string().max(100).optional(),
+});
+
+const StripeSchema = z.object({
+  integration: z.literal('stripe'),
+  action: z.enum(['connect', 'disconnect']).optional(),
+  publishableKey: z.string().max(500).optional(),
+  priceId: z.string().max(100).optional(),
+});
+
 const IntegrationBodySchema = z.discriminatedUnion('integration', [
   CalendlySchema,
   AnalyticsSchema,
+  MailchimpSchema,
+  StripeSchema,
 ]);
 import {
   buildProjectIntegrationUpdate,
@@ -77,6 +93,14 @@ export async function GET(request: NextRequest, context: RouteContext) {
       publishedUrl: snapshot.domain.publishedUrl,
       customDomain: snapshot.domain.customDomain,
       status: snapshot.domain.status || 'none',
+    },
+    mailchimp: {
+      connected: !!snapshot.mailchimp.apiKeySecretId,
+      audienceId: snapshot.mailchimp.audienceId,
+    },
+    stripe: {
+      connected: !!snapshot.stripe.publishableKeySecretId,
+      priceId: snapshot.stripe.priceId,
     },
   });
 }
@@ -234,6 +258,66 @@ export async function POST(request: NextRequest, context: RouteContext) {
       success: true,
       message: 'Analytics settings saved',
     });
+  }
+
+  if (body.integration === 'mailchimp') {
+    if (body.action === 'disconnect') {
+      if (snapshot.mailchimp.apiKeySecretId) {
+        await deleteSecret(supabase, snapshot.mailchimp.apiKeySecretId);
+      }
+      await supabase
+        .from('projects')
+        .update(buildProjectIntegrationUpdate(project as Record<string, unknown>, {
+          mailchimp: { apiKeySecretId: null, audienceId: null },
+        }))
+        .eq('id', projectId);
+      return NextResponse.json({ success: true, message: 'Mailchimp disconnected' });
+    }
+
+    let secretId = snapshot.mailchimp.apiKeySecretId;
+    if (body.apiKey) {
+      secretId = await storeSecret(supabase, projectId, 'mailchimp_api_key', body.apiKey, 'Mailchimp API key');
+    }
+    await supabase
+      .from('projects')
+      .update(buildProjectIntegrationUpdate(project as Record<string, unknown>, {
+        mailchimp: {
+          apiKeySecretId: secretId,
+          audienceId: body.audienceId ?? snapshot.mailchimp.audienceId,
+        },
+      }))
+      .eq('id', projectId);
+    return NextResponse.json({ success: true, message: 'Mailchimp settings saved' });
+  }
+
+  if (body.integration === 'stripe') {
+    if (body.action === 'disconnect') {
+      if (snapshot.stripe.publishableKeySecretId) {
+        await deleteSecret(supabase, snapshot.stripe.publishableKeySecretId);
+      }
+      await supabase
+        .from('projects')
+        .update(buildProjectIntegrationUpdate(project as Record<string, unknown>, {
+          stripe: { publishableKeySecretId: null, priceId: null },
+        }))
+        .eq('id', projectId);
+      return NextResponse.json({ success: true, message: 'Stripe disconnected' });
+    }
+
+    let pkSecretId = snapshot.stripe.publishableKeySecretId;
+    if (body.publishableKey) {
+      pkSecretId = await storeSecret(supabase, projectId, 'stripe_publishable_key', body.publishableKey, 'Stripe publishable key');
+    }
+    await supabase
+      .from('projects')
+      .update(buildProjectIntegrationUpdate(project as Record<string, unknown>, {
+        stripe: {
+          publishableKeySecretId: pkSecretId,
+          priceId: body.priceId ?? snapshot.stripe.priceId,
+        },
+      }))
+      .eq('id', projectId);
+    return NextResponse.json({ success: true, message: 'Stripe settings saved' });
   }
 
   return NextResponse.json({ error: 'Unknown integration' }, { status: 400 });

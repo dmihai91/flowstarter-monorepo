@@ -20,8 +20,8 @@ import {
 import { Button } from '@flowstarter/flow-design-system';
 import { LogoStep } from './LogoStep';
 import { IntegrationsStep } from './IntegrationsStep';
-import { DomainStep } from './DomainStep';
 import { PaymentStep } from './PaymentStep';
+import { DomainStep } from './DomainStep';
 
 // ── Brand tone options for personalization step ───────────────────────────────
 
@@ -42,8 +42,7 @@ const STEPS = [
   { label: 'Pick Template', desc: 'Choose a site design for the client' },
   { label: 'Personalization', desc: 'Select brand tone for the project' },
   { label: 'Logo', desc: 'Upload or skip a logo' },
-  { label: 'Integrations', desc: 'Calendly & Analytics setup' },
-  { label: 'Domain', desc: 'Register a custom domain' },
+  { label: 'Integrations & Domain', desc: 'Calendly, Analytics, and custom domain' },
   { label: 'Payment', desc: 'Plan, fee, and launch' },
 ];
 
@@ -563,10 +562,8 @@ export function NewProjectWizard() {
         return 4;
       case 'integrations':
         return 5;
-      case 'domain':
-        return 6;
       case 'payment':
-        return 7;
+        return 6;
       default:
         return 0;
     }
@@ -946,23 +943,14 @@ export function NewProjectWizard() {
 
           {form.phase === 'integrations' && (
             <IntegrationsStep
-              onComplete={(integrations) => {
-                form.setSelectedIntegrations(integrations);
-                form.proceedToDomain();
-              }}
-              onBack={() => form.setPhase('logo')}
-            />
-          )}
-
-          {form.phase === 'domain' && (
-            <DomainStep
               projectName={form.brief.projectName}
               clientName={form.clientInfo.name}
-              onDomainSelected={(domain) => {
+              onComplete={(integrations, domain) => {
+                form.setSelectedIntegrations(integrations);
                 form.setSelectedDomain(domain);
                 form.proceedToPayment();
               }}
-              onBack={() => form.setPhase('integrations')}
+              onBack={() => form.setPhase('logo')}
             />
           )}
 
@@ -972,7 +960,7 @@ export function NewProjectWizard() {
               setPlanName={form.setPlanName}
               setupFee={form.setupFee}
               setSetupFee={form.setSetupFee}
-              onBack={() => form.setPhase('domain')}
+              onBack={() => form.setPhase('integrations')}
               onLaunch={handleLaunch}
               isLaunching={isLaunching}
             />

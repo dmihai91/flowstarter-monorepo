@@ -571,7 +571,7 @@ export function useScaffoldForm() {
     () => setPhase('integrations'),
     []
   );
-  const proceedToDomain = useCallback(() => setPhase('domain'), []);
+
   const proceedToBuild = useCallback(() => setPhase('build'), []);
 
   // ── Review navigation ──────────────────────────────────────────────────────
@@ -789,7 +789,6 @@ export function useScaffoldForm() {
         case 'personalization':
         case 'logo':
         case 'integrations':
-        case 'domain':
         case 'build':
         case 'review':
         case 'input':
@@ -882,7 +881,7 @@ export function useScaffoldForm() {
     proceedToPersonalization,
     proceedToLogo,
     proceedToIntegrations,
-    proceedToDomain,
+
     proceedToPayment: () => setPhase('payment'),
     proceedToBuild,
     // Logo & Integrations

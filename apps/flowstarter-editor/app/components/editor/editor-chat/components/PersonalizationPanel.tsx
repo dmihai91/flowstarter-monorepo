@@ -1,31 +1,25 @@
 /**
  * PersonalizationPanel Component
  *
- * Combined personalization step that includes:
- * - Font selection
+ * Personalization step that includes:
  * - Logo upload/generation/skip
  * - AI images toggle (for template customization)
  *
- * Note: Palette selection is now dashboard-only (handled by NewProjectWizard).
+ * Note: Palette and font selection are now dashboard-only (handled by NewProjectWizard).
  */
 
 import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Type, ImageIcon, SkipForward, ChevronRight } from 'lucide-react';
-import { FontSelector } from './FontSelector';
+import { ImageIcon, SkipForward } from 'lucide-react';
 import { LogoSection } from './LogoSection';
 import { usePersonalizationPanel } from '~/components/editor/editor-chat/hooks/usePersonalizationPanel';
-import type { LogoInfo, SystemFont, BusinessInfo } from '~/components/editor/editor-chat/types';
-import type { TemplateFont } from '~/components/editor/template-preview/types';
+import type { LogoInfo, BusinessInfo } from '~/components/editor/editor-chat/types';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
 
 interface PersonalizationPanelProps {
   isDark: boolean;
-  fontsLoaded: boolean;
-  templateFonts?: TemplateFont[];
   businessInfo?: Partial<BusinessInfo>;
   initialUseAiImages?: boolean;
-  onFontSelect: (font: SystemFont) => void;
   onLogoSelect: (logo: LogoInfo, useAiImages?: boolean) => void;
 }
 
@@ -38,17 +32,13 @@ const SECTION_ANIMATION = {
 
 export function PersonalizationPanel({
   isDark,
-  fontsLoaded,
-  templateFonts,
   businessInfo,
   initialUseAiImages = false,
-  onFontSelect,
   onLogoSelect,
 }: PersonalizationPanelProps) {
   const panel = usePersonalizationPanel({
     initialUseAiImages,
     businessInfo,
-    onFontSelect,
     onLogoSelect,
   });
 
@@ -137,50 +127,6 @@ export function PersonalizationPanel({
       </div>
 
       <AnimatePresence mode="wait">
-        {/* Font Section */}
-        {panel.currentSection === 'font' && (
-          <motion.div key="font" data-testid="font-section" {...SECTION_ANIMATION}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-              <Type size={20} color={headingColor} />
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: headingColor }}>
-                {t(EDITOR_LABEL_KEYS.PERSONALIZE_FONTS)}
-              </h3>
-              <button
-                onClick={panel.handleSkipSection}
-                style={{
-                  marginLeft: 'auto',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '2px',
-                  padding: '4px 8px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '12px',
-                  fontWeight: 500,
-                  color: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)',
-                  background: 'transparent',
-                  transition: 'color 0.15s',
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)')
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)')
-                }
-              >
-                Skip <ChevronRight size={14} />
-              </button>
-            </div>
-            <FontSelector
-              isDark={isDark}
-              fontsLoaded={fontsLoaded}
-              onSelect={panel.handleFontSelect}
-              templateFonts={templateFonts}
-            />
-          </motion.div>
-        )}
-
         {/* Logo Section */}
         {panel.currentSection === 'logo' && (
           <motion.div key="logo" data-testid="logo-section" {...SECTION_ANIMATION}>

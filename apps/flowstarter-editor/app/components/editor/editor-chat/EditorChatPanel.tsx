@@ -17,7 +17,6 @@ import { useOptionalConversationContext } from '~/components/editor/Conversation
 import {
   useEditorChatState,
   useAttachments,
-  useFontsLoader,
   useConvexSync,
   useMessagePagination,
   useActivityEvents,
@@ -52,14 +51,6 @@ export function EditorChatPanel({
   const theme = useStore(themeStore);
   const effectiveTheme = theme === 'system' ? getEffectiveTheme() : theme;
   const isDark = effectiveTheme === 'dark';
-
-  // Load fonts
-  const { fontsLoaded, fontError } = useFontsLoader();
-  useEffect(() => {
-    if (fontError) {
-      console.warn('[EditorChatPanel] Font loading issue:', fontError);
-    }
-  }, [fontError]);
 
   // Chat state management
   const {
@@ -104,6 +95,7 @@ export function EditorChatPanel({
     isInternalFlow,
     handleTemplateSelect,
     handlePaletteSelect,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     handleFontSelect,
     handleLogoSelect,
     handleIntegrationsComplete,
@@ -310,11 +302,8 @@ export function EditorChatPanel({
         {step === 'personalization' && (
           <PersonalizationPanel
             isDark={isDark}
-            fontsLoaded={fontsLoaded}
-            templateFonts={selectedRecommendation?.fonts}
             businessInfo={businessInfo || undefined}
             initialUseAiImages={initialState?.useAiImages}
-            onFontSelect={handleFontSelect}
             onLogoSelect={handleLogoSelect}
           />
         )}

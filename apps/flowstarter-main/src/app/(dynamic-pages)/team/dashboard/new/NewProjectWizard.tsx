@@ -945,6 +945,7 @@ export function NewProjectWizard() {
             <IntegrationsStep
               projectName={form.brief.projectName}
               clientName={form.clientInfo.name}
+              planId={form.planName}
               onComplete={(integrations, domain) => {
                 form.setSelectedIntegrations(integrations);
                 form.setSelectedDomain(domain);

@@ -33,6 +33,9 @@ export interface SelectedLogo {
 export interface IntegrationsConfig {
   calendly?: { enabled: boolean; url: string };
   googleAnalytics?: { enabled: boolean; measurementId: string };
+  // Growth plan only
+  mailchimp?: { enabled: boolean; audienceId: string; apiKey: string };
+  stripe?: { enabled: boolean; publishableKey: string; priceId?: string };
 }
 
 // ── Enums (mirrors editor-engine contracts) ────────────────────────────────────

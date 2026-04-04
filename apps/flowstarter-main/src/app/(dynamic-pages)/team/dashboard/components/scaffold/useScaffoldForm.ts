@@ -565,6 +565,17 @@ export function useScaffoldForm() {
 
   // ── Phase transitions ──────────────────────────────────────────────────────
   const proceedToTemplate = useCallback(() => setPhase('template'), []);
+
+  // Safe review next — reads current reviewStep at call time to avoid stale closure
+  const reviewNext = useCallback(() => {
+    setReviewStep((s) => {
+      if (s === REVIEW_STEP_COUNT - 1) {
+        setPhase('template');
+        return s;
+      }
+      return Math.min(s + 1, REVIEW_STEP_COUNT - 1);
+    });
+  }, []);
   const proceedToPersonalization = useCallback(
     () => setPhase('personalization'),
     []
@@ -881,6 +892,7 @@ export function useScaffoldForm() {
     templateRecommendations,
     templateReasons,
     proceedToTemplate,
+    reviewNext,
     proceedToPersonalization,
     proceedToLogo,
     proceedToIntegrations,

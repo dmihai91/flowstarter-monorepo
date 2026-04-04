@@ -778,7 +778,7 @@ export function NewProjectWizard() {
               onUpdateBrief={form.updateBrief}
               onToggleGoal={form.toggleGoal}
               onToggleIntegration={form.toggleIntegration}
-              onNext={() => form.isLastStep ? form.proceedToTemplate() : form.nextStep()}
+              onNext={form.reviewNext}
               onPrev={form.prevStep}
               onBackToInput={form.backToInput}
               onRegenerate={form.regenerate}

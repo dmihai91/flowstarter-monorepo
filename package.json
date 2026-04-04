@@ -17,7 +17,15 @@
     "dev:supabase": "pnpm --filter flowstarter-main db:start",
     "dev:code": "pnpm nx run flowstarter-code:dev --output-style=stream",
     "t3:code": "npx t3",
-    "dev:authentik": "docker compose -f infra/authentik/docker-compose.yml up -d"
+    "dev:authentik": "docker compose -f infra/authentik/docker-compose.yml up -d",
+    "ci:lint": "pnpm --dir packages/editor-engine build && pnpm --dir apps/flowstarter-main lint && pnpm --dir apps/flowstarter-editor lint",
+    "ci:typecheck": "pnpm nx run-many -t build --projects=editor-engine,flow-design-system --output-style=stream-without-prefixes && pnpm nx run flowstarter-main:typecheck && pnpm nx run flowstarter-editor:typecheck",
+    "ci:test": "pnpm --dir packages/editor-engine build && pnpm nx run flowstarter-main:test && pnpm nx run flowstarter-editor:test",
+    "ci:quality-gate": "pnpm run ci:lint && pnpm run ci:typecheck && pnpm run ci:test",
+    "ci:smoke:editor": "pnpm --dir apps/flowstarter-editor test:e2e:integration",
+    "ci:smoke:platform": "pnpm exec playwright test --config playwright.config.ts",
+    "ci:smoke": "pnpm run ci:smoke:editor && pnpm run ci:smoke:platform",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@nx/eslint": "^22.4.5",
@@ -33,6 +41,7 @@
     "@swc/helpers": "~0.5.11",
     "@types/node": "20.19.9",
     "concurrently": "^7.6.0",
+    "husky": "^9.1.7",
     "mprocs": "^0.8.3",
     "nx": "22.4.5",
     "prettier": "~3.6.2",

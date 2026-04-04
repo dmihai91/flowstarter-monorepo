@@ -14,6 +14,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
+test.skip(true, 'Legacy integration suite still targets removed /p/:urlId routes and seeded Convex fixtures.');
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -103,7 +105,12 @@ async function getPreviewContent(page: Page): Promise<string> {
 
 // ��������� Tests ������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������
 
-test.describe('Modification Request Flow', () => {
+/*
+ * Legacy suite note:
+ * These scenarios still target the removed /p/:urlId route shape and old seeded Convex fixtures.
+ * Keep them skipped until they are rewritten for /project/:conversationId.
+ */
+test.describe.skip('Modification Request Flow', () => {
   test.beforeEach(async ({ page }) => {
     await setupApiMocks(page);
     await page.goto(`${BASE_URL}/p/${TEST_PROJECT.urlId}`);

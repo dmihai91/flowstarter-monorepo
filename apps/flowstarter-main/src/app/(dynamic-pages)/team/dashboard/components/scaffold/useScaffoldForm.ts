@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { EngineArtifacts } from '@/lib/engine/contracts';
 
 const EDITOR_URL =
@@ -247,6 +247,8 @@ export function useScaffoldForm() {
   const [userInput, setUserInput] = useState('');
   const [brief, setBrief] = useState<ProjectBriefDraft>(EMPTY_BRIEF);
   const [reviewStep, setReviewStep] = useState(0);
+  const reviewStepRef = useRef(0);
+  useEffect(() => { reviewStepRef.current = reviewStep; }, [reviewStep]);
   const [aiSteps, setAiSteps] = useState<AiStep[]>([]);
   const [followUpQuestions, setFollowUpQuestions] = useState<string[]>([]);
   const [clarifyAnswers, setClarifyAnswers] = useState<string[]>([]);
@@ -566,15 +568,14 @@ export function useScaffoldForm() {
   // ── Phase transitions ──────────────────────────────────────────────────────
   const proceedToTemplate = useCallback(() => setPhase('template'), []);
 
-  // Safe review next — reads current reviewStep at call time to avoid stale closure
+  // Safe review next — reads current step from ref (always fresh), no stale closure
   const reviewNext = useCallback(() => {
-    setReviewStep((s) => {
-      if (s === REVIEW_STEP_COUNT - 1) {
-        setPhase('template');
-        return s;
-      }
-      return Math.min(s + 1, REVIEW_STEP_COUNT - 1);
-    });
+    const current = reviewStepRef.current;
+    if (current >= REVIEW_STEP_COUNT - 1) {
+      setPhase('template');
+    } else {
+      setReviewStep(current + 1);
+    }
   }, []);
   const proceedToPersonalization = useCallback(
     () => setPhase('personalization'),

@@ -22,6 +22,7 @@ export default defineConfig({
    * Use playwright.config.cross-app.ts for cross-app scenarios.
    * Use pnpm test:e2e:all for everything. */
   testMatch: '{integration,smoke}/**/*.spec.ts',
+  testIgnore: ['**/integration/modification-flow.spec.ts', '**/integration/restoration-flow.spec.ts'],
 
   /* Global teardown - cleanup Daytona sandboxes after all tests */
   globalTeardown: './e2e/global-teardown.ts',

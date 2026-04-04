@@ -47,6 +47,7 @@ const contactDetailsSchema = v.object({
   email: v.optional(v.string()),
   phone: v.optional(v.string()),
   address: v.optional(v.string()),
+
   // Social links
   website: v.optional(v.string()),
   facebook: v.optional(v.string()),
@@ -67,8 +68,10 @@ function slugifyName(text: string): string {
     .slice(0, 40);
 }
 
-// NOTE: Projects should be created from dashboard handoff, not directly.
-// Create a new project
+/*
+ * NOTE: Projects should be created from dashboard handoff, not directly.
+ * Create a new project
+ */
 export const create = mutation({
   args: {
     urlId: v.string(),
@@ -147,27 +150,31 @@ export const update = mutation({
     // If name is provided, update both name and urlId (slug)
     if (name !== undefined && name.trim() !== '') {
       updates.name = name;
+
       // Generate URL-friendly slug directly from name (no random suffix)
       const baseSlug = name
         .toLowerCase()
         .trim()
         .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric with hyphens
-        .replace(/^-+|-+$/g, '')     // Remove leading/trailing hyphens
-        .slice(0, 40);               // Limit length
+        .replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens
+        .slice(0, 40); // Limit length
 
       if (baseSlug) {
         // Check uniqueness — try the clean slug first, then append -2, -3, etc.
         let candidate = baseSlug;
         let attempt = 1;
+
         while (attempt <= 20) {
           const existing = await ctx.db
             .query('projects')
             .withIndex('by_urlId', (q) => q.eq('urlId', candidate))
             .first();
+
           // If no conflict, or the conflict is this same project, use it
           if (!existing || existing._id === projectId) {
             break;
           }
+
           attempt++;
           candidate = `${baseSlug}-${attempt}`;
         }
@@ -209,9 +216,12 @@ export const updateBookingIntegration = mutation({
   },
   handler: async (ctx, args) => {
     const { projectId, booking } = args;
-    
+
     const project = await ctx.db.get(projectId);
-    if (!project) throw new Error('Project not found');
+
+    if (!project) {
+      throw new Error('Project not found');
+    }
 
     const integrations = {
       ...project.integrations,
@@ -235,9 +245,12 @@ export const updateNewsletterIntegration = mutation({
   },
   handler: async (ctx, args) => {
     const { projectId, newsletter } = args;
-    
+
     const project = await ctx.db.get(projectId);
-    if (!project) throw new Error('Project not found');
+
+    if (!project) {
+      throw new Error('Project not found');
+    }
 
     const integrations = {
       ...project.integrations,
@@ -282,7 +295,6 @@ export const updateWorkspace = mutation({
   },
 });
 
-
 // Update workspace by Supabase project ID (used by build pipeline which only has the Supabase slug)
 export const updateWorkspaceBySupabaseId = mutation({
   args: {
@@ -306,11 +318,14 @@ export const updateWorkspaceBySupabaseId = mutation({
       .query('projects')
       .withIndex('by_supabaseProjectId', (q) => q.eq('supabaseProjectId', supabaseProjectId))
       .first();
+
     if (!project) {
       console.warn('[updateWorkspaceBySupabaseId] No project found for supabaseProjectId:', supabaseProjectId);
       return null;
     }
+
     await ctx.db.patch(project._id, { ...updates, updatedAt: Date.now() });
+
     return project._id;
   },
 });
@@ -392,9 +407,11 @@ export const generateUrlId = mutation({
   },
 });
 
-// NOTE: Projects should be created from dashboard handoff, not directly.
-// Create an empty project immediately when user starts (first prompt)
-// Data is populated incrementally as user progresses through onboarding
+/*
+ * NOTE: Projects should be created from dashboard handoff, not directly.
+ * Create an empty project immediately when user starts (first prompt)
+ * Data is populated incrementally as user progresses through onboarding
+ */
 export const createEmpty = mutation({
   args: {
     // Optional - for internal flow
@@ -402,14 +419,17 @@ export const createEmpty = mutation({
     description: v.optional(v.string()),
     templateId: v.optional(v.string()),
     templateName: v.optional(v.string()),
-    businessDetails: v.optional(v.object({
-      businessName: v.string(),
-      description: v.string(),
-      targetAudience: v.optional(v.string()),
-      features: v.optional(v.array(v.string())),
-      goals: v.optional(v.array(v.string())),
-    })),
+    businessDetails: v.optional(
+      v.object({
+        businessName: v.string(),
+        description: v.string(),
+        targetAudience: v.optional(v.string()),
+        features: v.optional(v.array(v.string())),
+        goals: v.optional(v.array(v.string())),
+      }),
+    ),
     tags: v.optional(v.array(v.string())),
+
     // Client and team member linking (for internal flow)
     clientId: v.optional(v.id('clients')),
     createdBy: v.optional(v.string()), // Clerk user ID
@@ -418,9 +438,10 @@ export const createEmpty = mutation({
   },
   handler: async (ctx, args) => {
     const now = Date.now();
-    
+
     // Generate a unique URL ID from name or random
     let urlId: string;
+
     if (args.name) {
       const baseSlug = args.name
         .toLowerCase()
@@ -428,16 +449,21 @@ export const createEmpty = mutation({
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '')
         .slice(0, 40);
-      
+
       // Check uniqueness
       let candidate = baseSlug || 'project';
       let attempt = 1;
+
       while (attempt <= 20) {
         const existing = await ctx.db
           .query('projects')
           .withIndex('by_urlId', (q) => q.eq('urlId', candidate))
           .first();
-        if (!existing) break;
+
+        if (!existing) {
+          break;
+        }
+
         attempt++;
         candidate = `${baseSlug}-${attempt}`;
       }
@@ -446,6 +472,7 @@ export const createEmpty = mutation({
       // Random URL ID for self-serve flow
       const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
       urlId = '';
+
       for (let i = 0; i < 8; i++) {
         urlId += chars.charAt(Math.floor(Math.random() * chars.length));
       }
@@ -462,6 +489,7 @@ export const createEmpty = mutation({
       tags: args.tags || [],
       templateId: args.templateId || '',
       templateName: args.templateName,
+
       // New fields for client/team flow
       clientId: args.clientId,
       createdBy: args.createdBy,
@@ -478,9 +506,11 @@ export const createEmpty = mutation({
   },
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// INTERNAL TEAM FUNCTIONS
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * INTERNAL TEAM FUNCTIONS
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 // List projects by status (for internal dashboard)
 export const listByStatus = query({
@@ -490,13 +520,13 @@ export const listByStatus = query({
       v.literal('review'),
       v.literal('approved'),
       v.literal('published'),
-      v.literal('archived')
+      v.literal('archived'),
     ),
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const limit = args.limit || 50;
-    
+
     return await ctx.db
       .query('projects')
       .withIndex('by_status', (q) => q.eq('status', args.status))
@@ -527,7 +557,7 @@ export const updateStatus = mutation({
       v.literal('review'),
       v.literal('approved'),
       v.literal('published'),
-      v.literal('archived')
+      v.literal('archived'),
     ),
   },
   handler: async (ctx, args) => {
@@ -549,7 +579,7 @@ export const publish = mutation({
   },
   handler: async (ctx, args) => {
     const now = Date.now();
-    
+
     await ctx.db.patch(args.projectId, {
       status: 'published',
       publishedUrl: args.publishedUrl,
@@ -558,16 +588,17 @@ export const publish = mutation({
       lastPublishedBy: args.publishedBy,
       updatedAt: now,
     });
-    
+
     // Update client status if linked
     const project = await ctx.db.get(args.projectId);
+
     if (project?.clientId) {
       await ctx.db.patch(project.clientId, {
         status: 'active',
         updatedAt: now,
       });
     }
-    
+
     return { success: true, publishedUrl: args.publishedUrl };
   },
 });
@@ -586,19 +617,23 @@ export const linkToClient = mutation({
     return { success: true };
   },
 });
-  
-// Get workspace URL for preview proxy fallback  
-export const getPreviewUrl = query({  
-  args: { projectId: v.id('projects') },  
-  handler: async (ctx, args) => {  
-    const project = await ctx.db.get(args.projectId);  
-    if (!project) return null;  
-    return {  
-      workspaceUrl: project.workspaceUrl,  
-      workspaceStatus: project.workspaceStatus,  
-      sandboxId: project.daytonaWorkspaceId,  
-    };  
-  },  
+
+// Get workspace URL for preview proxy fallback
+export const getPreviewUrl = query({
+  args: { projectId: v.id('projects') },
+  handler: async (ctx, args) => {
+    const project = await ctx.db.get(args.projectId);
+
+    if (!project) {
+      return null;
+    }
+
+    return {
+      workspaceUrl: project.workspaceUrl,
+      workspaceStatus: project.workspaceStatus,
+      sandboxId: project.daytonaWorkspaceId,
+    };
+  },
 });
 
 // Link an existing Convex project to a Supabase project
@@ -622,9 +657,7 @@ export const getBySupabaseId = query({
   handler: async (ctx, args) => {
     return await ctx.db
       .query('projects')
-      .withIndex('by_supabaseProjectId', (q) =>
-        q.eq('supabaseProjectId', args.supabaseProjectId)
-      )
+      .withIndex('by_supabaseProjectId', (q) => q.eq('supabaseProjectId', args.supabaseProjectId))
       .first();
   },
 });
@@ -654,6 +687,7 @@ export const upsertFromMain = mutation({
       .first();
 
     const incomingSyncVersion = args.syncVersion ?? now;
+
     if (existing?.syncVersion && existing.syncVersion > incomingSyncVersion) {
       return { projectId: existing._id, urlId: existing.urlId, skipped: true };
     }
@@ -669,7 +703,8 @@ export const upsertFromMain = mutation({
           args.projectDescription ||
           '',
         targetAudience: (args.businessInfo as { targetAudience?: string } | undefined)?.targetAudience,
-        goals: (args.businessInfo as { goals?: string[]; businessGoals?: string[] } | undefined)?.goals ||
+        goals:
+          (args.businessInfo as { goals?: string[]; businessGoals?: string[] } | undefined)?.goals ||
           (args.businessInfo as { businessGoals?: string[] } | undefined)?.businessGoals,
       },
       contactDetails: args.contactInfo,
@@ -697,14 +732,17 @@ export const upsertFromMain = mutation({
     const baseSlug = slugifyName(args.projectName) || 'project';
     let urlId = baseSlug;
     let attempt = 1;
+
     while (attempt <= 20) {
       const conflict = await ctx.db
         .query('projects')
         .withIndex('by_urlId', (q) => q.eq('urlId', urlId))
         .first();
+
       if (!conflict) {
         break;
       }
+
       attempt += 1;
       urlId = `${baseSlug}-${attempt}`;
     }
@@ -740,7 +778,7 @@ export const upsertFromMain = mutation({
 
 // Check if a project name or slug is already taken
 export const checkNameAvailability = mutation({
-  args: { 
+  args: {
     name: v.string(),
     excludeProjectId: v.optional(v.id('projects')),
   },
@@ -766,8 +804,7 @@ export const checkNameAvailability = mutation({
     const allProjects = await ctx.db.query('projects').collect();
     const nameLower = args.name.toLowerCase().trim();
     const existingByName = allProjects.find(
-      (p) => p.name.toLowerCase().trim() === nameLower && 
-             (!args.excludeProjectId || p._id !== args.excludeProjectId)
+      (p) => p.name.toLowerCase().trim() === nameLower && (!args.excludeProjectId || p._id !== args.excludeProjectId),
     );
 
     if (existingByName) {
@@ -778,10 +815,11 @@ export const checkNameAvailability = mutation({
   },
 });
 
-
-// ═══════════════════════════════════════════════════════════════════════════
-// CASCADE DELETE — called by main platform when a Supabase project is deleted
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * CASCADE DELETE — called by main platform when a Supabase project is deleted
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 /**
  * Delete a Convex project (+ all conversations, files, snapshots) by Supabase UUID.
@@ -792,9 +830,7 @@ export const deleteBySupabaseId = mutation({
   handler: async (ctx, args) => {
     const project = await ctx.db
       .query('projects')
-      .withIndex('by_supabaseProjectId', (q) =>
-        q.eq('supabaseProjectId', args.supabaseProjectId)
-      )
+      .withIndex('by_supabaseProjectId', (q) => q.eq('supabaseProjectId', args.supabaseProjectId))
       .first();
 
     if (!project) {
@@ -802,6 +838,7 @@ export const deleteBySupabaseId = mutation({
     }
 
     const daytonaWorkspaceIds: string[] = [];
+
     if (project.daytonaWorkspaceId) {
       daytonaWorkspaceIds.push(project.daytonaWorkspaceId);
     }

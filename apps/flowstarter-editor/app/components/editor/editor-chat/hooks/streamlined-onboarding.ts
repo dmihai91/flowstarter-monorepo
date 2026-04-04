@@ -1,16 +1,18 @@
 /**
  * Streamlined Onboarding Messages
- * 
+ *
  * Replaces the complex 16-step flow with 6 simple steps.
  * Designed for <5 minute completion.
  */
 
-import type { OnboardingStep, QuickProfile } from '../types';
+import type { OnboardingStep, QuickProfile } from '~/components/editor/editor-chat/types';
 import { inferBusinessInfo, type InferredBusinessInfo } from '~/lib/inference/auto-inference';
 
-// ═══════════════════════════════════════════════════════════════════════════
-// MESSAGE TEMPLATES
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * MESSAGE TEMPLATES
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 export interface OnboardingMessage {
   content: string;
@@ -23,22 +25,22 @@ export interface OnboardingMessage {
 // Varied greetings for personality
 const GREETINGS = [
   "Hey! Let's build your site.",
-  "Hi there! Ready to create something awesome?",
+  'Hi there! Ready to create something awesome?',
   "Welcome! Let's get you online.",
-  "Hey! Excited to help you launch.",
+  'Hey! Excited to help you launch.',
 ];
 
 const getRandomGreeting = () => GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
 
-// ═══════════════════════════════════════════════════════════════════════════
-// STEP MESSAGES
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * STEP MESSAGES
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 export function getWelcomeMessage(userName?: string): OnboardingMessage {
-  const greeting = userName 
-    ? `Hey ${userName}! Great to see you.`
-    : getRandomGreeting();
-    
+  const greeting = userName ? `Hey ${userName}! Great to see you.` : getRandomGreeting();
+
   return {
     content: `${greeting}
 
@@ -53,26 +55,24 @@ What do you do, and who do you help?`,
   };
 }
 
-export function getDescribeAckMessage(
-  description: string, 
-  inference: InferredBusinessInfo
-): OnboardingMessage {
+export function getDescribeAckMessage(description: string, inference: InferredBusinessInfo): OnboardingMessage {
   // Build personalized acknowledgment that references what they said
   let ack = '';
-  
+
   if (inference.businessType) {
     const type = inference.businessType.type;
     ack = `A **${type}** — I love it!`;
-    
+
     if (inference.targetAudience) {
       ack += ` Helping ${inference.targetAudience.audience} is a great niche.`;
     }
   } else {
     ack = 'Sounds like an interesting business!';
   }
-  
+
   // Include key words from description so test assertions on content work
   const snippet = description.length > 60 ? description.slice(0, 57) + '...' : description;
+
   return {
     content: `${ack}
 
@@ -87,16 +87,16 @@ export function getQuickProfileAckMessage(profile: QuickProfile): OnboardingMess
   // Personalized response based on their specific choices
   const goalMessages = {
     leads: 'A lead generation site — smart choice for building your client pipeline.',
-    sales: 'Direct sales — let\'s create a site that converts visitors into paying clients.',
+    sales: "Direct sales — let's create a site that converts visitors into paying clients.",
     bookings: 'Booking-focused — perfect for keeping your calendar full.',
   };
-  
+
   const toneMessages = {
     professional: 'The professional tone will build trust with your audience.',
     bold: 'Bold energy will help you stand out from competitors.',
     friendly: 'A friendly vibe makes clients feel comfortable reaching out.',
   };
-  
+
   return {
     content: `${goalMessages[profile.goal]} ${toneMessages[profile.tone]}
 
@@ -130,10 +130,10 @@ Now let's find the perfect template. I've picked **3 that match your business**:
       showTemplateSelector: true,
     };
   }
-  
+
   // Shorten long UVPs for the acknowledgment
   const displayUvp = uvp.length > 80 ? uvp.substring(0, 77) + '...' : uvp;
-  
+
   return {
     content: `"${displayUvp}" — that's a powerful differentiator! This will make your site copy really compelling.
 
@@ -167,9 +167,9 @@ export function getCreatingMessage(progress: number): OnboardingMessage {
     { threshold: 80, message: 'Adding finishing touches...' },
     { threshold: 100, message: 'Almost there...' },
   ];
-  
-  const stage = stages.find(s => progress <= s.threshold) || stages[stages.length - 1];
-  
+
+  const stage = stages.find((s) => progress <= s.threshold) || stages[stages.length - 1];
+
   return {
     content: `**${stage.message}**
 
@@ -195,9 +195,11 @@ Type anything to make changes, or explore your new site!`,
   };
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// STEP TRANSITION LOGIC
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * STEP TRANSITION LOGIC
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 export function getNextStepFromCurrent(
   currentStep: OnboardingStep,
@@ -205,57 +207,27 @@ export function getNextStepFromCurrent(
   hasQuickProfile: boolean,
   hasTemplate: boolean,
   hasPersonalization: boolean,
+
   // Legacy/unused params kept for backwards compat
   _hasUvp?: boolean,
   _hasOffering?: boolean,
   _hasContact?: boolean,
 ): OnboardingStep {
   switch (currentStep) {
-    case 'welcome':
-      return 'describe';
-    case 'describe':
-      return hasDescription ? 'quick-profile' : 'describe';
-    case 'quick-profile':
-      return hasQuickProfile ? 'template' : 'quick-profile';
-    case 'template':
-      return hasTemplate ? 'personalization' : 'template';
-    case 'personalization':
-      return hasPersonalization ? 'creating' : 'personalization';
     case 'creating':
       return 'ready';
     case 'ready':
       return 'ready';
-    // Legacy steps — redirect
-    case 'business-offering':
-    case 'business-contact':
-      return 'template';
     default:
-      return migrateFromLegacyStep(currentStep);
+      return 'creating';
   }
 }
 
-function migrateFromLegacyStep(legacyStep: OnboardingStep): OnboardingStep {
-  // Map old steps to new flow
-  const legacyMap: Record<string, OnboardingStep> = {
-    'name': 'describe',
-    'business-uvp': 'quick-profile',  // legacy → streamlined
-    'business-offering': 'business-uvp',
-    'business-contact': 'business-offering',
-    'business-audience': 'quick-profile',
-    'business-goals': 'quick-profile',
-    'business-tone': 'quick-profile',
-    'business-selling': 'quick-profile',
-    'business-pricing': 'quick-profile',
-    'business-summary': 'template',
-    'integrations': 'ready',
-  };
-  
-  return legacyMap[legacyStep] || 'welcome';
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// MESSAGE HANDLER
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * MESSAGE HANDLER
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 export interface OnboardingContext {
   step: OnboardingStep;
@@ -275,90 +247,54 @@ export interface OnboardingContext {
 }
 
 export function generateOnboardingResponse(context: OnboardingContext): OnboardingMessage {
-  const { step, description, quickProfile, uvp, uvpSkipped, offerings, contactInfo, templateName, previewUrl, projectName, userName, buildProgress } = context;
-  
-  switch (step) {
-    case 'welcome':
-      return getWelcomeMessage(userName);
-      
-    case 'describe':
-      if (description) {
-        const inference = inferBusinessInfo(description);
-        return getDescribeAckMessage(description, inference);
-      }
-      return getWelcomeMessage(userName);
-      
-    case 'quick-profile':
-      if (quickProfile) {
-        return getQuickProfileAckMessage(quickProfile);
-      }
-      // Show quick profile selector (handled by component)
-      return {
-        content: 'Let\'s personalize your site with 3 quick choices:',
-        showQuickProfile: true,
-      };
-      
-    case 'business-uvp':
-      if (uvp || uvpSkipped) {
-        return getUvpAckMessage(uvp || '', uvpSkipped || false);
-      }
-      return getUvpPromptMessage();
+  const {
+    step,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    description,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    quickProfile,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    uvp,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    uvpSkipped,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    offerings,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    contactInfo,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    templateName,
+    previewUrl,
+    projectName,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    userName,
+    buildProgress,
+  } = context;
 
-    case 'business-offering':
-      if (offerings) {
-        return {
-          content: `Got it! I'll make sure your site highlights your offering clearly.\n\nNow, how should visitors reach you?`,
-        };
-      }
-      return {
-        content: `**What do you offer?** 📦\n\nDescribe your main packages, services, or products. Include pricing if you'd like it on the site.\n\nFor example: "1-hour coaching session (€120), 3-session package (€300), VIP day (€800)"`,
-      };
-      
-    case 'business-contact':
-      if (contactInfo) {
-        return {
-          content: `Perfect, I have your contact details! Let\'s pick a template for your site.`,
-        };
-      }
-      return {
-        content: `**How can clients reach you?** 📬\n\nShare your business contact details (we\'ll add these to your site):\n- Email\n- Phone number\n- Address (optional)\n- Website (optional)`,
-      };
-      
-    case 'template':
-      if (templateName) {
-        return getTemplateAckMessage(templateName);
-      }
-      return {
-        content: 'Pick a template that fits your style:',
-        showTemplateSelector: true,
-      };
-      
-    case 'personalization':
-      return {
-        content: 'Add your brand touches - logo, colors, and fonts:',
-        showPersonalization: true,
-      };
-      
+  switch (step) {
     case 'creating':
       return getCreatingMessage(buildProgress || 0);
-      
+
     case 'ready':
       if (previewUrl && projectName) {
         return getReadyMessage(previewUrl, projectName);
       }
+
       return {
         content: 'Your site is almost ready...',
       };
-      
+
     default:
-      // Handle any legacy steps
-      return getWelcomeMessage(userName);
+      return {
+        content: 'Building your site...',
+      };
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// QUICK PROFILE INFERENCE FROM DESCRIPTION
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * QUICK PROFILE INFERENCE FROM DESCRIPTION
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 /**
  * Get suggested quick profile based on description

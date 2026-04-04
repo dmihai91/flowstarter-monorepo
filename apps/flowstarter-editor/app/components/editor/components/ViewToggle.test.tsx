@@ -1,11 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ViewToggle, type ViewMode } from './ViewToggle';
 
 // Mock i18n
 vi.mock('~/lib/i18n/editor-labels', () => ({
   EDITOR_LABEL_KEYS: { VIEW_PREVIEW: 'VIEW_PREVIEW', VIEW_EDITOR: 'VIEW_EDITOR' },
-  t: (key: string) => key === 'VIEW_PREVIEW' ? 'Preview' : 'Code',
+  t: (key: string) => (key === 'VIEW_PREVIEW' ? 'Preview' : 'Code'),
 }));
 
 // Mock theme hooks
@@ -73,6 +74,7 @@ describe('ViewToggle', () => {
 
     it('does not show badge when terminalErrorCount is 0', () => {
       render(<ViewToggle viewMode="preview" onViewModeChange={mockChange} terminalErrorCount={0} />);
+
       // No standalone number badge
       expect(screen.queryByText('0')).toBeNull();
     });
@@ -81,9 +83,14 @@ describe('ViewToggle', () => {
   describe('activity pulse', () => {
     it('shows pulse dot when hasTerminalActivity and not on terminal tab', () => {
       const { container } = render(
-        <ViewToggle viewMode="preview" onViewModeChange={mockChange}
-          hasTerminalActivity={true} terminalErrorCount={0} />
+        <ViewToggle
+          viewMode="preview"
+          onViewModeChange={mockChange}
+          hasTerminalActivity={true}
+          terminalErrorCount={0}
+        />,
       );
+
       // Pulse dot is a span with inline style animation
       const pulse = container.querySelector('span[style*="animation"]');
       expect(pulse).toBeTruthy();
@@ -91,8 +98,12 @@ describe('ViewToggle', () => {
 
     it('does not show pulse when already on terminal tab', () => {
       const { container } = render(
-        <ViewToggle viewMode="terminal" onViewModeChange={mockChange}
-          hasTerminalActivity={true} terminalErrorCount={0} />
+        <ViewToggle
+          viewMode="terminal"
+          onViewModeChange={mockChange}
+          hasTerminalActivity={true}
+          terminalErrorCount={0}
+        />,
       );
       const pulse = container.querySelector('span[style*="animation"]');
       expect(pulse).toBeNull();

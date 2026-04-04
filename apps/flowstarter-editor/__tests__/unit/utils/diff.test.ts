@@ -5,8 +5,8 @@ import type { FileMap } from '~/lib/stores/files';
 
 describe('extractRelativePath', () => {
   beforeEach(() => {
-    vi.spyOn(console, 'log').mockImplementation(() => { });
-    vi.spyOn(console, 'error').mockImplementation(() => { });
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -341,4 +341,3 @@ describe('fileModificationsToHTML', () => {
     expect(result).toContain('path=');
   });
 });
-

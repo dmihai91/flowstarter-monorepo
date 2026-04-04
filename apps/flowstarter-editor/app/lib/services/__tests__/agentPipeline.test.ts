@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import type { AgentActivityEvent, SiteGenerationInput, GeneratedFile } from '../../services/claude-agent/types';
+import type { AgentActivityEvent, SiteGenerationInput, GeneratedFile } from '~/lib/services/claude-agent/types';
 
 // Mock the Claude Agent SDK
 const mockQuery = vi.fn();
@@ -48,9 +48,7 @@ describe('agentPipeline', () => {
     design: { primaryColor: '#059669' },
   };
 
-  const templateFiles: GeneratedFile[] = [
-    { path: 'src/pages/index.astro', content: '<html></html>' },
-  ];
+  const templateFiles: GeneratedFile[] = [{ path: 'src/pages/index.astro', content: '<html></html>' }];
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -74,6 +72,7 @@ describe('agentPipeline', () => {
 
   it('returns false when AGENTS_SDK_ENABLED is false', async () => {
     process.env.AGENTS_SDK_ENABLED = 'false';
+
     const { isAgentPipelineAvailable } = await import('../agentPipeline.server');
     expect(isAgentPipelineAvailable()).toBe(false);
     delete process.env.AGENTS_SDK_ENABLED;
@@ -89,11 +88,11 @@ describe('agentPipeline', () => {
     expect(result.success).toBe(true);
     expect(result.files?.length ?? 0).toBeGreaterThan(0);
 
-    const types = events.map(e => e.type);
+    const types = events.map((e) => e.type);
     expect(types).toContain('text'); // progress messages
     expect(types).toContain('done');
 
-    const doneEvent = events.find(e => e.type === 'done') as Extract<AgentActivityEvent, { type: 'done' }>;
+    const doneEvent = events.find((e) => e.type === 'done') as Extract<AgentActivityEvent, { type: 'done' }>;
     expect(doneEvent).toBeDefined();
     expect(doneEvent.turns).toBe(0); // dry run = 0 turns
   });
@@ -117,6 +116,7 @@ describe('agentPipeline', () => {
 
   it('handles missing onAgentEvent gracefully', async () => {
     const { runAgentPipeline } = await import('../agentPipeline.server');
+
     // Should not throw when no event handler provided
     const result = await runAgentPipeline(baseInput, templateFiles);
     expect(result.success).toBe(true);

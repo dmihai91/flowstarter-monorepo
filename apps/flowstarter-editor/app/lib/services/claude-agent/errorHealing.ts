@@ -5,7 +5,7 @@
  * Enhanced with better prompts and multi-file healing.
  */
 
-import { generateCompletion } from '../llm';
+import { generateCompletion } from '~/lib/services/llm';
 import type { SiteGenerationInput, GeneratedFile, BuildError } from './types';
 import { sanitizeContent, stripMarkdownCodeBlocks } from './sanitization';
 
@@ -30,7 +30,10 @@ export async function healBuildErrors(
       filesToFix.add(error.file);
     } else {
       // Try to extract file from error message
-      const fileMatch = error.message.match(/([a-zA-Z0-9_.\-/]*(?:src\/)?[a-zA-Z0-9_.-]+\.(astro|ts|tsx|jsx|js|css|mjs))/);
+      const fileMatch = error.message.match(
+        /([a-zA-Z0-9_.\-/]*(?:src\/)?[a-zA-Z0-9_.-]+\.(astro|ts|tsx|jsx|js|css|mjs))/,
+      );
+
       if (fileMatch) {
         filesToFix.add(fileMatch[1]);
       }
@@ -48,8 +51,10 @@ export async function healBuildErrors(
 
       // Try basename match
       const basename = filePath.split('/').pop();
+
       if (basename) {
         const basenameIndex = healedFiles.findIndex((f) => f.path.endsWith('/' + basename));
+
         if (basenameIndex !== -1) {
           console.log(`[FlowstarterAgent] Found file by basename: ${healedFiles[basenameIndex].path}`);
           await fixFile(healedFiles, basenameIndex, filePath, errors, input, onProgress);
@@ -65,6 +70,7 @@ export async function healBuildErrors(
   }
 
   onProgress?.('Build errors fixed');
+
   return healedFiles;
 }
 
@@ -81,8 +87,7 @@ async function fixFile(
 ): Promise<void> {
   const originalFile = healedFiles[fileIndex];
   const relevantErrors = errors.filter(
-    (e) =>
-      e.file === filePath || e.message.includes(filePath) || e.message.includes(filePath.split('/').pop() || ''),
+    (e) => e.file === filePath || e.message.includes(filePath) || e.message.includes(filePath.split('/').pop() || ''),
   );
 
   const errorSummary = relevantErrors.map((e) => `${e.message}${e.line ? ` (line ${e.line})` : ''}`).join('\n');
@@ -176,18 +181,20 @@ No explanations, no markdown code blocks - just the raw fixed code.`;
     });
 
     const cleaned = stripMarkdownCodeBlocks(fixedContent);
-    
+
     // Validate the fix actually worked
     const openBraces = (cleaned.match(/{/g) || []).length;
     const closeBraces = (cleaned.match(/}/g) || []).length;
     const openParens = (cleaned.match(/\(/g) || []).length;
     const closeParens = (cleaned.match(/\)/g) || []).length;
-    
+
     if (openBraces === closeBraces && openParens === closeParens) {
       console.log(`[FlowstarterAgent] Successfully fixed ${filePath} with Claude Sonnet`);
       return cleaned;
     } else {
-      console.warn(`[FlowstarterAgent] Claude fix still has unbalanced braces/parens in ${filePath}, returning original`);
+      console.warn(
+        `[FlowstarterAgent] Claude fix still has unbalanced braces/parens in ${filePath}, returning original`,
+      );
       return content;
     }
   } catch (e) {
@@ -199,6 +206,7 @@ No explanations, no markdown code blocks - just the raw fixed code.`;
 /**
  * Try to fix common syntax errors without LLM
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function tryRuleBasedSyntaxFix(filePath: string, content: string, errorMessage: string): string | null {
   const lowerError = errorMessage.toLowerCase();
 
@@ -214,8 +222,10 @@ function tryRuleBasedSyntaxFix(filePath: string, content: string, errorMessage: 
       // Remove extra closing braces from the end
       let fixed = content;
       let toRemove = closes - opens;
+
       while (toRemove > 0) {
         const lastBrace = fixed.lastIndexOf('}');
+
         if (lastBrace >= 0) {
           fixed = fixed.slice(0, lastBrace) + fixed.slice(lastBrace + 1);
           toRemove--;
@@ -223,6 +233,7 @@ function tryRuleBasedSyntaxFix(filePath: string, content: string, errorMessage: 
           break;
         }
       }
+
       return fixed;
     }
   }
@@ -230,6 +241,7 @@ function tryRuleBasedSyntaxFix(filePath: string, content: string, errorMessage: 
   // Fix unmatched template literals (backticks)
   if (lowerError.includes('template literal') || lowerError.includes('backtick')) {
     const backticks = (content.match(/`/g) || []).length;
+
     if (backticks % 2 !== 0) {
       // Find the last unclosed backtick and close it
       return content + '`';
@@ -248,5 +260,3 @@ function tryRuleBasedSyntaxFix(filePath: string, content: string, errorMessage: 
 
   return null;
 }
-
-

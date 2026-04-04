@@ -2,11 +2,11 @@
  * Claude Agent Service - LLM Helpers
  *
  * Prompt generation and LLM interaction utilities.
- * 
+ *
  * PREMIUM QUALITY: Explicit instructions to avoid AI slop!
  */
 
-import { generateCompletion, generateJSON } from '../llm';
+import { generateCompletion, generateJSON } from '~/lib/services/llm';
 import type { SiteGenerationInput } from './types';
 import { stripMarkdownCodeBlocks } from './sanitization';
 
@@ -33,16 +33,19 @@ function formatAssemblyContext(input: SiteGenerationInput): string {
 
   if (input.assemblySpec) {
     parts.push('## Assembly Spec');
+
     for (const page of input.assemblySpec.pages) {
       parts.push(`- ${page.path} (${page.intent}): ${page.sections.map((section) => section.blockType).join(', ')}`);
     }
+
     if (input.assemblySpec.integrations.length > 0) {
       parts.push(
         `- Integrations: ${input.assemblySpec.integrations
           .map((integration) => `${integration.kind}${integration.providerHint ? `:${integration.providerHint}` : ''}`)
-          .join(', ')}`
+          .join(', ')}`,
       );
     }
+
     parts.push('');
   }
 
@@ -146,6 +149,7 @@ ${input.businessInfo.logo ? `Use the provided logo image.` : `No logo image was 
 ${(() => {
   const booking = input.integrations?.find((i: any) => i.id === 'booking');
   const hasBooking = !!(booking?.config?.provider && booking?.config?.url);
+
   return hasBooking
     ? `- **Booking**: CONFIGURED (${booking!.config!.provider}). Include a "Book Now" CTA in the hero linking to the #booking section. Show the booking section.`
     : `- **Booking**: NOT configured. Do NOT show "Book Now" or "Book a Consultation" CTAs. Use "Contact Us" or service-oriented CTAs instead. Hide or omit the booking section.`;
@@ -153,6 +157,7 @@ ${(() => {
 ${(() => {
   const newsletter = input.integrations?.find((i: any) => i.id === 'newsletter');
   const hasNewsletter = !!(newsletter?.config?.provider && newsletter?.config?.url);
+
   return hasNewsletter
     ? `- **Newsletter**: CONFIGURED. Include a newsletter signup section.`
     : `- **Newsletter**: NOT configured. Omit or minimize the newsletter section.`;
@@ -189,9 +194,7 @@ Use the write_file tool for each file.`;
 /**
  * Generate a site plan (file manifest) using Claude
  */
-export async function generateSitePlan(
-  input: SiteGenerationInput,
-): Promise<{ files: string[]; architecture: string }> {
+export async function generateSitePlan(input: SiteGenerationInput): Promise<{ files: string[]; architecture: string }> {
   const systemPrompt = getSystemPrompt(input);
   const userPrompt = `Create a detailed file plan for this website.
 Return a JSON object with a "files" array and an "architecture" description.
@@ -295,11 +298,14 @@ CRITICAL SYNTAX RULES FOR ASTRO FILES:
   // Use Claude Sonnet for Astro files (needs careful syntax), Kimi for simpler files
   const isAstroFile = filePath.endsWith('.astro');
   const model = 'anthropic/claude-sonnet-4-6'; // Sonnet-4-6 for all file types
-  
+
   const content = await generateCompletion(
     [
       { role: 'system', content: systemPrompt },
-      { role: 'user', content: `Customize ${filePath} for ${input.businessInfo.name}. Replace ALL placeholder content.` },
+      {
+        role: 'user',
+        content: `Customize ${filePath} for ${input.businessInfo.name}. Replace ALL placeholder content.`,
+      },
     ],
     {
       model,
@@ -453,7 +459,7 @@ Remember:
 - Don't add your own creative flourishes - implement what's specified
 - Output ONLY the file content, nothing else`;
 
-    const messages = [
+  const messages = [
     { role: 'system' as const, content: systemPrompt },
     { role: 'user' as const, content: userPrompt },
   ];
@@ -463,11 +469,9 @@ Remember:
   const model = 'anthropic/claude-sonnet-4-6'; // Sonnet-4-6 for all file types
   const result = await generateCompletion(messages, {
     model,
-    temperature: 0.1,  // Low temperature for faithful implementation
+    temperature: 0.1, // Low temperature for faithful implementation
     maxTokens: isAstroFile ? 12000 : 8000,
   });
 
   return stripMarkdownCodeBlocks(result);
 }
-
-

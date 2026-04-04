@@ -340,7 +340,7 @@ h1 { font-family: 'Cormorant Garamond', serif; font-size: 64px; color: ${dark ? 
 };
 
 // Generate remaining templates with similar unique designs
-const remaining = ['coach-pro', 'language-teacher', 'music-teacher', 'workshop-host', 'therapist-care', 'creative-portfolio', 'wellness-holistic'];
+const _remaining = ['coach-pro', 'language-teacher', 'music-teacher', 'workshop-host', 'therapist-care', 'creative-portfolio', 'wellness-holistic'];
 
 // Simple fallback for templates not yet custom-designed
 function genericTemplate(name, color1, color2, dark) {

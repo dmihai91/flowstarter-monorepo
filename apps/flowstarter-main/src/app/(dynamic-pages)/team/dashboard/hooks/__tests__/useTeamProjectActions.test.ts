@@ -52,7 +52,9 @@ describe('useTeamProjectActions', () => {
       });
 
       expect(mockDeleteMutateAsync).toHaveBeenCalledWith('p1');
-      expect(mockToastSuccess).toHaveBeenCalledWith('team.dashboard.toast.deleteSuccess');
+      expect(mockToastSuccess).toHaveBeenCalledWith(
+        'team.dashboard.toast.deleteSuccess'
+      );
       expect(onSuccess).toHaveBeenCalled();
     });
 
@@ -64,7 +66,9 @@ describe('useTeamProjectActions', () => {
         await result.current.handleDeleteProject('p1');
       });
 
-      expect(mockToastError).toHaveBeenCalledWith('team.dashboard.toast.deleteFailed');
+      expect(mockToastError).toHaveBeenCalledWith(
+        'team.dashboard.toast.deleteFailed'
+      );
     });
   });
 
@@ -75,11 +79,20 @@ describe('useTeamProjectActions', () => {
       const { result } = renderHook(() => useTeamProjectActions());
 
       await act(async () => {
-        await result.current.handleRenameProject('p1', '  New Name  ', onSuccess);
+        await result.current.handleRenameProject(
+          'p1',
+          '  New Name  ',
+          onSuccess
+        );
       });
 
-      expect(mockRenameMutateAsync).toHaveBeenCalledWith({ id: 'p1', name: 'New Name' });
-      expect(mockToastSuccess).toHaveBeenCalledWith('team.dashboard.toast.renameSuccess');
+      expect(mockRenameMutateAsync).toHaveBeenCalledWith({
+        id: 'p1',
+        name: 'New Name',
+      });
+      expect(mockToastSuccess).toHaveBeenCalledWith(
+        'team.dashboard.toast.renameSuccess'
+      );
       expect(onSuccess).toHaveBeenCalled();
     });
 
@@ -101,7 +114,9 @@ describe('useTeamProjectActions', () => {
         await result.current.handleRenameProject('p1', 'Name');
       });
 
-      expect(mockToastError).toHaveBeenCalledWith('team.dashboard.toast.renameFailed');
+      expect(mockToastError).toHaveBeenCalledWith(
+        'team.dashboard.toast.renameFailed'
+      );
     });
   });
 
@@ -109,15 +124,25 @@ describe('useTeamProjectActions', () => {
     it('calls mutateAsync with pricing data and shows success', async () => {
       mockPricingMutateAsync.mockResolvedValueOnce(undefined);
       const onSuccess = vi.fn();
-      const pricingData: ProjectPricingData = { setup_fee: 500, monthly_fee: 30, is_paid: true, project_type: 'pro' };
+      const pricingData: ProjectPricingData = {
+        setup_fee: 500,
+        monthly_fee: 30,
+        is_paid: true,
+        project_type: 'pro',
+      };
       const { result } = renderHook(() => useTeamProjectActions());
 
       await act(async () => {
         await result.current.handleUpdatePricing('p1', pricingData, onSuccess);
       });
 
-      expect(mockPricingMutateAsync).toHaveBeenCalledWith({ id: 'p1', ...pricingData });
-      expect(mockToastSuccess).toHaveBeenCalledWith('team.dashboard.toast.pricingSuccess');
+      expect(mockPricingMutateAsync).toHaveBeenCalledWith({
+        id: 'p1',
+        ...pricingData,
+      });
+      expect(mockToastSuccess).toHaveBeenCalledWith(
+        'team.dashboard.toast.pricingSuccess'
+      );
       expect(onSuccess).toHaveBeenCalled();
     });
 
@@ -126,10 +151,15 @@ describe('useTeamProjectActions', () => {
       const { result } = renderHook(() => useTeamProjectActions());
 
       await act(async () => {
-        await result.current.handleUpdatePricing('p1', {} as ProjectPricingData);
+        await result.current.handleUpdatePricing(
+          'p1',
+          {} as ProjectPricingData
+        );
       });
 
-      expect(mockToastError).toHaveBeenCalledWith('team.dashboard.toast.pricingFailed');
+      expect(mockToastError).toHaveBeenCalledWith(
+        'team.dashboard.toast.pricingFailed'
+      );
     });
   });
 
@@ -139,7 +169,13 @@ describe('useTeamProjectActions', () => {
       vi.stubGlobal('open', mockOpen);
       global.fetch = vi.fn().mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ success: true, projectId: 'p1', token: 'tok', editorUrl: 'https://editor.example.com' }),
+        json: () =>
+          Promise.resolve({
+            success: true,
+            projectId: 'p1',
+            token: 'tok',
+            editorUrl: 'https://editor.example.com',
+          }),
       });
 
       const { result } = renderHook(() => useTeamProjectActions());
@@ -148,11 +184,17 @@ describe('useTeamProjectActions', () => {
         await result.current.openInEditor('p1');
       });
 
-      expect(global.fetch).toHaveBeenCalledWith('/api/editor/handoff', expect.objectContaining({
-        method: 'POST',
-        body: JSON.stringify({ projectId: 'p1' }),
-      }));
-      expect(mockOpen).toHaveBeenCalledWith('https://editor.example.com', '_blank');
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/editor/handoff',
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify({ projectId: 'p1' }),
+        })
+      );
+      expect(mockOpen).toHaveBeenCalledWith(
+        'https://editor.example.com',
+        '_blank'
+      );
 
       vi.unstubAllGlobals();
     });
@@ -165,7 +207,9 @@ describe('useTeamProjectActions', () => {
         await result.current.openInEditor('p1');
       });
 
-      expect(mockToastError).toHaveBeenCalledWith('team.dashboard.toast.editorFailed');
+      expect(mockToastError).toHaveBeenCalledWith(
+        'team.dashboard.toast.editorFailed'
+      );
     });
   });
 });

@@ -5,11 +5,7 @@
 import { useMemo } from 'react';
 type ChatMessage = { role: 'user' | 'assistant'; content: string; id?: string; timestamp?: number };
 
-const DEFAULT_SUGGESTIONS = [
-  'Add pricing',
-  'Contact form',
-  'Change colors',
-];
+const DEFAULT_SUGGESTIONS = ['Add pricing', 'Contact form', 'Change colors'];
 
 const FOLLOW_UP_SUGGESTIONS: Record<string, string[]> = {
   pricing: ['Add FAQ section', 'Change layout', 'Update fonts'],
@@ -28,16 +24,20 @@ interface UseSuggestionChipsOptions {
 
 export function useSuggestionChips({ messages, isGenerating }: UseSuggestionChipsOptions) {
   const suggestions = useMemo(() => {
-    if (isGenerating) return [];
+    if (isGenerating) {
+      return [];
+    }
 
-    if (messages.length === 0) return DEFAULT_SUGGESTIONS;
+    if (messages.length === 0) {
+      return DEFAULT_SUGGESTIONS;
+    }
 
     // Look at the last user message to suggest follow-ups
-    const lastUserMsg = [...messages]
-      .reverse()
-      .find((m) => m.role === 'user');
+    const lastUserMsg = [...messages].reverse().find((m) => m.role === 'user');
 
-    if (!lastUserMsg) return DEFAULT_SUGGESTIONS;
+    if (!lastUserMsg) {
+      return DEFAULT_SUGGESTIONS;
+    }
 
     const content = lastUserMsg.content.toLowerCase();
 

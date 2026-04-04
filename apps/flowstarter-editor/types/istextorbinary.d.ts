@@ -9,4 +9,3 @@ declare module 'istextorbinary' {
 
   export function getEncoding(buffer: Buffer | null, opts?: EncodingOpts): 'utf8' | 'binary' | null;
 }
-

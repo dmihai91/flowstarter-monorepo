@@ -63,6 +63,7 @@ describe('Message Creation', () => {
   });
 
   it('should include component when provided', () => {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     const TestComponent = 'test-component';
     const message = {
       id: 'msg-123',
@@ -235,14 +236,15 @@ describe('Messages Ref Synchronization', () => {
     const addMessage = (content: string) => {
       const message = { id: `msg-${Date.now()}`, content };
       messagesRef.current = [...messagesRef.current, message];
+
       return message;
     };
 
-    const msg1 = addMessage('First message');
+    addMessage('First message');
     expect(messagesRef.current).toHaveLength(1);
     expect(messagesRef.current[0].content).toBe('First message');
 
-    const msg2 = addMessage('Second message');
+    addMessage('Second message');
     expect(messagesRef.current).toHaveLength(2);
     expect(messagesRef.current[1].content).toBe('Second message');
   });
@@ -271,6 +273,7 @@ describe('onMessagesChange Callback', () => {
       const message = { id: `msg-${Date.now()}`, content };
       messages = [...messages, message];
       onMessagesChange(messages);
+
       return message;
     };
 
@@ -278,9 +281,7 @@ describe('onMessagesChange Callback', () => {
 
     expect(onMessagesChange).toHaveBeenCalledTimes(1);
     expect(onMessagesChange).toHaveBeenCalledWith(
-      expect.arrayContaining([
-        expect.objectContaining({ content: 'Test message' }),
-      ])
+      expect.arrayContaining([expect.objectContaining({ content: 'Test message' })]),
     );
   });
 
@@ -359,4 +360,3 @@ describe('LLM Message Generation', () => {
     expect(isGenerating).toBe(false);
   });
 });
-

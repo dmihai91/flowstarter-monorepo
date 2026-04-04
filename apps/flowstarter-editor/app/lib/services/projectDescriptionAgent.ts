@@ -5,7 +5,7 @@ import { generateCompletion } from './llm';
  *
  * Extracts a concise, essence-focused summary from user project descriptions.
  * Returns a natural, human-readable summary of what the user wants to build.
- * 
+ *
  * OPTIMIZED FOR: Service-based professionals (coaches, therapists, trainers, etc.)
  */
 

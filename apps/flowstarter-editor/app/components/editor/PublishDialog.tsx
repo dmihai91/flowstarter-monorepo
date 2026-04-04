@@ -50,7 +50,7 @@ export function PublishDialog({ isOpen, onClose, projectId }: PublishDialogProps
 
       setStep('deploying');
 
-      const data = await response.json() as { publishedUrl?: string };
+      const data = (await response.json()) as { publishedUrl?: string };
       setPublishedUrl(data.publishedUrl || null);
       setStep('done');
     } catch (err) {
@@ -65,16 +65,16 @@ export function PublishDialog({ isOpen, onClose, projectId }: PublishDialogProps
     onClose();
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-zinc-800">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-zinc-100">
-            Publish
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-zinc-100">Publish</h2>
           <button
             onClick={handleClose}
             className="p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-zinc-300 dark:hover:bg-zinc-800"
@@ -93,9 +93,7 @@ export function PublishDialog({ isOpen, onClose, projectId }: PublishDialogProps
           </div>
 
           {/* Status text */}
-          <p className="text-sm text-center text-gray-600 dark:text-zinc-400">
-            {STEP_LABELS[step]}
-          </p>
+          <p className="text-sm text-center text-gray-600 dark:text-zinc-400">{STEP_LABELS[step]}</p>
 
           {/* Error */}
           {error && (
@@ -161,22 +159,14 @@ export function PublishDialog({ isOpen, onClose, projectId }: PublishDialogProps
   );
 }
 
-function StepIndicator({
-  step,
-  currentStep,
-  label,
-}: {
-  step: PublishStep;
-  currentStep: PublishStep;
-  label: string;
-}) {
+function StepIndicator({ step, currentStep, label }: { step: PublishStep; currentStep: PublishStep; label: string }) {
   const steps: PublishStep[] = ['building', 'uploading', 'deploying'];
   const stepIdx = steps.indexOf(step);
   const currentIdx = steps.indexOf(currentStep);
 
   const isDone = currentStep === 'done' || currentIdx > stepIdx;
   const isActive = currentStep === step;
-  const isPending = currentIdx < stepIdx && currentStep !== 'done';
+  const _isPending = currentIdx < stepIdx && currentStep !== 'done';
 
   return (
     <div className="flex items-center gap-3">
@@ -199,9 +189,7 @@ function StepIndicator({
       </div>
       <span
         className={`text-sm ${
-          isDone || isActive
-            ? 'text-gray-900 dark:text-zinc-100 font-medium'
-            : 'text-gray-400 dark:text-zinc-500'
+          isDone || isActive ? 'text-gray-900 dark:text-zinc-100 font-medium' : 'text-gray-400 dark:text-zinc-500'
         }`}
       >
         {label}

@@ -12,14 +12,14 @@ Flowstarter uses an AI credit system to manage and meter AI-powered editing feat
 
 | Plan | Monthly Credits | Price | Credit Value |
 |------|-----------------|-------|--------------|
-| Standard | 1,000 | €39/mo | ~€0.039/credit |
+| Starter | 1,000 | €39/mo | ~€0.039/credit |
 | Future Pro | 3,000 | TBD | TBD |
 | Future Enterprise | Unlimited | TBD | TBD |
 
 ### 1.2 Profitability Target
 
 - **Target margin:** 50%+
-- **Max AI cost per €39 plan:** ~€20/month
+- **Max AI cost per €39 Starter plan:** ~€20/month
 - **1,000 credits = max €20 in token costs**
 - **1 credit ≈ €0.02 max cost**
 

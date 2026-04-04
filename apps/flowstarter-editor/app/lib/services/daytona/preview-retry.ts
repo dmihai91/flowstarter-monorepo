@@ -38,17 +38,20 @@ export async function retryPreviewWithFiles(
   log.debug(` retryPreviewWithFiles: reusing sandbox ${sandboxId} for project ${projectId}`);
 
   let client;
+
   try {
     client = getClient(env);
   } catch (e) {
     const errorMsg = e instanceof Error ? e.message : 'Unknown error';
     log.error(' Failed to get Daytona client:', errorMsg);
+
     return { success: false, error: errorMsg };
   }
 
   try {
     const sandbox = await client.get(sandboxId);
     await ensureSandboxRunning(client, sandbox);
+
     const workDir = (await sandbox.getWorkDir()) || '/home/daytona';
 
     // Re-upload fixed files
@@ -62,9 +65,11 @@ export async function retryPreviewWithFiles(
 
     // Run astro check first to catch type errors with file info
     const astroCheckResult = await runAstroCheck(sandbox, workDir);
+
     if (!astroCheckResult.success && astroCheckResult.errors.length > 0) {
       const firstError = astroCheckResult.errors[0];
       log.warn(` Astro check failed on retry: ${firstError.message} in ${firstError.file}`);
+
       return {
         success: false,
         error: `Type error in ${firstError.file}: ${firstError.message}`,
@@ -92,9 +97,11 @@ export async function retryPreviewWithFiles(
 
     if (!previewUrl) {
       const devLog = await readDevLog(sandbox, workDir, 100);
+
       if (devLog && hasFatalError(devLog, false)) {
         return handleBuildError(devLog, sandboxId);
       }
+
       return { success: false, error: 'Failed to get preview URL for dev server', sandboxId };
     }
 
@@ -120,6 +127,7 @@ export async function retryPreviewWithFiles(
       }
 
       const devLog = await readDevLog(sandbox, workDir, 100);
+
       if (devLog && hasFatalError(devLog, false)) {
         return handleBuildError(devLog, sandboxId);
       }
@@ -141,11 +149,14 @@ export async function retryPreviewWithFiles(
     });
 
     log.debug(` Preview ready after retry: ${previewUrl}`);
+
     return { success: true, previewUrl, sandboxId: sandbox.id };
   } catch (e) {
     log.error(' Error in retryPreviewWithFiles:', e);
+
     // Fall back to full startPreview if sandbox reuse fails
     log.debug(' Falling back to full startPreview...');
+
     return startPreview(projectId, files, env, onProgress);
   }
 }

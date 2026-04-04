@@ -15,8 +15,6 @@ import {
   Loader2,
   CheckCircle2,
   AlertCircle,
-  Copy,
-  Check,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -35,7 +33,6 @@ export default function TeamInvitePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [result, setResult] = useState<InvitationResult | null>(null);
-  const [copied, setCopied] = useState(false);
 
   // Check if user is admin
   useEffect(() => {
@@ -137,7 +134,10 @@ export default function TeamInvitePage() {
       <div className="p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
         <form onSubmit={handleInvite} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm text-gray-600 dark:text-white/60">
+            <Label
+              htmlFor="email"
+              className="text-sm text-gray-600 dark:text-white/60"
+            >
               Email address
             </Label>
             <div className="relative">

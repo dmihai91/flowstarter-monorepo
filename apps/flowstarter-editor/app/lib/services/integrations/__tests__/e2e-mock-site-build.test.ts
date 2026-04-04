@@ -12,7 +12,7 @@
  * This tests the EXACT same flow as api.build.ts lines 380-415.
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { injectIntegrations } from '../index';
+import { injectIntegrations } from '~/lib/services/integrations/index';
 
 // --- Mock Data: Supabase project config ---
 
@@ -238,9 +238,12 @@ describe('E2E: Build site with mock Calendly + GA4 + Lead Capture', () => {
 
   it('Scenario 1: Full pipeline — API Calendly + GA4 + Lead Capture', async () => {
     // Mock Calendly API
-    vi.stubGlobal('fetch', vi.fn()
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockCalendlyUser) })
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockCalendlyEventTypes) }),
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockCalendlyUser) })
+        .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockCalendlyEventTypes) }),
     );
 
     // Build intConfig exactly like api.build.ts
@@ -294,18 +297,23 @@ describe('E2E: Build site with mock Calendly + GA4 + Lead Capture', () => {
     expect((globalThis.fetch as any).mock.calls[0][1].headers.Authorization).toBe(`Bearer ${MOCK_CALENDLY_API_KEY}`);
 
     // --- Other pages untouched ---
-    expect(result.find((f) => f.path.includes('index.astro'))!.content)
-      .toBe(generatedSiteFiles.find((f) => f.path.includes('index.astro'))!.content);
-    expect(result.find((f) => f.path.includes('servicii.astro'))!.content)
-      .toBe(generatedSiteFiles.find((f) => f.path.includes('servicii.astro'))!.content);
-    expect(result.find((f) => f.path.includes('despre.astro'))!.content)
-      .toBe(generatedSiteFiles.find((f) => f.path.includes('despre.astro'))!.content);
+    expect(result.find((f) => f.path.includes('index.astro'))!.content).toBe(
+      generatedSiteFiles.find((f) => f.path.includes('index.astro'))!.content,
+    );
+    expect(result.find((f) => f.path.includes('servicii.astro'))!.content).toBe(
+      generatedSiteFiles.find((f) => f.path.includes('servicii.astro'))!.content,
+    );
+    expect(result.find((f) => f.path.includes('despre.astro'))!.content).toBe(
+      generatedSiteFiles.find((f) => f.path.includes('despre.astro'))!.content,
+    );
 
     // CSS + config untouched
-    expect(result.find((f) => f.path.includes('global.css'))!.content)
-      .toBe(generatedSiteFiles.find((f) => f.path.includes('global.css'))!.content);
-    expect(result.find((f) => f.path.includes('astro.config'))!.content)
-      .toBe(generatedSiteFiles.find((f) => f.path.includes('astro.config'))!.content);
+    expect(result.find((f) => f.path.includes('global.css'))!.content).toBe(
+      generatedSiteFiles.find((f) => f.path.includes('global.css'))!.content,
+    );
+    expect(result.find((f) => f.path.includes('astro.config'))!.content).toBe(
+      generatedSiteFiles.find((f) => f.path.includes('astro.config'))!.content,
+    );
 
     expect(result).toHaveLength(generatedSiteFiles.length);
   });
@@ -360,10 +368,14 @@ describe('E2E: Build site with mock Calendly + GA4 + Lead Capture', () => {
   });
 
   it('Scenario 4: Calendly API fails → graceful fallback to simple embed', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValueOnce({
-      ok: false, status: 403,
-      json: () => Promise.resolve({ message: 'Invalid API key' }),
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValueOnce({
+        ok: false,
+        status: 403,
+        json: () => Promise.resolve({ message: 'Invalid API key' }),
+      }),
+    );
     vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     const result = await injectIntegrations(generatedSiteFiles, {
@@ -372,6 +384,7 @@ describe('E2E: Build site with mock Calendly + GA4 + Lead Capture', () => {
     });
 
     const contact = result.find((f) => f.path.includes('contact.astro'))!;
+
     // Fallback: inline widget, not popup buttons
     expect(contact.content).toContain('calendly-inline-widget');
     expect(contact.content).not.toContain('Calendly.initPopupWidget');
@@ -398,9 +411,12 @@ describe('E2E: Build site with mock Calendly + GA4 + Lead Capture', () => {
   });
 
   it('Scenario 6: All mock data values appear in correct HTML locations', async () => {
-    vi.stubGlobal('fetch', vi.fn()
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockCalendlyUser) })
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockCalendlyEventTypes) }),
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockCalendlyUser) })
+        .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockCalendlyEventTypes) }),
     );
 
     const result = await injectIntegrations(generatedSiteFiles, {

@@ -386,4 +386,3 @@ export function buildProjectContextFromFiles(
 
   return buildProjectContext(templateId, designScheme, projectDetails, templateFiles);
 }
-

@@ -18,4 +18,3 @@ export { fetchScaffoldData } from './fetchScaffold';
 export { createFileBatches } from './batchUtils';
 export { applyCustomizations } from './customizations';
 export { getPlaceholderTemplate, getPlaceholderFiles } from './placeholders';
-

@@ -29,34 +29,33 @@ export const dashboardKeys = {
   'dashboard.stats.live': 'Live',
   'dashboard.stats.inProgress': 'In Progress',
   'dashboard.stats.notStarted': 'Awaiting kickoff',
-  'dashboard.stats.bookDiscovery':
-    'Schedule your kickoff call to begin',
+  'dashboard.stats.bookDiscovery': 'Schedule your kickoff call to begin',
   'dashboard.stats.buildingMessage':
-    'Your website is being built. We\'ll notify you at each milestone.',
+    "Your website is being built. We'll notify you at each milestone.",
   'dashboard.stats.edit': 'Edit',
   'dashboard.stats.view': 'View',
-  'dashboard.stats.trafficAppears':
-    'Traffic data activates at launch',
-  'dashboard.stats.leadsActivate':
-    'Lead tracking activates at launch',
+  'dashboard.stats.trafficAppears': 'Traffic data activates at launch',
+  'dashboard.stats.leadsActivate': 'Lead tracking activates at launch',
   'dashboard.stats.aiCreditsReset': 'Resets monthly',
   'dashboard.stats.integrations': 'Integrations',
   'dashboard.stats.integrationsSetup': 'Set up',
   'dashboard.stats.integrationsAfterLaunch': 'After launch',
   'dashboard.stats.integrationsConnect': 'Analytics, email, calendar',
-  'dashboard.stats.integrationsConnectLater':
-    'Available after launch',
+  'dashboard.stats.integrationsConnectLater': 'Available after launch',
   'dashboard.stats.analytics': 'Analytics',
   'dashboard.stats.email': 'Email',
   'dashboard.stats.calendar': 'Calendar',
 
   // Premium dashboard - milestones
   'dashboard.stepper.strategy': 'Strategy',
-  'dashboard.stepper.strategyDescription': 'Goals, audience, and positioning defined',
+  'dashboard.stepper.strategyDescription':
+    'Goals, audience, and positioning defined',
   'dashboard.stepper.design': 'Design',
-  'dashboard.stepper.designDescription': 'Brand, layout, and visual identity finalized',
+  'dashboard.stepper.designDescription':
+    'Brand, layout, and visual identity finalized',
   'dashboard.stepper.development': 'Development',
-  'dashboard.stepper.developmentDescription': 'Pages built, content placed, SEO configured',
+  'dashboard.stepper.developmentDescription':
+    'Pages built, content placed, SEO configured',
   'dashboard.stepper.launch': 'Launch',
   'dashboard.stepper.launchDescription': 'Live site + smart editor access',
   'dashboard.stepper.milestone': 'Phase {number}',
@@ -78,8 +77,9 @@ export const dashboardKeys = {
   'dashboard.action.uploadAssets': 'Upload Assets',
 
   // Premium dashboard - build phase
-  'dashboard.action.kickoffTitle': 'Let\'s get your website started',
-  'dashboard.action.kickoffDesc': 'A 45-minute call to define your goals. We handle the rest.',
+  'dashboard.action.kickoffTitle': "Let's get your website started",
+  'dashboard.action.kickoffDesc':
+    'A 45-minute call to define your goals. We handle the rest.',
   'dashboard.stats.buildPhase': 'Build in progress',
   'dashboard.stats.buildPhaseActive': 'In progress',
   'dashboard.stats.currentMilestone': 'Current phase: {phase}',

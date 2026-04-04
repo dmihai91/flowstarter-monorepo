@@ -46,6 +46,7 @@ export interface StreamCallbacks {
   onFileChange?: (file: FileChange) => void;
   onProgress?: (progress: { phase: string; message: string }) => void;
   onError?: (error: string) => void;
+
   /** Rich structured events for the AgentActivityPanel */
   onAgentEvent?: (event: AgentActivityEvent) => void;
 }
@@ -58,7 +59,10 @@ import type { AgentActivityEvent } from '~/lib/services/claude-agent/types';
  * Build prompt content with optional images
  * Returns either a string or an array of content blocks for multimodal input
  */
-function buildPromptWithImages(textPrompt: string, images?: ImageInput[]): string | Array<{ type: string; [key: string]: any }> {
+function buildPromptWithImages(
+  textPrompt: string,
+  images?: ImageInput[],
+): string | Array<{ type: string; [key: string]: any }> {
   if (!images || images.length === 0) {
     return textPrompt;
   }
@@ -126,6 +130,7 @@ export async function generateCode(
             hooks: [
               async (hookInput) => {
                 if (hookInput.hook_event_name === 'PostToolUse') {
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
                   const { tool_name, tool_input, tool_response } = hookInput;
 
                   // Track file writes
@@ -226,7 +231,10 @@ export async function generateCode(
  * Process incoming SDK messages and trigger callbacks
  */
 function countLines(content: unknown): number {
-  if (typeof content === 'string') return content.split('\n').length;
+  if (typeof content === 'string') {
+    return content.split('\n').length;
+  }
+
   return 0;
 }
 
@@ -235,7 +243,9 @@ function processMessage(message: SDKMessage, callbacks?: StreamCallbacks): void 
 
   switch (message.type) {
     case 'assistant': {
-      if (!message.message.content) break;
+      if (!message.message.content) {
+        break;
+      }
 
       for (const block of message.message.content) {
         if (block.type === 'text' && block.text) {
@@ -251,16 +261,28 @@ function processMessage(message: SDKMessage, callbacks?: StreamCallbacks): void 
           if (toolName === 'Write' || toolName === 'create_file') {
             const path = (input.file_path || input.path) as string;
             const content = input.content as string;
-            if (path) emit({ type: 'file_write', path, lines: countLines(content) });
+
+            if (path) {
+              emit({ type: 'file_write', path, lines: countLines(content) });
+            }
           } else if (toolName === 'Edit' || toolName === 'str_replace_editor') {
             const path = (input.file_path || input.path || input.old_file_path) as string;
-            if (path) emit({ type: 'file_write', path });
+
+            if (path) {
+              emit({ type: 'file_write', path });
+            }
           } else if (toolName === 'Read' || toolName === 'read_file') {
             const path = (input.file_path || input.path) as string;
-            if (path) emit({ type: 'file_read', path });
+
+            if (path) {
+              emit({ type: 'file_read', path });
+            }
           } else if (toolName === 'Bash' || toolName === 'bash' || toolName === 'execute_command') {
             const cmd = (input.command || input.cmd) as string;
-            if (cmd) emit({ type: 'command', cmd });
+
+            if (cmd) {
+              emit({ type: 'command', cmd });
+            }
           } else {
             emit({ type: 'tool_call', name: toolName, input });
           }
@@ -272,9 +294,11 @@ function processMessage(message: SDKMessage, callbacks?: StreamCallbacks): void 
     case 'stream_event': {
       // Raw streaming events — capture thinking deltas
       const event = message.event as any;
+
       if (event?.type === 'content_block_delta' && event.delta?.type === 'thinking_delta') {
         // Thinking is accumulated in assistant blocks; no-op here to avoid duplication
       }
+
       break;
     }
 
@@ -285,6 +309,7 @@ function processMessage(message: SDKMessage, callbacks?: StreamCallbacks): void 
           message: `Agent initialized with ${(message as any).tools?.length ?? 0} tools`,
         });
       }
+
       break;
     }
 
@@ -296,6 +321,7 @@ function processMessage(message: SDKMessage, callbacks?: StreamCallbacks): void 
 
     case 'result': {
       const r = message as any;
+
       if (r.subtype === 'success') {
         const usage = r.usage ?? {};
         emit({
@@ -309,6 +335,7 @@ function processMessage(message: SDKMessage, callbacks?: StreamCallbacks): void 
       } else if (r.errors?.length) {
         emit({ type: 'error', message: r.errors.join('; ') });
       }
+
       break;
     }
   }
@@ -363,6 +390,7 @@ For saving user-uploaded images:
 export async function quickGenerate(
   prompt: string,
   workingDirectory: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   model: string = 'claude-sonnet-4-6', // override with opus for quality-critical tasks
 ): Promise<CodeGenerationResult> {
   return generateCode({
@@ -418,7 +446,10 @@ export async function applyChanges(
   workingDirectory: string,
   images?: ImageInput[],
 ): Promise<CodeGenerationResult> {
-  const fileList = targetFiles.length > 0 ? targetFiles.map((f) => `- ${f}`).join('\n') : '(Let the agent determine which files to modify)';
+  const fileList =
+    targetFiles.length > 0
+      ? targetFiles.map((f) => `- ${f}`).join('\n')
+      : '(Let the agent determine which files to modify)';
 
   let prompt: string;
 
@@ -467,4 +498,3 @@ Please:
     images,
   });
 }
-

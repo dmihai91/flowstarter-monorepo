@@ -164,4 +164,3 @@ export function getOpenAILikeModel(baseURL: string, apiKey: OptionalApiKey, mode
 
   return openai(model);
 }
-

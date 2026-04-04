@@ -1,22 +1,22 @@
 'use client';
 
-import { TeamDashboardShell, ShellCard } from '../components/TeamDashboardShell';
+import {
+  TeamDashboardShell,
+  ShellCard,
+} from '../components/TeamDashboardShell';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useUser } from '@clerk/nextjs';
 import { useSignIn } from '@clerk/nextjs/legacy';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
-  ArrowLeft,
   Shield,
   ShieldCheck,
   ShieldOff,
   Smartphone,
   Loader2,
-  CheckCircle2,
   AlertCircle,
   QrCode,
   Copy,
@@ -41,7 +41,7 @@ export default function TeamSecurityPage() {
   const [secret, setSecret] = useState<string | null>(null);
   const [verificationCode, setVerificationCode] = useState('');
   const [setupError, setSetupError] = useState<string | null>(null);
-  const [setupSuccess, setSetupSuccess] = useState(false);
+  const [_setupSuccess, setSetupSuccess] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -65,6 +65,7 @@ export default function TeamSecurityPage() {
         setIsLoading(false);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, userLoaded, router]);
 
   const checkTotpStatus = () => {
@@ -85,14 +86,25 @@ export default function TeamSecurityPage() {
       setQrCodeUrl(totp.uri ?? null);
       setSecret(totp.secret ?? null);
     } catch (error: unknown) {
-      const clerkError = error as { errors?: Array<{ code?: string; message?: string }> };
+      const clerkError = error as {
+        errors?: Array<{ code?: string; message?: string }>;
+      };
       const code = clerkError?.errors?.[0]?.code ?? '';
       const msg = String(clerkError?.errors?.[0]?.message ?? error);
-      if (code === 'session_step_up_required' || code === 'requires_recent_sign_in' || msg.includes('additional verification')) {
+      if (
+        code === 'session_step_up_required' ||
+        code === 'requires_recent_sign_in' ||
+        msg.includes('additional verification')
+      ) {
         setNeedsReverification(true);
         setIsSettingUp(false);
-      } else if (msg.includes('not enabled') || code === 'feature_not_enabled_for_environment') {
-        setSetupError('Two-factor authentication is not enabled for this account. Contact your administrator.');
+      } else if (
+        msg.includes('not enabled') ||
+        code === 'feature_not_enabled_for_environment'
+      ) {
+        setSetupError(
+          'Two-factor authentication is not enabled for this account. Contact your administrator.'
+        );
         setIsSettingUp(false);
       } else {
         console.error('Error starting TOTP setup:', error);
@@ -107,7 +119,11 @@ export default function TeamSecurityPage() {
     setReverifyLoading(true);
     setReverifyError(null);
     try {
-      await signIn.create({ strategy: 'password', password: reverifyPassword, identifier: user.primaryEmailAddress?.emailAddress ?? '' });
+      await signIn.create({
+        strategy: 'password',
+        password: reverifyPassword,
+        identifier: user.primaryEmailAddress?.emailAddress ?? '',
+      });
       setNeedsReverification(false);
       setReverifyPassword('');
       await startTotpSetup();
@@ -191,280 +207,300 @@ export default function TeamSecurityPage() {
       maxWidth="2xl"
     >
       <ShellCard>
-          {/* 2FA Card */}
-          <div className="p-6 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
-            <div className="flex items-center justify-between gap-3 mb-6">
-              <div className="flex items-center gap-3 min-w-0">
-                <div
-                  className={`w-10 h-10 rounded-lg shrink-0 flex items-center justify-center ${
-                    totpEnabled
-                      ? 'bg-emerald-500/10 text-emerald-500'
-                      : 'bg-gray-100 dark:bg-white/5 text-gray-400'
-                  }`}
-                >
-                  {totpEnabled ? (
-                    <ShieldCheck className="w-5 h-5" />
-                  ) : (
-                    <ShieldOff className="w-5 h-5" />
-                  )}
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white">
-                    Two-Factor Authentication
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-white/50">
-                    {totpEnabled
-                      ? 'Your account is protected with 2FA'
-                      : 'Add an extra layer of security'}
-                  </p>
-                </div>
+        {/* 2FA Card */}
+        <div className="p-6 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+          <div className="flex items-center justify-between gap-3 mb-6">
+            <div className="flex items-center gap-3 min-w-0">
+              <div
+                className={`w-10 h-10 rounded-lg shrink-0 flex items-center justify-center ${
+                  totpEnabled
+                    ? 'bg-emerald-500/10 text-emerald-500'
+                    : 'bg-gray-100 dark:bg-white/5 text-gray-400'
+                }`}
+              >
+                {totpEnabled ? (
+                  <ShieldCheck className="w-5 h-5" />
+                ) : (
+                  <ShieldOff className="w-5 h-5" />
+                )}
               </div>
-
-              {!isSettingUp && !showDisableConfirm && (
-                <span
-                  className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-[0.65rem] font-semibold rounded-full whitespace-nowrap shrink-0 ${
-                    totpEnabled
-                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                      : 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                  }`}
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full ${totpEnabled ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-                  {totpEnabled ? 'Enabled' : 'Not enabled'}
-                </span>
-              )}
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">
+                  Two-Factor Authentication
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-white/50">
+                  {totpEnabled
+                    ? 'Your account is protected with 2FA'
+                    : 'Add an extra layer of security'}
+                </p>
+              </div>
             </div>
 
-            {/* Re-verification required */}
-            {needsReverification && (
-              <div className="mt-5 space-y-3">
-                <p className="text-sm text-gray-500 dark:text-white/50 flex items-center gap-2">
-                  <Shield className="w-4 h-4 shrink-0" />
-                  Confirm your password to continue
-                </p>
-                <div className="flex gap-2">
-                  <Input
-                    type="password"
-                    placeholder="Your password"
-                    value={reverifyPassword}
-                    onChange={e => setReverifyPassword(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleReverify()}
-                    className="flex-1"
-                    autoFocus
-                  />
-                  <Button onClick={handleReverify} disabled={!reverifyPassword || reverifyLoading} variant="accent" size="sm" className="shrink-0">
-                    {reverifyLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm'}
-                  </Button>
-                </div>
-                {reverifyError && <p className="text-xs text-red-500">{reverifyError}</p>}
-                <button onClick={() => setNeedsReverification(false)} className="text-xs text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/60 transition-colors">
-                  Cancel
-                </button>
-              </div>
+            {!isSettingUp && !showDisableConfirm && (
+              <span
+                className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-[0.65rem] font-semibold rounded-full whitespace-nowrap shrink-0 ${
+                  totpEnabled
+                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                    : 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                }`}
+              >
+                <span
+                  className={`w-1.5 h-1.5 rounded-full ${
+                    totpEnabled ? 'bg-emerald-500' : 'bg-amber-500'
+                  }`}
+                />
+                {totpEnabled ? 'Enabled' : 'Not enabled'}
+              </span>
             )}
+          </div>
 
-            {/* Setup Flow */}
-            {isSettingUp && qrCodeUrl && (
-              <div className="space-y-6">
-                <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
-                  <div className="flex items-start gap-3">
-                    <Smartphone className="w-5 h-5 text-blue-500 mt-0.5" />
-                    <div className="text-sm">
-                      <p className="font-medium text-gray-900 dark:text-white mb-1">
-                        Scan with your authenticator app
-                      </p>
-                      <p className="text-gray-500 dark:text-white/50">
-                        Use Google Authenticator, Authy, 1Password, or any TOTP
-                        app
-                      </p>
-                    </div>
-                  </div>
-                </div>
+          {/* Re-verification required */}
+          {needsReverification && (
+            <div className="mt-5 space-y-3">
+              <p className="text-sm text-gray-500 dark:text-white/50 flex items-center gap-2">
+                <Shield className="w-4 h-4 shrink-0" />
+                Confirm your password to continue
+              </p>
+              <div className="flex gap-2">
+                <Input
+                  type="password"
+                  placeholder="Your password"
+                  value={reverifyPassword}
+                  onChange={(e) => setReverifyPassword(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleReverify()}
+                  className="flex-1"
+                  autoFocus
+                />
+                <Button
+                  onClick={handleReverify}
+                  disabled={!reverifyPassword || reverifyLoading}
+                  variant="accent"
+                  size="sm"
+                  className="shrink-0"
+                >
+                  {reverifyLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    'Confirm'
+                  )}
+                </Button>
+              </div>
+              {reverifyError && (
+                <p className="text-xs text-red-500">{reverifyError}</p>
+              )}
+              <button
+                onClick={() => setNeedsReverification(false)}
+                className="text-xs text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/60 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
 
-                <div className="flex flex-col items-center py-6">
-                  <div className="p-4 bg-white rounded-2xl shadow-lg">
-                    <img
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
-                        qrCodeUrl
-                      )}`}
-                      alt="QR Code for authenticator"
-                      className="w-48 h-48"
-                    />
-                  </div>
-                </div>
-
-                {secret && (
-                  <div className="p-4 rounded-xl bg-gray-50 dark:bg-white/5">
-                    <p className="text-xs text-gray-500 dark:text-white/50 mb-2">
-                      Or enter this code manually:
+          {/* Setup Flow */}
+          {isSettingUp && qrCodeUrl && (
+            <div className="space-y-6">
+              <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
+                <div className="flex items-start gap-3">
+                  <Smartphone className="w-5 h-5 text-blue-500 mt-0.5" />
+                  <div className="text-sm">
+                    <p className="font-medium text-gray-900 dark:text-white mb-1">
+                      Scan with your authenticator app
                     </p>
-                    <div className="flex items-center gap-2">
-                      <code className="flex-1 px-3 py-2 bg-white dark:bg-white/10 rounded-lg text-sm font-mono text-gray-900 dark:text-white">
-                        {secret}
-                      </code>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={copySecret}
-                        className="shrink-0"
-                      >
-                        {copied ? (
-                          <Check className="w-4 h-4" />
-                        ) : (
-                          <Copy className="w-4 h-4" />
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                <div className="space-y-2">
-                  <Label className="text-sm text-gray-600 dark:text-white/60">
-                    Enter the 6-digit code from your app
-                  </Label>
-                  <Input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    maxLength={6}
-                    placeholder="000000"
-                    value={verificationCode}
-                    onChange={(e) =>
-                      setVerificationCode(e.target.value.replace(/\D/g, ''))
-                    }
-                    className="h-14 text-center text-2xl tracking-[0.5em] font-mono"
-                  />
-                </div>
-
-                {setupError && (
-                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-red-500" />
-                    <p className="text-sm text-red-600 dark:text-red-400">
-                      {setupError}
+                    <p className="text-gray-500 dark:text-white/50">
+                      Use Google Authenticator, Authy, 1Password, or any TOTP
+                      app
                     </p>
                   </div>
-                )}
-
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={cancelSetup}
-                    className="flex-1"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={verifyAndEnableTotp}
-                    disabled={verificationCode.length !== 6 || isVerifying}
-                    className="flex-1"
-                  >
-                    {isVerifying && (
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    )}
-                    {isVerifying ? 'Verifying...' : 'Enable 2FA'}
-                  </Button>
                 </div>
               </div>
-            )}
 
-            {/* Disable confirmation */}
-            {showDisableConfirm && (
-              <div className="space-y-4">
-                <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                  <p className="text-sm text-amber-700 dark:text-amber-400">
-                    Enter your authenticator code to disable 2FA. This will make
-                    your account less secure.
+              <div className="flex flex-col items-center py-6">
+                <div className="p-4 bg-white rounded-2xl shadow-lg">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+                      qrCodeUrl
+                    )}`}
+                    alt="QR Code for authenticator"
+                    className="w-48 h-48"
+                  />
+                </div>
+              </div>
+
+              {secret && (
+                <div className="p-4 rounded-xl bg-gray-50 dark:bg-white/5">
+                  <p className="text-xs text-gray-500 dark:text-white/50 mb-2">
+                    Or enter this code manually:
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <code className="flex-1 px-3 py-2 bg-white dark:bg-white/10 rounded-lg text-sm font-mono text-gray-900 dark:text-white">
+                      {secret}
+                    </code>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={copySecret}
+                      className="shrink-0"
+                    >
+                      {copied ? (
+                        <Check className="w-4 h-4" />
+                      ) : (
+                        <Copy className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label className="text-sm text-gray-600 dark:text-white/60">
+                  Enter the 6-digit code from your app
+                </Label>
+                <Input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={6}
+                  placeholder="000000"
+                  value={verificationCode}
+                  onChange={(e) =>
+                    setVerificationCode(e.target.value.replace(/\D/g, ''))
+                  }
+                  className="h-14 text-center text-2xl tracking-[0.5em] font-mono"
+                />
+              </div>
+
+              {setupError && (
+                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-red-500" />
+                  <p className="text-sm text-red-600 dark:text-red-400">
+                    {setupError}
                   </p>
                 </div>
+              )}
 
-                <div className="space-y-2">
-                  <Label className="text-sm text-gray-600 dark:text-white/60">
-                    Authentication code
-                  </Label>
-                  <Input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    maxLength={6}
-                    placeholder="000000"
-                    value={disableCode}
-                    onChange={(e) =>
-                      setDisableCode(e.target.value.replace(/\D/g, ''))
-                    }
-                    className="h-12 text-center text-xl tracking-[0.5em] font-mono"
-                  />
-                </div>
-
-                {setupError && (
-                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-red-500" />
-                    <p className="text-sm text-red-600 dark:text-red-400">
-                      {setupError}
-                    </p>
-                  </div>
-                )}
-
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setShowDisableConfirm(false);
-                      setDisableCode('');
-                      setSetupError(null);
-                    }}
-                    className="flex-1"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={disableTotp}
-                    disabled={disableCode.length !== 6 || isDisabling}
-                    variant="destructive"
-                    className="flex-1"
-                  >
-                    {isDisabling && (
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    )}
-                    {isDisabling ? 'Disabling...' : 'Disable 2FA'}
-                  </Button>
-                </div>
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={cancelSetup}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={verifyAndEnableTotp}
+                  disabled={verificationCode.length !== 6 || isVerifying}
+                  className="flex-1"
+                >
+                  {isVerifying && (
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  )}
+                  {isVerifying ? 'Verifying...' : 'Enable 2FA'}
+                </Button>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Enable/Disable buttons */}
-            {!isSettingUp && !showDisableConfirm && (
-              <div className="mt-4">
-                {totpEnabled ? (
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowDisableConfirm(true)}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10"
-                  >
-                    Disable Two-Factor Authentication
-                  </Button>
-                ) : (
-                  <Button onClick={startTotpSetup}>
-                    <QrCode className="w-4 h-4 mr-2" />
-                    Set Up Authenticator App
-                  </Button>
-                )}
+          {/* Disable confirmation */}
+          {showDisableConfirm && (
+            <div className="space-y-4">
+              <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                <p className="text-sm text-amber-700 dark:text-amber-400">
+                  Enter your authenticator code to disable 2FA. This will make
+                  your account less secure.
+                </p>
               </div>
-            )}
-          </div>
 
-          {/* Info */}
-          <div className="mt-6 p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
-            <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
-              Why use two-factor authentication?
-            </h3>
-            <ul className="text-xs text-gray-500 dark:text-white/50 space-y-1">
-              <li>
-                • Protects your account even if your password is compromised
-              </li>
-              <li>• Required for team members to access sensitive data</li>
-              <li>• Uses time-based codes that expire every 30 seconds</li>
-            </ul>
-          </div>
+              <div className="space-y-2">
+                <Label className="text-sm text-gray-600 dark:text-white/60">
+                  Authentication code
+                </Label>
+                <Input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={6}
+                  placeholder="000000"
+                  value={disableCode}
+                  onChange={(e) =>
+                    setDisableCode(e.target.value.replace(/\D/g, ''))
+                  }
+                  className="h-12 text-center text-xl tracking-[0.5em] font-mono"
+                />
+              </div>
+
+              {setupError && (
+                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-red-500" />
+                  <p className="text-sm text-red-600 dark:text-red-400">
+                    {setupError}
+                  </p>
+                </div>
+              )}
+
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowDisableConfirm(false);
+                    setDisableCode('');
+                    setSetupError(null);
+                  }}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={disableTotp}
+                  disabled={disableCode.length !== 6 || isDisabling}
+                  variant="destructive"
+                  className="flex-1"
+                >
+                  {isDisabling && (
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  )}
+                  {isDisabling ? 'Disabling...' : 'Disable 2FA'}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Enable/Disable buttons */}
+          {!isSettingUp && !showDisableConfirm && (
+            <div className="mt-4">
+              {totpEnabled ? (
+                <Button
+                  variant="outline"
+                  onClick={() => setShowDisableConfirm(true)}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10"
+                >
+                  Disable Two-Factor Authentication
+                </Button>
+              ) : (
+                <Button onClick={startTotpSetup}>
+                  <QrCode className="w-4 h-4 mr-2" />
+                  Set Up Authenticator App
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Info */}
+        <div className="mt-6 p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
+          <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
+            Why use two-factor authentication?
+          </h3>
+          <ul className="text-xs text-gray-500 dark:text-white/50 space-y-1">
+            <li>
+              • Protects your account even if your password is compromised
+            </li>
+            <li>• Required for team members to access sensitive data</li>
+            <li>• Uses time-based codes that expire every 30 seconds</li>
+          </ul>
+        </div>
       </ShellCard>
     </TeamDashboardShell>
   );

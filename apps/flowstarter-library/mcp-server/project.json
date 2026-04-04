@@ -1,7 +1,7 @@
 {
   "name": "@flowstarter/mcp-server",
   "projectType": "application",
-  "tags": ["app:mcp-server", "platform:railway"],
+  "tags": ["app:library", "platform:railway"],
   "targets": {
     "build": {
       "executor": "nx:run-commands",
@@ -46,7 +46,10 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint"
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": ["apps/flowstarter-library/mcp-server/src/**/*.ts"]
+      }
     },
     "typecheck": {
       "executor": "nx:run-commands",

@@ -1,4 +1,5 @@
 import { memo, useRef, useState } from 'react';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useStore } from '@nanostores/react';
 import { IconButton } from '~/components/ui/IconButton';
 import { useTranslation } from '~/lib/i18n/useTranslation';
@@ -194,7 +195,9 @@ export const PreviewHeader = memo(
             <div className="absolute right-0 top-full mt-2 z-[999] min-w-[240px] max-h-[400px] overflow-y-auto bg-flowstarter-elements-background-depth-1 rounded-xl shadow-2xl border border-flowstarter-elements-borderColor overflow-hidden">
               <div className="p-3 border-b border-flowstarter-elements-borderColor">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-flowstarter-elements-textPrimary">{t.workbench.previewHeader.windowOptions}</span>
+                  <span className="text-sm font-medium text-flowstarter-elements-textPrimary">
+                    {t.workbench.previewHeader.windowOptions}
+                  </span>
                 </div>
                 <div className="flex flex-col gap-2">
                   <button
@@ -207,7 +210,9 @@ export const PreviewHeader = memo(
                     <span className="i-lucide:external-link h-5 w-4 text-current"></span>
                   </button>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-flowstarter-elements-textTertiary">{t.workbench.previewHeader.showDeviceFrame}</span>
+                    <span className="text-xs text-flowstarter-elements-textTertiary">
+                      {t.workbench.previewHeader.showDeviceFrame}
+                    </span>
                     <button
                       className={`w-10 h-5 rounded-full transition-colors duration-200 ${
                         showDeviceFrame
@@ -227,7 +232,9 @@ export const PreviewHeader = memo(
                     </button>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-flowstarter-elements-textTertiary">{t.workbench.previewHeader.landscapeMode}</span>
+                    <span className="text-xs text-flowstarter-elements-textTertiary">
+                      {t.workbench.previewHeader.landscapeMode}
+                    </span>
                     <button
                       className={`w-10 h-5 rounded-full transition-colors duration-200 ${
                         isLandscape

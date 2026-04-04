@@ -41,14 +41,61 @@ export default function LandingPage() {
     <>
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-        .font-display { font-family: 'Outfit', system-ui, sans-serif; }
-        @keyframes flowDrift { 0% { transform: translateX(0); } 100% { transform: translateX(40px); } }
-        @keyframes flowDrift2 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(-30px) translateY(15px); } }
-        @keyframes flowDrift3 { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(20px) translateY(-10px); } }
-        @keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        .animate-cursor-blink { animation: cursorBlink 1s step-end infinite; }
-        @keyframes typing { from { width: 0; } to { width: 100%; } }
-        .typing-container { overflow: hidden; white-space: nowrap; border-right: 2px solid var(--purple); animation: typing 2s steps(30) forwards, cursorBlink 1s step-end infinite; will-change: transform; }
+        .font-display {
+          font-family: 'Outfit', system-ui, sans-serif;
+        }
+        @keyframes flowDrift {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(40px);
+          }
+        }
+        @keyframes flowDrift2 {
+          0% {
+            transform: translateX(0) translateY(0);
+          }
+          100% {
+            transform: translateX(-30px) translateY(15px);
+          }
+        }
+        @keyframes flowDrift3 {
+          0% {
+            transform: translateX(0) translateY(0);
+          }
+          100% {
+            transform: translateX(20px) translateY(-10px);
+          }
+        }
+        @keyframes cursorBlink {
+          0%,
+          100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0;
+          }
+        }
+        .animate-cursor-blink {
+          animation: cursorBlink 1s step-end infinite;
+        }
+        @keyframes typing {
+          from {
+            width: 0;
+          }
+          to {
+            width: 100%;
+          }
+        }
+        .typing-container {
+          overflow: hidden;
+          white-space: nowrap;
+          border-right: 2px solid var(--purple);
+          animation: typing 2s steps(30) forwards,
+            cursorBlink 1s step-end infinite;
+          will-change: transform;
+        }
       `}</style>
 
       <div className="min-h-screen bg-[var(--landing-bg)] dark:bg-[var(--landing-dark-surface)] text-gray-900 dark:text-white font-display relative transition-colors duration-300">
@@ -60,7 +107,11 @@ export default function LandingPage() {
 
         {/* 2. Audience — who this is for */}
         <AudienceSection />
-        <PreQualModal open={modalOpen} onClose={() => setModalOpen(false)} source="page" />
+        <PreQualModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          source="page"
+        />
 
         {/* 2. Editor demo showcase */}
         <EditorShowcase />
@@ -102,7 +153,7 @@ export default function LandingPage() {
         <Footer />
         <CookieConsent />
       </div>
-        <ScrollFab />
+      <ScrollFab />
     </>
   );
 }

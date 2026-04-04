@@ -90,4 +90,3 @@ export const STARTER_TEMPLATES: Template[] = [
     icon: 'i-flowstarter:qwik',
   },
 ];
-

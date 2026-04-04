@@ -5,7 +5,9 @@ import { useState, useEffect, useRef } from 'react';
  * Reads from sessionStorage, scrolls to the card, then clears after 3s.
  */
 export function useProjectHighlight(deps: unknown[] = []) {
-  const [highlightProjectId, setHighlightProjectId] = useState<string | null>(null);
+  const [highlightProjectId, setHighlightProjectId] = useState<string | null>(
+    null
+  );
   const highlightedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

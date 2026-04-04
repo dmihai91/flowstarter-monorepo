@@ -126,7 +126,10 @@ export const createThinkingArtifactElement: ElementFactory = (props) => {
 export function cleanoutMarkdownSyntax(content: string) {
   const codeBlockRegex = /^\s*```[\w-]*\s*\n?([\s\S]*?)\n?\s*```\s*$/;
   const match = content.match(codeBlockRegex);
-  if (match) return match[1].trim();
+
+  if (match) {
+    return match[1].trim();
+  }
 
   const multilineCodeBlockRegex = /```[\w-]*\s*\n([\s\S]*?)```/g;
   let cleaned = content.replace(multilineCodeBlockRegex, (_match, code) => code.trim());

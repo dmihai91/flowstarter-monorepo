@@ -46,60 +46,64 @@ export const LANDING_COPY = {
     templatesLabel: 'Templates',
   },
   hero: {
-    headlinePrefix: 'Every expert deserves a site that looks as good as their work.',
-    headlineHighlight: 'We build it for you.',
+    headlinePrefix:
+      'The right clients are out there looking for you.',
+    headlineHighlight: "Let's make sure they find you.",
     subheadlineBold: '',
     subheadline:
-      'We build your professional site, hand you a smart editor, and you never touch code. Most clients go live in 5–7 days.',
-    primaryCta: "Let's build it",
-    secondaryCta: "See what's included",
-    trustLine: 'For coaches, consultants, freelancers, and founders who want to show up like they mean it, without touching code.',
-    guarantee: 'Spots are limited to 8 new projects per month. Most clients go live within a week.',
+      'Starting from scratch or tired of a site that isn\'t working? One call. We build or rebuild your site in 5–7 days. You stay in control with a smart editor. No code, no waiting, no back and forth.',
+    primaryCta: 'Start getting clients',
+    secondaryCta: 'See plans and pricing',
+    trustLine:
+      'For coaches, consultants, therapists, freelancers and founders — whether you\'re starting from scratch or ready to relaunch.',
+    guarantee:
+      'First month free. Not happy in 30 days? We refund 50% of your setup fee. No questions asked.',
   },
   process: {
-    title: 'Three steps. One week. A site you\'re proud of.',
+    title: "Three steps. One week. A site you're proud of.",
     steps: [
       {
         number: '01',
         title: 'We talk for 45 minutes',
         description:
-          'You book a free discovery call. We ask the right questions about your brand, your clients, and what you want your site to do. You don\'t need to prepare anything.',
+          "You book a free discovery call. We ask the right questions about your brand, your clients, and what you want your site to do. You don't need to prepare anything.",
       },
       {
         number: '02',
         title: 'We build it',
         description:
-          'Our team picks the right template, writes the structure, and customises everything to your brand. You review one draft. We refine. That\'s it.',
+          "Our team picks the right template, writes the structure, and customises everything to your brand. You review one draft. We refine. That's it.",
       },
       {
         number: '03',
         title: 'You go live',
         description:
-          'Your site launches. You get access to our smart editor — update anything yourself in seconds, no code, no back-and-forth. You\'re in control.',
+          "Your site launches. You get access to our smart editor so you can update anything yourself in seconds, no code, no waiting. You're in control.",
       },
     ],
   },
   problem: {
-    title: 'Getting online shouldn\'t be this hard.',
+    title: "Whether you're starting fresh or starting over — getting it right shouldn't take months.",
     pains: [
       {
-        icon: 'clock',
-        title: 'Every hour on your website is an hour not spent on clients.',
-        body: 'Design decisions. Copy rewrites. Broken forms. It eats weeks. Your competitors are already booked.',
-      },
-      {
-        icon: 'wallet',
-        title: 'Agencies charge thousands. DIY tools look easy — until they\'re not.',
-        body: 'You hit the first technical wall and you\'re suddenly watching YouTube tutorials at midnight.',
+        icon: 'globe',
+        title: "No website yet? Every day you wait is a client that found someone else.",
+        body: "You know you need a proper online presence. But between templates, copy, tech, and design decisions, it never gets done. Flowstarter does it for you in a week.",
       },
       {
         icon: 'puzzle',
-        title: 'Website builders give you tools, not a website.',
-        body: 'A blank canvas isn\'t a starting point. It\'s a full-time job you didn\'t sign up for.',
+        title: "Already have a site? If it's not getting you clients, it's not working.",
+        body: "A site that looks outdated or doesn't convert is costing you leads every day. A fresh start with the right structure changes that.",
+      },
+      {
+        icon: 'wallet',
+        title:
+          "Traditional website projects take weeks and cost more than expected. DIY tools look easy, until they're not.",
+        body: "You hit the first technical wall and you're suddenly watching YouTube tutorials at midnight. Still not live.",
       },
     ],
     closing:
-      'Flowstarter builds the setup so you skip straight to the part where you get clients.',
+      'Flowstarter skips all of that. One call, and your site is live within a week — whether it\'s your first or your best.',
   },
   pillars: {
     title: 'Built to help you launch, manage, and improve',
@@ -110,22 +114,19 @@ export const LANDING_COPY = {
         icon: 'layers',
         title: 'Structured from day one',
         subtitle: 'A real business foundation',
-        body:
-          'Start with a clear offer structure, sections that make sense, and the essentials already connected.',
+        body: 'Start with a clear offer structure, sections that make sense, and the essentials already connected.',
       },
       {
         icon: 'layout',
         title: 'Control without complexity',
         subtitle: 'One place to manage',
-        body:
-          'Make updates, adjust content, and keep your site sharp — on your own schedule, no dependencies.',
+        body: 'Make updates, adjust content, and keep your site sharp. On your own schedule, no dependencies.',
       },
       {
         icon: 'sparkles',
         title: 'Designed to evolve',
         subtitle: 'Built-in smart editor',
-        body:
-          'Improve copy, sharpen positioning, and keep iterating as your business grows.',
+        body: 'Improve copy, sharpen positioning, and keep iterating as your business grows.',
       },
     ],
   },
@@ -135,97 +136,117 @@ export const LANDING_COPY = {
       {
         icon: 'globe',
         title: 'A live landing page for your offer',
-        description: 'Designed, structured, and ready. Live before you touch anything.',
+        description:
+          'Designed, structured, and ready. Live before you touch anything.',
       },
       {
         icon: 'layers',
         title: 'Your services and pricing laid out clearly',
-        description: 'Your offer structure is set up so visitors understand it and convert.',
+        description:
+          'Your offer structure is set up so visitors understand it and convert.',
       },
       {
         icon: 'calendar',
         title: 'Booking and contact, ready to go',
-        description: 'Clients book calls and reach you directly. No inbox management needed.',
+        description:
+          'Clients book calls and reach you directly. No inbox management needed.',
       },
       {
         icon: 'creditCard',
         title: 'Payments and email on higher plans',
-        description: 'Accept payments and grow your list as your business scales to Growth and Pro.',
+        description:
+          'Accept payments and grow your list as your business scales to Growth and Pro.',
       },
       {
         icon: 'sparkles',
         title: 'Change anything yourself, no code needed',
-        description: 'Type what you want updated. Our smart editor handles the rest. No code, no waiting.',
+        description:
+          'Type what you want updated. Our smart editor handles the rest. No code, no waiting.',
       },
       {
         icon: 'layout',
         title: 'One dashboard for everything',
-        description: 'Your site, leads, bookings, and settings. All in one place.',
+        description:
+          'Your site, leads, bookings, and settings. All in one place.',
+      },
+      {
+        icon: 'briefcase',
+        title: 'Integrations built in',
+        description:
+          'Calendly for bookings, Google Analytics for traffic insights, and more — all connected at launch, no setup needed on your end.',
       },
     ],
   },
   pricing: {
-    title: 'One setup. One price. Full control from day one.',
-    subtitle: 'Pay once to launch. Stay on the monthly plan for our smart editor and dashboard. Cancel anytime.',
-    socialProof: 'Only 10 founding-rate spots available per month. Beta pricing is live now.',
-    note:
-      'No tech skills needed. No waiting on anyone. Full control after launch.',
-    relaunchNote: 'Already have a site that isn\'t working? Ask about Flowstarter Relaunch on your discovery call.',
+    title: 'Clear pricing. No surprises. Rate locked forever.',
+    subtitle:
+      'Pay once to launch. €39/month keeps everything running, and that rate is yours for life. First month is free. If you are not happy within 30 days, we refund 50% of the setup fee.',
+    socialProof:
+      'Only 8 spots per month. First month free. 50% setup refund if not happy in the first 30 days.',
+    note: 'No tech skills needed. Full control after launch.',
+    relaunchNote:
+      "Already have a site that isn't working? Ask about Flowstarter Relaunch on your discovery call.",
     plans: [
       {
         name: 'STARTER',
         label: 'Get online fast',
-        setupPrice: '499€',
-        monthlyPrice: '39€/month',
+        setupPrice: '€499',
+        monthlyPrice: '€39/month, locked in forever',
         features: [
           'Live landing page for your offer',
           'Offer and pricing structure set up',
           'Online booking and contact form',
-          'Visitor tracking',
+          'Visitor tracking and analytics',
           'Smart editor: update anything yourself',
           'Your own business dashboard',
+          'First month free',
+          '50% setup refund if not happy in 30 days',
         ],
         cta: 'Claim your Starter spot',
         status: 'available',
       },
       {
         name: 'RELAUNCH',
-        label: 'Already have a site?',
-        setupPrice: '699€–999€',
-        monthlyPrice: '39€/month',
+        label: 'Your existing site, rebuilt to convert',
+        setupPrice: '€699–€999',
+        monthlyPrice: '€39/month, locked in forever',
         features: [
-          'Full audit of your existing site',
-          'Content migration from your old site',
-          'SEO redirect mapping',
+          'Full audit of what is costing you leads',
+          'Content migration from your existing site',
+          'SEO redirect mapping so you keep your rankings',
+          'New structure built to convert visitors',
           'Everything in Starter included',
-          'Complexity assessed on discovery call',
+          'First month free',
+          '50% setup refund if not happy in 30 days',
         ],
-        cta: 'Discuss your project',
+        cta: 'Discuss your relaunch',
         ctaVariant: 'outline',
         status: 'available',
       },
       {
         name: 'GROWTH',
-        label: 'Start converting visitors',
-        setupPrice: '999€–1499€',
-        monthlyPrice: '59€/month',
+        label: 'Turn visitors into paying clients',
+        setupPrice: '€999–€1,499',
+        monthlyPrice: '€59/month, locked in forever',
         features: [
           'Everything in Starter',
-          'Email list and newsletters',
+          'Email list setup and newsletters',
           'Online payment setup',
-          'Sales page to convert visitors',
+          'Sales page built to convert',
           'Visitor and revenue insights',
-          'Built to turn traffic into clients',
+          'First month free',
+          '50% setup refund if not happy in 30 days',
         ],
-        cta: 'Choose Growth',
-        badge: 'Recommended',
+        cta: 'Claim your Growth spot',
+        badge: 'Most popular',
+        recommended: true,
         status: 'available',
       },
       {
         name: 'PRO',
         label: 'Scale your business',
-        setupPrice: '1999€+',
-        monthlyPrice: '79€/month',
+        setupPrice: '€1,999+',
+        monthlyPrice: '€79/month',
         features: [
           'Everything in Growth',
           'Digital and physical product selling',
@@ -238,29 +259,32 @@ export const LANDING_COPY = {
         status: 'coming-soon',
       },
     ],
-    guarantee: '50% of your setup fee is refundable within 30 days. If we don\'t deliver, you don\'t pay in full.',
+    guarantee:
+      'We collect 50% upfront to start. The remaining 50% is due only when you love the result. Your first month is free. If you are not happy within 30 days, we refund 50% of your setup fee. No questions asked.',
   },
   differentiation: {
     title: 'A completely different kind of website launch.',
     cards: [
       {
         label: 'Website builders',
-        description: 'Give you tools. Leave you to figure out the rest.',
+        description:
+          'Give you a blank canvas and a 47-tab tutorial. You do all the work.',
       },
       {
-        label: 'Going it alone',
-        description: 'DIY tools take weeks to learn and still leave you with a site that feels unfinished.',
+        label: 'Traditional approach',
+        description:
+          'Longer timelines, higher budgets, and you still need to go back whenever something needs updating.',
       },
       {
         label: 'Flowstarter',
         description:
-          'Done for you in days. Smart editor included. Full control after launch.',
+          'Done for you in days — whether it\'s your first site or a full relaunch. Smart editor included. Rate locked forever.',
         bullets: [
-          'Done-for-you setup, live in days, not months',
-          'Smart editor included, no developer needed',
-          'Landing page, booking, and structure all set up',
-          'One dashboard to manage everything after launch',
-          'Real people behind it, not just a tool',
+          'New site or relaunch — both done in 5–7 days from one 45-min call',
+          'Smart editor: update anything yourself, no code',
+          'Booking, contact form, and analytics all connected',
+          'One dashboard for your leads, your site, your control',
+          '50% upfront. Rest only when you love the result.',
         ],
         highlighted: true,
       },
@@ -269,12 +293,38 @@ export const LANDING_COPY = {
   audience: {
     title: 'This is for you if...',
     items: [
-      { icon: 'clock', label: 'You\'ve been meaning to fix your website for months' },
-      { icon: 'puzzle', label: 'You tried DIY tools and hated every minute of it' },
-      { icon: 'mic', label: 'Your current site doesn\'t reflect how good you actually are' },
-      { icon: 'users', label: 'You want clients to find you, trust you, and reach out' },
-      { icon: 'rocket', label: 'You want it done fast, by someone who gets it' },
-      { icon: 'check', label: 'You\'re a coach, consultant, therapist, or solo pro' },
+      {
+        icon: 'globe',
+        label: "You don't have a website yet and want to get online properly from day one",
+      },
+      {
+        icon: 'mic',
+        label: "You have a site but it's not bringing in clients, and you've tried to fix it",
+      },
+      {
+        icon: 'clock',
+        label: "Your website has been on the to-do list for too long",
+      },
+      {
+        icon: 'users',
+        label: 'You want clients to find you, trust you, and reach out',
+      },
+      {
+        icon: 'puzzle',
+        label: 'You want a professional result without doing it yourself',
+      },
+      {
+        icon: 'rocket',
+        label: 'You want it done fast and done properly',
+      },
+      {
+        icon: 'check',
+        label: "You're a coach, consultant, therapist, or solo pro",
+      },
+      {
+        icon: 'calendar',
+        label: 'You want booking, analytics, and email all connected and ready from day one',
+      },
     ],
   },
   faq: {
@@ -283,58 +333,67 @@ export const LANDING_COPY = {
       {
         question: 'What exactly do I get?',
         answer:
-          'A done-for-you launch: your landing page, offer structure, booking setup, and essential tools connected. Plus your own dashboard and smart editor so you can manage everything after launch, with no developer needed.',
+          'A done-for-you launch: your landing page, offer structure, booking setup, and analytics, all connected. Plus your own dashboard and smart editor so you can manage everything after launch, no developer needed. Most clients are live within 5 to 7 days.',
       },
       {
-        question: 'Already have a site that isn\'t working for you?',
+        question: 'How does payment work? Is there a guarantee?',
         answer:
-          'Flowstarter Relaunch is built for that. We audit your existing site, migrate your content into a production-ready template, and hand you back a site with a real structure. Pricing starts at €699 depending on complexity. Book a free discovery call and we\'ll assess it together.',
+          'We collect 50% upfront to start your project. You only pay the remaining 50% when you are happy with the result. Your first month of subscription is free. If you are not satisfied within the first 30 days, we refund 50% of the setup fee. No questions asked. Your monthly rate is also locked in for life. New clients who join later pay more.',
+      },
+      {
+        question: 'My current site exists but it is not getting me clients. Can you help?',
+        answer:
+          "Yes, that is exactly what the Relaunch plan is for. We audit what is costing you leads, migrate your content, set up proper SEO redirects so you keep your rankings, and rebuild the structure around converting visitors. Pricing starts at €699 depending on complexity. Book a free discovery call and we will assess it together.",
       },
       {
         question: 'How long does launch usually take?',
         answer:
-          'The goal is days, not months. Most setups are intentionally lean and fast. Timing depends on scope, but we move quickly.',
+          'Most sites go live within 5–7 days of your discovery call. We move fast and keep you in the loop throughout.',
       },
       {
         question: 'Can I update the site myself after launch?',
         answer:
-          'Yes. Our smart editor lets you change any section yourself, no code, no waiting on anyone.',
+          'Yes. Our smart editor lets you rewrite copy, update images, add sections, or change anything, just by describing what you want in plain language. No code, no waiting on anyone.',
       },
       {
         question: 'Do I need technical skills?',
         answer:
-          'None. Flowstarter is built for people who want a serious online presence without learning to code.',
+          'None. Flowstarter is built for people who want a serious online presence without learning to code. If you can send a WhatsApp, you can manage your site.',
       },
       {
-        question: 'What changes on the higher tiers?',
+        question: 'What changes on higher plans?',
         answer:
-          'Growth adds online payments, email marketing, and a sales page to turn visitors into clients. Pro expands into a full multi-page website with custom automations.',
+          'Growth adds online payments, email marketing, and a dedicated sales page to turn visitors into paying clients. Pro expands into a full multi-page website with custom automations and priority support.',
       },
       {
         question: 'Am I locked into a long-term contract?',
         answer:
-          'No. The setup is a one-time fee. The monthly plan keeps our smart editor and dashboard running. Cancel anytime.',
+          'No contracts. The setup is a one-time fee. The monthly plan keeps your site, smart editor, and dashboard running. Cancel anytime and you keep all your site files no matter what.',
       },
     ],
   },
   testimonials: {
     title: 'What our clients say',
-    subtitle: '40+ sites launched. Average delivery 6 days. 4.9 / 5 client rating.',
+    subtitle:
+      '40+ sites launched. Average delivery 6 days. 4.9 / 5 client rating.',
     items: [
       {
-        quote: 'I had been meaning to fix my website for two years. Flowstarter had it live in five days. I already had three new clients reach out through it in the first month.',
+        quote:
+          'I had been meaning to fix my website for two years. Flowstarter had it live in five days. I already had three new clients reach out through it in the first month.',
         name: 'Sophie M.',
         role: 'Leadership Coach',
         initials: 'SM',
       },
       {
-        quote: "I was skeptical — I'd tried Squarespace, Wix, hired a freelancer. None of it stuck. This was completely different. One call, one draft, done. My site finally looks like a real business.",
+        quote:
+          "I was skeptical. I had tried Squarespace, Wix, even hired a freelancer. None of it stuck. This was completely different. One call, one draft, done. My site finally looks like a real business.",
         name: 'James R.',
         role: 'Strategy Consultant',
         initials: 'JR',
       },
       {
-        quote: "I'm not technical at all. The smart editor means I can update my site myself when I need to. I changed my pricing page last week in about two minutes.",
+        quote:
+          "I'm not technical at all. The smart editor means I can update my site myself when I need to. I changed my pricing page last week in about two minutes.",
         name: 'Lena K.',
         role: 'Therapist & Wellbeing Coach',
         initials: 'LK',
@@ -342,9 +401,8 @@ export const LANDING_COPY = {
     ],
   },
   finalCta: {
-    headline: 'Your next client is searching for someone like you.',
-    body:
-      'Make sure they find you. One 45-minute call is all it takes. No commitment, no tech knowledge needed. Spots are limited to 8 new projects per month.',
+    headline: 'Your next client is searching for someone like you right now.',
+    body: 'Make sure they find you. One 45-minute call is all it takes. No tech skills, no commitment needed. Only 8 spots per month, and we only ask for 50% until you love the result.',
     cta: 'Book a free discovery call',
   },
 };

@@ -124,7 +124,8 @@ export default function IntegrationsIndexPage() {
     {
       id: 'cal-com',
       name: 'Cal.com',
-      description: 'Open-source scheduling — embed booking directly in your site',
+      description:
+        'Open-source scheduling — embed booking directly in your site',
       icon: Calendar,
       status: 'not_connected',
       features: [
@@ -290,11 +291,7 @@ export default function IntegrationsIndexPage() {
           {integrations.map((integration, index) => {
             const animation = getStaggeredAnimation(index, cardsVisible);
             return (
-              <div
-                key={integration.id}
-                
-                style={animation}
-              >
+              <div key={integration.id} style={animation}>
                 <IntegrationCard
                   integration={integration}
                   onConnect={() => handleConnect(integration.id as Provider)}
@@ -310,7 +307,8 @@ export default function IntegrationsIndexPage() {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {selectedProvider === 'google-analytics' && 'Connect Google Analytics'}
+              {selectedProvider === 'google-analytics' &&
+                'Connect Google Analytics'}
               {selectedProvider === 'calendly' && 'Connect Calendly'}
               {selectedProvider === 'cal-com' && 'Connect Cal.com'}
               {selectedProvider === 'mailchimp' && 'Connect Mailchimp'}

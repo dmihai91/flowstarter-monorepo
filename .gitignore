@@ -42,7 +42,18 @@ Thumbs.db
 .nx/cache
 .nx/workspace-data
 mprocs.log
-.env.shared
+
+# Environment files — NEVER commit secrets
+# Ignore all .env files across the entire monorepo
+.env
+.env.*
+!.env.example
+!.env.*.example
+!.env.shared.example
+!.env.test.example
+
+# E2E auth session data (contains tokens/cookies)
+**/.auth/
 
 # M4 sync scripts
 m4-sync.sh

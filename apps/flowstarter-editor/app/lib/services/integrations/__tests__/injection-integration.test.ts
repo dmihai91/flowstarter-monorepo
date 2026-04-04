@@ -5,7 +5,7 @@
  * all integrations injected correctly and produces valid HTML.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { injectIntegrations } from '../index';
+import { injectIntegrations } from '~/lib/services/integrations/index';
 
 // Realistic generated site files (coach-pro template structure)
 const generatedSite = [
@@ -121,20 +121,23 @@ describe('Full site injection integration', () => {
     expect(layout.content).toContain('googletagmanager.com/gtag/js?id=G-DEMO123');
     expect(layout.content).toContain('calendly.com/assets/external/widget.css');
     expect(layout.content).toContain('calendly.com/assets/external/widget.js');
+
     // Scripts are inside <head>
-    const headContent = layout.content.slice(
-      layout.content.indexOf('<head>'),
-      layout.content.indexOf('</head>'),
-    );
+    const headContent = layout.content.slice(layout.content.indexOf('<head>'), layout.content.indexOf('</head>'));
     expect(headContent).toContain('gtag');
     expect(headContent).toContain('calendly');
 
-    // Contact page: Calendly replaces the form; lead capture won't inject
-    // (no <form> left after Calendly injection)
+    /*
+     * Contact page: Calendly replaces the form; lead capture won't inject
+     * (no <form> left after Calendly injection)
+     */
     const contact = result.find((f) => f.path.includes('contact.astro'))!;
     expect(contact.content).toContain('calendly-inline-widget');
-    // Lead capture only injects when a form exists; Calendly replaced it
-    // This is the correct behavior: booking replaces the form
+
+    /*
+     * Lead capture only injects when a form exists; Calendly replaced it
+     * This is the correct behavior: booking replaces the form
+     */
 
     // Other pages: untouched
     const about = result.find((f) => f.path.includes('about.astro'))!;
@@ -208,26 +211,52 @@ describe('Full site injection integration', () => {
 
     // First ID still there
     expect(layout.content).toContain('G-FIRST');
-    // Second ID also injected (idempotency only prevents same ID)
-    // This is by design: different IDs = different properties
+
+    /*
+     * Second ID also injected (idempotency only prevents same ID)
+     * This is by design: different IDs = different properties
+     */
     expect(layout.content).toContain('G-SECOND');
   });
 
   it('Calendly API mode injects popup buttons with service names', async () => {
-    const mockFetch = vi.fn()
+    const mockFetch = vi
+      .fn()
       .mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ resource: { uri: 'https://api.calendly.com/users/u1' } }),
       })
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({
-          collection: [
-            { uri: 'e1', name: 'Consultatie 30 min', slug: 'consult', duration: 30, scheduling_url: 'https://calendly.com/elena/consult', active: true },
-            { uri: 'e2', name: 'Tratament facial', slug: 'facial', duration: 60, scheduling_url: 'https://calendly.com/elena/facial', active: true },
-            { uri: 'e3', name: 'Archived', slug: 'old', duration: 15, scheduling_url: 'https://calendly.com/elena/old', active: false },
-          ],
-        }),
+        json: () =>
+          Promise.resolve({
+            collection: [
+              {
+                uri: 'e1',
+                name: 'Consultatie 30 min',
+                slug: 'consult',
+                duration: 30,
+                scheduling_url: 'https://calendly.com/elena/consult',
+                active: true,
+              },
+              {
+                uri: 'e2',
+                name: 'Tratament facial',
+                slug: 'facial',
+                duration: 60,
+                scheduling_url: 'https://calendly.com/elena/facial',
+                active: true,
+              },
+              {
+                uri: 'e3',
+                name: 'Archived',
+                slug: 'old',
+                duration: 15,
+                scheduling_url: 'https://calendly.com/elena/old',
+                active: false,
+              },
+            ],
+          }),
       });
 
     vi.stubGlobal('fetch', mockFetch);
@@ -257,9 +286,7 @@ describe('Full site injection integration', () => {
       leadCapture: { projectId: `proj-${i}`, apiUrl: 'https://flowstarter.dev/api/leads/capture' },
     }));
 
-    const results = await Promise.all(
-      configs.map((config) => injectIntegrations([...generatedSite], config)),
-    );
+    const results = await Promise.all(configs.map((config) => injectIntegrations([...generatedSite], config)));
 
     // Each result should have its own ID
     results.forEach((result, i) => {

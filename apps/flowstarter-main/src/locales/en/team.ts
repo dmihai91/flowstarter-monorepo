@@ -54,7 +54,8 @@ export const teamKeys = {
   'team.dashboard.untitledProject': 'Untitled Project',
   'team.dashboard.unknownOwner': 'Unknown',
   'team.dashboard.deleteProject': 'Delete Project',
-  'team.dashboard.deleteConfirm': 'Are you sure you want to delete "{name}"? This action cannot be undone.',
+  'team.dashboard.deleteConfirm':
+    'Are you sure you want to delete "{name}"? This action cannot be undone.',
   'team.dashboard.renameProject': 'Rename Project',
   'team.dashboard.projectNamePlaceholder': 'Project name',
   'team.dashboard.projectPricing': 'Project Pricing',

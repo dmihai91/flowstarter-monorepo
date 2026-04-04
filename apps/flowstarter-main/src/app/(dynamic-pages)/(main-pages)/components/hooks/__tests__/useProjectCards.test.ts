@@ -53,7 +53,9 @@ describe('useProjectCards', () => {
     const projects = [makeProject({ name: null })];
     const { result } = renderHook(() => useProjectCards(projects));
 
-    expect(result.current[0].name).toBe('dashboard.projects.draftPlaceholderName');
+    expect(result.current[0].name).toBe(
+      'dashboard.projects.draftPlaceholderName'
+    );
   });
 
   it('maps known template_id strings to labels', () => {
@@ -91,13 +93,17 @@ describe('useProjectCards', () => {
   });
 
   it('prefers updated_at over created_at for createdAt', () => {
-    const projects = [makeProject({ updated_at: '2025-06-01', created_at: '2025-01-01' })];
+    const projects = [
+      makeProject({ updated_at: '2025-06-01', created_at: '2025-01-01' }),
+    ];
     const { result } = renderHook(() => useProjectCards(projects));
     expect(result.current[0].createdAt).toBe('2025-06-01');
   });
 
   it('falls back to created_at when updated_at is null', () => {
-    const projects = [makeProject({ updated_at: null, created_at: '2025-01-01' })];
+    const projects = [
+      makeProject({ updated_at: null, created_at: '2025-01-01' }),
+    ];
     const { result } = renderHook(() => useProjectCards(projects));
     expect(result.current[0].createdAt).toBe('2025-01-01');
   });

@@ -140,4 +140,5 @@ export interface ErrorHistoryEntry {
   lastFixSummary?: string;
 }
 
-export type ResolvedConfig = Required<Omit<GretlyConfig, 'onProgress' | 'onPhaseChange' | 'dataFetcher'>> & GretlyConfig;
+export type ResolvedConfig = Required<Omit<GretlyConfig, 'onProgress' | 'onPhaseChange' | 'dataFetcher'>> &
+  GretlyConfig;

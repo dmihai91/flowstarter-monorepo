@@ -2,6 +2,16 @@ import { insertProjectAction } from '@/data/user/projects';
 import { useServerSupabaseWithAuthStrict } from '@/hooks/useServerSupabase';
 import { requireAuth } from '@/lib/api-auth';
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+
+const CreateProjectSchema = z.object({
+  name: z.string().min(1, 'Name is required').max(200),
+  description: z.string().max(5000).optional().default(''),
+  data: z.string().optional().default(''),
+  domain_type: z.enum(['custom', 'hosted']).optional().default('hosted'),
+  domain_name: z.string().max(253).optional().default(''),
+  domain_provider: z.string().max(100).optional().default(''),
+});
 
 /**
  * POST /api/projects
@@ -19,13 +29,30 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
 
+    const rawFields = {
+      name: formData.get('name') ?? '',
+      description: formData.get('description') ?? '',
+      data: formData.get('data') ?? '',
+      domain_type: formData.get('domain_type') ?? 'hosted',
+      domain_name: formData.get('domain_name') ?? '',
+      domain_provider: formData.get('domain_provider') ?? '',
+    };
+
+    const parseResult = CreateProjectSchema.safeParse(rawFields);
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: 'Validation error', details: parseResult.error.flatten().fieldErrors },
+        { status: 400 }
+      );
+    }
+
     const projectData = {
-      name: formData.get('name') as string,
-      description: formData.get('description') as string,
-      chat: formData.get('data') as string,
-      domain_type: formData.get('domain_type') as 'custom' | 'hosted',
-      domain_name: formData.get('domain_name') as string,
-      domain_provider: formData.get('domain_provider') as string,
+      name: parseResult.data.name,
+      description: parseResult.data.description,
+      chat: parseResult.data.data,
+      domain_type: parseResult.data.domain_type,
+      domain_name: parseResult.data.domain_name,
+      domain_provider: parseResult.data.domain_provider,
     };
 
     const result = await insertProjectAction(projectData);

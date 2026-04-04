@@ -32,7 +32,10 @@ function DashboardSkeleton() {
       {/* Milestones - mobile */}
       <div className="sm:hidden space-y-2 mb-8">
         {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white/40 dark:bg-white/[0.02]">
+          <div
+            key={i}
+            className="flex items-center gap-3 p-3 rounded-xl bg-white/40 dark:bg-white/[0.02]"
+          >
             <div className="w-9 h-9 rounded-full bg-gray-200 dark:bg-white/10 flex-shrink-0" />
             <div className="flex-1">
               <div className="h-3.5 w-20 bg-gray-200 dark:bg-white/10 rounded mb-1.5" />
@@ -45,7 +48,10 @@ function DashboardSkeleton() {
       {/* Milestones - tablet: 2x2 grid */}
       <div className="hidden sm:grid lg:hidden grid-cols-2 gap-4 mb-8">
         {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-white/30 dark:bg-white/[0.015]">
+          <div
+            key={i}
+            className="flex items-center gap-3 p-4 rounded-xl bg-white/30 dark:bg-white/[0.015]"
+          >
             <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-white/10 flex-shrink-0" />
             <div className="flex-1">
               <div className="h-2.5 w-10 bg-gray-200 dark:bg-white/10 rounded mb-1" />
@@ -113,7 +119,10 @@ export default function DashboardPage() {
   const loading = !isUserLoaded || isLoading;
 
   const firstName = user?.firstName || 'there';
-  const isAdmin = (user?.publicMetadata as { role?: string } | undefined)?.role?.toLowerCase() === 'admin';
+  const isAdmin =
+    (
+      user?.publicMetadata as { role?: string } | undefined
+    )?.role?.toLowerCase() === 'admin';
   const hour = new Date().getHours();
   const greeting = t(getTimeGreetingKey(hour));
 
@@ -126,47 +135,63 @@ export default function DashboardPage() {
       {loading ? (
         <DashboardSkeleton />
       ) : (
-      <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
-        <DashboardMessages />
+        <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
+          <DashboardMessages />
 
-        <DashboardInit>
-          {/* Greeting */}
-          <div className="mt-1 sm:mt-2 mb-6">
-            <p className="text-sm sm:text-base text-gray-500 dark:text-white/50 mb-1">
-              {greeting},{' '}
-              <span className="text-gray-700 dark:text-white/70 font-medium">{firstName}</span>
-            </p>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-              {t('dashboard.title')}
-            </h1>
-            {isAdmin && (
-              <Link href="/team/dashboard" className="inline-flex items-center gap-1.5 mt-2 text-xs text-[var(--purple)] hover:underline">
-                Team Dashboard <ArrowRight className="w-3 h-3" />
-              </Link>
-            )}
-          </div>
-
-          {/* Milestones Timeline */}
-          <MilestonesTimeline hasAnyProject={hasAnyProject} hasLiveProject={hasLiveProject} />
-
-          {/* Primary Action Banner */}
-          <PrimaryAction hasAnyProject={hasAnyProject} hasLiveProject={hasLiveProject} onBookCall={() => setModalOpen(true)} />
-
-          {/* Stats */}
-          <div className="mb-8">
-            <DashboardStatsClientFetcher />
-          </div>
-
-          {/* Upcoming Meetings (Calendly) */}
-          {data?.lastProject && (
-            <div className="mb-8">
-              <UpcomingMeetingsCard projectId={data.lastProject.id} />
+          <DashboardInit>
+            {/* Greeting */}
+            <div className="mt-1 sm:mt-2 mb-6">
+              <p className="text-sm sm:text-base text-gray-500 dark:text-white/50 mb-1">
+                {greeting},{' '}
+                <span className="text-gray-700 dark:text-white/70 font-medium">
+                  {firstName}
+                </span>
+              </p>
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                {t('dashboard.title')}
+              </h1>
+              {isAdmin && (
+                <Link
+                  href="/team/dashboard"
+                  className="inline-flex items-center gap-1.5 mt-2 text-xs text-[var(--purple)] hover:underline"
+                >
+                  Team Dashboard <ArrowRight className="w-3 h-3" />
+                </Link>
+              )}
             </div>
-          )}
-        </DashboardInit>
-      </div>
+
+            {/* Milestones Timeline */}
+            <MilestonesTimeline
+              hasAnyProject={hasAnyProject}
+              hasLiveProject={hasLiveProject}
+            />
+
+            {/* Primary Action Banner */}
+            <PrimaryAction
+              hasAnyProject={hasAnyProject}
+              hasLiveProject={hasLiveProject}
+              onBookCall={() => setModalOpen(true)}
+            />
+
+            {/* Stats */}
+            <div className="mb-8">
+              <DashboardStatsClientFetcher />
+            </div>
+
+            {/* Upcoming Meetings (Calendly) */}
+            {data?.lastProject && (
+              <div className="mb-8">
+                <UpcomingMeetingsCard projectId={data.lastProject.id} />
+              </div>
+            )}
+          </DashboardInit>
+        </div>
       )}
-      <PreQualModal open={modalOpen} onClose={() => setModalOpen(false)} source="dashboard" />
+      <PreQualModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        source="dashboard"
+      />
     </DashboardWrapper>
   );
 }

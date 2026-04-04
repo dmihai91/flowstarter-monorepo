@@ -7,7 +7,7 @@
 
 import { memo } from 'react';
 import { LoadingScreen } from '@flowstarter/flow-design-system';
-import type { Id } from '../../../convex/_generated/dataModel';
+import type { Id } from '~/convex/_generated/dataModel';
 import { EditorLayout, ConversationProvider } from '~/components/editor';
 import { EditorChatPanel } from '~/components/editor/EditorChatPanel';
 import { useProjectEditorState } from '~/components/editor/hooks/useProjectEditorState';
@@ -18,7 +18,7 @@ interface ProjectEditorContentProps {
   projectId: Id<'conversations'>;
 }
 
-export const ProjectEditorContent = memo(function ProjectEditorContent({ projectId }: ProjectEditorContentProps) {
+export const ProjectEditorContent = memo(({ projectId }: ProjectEditorContentProps) => {
   const {
     conversation,
     convexProjectId,

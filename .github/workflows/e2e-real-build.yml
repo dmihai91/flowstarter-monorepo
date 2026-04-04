@@ -1,0 +1,140 @@
+##############################################################################
+# e2e-real-build.yml
+#
+# Scenario 4 — Real AI + Daytona live build.
+# Burns Claude credits and spins up a real Daytona sandbox.
+#
+# When it runs:
+#   - Manually via workflow_dispatch
+#   - Nightly at 03:00 UTC (catches regressions in AI output quality)
+#   - When a PR is labeled "run-real-build-e2e"
+#
+# What it validates:
+#   4.1 Creates a real site for E2E Dental Clinic via Claude AI
+#   4.2 Preview URL and sandboxId are persisted to Supabase
+#   4.3 Generated files are committed to Convex
+#   4.4 Calendly widget is injected (REAL_CALENDLY_URL present in code)
+#   4.5 Google Analytics tag is injected (GA_ID present in code)
+#   4.6 leads/capture endpoint is present in generated code
+#   4.7 Site is ready signal appears in UI within 7 minutes
+##############################################################################
+
+name: E2E Real Build — Scenario 4
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch to test
+        required: false
+        default: feature/concierge-pivot
+
+  schedule:
+    - cron: '0 3 * * *' # 03:00 UTC nightly
+
+  pull_request:
+    types: [labeled]
+
+concurrency:
+  group: e2e-real-build
+  cancel-in-progress: false # never cancel a running real build — it costs money
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  check-trigger:
+    name: Check trigger
+    runs-on: ubuntu-latest
+    outputs:
+      should-run: ${{ steps.check.outputs.should-run }}
+    steps:
+      - id: check
+        run: |
+          EVENT_NAME="${{ github.event_name }}"
+          LABEL_NAME="${{ github.event.label.name }}"
+          if [[ "${EVENT_NAME}" == "schedule" ]]; then
+            echo "should-run=true" >> "$GITHUB_OUTPUT"
+          elif [[ "${EVENT_NAME}" == "workflow_dispatch" ]]; then
+            echo "should-run=true" >> "$GITHUB_OUTPUT"
+          elif [[ "${LABEL_NAME}" == "run-real-build-e2e" ]]; then
+            echo "should-run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should-run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  real-build:
+    name: Real AI Build — Scenario 4
+    needs: check-trigger
+    if: needs.check-trigger.outputs.should-run == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref }}
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build editor-engine
+        run: pnpm --dir packages/editor-engine build
+
+      - name: Install Playwright browsers
+        run: pnpm --dir apps/flowstarter-editor exec playwright install chromium --with-deps
+
+      - name: E2E — Scenario 4 (Real AI + Daytona)
+        run: pnpm --dir apps/flowstarter-editor test:e2e:real-build
+        env:
+          CI: true
+          RUN_REAL_BUILD_E2E: '1'
+          E2E_BASE_URL: ${{ secrets.E2E_BASE_URL }}
+          PLAYWRIGHT_E2E_EDITOR_URL: http://localhost:5173
+          E2E_SECRET: ${{ secrets.E2E_SECRET }}
+          E2E_USER_ID: ${{ secrets.E2E_USER_ID }}
+          HANDOFF_SECRET: ${{ secrets.HANDOFF_SECRET }}
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_CONVEX_URL: ${{ secrets.NEXT_PUBLIC_CONVEX_URL }}
+          CONVEX_SITE_URL: ${{ secrets.CONVEX_SITE_URL }}
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DAYTONA_API_KEY: ${{ secrets.DAYTONA_API_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-real-build-${{ github.run_id }}
+          path: apps/flowstarter-editor/playwright-report/
+          retention-days: 30
+
+      - name: Upload test results (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-real-build-${{ github.run_id }}
+          path: apps/flowstarter-editor/test-results/
+          retention-days: 30
+
+      - name: Notify on failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": ":rotating_light: *Scenario 4 Real Build FAILED* on `${{ github.ref_name }}`\nRun: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_QA_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

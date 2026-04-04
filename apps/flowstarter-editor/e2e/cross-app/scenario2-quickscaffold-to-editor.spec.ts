@@ -8,6 +8,7 @@ import {
   QUICKSCAFFOLD_INPUT,
   cleanupProject,
   e2eFetch,
+skipIfSecretsUnavailable,
 } from './helpers';
 
 type TemplateFixture = {
@@ -37,7 +38,9 @@ let createdProjectId: string | undefined;
 async function loadTemplateFixture(): Promise<TemplateFixture> {
   const result = await e2eFetch(`${BASE}/api/local-templates`);
   expect(result.status).toBe(200);
+
   const body = result.body as { templates?: TemplateFixture[] };
+
   return body.templates![0];
 }
 
@@ -74,6 +77,7 @@ async function quickScaffoldHandoff() {
   });
 
   expect(result.status).toBe(200);
+
   const body = result.body as {
     success: boolean;
     token: string;
@@ -83,6 +87,7 @@ async function quickScaffoldHandoff() {
 
   expect(body.success).toBe(true);
   createdProjectId = body.projectId;
+
   return { ...body, template };
 }
 
@@ -94,6 +99,7 @@ test.afterEach(async () => {
 });
 
 test.describe('Scenario 2: QuickScaffold to editor review', () => {
+  skipIfSecretsUnavailable();
   test.setTimeout(180_000);
 
   test('2.1 quick scaffold handoff accepts enriched business data and returns editor access', async () => {
@@ -113,6 +119,7 @@ test.describe('Scenario 2: QuickScaffold to editor review', () => {
     });
 
     expect(res.status()).toBe(200);
+
     const validated = (await res.json()) as {
       valid: boolean;
       project?: {

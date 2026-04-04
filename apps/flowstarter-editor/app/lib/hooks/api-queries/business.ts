@@ -34,7 +34,8 @@ async function extractBusinessInfo(params: ExtractBusinessInfoParams): Promise<B
     throw new Error(`Failed to extract business info: ${response.status}`);
   }
 
-  const data = await response.json() as { businessInfo?: unknown; value?: unknown; data?: { theme?: unknown } };
+  const data = (await response.json()) as { businessInfo?: unknown; value?: unknown; data?: { theme?: unknown } };
+
   return data.businessInfo as BusinessInfo;
 }
 
@@ -49,7 +50,8 @@ async function generateBusinessInfo(params: GenerateBusinessInfoParams): Promise
     throw new Error(`Failed to generate business info: ${response.status}`);
   }
 
-  const data = await response.json() as { businessInfo?: unknown; value?: unknown; data?: { theme?: unknown } };
+  const data = (await response.json()) as { businessInfo?: unknown; value?: unknown; data?: { theme?: unknown } };
+
   return data.value as string;
 }
 

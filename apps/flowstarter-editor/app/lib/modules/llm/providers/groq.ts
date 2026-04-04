@@ -116,5 +116,3 @@ export default class GroqProvider extends BaseProvider {
     return openai(model);
   }
 }
-
-

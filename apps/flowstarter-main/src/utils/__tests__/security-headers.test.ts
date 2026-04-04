@@ -43,6 +43,10 @@ describe('security-headers', () => {
       expect(buildCSPHeader()).toContain('img-src');
     });
 
+    it('allows assets.flowstarter.dev in img-src', () => {
+      expect(buildCSPHeader()).toContain('https://assets.flowstarter.dev');
+    });
+
     it('includes frame-ancestors none', () => {
       expect(buildCSPHeader()).toContain("frame-ancestors 'none'");
     });

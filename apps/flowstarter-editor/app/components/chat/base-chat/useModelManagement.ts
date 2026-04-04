@@ -6,7 +6,7 @@
 
 import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
-import { getApiKeysFromCookies } from '../APIKeyManager';
+import { getApiKeysFromCookies } from '~/components/chat/APIKeyManager';
 import type { ModelInfo } from '~/lib/modules/llm/types';
 import type { ProviderInfo } from '~/types/model';
 
@@ -22,10 +22,7 @@ interface UseModelManagementReturn {
   onApiKeysChange: (providerName: string, apiKey: string) => Promise<void>;
 }
 
-export function useModelManagement({
-  providerList,
-  provider,
-}: UseModelManagementOptions): UseModelManagementReturn {
+export function useModelManagement({ providerList, provider }: UseModelManagementOptions): UseModelManagementReturn {
   const [apiKeys, setApiKeys] = useState<Record<string, string>>(getApiKeysFromCookies());
   const [modelList, setModelList] = useState<ModelInfo[]>([]);
   const [isModelLoading, setIsModelLoading] = useState<string | undefined>('all');
@@ -90,4 +87,3 @@ export function useModelManagement({
     onApiKeysChange,
   };
 }
-

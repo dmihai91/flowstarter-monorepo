@@ -6,12 +6,15 @@
 
 import { SandboxState, type Sandbox, type Daytona } from '@daytonaio/sdk';
 import { getCachedSandbox, deleteCachedSandbox, log } from './client';
+import { validateProjectId, validateWorkspaceId } from './sanitize';
 import { findReusableSandbox, createSandbox } from './sandboxService';
 
 /**
  * Get or create a sandbox for the project
  */
 export async function getOrCreateSandbox(client: Daytona, projectId: string): Promise<Sandbox | null> {
+  validateProjectId(projectId);
+
   let sandbox: Sandbox | null = null;
   const cached = getCachedSandbox(projectId);
   log.debug(` Cached sandboxId: ${cached?.sandboxId || 'none'}`);
@@ -39,6 +42,8 @@ export async function getOrCreateSandbox(client: Daytona, projectId: string): Pr
  */
 async function verifyCachedSandbox(client: Daytona, sandboxId: string, projectId: string): Promise<Sandbox | null> {
   try {
+    validateWorkspaceId(sandboxId);
+
     const sandbox = await client.get(sandboxId);
     await sandbox.refreshData();
 
@@ -126,4 +131,3 @@ export async function verifySandbox(sandbox: Sandbox, workDir: string): Promise<
 
   return true;
 }
-

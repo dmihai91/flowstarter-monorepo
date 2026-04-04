@@ -10,13 +10,15 @@ import type {
   ChatMessage,
   SuggestedReply,
   ColorPalette,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   SystemFont,
   OnboardingStep,
   BusinessInfo,
   PreviewInfo,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   BuildPhase,
   InitialChatState,
-} from '../types';
+} from '~/components/editor/editor-chat/types';
 import type { Template } from '~/components/onboarding';
 import type { TemplateRecommendation } from '~/components/editor/template-preview/types';
 

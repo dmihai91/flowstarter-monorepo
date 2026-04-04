@@ -1,11 +1,11 @@
 import { useStore } from '@nanostores/react';
-import { json, type LinksFunction, type LoaderFunctionArgs } from '@remix-run/cloudflare';
+import { type LinksFunction, type LoaderFunctionArgs } from '@remix-run/cloudflare';
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from '@remix-run/react';
 import tailwindReset from '@unocss/reset/tailwind-compat.css?url';
 import { themeStore } from './lib/stores/theme';
 import { stripIndents } from './utils/stripIndent';
 import { createHead } from 'remix-island';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { ClientOnly } from 'remix-utils/client-only';
 import { ToastContainer } from 'react-toastify';
@@ -44,12 +44,13 @@ class RootErrorBoundary extends Component<{ children: ReactNode }, { crashed: bo
   }
   componentDidCatch(error: Error) {
     // If it's the transient null-dispatcher crash, reload cleanly
-    if (error.message?.includes('null') && (
-      error.message.includes('useMemo') ||
-      error.message.includes('useContext') ||
-      error.message.includes('useState') ||
-      error.message.includes('useRef')
-    )) {
+    if (
+      error.message?.includes('null') &&
+      (error.message.includes('useMemo') ||
+        error.message.includes('useContext') ||
+        error.message.includes('useState') ||
+        error.message.includes('useRef'))
+    ) {
       window.location.reload();
     }
   }
@@ -57,10 +58,10 @@ class RootErrorBoundary extends Component<{ children: ReactNode }, { crashed: bo
     if (this.state.crashed) {
       return <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>Loading...</div>;
     }
+
     return this.props.children;
   }
 }
-
 
 // Lazy singleton for Convex client - only initialized on client side
 let convexClientSingleton: ConvexReactClient | null = null;
@@ -81,10 +82,12 @@ function getConvexClient(): ConvexReactClient | null {
   return convexClientSingleton;
 }
 
-// Clerk auth loader with satellite configuration
-// The editor runs as a satellite app, sharing sessions with the main platform.
-// Handoff entry is intentionally authless at bootstrap time so the signed token
-// can initialize the project before the editor route hits the AuthGuard bypass.
+/*
+ * Clerk auth loader with satellite configuration
+ * The editor runs as a satellite app, sharing sessions with the main platform.
+ * Handoff entry is intentionally authless at bootstrap time so the signed token
+ * can initialize the project before the editor route hits the AuthGuard bypass.
+ */
 export const loader = (args: LoaderFunctionArgs) => {
   return rootAuthLoader(args, {
     signInUrl: 'https://flowstarter.dev/login',
@@ -319,25 +322,52 @@ import { logStore } from './lib/stores/logs';
 /**
  * Helper functions for cross-subdomain auth configuration
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getMainPlatformUrl(): string {
-  if (typeof window === 'undefined') return 'https://flowstarter.dev';
+  if (typeof window === 'undefined') {
+    return 'https://flowstarter.dev';
+  }
+
   const hostname = window.location.hostname;
-  if (hostname.includes('flowstarter.app')) return 'https://flowstarter.app';
-  if (hostname.includes('flowstarter.dev')) return 'https://flowstarter.dev';
+
+  if (hostname.includes('flowstarter.app')) {
+    return 'https://flowstarter.app';
+  }
+
+  if (hostname.includes('flowstarter.dev')) {
+    return 'https://flowstarter.dev';
+  }
+
   return 'https://flowstarter.dev';
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getSharedCookieDomain(): string | undefined {
-  if (typeof window === 'undefined') return undefined;
+  if (typeof window === 'undefined') {
+    return undefined;
+  }
+
   const hostname = window.location.hostname;
-  if (hostname.includes('flowstarter.app')) return '.flowstarter.app';
-  if (hostname.includes('flowstarter.dev')) return '.flowstarter.dev';
+
+  if (hostname.includes('flowstarter.app')) {
+    return '.flowstarter.app';
+  }
+
+  if (hostname.includes('flowstarter.dev')) {
+    return '.flowstarter.dev';
+  }
+
   return undefined;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function isSatelliteApp(): boolean {
-  if (typeof window === 'undefined') return false;
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
   const hostname = window.location.hostname;
+
   return hostname.startsWith('editor.') || hostname.includes('editor.flowstarter');
 }
 
@@ -353,12 +383,14 @@ function AppInner() {
     });
   }, []);
 
-  // Clerk satellite configuration is handled via environment variables:
-  // - CLERK_DOMAIN=.flowstarter.dev
-  // - CLERK_IS_SATELLITE=true  
-  // - CLERK_SIGN_IN_URL=https://flowstarter.dev/login
-  // - CLERK_SIGN_UP_URL=https://flowstarter.dev/login
-  // The rootAuthLoader reads these and passes them to ClerkProvider
+  /*
+   * Clerk satellite configuration is handled via environment variables:
+   * - CLERK_DOMAIN=.flowstarter.dev
+   * - CLERK_IS_SATELLITE=true
+   * - CLERK_SIGN_IN_URL=https://flowstarter.dev/login
+   * - CLERK_SIGN_UP_URL=https://flowstarter.dev/login
+   * The rootAuthLoader reads these and passes them to ClerkProvider
+   */
 
   const appShell = (
     <Layout>
@@ -367,10 +399,9 @@ function AppInner() {
   );
 
   return (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error ClerkProvider props are injected by rootAuthLoader at runtime
-    <ClerkProvider {...(loaderData || {})}>
-      {appShell}
-    </ClerkProvider>
+    <ClerkProvider {...(loaderData || {})}>{appShell}</ClerkProvider>
   );
 }
 

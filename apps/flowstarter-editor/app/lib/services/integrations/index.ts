@@ -29,6 +29,7 @@ export async function injectIntegrations(
   // Calendly
   if (config.calendly?.url) {
     const calendlyConfig = { ...config.calendly };
+
     if (calendlyConfig.apiKey && !calendlyConfig.eventTypes) {
       try {
         calendlyConfig.eventTypes = await fetchCalendlyEventTypes(calendlyConfig.apiKey);
@@ -37,6 +38,7 @@ export async function injectIntegrations(
         console.warn('[Integrations] Calendly API failed, using simple embed:', e);
       }
     }
+
     result = injectCalendly(result, calendlyConfig);
     console.log('[Integrations] Calendly injected');
   }

@@ -213,4 +213,3 @@ class ArtifactVersionStore {
 }
 
 export const artifactVersionStore = new ArtifactVersionStore();
-

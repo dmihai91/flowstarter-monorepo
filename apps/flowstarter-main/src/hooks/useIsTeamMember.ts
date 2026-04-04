@@ -25,7 +25,13 @@ export function useIsTeamMember(): {
   const { user, isLoaded } = useUser();
 
   if (!isLoaded || !user) {
-    return { isTeamMember: false, isAdmin: false, isCollaborator: false, role: undefined, isLoaded };
+    return {
+      isTeamMember: false,
+      isAdmin: false,
+      isCollaborator: false,
+      role: undefined,
+      isLoaded,
+    };
   }
 
   const metadata = user.publicMetadata as { role?: string } | undefined;

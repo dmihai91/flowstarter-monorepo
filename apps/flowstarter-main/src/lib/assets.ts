@@ -3,7 +3,8 @@
  * Base URL: https://assets.flowstarter.dev (or R2.dev subdomain during setup)
  */
 
-const ASSETS_BASE = process.env.NEXT_PUBLIC_ASSETS_URL ?? 'https://assets.flowstarter.dev';
+const ASSETS_BASE =
+  process.env.NEXT_PUBLIC_ASSETS_URL ?? 'https://assets.flowstarter.dev';
 
 /**
  * Returns the R2 URL for a template thumbnail.

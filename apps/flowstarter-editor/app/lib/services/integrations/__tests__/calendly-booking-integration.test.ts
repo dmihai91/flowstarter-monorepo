@@ -11,8 +11,8 @@
  * We test that our injection produces valid embeds that Calendly's JS will handle.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { injectCalendly, fetchCalendlyEventTypes } from '../calendly';
-import { injectIntegrations } from '../index';
+import { injectCalendly, fetchCalendlyEventTypes } from '~/lib/services/integrations/calendly';
+import { injectIntegrations } from '~/lib/services/integrations/index';
 
 const contactPage = {
   path: 'src/pages/contact.astro',
@@ -149,22 +149,46 @@ describe('Calendly booking integration', () => {
     });
 
     it('fetches event types from Calendly API and filters inactive ones', async () => {
-      const mockFetch = vi.fn()
+      const mockFetch = vi
+        .fn()
         .mockResolvedValueOnce({
           ok: true,
-          json: () => Promise.resolve({
-            resource: { uri: 'https://api.calendly.com/users/elena123' },
-          }),
+          json: () =>
+            Promise.resolve({
+              resource: { uri: 'https://api.calendly.com/users/elena123' },
+            }),
         })
         .mockResolvedValueOnce({
           ok: true,
-          json: () => Promise.resolve({
-            collection: [
-              { uri: 'e1', name: 'Active Event', slug: 'active', duration: 30, scheduling_url: 'https://calendly.com/elena/active', active: true },
-              { uri: 'e2', name: 'Paused Event', slug: 'paused', duration: 45, scheduling_url: 'https://calendly.com/elena/paused', active: false },
-              { uri: 'e3', name: 'Another Active', slug: 'another', duration: 60, scheduling_url: 'https://calendly.com/elena/another', active: true },
-            ],
-          }),
+          json: () =>
+            Promise.resolve({
+              collection: [
+                {
+                  uri: 'e1',
+                  name: 'Active Event',
+                  slug: 'active',
+                  duration: 30,
+                  scheduling_url: 'https://calendly.com/elena/active',
+                  active: true,
+                },
+                {
+                  uri: 'e2',
+                  name: 'Paused Event',
+                  slug: 'paused',
+                  duration: 45,
+                  scheduling_url: 'https://calendly.com/elena/paused',
+                  active: false,
+                },
+                {
+                  uri: 'e3',
+                  name: 'Another Active',
+                  slug: 'another',
+                  duration: 60,
+                  scheduling_url: 'https://calendly.com/elena/another',
+                  active: true,
+                },
+              ],
+            }),
         });
 
       vi.stubGlobal('fetch', mockFetch);
@@ -181,20 +205,30 @@ describe('Calendly booking integration', () => {
     });
 
     it('full flow: API key → fetch events → inject popup buttons', async () => {
-      const mockFetch = vi.fn()
+      const mockFetch = vi
+        .fn()
         .mockResolvedValueOnce({
           ok: true,
-          json: () => Promise.resolve({
-            resource: { uri: 'https://api.calendly.com/users/u1' },
-          }),
+          json: () =>
+            Promise.resolve({
+              resource: { uri: 'https://api.calendly.com/users/u1' },
+            }),
         })
         .mockResolvedValueOnce({
           ok: true,
-          json: () => Promise.resolve({
-            collection: [
-              { uri: 'e1', name: 'Discovery Call', slug: 'discovery', duration: 45, scheduling_url: 'https://calendly.com/elena/discovery', active: true },
-            ],
-          }),
+          json: () =>
+            Promise.resolve({
+              collection: [
+                {
+                  uri: 'e1',
+                  name: 'Discovery Call',
+                  slug: 'discovery',
+                  duration: 45,
+                  scheduling_url: 'https://calendly.com/elena/discovery',
+                  active: true,
+                },
+              ],
+            }),
         });
 
       vi.stubGlobal('fetch', mockFetch);
@@ -275,31 +309,52 @@ describe('Calendly booking integration', () => {
       expect(layout.content).toContain('widget.js');
       expect(layout.content).toContain('widget.css');
 
-      // When visitor clicks a time slot in the widget:
-      // → Calendly handles the entire booking flow
-      // → Booking is created on Calendly's platform
-      // → Operator gets notified via Calendly email/webhook
-      // → We can fetch it via GET /api/calendly/events
+      /*
+       * When visitor clicks a time slot in the widget:
+       * → Calendly handles the entire booking flow
+       * → Booking is created on Calendly's platform
+       * → Operator gets notified via Calendly email/webhook
+       * → We can fetch it via GET /api/calendly/events
+       */
     });
 
     it('simulates API mode: operator has API key → visitors see service buttons', async () => {
       // Mock Calendly API for event type fetching
-      vi.stubGlobal('fetch', vi.fn()
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () => Promise.resolve({
-            resource: { uri: 'https://api.calendly.com/users/u1' },
+      vi.stubGlobal(
+        'fetch',
+        vi
+          .fn()
+          .mockResolvedValueOnce({
+            ok: true,
+            json: () =>
+              Promise.resolve({
+                resource: { uri: 'https://api.calendly.com/users/u1' },
+              }),
+          })
+          .mockResolvedValueOnce({
+            ok: true,
+            json: () =>
+              Promise.resolve({
+                collection: [
+                  {
+                    uri: 'e1',
+                    name: 'Quick Consultation',
+                    slug: 'quick',
+                    duration: 15,
+                    scheduling_url: 'https://calendly.com/elena/quick',
+                    active: true,
+                  },
+                  {
+                    uri: 'e2',
+                    name: 'Full Treatment',
+                    slug: 'full',
+                    duration: 60,
+                    scheduling_url: 'https://calendly.com/elena/full',
+                    active: true,
+                  },
+                ],
+              }),
           }),
-        })
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () => Promise.resolve({
-            collection: [
-              { uri: 'e1', name: 'Quick Consultation', slug: 'quick', duration: 15, scheduling_url: 'https://calendly.com/elena/quick', active: true },
-              { uri: 'e2', name: 'Full Treatment', slug: 'full', duration: 60, scheduling_url: 'https://calendly.com/elena/full', active: true },
-            ],
-          }),
-        }),
       );
 
       const injectedFiles = await injectIntegrations([layoutPage, contactPage], {

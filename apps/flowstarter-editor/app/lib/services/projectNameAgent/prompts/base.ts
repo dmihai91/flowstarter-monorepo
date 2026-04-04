@@ -5,14 +5,54 @@
 // Words that feel corporate, motivational, or startup-y - never use them
 export const BANNED_WORDS_ARRAY = [
   // Corporate wellness/motivation
-  'Thrive', 'Flourish', 'Vitality', 'Nourish', 'Elevate', 'Empower', 'Transform',
-  'Inspire', 'Aspire', 'Radiant', 'Vibrant', 'Wellness', 'Journey', 'Path',
-  'Peak', 'Summit', 'Rise', 'Glow', 'Bloom', 'Spark', 'Ignite', 'Unleash',
+  'Thrive',
+  'Flourish',
+  'Vitality',
+  'Nourish',
+  'Elevate',
+  'Empower',
+  'Transform',
+  'Inspire',
+  'Aspire',
+  'Radiant',
+  'Vibrant',
+  'Wellness',
+  'Journey',
+  'Path',
+  'Peak',
+  'Summit',
+  'Rise',
+  'Glow',
+  'Bloom',
+  'Spark',
+  'Ignite',
+  'Unleash',
+
   // Cold/corporate
-  'Sterling', 'Prime', 'Edge', 'Apex', 'Pinnacle', 'Premier', 'Elite', 'Optimal',
-  'Strategic', 'Dynamic', 'Synergy', 'Leverage', 'Impact', 'Momentum', 'Catalyst',
+  'Sterling',
+  'Prime',
+  'Edge',
+  'Apex',
+  'Pinnacle',
+  'Premier',
+  'Elite',
+  'Optimal',
+  'Strategic',
+  'Dynamic',
+  'Synergy',
+  'Leverage',
+  'Impact',
+  'Momentum',
+  'Catalyst',
+
   // Generic action words
-  'Arrow', 'Compass', 'Beacon', 'Bridge', 'Gateway', 'Pathway', 'Launchpad',
+  'Arrow',
+  'Compass',
+  'Beacon',
+  'Bridge',
+  'Gateway',
+  'Pathway',
+  'Launchpad',
 ];
 
 export const BANNED_WORDS = BANNED_WORDS_ARRAY.join(', ');
@@ -28,7 +68,7 @@ export const BANNED_PATTERNS = [
  */
 export function containsBannedWord(name: string): boolean {
   const lowerName = name.toLowerCase();
-  return BANNED_WORDS_ARRAY.some(word => lowerName.includes(word.toLowerCase()));
+  return BANNED_WORDS_ARRAY.some((word) => lowerName.includes(word.toLowerCase()));
 }
 
 /**
@@ -36,7 +76,7 @@ export function containsBannedWord(name: string): boolean {
  */
 export function getBannedWord(name: string): string | null {
   const lowerName = name.toLowerCase();
-  return BANNED_WORDS_ARRAY.find(word => lowerName.includes(word.toLowerCase())) || null;
+  return BANNED_WORDS_ARRAY.find((word) => lowerName.includes(word.toLowerCase())) || null;
 }
 
 /**

@@ -47,4 +47,3 @@ export function createSampler<T extends (...args: any[]) => any>(fn: T, sampleIn
 
   return sampled;
 }
-

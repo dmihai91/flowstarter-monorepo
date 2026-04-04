@@ -2,7 +2,8 @@ export const miscKeys = {
   // Contact Page
   'contact.badge': 'Get in Touch',
   'contact.title': "We'd love to hear from you",
-  'contact.description': 'Whether you have a question about our service or want to discuss your project, we\'re here to help.',
+  'contact.description':
+    "Whether you have a question about our service or want to discuss your project, we're here to help.",
   'contact.form.title': 'Send us a message',
   'contact.form.successTitle': 'Message sent!',
   'contact.form.successDesc': "We'll get back to you within 24 hours.",
@@ -20,12 +21,14 @@ export const miscKeys = {
   'contact.form.subjectFeedback': 'Feedback',
   'contact.form.subjectOther': 'Other',
   'contact.form.messageLabel': 'Message',
-  'contact.form.messagePlaceholder': 'Tell us about your project or question...',
+  'contact.form.messagePlaceholder':
+    'Tell us about your project or question...',
   'contact.form.defaultError': 'Something went wrong',
   'contact.form.sending': 'Sending...',
   'contact.form.sendButton': 'Send Message',
   'contact.talk.title': 'Prefer to talk?',
-  'contact.talk.description': "Book a free 45-minute discovery call. We'll learn about your business and figure out the best approach together.",
+  'contact.talk.description':
+    "Book a free 45-minute discovery call. We'll learn about your business and figure out the best approach together.",
   'contact.talk.button': 'Book Free Discovery Call',
   'contact.other.title': 'Other ways to reach us',
   'contact.other.emailLabel': 'Email',
@@ -84,46 +87,62 @@ export const miscKeys = {
   // Help Content
   'help.badge': 'Help Center',
   'help.title': 'How can we help?',
-  'help.description': 'Everything you need to know about getting your website built and customized.',
+  'help.description':
+    'Everything you need to know about getting your website built and customized.',
   'help.loggedInTitle': 'Help & Support',
   'help.loggedInDescription': 'Everything you need to know about your project.',
   'help.quickAction.discovery.title': 'Book a Discovery Call',
-  'help.quickAction.discovery.desc': 'Free 45-minute call to discuss your project',
+  'help.quickAction.discovery.desc':
+    'Free 45-minute call to discuss your project',
   'help.quickAction.email.title': 'Email Support',
   'help.quickAction.email.desc': 'hello@flowstarter.app',
   'help.howItWorks': 'How It Works',
   'help.step1.number': '01',
   'help.step1.title': 'We talk',
-  'help.step1.description': 'Book a free 45-minute discovery call. We learn about your business, your brand, and your goals.',
+  'help.step1.description':
+    'Book a free 45-minute discovery call. We learn about your business, your brand, and your goals.',
   'help.step2.number': '02',
   'help.step2.title': 'We build',
-  'help.step2.description': 'Our team designs and builds your site from scratch, tailored to your brand. Ready in about 2 weeks.',
+  'help.step2.description':
+    'Our team designs and builds your site from scratch, tailored to your brand. Ready in about 2 weeks.',
   'help.step3.number': '03',
   'help.step3.title': 'You own it',
-  'help.step3.description': 'Your site goes live. Use our smart editor to update content, add pages, and tweak your design anytime.',
+  'help.step3.description':
+    'Your site goes live. Use our smart editor to update content, add pages, and tweak your design anytime.',
   'help.faqTitle': 'Frequently Asked Questions',
   'help.faq1.question': 'How does the process work?',
-  'help.faq1.answer': "It's simple! Book a free discovery call with our team. We'll learn about your business, goals, and design preferences. Then we design and build your professional website in about 2 weeks. Once it's live, you can customize it anytime using our smart editor.",
+  'help.faq1.answer':
+    "It's simple! Book a free discovery call with our team. We'll learn about your business, goals, and design preferences. Then we design and build your professional website in about 2 weeks. Once it's live, you can customize it anytime using our smart editor.",
   'help.faq2.question': 'How long does it take to build my website?',
-  'help.faq2.answer': "Most websites are completed within 2 weeks after your discovery call. We'll keep you updated throughout the process and send you a preview link when it's ready for your review.",
+  'help.faq2.answer':
+    "Most websites are completed within 2 weeks after your discovery call. We'll keep you updated throughout the process and send you a preview link when it's ready for your review.",
   'help.faq3.question': 'What happens during the discovery call?',
-  'help.faq3.answer': "We spend 45 minutes learning about your business, your goals, and your brand. You don't need to prepare anything, just show up and tell us about what you do. After the call, we'll send you a summary and get started on your site.",
+  'help.faq3.answer':
+    "We spend 45 minutes learning about your business, your goals, and your brand. You don't need to prepare anything, just show up and tell us about what you do. After the call, we'll send you a summary and get started on your site.",
   'help.faq4.question': 'Can I make changes after my site is live?',
-  'help.faq4.answer': "That's the whole point! Your subscription includes our smart editor: update text, add pages, change your branding, improve your SEO. All without writing a single line of code.",
+  'help.faq4.answer':
+    "That's the whole point! Your subscription includes our smart editor: update text, add pages, change your branding, improve your SEO. All without writing a single line of code.",
   'help.faq5.question': "What's included in my website?",
-  'help.faq5.answer': 'Every website includes: professionally designed pages tailored to your business, custom domain setup, mobile-responsive design, fast hosting, SSL certificate, professional email, contact form, analytics, and AI credits each month so you can keep your site fresh.',
+  'help.faq5.answer':
+    'Every website includes: professionally designed pages tailored to your business, custom domain setup, mobile-responsive design, fast hosting, SSL certificate, professional email, contact form, analytics, and AI credits each month so you can keep your site fresh.',
   'help.faq6.question': 'Do I need any technical skills?',
-  'help.faq6.answer': "Zero. We handle the technical setup. Our smart editor is built for people who've never touched code. Just describe what you want to change, and our smart editor handles the rest.",
+  'help.faq6.answer':
+    "Zero. We handle the technical setup. Our smart editor is built for people who've never touched code. Just describe what you want to change, and our smart editor handles the rest.",
   'help.faq7.question': 'What are AI credits?',
-  'help.faq7.answer': 'Editor credits let you make changes to your live site through our smart editor: update text, swap images, add sections, tweak layouts, and more. Your plan includes credits each month, which is more than enough for regular updates.',
+  'help.faq7.answer':
+    'Editor credits let you make changes to your live site through our smart editor: update text, swap images, add sections, tweak layouts, and more. Your plan includes credits each month, which is more than enough for regular updates.',
   'help.faq8.question': 'What if I want to cancel?',
-  'help.faq8.answer': "No lock-in contracts. You can cancel your monthly subscription anytime. You keep your domain and we can help you export your content if needed.",
+  'help.faq8.answer':
+    'No lock-in contracts. You can cancel your monthly subscription anytime. You keep your domain and we can help you export your content if needed.',
   'help.faq9.question': 'Can I use my existing domain?',
-  'help.faq9.answer': "Absolutely. We'll help you connect your existing domain to your new site at no extra cost. If you don't have a domain yet, we can help you pick and set one up during the discovery call.",
+  'help.faq9.answer':
+    "Absolutely. We'll help you connect your existing domain to your new site at no extra cost. If you don't have a domain yet, we can help you pick and set one up during the discovery call.",
   'help.faq10.question': 'What kind of websites can you build?',
-  'help.faq10.answer': "We specialize in professional websites for freelancers, consultants, small businesses, restaurants, agencies, coaches, and creators. Whether you need a portfolio, a service page, a landing page, or a multi-page business site, we've got you covered.",
+  'help.faq10.answer':
+    "We specialize in professional websites for freelancers, consultants, small businesses, restaurants, agencies, coaches, and creators. Whether you need a portfolio, a service page, a landing page, or a multi-page business site, we've got you covered.",
   'help.cta.title': 'Ready to get started?',
-  'help.cta.description': "Book a free discovery call and let's build your website together.",
+  'help.cta.description':
+    "Book a free discovery call and let's build your website together.",
   'help.cta.button': 'Book Free Discovery Call',
 
   // Content moderation

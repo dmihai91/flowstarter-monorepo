@@ -9,7 +9,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Mail, ChevronRight, Zap } from 'lucide-react';
-import type { IntegrationConfig } from '../types';
+import type { IntegrationConfig } from '~/components/editor/editor-chat/types';
 
 interface IntegrationsPanelProps {
   isDark: boolean;
@@ -29,11 +29,7 @@ interface NewsletterConfig {
   url: string;
 }
 
-export function IntegrationsPanel({
-  isDark,
-  onComplete,
-  onSkip,
-}: IntegrationsPanelProps) {
+export function IntegrationsPanel({ isDark, onComplete, onSkip }: IntegrationsPanelProps) {
   const [booking, setBooking] = useState<BookingConfig>({
     enabled: false,
     provider: 'calendly',
@@ -47,7 +43,7 @@ export function IntegrationsPanel({
   });
 
   const hasEnabledIntegrations = booking.enabled || newsletter.enabled;
-  
+
   // Check if integrations are properly configured (enabled means URL is required)
   const bookingValid = !booking.enabled || (booking.enabled && booking.url.trim().length > 0);
   const newsletterValid = !newsletter.enabled || (newsletter.enabled && newsletter.url.trim().length > 0);
@@ -118,7 +114,7 @@ export function IntegrationsPanel({
       <div style={{ marginBottom: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
           <Zap size={20} style={{ color: colors.accent }} />
-          <h3 
+          <h3
             data-testid="integrations-panel-title"
             style={{
               fontSize: '18px',
@@ -130,11 +126,13 @@ export function IntegrationsPanel({
             Connect Your Services
           </h3>
         </div>
-        <p style={{
-          fontSize: '14px',
-          color: colors.textSecondary,
-          margin: 0,
-        }}>
+        <p
+          style={{
+            fontSize: '14px',
+            color: colors.textSecondary,
+            margin: 0,
+          }}
+        >
           Optional: Add booking or newsletter integrations to your site.
         </p>
       </div>
@@ -174,7 +172,9 @@ export function IntegrationsPanel({
               </select>
               <input
                 type="url"
-                placeholder={booking.provider === 'calendly' ? 'https://calendly.com/your-link' : 'https://cal.com/your-link'}
+                placeholder={
+                  booking.provider === 'calendly' ? 'https://calendly.com/your-link' : 'https://cal.com/your-link'
+                }
                 value={booking.url}
                 onChange={(e) => setBooking({ ...booking, url: e.target.value })}
                 data-testid="booking-url-input"
@@ -207,7 +207,9 @@ export function IntegrationsPanel({
             <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <select
                 value={newsletter.provider}
-                onChange={(e) => setNewsletter({ ...newsletter, provider: e.target.value as NewsletterConfig['provider'] })}
+                onChange={(e) =>
+                  setNewsletter({ ...newsletter, provider: e.target.value as NewsletterConfig['provider'] })
+                }
                 data-testid="newsletter-provider-select"
                 style={{
                   width: '100%',
@@ -228,9 +230,11 @@ export function IntegrationsPanel({
               <input
                 type="text"
                 placeholder={
-                  newsletter.provider === 'mailchimp' ? 'Form action URL' :
-                  newsletter.provider === 'convertkit' ? 'Form ID' :
-                  'Username'
+                  newsletter.provider === 'mailchimp'
+                    ? 'Form action URL'
+                    : newsletter.provider === 'convertkit'
+                      ? 'Form ID'
+                      : 'Username'
                 }
                 value={newsletter.url}
                 onChange={(e) => setNewsletter({ ...newsletter, url: e.target.value })}
@@ -268,8 +272,8 @@ export function IntegrationsPanel({
             cursor: 'pointer',
             transition: 'background 0.2s',
           }}
-          onMouseEnter={(e) => e.currentTarget.style.background = colors.buttonSecondaryHover}
-          onMouseLeave={(e) => e.currentTarget.style.background = colors.buttonSecondaryBg}
+          onMouseEnter={(e) => (e.currentTarget.style.background = colors.buttonSecondaryHover)}
+          onMouseLeave={(e) => (e.currentTarget.style.background = colors.buttonSecondaryBg)}
         >
           Skip for Now
         </button>
@@ -294,8 +298,16 @@ export function IntegrationsPanel({
             gap: '6px',
             transition: 'opacity 0.2s',
           }}
-          onMouseEnter={(e) => { if (canBuild) e.currentTarget.style.opacity = '0.9'; }}
-          onMouseLeave={(e) => { if (canBuild) e.currentTarget.style.opacity = '1'; }}
+          onMouseEnter={(e) => {
+            if (canBuild) {
+              e.currentTarget.style.opacity = '0.9';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (canBuild) {
+              e.currentTarget.style.opacity = '1';
+            }
+          }}
         >
           {hasEnabledIntegrations ? 'Continue' : 'Build My Site'}
           <ChevronRight size={16} />
@@ -340,35 +352,41 @@ function IntegrationCard({
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{
-            width: '36px',
-            height: '36px',
-            borderRadius: '10px',
-            background: enabled ? 'rgba(77, 93, 217, 0.1)' : colors.inputBg,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: enabled ? colors.accent : colors.textTertiary,
-          }}>
+          <div
+            style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '10px',
+              background: enabled ? 'rgba(77, 93, 217, 0.1)' : colors.inputBg,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: enabled ? colors.accent : colors.textTertiary,
+            }}
+          >
             {icon}
           </div>
           <div>
-            <div style={{
-              fontSize: '14px',
-              fontWeight: 600,
-              color: colors.text,
-            }}>
+            <div
+              style={{
+                fontSize: '14px',
+                fontWeight: 600,
+                color: colors.text,
+              }}
+            >
               {title}
             </div>
-            <div style={{
-              fontSize: '12px',
-              color: colors.textSecondary,
-            }}>
+            <div
+              style={{
+                fontSize: '12px',
+                color: colors.textSecondary,
+              }}
+            >
               {description}
             </div>
           </div>
         </div>
-        
+
         {/* Toggle Switch */}
         <button
           type="button"
@@ -403,11 +421,11 @@ function IntegrationCard({
           />
         </button>
       </div>
-      
+
       {children}
     </div>
   );
 }
 
 // Re-export ContactDetails type for backwards compatibility (now in types.ts)
-export type { ContactDetails } from '../types';
+export type { ContactDetails } from '~/components/editor/editor-chat/types';

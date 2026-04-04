@@ -34,8 +34,12 @@ export function AppHeader() {
           </button>
 
           <Link href={homeHref} className="flex items-center gap-3 group">
-            <span className="sm:hidden"><Logo size="sm" /></span>
-            <span className="hidden sm:block"><Logo size="md" /></span>
+            <span className="sm:hidden">
+              <Logo size="sm" />
+            </span>
+            <span className="hidden sm:block">
+              <Logo size="md" />
+            </span>
             {isTeam && (
               <span className="px-2 py-0.5 text-[0.625rem] font-medium bg-[var(--purple)]/10 text-[var(--purple)] rounded-full hidden sm:block">
                 Team
@@ -48,7 +52,21 @@ export function AppHeader() {
             rel="noopener noreferrer"
             className="hidden sm:flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white hover:bg-gray-100/50 dark:hover:bg-white/5 transition-colors no-underline"
           >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
             Templates
           </a>
         </div>

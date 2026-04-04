@@ -1,6 +1,7 @@
 import { type ActionFunctionArgs } from '@remix-run/cloudflare';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { streamText, convertToCoreMessages } from 'ai';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { trackLLMUsage } from '~/lib/.server/llm/cost-tracker';
 import { createScopedLogger } from '~/utils/logger';
 import { FLOWSTARTER_SYSTEM_PROMPT } from '~/lib/config/systemPrompt';
@@ -105,4 +106,3 @@ export async function action({ request, context }: ActionFunctionArgs) {
     });
   }
 }
-

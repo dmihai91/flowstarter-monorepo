@@ -11,7 +11,9 @@ export interface ContactFormData {
 
 export function useContactForm() {
   return useMutation({
-    mutationFn: async (data: ContactFormData): Promise<{ success: boolean }> => {
+    mutationFn: async (
+      data: ContactFormData
+    ): Promise<{ success: boolean }> => {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

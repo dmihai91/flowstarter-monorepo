@@ -2,14 +2,22 @@
 
 import { Button } from '@/components/ui/button';
 import { useContactForm } from '@/hooks/useContactForm';
-import Link from 'next/link';
 import { useState } from 'react';
-import { GlassCard, GlassPanel } from '@flowstarter/flow-design-system';
-import { MessageCircle, Check, Loader2, Send, Calendar, Mail, Twitter, Linkedin, Clock } from 'lucide-react';
+import { GlassPanel } from '@flowstarter/flow-design-system';
+import {
+  MessageCircle,
+  Check,
+  Loader2,
+  Send,
+  Calendar,
+  Mail,
+  Twitter,
+  Linkedin,
+  Clock,
+} from 'lucide-react';
 import { useTranslations } from '@/lib/i18n';
 import { PublicPageLayout } from '@/components/PublicPageLayout';
 import { PreQualModal } from '@/app/(dynamic-pages)/(main-pages)/components/PreQualModal';
-
 
 export default function ContactPage() {
   const { t } = useTranslations();
@@ -42,254 +50,267 @@ export default function ContactPage() {
   const status = contactMutation.isPending
     ? 'loading'
     : contactMutation.isSuccess
-      ? 'success'
-      : contactMutation.isError
-        ? 'error'
-        : 'idle';
+    ? 'success'
+    : contactMutation.isError
+    ? 'error'
+    : 'idle';
 
-  const errorMessage = contactMutation.error?.message || t('contact.form.defaultError');
+  const errorMessage =
+    contactMutation.error?.message || t('contact.form.defaultError');
 
   return (
     <PublicPageLayout>
       {/* Content */}
       <main className="relative z-10 max-w-5xl mx-auto px-6 pt-28 pb-16">
-          {/* Hero */}
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium mb-6">
-              <MessageCircle className="w-4 h-4" />
-              {t('contact.badge')}
-            </div>
-            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-              {t('contact.title')}
-            </h1>
-            <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl mx-auto">
-              {t('contact.description')}
-            </p>
+        {/* Hero */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium mb-6">
+            <MessageCircle className="w-4 h-4" />
+            {t('contact.badge')}
           </div>
+          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+            {t('contact.title')}
+          </h1>
+          <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl mx-auto">
+            {t('contact.description')}
+          </p>
+        </div>
 
-          <div className="grid lg:grid-cols-2 gap-12">
-            {/* Contact Form */}
-            <GlassPanel padding="lg">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                {t('contact.form.title')}
-              </h2>
+        <div className="grid lg:grid-cols-2 gap-12">
+          {/* Contact Form */}
+          <GlassPanel padding="lg">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+              {t('contact.form.title')}
+            </h2>
 
-              {status === 'success' ? (
-                <div className="text-center py-12">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                    <Check className="w-8 h-8 text-emerald-500" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                    {t('contact.form.successTitle')}
-                  </h3>
-                  <p className="text-gray-500 dark:text-white/50 mb-6">
-                    {t('contact.form.successDesc')}
-                  </p>
-                  <Button
-                    onClick={() => contactMutation.reset()}
-                    variant="outline"
-                    className="rounded-xl"
-                  >
-                    {t('contact.form.sendAnother')}
-                  </Button>
+            {status === 'success' ? (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                  <Check className="w-8 h-8 text-emerald-500" />
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
-                      {t('contact.form.nameLabel')}
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.name}
-                      onChange={(e) =>
-                        setFormData({ ...formData, name: e.target.value })
-                      }
-                      placeholder={t('contact.form.namePlaceholder')}
-                      className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
-                      {t('contact.form.emailLabel')}
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={(e) =>
-                        setFormData({ ...formData, email: e.target.value })
-                      }
-                      placeholder={t('contact.form.emailPlaceholder')}
-                      className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
-                      {t('contact.form.subjectLabel')}
-                    </label>
-                    <select
-                      required
-                      value={formData.subject}
-                      onChange={(e) =>
-                        setFormData({ ...formData, subject: e.target.value })
-                      }
-                      className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
-                    >
-                      <option value="">{t('contact.form.subjectDefault')}</option>
-                      <option value="general">{t('contact.form.subjectGeneral')}</option>
-                      <option value="project">{t('contact.form.subjectProject')}</option>
-                      <option value="support">{t('contact.form.subjectSupport')}</option>
-                      <option value="billing">{t('contact.form.subjectBilling')}</option>
-                      <option value="feedback">{t('contact.form.subjectFeedback')}</option>
-                      <option value="other">{t('contact.form.subjectOther')}</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
-                      {t('contact.form.messageLabel')}
-                    </label>
-                    <textarea
-                      required
-                      rows={5}
-                      value={formData.message}
-                      onChange={(e) =>
-                        setFormData({ ...formData, message: e.target.value })
-                      }
-                      placeholder={t('contact.form.messagePlaceholder')}
-                      className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all resize-none"
-                    />
-                  </div>
-
-                  {status === 'error' && (
-                    <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-sm">
-                      {errorMessage}
-                    </div>
-                  )}
-
-                  <Button
-                    type="submit"
-                    disabled={status === 'loading'}
-                    className="w-full bg-gradient-to-r from-[var(--landing-btn-from)] via-[var(--landing-btn-via)] to-[var(--landing-btn-from)] text-white hover:from-[var(--landing-btn-hover-from)] hover:via-[var(--landing-btn-hover-via)] hover:to-[var(--landing-btn-hover-from)] rounded-xl h-12 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {status === 'loading' ? (
-                      <span className="flex items-center gap-2">
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        {t('contact.form.sending')}
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-2">
-                        {t('contact.form.sendButton')}
-                        <Send className="w-4 h-4" />
-                      </span>
-                    )}
-                  </Button>
-                </form>
-              )}
-            </GlassPanel>
-
-            {/* Contact Info */}
-            <div className="space-y-6">
-              {/* Quick Contact */}
-              <div className="p-8 rounded-2xl bg-gradient-to-br from-[var(--purple)]/10 to-blue-500/10 border border-[var(--purple)]/20">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
-                  {t('contact.talk.title')}
-                </h2>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                  {t('contact.form.successTitle')}
+                </h3>
                 <p className="text-gray-500 dark:text-white/50 mb-6">
-                  {t('contact.talk.description')}
+                  {t('contact.form.successDesc')}
                 </p>
                 <Button
-                  variant="brand-gradient"
-                  className="w-full rounded-xl h-12 shadow-lg"
-                  onClick={() => setDiscoveryModalOpen(true)}
+                  onClick={() => contactMutation.reset()}
+                  variant="outline"
+                  className="rounded-xl"
                 >
-                  <Calendar className="w-4 h-4 mr-2" />
-                  {t('contact.talk.button')}
+                  {t('contact.form.sendAnother')}
                 </Button>
               </div>
-
-              {/* Contact Methods */}
-              <GlassPanel padding="lg">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
-                  {t('contact.other.title')}
-                </h2>
-                <div className="space-y-4">
-                  <a
-                    href="mailto:hello@flowstarter.app"
-                    className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group"
-                  >
-                    <div className="w-10 h-10 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center">
-                      <Mail className="w-5 h-5 text-[var(--purple)]" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900 dark:text-white group-hover:text-[var(--purple)] transition-colors">
-                        {t('contact.other.emailLabel')}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-white/50">
-                        {t('contact.other.emailValue')}
-                      </p>
-                    </div>
-                  </a>
-                  <a
-                    href="https://twitter.com/flowstarter"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group"
-                  >
-                    <div className="w-10 h-10 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center">
-                      <Twitter className="w-5 h-5 text-[var(--purple)]" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900 dark:text-white group-hover:text-[var(--purple)] transition-colors">
-                        {t('contact.other.twitterLabel')}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-white/50">
-                        {t('contact.other.twitterValue')}
-                      </p>
-                    </div>
-                  </a>
-                  <a
-                    href="https://linkedin.com/company/flowstarter"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group"
-                  >
-                    <div className="w-10 h-10 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center">
-                      <Linkedin className="w-5 h-5 text-[var(--purple)]" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900 dark:text-white group-hover:text-[var(--purple)] transition-colors">
-                        {t('contact.other.linkedinLabel')}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-white/50">
-                        {t('contact.other.linkedinValue')}
-                      </p>
-                    </div>
-                  </a>
-                </div>
-              </GlassPanel>
-
-              {/* Response Time */}
-              <div className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 flex items-center gap-4">
-                <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-emerald-500" />
-                </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-white">
-                    {t('contact.response.title')}
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-white/50">
-                    {t('contact.response.description')}
-                  </p>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
+                    {t('contact.form.nameLabel')}
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                    placeholder={t('contact.form.namePlaceholder')}
+                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
+                  />
                 </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
+                    {t('contact.form.emailLabel')}
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
+                    placeholder={t('contact.form.emailPlaceholder')}
+                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
+                    {t('contact.form.subjectLabel')}
+                  </label>
+                  <select
+                    required
+                    value={formData.subject}
+                    onChange={(e) =>
+                      setFormData({ ...formData, subject: e.target.value })
+                    }
+                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
+                  >
+                    <option value="">{t('contact.form.subjectDefault')}</option>
+                    <option value="general">
+                      {t('contact.form.subjectGeneral')}
+                    </option>
+                    <option value="project">
+                      {t('contact.form.subjectProject')}
+                    </option>
+                    <option value="support">
+                      {t('contact.form.subjectSupport')}
+                    </option>
+                    <option value="billing">
+                      {t('contact.form.subjectBilling')}
+                    </option>
+                    <option value="feedback">
+                      {t('contact.form.subjectFeedback')}
+                    </option>
+                    <option value="other">
+                      {t('contact.form.subjectOther')}
+                    </option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
+                    {t('contact.form.messageLabel')}
+                  </label>
+                  <textarea
+                    required
+                    rows={5}
+                    value={formData.message}
+                    onChange={(e) =>
+                      setFormData({ ...formData, message: e.target.value })
+                    }
+                    placeholder={t('contact.form.messagePlaceholder')}
+                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all resize-none"
+                  />
+                </div>
+
+                {status === 'error' && (
+                  <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-sm">
+                    {errorMessage}
+                  </div>
+                )}
+
+                <Button
+                  type="submit"
+                  disabled={status === 'loading'}
+                  className="w-full bg-gradient-to-r from-[var(--landing-btn-from)] via-[var(--landing-btn-via)] to-[var(--landing-btn-from)] text-white hover:from-[var(--landing-btn-hover-from)] hover:via-[var(--landing-btn-hover-via)] hover:to-[var(--landing-btn-hover-from)] rounded-xl h-12 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {status === 'loading' ? (
+                    <span className="flex items-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      {t('contact.form.sending')}
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      {t('contact.form.sendButton')}
+                      <Send className="w-4 h-4" />
+                    </span>
+                  )}
+                </Button>
+              </form>
+            )}
+          </GlassPanel>
+
+          {/* Contact Info */}
+          <div className="space-y-6">
+            {/* Quick Contact */}
+            <div className="p-8 rounded-2xl bg-gradient-to-br from-[var(--purple)]/10 to-blue-500/10 border border-[var(--purple)]/20">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+                {t('contact.talk.title')}
+              </h2>
+              <p className="text-gray-500 dark:text-white/50 mb-6">
+                {t('contact.talk.description')}
+              </p>
+              <Button
+                variant="brand-gradient"
+                className="w-full rounded-xl h-12 shadow-lg"
+                onClick={() => setDiscoveryModalOpen(true)}
+              >
+                <Calendar className="w-4 h-4 mr-2" />
+                {t('contact.talk.button')}
+              </Button>
+            </div>
+
+            {/* Contact Methods */}
+            <GlassPanel padding="lg">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+                {t('contact.other.title')}
+              </h2>
+              <div className="space-y-4">
+                <a
+                  href="mailto:hello@flowstarter.app"
+                  className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center">
+                    <Mail className="w-5 h-5 text-[var(--purple)]" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white group-hover:text-[var(--purple)] transition-colors">
+                      {t('contact.other.emailLabel')}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-white/50">
+                      {t('contact.other.emailValue')}
+                    </p>
+                  </div>
+                </a>
+                <a
+                  href="https://twitter.com/flowstarter"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center">
+                    <Twitter className="w-5 h-5 text-[var(--purple)]" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white group-hover:text-[var(--purple)] transition-colors">
+                      {t('contact.other.twitterLabel')}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-white/50">
+                      {t('contact.other.twitterValue')}
+                    </p>
+                  </div>
+                </a>
+                <a
+                  href="https://linkedin.com/company/flowstarter"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center">
+                    <Linkedin className="w-5 h-5 text-[var(--purple)]" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white group-hover:text-[var(--purple)] transition-colors">
+                      {t('contact.other.linkedinLabel')}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-white/50">
+                      {t('contact.other.linkedinValue')}
+                    </p>
+                  </div>
+                </a>
+              </div>
+            </GlassPanel>
+
+            {/* Response Time */}
+            <div className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 flex items-center gap-4">
+              <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                <Clock className="w-5 h-5 text-emerald-500" />
+              </div>
+              <div>
+                <p className="font-medium text-gray-900 dark:text-white">
+                  {t('contact.response.title')}
+                </p>
+                <p className="text-sm text-gray-500 dark:text-white/50">
+                  {t('contact.response.description')}
+                </p>
               </div>
             </div>
           </div>
-        </main>
+        </div>
+      </main>
 
       <PreQualModal
         open={discoveryModalOpen}

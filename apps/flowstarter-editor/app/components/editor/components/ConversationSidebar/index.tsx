@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useThemeStyles, getColors } from '~/components/editor/hooks';
 import { SidebarHeader } from './SidebarHeader';
 import { ConversationList } from './ConversationList';
+import { DashboardLinkButton } from './NewProjectButton';
 import type { ConversationSidebarProps } from './types';
 
 export type { ConversationSidebarProps } from './types';
@@ -19,7 +20,7 @@ export function ConversationSidebar({
   onDeleteConversation,
 }: ConversationSidebarProps) {
   const { isDark } = useThemeStyles();
-  const colors = getColors(isDark);
+  const _colors = getColors(isDark);
 
   return (
     <AnimatePresence>
@@ -56,12 +57,8 @@ export function ConversationSidebar({
                 : 'linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(250, 250, 252, 0.92) 100%)',
               backdropFilter: 'blur(40px) saturate(180%)',
               WebkitBackdropFilter: 'blur(40px) saturate(180%)',
-              borderRight: isDark
-                ? '1px solid rgba(0, 0, 0, 0.4)'
-                : '1px solid rgba(0, 0, 0, 0.08)',
-              borderLeft: isDark
-                ? '1px solid rgba(255, 255, 255, 0.08)'
-                : '1px solid rgba(255, 255, 255, 0.95)',
+              borderRight: isDark ? '1px solid rgba(0, 0, 0, 0.4)' : '1px solid rgba(0, 0, 0, 0.08)',
+              borderLeft: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(255, 255, 255, 0.95)',
               boxShadow: isDark
                 ? '4px 0 24px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(255, 255, 255, 0.06) inset, -1px 0 0 rgba(0, 0, 0, 0.3) inset'
                 : '4px 0 24px rgba(0, 0, 0, 0.06), 0 1px 0 rgba(255, 255, 255, 1) inset, -1px 0 0 rgba(0, 0, 0, 0.04) inset',
@@ -81,6 +78,7 @@ export function ConversationSidebar({
               onProjectNameChange={onProjectNameChange}
               onDeleteConversation={onDeleteConversation}
             />
+            <DashboardLinkButton />
           </motion.div>
         </>
       )}

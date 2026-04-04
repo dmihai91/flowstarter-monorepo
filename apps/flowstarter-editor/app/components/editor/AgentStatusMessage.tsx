@@ -17,7 +17,12 @@ interface Props {
 
 type Phase = 'thinking' | 'writing' | 'running' | 'validating' | 'fixing' | 'deploying' | 'done' | 'error';
 
-interface AutoFixEntry { attempt: number; strategy: string; error: string; result?: { success: boolean; message: string } }
+interface AutoFixEntry {
+  attempt: number;
+  strategy: string;
+  error: string;
+  result?: { success: boolean; message: string };
+}
 
 interface State {
   phase: Phase;
@@ -48,7 +53,10 @@ function deriveState(events: AgentActivityEvent[]): State {
         state.filesWritten++;
         break;
       case 'file_read':
-        if (state.phase !== 'writing') state.phase = 'thinking';
+        if (state.phase !== 'writing') {
+          state.phase = 'thinking';
+        }
+
         break;
       case 'tool_call':
         state.toolCalls++;
@@ -59,9 +67,16 @@ function deriveState(events: AgentActivityEvent[]): State {
         state.autoFixes.push({ attempt: e.attempt, strategy: e.strategy, error: e.error });
         break;
       case 'auto_fix_result': {
-        const fix = state.autoFixes.find(f => f.attempt === e.attempt);
-        if (fix) fix.result = { success: e.success, message: e.message };
-        if (e.success) state.phase = 'validating';
+        const fix = state.autoFixes.find((f) => f.attempt === e.attempt);
+
+        if (fix) {
+          fix.result = { success: e.success, message: e.message };
+        }
+
+        if (e.success) {
+          state.phase = 'validating';
+        }
+
         break;
       }
       case 'error':
@@ -74,35 +89,57 @@ function deriveState(events: AgentActivityEvent[]): State {
         break;
     }
   }
+
   return state;
 }
 
 const PHASE_LABEL: Record<Phase, string> = {
-  thinking: 'Analyzing', writing: 'Writing files', running: 'Running',
-  validating: 'Validating', fixing: 'Auto-fixing', deploying: 'Deploying',
-  done: 'Complete', error: 'Error',
+  thinking: 'Analyzing',
+  writing: 'Writing files',
+  running: 'Running',
+  validating: 'Validating',
+  fixing: 'Auto-fixing',
+  deploying: 'Deploying',
+  done: 'Complete',
+  error: 'Error',
 };
 
 const PHASE_COLOR: Record<Phase, string> = {
-  thinking: 'var(--purple, #4D5DD9)', writing: '#22c55e', running: '#f59e0b',
-  validating: '#06b6d4', fixing: '#f97316', deploying: '#8b5cf6',
-  done: '#22c55e', error: '#ef4444',
+  thinking: 'var(--purple, #4D5DD9)',
+  writing: '#22c55e',
+  running: '#f59e0b',
+  validating: '#06b6d4',
+  fixing: '#f97316',
+  deploying: '#8b5cf6',
+  done: '#22c55e',
+  error: '#ef4444',
 };
 
 const STRATEGY_LABEL: Record<string, string> = {
-  analyzing: 'Analyzing error', 'deterministic': 'Deterministic fix',
-  'ai-healing': 'AI healing (GLM)', 'rule-based': 'Rule-based fix',
+  analyzing: 'Analyzing error',
+  deterministic: 'Deterministic fix',
+  'ai-healing': 'AI healing (GLM)',
+  'rule-based': 'Rule-based fix',
 };
 
 function fmt(ms: number) {
   const s = ms / 1000;
   return s < 1 ? `${Math.round(ms)}ms` : s < 60 ? `${s.toFixed(1)}s` : `${Math.floor(s / 60)}m ${Math.round(s % 60)}s`;
 }
-function cost(usd: number) { return usd < 0.01 ? '<$0.01' : `$${usd.toFixed(2)}`; }
+
+function cost(usd: number) {
+  return usd < 0.01 ? '<$0.01' : `$${usd.toFixed(2)}`;
+}
 
 function toolCallSummary(tc: { name: string; input: Record<string, unknown> }): string {
-  if (tc.name === 'write_file') return `write_file(${tc.input.path || '?'})`;
-  if (tc.name === 'read_file') return `read_file(${tc.input.path || '?'})`;
+  if (tc.name === 'write_file') {
+    return `write_file(${tc.input.path || '?'})`;
+  }
+
+  if (tc.name === 'read_file') {
+    return `read_file(${tc.input.path || '?'})`;
+  }
+
   return tc.name;
 }
 
@@ -116,29 +153,68 @@ export function AgentStatusMessage({ events, isActive, onOpenTerminal }: Props) 
   const [dot, setDot] = useState(0);
   const dotRef = useRef<ReturnType<typeof setInterval>>(undefined);
   useEffect(() => {
-    if (!isActive) { if (dotRef.current) clearInterval(dotRef.current); return; }
-    dotRef.current = setInterval(() => setDot(d => (d + 1) % 3), 500);
-    return () => { if (dotRef.current) clearInterval(dotRef.current); };
+    if (!isActive) {
+      if (dotRef.current) {
+        clearInterval(dotRef.current);
+      }
+
+      return undefined;
+    }
+
+    dotRef.current = setInterval(() => setDot((d) => (d + 1) % 3), 500);
+
+    return () => {
+      if (dotRef.current) {
+        clearInterval(dotRef.current);
+      }
+    };
   }, [isActive]);
+
   const dots = '.'.repeat(dot + 1).padEnd(3, '\u00a0');
 
   return (
-    <div style={{
-      borderRadius: 8, border: `1px solid ${borderColor}`,
-      background: hasErrors ? 'rgba(239,68,68,0.04)' : 'rgba(255,255,255,0.03)',
-      fontFamily: 'var(--font-mono, monospace)', fontSize: 11, overflow: 'hidden',
-    }}>
+    <div
+      style={{
+        borderRadius: 8,
+        border: `1px solid ${borderColor}`,
+        background: hasErrors ? 'rgba(239,68,68,0.04)' : 'rgba(255,255,255,0.03)',
+        fontFamily: 'var(--font-mono, monospace)',
+        fontSize: 11,
+        overflow: 'hidden',
+      }}
+    >
       {/* Header */}
-      <div style={{
-        padding: '6px 12px', display: 'flex', alignItems: 'center', gap: 8,
-        borderBottom: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)',
-      }}>
-        <span style={{
-          width: 6, height: 6, borderRadius: '50%', background: PHASE_COLOR[state.phase],
-          flexShrink: 0, boxShadow: isActive ? `0 0 6px ${PHASE_COLOR[state.phase]}` : 'none',
-        }} />
-        <span style={{ color: PHASE_COLOR[state.phase], fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', fontSize: 10 }}>
-          {PHASE_LABEL[state.phase]}{isActive ? dots : ''}
+      <div
+        style={{
+          padding: '6px 12px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          borderBottom: '1px solid rgba(255,255,255,0.05)',
+          background: 'rgba(255,255,255,0.02)',
+        }}
+      >
+        <span
+          style={{
+            width: 6,
+            height: 6,
+            borderRadius: '50%',
+            background: PHASE_COLOR[state.phase],
+            flexShrink: 0,
+            boxShadow: isActive ? `0 0 6px ${PHASE_COLOR[state.phase]}` : 'none',
+          }}
+        />
+        <span
+          style={{
+            color: PHASE_COLOR[state.phase],
+            fontWeight: 600,
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            fontSize: 10,
+          }}
+        >
+          {PHASE_LABEL[state.phase]}
+          {isActive ? dots : ''}
         </span>
         <span style={{ marginLeft: 'auto', color: 'rgba(255,255,255,0.25)', fontSize: 10 }}>
           {state.toolCalls > 0 && `${state.toolCalls} calls`}
@@ -146,10 +222,16 @@ export function AgentStatusMessage({ events, isActive, onOpenTerminal }: Props) 
           {state.doneEvent && ` · ${fmt(state.doneEvent.duration_ms)} · ${cost(state.doneEvent.cost_usd)}`}
         </span>
         {hasErrors && (
-          <span style={{
-            background: 'rgba(239,68,68,0.15)', color: '#ef4444',
-            borderRadius: 4, padding: '1px 6px', fontSize: 10, fontWeight: 600,
-          }}>
+          <span
+            style={{
+              background: 'rgba(239,68,68,0.15)',
+              color: '#ef4444',
+              borderRadius: 4,
+              padding: '1px 6px',
+              fontSize: 10,
+              fontWeight: 600,
+            }}
+          >
             {state.errors.length}
           </span>
         )}
@@ -189,14 +271,25 @@ export function AgentStatusMessage({ events, isActive, onOpenTerminal }: Props) 
         {state.autoFixes.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 3, marginTop: 2 }}>
             {state.autoFixes.slice(-3).map((fix, i) => (
-              <div key={i} style={{
-                display: 'flex', gap: 6, alignItems: 'baseline',
-                background: 'rgba(249,115,22,0.06)', borderRadius: 4, padding: '3px 8px',
-              }}>
-                <span style={{
-                  color: fix.result?.success ? '#22c55e' : fix.result ? '#ef4444' : '#f97316',
-                  fontWeight: 600, fontSize: 10, flexShrink: 0,
-                }}>
+              <div
+                key={i}
+                style={{
+                  display: 'flex',
+                  gap: 6,
+                  alignItems: 'baseline',
+                  background: 'rgba(249,115,22,0.06)',
+                  borderRadius: 4,
+                  padding: '3px 8px',
+                }}
+              >
+                <span
+                  style={{
+                    color: fix.result?.success ? '#22c55e' : fix.result ? '#ef4444' : '#f97316',
+                    fontWeight: 600,
+                    fontSize: 10,
+                    flexShrink: 0,
+                  }}
+                >
                   {fix.result?.success ? 'FIXED' : fix.result ? 'FAILED' : `FIX ${fix.attempt}`}
                 </span>
                 <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10 }}>
@@ -214,10 +307,16 @@ export function AgentStatusMessage({ events, isActive, onOpenTerminal }: Props) 
 
         {/* Errors */}
         {state.errors.slice(-2).map((err, i) => (
-          <div key={i} style={{
-            color: '#fca5a5', background: 'rgba(239,68,68,0.08)',
-            borderRadius: 4, padding: '4px 8px', lineHeight: 1.5,
-          }}>
+          <div
+            key={i}
+            style={{
+              color: '#fca5a5',
+              background: 'rgba(239,68,68,0.08)',
+              borderRadius: 4,
+              padding: '4px 8px',
+              lineHeight: 1.5,
+            }}
+          >
             {err}
           </div>
         ))}
@@ -227,7 +326,8 @@ export function AgentStatusMessage({ events, isActive, onOpenTerminal }: Props) 
           <div style={{ color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>
             Generated {state.filesWritten} files in {fmt(state.doneEvent.duration_ms)}.
             {state.doneEvent.turns > 0 && ` ${state.doneEvent.turns} turns.`}
-            {state.autoFixes.length > 0 && ` ${state.autoFixes.filter(f => f.result?.success).length}/${state.autoFixes.length} auto-fixes.`}
+            {state.autoFixes.length > 0 &&
+              ` ${state.autoFixes.filter((f) => f.result?.success).length}/${state.autoFixes.length} auto-fixes.`}
           </div>
         )}
       </div>
@@ -235,11 +335,19 @@ export function AgentStatusMessage({ events, isActive, onOpenTerminal }: Props) 
       {/* Footer */}
       {onOpenTerminal && (
         <div style={{ padding: '4px 12px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-          <button onClick={onOpenTerminal} style={{
-            background: 'none', border: 'none', padding: 0,
-            color: 'rgba(255,255,255,0.25)', cursor: 'pointer', fontSize: 10,
-            textDecoration: 'underline', textUnderlineOffset: 2,
-          }}>
+          <button
+            onClick={onOpenTerminal}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              color: 'rgba(255,255,255,0.25)',
+              cursor: 'pointer',
+              fontSize: 10,
+              textDecoration: 'underline',
+              textUnderlineOffset: 2,
+            }}
+          >
             View full activity in terminal
           </button>
         </div>

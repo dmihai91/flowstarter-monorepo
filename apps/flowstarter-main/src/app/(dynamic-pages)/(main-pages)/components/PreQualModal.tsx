@@ -9,25 +9,25 @@ const OPTIONS = [
   {
     id: 'starter',
     name: 'Starter',
-    desc: 'I need a solid site fast',
-    price: '499€',
+    desc: 'Get a professional site live in 5–7 days',
+    price: '€499',
   },
   {
     id: 'relaunch',
     name: 'Relaunch',
-    desc: 'I have a site that needs a fresh start',
-    price: '699€–999€',
+    desc: 'My site exists but is not getting me clients',
+    price: '€699–€999',
   },
   {
     id: 'growth',
     name: 'Growth',
-    desc: 'I want the full setup + editor access',
-    price: '999€–1499€',
+    desc: 'I want bookings, payments & email all set up',
+    price: '€999–€1,499',
   },
   {
     id: 'unsure',
     name: 'Not sure yet',
-    desc: 'Help me decide on the call',
+    desc: 'I\'ll explain my situation on the call',
     price: null,
   },
 ] as const;
@@ -43,16 +43,19 @@ interface PreQualModalProps {
   initialPlan?: string | null;
 }
 
-export function PreQualModal({ open, onClose, source = 'cta', initialPlan }: PreQualModalProps) {
+export function PreQualModal({
+  open,
+  onClose,
+  source = 'cta',
+  initialPlan,
+}: PreQualModalProps) {
   const [selected, setSelected] = useState<OptionId | null>(null);
   const [step, setStep] = useState<Step>('select');
 
   // Reset on open + lock scroll; apply initial plan
   useEffect(() => {
     if (open) {
-      const match = OPTIONS.find(
-        (o) => o.id === initialPlan?.toLowerCase()
-      );
+      const match = OPTIONS.find((o) => o.id === initialPlan?.toLowerCase());
       setSelected(match ? match.id : null);
       setStep('select');
       document.body.style.overflow = 'hidden';
@@ -128,9 +131,7 @@ export function PreQualModal({ open, onClose, source = 'cta', initialPlan }: Pre
         <div
           className={[
             'relative w-full my-auto rounded-2xl border border-white/10 bg-white dark:bg-[#0f1117] shadow-2xl shadow-black/30 p-5 sm:p-8 transition-all duration-300',
-            step === 'calendar'
-              ? 'max-w-3xl'
-              : 'max-w-md sm:max-w-2xl',
+            step === 'calendar' ? 'max-w-3xl' : 'max-w-md sm:max-w-2xl',
           ].join(' ')}
         >
           {/* Drag handle — mobile only */}

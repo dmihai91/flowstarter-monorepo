@@ -31,7 +31,9 @@ export function PaletteSelector({
   templatePalette,
   isDark,
   onSelect,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onCustomClick,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   customColors,
   templatePalettes,
 }: PaletteSelectorProps) {
@@ -217,8 +219,6 @@ export function PaletteSelector({
             </motion.button>
           );
         })}
-
-        
       </AnimatePresence>
     </motion.div>
   );

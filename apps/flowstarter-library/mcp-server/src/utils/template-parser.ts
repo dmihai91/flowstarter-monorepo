@@ -43,7 +43,7 @@ export async function parseTemplate(
         defaults[key.trim()] = valueParts.join('=').trim();
       }
     });
-  } catch (error) {
+  } catch {
     // Defaults file is optional
   }
   
@@ -71,7 +71,7 @@ export async function parseTemplate(
   let contentStructure = '';
   try {
     contentStructure = await readFileContent(contentPath);
-  } catch (error) {
+  } catch {
     console.warn(`No content.md found for ${templateName}`);
   }
 
@@ -90,7 +90,7 @@ export async function parseTemplate(
       devDependencies: pkg.devDependencies || {},
       scripts: pkg.scripts || {}
     };
-  } catch (error) {
+  } catch {
     console.warn(`No package.json found for ${templateName}`);
   }
 
@@ -139,7 +139,7 @@ export async function parseTemplate(
         .filter(line => line.startsWith('- '))
         .map(line => line.replace(/^- \*\*(.+?)\*\* - (.+)/, '$1: $2').trim());
     }
-  } catch (error) {
+  } catch {
     console.warn(`No README.md found for ${templateName}`);
   }
 

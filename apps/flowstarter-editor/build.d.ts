@@ -9,4 +9,3 @@ declare module '../build/server' {
   const build: ServerBuild;
   export default build;
 }
-

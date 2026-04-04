@@ -18,7 +18,10 @@ export async function GET(req: Request) {
 
   const config = integration?.config as Record<string, string> | null;
   if (!config?.api_key_secret_id) {
-    return NextResponse.json({ error: 'Cal.com not connected' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Cal.com not connected' },
+      { status: 400 }
+    );
   }
 
   // Resolve API key from Vault
@@ -26,24 +29,39 @@ export async function GET(req: Request) {
   try {
     apiKey = await readUserSecret(supabase, config.api_key_secret_id);
   } catch {
-    return NextResponse.json({ error: 'Failed to retrieve credentials' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to retrieve credentials' },
+      { status: 500 }
+    );
   }
   if (!apiKey) {
-    return NextResponse.json({ error: 'Cal.com credentials not found' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Cal.com credentials not found' },
+      { status: 400 }
+    );
   }
 
   try {
     const [meRes, eventTypesRes] = await Promise.all([
       fetch(`https://api.cal.com/v1/me?apiKey=${encodeURIComponent(apiKey)}`),
-      fetch(`https://api.cal.com/v1/event-types?apiKey=${encodeURIComponent(apiKey)}`),
+      fetch(
+        `https://api.cal.com/v1/event-types?apiKey=${encodeURIComponent(
+          apiKey
+        )}`
+      ),
     ]);
 
     if (!meRes.ok) {
-      return NextResponse.json({ error: 'Failed to fetch Cal.com user' }, { status: 502 });
+      return NextResponse.json(
+        { error: 'Failed to fetch Cal.com user' },
+        { status: 502 }
+      );
     }
 
     const { user } = await meRes.json();
-    const eventTypesData = eventTypesRes.ok ? await eventTypesRes.json() : { event_types: [] };
+    const eventTypesData = eventTypesRes.ok
+      ? await eventTypesRes.json()
+      : { event_types: [] };
 
     return NextResponse.json({
       users: [
@@ -74,6 +92,9 @@ export async function GET(req: Request) {
     });
   } catch (err) {
     console.error('Cal.com resources error:', err);
-    return NextResponse.json({ error: 'Failed to fetch Cal.com resources' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch Cal.com resources' },
+      { status: 500 }
+    );
   }
 }

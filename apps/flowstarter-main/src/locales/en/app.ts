@@ -1,7 +1,8 @@
 export const appKeys = {
   // General
   'app.name': 'Flowstarter',
-  'app.title': 'Flowstarter | Professional websites for coaches, consultants & therapists',
+  'app.title':
+    'Flowstarter | Professional websites for coaches, consultants & therapists',
   'app.description':
     'We design, build, and launch your professional website in days. Update it yourself with AI. Starting at €499.',
   'app.back': 'Back',

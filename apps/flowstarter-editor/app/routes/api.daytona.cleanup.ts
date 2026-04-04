@@ -141,4 +141,3 @@ async function cleanupDaytonaWorkspace(workspaceId: string, env: CloudflareEnv):
 
   throw new Error(`Failed to delete workspace ${workspaceId} from any endpoint`);
 }
-

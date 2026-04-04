@@ -1,10 +1,11 @@
 /**
  * Site Content Agent - Domain Index
- * 
+ *
  * Routes business descriptions to domain-specific content agents
  * for optimized site generation.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { type BusinessContext, type SiteContent } from './base';
 import { THERAPIST_DOMAIN } from './therapist';
 import { FITNESS_DOMAIN } from './fitness';
@@ -61,21 +62,21 @@ const DOMAINS: DomainConfig[] = [
   THERAPIST_DOMAIN as DomainConfig,
   YOGA_DOMAIN,
   FITNESS_DOMAIN as DomainConfig,
-  
+
   // Service professionals
   COACHING_DOMAIN,
   BEAUTY_DOMAIN,
-  
+
   // Creative
   CREATIVE_DOMAIN,
-  
+
   // Food & hospitality
   FOOD_DOMAIN,
-  
+
   // Professional services
   PROFESSIONAL_DOMAIN,
   REALESTATE_DOMAIN,
-  
+
   // Tech
   TECH_DOMAIN,
 ];
@@ -99,12 +100,7 @@ export const GENERIC_DOMAIN: DomainConfig = {
       'Your Success Is Our Mission',
       'Professional Solutions, Personal Touch',
     ],
-    ctas: [
-      'Get Started',
-      'Contact Us',
-      'Learn More',
-      'Request a Quote',
-    ],
+    ctas: ['Get Started', 'Contact Us', 'Learn More', 'Request a Quote'],
   },
   systemPrompt: `You are a professional website content writer.
 Create clear, compelling content that communicates value and builds trust.
@@ -135,7 +131,7 @@ export function detectDomain(description: string): DomainConfig {
   }
 
   const lowerDesc = description.toLowerCase();
-  
+
   for (const domain of DOMAINS) {
     for (const keyword of domain.keywords) {
       if (lowerDesc.includes(keyword.toLowerCase())) {
@@ -143,7 +139,7 @@ export function detectDomain(description: string): DomainConfig {
       }
     }
   }
-  
+
   return GENERIC_DOMAIN;
 }
 
@@ -195,13 +191,16 @@ export function getSampleHeadlines(description: string): string[] {
  * Get all domain IDs (for debugging/testing)
  */
 export function getAllDomainIds(): string[] {
-  return [...DOMAINS.map(d => d.id), 'generic'];
+  return [...DOMAINS.map((d) => d.id), 'generic'];
 }
 
 /**
  * Get a domain by ID
  */
 export function getDomainById(id: string): DomainConfig | undefined {
-  if (id === 'generic') return GENERIC_DOMAIN;
-  return DOMAINS.find(d => d.id === id);
+  if (id === 'generic') {
+    return GENERIC_DOMAIN;
+  }
+
+  return DOMAINS.find((d) => d.id === id);
 }

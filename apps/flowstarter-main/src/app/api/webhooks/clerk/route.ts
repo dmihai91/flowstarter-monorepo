@@ -74,7 +74,7 @@ async function handleUserCreated(data: ClerkUserData): Promise<void> {
   await supabase.from('security_audit_logs').insert({
     event: 'user.created',
     severity: 'info',
-    user_hash: hashUserId(data.id),
+    user_hash: await hashUserId(data.id),
     provider: 'clerk',
     success: true,
   });
@@ -91,7 +91,7 @@ async function handleUserUpdated(data: ClerkUserData): Promise<void> {
   await supabase.from('security_audit_logs').insert({
     event: 'user.updated',
     severity: 'info',
-    user_hash: hashUserId(data.id),
+    user_hash: await hashUserId(data.id),
     provider: 'clerk',
     success: true,
   });
@@ -149,7 +149,7 @@ async function handleUserDeleted(data: ClerkUserData): Promise<void> {
   await supabase.from('security_audit_logs').insert({
     event: 'user.deleted',
     severity: 'info',
-    user_hash: hashUserId(data.id),
+    user_hash: await hashUserId(data.id),
     provider: 'clerk',
     success: true,
   });
@@ -158,14 +158,10 @@ async function handleUserDeleted(data: ClerkUserData): Promise<void> {
 /**
  * Hash user ID for privacy-compliant logging
  */
-function hashUserId(userId: string): string {
+async function hashUserId(userId: string): Promise<string> {
   // Use a simple hash for correlation without PII
-  const crypto = require('crypto');
-  return crypto
-    .createHash('sha256')
-    .update(userId)
-    .digest('hex')
-    .substring(0, 16);
+  const { createHash } = await import('crypto');
+  return createHash('sha256').update(userId).digest('hex').substring(0, 16);
 }
 
 /**

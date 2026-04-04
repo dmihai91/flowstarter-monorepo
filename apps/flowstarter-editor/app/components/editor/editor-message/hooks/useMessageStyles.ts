@@ -49,9 +49,7 @@ export function useBubbleStyles({ isDark, variant }: BubbleStyleConfig): BubbleS
         background: isUser
           ? 'linear-gradient(135deg, rgba(39, 39, 42, 0.45) 0%, rgba(39, 39, 42, 0.3) 100%)'
           : 'linear-gradient(135deg, rgba(24, 24, 27, 0.65) 0%, rgba(24, 24, 27, 0.45) 100%)',
-        border: isUser
-          ? '1px solid rgba(255, 255, 255, 0.08)'
-          : '1px solid rgba(139, 92, 246, 0.12)',
+        border: isUser ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(139, 92, 246, 0.12)',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
       };
     }
@@ -60,9 +58,7 @@ export function useBubbleStyles({ isDark, variant }: BubbleStyleConfig): BubbleS
       background: isUser
         ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%)'
         : 'linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(244, 244, 245, 0.65) 100%)',
-      border: isUser
-        ? '1px solid rgba(255, 255, 255, 0.7)'
-        : '1px solid rgba(255, 255, 255, 0.5)',
+      border: isUser ? '1px solid rgba(255, 255, 255, 0.7)' : '1px solid rgba(255, 255, 255, 0.5)',
       boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.9)',
     };
   }, [isDark, variant]);

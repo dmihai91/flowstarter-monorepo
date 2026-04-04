@@ -72,7 +72,7 @@ export async function buildFileTree(
 			try {
 				const childNode = await buildFileTree(fullPath, relPath);
 				children.push(childNode);
-			} catch (error) {
+			} catch {
 				// Skip excluded directories and files
 				continue;
 			}

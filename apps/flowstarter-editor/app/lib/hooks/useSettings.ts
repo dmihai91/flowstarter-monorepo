@@ -54,7 +54,6 @@ export interface UseSettingsReturn {
   setAutoSelectTemplate: (enabled: boolean) => void;
   contextOptimizationEnabled: boolean;
   enableContextOptimization: (enabled: boolean) => void;
-
 }
 
 // Add interface to match ProviderSetting type
@@ -195,4 +194,3 @@ export function useSettings(): UseSettingsReturn {
     settings,
   };
 }
-

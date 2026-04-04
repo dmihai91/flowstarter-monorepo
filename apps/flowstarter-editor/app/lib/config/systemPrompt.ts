@@ -104,7 +104,7 @@ Example:
 \`\`\`astro
 ---
 // Frontmatter - runs at build time
-import Layout from '../layouts/Layout.astro';
+import Layout from '~/lib/layouts/Layout.astro';
 interface Props {
   title: string;
 }
@@ -212,4 +212,3 @@ REMEMBER: Use primary color for 10-15% of design only. Most elements should use 
 
   return FLOWSTARTER_SYSTEM_PROMPT + contextAddition;
 }
-

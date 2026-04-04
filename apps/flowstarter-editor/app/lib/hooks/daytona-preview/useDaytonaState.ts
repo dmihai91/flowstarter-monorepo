@@ -46,6 +46,7 @@ export function useDaytonaState(projectId: string | null): UseDaytonaStateResult
   // Cleanup refs on unmount to prevent stale state and race conditions
   useEffect(() => {
     isMountedRef.current = true;
+
     return () => {
       isMountedRef.current = false;
       isStartingRef.current = false;

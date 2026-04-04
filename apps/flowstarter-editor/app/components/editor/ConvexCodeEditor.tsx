@@ -367,15 +367,10 @@ export function ConvexCodeEditor({ projectId, onSaveComplete }: ConvexCodeEditor
               width: '4px',
               background: colors.surfaceSubtle,
               transition: 'background 0.2s',
+
+              // CSS hover handled via global style injection — avoids typed event handler incompatibility with PanelResizeHandle
             }}
-            onMouseEnter={(e) => {
-              const target = e.currentTarget as unknown as HTMLElement;
-              target.style.background = isDark ? 'rgba(99, 102, 241, 0.5)' : 'rgba(99, 102, 241, 0.3)';
-            }}
-            onMouseLeave={(e) => {
-              const target = e.currentTarget as unknown as HTMLElement;
-              target.style.background = colors.surfaceSubtle;
-            }}
+            className="convex-resize-handle"
           />
 
           {/* Monaco editor */}

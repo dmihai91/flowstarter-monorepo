@@ -25,8 +25,10 @@ export interface PaginatedMessage {
 
 interface UseMessagePaginationProps {
   conversationId: Id<'conversations'> | null;
+
   /** Number of messages to load per batch. Default: 30 */
   pageSize?: number;
+
   /** Whether pagination is enabled. When false, returns empty state. */
   enabled?: boolean;
 }
@@ -34,16 +36,22 @@ interface UseMessagePaginationProps {
 interface UseMessagePaginationReturn {
   /** All loaded messages (oldest first) */
   messages: PaginatedMessage[];
+
   /** Whether there are older messages to load */
   hasMore: boolean;
+
   /** Whether we're currently loading more messages */
   isLoadingMore: boolean;
+
   /** Total message count in the conversation */
   totalCount: number;
+
   /** Call this when user scrolls to the top to load more */
   loadMoreMessages: () => void;
+
   /** Ref to attach to the scroll container div */
   scrollContainerRef: React.RefObject<HTMLDivElement>;
+
   /** Whether initial messages have loaded */
   isInitialLoad: boolean;
 }
@@ -66,8 +74,10 @@ export function useMessagePagination({
     conversationId && enabled ? { conversationId } : 'skip',
   );
 
-  // Query messages with current pagination window
-  // We request the last `loadedCount` messages (offset=0 means from the end)
+  /*
+   * Query messages with current pagination window
+   * We request the last `loadedCount` messages (offset=0 means from the end)
+   */
   const rawMessages = useQuery(
     api.conversations.getMessages,
     conversationId && enabled
@@ -94,7 +104,9 @@ export function useMessagePagination({
 
   // Load more messages (older ones)
   const loadMoreMessages = useCallback(() => {
-    if (!hasMore || isLoadingMore || !totalCount) return;
+    if (!hasMore || isLoadingMore || !totalCount) {
+      return;
+    }
 
     setIsLoadingMore(true);
 
@@ -127,7 +139,10 @@ export function useMessagePagination({
   // Scroll detection — load more when user scrolls near the top
   useEffect(() => {
     const container = scrollContainerRef.current;
-    if (!container || !enabled) return;
+
+    if (!container || !enabled) {
+      return undefined;
+    }
 
     const handleScroll = () => {
       // When scrolled within 100px of the top and we have more to load
@@ -137,6 +152,7 @@ export function useMessagePagination({
     };
 
     container.addEventListener('scroll', handleScroll, { passive: true });
+
     return () => container.removeEventListener('scroll', handleScroll);
   }, [enabled, hasMore, isLoadingMore, loadMoreMessages]);
 
@@ -156,4 +172,3 @@ export function useMessagePagination({
     isInitialLoad,
   };
 }
-

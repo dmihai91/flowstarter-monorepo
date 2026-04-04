@@ -1,6 +1,6 @@
 import { memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { PROGRESS_STEPS } from '../constants';
+import { PROGRESS_STEPS } from '~/components/workbench/DaytonaPreview/constants';
 
 interface ProgressDotsProps {
   status: string;
@@ -10,7 +10,11 @@ interface ProgressDotsProps {
 export const ProgressDots = memo(({ status, isDark }: ProgressDotsProps) => {
   const steps = useMemo(() => PROGRESS_STEPS, []);
   const currentIndex = steps.indexOf(
-    (status === 'idle' ? 'creating' : status === 'reconnecting' ? 'syncing' : status) as (typeof PROGRESS_STEPS)[number],
+    (status === 'idle'
+      ? 'creating'
+      : status === 'reconnecting'
+        ? 'syncing'
+        : status) as (typeof PROGRESS_STEPS)[number],
   );
 
   return (

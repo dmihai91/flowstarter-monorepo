@@ -3,11 +3,18 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AppLoader } from '@/components/ui/app-loading';
-import { getInitials } from '@/lib/user-utils';
-import { formatDate } from '@/lib/format-utils';
 import { useTranslations } from '@/lib/i18n';
 import { useUser } from '@clerk/nextjs';
-import { Pencil, Check, X, Mail, User, Calendar, Shield, Camera, type LucideIcon } from 'lucide-react';
+import {
+  Pencil,
+  Check,
+  X,
+  Mail,
+  User,
+  Calendar,
+  Camera,
+  type LucideIcon,
+} from 'lucide-react';
 import Image from 'next/image';
 import { useState, useRef } from 'react';
 import { GlassCard } from '@flowstarter/flow-design-system';
@@ -41,7 +48,10 @@ export function ProfileContent({ embedded = false }: { embedded?: boolean }) {
   const [editingField, setEditingField] = useState<string | null>(null);
   const [editValues, setEditValues] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!isLoaded) {
@@ -51,14 +61,21 @@ export function ProfileContent({ embedded = false }: { embedded?: boolean }) {
   if (!user) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-10 text-center">
-        <h1 className="text-2xl font-bold text-red-600">{t('profile.userNotFound')}</h1>
-        <p className="text-gray-500 dark:text-white/50 mt-2">{t('profile.userNotFound.description')}</p>
+        <h1 className="text-2xl font-bold text-red-600">
+          {t('profile.userNotFound')}
+        </h1>
+        <p className="text-gray-500 dark:text-white/50 mt-2">
+          {t('profile.userNotFound.description')}
+        </p>
       </div>
     );
   }
 
-  const primaryEmail = user.emailAddresses.find(e => e.id === user.primaryEmailAddressId)?.emailAddress
-    || user.emailAddresses[0]?.emailAddress || '';
+  const primaryEmail =
+    user.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)
+      ?.emailAddress ||
+    user.emailAddresses[0]?.emailAddress ||
+    '';
 
   const startEdit = (field: string, currentValue: string) => {
     setEditingField(field);
@@ -82,16 +99,27 @@ export function ProfileContent({ embedded = false }: { embedded?: boolean }) {
         await user.update({ [field]: value });
         setMessage({ type: 'success', text: 'Name updated successfully.' });
       } else if (field === 'email') {
-        const emailObj = user.emailAddresses.find(e => e.emailAddress === primaryEmail);
+        const emailObj = user.emailAddresses.find(
+          (e) => e.emailAddress === primaryEmail
+        );
         if (emailObj && value !== primaryEmail) {
           const newEmail = await user.createEmailAddress({ email: value });
           await newEmail.prepareVerification({ strategy: 'email_code' });
-          setMessage({ type: 'success', text: 'Verification email sent to ' + value + '. Please check your inbox.' });
+          setMessage({
+            type: 'success',
+            text:
+              'Verification email sent to ' +
+              value +
+              '. Please check your inbox.',
+          });
         }
       }
       setEditingField(null);
     } catch (err: unknown) {
-      setMessage({ type: 'error', text: getClerkErrorMessage(err, 'Something went wrong.') });
+      setMessage({
+        type: 'error',
+        text: getClerkErrorMessage(err, 'Something went wrong.'),
+      });
     } finally {
       setSaving(false);
     }
@@ -105,7 +133,10 @@ export function ProfileContent({ embedded = false }: { embedded?: boolean }) {
       await user.setProfileImage({ file });
       setMessage({ type: 'success', text: 'Profile photo updated.' });
     } catch (err: unknown) {
-      setMessage({ type: 'error', text: getClerkErrorMessage(err, t('app.failedToUpdatePhoto')) });
+      setMessage({
+        type: 'error',
+        text: getClerkErrorMessage(err, t('app.failedToUpdatePhoto')),
+      });
     } finally {
       setSaving(false);
     }
@@ -119,20 +150,24 @@ export function ProfileContent({ embedded = false }: { embedded?: boolean }) {
 
   const formatDate = (date: Date | null | undefined) => {
     if (!date) return '-';
-    return new Date(date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    return new Date(date).toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
   };
 
-  const InfoRow = ({ 
-    icon: Icon, 
-    label, 
-    value, 
-    field, 
-    editable = false 
-  }: { 
-    icon: LucideIcon; 
-    label: string; 
-    value: string; 
-    field?: string; 
+  const InfoRow = ({
+    icon: Icon,
+    label,
+    value,
+    field,
+    editable = false,
+  }: {
+    icon: LucideIcon;
+    label: string;
+    value: string;
+    field?: string;
     editable?: boolean;
   }) => {
     const isEditing = editingField === field;
@@ -150,7 +185,9 @@ export function ProfileContent({ embedded = false }: { embedded?: boolean }) {
             <div className="flex items-center gap-2">
               <Input
                 value={editValues[field!] || ''}
-                onChange={(e) => setEditValues({ ...editValues, [field!]: e.target.value })}
+                onChange={(e) =>
+                  setEditValues({ ...editValues, [field!]: e.target.value })
+                }
                 className="h-8 text-sm bg-white/50 dark:bg-white/5 border-gray-200 dark:border-white/10"
                 autoFocus
                 onKeyDown={(e) => {
@@ -197,7 +234,13 @@ export function ProfileContent({ embedded = false }: { embedded?: boolean }) {
   };
 
   return (
-    <div className={embedded ? "" : "max-w-xl mx-auto px-4 pt-8 pb-4 max-h-[calc(100vh-4rem)] overflow-y-auto"}>
+    <div
+      className={
+        embedded
+          ? ''
+          : 'max-w-xl mx-auto px-4 pt-8 pb-4 max-h-[calc(100vh-4rem)] overflow-y-auto'
+      }
+    >
       {/* Profile header */}
       <div className="flex items-center gap-3 mb-5">
         <div className="relative group">
@@ -230,15 +273,23 @@ export function ProfileContent({ embedded = false }: { embedded?: boolean }) {
           </p>
         </div>
       </div>
-      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleAvatarChange}
+      />
 
       {/* Status message */}
       {message && (
-        <div className={`mb-3 px-3 py-2 rounded-xl text-sm font-medium ${
-          message.type === 'success' 
-            ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800/30' 
-            : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800/30'
-        }`}>
+        <div
+          className={`mb-3 px-3 py-2 rounded-xl text-sm font-medium ${
+            message.type === 'success'
+              ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800/30'
+              : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800/30'
+          }`}
+        >
           {message.text}
         </div>
       )}
@@ -249,9 +300,27 @@ export function ProfileContent({ embedded = false }: { embedded?: boolean }) {
           {t('profile.personalInformation.title')}
         </h2>
         <div className="divide-y divide-gray-100 dark:divide-white/5">
-          <InfoRow icon={User} label={t('profile.personalInformation.firstName')} value={user.firstName || '-'} field="firstName" editable />
-          <InfoRow icon={User} label={t('profile.personalInformation.lastName')} value={user.lastName || '-'} field="lastName" editable />
-          <InfoRow icon={Mail} label={t('profile.personalInformation.email')} value={primaryEmail || '-'} field="email" editable />
+          <InfoRow
+            icon={User}
+            label={t('profile.personalInformation.firstName')}
+            value={user.firstName || '-'}
+            field="firstName"
+            editable
+          />
+          <InfoRow
+            icon={User}
+            label={t('profile.personalInformation.lastName')}
+            value={user.lastName || '-'}
+            field="lastName"
+            editable
+          />
+          <InfoRow
+            icon={Mail}
+            label={t('profile.personalInformation.email')}
+            value={primaryEmail || '-'}
+            field="email"
+            editable
+          />
         </div>
       </GlassCard>
 
@@ -261,8 +330,16 @@ export function ProfileContent({ embedded = false }: { embedded?: boolean }) {
           {t('profile.accountDetails.title')}
         </h2>
         <div className="divide-y divide-gray-100 dark:divide-white/5">
-          <InfoRow icon={Calendar} label={t('profile.accountDetails.created')} value={formatDate(user.createdAt)} />
-          <InfoRow icon={Calendar} label={t('profile.accountDetails.lastUpdated')} value={formatDate(user.updatedAt)} />
+          <InfoRow
+            icon={Calendar}
+            label={t('profile.accountDetails.created')}
+            value={formatDate(user.createdAt)}
+          />
+          <InfoRow
+            icon={Calendar}
+            label={t('profile.accountDetails.lastUpdated')}
+            value={formatDate(user.updatedAt)}
+          />
         </div>
       </GlassCard>
     </div>

@@ -15,7 +15,10 @@ interface TerminalPanelProps {
 }
 
 function formatDuration(s: number): string {
-  if (s < 1) return `${Math.round(s * 1000)}ms`;
+  if (s < 1) {
+    return `${Math.round(s * 1000)}ms`;
+  }
+
   return `${s.toFixed(1)}s`;
 }
 
@@ -30,10 +33,34 @@ function formatTokens(n: number): string {
 type FilterMode = 'all' | 'errors' | 'files' | 'sandbox';
 
 function filterEvents(events: AgentActivityEvent[], mode: FilterMode): AgentActivityEvent[] {
-  if (mode === 'all') return events;
-  if (mode === 'errors') return events.filter(e => e.type === 'error' || (e.type === 'sandbox_exit' && e.code !== 0) || (e.type === 'sandbox_output' && e.stream === 'stderr'));
-  if (mode === 'files') return events.filter(e => e.type === 'file_write' || e.type === 'file_read' || e.type === 'file_delete');
-  if (mode === 'sandbox') return events.filter(e => e.type === 'sandbox_status' || e.type === 'sandbox_output' || e.type === 'sandbox_exit' || e.type === 'command' || e.type === 'command_output');
+  if (mode === 'all') {
+    return events;
+  }
+
+  if (mode === 'errors') {
+    return events.filter(
+      (e) =>
+        e.type === 'error' ||
+        (e.type === 'sandbox_exit' && e.code !== 0) ||
+        (e.type === 'sandbox_output' && e.stream === 'stderr'),
+    );
+  }
+
+  if (mode === 'files') {
+    return events.filter((e) => e.type === 'file_write' || e.type === 'file_read' || e.type === 'file_delete');
+  }
+
+  if (mode === 'sandbox') {
+    return events.filter(
+      (e) =>
+        e.type === 'sandbox_status' ||
+        e.type === 'sandbox_output' ||
+        e.type === 'sandbox_exit' ||
+        e.type === 'command' ||
+        e.type === 'command_output',
+    );
+  }
+
   return events;
 }
 
@@ -49,13 +76,11 @@ function EventLine({ event }: { event: AgentActivityEvent }) {
           </span>
           <div className="flex-1 min-w-0">
             <button
-              onClick={() => setExpanded(e => !e)}
+              onClick={() => setExpanded((e) => !e)}
               className="text-left w-full text-[11px] font-mono text-[#71717a] hover:text-[#a1a1aa] transition-colors"
             >
               {expanded ? event.text : event.text.slice(0, 200).replace(/\n/g, ' ')}
-              {!expanded && event.text.length > 200 && (
-                <span className="text-[var(--purple,#4d5dd9)] ml-1">…</span>
-              )}
+              {!expanded && event.text.length > 200 && <span className="text-[var(--purple,#4d5dd9)] ml-1">…</span>}
             </button>
             {event.duration_s !== undefined && (
               <span className="text-[10px] font-mono text-[#3f3f46]"> ({formatDuration(event.duration_s)})</span>
@@ -103,7 +128,9 @@ function EventLine({ event }: { event: AgentActivityEvent }) {
       return (
         <div className="flex gap-3 py-0.5">
           <span className="w-[88px] shrink-0" />
-          <span className={`flex-1 text-[11px] font-mono break-all ${event.success === false ? 'text-[#EF4444]' : 'text-[#52525b]'}`}>
+          <span
+            className={`flex-1 text-[11px] font-mono break-all ${event.success === false ? 'text-[#EF4444]' : 'text-[#52525b]'}`}
+          >
             → {event.text}
           </span>
         </div>
@@ -121,9 +148,11 @@ function EventLine({ event }: { event: AgentActivityEvent }) {
       return (
         <div className="flex gap-3 py-0.5">
           <span className="w-[88px] shrink-0" />
-          <span className={`flex-1 text-[11px] font-mono break-all whitespace-pre-wrap ${
-            event.stream === 'stderr' ? 'text-[#EF4444]/80' : 'text-[#52525b]'
-          }`}>
+          <span
+            className={`flex-1 text-[11px] font-mono break-all whitespace-pre-wrap ${
+              event.stream === 'stderr' ? 'text-[#EF4444]/80' : 'text-[#52525b]'
+            }`}
+          >
             {event.line}
           </span>
         </div>
@@ -195,15 +224,19 @@ export function TerminalPanel({ events, isActive = false }: TerminalPanelProps) 
     }
   }, [events]);
 
-  const visible = filterEvents(events.filter(e => e.type !== 'done'), filter);
-  const doneEvent = events.findLast(e => e.type === 'done') as Extract<AgentActivityEvent, { type: 'done' }> | undefined;
-  const errorCount = events.filter(e => e.type === 'error' || (e.type === 'sandbox_exit' && (e as any).code !== 0)).length;
+  const visible = filterEvents(
+    events.filter((e) => e.type !== 'done'),
+    filter,
+  );
+  const doneEvent = events.findLast((e) => e.type === 'done') as
+    | Extract<AgentActivityEvent, { type: 'done' }>
+    | undefined;
+  const errorCount = events.filter(
+    (e) => e.type === 'error' || (e.type === 'sandbox_exit' && (e as any).code !== 0),
+  ).length;
 
   return (
-    <div
-      className="flex flex-col h-full font-mono"
-      style={{ background: 'var(--color-bg-primary, #0a0a0c)' }}
-    >
+    <div className="flex flex-col h-full font-mono" style={{ background: 'var(--color-bg-primary, #0a0a0c)' }}>
       {/* Toolbar */}
       <div
         className="flex items-center justify-between px-4 py-2 border-b shrink-0"
@@ -211,21 +244,17 @@ export function TerminalPanel({ events, isActive = false }: TerminalPanelProps) 
       >
         {/* Filter tabs */}
         <div className="flex items-center gap-1">
-          {FILTERS.map(f => (
+          {FILTERS.map((f) => (
             <button
               key={f.key}
               onClick={() => setFilter(f.key)}
               className={`px-3 py-1 text-[11px] font-mono rounded transition-colors ${
-                filter === f.key
-                  ? 'bg-white/10 text-[#d4d4d8]'
-                  : 'text-[#3f3f46] hover:text-[#71717a]'
+                filter === f.key ? 'bg-white/10 text-[#d4d4d8]' : 'text-[#3f3f46] hover:text-[#71717a]'
               } ${f.key === 'errors' && errorCount > 0 ? 'text-[#EF4444]' : ''}`}
             >
               {f.label}
               {f.key === 'errors' && errorCount > 0 && (
-                <span className="ml-1.5 bg-[#EF4444] text-white text-[9px] px-1 py-0.5 rounded">
-                  {errorCount}
-                </span>
+                <span className="ml-1.5 bg-[#EF4444] text-white text-[9px] px-1 py-0.5 rounded">{errorCount}</span>
               )}
             </button>
           ))}
@@ -239,9 +268,7 @@ export function TerminalPanel({ events, isActive = false }: TerminalPanelProps) 
               running
             </span>
           )}
-          {doneEvent && !isActive && (
-            <span className="text-[10px] text-[#3f3f46]">done</span>
-          )}
+          {doneEvent && !isActive && <span className="text-[10px] text-[#3f3f46]">done</span>}
         </div>
       </div>
 

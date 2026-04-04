@@ -9,25 +9,25 @@ import type { SiteGenerationInput } from './types';
 /** Virtual template mapping to base templates */
 export const TEMPLATE_MAPPING: Record<string, string> = {
   // Map virtual/old slugs to real MCP slugs
-  'medical-clinic':   'therapist-care',   // closest healthcare template
-  'dental-clinic':    'therapist-care',
-  'healthcare':       'therapist-care',
-  'fitness-studio':   'fitness-coach',
-  'fitness':          'fitness-coach',
-  'restaurant-page':  'coach-pro',
-  'local-service':    'coach-pro',
-  'real-estate-pro':  'coach-pro',
-  'agency-modern':    'creative-portfolio',
-  'minimal-blog':     'creative-portfolio',
-  'modern-business':  'coach-pro',        // fallback for old references
-  'coaching':         'coach-pro',
-  'wellness':         'wellness-holistic',
-  'education':        'academic-tutor',
-  'tutor':            'academic-tutor',
-  'beauty':           'beauty-stylist',
-  'music':            'music-teacher',
-  'therapy':          'therapist-care',
-  'workshop':         'workshop-host',
+  'medical-clinic': 'therapist-care', // closest healthcare template
+  'dental-clinic': 'therapist-care',
+  healthcare: 'therapist-care',
+  'fitness-studio': 'fitness-coach',
+  fitness: 'fitness-coach',
+  'restaurant-page': 'coach-pro',
+  'local-service': 'coach-pro',
+  'real-estate-pro': 'coach-pro',
+  'agency-modern': 'creative-portfolio',
+  'minimal-blog': 'creative-portfolio',
+  'modern-business': 'coach-pro', // fallback for old references
+  coaching: 'coach-pro',
+  wellness: 'wellness-holistic',
+  education: 'academic-tutor',
+  tutor: 'academic-tutor',
+  beauty: 'beauty-stylist',
+  music: 'music-teacher',
+  therapy: 'therapist-care',
+  workshop: 'workshop-host',
 };
 
 /**
@@ -166,8 +166,8 @@ const { title, description = '${input.businessInfo.description || 'Welcome to ou
  */
 export function generateIndexAstro(input: SiteGenerationInput): string {
   return `---
-import Layout from '../layouts/Layout.astro';
-import { loadContent } from '../lib/content';
+import Layout from '~/lib/services/layouts/Layout.astro';
+import { loadContent } from '~/lib/services/lib/content';
 
 let content;
 try {
@@ -230,4 +230,3 @@ export function patchTailwindContentPaths(configContent: string): string {
 
   return patched;
 }
-

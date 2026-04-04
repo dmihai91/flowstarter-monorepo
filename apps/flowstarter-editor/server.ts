@@ -58,21 +58,23 @@ app.use(
   express.static(join(__dirname, 'build/client/assets'), {
     immutable: true,
     maxAge: '1y',
-  })
+  }),
 );
 
 app.use(
   express.static(join(__dirname, 'build/client'), {
     maxAge: '1h',
-  })
+  }),
 );
 
 // Handle Remix requests
 const MODE = process.env.NODE_ENV || 'production';
 const BUILD_PATH = join(__dirname, 'build/server/index.js');
 
-// In development, we'll use vite's dev server instead
-// In production, we serve the built app
+/*
+ * In development, we'll use vite's dev server instead
+ * In production, we serve the built app
+ */
 if (MODE === 'production') {
   const build = await import(BUILD_PATH);
 
@@ -81,8 +83,11 @@ if (MODE === 'production') {
     createRequestHandler({
       build,
       mode: MODE,
-      // Note: In Node.js mode, we provide env directly instead of cloudflare context
-      // Routes should check for both process.env and context.cloudflare?.env
+
+      /*
+       * Note: In Node.js mode, we provide env directly instead of cloudflare context
+       * Routes should check for both process.env and context.cloudflare?.env
+       */
       getLoadContext(): AppLoadContext {
         const context: NodeCloudflareContext = {
           env: process.env as unknown as Env,
@@ -90,10 +95,11 @@ if (MODE === 'production') {
           caches: {} as CacheStorage,
           cf: undefined,
         };
+
         // Type assertion needed because Node.js context lacks full Cloudflare properties
         return { cloudflare: context } as unknown as AppLoadContext;
       },
-    })
+    }),
   );
 }
 
@@ -105,4 +111,3 @@ app.listen(PORT, '0.0.0.0', () => {
 });
 
 export { app };
-

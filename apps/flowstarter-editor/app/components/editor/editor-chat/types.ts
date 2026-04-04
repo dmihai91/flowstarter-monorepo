@@ -7,6 +7,7 @@ export interface ChatMessage {
   content: string;
   timestamp: number;
   component?: React.ReactNode;
+
   /** Live agent events for AgentStatusMessage card */
   agentEvents?: import('~/lib/services/claude-agent/types').AgentActivityEvent[];
   isAgentActive?: boolean;
@@ -42,44 +43,28 @@ export interface AttachedImage {
   preview: string;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// STREAMLINED ONBOARDING (6 Steps for <5 min completion)
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * STREAMLINED ONBOARDING (6 Steps for <5 min completion)
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 /**
- * Streamlined onboarding flow:
- * welcome → describe → name → quick-profile → business-uvp → template → personalization → creating → ready
- * 
- * Legacy steps are preserved for backward compatibility but deprecated.
+ * Build-only onboarding flow:
+ * creating → ready
+ *
+ * All pre-build decisions are made on the dashboard.
+ * The editor's job is purely: build the site, then chat to modify it.
  */
 export type OnboardingStep =
-  // === STREAMLINED FLOW ===
-  | 'welcome'          // Greeting + showcase
-  | 'describe'         // What do you sell + who is it for?
-  | 'name'             // Project/business name
-  | 'quick-profile'    // Goal + Offer + Tone - 3 multiple choice
-  | 'business-details' // Consolidated: UVP + offerings + contact info
-  | 'review'           // Handoff-backed review before first build
-  | 'template'         // Pick from recommended templates
-  | 'personalization'  // Logo + Colors + Font
-  | 'integrations'     // Calendly + GA integration cards
-  | 'creating'         // Build in progress
-  | 'ready'            // Done!
+  | 'creating' // Build in progress
+  | 'ready'; // Done!
 
-  // === LEGACY STEPS (deprecated, kept for migration) ===
-  | 'business-uvp'      // @deprecated - merged into business-details
-  | 'business-offering' // @deprecated - merged into business-details
-  | 'business-contact'  // @deprecated - merged into business-details
-  | 'business-audience' // @deprecated - merged into describe
-  | 'business-goals'    // @deprecated - merged into quick-profile
-  | 'business-tone'     // @deprecated - merged into quick-profile
-  | 'business-selling'  // @deprecated - merged into quick-profile
-  | 'business-pricing'  // @deprecated - merged into quick-profile
-  | 'business-summary'; // @deprecated - removed
-
-// ═══════════════════════════════════════════════════════════════════════════
-// QUICK PROFILE - Replaces 8 business discovery steps
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * QUICK PROFILE (used by build-phase inference & templates)
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 /** Primary business goal - determines CTA structure */
 export type BusinessGoal = 'leads' | 'sales' | 'bookings';
@@ -91,58 +76,43 @@ export type OfferType = 'high-ticket' | 'low-ticket' | 'free';
 export type BrandTone = 'professional' | 'bold' | 'friendly';
 
 /**
- * QuickProfile - The 3 essential choices collected in one step
- * Everything else is auto-inferred from the description
+ * QuickProfile - The 3 essential choices collected during dashboard project creation.
+ * Used by build-phase inference and structural templates.
  */
 export interface QuickProfile {
-  goal: BusinessGoal;      // leads | sales | bookings
-  offerType: OfferType;    // high-ticket | low-ticket | free
-  tone: BrandTone;         // professional | bold | friendly
+  goal: BusinessGoal;
+  offerType: OfferType;
+  tone: BrandTone;
 }
 
-/** Display labels for quick profile options (icons are Lucide icon names) */
-export const QUICK_PROFILE_OPTIONS = {
-  goal: {
-    leads: { label: 'Get Leads', description: 'Collect inquiries & contact info', icon: 'mail' },
-    sales: { label: 'Make Sales', description: 'Sell products or services directly', icon: 'credit-card' },
-    bookings: { label: 'Get Bookings', description: 'Schedule appointments & sessions', icon: 'calendar' },
-  },
-  offerType: {
-    'high-ticket': { label: 'Premium', description: '€500+ per client', icon: 'gem' },
-    'low-ticket': { label: 'Accessible', description: 'Under €500 per client', icon: 'tag' },
-    free: { label: 'Free First', description: 'Free consultation or trial', icon: 'gift' },
-  },
-  tone: {
-    professional: { label: 'Professional', description: 'Polished & trustworthy', icon: 'briefcase' },
-    bold: { label: 'Bold', description: 'Energetic & confident', icon: 'zap' },
-    friendly: { label: 'Friendly', description: 'Warm & approachable', icon: 'smile' },
-  },
-} as const;
-
-// ═══════════════════════════════════════════════════════════════════════════
-// BUSINESS INFO (Simplified - mostly auto-inferred)
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * BUSINESS INFO (Simplified - mostly auto-inferred)
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 export interface BusinessInfo {
   // Core (from description + quick profile)
-  description: string;           // What they do + who they serve
-  quickProfile: QuickProfile;    // Goal + Offer + Tone
-  
+  description: string; // What they do + who they serve
+  quickProfile: QuickProfile; // Goal + Offer + Tone
+
   // Auto-inferred from description
-  businessType?: string;         // e.g., "life coach", "therapist"
-  targetAudience?: string;       // Extracted from description
-  uvp?: string;                  // Unique value proposition (inferred)
-  industry?: string;             // Category detection
-  
+  businessType?: string; // e.g., "life coach", "therapist"
+  targetAudience?: string; // Extracted from description
+  uvp?: string; // Unique value proposition (inferred)
+  industry?: string; // Category detection
+
   // Legacy fields (for backward compatibility)
   /** @deprecated Use quickProfile.goal instead */
   businessGoals?: string[];
+
   /** @deprecated Use quickProfile.tone instead */
   brandTone?: string;
+
   /** @deprecated Use quickProfile.goal to determine selling method */
   sellingMethod?: 'ecommerce' | 'bookings' | 'leads' | 'subscriptions' | 'content' | 'other';
   sellingMethodDetails?: string;
-  offerings?: string;           // Package/offering description
+  offerings?: string; // Package/offering description
   contactEmail?: string;
   contactPhone?: string;
   contactAddress?: string;
@@ -150,9 +120,11 @@ export interface BusinessInfo {
   pricingOffers?: string;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// EXISTING TYPES (Unchanged)
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * EXISTING TYPES (Unchanged)
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 /** A single service/offering item for BusinessDetailsForm */
 export interface ServiceOffering {
@@ -200,6 +172,7 @@ export interface ContactDetails {
   email: string;
   phone?: string;
   address?: string;
+
   // Social links
   website?: string;
   facebook?: string;
@@ -222,7 +195,23 @@ export interface PreviewInfo {
   status: 'starting' | 'ready' | 'error';
 }
 
-export type BuildPhase = 'idle' | 'generating' | 'cloning' | 'syncing' | 'installing' | 'starting' | 'customizing' | 'deploying' | 'deploying-upload' | 'deploying-install' | 'deploying-server' | 'deploying-waiting' | 'fixing' | 'fixing-retry' | 'complete' | 'complete-healed';
+export type BuildPhase =
+  | 'idle'
+  | 'generating'
+  | 'cloning'
+  | 'syncing'
+  | 'installing'
+  | 'starting'
+  | 'customizing'
+  | 'deploying'
+  | 'deploying-upload'
+  | 'deploying-install'
+  | 'deploying-server'
+  | 'deploying-waiting'
+  | 'fixing'
+  | 'fixing-retry'
+  | 'complete'
+  | 'complete-healed';
 
 export interface InitialChatState {
   step: OnboardingStep;
@@ -235,6 +224,7 @@ export interface InitialChatState {
   projectUrlId: string | null;
   buildPhase?: BuildPhase;
   projectName?: string | null;
+  mode?: 'concierge' | 'interactive' | 'generate';
 
   // NEW: Quick profile for streamlined flow
   quickProfile?: QuickProfile | null;
@@ -259,6 +249,7 @@ export interface InitialChatState {
 
   // Convex project ID for linking with database
   convexProjectId?: string | null;
+
   // Convex conversation _id from the URL param — for Convex mutations
   conversationId?: string | null;
 }
@@ -285,23 +276,14 @@ export interface CategoryColors {
   gradient: string;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// STEP FLOW HELPERS
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * STEP FLOW HELPERS
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
-/** New streamlined step order */
-export const STREAMLINED_STEPS: OnboardingStep[] = [
-  'welcome',
-  'describe',
-  'name',
-  'quick-profile',
-  'business-details',
-  'template',
-  'personalization',
-  'integrations',
-  'creating',
-  'ready',
-];
+/** Build-only step order */
+export const STREAMLINED_STEPS: OnboardingStep[] = ['creating', 'ready'];
 
 /** Check if a step is part of the new streamlined flow */
 export function isStreamlinedStep(step: OnboardingStep): boolean {
@@ -311,25 +293,33 @@ export function isStreamlinedStep(step: OnboardingStep): boolean {
 /** Get next step in streamlined flow */
 export function getNextStep(currentStep: OnboardingStep): OnboardingStep | null {
   const currentIndex = STREAMLINED_STEPS.indexOf(currentStep);
+
   if (currentIndex === -1 || currentIndex >= STREAMLINED_STEPS.length - 1) {
     return null;
   }
+
   return STREAMLINED_STEPS[currentIndex + 1];
 }
 
 /** Get previous step in streamlined flow */
 export function getPreviousStep(currentStep: OnboardingStep): OnboardingStep | null {
   const currentIndex = STREAMLINED_STEPS.indexOf(currentStep);
+
   if (currentIndex <= 0) {
     return null;
   }
+
   return STREAMLINED_STEPS[currentIndex - 1];
 }
 
 /** Get step progress (0-100) */
 export function getStepProgress(step: OnboardingStep): number {
   const index = STREAMLINED_STEPS.indexOf(step);
-  if (index === -1) return 0;
+
+  if (index === -1) {
+    return 0;
+  }
+
   return Math.round((index / (STREAMLINED_STEPS.length - 1)) * 100);
 }
 

@@ -6,7 +6,8 @@
  */
 
 // Main platform URL - configure via environment
-const MAIN_PLATFORM_URL = import.meta.env.VITE_MAIN_PLATFORM_URL || 
+const MAIN_PLATFORM_URL =
+  import.meta.env.VITE_MAIN_PLATFORM_URL ||
   (import.meta.env.PROD ? 'https://flowstarter.app' : 'https://flowstarter.dev');
 
 // Storage keys
@@ -271,4 +272,3 @@ export async function syncOnboardingComplete(): Promise<{ success: boolean; erro
     onboardingComplete: true,
   });
 }
-

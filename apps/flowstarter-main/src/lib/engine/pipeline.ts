@@ -19,7 +19,9 @@ export type ConciergePipelineResult =
 export async function runConciergePipeline(
   intake: IntakeInput
 ): Promise<ConciergePipelineResult> {
-  const enriched = (await enrichProject(intake.description)) as EnrichmentResult;
+  const enriched = (await enrichProject(
+    intake.description
+  )) as EnrichmentResult;
 
   if (enriched.status === 'needsMoreInfo') {
     return {

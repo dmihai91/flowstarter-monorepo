@@ -17,22 +17,32 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './e2e',
-  /* Only run the main full-site-build test by default */
-  testMatch: '*.spec.ts',
+
+  /* Default: integration tests only (mocked, fast).
+   * Use playwright.config.cross-app.ts for cross-app scenarios.
+   * Use pnpm test:e2e:all for everything. */
+  testMatch: '{integration,smoke}/**/*.spec.ts',
+
   /* Global teardown - cleanup Daytona sandboxes after all tests */
   globalTeardown: './e2e/global-teardown.ts',
+
   /* Run tests in files in parallel */
   fullyParallel: true,
+
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
+
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
+
   /* Use multiple workers for parallel execution */
   workers: process.env.CI ? 2 : 4,
+
   /* Test timeout - extended for full site build flow */
   timeout: 120000, // 2 minutes default, individual tests can override
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI ? 'github' : 'html',
+
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -54,14 +64,17 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
-    // },
-    // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
-    // },
+
+    /*
+     * {
+     *   name: 'firefox',
+     *   use: { ...devices['Desktop Firefox'] },
+     * },
+     * {
+     *   name: 'webkit',
+     *   use: { ...devices['Desktop Safari'] },
+     * },
+     */
   ],
 
   /* Note: Use 'npm run dev' for Vite (UI testing) or start Remix server manually for API routes */
@@ -73,4 +86,3 @@ export default defineConfig({
     timeout: 120 * 1000,
   },
 });
-

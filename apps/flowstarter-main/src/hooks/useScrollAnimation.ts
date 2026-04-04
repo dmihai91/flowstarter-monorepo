@@ -10,7 +10,10 @@ import { useRef, useState, useEffect } from 'react';
  * @param threshold - Intersection threshold (0-1), default 0.05
  * @param rootMargin - Root margin for early triggering, default '100px'
  */
-export function useScrollAnimation(threshold = 0.01, rootMargin = '0px 0px 400px 0px') {
+export function useScrollAnimation(
+  threshold = 0.01,
+  rootMargin = '0px 0px 400px 0px'
+) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -56,7 +59,7 @@ export function getStaggeredAnimation(
 ): React.CSSProperties {
   return {
     opacity: isVisible ? 1 : 0,
-    
+
     transition: `opacity 0.5s ease-out ${index * baseDelay}ms`,
   };
 }

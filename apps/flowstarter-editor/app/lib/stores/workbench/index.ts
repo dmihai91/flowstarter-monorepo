@@ -24,10 +24,10 @@ import type {
 import type { ITerminal } from '~/types/terminal';
 import type { ActionAlert, DeployAlert } from '~/types/actions';
 import { createScopedLogger } from '~/utils/logger';
-import { EditorStore } from '../editor';
-import { FilesStore, type FileMap } from '../files';
-import { PreviewsStore } from '../previews';
-import { TerminalStore } from '../terminal';
+import { EditorStore } from '~/lib/stores/editor';
+import { FilesStore, type FileMap } from '~/lib/stores/files';
+import { PreviewsStore } from '~/lib/stores/previews';
+import { TerminalStore } from '~/lib/stores/terminal';
 import { ArtifactStore } from './artifacts';
 import { ActionManager } from './actions';
 import { downloadZip, syncFiles } from './download';
@@ -432,4 +432,3 @@ export class WorkbenchStore {
 }
 
 export const workbenchStore = new WorkbenchStore();
-

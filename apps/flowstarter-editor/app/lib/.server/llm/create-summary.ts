@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { trackLLMUsage } from './cost-tracker';
 import { generateText, type CoreTool, type GenerateTextResult, type Message } from 'ai';
 import type { IProviderSetting } from '~/types/model';
@@ -196,4 +197,3 @@ Please provide a summary of the chat till now including the hitorical summary of
 
   return response;
 }
-

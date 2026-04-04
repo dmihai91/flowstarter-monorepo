@@ -37,7 +37,7 @@ export const MESSAGE_LABELS: Record<MessageKey, string> = {
   [MESSAGE_KEYS.WELCOME_GREETING]: '**Welcome to Flowstarter Editor** 👋\n\nHow can I help you build today?',
   [MESSAGE_KEYS.WELCOME_GREETING_USER]: '**Hey {{username}}!** 👋',
   [MESSAGE_KEYS.WELCOME_SHOWCASE]: '',
-  [MESSAGE_KEYS.WELCOME_CTA]: 'Tell me what you do and I\'ll build your site.',
+  [MESSAGE_KEYS.WELCOME_CTA]: "Tell me what you do and I'll build your site.",
   [MESSAGE_KEYS.INTERNAL_WELCOME]:
     "**Your business details are ready.** Let's pick a template that matches your brand.",
   [MESSAGE_KEYS.INTERNAL_WELCOME_WITH_NAME]:
@@ -46,13 +46,15 @@ export const MESSAGE_LABELS: Record<MessageKey, string> = {
     "I've selected **3 templates** that match your business profile.\n\nClick any template to preview it, or browse all options below.",
   [MESSAGE_KEYS.DESCRIBE_PROMPT]:
     '**Tell me about your business.**\n\nWhat service do you offer, and who do you help?\n\n**Examples:**\n• "I\'m a life coach helping busy professionals find work-life balance"\n• "I\'m a therapist specializing in anxiety and stress management"\n• "I\'m a wedding photographer in Chicago"\n• "I\'m a personal trainer for women over 40"',
-  [MESSAGE_KEYS.DESCRIBE_ACK]: 'A **{{businessType}}**, I love it! {{audienceNote}}Let\'s find the perfect name for your site.',
+  [MESSAGE_KEYS.DESCRIBE_ACK]:
+    "A **{{businessType}}**, I love it! {{audienceNote}}Let's find the perfect name for your site.",
   [MESSAGE_KEYS.QUICK_PROFILE_INTRO]: 'Choose the options that best describe your business:',
   [MESSAGE_KEYS.QUICK_PROFILE_ACK]: '{{goalResponse}} One more question to personalize your copy...',
   [MESSAGE_KEYS.UVP_PROMPT]:
     '**What makes you stand out?**\n\nWhat\'s your unique approach that gets results for clients?\n\n*Example: "I use a holistic 3-step method that combines mindfulness with practical action plans."*',
   [MESSAGE_KEYS.UVP_ACK]: '"{{uvp}}" — that\'s powerful! This will make your site copy really compelling.',
-  [MESSAGE_KEYS.NAME_GENERATION_ERROR]: "I couldn't generate a name right now. What would you like to call your project?",
+  [MESSAGE_KEYS.NAME_GENERATION_ERROR]:
+    "I couldn't generate a name right now. What would you like to call your project?",
   [MESSAGE_KEYS.NAME_PROMPT_MANUAL]: 'Great! Type your business or project name below.',
   [MESSAGE_KEYS.NAME_SKIP_BUSINESS]: "No problem! Let's pick a template to get started.",
   [MESSAGE_KEYS.NAME_TYPE_BELOW]: "Great! Type your name below and I'll use it for your project.",
@@ -68,10 +70,12 @@ export const MESSAGE_LABELS: Record<MessageKey, string> = {
 
 export function getMessage(key: MessageKey, context?: Record<string, string>): string {
   let message = MESSAGE_LABELS[key] || key;
+
   if (context) {
     for (const [varName, value] of Object.entries(context)) {
       message = message.replace(new RegExp(`\\{\\{${varName}\\}\\}`, 'g'), value);
     }
   }
+
   return message;
 }

@@ -119,4 +119,3 @@ export const acknowledgeError = async (id: string): Promise<void> => {
     console.error('Error acknowledging error:', error);
   }
 };
-

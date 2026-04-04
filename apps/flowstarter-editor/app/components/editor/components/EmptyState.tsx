@@ -11,7 +11,7 @@ interface EmptyStateProps {
 }
 
 // Animated background orbs
-const FloatingOrb = ({
+const _FloatingOrb = ({
   delay,
   size,
   x,
@@ -53,7 +53,7 @@ const FloatingOrb = ({
 );
 
 // Animated grid pattern
-const GridPattern = ({ isDark }: { isDark: boolean }) => (
+const _GridPattern = ({ isDark }: { isDark: boolean }) => (
   <div
     style={{
       position: 'absolute',
@@ -96,48 +96,6 @@ const PulsingRings = ({ color }: { color: string }) => (
 );
 
 // Step-specific icons with animations
-const TemplateIcon = ({ color }: { color: string }) => (
-  <motion.svg
-    width="36"
-    height="36"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke={color}
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <motion.rect
-      x="3"
-      y="3"
-      width="18"
-      height="18"
-      rx="2"
-      initial={{ pathLength: 0 }}
-      animate={{ pathLength: 1 }}
-      transition={{ duration: 1, ease: 'easeOut' }}
-    />
-    <motion.line
-      x1="3"
-      y1="9"
-      x2="21"
-      y2="9"
-      initial={{ pathLength: 0 }}
-      animate={{ pathLength: 1 }}
-      transition={{ duration: 0.5, delay: 0.5 }}
-    />
-    <motion.line
-      x1="9"
-      y1="21"
-      x2="9"
-      y2="9"
-      initial={{ pathLength: 0 }}
-      animate={{ pathLength: 1 }}
-      transition={{ duration: 0.5, delay: 0.7 }}
-    />
-  </motion.svg>
-);
-
 const PaletteIcon = ({ color }: { color: string }) => (
   <motion.svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5">
     <motion.path
@@ -163,34 +121,6 @@ const PaletteIcon = ({ color }: { color: string }) => (
         transition={{ duration: 0.3, delay: 0.8 + i * 0.1 }}
       />
     ))}
-  </motion.svg>
-);
-
-const FontIcon = ({ color }: { color: string }) => (
-  <motion.svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5">
-    <motion.text
-      x="6"
-      y="17"
-      fontSize="14"
-      fontWeight="bold"
-      fontFamily="serif"
-      fill={color}
-      stroke="none"
-      initial={{ opacity: 0, y: 5 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      Aa
-    </motion.text>
-    <motion.line
-      x1="4"
-      y1="20"
-      x2="20"
-      y2="20"
-      initial={{ pathLength: 0 }}
-      animate={{ pathLength: 1 }}
-      transition={{ duration: 0.5, delay: 0.3 }}
-    />
   </motion.svg>
 );
 
@@ -282,55 +212,6 @@ const getStepConfig = (step: OnboardingStep | undefined, type: 'preview' | 'edit
   }
 
   switch (step) {
-    case 'welcome':
-    case 'describe':
-      return {
-        icon: WelcomeIcon,
-        title: t(EDITOR_LABEL_KEYS.EMPTY_DESCRIBE_TITLE),
-        subtitle: t(EDITOR_LABEL_KEYS.EMPTY_DESCRIBE_SUBTITLE),
-        accentColor: 'rgba(77, 93, 217, 0.3)',
-      };
-    case 'name':
-      return {
-        icon: WelcomeIcon,
-        title: t(EDITOR_LABEL_KEYS.EMPTY_NAME_TITLE),
-        subtitle: t(EDITOR_LABEL_KEYS.EMPTY_NAME_SUBTITLE),
-        accentColor: 'rgba(77, 93, 217, 0.3)',
-      };
-    case 'business-uvp':
-    case 'business-audience':
-    case 'business-goals':
-    case 'business-tone':
-    case 'business-selling':
-    case 'business-pricing':
-    case 'business-summary':
-      return {
-        icon: WelcomeIcon,
-        title: t(EDITOR_LABEL_KEYS.EMPTY_BUSINESS_TITLE),
-        subtitle: t(EDITOR_LABEL_KEYS.EMPTY_BUSINESS_SUBTITLE),
-        accentColor: 'rgba(77, 93, 217, 0.3)',
-      };
-    case 'template':
-      return {
-        icon: TemplateIcon,
-        title: t(EDITOR_LABEL_KEYS.EMPTY_TEMPLATE_TITLE),
-        subtitle: t(EDITOR_LABEL_KEYS.EMPTY_TEMPLATE_SUBTITLE),
-        accentColor: 'rgba(6, 182, 212, 0.3)',
-      };
-    case 'personalization':
-      return {
-        icon: PaletteIcon,
-        title: t(EDITOR_LABEL_KEYS.EMPTY_PERSONALIZE_TITLE),
-        subtitle: t(EDITOR_LABEL_KEYS.EMPTY_PERSONALIZE_SUBTITLE),
-        accentColor: 'rgba(236, 72, 153, 0.5)',
-      };
-    case 'integrations':
-      return {
-        icon: IntegrationsIcon,
-        title: 'Connect Your Services',
-        subtitle: 'Add booking and newsletter integrations to enhance your site',
-        accentColor: 'rgba(14, 165, 233, 0.5)',
-      };
     case 'creating':
       return {
         icon: GeneratingIcon,
@@ -348,8 +229,8 @@ const getStepConfig = (step: OnboardingStep | undefined, type: 'preview' | 'edit
     default:
       return {
         icon: WelcomeIcon,
-        title: t(EDITOR_LABEL_KEYS.EMPTY_DESCRIBE_TITLE),
-        subtitle: t(EDITOR_LABEL_KEYS.EMPTY_DESCRIBE_SUBTITLE),
+        title: 'Review Your Project',
+        subtitle: 'Check your project details before building',
         accentColor: 'rgba(77, 93, 217, 0.3)',
       };
   }
@@ -357,7 +238,7 @@ const getStepConfig = (step: OnboardingStep | undefined, type: 'preview' | 'edit
 
 export function EmptyState({ type, step }: EmptyStateProps) {
   const { isDark } = useThemeStyles();
-  const colors = getColors(isDark);
+  const _colors = getColors(isDark);
   const config = getStepConfig(step, type);
   const IconComponent = config.icon;
 
@@ -375,7 +256,6 @@ export function EmptyState({ type, step }: EmptyStateProps) {
       }}
     >
       <FlowBackground variant="editor" style={{ position: 'absolute', inset: 0, zIndex: 0 }} />
-
 
       {/* Main content */}
       <motion.div
@@ -454,53 +334,7 @@ export function EmptyState({ type, step }: EmptyStateProps) {
         >
           {config.subtitle}
         </motion.p>
-
-        {/* Step indicator dots */}
-        {type === 'preview' && step && step !== 'ready' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            style={{
-              display: 'flex',
-              gap: '8px',
-              marginTop: '32px',
-            }}
-          >
-            {['describe', 'quick-profile', 'business-offering', 'business-contact', 'template', 'personalization', 'creating'].map((s, i) => {
-              const steps = ['describe', 'quick-profile', 'business-offering', 'business-contact', 'template', 'personalization', 'creating'];
-              // Map welcome to describe, business-uvp to quick-profile
-              const mappedStep = step === 'welcome' ? 'describe' : step === 'name' ? 'describe' : step === 'business-uvp' ? 'quick-profile' : step;
-              const currentIndex = steps.indexOf(mappedStep || 'describe');
-              const isActive = i <= currentIndex;
-              const isCurrent = s === mappedStep;
-
-              return (
-                <motion.div
-                  key={s}
-                  animate={{
-                    scale: isCurrent ? 1.2 : 1,
-                    backgroundColor: isActive
-                      ? isDark
-                        ? 'rgba(77, 93, 217, 0.7)'
-                        : 'rgba(77, 93, 217, 0.6)'
-                      : isDark
-                        ? 'rgba(255,255,255,0.15)'
-                        : 'rgba(0,0,0,0.1)',
-                  }}
-                  transition={{ duration: 0.3 }}
-                  style={{
-                    width: '8px',
-                    height: '8px',
-                    borderRadius: '50%',
-                  }}
-                />
-              );
-            })}
-          </motion.div>
-        )}
       </motion.div>
     </div>
   );
 }
-

@@ -58,7 +58,9 @@ export async function GET(req: Request) {
     if (error) {
       return NextResponse.redirect(
         new URL(
-          `/dashboard/integrations?provider=mailchimp&status=error&message=${encodeURIComponent(error)}`,
+          `/dashboard/integrations?provider=mailchimp&status=error&message=${encodeURIComponent(
+            error
+          )}`,
           req.url
         )
       );
@@ -150,7 +152,11 @@ export async function GET(req: Request) {
     let accessTokenSecretId: string;
     try {
       accessTokenSecretId = await storeUserSecret(
-        supabase, userId, 'mailchimp', 'access_token', tokens.access_token
+        supabase,
+        userId,
+        'mailchimp',
+        'access_token',
+        tokens.access_token
       );
     } catch (vaultErr) {
       console.error('Vault store failed (Mailchimp):', vaultErr);

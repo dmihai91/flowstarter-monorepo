@@ -7,8 +7,12 @@ import {
 } from './contracts';
 import { getBlocksForBrief } from './block-registry';
 
-function buildIntegrations(template: TemplateRegistryEntry, brief: ProjectBrief) {
-  const bookingEnabled = brief.goal === 'bookings' && template.capability.supportsBooking;
+function buildIntegrations(
+  template: TemplateRegistryEntry,
+  brief: ProjectBrief
+) {
+  const bookingEnabled =
+    brief.goal === 'bookings' && template.capability.supportsBooking;
   const newsletterEnabled = template.capability.supportsNewsletter;
 
   return [
@@ -30,7 +34,9 @@ function buildIntegrations(template: TemplateRegistryEntry, brief: ProjectBrief)
             ['mailchimp', 'convertkit', 'buttondown'].includes(integration)
           )
         : [],
-      configFields: newsletterEnabled ? ['newsletter_provider', 'newsletter_url'] : [],
+      configFields: newsletterEnabled
+        ? ['newsletter_provider', 'newsletter_url']
+        : [],
     },
   ];
 }
@@ -111,7 +117,9 @@ function deriveFieldValue(field: string, projectBrief: ProjectBrief): string {
       return projectBrief.summary;
     case 'primaryCta':
     case 'ctaLabel':
-      return projectBrief.goal === 'bookings' ? 'Book a consultation' : 'Start a conversation';
+      return projectBrief.goal === 'bookings'
+        ? 'Book a consultation'
+        : 'Start a conversation';
     case 'secondaryCta':
       return 'See how it works';
     case 'email':

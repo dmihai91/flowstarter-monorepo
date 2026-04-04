@@ -21,7 +21,9 @@ describe('useApiMutation', () => {
     mockFetch.mockImplementation(() => new Promise(() => {})); // never resolves
     const { result } = renderHook(() => useApiMutation('/api/test'));
 
-    act(() => { result.current.mutate({ foo: 'bar' }); });
+    act(() => {
+      result.current.mutate({ foo: 'bar' });
+    });
     expect(result.current.isPending).toBe(true);
   });
 
@@ -32,7 +34,9 @@ describe('useApiMutation', () => {
     });
 
     const { result } = renderHook(() => useApiMutation('/api/test'));
-    await act(async () => { await result.current.mutate({ foo: 'bar' }); });
+    await act(async () => {
+      await result.current.mutate({ foo: 'bar' });
+    });
 
     expect(result.current.data).toEqual({ id: 1 });
     expect(result.current.isPending).toBe(false);
@@ -47,7 +51,9 @@ describe('useApiMutation', () => {
     });
 
     const { result } = renderHook(() => useApiMutation('/api/test'));
-    await act(async () => { await result.current.mutate({ foo: 'bar' }); });
+    await act(async () => {
+      await result.current.mutate({ foo: 'bar' });
+    });
 
     expect(result.current.error).toBe('Bad request');
     expect(result.current.data).toBeNull();
@@ -58,7 +64,9 @@ describe('useApiMutation', () => {
     mockFetch.mockRejectedValue(new Error('Network failed'));
 
     const { result } = renderHook(() => useApiMutation('/api/test'));
-    await act(async () => { await result.current.mutate(); });
+    await act(async () => {
+      await result.current.mutate();
+    });
 
     expect(result.current.error).toBe('Network failed');
   });
@@ -70,19 +78,27 @@ describe('useApiMutation', () => {
     const { result } = renderHook(() =>
       useApiMutation('/api/test', 'POST', { onSuccess })
     );
-    await act(async () => { await result.current.mutate({ foo: 'bar' }); });
+    await act(async () => {
+      await result.current.mutate({ foo: 'bar' });
+    });
 
     expect(onSuccess).toHaveBeenCalledWith({ ok: true });
   });
 
   it('calls onError callback', async () => {
-    mockFetch.mockResolvedValue({ ok: false, status: 500, json: async () => ({ error: 'Server error' }) });
+    mockFetch.mockResolvedValue({
+      ok: false,
+      status: 500,
+      json: async () => ({ error: 'Server error' }),
+    });
     const onError = vi.fn();
 
     const { result } = renderHook(() =>
       useApiMutation('/api/test', 'POST', { onError })
     );
-    await act(async () => { await result.current.mutate(); });
+    await act(async () => {
+      await result.current.mutate();
+    });
 
     expect(onError).toHaveBeenCalledWith('Server error');
   });
@@ -91,7 +107,9 @@ describe('useApiMutation', () => {
     mockFetch.mockResolvedValue({ ok: true, json: async () => ({}) });
 
     const { result } = renderHook(() => useApiMutation('/api/test', 'PATCH'));
-    await act(async () => { await result.current.mutate({ name: 'test' }); });
+    await act(async () => {
+      await result.current.mutate({ name: 'test' });
+    });
 
     expect(mockFetch).toHaveBeenCalledWith('/api/test', {
       method: 'PATCH',

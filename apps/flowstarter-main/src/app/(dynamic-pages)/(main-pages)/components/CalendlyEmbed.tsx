@@ -98,7 +98,11 @@ export function CalendlyEmbed({
     const handler = (e: MessageEvent) => {
       let data = e.data;
       if (typeof data === 'string') {
-        try { data = JSON.parse(data); } catch { return; }
+        try {
+          data = JSON.parse(data);
+        } catch {
+          return;
+        }
       }
       if (data?.event === 'calendly.event_scheduled') {
         onEventScheduled();

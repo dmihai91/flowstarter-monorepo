@@ -8,10 +8,12 @@ import {
   type ConversationContext,
   type UserContext,
 } from '~/lib/services/projectNameAgent';
-import { API_MESSAGE_KEYS, getApiMessage } from '~/lib/i18n/api-messages';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { API_MESSAGE_KEYS } from '~/lib/i18n/api-messages';
 
 const logger = createScopedLogger('api.generate-project-name');
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function action({ context, request }: ActionFunctionArgs) {
   let projectDescription: string | undefined;
 
@@ -28,11 +30,11 @@ export async function action({ context, request }: ActionFunctionArgs) {
       // Refinement context (for action: 'refine')
       previousName?: string;
       refinementFeedback?: string;
-      
+
       // Conversation history to avoid repeats and respect accumulated requirements
       previouslySuggested?: string[];
       accumulatedRequirements?: string[];
-      
+
       // NEW: User context for personalized name generation
       userContext?: UserContext;
     }>();
@@ -53,10 +55,11 @@ export async function action({ context, request }: ActionFunctionArgs) {
     // Handle name refinement based on user feedback
     if (requestAction === 'refine' && previousName && refinementFeedback) {
       logger.info(`Refining name "${previousName}" with feedback: "${refinementFeedback.substring(0, 50)}..."`);
-      
+
       if (previouslySuggested?.length) {
         logger.info(`Avoiding ${previouslySuggested.length} previously suggested names`);
       }
+
       if (accumulatedRequirements?.length) {
         logger.info(`Respecting ${accumulatedRequirements.length} accumulated requirements`);
       }
@@ -84,7 +87,9 @@ export async function action({ context, request }: ActionFunctionArgs) {
         accumulatedRequirements,
       };
 
-      logger.info(`Extracting name with ${previouslySuggested?.length || 0} previous suggestions, ${accumulatedRequirements?.length || 0} requirements`);
+      logger.info(
+        `Extracting name with ${previouslySuggested?.length || 0} previous suggestions, ${accumulatedRequirements?.length || 0} requirements`,
+      );
 
       const result = await extractProjectName(userInput, extractionContext);
 
@@ -102,7 +107,9 @@ export async function action({ context, request }: ActionFunctionArgs) {
 
     // Log personalization if provided
     if (userContext && Object.keys(userContext).length > 0) {
-      logger.info(`Generating personalized name for: ${descriptionToUse ? descriptionToUse.substring(0, 50) + '...' : 'Generic'}`);
+      logger.info(
+        `Generating personalized name for: ${descriptionToUse ? descriptionToUse.substring(0, 50) + '...' : 'Generic'}`,
+      );
       logger.info(`User context: ${JSON.stringify(userContext)}`);
     } else {
       logger.info(

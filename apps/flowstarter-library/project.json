@@ -1,7 +1,7 @@
 {
   "name": "@flowstarter/library",
   "projectType": "library",
-  "tags": ["type:library", "scope:templates"],
+  "tags": ["app:library", "scope:templates"],
   "targets": {
     "build:templates": {
       "executor": "nx:run-commands",
@@ -25,7 +25,10 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint"
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": ["apps/flowstarter-library/scripts/**/*.{js,mjs}", "apps/flowstarter-library/src/**/*.ts"]
+      }
     }
   }
 }

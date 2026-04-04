@@ -74,9 +74,11 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
     resetCustomizerAgent();
   });
 
-  // ============================================================================
-  // BusinessDataAgent Tests
-  // ============================================================================
+  /*
+   * ============================================================================
+   * BusinessDataAgent Tests
+   * ============================================================================
+   */
 
   describe('BusinessDataAgent', () => {
     describe('Singleton Pattern', () => {
@@ -89,6 +91,7 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
       it('should create new instance after reset', () => {
         const agent1 = getBusinessDataAgent();
         resetBusinessDataAgent();
+
         const agent2 = getBusinessDataAgent();
         expect(agent1).not.toBe(agent2);
       });
@@ -116,7 +119,7 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
     describe('Request Handling', () => {
       it('should handle start request', async () => {
         mockedGenerateCompletion.mockResolvedValue(
-          "Hello! I'd love to help you create a website. What's your business called?"
+          "Hello! I'd love to help you create a website. What's your business called?",
         );
 
         const agent = new BusinessDataAgent();
@@ -124,6 +127,7 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
         const result = await agent.chat(JSON.stringify(request));
 
         expect(result.message).toBeDefined();
+
         const response: BusinessDataResponse = JSON.parse(result.message.content);
         expect(response.success).toBe(true);
         expect(response.isComplete).toBe(false);
@@ -135,9 +139,7 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
           businessName: 'Tech Startup',
           description: 'A SaaS platform for developers',
         });
-        mockedGenerateCompletion.mockResolvedValue(
-          "That sounds great! What makes your platform unique?"
-        );
+        mockedGenerateCompletion.mockResolvedValue('That sounds great! What makes your platform unique?');
 
         const agent = new BusinessDataAgent();
 
@@ -154,6 +156,7 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
         const result = await agent.chat(JSON.stringify(continueRequest));
 
         expect(result.message).toBeDefined();
+
         const response: BusinessDataResponse = JSON.parse(result.message.content);
         expect(response.success).toBe(true);
       });
@@ -225,6 +228,7 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
           type: 'validate',
           partialData: {
             businessName: 'TestCo',
+
             // Missing: description, uvp, targetAudience, businessGoals
           },
         };
@@ -246,19 +250,13 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
         const agent = new BusinessDataAgent();
 
         // First extraction
-        await agent.chat(
-          JSON.stringify({ type: 'extract', userMessage: 'Company A is our name' })
-        );
+        await agent.chat(JSON.stringify({ type: 'extract', userMessage: 'Company A is our name' }));
 
         // Second extraction should not overwrite businessName
-        await agent.chat(
-          JSON.stringify({ type: 'extract', userMessage: 'We are in the tech industry' })
-        );
+        await agent.chat(JSON.stringify({ type: 'extract', userMessage: 'We are in the tech industry' }));
 
         // Validate current state
-        const validateResult = await agent.chat(
-          JSON.stringify({ type: 'validate', partialData: {} })
-        );
+        const validateResult = await agent.chat(JSON.stringify({ type: 'validate', partialData: {} }));
         const response: BusinessDataResponse = JSON.parse(validateResult.message.content);
 
         // businessName should still be set
@@ -275,6 +273,7 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
         };
 
         agent.setBusinessData(testData);
+
         const history = agent.getConversationHistory();
 
         expect(history).toBeDefined();
@@ -308,6 +307,7 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
         mockedGenerateCompletion.mockResolvedValue('Tell me more!');
 
         const agent = new BusinessDataAgent();
+
         // Send a plain text message instead of JSON
         const result = await agent.chat('My business is Direct Message Corp');
 
@@ -317,9 +317,11 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
     });
   });
 
-  // ============================================================================
-  // TemplateRecommenderAgent Tests
-  // ============================================================================
+  /*
+   * ============================================================================
+   * TemplateRecommenderAgent Tests
+   * ============================================================================
+   */
 
   describe('TemplateRecommenderAgent', () => {
     const mockTemplates: Template[] = [
@@ -364,6 +366,7 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
       it('should create new instance after reset', () => {
         const agent1 = getTemplateRecommenderAgent();
         resetTemplateRecommenderAgent();
+
         const agent2 = getTemplateRecommenderAgent();
         expect(agent1).not.toBe(agent2);
       });
@@ -451,7 +454,7 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
               { templateId: 'saas-product', reasoning: 'Not a good fit', matchScore: 30 },
               { templateId: 'creative-portfolio', reasoning: 'Wrong category', matchScore: 20 },
             ],
-          })
+          }),
         );
 
         const agent = new TemplateRecommenderAgent();
@@ -477,11 +480,9 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
         mockedGenerateCompletion.mockResolvedValue(
           '```json\n' +
             JSON.stringify({
-              recommendations: [
-                { templateId: 'fitness-gym', reasoning: 'Good fit', matchScore: 90 },
-              ],
+              recommendations: [{ templateId: 'fitness-gym', reasoning: 'Good fit', matchScore: 90 }],
             }) +
-            '\n```'
+            '\n```',
         );
 
         const agent = new TemplateRecommenderAgent();
@@ -506,7 +507,7 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
               { templateId: 'saas-product', reasoning: 'OK', matchScore: 70 },
               { templateId: 'creative-portfolio', reasoning: 'Meh', matchScore: 65 },
             ],
-          })
+          }),
         );
 
         const agent = new TemplateRecommenderAgent();
@@ -514,6 +515,7 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
           templates: mockTemplates,
           projectDescription: 'Test project',
           businessInfo: mockBusinessInfo,
+
           // No topN or minScore - should use defaults (3, 60)
         };
 
@@ -544,10 +546,8 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
       it('should warn when template ID not found', async () => {
         mockedGenerateCompletion.mockResolvedValue(
           JSON.stringify({
-            recommendations: [
-              { templateId: 'non-existent-template', reasoning: 'Test', matchScore: 90 },
-            ],
-          })
+            recommendations: [{ templateId: 'non-existent-template', reasoning: 'Test', matchScore: 90 }],
+          }),
         );
 
         const agent = new TemplateRecommenderAgent();
@@ -566,9 +566,11 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
     });
   });
 
-  // ============================================================================
-  // CustomizerAgent Tests
-  // ============================================================================
+  /*
+   * ============================================================================
+   * CustomizerAgent Tests
+   * ============================================================================
+   */
 
   describe('CustomizerAgent', () => {
     const mockTemplate: Template = {
@@ -625,6 +627,7 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
       description: 'A template without fonts or palettes',
       thumbnail: '/templates/bare-template/thumbnail.png',
       category: 'Test',
+
       // No fonts or palettes
     };
 
@@ -650,6 +653,7 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
       it('should create new instance after reset', () => {
         const agent1 = getCustomizerAgent();
         resetCustomizerAgent();
+
         const agent2 = getCustomizerAgent();
         expect(agent1).not.toBe(agent2);
       });
@@ -770,6 +774,7 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
         expect(response.success).toBe(true);
         expect(response.fonts).toBeDefined();
         expect(response.fonts!.length).toBeGreaterThan(0);
+
         // Should use default fallback fonts
       });
 
@@ -806,6 +811,7 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
 
         expect(response.success).toBe(true);
         expect(response.fonts).toBeDefined();
+
         // Should still return fonts (fallback)
       });
     });
@@ -897,9 +903,7 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
           businessContext: { ...mockBusinessContext, brandTone: 'professional' },
         };
         const professionalResult = await agent.chat(JSON.stringify(professionalRequest));
-        const professionalResponse: CustomizeResponse = JSON.parse(
-          professionalResult.message.content
-        );
+        const professionalResponse: CustomizeResponse = JSON.parse(professionalResult.message.content);
         expect(professionalResponse.theme!.style).toBe('modern');
 
         // Test playful tone
@@ -946,9 +950,11 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
     });
   });
 
-  // ============================================================================
-  // Integration Tests - Agent Communication
-  // ============================================================================
+  /*
+   * ============================================================================
+   * Integration Tests - Agent Communication
+   * ============================================================================
+   */
 
   describe('Pre-Pipeline Agent Communication', () => {
     it('should have compatible agent references', () => {
@@ -984,4 +990,3 @@ describe('Flowstarter Pre-Pipeline Agents', () => {
     });
   });
 });
-

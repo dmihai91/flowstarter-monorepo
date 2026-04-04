@@ -12,4 +12,3 @@ export { ColorSection } from './ColorSection';
 export { TypographySection } from './TypographySection';
 export { FeaturesSection } from './FeaturesSection';
 export { StylingSection } from './StylingSection';
-

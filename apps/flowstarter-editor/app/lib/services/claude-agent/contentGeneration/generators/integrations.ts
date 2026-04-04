@@ -1,35 +1,46 @@
 /**
  * Integration Content Generators
- * 
+ *
  * Generators for booking, contact, newsletter, payments, and social feed.
  */
 
-import type { ContentContext, IntegrationConfig } from '../types';
+import type { ContentContext, IntegrationConfig } from '~/lib/services/claude-agent/contentGeneration/types';
 
-// ============================================
-// BOOKING
-// ============================================
+/*
+ * ============================================
+ * BOOKING
+ * ============================================
+ */
 
 const BOOKING_TITLES: Record<string, { title: string; description: string; cta: string }> = {
-  therapist: { title: 'Schedule a Session', description: 'Take the first step. Book a confidential consultation.', cta: 'Book Session' },
+  therapist: {
+    title: 'Schedule a Session',
+    description: 'Take the first step. Book a confidential consultation.',
+    cta: 'Book Session',
+  },
   fitness: { title: 'Book Your Training', description: 'Ready to transform? Lock in your spot.', cta: 'Book Now' },
   yoga: { title: 'Reserve Your Mat', description: 'Find your flow. Book a class today.', cta: 'Reserve Spot' },
   beauty: { title: 'Book Appointment', description: 'Treat yourself. Schedule your visit.', cta: 'Book Now' },
-  food: { title: 'Make a Reservation', description: 'Secure your table for an unforgettable meal.', cta: 'Reserve Table' },
+  food: {
+    title: 'Make a Reservation',
+    description: 'Secure your table for an unforgettable meal.',
+    cta: 'Reserve Table',
+  },
 };
 
-const DEFAULT_BOOKING = { title: 'Book a Consultation', description: 'Schedule a time that works for you.', cta: 'Confirm Booking' };
+const DEFAULT_BOOKING = {
+  title: 'Book a Consultation',
+  description: 'Schedule a time that works for you.',
+  cta: 'Confirm Booking',
+};
 
-export function generateBookingMd(
-  businessInfo: any,
-  integration?: IntegrationConfig,
-  ctx?: ContentContext
-): string {
+export function generateBookingMd(businessInfo: any, integration?: IntegrationConfig, ctx?: ContentContext): string {
   const provider = integration?.config?.provider || null;
   const url = integration?.config?.url || null;
   const enabled = !!(provider && url);
 
   let providerFields = '';
+
   if (provider === 'calendly' && url) {
     providerFields = `calendly_url: "${url}"`;
   } else if (provider === 'calcom' && url) {
@@ -83,9 +94,11 @@ confirmation:
 `;
 }
 
-// ============================================
-// PAYMENTS
-// ============================================
+/*
+ * ============================================
+ * PAYMENTS
+ * ============================================
+ */
 
 export function generatePaymentsMd(): string {
   return `---
@@ -134,9 +147,11 @@ error:
 `;
 }
 
-// ============================================
-// CONTACT FORM
-// ============================================
+/*
+ * ============================================
+ * CONTACT FORM
+ * ============================================
+ */
 
 const CONTACT_TITLES: Record<string, { title: string; description: string }> = {
   therapist: { title: 'Reach Out', description: "Have questions? I'm here to help. Your message is confidential." },
@@ -218,9 +233,11 @@ contact_info:
 `;
 }
 
-// ============================================
-// NEWSLETTER
-// ============================================
+/*
+ * ============================================
+ * NEWSLETTER
+ * ============================================
+ */
 
 const NEWSLETTER_TITLES: Record<string, { title: string; description: string; benefits: string[] }> = {
   therapist: {
@@ -256,22 +273,19 @@ const DEFAULT_NEWSLETTER = {
   benefits: ['Weekly updates', 'Exclusive content', 'Special offers'],
 };
 
-export function generateNewsletterMd(
-  businessInfo: any,
-  integration?: IntegrationConfig,
-  ctx?: ContentContext
-): string {
+export function generateNewsletterMd(businessInfo: any, integration?: IntegrationConfig, ctx?: ContentContext): string {
   const provider = integration?.config?.provider || null;
   const url = integration?.config?.url || null;
   const enabled = !!(provider && url);
 
   let formActionUrl = '';
+
   if (provider && url) {
     formActionUrl = `form_action_url: "${url}"`;
   }
 
   const newsletter = NEWSLETTER_TITLES[ctx?.domain.id || ''] || DEFAULT_NEWSLETTER;
-  const benefitsYaml = newsletter.benefits.map(b => `  - "${b}"`).join('\n');
+  const benefitsYaml = newsletter.benefits.map((b) => `  - "${b}"`).join('\n');
 
   return `---
 enabled: ${enabled}
@@ -296,10 +310,13 @@ success:
 `;
 }
 
-// ============================================
-// SOCIAL FEED
-// ============================================
+/*
+ * ============================================
+ * SOCIAL FEED
+ * ============================================
+ */
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function generateSocialFeedMd(businessInfo: any): string {
   return `---
 enabled: false

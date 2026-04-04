@@ -52,6 +52,12 @@ export default {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'assets.flowstarter.dev',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
   // Optimize compilation speed

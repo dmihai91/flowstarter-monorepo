@@ -15,7 +15,7 @@ export const queryKeys = {
 
 // ─── Stale Times ────────────────────────────────────────────────────────────
 export const STALE_TIME = {
-  templates: 5 * 60 * 1000,      // 5 minutes
-  recommendations: 0,             // Always fresh - each business context is unique
-  templateTheme: 30 * 60 * 1000,  // 30 minutes (rarely changes)
+  templates: 5 * 60 * 1000, // 5 minutes
+  recommendations: 0, // Always fresh - each business context is unique
+  templateTheme: 30 * 60 * 1000, // 30 minutes (rarely changes)
 };

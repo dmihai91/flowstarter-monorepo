@@ -16,7 +16,10 @@ interface PublicPageLayoutProps {
 export function PublicPageLayout({ children }: PublicPageLayoutProps) {
   return (
     <div className="relative flex min-h-screen flex-col font-display">
-      <FlowBackground variant="landing" style={{ position: 'fixed', inset: 0, zIndex: 0 }} />
+      <FlowBackground
+        variant="landing"
+        style={{ position: 'fixed', inset: 0, zIndex: 0 }}
+      />
       <SupportHeader />
       {children}
       <Footer />

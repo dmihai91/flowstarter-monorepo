@@ -12,6 +12,7 @@
 import {
   createGretly,
   type GretlyInput,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   type GretlyResult,
   type GretlyConfig,
   type BusinessInfo,
@@ -101,7 +102,7 @@ export interface FlowstarterOptions {
  * 2. Daytona for real builds and preview
  * 3. Self-healing via FixerAgent
  *
- * Pipeline: PLAN ƒÅ' GENERATE ƒÅ' BUILD ƒÅ' FIX ƒÅ' REVIEW ƒÅ' REFINE ƒÅ' PUBLISH
+ * Pipeline: PLAN ï¿½ï¿½' GENERATE ï¿½ï¿½' BUILD ï¿½ï¿½' FIX ï¿½ï¿½' REVIEW ï¿½ï¿½' REFINE ï¿½ï¿½' PUBLISH
  */
 export async function generateSite(
   input: FlowstarterInput,
@@ -128,9 +129,11 @@ export async function generateSite(
         try {
           const files = await fetchTemplateScaffold(slug);
           const filesRecord: Record<string, string> = {};
+
           for (const f of files) {
             filesRecord[f.path] = f.content;
           }
+
           return {
             info: { slug, name: slug },
             files: filesRecord,
@@ -299,6 +302,3 @@ export async function generateSiteQuick(
 
 export type { BusinessInfo, TemplateInfo, DesignInfo, GretlyResult } from '~/lib/gretly/gretlyEngine';
 export type { PrewarmedSandbox } from '~/lib/services/daytonaService.server';
-
-
-

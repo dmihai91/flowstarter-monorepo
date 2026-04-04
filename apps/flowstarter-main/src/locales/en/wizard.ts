@@ -73,7 +73,8 @@ export const wizardKeys = {
   'scaffold.client.error.phone': 'Please enter a valid phone number',
   'scaffold.collapsed.prompt': 'Describe a business to generate a draft',
   'scaffold.input.title': 'AI Draft Generator',
-  'scaffold.input.subtitle': 'Describe the business in detail, AI builds the project brief',
+  'scaffold.input.subtitle':
+    'Describe the business in detail, AI builds the project brief',
   'scaffold.input.placeholder': "Describe your client's business in detail...",
   'scaffold.input.chip.services': 'Services & pricing',
   'scaffold.input.chip.location': 'Location',
@@ -83,7 +84,8 @@ export const wizardKeys = {
   'scaffold.input.charCount': '{count} chars',
   'scaffold.input.analyzing': 'Analyzing...',
   'scaffold.input.generate': 'Generate Brief',
-  'scaffold.input.hint': 'The more detail you provide, the better the AI-generated brief',
+  'scaffold.input.hint':
+    'The more detail you provide, the better the AI-generated brief',
   'scaffold.input.attachFiles': 'Attach files',
   'scaffold.progress.title': 'AI is analyzing...',
   'scaffold.progress.subtitle': 'Building your project brief',
@@ -121,7 +123,8 @@ export const wizardKeys = {
   'scaffold.review.placeholder.targetAudience': 'Who are their ideal clients?',
   'scaffold.review.placeholder.uvp': 'What makes them stand out?',
   'scaffold.review.placeholder.brandTone': 'professional, bold, or friendly',
-  'scaffold.review.placeholder.offerings': 'e.g. Consultation - \u20ac50, Premium Package - \u20ac200/mo',
+  'scaffold.review.placeholder.offerings':
+    'e.g. Consultation - \u20ac50, Premium Package - \u20ac200/mo',
   'scaffold.review.placeholder.goal': 'leads, sales, or bookings',
   'scaffold.review.placeholder.offerType': 'premium, accessible, or free',
   'scaffold.review.placeholder.contactEmail': 'hello@business.com',

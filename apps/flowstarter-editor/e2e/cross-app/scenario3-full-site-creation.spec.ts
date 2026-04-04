@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { BASE, EDITOR, BUSINESS_INFO, CONTACT_INFO, cleanupProject, e2eFetch, testProjectName } from './helpers';
+import { BASE, EDITOR, BUSINESS_INFO, CONTACT_INFO, cleanupProject, e2eFetch, testProjectName, skipIfSecretsUnavailable,
+} from './helpers';
 
 type TemplateFixture = {
   slug: string;
@@ -28,6 +29,7 @@ let createdProjectId: string | undefined;
 async function loadTemplateFixture(): Promise<TemplateFixture> {
   const result = await e2eFetch(`${BASE}/api/local-templates`);
   expect(result.status).toBe(200);
+
   return (result.body as { templates?: TemplateFixture[] }).templates![0];
 }
 
@@ -43,6 +45,7 @@ async function openReview(page: import('@playwright/test').Page, token: string) 
       if (attempt === 1) {
         throw error;
       }
+
       await page.reload({ waitUntil: 'domcontentloaded' });
       await page.waitForURL(/\/project\//, { timeout: 15_000 });
     }
@@ -57,6 +60,7 @@ test.afterEach(async () => {
 });
 
 test.describe('Scenario 3: Review to build', () => {
+  skipIfSecretsUnavailable();
   test.setTimeout(300_000);
 
   test('3.1 review-first flow can start a seeded build and surface completion', async ({ page }) => {
@@ -101,6 +105,7 @@ test.describe('Scenario 3: Review to build', () => {
     });
 
     expect(handoff.status).toBe(200);
+
     const { token, projectId } = handoff.body as { token: string; projectId: string };
     createdProjectId = projectId;
 

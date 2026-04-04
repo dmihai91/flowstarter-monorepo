@@ -513,4 +513,3 @@ export function getBusinessDataAgent(): BusinessDataAgent {
 export function resetBusinessDataAgent(): void {
   businessDataAgentInstance = null;
 }
-

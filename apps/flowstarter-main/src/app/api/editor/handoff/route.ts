@@ -5,6 +5,7 @@ import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createHmac } from 'crypto';
+import { storeSecret } from '@/lib/vault';
 import {
   createAssemblySpec,
   createContentMap,
@@ -68,7 +69,10 @@ if (!HANDOFF_SECRET && process.env.NODE_ENV === 'production') {
 
 const CONVEX_SITE_URL =
   process.env.CONVEX_SITE_URL ||
-  (process.env.NEXT_PUBLIC_CONVEX_URL || '').replace('.convex.cloud', '.convex.site');
+  (process.env.NEXT_PUBLIC_CONVEX_URL || '').replace(
+    '.convex.cloud',
+    '.convex.site'
+  );
 
 // ─── Token helpers ────────────────────────────────────────────────────────────
 
@@ -86,7 +90,9 @@ export interface HandoffPayload {
   };
 }
 
-function buildTokenProjectData(projectData: Record<string, unknown>): Record<string, unknown> {
+function buildTokenProjectData(
+  projectData: Record<string, unknown>
+): Record<string, unknown> {
   return {
     userDescription: projectData.userDescription,
     industry: projectData.industry,
@@ -109,7 +115,9 @@ function buildTokenProjectData(projectData: Record<string, unknown>): Record<str
  * No server-side storage needed — validated by signature + expiry.
  * TTL: 15 minutes.
  */
-export function createHandoffToken(payload: Omit<HandoffPayload, 'iat' | 'exp'>): string {
+export function createHandoffToken(
+  payload: Omit<HandoffPayload, 'iat' | 'exp'>
+): string {
   const now = Math.floor(Date.now() / 1000);
   const full: HandoffPayload = {
     ...payload,
@@ -144,7 +152,9 @@ export function verifyHandoffToken(token: string): HandoffPayload | null {
     }
     if (diff !== 0) return null;
 
-    const payload = JSON.parse(Buffer.from(data, 'base64url').toString()) as HandoffPayload;
+    const payload = JSON.parse(
+      Buffer.from(data, 'base64url').toString()
+    ) as HandoffPayload;
     if (Math.floor(Date.now() / 1000) > payload.exp) return null;
 
     return payload;
@@ -177,24 +187,24 @@ const handoffBodySchema = z
         clientPhone: z.string().optional(),
         businessInfo: z
           .object({
-            description:      z.string().optional(),
-            summary:          z.string().optional(),
-            uvp:              z.string().optional(),
+            description: z.string().optional(),
+            summary: z.string().optional(),
+            uvp: z.string().optional(),
             valueProposition: z.string().optional(),
-            targetAudience:   z.string().optional(),
-            industry:         z.string().optional(),
-            goal:             z.string().optional(),
-            goals:            z.array(z.string()).optional(),
-            offerType:        z.string().optional(),
-            brandTone:        z.string().optional(),
-            offerings:        z.union([z.string(), z.array(z.string())]).optional(),
+            targetAudience: z.string().optional(),
+            industry: z.string().optional(),
+            goal: z.string().optional(),
+            goals: z.array(z.string()).optional(),
+            offerType: z.string().optional(),
+            brandTone: z.string().optional(),
+            offerings: z.union([z.string(), z.array(z.string())]).optional(),
             desiredCustomerAction: z.string().optional(),
             differentiators: z.array(z.string()).optional(),
             trustSignals: z.array(z.string()).optional(),
             contentStylePreference: z.string().optional(),
-            contactEmail:     z.string().optional(),
-            contactPhone:     z.string().optional(),
-            contactAddress:   z.string().optional(),
+            contactEmail: z.string().optional(),
+            contactPhone: z.string().optional(),
+            contactAddress: z.string().optional(),
           })
           .optional(),
         brandProfile: brandProfileSchema.optional(),
@@ -222,14 +232,22 @@ const handoffBodySchema = z
             address: z.string().optional(),
           })
           .optional(),
-        planName:      z.string().optional(),
-        totalFee:      z.number().optional(),
+        integrations: z
+          .object({
+            calendly: z.object({ enabled: z.boolean().optional(), url: z.string().optional() }).optional(),
+            googleAnalytics: z.object({ enabled: z.boolean().optional(), measurementId: z.string().optional() }).optional(),
+            mailchimp: z.object({ enabled: z.boolean().optional(), apiKey: z.string().optional(), audienceId: z.string().optional() }).optional(),
+            stripe: z.object({ enabled: z.boolean().optional(), publishableKey: z.string().optional(), priceId: z.string().optional() }).optional(),
+          })
+          .optional(),
+        planName: z.string().optional(),
+        totalFee: z.number().optional(),
         depositAmount: z.number().optional(),
-        finalAmount:   z.number().optional(),
-        templateId:    z.string().optional(),
+        finalAmount: z.number().optional(),
+        templateId: z.string().optional(),
       })
       .optional(),
-    mode: z.enum(['interactive', 'generate']).optional().default('interactive'),
+    mode: z.enum(['interactive', 'generate', 'concierge']).optional().default('concierge'),
   })
   .refine((d) => d.projectId || d.projectConfig, {
     message: 'Either projectId or projectConfig is required',
@@ -242,12 +260,18 @@ const handoffBodySchema = z
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get('token');
   if (!token) {
-    return NextResponse.json({ valid: false, error: 'Token required' }, { status: 400 });
+    return NextResponse.json(
+      { valid: false, error: 'Token required' },
+      { status: 400 }
+    );
   }
 
   const payload = verifyHandoffToken(token);
   if (!payload) {
-    return NextResponse.json({ valid: false, error: 'Invalid or expired token' }, { status: 401 });
+    return NextResponse.json(
+      { valid: false, error: 'Invalid or expired token' },
+      { status: 401 }
+    );
   }
 
   return NextResponse.json({
@@ -300,16 +324,20 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (error || !project) {
-        return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+        return NextResponse.json(
+          { error: 'Project not found' },
+          { status: 404 }
+        );
       }
 
       resolvedProjectId = project.id;
       projectName = project.name;
       projectDescription = project.description ?? '';
       try {
-        projectData = typeof project.data === 'string'
-          ? JSON.parse(project.data)
-          : (project.data as unknown as Record<string, unknown>) ?? {};
+        projectData =
+          typeof project.data === 'string'
+            ? JSON.parse(project.data)
+            : (project.data as unknown as Record<string, unknown>) ?? {};
       } catch {
         projectData = {};
       }
@@ -328,7 +356,8 @@ export async function POST(request: NextRequest) {
 
       projectData = {
         userDescription: projectConfig.userDescription,
-        industry: projectConfig.industry || projectConfig.businessInfo?.industry,
+        industry:
+          projectConfig.industry || projectConfig.businessInfo?.industry,
         businessInfo: projectConfig.businessInfo,
         brandProfile: projectConfig.brandProfile,
         template: projectConfig.template,
@@ -350,7 +379,9 @@ export async function POST(request: NextRequest) {
         projectName,
         summary: projectDescription,
         industry:
-          projectConfig.industry || projectConfig.businessInfo?.industry || 'other',
+          projectConfig.industry ||
+          projectConfig.businessInfo?.industry ||
+          'other',
         targetAudience: projectConfig.businessInfo?.targetAudience,
         valueProposition: projectConfig.businessInfo?.uvp,
         brandTone: projectConfig.businessInfo?.brandTone,
@@ -420,28 +451,80 @@ export async function POST(request: NextRequest) {
             selectedTemplateSlug ||
             projectConfig.templateId ||
             projectConfig.template?.id ||
-            ((projectConfig.flowstarterEngine?.templateSelection as { selectedTemplateId?: string } | undefined)
-              ?.selectedTemplateId ?? null),
+            ((
+              projectConfig.flowstarterEngine?.templateSelection as
+                | { selectedTemplateId?: string }
+                | undefined
+            )?.selectedTemplateId ??
+              null),
           user_id: userId,
           status: 'draft',
           is_draft: true,
           template_slug: selectedTemplateSlug,
           domain_type: 'hosted',
           domain_provider: 'platform',
-          plan_name:      (projectConfig.planName as string | undefined) ?? null,
-          total_fee:      (projectConfig.totalFee as number | undefined) ?? null,
-          deposit_amount: (projectConfig.depositAmount as number | undefined) ?? null,
-          final_amount:   (projectConfig.finalAmount as number | undefined) ?? null,
+          plan_name: (projectConfig.planName as string | undefined) ?? null,
+          total_fee: (projectConfig.totalFee as number | undefined) ?? null,
+          deposit_amount:
+            (projectConfig.depositAmount as number | undefined) ?? null,
+          final_amount:
+            (projectConfig.finalAmount as number | undefined) ?? null,
         })
         .select('id')
         .single();
 
       if (error) {
         console.error('[Editor Handoff] Insert error:', error);
-        return NextResponse.json({ error: 'Failed to create project draft' }, { status: 500 });
+        return NextResponse.json(
+          { error: 'Failed to create project draft' },
+          { status: 500 }
+        );
       }
 
       resolvedProjectId = newProject.id;
+
+      // ── Store integration secrets in Vault (non-fatal, best-effort) ──────
+      // Keys collected in the wizard are encrypted at rest via pgsodium.
+      // We store secret UUIDs back to the project row for later retrieval.
+      const wizardIntegrations = projectConfig.integrations as {
+        calendly?: { enabled?: boolean; url?: string };
+        googleAnalytics?: { enabled?: boolean; measurementId?: string };
+        mailchimp?: { enabled?: boolean; apiKey?: string; audienceId?: string };
+        stripe?: { enabled?: boolean; publishableKey?: string; priceId?: string };
+      } | null | undefined;
+
+      if (wizardIntegrations) {
+        const vaultUpdates: Record<string, unknown> = {};
+        try {
+          if (wizardIntegrations.mailchimp?.apiKey) {
+            const mcSecretId = await storeSecret(
+              supabase, resolvedProjectId, 'mailchimp_api_key',
+              wizardIntegrations.mailchimp.apiKey, 'Mailchimp API key'
+            );
+            vaultUpdates.mailchimp_api_key_id = mcSecretId;
+            vaultUpdates.mailchimp_audience_id = wizardIntegrations.mailchimp.audienceId ?? null;
+          }
+          if (wizardIntegrations.stripe?.publishableKey) {
+            const stripeSecretId = await storeSecret(
+              supabase, resolvedProjectId, 'stripe_publishable_key',
+              wizardIntegrations.stripe.publishableKey, 'Stripe publishable key'
+            );
+            vaultUpdates.stripe_pk_id = stripeSecretId;
+            vaultUpdates.stripe_price_id = wizardIntegrations.stripe.priceId ?? null;
+          }
+          if (wizardIntegrations.calendly?.url) {
+            vaultUpdates.calendly_url = wizardIntegrations.calendly.url;
+          }
+          if (wizardIntegrations.googleAnalytics?.measurementId) {
+            vaultUpdates.analytics_ga_measurement_id = wizardIntegrations.googleAnalytics.measurementId;
+          }
+          if (Object.keys(vaultUpdates).length > 0) {
+            await supabase.from('projects').update(vaultUpdates).eq('id', resolvedProjectId);
+          }
+        } catch (vaultErr) {
+          console.warn('[Editor Handoff] Non-fatal: vault storage failed:', vaultErr);
+        }
+      }
     } else {
       return NextResponse.json(
         { error: 'Either projectId or projectConfig is required' },
@@ -449,70 +532,155 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Pre-initialize Convex project + conversation so the editor can navigate instantly
+    // Convex init is required — no token without conversationId
     let conversationId: string | undefined;
-    if (CONVEX_SITE_URL) {
-      try {
-        const bi = (projectData?.businessInfo ?? {}) as Record<string, unknown>;
-        const bp = (projectData?.brandProfile ?? {}) as Record<string, unknown>;
-        const siteInfo = (projectData?.siteInfo ?? {}) as Record<string, unknown>;
-        const palette = (projectData?.palette ?? null) as Record<string, unknown> | null;
-        const font = (projectData?.font ?? null) as Record<string, unknown> | null;
-        const template = (projectData?.template ?? null) as Record<string, unknown> | null;
-        const client = (projectData?.client ?? {}) as Record<string, unknown>;
-        const ci = (projectData?.contactInfo ?? {}) as Record<string, unknown>;
-        const hasBusinessData = !!(bi?.uvp || bi?.industry || bi?.pricingOffers);
-        const convexRes = await fetch(`${CONVEX_SITE_URL}/handoff/initialize`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-handoff-secret': HANDOFF_SECRET || 'dev-secret' },
-          body: JSON.stringify({
-            supabaseProjectId: resolvedProjectId,
-            projectName: projectName!,
-            projectDescription: projectDescription!,
-            businessInfo: {
-              description: bi.description,
-              summary: bi.summary,
-              uvp: bi.uvp,
-              valueProposition: bi.valueProposition,
-              targetAudience: bi.targetAudience,
-              industry: bi.industry,
-              brandTone: bi.brandTone,
-              businessType: bi.offerType,
-              businessGoals: bi.goals || (bi.goal ? [bi.goal] : undefined),
-              sellingMethod: bi.sellingMethod,
-              pricingOffers: bi.offerings,
-              desiredCustomerAction: bi.desiredCustomerAction,
-              differentiators: bi.differentiators,
-              trustSignals: bi.trustSignals,
-              contentStylePreference: bi.contentStylePreference,
-              contactEmail: (bi.contactEmail as string) || (client.email as string) || (ci.email as string),
-              contactPhone: (bi.contactPhone as string) || (client.phone as string) || (ci.phone as string),
-              contactAddress: (bi.contactAddress as string) || (ci.address as string),
-              website: (bi.website as string) || (ci.website as string),
-            },
-            brandProfile: bp,
-            selectedTemplateId:
-              selectedTemplateSlug ||
-              (template?.id as string | undefined),
-            selectedTemplateName:
-              (template?.name as string | undefined) || selectedTemplateName || undefined,
-            selectedPalette: palette,
-            selectedFont: font,
-            selectedIntegrations: {
-              required: requiredIntegrations,
-              selected: (siteInfo.integrations as string[] | undefined) || [],
-            },
-            syncVersion: Date.now(),
-            step: hasBusinessData ? 'review' : (projectName && projectName !== 'Untitled Project' ? 'describe' : 'welcome'),
-          }),
-        });
-        if (convexRes.ok) {
-          const convexData = await convexRes.json() as { conversationId?: string };
-          conversationId = convexData.conversationId;
+    if (!CONVEX_SITE_URL) {
+      console.error('[Editor Handoff] CONVEX_SITE_URL is not configured');
+      return NextResponse.json(
+        { error: 'Failed to initialize editor session. Please try again.' },
+        { status: 502 }
+      );
+    }
+
+    {
+      const bi = (projectData?.businessInfo ?? {}) as Record<string, unknown>;
+      const bp = (projectData?.brandProfile ?? {}) as Record<string, unknown>;
+      const siteInfo = (projectData?.siteInfo ?? {}) as Record<
+        string,
+        unknown
+      >;
+      const palette = (projectData?.palette ?? null) as Record<
+        string,
+        unknown
+      > | null;
+      const font = (projectData?.font ?? null) as Record<
+        string,
+        unknown
+      > | null;
+      const template = (projectData?.template ?? null) as Record<
+        string,
+        unknown
+      > | null;
+      const client = (projectData?.client ?? {}) as Record<string, unknown>;
+      const ci = (projectData?.contactInfo ?? {}) as Record<string, unknown>;
+      const hasBusinessData = !!(
+        bi?.uvp ||
+        bi?.industry ||
+        bi?.pricingOffers
+      );
+
+      const convexBody = JSON.stringify({
+        supabaseProjectId: resolvedProjectId,
+        projectName: projectName!,
+        projectDescription: projectDescription!,
+        businessInfo: {
+          description: bi.description,
+          summary: bi.summary,
+          uvp: bi.uvp,
+          valueProposition: bi.valueProposition,
+          targetAudience: bi.targetAudience,
+          industry: bi.industry,
+          brandTone: bi.brandTone,
+          businessType: bi.offerType,
+          businessGoals: bi.goals || (bi.goal ? [bi.goal] : undefined),
+          sellingMethod: bi.sellingMethod,
+          pricingOffers: bi.offerings,
+          desiredCustomerAction: bi.desiredCustomerAction,
+          differentiators: bi.differentiators,
+          trustSignals: bi.trustSignals,
+          contentStylePreference: bi.contentStylePreference,
+          contactEmail:
+            (bi.contactEmail as string) ||
+            (client.email as string) ||
+            (ci.email as string),
+          contactPhone:
+            (bi.contactPhone as string) ||
+            (client.phone as string) ||
+            (ci.phone as string),
+          contactAddress:
+            (bi.contactAddress as string) || (ci.address as string),
+          website: (bi.website as string) || (ci.website as string),
+        },
+        brandProfile: bp,
+        selectedTemplateId:
+          selectedTemplateSlug || (template?.id as string | undefined),
+        selectedTemplateName:
+          (template?.name as string | undefined) ||
+          selectedTemplateName ||
+          undefined,
+        selectedPalette: palette,
+        selectedFont: font,
+        selectedIntegrations: {
+          required: requiredIntegrations,
+          selected: (siteInfo.integrations as string[] | undefined) || [],
+        },
+        syncVersion: Date.now(),
+        step: hasBusinessData
+          ? 'review'
+          : projectName && projectName !== 'Untitled Project'
+          ? 'describe'
+          : 'welcome',
+      });
+
+      // Retry up to 3 times (1 initial + 2 retries) with 500ms delay
+      const MAX_ATTEMPTS = 3;
+      let lastError: unknown;
+
+      for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+        try {
+          const convexRes = await fetch(
+            `${CONVEX_SITE_URL}/handoff/initialize`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'x-handoff-secret': HANDOFF_SECRET || 'dev-secret',
+              },
+              body: convexBody,
+            }
+          );
+
+          if (convexRes.ok) {
+            const convexData = (await convexRes.json()) as {
+              conversationId?: string;
+            };
+            if (convexData.conversationId) {
+              conversationId = convexData.conversationId;
+              break;
+            }
+            lastError = new Error(
+              `Convex returned OK but no conversationId (attempt ${attempt}/${MAX_ATTEMPTS})`
+            );
+          } else {
+            lastError = new Error(
+              `Convex returned ${convexRes.status} (attempt ${attempt}/${MAX_ATTEMPTS})`
+            );
+          }
+        } catch (e) {
+          lastError = e;
         }
-      } catch (e) {
-        // Non-fatal — editor will initialize itself as fallback
-        console.warn('[Editor Handoff] Convex pre-init failed:', e);
+
+        if (attempt < MAX_ATTEMPTS) {
+          console.warn(
+            `[Editor Handoff] Convex init attempt ${attempt}/${MAX_ATTEMPTS} failed, retrying in 500ms...`,
+            lastError
+          );
+          await new Promise((r) => setTimeout(r, 500));
+        }
+      }
+
+      if (!conversationId) {
+        console.error(
+          `[Editor Handoff] Convex init failed after ${MAX_ATTEMPTS} attempts. Orphaned Supabase project: ${resolvedProjectId}`,
+          lastError
+        );
+        return NextResponse.json(
+          {
+            error:
+              'Failed to initialize editor session. Please try again.',
+          },
+          { status: 502 }
+        );
       }
     }
 
@@ -530,10 +698,17 @@ export async function POST(request: NextRequest) {
     });
 
     const editorUrl = conversationId
-      ? `${EDITOR_URL}/project/${conversationId}?handoff=${encodeURIComponent(token)}`
+      ? `${EDITOR_URL}/project/${conversationId}?handoff=${encodeURIComponent(
+          token
+        )}`
       : `${EDITOR_URL}?handoff=${encodeURIComponent(token)}`;
 
-    console.info('[Editor Handoff] Token issued', { userId, projectId: resolvedProjectId, mode, conversationId });
+    console.info('[Editor Handoff] Token issued', {
+      userId,
+      projectId: resolvedProjectId,
+      mode,
+      conversationId,
+    });
 
     return NextResponse.json({
       success: true,

@@ -32,7 +32,8 @@ export interface TemplateFont {
   };
 }
 
-export interface LibraryTemplateRegistryEntry extends BaseTemplateRegistryEntry {
+export interface LibraryTemplateRegistryEntry
+  extends BaseTemplateRegistryEntry {
   previewImage?: string;
   defaultPaletteId?: string;
   defaultFontId?: string;
@@ -94,27 +95,68 @@ const FALLBACK_PALETTE_COLORS: TemplatePalette['colors'] = {
 };
 
 const FALLBACK_FONTS: TemplateFont[] = [
-  { id: 'font-1', name: 'Editorial', heading: { family: 'Fraunces', weight: 700 }, body: { family: 'Inter', weight: 400 } },
-  { id: 'font-2', name: 'Modern', heading: { family: 'Space Grotesk', weight: 700 }, body: { family: 'Inter', weight: 400 } },
-  { id: 'font-3', name: 'Classic', heading: { family: 'Libre Baskerville', weight: 700 }, body: { family: 'Source Sans 3', weight: 400 } },
-  { id: 'font-4', name: 'Strong', heading: { family: 'Oswald', weight: 600 }, body: { family: 'DM Sans', weight: 400 } },
-  { id: 'font-5', name: 'Friendly', heading: { family: 'Poppins', weight: 600 }, body: { family: 'Nunito', weight: 400 } },
-  { id: 'font-6', name: 'Minimal', heading: { family: 'Manrope', weight: 700 }, body: { family: 'Inter', weight: 400 } },
+  {
+    id: 'font-1',
+    name: 'Editorial',
+    heading: { family: 'Fraunces', weight: 700 },
+    body: { family: 'Inter', weight: 400 },
+  },
+  {
+    id: 'font-2',
+    name: 'Modern',
+    heading: { family: 'Space Grotesk', weight: 700 },
+    body: { family: 'Inter', weight: 400 },
+  },
+  {
+    id: 'font-3',
+    name: 'Classic',
+    heading: { family: 'Libre Baskerville', weight: 700 },
+    body: { family: 'Source Sans 3', weight: 400 },
+  },
+  {
+    id: 'font-4',
+    name: 'Strong',
+    heading: { family: 'Oswald', weight: 600 },
+    body: { family: 'DM Sans', weight: 400 },
+  },
+  {
+    id: 'font-5',
+    name: 'Friendly',
+    heading: { family: 'Poppins', weight: 600 },
+    body: { family: 'Nunito', weight: 400 },
+  },
+  {
+    id: 'font-6',
+    name: 'Minimal',
+    heading: { family: 'Manrope', weight: 700 },
+    body: { family: 'Inter', weight: 400 },
+  },
 ];
 
 function normalizePaletteColors(
   colors?: Record<string, string>
 ): TemplatePalette['colors'] {
   return {
-    primary: colors?.primary || colors?.['primary-dark'] || FALLBACK_PALETTE_COLORS.primary,
-    secondary: colors?.secondary || colors?.accent || FALLBACK_PALETTE_COLORS.secondary,
-    accent: colors?.accent || colors?.secondary || FALLBACK_PALETTE_COLORS.accent,
-    background: colors?.background || colors?.surface || FALLBACK_PALETTE_COLORS.background,
-    text: colors?.text || colors?.['text-muted'] || FALLBACK_PALETTE_COLORS.text,
+    primary:
+      colors?.primary ||
+      colors?.['primary-dark'] ||
+      FALLBACK_PALETTE_COLORS.primary,
+    secondary:
+      colors?.secondary || colors?.accent || FALLBACK_PALETTE_COLORS.secondary,
+    accent:
+      colors?.accent || colors?.secondary || FALLBACK_PALETTE_COLORS.accent,
+    background:
+      colors?.background ||
+      colors?.surface ||
+      FALLBACK_PALETTE_COLORS.background,
+    text:
+      colors?.text || colors?.['text-muted'] || FALLBACK_PALETTE_COLORS.text,
   };
 }
 
-async function loadTemplatePalettes(templateDir: string): Promise<TemplatePalette[]> {
+async function loadTemplatePalettes(
+  templateDir: string
+): Promise<TemplatePalette[]> {
   const palettesDir = path.join(templateDir, 'palettes');
 
   try {
@@ -147,9 +189,10 @@ async function loadTemplatePalettes(templateDir: string): Promise<TemplatePalett
 }
 
 function fillPaletteVariants(palettes: TemplatePalette[]): TemplatePalette[] {
-  const base = palettes.length > 0
-    ? palettes
-    : [{ id: 'palette-1', name: 'Default', colors: FALLBACK_PALETTE_COLORS }];
+  const base =
+    palettes.length > 0
+      ? palettes
+      : [{ id: 'palette-1', name: 'Default', colors: FALLBACK_PALETTE_COLORS }];
 
   return Array.from({ length: 6 }, (_, index) => {
     const palette = base[index] || base[index % base.length];
@@ -186,16 +229,22 @@ function normalizeFonts(rawFonts?: RawTemplateConfig['fonts']): TemplateFont[] {
       id: font.id || `font-${index + 1}`,
       name: font.name || `Font ${index + 1}`,
       heading: {
-        family: font.heading || FALLBACK_FONTS[index % FALLBACK_FONTS.length].heading.family,
+        family:
+          font.heading ||
+          FALLBACK_FONTS[index % FALLBACK_FONTS.length].heading.family,
       },
       body: {
-        family: font.body || FALLBACK_FONTS[index % FALLBACK_FONTS.length].body.family,
+        family:
+          font.body ||
+          FALLBACK_FONTS[index % FALLBACK_FONTS.length].body.family,
       },
     }))
   );
 }
 
-export async function loadLibraryTemplateRegistry(): Promise<LibraryTemplateRegistryEntry[]> {
+export async function loadLibraryTemplateRegistry(): Promise<
+  LibraryTemplateRegistryEntry[]
+> {
   const candidateDirs = [
     path.join(process.cwd(), 'apps', 'flowstarter-library', 'templates'),
     path.join(process.cwd(), '..', 'flowstarter-library', 'templates'),
@@ -222,7 +271,9 @@ export async function loadLibraryTemplateRegistry(): Promise<LibraryTemplateRegi
     const configPath = path.join(templatesDir, entry.name, 'config.json');
 
     try {
-      const raw = JSON.parse(await fs.readFile(configPath, 'utf-8')) as RawTemplateConfig;
+      const raw = JSON.parse(
+        await fs.readFile(configPath, 'utf-8')
+      ) as RawTemplateConfig;
       const palettes = fillPaletteVariants(
         await loadTemplatePalettes(path.join(templatesDir, entry.name))
       );

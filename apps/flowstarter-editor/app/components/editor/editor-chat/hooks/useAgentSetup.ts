@@ -6,8 +6,8 @@
 
 import { workbenchStore } from '~/lib/stores/workbench';
 import { useAgentExecution, type AgentFileResultDTO } from '~/lib/hooks/useAgentExecution';
-import { normalizePath } from '../utils';
-import { AGENT_ERRORS, formatErrorForUser, getErrorSuggestions } from '../errors';
+import { normalizePath } from '~/components/editor/editor-chat/utils';
+import { AGENT_ERRORS, formatErrorForUser, getErrorSuggestions } from '~/components/editor/editor-chat/errors';
 import type { UseOnboardingMessagesReturn } from './useOnboardingMessages';
 
 interface UseAgentSetupProps {
@@ -59,4 +59,3 @@ export function useAgentSetup({ messageHook }: UseAgentSetupProps): UseAgentSetu
 }
 
 export type { UseAgentSetupProps, UseAgentSetupReturn };
-

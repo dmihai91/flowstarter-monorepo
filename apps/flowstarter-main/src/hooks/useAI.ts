@@ -28,7 +28,9 @@ export interface ModerateContentResult {
  */
 export function useAIClassify() {
   return useMutation({
-    mutationFn: async (data: ClassifyProjectData): Promise<ClassifyProjectResult> => {
+    mutationFn: async (
+      data: ClassifyProjectData
+    ): Promise<ClassifyProjectResult> => {
       const res = await fetch('/api/ai/classify-project', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -48,7 +50,9 @@ export function useAIClassify() {
  */
 export function useAIModerate() {
   return useMutation({
-    mutationFn: async (data: ModerateContentData): Promise<ModerateContentResult> => {
+    mutationFn: async (
+      data: ModerateContentData
+    ): Promise<ModerateContentResult> => {
       const res = await fetch('/api/ai/moderate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

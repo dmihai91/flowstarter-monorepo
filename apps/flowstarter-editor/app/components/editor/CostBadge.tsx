@@ -5,8 +5,8 @@
  */
 
 import { useQuery } from 'convex/react';
-import { api } from '../../../convex/_generated/api';
-import type { Id } from '../../../convex/_generated/dataModel';
+import { api } from '~/convex/_generated/api';
+import type { Id } from '~/convex/_generated/dataModel';
 
 interface CostBadgeProps {
   projectId: string;
@@ -21,9 +21,7 @@ export function CostBadge({ projectId }: CostBadgeProps) {
     return null;
   }
 
-  const formatted = data.summary.totalCostUSD < 0.01
-    ? '<$0.01'
-    : `$${data.summary.totalCostUSD.toFixed(2)}`;
+  const formatted = data.summary.totalCostUSD < 0.01 ? '<$0.01' : `$${data.summary.totalCostUSD.toFixed(2)}`;
 
   return (
     <div

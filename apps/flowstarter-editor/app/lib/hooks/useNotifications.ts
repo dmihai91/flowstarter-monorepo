@@ -49,4 +49,3 @@ export const useNotifications = () => {
 
   return { hasUnreadNotifications, unreadNotifications, markAsRead, markAllAsRead };
 };
-

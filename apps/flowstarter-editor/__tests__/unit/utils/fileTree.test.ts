@@ -281,4 +281,3 @@ describe('getAllPaths', () => {
     expect(allPaths).toHaveLength(5);
   });
 });
-

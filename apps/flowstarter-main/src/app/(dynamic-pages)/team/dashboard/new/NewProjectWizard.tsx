@@ -4,13 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useState, useEffect, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
-import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  Loader2,
-  Sparkles,
-} from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Loader2, Sparkles } from 'lucide-react';
 import { useScaffoldForm } from '../components/scaffold/useScaffoldForm';
 import { ScaffoldClientInfo } from '../components/scaffold/ScaffoldClientInfo';
 import { ScaffoldInput } from '../components/scaffold/ScaffoldInput';
@@ -24,45 +18,21 @@ import {
   type WizardTemplate,
 } from './TemplateGallery';
 import { Button } from '@flowstarter/flow-design-system';
+import { LogoStep } from './LogoStep';
+import { IntegrationsStep } from './IntegrationsStep';
+import { PaymentStep } from './PaymentStep';
+import { DomainStep } from './DomainStep';
 
-// ── Plan config ────────────────────────────────────────────────────────────────
+// ── Brand tone options for personalization step ───────────────────────────────
 
-const PLANS = [
-  {
-    id: 'STARTER',
-    name: 'Starter',
-    price: '39',
-    desc: 'Solid site, fast delivery',
-    suggestedFee: 499,
-    color: 'from-blue-500 to-blue-600',
-  },
-  {
-    id: 'RELAUNCH_39',
-    name: 'Relaunch',
-    price: '39',
-    desc: 'Existing site refresh',
-    suggestedFee: 699,
-    color: 'from-[var(--purple)] to-blue-600',
-  },
-  {
-    id: 'RELAUNCH_59',
-    name: 'Relaunch+',
-    price: '59',
-    desc: 'Full redesign + extras',
-    suggestedFee: 999,
-    color: 'from-[var(--purple)] to-indigo-600',
-  },
-  {
-    id: 'GROWTH',
-    name: 'Growth',
-    price: '59',
-    desc: 'Full setup + editor access',
-    suggestedFee: 1299,
-    color: 'from-violet-500 to-[var(--purple)]',
-  },
+const BRAND_TONES = [
+  { id: 'professional', label: 'Professional', desc: 'Clean, corporate, trustworthy' },
+  { id: 'bold', label: 'Bold', desc: 'Strong, confident, impactful' },
+  { id: 'friendly', label: 'Friendly', desc: 'Warm, approachable, casual' },
+  { id: 'warm', label: 'Warm', desc: 'Inviting, personal, comforting' },
+  { id: 'energetic', label: 'Energetic', desc: 'Dynamic, vibrant, exciting' },
+  { id: 'minimalist', label: 'Minimalist', desc: 'Simple, elegant, focused' },
 ] as const;
-
-type PlanId = (typeof PLANS)[number]['id'];
 
 // ── Step config ────────────────────────────────────────────────────────────────
 
@@ -70,10 +40,17 @@ const STEPS = [
   { label: 'Client & Brief', desc: 'Client info, industry, and AI brief' },
   { label: 'Review Brief', desc: 'Edit business details and goals' },
   { label: 'Pick Template', desc: 'Choose a site design for the client' },
-  { label: 'Pricing & Launch', desc: 'Set fees, plan, and create project' },
+  { label: 'Personalization', desc: 'Select brand tone for the project' },
+  { label: 'Logo', desc: 'Upload or skip a logo' },
+  { label: 'Integrations & Domain', desc: 'Calendly, Analytics, and custom domain' },
+  { label: 'Payment', desc: 'Plan, fee, and launch' },
 ];
 
-function StepIndicator({ current, reviewStep = 0, reviewStepCount = 0 }: {
+function StepIndicator({
+  current,
+  reviewStep = 0,
+  reviewStepCount = 0,
+}: {
   current: number;
   reviewStep?: number;
   reviewStepCount?: number;
@@ -81,13 +58,16 @@ function StepIndicator({ current, reviewStep = 0, reviewStepCount = 0 }: {
   const activeStep = STEPS[current];
   const isReviewPhase = current === 1 && reviewStepCount > 0;
   // During review, show sub-step X of Y as a suffix
-  const descSuffix = isReviewPhase ? ` · ${reviewStep + 1} of ${reviewStepCount}` : '';
+  const descSuffix = isReviewPhase
+    ? ` · ${reviewStep + 1} of ${reviewStepCount}`
+    : '';
   const displayDesc = activeStep.desc + descSuffix;
   const REVIEW_STEPS = ['Business', 'Offer', 'Structure', 'Contact'];
-  const reviewLabel = isReviewPhase ? REVIEW_STEPS[reviewStep] ?? activeStep.label : activeStep.label;
+  const reviewLabel = isReviewPhase
+    ? REVIEW_STEPS[reviewStep] ?? activeStep.label
+    : activeStep.label;
   return (
     <div className="w-full mb-6 rounded-[28px] border border-gray-200/60 bg-white/65 px-4 sm:px-6 py-4 sm:py-5 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:border-white/[0.06] dark:bg-white/[0.04] dark:shadow-[0_8px_32px_rgba(0,0,0,0.20)]">
-
       {/* Mobile: compact progress */}
       <div className="sm:hidden">
         <div className="flex items-center justify-between mb-2.5">
@@ -96,17 +76,29 @@ function StepIndicator({ current, reviewStep = 0, reviewStepCount = 0 }: {
               {isReviewPhase ? reviewStep + 1 : current + 1}
             </div>
             <div>
-              <p className="text-sm font-semibold text-zinc-900 dark:text-white leading-tight">{isReviewPhase ? reviewLabel : activeStep.label}</p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">{displayDesc}</p>
+              <p className="text-sm font-semibold text-zinc-900 dark:text-white leading-tight">
+                {isReviewPhase ? reviewLabel : activeStep.label}
+              </p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                {displayDesc}
+              </p>
             </div>
           </div>
-          <span className="text-xs text-zinc-400 dark:text-zinc-500 shrink-0">{isReviewPhase ? `${reviewStep + 1}/${reviewStepCount}` : `${current + 1}/${STEPS.length}`}</span>
+          <span className="text-xs text-zinc-400 dark:text-zinc-500 shrink-0">
+            {isReviewPhase
+              ? `${reviewStep + 1}/${reviewStepCount}`
+              : `${current + 1}/${STEPS.length}`}
+          </span>
         </div>
         {/* Progress bar */}
         <div className="h-1 w-full bg-gray-100 dark:bg-white/[0.06] rounded-full overflow-hidden">
           <div
             className="h-full bg-[var(--purple)] rounded-full transition-all duration-500"
-            style={{ width: isReviewPhase ? `${((reviewStep + 1) / reviewStepCount) * 100}%` : `${((current + 1) / STEPS.length) * 100}%` }}
+            style={{
+              width: isReviewPhase
+                ? `${((reviewStep + 1) / reviewStepCount) * 100}%`
+                : `${((current + 1) / STEPS.length) * 100}%`,
+            }}
           />
         </div>
       </div>
@@ -120,164 +112,202 @@ function StepIndicator({ current, reviewStep = 0, reviewStepCount = 0 }: {
           return (
             <div key={i} className="flex flex-1 items-start">
               <div className="flex flex-col items-center">
-                <div className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-all duration-300 ${
-                  isDone    ? 'bg-[var(--purple)] text-white' :
-                  isActive  ? 'bg-[var(--purple)] text-white ring-4 ring-[var(--purple)]/20' :
-                              'bg-gray-100 text-zinc-400 dark:bg-white/[0.06] dark:text-zinc-400'
-                }`}>
+                <div
+                  className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-all duration-300 ${
+                    isDone
+                      ? 'bg-[var(--purple)] text-white'
+                      : isActive
+                      ? 'bg-[var(--purple)] text-white ring-4 ring-[var(--purple)]/20'
+                      : 'bg-gray-100 text-zinc-400 dark:bg-white/[0.06] dark:text-zinc-400'
+                  }`}
+                >
                   {isDone ? <Check className="h-5 w-5" /> : i + 1}
                 </div>
                 <div className="mt-2 text-center max-w-[120px]">
-                  <p className={`text-sm font-semibold leading-5 ${isActive || isDone ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 dark:text-zinc-500'}`}>
+                  <p
+                    className={`text-sm font-semibold leading-5 ${
+                      isActive || isDone
+                        ? 'text-zinc-900 dark:text-white'
+                        : 'text-zinc-400 dark:text-zinc-500'
+                    }`}
+                  >
                     {step.label}
                   </p>
-                  <p className={`mt-0.5 text-xs leading-4 ${isActive || isDone ? 'text-zinc-500 dark:text-zinc-400' : 'text-zinc-400 dark:text-zinc-600'}`}>
+                  <p
+                    className={`mt-0.5 text-xs leading-4 ${
+                      isActive || isDone
+                        ? 'text-zinc-500 dark:text-zinc-400'
+                        : 'text-zinc-400 dark:text-zinc-600'
+                    }`}
+                  >
                     {step.desc}
                   </p>
                 </div>
               </div>
               {!isLast && (
-                <div className={`mt-5 h-px flex-1 mx-3 transition-all duration-300 ${isDone ? 'bg-[var(--purple)]' : 'bg-gray-200 dark:bg-white/[0.06]'}`} />
+                <div
+                  className={`mt-5 h-px flex-1 mx-3 transition-all duration-300 ${
+                    isDone
+                      ? 'bg-[var(--purple)]'
+                      : 'bg-gray-200 dark:bg-white/[0.06]'
+                  }`}
+                />
               )}
             </div>
           );
         })}
       </div>
-
     </div>
   );
 }
 
+// ── Personalization step ──────────────────────────────────────────────────────
 
-// ── Payment step ───────────────────────────────────────────────────────────────
+function PersonalizationStep({
+  selectedTone,
+  onSelect,
+  onBack,
+  onNext,
+}: {
+  selectedTone: string;
+  onSelect: (tone: string) => void;
+  onBack: () => void;
+  onNext: () => void;
+}) {
+  return (
+    <div className="space-y-5">
+      <div>
+        <h3 className="text-base font-semibold text-zinc-900 dark:text-white">
+          Choose a brand tone
+        </h3>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
+          This sets the voice and feel of the site content.
+        </p>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {BRAND_TONES.map((tone) => (
+          <button
+            key={tone.id}
+            onClick={() => onSelect(tone.id)}
+            className={`relative p-4 rounded-[20px] border text-left transition-all duration-200 ${
+              selectedTone === tone.id
+                ? 'border-[var(--purple)]/50 bg-[var(--purple)]/5 dark:bg-[var(--purple)]/10 ring-1 ring-[var(--purple)]/30'
+                : 'border-gray-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.06]'
+            }`}
+          >
+            {selectedTone === tone.id && (
+              <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-[var(--purple)] flex items-center justify-center">
+                <Check className="w-2.5 h-2.5 text-white" />
+              </div>
+            )}
+            <p className="text-sm font-semibold text-zinc-900 dark:text-white">
+              {tone.label}
+            </p>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+              {tone.desc}
+            </p>
+          </button>
+        ))}
+      </div>
+      <div className="flex gap-3 pt-2">
+        <Button onClick={onBack} variant="outline" size="md" icon={<ArrowLeft className="w-4 h-4" />}>
+          Back
+        </Button>
+        <Button
+          onClick={onNext}
+          disabled={!selectedTone}
+          variant="accent"
+          size="md"
+          className="flex-1"
+          icon={<ArrowRight className="w-4 h-4" />}
+          iconPosition="right"
+        >
+          Continue
+        </Button>
+      </div>
+    </div>
+  );
+}
 
-function PaymentStep({
-  planName,
-  setPlanName,
-  setupFee,
-  setSetupFee,
+// ── Build step (summary + launch) ────────────────────────────────────────────
+
+function BuildStep({
+  clientName,
+  templateName,
+  paletteName,
+  fontName,
+  brandTone,
+  logoLabel,
+  domainLabel,
+  integrationsLabel,
   onBack,
   onLaunch,
   isLaunching,
 }: {
-  planName: string;
-  setPlanName: (p: string) => void;
-  setupFee: number;
-  setSetupFee: (n: number) => void;
+  clientName: string;
+  templateName: string;
+  paletteName: string;
+  fontName: string;
+  brandTone: string;
+  logoLabel: string;
+  domainLabel: string;
+  integrationsLabel: string;
   onBack: () => void;
   onLaunch: () => void;
   isLaunching: boolean;
 }) {
-  const selectedPlan = PLANS.find((p) => p.id === planName) ?? PLANS[0];
-  const deposit = Math.round(setupFee * 0.5);
-  const final = setupFee - deposit;
-  const monthlyPrice = parseInt(selectedPlan.price);
+  const rows = [
+    { label: 'Client', value: clientName },
+    { label: 'Template', value: templateName },
+    { label: 'Palette', value: paletteName },
+    { label: 'Font', value: fontName },
+    { label: 'Brand Tone', value: brandTone },
+    { label: 'Logo', value: logoLabel },
+    { label: 'Domain', value: domainLabel },
+    { label: 'Integrations', value: integrationsLabel },
+  ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div>
-        <label className="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 mb-3 uppercase tracking-wider">
-          Subscription Plan
-        </label>
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-          {PLANS.map((plan) => (
-            <button
-              key={plan.id}
-              onClick={() => {
-                setPlanName(plan.id);
-                if (
-                  setupFee === 0 ||
-                  setupFee ===
-                    (PLANS.find((p) => p.id === planName)?.suggestedFee ?? 0)
-                ) {
-                  setSetupFee(plan.suggestedFee);
-                }
-              }}
-              className={`
-                relative p-4 rounded-[20px] border text-left transition-all duration-200
-                ${
-                  planName === plan.id
-                    ? 'border-[var(--purple)]/50 bg-[var(--purple)]/5 dark:bg-[var(--purple)]/10 ring-1 ring-[var(--purple)]/30'
-                    : 'border-gray-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.06]'
-                }
-              `}
-            >
-              {planName === plan.id && (
-                <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-[var(--purple)] flex items-center justify-center">
-                  <Check className="w-2.5 h-2.5 text-white" />
-                </div>
-              )}
-              <p className="text-sm font-semibold text-zinc-900 dark:text-white">{plan.name}</p>
-              <p className="text-[0.6rem] text-zinc-500 dark:text-zinc-400 mt-0.5">{plan.desc}</p>
-              <p className="text-xs font-bold text-[var(--purple)] mt-1.5">€{plan.price}/mo</p>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 mb-2 uppercase tracking-wider">
-          Setup Fee (EUR)
-        </label>
-        <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 font-semibold">€</span>
-          <input
-            type="number"
-            min={0}
-            step={50}
-            value={setupFee || ''}
-            onChange={(e) => setSetupFee(parseInt(e.target.value) || 0)}
-            placeholder={selectedPlan.suggestedFee.toString()}
-            className="w-full pl-8 pr-4 py-3 rounded-2xl bg-white dark:bg-white/[0.05] border border-gray-200 dark:border-white/[0.06] text-zinc-900 dark:text-white text-lg font-semibold placeholder:text-zinc-300 dark:placeholder:text-zinc-40 focus:outline-none focus:border-[var(--purple)] focus:ring-2 focus:ring-[var(--purple)]/20 transition-all"
-          />
-        </div>
-        <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1.5">
-          Suggested for {selectedPlan.name}: €{selectedPlan.suggestedFee}
+        <h3 className="text-base font-semibold text-zinc-900 dark:text-white">
+          Ready to build
+        </h3>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
+          Review the summary below, then hand off to the editor.
         </p>
       </div>
-
-      {setupFee > 0 && (
-        <div className="space-y-4 rounded-[28px] border border-gray-200/80 bg-white/95 p-5 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]">
-          <p className="text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Payment breakdown</p>
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-sm font-semibold text-zinc-900 dark:text-white">Deposit invoice</p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">Sent immediately, due in 10 days — non-refundable</p>
-            </div>
-            <p className="text-lg font-bold text-zinc-900 dark:text-white">€{deposit}</p>
+      <div className="rounded-[20px] border border-gray-200/80 bg-white/95 p-5 space-y-3 dark:border-white/[0.06] dark:bg-white/[0.04]">
+        {rows.map((row) => (
+          <div key={row.label} className="flex justify-between items-center">
+            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+              {row.label}
+            </span>
+            <span className="text-sm font-medium text-zinc-900 dark:text-white">
+              {row.value || '—'}
+            </span>
           </div>
-          <div className="h-px bg-zinc-200 dark:bg-zinc-700" />
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-sm font-semibold text-zinc-600 dark:text-zinc-300">Final invoice</p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">Sent on delivery, 30-day refund window</p>
-            </div>
-            <p className="text-lg font-bold text-zinc-500 dark:text-zinc-400">€{final}</p>
-          </div>
-          <div className="h-px bg-zinc-200 dark:bg-zinc-700" />
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-sm font-semibold text-zinc-600 dark:text-zinc-300">Subscription</p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">Starts after delivery, 30-day free trial</p>
-            </div>
-            <p className="text-sm font-bold text-[var(--purple)]">€{monthlyPrice}/mo</p>
-          </div>
-        </div>
-      )}
-
+        ))}
+      </div>
       <div className="flex gap-3 pt-2">
         <Button onClick={onBack} variant="outline" size="md" icon={<ArrowLeft className="w-4 h-4" />}>
           Back
         </Button>
         <Button
           onClick={onLaunch}
-          disabled={setupFee <= 0 || isLaunching}
+          disabled={isLaunching}
           variant="accent"
           size="md"
           className="flex-1"
-          icon={isLaunching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+          icon={
+            isLaunching ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Sparkles className="w-4 h-4" />
+            )
+          }
         >
-          {isLaunching ? 'Creating project...' : 'Create project & send invoice'}
+          {isLaunching ? 'Creating project...' : 'Build Site'}
         </Button>
       </div>
     </div>
@@ -303,7 +333,9 @@ export function NewProjectWizard() {
   const form = useScaffoldForm();
 
   // ── Draft persistence ────────────────────────────────────────────────────────
-  const [draftId, setDraftId] = useState<string | null>(() => searchParams.get('draft'));
+  const [draftId, setDraftId] = useState<string | null>(() =>
+    searchParams.get('draft')
+  );
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const saveDraftMutation = useMutation({
@@ -317,7 +349,10 @@ export function NewProjectWizard() {
         body: JSON.stringify({
           projectId: draftId || undefined,
           projectConfig: {
-            name: form.brief.projectName || payload.clientInfo.name || 'Untitled Project',
+            name:
+              form.brief.projectName ||
+              payload.clientInfo.name ||
+              'Untitled Project',
             description: form.brief.summary || payload.userInput || '',
             currentStep: form.phase,
             clientInfo: payload.clientInfo,
@@ -360,7 +395,9 @@ export function NewProjectWizard() {
         };
 
         if (!cancelled) {
-          setTemplates((data.templates ?? []).map(mapRegistryTemplateToWizardTemplate));
+          setTemplates(
+            (data.templates ?? []).map(mapRegistryTemplateToWizardTemplate)
+          );
         }
       } catch (error) {
         console.warn('[NewProjectWizard] Failed to load templates', error);
@@ -378,6 +415,8 @@ export function NewProjectWizard() {
     };
   }, []);
 
+
+
   useEffect(() => {
     if (!draftId) {
       return;
@@ -387,7 +426,9 @@ export function NewProjectWizard() {
 
     const loadDraft = async () => {
       try {
-        const response = await fetch(`/api/projects/draft?projectId=${encodeURIComponent(draftId)}`);
+        const response = await fetch(
+          `/api/projects/draft?projectId=${encodeURIComponent(draftId)}`
+        );
         const payload = (await response.json()) as {
           draft?: {
             data?: string;
@@ -406,12 +447,18 @@ export function NewProjectWizard() {
         form.hydrateDraft({
           currentStep: raw.currentStep as string | undefined,
           userInput: raw.userInput as string | undefined,
-          clientInfo: raw.clientInfo as { name?: string; email?: string; phone?: string } | undefined,
+          clientInfo: raw.clientInfo as
+            | { name?: string; email?: string; phone?: string }
+            | undefined,
           businessInfo: raw.businessInfo as Record<string, unknown> | undefined,
-          brandProfile: raw.brandProfile as Parameters<typeof form.hydrateDraft>[0]['brandProfile'],
+          brandProfile: raw.brandProfile as Parameters<
+            typeof form.hydrateDraft
+          >[0]['brandProfile'],
           contactInfo: raw.contactInfo as Record<string, unknown> | undefined,
           template: raw.template as { id?: string } | undefined,
-          palette: raw.palette as Parameters<typeof form.hydrateDraft>[0]['palette'],
+          palette: raw.palette as Parameters<
+            typeof form.hydrateDraft
+          >[0]['palette'],
           font: raw.font as Parameters<typeof form.hydrateDraft>[0]['font'],
         });
 
@@ -435,7 +482,9 @@ export function NewProjectWizard() {
       return;
     }
 
-    const selectedTemplate = templates.find((template) => template.id === form.selectedTemplateId);
+    const selectedTemplate = templates.find(
+      (template) => template.id === form.selectedTemplateId
+    );
     if (!selectedTemplate) {
       return;
     }
@@ -452,13 +501,15 @@ export function NewProjectWizard() {
 
     if (!form.selectedFont) {
       const font =
-        selectedTemplate.fonts.find((entry) => entry.id === selectedTemplate.defaultFontId) ||
-        selectedTemplate.fonts[0];
+        selectedTemplate.fonts.find(
+          (entry) => entry.id === selectedTemplate.defaultFontId
+        ) || selectedTemplate.fonts[0];
       if (font) {
         form.setSelectedFont(font);
       }
     }
   }, [
+    form,
     form.selectedFont,
     form.selectedPalette,
     form.selectedTemplateId,
@@ -474,18 +525,25 @@ export function NewProjectWizard() {
     if (current.get('draft') !== draftId) {
       const params = new URLSearchParams(current);
       params.set('draft', draftId);
-      window.history.replaceState(null, '', `/team/dashboard/new?${params.toString()}`);
+      window.history.replaceState(
+        null,
+        '',
+        `/team/dashboard/new?${params.toString()}`
+      );
     }
   }, [draftId]);
 
   // Auto-save client info 800ms after last keystroke
-  const scheduleSaveDraft = useCallback((clientInfo: { name: string; email: string; phone: string }) => {
-    if (!clientInfo.name && !clientInfo.email && !clientInfo.phone) return;
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(() => {
-      saveDraftMutation.mutate({ clientInfo });
-    }, 400);
-  }, [form.brief.industry, form.brief.projectName, form.brief.summary, form.phase, industry, saveDraftMutation]);
+  const scheduleSaveDraft = useCallback(
+    (clientInfo: { name: string; email: string; phone: string }) => {
+      if (!clientInfo.name && !clientInfo.email && !clientInfo.phone) return;
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = setTimeout(() => {
+        saveDraftMutation.mutate({ clientInfo });
+      }, 400);
+    },
+    [saveDraftMutation]
+  );
 
   const stepIndex = (() => {
     switch (form.phase) {
@@ -498,8 +556,14 @@ export function NewProjectWizard() {
         return 1;
       case 'template':
         return 2;
-      case 'payment':
+      case 'personalization':
         return 3;
+      case 'logo':
+        return 4;
+      case 'integrations':
+        return 5;
+      case 'payment':
+        return 6;
       default:
         return 0;
     }
@@ -511,7 +575,9 @@ export function NewProjectWizard() {
     form.updateBrief('contactPhone', form.clientInfo.phone);
 
     // Persist client info to Supabase draft (best-effort, non-blocking)
-    saveDraftMutation.mutateAsync({ clientInfo: form.clientInfo }).catch(() => {});
+    saveDraftMutation
+      .mutateAsync({ clientInfo: form.clientInfo })
+      .catch(() => {});
 
     if (mode === 'manual') {
       form.setPhase('review');
@@ -529,7 +595,7 @@ export function NewProjectWizard() {
       .join('\n');
 
     form.submitDescription(description);
-  }, [form, industry, mode, prompt]);
+  }, [form, industry, mode, prompt, saveDraftMutation]);
 
   const handleLaunch = useCallback(async () => {
     setIsLaunching(true);
@@ -574,7 +640,8 @@ export function NewProjectWizard() {
                 notes: form.brief.brandNotes || undefined,
               },
               valueProposition:
-                form.brief.valuePropositionDetail || form.brief.valueProposition,
+                form.brief.valuePropositionDetail ||
+                form.brief.valueProposition,
               primaryGoal: form.brief.primaryGoal || form.brief.goals[0],
               desiredCustomerAction: form.brief.desiredCustomerAction,
               differentiators: form.brief.differentiators,
@@ -593,8 +660,11 @@ export function NewProjectWizard() {
             },
             palette: form.selectedPalette,
             font: form.selectedFont,
+            logo: form.selectedLogo ?? undefined,
+            integrations: form.selectedIntegrations ?? undefined,
+            selectedDomain: form.selectedDomain ?? undefined,
           },
-          mode: 'interactive',
+          mode: 'concierge',
         }),
       });
 
@@ -611,7 +681,10 @@ export function NewProjectWizard() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ projectId, type: 'deposit' }),
         }).catch((invoiceErr) => {
-          console.warn('[handleLaunch] Deposit invoice failed (non-fatal):', invoiceErr);
+          console.warn(
+            '[handleLaunch] Deposit invoice failed (non-fatal):',
+            invoiceErr
+          );
         });
       }
 
@@ -620,20 +693,28 @@ export function NewProjectWizard() {
       window.open(editorUrl || `${EDITOR_URL}?handoff=${token}`, '_blank');
       router.push('/team/dashboard');
     } catch (err) {
-      setLaunchError(err instanceof Error ? err.message : 'Something went wrong');
+      setLaunchError(
+        err instanceof Error ? err.message : 'Something went wrong'
+      );
     } finally {
       setIsLaunching(false);
     }
   }, [form, router]);
 
-  const selectedTemplate = templates.find((template) => template.id === form.selectedTemplateId) || null;
+  const selectedTemplate =
+    templates.find((template) => template.id === form.selectedTemplateId) ||
+    null;
 
   return (
     <div className="py-4 sm:py-8 px-3 sm:px-6">
       <div className="max-w-4xl mx-auto">
         {/* Step indicator — hide during progress/clarify */}
         {!['progress', 'clarify'].includes(form.phase) && (
-          <StepIndicator current={stepIndex} reviewStep={form.reviewStep} reviewStepCount={form.reviewStepCount} />
+          <StepIndicator
+            current={stepIndex}
+            reviewStep={form.reviewStep}
+            reviewStepCount={form.reviewStepCount}
+          />
         )}
 
         {/* Content card */}
@@ -733,7 +814,8 @@ export function NewProjectWizard() {
                         Palette variants
                       </h4>
                       <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                        Show these during the onboarding call and lock the preferred direction before handoff.
+                        Show these during the onboarding call and lock the
+                        preferred direction before handoff.
                       </p>
                     </div>
                     <div className="space-y-2">
@@ -749,19 +831,23 @@ export function NewProjectWizard() {
                           }`}
                         >
                           <div>
-                            <p className="text-sm font-medium text-zinc-900 dark:text-white">{palette.name}</p>
+                            <p className="text-sm font-medium text-zinc-900 dark:text-white">
+                              {palette.name}
+                            </p>
                             <p className="mt-1 text-[0.7rem] text-zinc-500 dark:text-zinc-400">
                               {palette.id}
                             </p>
                           </div>
                           <div className="flex items-center gap-1">
-                            {Object.values(palette.colors).map((color, index) => (
-                              <span
-                                key={`${palette.id}-${index}`}
-                                className="h-4 w-4 rounded-full border border-black/10"
-                                style={{ backgroundColor: String(color) }}
-                              />
-                            ))}
+                            {Object.values(palette.colors).map(
+                              (color, index) => (
+                                <span
+                                  key={`${palette.id}-${index}`}
+                                  className="h-4 w-4 rounded-full border border-black/10"
+                                  style={{ backgroundColor: String(color) }}
+                                />
+                              )
+                            )}
                           </div>
                         </button>
                       ))}
@@ -773,7 +859,8 @@ export function NewProjectWizard() {
                         Font variants
                       </h4>
                       <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                        Pick the font pairing that matches the client’s tone and positioning.
+                        Pick the font pairing that matches the client’s tone and
+                        positioning.
                       </p>
                     </div>
                     <div className="space-y-2">
@@ -788,7 +875,9 @@ export function NewProjectWizard() {
                               : 'border-gray-200 bg-white hover:border-gray-300 dark:border-white/[0.06] dark:bg-white/[0.03] dark:hover:border-white/[0.12]'
                           }`}
                         >
-                          <p className="text-sm font-medium text-zinc-900 dark:text-white">{font.name}</p>
+                          <p className="text-sm font-medium text-zinc-900 dark:text-white">
+                            {font.name}
+                          </p>
                           <p className="mt-1 text-[0.75rem] text-zinc-500 dark:text-zinc-400">
                             Heading: {font.heading.family}
                           </p>
@@ -811,8 +900,12 @@ export function NewProjectWizard() {
                   Back
                 </Button>
                 <Button
-                  onClick={form.proceedToPayment}
-                  disabled={!form.selectedTemplateId || !form.selectedPalette || !form.selectedFont}
+                  onClick={form.proceedToPersonalization}
+                  disabled={
+                    !form.selectedTemplateId ||
+                    !form.selectedPalette ||
+                    !form.selectedFont
+                  }
                   variant="accent"
                   size="md"
                   className="flex-1"
@@ -825,13 +918,50 @@ export function NewProjectWizard() {
             </div>
           )}
 
+          {form.phase === 'personalization' && (
+            <PersonalizationStep
+              selectedTone={form.brief.brandTone}
+              onSelect={(tone) => form.updateBrief('brandTone', tone as import('../components/scaffold/useScaffoldForm').BrandTone)}
+              onBack={() => form.setPhase('template')}
+              onNext={form.proceedToLogo}
+            />
+          )}
+
+          {form.phase === 'logo' && (
+            <LogoStep
+              onLogoSelected={(logo) => {
+                form.setSelectedLogo(logo);
+                form.proceedToIntegrations();
+              }}
+              onSkip={() => {
+                form.setSelectedLogo({ type: 'none' });
+                form.proceedToIntegrations();
+              }}
+              onBack={() => form.setPhase('personalization')}
+            />
+          )}
+
+          {form.phase === 'integrations' && (
+            <IntegrationsStep
+              projectName={form.brief.projectName}
+              clientName={form.clientInfo.name}
+              planId={form.planName}
+              onComplete={(integrations, domain) => {
+                form.setSelectedIntegrations(integrations);
+                form.setSelectedDomain(domain);
+                form.proceedToPayment();
+              }}
+              onBack={() => form.setPhase('logo')}
+            />
+          )}
+
           {form.phase === 'payment' && (
             <PaymentStep
               planName={form.planName}
               setPlanName={form.setPlanName}
               setupFee={form.setupFee}
               setSetupFee={form.setSetupFee}
-              onBack={() => form.setPhase('template')}
+              onBack={() => form.setPhase('integrations')}
               onLaunch={handleLaunch}
               isLaunching={isLaunching}
             />

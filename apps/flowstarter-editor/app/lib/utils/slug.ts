@@ -60,4 +60,3 @@ export function getSlugDisplayName(slug: string): string {
   // Convert dashes to spaces and title case
   return parts.join(' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
-

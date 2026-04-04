@@ -26,11 +26,17 @@ export function SectionWrapper({
       ref={ref}
       id={id}
       className={`relative ${padding} ${className}`}
-      style={tinted ? {
-        background: 'var(--landing-bg-tint)',
-        maskImage: 'linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%)',
-        WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%)',
-      } : undefined}
+      style={
+        tinted
+          ? {
+              background: 'var(--landing-bg-tint)',
+              maskImage:
+                'linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%)',
+              WebkitMaskImage:
+                'linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%)',
+            }
+          : undefined
+      }
     >
       <motion.div
         className="mx-auto max-w-5xl px-6 lg:px-8"
@@ -44,9 +50,17 @@ export function SectionWrapper({
   );
 }
 
-export function SectionHeading({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+export function SectionHeading({
+  children,
+  className = '',
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <h2 className={`font-display text-3xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-4xl lg:text-5xl ${className}`}>
+    <h2
+      className={`font-display text-3xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-4xl lg:text-5xl ${className}`}
+    >
       {children}
     </h2>
   );

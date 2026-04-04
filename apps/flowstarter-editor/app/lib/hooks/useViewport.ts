@@ -16,4 +16,3 @@ const useViewport = (threshold = 1024) => {
 };
 
 export default useViewport;
-

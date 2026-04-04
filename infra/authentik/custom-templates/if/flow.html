@@ -14,6 +14,25 @@
 {% endif %}
 {% include "base/header_js.html" %}
 <script>
+(function() {
+  var root = document.documentElement;
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+
+  function applyTheme() {
+    var forced = root.getAttribute('data-theme');
+    var isDark = forced === 'dark' || (!forced && media.matches);
+    root.classList.toggle('dark', isDark);
+  }
+
+  applyTheme();
+  if (typeof media.addEventListener === 'function') {
+    media.addEventListener('change', applyTheme);
+  } else if (typeof media.addListener === 'function') {
+    media.addListener(applyTheme);
+  }
+})();
+</script>
+<script>
 window.authentik.flow = {
     "layout": "{{ flow.layout }}",
 };

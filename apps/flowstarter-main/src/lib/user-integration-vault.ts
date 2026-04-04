@@ -22,7 +22,7 @@ export async function storeUserSecret(
   userId: string,
   integrationId: string,
   keyName: string,
-  value: string,
+  value: string
 ): Promise<string> {
   const { data, error } = await supabase.rpc('store_user_secret', {
     p_user_id: userId,
@@ -31,7 +31,10 @@ export async function storeUserSecret(
     p_value: value,
   });
 
-  if (error) throw new Error(`Vault store failed [${integrationId}/${keyName}]: ${error.message}`);
+  if (error)
+    throw new Error(
+      `Vault store failed [${integrationId}/${keyName}]: ${error.message}`
+    );
   return data as string;
 }
 
@@ -41,7 +44,7 @@ export async function storeUserSecret(
  */
 export async function readUserSecret(
   supabase: SupabaseClient,
-  secretId: string,
+  secretId: string
 ): Promise<string | null> {
   const { data, error } = await supabase.rpc('read_user_secret', {
     p_secret_id: secretId,
@@ -56,7 +59,7 @@ export async function readUserSecret(
  */
 export async function deleteUserSecret(
   supabase: SupabaseClient,
-  secretId: string,
+  secretId: string
 ): Promise<void> {
   const { error } = await supabase.rpc('delete_user_secret', {
     p_secret_id: secretId,

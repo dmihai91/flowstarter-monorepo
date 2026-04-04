@@ -22,4 +22,3 @@ export {
   type SelfHealingInput,
   type SelfHealingOutput,
 } from './self-healing-tool';
-

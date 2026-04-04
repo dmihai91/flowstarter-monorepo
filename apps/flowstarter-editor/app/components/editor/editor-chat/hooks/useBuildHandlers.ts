@@ -3,7 +3,7 @@
  *
  * Handles the main project build flow including font selection,
  * template cloning, and orchestration.
- * 
+ *
  * Uses React Query mutations for API calls with automatic retries.
  */
 
@@ -19,11 +19,16 @@ import type { UseOnboardingFlowReturn } from './useOnboardingFlow';
 import type { UseTemplateSelectionReturn } from './useTemplateSelection';
 import type { UsePaletteSelectionReturn } from './usePaletteSelection';
 import type { UseBusinessInfoReturn } from './useBusinessInfo';
-import type { SystemFont, PreviewInfo, InitialChatState } from '../types';
+import type { SystemFont, PreviewInfo, InitialChatState } from '~/components/editor/editor-chat/types';
 import type { Id } from '~/convex/_generated/dataModel';
-import { normalizePath, getEssentialConfigFiles } from '../utils';
-import { SUGGESTED_REPLIES } from '../constants';
-import { BUILD_ERRORS, formatErrorForUser, getUserFriendlyError, getErrorSuggestions } from '../errors';
+import { normalizePath, getEssentialConfigFiles } from '~/components/editor/editor-chat/utils';
+import { SUGGESTED_REPLIES } from '~/components/editor/editor-chat/constants';
+import {
+  BUILD_ERRORS,
+  formatErrorForUser,
+  getUserFriendlyError,
+  getErrorSuggestions,
+} from '~/components/editor/editor-chat/errors';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
 
 // ─── Build Progress Constants ───────────────────────────────────────────────
@@ -38,7 +43,7 @@ const BUILD_PROGRESS = {
 } as const;
 
 // ─── Font Weight Constants ──────────────────────────────────────────────────
-const FONT_WEIGHTS = {
+const _FONT_WEIGHTS = {
   HEADING: 700,
   BODY: 400,
 } as const;
@@ -132,7 +137,7 @@ export function useBuildHandlers({
       const selectedPalette = paletteHook.selectedPalette;
 
       if (!selectedTemplate) {
-        flowHook.setStep('template');
+        flowHook.setStep('ready');
         messageHook.addAssistantMessage(formatErrorForUser(BUILD_ERRORS.MISSING_TEMPLATE));
         messageHook.setSuggestedReplies(getErrorSuggestions('template'));
 
@@ -140,7 +145,7 @@ export function useBuildHandlers({
       }
 
       if (!selectedPalette) {
-        flowHook.setStep('personalization');
+        flowHook.setStep('ready');
         messageHook.addAssistantMessage(formatErrorForUser(BUILD_ERRORS.MISSING_PALETTE));
         messageHook.setSuggestedReplies(getErrorSuggestions('build'));
 
@@ -160,7 +165,8 @@ export function useBuildHandlers({
           },
         };
 
-        const fontForClone: FontPairing = PREDEFINED_FONT_PAIRINGS.find(f => f.id === font.id) || PREDEFINED_FONT_PAIRINGS[0];
+        const fontForClone: FontPairing =
+          PREDEFINED_FONT_PAIRINGS.find((f) => f.id === font.id) || PREDEFINED_FONT_PAIRINGS[0];
 
         // Phase 1: Clone template
         setBuildStep(t(EDITOR_LABEL_KEYS.BUILD_GETTING_READY));
@@ -197,15 +203,15 @@ export function useBuildHandlers({
           `${t(EDITOR_LABEL_KEYS.BUILD_BUILDING_SITE)}\n${t(EDITOR_LABEL_KEYS.BUILD_BUILDING_SITE_DESC)}`,
         );
 
-        let customizedFiles: Record<string, string> = {};
+        const customizedFiles: Record<string, string> = {};
 
         // Fetch template files using React Query mutation
         try {
-          const filesResult = await fetchTemplateFilesMutation.mutateAsync({ 
-            urlId, 
-            signal 
+          const filesResult = await fetchTemplateFilesMutation.mutateAsync({
+            urlId,
+            signal,
           });
-          
+
           for (const [path, content] of Object.entries(filesResult.files)) {
             customizedFiles[normalizePath(path)] = content;
           }
@@ -253,10 +259,10 @@ export function useBuildHandlers({
             isBinary: false,
           }));
 
-          await syncFilesToConvexMutation.mutateAsync({ 
-            projectId: clonedProjectId, 
-            files: convexFiles, 
-            signal 
+          await syncFilesToConvexMutation.mutateAsync({
+            projectId: clonedProjectId,
+            files: convexFiles,
+            signal,
           });
         }
 
@@ -316,7 +322,7 @@ export function useBuildHandlers({
         console.error('Failed to create project:', error);
         setBuildStep('');
         setBuildProgress(BUILD_PROGRESS.INITIAL);
-        flowHook.setStep('template');
+        flowHook.setStep('ready');
 
         const userError = getUserFriendlyError(error);
         messageHook.addAssistantMessage(formatErrorForUser(userError));
@@ -328,7 +334,6 @@ export function useBuildHandlers({
      * Note: onPreviewChange, onProjectReady, onStateChange are accessed via refs
      * to avoid infinite loops from unstable callback identity
      */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       flowHook,
       messageHook,
@@ -355,4 +360,3 @@ export function useBuildHandlers({
 }
 
 export type { UseBuildHandlersProps, UseBuildHandlersReturn };
-

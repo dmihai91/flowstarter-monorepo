@@ -39,8 +39,10 @@ src/pages/index.tsx:42`;
     });
 
     it('should parse TypeError with file path', () => {
-      // The actual error parser requires a specific format for TypeErrors
-      // matching the patterns in errorParser.ts
+      /*
+       * The actual error parser requires a specific format for TypeErrors
+       * matching the patterns in errorParser.ts
+       */
       const output = `TypeError: Cannot read property 'map' of undefined
 src/components/List.jsx:10:5`;
 
@@ -62,8 +64,10 @@ src/components/List.jsx:10:5`;
     });
 
     it('should parse CSS syntax errors with valid source file extension', () => {
-      // Note: The current implementation only recognizes .astro, .tsx, .ts, .jsx, .js, .json extensions
-      // CSS errors that reference a source file will be parsed
+      /*
+       * Note: The current implementation only recognizes .astro, .tsx, .ts, .jsx, .js, .json extensions
+       * CSS errors that reference a source file will be parsed
+       */
       const output = `Error: CssSyntaxError in build
     at transform (/home/daytona/src/styles/index.ts:25:3)`;
 
@@ -281,4 +285,3 @@ SyntaxError: Unexpected token`;
     });
   });
 });
-

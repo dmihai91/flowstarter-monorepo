@@ -1,12 +1,12 @@
 /**
  * Content Generation Module
- * 
+ *
  * Domain-specialized content generation for website creation.
  * Generates content/*.md files with domain-appropriate messaging.
  */
 
 import type { SiteGenerationInput, GeneratedContentFiles } from './types';
-import { buildDomainContext, findIntegration, getDomainInfo } from './context';
+import { buildDomainContext, findIntegration } from './context';
 import {
   generateSiteMd,
   generateHeroMd,

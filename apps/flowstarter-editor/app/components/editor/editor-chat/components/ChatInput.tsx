@@ -26,6 +26,7 @@ export function ChatInput({
   inputValue,
   onInputChange,
   onSend,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   step,
   isDark,
   attachedImages,
@@ -41,13 +42,23 @@ export function ChatInput({
   // iOS/iPadOS: push input above keyboard when visual viewport shrinks
   const [keyboardOffset, setKeyboardOffset] = useState(0);
   useEffect(() => {
-    const vv = (window as Window & { visualViewport?: { height: number; addEventListener: Function; removeEventListener: Function } }).visualViewport;
-    if (!vv) return;
+    const vv = (
+      window as Window & {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+        visualViewport?: { height: number; addEventListener: Function; removeEventListener: Function };
+      }
+    ).visualViewport;
+
+    if (!vv) {
+      return undefined;
+    }
+
     const onResize = () => {
       const offset = Math.max(0, window.innerHeight - vv.height);
       setKeyboardOffset(offset);
     };
     vv.addEventListener('resize', onResize);
+
     return () => vv.removeEventListener('resize', onResize);
   }, []);
 
@@ -74,9 +85,7 @@ export function ChatInput({
     <div
       className="px-3 sm:px-4 pt-2 sm:pt-3 pb-3 sm:pb-4 relative z-[1]"
       style={{
-        paddingBottom: keyboardOffset
-          ? `${keyboardOffset + 12}px`
-          : 'max(12px, env(safe-area-inset-bottom, 12px))',
+        paddingBottom: keyboardOffset ? `${keyboardOffset + 12}px` : 'max(12px, env(safe-area-inset-bottom, 12px))',
         background: 'transparent',
         transition: 'padding-bottom 0.15s ease',
       }}
@@ -313,11 +322,7 @@ export function ChatInput({
                 handleSend();
               }
             }}
-            placeholder={
-              step === 'describe'
-                ? t(EDITOR_LABEL_KEYS.CHAT_PLACEHOLDER_DESCRIBE)
-                : t(EDITOR_LABEL_KEYS.CHAT_PLACEHOLDER_CHANGES)
-            }
+            placeholder={t(EDITOR_LABEL_KEYS.CHAT_PLACEHOLDER_CHANGES)}
             rows={1}
             style={{
               flex: 1,

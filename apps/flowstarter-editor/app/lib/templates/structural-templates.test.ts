@@ -1,6 +1,6 @@
 /**
  * Structural Templates Tests
- * 
+ *
  * Tests for template archetype definitions, recommendation scoring,
  * and profile-to-template mapping.
  */
@@ -17,9 +17,11 @@ import {
 } from './structural-templates';
 import type { QuickProfile } from '~/components/editor/editor-chat/types';
 
-// ═══════════════════════════════════════════════════════════════════════════
-// ARCHETYPE DEFINITIONS
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * ARCHETYPE DEFINITIONS
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('TEMPLATE_ARCHETYPES', () => {
   it('has exactly 6 archetypes', () => {
@@ -35,15 +37,15 @@ describe('TEMPLATE_ARCHETYPES', () => {
       'local-expert',
       'event-host',
     ];
-    
-    expected.forEach(archetype => {
+
+    expected.forEach((archetype) => {
       expect(TEMPLATE_ARCHETYPES[archetype]).toBeDefined();
     });
   });
 
   describe('archetype properties', () => {
     it('each archetype has required properties', () => {
-      Object.values(TEMPLATE_ARCHETYPES).forEach(archetype => {
+      Object.values(TEMPLATE_ARCHETYPES).forEach((archetype) => {
         expect(archetype.id).toBeDefined();
         expect(archetype.name).toBeDefined();
         expect(archetype.tagline).toBeDefined();
@@ -82,9 +84,11 @@ describe('TEMPLATE_ARCHETYPES', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// LEGACY MAPPING
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * LEGACY MAPPING
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('LEGACY_TEMPLATE_MAPPING', () => {
   it('maps all 12 legacy templates', () => {
@@ -116,9 +120,11 @@ describe('LEGACY_TEMPLATE_MAPPING', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// RECOMMENDATION SCORING
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * RECOMMENDATION SCORING
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('recommendArchetypes', () => {
   it('returns 3 recommendations', () => {
@@ -127,7 +133,7 @@ describe('recommendArchetypes', () => {
       offerType: 'high-ticket',
       tone: 'professional',
     };
-    
+
     const recommendations = recommendArchetypes(profile);
     expect(recommendations).toHaveLength(3);
   });
@@ -138,7 +144,7 @@ describe('recommendArchetypes', () => {
       offerType: 'low-ticket',
       tone: 'friendly',
     };
-    
+
     const recommendations = recommendArchetypes(profile);
     expect(recommendations[0].score).toBeGreaterThanOrEqual(recommendations[1].score);
     expect(recommendations[1].score).toBeGreaterThanOrEqual(recommendations[2].score);
@@ -150,9 +156,9 @@ describe('recommendArchetypes', () => {
       offerType: 'high-ticket',
       tone: 'professional',
     };
-    
+
     const recommendations = recommendArchetypes(profile);
-    recommendations.forEach(rec => {
+    recommendations.forEach((rec) => {
       expect(rec.reasons).toBeInstanceOf(Array);
     });
   });
@@ -164,7 +170,7 @@ describe('recommendArchetypes', () => {
         offerType: 'high-ticket',
         tone: 'professional',
       };
-      
+
       const recommendations = recommendArchetypes(profile);
       expect(recommendations[0].archetype).toBe('authority-builder');
     });
@@ -175,8 +181,9 @@ describe('recommendArchetypes', () => {
         offerType: 'low-ticket',
         tone: 'friendly',
       };
-      
+
       const recommendations = recommendArchetypes(profile);
+
       // service-provider or local-expert should be top for this profile
       expect(['service-provider', 'local-expert']).toContain(recommendations[0].archetype);
     });
@@ -187,7 +194,7 @@ describe('recommendArchetypes', () => {
         offerType: 'low-ticket',
         tone: 'friendly',
       };
-      
+
       const recommendations = recommendArchetypes(profile);
       expect(recommendations[0].archetype).toBe('course-creator');
     });
@@ -198,10 +205,11 @@ describe('recommendArchetypes', () => {
         offerType: 'high-ticket',
         tone: 'bold',
       };
-      
+
       const recommendations = recommendArchetypes(profile);
+
       // Should include portfolio-showcase in recommendations
-      const archetypes = recommendations.map(r => r.archetype);
+      const archetypes = recommendations.map((r) => r.archetype);
       expect(archetypes).toContain('portfolio-showcase');
     });
   });
@@ -213,10 +221,10 @@ describe('recommendArchetypes', () => {
         offerType: 'free', // Doesn't match service-provider
         tone: 'bold', // Doesn't match service-provider's primary
       };
-      
+
       const recommendations = recommendArchetypes(profile);
-      const serviceProvider = recommendations.find(r => r.archetype === 'service-provider');
-      
+      const serviceProvider = recommendations.find((r) => r.archetype === 'service-provider');
+
       // Should have at least 40 points from goal match
       expect(serviceProvider?.score).toBeGreaterThanOrEqual(40);
     });
@@ -227,27 +235,29 @@ describe('recommendArchetypes', () => {
         offerType: 'high-ticket',
         tone: 'professional',
       };
-      
+
       const profileWithoutMatch: QuickProfile = {
         goal: 'leads',
         offerType: 'free',
         tone: 'professional',
       };
-      
+
       const withMatch = recommendArchetypes(profileWithMatch);
       const withoutMatch = recommendArchetypes(profileWithoutMatch);
-      
-      const authorityWithMatch = withMatch.find(r => r.archetype === 'authority-builder');
-      const authorityWithoutMatch = withoutMatch.find(r => r.archetype === 'authority-builder');
-      
+
+      const authorityWithMatch = withMatch.find((r) => r.archetype === 'authority-builder');
+      const authorityWithoutMatch = withoutMatch.find((r) => r.archetype === 'authority-builder');
+
       expect(authorityWithMatch!.score).toBeGreaterThan(authorityWithoutMatch!.score);
     });
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// BEST ARCHETYPE SELECTION
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * BEST ARCHETYPE SELECTION
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('getBestArchetype', () => {
   it('returns authority-builder for coaching profile', () => {
@@ -256,7 +266,7 @@ describe('getBestArchetype', () => {
       offerType: 'high-ticket',
       tone: 'professional',
     };
-    
+
     const best = getBestArchetype(profile);
     expect(best).toBe('authority-builder');
   });
@@ -267,7 +277,7 @@ describe('getBestArchetype', () => {
       offerType: 'low-ticket',
       tone: 'friendly',
     };
-    
+
     const best = getBestArchetype(profile);
     expect(best).toBe('course-creator');
   });
@@ -278,15 +288,17 @@ describe('getBestArchetype', () => {
       offerType: 'free',
       tone: 'bold',
     };
-    
+
     const best = getBestArchetype(profile);
     expect(TEMPLATE_ARCHETYPES[best]).toBeDefined();
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// CATEGORY TO ARCHETYPE MAPPING
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * CATEGORY TO ARCHETYPE MAPPING
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('getArchetypesForCategory', () => {
   it('returns archetypes for coaching category', () => {
@@ -328,9 +340,11 @@ describe('getArchetypesForCategory', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// TEMPLATE SLUG RESOLUTION
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * TEMPLATE SLUG RESOLUTION
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('getTemplateSlugsForProfile', () => {
   it('returns template slugs for recommended archetypes', () => {
@@ -339,7 +353,7 @@ describe('getTemplateSlugsForProfile', () => {
       offerType: 'high-ticket',
       tone: 'professional',
     };
-    
+
     const slugs = getTemplateSlugsForProfile(profile);
     expect(slugs.length).toBeGreaterThan(0);
     expect(slugs.length).toBeLessThanOrEqual(3);
@@ -351,7 +365,7 @@ describe('getTemplateSlugsForProfile', () => {
       offerType: 'high-ticket',
       tone: 'professional',
     };
-    
+
     const slugs = getTemplateSlugsForProfile(profile);
     expect(slugs).toContain('coach-pro');
   });
@@ -362,11 +376,11 @@ describe('getTemplateSlugsForProfile', () => {
       { goal: 'sales', offerType: 'low-ticket', tone: 'friendly' },
       { goal: 'bookings', offerType: 'free', tone: 'bold' },
     ];
-    
-    profiles.forEach(profile => {
+
+    profiles.forEach((profile) => {
       const slugs = getTemplateSlugsForProfile(profile);
       expect(slugs.length).toBeGreaterThan(0);
-      slugs.forEach(slug => {
+      slugs.forEach((slug) => {
         expect(typeof slug).toBe('string');
         expect(slug.length).toBeGreaterThan(0);
       });

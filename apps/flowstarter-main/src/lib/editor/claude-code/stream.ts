@@ -14,11 +14,16 @@ export function encodeSSEDone(): string {
   return `data: [DONE]\n\n`;
 }
 
-export function streamOutput(output: string, controller: ReadableStreamDefaultController): void {
+export function streamOutput(
+  output: string,
+  controller: ReadableStreamDefaultController
+): void {
   const encoder = new TextEncoder();
   const chunkSize = 100;
   for (let i = 0; i < output.length; i += chunkSize) {
     const chunk = output.slice(i, i + chunkSize);
-    controller.enqueue(encoder.encode(encodeSSE({ type: 'content', content: chunk })));
+    controller.enqueue(
+      encoder.encode(encodeSSE({ type: 'content', content: chunk }))
+    );
   }
 }

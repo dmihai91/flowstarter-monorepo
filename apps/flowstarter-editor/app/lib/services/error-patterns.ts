@@ -75,9 +75,11 @@ export const ERROR_PATTERNS: ErrorPattern[] = [
       fix: (content, _error, match) => {
         const invalidClass = match[1];
         const replacement = CSS_CLASS_REPLACEMENTS[invalidClass];
+
         if (replacement) {
           return content.replace(new RegExp(`\\b${invalidClass}\\b`, 'g'), replacement);
         }
+
         return content.replace(new RegExp(`\\s*${invalidClass}`, 'g'), '');
       },
       confidence: 0.95,
@@ -89,7 +91,10 @@ export const ERROR_PATTERNS: ErrorPattern[] = [
     solution: {
       description: 'Add missing Icon import from astro-icon',
       fix: (content) => {
-        if (content.includes("from 'astro-icon")) return content;
+        if (content.includes("from 'astro-icon")) {
+          return content;
+        }
+
         return content.replace(/^---\n/m, "---\nimport { Icon } from 'astro-icon/components';\n");
       },
       confidence: 0.98,
@@ -101,7 +106,10 @@ export const ERROR_PATTERNS: ErrorPattern[] = [
     solution: {
       description: 'Add missing Image import from astro:assets',
       fix: (content) => {
-        if (content.includes("from 'astro:assets'")) return content;
+        if (content.includes("from 'astro:assets'")) {
+          return content;
+        }
+
         return content.replace(/^---\n/m, "---\nimport { Image } from 'astro:assets';\n");
       },
       confidence: 0.98,
@@ -115,6 +123,7 @@ export const ERROR_PATTERNS: ErrorPattern[] = [
       fix: (content) => {
         const opens = (content.match(/[{[(]/g) || []).length;
         const closes = (content.match(/[}\])]/g) || []).length;
+
         if (opens > closes) {
           const ob = (content.match(/{/g) || []).length;
           const cb = (content.match(/}/g) || []).length;
@@ -123,11 +132,22 @@ export const ERROR_PATTERNS: ErrorPattern[] = [
           const obk = (content.match(/\[/g) || []).length;
           const cbk = (content.match(/\]/g) || []).length;
           let suffix = '';
-          if (ob > cb) suffix += '}'.repeat(ob - cb);
-          if (op > cp) suffix += ')'.repeat(op - cp);
-          if (obk > cbk) suffix += ']'.repeat(obk - cbk);
+
+          if (ob > cb) {
+            suffix += '}'.repeat(ob - cb);
+          }
+
+          if (op > cp) {
+            suffix += ')'.repeat(op - cp);
+          }
+
+          if (obk > cbk) {
+            suffix += ']'.repeat(obk - cbk);
+          }
+
           return content + '\n' + suffix;
         }
+
         return content;
       },
       confidence: 0.7,
@@ -141,6 +161,7 @@ export const ERROR_PATTERNS: ErrorPattern[] = [
       fix: (content, _error, match) => {
         const nextToken = match[1];
         const pattern = new RegExp(`([^,\\s])(\\s*\\n\\s*)(${nextToken})`, 'g');
+
         return content.replace(pattern, '$1,$2$3');
       },
       confidence: 0.8,
@@ -163,9 +184,11 @@ export const ERROR_PATTERNS: ErrorPattern[] = [
       fix: (content, _error, match) => {
         const invalidClass = match[1];
         const replacement = CSS_CLASS_REPLACEMENTS[invalidClass];
+
         if (replacement) {
           return content.replace(new RegExp(`@apply([^;]*?)\\b${invalidClass}\\b`, 'g'), `@apply$1${replacement}`);
         }
+
         return content.replace(new RegExp(`@apply([^;]*?)\\s*${invalidClass}`, 'g'), '@apply$1');
       },
       confidence: 0.9,
@@ -177,9 +200,7 @@ export const ERROR_PATTERNS: ErrorPattern[] = [
     solution: {
       description: 'Fix JSON syntax error - likely trailing comma or missing quote',
       fix: (content) => {
-        return content
-          .replace(/,(\s*[}\]])/g, '$1')
-          .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3');
+        return content.replace(/,(\s*[}\]])/g, '$1').replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3');
       },
       confidence: 0.75,
     },

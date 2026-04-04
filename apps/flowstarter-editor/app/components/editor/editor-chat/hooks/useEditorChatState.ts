@@ -1,5 +1,5 @@
 /**
- * useEditorChatState Hook (Refactored v4)
+ * useEditorChatState Hook (Refactored v5)
  *
  * Main composite hook that orchestrates the editor chat experience.
  * Updated to use focused sub-hooks for better organization.
@@ -9,7 +9,8 @@
  * - Core: useOnboardingMessages, useOnboardingFlow, useTemplateSelection, usePaletteSelection, useBusinessInfo
  * - State: useStatePersistence, useStateRestoration, useWelcomeInit, useAdditionalState
  * - Flow: useDescriptionFlow, useTemplateFlow, usePersonalizationFlow, useBusinessFlow
- * - Handlers: useProjectNameHandlers, useSimpleBuildHandlers, useSuggestionHandlers, useSendHandler
+ * - Handlers: useFlowHandlers, useSimpleBuildHandlers, useSendHandler
+ * - Computed: useBusinessContext
  * - Setup: useAgentSetup, useChatEffects
  */
 
@@ -35,30 +36,38 @@ import { useAdditionalState } from './useAdditionalState';
 import { usePersonalizationFlow } from './usePersonalizationFlow';
 import { useSimpleBuildHandlers } from './useSimpleBuildHandlers';
 import { useSendHandler } from './useSendHandler';
+import { useFlowHandlers } from './useFlowHandlers';
+import { useBusinessContext } from './useBusinessContext';
 import { normalizeHandoffStep } from './handoffState';
 
 // Types
-import type { PreviewInfo, InitialChatState, OnboardingStep } from '../types';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type { PreviewInfo, InitialChatState, OnboardingStep } from '~/components/editor/editor-chat/types';
 
 // Re-export PreviewSource from useAdditionalState
 export type { PreviewSource } from './useAdditionalState';
 
-// ═══════════════════════════════════════════════════════════════════════════
-// Hook Props
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * Hook Props
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 interface UseEditorChatStateProps {
   onProjectReady?: (urlId: string) => void;
   onPreviewChange?: (preview: PreviewInfo | null) => void;
   initialState?: InitialChatState;
   onStateChange?: (state: Partial<InitialChatState>) => void;
+
   /** External project ID from parent component (e.g., from conversation context) */
   externalProjectId?: string | null;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// Main Hook
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * Main Hook
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 export function useEditorChatState({
   onProjectReady,
@@ -67,21 +76,25 @@ export function useEditorChatState({
   onStateChange,
   externalProjectId,
 }: UseEditorChatStateProps) {
-  // ═══════════════════════════════════════════════════════════════════════
-  // Sync Callbacks (stable refs for state syncing)
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * Sync Callbacks (stable refs for state syncing)
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   const { handleStepChange, handleTemplateSelectSync, handlePaletteSelectSync, handleBusinessInfoConfirmSync } =
     useSyncCallbacks({ onStateChange });
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // Core Hooks
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * Core Hooks
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   const messageHook = useOnboardingMessages();
 
   const flowHook = useOnboardingFlow({
-    initialStep: initialState ? normalizeHandoffStep(initialState) : 'review',
+    initialStep: initialState ? normalizeHandoffStep(initialState) : 'creating',
     initialDescription: initialState?.projectDescription || '',
     initialProjectName: initialState?.projectName || null,
     onStepChange: handleStepChange,
@@ -102,9 +115,11 @@ export function useEditorChatState({
 
   useStatePersistence({ initialState, onStateChange });
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // Additional State (font, logo, build progress, etc.)
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * Additional State (font, logo, build progress, etc.)
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   const additionalState = useAdditionalState({
     initialState,
@@ -112,16 +127,20 @@ export function useEditorChatState({
     projectDescription: flowHook.projectDescription,
   });
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // External Hooks
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * External Hooks
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   const { isCloning } = useTemplateClone();
   const { createSnapshot } = useSnapshotBlob();
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // Agent & Orchestrator Setup
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * Agent & Orchestrator Setup
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   const { agentState, cancelAgent } = useAgentSetup({ messageHook });
 
@@ -140,9 +159,11 @@ export function useEditorChatState({
   const orchestratorRunning = false;
   const stopOrchestration = useCallback(() => {}, []);
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // State Restoration & Welcome Init
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * State Restoration & Welcome Init
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   const { hasRestoredState } = useStateRestoration({
     initialState,
@@ -178,9 +199,11 @@ export function useEditorChatState({
     onTemplateBuildStart: handleTemplateBuildStart,
   });
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // Effects
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * Effects
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   useChatEffects({
     messageHook,
@@ -205,9 +228,11 @@ export function useEditorChatState({
     createSnapshot,
   });
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // Build Handlers
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * Build Handlers
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   const buildHandlers = useSimpleBuildHandlers({
     messageHook,
@@ -239,6 +264,7 @@ export function useEditorChatState({
         : null,
   });
 
+  // Auto-start seeded build once state is restored and all selections are available
   useEffect(() => {
     if (!pendingSeededBuildRef.current) {
       return;
@@ -252,65 +278,43 @@ export function useEditorChatState({
       return;
     }
 
-    flowHook.setStep('review');
+    pendingSeededBuildRef.current = false;
+    buildHandlers.startSeededBuild();
   }, [
     additionalState.selectedFont,
     buildHandlers,
-    flowHook,
     hasRestoredState,
     paletteHook.selectedPalette,
     templateHook.selectedTemplate,
   ]);
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // Flow Handlers
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * Flow Handlers (extracted)
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
-  const handleTemplateSelect = useCallback(
-    async (template: import('~/components/onboarding').Template) => {
-      templateHook.handleTemplateSelect(template);
-      onStateChange?.({
-        selectedTemplateId: template.id,
-        selectedTemplateName: template.name,
-      });
-      messageHook.addUserMessage(`I'll keep the "${template.name}" template`);
-      await messageHook.addStepTransitionMessage('review', 'personalization', {
-        templateName: template.name,
-      });
-      flowHook.setStep('personalization');
-    },
-    [flowHook, messageHook, onStateChange, templateHook],
-  );
-
-  const handleRecommendationSelect = useCallback(
-    async (recommendation: import('~/components/editor/template-preview/types').TemplateRecommendation) => {
-      templateHook.handleRecommendationSelect(recommendation);
-      onStateChange?.({
-        selectedTemplateId: recommendation.template.id,
-        selectedTemplateName: recommendation.template.name,
-      });
-      messageHook.addUserMessage(`I'll keep the "${recommendation.template.name}" template`);
-      await messageHook.addStepTransitionMessage('review', 'personalization', {
-        templateName: recommendation.template.name,
-      });
-      flowHook.setStep('personalization');
-    },
-    [flowHook, messageHook, onStateChange, templateHook],
-  );
-
-  const { handlePaletteSelect, handleFontSelect, handleLogoSelect, refreshSuggestions } = usePersonalizationFlow({
+  const {
+    handleTemplateSelect,
+    handleRecommendationSelect,
+    handleReviewBuildStart,
+    handleBusinessInfoConfirm,
+    handleSuggestionAccept,
+  } = useFlowHandlers({
     messageHook,
     flowHook,
+    templateHook,
     paletteHook,
-    selectedFont: additionalState.selectedFont,
-    setSelectedFont: additionalState.setSelectedFont,
-    setSelectedLogo: additionalState.setSelectedLogo,
-    handlePersonalizationComplete: buildHandlers.handlePersonalizationComplete,
     onStateChange,
+    buildHandlers,
+    pendingSeededBuildRef,
   });
 
-  const handleBusinessInfoConfirm = useCallback(async (_confirmed: boolean) => {}, []);
-  const handleSuggestionAccept = useCallback(async () => {}, []);
+  const { handlePaletteSelect, handleFontSelect, refreshSuggestions } = usePersonalizationFlow({
+    paletteHook,
+    setSelectedFont: additionalState.setSelectedFont,
+    onStateChange,
+  });
 
   const { handleSend } = useSendHandler({
     messageHook,
@@ -320,51 +324,25 @@ export function useEditorChatState({
     convexProjectId: additionalState.convexProjectId,
   });
 
-  const handleReviewBuildStart = useCallback(async () => {
-    pendingSeededBuildRef.current = false;
-    messageHook.addUserMessage('Build the first version with these selections');
-    await buildHandlers.startSeededBuild();
-  }, [buildHandlers, messageHook]);
-
-  const handleReviewCustomize = useCallback(() => {
-    messageHook.addUserMessage('I want to adjust the style before building');
-    flowHook.setStep('personalization');
-  }, [flowHook, messageHook]);
-
   const noopAsync = useCallback(async () => {}, []);
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // Computed: Business Context (for display in UI)
-  // ═══════════════════════════════════════════════════════════════════════
-
-  /**
-   * Business context computed from initial state and business info.
-   * Used to display business details in the UI for the internal flow.
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * Computed: Business Context (extracted)
+   * ═══════════════════════════════════════════════════════════════════════
    */
-  const businessContext = useMemo(() => {
-    const info = businessHook.businessInfo;
-    if (!info && !initialState?.businessInfo && !initialState?.projectDescription) {
-      return null;
-    }
 
-    const source = info || initialState?.businessInfo;
-    return {
-      businessName: flowHook.projectName || source?.businessType || initialState?.projectName || undefined,
-      description: source?.description || initialState?.projectDescription || undefined,
-      targetAudience: source?.targetAudience || undefined,
-      goals: source?.businessGoals || undefined,
-      industry: source?.industry || undefined,
-      uvp: source?.uvp || undefined,
-    };
-  }, [businessHook.businessInfo, initialState, flowHook.projectName]);
+  const { businessContext, isInternalFlow } = useBusinessContext({
+    businessHook,
+    initialState,
+    flowHook,
+  });
 
-  const isInternalFlow = useMemo(() => {
-    return Boolean(businessContext?.description && businessContext.description.length > 10);
-  }, [businessContext]);
-
-  // ═══════════════════════════════════════════════════════════════════════
-  // Return Public API
-  // ═══════════════════════════════════════════════════════════════════════
+  /*
+   * ═══════════════════════════════════════════════════════════════════════
+   * Return Public API
+   * ═══════════════════════════════════════════════════════════════════════
+   */
 
   return {
     // State
@@ -448,15 +426,10 @@ export function useEditorChatState({
     handleRecommendationSelect,
     handlePaletteSelect,
     handleFontSelect,
-    handleLogoSelect,
-    handlePersonalizationComplete: buildHandlers.handlePersonalizationComplete,
     handleContactDetailsComplete: buildHandlers.handleContactDetailsComplete,
     handleSkipContactDetails: buildHandlers.handleSkipContactDetails,
-    handleIntegrationsComplete: buildHandlers.handleIntegrationsComplete,
-    handleSkipIntegrations: buildHandlers.handleSkipIntegrations,
     handleBusinessDetailsComplete: noopAsync,
     handleReviewBuildStart,
-    handleReviewCustomize,
     handleSuggestionAccept,
     handleSend,
     handleThumbnailError: templateHook.handleThumbnailError,

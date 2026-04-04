@@ -44,6 +44,7 @@ export default function IntegrationConnectWizard({
       // Automatically start OAuth flow when wizard loads
       void startOAuth();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const title = useMemo(() => {

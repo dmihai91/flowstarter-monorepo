@@ -33,4 +33,3 @@ export class AlertsStore {
 }
 
 export const alertsStore = new AlertsStore();
-

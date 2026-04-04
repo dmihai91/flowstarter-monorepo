@@ -103,7 +103,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       });
 
       // Inject a base tag and script to handle dynamic requests
-      const baseTag = `<base href="${proxyBase}/">`;
+      const _baseTag = `<base href="${proxyBase}/">`;
       const proxyScript = `
         <script>
           // Override fetch to proxy requests
@@ -188,4 +188,3 @@ export async function action({ request }: LoaderFunctionArgs) {
   // For POST requests, proxy them too
   return loader({ request } as LoaderFunctionArgs);
 }
-

@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { exampleSites, exampleCategories, exampleIndustries } from '../example-sites';
+import {
+  exampleSites,
+  exampleCategories,
+  exampleIndustries,
+} from '../example-sites';
 
 describe('example-sites data', () => {
   describe('exampleSites', () => {

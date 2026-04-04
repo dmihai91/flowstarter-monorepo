@@ -1,35 +1,25 @@
 /**
  * PersonalizationPanel Component
  *
- * Combined personalization step that includes:
- * - Color palette selection
- * - Font selection
+ * Personalization step that includes:
  * - Logo upload/generation/skip
  * - AI images toggle (for template customization)
+ *
+ * Note: Palette and font selection are now dashboard-only (handled by NewProjectWizard).
  */
 
-import { useMemo, useEffect, useRef } from 'react';
+import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Palette, Type, ImageIcon, SkipForward, ChevronRight } from 'lucide-react';
-import { PaletteSelector } from './PaletteSelector';
-import { FontSelector } from './FontSelector';
+import { ImageIcon, SkipForward } from 'lucide-react';
 import { LogoSection } from './LogoSection';
-import { usePersonalizationPanel } from '../hooks/usePersonalizationPanel';
-import type { LogoInfo, ColorPalette, SystemFont, BusinessInfo } from '../types';
-import type { TemplatePalette, TemplateFont } from '~/components/editor/template-preview/types';
+import { usePersonalizationPanel } from '~/components/editor/editor-chat/hooks/usePersonalizationPanel';
+import type { LogoInfo, BusinessInfo } from '~/components/editor/editor-chat/types';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
 
 interface PersonalizationPanelProps {
   isDark: boolean;
-  fontsLoaded: boolean;
-  templatePalette?: ColorPalette | null;
-  templatePalettes?: TemplatePalette[];
-  templateFonts?: TemplateFont[];
   businessInfo?: Partial<BusinessInfo>;
   initialUseAiImages?: boolean;
-  onPaletteSelect: (palette: ColorPalette) => void;
-  onCustomPaletteClick?: () => void;
-  onFontSelect: (font: SystemFont) => void;
   onLogoSelect: (logo: LogoInfo, useAiImages?: boolean) => void;
 }
 
@@ -42,51 +32,15 @@ const SECTION_ANIMATION = {
 
 export function PersonalizationPanel({
   isDark,
-  fontsLoaded,
-  templatePalette,
-  templatePalettes,
-  templateFonts,
   businessInfo,
   initialUseAiImages = false,
-  onPaletteSelect,
-  onCustomPaletteClick,
-  onFontSelect,
   onLogoSelect,
 }: PersonalizationPanelProps) {
   const panel = usePersonalizationPanel({
     initialUseAiImages,
     businessInfo,
-    onPaletteSelect,
-    onFontSelect,
     onLogoSelect,
   });
-
-  // Auto-select first template palette to skip palette section
-  const autoSelectedRef = useRef(false);
-  useEffect(() => {
-    if (autoSelectedRef.current) return;
-    if (templatePalettes && templatePalettes.length > 0 && panel.currentSection === 'palette') {
-      autoSelectedRef.current = true;
-      // Convert TemplatePalette to ColorPalette and auto-select
-      const first = templatePalettes[0];
-      const c = first.colors || {};
-      const autoPalette: import('../types').ColorPalette = {
-        id: first.id || 'auto-palette',
-        name: first.name || 'Default',
-        colors: [c.primary || '#3B82F6', c.secondary || '#1E40AF', c.accent || '#F59E0B', c.background || '#FFFFFF', c.text || '#111827'],
-        primary: c.primary || '#3B82F6',
-        secondary: c.secondary || '#1E40AF',
-        accent: c.accent || '#F59E0B',
-        background: c.background || '#FFFFFF',
-        text: c.text || '#111827',
-      };
-      // Auto-select after a brief delay so the UI shows the transition
-      setTimeout(() => panel.handlePaletteSelect(autoPalette), 300);
-    } else if (templatePalette && panel.currentSection === 'palette') {
-      autoSelectedRef.current = true;
-      setTimeout(() => panel.handlePaletteSelect(templatePalette), 300);
-    }
-  }, [templatePalettes, templatePalette, panel.currentSection, panel.handlePaletteSelect]);
 
   // Theme colors - glassmorphism palette
   const colors = useMemo(
@@ -121,23 +75,23 @@ export function PersonalizationPanel({
       {/* Header: Progress + Skip to build */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <div style={{ display: 'flex', gap: '8px', flex: 1 }}>
-        {panel.sections.map((section, index) => (
-          <div
-            key={section}
-            style={{
-              flex: 1,
-              height: '4px',
-              borderRadius: '2px',
-              background:
-                index <= panel.sectionIndex
-                  ? 'linear-gradient(135deg, rgba(77, 93, 217, 0.8), rgba(6, 182, 212, 0.6))'
-                  : isDark
-                    ? 'rgba(255, 255, 255, 0.1)'
-                    : 'rgba(0, 0, 0, 0.1)',
-              transition: 'background 0.3s ease',
-            }}
-          />
-        ))}
+          {panel.sections.map((section, index) => (
+            <div
+              key={section}
+              style={{
+                flex: 1,
+                height: '4px',
+                borderRadius: '2px',
+                background:
+                  index <= panel.sectionIndex
+                    ? 'linear-gradient(135deg, rgba(77, 93, 217, 0.8), rgba(6, 182, 212, 0.6))'
+                    : isDark
+                      ? 'rgba(255, 255, 255, 0.1)'
+                      : 'rgba(0, 0, 0, 0.1)',
+                transition: 'background 0.3s ease',
+              }}
+            />
+          ))}
         </div>
         <button
           onClick={panel.handleSkipAll}
@@ -158,11 +112,11 @@ export function PersonalizationPanel({
             transition: 'all 0.15s',
             whiteSpace: 'nowrap',
           }}
-          onMouseEnter={e => {
+          onMouseEnter={(e) => {
             e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)';
             e.currentTarget.style.background = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)';
           }}
-          onMouseLeave={e => {
+          onMouseLeave={(e) => {
             e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.45)';
             e.currentTarget.style.background = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.05)';
           }}
@@ -173,88 +127,6 @@ export function PersonalizationPanel({
       </div>
 
       <AnimatePresence mode="wait">
-        {/* Palette Section */}
-        {panel.currentSection === 'palette' && (
-          <motion.div key="palette" data-testid="palette-section" {...SECTION_ANIMATION}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-              <Palette size={20} color={headingColor} />
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: headingColor }}>
-                {t(EDITOR_LABEL_KEYS.PERSONALIZE_COLORS)}
-              </h3>
-              <button
-                onClick={panel.handleSkipSection}
-                style={{
-                  marginLeft: 'auto',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '2px',
-                  padding: '4px 8px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '12px',
-                  fontWeight: 500,
-                  color: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)',
-                  background: 'transparent',
-                  transition: 'color 0.15s',
-                }}
-                onMouseEnter={e => e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'}
-                onMouseLeave={e => e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)'}
-              >
-                Skip <ChevronRight size={14} />
-              </button>
-            </div>
-            <PaletteSelector
-              templatePalette={templatePalette || null}
-              isDark={isDark}
-              onSelect={panel.handlePaletteSelect}
-              onCustomClick={onCustomPaletteClick || (() => {})}
-              customColors={[]}
-              templatePalettes={templatePalettes}
-            />
-          </motion.div>
-        )}
-
-        {/* Font Section */}
-        {panel.currentSection === 'font' && (
-          <motion.div key="font" data-testid="font-section" {...SECTION_ANIMATION}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-              <Type size={20} color={headingColor} />
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: headingColor }}>
-                {t(EDITOR_LABEL_KEYS.PERSONALIZE_FONTS)}
-              </h3>
-              <button
-                onClick={panel.handleSkipSection}
-                style={{
-                  marginLeft: 'auto',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '2px',
-                  padding: '4px 8px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '12px',
-                  fontWeight: 500,
-                  color: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)',
-                  background: 'transparent',
-                  transition: 'color 0.15s',
-                }}
-                onMouseEnter={e => e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)'}
-                onMouseLeave={e => e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)'}
-              >
-                Skip <ChevronRight size={14} />
-              </button>
-            </div>
-            <FontSelector
-              isDark={isDark}
-              fontsLoaded={fontsLoaded}
-              onSelect={panel.handleFontSelect}
-              templateFonts={templateFonts}
-            />
-          </motion.div>
-        )}
-
         {/* Logo Section */}
         {panel.currentSection === 'logo' && (
           <motion.div key="logo" data-testid="logo-section" {...SECTION_ANIMATION}>

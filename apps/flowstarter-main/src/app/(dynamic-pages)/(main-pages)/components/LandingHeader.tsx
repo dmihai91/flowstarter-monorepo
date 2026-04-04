@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Logo } from '@/components/ui/logo';
 import { useI18n } from '@/lib/i18n';
-import { EXTERNAL_URLS } from '@/lib/constants';
 import Link from 'next/link';
 import { useHeaderState } from './hooks/useHeaderState';
 import { LANDING_COPY } from '../landing-copy';
@@ -14,217 +13,222 @@ import { LANDING_COPY } from '../landing-copy';
  */
 export function LandingHeader({ onOpenModal }: { onOpenModal?: () => void }) {
   const { t } = useI18n();
-  const { isLoaded, scrolled, mobileMenuOpen, setMobileMenuOpen } = useHeaderState();
+  const { isLoaded, scrolled, mobileMenuOpen, setMobileMenuOpen } =
+    useHeaderState();
 
   return (
     <>
-        {/* Backdrop overlay when mobile menu is open */}
-        {mobileMenuOpen && (
-          <div
-            className="fixed inset-0 z-40 bg-black/20 dark:bg-black/50 backdrop-blur-sm md:hidden"
-            onClick={() => setMobileMenuOpen(false)}
-          />
-        )}
+      {/* Backdrop overlay when mobile menu is open */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/20 dark:bg-black/50 backdrop-blur-sm md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
 
-        {/* Header */}
-        <header
-          className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-            isLoaded ? 'opacity-100' : 'opacity-0'
-          } ${
-            scrolled || mobileMenuOpen
-              ? 'bg-white/70 dark:bg-[#0a0a0c]/70 backdrop-blur-lg lg:backdrop-blur-2xl backdrop-saturate-150 border-b border-white/40 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.04)]'
-              : ''
-          }`}
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
-            <div className="flex items-center justify-between h-14 sm:h-16">
-              <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
-                <Logo size="md" />
-              </Link>
+      {/* Header */}
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          isLoaded ? 'opacity-100' : 'opacity-0'
+        } ${
+          scrolled || mobileMenuOpen
+            ? 'bg-white/70 dark:bg-[#0a0a0c]/70 backdrop-blur-lg lg:backdrop-blur-2xl backdrop-saturate-150 border-b border-white/40 dark:border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.04)]'
+            : ''
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
+          <div className="flex items-center justify-between h-14 sm:h-16">
+            <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
+              <Logo size="md" />
+            </Link>
 
-              <nav className="hidden lg:flex items-center gap-6">
-                <a
-                  href="https://library.flowstarter.dev"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
-                >
-                  {LANDING_COPY.nav.templatesLabel}
-                </a>
-                <a
-                  href="#process"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document
-                      .getElementById('process')
-                      ?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
-                >
-                  {t('nav.process')}
-                </a>
-                <a
-                  href="#pricing"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document
-                      .getElementById('pricing')
-                      ?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
-                >
-                  {t('nav.pricing')}
-                </a>
-                <a
-                  href="#faq"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document
-                      .getElementById('faq')
-                      ?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
-                >
-                  {t('nav.faq')}
-                </a>
-              </nav>
+            <nav className="hidden lg:flex items-center gap-6">
+              <a
+                href="https://library.flowstarter.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
+              >
+                {LANDING_COPY.nav.templatesLabel}
+              </a>
+              <a
+                href="#process"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document
+                    .getElementById('process')
+                    ?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
+              >
+                {t('nav.process')}
+              </a>
+              <a
+                href="#pricing"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document
+                    .getElementById('pricing')
+                    ?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
+              >
+                {t('nav.pricing')}
+              </a>
+              <a
+                href="#faq"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document
+                    .getElementById('faq')
+                    ?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
+              >
+                {t('nav.faq')}
+              </a>
+            </nav>
 
-              <div className="flex items-center gap-2 sm:gap-4">
-                <div className="hidden lg:block">
-                  <ThemeToggle />
-                </div>
-                <Link
-                  href="/login"
-                  className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors hidden lg:block"
-                >
-                  {t('nav.signIn')}
-                </Link>
-                <Button
-                  variant="brand-gradient"
-                  size="sm"
-                  className="hidden lg:flex rounded-lg px-6 shadow-lg"
-                  onClick={() => onOpenModal?.()}
-                >
-                  {t('landing.header.cta')}
-                </Button>
-                {/* Mobile menu button */}
-                <button
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
-                  aria-label="Toggle menu"
-                >
-                  {mobileMenuOpen ? (
-                    <svg
-                      className="w-5 h-5 text-gray-600 dark:text-white"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  ) : (
-                    <svg
-                      className="w-5 h-5 text-gray-600 dark:text-white"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M4 6h16M4 12h16M4 18h16"
-                      />
-                    </svg>
-                  )}
-                </button>
+            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="hidden lg:block">
+                <ThemeToggle />
               </div>
-            </div>
-
-            {/* Mobile menu dropdown */}
-            <div
-              className={`lg:hidden overflow-hidden transition-all duration-300 ${
-                mobileMenuOpen ? 'max-h-[36rem] pb-4' : 'max-h-0'
-              }`}
-            >
-              <nav className="flex flex-col gap-1 pt-3 mt-2 border-t border-gray-200/50 dark:border-white/10">
-                <div className="flex items-center justify-between px-3 py-2">
-                  <span className="text-base font-medium text-gray-700 dark:text-white/80">{t('nav.theme')}</span>
-                  <ThemeToggle />
-                </div>
-                <a
-                  href="#process"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setMobileMenuOpen(false);
-                    document
-                      .getElementById('process')
-                      ?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="px-3 py-3 text-base font-medium text-gray-700 dark:text-white/80 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
-                >
-                  {t('nav.process')}
-                </a>
-                <a
-                  href="#pricing"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setMobileMenuOpen(false);
-                    document
-                      .getElementById('pricing')
-                      ?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="px-3 py-3 text-base font-medium text-gray-700 dark:text-white/80 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
-                >
-                  {t('nav.pricing')}
-                </a>
-                <a
-                  href="#faq"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setMobileMenuOpen(false);
-                    document
-                      .getElementById('faq')
-                      ?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="px-3 py-3 text-base font-medium text-gray-700 dark:text-white/80 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
-                >
-                  {t('nav.faq')}
-                </a>
-                <a
-                  href="https://library.flowstarter.dev"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="px-3 py-3 text-base font-medium text-gray-700 dark:text-white/80 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors"
-                >
-                  {LANDING_COPY.nav.templatesLabel}
-                </a>
-                <Link
-                  href="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="px-3 py-3 text-base font-medium text-gray-700 dark:text-white/80 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors"
-                >
-                  {t('nav.signIn')}
-                </Link>
-                <Button
-                  variant="brand-gradient"
-                  size="sm"
-                  className="mt-2 w-full rounded-lg"
-                  onClick={() => { setMobileMenuOpen(false); onOpenModal?.(); }}
-                >
-                  {t('landing.header.cta')}
-                </Button>
-              </nav>
+              <Link
+                href="/login"
+                className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors hidden lg:block"
+              >
+                {t('nav.signIn')}
+              </Link>
+              <Button
+                variant="brand-gradient"
+                size="sm"
+                className="hidden lg:flex rounded-lg px-6 shadow-lg"
+                onClick={() => onOpenModal?.()}
+              >
+                {t('landing.header.cta')}
+              </Button>
+              {/* Mobile menu button */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+                aria-label="Toggle menu"
+              >
+                {mobileMenuOpen ? (
+                  <svg
+                    className="w-5 h-5 text-gray-600 dark:text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-5 h-5 text-gray-600 dark:text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  </svg>
+                )}
+              </button>
             </div>
           </div>
-        </header>
 
+          {/* Mobile menu dropdown */}
+          <div
+            className={`lg:hidden overflow-hidden transition-all duration-300 ${
+              mobileMenuOpen ? 'max-h-[36rem] pb-4' : 'max-h-0'
+            }`}
+          >
+            <nav className="flex flex-col gap-1 pt-3 mt-2 border-t border-gray-200/50 dark:border-white/10">
+              <div className="flex items-center justify-between px-3 py-2">
+                <span className="text-base font-medium text-gray-700 dark:text-white/80">
+                  {t('nav.theme')}
+                </span>
+                <ThemeToggle />
+              </div>
+              <a
+                href="#process"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setMobileMenuOpen(false);
+                  document
+                    .getElementById('process')
+                    ?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="px-3 py-3 text-base font-medium text-gray-700 dark:text-white/80 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
+              >
+                {t('nav.process')}
+              </a>
+              <a
+                href="#pricing"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setMobileMenuOpen(false);
+                  document
+                    .getElementById('pricing')
+                    ?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="px-3 py-3 text-base font-medium text-gray-700 dark:text-white/80 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
+              >
+                {t('nav.pricing')}
+              </a>
+              <a
+                href="#faq"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setMobileMenuOpen(false);
+                  document
+                    .getElementById('faq')
+                    ?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="px-3 py-3 text-base font-medium text-gray-700 dark:text-white/80 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
+              >
+                {t('nav.faq')}
+              </a>
+              <a
+                href="https://library.flowstarter.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
+                className="px-3 py-3 text-base font-medium text-gray-700 dark:text-white/80 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors"
+              >
+                {LANDING_COPY.nav.templatesLabel}
+              </a>
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="px-3 py-3 text-base font-medium text-gray-700 dark:text-white/80 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors"
+              >
+                {t('nav.signIn')}
+              </Link>
+              <Button
+                variant="brand-gradient"
+                size="sm"
+                className="mt-2 w-full rounded-lg"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenModal?.();
+                }}
+              >
+                {t('landing.header.cta')}
+              </Button>
+            </nav>
+          </div>
+        </div>
+      </header>
     </>
   );
 }

@@ -23,7 +23,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
-
 interface SidebarItem {
   title: string;
   href: string;
@@ -33,7 +32,8 @@ interface SidebarItem {
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen } = useSidebar();
+  const { isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen } =
+    useSidebar();
   const { t } = useTranslations();
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
@@ -55,8 +55,12 @@ export function Sidebar() {
 
   const supportItems: SidebarItem[] = [
     {
-      title: hasProject ? t('sidebar.scheduleCheckin') : t('sidebar.bookFreeCall'),
-      href: hasProject ? EXTERNAL_URLS.calendly.checkIn : EXTERNAL_URLS.calendly.discovery,
+      title: hasProject
+        ? t('sidebar.scheduleCheckin')
+        : t('sidebar.bookFreeCall'),
+      href: hasProject
+        ? EXTERNAL_URLS.calendly.checkIn
+        : EXTERNAL_URLS.calendly.discovery,
       icon: Calendar,
       external: true,
     },
@@ -89,31 +93,32 @@ export function Sidebar() {
   const isActive = (href: string, exact?: boolean) => {
     if (exact) return pathname === href;
     if (href === '/dashboard') {
-      return pathname === '/dashboard' || 
-             pathname?.startsWith('/dashboard/projects');
+      return (
+        pathname === '/dashboard' || pathname?.startsWith('/dashboard/projects')
+      );
     }
     return pathname?.startsWith(href);
   };
 
-  const NavLink = ({ 
-    href, 
-    icon: Icon, 
-    label, 
+  const NavLink = ({
+    href,
+    icon: Icon,
+    label,
     exact,
     external,
     onClick,
     showLabel,
-  }: { 
-    href: string; 
-    icon: LucideIcon; 
-    label: string; 
+  }: {
+    href: string;
+    icon: LucideIcon;
+    label: string;
     exact?: boolean;
     external?: boolean;
     onClick?: () => void;
     showLabel: boolean;
   }) => {
     const active = !external && isActive(href, exact);
-    
+
     const cls = cn(
       'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
       active
@@ -131,89 +136,122 @@ export function Sidebar() {
 
     if (external) {
       return (
-        <a href={href} target="_blank" rel="noopener noreferrer" title={!showLabel ? label : undefined} onClick={onClick} className={cls}>
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={!showLabel ? label : undefined}
+          onClick={onClick}
+          className={cls}
+        >
           {content}
         </a>
       );
     }
 
     return (
-      <Link href={href} title={!showLabel ? label : undefined} onClick={onClick} className={cls}>
+      <Link
+        href={href}
+        title={!showLabel ? label : undefined}
+        onClick={onClick}
+        className={cls}
+      >
         {content}
       </Link>
     );
   };
 
-  const SidebarContent = ({ showToggle = false, forceExpanded = false }: { showToggle?: boolean; forceExpanded?: boolean }) => {
+  const SidebarContent = ({
+    showToggle = false,
+    forceExpanded = false,
+  }: {
+    showToggle?: boolean;
+    forceExpanded?: boolean;
+  }) => {
     const showLabel = forceExpanded ? true : !isCollapsed;
     const effectiveCollapsed = !showLabel;
     return (
-    <div className={cn("p-4 space-y-6 h-full overflow-y-auto flex flex-col", effectiveCollapsed && "items-center")}>
-      {/* Collapse/Expand Toggle - Desktop only */}
-      {showToggle && (
-        <div className={cn("w-full", effectiveCollapsed ? "flex justify-center" : "flex justify-end")}>
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            title={effectiveCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+      <div
+        className={cn(
+          'p-4 space-y-6 h-full overflow-y-auto flex flex-col',
+          effectiveCollapsed && 'items-center'
+        )}
+      >
+        {/* Collapse/Expand Toggle - Desktop only */}
+        {showToggle && (
+          <div
             className={cn(
-              'p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:text-white/40 dark:hover:text-white/60',
-              'hover:bg-white/55 dark:hover:bg-white/5 transition-all'
+              'w-full',
+              effectiveCollapsed ? 'flex justify-center' : 'flex justify-end'
             )}
           >
-            {effectiveCollapsed ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}
-          </button>
-        </div>
-      )}
-
-      {/* Main Navigation */}
-      <div className={cn(effectiveCollapsed && "w-full")}>
-        {showLabel && (
-          <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
-            {t('sidebar.main')}
-          </h3>
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              title={effectiveCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              className={cn(
+                'p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:text-white/40 dark:hover:text-white/60',
+                'hover:bg-white/55 dark:hover:bg-white/5 transition-all'
+              )}
+            >
+              {effectiveCollapsed ? (
+                <ChevronsRight className="w-4 h-4" />
+              ) : (
+                <ChevronsLeft className="w-4 h-4" />
+              )}
+            </button>
+          </div>
         )}
-        <div className="space-y-1">
-          {mainItems.map((item) => (
-            <NavLink 
-              key={item.href} 
-              href={item.href}
-              icon={item.icon}
-              label={item.title}
-              exact={item.href === '/dashboard'}
-              showLabel={showLabel}
-            />
-          ))}
+
+        {/* Main Navigation */}
+        <div className={cn(effectiveCollapsed && 'w-full')}>
+          {showLabel && (
+            <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
+              {t('sidebar.main')}
+            </h3>
+          )}
+          <div className="space-y-1">
+            {mainItems.map((item) => (
+              <NavLink
+                key={item.href}
+                href={item.href}
+                icon={item.icon}
+                label={item.title}
+                exact={item.href === '/dashboard'}
+                showLabel={showLabel}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Support */}
+        <div className={cn(effectiveCollapsed && 'w-full')}>
+          {showLabel && (
+            <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
+              {t('sidebar.support')}
+            </h3>
+          )}
+          <div className="space-y-1">
+            {supportItems.map((item) => (
+              <NavLink
+                key={item.href}
+                href={item.href === '#feedback' ? '#' : item.href}
+                icon={item.icon}
+                label={item.title}
+                external={item.external}
+                onClick={
+                  item.href === '#feedback'
+                    ? () => {
+                        setIsFeedbackOpen(true);
+                        setIsMobileOpen(false);
+                      }
+                    : undefined
+                }
+                showLabel={showLabel}
+              />
+            ))}
+          </div>
         </div>
       </div>
-
-      {/* Support */}
-      <div className={cn(effectiveCollapsed && "w-full")}>
-        {showLabel && (
-          <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
-            {t('sidebar.support')}
-          </h3>
-        )}
-        <div className="space-y-1">
-          {supportItems.map((item) => (
-            <NavLink 
-              key={item.href} 
-              href={item.href === '#feedback' ? '#' : item.href}
-              icon={item.icon}
-              label={item.title}
-              external={item.external}
-              onClick={item.href === '#feedback' ? () => {
-                setIsFeedbackOpen(true);
-                setIsMobileOpen(false);
-              } : undefined}
-              showLabel={showLabel}
-            />
-          ))}
-        </div>
-      </div>
-
-
-
-    </div>
     );
   };
 
@@ -253,17 +291,18 @@ export function Sidebar() {
 
         {/* ThemeToggle with label */}
         <div className="px-4 py-3 border-b border-gray-200/50 dark:border-white/5 flex items-center justify-between">
-          <span className="text-sm text-gray-600 dark:text-white/70">Theme</span>
+          <span className="text-sm text-gray-600 dark:text-white/70">
+            Theme
+          </span>
           <ThemeToggle />
         </div>
 
         {/* Always show labels on mobile */}
         <SidebarContent forceExpanded />
-
       </aside>
 
       {/* Desktop/Tablet sidebar - Glassmorphism */}
-      <aside 
+      <aside
         className={cn(
           'hidden md:flex flex-col flex-shrink-0 fixed left-0 top-16 bottom-0 transition-all duration-300 z-40',
           'bg-white/75 dark:bg-[#101014]/70 backdrop-blur-2xl backdrop-saturate-150',

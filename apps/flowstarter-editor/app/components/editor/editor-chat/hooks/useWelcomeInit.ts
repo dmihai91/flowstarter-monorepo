@@ -1,12 +1,12 @@
 /**
  * useWelcomeInit Hook
  *
- * Handles initialization for the supported handoff-only flow.
- * New projects now start in review, existing built projects resume in ready.
+ * Build-only init: preseeded handoff → 'creating' (auto-build),
+ * existing/completed project → 'ready' (chat mode).
  */
 
 import { useEffect, useRef, useCallback } from 'react';
-import type { InitialChatState } from '../types';
+import type { InitialChatState } from '~/components/editor/editor-chat/types';
 import type { UseOnboardingMessagesReturn } from './useOnboardingMessages';
 import type { UseOnboardingFlowReturn } from './useOnboardingFlow';
 import { hasPreseededTemplateBuild, isCompletedBuildState } from './handoffState';
@@ -19,7 +19,8 @@ interface UseWelcomeInitProps {
   messageHook: UseOnboardingMessagesReturn;
   flowHook: UseOnboardingFlowReturn;
   hasRestoredState: React.MutableRefObject<boolean>;
-  /** Callback to move seeded handoff projects into explicit review before build */
+
+  /** Callback to auto-start seeded build immediately */
   onTemplateBuildStart?: () => void;
 }
 
@@ -27,6 +28,7 @@ export function useWelcomeInit({
   initialState,
   messageHook,
   flowHook,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   hasRestoredState,
   onTemplateBuildStart,
 }: UseWelcomeInitProps): void {
@@ -55,31 +57,42 @@ export function useWelcomeInit({
     if (state?.projectName) {
       flow.setProjectName(state.projectName);
     }
+
     if (state?.projectDescription) {
       flow.setProjectDescription(state.projectDescription);
     }
 
+    // Existing/completed project → chat mode
     if (isCompletedBuildState(state)) {
       flow.setStep('ready');
       msg.setSuggestedReplies([]);
+
       return;
     }
 
+    // Concierge mode → team has already built the site, open in chat mode
+    if (state?.mode === 'concierge') {
+      flow.setStep('ready');
+      msg.setSuggestedReplies([]);
+
+      return;
+    }
+
+    // Preseeded handoff → auto-start build immediately
     if (hasPreseededTemplateBuild(state)) {
       msg.addAssistantMessage(
-        '**Project setup received.** Review the selected template, brand direction, and integrations below, then confirm when you want me to build the first version.',
+        '**Building your site...** Using the template, palette, and font selected on the dashboard.',
       );
       msg.setSuggestedReplies([]);
-      flow.setStep('review');
+      flow.setStep('creating');
       onTemplateBuildStartRef.current?.();
+
       return;
     }
 
-    msg.addAssistantMessage(
-      'This editor only supports dashboard handoff projects. Re-open the project from the main dashboard to continue.',
-    );
+    // Direct URL with no state → ready (chat mode for existing project)
+    flow.setStep('ready');
     msg.setSuggestedReplies([]);
-    flow.setStep('review');
   }, []);
 
   /*
@@ -88,7 +101,7 @@ export function useWelcomeInit({
    */
   useEffect(() => {
     if (hasInitialized.current) {
-      return;
+      return undefined;
     }
 
     const state = initialStateRef.current;
@@ -96,10 +109,10 @@ export function useWelcomeInit({
     // Skip if we have initial state with messages
     if (state?.messages && state.messages.length > 0) {
       hasInitialized.current = true;
-      return;
+      return undefined;
     }
 
-    const currentStep = flowHookRef.current.step;
+    const _currentStep = flowHookRef.current.step;
     const currentMessages = messageHookRef.current.messages;
 
     // Timeout fallback
@@ -135,7 +148,6 @@ export function useWelcomeInit({
      * Empty dependency array - uses refs for all state access
      * This ensures the effect runs exactly once on mount
      */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }
 

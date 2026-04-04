@@ -631,8 +631,8 @@ Client Onboarded
          │
 ┌─────────────────────────────────────────┐
 │  Pricing                                │
-│  • EUR 399 setup fee                    │
-│  • EUR 39/month (hosting + support)     │
+│  • EUR 499 setup fee                    │
+│  • EUR 39/month (locked in forever)     │
 │  • No lock-in, cancel anytime           │
 └─────────────────────────────────────────┘
          │
@@ -653,24 +653,24 @@ Client Onboarded
 
 | Tier | Setup | Monthly | Target Client |
 |------|-------|---------|---------------|
-| **Pilot** (1 client) | FREE | EUR 15/mo (after 6mo) | Feedback + case study |
-| **Standard** | EUR 199 | EUR 19/mo | Service professionals, freelancers |
-| **Pro** | EUR 399 | EUR 39/mo | Growing businesses, agencies |
-| **Business** | EUR 599-799 | EUR 79-99/mo | E-commerce, booking-heavy, payments |
+| **Starter** | EUR 499 setup | EUR 39/mo | Launch clients — monthly rate locked in forever |
+| **Starter (after launch)** | EUR 499 setup | EUR 49/mo | New clients after launch — same setup, higher monthly |
+| **Pro** (coming Q2 2026) | EUR 499 setup | EUR 49/mo | Growing businesses, agencies |
+| **Business** (coming Q3 2026) | EUR 699 setup | EUR 79/mo | E-commerce, booking-heavy, payments |
 
 ### Permanent Tier Structure
 
 | Tier | Setup | Monthly | Best For |
 |------|-------|---------|----------|
-| **Standard** | EUR 199 | EUR 19/mo | Freelancers, coaches, solo practitioners |
-| **Pro** | EUR 399 | EUR 39/mo | Growing businesses, agencies, teams |
-| **Business** | EUR 599+ | EUR 79/mo | E-commerce, course creators, booking-heavy |
+| **Starter** | EUR 499 | EUR 39/mo | Freelancers, coaches, solo practitioners |
+| **Pro** (Q2 2026) | EUR 499 | EUR 49/mo | Growing businesses, agencies, teams |
+| **Business** (Q3 2026) | EUR 699 | EUR 79/mo | E-commerce, course creators, booking-heavy |
 
 **All clients stay at their tier price forever. No surprise increases.**
 
 ### What's Included Per Tier (Setup + Ongoing)
 
-#### Standard (€199 + €19/mo)
+#### Starter (€499 setup + €39/mo — rate locked in forever)
 **Best for:** Coaches, consultants, therapists, freelancers, personal brands
 
 **Setup includes:**
@@ -692,7 +692,7 @@ Client Onboarded
 
 ---
 
-#### Pro (€399 + €39/mo)
+#### Pro (€499 + €49/mo — coming Q2 2026)
 **Best for:** Growing businesses, agencies, restaurants, salons, clinics
 
 **Everything in Standard, plus:**
@@ -715,7 +715,7 @@ Client Onboarded
 
 ---
 
-#### Business (€599+ setup, €79/mo)
+#### Business (€699+ setup, €79/mo — coming Q3 2026)
 **Best for:** E-commerce, course creators, membership sites, booking-heavy businesses
 
 **Everything in Pro, plus:**
@@ -779,21 +779,21 @@ Client Onboarded
 
 ### Example Clients by Tier
 
-**Standard (€19/mo):**
+**Starter (€499 setup + €39/mo):**
 - Life coach with booking page
 - Freelance photographer portfolio
 - Personal trainer website
 - Massage therapist
 - Consultant landing page
 
-**Pro (€39/mo):**
+**Pro (€49/mo — coming Q2 2026):**
 - Restaurant with menu + reservations
 - Hair salon with team booking
 - Dental clinic
 - Real estate agent
 - Marketing agency
 
-**Business (€79/mo):**
+**Business (€79/mo — coming Q3 2026):**
 - Online clothing store
 - Course creator selling digital products
 - Fitness studio with class booking + membership
@@ -887,46 +887,53 @@ Immediately       Message to Client:
 
 ## Unit Economics
 
-### Standard Client (EUR 199 + EUR 19/mo)
+### Starter Client (EUR 499 setup + EUR 39/mo)
 
-**Year 1 (base subscription):**
+**Year 1:**
 | | Amount |
 |---|--------|
-| Revenue | EUR 199 + (EUR 19 × 11) = **EUR 408** |
+| Revenue | EUR 499 + (EUR 39 × 11) = **EUR 928** |
 | Costs | EUR 192 |
-| **Profit** | **EUR 216** (53% margin) |
+| **Profit** | **EUR 736** (79% margin) |
 
 **Year 1 with add-ons (2-3 complex requests):**
 | | Amount |
 |---|--------|
-| Revenue | EUR 408 + EUR 200 (add-ons) = **EUR 608** |
+| Revenue | EUR 928 + EUR 200 (add-ons) = **EUR 1,128** |
 | Costs | EUR 192 + EUR 30 (AI) = EUR 222 |
-| **Profit** | **EUR 386** (63% margin) |
+| **Profit** | **EUR 906** (80% margin) |
 
-### Pro Client (EUR 399 + EUR 39/mo)
+**Year 2+ (recurring only):**
+| | Amount |
+|---|--------|
+| Revenue | EUR 39 × 12 = **EUR 468** |
+| Costs | EUR 60 (hosting + AI) |
+| **Profit** | **EUR 408** (87% margin) |
+
+### Pro Client (EUR 499 + EUR 49/mo — coming Q2 2026)
 
 **Year 1:**
 | | Amount |
 |---|--------|
-| Revenue | EUR 399 + (EUR 39 × 11) = **EUR 828** |
+| Revenue | EUR 499 + (EUR 49 × 11) = **EUR 1,038** |
 | Costs | EUR 192 |
-| **Profit** | **EUR 636** (77% margin) |
+| **Profit** | **EUR 846** (82% margin) |
 
 **Year 2+:**
 | | Amount |
 |---|--------|
-| Revenue | EUR 468 |
+| Revenue | EUR 588 |
 | Costs | EUR 192 |
-| **Profit** | **EUR 276** (59% margin) |
+| **Profit** | **EUR 396** (67% margin) |
 
-### Business Client (EUR 599 + EUR 79/mo)
+### Business Client (EUR 699 + EUR 79/mo — coming Q3 2026)
 
 **Year 1:**
 | | Amount |
 |---|--------|
-| Revenue | EUR 599 + (EUR 79 × 11) = **EUR 1,468** |
+| Revenue | EUR 699 + (EUR 79 × 11) = **EUR 1,568** |
 | Costs | EUR 250 (more integrations) |
-| **Profit** | **EUR 1,218** (83% margin) |
+| **Profit** | **EUR 1,318** (84% margin) |
 
 ---
 
@@ -940,10 +947,11 @@ Immediately       Message to Client:
 │                              PRICING                                     │
 │                                                                          │
 │   ┌─────────────────────┐ ┌─────────────────────┐ ┌─────────────────────┐│
-│   │      STANDARD       │ │        PRO          │ │      BUSINESS       ││
-│   │                     │ │      ⭐ POPULAR      │ │                     ││
-│   │   €199 setup        │ │   €399 setup        │ │   €599+ setup       ││
-│   │   €19/month         │ │   €39/month         │ │   €79/month         ││
+│   │  STARTER ⭐ POPULAR │ │    PRO (Q2 2026)    │ │  BUSINESS (Q3 2026) ││
+│   │                     │ │    Coming Soon      │ │    Coming Soon      ││
+│   │   €499 setup        │ │   TBD setup         │ │   TBD+ setup        ││
+│   │   €39/month         │ │   TBD/month         │ │   TBD/month         ││
+│   │ Rate locked forever │ │                     │ │                     ││
 │   │                     │ │                     │ │                     ││
 │   │   ✓ Professional    │ │   Everything in     │ │   Everything in     ││
 │   │     website         │ │   Standard, plus:   │ │   Pro, plus:        ││
@@ -1494,9 +1502,9 @@ Each template has pre-built integration slots:
 
 | Tier | Monthly | Included Integrations |
 |------|---------|----------------------|
-| **Standard** | €19/mo | GA4, Contact Form, WhatsApp, 1 booking tool |
-| **Pro** | €39/mo | All above + Mailchimp, Instagram, Maps |
-| **Business** | €79/mo | All above + Stripe, Shopify, Zapier, advanced |
+| **Starter** | €39/mo | GA4, Contact Form, WhatsApp, 1 booking tool |
+| **Pro** (Q2 2026) | €49/mo | All above + Mailchimp, Instagram, Maps |
+| **Business** (Q3 2026) | €79/mo | All above + Stripe, Shopify, Zapier, advanced |
 
 ### Integration Setup Process
 
@@ -1779,7 +1787,7 @@ async function syncAnalytics(projectId: string) {
 
 ### Analytics by Tier
 
-| Metric | Standard (€19) | Pro (€39) | Business (€79) |
+| Metric | Starter (€39/mo) | Pro (Q2 2026) | Business (Q3 2026) |
 |--------|----------------|-----------|----------------|
 | Visitors | ✅ | ✅ | ✅ |
 | Page Views | ✅ | ✅ | ✅ |
@@ -2169,10 +2177,11 @@ If client enables, send WhatsApp message for instant notification.
 │                        PRICING                                   │
 │                                                                  │
 │   ┌───────────────┐ ┌───────────────┐ ┌───────────────┐         │
-│   │   STANDARD    │ │     PRO       │ │   BUSINESS    │         │
-│   │               │ │   ⭐ POPULAR   │ │               │         │
-│   │  €199 setup   │ │  €399 setup   │ │  €599+ setup  │         │
-│   │  €19/month    │ │  €39/month    │ │  €79/month    │         │
+│   │STARTER⭐POPULAR│ │  PRO (Q2 2026)│ │BIZ (Q3 2026)  │         │
+│   │               │ │  Coming Soon  │ │  Coming Soon  │         │
+│   │  €499 setup   │ │  TBD setup    │ │  TBD+ setup   │         │
+│   │  €39/month    │ │  TBD/month    │ │  TBD/month    │         │
+│   │ rate locked   │ │  Q2 2026      │ │  Q3 2026      │         │
 │   │               │ │               │ │               │         │
 │   │  ✓ Website    │ │  + Mailchimp  │ │  + Stripe     │         │
 │   │  ✓ Domain     │ │  + Instagram  │ │  + Shopify    │         │
@@ -2280,8 +2289,8 @@ Client Approves Final Site
 ┌─────────────────────────────┐
 │   STRIPE CHECKOUT           │
 │                             │
-│   Your Plan: [Standard/Pro/Business]
-│   Setup Fee: €199/399/599   │
+│   Your Plan: [Starter/Pro/Business]
+│   Setup Fee: €499           │
 │   First Month: FREE         │
 │                             │
 │   Starting Month 2:         │
@@ -2443,7 +2452,7 @@ async function activateClient(projectId: string, clientEmail: string) {
 
 ```
 Payment Flow:
-1. Client pays EUR 399 setup via Stripe checkout
+1. Client pays EUR 499 setup via Stripe checkout
 2. Webhook creates project record with status='paid'
 3. Team builds site (manual trigger)
 4. When ready, team clicks "Activate Client"
@@ -2607,8 +2616,8 @@ All complexity classification and quoting happens in **Darius's head**, not in t
 
 | What | Standard Only |
 |------|---------------|
-| Setup | €199 (or FREE for pilot) |
-| Monthly | €19/mo |
+| Setup | €499 |
+| Monthly | €39/mo (locked in forever) |
 | Pages | 3-5 |
 | Emails | 2 |
 | Integrations | GA4, Contact Form, WhatsApp, Calendly |

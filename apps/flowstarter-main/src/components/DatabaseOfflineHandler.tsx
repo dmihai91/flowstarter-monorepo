@@ -1,8 +1,6 @@
 'use client';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { useTranslations } from '@/lib/i18n';
 import { AlertTriangle, RefreshCw, Wifi, WifiOff } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -97,7 +95,13 @@ export function DatabaseOfflineHandler({
             fill="none"
           >
             <defs>
-              <linearGradient id="offlineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <linearGradient
+                id="offlineGradient"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="0%"
+              >
                 <stop offset="0%" stopColor="var(--purple)" />
                 <stop offset="100%" stopColor="#3B82F6" />
               </linearGradient>

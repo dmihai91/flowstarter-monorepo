@@ -1,6 +1,6 @@
 /**
  * Tests for the modular prompt system
- * 
+ *
  * Tests category detection, prompt selection, fallback names,
  * banned word filtering, and refinement prompt building.
  */
@@ -35,7 +35,7 @@ describe('Category Detection', () => {
         'LMFT providing family therapy',
       ];
 
-      therapistDescriptions.forEach(desc => {
+      therapistDescriptions.forEach((desc) => {
         const category = detectCategory(desc);
         expect(category.id).toBe('therapist');
       });
@@ -49,7 +49,7 @@ describe('Category Detection', () => {
         'Fitness coach specializing in HIIT',
       ];
 
-      fitnessDescriptions.forEach(desc => {
+      fitnessDescriptions.forEach((desc) => {
         const category = detectCategory(desc);
         expect(category.id).toBe('fitness');
       });
@@ -63,7 +63,7 @@ describe('Category Detection', () => {
         'Breathwork and yoga practice',
       ];
 
-      yogaDescriptions.forEach(desc => {
+      yogaDescriptions.forEach((desc) => {
         const category = detectCategory(desc);
         expect(category.id).toBe('yoga');
       });
@@ -77,7 +77,7 @@ describe('Category Detection', () => {
         'Career coach and mentor',
       ];
 
-      coachingDescriptions.forEach(desc => {
+      coachingDescriptions.forEach((desc) => {
         const category = detectCategory(desc);
         expect(category.id).toBe('coaching');
       });
@@ -92,7 +92,7 @@ describe('Category Detection', () => {
         'Freelance illustrator',
       ];
 
-      creativeDescriptions.forEach(desc => {
+      creativeDescriptions.forEach((desc) => {
         const category = detectCategory(desc);
         expect(category.id).toBe('creative');
       });
@@ -107,7 +107,7 @@ describe('Category Detection', () => {
         'Barber shop in Brooklyn',
       ];
 
-      beautyDescriptions.forEach(desc => {
+      beautyDescriptions.forEach((desc) => {
         const category = detectCategory(desc);
         expect(category.id).toBe('beauty');
       });
@@ -122,7 +122,7 @@ describe('Category Detection', () => {
         'Food truck selling tacos',
       ];
 
-      foodDescriptions.forEach(desc => {
+      foodDescriptions.forEach((desc) => {
         const category = detectCategory(desc);
         expect(category.id).toBe('food');
       });
@@ -137,7 +137,7 @@ describe('Category Detection', () => {
         'Lawyer helping with immigration',
       ];
 
-      professionalDescriptions.forEach(desc => {
+      professionalDescriptions.forEach((desc) => {
         const category = detectCategory(desc);
         expect(category.id).toBe('professional');
       });
@@ -151,7 +151,7 @@ describe('Category Detection', () => {
         'Home sales specialist',
       ];
 
-      realEstateDescriptions.forEach(desc => {
+      realEstateDescriptions.forEach((desc) => {
         const category = detectCategory(desc);
         expect(category.id).toBe('realestate');
       });
@@ -166,7 +166,7 @@ describe('Category Detection', () => {
         'AI-powered software',
       ];
 
-      techDescriptions.forEach(desc => {
+      techDescriptions.forEach((desc) => {
         const category = detectCategory(desc);
         expect(category.id).toBe('tech');
       });
@@ -180,7 +180,7 @@ describe('Category Detection', () => {
         '',
       ];
 
-      genericDescriptions.forEach(desc => {
+      genericDescriptions.forEach((desc) => {
         const category = detectCategory(desc);
         expect(category.id).toBe('generic');
       });
@@ -215,8 +215,8 @@ describe('Prompt Generation', () => {
 
     it('includes base rules in all prompts', () => {
       const categories = ['therapist', 'fitness coach', 'photographer', 'restaurant'];
-      
-      categories.forEach(desc => {
+
+      categories.forEach((desc) => {
         const prompt = getGenerationPrompt(desc);
         expect(prompt).toContain('RULES');
         expect(prompt).toContain('1-3 words');
@@ -253,7 +253,7 @@ describe('Fallback Names', () => {
         const names = getFallbackNames(desc);
         expect(Array.isArray(names)).toBe(true);
         expect(names.length).toBeGreaterThanOrEqual(minNames);
-        names.forEach(name => {
+        names.forEach((name) => {
           expect(typeof name).toBe('string');
           expect(name.length).toBeGreaterThan(0);
         });
@@ -262,16 +262,22 @@ describe('Fallback Names', () => {
 
     it('returns category-appropriate names', () => {
       const therapistNames = getFallbackNames('therapist');
+
       // Should have calming, safe-feeling names
-      expect(therapistNames.some(n => 
-        n.includes('Safe') || n.includes('Calm') || n.includes('Haven') || n.includes('Ground')
-      )).toBe(true);
+      expect(
+        therapistNames.some(
+          (n) => n.includes('Safe') || n.includes('Calm') || n.includes('Haven') || n.includes('Ground'),
+        ),
+      ).toBe(true);
 
       const fitnessNames = getFallbackNames('personal trainer');
+
       // Should have powerful, energetic names
-      expect(fitnessNames.some(n => 
-        n.includes('Iron') || n.includes('Forge') || n.includes('Torque') || n.includes('Grit')
-      )).toBe(true);
+      expect(
+        fitnessNames.some(
+          (n) => n.includes('Iron') || n.includes('Forge') || n.includes('Torque') || n.includes('Grit'),
+        ),
+      ).toBe(true);
     });
   });
 
@@ -285,12 +291,13 @@ describe('Fallback Names', () => {
     it('returns names from the correct category', () => {
       // Run multiple times to check randomness works
       const names = new Set<string>();
+
       for (let i = 0; i < 20; i++) {
         names.add(getRandomFallbackName('therapist'));
       }
-      
+
       const therapistFallbacks = getFallbackNames('therapist');
-      names.forEach(name => {
+      names.forEach((name) => {
         expect(therapistFallbacks).toContain(name);
       });
     });
@@ -310,7 +317,7 @@ describe('Banned Words', () => {
         'Apex Training',
       ];
 
-      bannedNames.forEach(name => {
+      bannedNames.forEach((name) => {
         expect(containsBannedWord(name)).toBe(true);
       });
     });
@@ -326,7 +333,7 @@ describe('Banned Words', () => {
         'The Practice',
       ];
 
-      goodNames.forEach(name => {
+      goodNames.forEach((name) => {
         expect(containsBannedWord(name)).toBe(false);
       });
     });
@@ -354,11 +361,19 @@ describe('Banned Words', () => {
   describe('BANNED_WORDS_ARRAY', () => {
     it('contains expected banned words', () => {
       const expectedBanned = [
-        'Thrive', 'Flourish', 'Elevate', 'Empower', 'Transform',
-        'Synergy', 'Leverage', 'Impact', 'Peak', 'Apex',
+        'Thrive',
+        'Flourish',
+        'Elevate',
+        'Empower',
+        'Transform',
+        'Synergy',
+        'Leverage',
+        'Impact',
+        'Peak',
+        'Apex',
       ];
 
-      expectedBanned.forEach(word => {
+      expectedBanned.forEach((word) => {
         expect(BANNED_WORDS_ARRAY).toContain(word);
       });
     });
@@ -375,7 +390,7 @@ describe('Refinement Hints', () => {
     it('returns hints object for each category', () => {
       const categories = ['therapist', 'personal trainer', 'photographer', 'restaurant'];
 
-      categories.forEach(desc => {
+      categories.forEach((desc) => {
         const hints = getRefinementHints(desc);
         expect(typeof hints).toBe('object');
         expect(Object.keys(hints).length).toBeGreaterThan(0);
@@ -383,8 +398,10 @@ describe('Refinement Hints', () => {
     });
 
     it('includes common refinement keys', () => {
-      // Different categories have different hint keys
-      // Therapist: warm, professional, creative, shorter, different
+      /*
+       * Different categories have different hint keys
+       * Therapist: warm, professional, creative, shorter, different
+       */
       const therapistHints = getRefinementHints('therapist');
       expect(therapistHints).toHaveProperty('warm');
       expect(therapistHints).toHaveProperty('professional');
@@ -401,11 +418,7 @@ describe('Refinement Hints', () => {
 describe('Prompt Builders', () => {
   describe('buildRefinementPrompt', () => {
     it('includes previous name and feedback', () => {
-      const prompt = buildRefinementPrompt(
-        'Calm Space',
-        'make it more professional',
-        'therapist practice'
-      );
+      const prompt = buildRefinementPrompt('Calm Space', 'make it more professional', 'therapist practice');
 
       expect(prompt).toContain('Calm Space');
       expect(prompt).toContain('professional');
@@ -413,12 +426,11 @@ describe('Prompt Builders', () => {
     });
 
     it('includes previously suggested names to avoid', () => {
-      const prompt = buildRefinementPrompt(
+      const prompt = buildRefinementPrompt('Calm Space', 'try another', 'therapist', [
+        'Safe Ground',
+        'The Clearing',
         'Calm Space',
-        'try another',
-        'therapist',
-        ['Safe Ground', 'The Clearing', 'Calm Space']
-      );
+      ]);
 
       expect(prompt).toContain('Safe Ground');
       expect(prompt).toContain('The Clearing');
@@ -431,7 +443,7 @@ describe('Prompt Builders', () => {
         'shorter',
         'therapist',
         [],
-        ['must include initials JM', 'no nature words']
+        ['must include initials JM', 'no nature words'],
       );
 
       expect(prompt).toContain('initials JM');
@@ -440,11 +452,7 @@ describe('Prompt Builders', () => {
     });
 
     it('includes style guidance for matching feedback', () => {
-      const prompt = buildRefinementPrompt(
-        'Safe Space',
-        'make it more professional',
-        'therapist'
-      );
+      const prompt = buildRefinementPrompt('Safe Space', 'make it more professional', 'therapist');
 
       expect(prompt).toContain('STYLE GUIDANCE');
     });
@@ -461,7 +469,7 @@ describe('Prompt Builders', () => {
         'Safe Ground',
         'therapist practice in Seattle',
         ['Haven', 'Safe Ground'],
-        ['must be one word']
+        ['must be one word'],
       );
 
       expect(prompt).toContain('Safe Ground');
@@ -575,9 +583,11 @@ describe('Edge Cases', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════
-// PERSONALIZATION TESTS
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * PERSONALIZATION TESTS
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 describe('Personalization', () => {
   describe('buildPersonalizedContext', () => {
@@ -592,7 +602,7 @@ describe('Personalization', () => {
         ownerName: 'Sarah Mitchell',
       };
       const result = buildPersonalizedContext(userContext);
-      
+
       expect(result).toContain('Sarah Mitchell');
       expect(result).toContain('Owner');
       expect(result).toContain('PERSONALIZATION');
@@ -603,7 +613,7 @@ describe('Personalization', () => {
         initials: 'SM',
       };
       const result = buildPersonalizedContext(userContext);
-      
+
       expect(result).toContain('SM');
       expect(result).toContain('Initials');
     });
@@ -613,7 +623,7 @@ describe('Personalization', () => {
         preferredStyle: 'warm and welcoming',
       };
       const result = buildPersonalizedContext(userContext);
-      
+
       expect(result).toContain('warm and welcoming');
       expect(result).toContain('style');
     });
@@ -623,7 +633,7 @@ describe('Personalization', () => {
         keywords: ['calm', 'clarity', 'peace'],
       };
       const result = buildPersonalizedContext(userContext);
-      
+
       expect(result).toContain('calm');
       expect(result).toContain('clarity');
       expect(result).toContain('peace');
@@ -635,7 +645,7 @@ describe('Personalization', () => {
         uniqueApproach: 'mindfulness-based therapy',
       };
       const result = buildPersonalizedContext(userContext);
-      
+
       expect(result).toContain('mindfulness-based therapy');
       expect(result).toContain('unique');
     });
@@ -645,7 +655,7 @@ describe('Personalization', () => {
         targetAudience: 'busy professionals',
       };
       const result = buildPersonalizedContext(userContext);
-      
+
       expect(result).toContain('busy professionals');
       expect(result).toContain('audience');
     });
@@ -655,7 +665,7 @@ describe('Personalization', () => {
         location: 'Brooklyn',
       };
       const result = buildPersonalizedContext(userContext);
-      
+
       expect(result).toContain('Brooklyn');
       expect(result).toContain('Location');
     });
@@ -665,7 +675,7 @@ describe('Personalization', () => {
         avoidWords: ['zen', 'healing', 'journey'],
       };
       const result = buildPersonalizedContext(userContext);
-      
+
       expect(result).toContain('zen');
       expect(result).toContain('healing');
       expect(result).toContain('journey');
@@ -680,7 +690,7 @@ describe('Personalization', () => {
         location: 'Austin',
       };
       const result = buildPersonalizedContext(userContext);
-      
+
       expect(result).toContain('Elena Park');
       expect(result).toContain('peaceful and grounding');
       expect(result).toContain('flow');
@@ -693,7 +703,7 @@ describe('Personalization', () => {
         ownerName: 'Test User',
       };
       const result = buildPersonalizedContext(userContext);
-      
+
       expect(result).toContain('MUST incorporate');
       expect(result).toContain('DISTINCTIVE');
     });
@@ -703,7 +713,7 @@ describe('Personalization', () => {
     it('returns base prompt without personalization when no userContext', () => {
       const withoutContext = getGenerationPrompt('therapist');
       const withEmptyContext = getGenerationPrompt('therapist', {});
-      
+
       expect(withoutContext).not.toContain('PERSONALIZATION');
       expect(withEmptyContext).not.toContain('PERSONALIZATION');
     });
@@ -714,7 +724,7 @@ describe('Personalization', () => {
         keywords: ['calm'],
       };
       const prompt = getGenerationPrompt('therapist', userContext);
-      
+
       expect(prompt).toContain('PERSONALIZATION');
       expect(prompt).toContain('Sarah Mitchell');
       expect(prompt).toContain('calm');
@@ -724,12 +734,12 @@ describe('Personalization', () => {
       const userContext: UserContext = {
         ownerName: 'Mike Torres',
       };
-      
+
       const therapistPrompt = getGenerationPrompt('therapist', userContext);
       expect(therapistPrompt).toContain('therapy');
       expect(therapistPrompt).toContain('Safe');
       expect(therapistPrompt).toContain('Mike Torres');
-      
+
       const fitnessPrompt = getGenerationPrompt('personal trainer', userContext);
       expect(fitnessPrompt).toContain('fitness');
       expect(fitnessPrompt).toContain('Mike Torres');
@@ -740,7 +750,7 @@ describe('Personalization', () => {
         ownerName: 'Test User',
       };
       const prompt = getGenerationPrompt('therapist', userContext);
-      
+
       expect(prompt).toContain('RULES');
       expect(prompt).toContain('1-3 words');
       expect(prompt).toContain('BANNED');
@@ -751,10 +761,10 @@ describe('Personalization', () => {
         ownerName: 'Test User',
       };
       const prompt = getGenerationPrompt('therapist', userContext);
-      
+
       const personalizationIndex = prompt.indexOf('PERSONALIZATION');
       const rulesIndex = prompt.indexOf('RULES (apply to ALL names)');
-      
+
       // Personalization should come before rules
       expect(personalizationIndex).toBeLessThan(rulesIndex);
       expect(personalizationIndex).toBeGreaterThan(0);
@@ -774,7 +784,7 @@ describe('UserContext Interface', () => {
       location: 'San Francisco',
       avoidWords: ['basic', 'simple'],
     };
-    
+
     // Should not throw
     const result = buildPersonalizedContext(fullContext);
     expect(result).toBeTruthy();
@@ -787,8 +797,8 @@ describe('UserContext Interface', () => {
       { location: 'NYC' },
       { preferredStyle: 'bold' },
     ];
-    
-    partialContexts.forEach(ctx => {
+
+    partialContexts.forEach((ctx) => {
       const result = buildPersonalizedContext(ctx);
       expect(result).toBeTruthy();
       expect(result).toContain('PERSONALIZATION');
@@ -802,7 +812,7 @@ describe('Personalization with Romanian Content', () => {
       ownerName: 'Andreea Ionescu',
     };
     const result = buildPersonalizedContext(userContext);
-    
+
     expect(result).toContain('Andreea Ionescu');
   });
 
@@ -811,7 +821,7 @@ describe('Personalization with Romanian Content', () => {
       keywords: ['liniște', 'echilibru', 'pace'],
     };
     const result = buildPersonalizedContext(userContext);
-    
+
     expect(result).toContain('liniște');
     expect(result).toContain('echilibru');
   });
@@ -821,7 +831,7 @@ describe('Personalization with Romanian Content', () => {
       location: 'București',
     };
     const result = buildPersonalizedContext(userContext);
-    
+
     expect(result).toContain('București');
   });
 
@@ -832,7 +842,7 @@ describe('Personalization with Romanian Content', () => {
       keywords: ['tradiție', 'calitate'],
     };
     const prompt = getGenerationPrompt('brutarie artizanala', userContext);
-    
+
     expect(prompt).toContain('Maria Popescu');
     expect(prompt).toContain('Cluj-Napoca');
     expect(prompt).toContain('tradiție');

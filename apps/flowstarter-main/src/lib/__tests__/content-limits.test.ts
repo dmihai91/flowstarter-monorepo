@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { DESCRIPTION_MIN, DESCRIPTION_MAX, UVP_MIN, UVP_MAX } from '../content-limits';
+import {
+  DESCRIPTION_MIN,
+  DESCRIPTION_MAX,
+  UVP_MIN,
+  UVP_MAX,
+} from '../content-limits';
 
 describe('content-limits', () => {
   it('exports DESCRIPTION_MIN as 100', () => {

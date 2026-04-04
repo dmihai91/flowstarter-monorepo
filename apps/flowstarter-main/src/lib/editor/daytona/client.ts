@@ -4,7 +4,10 @@ import { Daytona, type DaytonaConfig } from '@daytonaio/sdk';
 
 let daytonaClient: Daytona | null = null;
 
-const sandboxCache = new Map<string, { sandboxId: string; previewUrl?: string }>();
+const sandboxCache = new Map<
+  string,
+  { sandboxId: string; previewUrl?: string }
+>();
 
 export function getClient(): Daytona {
   const apiKey = process.env.DAYTONA_API_KEY || '';
@@ -22,6 +25,9 @@ export function getCachedSandbox(projectId: string) {
   return sandboxCache.get(projectId) || null;
 }
 
-export function setCachedSandbox(projectId: string, info: { sandboxId: string; previewUrl?: string }) {
+export function setCachedSandbox(
+  projectId: string,
+  info: { sandboxId: string; previewUrl?: string }
+) {
   sandboxCache.set(projectId, info);
 }

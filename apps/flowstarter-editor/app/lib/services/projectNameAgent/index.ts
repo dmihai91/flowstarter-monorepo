@@ -5,8 +5,7 @@
  * Uses modular category-specific prompts for better naming quality.
  */
 
-// eslint-disable-next-line no-restricted-imports
-import { generateCompletion } from '../llm';
+import { generateCompletion } from '~/lib/services/llm';
 import { createScopedLogger } from '~/utils/logger';
 import {
   detectCategory,
@@ -174,6 +173,7 @@ function resolveOptions(
 /**
  * Parse LLM response into name options and filter banned words
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function parseAndFilterNames(response: string, projectDescription: string): string[] {
   const rawOptions = response
     .split('\n')
@@ -189,8 +189,10 @@ function parseAndFilterNames(response: string, projectDescription: string): stri
     if (containsBannedWord(name)) {
       const bannedWord = getBannedWord(name);
       logger.warn(`Filtering out banned name "${name}" (contains "${bannedWord}")`);
+
       return false;
     }
+
     return true;
   });
 }

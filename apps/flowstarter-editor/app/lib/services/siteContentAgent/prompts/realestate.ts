@@ -18,13 +18,7 @@ export const REALESTATE_CONTENT_PATTERNS = {
     'Making Moves, Building Dreams',
     'Home Is Where Your Story Begins',
   ],
-  ctas: [
-    'Search Listings',
-    'Get a Home Valuation',
-    'Schedule a Showing',
-    'Contact Me',
-    'Start Your Search',
-  ],
+  ctas: ['Search Listings', 'Get a Home Valuation', 'Schedule a Showing', 'Contact Me', 'Start Your Search'],
   services: [
     'Buyer Representation',
     'Seller Representation',
@@ -69,10 +63,23 @@ ${BASE_CONTENT_RULES}`;
 
 export function buildRealestateContentPrompt(context: BusinessContext): string {
   const parts = [`${REALESTATE_CONTENT_PROMPT}\n\nBUSINESS CONTEXT:`];
-  if (context.ownerName) parts.push(`- Agent: ${context.ownerName}`);
-  if (context.location) parts.push(`- Market: ${context.location}`);
-  if (context.services?.length) parts.push(`- Specialties: ${context.services.join(', ')}`);
-  if (context.uniqueApproach) parts.push(`- Approach: ${context.uniqueApproach}`);
+
+  if (context.ownerName) {
+    parts.push(`- Agent: ${context.ownerName}`);
+  }
+
+  if (context.location) {
+    parts.push(`- Market: ${context.location}`);
+  }
+
+  if (context.services?.length) {
+    parts.push(`- Specialties: ${context.services.join(', ')}`);
+  }
+
+  if (context.uniqueApproach) {
+    parts.push(`- Approach: ${context.uniqueApproach}`);
+  }
+
   return parts.join('\n');
 }
 

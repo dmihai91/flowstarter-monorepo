@@ -67,10 +67,13 @@ describe('getProjectGACredentials', () => {
 
     const result = await getProjectGACredentials('proj-1');
 
-    expect(result).toEqual({ propertyId: '123456', accessToken: 'fresh_access_token' });
+    expect(result).toEqual({
+      propertyId: '123456',
+      accessToken: 'fresh_access_token',
+    });
     expect(mockFetch).toHaveBeenCalledWith(
       'https://oauth2.googleapis.com/token',
-      expect.objectContaining({ method: 'POST' }),
+      expect.objectContaining({ method: 'POST' })
     );
     expect(mockReadSecret).toHaveBeenCalled();
   });
@@ -81,7 +84,10 @@ describe('getProjectGACredentials', () => {
     });
     mockReadSecret.mockResolvedValue('expired_token');
 
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 401 }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({ ok: false, status: 401 })
+    );
 
     const result = await getProjectGACredentials('proj-1');
     expect(result).toBeNull();
@@ -93,10 +99,13 @@ describe('getProjectGACredentials', () => {
     });
     mockReadSecret.mockResolvedValue('super_secret_refresh_token');
 
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ access_token: 'at_123' }),
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ access_token: 'at_123' }),
+      })
+    );
 
     const result = await getProjectGACredentials('proj-1');
     expect(result).toBeDefined();

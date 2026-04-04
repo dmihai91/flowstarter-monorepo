@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { fixContentImports } from '../postProcessAstro';
-import type { GeneratedFile } from '../claude-agent/types';
+import { fixContentImports } from '~/lib/services/postProcessAstro';
+import type { GeneratedFile } from '~/lib/services/claude-agent/types';
 
 function astroFile(content: string, path = 'src/pages/index.astro'): GeneratedFile {
   return { path, content };
@@ -18,7 +18,7 @@ const { title, description } = frontmatter;
 <p>{description}</p>`),
     ]);
 
-    expect(files[0].content).not.toContain("content/services.md");
+    expect(files[0].content).not.toContain('content/services.md');
     expect(files[0].content).toContain('const title = "Services";');
     expect(files[0].content).toContain('const description = "Services Description";');
   });

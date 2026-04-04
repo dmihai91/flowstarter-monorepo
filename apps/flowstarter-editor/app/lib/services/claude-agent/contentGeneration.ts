@@ -1,4 +1,4 @@
-/** 
- * Re-export from modular contentGeneration 
- */ 
+/**
+ * Re-export from modular contentGeneration
+ */
 export * from './contentGeneration/index';

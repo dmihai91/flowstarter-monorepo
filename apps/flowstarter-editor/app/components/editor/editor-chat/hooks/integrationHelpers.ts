@@ -5,7 +5,7 @@
  * and the Convex projects.integrations schema format.
  */
 
-import type { IntegrationConfig } from '../types';
+import type { IntegrationConfig } from '~/components/editor/editor-chat/types';
 
 export interface ConvexBookingConfig {
   enabled: boolean;
@@ -41,7 +41,9 @@ const DEFAULT_NEWSLETTER: ConvexNewsletterConfig = {
  * Convert a booking IntegrationConfig to Convex schema format
  */
 export function toConvexBooking(config: IntegrationConfig | undefined): ConvexBookingConfig {
-  if (!config) return DEFAULT_BOOKING;
+  if (!config) {
+    return DEFAULT_BOOKING;
+  }
 
   const provider = (config.config?.provider as ConvexBookingConfig['provider']) || 'none';
 
@@ -57,7 +59,9 @@ export function toConvexBooking(config: IntegrationConfig | undefined): ConvexBo
  * Convert a newsletter IntegrationConfig to Convex schema format
  */
 export function toConvexNewsletter(config: IntegrationConfig | undefined): ConvexNewsletterConfig {
-  if (!config) return DEFAULT_NEWSLETTER;
+  if (!config) {
+    return DEFAULT_NEWSLETTER;
+  }
 
   const provider = (config.config?.provider as ConvexNewsletterConfig['provider']) || 'none';
 
@@ -74,8 +78,8 @@ export function toConvexNewsletter(config: IntegrationConfig | undefined): Conve
  * Convert an IntegrationConfig[] array to the full Convex integrations object.
  */
 export function toConvexIntegrations(integrations: IntegrationConfig[]): ConvexIntegrations {
-  const bookingConfig = integrations.find(i => i.id === 'booking');
-  const newsletterConfig = integrations.find(i => i.id === 'newsletter');
+  const bookingConfig = integrations.find((i) => i.id === 'booking');
+  const newsletterConfig = integrations.find((i) => i.id === 'newsletter');
 
   return {
     booking: toConvexBooking(bookingConfig),
@@ -111,7 +115,7 @@ export function isValidCalcomUrl(url: string): boolean {
  * Filter integrations to only enabled ones
  */
 export function getEnabledIntegrations(integrations: IntegrationConfig[]): IntegrationConfig[] {
-  return integrations.filter(i => i.enabled);
+  return integrations.filter((i) => i.enabled);
 }
 
 /**
@@ -124,7 +128,7 @@ export function buildIntegrationsMessage(integrations: IntegrationConfig[]): str
     return "Let's build my site!";
   }
 
-  const names = enabled.map(i => i.name).join(' and ');
+  const names = enabled.map((i) => i.name).join(' and ');
+
   return `I've connected ${names}. Let's build!`;
 }
-

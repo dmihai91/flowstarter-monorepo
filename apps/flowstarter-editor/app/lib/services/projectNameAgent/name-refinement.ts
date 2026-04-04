@@ -4,8 +4,7 @@
  * Refines existing project names based on user feedback.
  */
 
-// eslint-disable-next-line no-restricted-imports
-import { generateCompletion } from '../llm';
+import { generateCompletion } from '~/lib/services/llm';
 import { createScopedLogger } from '~/utils/logger';
 import {
   detectCategory,

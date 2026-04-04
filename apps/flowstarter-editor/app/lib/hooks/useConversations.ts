@@ -77,6 +77,7 @@ function normalizeIntegrations(value: unknown): IntegrationConfig[] | null {
 
   if (typeof value === 'object') {
     const record = value as Record<string, unknown>;
+
     if (Array.isArray(record.selected)) {
       return record.selected
         .filter((entry): entry is string => typeof entry === 'string')
@@ -132,7 +133,7 @@ export function useConversations(initialConversationId?: Id<'conversations'>): U
   const [localMessages, setLocalMessages] = useState<ConversationMessage[]>([]);
   const syncDebounceRef = useRef<NodeJS.Timeout | null>(null);
   const pendingMessagesRef = useRef<ConversationMessage[] | null>(null);
-  const hasInitializedRef = useRef(false);
+  const _hasInitializedRef = useRef(false);
 
   // Queries - if initialConversationId is provided, use it directly
   const conversationsData = useQuery(api.conversations.getBySessionId, { sessionId });
@@ -262,10 +263,9 @@ export function useConversations(initialConversationId?: Id<'conversations'>): U
   const updateConversationProjectName = useCallback(
     async (id: Id<'conversations'>, name: string) => {
       await updateProjectNameMutation({ id, projectName: name });
+
       // Sync to Supabase (fire-and-forget)
-      syncProjectName(name).catch((err) =>
-        console.warn('[useConversations] Failed to sync name to Supabase:', err)
-      );
+      syncProjectName(name).catch((err) => console.warn('[useConversations] Failed to sync name to Supabase:', err));
     },
     [updateProjectNameMutation],
   );
@@ -274,8 +274,8 @@ export function useConversations(initialConversationId?: Id<'conversations'>): U
   const deleteConversation = useCallback(
     async (id: Id<'conversations'>) => {
       // Look up conversation to get supabaseProjectId before deleting
-      const convo = conversationsData?.find(c => c._id === id);
-      const project = convo?.projectId ? await null : null; // project info comes from Convex mutation
+      const convo = conversationsData?.find((c) => c._id === id);
+      const _project = convo?.projectId ? await null : null; // project info comes from Convex mutation
 
       // The mutation returns any associated workspace IDs that need cleanup
       const result = await deleteMutation({ id });
@@ -283,12 +283,13 @@ export function useConversations(initialConversationId?: Id<'conversations'>): U
       // Also delete from Supabase if linked
       if (result && typeof result === 'object' && 'supabaseProjectId' in result) {
         const supabaseId = (result as { supabaseProjectId?: string }).supabaseProjectId;
+
         if (supabaseId) {
           fetch('/api/project/delete', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ supabaseProjectId: supabaseId }),
-          }).catch(e => console.error('Failed to delete from Supabase:', e));
+          }).catch((e) => console.error('Failed to delete from Supabase:', e));
         }
       }
 

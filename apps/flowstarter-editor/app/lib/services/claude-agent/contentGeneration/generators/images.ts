@@ -2,8 +2,8 @@
  * Images.md Generator
  */
 
-import type { GeneratedAsset } from '../types';
-import { findAsset } from '../context';
+import type { GeneratedAsset } from '~/lib/services/claude-agent/contentGeneration/types';
+import { findAsset } from '~/lib/services/claude-agent/contentGeneration/context';
 
 export function generateImagesMd(assets?: GeneratedAsset[]): string {
   if (!assets || assets.length === 0) {
@@ -21,14 +21,19 @@ background:
   }
 
   const heroAsset = findAsset(assets, 'hero');
-  const featureAssets = assets.filter(a => a.type === 'feature' || a.type === 'product');
+  const featureAssets = assets.filter((a) => a.type === 'feature' || a.type === 'product');
   const backgroundAsset = findAsset(assets, 'background');
 
-  const featureYaml = featureAssets.length > 0
-    ? featureAssets.map(a => `  - url: "${a.url}"
+  const featureYaml =
+    featureAssets.length > 0
+      ? featureAssets
+          .map(
+            (a) => `  - url: "${a.url}"
     name: "${a.name}"
-    alt: "${(a.prompt || a.name).replace(/"/g, "'")}"`).join('\n')
-    : '  []';
+    alt: "${(a.prompt || a.name).replace(/"/g, "'")}"`,
+          )
+          .join('\n')
+      : '  []';
 
   return `---
 # AI-Generated Images (powered by fal.ai)

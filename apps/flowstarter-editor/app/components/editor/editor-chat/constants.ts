@@ -51,21 +51,21 @@ export const SERVICE_PROMPTS: SuggestedReply[] = [
   // Fitness & Wellness
   { id: 'example-trainer', text: en.quickIdeas['personal-trainer'] },
   { id: 'example-yoga', text: en.quickIdeas['yoga-instructor'] },
-  { id: 'example-nutritionist', text: en.quickIdeas['nutritionist'] },
+  { id: 'example-nutritionist', text: en.quickIdeas.nutritionist },
 
   // Mental Health & Therapy
-  { id: 'example-therapist', text: en.quickIdeas['therapist'] },
-  { id: 'example-counselor', text: en.quickIdeas['counselor'] },
+  { id: 'example-therapist', text: en.quickIdeas.therapist },
+  { id: 'example-counselor', text: en.quickIdeas.counselor },
 
   // Creative
-  { id: 'example-photographer', text: en.quickIdeas['photographer'] },
-  { id: 'example-designer', text: en.quickIdeas['designer'] },
-  { id: 'example-videographer', text: en.quickIdeas['videographer'] },
+  { id: 'example-photographer', text: en.quickIdeas.photographer },
+  { id: 'example-designer', text: en.quickIdeas.designer },
+  { id: 'example-videographer', text: en.quickIdeas.videographer },
 
   // Beauty & Styling
-  { id: 'example-stylist', text: en.quickIdeas['stylist'] },
+  { id: 'example-stylist', text: en.quickIdeas.stylist },
   { id: 'example-makeup', text: en.quickIdeas['makeup-artist'] },
-  { id: 'example-esthetician', text: en.quickIdeas['esthetician'] },
+  { id: 'example-esthetician', text: en.quickIdeas.esthetician },
 
   // Education
   { id: 'example-tutor', text: en.quickIdeas['private-tutor'] },
@@ -240,4 +240,3 @@ export function getDefaultReadySuggestions(): SuggestedReply[] {
     { id: 'testimonials', text: 'Add client testimonials' },
   ];
 }
-

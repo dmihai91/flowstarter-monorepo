@@ -1,6 +1,6 @@
 /**
  * Supabase Client
- * 
+ *
  * Connects to the shared Supabase database for project persistence.
  */
 
@@ -13,8 +13,6 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.warn('[Supabase] Missing environment variables. Project sync disabled.');
 }
 
-export const supabase = supabaseUrl && supabaseAnonKey 
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null;
+export const supabase = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
 export const isSupabaseConfigured = !!supabase;

@@ -11,9 +11,9 @@ describe('LLMManager', () => {
     manager = LLMManager.getInstance();
 
     // Silence console for cleaner test output
-    vi.spyOn(console, 'log').mockImplementation(() => { });
-    vi.spyOn(console, 'error').mockImplementation(() => { });
-    vi.spyOn(console, 'warn').mockImplementation(() => { });
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -184,4 +184,3 @@ describe('LLMManager', () => {
     });
   });
 });
-

@@ -83,7 +83,10 @@ export function TeamProjectActionMenu({
         )}
         <DropdownMenuItem
           onClick={() =>
-            window.open(`/team/dashboard/domains?project=${project.id}`, '_self')
+            window.open(
+              `/team/dashboard/domains?project=${project.id}`,
+              '_self'
+            )
           }
         >
           <Globe className="h-4 w-4" />
@@ -99,7 +102,10 @@ export function TeamProjectActionMenu({
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() =>
-            window.open(`/team/dashboard/analytics?project=${project.id}`, '_self')
+            window.open(
+              `/team/dashboard/analytics?project=${project.id}`,
+              '_self'
+            )
           }
         >
           <BarChart3 className="h-4 w-4" />

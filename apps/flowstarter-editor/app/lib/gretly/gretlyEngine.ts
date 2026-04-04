@@ -13,7 +13,16 @@ import type { GretlyPhase, GretlyConfig, GretlyInput, GretlyResult, ResolvedConf
 import { registerAgents, callPlannerAgent, callPlannerAgentReview } from './agent-communication';
 import { fetchData, executeGeneration, executeBuildWithFixing, handleEscalation } from './gretly-phases';
 
-export type { GretlyPhase, GretlyConfig, GretlyInput, GretlyResult, BusinessInfo, TemplateInfo, DesignInfo, GretlyDataFetcher } from './types';
+export type {
+  GretlyPhase,
+  GretlyConfig,
+  GretlyInput,
+  GretlyResult,
+  BusinessInfo,
+  TemplateInfo,
+  DesignInfo,
+  GretlyDataFetcher,
+} from './types';
 
 const logger = createScopedLogger('Gretly');
 
@@ -37,7 +46,9 @@ export class Gretly {
 
     // Register agents with FlowOps
     registerAgents(this.config.approvalThreshold);
-    logger.info(`Gretly config: maxFixAttempts=${this.config.maxFixAttempts}, maxRefineIterations=${this.config.maxRefineIterations}`);
+    logger.info(
+      `Gretly config: maxFixAttempts=${this.config.maxFixAttempts}, maxRefineIterations=${this.config.maxRefineIterations}`,
+    );
   }
 
   /**
@@ -110,22 +121,42 @@ export class Gretly {
 
       while (refineIterations <= this.config.maxRefineIterations) {
         files = await executeGeneration(
-          this.config, resolvedInput, plan, refineIterations,
-          templateFiles, files, (p) => this.setPhase(p), review?.improvements,
+          this.config,
+          resolvedInput,
+          plan,
+          refineIterations,
+          templateFiles,
+          files,
+          (p) => this.setPhase(p),
+          review?.improvements,
         );
 
         const buildResult = await executeBuildWithFixing(
-          this.config, input, files, buildFn, errorHistory, fixAttempts, (p) => this.setPhase(p),
+          this.config,
+          input,
+          files,
+          buildFn,
+          errorHistory,
+          fixAttempts,
+          (p) => this.setPhase(p),
         );
 
         fixAttempts = buildResult.fixAttempts;
 
         if (buildResult.needsEscalation) {
           const escalationResult = await handleEscalation(
-            this.config, resolvedInput, errorHistory, files,
-            fixAttempts, refineIterations, this.phases, (p) => this.setPhase(p),
-            buildResult.lastBuildError, buildResult.buildResult,
+            this.config,
+            resolvedInput,
+            errorHistory,
+            files,
+            fixAttempts,
+            refineIterations,
+            this.phases,
+            (p) => this.setPhase(p),
+            buildResult.lastBuildError,
+            buildResult.buildResult,
           );
+
           if (escalationResult) {
             return escalationResult;
           }
@@ -139,7 +170,10 @@ export class Gretly {
             phases: this.phases,
             fixAttempts,
             refineIterations,
-            error: buildResult.lastBuildError?.message || buildResult.buildResult?.error || t(EDITOR_LABEL_KEYS.ORCH_BUILD_FAILED),
+            error:
+              buildResult.lastBuildError?.message ||
+              buildResult.buildResult?.error ||
+              t(EDITOR_LABEL_KEYS.ORCH_BUILD_FAILED),
           };
         }
 

@@ -48,7 +48,7 @@ type LegacyUsageMessage = {
 
 const MODEL = 'claude-sonnet-4-6';
 const MAX_TURNS = 5;
-const MAX_BUDGET_USD = 0.50;
+const MAX_BUDGET_USD = 0.5;
 
 /** Write files from Convex into a temp directory for the agent to work on. */
 async function setupWorkDir(files: GeneratedFile[]): Promise<string> {
@@ -70,12 +70,15 @@ async function collectFiles(dir: string, base = ''): Promise<GeneratedFile[]> {
   const files: GeneratedFile[] = [];
 
   for (const entry of entries) {
-    if (entry.name.startsWith('.') || entry.name === 'node_modules' || entry.name === 'dist') continue;
+    if (entry.name.startsWith('.') || entry.name === 'node_modules' || entry.name === 'dist') {
+      continue;
+    }
+
     const rel = base ? `${base}/${entry.name}` : entry.name;
     const full = join(dir, entry.name);
 
     if (entry.isDirectory()) {
-      files.push(...await collectFiles(full, rel));
+      files.push(...(await collectFiles(full, rel)));
     } else {
       files.push({ path: rel, content: await readFile(full, 'utf-8').catch(() => '') });
     }
@@ -138,9 +141,11 @@ Keep all content in the original language. Preserve existing styles and structur
     // 3. Stream messages and track progress
     for await (const rawMessage of result) {
       const message = rawMessage as SDKMessage | LegacyToolUseMessage | LegacyToolResultMessage | LegacyUsageMessage;
+
       switch (message.type) {
         case 'assistant':
           turns++;
+
           // Extract text content
           for (const block of message.message.content) {
             if (block.type === 'text') {
@@ -158,6 +163,7 @@ Keep all content in the original language. Preserve existing styles and structur
           if (message.tool_name === 'Edit' || message.tool_name === 'Write') {
             emit({ type: 'file_write', path: String((message as any).input?.file_path || ''), lines: 0 });
           }
+
           break;
 
         case 'result':
@@ -168,21 +174,26 @@ Keep all content in the original language. Preserve existing styles and structur
           } else if (message.subtype === 'error_max_budget_usd') {
             emit({ type: 'error', message: 'Reached budget limit' });
           }
+
           // Extract cost info
           if ('cost_usd' in message) {
             totalCostUsd = (message as any).cost_usd || 0;
           }
+
           break;
 
         case 'usage':
           // Track token usage for cost
+          // eslint-disable-next-line no-case-declarations
           const usage = message as any;
+
           if (usage.input_tokens || usage.output_tokens) {
             trackLLMUsage(supabaseProjectId, MODEL, 'site_modification', {
               promptTokens: usage.input_tokens || 0,
               completionTokens: usage.output_tokens || 0,
             });
           }
+
           break;
       }
     }
@@ -210,6 +221,7 @@ Keep all content in the original language. Preserve existing styles and structur
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Edit agent failed';
     emit({ type: 'error', message });
+
     return { success: false, files: [], error: message };
   } finally {
     await rm(workDir, { recursive: true, force: true }).catch(() => {});

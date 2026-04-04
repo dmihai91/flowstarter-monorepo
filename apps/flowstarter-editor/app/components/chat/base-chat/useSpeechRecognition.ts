@@ -20,9 +20,7 @@ interface UseSpeechRecognitionReturn {
   setIsListening: (listening: boolean) => void;
 }
 
-export function useSpeechRecognition({
-  handleInputChange,
-}: UseSpeechRecognitionOptions): UseSpeechRecognitionReturn {
+export function useSpeechRecognition({ handleInputChange }: UseSpeechRecognitionOptions): UseSpeechRecognitionReturn {
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
   const [transcript, setTranscript] = useState('');
@@ -83,4 +81,3 @@ export function useSpeechRecognition({
     setIsListening,
   };
 }
-

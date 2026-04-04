@@ -14,7 +14,7 @@
     "test:e2e": "playwright test",
     "test": "vitest --root src --run",
     "test:watch": "vitest --root src",
-    "lint": "pnpm eslint --fix src",
+    "lint": "ESLINT_USE_FLAT_CONFIG=false pnpm eslint --fix src",
     "lint:prettier": "prettier --write src",
     "tsc": "tsc",
     "postbuild": "next-sitemap --config next-sitemap.config.cjs",
@@ -89,6 +89,7 @@
     "@supabase/auth-helpers-react": "^0.3.1",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.49.4",
+    "@t3-oss/env-nextjs": "^0.13.11",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/postcss": "^4.1.13",
     "@tailwindcss/typography": "^0.5.16",
@@ -187,13 +188,6 @@
       "@semantic-release/git",
       "@semantic-release/github"
     ]
-  },
-  "packageManager": "pnpm@9.0.6+sha512.f6d863130973207cb7a336d6b439a242a26ac8068077df530d6a86069419853dc1ffe64029ec594a9c505a3a410d19643c870aba6776330f5cfddcf10a9c1617",
-  "pnpm": {
-    "overrides": {
-      "@types/react": "19.1.0",
-      "@types/react-dom": "19.1.2"
-    }
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",

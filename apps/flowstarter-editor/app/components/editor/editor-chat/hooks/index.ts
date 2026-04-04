@@ -45,11 +45,7 @@ export {
   type UseStateRestorationReturn,
 } from './useStateRestoration';
 export { useWelcomeInit, type UseWelcomeInitProps } from './useWelcomeInit';
-export {
-  useSendHandler,
-  type UseSendHandlerProps,
-  type UseSendHandlerReturn,
-} from './useSendHandler';
+export { useSendHandler, type UseSendHandlerProps, type UseSendHandlerReturn } from './useSendHandler';
 
 // Setup hooks (agent, effects)
 export { useAgentSetup, type UseAgentSetupProps, type UseAgentSetupReturn } from './useAgentSetup';

@@ -38,12 +38,19 @@ export function injectAnalytics(
   };
 
   const script = scriptMap[config.provider]?.(config.id);
-  if (!script) return files;
+
+  if (!script) {
+    return files;
+  }
 
   return files.map((file) => {
-    if ((file.path.includes('Layout.astro') || file.path.includes('layout.astro')) && !file.content.includes(config.id)) {
+    if (
+      (file.path.includes('Layout.astro') || file.path.includes('layout.astro')) &&
+      !file.content.includes(config.id)
+    ) {
       return { ...file, content: file.content.replace('</head>', `${script}\n  </head>`) };
     }
+
     return file;
   });
 }

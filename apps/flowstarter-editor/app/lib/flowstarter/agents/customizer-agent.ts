@@ -512,5 +512,3 @@ export function getCustomizerAgent(): CustomizerAgent {
 export function resetCustomizerAgent(): void {
   customizerAgentInstance = null;
 }
-
-

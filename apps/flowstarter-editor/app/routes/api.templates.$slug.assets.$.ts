@@ -79,4 +79,3 @@ export async function loader({ params, request, context }: LoaderFunctionArgs) {
     return new Response('Failed to fetch asset', { status: 502 });
   }
 }
-

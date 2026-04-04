@@ -92,8 +92,10 @@ export default function ExampleSitesPage() {
           <Card>
             <CardContent className="py-8 text-center">
               <p className="text-muted-foreground">
-                {error instanceof Error ? error.message : 'Failed to load example sites'}.{' '}
-                {t('examples.pleaseTryAgain')}
+                {error instanceof Error
+                  ? error.message
+                  : 'Failed to load example sites'}
+                . {t('examples.pleaseTryAgain')}
               </p>
             </CardContent>
           </Card>

@@ -31,7 +31,14 @@ export function useTemplateClone(): UseTemplateCloneResult {
   const createSnapshot = useMutation(api.snapshots.create);
 
   const cloneTemplate = useCallback(
-    async ({ template, projectName, palette, fonts, existingProjectId, existingUrlId }: CloneOptions): Promise<CloneResult> => {
+    async ({
+      template,
+      projectName,
+      palette,
+      fonts,
+      existingProjectId,
+      existingUrlId,
+    }: CloneOptions): Promise<CloneResult> => {
       console.log(`[cloneTemplate] Starting clone for template "${template.id}"`);
 
       const startTime = Date.now();
@@ -183,6 +190,7 @@ async function clientSideBatchedUpload({
   console.log(`[cloneTemplate] Fetched ${files.length} files, preparing batched upload...`);
 
   const urlId = existingUrlId || (await generateUrlId({ baseName: projectName }));
+
   if (!existingUrlId) {
     console.log(`[cloneTemplate] Generated urlId: ${urlId}`);
   }

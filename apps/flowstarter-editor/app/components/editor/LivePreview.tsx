@@ -33,11 +33,7 @@ export function LivePreview({
   return (
     <div className="flex flex-col h-full bg-white dark:bg-zinc-950">
       {/* Browser chrome */}
-      <BrowserChrome
-        url={domainName || previewUrl || undefined}
-        isLive={isLive}
-        isLoading={isLoading}
-      />
+      <BrowserChrome url={domainName || previewUrl || undefined} isLive={isLive} isLoading={isLoading} />
 
       {/* Content */}
       <div className="flex-1 relative">

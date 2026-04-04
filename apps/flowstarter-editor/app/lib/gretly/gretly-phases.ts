@@ -7,14 +7,11 @@
 
 import { createScopedLogger } from '~/utils/logger';
 import type { BuildErrorDTO } from '~/lib/flowops/schema';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { PlanResultDTO, ReviewResultDTO } from '~/lib/flowstarter/agents/planner-agent';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
 import type { GretlyPhase, GretlyInput, ResolvedConfig, ErrorHistoryEntry } from './types';
-import {
-  callPlannerAgentEscalate,
-  callCodeGeneratorAgent,
-  callFixerAgent,
-} from './agent-communication';
+import { callPlannerAgentEscalate, callCodeGeneratorAgent, callFixerAgent } from './agent-communication';
 import { findFilePath } from './utils';
 
 const logger = createScopedLogger('Gretly');
@@ -34,6 +31,7 @@ export async function fetchData(
 
   if (config.dataFetcher?.fetchBusinessInfo) {
     const freshBusinessInfo = await config.dataFetcher.fetchBusinessInfo(input.projectId);
+
     if (freshBusinessInfo) {
       resolvedInput = { ...resolvedInput, businessInfo: freshBusinessInfo };
       logger.info('Fetched fresh business info');
@@ -42,6 +40,7 @@ export async function fetchData(
 
   if (config.dataFetcher?.fetchTemplate) {
     const templateData = await config.dataFetcher.fetchTemplate(input.template.slug);
+
     if (templateData) {
       resolvedInput = { ...resolvedInput, template: templateData.info };
       templateFiles = templateData.files;
@@ -89,6 +88,7 @@ export async function executeGeneration(
   }
 
   logger.info(`Generated ${Object.keys(generateResponse.files).length} files`);
+
   return generateResponse.files;
 }
 
@@ -99,14 +99,23 @@ export async function executeBuildWithFixing(
   config: ResolvedConfig,
   input: GretlyInput,
   files: Record<string, string>,
-  buildFn: (projectId: string, files: Record<string, string>) => Promise<{
-    success: boolean; error?: string; buildError?: BuildErrorDTO; previewUrl?: string; sandboxId?: string;
+  buildFn: (
+    projectId: string,
+    files: Record<string, string>,
+  ) => Promise<{
+    success: boolean;
+    error?: string;
+    buildError?: BuildErrorDTO;
+    previewUrl?: string;
+    sandboxId?: string;
   }>,
   errorHistory: ErrorHistoryEntry[],
   initialFixAttempts: number,
   setPhase: (phase: GretlyPhase) => void,
 ): Promise<{
-  success: boolean; fixAttempts: number; needsEscalation: boolean;
+  success: boolean;
+  fixAttempts: number;
+  needsEscalation: boolean;
   lastBuildError?: BuildErrorDTO;
   buildResult: Awaited<ReturnType<typeof buildFn>> | null;
 }> {
@@ -148,6 +157,7 @@ export async function executeBuildWithFixing(
     }
 
     const foundPath = findFilePath(buildResult.buildError.file, files);
+
     if (foundPath) {
       files[foundPath] = fixResult.fixedContent;
       logger.info(`Fixed ${foundPath}: ${fixResult.summary}`);
@@ -189,25 +199,31 @@ export async function handleEscalation(
   if (escalateResponse.type === 'escalate') {
     logger.warn(`Escalation: ${escalateResponse.result.escalationType}`);
     return {
-      success: false, files, phases, fixAttempts, refineIterations,
+      success: false,
+      files,
+      phases,
+      fixAttempts,
+      refineIterations,
       error: escalateResponse.result.explanation,
       escalation: escalateResponse.result,
     };
   }
 
   setPhase('failed');
+
   return {
-    success: false, files, phases, fixAttempts, refineIterations,
+    success: false,
+    files,
+    phases,
+    fixAttempts,
+    refineIterations,
     error: lastBuildError?.message || buildResult?.error || t(EDITOR_LABEL_KEYS.ORCH_BUILD_FAILED_MAX),
   };
 }
 
-function trackFixError(
-  errorHistory: ErrorHistoryEntry[],
-  buildError: BuildErrorDTO,
-  fixSummary?: string,
-): void {
+function trackFixError(errorHistory: ErrorHistoryEntry[], buildError: BuildErrorDTO, fixSummary?: string): void {
   const existing = errorHistory.find((e) => e.file === buildError.file);
+
   if (existing) {
     existing.fixAttempts++;
     existing.lastFixSummary = fixSummary;

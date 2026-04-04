@@ -364,4 +364,3 @@ export function getReviewerAgent(approvalThreshold?: number): ReviewerAgent {
 
   return reviewerAgentInstance;
 }
-

@@ -1,7 +1,7 @@
 {
   "name": "flowstarter-showcase",
   "projectType": "application",
-  "tags": ["app:showcase", "type:frontend"],
+  "tags": ["app:library", "type:frontend"],
   "targets": {
     "build": {
       "executor": "nx:run-commands",

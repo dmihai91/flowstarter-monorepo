@@ -1,6 +1,7 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 import path from 'path';
+import { readFileSync } from 'fs';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -9,17 +10,19 @@ export default defineConfig({
     environment: 'jsdom',
     exclude: ['e2e/**', 'node_modules/**', 'dist/**', '.next/**', 'templates/**'],
     setupFiles: ['./test/setup.ts'],
+    typecheck: {
+      tsconfig: './tsconfig.test.json',
+    },
     pool: 'forks',
     poolOptions: {
       forks: {
-        singleFork: true, // Use single worker to prevent OOM
-        isolate: false, // Disable isolation for faster cleanup
-        execArgv: ['--max-old-space-size=8192'],
+        singleFork: false,
+        isolate: false,
+        execArgv: ['--max-old-space-size=4096'],
       },
     },
-    // Run tests within files concurrently, but files sequentially to prevent OOM
     maxConcurrency: 20,
-    fileParallelism: false,
+    fileParallelism: true,
     testTimeout: 10000,
     hookTimeout: 10000,
     coverage: {
@@ -49,5 +52,8 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
+    // Dedupe React to prevent "Invalid hook call" from multiple React copies
+    // (happens when @flowstarter/flow-design-system pulls its own React instance)
+    dedupe: ['react', 'react-dom', 'react/jsx-runtime'],
   },
 });

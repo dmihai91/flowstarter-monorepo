@@ -60,7 +60,7 @@ export const IconButton = memo(
           )}
           title={title}
           disabled={disabled}
-          onClick={(event) => {
+          onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
             if (disabled) {
               return;
             }

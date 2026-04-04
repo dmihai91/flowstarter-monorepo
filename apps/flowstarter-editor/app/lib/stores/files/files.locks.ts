@@ -31,11 +31,7 @@ export interface FilesLockContext {
 /**
  * Apply lock status to all contents of a folder
  */
-export function applyLockToFolderContents(
-  currentFiles: FileMap,
-  updates: FileMap,
-  folderPath: string,
-): void {
+export function applyLockToFolderContents(currentFiles: FileMap, updates: FileMap, folderPath: string): void {
   const folderPrefix = folderPath.endsWith('/') ? folderPath : `${folderPath}/`;
 
   // Find all files that are within this folder
@@ -337,11 +333,7 @@ export function isFileLocked(ctx: FilesLockContext, filePath: string, chatId?: s
 /**
  * Check if a folder is locked
  */
-export function isFolderLocked(
-  ctx: FilesLockContext,
-  folderPath: string,
-  chatId?: string,
-): FolderLockResult {
+export function isFolderLocked(ctx: FilesLockContext, folderPath: string, chatId?: string): FolderLockResult {
   const folder = ctx.getFileOrFolder(folderPath);
   const currentChatId = chatId || getCurrentChatId();
 

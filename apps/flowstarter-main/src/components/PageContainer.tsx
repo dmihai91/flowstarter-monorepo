@@ -44,7 +44,10 @@ export function PageContainer({
         )}
       >
         {/* Flow background with animated lines */}
-        <FlowBackground variant={flowVariant} style={{ position: "fixed", inset: 0, zIndex: 0 }} />
+        <FlowBackground
+          variant={flowVariant}
+          style={{ position: 'fixed', inset: 0, zIndex: 0 }}
+        />
         <MaxWidthContainer
           className={cn('p-4 sm:p-6 lg:p-8 pt-6', contentClassName)}
         >

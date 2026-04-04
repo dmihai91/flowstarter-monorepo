@@ -9,6 +9,7 @@ import { persistPreviewUrl, clearPersistedPreviewUrl } from './convexClient';
 import { ensureSandboxRunning } from './sandboxService';
 import { uploadFiles } from './fileService';
 import { checkBunAvailable, installBun, bunInstall } from './bunService';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { PreviewResult as PreviewResultType } from './types';
 import { runNpmFallback } from './npmFallbackService';
 import { getOrCreateSandbox, verifySandbox } from './sandboxHelpers';
@@ -40,12 +41,14 @@ export async function startPreview(
   } catch (e) {
     const errorMsg = e instanceof Error ? e.message : 'Unknown error';
     log.error(' Failed to get Daytona client:', errorMsg);
+
     return { success: false, error: errorMsg };
   }
 
   try {
     // OPTIMIZATION 0: Check for existing running sandbox
     const reuseResult = await tryReuseExistingSandbox(projectId, client, progress);
+
     if (reuseResult) {
       return reuseResult;
     }
@@ -68,9 +71,11 @@ export async function startPreview(
     } else {
       progress('Provisioning cloud sandbox...');
       sandbox = await getOrCreateSandbox(client, projectId);
+
       if (!sandbox) {
         return { success: false, error: 'Failed to get or create sandbox' };
       }
+
       currentSandboxId = sandbox.id;
       workDir = (await sandbox.getWorkDir()) || '/home/daytona';
     }
@@ -85,6 +90,7 @@ export async function startPreview(
     } else {
       progress(`Uploading ${Object.keys(files).length} files to sandbox...`);
       log.debug(' Parallel: uploading files + checking bun...');
+
       const [, bunReady] = await Promise.all([uploadFiles(sandbox, files), ensureBunReady(sandbox, workDir)]);
       hasBun = bunReady;
     }
@@ -93,6 +99,7 @@ export async function startPreview(
 
     // Verify sandbox is working
     const sandboxReady = await verifySandbox(sandbox, workDir);
+
     if (!sandboxReady) {
       return { success: false, error: 'Sandbox not ready' };
     }
@@ -100,8 +107,10 @@ export async function startPreview(
     // OPTIMIZATION 3: Skip install if package.json unchanged
     if (!hasBun) {
       hasBun = await checkBunAvailable(sandbox, workDir);
+
       if (!hasBun) {
         hasBun = await installBun(sandbox, workDir);
+
         if (!hasBun) {
           return runNpmFallback(sandbox, workDir, projectId, (id, info) => setCachedSandbox(id, info));
         }
@@ -114,13 +123,16 @@ export async function startPreview(
     if (shouldInstall) {
       progress('Installing dependencies...');
       log.debug(' Installing dependencies (package.json changed or first run)...');
+
       const installSuccess = await bunInstall(sandbox, workDir);
+
       if (!installSuccess) {
         return {
           success: false,
           error: 'Failed to install dependencies with bun. Please check your package.json.',
         };
       }
+
       recordInstall(projectId, packageJson);
     } else {
       log.debug(' Skipping install - package.json unchanged');
@@ -147,7 +159,6 @@ export async function startPreview(
     return { success: false, error: e instanceof Error ? e.message : 'Unknown error' };
   }
 }
-
 
 /**
  * Refresh preview (re-sync files) - optimized
@@ -214,6 +225,6 @@ export function ensurePoolInitialized(env?: DaytonaEnv): Promise<void> {
   if (!poolInitPromise) {
     poolInitPromise = initializePool(env);
   }
+
   return poolInitPromise;
 }
-

@@ -1,6 +1,6 @@
 /**
  * React Query Provider
- * 
+ *
  * Provides QueryClient for data fetching with caching
  */
 
@@ -24,10 +24,13 @@ export function QueryProvider({ children }: QueryProviderProps) {
           queries: {
             // Default stale time: 5 minutes
             staleTime: 5 * 60 * 1000,
+
             // Default cache time: 10 minutes
             gcTime: 10 * 60 * 1000,
+
             // Retry failed requests twice
             retry: 2,
+
             // Don't refetch on window focus by default (can enable per-query)
             refetchOnWindowFocus: false,
           },

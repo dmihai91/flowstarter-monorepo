@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, vi } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { listTemplates, ListTemplatesSchema } from './list.js';
 import { TemplateFetcher } from '../utils/template-fetcher.js';
 import * as path from 'path';

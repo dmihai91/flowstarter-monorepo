@@ -4,4 +4,3 @@ export { MessageTimestamp } from './MessageTimestamp';
 export { MessageContent } from './MessageContent';
 export { StreamingIndicator } from './StreamingIndicator';
 export { FileUpdateCard } from './FileUpdateCard';
-

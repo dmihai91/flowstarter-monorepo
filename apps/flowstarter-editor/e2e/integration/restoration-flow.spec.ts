@@ -10,7 +10,7 @@
 
 import { test, expect, type Page } from '@playwright/test';
 
-// ÔöÇÔöÇÔöÇ Test Configuration ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Test Configuration ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173';
 
@@ -18,7 +18,7 @@ const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173';
 const TEST_PROJECTS = {
   fullBuild: {
     urlId: 'aluat-de-cas-8gacf2',
-    name: 'Aluat de Cas-â',
+    name: 'Aluat de Cas-ï¿½',
     hasWorkspace: true,
     hasTemplate: true,
   },
@@ -36,7 +36,7 @@ const TEST_PROJECTS = {
   },
 };
 
-// ÔöÇÔöÇÔöÇ Helper Functions ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Helper Functions ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 async function waitForChatReady(page: Page, timeout = 30000) {
   // Wait for the chat panel to be interactive
@@ -55,6 +55,7 @@ async function waitForPreviewReady(page: Page, timeout = 60000) {
 async function getProjectStep(page: Page): Promise<string | null> {
   // Check for step indicator or infer from UI state
   const stepIndicator = page.locator('[data-testid="current-step"]');
+
   if (await stepIndicator.isVisible()) {
     return stepIndicator.textContent();
   }
@@ -63,12 +64,15 @@ async function getProjectStep(page: Page): Promise<string | null> {
   if (await page.locator('[data-testid="template-gallery"]').isVisible()) {
     return 'template';
   }
+
   if (await page.locator('[data-testid="personalization-panel"]').isVisible()) {
     return 'personalization';
   }
+
   if (await page.locator('[data-testid="integrations-panel"]').isVisible()) {
     return 'integrations';
   }
+
   if (await page.locator('text=Your site is ready').isVisible()) {
     return 'ready';
   }
@@ -76,7 +80,7 @@ async function getProjectStep(page: Page): Promise<string | null> {
   return null;
 }
 
-// ÔöÇÔöÇÔöÇ Tests ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Tests ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 test.describe('Project Restoration Flow', () => {
   test.describe('Full Project Restoration', () => {
@@ -133,7 +137,7 @@ test.describe('Project Restoration Flow', () => {
 
       // Should show modification suggestions
       await expect(
-        page.locator('text=Make some changes, text=Try different colors, text=Add more sections').first()
+        page.locator('text=Make some changes, text=Try different colors, text=Add more sections').first(),
       ).toBeVisible({ timeout: 10000 });
     });
   });
@@ -146,13 +150,17 @@ test.describe('Project Restoration Flow', () => {
       await waitForChatReady(page);
 
       // Should show loading/creating state or prompt
-      const creatingIndicator = page.locator(
-        'text=Creating workspace, text=Provisioning, text=Building your site'
-      );
+      const creatingIndicator = page.locator('text=Creating workspace, text=Provisioning, text=Building your site');
 
       // Either shows creating state or prompts to continue
-      const isCreating = await creatingIndicator.first().isVisible({ timeout: 5000 }).catch(() => false);
-      const hasPrompt = await page.locator('text=Continue building').isVisible({ timeout: 5000 }).catch(() => false);
+      const isCreating = await creatingIndicator
+        .first()
+        .isVisible({ timeout: 5000 })
+        .catch(() => false);
+      const hasPrompt = await page
+        .locator('text=Continue building')
+        .isVisible({ timeout: 5000 })
+        .catch(() => false);
 
       expect(isCreating || hasPrompt).toBeTruthy();
     });
@@ -163,16 +171,21 @@ test.describe('Project Restoration Flow', () => {
       await page.goto(`${BASE_URL}/p/${project.urlId}`);
       await waitForChatReady(page);
 
-      // Business info should be restored even without workspace
-      // Check if business summary or relevant info is shown
+      /*
+       * Business info should be restored even without workspace
+       * Check if business summary or relevant info is shown
+       */
       const businessInfo = page.locator('text=fitness trainer, text=strength training, text=Austin');
-      const hasBusinessInfo = await businessInfo.first().isVisible({ timeout: 10000 }).catch(() => false);
+      const hasBusinessInfo = await businessInfo
+        .first()
+        .isVisible({ timeout: 10000 })
+        .catch(() => false);
 
       // If not visible in summary, it should be in the chat history
       if (!hasBusinessInfo) {
         const chatHistory = await page.locator('.chat-message, [data-testid="chat-message"]').allTextContents();
         const mentionsFitness = chatHistory.some(
-          (text) => text.toLowerCase().includes('fitness') || text.toLowerCase().includes('trainer')
+          (text) => text.toLowerCase().includes('fitness') || text.toLowerCase().includes('trainer'),
         );
         expect(mentionsFitness).toBeTruthy();
       }
@@ -184,8 +197,10 @@ test.describe('Project Restoration Flow', () => {
       await page.goto(`${BASE_URL}/p/${project.urlId}`);
       await waitForChatReady(page);
 
-      // Template should be preselected (fitness-coach)
-      // This might be shown in UI or stored in state
+      /*
+       * Template should be preselected (fitness-coach)
+       * This might be shown in UI or stored in state
+       */
       const templateIndicator = page.locator('text=Fitness Coach');
       const isTemplateShown = await templateIndicator.isVisible({ timeout: 5000 }).catch(() => false);
 
@@ -206,8 +221,14 @@ test.describe('Project Restoration Flow', () => {
 
       // Workspace should be available
       const hasPreviewOrEditor =
-        (await page.locator('iframe[src*="proxy.daytona.works"]').isVisible({ timeout: 5000 }).catch(() => false)) ||
-        (await page.locator('[data-testid="code-editor"]').isVisible({ timeout: 5000 }).catch(() => false));
+        (await page
+          .locator('iframe[src*="proxy.daytona.works"]')
+          .isVisible({ timeout: 5000 })
+          .catch(() => false)) ||
+        (await page
+          .locator('[data-testid="code-editor"]')
+          .isVisible({ timeout: 5000 })
+          .catch(() => false));
 
       expect(hasPreviewOrEditor).toBeTruthy();
     });
@@ -227,9 +248,9 @@ test.describe('Project Restoration Flow', () => {
       await chatInput.press('Enter');
 
       // Should show processing or response
-      await expect(
-        page.locator('text=Applying, text=Processing, text=contact section').first()
-      ).toBeVisible({ timeout: 15000 });
+      await expect(page.locator('text=Applying, text=Processing, text=contact section').first()).toBeVisible({
+        timeout: 15000,
+      });
     });
   });
 
@@ -250,8 +271,10 @@ test.describe('Project Restoration Flow', () => {
     });
 
     test('handles workspace in error state', async ({ page }) => {
-      // This test would need a project with workspaceStatus: 'error'
-      // For now, we test that the app doesn't crash on edge cases
+      /*
+       * This test would need a project with workspaceStatus: 'error'
+       * For now, we test that the app doesn't crash on edge cases
+       */
       const project = TEST_PROJECTS.fullBuild;
 
       await page.goto(`${BASE_URL}/p/${project.urlId}`);
@@ -317,13 +340,12 @@ test.describe('Workspace Restoration', () => {
 
     // Switch to editor view
     const editorTab = page.locator('button:has-text("Editor"), [data-testid="editor-tab"]');
+
     if (await editorTab.isVisible()) {
       await editorTab.click();
 
       // File tree should show project files
-      await expect(
-        page.locator('[data-testid="file-tree"], .file-tree').first()
-      ).toBeVisible({ timeout: 10000 });
+      await expect(page.locator('[data-testid="file-tree"], .file-tree').first()).toBeVisible({ timeout: 10000 });
 
       // Common Astro project files should be present
       const fileTree = page.locator('[data-testid="file-tree"], .file-tree');
@@ -332,7 +354,7 @@ test.describe('Workspace Restoration', () => {
       expect(
         fileTreeText?.includes('astro.config') ||
           fileTreeText?.includes('src') ||
-          fileTreeText?.includes('package.json')
+          fileTreeText?.includes('package.json'),
       ).toBeTruthy();
     }
   });
@@ -355,4 +377,3 @@ test.describe('Workspace Restoration', () => {
     expect(bodyText?.length).toBeGreaterThan(50); // Has real content
   });
 });
-

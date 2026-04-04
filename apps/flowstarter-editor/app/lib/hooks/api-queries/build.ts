@@ -72,11 +72,11 @@ export interface BuildPipelineParams {
   // Clone step
   urlId: string;
   projectId: string;
-  
+
   // Files
   templateFiles?: Record<string, string>;
   essentialFiles?: Record<string, string>;
-  
+
   // Callbacks
   signal?: AbortSignal;
   onStep?: (step: string) => void;
@@ -118,12 +118,13 @@ async function generateSiteWithStream(params: GenerateSiteStreamParams): Promise
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({})) as { error?: string };
+    const errorData = (await response.json().catch(() => ({}))) as { error?: string };
     throw new Error(errorData.error || `Generation failed: ${response.status}`);
   }
 
   // Process SSE stream
   const reader = response.body?.getReader();
+
   if (!reader) {
     throw new Error('Response body is missing');
   }
@@ -135,9 +136,12 @@ async function generateSiteWithStream(params: GenerateSiteStreamParams): Promise
   while (true) {
     const { done, value } = await reader.read();
 
-    if (done) break;
+    if (done) {
+      break;
+    }
 
     buffer += decoder.decode(value, { stream: true });
+
     const lines = buffer.split('\n\n');
     buffer = lines.pop() || '';
 
@@ -146,13 +150,19 @@ async function generateSiteWithStream(params: GenerateSiteStreamParams): Promise
         // Standard progress/complete events: "data: {...}"
         if (line.startsWith('data: ')) {
           const data = JSON.parse(line.slice(6));
-          if (data.type === 'progress' && onProgress) onProgress(data.message);
-          else if (data.type === 'error') throw new Error(data.error);
-          else if (data.type === 'complete') result = data.result;
+
+          if (data.type === 'progress' && onProgress) {
+            onProgress(data.message);
+          } else if (data.type === 'error') {
+            throw new Error(data.error);
+          } else if (data.type === 'complete') {
+            result = data.result;
+          }
         }
         // Agent-event SSE: "event: agent-event\ndata: {...}"
         else if (line.includes('event: agent-event')) {
-          const dataLine = line.split('\n').find(l => l.startsWith('data:'));
+          const dataLine = line.split('\n').find((l) => l.startsWith('data:'));
+
           if (dataLine && onAgentEvent) {
             const event = JSON.parse(dataLine.slice(5).trim());
             onAgentEvent(event);
@@ -216,10 +226,10 @@ async function executeBuildPipeline(params: BuildPipelineParams): Promise<BuildP
   onStep?.('Starting preview server...');
   onProgress?.(80);
 
-  const previewResult = await startDaytonaPreview({ 
-    projectId, 
-    files: allFiles, 
-    signal 
+  const previewResult = await startDaytonaPreview({
+    projectId,
+    files: allFiles,
+    signal,
   });
 
   onProgress?.(100);

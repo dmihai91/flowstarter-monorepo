@@ -5,8 +5,7 @@
  * Handles confirmations, explicit names, and refinement requests.
  */
 
-// eslint-disable-next-line no-restricted-imports
-import { generateCompletion } from '../llm';
+import { generateCompletion } from '~/lib/services/llm';
 import { createScopedLogger } from '~/utils/logger';
 import { API_MESSAGE_KEYS, getApiMessage } from '~/lib/i18n/api-messages';
 import { buildExtractionPrompt, containsBannedWord, getBannedWord, getRandomFallbackName } from './prompts';
@@ -75,6 +74,7 @@ export async function extractProjectName(
     if (parsed.type === 'name' && parsed.name) {
       const extractedName = parsed.name.trim();
       logger.info(`Extracted name: "${extractedName}"`);
+
       return { projectName: extractedName };
     }
 
@@ -124,10 +124,7 @@ function handleQuestionResponse(
 /**
  * Handle fallback when parsed name doesn't have a clear type
  */
-function handleFallbackName(
-  name: string,
-  context?: ConversationContext,
-): NameExtractionResult {
+function handleFallbackName(name: string, context?: ConversationContext): NameExtractionResult {
   const extractedName = name.trim();
 
   if (context?.previousSuggestion && extractedName.toLowerCase() === context.previousSuggestion.toLowerCase()) {
@@ -163,6 +160,7 @@ export function simpleFallbackExtraction(input: string, previousSuggestion?: str
     if (match && match[1]) {
       const extractedName = match[1].trim();
       logger.info(`Fallback pattern extraction: "${extractedName}"`);
+
       return { projectName: extractedName };
     }
   }

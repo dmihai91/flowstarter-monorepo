@@ -225,4 +225,3 @@ Use these preferences when creating UI components, styling code, or suggesting d
 
   return result;
 }
-

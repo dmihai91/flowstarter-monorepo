@@ -9,6 +9,7 @@ interface UseSandboxPreviewOptions {
   autoRefresh?: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function useSandboxPreview({ projectId, autoRefresh = true }: UseSandboxPreviewOptions) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -22,11 +23,13 @@ export function useSandboxPreview({ projectId, autoRefresh = true }: UseSandboxP
       setError(null);
 
       const response = await fetch(`/api/preview/url?projectId=${projectId}`);
+
       if (!response.ok) {
         throw new Error('Failed to fetch preview URL');
       }
 
-      const data = await response.json() as { previewUrl?: string };
+      const data = (await response.json()) as { previewUrl?: string };
+
       if (data.previewUrl) {
         setPreviewUrl(data.previewUrl);
         setIsLive(true);

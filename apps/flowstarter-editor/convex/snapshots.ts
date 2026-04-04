@@ -33,7 +33,7 @@ export const create = mutation({
       name: args.name,
       label: args.label,
       description: args.description,
-      blobUrl: blobUrl,
+      blobUrl,
       storageId: args.storageId,
       compressedSize: args.compressedSize,
       uncompressedSize: args.uncompressedSize,
@@ -116,4 +116,3 @@ export const generateUploadUrl = mutation({
     return await ctx.storage.generateUploadUrl();
   },
 });
-

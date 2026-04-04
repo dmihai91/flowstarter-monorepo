@@ -195,4 +195,3 @@ export function getAllPaths(tree: FileNode[], filesOnly = true): string[] {
 
   return paths;
 }
-

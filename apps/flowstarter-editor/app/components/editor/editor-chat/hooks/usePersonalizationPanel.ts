@@ -2,10 +2,11 @@
  * usePersonalizationPanel Hook
  *
  * Manages state and callbacks for the PersonalizationPanel component:
- * - Section navigation (palette → font → logo)
  * - Logo upload to Convex
  * - AI logo generation via React Query
  * - AI images toggle
+ *
+ * Note: Palette and font selection are now dashboard-only (handled by NewProjectWizard).
  */
 
 import { useState, useRef, useCallback } from 'react';
@@ -13,26 +14,22 @@ import { useMutation } from 'convex/react';
 import { useMutation as useReactQueryMutation } from '@tanstack/react-query';
 import { api } from '~/convex/_generated/api';
 import type { Id } from '~/convex/_generated/dataModel';
-import type { LogoInfo, ColorPalette, SystemFont, BusinessInfo } from '../types';
+import type { LogoInfo, BusinessInfo } from '~/components/editor/editor-chat/types';
 
-type PersonalizationSection = 'palette' | 'font' | 'logo';
+type PersonalizationSection = 'logo';
 
 interface UsePersonalizationPanelProps {
   initialUseAiImages?: boolean;
   businessInfo?: Partial<BusinessInfo>;
-  onPaletteSelect: (palette: ColorPalette) => void;
-  onFontSelect: (font: SystemFont) => void;
   onLogoSelect: (logo: LogoInfo, useAiImages?: boolean) => void;
 }
 
 export function usePersonalizationPanel({
   initialUseAiImages = false,
   businessInfo,
-  onPaletteSelect,
-  onFontSelect,
   onLogoSelect,
 }: UsePersonalizationPanelProps) {
-  const [currentSection, setCurrentSection] = useState<PersonalizationSection>('palette');
+  const [currentSection, setCurrentSection] = useState<PersonalizationSection>('logo');
   const [selectedLogo, setSelectedLogo] = useState<LogoInfo | null>(null);
   const [uploading, setUploading] = useState(false);
   const [generating, setGenerating] = useState(false);
@@ -46,36 +43,22 @@ export function usePersonalizationPanel({
   const generateUploadUrl = useMutation(api.logos.generateUploadUrl);
   const saveLogo = useMutation(api.logos.saveLogo);
 
-  const sections: PersonalizationSection[] = ['palette', 'font', 'logo'];
+  const sections: PersonalizationSection[] = ['logo'];
   const sectionIndex = sections.indexOf(currentSection);
-
-  const handlePaletteSelect = useCallback(
-    (palette: ColorPalette) => {
-      onPaletteSelect(palette);
-      setCurrentSection('font');
-    },
-    [onPaletteSelect],
-  );
-
-  const handleFontSelect = useCallback(
-    (font: SystemFont) => {
-      onFontSelect(font);
-      setTimeout(() => {
-        setCurrentSection('logo');
-      }, 100);
-    },
-    [onFontSelect],
-  );
 
   const handleFileUpload = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
-      if (!file) return;
+
+      if (!file) {
+        return;
+      }
 
       if (file.size > 5 * 1024 * 1024) {
         setGenerationError('File size must be less than 5MB');
         return;
       }
+
       if (!file.type.startsWith('image/')) {
         setGenerationError('Please upload an image file');
         return;
@@ -92,7 +75,9 @@ export function usePersonalizationPanel({
           body: file,
         });
 
-        if (!uploadResult.ok) throw new Error('Failed to upload file');
+        if (!uploadResult.ok) {
+          throw new Error('Failed to upload file');
+        }
 
         const uploadData = (await uploadResult.json()) as { storageId: Id<'_storage'> };
         const result = await saveLogo({
@@ -131,9 +116,11 @@ export function usePersonalizationPanel({
       });
 
       const data = (await response.json()) as { success?: boolean; imageUrl?: string; error?: string };
+
       if (!data.success || !data.imageUrl) {
         throw new Error(data.error || 'Failed to generate logo');
       }
+
       return data.imageUrl;
     },
     retry: 1,
@@ -141,7 +128,9 @@ export function usePersonalizationPanel({
   });
 
   const handleGenerateLogo = useCallback(async () => {
-    if (!generationPrompt.trim()) return;
+    if (!generationPrompt.trim()) {
+      return;
+    }
 
     setGenerating(true);
     setGenerationError(null);
@@ -153,6 +142,7 @@ export function usePersonalizationPanel({
       });
 
       setGeneratedImageUrl(imageUrl);
+
       const logoInfo: LogoInfo = { type: 'generated', url: imageUrl, prompt: generationPrompt };
       setSelectedLogo(logoInfo);
       onLogoSelect(logoInfo, useAiImages);
@@ -172,24 +162,14 @@ export function usePersonalizationPanel({
 
   /** Skip all remaining personalization — use defaults and proceed to build */
   const handleSkipAll = useCallback(() => {
-    // If still on palette, auto-select first available
-    if (currentSection === 'palette') {
-      // Don't call onPaletteSelect — just advance
-    }
-    // Skip font if not selected
-    // Skip logo and trigger build
     const logoInfo: LogoInfo = { type: 'none' };
     setSelectedLogo(logoInfo);
     onLogoSelect(logoInfo, useAiImages);
-  }, [currentSection, onLogoSelect, useAiImages]);
+  }, [onLogoSelect, useAiImages]);
 
   /** Skip current section only */
   const handleSkipSection = useCallback(() => {
-    if (currentSection === 'palette') {
-      setCurrentSection('font');
-    } else if (currentSection === 'font') {
-      setCurrentSection('logo');
-    } else if (currentSection === 'logo') {
+    if (currentSection === 'logo') {
       handleSkipLogo();
     }
   }, [currentSection, handleSkipLogo]);
@@ -208,8 +188,6 @@ export function usePersonalizationPanel({
     useAiImages,
     setUseAiImages,
     fileInputRef,
-    handlePaletteSelect,
-    handleFontSelect,
     handleFileUpload,
     handleGenerateLogo,
     handleSkipLogo,

@@ -9,7 +9,7 @@
  */
 
 import Link from 'next/link';
-import { forwardRef, type ReactNode } from 'react';
+import { forwardRef } from 'react';
 import {
   GlassCard as BaseGlassCard,
   type GlassCardProps as BaseGlassCardProps,
@@ -35,7 +35,7 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
         {children}
       </BaseGlassCard>
     );
-  },
+  }
 );
 
 GlassCard.displayName = 'GlassCard';

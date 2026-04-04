@@ -5,7 +5,7 @@
  * Refactored into modules for maintainability.
  */
 
-import { fetchTemplateScaffold } from '../templateService';
+import { fetchTemplateScaffold } from '~/lib/services/templateService';
 
 // Re-export types
 export type { SiteGenerationInput, GeneratedFile, SiteGenerationResult, BuildError, AgentActivityEvent } from './types';
@@ -37,8 +37,10 @@ export async function generateSiteFromTemplate(
   input: SiteGenerationInput,
   onProgress?: (message: string) => void,
 ): Promise<SiteGenerationResult> {
-  // Agents SDK path — Node.js only (not Cloudflare Workers)
-  // Pipe onAgentEvent from input through to the SDK callbacks
+  /*
+   * Agents SDK path — Node.js only (not Cloudflare Workers)
+   * Pipe onAgentEvent from input through to the SDK callbacks
+   */
   const agentEventSink = input.onAgentEvent;
   const anthropicApiKey = process.env.ANTHROPIC_API_KEY;
 
@@ -86,13 +88,15 @@ export async function generateSiteFromTemplate(
 
     // 3. Build context and create modification plan
     const context = buildContext(filesMap);
-    
+
     // 4. Execute changes — Agents SDK (Node.js) or memory-based (Workers)
     const generatedFiles: GeneratedFile[] = [];
 
     if (isAgentsSDKAvailable()) {
-      // ── Full Agents SDK pipeline: Opus orchestrator + Sonnet sub-agents ──────
-      // Skip design + planning phases — the agent does its own planning
+      /*
+       * ── Full Agents SDK pipeline: Opus orchestrator + Sonnet sub-agents ──────
+       * Skip design + planning phases — the agent does its own planning
+       */
       onProgress?.('Launching Agents SDK pipeline (Opus orchestrator + Sonnet coders)...');
 
       const pipelineResult = await runAgentPipeline(
@@ -108,6 +112,7 @@ export async function generateSiteFromTemplate(
       for (const f of pipelineResult.files ?? []) {
         generatedFiles.push(f);
       }
+
       // Pass pipeline cost to result
       return { success: true, files: generatedFiles, cost: pipelineResult.cost };
     } else {
@@ -116,6 +121,7 @@ export async function generateSiteFromTemplate(
       console.log('[FlowstarterAgent] Phase 1: Generating design spec with Opus...');
 
       let designSpec: DesignSpec | null = null;
+
       try {
         designSpec = await generateDesignSpec(input);
         console.log('[FlowstarterAgent] Design spec created:', {
@@ -140,75 +146,80 @@ export async function generateSiteFromTemplate(
       const deduplicatedMods = deduplicateModifications(modifications);
       console.log(`[FlowstarterAgent] Deduplicated to ${deduplicatedMods.length} unique files`);
       onProgress?.(`Plan created: Updating ${deduplicatedMods.length} files...`);
+
       // ── Memory-based path: parallel LLM batch calls (Cloudflare Workers) ────
 
-    // Add all original files first (except those being modified)
-    for (const [path, content] of filesMap.entries()) {
-      if (!deduplicatedMods.find((m) => m.path === path || m.path === `src/${path}` || `src/${m.path}` === path)) {
-        const normalizedPath = normalizePath(path);
-        generatedFiles.push({ path: normalizedPath, content });
-      }
-    }
-
-    // Process modifications in batches
-    const batchSize = 5;
-
-    for (let i = 0; i < deduplicatedMods.length; i += batchSize) {
-      const batch = deduplicatedMods.slice(i, i + batchSize);
-      const batchNum = Math.floor(i / batchSize) + 1;
-      console.log(`[FlowstarterAgent] Processing batch ${batchNum}...`);
-      // Show which files are being generated
-      const fileNames = batch.map((m) => m.path.split('/').pop()).join(', ');
-      onProgress?.(`Generating files (${i + 1}-${Math.min(i + batch.length, deduplicatedMods.length)} of ${deduplicatedMods.length}): ${fileNames}`);
-
-      const results = await Promise.all(
-        batch.map(async (mod) => {
-          let originalPath = mod.path;
-          let content = filesMap.get(originalPath);
-
-          if (!content && originalPath.startsWith('src/')) {
-            originalPath = originalPath.replace('src/', '');
-            content = filesMap.get(originalPath);
-          }
-
-          const isNewFile = !content || mod.instructions.includes('NEW:');
-
-          if (isNewFile) {
-            console.log(`[FlowstarterAgent] Creating new file ${mod.path}...`);
-            onProgress?.(`Creating ${mod.path.split('/').pop()}...`);
-          } else {
-            console.log(`[FlowstarterAgent] Modifying ${mod.path}...`);
-            onProgress?.(`Customizing ${mod.path.split('/').pop()}...`);
-          }
-
-          const contextStr = isNewFile
-            ? `Instructions: ${mod.instructions}\n\nThis is a NEW file - create it from scratch based on the instructions.`
-            : `Instructions: ${mod.instructions}\n\nOriginal File Content:\n${content}`;
-
-          const newContent = designSpec
-            ? await generateFileContentWithDesign(input, mod.path, contextStr, designSpec)
-            : await generateFileContent(input, mod.path, contextStr);
-          let sanitizedContent = sanitizeContent(mod.path, newContent);
-
-          const syntaxError = detectSyntaxErrors(mod.path, sanitizedContent);
-
-          if (syntaxError) {
-            console.warn(`[FlowstarterAgent] Syntax error detected in ${mod.path}: ${syntaxError}`);
-            sanitizedContent = await fixSyntaxErrors(input, mod.path, sanitizedContent, syntaxError);
-          }
-
-          return { path: mod.path, content: sanitizedContent };
-        }),
-      );
-
-      for (const res of results) {
-        if (res) {
-          generatedFiles.push(res);
+      // Add all original files first (except those being modified)
+      for (const [path, content] of filesMap.entries()) {
+        if (!deduplicatedMods.find((m) => m.path === path || m.path === `src/${path}` || `src/${m.path}` === path)) {
+          const normalizedPath = normalizePath(path);
+          generatedFiles.push({ path: normalizedPath, content });
         }
       }
-      onProgress?.(`Completed ${Math.min(i + batch.length, deduplicatedMods.length)} of ${deduplicatedMods.length} files`);
-    }
 
+      // Process modifications in batches
+      const batchSize = 5;
+
+      for (let i = 0; i < deduplicatedMods.length; i += batchSize) {
+        const batch = deduplicatedMods.slice(i, i + batchSize);
+        const batchNum = Math.floor(i / batchSize) + 1;
+        console.log(`[FlowstarterAgent] Processing batch ${batchNum}...`);
+
+        // Show which files are being generated
+        const fileNames = batch.map((m) => m.path.split('/').pop()).join(', ');
+        onProgress?.(
+          `Generating files (${i + 1}-${Math.min(i + batch.length, deduplicatedMods.length)} of ${deduplicatedMods.length}): ${fileNames}`,
+        );
+
+        const results = await Promise.all(
+          batch.map(async (mod) => {
+            let originalPath = mod.path;
+            let content = filesMap.get(originalPath);
+
+            if (!content && originalPath.startsWith('src/')) {
+              originalPath = originalPath.replace('src/', '');
+              content = filesMap.get(originalPath);
+            }
+
+            const isNewFile = !content || mod.instructions.includes('NEW:');
+
+            if (isNewFile) {
+              console.log(`[FlowstarterAgent] Creating new file ${mod.path}...`);
+              onProgress?.(`Creating ${mod.path.split('/').pop()}...`);
+            } else {
+              console.log(`[FlowstarterAgent] Modifying ${mod.path}...`);
+              onProgress?.(`Customizing ${mod.path.split('/').pop()}...`);
+            }
+
+            const contextStr = isNewFile
+              ? `Instructions: ${mod.instructions}\n\nThis is a NEW file - create it from scratch based on the instructions.`
+              : `Instructions: ${mod.instructions}\n\nOriginal File Content:\n${content}`;
+
+            const newContent = designSpec
+              ? await generateFileContentWithDesign(input, mod.path, contextStr, designSpec)
+              : await generateFileContent(input, mod.path, contextStr);
+            let sanitizedContent = sanitizeContent(mod.path, newContent);
+
+            const syntaxError = detectSyntaxErrors(mod.path, sanitizedContent);
+
+            if (syntaxError) {
+              console.warn(`[FlowstarterAgent] Syntax error detected in ${mod.path}: ${syntaxError}`);
+              sanitizedContent = await fixSyntaxErrors(input, mod.path, sanitizedContent, syntaxError);
+            }
+
+            return { path: mod.path, content: sanitizedContent };
+          }),
+        );
+
+        for (const res of results) {
+          if (res) {
+            generatedFiles.push(res);
+          }
+        }
+        onProgress?.(
+          `Completed ${Math.min(i + batch.length, deduplicatedMods.length)} of ${deduplicatedMods.length} files`,
+        );
+      }
     } // end memory-based path
 
     console.log(`[FlowstarterAgent] Generation complete. Total files: ${generatedFiles.length}`);
@@ -223,6 +234,7 @@ export async function generateSiteFromTemplate(
 
       if (syntaxError) {
         console.warn(`[FlowstarterAgent] Final validation found syntax error in ${file.path}: ${syntaxError}`);
+
         const fixed = await fixSyntaxErrors(input, file.path, file.content, syntaxError);
         generatedFiles[i] = { ...file, content: fixed };
         fixCount++;
@@ -258,18 +270,16 @@ export async function generateSiteFromTemplate(
   }
 }
 
-
-
-
-// ═══════════════════════════════════════════════════════════════════════════
-// Agents SDK Integration
-// Replaces the batch file-generation phase with a single autonomous SDK run.
-// Requires Node.js runtime (file system access via os.tmpdir()).
-// Falls back to the memory-based approach in Cloudflare Workers.
-// ═══════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════
+ * Agents SDK Integration
+ * Replaces the batch file-generation phase with a single autonomous SDK run.
+ * Requires Node.js runtime (file system access via os.tmpdir()).
+ * Falls back to the memory-based approach in Cloudflare Workers.
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 
 import { runAgentPipeline, isAgentPipelineAvailable } from '~/lib/services/agentPipeline.server';
 
 // isAgentPipelineAvailable imported from agentPipeline.server
 const isAgentsSDKAvailable = isAgentPipelineAvailable;
-

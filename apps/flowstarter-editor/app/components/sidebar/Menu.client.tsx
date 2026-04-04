@@ -47,10 +47,17 @@ export const Menu = () => {
   const profile = useStore(profileStore);
 
   const {
-    list, loadEntries, dialogContent, closeDialog,
-    selectionMode, toggleSelectionMode,
-    selectedItems, toggleItemSelection, handleBulkDeleteClick,
-    deleteItem, deleteSelectedItems,
+    list,
+    loadEntries,
+    dialogContent,
+    closeDialog,
+    selectionMode,
+    toggleSelectionMode,
+    selectedItems,
+    toggleItemSelection,
+    handleBulkDeleteClick,
+    deleteItem,
+    deleteSelectedItems,
     setDialogContentWithLogging,
   } = useChatManagement();
 
@@ -72,7 +79,9 @@ export const Menu = () => {
   }, [filteredList, selectedItems, toggleItemSelection]);
 
   useEffect(() => {
-    if (open) { loadEntries(); }
+    if (open) {
+      loadEntries();
+    }
   }, [open, loadEntries]);
 
   useEffect(() => {
@@ -86,12 +95,21 @@ export const Menu = () => {
     const exitThreshold = 40;
 
     function onMouseMove(event: MouseEvent) {
-      if (isSettingsOpen) { return; }
-      if (event.pageX < enterThreshold) { setOpen(true); }
-      if (menuRef.current && event.clientX > menuRef.current.getBoundingClientRect().right + exitThreshold) { setOpen(false); }
+      if (isSettingsOpen) {
+        return;
+      }
+
+      if (event.pageX < enterThreshold) {
+        setOpen(true);
+      }
+
+      if (menuRef.current && event.clientX > menuRef.current.getBoundingClientRect().right + exitThreshold) {
+        setOpen(false);
+      }
     }
 
     window.addEventListener('mousemove', onMouseMove);
+
     return () => window.removeEventListener('mousemove', onMouseMove);
   }, [isSettingsOpen]);
 
@@ -100,8 +118,11 @@ export const Menu = () => {
     loadEntries();
   };
 
-  const handleSettingsClick = () => { setIsSettingsOpen(true); setOpen(false); };
-  const handleSettingsClose = () => setIsSettingsOpen(false);
+  const handleSettingsClick = () => {
+    setIsSettingsOpen(true);
+    setOpen(false);
+  };
+  const _handleSettingsClose = () => setIsSettingsOpen(false);
 
   return (
     <>
@@ -242,7 +263,6 @@ export const Menu = () => {
           </div>
         </div>
       </motion.div>
-
     </>
   );
 };

@@ -12,29 +12,32 @@ let convexClient: ConvexHttpClient | null = null;
  * Get the Convex HTTP client (singleton)
  */
 export function getConvexClient(): ConvexHttpClient | null {
-  if (convexClient) return convexClient;
+  if (convexClient) {
+    return convexClient;
+  }
 
   const convexUrl = process.env.CONVEX_URL || process.env.VITE_CONVEX_URL;
+
   if (!convexUrl) {
     console.warn('[ConvexClient] CONVEX_URL not configured');
     return null;
   }
 
   convexClient = new ConvexHttpClient(convexUrl);
+
   return convexClient;
 }
 
 /**
  * Persist preview URL to Convex for durability across worker restarts
  */
-export async function persistPreviewUrl(
-  projectId: string,
-  workspaceUrl: string,
-  sandboxId: string
-): Promise<boolean> {
+export async function persistPreviewUrl(projectId: string, workspaceUrl: string, sandboxId: string): Promise<boolean> {
   try {
     const client = getConvexClient();
-    if (!client) return false;
+
+    if (!client) {
+      return false;
+    }
 
     // Use the supabase-id variant so the Supabase slug is accepted directly
     await client.mutation('projects:updateWorkspaceBySupabaseId' as any, {
@@ -45,6 +48,7 @@ export async function persistPreviewUrl(
     });
 
     console.log(`[ConvexClient] Persisted preview URL for ${projectId}`);
+
     return true;
   } catch (e) {
     console.error('[ConvexClient] Failed to persist preview URL:', e);
@@ -55,12 +59,13 @@ export async function persistPreviewUrl(
 /**
  * Fetch preview URL from Convex (fallback when memory cache is empty)
  */
-export async function fetchPreviewUrl(
-  projectId: string
-): Promise<{ workspaceUrl: string; sandboxId: string } | null> {
+export async function fetchPreviewUrl(projectId: string): Promise<{ workspaceUrl: string; sandboxId: string } | null> {
   try {
     const client = getConvexClient();
-    if (!client) return null;
+
+    if (!client) {
+      return null;
+    }
 
     const result = await client.query('projects:getPreviewUrl' as any, { projectId });
 
@@ -85,7 +90,10 @@ export async function fetchPreviewUrl(
 export async function clearPersistedPreviewUrl(projectId: string): Promise<boolean> {
   try {
     const client = getConvexClient();
-    if (!client) return false;
+
+    if (!client) {
+      return false;
+    }
 
     await client.mutation('projects:updateWorkspace' as any, {
       projectId,
@@ -100,4 +108,3 @@ export async function clearPersistedPreviewUrl(projectId: string): Promise<boole
     return false;
   }
 }
-

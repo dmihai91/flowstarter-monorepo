@@ -1,4 +1,11 @@
-import type { SystemFont, LogoInfo, PreviewInfo, InitialChatState, IntegrationConfig, ContactDetails } from '../types';
+import type {
+  SystemFont,
+  LogoInfo,
+  PreviewInfo,
+  InitialChatState,
+  IntegrationConfig,
+  ContactDetails,
+} from '~/components/editor/editor-chat/types';
 import type { UseOnboardingMessagesReturn } from './useOnboardingMessages';
 import type { UseOnboardingFlowReturn } from './useOnboardingFlow';
 import type { UseTemplateSelectionReturn } from './useTemplateSelection';
@@ -33,12 +40,16 @@ export interface UseSimpleBuildHandlersProps {
   onPreviewChange?: (preview: PreviewInfo | null) => void;
   onProjectReady?: (urlId: string) => void;
   onStateChange?: (state: Partial<InitialChatState>) => void;
+
   /** Existing project ID if one was already created (e.g., in /new route) */
   existingProjectId?: string | null;
+
   /** Convex conversation _id from the URL param — used for Convex mutations */
   convexConversationId?: string | null;
+
   /** Integrations already selected upstream in the main-platform handoff */
   seededIntegrations?: IntegrationConfig[];
+
   /** Seeded template metadata from dashboard handoff, used while template hook hydrates */
   seededTemplate?: {
     id: string;
@@ -47,10 +58,7 @@ export interface UseSimpleBuildHandlersProps {
 }
 
 export interface UseSimpleBuildHandlersReturn {
-  handlePersonalizationComplete: (font: SystemFont, logo: LogoInfo, useAiImages?: boolean) => Promise<void>;
   handleContactDetailsComplete: (contactDetails: ContactDetails) => Promise<void>;
   handleSkipContactDetails: () => Promise<void>;
-  handleIntegrationsComplete: (integrations: IntegrationConfig[]) => Promise<void>;
-  handleSkipIntegrations: () => Promise<void>;
   startSeededBuild: () => Promise<void>;
 }

@@ -1,47 +1,38 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Create mock functions BEFORE any imports
-const mockAiModerateContent = vi.fn();
-const mockGenerateObject = vi.fn();
-const mockModels = {
-  projectDetails: 'mock-model',
-};
+// vi.hoisted ensures these variables are initialized BEFORE vi.mock factory runs,
+// preventing TDZ errors when fileParallelism=true transforms hoist vi.mock calls.
+const { mockAiModerateContent, mockGenerateObject, mockModels } = vi.hoisted(() => ({
+  mockAiModerateContent: vi.fn(),
+  mockGenerateObject: vi.fn(),
+  mockModels: { projectDetails: 'mock-model' },
+}));
 
-// Mock dependencies - must be before imports
-vi.mock('../ai-moderation', async () => ({
+vi.mock('../ai-moderation', () => ({
   aiModerateContent: mockAiModerateContent,
 }));
 
-vi.mock('ai', async () => ({
+vi.mock('ai', () => ({
   generateObject: mockGenerateObject,
 }));
 
-vi.mock('../openrouter-client', async () => ({
+vi.mock('../openrouter-client', () => ({
   models: mockModels,
 }));
 
-// Use dynamic import to ensure mocks are applied
-let generateProjectDetails: typeof import('../project-details').generateProjectDetails;
-let moderateBusinessInfo: typeof import('../project-details').moderateBusinessInfo;
-type BusinessInfo = import('../project-details').BusinessInfo;
-
-beforeEach(async () => {
-  // Set the environment variable before importing the module
-  vi.stubEnv('OPENROUTER_API_KEY', 'test-api-key');
-  const projectDetailsModule = await import('../project-details');
-  generateProjectDetails = projectDetailsModule.generateProjectDetails;
-  moderateBusinessInfo = projectDetailsModule.moderateBusinessInfo;
-});
+// Import once — mocks are already in place via vi.mock hoisting
+import { generateProjectDetails, moderateBusinessInfo } from '../project-details';
+import type { BusinessInfo } from '../project-details';
 
 describe('AI Project Details Generation', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.clearAllMocks();
-    // Ensure env var is set for each test
     vi.stubEnv('OPENROUTER_API_KEY', 'test-api-key');
-    // Reload module to ensure fresh state
-    const projectDetailsModule = await import('../project-details');
-    generateProjectDetails = projectDetailsModule.generateProjectDetails;
-    moderateBusinessInfo = projectDetailsModule.moderateBusinessInfo;
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllEnvs();
   });
 
   describe('moderateBusinessInfo', () => {

@@ -27,7 +27,11 @@ export function LandingPricing() {
   return (
     <div ref={sectionRef}>
       {/* Pricing Section */}
-      <section data-section="pricing" id="pricing" className="py-8 lg:py-18 pb-4 lg:pb-8 relative">
+      <section
+        data-section="pricing"
+        id="pricing"
+        className="py-8 lg:py-18 pb-4 lg:pb-8 relative"
+      >
         {/* Gradient accent - lavender tint */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--landing-bg-tint)] to-transparent dark:via-[var(--landing-dark-surface-tint)] pointer-events-none" />
 
@@ -55,13 +59,17 @@ export function LandingPricing() {
                 <div
                   key={plan.name}
                   className={`relative flex h-full flex-col rounded-[28px] border p-7 sm:p-8 transition-all duration-[600ms] ${
-                    isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+                    isVisible
+                      ? 'opacity-100 translate-y-0'
+                      : 'opacity-0 translate-y-6'
                   } ${
                     isHighlighted
                       ? 'border-[var(--purple-primary)]/60 bg-white/40 dark:bg-white/[0.04] backdrop-blur-2xl shadow-[0_8px_32px_rgba(124,58,237,0.12)] dark:shadow-[0_8px_32px_rgba(124,58,237,0.20)] ring-1 ring-[var(--purple-primary)]/20'
                       : 'border-white/40 dark:border-white/[0.07] bg-white/30 dark:bg-white/[0.025] backdrop-blur-2xl shadow-[0_4px_24px_rgba(15,23,42,0.06)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:border-white/60 dark:hover:border-white/[0.12] hover:bg-white/40 dark:hover:bg-white/[0.04]'
                   } ${
-                    isComingSoon ? 'opacity-50 saturate-50 pointer-events-none select-none' : ''
+                    isComingSoon
+                      ? 'opacity-50 saturate-50 pointer-events-none select-none'
+                      : ''
                   }`}
                   style={{ transitionDelay: `${index * 120}ms` }}
                 >
@@ -96,7 +104,9 @@ export function LandingPricing() {
                       <span className="text-4xl font-semibold tracking-tight text-gray-900 dark:text-white">
                         {plan.setupPrice}
                       </span>
-                      <span className="text-sm text-gray-500 dark:text-white/45">setup</span>
+                      <span className="text-sm text-gray-500 dark:text-white/45">
+                        setup
+                      </span>
                     </div>
                     <p className="mt-3 text-base text-gray-600 dark:text-white/55">
                       {plan.monthlyPrice}
@@ -105,10 +115,23 @@ export function LandingPricing() {
 
                   <ul className="mb-8 flex-1 space-y-3">
                     {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-3 text-sm text-gray-700 dark:text-white/60">
+                      <li
+                        key={feature}
+                        className="flex items-start gap-3 text-sm text-gray-700 dark:text-white/60"
+                      >
                         <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500">
-                          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          <svg
+                            className="h-3.5 w-3.5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2.5}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M5 13l4 4L19 7"
+                            />
                           </svg>
                         </span>
                         <span>{feature}</span>
@@ -129,7 +152,12 @@ export function LandingPricing() {
                       role="button"
                       tabIndex={0}
                       onClick={() => handlePlanClick(plan.name.toLowerCase())}
-                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handlePlanClick(plan.name.toLowerCase()); } }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handlePlanClick(plan.name.toLowerCase());
+                        }
+                      }}
                       className="mt-auto block w-full cursor-pointer"
                     >
                       {isHighlighted ? (
@@ -143,9 +171,21 @@ export function LandingPricing() {
                       ) : (
                         <span
                           className="inline-flex h-12 w-full items-center justify-center rounded-xl text-sm font-semibold transition-all duration-200"
-                          style={{ border: '1.5px solid var(--purple-primary)', color: 'var(--purple-primary)', background: 'transparent' }}
-                          onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = 'var(--purple-primary)'; el.style.color = '#fff'; }}
-                          onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = 'transparent'; el.style.color = 'var(--purple-primary)'; }}
+                          style={{
+                            border: '1.5px solid var(--purple-primary)',
+                            color: 'var(--purple-primary)',
+                            background: 'transparent',
+                          }}
+                          onMouseEnter={(e) => {
+                            const el = e.currentTarget as HTMLElement;
+                            el.style.background = 'var(--purple-primary)';
+                            el.style.color = '#fff';
+                          }}
+                          onMouseLeave={(e) => {
+                            const el = e.currentTarget as HTMLElement;
+                            el.style.background = 'transparent';
+                            el.style.color = 'var(--purple-primary)';
+                          }}
                         >
                           {plan.cta}
                         </span>

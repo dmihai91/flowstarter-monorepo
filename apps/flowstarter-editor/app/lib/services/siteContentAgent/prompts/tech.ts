@@ -18,13 +18,7 @@ export const TECH_CONTENT_PATTERNS = {
     'Built for Teams That Ship',
     'Your [Tool] Superpower',
   ],
-  ctas: [
-    'Start Free Trial',
-    'Get Started',
-    'Request a Demo',
-    'See It in Action',
-    'Try It Free',
-  ],
+  ctas: ['Start Free Trial', 'Get Started', 'Request a Demo', 'See It in Action', 'Try It Free'],
   features: [
     'Easy Integration',
     'Real-Time Analytics',
@@ -70,17 +64,42 @@ ${BASE_CONTENT_RULES}`;
 
 export function buildTechContentPrompt(context: BusinessContext): string {
   const parts = [`${TECH_CONTENT_PROMPT}\n\nBUSINESS CONTEXT:`];
-  if (context.ownerName) parts.push(`- Company: ${context.ownerName}`);
-  if (context.services?.length) parts.push(`- Key features: ${context.services.join(', ')}`);
-  if (context.targetAudience) parts.push(`- Target users: ${context.targetAudience}`);
-  if (context.uniqueApproach) parts.push(`- Differentiation: ${context.uniqueApproach}`);
+
+  if (context.ownerName) {
+    parts.push(`- Company: ${context.ownerName}`);
+  }
+
+  if (context.services?.length) {
+    parts.push(`- Key features: ${context.services.join(', ')}`);
+  }
+
+  if (context.targetAudience) {
+    parts.push(`- Target users: ${context.targetAudience}`);
+  }
+
+  if (context.uniqueApproach) {
+    parts.push(`- Differentiation: ${context.uniqueApproach}`);
+  }
+
   return parts.join('\n');
 }
 
 export const TECH_DOMAIN = {
   id: 'tech',
   name: 'Tech & SaaS',
-  keywords: ['saas', 'software', 'app', 'startup', 'tech', 'platform', 'tool', 'api', 'web app', 'mobile app', 'automation'],
+  keywords: [
+    'saas',
+    'software',
+    'app',
+    'startup',
+    'tech',
+    'platform',
+    'tool',
+    'api',
+    'web app',
+    'mobile app',
+    'automation',
+  ],
   sections: TECH_SECTIONS,
   contentPatterns: TECH_CONTENT_PATTERNS,
   systemPrompt: TECH_CONTENT_PROMPT,

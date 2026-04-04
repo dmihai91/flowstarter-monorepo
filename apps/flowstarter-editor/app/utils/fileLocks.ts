@@ -73,4 +73,3 @@ export function hasLockedItems(chatId?: string): boolean {
     return false;
   }
 }
-

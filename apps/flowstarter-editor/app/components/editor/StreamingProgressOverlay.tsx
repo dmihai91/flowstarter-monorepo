@@ -8,16 +8,14 @@
 
 interface StreamingProgressOverlayProps {
   isStreaming: boolean;
-  streamedFiles: string[];   // last 5 file paths
+  streamedFiles: string[]; // last 5 file paths
   streamedCount: number;
 }
 
-export function StreamingProgressOverlay({
-  isStreaming,
-  streamedFiles,
-  streamedCount,
-}: StreamingProgressOverlayProps) {
-  if (!isStreaming) return null;
+export function StreamingProgressOverlay({ isStreaming, streamedFiles, streamedCount }: StreamingProgressOverlayProps) {
+  if (!isStreaming) {
+    return null;
+  }
 
   return (
     <div
@@ -47,18 +45,14 @@ export function StreamingProgressOverlay({
             <p
               key={i}
               className={`text-[11px] font-mono truncate ${
-                i === streamedFiles.length - 1
-                  ? 'text-[#d4d4d8]'
-                  : 'text-[#52525b]'
+                i === streamedFiles.length - 1 ? 'text-[#d4d4d8]' : 'text-[#52525b]'
               }`}
             >
               {i === streamedFiles.length - 1 ? '→ ' : '  '}
               {file}
             </p>
           ))}
-          {streamedFiles.length === 0 && (
-            <p className="text-[11px] font-mono text-[#3f3f46]">Initializing agent...</p>
-          )}
+          {streamedFiles.length === 0 && <p className="text-[11px] font-mono text-[#3f3f46]">Initializing agent...</p>}
         </div>
 
         {/* Count */}

@@ -46,6 +46,7 @@ export async function tryReuseExistingSandbox(
   // If not in memory, check Convex persistence (survives server restarts)
   if (!existingUrl) {
     const persisted = await fetchPreviewUrl(projectId);
+
     if (persisted?.workspaceUrl) {
       existingUrl = persisted.workspaceUrl;
       existingSandboxId = persisted.sandboxId;
@@ -61,6 +62,7 @@ export async function tryReuseExistingSandbox(
 
   try {
     progress('Reconnecting to existing preview...');
+
     const existingSandbox = await client.get(existingSandboxId);
 
     // Quick health check
@@ -72,6 +74,7 @@ export async function tryReuseExistingSandbox(
     if (healthCheck && healthCheck.ok) {
       log.debug(` Existing sandbox is alive! Returning cached preview instantly`);
       setCachedSandbox(projectId, { sandboxId: existingSandboxId, previewUrl: existingUrl });
+
       return { success: true, previewUrl: existingUrl, sandboxId: existingSandboxId };
     }
 
@@ -87,6 +90,7 @@ export async function tryReuseExistingSandbox(
     if (retryCheck && retryCheck.ok) {
       log.debug(` Existing sandbox recovered! Returning cached preview`);
       setCachedSandbox(projectId, { sandboxId: existingSandboxId, previewUrl: existingUrl });
+
       return { success: true, previewUrl: existingUrl, sandboxId: existingSandboxId };
     }
 
@@ -108,9 +112,11 @@ export async function ensureBunReady(
   workDir: string,
 ): Promise<boolean> {
   let hasBun = await checkBunAvailable(sandbox, workDir);
+
   if (!hasBun) {
     hasBun = await installBun(sandbox, workDir);
   }
+
   return hasBun;
 }
 
@@ -148,6 +154,7 @@ export async function startAndWaitForDevServer(
   await killExistingDevServers(sandbox, workDir);
 
   const astroCheckResult = await runAstroCheck(sandbox, workDir);
+
   if (!astroCheckResult.success && astroCheckResult.errors.length > 0) {
     const firstError = astroCheckResult.errors[0];
     console.error('[Daytona:startAndWaitForDevServer] Astro check failed', {
@@ -157,10 +164,16 @@ export async function startAndWaitForDevServer(
       message: firstError.message,
     });
     log.warn(` Astro check failed: ${firstError.message} in ${firstError.file}`);
+
     return {
       success: false,
       error: `Type error in ${firstError.file}: ${firstError.message}`,
-      buildError: { file: firstError.file, line: firstError.line, message: firstError.message, fullOutput: firstError.fullOutput },
+      buildError: {
+        file: firstError.file,
+        line: firstError.line,
+        message: firstError.message,
+        fullOutput: firstError.fullOutput,
+      },
       sandboxId: sandbox.id,
     };
   }
@@ -170,6 +183,7 @@ export async function startAndWaitForDevServer(
     sandboxId: sandbox.id,
     outputSnippet: output.slice(0, 500),
   });
+
   if (hasFatalError(output, checkServerStarted(output))) {
     console.error('[Daytona:startAndWaitForDevServer] Fatal error detected in test output', {
       sandboxId: sandbox.id,
@@ -183,14 +197,18 @@ export async function startAndWaitForDevServer(
   });
 
   const previewUrl = await setupPreviewUrl(sandbox, workDir, output);
+
   if (!previewUrl) {
     console.error('[Daytona:startAndWaitForDevServer] Preview URL setup returned empty', {
       sandboxId: sandbox.id,
     });
+
     const devLog = await readDevLog(sandbox, workDir, 100);
+
     if (devLog && hasFatalError(devLog, false)) {
       return handleBuildError(devLog, sandboxId);
     }
+
     return { success: false, error: 'Failed to get preview URL for dev server', sandboxId };
   }
 
@@ -199,6 +217,7 @@ export async function startAndWaitForDevServer(
     sandboxId: sandbox.id,
     previewUrl,
   });
+
   const waitResult = await waitForDevServer(previewUrl, 60000, { sandbox, workDir, logCheckInterval: 3 });
 
   if (!waitResult.ready) {
@@ -207,13 +226,22 @@ export async function startAndWaitForDevServer(
       previewUrl,
       buildError: waitResult.buildError,
     });
+
     if (waitResult.buildError) {
-      return { success: false, error: `Dev server failed: ${waitResult.buildError.message.slice(0, 200)}`, buildError: waitResult.buildError, sandboxId };
+      return {
+        success: false,
+        error: `Dev server failed: ${waitResult.buildError.message.slice(0, 200)}`,
+        buildError: waitResult.buildError,
+        sandboxId,
+      };
     }
+
     const devLog = await readDevLog(sandbox, workDir, 100);
+
     if (devLog && hasFatalError(devLog, false)) {
       return handleBuildError(devLog, sandboxId);
     }
+
     return { success: false, error: 'The preview server is taking too long to start.', sandboxId };
   }
 
@@ -222,6 +250,7 @@ export async function startAndWaitForDevServer(
     sandboxId: sandbox.id,
     previewUrl,
   });
+
   return { previewUrl };
 }
 
@@ -249,9 +278,11 @@ export async function setupPreviewUrl(
       detectedPort: portNum,
     });
     log.error(' Could not get preview URL for any port');
+
     return null;
   }
 
+  // eslint-disable-next-line prefer-const
   let { url: previewUrl, port: workingPort } = previewResult;
 
   log.debug(` Preview URL: ${previewUrl} (port ${workingPort})`);
@@ -281,6 +312,7 @@ export async function setupPreviewUrl(
       } else {
         previewUrl = nextUrl;
       }
+
       log.debug(` Updated preview URL to port ${bgPort}: ${previewUrl}`);
     } catch (error) {
       console.error('[Daytona:setupPreviewUrl] Failed to resolve alternate port preview URL', {
@@ -297,5 +329,6 @@ export async function setupPreviewUrl(
     previewUrl,
     port: workingPort,
   });
+
   return previewUrl;
 }

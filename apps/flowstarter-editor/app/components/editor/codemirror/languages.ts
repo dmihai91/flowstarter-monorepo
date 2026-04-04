@@ -110,4 +110,3 @@ export async function getLanguage(fileName: string) {
 
   return undefined;
 }
-

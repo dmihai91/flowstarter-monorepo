@@ -54,7 +54,7 @@ export async function GET() {
 
     // Get unique user IDs and fetch their info from Clerk
     const userIds = Array.from(
-      new Set(projects?.map((p) => p.user_id).filter(Boolean) || []),
+      new Set(projects?.map((p) => p.user_id).filter(Boolean) || [])
     );
     const userMap: Record<string, { email: string; name: string }> = {};
 

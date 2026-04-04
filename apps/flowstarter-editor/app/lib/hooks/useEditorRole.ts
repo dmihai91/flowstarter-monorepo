@@ -21,13 +21,12 @@ export function useEditorRole(): EditorPermissions {
 
   return useMemo(() => {
     const metadata = user?.publicMetadata as { role?: string } | undefined;
-    const role: EditorRole =
-      metadata?.role === 'admin' || metadata?.role === 'team' ? 'team' : 'client';
+    const role: EditorRole = metadata?.role === 'admin' || metadata?.role === 'team' ? 'team' : 'client';
 
     return {
       role,
       canViewCode: role === 'team',
-      canPublish: role === 'team',
+      canPublish: true,
       canEditSettings: role === 'team',
       canTogglePreviewCode: role === 'team',
     };

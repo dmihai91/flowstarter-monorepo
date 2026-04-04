@@ -5,4 +5,3 @@ export interface Snapshot {
   files: FileMap;
   summary?: string;
 }
-

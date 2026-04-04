@@ -25,9 +25,11 @@ import {
   sanitizeName,
 } from './projectNameHelpers';
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// containsBannedWord / getBannedWord
-// ═══════════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * containsBannedWord / getBannedWord
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
 
 describe('containsBannedWord', () => {
   it('catches corporate motivation words', () => {
@@ -80,26 +82,29 @@ describe('getBannedWord', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// isConfirmation
-// ═══════════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * isConfirmation
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
 
 describe('isConfirmation', () => {
   describe('recognizes confirmation words', () => {
-    it.each([
-      'yes', 'yeah', 'yep', 'sure', 'ok', 'okay', 'perfect', 'great', 'good',
-    ])('"%s" is a confirmation', (word) => {
-      expect(isConfirmation(word)).toBe(true);
-    });
+    it.each(['yes', 'yeah', 'yep', 'sure', 'ok', 'okay', 'perfect', 'great', 'good'])(
+      '"%s" is a confirmation',
+      (word) => {
+        expect(isConfirmation(word)).toBe(true);
+      },
+    );
   });
 
   describe('recognizes confirmation phrases', () => {
-    it.each([
-      'that works', 'sounds good', 'sounds great', 'i like it', 'love it',
-      "let's go with that", "use it",
-    ])('"%s" is a confirmation', (phrase) => {
-      expect(isConfirmation(phrase)).toBe(true);
-    });
+    it.each(['that works', 'sounds good', 'sounds great', 'i like it', 'love it', "let's go with that", 'use it'])(
+      '"%s" is a confirmation',
+      (phrase) => {
+        expect(isConfirmation(phrase)).toBe(true);
+      },
+    );
   });
 
   it('handles leading/trailing whitespace', () => {
@@ -131,9 +136,11 @@ describe('isConfirmation', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// extractNameFromPatterns
-// ═══════════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * extractNameFromPatterns
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
 
 describe('extractNameFromPatterns', () => {
   it('extracts from "call it X"', () => {
@@ -187,9 +194,11 @@ describe('extractNameFromPatterns', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// isRefinementRequest
-// ═══════════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * isRefinementRequest
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
 
 describe('isRefinementRequest', () => {
   it('detects "make it" requests', () => {
@@ -223,9 +232,11 @@ describe('isRefinementRequest', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// resolveDescriptionContext — the stale-description fix
-// ═══════════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * resolveDescriptionContext — the stale-description fix
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
 
 describe('resolveDescriptionContext', () => {
   const MESSAGES = [
@@ -244,9 +255,7 @@ describe('resolveDescriptionContext', () => {
   });
 
   it('falls back to first user message when both descriptions are empty', () => {
-    expect(resolveDescriptionContext('', '', MESSAGES)).toBe(
-      'A fitness coaching website with workout programs',
-    );
+    expect(resolveDescriptionContext('', '', MESSAGES)).toBe('A fitness coaching website with workout programs');
   });
 
   it('skips "suggest a name" when finding first user message', () => {
@@ -254,6 +263,7 @@ describe('resolveDescriptionContext', () => {
       { role: 'user' as const, content: 'Suggest a name' },
       { role: 'assistant' as const, content: 'How about Fern?' },
     ];
+
     // No valid user message found
     expect(resolveDescriptionContext('', '', onlySuggest)).toBe('');
   });
@@ -264,9 +274,7 @@ describe('resolveDescriptionContext', () => {
   });
 
   it('ignores whitespace-only descriptions', () => {
-    expect(resolveDescriptionContext('   ', '   ', MESSAGES)).toBe(
-      'A fitness coaching website with workout programs',
-    );
+    expect(resolveDescriptionContext('   ', '   ', MESSAGES)).toBe('A fitness coaching website with workout programs');
   });
 
   /**
@@ -280,6 +288,7 @@ describe('resolveDescriptionContext', () => {
       { role: 'assistant' as const, content: 'Great! Name?' },
       { role: 'user' as const, content: 'Suggest a name' },
     ];
+
     // Simulate the bug: both explicit and flow descriptions are empty (stale closure)
     const result = resolveDescriptionContext('', '', messagesWithDescription);
     expect(result).toBe('A hair salon site with stylist portfolios');
@@ -287,9 +296,11 @@ describe('resolveDescriptionContext', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// addToHistory / wasAlreadySuggested
-// ═══════════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * addToHistory / wasAlreadySuggested
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
 
 describe('addToHistory', () => {
   it('adds a new name to empty history', () => {
@@ -330,9 +341,11 @@ describe('wasAlreadySuggested', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// sanitizeName
-// ═══════════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * sanitizeName
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
 
 describe('sanitizeName', () => {
   it('trims whitespace', () => {
@@ -362,9 +375,11 @@ describe('sanitizeName', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// Full Naming Conversation Flow (logic-only integration test)
-// ═══════════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * Full Naming Conversation Flow (logic-only integration test)
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
 
 describe('naming conversation flow (logic)', () => {
   it('generate → confirm flow', () => {
@@ -401,17 +416,20 @@ describe('naming conversation flow (logic)', () => {
 
     // Step 4: User confirms
     expect(isConfirmation('sounds good')).toBe(true);
+
     // → Confirmed name is "Atlas"
   });
 
   it('generate → user provides own name flow', () => {
     let history: string[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     history = addToHistory(history, 'Fern');
 
     // User provides their own name
     const userInput = 'Call it FitPro Studio';
     expect(isConfirmation(userInput)).toBe(false);
     expect(extractNameFromPatterns(userInput)).toBe('FitPro Studio');
+
     // → User's name is "FitPro Studio"
   });
 
@@ -442,12 +460,16 @@ describe('naming conversation flow (logic)', () => {
   it('user provides name directly (no generation)', () => {
     // User types their name immediately
     const input = 'FitPro Studio';
+
     // Not a confirmation (no previous suggestion)
     expect(isConfirmation(input)).toBe(false);
+
     // Not a refinement
     expect(isRefinementRequest(input)).toBe(false);
+
     // Not a pattern match either — it's just a raw name
     expect(extractNameFromPatterns(input)).toBeNull();
+
     // → System should use input as-is after sanitization
     expect(sanitizeName(input)).toBe('FitPro Studio');
   });
@@ -458,6 +480,7 @@ describe('naming conversation flow (logic)', () => {
       { role: 'assistant' as const, content: 'Got it!' },
       { role: 'user' as const, content: 'Suggest a name' },
     ];
+
     // Simulate stale closure: both descriptions empty
     const desc = resolveDescriptionContext('', '', messages);
     expect(desc).toBe('A restaurant website with online ordering');
@@ -468,12 +491,13 @@ describe('naming conversation flow (logic)', () => {
   it('banned word in generated name triggers filter', () => {
     expect(containsBannedWord('Thrive Coaching')).toBe(true);
     expect(containsBannedWord('Bennett')).toBe(false);
+
     // Only clean names should be used
     const candidate = 'Elevate Studio';
+
     if (containsBannedWord(candidate)) {
       // Should fall back to a safe name instead
       expect(getBannedWord(candidate)).toBe('Elevate');
     }
   });
 });
-

@@ -25,7 +25,7 @@ function generateNonce(): string {
  * Timing-safe string comparison using Web Crypto API
  * (Edge Runtime compatible)
  */
-async function timingSafeCompare(a: string, b: string): Promise<boolean> {
+async function _timingSafeCompare(a: string, b: string): Promise<boolean> {
   if (a.length !== b.length) return false;
 
   const encoder = new TextEncoder();
@@ -211,11 +211,22 @@ export default clerkMiddleware(async (auth, req) => {
       const isAiApi = pathname.startsWith('/api/ai/');
       const isAuthApi = pathname.startsWith('/api/auth/'); // Protected by Clerk auth
       const isEditorApi = pathname.startsWith('/api/editor/'); // Protected by handoff tokens / Clerk auth
-      const isProjectsApi = pathname.startsWith('/api/projects/') || pathname === '/api/projects';
+      const isProjectsApi =
+        pathname.startsWith('/api/projects/') || pathname === '/api/projects';
       const isIntegrationsApi = pathname.startsWith('/api/integrations/'); // Protected by Clerk auth
       const isAnalyticsApi = pathname.startsWith('/api/analytics/'); // Protected by Clerk auth
       const unsafe = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method);
-      if (unsafe && !isWebhook && !isTeamApi && !isAiApi && !isAuthApi && !isEditorApi && !isProjectsApi && !isIntegrationsApi && !isAnalyticsApi) {
+      if (
+        unsafe &&
+        !isWebhook &&
+        !isTeamApi &&
+        !isAiApi &&
+        !isAuthApi &&
+        !isEditorApi &&
+        !isProjectsApi &&
+        !isIntegrationsApi &&
+        !isAnalyticsApi
+      ) {
         if (!isSameOrigin) {
           // Log CSRF block
           logSecurityEventEdge('security.csrf_blocked', {
@@ -328,7 +339,11 @@ export default clerkMiddleware(async (auth, req) => {
   if (isPublicRoute(req)) {
     // If user is already authenticated and trying to access auth pages, redirect to dashboard
     const pathname = req.nextUrl.pathname;
-    if (pathname.startsWith('/login') || pathname.startsWith('/sign-up') || pathname.startsWith('/team/login')) {
+    if (
+      pathname.startsWith('/login') ||
+      pathname.startsWith('/sign-up') ||
+      pathname.startsWith('/team/login')
+    ) {
       try {
         const { userId, sessionClaims } = await auth();
         if (userId) {
@@ -409,8 +424,10 @@ export default clerkMiddleware(async (auth, req) => {
       const url = req.nextUrl.clone();
       const next = req.nextUrl.pathname + (req.nextUrl.search || '');
       // /new?template= is an operator flow — send to team login
-      const isTeamRoute = req.nextUrl.pathname.startsWith('/team/') ||
-        (req.nextUrl.pathname === '/new' && req.nextUrl.searchParams.has('template'));
+      const isTeamRoute =
+        req.nextUrl.pathname.startsWith('/team/') ||
+        (req.nextUrl.pathname === '/new' &&
+          req.nextUrl.searchParams.has('template'));
       url.pathname = isTeamRoute ? '/team/login' : '/login';
       url.searchParams.set('reason', 'unauthenticated');
       url.searchParams.set('next', next);

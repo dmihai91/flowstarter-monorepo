@@ -65,13 +65,17 @@ export const Workbench = memo(
   ({
     chatStarted,
     isStreaming,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     actionRunner,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     metadata,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     updateChatMestaData,
     renderHeader: _renderHeader,
   }: WorkspaceProps) => {
     renderLogger.trace('Workbench');
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [fileHistory, setFileHistory] = useState<Record<string, FileHistory>>({});
 
     // Terminal state

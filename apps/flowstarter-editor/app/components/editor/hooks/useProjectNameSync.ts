@@ -12,7 +12,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useMutation } from 'convex/react';
 // eslint-disable-next-line no-restricted-imports
 import { api } from '../../../../convex/_generated/api';
-import type { Id } from '../../../../convex/_generated/dataModel';
+import type { Id } from '~/convex/_generated/dataModel';
 import { syncProjectName } from '~/lib/services/projectSyncService';
 
 interface UseProjectNameSyncOptions {
@@ -24,6 +24,7 @@ interface UseProjectNameSyncOptions {
 interface UseProjectNameSyncReturn {
   /** Update the project name from the editor — syncs to both Convex and Supabase */
   updateName: (name: string) => Promise<void>;
+
   /** Whether a valid name exists (can skip naming step) */
   hasName: boolean;
 }
@@ -39,12 +40,18 @@ export function useProjectNameSync({
 
   // On mount: sync name FROM Supabase → Convex (if different)
   useEffect(() => {
-    if (hasSyncedFromSupabase.current || !conversationId) return;
+    if (hasSyncedFromSupabase.current || !conversationId) {
+      return;
+    }
+
     hasSyncedFromSupabase.current = true;
 
     try {
       const handoffDataStr = localStorage.getItem('flowstarter_handoff_data');
-      if (!handoffDataStr) return;
+
+      if (!handoffDataStr) {
+        return;
+      }
 
       const handoffData = JSON.parse(handoffDataStr);
       const supabaseName = handoffData?.name || handoffData?.projectName;
@@ -55,6 +62,7 @@ export function useProjectNameSync({
           id: conversationId,
           projectName: supabaseName,
         });
+
         if (projectId) {
           updateProject({
             projectId,
@@ -70,7 +78,9 @@ export function useProjectNameSync({
   // Update name FROM editor → Convex + Supabase
   const updateName = useCallback(
     async (name: string) => {
-      if (!conversationId || !name.trim()) return;
+      if (!conversationId || !name.trim()) {
+        return;
+      }
 
       // 1. Update Convex conversation
       await updateConversationState({
@@ -87,14 +97,14 @@ export function useProjectNameSync({
       }
 
       // 3. Sync to Supabase (fire-and-forget)
-      syncProjectName(name).catch((err) =>
-        console.warn('[NameSync] Failed to sync to Supabase:', err)
-      );
+      syncProjectName(name).catch((err) => console.warn('[NameSync] Failed to sync to Supabase:', err));
     },
-    [conversationId, projectId, updateConversationState, updateProject]
+    [conversationId, projectId, updateConversationState, updateProject],
   );
 
-  const hasName = Boolean(currentName && currentName.trim() && currentName !== 'Untitled Project' && currentName !== 'New Project');
+  const hasName = Boolean(
+    currentName && currentName.trim() && currentName !== 'Untitled Project' && currentName !== 'New Project',
+  );
 
   return { updateName, hasName };
 }

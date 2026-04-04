@@ -1,9 +1,16 @@
-import type { InitialChatState, OnboardingStep } from '../types';
+import type { InitialChatState, OnboardingStep } from '~/components/editor/editor-chat/types';
 
 type PartialState = Partial<
   Pick<
     InitialChatState,
-    'step' | 'projectUrlId' | 'buildPhase' | 'selectedTemplateId' | 'selectedPalette' | 'selectedFont' | 'businessInfo' | 'projectDescription'
+    | 'step'
+    | 'projectUrlId'
+    | 'buildPhase'
+    | 'selectedTemplateId'
+    | 'selectedPalette'
+    | 'selectedFont'
+    | 'businessInfo'
+    | 'projectDescription'
   >
 >;
 
@@ -30,13 +37,10 @@ export function isCompletedBuildState(state?: PartialState | null): boolean {
   return Boolean(state.buildPhase && COMPLETED_BUILD_PHASES.has(state.buildPhase));
 }
 
+const VALID_STEPS = new Set<string>(['creating', 'ready']);
+
 export function normalizeHandoffStep(state: PartialState): OnboardingStep {
-  if (
-    state.step === 'review' ||
-    state.step === 'personalization' ||
-    state.step === 'integrations' ||
-    state.step === 'creating'
-  ) {
+  if (state.step && VALID_STEPS.has(state.step)) {
     return state.step;
   }
 
@@ -44,33 +48,6 @@ export function normalizeHandoffStep(state: PartialState): OnboardingStep {
     return 'ready';
   }
 
-  if (hasPreseededTemplateBuild(state)) {
-    return 'review';
-  }
-
-  if (
-    state.step === 'welcome' ||
-    state.step === 'describe' ||
-    state.step === 'name' ||
-    state.step === 'quick-profile' ||
-    state.step === 'business-details' ||
-    state.step === 'business-uvp' ||
-    state.step === 'business-offering' ||
-    state.step === 'business-contact' ||
-    state.step === 'business-audience' ||
-    state.step === 'business-goals' ||
-    state.step === 'business-tone' ||
-    state.step === 'business-selling' ||
-    state.step === 'business-pricing' ||
-    state.step === 'business-summary' ||
-    state.step === 'template'
-  ) {
-    return 'review';
-  }
-
-  if (state.projectUrlId) {
-    return 'review';
-  }
-
-  return state.step || 'review';
+  // All pre-build decisions happen on the dashboard; editor starts building immediately
+  return 'creating';
 }

@@ -14,12 +14,7 @@ interface FileTreeItemProps {
   depth?: number;
 }
 
-export const FileTreeItem = memo(function FileTreeItem({
-  node,
-  selectedPath,
-  onSelect,
-  depth = 0,
-}: FileTreeItemProps) {
+export const FileTreeItem = memo(function FileTreeItem({ node, selectedPath, onSelect, depth = 0 }: FileTreeItemProps) {
   const [isExpanded, setIsExpanded] = useState(depth < 2);
   const isSelected = node.path === selectedPath;
   const isDirectory = node.type === 'directory';

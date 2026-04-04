@@ -15,7 +15,7 @@ import {
   getEnabledIntegrations,
   buildIntegrationsMessage,
 } from './integrationHelpers';
-import type { IntegrationConfig } from '../types';
+import type { IntegrationConfig } from '~/components/editor/editor-chat/types';
 
 // ─── Test Fixtures ────────────────────────────────────────────────────────────
 
@@ -125,6 +125,7 @@ describe('toConvexBooking', () => {
     const result = toConvexBooking(DISABLED_BOOKING);
     expect(result.enabled).toBe(false);
     expect(result.provider).toBe('calendly');
+
     // URL is empty string which is falsy but still set
     expect(result.calendlyUrl).toBe('');
   });
@@ -272,6 +273,7 @@ describe('toConvexIntegrations', () => {
       config: { provider: 'calcom', url: 'https://cal.com/other/30min' },
     };
     const result = toConvexIntegrations([CALENDLY_CONFIG, calendly2]);
+
     // Array.find returns the first match
     expect(result.booking.provider).toBe('calendly');
     expect(result.booking.calendlyUrl).toBe('https://calendly.com/darius-popescu1191/30min');
@@ -360,8 +362,9 @@ describe('buildIntegrationsMessage', () => {
   });
 
   it('shows both integration names joined with "and"', () => {
-    expect(buildIntegrationsMessage([CALENDLY_CONFIG, MAILCHIMP_CONFIG]))
-      .toBe("I've connected Calendly and Mailchimp. Let's build!");
+    expect(buildIntegrationsMessage([CALENDLY_CONFIG, MAILCHIMP_CONFIG])).toBe(
+      "I've connected Calendly and Mailchimp. Let's build!",
+    );
   });
 
   it('uses the integration name field, not the id', () => {
@@ -374,4 +377,3 @@ describe('buildIntegrationsMessage', () => {
     expect(buildIntegrationsMessage([custom])).toBe("I've connected My Custom Booking. Let's build!");
   });
 });
-

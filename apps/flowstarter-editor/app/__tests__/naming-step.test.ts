@@ -15,7 +15,6 @@ import { describe, it, expect } from 'vitest';
 import {
   SUGGESTED_REPLIES,
   DEFAULT_PROJECT_NAME_GENERATION,
-  REPLY_LABELS,
   REPLY_KEYS,
   getMessage,
   MESSAGE_KEYS,
@@ -40,14 +39,13 @@ describe('Name generation trigger conditions', () => {
   function resolveNameContext(
     descriptionOrPrompt: string,
     projectDescription: string,
-    messages: Array<{ role: string; content: string }>
+    messages: Array<{ role: string; content: string }>,
   ): string {
     let context = descriptionOrPrompt || projectDescription || '';
 
     if (!context || context.trim().length === 0) {
-      const firstUserMessage = messages.find(
-        (m) => m.role === 'user' && !m.content.includes('Suggest a name')
-      );
+      const firstUserMessage = messages.find((m) => m.role === 'user' && !m.content.includes('Suggest a name'));
+
       if (firstUserMessage) {
         context = firstUserMessage.content;
       }
@@ -57,11 +55,7 @@ describe('Name generation trigger conditions', () => {
   }
 
   it('should use descriptionOrPrompt when provided', () => {
-    const ctx = resolveNameContext(
-      'A fitness coaching website',
-      'something else',
-      []
-    );
+    const ctx = resolveNameContext('A fitness coaching website', 'something else', []);
     expect(ctx).toBe('A fitness coaching website');
   });
 
@@ -85,6 +79,7 @@ describe('Name generation trigger conditions', () => {
       { role: 'user', content: 'Suggest a name' },
       { role: 'user', content: 'A yoga studio' },
     ];
+
     // The logic finds the first user message that doesn't include "Suggest a name"
     const ctx = resolveNameContext('', '', messages);
     expect(ctx).toBe('A yoga studio');
@@ -96,9 +91,8 @@ describe('Name generation trigger conditions', () => {
   });
 
   it('should trim whitespace-only descriptions', () => {
-    const ctx = resolveNameContext('   ', '', [
-      { role: 'user', content: 'Fallback message' },
-    ]);
+    const ctx = resolveNameContext('   ', '', [{ role: 'user', content: 'Fallback message' }]);
+
     // '   '.trim().length === 0, so falls through to message history
     expect(ctx).toBe('Fallback message');
   });
@@ -141,14 +135,11 @@ describe('Name confirmation detection', () => {
     'okay',
   ];
 
-  it.each(confirmationPhrases)(
-    'should recognize "%s" as a confirmation phrase',
-    (phrase) => {
-      // These are short affirmative phrases — no "call it" or "make it" keywords
-      expect(phrase.length).toBeLessThan(30);
-      expect(phrase.toLowerCase()).not.toMatch(/^(call it|name it|make it|i want)/);
-    }
-  );
+  it.each(confirmationPhrases)('should recognize "%s" as a confirmation phrase', (phrase) => {
+    // These are short affirmative phrases — no "call it" or "make it" keywords
+    expect(phrase.length).toBeLessThan(30);
+    expect(phrase.toLowerCase()).not.toMatch(/^(call it|name it|make it|i want)/);
+  });
 
   it('should distinguish confirmation from refinement', () => {
     const refinements = ['make it shorter', 'more punchy', 'try another'];
@@ -187,25 +178,23 @@ describe('Name refinement detection', () => {
     'more unique',
   ];
 
-  it.each(refinementPhrases)(
-    'should recognize "%s" as a refinement request',
-    (phrase) => {
-      const lower = phrase.toLowerCase();
-      // Refinement phrases contain modifiers or requests for change
-      const isRefinement =
-        /\b(make|more|less|too|try|different|another|change|not quite|something|shorter|longer|punchy|creative|professional|unique|modern|bold|funky|generic)\b/i.test(
-          lower
-        );
-      expect(isRefinement).toBe(true);
-    }
-  );
+  it.each(refinementPhrases)('should recognize "%s" as a refinement request', (phrase) => {
+    const lower = phrase.toLowerCase();
+
+    // Refinement phrases contain modifiers or requests for change
+    const isRefinement =
+      /\b(make|more|less|too|try|different|another|change|not quite|something|shorter|longer|punchy|creative|professional|unique|modern|bold|funky|generic)\b/i.test(
+        lower,
+      );
+    expect(isRefinement).toBe(true);
+  });
 
   it('should not classify direct names as refinement', () => {
     const directNames = ['FitPro Studio', 'Clara', 'The Golden Table', 'My Business'];
+
     for (const name of directNames) {
       // Direct names typically don't contain refinement keywords
-      const isRefinement =
-        /^(make|more|less|too|try|not quite)\b/i.test(name);
+      const isRefinement = /^(make|more|less|too|try|not quite)\b/i.test(name);
       expect(isRefinement).toBe(false);
     }
   });
@@ -222,25 +211,19 @@ describe('Direct name input patterns', () => {
     { input: 'use "Sunday Morning"', expectedName: 'Sunday Morning' },
   ];
 
-  it.each(directNamePatterns)(
-    'should extract name from "$input"',
-    ({ input, expectedName }) => {
-      // Simple extraction pattern: remove common prefixes
-      const prefixes =
-        /^(call it|name it|let'?s call it|i want to (call|name) it|use)\s+/i;
-      const cleaned = input.replace(prefixes, '').replace(/^["']|["']$/g, '');
-      expect(cleaned).toBe(expectedName);
-    }
-  );
+  it.each(directNamePatterns)('should extract name from "$input"', ({ input, expectedName }) => {
+    // Simple extraction pattern: remove common prefixes
+    const prefixes = /^(call it|name it|let'?s call it|i want to (call|name) it|use)\s+/i;
+    const cleaned = input.replace(prefixes, '').replace(/^["']|["']$/g, '');
+    expect(cleaned).toBe(expectedName);
+  });
 
   it('should handle quoted names', () => {
     const inputs = ['"My Project"', "'My Project'", 'call it "My Project"'];
+
     for (const input of inputs) {
       const cleaned = input
-        .replace(
-          /^(call it|name it|let'?s call it|i want to (call|name) it|use)\s+/i,
-          ''
-        )
+        .replace(/^(call it|name it|let'?s call it|i want to (call|name) it|use)\s+/i, '')
         .replace(/^["']|["']$/g, '');
       expect(cleaned).toBe('My Project');
     }
@@ -257,12 +240,8 @@ describe('Manual entry mode (I have my own)', () => {
   });
 
   it('should not skip LLM for other action types', () => {
-    const actions = [
-      { type: 'name-input' },
-      { type: 'generate-name' },
-      null,
-      { type: '' },
-    ];
+    const actions = [{ type: 'name-input' }, { type: 'generate-name' }, null, { type: '' }];
+
     for (const action of actions) {
       const isManualEntry = action?.type === 'awaiting-manual-name';
       expect(isManualEntry).toBe(false);
@@ -295,15 +274,20 @@ describe('Dependency array correctness (stale closure regression)', () => {
     let capturedDescription = '';
 
     // BAD: captured at creation time (stale closure)
-    const staleCallback = () => capturedDescription;
+
+    const _staleCallback = () => capturedDescription;
 
     capturedDescription = 'A fitness coaching site';
 
-    // With stale closure, the captured value would be ''
-    // After the fix, the callback is recreated when projectDescription changes
+    /*
+     * With stale closure, the captured value would be ''
+     * After the fix, the callback is recreated when projectDescription changes
+     */
 
-    // This test verifies the expected behavior:
-    // The callback should reflect the CURRENT value of projectDescription
+    /*
+     * This test verifies the expected behavior:
+     * The callback should reflect the CURRENT value of projectDescription
+     */
     expect(capturedDescription).toBe('A fitness coaching site');
     expect(capturedDescription).not.toBe('');
   });
@@ -334,7 +318,10 @@ describe('Dependency array correctness (stale closure regression)', () => {
   it('should update previouslySuggested without duplicates', () => {
     // Simulates addToSuggestedHistory logic
     const addToHistory = (prev: string[], name: string): string[] => {
-      if (prev.includes(name)) return prev;
+      if (prev.includes(name)) {
+        return prev;
+      }
+
       return [...prev, name];
     };
 
@@ -351,11 +338,13 @@ describe('Dependency array correctness (stale closure regression)', () => {
     // Simulates setAccumulatedRequirements logic
     const accumulateReqs = (prev: string[], newReqs: string[]): string[] => {
       const combined = [...prev];
+
       for (const req of newReqs) {
         if (!combined.includes(req)) {
           combined.push(req);
         }
       }
+
       return combined;
     };
 
@@ -389,6 +378,7 @@ describe('Naming step edge cases', () => {
 
     for (const name of specialNames) {
       expect(name.trim().length).toBeGreaterThan(0);
+
       // Name should survive a round-trip through JSON
       const roundTripped = JSON.parse(JSON.stringify(name));
       expect(roundTripped).toBe(name);
@@ -407,6 +397,7 @@ describe('Naming step edge cases', () => {
 
   it('should handle whitespace-only input', () => {
     const inputs = ['', '   ', '\t', '\n', '  \n  '];
+
     for (const input of inputs) {
       expect(input.trim().length).toBe(0);
     }
@@ -414,6 +405,7 @@ describe('Naming step edge cases', () => {
 
   it('should handle unicode names', () => {
     const unicodeNames = ['工作室', '日本語サイト', 'مشروع جديد', '새 프로젝트'];
+
     for (const name of unicodeNames) {
       expect(name.trim().length).toBeGreaterThan(0);
     }
@@ -483,16 +475,12 @@ describe('Name step suggested replies', () => {
 describe('Name generation error messages', () => {
   it('should have recoverable generation error', () => {
     expect(NAME_GENERATION_ERRORS.GENERATION_FAILED.recoverable).toBe(true);
-    expect(NAME_GENERATION_ERRORS.GENERATION_FAILED.message).toContain(
-      'Name generation unavailable'
-    );
+    expect(NAME_GENERATION_ERRORS.GENERATION_FAILED.message).toContain('Name generation unavailable');
   });
 
   it('should have recoverable extraction error', () => {
     expect(NAME_GENERATION_ERRORS.EXTRACTION_FAILED.recoverable).toBe(true);
-    expect(NAME_GENERATION_ERRORS.EXTRACTION_FAILED.message).toContain(
-      "Couldn't understand"
-    );
+    expect(NAME_GENERATION_ERRORS.EXTRACTION_FAILED.message).toContain("Couldn't understand");
   });
 
   it('should format error with suggestions', () => {
@@ -568,7 +556,10 @@ describe('Name conversation history tracking', () => {
 
     // Simulate addToSuggestedHistory
     const add = (list: string[], name: string) => {
-      if (list.includes(name)) return list;
+      if (list.includes(name)) {
+        return list;
+      }
+
       return [...list, name];
     };
 
@@ -593,8 +584,10 @@ describe('Name conversation history tracking', () => {
   });
 
   it('should be cleared after name confirmation (step transition)', () => {
-    // In handleNameSubmit, after confirmation, resetNameHistory is called
-    // Simulating the sequence:
+    /*
+     * In handleNameSubmit, after confirmation, resetNameHistory is called
+     * Simulating the sequence:
+     */
     let history = ['Clara', 'Fern', 'Atlas'];
     let reqs = ['punchy', 'shorter'];
 
@@ -643,6 +636,7 @@ describe('Name generation request cancellation', () => {
 
     // First request
     abortController = new AbortController();
+
     const firstSignal = abortController.signal;
     expect(firstSignal.aborted).toBe(false);
 
@@ -662,4 +656,3 @@ describe('Name generation request cancellation', () => {
     expect(isAbort).toBe(true);
   });
 });
-

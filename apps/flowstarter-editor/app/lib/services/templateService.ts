@@ -38,8 +38,8 @@ export async function fetchTemplates(): Promise<Template[]> {
       throw new Error(`Failed to fetch templates: ${response.statusText}`);
     }
 
-    const rawTemplates = await response.json() as Array<{ slug: string } & Omit<Template, "id">>;
-    const templates = rawTemplates.map(t => ({ ...t, id: t.slug })) as Template[];
+    const rawTemplates = (await response.json()) as Array<{ slug: string } & Omit<Template, 'id'>>;
+    const templates = rawTemplates.map((t) => ({ ...t, id: t.slug })) as Template[];
 
     console.log('[TemplateService] Fetched', templates.length, 'templates');
 
@@ -257,4 +257,3 @@ export async function fetchCategories(): Promise<string[]> {
     throw new Error(`Failed to fetch categories: ${error}`);
   }
 }
-

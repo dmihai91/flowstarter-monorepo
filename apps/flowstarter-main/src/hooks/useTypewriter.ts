@@ -3,9 +3,9 @@
 import { useState, useEffect, useRef } from 'react';
 
 interface UseTypewriterOptions {
-  speed?: number;       // ms per character (default 18)
-  delay?: number;       // initial delay before starting (default 0)
-  enabled?: boolean;    // set false to skip animation
+  speed?: number; // ms per character (default 18)
+  delay?: number; // initial delay before starting (default 0)
+  enabled?: boolean; // set false to skip animation
 }
 
 /**
@@ -47,7 +47,9 @@ export function useTypewriter(
     };
 
     timerRef.current = setTimeout(run, delay);
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, [text, speed, delay, enabled]);
 
   return { displayed, done };

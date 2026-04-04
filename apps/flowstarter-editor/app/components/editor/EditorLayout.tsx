@@ -18,7 +18,7 @@ import type { OnboardingStep } from './editor-chat/types';
 import { TerminalPanel } from './TerminalPanel';
 import type { AgentActivityEvent } from './AgentActivityPanel';
 import type { OrchestratorStatusDTO } from '~/lib/hooks/types/orchestrator.dto';
-import type { Id } from '../../../convex/_generated/dataModel';
+import type { Id } from '~/convex/_generated/dataModel';
 
 // Lazy load the Monaco-based code editor (no WebContainer dependency)
 const ConvexCodeEditor = lazy(() =>
@@ -51,9 +51,11 @@ export function EditorLayout({
   projectId,
   children,
   isPublishEnabled = false,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   hasProject = false,
   onboardingStep,
   onPublish,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   orchestrationStatus,
   agentEvents = [],
   isAgentActive = false,
@@ -62,6 +64,7 @@ export function EditorLayout({
   const colors = getColors(isDark);
   const [viewMode, setViewMode] = useState<ViewMode>('preview');
   const [terminalOpen, setTerminalOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [terminalHeight, setTerminalHeight] = useState(240);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
@@ -72,10 +75,14 @@ export function EditorLayout({
       const tablet = window.innerWidth >= 640 && window.innerWidth < 1024;
       setIsMobile(mobile);
       setIsTablet(tablet);
-      if (mobile) setViewMode(prev => prev === 'preview' ? 'chat' : prev);
+
+      if (mobile) {
+        setViewMode((prev) => (prev === 'preview' ? 'chat' : prev));
+      }
     };
     check();
     window.addEventListener('resize', check);
+
     return () => window.removeEventListener('resize', check);
   }, []);
 
@@ -98,6 +105,7 @@ export function EditorLayout({
     startPreview,
     refreshPreview,
     retryPreview,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     autoFixAttempts,
   } = useDaytonaPreview({
     projectId: projectId || null,
@@ -106,23 +114,33 @@ export function EditorLayout({
     maxAutoFixAttempts: 3,
   });
 
-
-  // Ensure preview starts when step becomes 'ready' and viewMode is already 'preview'
-  // (autoStart in the hook handles this, but this is a safety net)
+  /*
+   * Ensure preview starts when step becomes 'ready' and viewMode is already 'preview'
+   * (autoStart in the hook handles this, but this is a safety net)
+   */
   useEffect(() => {
-    if (onboardingStep === 'ready' && viewMode === 'preview' && !previewTriggered && projectId && daytonaState.status === 'idle') {
+    if (
+      onboardingStep === 'ready' &&
+      viewMode === 'preview' &&
+      !previewTriggered &&
+      projectId &&
+      daytonaState.status === 'idle'
+    ) {
       setPreviewTriggered(true);
       startPreview();
     }
   }, [onboardingStep, viewMode, previewTriggered, projectId, daytonaState.status, startPreview]);
 
-  // Handle view mode changes - trigger preview on first switch to preview tab
-  // Auto-open terminal when agent starts running
+  /*
+   * Handle view mode changes - trigger preview on first switch to preview tab
+   * Auto-open terminal when agent starts running
+   */
   const prevAgentActive = useRef(false);
   useEffect(() => {
     if (isAgentActive && !prevAgentActive.current) {
       setTerminalOpen(true);
     }
+
     prevAgentActive.current = isAgentActive;
   }, [isAgentActive]);
 
@@ -147,7 +165,7 @@ export function EditorLayout({
     conversations,
     activeConversation,
     isLoadingConversations,
-    createConversation,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     selectConversation,
     renameConversation,
     deleteConversation,
@@ -170,16 +188,6 @@ export function EditorLayout({
 
   const navigate = useNavigate();
 
-  const handleNewConversation = async () => {
-    const newConversationId = await createConversation();
-    closeSidebar();
-
-    // Navigate to the new conversation URL
-    if (newConversationId) {
-      navigate(`/project/${newConversationId}`);
-    }
-  };
-
   const handleSelectConversation = async (id: Parameters<typeof selectConversation>[0]) => {
     closeSidebar();
 
@@ -193,7 +201,8 @@ export function EditorLayout({
       style={{
         display: 'flex',
         flexDirection: 'column',
-        height: '100dvh', maxHeight: '-webkit-fill-available',
+        height: '100dvh',
+        maxHeight: '-webkit-fill-available',
         width: '100vw',
         overflow: 'hidden',
         background: 'transparent',
@@ -211,7 +220,6 @@ export function EditorLayout({
         isLoading={isLoadingConversations}
         onClose={closeSidebar}
         onSelectConversation={handleSelectConversation}
-        onNewConversation={handleNewConversation}
         onRenameConversation={renameConversation}
         onProjectNameChange={updateConversationProjectName}
         onDeleteConversation={deleteConversation}
@@ -219,17 +227,20 @@ export function EditorLayout({
 
       <EditorHeader
         projectName={displayProjectName}
-        projectId={projectId}
         viewMode={viewMode}
         isPublishEnabled={isPublishEnabled}
         onViewModeChange={handleViewModeChange}
         onProjectNameChange={updateProjectName}
         onPublish={onPublish}
         onMenuClick={toggleSidebar}
-        terminalErrorCount={agentEvents.filter((e: AgentActivityEvent) => e.type === 'error' || (e.type === 'sandbox_exit' && (e as any).code !== 0)).length}
+        terminalErrorCount={
+          agentEvents.filter(
+            (e: AgentActivityEvent) => e.type === 'error' || (e.type === 'sandbox_exit' && (e as any).code !== 0),
+          ).length
+        }
         hasTerminalActivity={(agentEvents ?? []).length > 0}
         terminalOpen={terminalOpen}
-        onTerminalToggle={() => setTerminalOpen(o => !o)}
+        onTerminalToggle={() => setTerminalOpen((o) => !o)}
       />
 
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
@@ -253,16 +264,26 @@ export function EditorLayout({
           {children}
         </div>
 
-        {!isMobile && <ResizeHandle
-          isResizing={isResizing}
-          isHovered={isHandleHovered}
-          onMouseDown={handleMouseDown}
-          onMouseEnter={() => setIsHandleHovered(true)}
-          onMouseLeave={() => setIsHandleHovered(false)}
-        />}
+        {!isMobile && (
+          <ResizeHandle
+            isResizing={isResizing}
+            isHovered={isHandleHovered}
+            onMouseDown={handleMouseDown}
+            onMouseEnter={() => setIsHandleHovered(true)}
+            onMouseLeave={() => setIsHandleHovered(false)}
+          />
+        )}
 
         {/* RIGHT: Editor/Preview Panel (hidden on mobile when in chat mode) */}
-        <div style={{ flex: 1, background: isDark ? colors.bgTertiary : 'rgba(248,248,250,0.6)', overflow: 'hidden', display: isMobile && viewMode !== 'preview' ? 'none' : 'flex', flexDirection: 'column' }}>
+        <div
+          style={{
+            flex: 1,
+            background: isDark ? colors.bgTertiary : 'rgba(248,248,250,0.6)',
+            overflow: 'hidden',
+            display: isMobile && viewMode !== 'preview' ? 'none' : 'flex',
+            flexDirection: 'column',
+          }}
+        >
           {projectId &&
           onboardingStep &&
           ![

@@ -20,7 +20,7 @@ import type {
   Template,
   ColorPalette,
   InitialChatState,
-} from '../types';
+} from '~/components/editor/editor-chat/types';
 
 interface UseSyncCallbacksProps {
   onStateChange?: (state: Partial<InitialChatState>) => void;

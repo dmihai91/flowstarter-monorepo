@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { trackLLMUsage } from './cost-tracker';
 import { generateText, type CoreTool, type GenerateTextResult, type Message } from 'ai';
 import ignore from 'ignore';
@@ -249,4 +250,3 @@ export function getFilePaths(files: FileMap) {
 
   return filePaths;
 }
-

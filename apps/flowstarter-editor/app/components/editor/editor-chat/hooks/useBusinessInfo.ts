@@ -7,8 +7,8 @@
 
 import { useState, useCallback } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import type { BusinessInfo } from '../types';
-import type { UseBusinessInfoOptions, UseBusinessInfoReturn } from '../types/sharedState';
+import type { BusinessInfo } from '~/components/editor/editor-chat/types';
+import type { UseBusinessInfoOptions, UseBusinessInfoReturn } from '~/components/editor/editor-chat/types/sharedState';
 
 // ─── Generate Business Info API ─────────────────────────────────────────────
 
@@ -68,6 +68,7 @@ export function useBusinessInfo(options: UseBusinessInfoOptions = {}): UseBusine
       try {
         const result = await generateMutation.mutateAsync({ description, projectName });
         return result;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         // Error already logged by mutation
         return null;
@@ -100,4 +101,3 @@ export function useBusinessInfo(options: UseBusinessInfoOptions = {}): UseBusine
 }
 
 export type { UseBusinessInfoOptions, UseBusinessInfoReturn };
-

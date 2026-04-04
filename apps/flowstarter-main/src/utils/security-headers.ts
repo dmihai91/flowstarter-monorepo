@@ -46,6 +46,8 @@ const ALLOWED_IMG_DOMAINS = [
   'https://*.clerk.com',
   'https://*.clerk.dev',
   'https://www.google-analytics.com',
+  // Template thumbnails served from Cloudflare R2
+  'https://assets.flowstarter.dev',
 ];
 
 const ALLOWED_FONT_DOMAINS = ["'self'", 'https://fonts.gstatic.com', 'data:'];

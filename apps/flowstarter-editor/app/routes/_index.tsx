@@ -7,10 +7,7 @@ import { LoadingScreen } from '~/components/LoadingScreen';
 import { en } from '~/lib/i18n/locales/en';
 
 export const meta: MetaFunction = () => {
-  return [
-    { title: en.app.title },
-    { name: 'description', content: en.app.description },
-  ];
+  return [{ title: en.app.title }, { name: 'description', content: en.app.description }];
 };
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -98,7 +95,8 @@ function NoDashboardCard() {
             margin: '0 0 28px',
           }}
         >
-          Start a project from the team dashboard, complete the business and template setup, then open it here through the handoff flow.
+          Start a project from the team dashboard, complete the business and template setup, then open it here through
+          the handoff flow.
         </p>
         <a
           href={dashboardUrl}
@@ -140,11 +138,7 @@ function IndexContent() {
   }
 
   return (
-    <HandoffGate
-      handoffToken={handoffToken}
-      hasHandoff={hasHandoff}
-      loadingMessage={en.app.loadingFlowstarterEditor}
-    />
+    <HandoffGate handoffToken={handoffToken} hasHandoff={hasHandoff} loadingMessage={en.app.loadingFlowstarterEditor} />
   );
 }
 
@@ -153,9 +147,7 @@ export default function Index() {
 
   // Skip AuthGuard for handoff URLs — HandoffGate validates the token independently
   if (hasHandoff) {
-    return (
-      <ClientOnly fallback={<LoadingFallback />}>{() => <IndexContent />}</ClientOnly>
-    );
+    return <ClientOnly fallback={<LoadingFallback />}>{() => <IndexContent />}</ClientOnly>;
   }
 
   return (

@@ -23,4 +23,3 @@ export interface IProviderSetting {
 export type IProviderConfig = ProviderInfo & {
   settings: IProviderSetting;
 };
-

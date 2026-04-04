@@ -73,7 +73,7 @@ export interface SelfHealingOutput {
 /*
  * ============================================================================
  * CSS Class Replacements (Tier 1)
- * 
+ *
  * Order matters! Specific patterns should come before generic patterns.
  * ============================================================================
  */
@@ -112,8 +112,10 @@ const CSS_REPLACEMENTS: [RegExp, string][] = [
   [/\bborder-light\b/g, 'border-gray-100'],
   [/\bborder-primary\b/g, 'border-blue-600'],
 
-  // ── Generic suffix handling (MUST come last) ─────────────────────────────
-  // Only match standalone classes, not those with variant prefixes like hover:
+  /*
+   * ── Generic suffix handling (MUST come last) ─────────────────────────────
+   * Only match standalone classes, not those with variant prefixes like hover:
+   */
   [/(?<![:\w])\b(bg|text|border|ring)-([a-z]+)-dark\b/g, '$1-$2-700'],
   [/(?<![:\w])\b(bg|text|border|ring)-([a-z]+)-light\b/g, '$1-$2-300'],
 ];
@@ -502,5 +504,3 @@ export function getSelfHealingTool(): SelfHealingTool {
 export function resetSelfHealingTool(): void {
   selfHealingToolInstance = null;
 }
-
-

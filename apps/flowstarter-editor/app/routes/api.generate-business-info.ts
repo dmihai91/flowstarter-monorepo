@@ -11,6 +11,7 @@
 
 import { type ActionFunctionArgs, json } from '@remix-run/cloudflare';
 import { createScopedLogger } from '~/utils/logger';
+import { checkRateLimit, getRateLimitKey } from '~/lib/rateLimit';
 
 const logger = createScopedLogger('api.generate-business-info');
 
@@ -27,6 +28,7 @@ export interface BusinessInfo {
   pricingOffers?: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface BusinessInfoResponse {
   success: true;
   info: BusinessInfo;
@@ -41,6 +43,22 @@ interface BusinessInfoError {
 }
 
 export async function action({ context, request }: ActionFunctionArgs) {
+  const rlKey = getRateLimitKey(request, 'api.generate-business-info');
+  const rl = checkRateLimit(rlKey, 30, 60 * 60 * 1000);
+
+  if (rl.limited) {
+    return json<BusinessInfoError>(
+      {
+        success: false,
+        error: 'Rate limit exceeded',
+        errorType: 'unknown',
+        message: 'Too many requests. Please try again later.',
+        canRetry: true,
+      },
+      { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } },
+    );
+  }
+
   try {
     const body = (await request.json()) as BusinessInfoRequest;
     const { projectDescription, projectName } = body;
@@ -327,4 +345,3 @@ function parseBusinessInfoResponse(response: string): BusinessInfo {
     throw e;
   }
 }
-

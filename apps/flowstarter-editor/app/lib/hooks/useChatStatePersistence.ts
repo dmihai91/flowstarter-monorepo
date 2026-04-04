@@ -120,4 +120,3 @@ export function useChatStatePersistence(): UseChatStatePersistenceResult {
     clearSession,
   };
 }
-

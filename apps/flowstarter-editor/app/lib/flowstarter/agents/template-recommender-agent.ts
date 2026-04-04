@@ -12,7 +12,7 @@ import { generateCompletion } from '~/lib/services/llm';
 import { createScopedLogger } from '~/utils/logger';
 import type { Template } from '~/components/editor/template-preview/types';
 
-const logger = createScopedLogger('TemplateRecommenderAgent');
+const _logger = createScopedLogger('TemplateRecommenderAgent');
 
 /*
  * ============================================================================
@@ -325,4 +325,3 @@ export function getTemplateRecommenderAgent(): TemplateRecommenderAgent {
 export function resetTemplateRecommenderAgent(): void {
   templateRecommenderAgentInstance = null;
 }
-

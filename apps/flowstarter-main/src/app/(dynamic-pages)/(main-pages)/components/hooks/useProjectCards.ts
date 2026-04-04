@@ -56,20 +56,26 @@ function getTemplateLabel(raw: unknown): string {
 /**
  * Transforms raw project data into card view models.
  */
-export function useProjectCards(projects: Array<TableType<'projects'>>): ProjectCard[] {
+export function useProjectCards(
+  projects: Array<TableType<'projects'>>
+): ProjectCard[] {
   const { t } = useTranslations();
 
   return useMemo(() => {
     const result: ProjectCard[] = [];
 
     for (const p of projects) {
-      const isDraft = (p as unknown as { is_draft?: boolean }).is_draft === true;
+      const isDraft =
+        (p as unknown as { is_draft?: boolean }).is_draft === true;
       const name =
         typeof p.name === 'string'
           ? p.name
           : t('dashboard.projects.draftPlaceholderName');
-      const description = typeof p.description === 'string' ? p.description : '';
-      const link = isDraft ? `/team/dashboard/new?draft=${p.id}` : `/projects/${p.id}`;
+      const description =
+        typeof p.description === 'string' ? p.description : '';
+      const link = isDraft
+        ? `/team/dashboard/new?draft=${p.id}`
+        : `/projects/${p.id}`;
 
       result.push({
         id: p.id,

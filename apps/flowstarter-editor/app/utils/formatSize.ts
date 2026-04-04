@@ -10,4 +10,3 @@ export function formatSize(bytes: number): string {
 
   return `${size.toFixed(1)} ${units[unitIndex]}`;
 }
-

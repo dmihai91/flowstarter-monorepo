@@ -29,9 +29,10 @@ export function DashboardStatsClientFetcher() {
 
   // AI credits unlock when a site goes live
   // TODO: Fetch real usage from billing/subscription system
-  const aiCredits = data.liveProjects > 0
-    ? { remaining: 1000, total: 1000, hasSubscription: true }
-    : undefined;
+  const aiCredits =
+    data.liveProjects > 0
+      ? { remaining: 1000, total: 1000, hasSubscription: true }
+      : undefined;
 
   return (
     <DashboardStatsClient

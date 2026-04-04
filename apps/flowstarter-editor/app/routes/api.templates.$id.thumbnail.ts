@@ -9,16 +9,18 @@ const MCP_BASE_URL = process.env.FLOWSTARTER_MCP_URL || 'http://localhost:3001';
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const { id } = params;
-  if (!id) return new Response('Not found', { status: 404 });
+
+  if (!id) {
+    return new Response('Not found', { status: 404 });
+  }
 
   const url = new URL(request.url);
   const theme = url.searchParams.get('theme') || 'light';
 
   try {
-    const upstream = await fetch(
-      `${MCP_BASE_URL}/api/templates/${id}/thumbnail?theme=${theme}`,
-      { signal: AbortSignal.timeout(5000) }
-    );
+    const upstream = await fetch(`${MCP_BASE_URL}/api/templates/${id}/thumbnail?theme=${theme}`, {
+      signal: AbortSignal.timeout(5000),
+    });
 
     if (!upstream.ok) {
       return new Response(null, { status: upstream.status });

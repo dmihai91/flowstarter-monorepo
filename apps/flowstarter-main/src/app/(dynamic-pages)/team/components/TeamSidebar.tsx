@@ -28,25 +28,40 @@ export function TeamSidebar() {
   const pathname = usePathname();
   const { user } = useUser();
   const { t } = useTranslations();
-  const [collapsed, setCollapsed] = useLocalStorage('team-sidebar-collapsed', false);
+  const [collapsed, setCollapsed] = useLocalStorage(
+    'team-sidebar-collapsed',
+    false
+  );
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
-  
+
   const metadata = user?.publicMetadata as { role?: string } | undefined;
   const isAdmin = metadata?.role?.toLowerCase() === 'admin';
 
   const configItems = [
-    { label: t('team.sidebar.analytics'), href: '/team/dashboard/analytics', icon: BarChart3 },
+    {
+      label: t('team.sidebar.analytics'),
+      href: '/team/dashboard/analytics',
+      icon: BarChart3,
+    },
   ];
 
   const adminItems = [
-    { label: t('team.sidebar.invite'), href: '/team/dashboard/invite', icon: UserPlus },
+    {
+      label: t('team.sidebar.invite'),
+      href: '/team/dashboard/invite',
+      icon: UserPlus,
+    },
   ];
 
   const adminOnlyItems = [
-    { label: 'All projects', href: '/team/dashboard/projects/list', icon: FolderOpen  },
-    { label: 'AI usage',     href: '/team/dashboard/ai-usage',      icon: SparklesIcon },
-    { label: 'Clients',      href: '/team/dashboard/clients',        icon: Users       },
-    { label: 'Team members', href: '/team/dashboard/team',           icon: ShieldCheck },
+    {
+      label: 'All projects',
+      href: '/team/dashboard/projects/list',
+      icon: FolderOpen,
+    },
+    { label: 'AI usage', href: '/team/dashboard/ai-usage', icon: SparklesIcon },
+    { label: 'Clients', href: '/team/dashboard/clients', icon: Users },
+    { label: 'Team members', href: '/team/dashboard/team', icon: ShieldCheck },
   ];
 
   // Close mobile sidebar on route change
@@ -68,7 +83,19 @@ export function TeamSidebar() {
     return pathname?.startsWith(href);
   };
 
-  const NavLink = ({ href, icon: Icon, label, exact, showLabel = true }: { href: string; icon: LucideIcon; label: string; exact?: boolean; showLabel?: boolean }) => (
+  const NavLink = ({
+    href,
+    icon: Icon,
+    label,
+    exact,
+    showLabel = true,
+  }: {
+    href: string;
+    icon: LucideIcon;
+    label: string;
+    exact?: boolean;
+    showLabel?: boolean;
+  }) => (
     <Link
       href={href}
       title={!showLabel ? label : undefined}
@@ -86,12 +113,27 @@ export function TeamSidebar() {
     </Link>
   );
 
-
-const SidebarContent = ({ showLabel, showCollapseToggle = false }: { showLabel: boolean; showCollapseToggle?: boolean }) => (
-    <div className={cn("p-4 space-y-6 h-full overflow-y-auto flex flex-col", !showLabel && "items-center")}>
+  const SidebarContent = ({
+    showLabel,
+    showCollapseToggle = false,
+  }: {
+    showLabel: boolean;
+    showCollapseToggle?: boolean;
+  }) => (
+    <div
+      className={cn(
+        'p-4 space-y-6 h-full overflow-y-auto flex flex-col',
+        !showLabel && 'items-center'
+      )}
+    >
       {/* Collapse Toggle - Desktop only */}
       {showCollapseToggle && (
-        <div className={cn("w-full", !showLabel ? "flex justify-center" : "flex justify-end")}>
+        <div
+          className={cn(
+            'w-full',
+            !showLabel ? 'flex justify-center' : 'flex justify-end'
+          )}
+        >
           <button
             onClick={() => setCollapsed(!collapsed)}
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
@@ -110,18 +152,18 @@ const SidebarContent = ({ showLabel, showCollapseToggle = false }: { showLabel: 
       )}
 
       {/* Main Navigation */}
-      <div className={cn("space-y-1", !showLabel && "w-full")}>
-        <NavLink 
-          href="/team/dashboard" 
-          icon={LayoutDashboard} 
-          label={t('team.sidebar.dashboard')} 
-          exact 
+      <div className={cn('space-y-1', !showLabel && 'w-full')}>
+        <NavLink
+          href="/team/dashboard"
+          icon={LayoutDashboard}
+          label={t('team.sidebar.dashboard')}
+          exact
           showLabel={showLabel}
         />
       </div>
 
       {/* Configuration */}
-      <div className={cn(!showLabel && "w-full")}>
+      <div className={cn(!showLabel && 'w-full')}>
         {showLabel && (
           <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
             {t('team.sidebar.configuration')}
@@ -136,7 +178,7 @@ const SidebarContent = ({ showLabel, showCollapseToggle = false }: { showLabel: 
 
       {/* Admin Only */}
       {isAdmin && (
-        <div className={cn(!showLabel && "w-full")}>
+        <div className={cn(!showLabel && 'w-full')}>
           {showLabel && (
             <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
               {t('team.sidebar.team')}
@@ -152,7 +194,7 @@ const SidebarContent = ({ showLabel, showCollapseToggle = false }: { showLabel: 
 
       {/* Admin-only pages */}
       {isAdmin && (
-        <div className={cn(!showLabel && "w-full")}>
+        <div className={cn(!showLabel && 'w-full')}>
           {showLabel && (
             <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
               Admin
@@ -165,7 +207,6 @@ const SidebarContent = ({ showLabel, showCollapseToggle = false }: { showLabel: 
           </div>
         </div>
       )}
-
     </div>
   );
 
@@ -205,7 +246,9 @@ const SidebarContent = ({ showLabel, showCollapseToggle = false }: { showLabel: 
 
         {/* ThemeToggle with label */}
         <div className="px-4 py-3 border-b border-white/60 dark:border-white/10 flex items-center justify-between">
-          <span className="text-sm text-gray-600 dark:text-white/70">Theme</span>
+          <span className="text-sm text-gray-600 dark:text-white/70">
+            Theme
+          </span>
           <ThemeToggle />
         </div>
 
@@ -214,7 +257,7 @@ const SidebarContent = ({ showLabel, showCollapseToggle = false }: { showLabel: 
       </aside>
 
       {/* Desktop/Tablet sidebar - Glassmorphism */}
-      <aside 
+      <aside
         className={cn(
           'hidden md:flex flex-col flex-shrink-0 overflow-hidden transition-all duration-300',
           'bg-white/95 dark:bg-white/[0.05] backdrop-blur-2xl backdrop-saturate-150',

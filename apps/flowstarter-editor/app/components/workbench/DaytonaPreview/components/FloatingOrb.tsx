@@ -1,6 +1,6 @@
 import { memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { orbAnimations, orbTransition } from '../constants';
+import { orbAnimations, orbTransition } from '~/components/workbench/DaytonaPreview/constants';
 
 interface FloatingOrbProps {
   delay: number;
@@ -28,7 +28,9 @@ export const FloatingOrb = memo(({ delay, size, x, y, color }: FloatingOrbProps)
 
   const transition = useMemo(() => orbTransition(delay), [delay]);
 
-  return <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={orbAnimations} transition={transition} style={style} />;
+  return (
+    <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={orbAnimations} transition={transition} style={style} />
+  );
 });
 
 FloatingOrb.displayName = 'FloatingOrb';

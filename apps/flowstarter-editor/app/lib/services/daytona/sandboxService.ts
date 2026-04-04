@@ -6,6 +6,7 @@
 
 import { Daytona, Sandbox, SandboxState } from '@daytonaio/sdk';
 import { log } from './client';
+import { validateProjectId } from './sanitize';
 import type { ReusableSandboxResult } from './types';
 
 /**
@@ -14,6 +15,7 @@ import type { ReusableSandboxResult } from './types';
  */
 export async function findReusableSandbox(client: Daytona, projectId: string): Promise<ReusableSandboxResult | null> {
   try {
+    validateProjectId(projectId);
     log.debug(` Looking for existing sandbox for project ${projectId}`);
 
     // Get all flowstarter sandboxes
@@ -77,6 +79,7 @@ export async function findReusableSandbox(client: Daytona, projectId: string): P
  * Create a new sandbox for the project
  */
 export async function createSandbox(client: Daytona, projectId: string): Promise<Sandbox> {
+  validateProjectId(projectId);
   log.debug(` Creating sandbox for project ${projectId}`);
 
   const baseConfig = {
@@ -163,4 +166,3 @@ export async function ensureSandboxRunning(_client: Daytona, sandbox: Sandbox): 
     return false;
   }
 }
-

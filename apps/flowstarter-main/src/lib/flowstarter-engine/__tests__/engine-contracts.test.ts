@@ -17,6 +17,8 @@ const registry: TemplateRegistryEntry[] = [
     framework: 'astro',
     features: ['Multi-page', 'Booking integration', 'Pricing'],
     tags: ['fitness', 'trainer', 'strength'],
+    palettes: [],
+    fonts: [],
     integrations: {
       booking: { optional: true, providers: ['calendly'] },
       newsletter: { optional: true, providers: ['mailchimp'] },
@@ -30,6 +32,8 @@ const registry: TemplateRegistryEntry[] = [
     framework: 'astro',
     features: ['Multi-page', 'Booking integration'],
     tags: ['coach'],
+    palettes: [],
+    fonts: [],
     integrations: {
       booking: { optional: true, providers: ['calendly'] },
     },
@@ -83,7 +87,9 @@ describe('flowstarter engine contracts', () => {
     expect(selection.templateSlug).toBe('fitness-coach');
     expect(assemblySpec.pages[0]?.path).toBe('/');
     expect(
-      assemblySpec.integrations.some((integration) => integration.kind === 'booking')
+      assemblySpec.integrations.some(
+        (integration) => integration.kind === 'booking'
+      )
     ).toBe(true);
     expect(contentMap.entries.length).toBeGreaterThan(0);
     expect(validationReport.status).toBe('pass');

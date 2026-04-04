@@ -56,9 +56,7 @@ export function ConversationList({
                   colors={colors}
                   onSelect={() => onSelectConversation(conv.id)}
                   onRename={(title) => onRenameConversation(conv.id, title)}
-                  onProjectNameChange={
-                    onProjectNameChange ? (name) => onProjectNameChange(conv.id, name) : undefined
-                  }
+                  onProjectNameChange={onProjectNameChange ? (name) => onProjectNameChange(conv.id, name) : undefined}
                   onDelete={() => onDeleteConversation(conv.id)}
                 />
               ))}

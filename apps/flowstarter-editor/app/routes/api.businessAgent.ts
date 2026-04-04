@@ -1,5 +1,6 @@
 import { type ActionFunctionArgs } from '@remix-run/node';
 import { BusinessAgent } from '~/lib/services/businessAgent';
+import { checkRateLimit, getRateLimitKey } from '~/lib/rateLimit';
 
 // Store active agent sessions (in production, use Redis or similar)
 const agentSessions = new Map<string, BusinessAgent>();
@@ -14,6 +15,16 @@ const agentSessions = new Map<string, BusinessAgent>();
  * Body: { action: 'start' | 'chat' | 'generate' | 'regenerate', sessionId?: string, message?: string }
  */
 export async function action({ request }: ActionFunctionArgs) {
+  const rlKey = getRateLimitKey(request, 'api.businessAgent');
+  const rl = checkRateLimit(rlKey, 20, 60 * 60 * 1000);
+
+  if (rl.limited) {
+    return new Response(JSON.stringify({ success: false, error: 'Rate limit exceeded' }), {
+      status: 429,
+      headers: { 'Content-Type': 'application/json', 'Retry-After': String(rl.retryAfter) },
+    });
+  }
+
   try {
     const body = (await request.json()) as {
       action: 'start' | 'chat' | 'generate' | 'regenerate';
@@ -159,4 +170,3 @@ setInterval(
   },
   5 * 60 * 1000,
 ); // Every 5 minutes
-

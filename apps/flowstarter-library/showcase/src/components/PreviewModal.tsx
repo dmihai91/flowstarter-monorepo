@@ -173,10 +173,10 @@ function applyTheme(iframe: HTMLIFrameElement, dark: boolean): void {
     const html = iframe.contentDocument?.documentElement;
     if (html) {
       html.classList.toggle('dark', dark);
-      try { iframe.contentWindow?.localStorage?.setItem('theme', dark ? 'dark' : 'light'); } catch(_) {}
+      try { iframe.contentWindow?.localStorage?.setItem('theme', dark ? 'dark' : 'light'); } catch { /* cross-origin */ }
       return;
     }
-  } catch(_) {}
+  } catch { /* cross-origin */ }
   iframe.contentWindow?.postMessage({ source: 'fs-preview', type: 'setTheme', value: dark ? 'dark' : 'light' }, '*');
 }
 
@@ -265,7 +265,7 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
     setSelectedFont(template.fonts?.[0] || null);
     setViewMode(typeof window !== 'undefined' && window.innerWidth < 640 ? 'mobile' : 'desktop');
     setIframeReady(false);
-  }, [template.slug]);  // eslint-disable-line react-hooks/exhaustive-deps — darkMode via ref
+  }, [template.slug]); // darkMode intentionally excluded (via ref)
 
   // Keyboard + scroll lock
   const handleEscape = useCallback((e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); }, [onClose]);
@@ -279,7 +279,7 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
   const applyPalette = useCallback((iframe: HTMLIFrameElement, palette: Palette | null) => {
     applyTheme(iframe, darkMode);
     injectPalette(iframe, palette, darkMode);
-  }, [darkMode]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [darkMode]); // only darkMode triggers recompute
 
   // Listen for messages from inside the template iframe
   useEffect(() => {
@@ -320,7 +320,7 @@ export function PreviewModal({ template, darkMode, onClose }: PreviewModalProps)
       applyPalette(iframe, selectedPaletteRef.current);
       applyFont(iframe, selectedFontRef.current);
     }, 300);
-  }, [applyPalette]); // eslint-disable-line react-hooks/exhaustive-deps — selectedPaletteRef/selectedFontRef are refs
+  }, [applyPalette]); // refs excluded intentionally
 
   // When palette changes: apply theme + palette together (atomic — no separate theme effect)
   useEffect(() => {

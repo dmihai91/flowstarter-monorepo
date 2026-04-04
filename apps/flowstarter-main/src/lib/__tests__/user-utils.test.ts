@@ -3,7 +3,9 @@ import { getInitials } from '../user-utils';
 
 describe('getInitials', () => {
   it('returns first + last initials when both present', () => {
-    expect(getInitials({ firstName: 'Darius', lastName: 'Popescu' })).toBe('DP');
+    expect(getInitials({ firstName: 'Darius', lastName: 'Popescu' })).toBe(
+      'DP'
+    );
   });
 
   it('returns first initial when only firstName', () => {
@@ -11,7 +13,9 @@ describe('getInitials', () => {
   });
 
   it('returns email initial when no name', () => {
-    expect(getInitials({ emailAddresses: [{ emailAddress: 'test@example.com' }] })).toBe('T');
+    expect(
+      getInitials({ emailAddresses: [{ emailAddress: 'test@example.com' }] })
+    ).toBe('T');
   });
 
   it('returns U as fallback', () => {
@@ -23,6 +27,8 @@ describe('getInitials', () => {
   });
 
   it('uppercases initials', () => {
-    expect(getInitials({ firstName: 'darius', lastName: 'popescu' })).toBe('DP');
+    expect(getInitials({ firstName: 'darius', lastName: 'popescu' })).toBe(
+      'DP'
+    );
   });
 });

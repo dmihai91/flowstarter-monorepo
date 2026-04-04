@@ -61,8 +61,13 @@ export function injectLeadCapture(
 ): Array<{ path: string; content: string }> {
   return files.map((file) => {
     // Only inject into contact page
-    if (!file.path.toLowerCase().includes('contact')) return file;
-    if (!file.content.includes('<form') && !file.content.includes('</form>')) return file;
+    if (!file.path.toLowerCase().includes('contact')) {
+      return file;
+    }
+
+    if (!file.content.includes('<form') && !file.content.includes('</form>')) {
+      return file;
+    }
 
     let content = file.content;
 
@@ -77,6 +82,7 @@ export function injectLeadCapture(
 
     // Add capture script before </body> or at end
     const script = captureScript(config.apiUrl, config.projectId);
+
     if (content.includes('</body>')) {
       content = content.replace('</body>', `${script}\n</body>`);
     } else if (content.includes('</Layout>')) {

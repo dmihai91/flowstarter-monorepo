@@ -13,11 +13,13 @@
  * - Summary approval
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// Romanian Intent Detection Patterns
-// ═══════════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * Romanian Intent Detection Patterns
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
 
 /**
  * Romanian confirmation patterns that should be detected as "yes/approve"
@@ -173,26 +175,45 @@ const ROMANIAN_SELLING_METHODS = {
   ],
 };
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// Intent Detection Functions (simulating LLM behavior)
-// ═══════════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * Intent Detection Functions (simulating LLM behavior)
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
 
 /**
  * Detects if Romanian input is a confirmation
  */
 function isRomanianConfirmation(input: string): boolean {
   const normalized = input.toLowerCase().trim();
-  
+
   // Direct matches
-  if (ROMANIAN_CONFIRMATIONS.some(c => normalized === c.toLowerCase())) {
+  if (ROMANIAN_CONFIRMATIONS.some((c) => normalized === c.toLowerCase())) {
     return true;
   }
-  
+
   // Partial matches for common patterns
-  const positiveKeywords = ['da', 'bine', 'perfect', 'ok', 'super', 'grozav', 'place', 'acord', 'corect', 'exact', 'merge', 'folosește', 'foloseste', 'asta', 'căutam', 'cautam'];
-  const hasPositive = positiveKeywords.some(kw => normalized.includes(kw));
+  const positiveKeywords = [
+    'da',
+    'bine',
+    'perfect',
+    'ok',
+    'super',
+    'grozav',
+    'place',
+    'acord',
+    'corect',
+    'exact',
+    'merge',
+    'folosește',
+    'foloseste',
+    'asta',
+    'căutam',
+    'cautam',
+  ];
+  const hasPositive = positiveKeywords.some((kw) => normalized.includes(kw));
   const hasNegative = normalized.includes('nu ') || normalized.startsWith('nu');
-  
+
   return hasPositive && !hasNegative;
 }
 
@@ -201,39 +222,40 @@ function isRomanianConfirmation(input: string): boolean {
  */
 function isRomanianRejection(input: string): boolean {
   const normalized = input.toLowerCase().trim();
-  
+
   // Direct matches
-  if (ROMANIAN_REJECTIONS.some(r => normalized === r.toLowerCase())) {
+  if (ROMANIAN_REJECTIONS.some((r) => normalized === r.toLowerCase())) {
     return true;
   }
-  
+
   // Pattern matches - more specific to avoid false positives
   const negativePatterns = [
-    /\bnu\b/,           // "nu" as whole word
-    /schimb/,           // schimbă, schimb
-    /\balt\b/,          // alt as whole word
-    /\baltceva\b/,      // altceva
-    /\baltul\b/,        // altul
-    /modific/,          // modifică, modific
-    /diferit/,          // diferit
-    /încerc/,           // încearcă, încerci (retry)
-    /incerc/,           // incearca (without diacritics)
-    /adăug/,            // adaugă, adăug
-    /adaug/,            // adaug (without diacritics)
-    /trebuie/,          // trebuie să
-    /tocmai/,           // nu e tocmai bine
-    /vreau să/,         // vreau să schimb
-    /vreau sa/,         // vreau sa (without diacritics)
+    /\bnu\b/, // "nu" as whole word
+    /schimb/, // schimbă, schimb
+    /\balt\b/, // alt as whole word
+    /\baltceva\b/, // altceva
+    /\baltul\b/, // altul
+    /modific/, // modifică, modific
+    /diferit/, // diferit
+    /încerc/, // încearcă, încerci (retry)
+    /incerc/, // incearca (without diacritics)
+    /adăug/, // adaugă, adăug
+    /adaug/, // adaug (without diacritics)
+    /trebuie/, // trebuie să
+    /tocmai/, // nu e tocmai bine
+    /vreau să/, // vreau să schimb
+    /vreau sa/, // vreau sa (without diacritics)
   ];
-  
+
   // Only reject if it's clearly a rejection intent
-  const hasNegativePattern = negativePatterns.some(p => p.test(normalized));
-  
+  const hasNegativePattern = negativePatterns.some((p) => p.test(normalized));
+
   // But not if it's purely positive
-  const isPurelyPositive = (normalized.startsWith('da ') || normalized === 'da') && 
-                           !normalized.includes('schimb') && 
-                           !normalized.includes('alt');
-  
+  const isPurelyPositive =
+    (normalized.startsWith('da ') || normalized === 'da') &&
+    !normalized.includes('schimb') &&
+    !normalized.includes('alt');
+
   return hasNegativePattern && !isPurelyPositive;
 }
 
@@ -242,10 +264,8 @@ function isRomanianRejection(input: string): boolean {
  */
 function isRomanianSkip(input: string): boolean {
   const normalized = input.toLowerCase().trim();
-  
-  return ROMANIAN_SKIP_PATTERNS.some(pattern => 
-    normalized.includes(pattern.toLowerCase())
-  );
+
+  return ROMANIAN_SKIP_PATTERNS.some((pattern) => normalized.includes(pattern.toLowerCase()));
 }
 
 /**
@@ -253,28 +273,30 @@ function isRomanianSkip(input: string): boolean {
  */
 function detectRomanianSellingMethod(input: string): 'bookings' | 'products' | 'subscriptions' | 'other' {
   const normalized = input.toLowerCase();
-  
+
   // Check for bookings keywords
-  if (ROMANIAN_SELLING_METHODS.bookings.some(kw => normalized.includes(kw.toLowerCase()))) {
+  if (ROMANIAN_SELLING_METHODS.bookings.some((kw) => normalized.includes(kw.toLowerCase()))) {
     return 'bookings';
   }
-  
+
   // Check for products keywords
-  if (ROMANIAN_SELLING_METHODS.products.some(kw => normalized.includes(kw.toLowerCase()))) {
+  if (ROMANIAN_SELLING_METHODS.products.some((kw) => normalized.includes(kw.toLowerCase()))) {
     return 'products';
   }
-  
+
   // Check for subscriptions keywords
-  if (ROMANIAN_SELLING_METHODS.subscriptions.some(kw => normalized.includes(kw.toLowerCase()))) {
+  if (ROMANIAN_SELLING_METHODS.subscriptions.some((kw) => normalized.includes(kw.toLowerCase()))) {
     return 'subscriptions';
   }
-  
+
   return 'other';
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// Tests
-// ═══════════════════════════════════════════════════════════════════════════════
+/*
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * Tests
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
 
 describe('Romanian Confirmation Detection', () => {
   it('detects simple "da" as confirmation', () => {
@@ -487,14 +509,15 @@ describe('Romanian Business Descriptions', () => {
     },
   ];
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ROMANIAN_BUSINESS_DESCRIPTIONS.forEach(({ input, expectedKeywords, industry }) => {
     it(`extracts keywords from "${input.slice(0, 40)}..."`, () => {
-      expectedKeywords.forEach(keyword => {
+      expectedKeywords.forEach((keyword) => {
         // Normalize for diacritics comparison
         const normalizedInput = input.toLowerCase();
         const normalizedKeyword = keyword.toLowerCase();
         const hasDiacritics = /[ăâîșț]/i.test(keyword);
-        
+
         if (hasDiacritics) {
           // Check with or without diacritics
           const withoutDiacritics = normalizedKeyword
@@ -503,10 +526,7 @@ describe('Romanian Business Descriptions', () => {
             .replace(/î/g, 'i')
             .replace(/ș/g, 's')
             .replace(/ț/g, 't');
-          expect(
-            normalizedInput.includes(normalizedKeyword) || 
-            normalizedInput.includes(withoutDiacritics)
-          ).toBe(true);
+          expect(normalizedInput.includes(normalizedKeyword) || normalizedInput.includes(withoutDiacritics)).toBe(true);
         } else {
           expect(normalizedInput.includes(normalizedKeyword)).toBe(true);
         }
@@ -540,13 +560,13 @@ describe('Romanian Name Suggestions Flow', () => {
   NAME_FLOW_SCENARIOS.forEach(({ businessType, suggestedName, responses }) => {
     describe(`${businessType} business - name "${suggestedName}"`, () => {
       it('accepts the name with Romanian confirmations', () => {
-        responses.accept.forEach(response => {
+        responses.accept.forEach((response) => {
           expect(isRomanianConfirmation(response)).toBe(true);
         });
       });
 
       it('rejects the name with Romanian rejections', () => {
-        responses.reject.forEach(response => {
+        responses.reject.forEach((response) => {
           expect(isRomanianRejection(response)).toBe(true);
         });
       });
@@ -571,22 +591,17 @@ describe('Romanian Summary Confirmation Flow', () => {
       'mai am de adăugat',
       'vreau să corectez',
     ],
-    specific: [
-      'schimbă audiența',
-      'tonul nu e bun',
-      'modifică prețurile',
-      'adaugă mai multe detalii',
-    ],
+    specific: ['schimbă audiența', 'tonul nu e bun', 'modifică prețurile', 'adaugă mai multe detalii'],
   };
 
   it('detects summary approvals', () => {
-    SUMMARY_RESPONSES.approve.forEach(response => {
+    SUMMARY_RESPONSES.approve.forEach((response) => {
       expect(isRomanianConfirmation(response)).toBe(true);
     });
   });
 
   it('detects modification requests', () => {
-    SUMMARY_RESPONSES.modify.forEach(response => {
+    SUMMARY_RESPONSES.modify.forEach((response) => {
       expect(isRomanianRejection(response)).toBe(true);
     });
   });
@@ -613,16 +628,11 @@ describe('Romanian Diacritics Handling', () => {
       // Both versions should be recognized as equivalent for intent detection
       const normalizedWith = withDiacritics.toLowerCase();
       const normalizedWithout = withoutDiacritics.toLowerCase();
-      
+
       // Simulate normalization function
-      const normalize = (s: string) => s
-        .toLowerCase()
-        .replace(/ă/g, 'a')
-        .replace(/â/g, 'a')
-        .replace(/î/g, 'i')
-        .replace(/ș/g, 's')
-        .replace(/ț/g, 't');
-      
+      const normalize = (s: string) =>
+        s.toLowerCase().replace(/ă/g, 'a').replace(/â/g, 'a').replace(/î/g, 'i').replace(/ș/g, 's').replace(/ț/g, 't');
+
       expect(normalize(normalizedWith)).toBe(normalize(normalizedWithout));
     });
   });
@@ -693,10 +703,11 @@ describe('Full Romanian Flow Simulation', () => {
     },
   ];
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   FULL_FLOW.forEach(({ step, userInput, expectedIntent, expectedNextStep }) => {
     it(`${step}: "${userInput.slice(0, 30)}..." → ${expectedIntent}`, () => {
       let detectedIntent: string;
-      
+
       if (isRomanianSkip(userInput)) {
         detectedIntent = 'skip';
       } else if (isRomanianConfirmation(userInput)) {
@@ -706,7 +717,7 @@ describe('Full Romanian Flow Simulation', () => {
       } else {
         detectedIntent = step === 'describe' ? 'description' : 'answer';
       }
-      
+
       expect(detectedIntent).toBe(expectedIntent);
     });
   });
@@ -746,7 +757,7 @@ describe('Edge Cases - Romanian', () => {
       și coaching online pentru cei care preferă să se antreneze acasă.
       Specializarea mea este fitness funcțional și pregătire pentru competiții.
     `;
-    
+
     // Should extract key business indicators
     expect(longDescription.includes('antrenor')).toBe(true);
     expect(longDescription.includes('București')).toBe(true);

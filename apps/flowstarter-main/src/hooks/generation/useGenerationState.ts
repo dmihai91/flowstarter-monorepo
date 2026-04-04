@@ -1,7 +1,12 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import type { GenerationStep, GenerationProgress, GenerationResult, StepData } from './types';
+import type {
+  GenerationStep,
+  GenerationProgress,
+  GenerationResult,
+  StepData,
+} from './types';
 
 /**
  * Manages generation state (steps, progress, errors).
@@ -17,7 +22,13 @@ export function useGenerationState() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const updateStep = useCallback(
-    (stepId: number | string, name: string | undefined, status: GenerationStep['status'], message?: string, data?: StepData) => {
+    (
+      stepId: number | string,
+      name: string | undefined,
+      status: GenerationStep['status'],
+      message?: string,
+      data?: StepData
+    ) => {
       const id = String(stepId);
       setSteps((prev) => {
         const existing = prev.find((s) => s.id === id);
@@ -30,9 +41,16 @@ export function useGenerationState() {
         if (existing) {
           return prev.map((s) => (s.id === id ? { ...s, ...updates } : s));
         }
-        return [...prev, { id, name: name || `Step ${stepId}`, status, ...(message ? { message } : {}), ...(data ? { data } : {}) }].sort(
-          (a, b) => Number(a.id) - Number(b.id)
-        );
+        return [
+          ...prev,
+          {
+            id,
+            name: name || `Step ${stepId}`,
+            status,
+            ...(message ? { message } : {}),
+            ...(data ? { data } : {}),
+          },
+        ].sort((a, b) => Number(a.id) - Number(b.id));
       });
     },
     []
@@ -60,13 +78,20 @@ export function useGenerationState() {
 
   return {
     // State
-    isGenerating, setIsGenerating,
-    progress, setProgress,
-    steps, setSteps,
-    currentStep, setCurrentStep,
-    error, setError,
-    result, setResult,
-    previewUrl, setPreviewUrl,
+    isGenerating,
+    setIsGenerating,
+    progress,
+    setProgress,
+    steps,
+    setSteps,
+    currentStep,
+    setCurrentStep,
+    error,
+    setError,
+    result,
+    setResult,
+    previewUrl,
+    setPreviewUrl,
     // Actions
     updateStep,
     updateStepMessage,

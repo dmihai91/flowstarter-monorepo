@@ -12,7 +12,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 const MESSAGE_TRANSITION_DELAY = 1500; // Delay between sequential messages
 const MESSAGE_RENDER_DELAY = 100; // Internal render delay for LLM messages
-const TYPING_ANIMATION_DELAY = 300; // Delay for assistant message typing animation
 
 describe('Message Sequencing', () => {
   beforeEach(() => {
@@ -36,10 +35,12 @@ describe('Message Sequencing', () => {
     });
 
     it('should calculate total time for two sequential messages correctly', () => {
-      // First message: 100ms render delay
-      // Transition: 1500ms delay
-      // Second message: 100ms render delay
-      // Total: 1700ms minimum between first message appearing and second message appearing
+      /*
+       * First message: 100ms render delay
+       * Transition: 1500ms delay
+       * Second message: 100ms render delay
+       * Total: 1700ms minimum between first message appearing and second message appearing
+       */
       const totalSequentialTime = MESSAGE_RENDER_DELAY + MESSAGE_TRANSITION_DELAY + MESSAGE_RENDER_DELAY;
       expect(totalSequentialTime).toBe(1700);
     });
@@ -57,8 +58,10 @@ describe('Message Sequencing', () => {
       // Simulate delay between messages
       currentTime += MESSAGE_TRANSITION_DELAY;
 
-      // Simulate typing indicator time (implicit in the flow)
-      // Then second message (business-uvp-prompt)
+      /*
+       * Simulate typing indicator time (implicit in the flow)
+       * Then second message (business-uvp-prompt)
+       */
       currentTime += MESSAGE_RENDER_DELAY;
       messageTimestamps.push(currentTime);
 
@@ -83,12 +86,14 @@ describe('Message Sequencing', () => {
 
   describe('Typing Indicator Flow', () => {
     it('should show typing indicator between messages', () => {
-      // The flow should be:
-      // 1. First message appears
-      // 2. Delay starts
-      // 3. Typing indicator shown
-      // 4. Second message appears
-      // 5. Typing indicator hidden
+      /*
+       * The flow should be:
+       * 1. First message appears
+       * 2. Delay starts
+       * 3. Typing indicator shown
+       * 4. Second message appears
+       * 5. Typing indicator hidden
+       */
 
       const flow = [
         { event: 'first-message', time: 0 },
@@ -269,4 +274,3 @@ describe('Delay Promise Behavior', () => {
     expect(events[1].time).toBe(MESSAGE_TRANSITION_DELAY);
   });
 });
-

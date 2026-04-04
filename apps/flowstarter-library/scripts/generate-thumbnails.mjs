@@ -1,3 +1,4 @@
+/* global document */
 import { chromium } from 'playwright';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -45,21 +46,21 @@ async function generateThumbnail(browser, templateSlug) {
   
   try {
     config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-  } catch (e) {}
-  
+  } catch { /* optional file */ }
+
   try {
     const heroContent = fs.readFileSync(heroPath, 'utf-8');
     const headlineMatch = heroContent.match(/headline:\s*["']?([^"'\n]+)/);
     const subheadlineMatch = heroContent.match(/subheadline:\s*["']?([^"'\n]+)/);
     if (headlineMatch) heroData.headline = headlineMatch[1].trim();
     if (subheadlineMatch) heroData.subheadline = subheadlineMatch[1].trim().substring(0, 100);
-  } catch (e) {}
-  
+  } catch { /* optional file */ }
+
   try {
     const siteContent = fs.readFileSync(sitePath, 'utf-8');
     const nameMatch = siteContent.match(/name:\s*["']?([^"'\n]+)/);
     if (nameMatch) siteData.name = nameMatch[1].trim();
-  } catch (e) {}
+  } catch { /* optional file */ }
 
   const colors = templateColors[templateSlug] || { primary: '#3b82f6', bg: '#f8fafc' };
   
@@ -182,6 +183,7 @@ async function generateThumbnail(browser, templateSlug) {
   console.log(`✓ Generated ${templateSlug}/thumbnail.png`);
   
   // Dark theme
+  // eslint-disable-next-line no-unused-vars
   await page.evaluate((primaryColor) => {
     document.body.style.background = `linear-gradient(135deg, #1e293b 0%, #0f172a 100%)`;
     document.querySelector('h1').style.color = '#f8fafc';

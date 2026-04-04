@@ -2,8 +2,12 @@
  * Hero.md Generator
  */
 
-import type { ContentContext, IntegrationConfig, GeneratedAsset } from '../types';
-import { pickRandom, findAsset } from '../context';
+import type {
+  ContentContext,
+  IntegrationConfig,
+  GeneratedAsset,
+} from '~/lib/services/claude-agent/contentGeneration/types';
+import { pickRandom, findAsset } from '~/lib/services/claude-agent/contentGeneration/context';
 
 /** Domain-specific badge text */
 const BADGES: Record<string, string> = {
@@ -71,25 +75,22 @@ export function generateHeroMd(
   businessInfo: any,
   integrations?: IntegrationConfig[],
   assets?: GeneratedAsset[],
-  ctx?: ContentContext
+  ctx?: ContentContext,
 ): string {
-  const headline = businessInfo.tagline ||
-    (ctx ? pickRandom(ctx.suggestions.headlines) : `Welcome to ${businessInfo.name}`);
+  const headline =
+    businessInfo.tagline || (ctx ? pickRandom(ctx.suggestions.headlines) : `Welcome to ${businessInfo.name}`);
 
-  const subheadline = businessInfo.description ||
-    'Professional services tailored to your needs.';
+  const subheadline = businessInfo.description || 'Professional services tailored to your needs.';
 
   // Check if booking integration is configured
-  const bookingIntegration = integrations?.find(i => i.id === 'booking');
+  const bookingIntegration = integrations?.find((i) => i.id === 'booking');
   const hasBooking = !!(bookingIntegration?.config?.provider && bookingIntegration?.config?.url);
 
   // Get domain-appropriate CTAs
   const primaryCta = ctx?.conversion.primaryCta || 'Contact Us';
   const secondaryCta = ctx?.conversion.secondaryCta || 'Learn More';
 
-  const ctaPrimary = hasBooking
-    ? { text: primaryCta, href: '#booking' }
-    : { text: primaryCta, href: '#contact' };
+  const ctaPrimary = hasBooking ? { text: primaryCta, href: '#booking' } : { text: primaryCta, href: '#contact' };
   const ctaSecondary = { text: secondaryCta, href: '#services' };
 
   // Domain-specific badge
@@ -109,7 +110,7 @@ export function generateHeroMd(
 
   // Domain-specific stats
   const stats = DOMAIN_STATS[ctx?.domain.id || ''] || DEFAULT_STATS;
-  const statsYaml = stats.map(s => `  - value: "${s.value}"\n    label: "${s.label}"`).join('\n');
+  const statsYaml = stats.map((s) => `  - value: "${s.value}"\n    label: "${s.label}"`).join('\n');
 
   return `---
 headline: "${headline}"

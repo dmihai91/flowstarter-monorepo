@@ -7,7 +7,7 @@
  */
 
 import { useCallback, useEffect, useRef } from 'react';
-import type { Id } from '../../../../convex/_generated/dataModel';
+import type { Id } from '~/convex/_generated/dataModel';
 import type { InitialChatState } from '~/components/editor/editor-chat/types';
 import { createScopedLogger } from '~/utils/logger';
 
@@ -31,10 +31,7 @@ interface SyncPayload {
  * Send a sync request with retry logic.
  * Returns the response JSON on success, or null after all retries exhausted.
  */
-async function syncWithRetry(
-  payload: SyncPayload,
-  attempt = 0,
-): Promise<Record<string, unknown> | null> {
+async function syncWithRetry(payload: SyncPayload, attempt = 0): Promise<Record<string, unknown> | null> {
   try {
     const res = await fetch('/api/project/sync', {
       method: 'POST',
@@ -44,9 +41,11 @@ async function syncWithRetry(
 
     if (res.ok) {
       const data = await res.json();
+
       if (attempt > 0) {
         logger.info(`Sync succeeded after ${attempt + 1} attempts`);
       }
+
       return data as Record<string, unknown>;
     }
 
@@ -60,12 +59,17 @@ async function syncWithRetry(
   } catch (e) {
     if (attempt < MAX_RETRIES) {
       const delay = RETRY_DELAYS[attempt] || 10000;
-      logger.warn(`Sync ${payload.action} failed (attempt ${attempt + 1}/${MAX_RETRIES + 1}), retrying in ${delay}ms:`, e);
-      await new Promise(resolve => setTimeout(resolve, delay));
+      logger.warn(
+        `Sync ${payload.action} failed (attempt ${attempt + 1}/${MAX_RETRIES + 1}), retrying in ${delay}ms:`,
+        e,
+      );
+      await new Promise((resolve) => setTimeout(resolve, delay));
+
       return syncWithRetry(payload, attempt + 1);
     }
 
     logger.error(`Sync ${payload.action} failed after ${MAX_RETRIES + 1} attempts:`, e);
+
     return null;
   }
 }
@@ -91,11 +95,7 @@ function syncUpdate(supabaseId: string, state: Partial<InitialChatState>): void 
  * Sync a new project to Supabase (create).
  * Returns a promise that resolves with the new supabaseProjectId, or null on failure.
  */
-async function syncCreate(
-  convexId: string,
-  name: string,
-  state: Partial<InitialChatState>,
-): Promise<string | null> {
+async function syncCreate(convexId: string, name: string, state: Partial<InitialChatState>): Promise<string | null> {
   const result = await syncWithRetry({
     action: 'create',
     projectData: {
@@ -116,20 +116,22 @@ async function syncCreate(
   return null;
 }
 
-export function useSupabaseSync({
-  supabaseProjectId,
-  convexProjectId,
-  conversationName,
-}: UseSupabaseSyncOptions) {
+export function useSupabaseSync({ supabaseProjectId, convexProjectId, conversationName }: UseSupabaseSyncOptions) {
   // Refs to avoid stale closures in the callback
   const supabaseIdRef = useRef(supabaseProjectId ?? null);
   const convexProjectIdRef = useRef(convexProjectId);
   const conversationNameRef = useRef(conversationName ?? null);
   const createInFlightRef = useRef(false);
 
-  useEffect(() => { supabaseIdRef.current = supabaseProjectId ?? null; }, [supabaseProjectId]);
-  useEffect(() => { convexProjectIdRef.current = convexProjectId; }, [convexProjectId]);
-  useEffect(() => { conversationNameRef.current = conversationName ?? null; }, [conversationName]);
+  useEffect(() => {
+    supabaseIdRef.current = supabaseProjectId ?? null;
+  }, [supabaseProjectId]);
+  useEffect(() => {
+    convexProjectIdRef.current = convexProjectId;
+  }, [convexProjectId]);
+  useEffect(() => {
+    conversationNameRef.current = conversationName ?? null;
+  }, [conversationName]);
 
   // Sync name to Supabase when the link is first established
   const hasSyncedInitialName = useRef(false);
@@ -154,15 +156,17 @@ export function useSupabaseSync({
         return;
       }
 
-      // No Supabase project yet — create one (use conversation name as fallback)
-      // Guard against duplicate creates with createInFlightRef
+      /*
+       * No Supabase project yet — create one (use conversation name as fallback)
+       * Guard against duplicate creates with createInFlightRef
+       */
       if (currentConvexId && !createInFlightRef.current) {
         const name = state.projectName || conversationNameRef.current;
 
         if (name) {
           createInFlightRef.current = true;
           syncCreate(String(currentConvexId), name, state)
-            .then(newId => {
+            .then((newId) => {
               if (newId) {
                 supabaseIdRef.current = newId;
               }

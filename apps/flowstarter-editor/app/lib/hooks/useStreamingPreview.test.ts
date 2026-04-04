@@ -16,18 +16,14 @@ describe('useStreamingPreview', () => {
   });
 
   it('starts with isStreaming=false and empty files', () => {
-    const { result } = renderHook(() =>
-      useStreamingPreview({ projectId: PROJECT_ID, sandboxId: SANDBOX_ID })
-    );
+    const { result } = renderHook(() => useStreamingPreview({ projectId: PROJECT_ID, sandboxId: SANDBOX_ID }));
     expect(result.current.isStreaming).toBe(false);
     expect(result.current.streamedFiles).toEqual([]);
     expect(result.current.streamedCount).toBe(0);
   });
 
   it('startStreaming sets isStreaming=true and resets state', () => {
-    const { result } = renderHook(() =>
-      useStreamingPreview({ projectId: PROJECT_ID, sandboxId: SANDBOX_ID })
-    );
+    const { result } = renderHook(() => useStreamingPreview({ projectId: PROJECT_ID, sandboxId: SANDBOX_ID }));
     act(() => result.current.startStreaming());
     expect(result.current.isStreaming).toBe(true);
     expect(result.current.streamedFiles).toEqual([]);
@@ -35,18 +31,14 @@ describe('useStreamingPreview', () => {
   });
 
   it('stopStreaming sets isStreaming=false', () => {
-    const { result } = renderHook(() =>
-      useStreamingPreview({ projectId: PROJECT_ID, sandboxId: SANDBOX_ID })
-    );
+    const { result } = renderHook(() => useStreamingPreview({ projectId: PROJECT_ID, sandboxId: SANDBOX_ID }));
     act(() => result.current.startStreaming());
     act(() => result.current.stopStreaming());
     expect(result.current.isStreaming).toBe(false);
   });
 
   it('pushFile increments streamedCount', () => {
-    const { result } = renderHook(() =>
-      useStreamingPreview({ projectId: PROJECT_ID, sandboxId: SANDBOX_ID })
-    );
+    const { result } = renderHook(() => useStreamingPreview({ projectId: PROJECT_ID, sandboxId: SANDBOX_ID }));
     act(() => result.current.pushFile('src/index.html', '<html/>'));
     expect(result.current.streamedCount).toBe(1);
     act(() => result.current.pushFile('src/styles.css', 'body{}'));
@@ -54,17 +46,14 @@ describe('useStreamingPreview', () => {
   });
 
   it('pushFile adds path to streamedFiles', () => {
-    const { result } = renderHook(() =>
-      useStreamingPreview({ projectId: PROJECT_ID, sandboxId: SANDBOX_ID })
-    );
+    const { result } = renderHook(() => useStreamingPreview({ projectId: PROJECT_ID, sandboxId: SANDBOX_ID }));
     act(() => result.current.pushFile('src/index.html', '<html/>'));
     expect(result.current.streamedFiles).toContain('src/index.html');
   });
 
   it('pushFile keeps only last 5 file paths', () => {
-    const { result } = renderHook(() =>
-      useStreamingPreview({ projectId: PROJECT_ID, sandboxId: SANDBOX_ID })
-    );
+    const { result } = renderHook(() => useStreamingPreview({ projectId: PROJECT_ID, sandboxId: SANDBOX_ID }));
+
     for (let i = 1; i <= 7; i++) {
       act(() => result.current.pushFile(`file${i}.ts`, 'content'));
     }
@@ -78,9 +67,7 @@ describe('useStreamingPreview', () => {
     const mockFetch = vi.fn().mockResolvedValue({ ok: true });
     vi.stubGlobal('fetch', mockFetch);
 
-    const { result } = renderHook(() =>
-      useStreamingPreview({ projectId: PROJECT_ID, sandboxId: SANDBOX_ID })
-    );
+    const { result } = renderHook(() => useStreamingPreview({ projectId: PROJECT_ID, sandboxId: SANDBOX_ID }));
 
     act(() => result.current.pushFile('src/app.ts', 'export {}'));
     await act(async () => {});
@@ -93,14 +80,20 @@ describe('useStreamingPreview', () => {
   });
 
   it('pushFile does not throw when fetch fails', async () => {
+    vi.useFakeTimers();
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network error')));
-    const { result } = renderHook(() =>
-      useStreamingPreview({ projectId: PROJECT_ID, sandboxId: SANDBOX_ID })
-    );
-    // Should not throw
+
+    const { result } = renderHook(() => useStreamingPreview({ projectId: PROJECT_ID, sandboxId: SANDBOX_ID }));
+
+    // Should not throw — advance fake timers instead of real setTimeout to avoid post-teardown state updates
     await expect(
-      act(async () => { result.current.pushFile('a.ts', 'x'); await new Promise(r => setTimeout(r, 10)); })
+      act(async () => {
+        result.current.pushFile('a.ts', 'x');
+        await vi.runAllTimersAsync();
+      }),
     ).resolves.toBeUndefined();
+
+    vi.useRealTimers();
   });
 
   it('pushFile does not call fetch when projectId is null', async () => {
@@ -108,11 +101,12 @@ describe('useStreamingPreview', () => {
     const mockFetch = vi.fn().mockResolvedValue({ ok: true });
     const originalFetch = globalThis.fetch;
     globalThis.fetch = mockFetch;
+
     try {
-      const { result } = renderHook(() =>
-        useStreamingPreview({ projectId: null, sandboxId: SANDBOX_ID })
-      );
-      act(() => { result.current?.pushFile('a.ts', 'content'); });
+      const { result } = renderHook(() => useStreamingPreview({ projectId: null, sandboxId: SANDBOX_ID }));
+      act(() => {
+        result.current?.pushFile('a.ts', 'content');
+      });
       await act(async () => {});
       expect(mockFetch).not.toHaveBeenCalled();
     } finally {
@@ -122,17 +116,19 @@ describe('useStreamingPreview', () => {
 
   it.skip('startStreaming and stopStreaming toggle isStreaming (env isolation issue)', () => {
     // Use a fresh stub to avoid interference from beforeEach
-    const { result } = renderHook(() =>
-      useStreamingPreview({ projectId: PROJECT_ID, sandboxId: SANDBOX_ID })
-    );
+    const { result } = renderHook(() => useStreamingPreview({ projectId: PROJECT_ID, sandboxId: SANDBOX_ID }));
     expect(result.current).not.toBeNull();
     expect(result.current.isStreaming).toBe(false);
 
-    act(() => { result.current.startStreaming(); });
+    act(() => {
+      result.current.startStreaming();
+    });
     expect(result.current.isStreaming).toBe(true);
     expect(result.current.streamedCount).toBe(0);
 
-    act(() => { result.current.stopStreaming(); });
+    act(() => {
+      result.current.stopStreaming();
+    });
     expect(result.current.isStreaming).toBe(false);
   });
 });

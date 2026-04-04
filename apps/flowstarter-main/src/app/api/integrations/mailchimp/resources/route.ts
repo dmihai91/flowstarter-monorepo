@@ -32,12 +32,21 @@ export async function GET(req: Request) {
   // Resolve access token from Vault
   let access_token: string | null;
   try {
-    access_token = await readUserSecret(supabase, config.access_token_secret_id);
+    access_token = await readUserSecret(
+      supabase,
+      config.access_token_secret_id
+    );
   } catch {
-    return NextResponse.json({ error: 'Failed to retrieve credentials' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to retrieve credentials' },
+      { status: 500 }
+    );
   }
   if (!access_token) {
-    return NextResponse.json({ error: 'Mailchimp credentials not found' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Mailchimp credentials not found' },
+      { status: 400 }
+    );
   }
 
   const { dc = 'us1', api_endpoint } = config;
@@ -72,7 +81,11 @@ export async function GET(req: Request) {
         name: account.account_name || account.account_id,
       },
       audiences: (listsData.lists || []).map(
-        (list: { id: string; name: string; stats?: { member_count?: number } }) => ({
+        (list: {
+          id: string;
+          name: string;
+          stats?: { member_count?: number };
+        }) => ({
           id: list.id,
           name: list.name,
           memberCount: list.stats?.member_count ?? 0,

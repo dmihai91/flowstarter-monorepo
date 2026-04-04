@@ -26,8 +26,6 @@ const roboto_mono = {
   variable: '--font-roboto-mono',
 };
 
-
-
 export async function generateMetadata(): Promise<Metadata> {
   // Get locale from headers or use default 'en'
   // In a real app, you'd get this from headers/cookies

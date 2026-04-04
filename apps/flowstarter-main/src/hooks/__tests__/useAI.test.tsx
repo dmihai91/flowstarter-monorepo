@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAIClassify, useAIModerate } from '../useAI';
@@ -30,11 +30,13 @@ describe('useAIClassify', () => {
       template: 'saas',
       confidence: 0.95,
     };
-    
-    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockResponse,
-    });
+
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      {
+        ok: true,
+        json: async () => mockResponse,
+      }
+    );
 
     const { result } = renderHook(() => useAIClassify(), {
       wrapper: createWrapper(),
@@ -47,10 +49,12 @@ describe('useAIClassify', () => {
   });
 
   it('should handle classification error', async () => {
-    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: false,
-      json: async () => ({ error: 'Classification failed' }),
-    });
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      {
+        ok: false,
+        json: async () => ({ error: 'Classification failed' }),
+      }
+    );
 
     const { result } = renderHook(() => useAIClassify(), {
       wrapper: createWrapper(),
@@ -73,11 +77,13 @@ describe('useAIModerate', () => {
       allowed: true,
       flagged_categories: [],
     };
-    
-    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockResponse,
-    });
+
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      {
+        ok: true,
+        json: async () => mockResponse,
+      }
+    );
 
     const { result } = renderHook(() => useAIModerate(), {
       wrapper: createWrapper(),
@@ -95,11 +101,13 @@ describe('useAIModerate', () => {
       reason: 'Content violates guidelines',
       flagged_categories: ['inappropriate'],
     };
-    
-    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockResponse,
-    });
+
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      {
+        ok: true,
+        json: async () => mockResponse,
+      }
+    );
 
     const { result } = renderHook(() => useAIModerate(), {
       wrapper: createWrapper(),

@@ -1,70 +1,70 @@
 /**
  * Design Phase - Opus generates creative design decisions
- * 
+ *
  * This phase focuses purely on DESIGN, not code.
  * Opus makes creative decisions about layout, visual hierarchy, and styling.
  */
 
-import { generateJSON } from '../llm';
+import { generateJSON } from '~/lib/services/llm';
 import type { SiteGenerationInput } from './types';
 
 export interface DesignSpec {
   // Overall design direction
   designDirection: {
-    mood: string;           // e.g., "bold and confident", "warm and approachable"
-    visualStyle: string;    // e.g., "geometric with sharp angles", "organic with soft curves"
-    uniqueElement: string;  // One distinctive design element that makes this site stand out
+    mood: string; // e.g., "bold and confident", "warm and approachable"
+    visualStyle: string; // e.g., "geometric with sharp angles", "organic with soft curves"
+    uniqueElement: string; // One distinctive design element that makes this site stand out
   };
 
   // Hero section design
   hero: {
     layout: 'centered' | 'split' | 'asymmetric' | 'full-bleed';
-    headline: string;           // Exact headline text
-    subheadline: string;        // Exact subheadline
-    ctaPrimary: string;         // Primary CTA text
-    ctaSecondary?: string;      // Secondary CTA text
-    visualTreatment: string;    // e.g., "gradient overlay on background", "floating shapes"
-    heightStyle: string;        // e.g., "full viewport", "80vh with peek of next section"
+    headline: string; // Exact headline text
+    subheadline: string; // Exact subheadline
+    ctaPrimary: string; // Primary CTA text
+    ctaSecondary?: string; // Secondary CTA text
+    visualTreatment: string; // e.g., "gradient overlay on background", "floating shapes"
+    heightStyle: string; // e.g., "full viewport", "80vh with peek of next section"
   };
 
   // Section designs
   sections: Array<{
     id: string;
     purpose: string;
-    layout: string;             // Specific layout description
-    backgroundColor: string;    // Exact color or gradient
-    contentStyle: string;       // How content is presented
-    uniqueTwist: string;        // What makes this section visually interesting
+    layout: string; // Specific layout description
+    backgroundColor: string; // Exact color or gradient
+    contentStyle: string; // How content is presented
+    uniqueTwist: string; // What makes this section visually interesting
   }>;
 
   // Typography decisions
   typography: {
-    heroHeadlineSize: string;   // e.g., "text-6xl md:text-8xl"
+    heroHeadlineSize: string; // e.g., "text-6xl md:text-8xl"
     sectionHeadlineSize: string;
     bodySize: string;
-    specialTreatments: string[];  // e.g., ["tracking-tight on headlines", "uppercase on labels"]
+    specialTreatments: string[]; // e.g., ["tracking-tight on headlines", "uppercase on labels"]
   };
 
   // Color usage
   colorUsage: {
-    primaryUsage: string[];     // Where primary color is used
-    accentUsage: string[];      // Where accent color is used
-    backgroundVariations: string[];  // Section background color sequence
+    primaryUsage: string[]; // Where primary color is used
+    accentUsage: string[]; // Where accent color is used
+    backgroundVariations: string[]; // Section background color sequence
   };
 
   // Specific styling decisions
   styling: {
-    borderRadius: string;       // e.g., "rounded-2xl for cards, rounded-full for buttons"
-    shadows: string;            // e.g., "subtle shadows on cards, dramatic on hero CTA"
-    spacing: string;            // e.g., "generous py-24 between sections"
-    animations: string[];       // Specific animations to use
+    borderRadius: string; // e.g., "rounded-2xl for cards, rounded-full for buttons"
+    shadows: string; // e.g., "subtle shadows on cards, dramatic on hero CTA"
+    spacing: string; // e.g., "generous py-24 between sections"
+    animations: string[]; // Specific animations to use
   };
 
   // Content decisions
   content: {
-    testimonialStyle: string;   // How testimonials should look/feel
+    testimonialStyle: string; // How testimonials should look/feel
     pricingPresentation: string; // How pricing is presented
-    ctaStrategy: string;        // Overall CTA approach
+    ctaStrategy: string; // Overall CTA approach
   };
 }
 
@@ -177,7 +177,7 @@ Return a JSON object with this structure:
 
   const result = await generateJSON<DesignSpec>(messages, {
     model: 'anthropic/claude-opus-4-6',
-    temperature: 0.8,  // Higher temperature for creativity
+    temperature: 0.8, // Higher temperature for creativity
     maxTokens: 4000,
   });
 
@@ -190,7 +190,7 @@ Return a JSON object with this structure:
 export function getImplementationInstructions(
   designSpec: DesignSpec,
   filePath: string,
-  input: SiteGenerationInput
+  input: SiteGenerationInput,
 ): string {
   let instructions = `## Design Specification (from Creative Director)
 Follow these design decisions EXACTLY. Do not deviate or make your own design choices.
@@ -231,14 +231,18 @@ ${designSpec.hero.ctaSecondary ? `- Secondary CTA: "${designSpec.hero.ctaSeconda
 - Height: ${designSpec.hero.heightStyle}
 
 ### Sections
-${designSpec.sections.map(s => `
+${designSpec.sections
+  .map(
+    (s) => `
 #### ${s.id}
 - Purpose: ${s.purpose}
 - Layout: ${s.layout}
 - Background: ${s.backgroundColor}
 - Content style: ${s.contentStyle}
 - Unique twist: ${s.uniqueTwist}
-`).join('\n')}
+`,
+  )
+  .join('\n')}
 `;
   }
 
@@ -253,4 +257,3 @@ IMPORTANT: Implement this design FAITHFULLY. The creative decisions have been ma
 
   return instructions;
 }
-

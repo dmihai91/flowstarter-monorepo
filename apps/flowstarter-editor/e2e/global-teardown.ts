@@ -10,11 +10,7 @@ import type { FullConfig } from '@playwright/test';
 const BASE_URL = 'http://localhost:5173';
 
 // Pattern to identify test-created projects (FitPro Studio or similar test names)
-const TEST_PROJECT_PATTERNS = [
-  /^FitPro Studio$/i,
-  /^Test Project/i,
-  /^E2E Test/i,
-];
+const TEST_PROJECT_PATTERNS = [/^FitPro Studio$/i, /^Test Project/i, /^E2E Test/i];
 
 async function globalTeardown(config: FullConfig) {
   console.log('\n════════════════════════════════════════════════════════════════');
@@ -46,13 +42,21 @@ async function cleanupDaytona(): Promise<void> {
     });
 
     if (response.ok) {
-      const result = await response.json() as { message?: string; deleted?: number; failed?: number; errors?: string[] };
+      const result = (await response.json()) as {
+        message?: string;
+        deleted?: number;
+        failed?: number;
+        errors?: string[];
+      };
       console.log(`  ✅ Daytona cleanup: ${result.message || 'Complete'}`);
+
       if (result.deleted !== undefined) {
         console.log(`  📊 Deleted ${result.deleted} sandboxes`);
       }
+
       if (result.failed && result.failed > 0) {
         console.log(`  ⚠️ Failed to delete ${result.failed} sandboxes`);
+
         if (result.errors && result.errors.length > 0) {
           result.errors.slice(0, 3).forEach((err: string) => {
             console.log(`     - ${err}`);
@@ -89,7 +93,7 @@ async function cleanupConvexProjects(): Promise<void> {
       return;
     }
 
-    const result = await listResponse.json() as { projects?: Array<{ name?: string; _id?: string }> };
+    const result = (await listResponse.json()) as { projects?: Array<{ name?: string; _id?: string }> };
     const projects = result.projects;
 
     if (!Array.isArray(projects) || projects.length === 0) {
@@ -101,8 +105,11 @@ async function cleanupConvexProjects(): Promise<void> {
 
     // Find test-created projects by name pattern
     const testProjects = projects.filter((p) => {
-      if (!p.name) return false;
-      return TEST_PROJECT_PATTERNS.some(pattern => pattern.test(p.name!));
+      if (!p.name) {
+        return false;
+      }
+
+      return TEST_PROJECT_PATTERNS.some((pattern) => pattern.test(p.name!));
     });
 
     if (testProjects.length === 0) {
@@ -136,4 +143,3 @@ async function cleanupConvexProjects(): Promise<void> {
 }
 
 export default globalTeardown;
-

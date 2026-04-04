@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useCallback, useMemo, useRef, useState, type MutableRefObject } from 'react';
 import type { StickToBottomOptions, StickToBottomState } from './stick-to-bottom-types';
 import {
@@ -137,20 +138,32 @@ export const useStickToBottom = (options: StickToBottomOptions = {}) => {
   }, []);
 
   const { scrollToBottom, stopScroll } = useScrollToBottom(
-    state, setIsAtBottom, setEscapedFromLock, isSelecting, optionsRef,
+    state,
+    setIsAtBottom,
+    setEscapedFromLock,
+    isSelecting,
+    optionsRef,
   );
 
   const { handleScroll, handleWheel } = useScrollEventHandlers(
-    state, scrollElRef, setIsAtBottom, setEscapedFromLock, setIsNearBottom, isSelecting,
+    state,
+    scrollElRef,
+    setIsAtBottom,
+    setEscapedFromLock,
+    setIsNearBottom,
+    isSelecting,
   );
 
-  const scrollRef = useRefCallback((scroll: HTMLElement | null) => {
-    scrollElRef.current?.removeEventListener('scroll', handleScroll);
-    (scrollElRef.current as HTMLElement | null)?.removeEventListener('wheel', handleWheel as EventListener);
-    scrollElRef.current = scroll;
-    scroll?.addEventListener('scroll', handleScroll, { passive: true });
-    scroll?.addEventListener('wheel', handleWheel as EventListener, { passive: true });
-  }, [handleScroll, handleWheel]);
+  const scrollRef = useRefCallback(
+    (scroll: HTMLElement | null) => {
+      scrollElRef.current?.removeEventListener('scroll', handleScroll);
+      (scrollElRef.current as HTMLElement | null)?.removeEventListener('wheel', handleWheel as EventListener);
+      scrollElRef.current = scroll;
+      scroll?.addEventListener('scroll', handleScroll, { passive: true });
+      scroll?.addEventListener('wheel', handleWheel as EventListener, { passive: true });
+    },
+    [handleScroll, handleWheel],
+  );
 
   const contentRef = useRefCallback((content) => {
     state.resizeObserver?.disconnect();

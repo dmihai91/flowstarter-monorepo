@@ -95,4 +95,3 @@ export function useFontsLoader(): UseFontsLoaderReturn {
 
   return { fontsLoaded, fontError };
 }
-

@@ -12,4 +12,3 @@ export async function request(url: string, init?: CommonRequest) {
 
   return fetch(url, init);
 }
-

@@ -79,7 +79,8 @@ function getStatusConfig(status: string) {
   if (status === 'completed') {
     return {
       icon: CheckCircle2,
-      bgGradient: 'from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20',
+      bgGradient:
+        'from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20',
       borderColor: 'border-emerald-200/30 dark:border-emerald-500/20',
       iconColor: 'text-emerald-600/70 dark:text-emerald-400/70',
     };
@@ -87,7 +88,8 @@ function getStatusConfig(status: string) {
   if (status === 'generating') {
     return {
       icon: Loader2,
-      bgGradient: 'from-sky-500/10 to-blue-500/10 dark:from-sky-500/20 dark:to-blue-500/20',
+      bgGradient:
+        'from-sky-500/10 to-blue-500/10 dark:from-sky-500/20 dark:to-blue-500/20',
       borderColor: 'border-sky-200/30 dark:border-sky-500/20',
       iconColor: 'text-sky-600/70 dark:text-sky-400/70',
     };
@@ -95,14 +97,16 @@ function getStatusConfig(status: string) {
   if (status === 'draft') {
     return {
       icon: FileText,
-      bgGradient: 'from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20',
+      bgGradient:
+        'from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20',
       borderColor: 'border-amber-200/30 dark:border-amber-500/20',
       iconColor: 'text-amber-600/70 dark:text-amber-400/70',
     };
   }
   return {
     icon: LayoutDashboard,
-    bgGradient: 'from-[var(--purple)]/10 to-[var(--purple)]/10 dark:from-[var(--purple)]/20 dark:to-[var(--purple)]/20',
+    bgGradient:
+      'from-[var(--purple)]/10 to-[var(--purple)]/10 dark:from-[var(--purple)]/20 dark:to-[var(--purple)]/20',
     borderColor: 'border-[var(--purple)]/30 dark:border-[var(--purple)]/20',
     iconColor: 'text-[var(--purple)]/70 dark:text-[var(--purple)]/70',
   };
@@ -115,7 +119,9 @@ export const ProjectsList = ({
   const { t } = useTranslations();
   const router = useRouter();
   const { formatTimeAgo } = useFormatDate();
-  const { highlightProjectId, highlightedRef } = useProjectHighlight([projects]);
+  const { highlightProjectId, highlightedRef } = useProjectHighlight([
+    projects,
+  ]);
   const {
     deleteDialogOpen,
     setDeleteDialogOpen,

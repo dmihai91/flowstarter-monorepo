@@ -1,14 +1,22 @@
 import type { MessageState, StreamingMessageParserOptions } from './message-parser-types';
 import {
-  handleActionContent, handleArtifactContent,
-  handleTagOpening, handleThinkingContent,
+  handleActionContent,
+  handleArtifactContent,
+  handleTagOpening,
+  handleThinkingContent,
 } from './message-parser-handlers';
 
 // Re-export types for backward compatibility
 export type {
-  ArtifactCallbackData, ActionCallbackData, ThinkingCallbackData,
-  ThinkingArtifactCallbackData, ArtifactCallback, ActionCallback,
-  ThinkingCallback, ThinkingArtifactCallback, ParserCallbacks,
+  ArtifactCallbackData,
+  ActionCallbackData,
+  ThinkingCallbackData,
+  ThinkingArtifactCallbackData,
+  ArtifactCallback,
+  ActionCallback,
+  ThinkingCallback,
+  ThinkingArtifactCallback,
+  ParserCallbacks,
   StreamingMessageParserOptions,
 } from './message-parser-types';
 
@@ -70,4 +78,3 @@ export class StreamingMessageParser {
     this.#messages.clear();
   }
 }
-

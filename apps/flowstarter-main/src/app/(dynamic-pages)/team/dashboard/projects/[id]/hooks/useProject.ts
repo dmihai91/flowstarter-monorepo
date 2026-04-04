@@ -41,7 +41,7 @@ export interface ParsedChat {
 export function useProject() {
   const { id } = useParams();
   const router = useRouter();
-  
+
   const [project, setProject] = useState<ProjectData | null>(null);
   const [parsedChat, setParsedChat] = useState<ParsedChat | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -87,12 +87,13 @@ export function useProject() {
   );
 
   // Build wizard data from project
-  const buildWizardData = () => ({
+  const _buildWizardData = () => ({
     clientName: parsedChat?.clientInfo?.name || '',
     clientEmail: parsedChat?.clientInfo?.email || '',
     clientPhone: parsedChat?.clientInfo?.phone || '',
     businessName: parsedChat?.businessInfo?.name || project?.name || '',
-    description: parsedChat?.businessInfo?.description || project?.description || '',
+    description:
+      parsedChat?.businessInfo?.description || project?.description || '',
     industry: parsedChat?.businessInfo?.industry || '',
     targetAudience: parsedChat?.businessInfo?.targetAudience || '',
     uvp: parsedChat?.businessInfo?.uvp || '',

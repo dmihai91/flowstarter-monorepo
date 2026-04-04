@@ -18,18 +18,12 @@ export const FOOD_CONTENT_PATTERNS = {
     'A Culinary Experience Awaits',
     'Good Food, Good People',
   ],
-  ctas: [
-    'View Menu',
-    'Make a Reservation',
-    'Order Online',
-    'Book a Table',
-    'See Today\'s Specials',
-  ],
+  ctas: ['View Menu', 'Make a Reservation', 'Order Online', 'Book a Table', "See Today's Specials"],
   highlights: [
     'Farm to Table',
     'House-Made',
     'Local Ingredients',
-    'Chef\'s Specials',
+    "Chef's Specials",
     'Seasonal Menu',
     'Private Dining',
     'Catering Available',
@@ -68,17 +62,42 @@ ${BASE_CONTENT_RULES}`;
 
 export function buildFoodContentPrompt(context: BusinessContext): string {
   const parts = [`${FOOD_CONTENT_PROMPT}\n\nBUSINESS CONTEXT:`];
-  if (context.ownerName) parts.push(`- Owner/Chef: ${context.ownerName}`);
-  if (context.location) parts.push(`- Location: ${context.location}`);
-  if (context.services?.length) parts.push(`- Cuisine/Offerings: ${context.services.join(', ')}`);
-  if (context.uniqueApproach) parts.push(`- Concept: ${context.uniqueApproach}`);
+
+  if (context.ownerName) {
+    parts.push(`- Owner/Chef: ${context.ownerName}`);
+  }
+
+  if (context.location) {
+    parts.push(`- Location: ${context.location}`);
+  }
+
+  if (context.services?.length) {
+    parts.push(`- Cuisine/Offerings: ${context.services.join(', ')}`);
+  }
+
+  if (context.uniqueApproach) {
+    parts.push(`- Concept: ${context.uniqueApproach}`);
+  }
+
   return parts.join('\n');
 }
 
 export const FOOD_DOMAIN = {
   id: 'food',
   name: 'Restaurant & Food',
-  keywords: ['restaurant', 'cafe', 'bakery', 'catering', 'chef', 'food', 'dining', 'bistro', 'bar', 'coffee shop', 'pizzeria'],
+  keywords: [
+    'restaurant',
+    'cafe',
+    'bakery',
+    'catering',
+    'chef',
+    'food',
+    'dining',
+    'bistro',
+    'bar',
+    'coffee shop',
+    'pizzeria',
+  ],
   sections: FOOD_SECTIONS,
   contentPatterns: FOOD_CONTENT_PATTERNS,
   systemPrompt: FOOD_CONTENT_PROMPT,

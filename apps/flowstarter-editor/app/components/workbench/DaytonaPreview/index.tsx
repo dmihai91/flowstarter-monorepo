@@ -19,14 +19,8 @@ export const DaytonaPreview = memo(({ state, onRefresh, onRetry }: DaytonaPrevie
   const colors = getColors(isDark);
   const { status, previewUrl, displayUrl, error } = state;
 
-  const {
-    containerStyle,
-    iconContainerStyle,
-    titleStyle,
-    subtitleStyle,
-    iconColor,
-    ringsColor,
-  } = useDaytonaPreviewStyles(isDark, colors);
+  const { containerStyle, iconContainerStyle, titleStyle, subtitleStyle, iconColor, ringsColor } =
+    useDaytonaPreviewStyles(isDark, colors);
 
   // Loading states
   if (status !== 'ready' && status !== 'error') {

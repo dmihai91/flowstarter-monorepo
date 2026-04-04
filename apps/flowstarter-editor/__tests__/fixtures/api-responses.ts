@@ -186,4 +186,3 @@ export const mockSystemInfo = {
     free: 200 * 1024 * 1024 * 1024, // 200GB
   },
 };
-

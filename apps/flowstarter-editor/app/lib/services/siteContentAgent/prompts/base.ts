@@ -70,7 +70,7 @@ export const COMMON_SECTIONS = [
   'cta-banner',
 ] as const;
 
-export type SectionType = typeof COMMON_SECTIONS[number];
+export type SectionType = (typeof COMMON_SECTIONS)[number];
 
 /**
  * Default CTA styles per intent

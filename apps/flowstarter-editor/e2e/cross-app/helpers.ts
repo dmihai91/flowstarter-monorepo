@@ -12,8 +12,21 @@
  *   ✅ /api/build, /api/agent-code, /api/ai/enrich-project — all real
  */
 
-import { type Page } from '@playwright/test';
+import { test, type Page } from '@playwright/test';
 import { createHmac } from 'crypto';
+
+/**
+ * Call at the top of each cross-app describe block.
+ * Skips all tests in CI when required secrets are not configured.
+ */
+export function skipIfSecretsUnavailable() {
+  test.skip(
+    process.env.E2E_SECRETS_AVAILABLE === 'false' ||
+      (!process.env.CLERK_SECRET_KEY && !!process.env.CI),
+    'Skipping cross-app E2E — secrets not configured in this environment.'
+  );
+}
+
 import { config } from 'dotenv';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
@@ -23,19 +36,17 @@ config({ path: path.resolve(__dirname, '../../.env') });
 config({ path: path.resolve(__dirname, '../../.env.local'), override: true });
 
 export const BASE = process.env.E2E_BASE_URL || 'https://flowstarter.dev';
-export const EDITOR =
-  process.env.PLAYWRIGHT_E2E_EDITOR_URL ||
-  'http://localhost:5173';
+export const EDITOR = process.env.PLAYWRIGHT_E2E_EDITOR_URL || 'http://localhost:5173';
 export const CONVEX_SITE_URL = (
   process.env.CONVEX_SITE_URL ||
   process.env.NEXT_PUBLIC_CONVEX_URL ||
   'https://outstanding-otter-369.convex.cloud'
 ).replace('.convex.cloud', '.convex.site');
 
-export const HANDOFF_SECRET = process.env.HANDOFF_SECRET ||
-  '9c5ff35ecdf4c9699e4749c408c1ee6bbad51552c8e66cb8e008f5c13ae48e9c';
+export const HANDOFF_SECRET =
+  process.env.HANDOFF_SECRET || '9c5ff35ecdf4c9699e4749c408c1ee6bbad51552c8e66cb8e008f5c13ae48e9c';
 
-const E2E_SECRET  = process.env.E2E_SECRET  || '';
+const E2E_SECRET = process.env.E2E_SECRET || '';
 const E2E_USER_ID = process.env.E2E_USER_ID || 'user_3AeSkinjvy9jZkCFvkupD9I06PG';
 
 if (!E2E_SECRET) {
@@ -67,8 +78,7 @@ export const CONTACT_INFO = {
   address: 'Str. Memo 10, Cluj-Napoca',
 };
 
-export const QUICKSCAFFOLD_INPUT =
-  `Cabinet stomatologic estetic in Cluj-Napoca, Dr. Elena Popescu ${RUN_ID}`;
+export const QUICKSCAFFOLD_INPUT = `Cabinet stomatologic estetic in Cluj-Napoca, Dr. Elena Popescu ${RUN_ID}`;
 
 export const ENRICHED_DATA = {
   name: testProjectName(),
@@ -86,17 +96,20 @@ export const ENRICHED_DATA = {
 
 export function makeHandoffToken(payload: object): string {
   const data = Buffer.from(JSON.stringify(payload)).toString('base64url');
-  const sig  = createHmac('sha256', HANDOFF_SECRET).update(data).digest('base64url');
+  const sig = createHmac('sha256', HANDOFF_SECRET).update(data).digest('base64url');
+
   return `${data}.${sig}`;
 }
 
-// ─── Direct API calls with E2E secret header ──────────────────────────────────
-// No browser session required. The server's requireAuth() checks this header
-// before falling back to Clerk session — only active in NODE_ENV !== 'production'.
+/*
+ * ─── Direct API calls with E2E secret header ──────────────────────────────────
+ * No browser session required. The server's requireAuth() checks this header
+ * before falling back to Clerk session — only active in NODE_ENV !== 'production'.
+ */
 
 export async function e2eFetch(
   url: string,
-  options: { method?: string; body?: object; extraHeaders?: Record<string, string> } = {}
+  options: { method?: string; body?: object; extraHeaders?: Record<string, string> } = {},
 ): Promise<{ status: number; body: unknown }> {
   const res = await fetch(url, {
     method: options.method || 'GET',
@@ -111,13 +124,19 @@ export async function e2eFetch(
 
   const text = await res.text();
   let body: unknown;
-  try { body = JSON.parse(text); } catch { body = text; }
+
+  try {
+    body = JSON.parse(text);
+  } catch {
+    body = text;
+  }
+
   return { status: res.status, body };
 }
 
 export async function convexFetch(
   path: string,
-  options: { method?: string } = {}
+  options: { method?: string } = {},
 ): Promise<{ status: number; body: unknown }> {
   const res = await fetch(`${CONVEX_SITE_URL}${path}`, {
     method: options.method || 'GET',
@@ -129,7 +148,13 @@ export async function convexFetch(
 
   const text = await res.text();
   let body: unknown;
-  try { body = JSON.parse(text); } catch { body = text; }
+
+  try {
+    body = JSON.parse(text);
+  } catch {
+    body = text;
+  }
+
   return { status: res.status, body };
 }
 
@@ -138,12 +163,21 @@ export async function convexFetch(
 export async function browserFetch(
   page: Page,
   url: string,
-  options: { method?: string; body?: object } = {}
+  options: { method?: string; body?: object } = {},
 ): Promise<{ status: number; body: unknown }> {
   return page.evaluate(
-    async ({ url, method, body, secret, userId }: {
-      url: string; method: string; body?: string;
-      secret: string; userId: string;
+    async ({
+      url,
+      method,
+      body,
+      secret,
+      userId,
+    }: {
+      url: string;
+      method: string;
+      body?: string;
+      secret: string;
+      userId: string;
     }) => {
       const res = await fetch(url, {
         method,
@@ -157,7 +191,13 @@ export async function browserFetch(
       });
       const text = await res.text();
       let parsed: unknown;
-      try { parsed = JSON.parse(text); } catch { parsed = text; }
+
+      try {
+        parsed = JSON.parse(text);
+      } catch {
+        parsed = text;
+      }
+
       return { status: res.status, body: parsed };
     },
     {
@@ -166,14 +206,17 @@ export async function browserFetch(
       body: options.body ? JSON.stringify(options.body) : undefined,
       secret: E2E_SECRET,
       userId: E2E_USER_ID,
-    }
+    },
   );
 }
 
 // ─── Cleanup ──────────────────────────────────────────────────────────────────
 
 export async function cleanupProject(projectId: string) {
-  if (!projectId) return;
+  if (!projectId) {
+    return;
+  }
+
   try {
     const result = await e2eFetch(`${BASE}/api/projects/${projectId}`, { method: 'DELETE' });
     console.log('[cleanup] Deleted project', projectId, '→ status:', result.status);
@@ -222,18 +265,26 @@ export async function seedProjectIntegrations(
 
 export async function getProject(projectId: string) {
   const result = await e2eFetch(`${BASE}/api/projects/${projectId}`);
+
   if (result.status !== 200) {
     throw new Error(`Failed to fetch project ${projectId}: ${JSON.stringify(result.body)}`);
   }
+
   return (result.body as { project: Record<string, unknown> }).project;
 }
 
 export async function getGeneratedFiles(projectId: string) {
   const result = await convexFetch(`/files/list?supabaseProjectId=${encodeURIComponent(projectId)}`);
+
   if (result.status !== 200) {
     throw new Error(`Failed to fetch generated files for ${projectId}: ${JSON.stringify(result.body)}`);
   }
-  return (result.body as {
-    files?: Array<{ path: string; content: string; updatedAt?: number }>;
-  }).files || [];
+
+  return (
+    (
+      result.body as {
+        files?: Array<{ path: string; content: string; updatedAt?: number }>;
+      }
+    ).files || []
+  );
 }

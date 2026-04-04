@@ -30,14 +30,30 @@ interface FeedbackDialogProps {
 
 export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
   const { t } = useTranslations();
-  const { formData, updateField, submit, validate, isPending: isSubmitting } = useFeedback(
-    () => { toast.success(t('feedback.success')); onOpenChange(false); }
-  );
+  const {
+    formData,
+    updateField,
+    submit,
+    validate,
+    isPending: isSubmitting,
+  } = useFeedback(() => {
+    toast.success(t('feedback.success'));
+    onOpenChange(false);
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const error = validate();
-    if (error) { toast.error(t(error === 'Category is required' || error === 'Message is required' ? 'feedback.error.required' : 'feedback.error.tooShort')); return; }
+    if (error) {
+      toast.error(
+        t(
+          error === 'Category is required' || error === 'Message is required'
+            ? 'feedback.error.required'
+            : 'feedback.error.tooShort'
+        )
+      );
+      return;
+    }
     const result = await submit();
     if (!result) toast.error(t('feedback.error.submit'));
   };
@@ -59,9 +75,7 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
             </Label>
             <Select
               value={formData.category}
-              onValueChange={(value) =>
-                updateField('category', value)
-              }
+              onValueChange={(value) => updateField('category', value)}
               disabled={isSubmitting}
             >
               <SelectTrigger id="category" className="w-full">
@@ -91,9 +105,7 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
             <Textarea
               id="message"
               value={formData.message}
-              onChange={(e) =>
-                updateField('message', e.target.value)
-              }
+              onChange={(e) => updateField('message', e.target.value)}
               placeholder={t('feedback.message.placeholder')}
               className="min-h-[140px] resize-none"
               disabled={isSubmitting}
@@ -115,9 +127,7 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
               id="email"
               type="email"
               value={formData.email}
-              onChange={(e) =>
-                updateField('email', e.target.value)
-              }
+              onChange={(e) => updateField('email', e.target.value)}
               placeholder={t('feedback.email.placeholder')}
               disabled={isSubmitting}
             />

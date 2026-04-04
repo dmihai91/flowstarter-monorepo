@@ -78,6 +78,7 @@ describe('toSystemFont', () => {
 
   it('does not include googleFonts in output', () => {
     const result = toSystemFont(MOCK_TEMPLATE_FONT);
+
     // The type allows googleFonts but toSystemFont doesn't copy it
     expect(result).toEqual({
       id: 'modern',
@@ -268,4 +269,3 @@ describe('getNextSection', () => {
     expect(getNextSection('logo')).toBeNull();
   });
 });
-

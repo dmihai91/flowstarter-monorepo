@@ -7,9 +7,12 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { generateMessageId } from '../utils';
-import type { ChatMessage, SuggestedReply } from '../types';
-import type { UseOnboardingMessagesOptions, UseOnboardingMessagesReturn } from '../types/sharedState';
+import { generateMessageId } from '~/components/editor/editor-chat/utils';
+import type { ChatMessage, SuggestedReply } from '~/components/editor/editor-chat/types';
+import type {
+  UseOnboardingMessagesOptions,
+  UseOnboardingMessagesReturn,
+} from '~/components/editor/editor-chat/types/sharedState';
 
 type MessageType = string;
 
@@ -252,12 +255,9 @@ export function useOnboardingMessages(options: UseOnboardingMessagesOptions = {}
     [onMessagesChange],
   );
 
-
   // Update an existing message by id (e.g. live agent status card)
   const updateMessage = useCallback((id: string, patch: Partial<import('../types').ChatMessage>) => {
-    setMessagesInternal(prev =>
-      prev.map(msg => msg.id === id ? { ...msg, ...patch } : msg)
-    );
+    setMessagesInternal((prev) => prev.map((msg) => (msg.id === id ? { ...msg, ...patch } : msg)));
   }, []);
 
   return {

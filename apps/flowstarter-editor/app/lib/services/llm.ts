@@ -27,22 +27,26 @@ const MODEL_PRICING: Record<string, { input: number; output: number }> = {
   'anthropic/claude-3.5-sonnet': { input: 3.0, output: 15.0 },
   'anthropic/claude-3-opus': { input: 15.0, output: 75.0 },
   'anthropic/claude-3-haiku': { input: 0.25, output: 1.25 },
+
   // Kimi via OpenRouter
   'moonshotai/kimi-k2-instruct-0905': { input: 0.6, output: 2.4 },
+
   // Groq (free tier, but track for visibility)
   'llama-3.3-70b-versatile': { input: 0.0, output: 0.0 },
   'llama-3.1-8b-instant': { input: 0.0, output: 0.0 },
+
   // Default fallback
-  'default': { input: 3.0, output: 15.0 },
+  default: { input: 3.0, output: 15.0 },
 };
 
 /**
  * Calculate cost based on token usage
  */
 function calculateCost(model: string, promptTokens: number, completionTokens: number): number {
-  const pricing = MODEL_PRICING[model] || MODEL_PRICING['default'];
+  const pricing = MODEL_PRICING[model] || MODEL_PRICING.default;
   const inputCost = (promptTokens / 1_000_000) * pricing.input;
   const outputCost = (completionTokens / 1_000_000) * pricing.output;
+
   return inputCost + outputCost;
 }
 
@@ -73,9 +77,11 @@ function getEnv(key: string): string | undefined {
   if (typeof process !== 'undefined' && process.env) {
     return process.env[key];
   }
+
   if (typeof globalThis !== 'undefined' && (globalThis as Record<string, unknown>).env) {
     return ((globalThis as Record<string, unknown>).env as Record<string, string>)[key];
   }
+
   return undefined;
 }
 
@@ -92,22 +98,27 @@ function getOpenRouter() {
       console.error('[LLM] OPEN_ROUTER_API_KEY not found.');
       throw new Error('OPEN_ROUTER_API_KEY environment variable is not set');
     }
+
     _openrouter = createOpenRouter({ apiKey });
   }
+
   return _openrouter;
 }
 
 function getGroq() {
   if (!_groq) {
     const apiKey = getEnv('GROQ_API_KEY');
+
     if (!apiKey) {
       throw new Error('GROQ_API_KEY environment variable is not set');
     }
+
     _groq = createOpenAI({
       apiKey,
       baseURL: getEnv('GROQ_API_BASE_URL') || 'https://api.groq.com/openai/v1',
     });
   }
+
   return _groq;
 }
 
@@ -137,7 +148,10 @@ export async function generateCompletion(messages: LLMMessage[], options: LLMOpt
   let providerModel: ProviderModel;
 
   // Route to Groq for Llama, Kimi, and moonshotai models
-  if (getEnv('GROQ_API_KEY') && (model.includes('llama') || model.includes('groq') || model.includes('kimi') || model.includes('moonshotai'))) {
+  if (
+    getEnv('GROQ_API_KEY') &&
+    (model.includes('llama') || model.includes('groq') || model.includes('kimi') || model.includes('moonshotai'))
+  ) {
     providerModel = getGroq()(model.replace('meta-llama/', ''));
   } else {
     providerModel = getOpenRouter()(model);
@@ -202,7 +216,9 @@ export async function generateJSON<T>(messages: LLMMessage[], options: LLMOption
   try {
     const jsonMatch = result.match(/```json\n([\s\S]*?)\n```/) || result.match(/```\n([\s\S]*?)\n```/);
     const jsonStr = jsonMatch ? jsonMatch[1] : result;
+
     return JSON.parse(jsonStr.trim());
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     console.error('Failed to parse JSON response:', result);
     throw new Error('Invalid JSON response from LLM');
@@ -214,10 +230,13 @@ export async function generateJSON<T>(messages: LLMMessage[], options: LLMOption
  */
 export async function chat(userMessage: string, systemPrompt?: string, options?: LLMOptions): Promise<string> {
   const messages: LLMMessage[] = [];
+
   if (systemPrompt) {
     messages.push({ role: 'system', content: systemPrompt });
   }
+
   messages.push({ role: 'user', content: userMessage });
+
   return generateCompletion(messages, options);
 }
 
@@ -244,4 +263,3 @@ Error: ${errorLog}
 File: ${fileContent}
 Return ONLY the fixed file content, no explanations.`,
 };
-

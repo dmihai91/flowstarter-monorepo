@@ -41,4 +41,3 @@ export * from './TabsWithSlider';
 // Tooltip components
 export { default as WithTooltip } from './Tooltip';
 export { Tooltip } from './Tooltip';
-

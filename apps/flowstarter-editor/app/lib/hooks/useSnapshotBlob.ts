@@ -248,4 +248,3 @@ export function useSnapshotBlob(): UseSnapshotBlobResult {
     compressionSupported: isCompressionSupported(),
   };
 }
-

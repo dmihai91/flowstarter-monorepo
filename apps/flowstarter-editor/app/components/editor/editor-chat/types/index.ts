@@ -20,11 +20,10 @@ export type {
   EditorChatPanelProps,
   CategoryColors,
   Template,
-} from '../types';
+} from '~/components/editor/editor-chat/types';
 
 // Shared state types for hook composition
 export type {
-
   // Message hook
   UseOnboardingMessagesOptions,
   UseOnboardingMessagesReturn,
@@ -60,4 +59,3 @@ export type {
   // Main hook props
   UseEditorChatStateProps,
 } from './sharedState';
-

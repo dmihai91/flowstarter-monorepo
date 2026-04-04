@@ -1,8 +1,16 @@
 'use client';
 
-import { useTypewriter } from '@/hooks/useTypewriter';
 import { cn } from '@/lib/utils';
-import { ArrowLeft, ArrowRight, Building2, Layers, Link2, Mail, RefreshCw, Sparkles, X } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Building2,
+  Layers,
+  Mail,
+  RefreshCw,
+  Sparkles,
+  X,
+} from 'lucide-react';
 import type {
   ProjectBriefDraft,
   ProjectGoal,
@@ -15,39 +23,55 @@ import type {
 // ── Option sets ────────────────────────────────────────────────────────────────
 
 const GOAL_OPTIONS: { value: ProjectGoal; label: string; emoji: string }[] = [
-  { value: 'leads',      label: 'Generate leads',     emoji: '🎯' },
-  { value: 'bookings',   label: 'Take bookings',       emoji: '📅' },
-  { value: 'sales',      label: 'Drive sales',         emoji: '💳' },
-  { value: 'newsletter', label: 'Grow newsletter',     emoji: '📬' },
-  { value: 'awareness',  label: 'Build awareness',     emoji: '📣' },
+  { value: 'leads', label: 'Generate leads', emoji: '🎯' },
+  { value: 'bookings', label: 'Take bookings', emoji: '📅' },
+  { value: 'sales', label: 'Drive sales', emoji: '💳' },
+  { value: 'newsletter', label: 'Grow newsletter', emoji: '📬' },
+  { value: 'awareness', label: 'Build awareness', emoji: '📣' },
 ];
 
 const TONE_OPTIONS: { value: BrandTone; label: string; desc: string }[] = [
-  { value: 'professional', label: 'Professional', desc: 'Polished, trustworthy' },
-  { value: 'bold',         label: 'Bold',         desc: 'Direct, confident'    },
-  { value: 'warm',         label: 'Warm',         desc: 'Approachable, human'   },
-  { value: 'calming',      label: 'Calming',      desc: 'Soft, reassuring'      },
-  { value: 'modern',       label: 'Modern',       desc: 'Clean, minimal'       },
-  { value: 'premium',      label: 'Premium',      desc: 'Elevated, exclusive'   },
+  {
+    value: 'professional',
+    label: 'Professional',
+    desc: 'Polished, trustworthy',
+  },
+  { value: 'bold', label: 'Bold', desc: 'Direct, confident' },
+  { value: 'warm', label: 'Warm', desc: 'Approachable, human' },
+  { value: 'calming', label: 'Calming', desc: 'Soft, reassuring' },
+  { value: 'modern', label: 'Modern', desc: 'Clean, minimal' },
+  { value: 'premium', label: 'Premium', desc: 'Elevated, exclusive' },
 ];
 
 const OFFER_OPTIONS: { value: OfferType; label: string }[] = [
-  { value: 'premium',    label: 'Premium'     },
-  { value: 'accessible', label: 'Accessible'  },
-  { value: 'free',       label: 'Free'        },
-  { value: 'custom',     label: 'Custom'      },
+  { value: 'premium', label: 'Premium' },
+  { value: 'accessible', label: 'Accessible' },
+  { value: 'free', label: 'Free' },
+  { value: 'custom', label: 'Custom' },
 ];
 
 const PAGE_OPTIONS: { value: PagePref; label: string; desc: string }[] = [
-  { value: 'single-page', label: 'Single page', desc: 'One long scrollable page'     },
-  { value: 'multi-page',  label: 'Multi-page',  desc: 'Home + subpages (About, etc)' },
+  {
+    value: 'single-page',
+    label: 'Single page',
+    desc: 'One long scrollable page',
+  },
+  {
+    value: 'multi-page',
+    label: 'Multi-page',
+    desc: 'Home + subpages (About, etc)',
+  },
 ];
 
-const INTEGRATION_OPTIONS: { value: Integration; label: string; emoji: string }[] = [
-  { value: 'booking',      label: 'Booking',      emoji: '📅' },
-  { value: 'newsletter',   label: 'Newsletter',   emoji: '📬' },
-  { value: 'analytics',    label: 'Analytics',    emoji: '📊' },
-  { value: 'leadCapture',  label: 'Lead capture', emoji: '🎯' },
+const INTEGRATION_OPTIONS: {
+  value: Integration;
+  label: string;
+  emoji: string;
+}[] = [
+  { value: 'booking', label: 'Booking', emoji: '📅' },
+  { value: 'newsletter', label: 'Newsletter', emoji: '📬' },
+  { value: 'analytics', label: 'Analytics', emoji: '📊' },
+  { value: 'leadCapture', label: 'Lead capture', emoji: '🎯' },
 ];
 
 // ── Shared UI primitives ───────────────────────────────────────────────────────
@@ -61,7 +85,9 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
 }
 
 function TextInput({
-  value, onChange, placeholder,
+  value,
+  onChange,
+  placeholder,
 }: {
   value: string;
   onChange: (v: string) => void;
@@ -79,7 +105,10 @@ function TextInput({
 }
 
 function TextArea({
-  value, onChange, placeholder, rows = 3,
+  value,
+  onChange,
+  placeholder,
+  rows = 3,
 }: {
   value: string;
   onChange: (v: string) => void;
@@ -98,7 +127,9 @@ function TextArea({
 }
 
 function PillButton({
-  active, onClick, children,
+  active,
+  onClick,
+  children,
 }: {
   active: boolean;
   onClick: () => void;
@@ -123,10 +154,14 @@ function PillButton({
 // ── Step renderers ─────────────────────────────────────────────────────────────
 
 function Step1Business({
-  brief, update,
+  brief,
+  update,
 }: {
   brief: ProjectBriefDraft;
-  update: <K extends keyof ProjectBriefDraft>(k: K, v: ProjectBriefDraft[K]) => void;
+  update: <K extends keyof ProjectBriefDraft>(
+    k: K,
+    v: ProjectBriefDraft[K]
+  ) => void;
 }) {
   return (
     <div className="space-y-3">
@@ -168,10 +203,15 @@ function Step1Business({
 }
 
 function Step2Offer({
-  brief, update, toggleGoal,
+  brief,
+  update,
+  toggleGoal,
 }: {
   brief: ProjectBriefDraft;
-  update: <K extends keyof ProjectBriefDraft>(k: K, v: ProjectBriefDraft[K]) => void;
+  update: <K extends keyof ProjectBriefDraft>(
+    k: K,
+    v: ProjectBriefDraft[K]
+  ) => void;
   toggleGoal: (g: ProjectGoal) => void;
 }) {
   return (
@@ -190,9 +230,15 @@ function Step2Offer({
         <TextArea
           value={brief.offerings.join('\n')}
           onChange={(v) =>
-            update('offerings', v.split('\n').map((s) => s.trim()).filter(Boolean))
+            update(
+              'offerings',
+              v
+                .split('\n')
+                .map((s) => s.trim())
+                .filter(Boolean)
+            )
           }
-          placeholder={"Haircut & styling\nColour treatment\nBridal packages"}
+          placeholder={'Haircut & styling\nColour treatment\nBridal packages'}
           rows={3}
         />
       </div>
@@ -239,10 +285,19 @@ function Step2Offer({
                   : 'bg-white dark:bg-white/[0.03] border-gray-200 dark:border-white/[0.06] hover:bg-gray-50 dark:hover:bg-white/[0.06]'
               )}
             >
-              <p className={cn('text-xs font-semibold', brief.brandTone === value ? 'text-[var(--purple)] dark:text-[#a5b4fc]' : 'text-zinc-700 dark:text-zinc-300')}>
+              <p
+                className={cn(
+                  'text-xs font-semibold',
+                  brief.brandTone === value
+                    ? 'text-[var(--purple)] dark:text-[#a5b4fc]'
+                    : 'text-zinc-700 dark:text-zinc-300'
+                )}
+              >
                 {label}
               </p>
-              <p className="text-[0.6rem] text-zinc-400 dark:text-zinc-500 mt-0.5">{desc}</p>
+              <p className="text-[0.6rem] text-zinc-400 dark:text-zinc-500 mt-0.5">
+                {desc}
+              </p>
             </button>
           ))}
         </div>
@@ -268,9 +323,17 @@ function Step2Offer({
         <TextArea
           value={brief.differentiators.join('\n')}
           onChange={(v) =>
-            update('differentiators', v.split('\n').map((s) => s.trim()).filter(Boolean))
+            update(
+              'differentiators',
+              v
+                .split('\n')
+                .map((s) => s.trim())
+                .filter(Boolean)
+            )
           }
-          placeholder={"15 years of experience\nCertified specialists\nFast turnaround"}
+          placeholder={
+            '15 years of experience\nCertified specialists\nFast turnaround'
+          }
           rows={3}
         />
       </div>
@@ -279,9 +342,17 @@ function Step2Offer({
         <TextArea
           value={brief.trustSignals.join('\n')}
           onChange={(v) =>
-            update('trustSignals', v.split('\n').map((s) => s.trim()).filter(Boolean))
+            update(
+              'trustSignals',
+              v
+                .split('\n')
+                .map((s) => s.trim())
+                .filter(Boolean)
+            )
           }
-          placeholder={"5-star reviews\nRecognized partners\nMoney-back guarantee"}
+          placeholder={
+            '5-star reviews\nRecognized partners\nMoney-back guarantee'
+          }
           rows={3}
         />
       </div>
@@ -307,10 +378,15 @@ function Step2Offer({
 }
 
 function Step3Structure({
-  brief, update, toggleIntegration,
+  brief,
+  update,
+  toggleIntegration,
 }: {
   brief: ProjectBriefDraft;
-  update: <K extends keyof ProjectBriefDraft>(k: K, v: ProjectBriefDraft[K]) => void;
+  update: <K extends keyof ProjectBriefDraft>(
+    k: K,
+    v: ProjectBriefDraft[K]
+  ) => void;
   toggleIntegration: (i: Integration) => void;
 }) {
   return (
@@ -330,10 +406,19 @@ function Step3Structure({
                   : 'bg-white dark:bg-white/[0.03] border-gray-200 dark:border-white/[0.06] hover:bg-gray-50 dark:hover:bg-white/[0.06]'
               )}
             >
-              <p className={cn('text-xs font-semibold', brief.pagePreference === value ? 'text-[var(--purple)] dark:text-[#a5b4fc]' : 'text-zinc-700 dark:text-zinc-300')}>
+              <p
+                className={cn(
+                  'text-xs font-semibold',
+                  brief.pagePreference === value
+                    ? 'text-[var(--purple)] dark:text-[#a5b4fc]'
+                    : 'text-zinc-700 dark:text-zinc-300'
+                )}
+              >
                 {label}
               </p>
-              <p className="text-[0.6rem] text-zinc-400 dark:text-zinc-500 mt-0.5">{desc}</p>
+              <p className="text-[0.6rem] text-zinc-400 dark:text-zinc-500 mt-0.5">
+                {desc}
+              </p>
             </button>
           ))}
         </div>
@@ -351,17 +436,23 @@ function Step3Structure({
             </PillButton>
           ))}
         </div>
-        <p className="text-[0.6rem] text-zinc-400 dark:text-zinc-500 mt-2">Select all that apply — can be changed later</p>
+        <p className="text-[0.6rem] text-zinc-400 dark:text-zinc-500 mt-2">
+          Select all that apply — can be changed later
+        </p>
       </div>
     </div>
   );
 }
 
 function Step4Contact({
-  brief, update,
+  brief,
+  update,
 }: {
   brief: ProjectBriefDraft;
-  update: <K extends keyof ProjectBriefDraft>(k: K, v: ProjectBriefDraft[K]) => void;
+  update: <K extends keyof ProjectBriefDraft>(
+    k: K,
+    v: ProjectBriefDraft[K]
+  ) => void;
 }) {
   return (
     <div className="space-y-3">
@@ -396,28 +487,47 @@ function Step4Contact({
 // ── Step metadata ──────────────────────────────────────────────────────────────
 
 const STEP_META = [
-  { title: 'Business',  subtitle: 'Name, industry and what you do',        icon: <Building2 className="w-4 h-4 text-[var(--purple)]" /> },
-  { title: 'Offer',     subtitle: 'Services, goals and brand positioning',  icon: <Sparkles  className="w-4 h-4 text-[var(--purple)]" /> },
-  { title: 'Structure', subtitle: 'Site layout and integrations',           icon: <Layers    className="w-4 h-4 text-[var(--purple)]" /> },
-  { title: 'Contact',   subtitle: 'How clients reach the business',         icon: <Mail      className="w-4 h-4 text-[var(--purple)]" /> },
+  {
+    title: 'Business',
+    subtitle: 'Name, industry and what you do',
+    icon: <Building2 className="w-4 h-4 text-[var(--purple)]" />,
+  },
+  {
+    title: 'Offer',
+    subtitle: 'Services, goals and brand positioning',
+    icon: <Sparkles className="w-4 h-4 text-[var(--purple)]" />,
+  },
+  {
+    title: 'Structure',
+    subtitle: 'Site layout and integrations',
+    icon: <Layers className="w-4 h-4 text-[var(--purple)]" />,
+  },
+  {
+    title: 'Contact',
+    subtitle: 'How clients reach the business',
+    icon: <Mail className="w-4 h-4 text-[var(--purple)]" />,
+  },
 ];
 
 // ── Main component ─────────────────────────────────────────────────────────────
 
 interface ScaffoldReviewProps {
-  brief:           ProjectBriefDraft;
-  reviewStep:      number;
-  isFirstStep:     boolean;
-  isLastStep:      boolean;
+  brief: ProjectBriefDraft;
+  reviewStep: number;
+  isFirstStep: boolean;
+  isLastStep: boolean;
   reviewStepCount: number;
-  onUpdateBrief:   <K extends keyof ProjectBriefDraft>(key: K, value: ProjectBriefDraft[K]) => void;
-  onToggleGoal:        (goal: ProjectGoal) => void;
+  onUpdateBrief: <K extends keyof ProjectBriefDraft>(
+    key: K,
+    value: ProjectBriefDraft[K]
+  ) => void;
+  onToggleGoal: (goal: ProjectGoal) => void;
   onToggleIntegration: (integration: Integration) => void;
-  onNext:           () => void;
-  onPrev:           () => void;
-  onBackToInput:    () => void;
-  onRegenerate:     () => void;
-  onReset:          () => void;
+  onNext: () => void;
+  onPrev: () => void;
+  onBackToInput: () => void;
+  onRegenerate: () => void;
+  onReset: () => void;
 }
 
 export function ScaffoldReview({
@@ -462,8 +572,12 @@ export function ScaffoldReview({
             {meta.icon}
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">{meta.title}</h3>
-            <p className="text-[0.6875rem] text-zinc-500 dark:text-zinc-400">{meta.subtitle}</p>
+            <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
+              {meta.title}
+            </h3>
+            <p className="text-[0.6875rem] text-zinc-500 dark:text-zinc-400">
+              {meta.subtitle}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-1">
@@ -490,7 +604,9 @@ export function ScaffoldReview({
             key={i}
             className={cn(
               'h-0.5 flex-1 rounded-full transition-all duration-300',
-              i <= reviewStep ? 'bg-[var(--purple)]' : 'bg-gray-200 dark:bg-white/[0.06]'
+              i <= reviewStep
+                ? 'bg-[var(--purple)]'
+                : 'bg-gray-200 dark:bg-white/[0.06]'
             )}
           />
         ))}
@@ -502,10 +618,18 @@ export function ScaffoldReview({
           <Step1Business brief={brief} update={onUpdateBrief} />
         )}
         {reviewStep === 1 && (
-          <Step2Offer brief={brief} update={onUpdateBrief} toggleGoal={onToggleGoal} />
+          <Step2Offer
+            brief={brief}
+            update={onUpdateBrief}
+            toggleGoal={onToggleGoal}
+          />
         )}
         {reviewStep === 2 && (
-          <Step3Structure brief={brief} update={onUpdateBrief} toggleIntegration={onToggleIntegration} />
+          <Step3Structure
+            brief={brief}
+            update={onUpdateBrief}
+            toggleIntegration={onToggleIntegration}
+          />
         )}
         {reviewStep === 3 && (
           <Step4Contact brief={brief} update={onUpdateBrief} />
@@ -526,9 +650,13 @@ export function ScaffoldReview({
           className="flex flex-1 items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl bg-[var(--purple)] text-white text-sm font-semibold hover:bg-[var(--purple)]/90 transition-all shadow-[0_4px_12px_rgba(99,102,241,0.25)] disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
         >
           {isLastStep ? (
-            <><Sparkles className="w-3.5 h-3.5" /> Done — pick template</>
+            <>
+              <Sparkles className="w-3.5 h-3.5" /> Done — pick template
+            </>
           ) : (
-            <>Next <ArrowRight className="w-3.5 h-3.5" /></>
+            <>
+              Next <ArrowRight className="w-3.5 h-3.5" />
+            </>
           )}
         </button>
       </div>

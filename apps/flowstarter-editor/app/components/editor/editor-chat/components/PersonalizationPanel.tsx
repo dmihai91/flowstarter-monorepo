@@ -2,33 +2,29 @@
  * PersonalizationPanel Component
  *
  * Combined personalization step that includes:
- * - Color palette selection
  * - Font selection
  * - Logo upload/generation/skip
  * - AI images toggle (for template customization)
+ *
+ * Note: Palette selection is now dashboard-only (handled by NewProjectWizard).
  */
 
-import { useMemo, useEffect, useRef } from 'react';
+import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Palette, Type, ImageIcon, SkipForward, ChevronRight } from 'lucide-react';
-import { PaletteSelector } from './PaletteSelector';
+import { Type, ImageIcon, SkipForward, ChevronRight } from 'lucide-react';
 import { FontSelector } from './FontSelector';
 import { LogoSection } from './LogoSection';
 import { usePersonalizationPanel } from '~/components/editor/editor-chat/hooks/usePersonalizationPanel';
-import type { LogoInfo, ColorPalette, SystemFont, BusinessInfo } from '~/components/editor/editor-chat/types';
-import type { TemplatePalette, TemplateFont } from '~/components/editor/template-preview/types';
+import type { LogoInfo, SystemFont, BusinessInfo } from '~/components/editor/editor-chat/types';
+import type { TemplateFont } from '~/components/editor/template-preview/types';
 import { EDITOR_LABEL_KEYS, t } from '~/lib/i18n/editor-labels';
 
 interface PersonalizationPanelProps {
   isDark: boolean;
   fontsLoaded: boolean;
-  templatePalette?: ColorPalette | null;
-  templatePalettes?: TemplatePalette[];
   templateFonts?: TemplateFont[];
   businessInfo?: Partial<BusinessInfo>;
   initialUseAiImages?: boolean;
-  onPaletteSelect: (palette: ColorPalette) => void;
-  onCustomPaletteClick?: () => void;
   onFontSelect: (font: SystemFont) => void;
   onLogoSelect: (logo: LogoInfo, useAiImages?: boolean) => void;
 }
@@ -43,61 +39,18 @@ const SECTION_ANIMATION = {
 export function PersonalizationPanel({
   isDark,
   fontsLoaded,
-  templatePalette,
-  templatePalettes,
   templateFonts,
   businessInfo,
   initialUseAiImages = false,
-  onPaletteSelect,
-  onCustomPaletteClick,
   onFontSelect,
   onLogoSelect,
 }: PersonalizationPanelProps) {
   const panel = usePersonalizationPanel({
     initialUseAiImages,
     businessInfo,
-    onPaletteSelect,
     onFontSelect,
     onLogoSelect,
   });
-
-  // Auto-select first template palette to skip palette section
-  const autoSelectedRef = useRef(false);
-  useEffect(() => {
-    if (autoSelectedRef.current) {
-      return;
-    }
-
-    if (templatePalettes && templatePalettes.length > 0 && panel.currentSection === 'palette') {
-      autoSelectedRef.current = true;
-
-      // Convert TemplatePalette to ColorPalette and auto-select
-      const first = templatePalettes[0];
-      const c = first.colors || {};
-      const autoPalette: import('../types').ColorPalette = {
-        id: first.id || 'auto-palette',
-        name: first.name || 'Default',
-        colors: [
-          c.primary || '#3B82F6',
-          c.secondary || '#1E40AF',
-          c.accent || '#F59E0B',
-          c.background || '#FFFFFF',
-          c.text || '#111827',
-        ],
-        primary: c.primary || '#3B82F6',
-        secondary: c.secondary || '#1E40AF',
-        accent: c.accent || '#F59E0B',
-        background: c.background || '#FFFFFF',
-        text: c.text || '#111827',
-      };
-
-      // Auto-select after a brief delay so the UI shows the transition
-      setTimeout(() => panel.handlePaletteSelect(autoPalette), 300);
-    } else if (templatePalette && panel.currentSection === 'palette') {
-      autoSelectedRef.current = true;
-      setTimeout(() => panel.handlePaletteSelect(templatePalette), 300);
-    }
-  }, [templatePalettes, templatePalette, panel.currentSection, panel.handlePaletteSelect]);
 
   // Theme colors - glassmorphism palette
   const colors = useMemo(
@@ -184,52 +137,6 @@ export function PersonalizationPanel({
       </div>
 
       <AnimatePresence mode="wait">
-        {/* Palette Section */}
-        {panel.currentSection === 'palette' && (
-          <motion.div key="palette" data-testid="palette-section" {...SECTION_ANIMATION}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-              <Palette size={20} color={headingColor} />
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: headingColor }}>
-                {t(EDITOR_LABEL_KEYS.PERSONALIZE_COLORS)}
-              </h3>
-              <button
-                onClick={panel.handleSkipSection}
-                style={{
-                  marginLeft: 'auto',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '2px',
-                  padding: '4px 8px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '12px',
-                  fontWeight: 500,
-                  color: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)',
-                  background: 'transparent',
-                  transition: 'color 0.15s',
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)')
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)')
-                }
-              >
-                Skip <ChevronRight size={14} />
-              </button>
-            </div>
-            <PaletteSelector
-              templatePalette={templatePalette || null}
-              isDark={isDark}
-              onSelect={panel.handlePaletteSelect}
-              onCustomClick={onCustomPaletteClick || (() => {})}
-              customColors={[]}
-              templatePalettes={templatePalettes}
-            />
-          </motion.div>
-        )}
-
         {/* Font Section */}
         {panel.currentSection === 'font' && (
           <motion.div key="font" data-testid="font-section" {...SECTION_ANIMATION}>

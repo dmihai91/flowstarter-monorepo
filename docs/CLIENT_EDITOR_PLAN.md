@@ -400,14 +400,63 @@ Widgets are **pre-written snippets with variable interpolation**, not AI-generat
 
 | # | Task | Detail | Effort |
 |---|------|--------|--------|
-| 10 | **Custom subdomain routing** | `{slug}.flowstarter.dev` → Cloudflare Pages custom domain via API. DNS: wildcard CNAME `*.flowstarter.dev → pages.dev`. | 2 days |
-| 11 | **Client onboarding tour** | First-visit guided tour (tooltip sequence): "Here's your site" → "Edit content here" → "Publish when ready". | 1 day |
-| 12 | **Responsive preview toggle** | Desktop/tablet/mobile width presets for the iframe. | 0.5 day |
-| 13 | **Re-publish from rebuild** | Option B from section 5: ephemeral Daytona sandbox for structural changes. Needed when section add/remove requires a real build. | 3 days |
+| 10 | **`{slug}.flowstarter.dev` subdomain** | Wildcard CNAME `*.flowstarter.dev → pages.dev` on Cloudflare DNS. Attach via Cloudflare Pages custom domain API per project. Client app reads `project.slug` and resolves accordingly. | 1.5 days |
+| 11 | **Domain provisioning via name.com** | Team registers domain on client's behalf during project setup (dashboard wizard, new DomainStep phase). Uses name.com Core v1 API: search → register → point nameservers to Cloudflare → attach to Pages project. Domain bundled in setup fee. | 2.5 days |
+| 12 | **Client brings their own domain** | Client enters `www.janedoe.com` or `booking.janedoe.com` in client editor settings. Show exact DNS records (CNAME). Poll propagation. On success call Cloudflare Pages custom domain API + update `customDomain` in Convex. | 1.5 days |
+| 13 | **Client onboarding tour** | First-visit guided tour (tooltip sequence): "Here's your site" → "Edit content here" → "Publish when ready". | 1 day |
+| 14 | **Responsive preview toggle** | Desktop/tablet/mobile width presets for the iframe. | 0.5 day |
+| 15 | **Re-publish from rebuild** | Ephemeral Daytona sandbox for structural changes (section add/remove that require a real build). | 3 days |
 
 ---
 
-## 10. What NOT to build for beta
+## 10. Domain Architecture
+
+Every project always gets three domain options — clients can have all three simultaneously.
+
+### Tier 1 — Always included: `{slug}.flowstarter.dev`
+
+- Wildcard CNAME `*.flowstarter.dev → {slug}.pages.dev` configured once on Cloudflare DNS
+- Cloudflare Pages custom domain API attaches `{slug}.flowstarter.dev` to the Pages project on first publish
+- Zero extra setup per project. Goes live automatically.
+
+### Tier 2 — Team provisions a domain (bundled in setup fee)
+
+Uses **name.com Core v1 API** (same registrar as Netlify, Replit, Beacons.ai).
+
+Flow during dashboard wizard (new `DomainStep` phase after `integrations`):
+1. Team searches `GET /core/v1/domains/search?keyword={clientName}` → shows available .com/.co/.io suggestions
+2. Team picks and confirms → `POST /core/v1/domains` registers in Flowstarter's name.com account (~$9-13/yr, bundled into setup fee)
+3. Immediately `PUT /core/v1/domains/{domain}/nameservers` → point to Cloudflare nameservers
+4. On publish: Cloudflare Pages custom domain API attaches `www.janedoe.com` → automatic TLS
+
+Storage: Supabase `domain_name`, `domain_provider: 'namecom'`, `domain_type: 'provisioned'`, `domain_status: 'active'` + Convex `customDomain`.
+
+**Why name.com:**
+- Full sandbox (`api.dev.name.com`) — no real money burned in dev/CI
+- No IP whitelist — works from any serverless/cloud environment
+- Modern REST/JSON + OpenAPI 3.1 spec → generate typed TypeScript client
+- Proven at scale: Netlify, Replit both use it for the same use case
+- Cloudflare Registrar confirmed dead-end: no API for new domain registration
+
+**Implementation:** `packages/editor-engine/src/publishing/namecom.ts` service wrapper (~150 lines).
+
+### Tier 3 — Client connects their own domain
+
+For clients who already own `www.theirsite.com` or want `booking.theirsite.com`:
+
+1. Client enters domain in client editor settings (`DomainSettings.tsx`)
+2. System shows exact DNS record to add:
+   - Subdomain (`www.` / `booking.`): `CNAME {subdomain} → {slug}.pages.dev`
+   - Apex (`janedoe.com`): Recommend redirecting apex to `www` — or use Cloudflare-proxied A record if their DNS is on Cloudflare
+3. Poll propagation via `getDeploymentStatus()` or DNS lookup check every 30s
+4. On confirmation: Cloudflare Pages custom domain API → TLS auto-provisioned
+5. Update Supabase `domain_type: 'custom'`, `domain_status: 'active'` + Convex `customDomain`
+
+**Not a beta blocker** — Tier 1 (`{slug}.flowstarter.dev`) is sufficient for beta launch.
+
+---
+
+## 11. What NOT to build for beta
 
 - **Real-time collaborative editing** — one client, one project, no conflicts to resolve
 - **Client-side code editor** — no Monaco, no file tree, no syntax highlighting
@@ -422,11 +471,11 @@ Widgets are **pre-written snippets with variable interpolation**, not AI-generat
 
 ---
 
-## 11. Open questions
+## 12. Open questions
 
 | # | Question | Options | Recommendation |
 |---|----------|---------|----------------|
-| 1 | **Domain strategy** | ✅ **CONFIRMED:** Both `{slug}.flowstarter.dev` subdomain AND custom domain (e.g. `www.janedoe.com`) supported. `customDomain` field already in Convex projects schema. Cloudflare Pages API has a custom domain attachment endpoint. Phase 1: slug subdomain. Phase 2: custom domain wizard. |
+| 1 | **Domain strategy** | ✅ **CONFIRMED:** Three tiers: (a) `{slug}.flowstarter.dev` always included, (b) team provisions a real domain via **name.com Core v1 API** (bundled in setup fee), (c) client connects their own existing domain. Registrar: name.com (same as Netlify/Replit). Cloudflare Registrar has NO new-domain API — confirmed dead end. `customDomain` + `domain_name`/`domain_type`/`domain_status`/`domain_provider` fields already exist in Supabase + Convex schemas. |
 | 2 | **Preview before first publish** | ✅ **CONFIRMED:** Team always pre-publishes before sending magic link. Client always opens to a live Cloudflare Pages URL. Guard: "Send to client" button disabled if `!project.publishedUrl`. No Daytona dependency in client editor. |
 | 3 | **First publish ownership** | ✅ **CONFIRMED (flows from #2):** Team pre-publishes. Client's publish is always a re-publish. Simplifies flow, client always sees a live site immediately. |
 | 4 | **Out-of-scope request handling** | (a) Email notification to Darius. (b) In-app `changeRequests` table + notification. (c) Both. | (b) for beta — create a `changeRequests` Convex table. Add email notification in Phase 3 when volume warrants it. |
@@ -436,7 +485,7 @@ Widgets are **pre-written snippets with variable interpolation**, not AI-generat
 
 ---
 
-## 12. Effort estimate
+## 13. Effort estimate
 
 | Component | Effort | Owner | Depends on |
 |-----------|--------|-------|------------|
@@ -451,12 +500,17 @@ Widgets are **pre-written snippets with variable interpolation**, not AI-generat
 | Change history (snapshot list + restore) | 1.5 days | Darius | `snapshots` table queries |
 | "Request a change" fallback | 1 day | Darius | `changeRequests` Convex table (new) |
 | **Phase 2 total** | **~7.5 days** | | |
-| `{slug}.flowstarter.dev` subdomain routing (wildcard DNS + Cloudflare) | 1.5 days | Darius | Cloudflare DNS wildcard record, reverse proxy in client app |
-| Custom domain wizard (client enters `www.janedoe.com`, get DNS instructions) | 2 days | Darius | Cloudflare Pages custom domain API, `customDomain` Convex field already exists |
+| `{slug}.flowstarter.dev` subdomain (wildcard DNS + Cloudflare Pages attach) | 1.5 days | Darius | Cloudflare DNS wildcard CNAME set up once |
+| **Domain provisioning — name.com Core v1** | **2.5 days** | **Darius** | **name.com API key + sandbox credentials, DomainStep in dashboard wizard** |
+| ↳ name.com service wrapper (`packages/editor-engine/src/publishing/namecom.ts`) | 0.5 day | | |
+| ↳ DomainStep in dashboard wizard (search → pick → register) | 1 day | | name.com sandbox |
+| ↳ Auto-attach registered domain to Cloudflare Pages project on publish | 0.5 day | | `/api/publish` route |
+| ↳ Store in Supabase `domain_name`, `domain_provider: 'namecom'`, `domain_status` | 0.5 day | | |
+| **Client brings own domain** (CNAME wizard + propagation polling) | 1.5 days | Darius | Cloudflare Pages custom domain API |
 | Client onboarding tour | 1 day | Darius | Client app scaffold |
 | Responsive preview toggle | 0.5 day | Darius | `SitePreview` component |
 | Ephemeral sandbox rebuild | 3 days | Darius | Daytona SDK, `editor-engine/daytona` |
-| **Phase 3 total** | **~6.5 days** | | |
+| **Phase 3 total** | **~10 days** | | |
 
-**Total: ~19.5 working days (4 weeks) from scaffold to polished launch.**
-Phase 1 alone unblocks beta in 1 week.
+**Total: ~23 working days (~4.5 weeks) from scaffold to polished launch.**
+Phase 1 alone unblocks beta in 1 week. Domain provisioning is Phase 3 — not a beta blocker.

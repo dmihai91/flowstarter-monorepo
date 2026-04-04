@@ -426,9 +426,9 @@ Widgets are **pre-written snippets with variable interpolation**, not AI-generat
 
 | # | Question | Options | Recommendation |
 |---|----------|---------|----------------|
-| 1 | **Domain strategy** | (a) `client.flowstarter.dev` — one subdomain, all clients via `/project/$urlId` routing. (b) `{slug}.flowstarter.dev` — per-project subdomain. | Start with (a) for beta. Add (b) in Phase 3 — it requires wildcard DNS + Cloudflare custom domain API. |
-| 2 | **Preview before first publish** | (a) Show Daytona workspace URL (requires workspace to stay running). (b) Team pre-publishes before handoff so client always has a Cloudflare Pages URL. | (b) — team should always publish once before sending the magic link. Add a guard: "Send to client" button disabled if `!project.publishedUrl`. |
-| 3 | **First publish ownership** | Does the team always pre-publish, or can a client's first action be "Publish"? | Team pre-publishes. Client's publish is always a re-publish of an already-live site. Simplifies the flow and guarantees the client sees something immediately. |
+| 1 | **Domain strategy** | ✅ **CONFIRMED:** Both `{slug}.flowstarter.dev` subdomain AND custom domain (e.g. `www.janedoe.com`) supported. `customDomain` field already in Convex projects schema. Cloudflare Pages API has a custom domain attachment endpoint. Phase 1: slug subdomain. Phase 2: custom domain wizard. |
+| 2 | **Preview before first publish** | ✅ **CONFIRMED:** Team always pre-publishes before sending magic link. Client always opens to a live Cloudflare Pages URL. Guard: "Send to client" button disabled if `!project.publishedUrl`. No Daytona dependency in client editor. |
+| 3 | **First publish ownership** | ✅ **CONFIRMED (flows from #2):** Team pre-publishes. Client's publish is always a re-publish. Simplifies flow, client always sees a live site immediately. |
 | 4 | **Out-of-scope request handling** | (a) Email notification to Darius. (b) In-app `changeRequests` table + notification. (c) Both. | (b) for beta — create a `changeRequests` Convex table. Add email notification in Phase 3 when volume warrants it. |
 | 5 | **Template lock** | Can the client ever request a template change? | No for beta. If requested, it goes through "Request a change" → team handles manually. |
 | 6 | **Session duration** | Current: 30 days (`clientSessions.expiresAt`). Is this right? | 30 days is fine for beta. Add a "Remember me" option later if needed. |
@@ -451,7 +451,8 @@ Widgets are **pre-written snippets with variable interpolation**, not AI-generat
 | Change history (snapshot list + restore) | 1.5 days | Darius | `snapshots` table queries |
 | "Request a change" fallback | 1 day | Darius | `changeRequests` Convex table (new) |
 | **Phase 2 total** | **~7.5 days** | | |
-| Custom subdomain routing | 2 days | Darius | Cloudflare API, DNS wildcard |
+| `{slug}.flowstarter.dev` subdomain routing (wildcard DNS + Cloudflare) | 1.5 days | Darius | Cloudflare DNS wildcard record, reverse proxy in client app |
+| Custom domain wizard (client enters `www.janedoe.com`, get DNS instructions) | 2 days | Darius | Cloudflare Pages custom domain API, `customDomain` Convex field already exists |
 | Client onboarding tour | 1 day | Darius | Client app scaffold |
 | Responsive preview toggle | 0.5 day | Darius | `SitePreview` component |
 | Ephemeral sandbox rebuild | 3 days | Darius | Daytona SDK, `editor-engine/daytona` |

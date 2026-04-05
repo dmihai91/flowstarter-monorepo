@@ -64,7 +64,7 @@ jobs:
         env:
           CI: true
           # Main platform — points at deployed staging or preview URL
-          E2E_BASE_URL: ${{ secrets.E2E_BASE_URL || 'https://staging.flowstarter.dev' }}
+          E2E_BASE_URL: ${{ secrets.E2E_BASE_URL || 'https://flowstarter.dev' }}
           # Editor — points at deployed URL; no local server is started in CI
           PLAYWRIGHT_E2E_EDITOR_URL: ${{ secrets.EDITOR_URL || 'https://editor.flowstarter.dev' }}
           # Auth bypass (only works in non-production)
@@ -135,7 +135,7 @@ jobs:
         env:
           CI: true
           # These tests run against the deployed URL, not a local server
-          PLAYWRIGHT_BASE_URL: ${{ secrets.E2E_BASE_URL || 'https://staging.flowstarter.dev' }}
+          PLAYWRIGHT_BASE_URL: ${{ secrets.E2E_BASE_URL || 'https://flowstarter.dev' }}
 
       - name: Upload Playwright report
         if: always()

@@ -62,7 +62,7 @@ test.describe('Concierge Flow — Platform Smoke', () => {
       // skip this test and rely on cross-app E2E for editor auth coverage.
       test.skip(isExternalUrl || !!process.env.CI, 'Editor localhost check skipped in CI — covered by cross-app E2E');
 
-      await page.goto('http://localhost:5175');
+      await page.goto('http://localhost:5173');
       await page.waitForTimeout(3000);
       const url = page.url();
       const isRedirected =

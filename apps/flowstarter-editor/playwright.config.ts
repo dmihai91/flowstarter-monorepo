@@ -78,12 +78,19 @@ export default defineConfig({
      */
   ],
 
-  /* Note: Use 'npm run dev' for Vite (UI testing) or start Remix server manually for API routes */
-  /* Windows Node 22 has ESM path issues with tsx - use Node 20 for full server or test UI-only */
-  webServer: {
-    command: 'pnpm run dev',
-    url: 'http://localhost:5173',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
-  },
+  /* In CI, serve a built production app for deterministic startup.
+   * Locally, keep using the dev server for faster iteration. */
+  webServer: process.env.CI
+    ? {
+        command: 'pnpm run preview',
+        url: 'http://localhost:5173',
+        reuseExistingServer: true,
+        timeout: 240 * 1000,
+      }
+    : {
+        command: 'pnpm run dev',
+        url: 'http://localhost:5173',
+        reuseExistingServer: true,
+        timeout: 120 * 1000,
+      },
 });

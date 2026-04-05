@@ -8,8 +8,14 @@ export function FinalCTASection({ onOpenModal }: { onOpenModal?: () => void }) {
 
   return (
     <section className="relative overflow-hidden mt-8">
-      {/* Light mode background — slate-950 for strong contrast */}
-      <div className="absolute inset-0 bg-slate-950 dark:hidden" />
+      {/* Light mode background */}
+      <div
+        className="absolute inset-0 dark:hidden"
+        style={{
+          background:
+            'linear-gradient(135deg, hsl(241,70%,91%) 0%, hsl(241,65%,85%) 100%)',
+        }}
+      />
 
       {/* Dark mode background */}
       <div
@@ -38,11 +44,11 @@ export function FinalCTASection({ onOpenModal }: { onOpenModal?: () => void }) {
       />
 
       {/* Content */}
-      <div className="relative z-10 max-w-xl lg:max-w-3xl xl:max-w-5xl mx-auto px-6 py-20 sm:py-24 xl:py-32 text-center">
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-semibold text-white leading-[1.12] tracking-tight mb-5 [text-wrap:balance]">
+      <div className="relative z-10 max-w-xl lg:max-w-3xl xl:max-w-5xl mx-auto px-6 py-12 sm:py-16 xl:py-20 text-center">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-semibold text-gray-900 dark:text-white leading-[1.12] tracking-tight mb-5 [text-wrap:balance]">
           {finalCta.headline}
         </h2>
-        <p className="text-base lg:text-lg xl:text-xl text-slate-400 mb-10 max-w-xs lg:max-w-sm xl:max-w-md mx-auto leading-relaxed">
+        <p className="text-base lg:text-lg xl:text-xl text-gray-500 dark:text-slate-400 mb-6 max-w-xs lg:max-w-sm xl:max-w-md mx-auto leading-relaxed">
           One free call. Live in a week.
         </p>
 

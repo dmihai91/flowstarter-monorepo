@@ -79,7 +79,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
 
   return (
     <section
-      className="relative overflow-hidden flex flex-col justify-center pb-16 sm:pb-20 lg:pb-16 lg:min-h-[100dvh] pt-24"
+      className="relative overflow-hidden flex flex-col justify-center lg:justify-start pb-16 sm:pb-20 lg:pb-16 lg:min-h-[100dvh] pt-24 lg:pt-40"
       style={{ boxSizing: 'border-box' }}
     >
       <FlowBackground
@@ -147,7 +147,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         />
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-10 lg:mt-28">
+      <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-10">
         {/* Label */}
         <div
           style={fade('0s')}
@@ -176,7 +176,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
             {/* Prefix: word-by-word entrance */}
             <span
               className="block font-light text-gray-900 dark:text-white"
-              style={{ fontSize: 'clamp(2rem, 5vw, 3.8rem)' }}
+              style={{ fontSize: 'clamp(1.6rem, 4vw, 3rem)' }}
             >
               {prefixWords.map((word, i) => (
                 <span
@@ -202,7 +202,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
             <span
               className="block font-black"
               style={{
-                fontSize: 'clamp(2.4rem, 6vw, 4.5rem)',
+                fontSize: 'clamp(2rem, 5vw, 3.6rem)',
                 background:
                   'linear-gradient(135deg, hsl(241,93%,75%) 0%, var(--purple) 40%, hsl(241,93%,45%) 100%)',
                 backgroundSize: useSimpleHeadlineAnimation
@@ -311,8 +311,8 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
 
         {/* Guarantee line */}
         <p
-          style={fade('0.35s')}
-          className="text-center text-sm sm:text-base text-gray-400 dark:text-white/35 mb-7 sm:mb-8"
+          style={{ ...fade('0.35s'), fontSize: '0.85rem' }}
+          className="text-center text-gray-400 dark:text-white/35 mb-7 sm:mb-8"
         >
           {hero.guarantee}
         </p>

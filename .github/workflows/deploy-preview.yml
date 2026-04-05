@@ -18,6 +18,10 @@ on:
     types: [opened, synchronize, reopened, closed]
     branches: [main, master]
 
+permissions:
+  contents: read
+  issues: write
+
 concurrency:
   group: deploy-preview-${{ github.event.pull_request.number }}
   cancel-in-progress: true
@@ -86,8 +90,23 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
 
+      - name: Publish preview URLs to job summary
+        run: |
+          {
+            echo "## Preview Deployments"
+            echo
+            echo "| Service | URL |"
+            echo "|---------|-----|"
+            echo "| flowstarter-main | ${{ steps.deploy-main.outputs.url }} |"
+            echo "| flowstarter-editor | ${{ steps.deploy-editor.outputs.url }} |"
+            echo
+            echo "PR comment is best-effort and may be skipped when GitHub token permissions are restricted."
+          } >> "$GITHUB_STEP_SUMMARY"
+
       # ── Comment on PR with preview URLs ─────────────────────────────────
       - name: Comment preview URLs on PR
+        if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+        continue-on-error: true
         uses: actions/github-script@v7
         with:
           script: |
@@ -105,32 +124,35 @@ jobs:
               '> E2E smoke tests will run against these URLs automatically.',
             ].join('\n');
 
-            // Update existing comment or create new one
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
-
-            const existing = comments.find(c =>
-              c.user?.login === 'github-actions[bot]' &&
-              c.body?.includes('Preview Deployments')
-            );
-
-            if (existing) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: existing.id,
-                body,
-              });
-            } else {
-              await github.rest.issues.createComment({
+            try {
+              const { data: comments } = await github.rest.issues.listComments({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body,
               });
+
+              const existing = comments.find(c =>
+                c.user?.login === 'github-actions[bot]' &&
+                c.body?.includes('Preview Deployments')
+              );
+
+              if (existing) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existing.id,
+                  body,
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  body,
+                });
+              }
+            } catch (error) {
+              core.warning(`Unable to post preview comment: ${error.message}`);
             }
 
   # ── Teardown preview on PR close ─────────────────────────────────────────

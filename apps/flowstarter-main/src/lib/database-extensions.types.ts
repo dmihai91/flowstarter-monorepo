@@ -72,7 +72,7 @@ export interface LeadsTable {
       isOneToOne: false;
       referencedRelation: 'projects';
       referencedColumns: ['id'];
-    },
+    }
   ];
 }
 

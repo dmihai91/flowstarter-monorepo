@@ -2,11 +2,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // vi.hoisted ensures these variables are initialized BEFORE vi.mock factory runs,
 // preventing TDZ errors when fileParallelism=true transforms hoist vi.mock calls.
-const { mockAiModerateContent, mockGenerateObject, mockModels } = vi.hoisted(() => ({
-  mockAiModerateContent: vi.fn(),
-  mockGenerateObject: vi.fn(),
-  mockModels: { projectDetails: 'mock-model' },
-}));
+const { mockAiModerateContent, mockGenerateObject, mockModels } = vi.hoisted(
+  () => ({
+    mockAiModerateContent: vi.fn(),
+    mockGenerateObject: vi.fn(),
+    mockModels: { projectDetails: 'mock-model' },
+  })
+);
 
 vi.mock('../ai-moderation', () => ({
   aiModerateContent: mockAiModerateContent,
@@ -21,7 +23,10 @@ vi.mock('../openrouter-client', () => ({
 }));
 
 // Import once — mocks are already in place via vi.mock hoisting
-import { generateProjectDetails, moderateBusinessInfo } from '../project-details';
+import {
+  generateProjectDetails,
+  moderateBusinessInfo,
+} from '../project-details';
 import type { BusinessInfo } from '../project-details';
 
 describe('AI Project Details Generation', () => {

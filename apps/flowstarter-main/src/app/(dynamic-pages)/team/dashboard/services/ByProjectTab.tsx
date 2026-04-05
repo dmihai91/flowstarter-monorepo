@@ -58,8 +58,7 @@ export function ByProjectTab({
       ) : (
         projects
           ?.filter(
-            (p) =>
-              selectedProjectId === 'all' || p.id === selectedProjectId
+            (p) => selectedProjectId === 'all' || p.id === selectedProjectId
           )
           .map((project) => {
             const projectIntegrations = byProject[project.id] || [];
@@ -77,15 +76,11 @@ export function ByProjectTab({
                     </h3>
                     <p className="text-xs text-gray-400 dark:text-white/40 mt-0.5">
                       {projectIntegrations.length} integration
-                      {projectIntegrations.length !== 1 ? 's' : ''}{' '}
-                      configured
+                      {projectIntegrations.length !== 1 ? 's' : ''} configured
                     </p>
                   </div>
                   {project.status && (
-                    <Badge
-                      variant="outline"
-                      className="text-xs capitalize"
-                    >
+                    <Badge variant="outline" className="text-xs capitalize">
                       {project.status}
                     </Badge>
                   )}
@@ -108,9 +103,7 @@ export function ByProjectTab({
                             <div
                               className={`w-8 h-8 rounded-lg ${meta.bgColor} flex items-center justify-center`}
                             >
-                              <Icon
-                                className={`w-4 h-4 ${meta.color}`}
-                              />
+                              <Icon className={`w-4 h-4 ${meta.color}`} />
                             </div>
                             <div>
                               <p className="font-medium text-sm text-gray-900 dark:text-white">
@@ -128,9 +121,7 @@ export function ByProjectTab({
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() =>
-                                handleTestConnection(integration)
-                              }
+                              onClick={() => handleTestConnection(integration)}
                               disabled={testing}
                               title="Test connection"
                               className="text-gray-500 hover:text-gray-800 dark:hover:text-white"
@@ -144,9 +135,7 @@ export function ByProjectTab({
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() =>
-                                openEditDialog(integration)
-                              }
+                              onClick={() => openEditDialog(integration)}
                               className="text-gray-500 hover:text-gray-800 dark:hover:text-white"
                             >
                               <Settings className="w-4 h-4" />
@@ -154,9 +143,7 @@ export function ByProjectTab({
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() =>
-                                handleDelete(integration.id)
-                              }
+                              onClick={() => handleDelete(integration.id)}
                               className="text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -181,9 +168,7 @@ export function ByProjectTab({
                         return (
                           <button
                             key={type}
-                            onClick={() =>
-                              openAddDialog(type, project.id)
-                            }
+                            onClick={() => openAddDialog(type, project.id)}
                             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border border-dashed ${meta.borderColor} ${meta.color} hover:${meta.bgColor} transition-colors`}
                           >
                             <Icon className="w-3.5 h-3.5" />

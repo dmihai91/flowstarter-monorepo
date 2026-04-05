@@ -25,7 +25,11 @@ import { PaymentStep } from './PaymentStep';
 // ── Brand tone options for personalization step ───────────────────────────────
 
 const BRAND_TONES = [
-  { id: 'professional', label: 'Professional', desc: 'Clean, corporate, trustworthy' },
+  {
+    id: 'professional',
+    label: 'Professional',
+    desc: 'Clean, corporate, trustworthy',
+  },
   { id: 'bold', label: 'Bold', desc: 'Strong, confident, impactful' },
   { id: 'friendly', label: 'Friendly', desc: 'Warm, approachable, casual' },
   { id: 'warm', label: 'Warm', desc: 'Inviting, personal, comforting' },
@@ -40,7 +44,10 @@ const STEPS = [
   { label: 'Review Brief', desc: 'Edit business details and goals' },
   { label: 'Pick Template', desc: 'Choose a site design for the client' },
   { label: 'Personalization', desc: 'Brand tone and logo' },
-  { label: 'Integrations & Domain', desc: 'Calendly, Analytics, and custom domain' },
+  {
+    label: 'Integrations & Domain',
+    desc: 'Calendly, Analytics, and custom domain',
+  },
   { label: 'Payment', desc: 'Plan, fee, and launch' },
 ];
 
@@ -62,12 +69,11 @@ function StepIndicator({
   const descSuffix = isReviewPhase
     ? ` · ${reviewStep + 1} of ${reviewStepCount}`
     : '';
-  const personalizationDesc =
-    isPersonalizationPhase
-      ? personalizationSubStep === 'tone'
-        ? 'Brand tone · 1 of 2'
-        : 'Logo · 2 of 2'
-      : '';
+  const personalizationDesc = isPersonalizationPhase
+    ? personalizationSubStep === 'tone'
+      ? 'Brand tone · 1 of 2'
+      : 'Logo · 2 of 2'
+    : '';
   const displayDesc = isPersonalizationPhase
     ? personalizationDesc
     : activeStep.desc + descSuffix;
@@ -219,7 +225,12 @@ function PersonalizationStep({
         ))}
       </div>
       <div className="flex gap-3 pt-2">
-        <Button onClick={onBack} variant="outline" size="md" icon={<ArrowLeft className="w-4 h-4" />}>
+        <Button
+          onClick={onBack}
+          variant="outline"
+          size="md"
+          icon={<ArrowLeft className="w-4 h-4" />}
+        >
           Back
         </Button>
         <Button
@@ -299,7 +310,12 @@ function BuildStep({
         ))}
       </div>
       <div className="flex gap-3 pt-2">
-        <Button onClick={onBack} variant="outline" size="md" icon={<ArrowLeft className="w-4 h-4" />}>
+        <Button
+          onClick={onBack}
+          variant="outline"
+          size="md"
+          icon={<ArrowLeft className="w-4 h-4" />}
+        >
           Back
         </Button>
         <Button
@@ -423,8 +439,6 @@ export function NewProjectWizard() {
       cancelled = true;
     };
   }, []);
-
-
 
   useEffect(() => {
     if (!draftId) {
@@ -930,7 +944,12 @@ export function NewProjectWizard() {
           {form.phase === 'personalization' && (
             <PersonalizationStep
               selectedTone={form.brief.brandTone}
-              onSelect={(tone) => form.updateBrief('brandTone', tone as import('../components/scaffold/useScaffoldForm').BrandTone)}
+              onSelect={(tone) =>
+                form.updateBrief(
+                  'brandTone',
+                  tone as import('../components/scaffold/useScaffoldForm').BrandTone
+                )
+              }
               onBack={() => form.setPhase('template')}
               onNext={form.proceedToLogo}
             />

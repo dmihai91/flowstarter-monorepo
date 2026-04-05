@@ -41,7 +41,10 @@ export async function POST(request: NextRequest) {
     const parseResult = CreateProjectSchema.safeParse(rawFields);
     if (!parseResult.success) {
       return NextResponse.json(
-        { error: 'Validation error', details: parseResult.error.flatten().fieldErrors },
+        {
+          error: 'Validation error',
+          details: parseResult.error.flatten().fieldErrors,
+        },
         { status: 400 }
       );
     }

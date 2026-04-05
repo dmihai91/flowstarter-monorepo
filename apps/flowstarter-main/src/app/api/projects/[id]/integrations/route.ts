@@ -122,7 +122,10 @@ export async function POST(request: NextRequest, context: RouteContext) {
   const parseResult = IntegrationBodySchema.safeParse(rawBody);
   if (!parseResult.success) {
     return NextResponse.json(
-      { error: 'Validation error', details: parseResult.error.flatten().fieldErrors },
+      {
+        error: 'Validation error',
+        details: parseResult.error.flatten().fieldErrors,
+      },
       { status: 400 }
     );
   }
@@ -267,27 +270,43 @@ export async function POST(request: NextRequest, context: RouteContext) {
       }
       await supabase
         .from('projects')
-        .update(buildProjectIntegrationUpdate(project as Record<string, unknown>, {
-          mailchimp: { apiKeySecretId: null, audienceId: null },
-        }))
+        .update(
+          buildProjectIntegrationUpdate(project as Record<string, unknown>, {
+            mailchimp: { apiKeySecretId: null, audienceId: null },
+          })
+        )
         .eq('id', projectId);
-      return NextResponse.json({ success: true, message: 'Mailchimp disconnected' });
+      return NextResponse.json({
+        success: true,
+        message: 'Mailchimp disconnected',
+      });
     }
 
     let secretId = snapshot.mailchimp.apiKeySecretId;
     if (body.apiKey) {
-      secretId = await storeSecret(supabase, projectId, 'mailchimp_api_key', body.apiKey, 'Mailchimp API key');
+      secretId = await storeSecret(
+        supabase,
+        projectId,
+        'mailchimp_api_key',
+        body.apiKey,
+        'Mailchimp API key'
+      );
     }
     await supabase
       .from('projects')
-      .update(buildProjectIntegrationUpdate(project as Record<string, unknown>, {
-        mailchimp: {
-          apiKeySecretId: secretId,
-          audienceId: body.audienceId ?? snapshot.mailchimp.audienceId,
-        },
-      }))
+      .update(
+        buildProjectIntegrationUpdate(project as Record<string, unknown>, {
+          mailchimp: {
+            apiKeySecretId: secretId,
+            audienceId: body.audienceId ?? snapshot.mailchimp.audienceId,
+          },
+        })
+      )
       .eq('id', projectId);
-    return NextResponse.json({ success: true, message: 'Mailchimp settings saved' });
+    return NextResponse.json({
+      success: true,
+      message: 'Mailchimp settings saved',
+    });
   }
 
   if (body.integration === 'stripe') {
@@ -297,27 +316,43 @@ export async function POST(request: NextRequest, context: RouteContext) {
       }
       await supabase
         .from('projects')
-        .update(buildProjectIntegrationUpdate(project as Record<string, unknown>, {
-          stripe: { publishableKeySecretId: null, priceId: null },
-        }))
+        .update(
+          buildProjectIntegrationUpdate(project as Record<string, unknown>, {
+            stripe: { publishableKeySecretId: null, priceId: null },
+          })
+        )
         .eq('id', projectId);
-      return NextResponse.json({ success: true, message: 'Stripe disconnected' });
+      return NextResponse.json({
+        success: true,
+        message: 'Stripe disconnected',
+      });
     }
 
     let pkSecretId = snapshot.stripe.publishableKeySecretId;
     if (body.publishableKey) {
-      pkSecretId = await storeSecret(supabase, projectId, 'stripe_publishable_key', body.publishableKey, 'Stripe publishable key');
+      pkSecretId = await storeSecret(
+        supabase,
+        projectId,
+        'stripe_publishable_key',
+        body.publishableKey,
+        'Stripe publishable key'
+      );
     }
     await supabase
       .from('projects')
-      .update(buildProjectIntegrationUpdate(project as Record<string, unknown>, {
-        stripe: {
-          publishableKeySecretId: pkSecretId,
-          priceId: body.priceId ?? snapshot.stripe.priceId,
-        },
-      }))
+      .update(
+        buildProjectIntegrationUpdate(project as Record<string, unknown>, {
+          stripe: {
+            publishableKeySecretId: pkSecretId,
+            priceId: body.priceId ?? snapshot.stripe.priceId,
+          },
+        })
+      )
       .eq('id', projectId);
-    return NextResponse.json({ success: true, message: 'Stripe settings saved' });
+    return NextResponse.json({
+      success: true,
+      message: 'Stripe settings saved',
+    });
   }
 
   return NextResponse.json({ error: 'Unknown integration' }, { status: 400 });

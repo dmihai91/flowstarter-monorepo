@@ -9,15 +9,17 @@ const DomainConfigSchema = z.object({
   provider: z.string().max(100).optional(),
 });
 
-const ProjectConfigSchema = z.object({
-  name: z.string().max(200).optional(),
-  description: z.string().max(5000).optional(),
-  currentStep: z.string().max(100).optional(),
-  entry_mode: z.string().max(50).optional(),
-  platformType: z.string().max(100).optional(),
-  template: z.object({ id: z.string().optional() }).optional(),
-  domainConfig: DomainConfigSchema.optional(),
-}).passthrough();
+const ProjectConfigSchema = z
+  .object({
+    name: z.string().max(200).optional(),
+    description: z.string().max(5000).optional(),
+    currentStep: z.string().max(100).optional(),
+    entry_mode: z.string().max(50).optional(),
+    platformType: z.string().max(100).optional(),
+    template: z.object({ id: z.string().optional() }).optional(),
+    domainConfig: DomainConfigSchema.optional(),
+  })
+  .passthrough();
 
 const DraftPostSchema = z.object({
   projectId: z.string().uuid().optional(),
@@ -221,7 +223,10 @@ export async function POST(request: NextRequest) {
     if (!parseResult.success) {
       console.info('[Draft API] Invalid payload:', parseResult.error.flatten());
       return NextResponse.json(
-        { error: 'Validation error', details: parseResult.error.flatten().fieldErrors },
+        {
+          error: 'Validation error',
+          details: parseResult.error.flatten().fieldErrors,
+        },
         { status: 400 }
       );
     }

@@ -2,8 +2,17 @@
 
 import { useCallback, useState } from 'react';
 import {
-  ArrowLeft, ArrowRight, Calendar, BarChart3, Check,
-  Globe, Loader2, Search, Mail, CreditCard, Lock,
+  ArrowLeft,
+  ArrowRight,
+  Calendar,
+  BarChart3,
+  Check,
+  Globe,
+  Loader2,
+  Search,
+  Mail,
+  CreditCard,
+  Lock,
 } from 'lucide-react';
 import { Button } from '@flowstarter/flow-design-system';
 import type { IntegrationsConfig } from '../components/scaffold/useScaffoldForm';
@@ -28,7 +37,10 @@ export interface IntegrationsStepProps {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function slugify(value: string): string {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, '').slice(0, 63);
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '')
+    .slice(0, 63);
 }
 
 function formatPrice(cents: number): string {
@@ -43,9 +55,17 @@ function isGrowthPlan(planId?: string): boolean {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-function SectionCard({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+function SectionCard({
+  children,
+  className = '',
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <div className={`rounded-[20px] border border-gray-200/80 bg-white/95 p-5 space-y-3 dark:border-white/[0.06] dark:bg-white/[0.04] ${className}`}>
+    <div
+      className={`rounded-[20px] border border-gray-200/80 bg-white/95 p-5 space-y-3 dark:border-white/[0.06] dark:bg-white/[0.04] ${className}`}
+    >
       {children}
     </div>
   );
@@ -80,7 +100,9 @@ function IntegrationHeader({
         </p>
         <p className="text-xs text-zinc-400">{sublabel}</p>
       </div>
-      {checked && !locked && <Check className="ml-auto w-4 h-4 text-green-500" />}
+      {checked && !locked && (
+        <Check className="ml-auto w-4 h-4 text-green-500" />
+      )}
     </div>
   );
 }
@@ -116,7 +138,9 @@ function FieldInput({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
-      className={`w-full rounded-xl border border-gray-200 dark:border-white/[0.08] bg-gray-50 dark:bg-white/[0.04] px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder:text-zinc-400 outline-none disabled:opacity-40 disabled:cursor-not-allowed ${mono ? 'font-mono' : ''} ${focusClass[focusColor]}`}
+      className={`w-full rounded-xl border border-gray-200 dark:border-white/[0.08] bg-gray-50 dark:bg-white/[0.04] px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder:text-zinc-400 outline-none disabled:opacity-40 disabled:cursor-not-allowed ${
+        mono ? 'font-mono' : ''
+      } ${focusClass[focusColor]}`}
     />
   );
 }
@@ -138,7 +162,8 @@ export function IntegrationsStep({
 
   // Calendly
   const [calendlyUrl, setCalendlyUrl] = useState('');
-  const calendlyValid = !calendlyUrl || /^https?:\/\/.+calendly\.com\/.+/i.test(calendlyUrl);
+  const calendlyValid =
+    !calendlyUrl || /^https?:\/\/.+calendly\.com\/.+/i.test(calendlyUrl);
 
   // Google Analytics
   const [gaId, setGaId] = useState('');
@@ -155,7 +180,9 @@ export function IntegrationsStep({
   const stripeValid = !stripePk || stripePk.startsWith('pk_');
 
   // Domain
-  const [keyword, setKeyword] = useState(() => slugify(clientName || projectName));
+  const [keyword, setKeyword] = useState(() =>
+    slugify(clientName || projectName)
+  );
   const [results, setResults] = useState<DomainSearchResult[]>([]);
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
@@ -171,7 +198,9 @@ export function IntegrationsStep({
     setResults([]);
     setSelectedDomain(null);
     try {
-      const res = await fetch(`/api/domains/search?keyword=${encodeURIComponent(q)}`);
+      const res = await fetch(
+        `/api/domains/search?keyword=${encodeURIComponent(q)}`
+      );
       if (!res.ok) throw new Error('Search failed');
       const data = (await res.json()) as { domains: DomainSearchResult[] };
       setResults(data.domains);
@@ -191,10 +220,18 @@ export function IntegrationsStep({
       config.googleAnalytics = { enabled: true, measurementId: gaId.trim() };
     }
     if (mcApiKey.trim() && mcAudienceId.trim() && mcValid) {
-      config.mailchimp = { enabled: true, apiKey: mcApiKey.trim(), audienceId: mcAudienceId.trim() };
+      config.mailchimp = {
+        enabled: true,
+        apiKey: mcApiKey.trim(),
+        audienceId: mcAudienceId.trim(),
+      };
     }
     if (stripePk.trim() && stripeValid) {
-      config.stripe = { enabled: true, publishableKey: stripePk.trim(), priceId: stripePriceId.trim() || undefined };
+      config.stripe = {
+        enabled: true,
+        publishableKey: stripePk.trim(),
+        priceId: stripePriceId.trim() || undefined,
+      };
     }
     onComplete(config, selectedDomain);
   };
@@ -215,7 +252,11 @@ export function IntegrationsStep({
         {/* Calendly */}
         <SectionCard>
           <IntegrationHeader
-            icon={<div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-500 shrink-0"><Calendar className="w-5 h-5" /></div>}
+            icon={
+              <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-500 shrink-0">
+                <Calendar className="w-5 h-5" />
+              </div>
+            }
             label="Calendly"
             sublabel="Booking widget"
             checked={!!(calendlyUrl.trim() && calendlyValid)}
@@ -235,7 +276,11 @@ export function IntegrationsStep({
         {/* Google Analytics */}
         <SectionCard>
           <IntegrationHeader
-            icon={<div className="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0"><BarChart3 className="w-5 h-5" /></div>}
+            icon={
+              <div className="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0">
+                <BarChart3 className="w-5 h-5" />
+              </div>
+            }
             label="Google Analytics"
             sublabel="Visitor tracking"
             checked={!!(gaId.trim() && gaValid)}
@@ -258,7 +303,11 @@ export function IntegrationsStep({
         {/* Mailchimp */}
         <SectionCard>
           <IntegrationHeader
-            icon={<div className="w-9 h-9 rounded-xl bg-yellow-50 dark:bg-yellow-500/10 flex items-center justify-center text-yellow-600 shrink-0"><Mail className="w-5 h-5" /></div>}
+            icon={
+              <div className="w-9 h-9 rounded-xl bg-yellow-50 dark:bg-yellow-500/10 flex items-center justify-center text-yellow-600 shrink-0">
+                <Mail className="w-5 h-5" />
+              </div>
+            }
             label="Mailchimp"
             sublabel="Email newsletter signup"
             checked={!!(mcApiKey.trim() && mcAudienceId.trim() && mcValid)}
@@ -287,7 +336,11 @@ export function IntegrationsStep({
         {/* Stripe */}
         <SectionCard>
           <IntegrationHeader
-            icon={<div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-500 shrink-0"><CreditCard className="w-5 h-5" /></div>}
+            icon={
+              <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-500 shrink-0">
+                <CreditCard className="w-5 h-5" />
+              </div>
+            }
             label="Stripe"
             sublabel="Accept payments on the site"
             checked={!!(stripePk.trim() && stripeValid)}
@@ -309,21 +362,29 @@ export function IntegrationsStep({
             focusColor="purple"
           />
           {stripePk && !stripeValid && (
-            <p className="text-xs text-red-500">Must start with pk_live_ or pk_test_</p>
+            <p className="text-xs text-red-500">
+              Must start with pk_live_ or pk_test_
+            </p>
           )}
         </SectionCard>
       </div>
 
       {!growth && (mcApiKey.trim() || stripePk.trim()) && (
         <p className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 rounded-xl px-4 py-2.5">
-          Mailchimp and Stripe are available on the <span className="font-semibold">Growth plan</span>. Select Growth on the next step to activate them.
+          Mailchimp and Stripe are available on the{' '}
+          <span className="font-semibold">Growth plan</span>. Select Growth on
+          the next step to activate them.
         </p>
       )}
 
       {/* ── Domain ────────────────────────────────────────────────── */}
       <SectionCard>
         <IntegrationHeader
-          icon={<div className="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-purple-500 shrink-0"><Globe className="w-5 h-5" /></div>}
+          icon={
+            <div className="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-purple-500 shrink-0">
+              <Globe className="w-5 h-5" />
+            </div>
+          }
           label="Custom Domain"
           sublabel="Register a domain — site always gets a free .flowstarter.dev address"
           checked={!!selectedDomain}
@@ -340,13 +401,23 @@ export function IntegrationsStep({
             disabled={searching || !keyword.trim()}
             variant="accent"
             size="md"
-            icon={searching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+            icon={
+              searching ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Search className="w-4 h-4" />
+              )
+            }
           >
             Search
           </Button>
         </div>
 
-        {searchError && <p className="text-sm text-red-600 dark:text-red-400">{searchError}</p>}
+        {searchError && (
+          <p className="text-sm text-red-600 dark:text-red-400">
+            {searchError}
+          </p>
+        )}
 
         {results.length > 0 && (
           <div className="space-y-2 pt-1">
@@ -355,24 +426,37 @@ export function IntegrationsStep({
                 key={r.domain}
                 type="button"
                 disabled={!r.available}
-                onClick={() => r.available && setSelectedDomain(selectedDomain === r.domain ? null : r.domain)}
+                onClick={() =>
+                  r.available &&
+                  setSelectedDomain(
+                    selectedDomain === r.domain ? null : r.domain
+                  )
+                }
                 className={`flex w-full items-center justify-between rounded-2xl border px-4 py-2.5 text-left transition-all ${
                   selectedDomain === r.domain
                     ? 'border-[var(--purple)]/50 bg-[var(--purple)]/5 dark:bg-[var(--purple)]/10 ring-1 ring-[var(--purple)]/30'
                     : r.available
-                      ? 'border-gray-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.06]'
-                      : 'border-gray-200/50 dark:border-white/[0.04] opacity-50 cursor-not-allowed'
+                    ? 'border-gray-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.06]'
+                    : 'border-gray-200/50 dark:border-white/[0.04] opacity-50 cursor-not-allowed'
                 }`}
               >
-                <span className="text-sm font-medium text-zinc-900 dark:text-white">{r.domain}</span>
+                <span className="text-sm font-medium text-zinc-900 dark:text-white">
+                  {r.domain}
+                </span>
                 <div className="flex items-center gap-2">
                   {r.price != null && (
-                    <span className="text-xs text-zinc-500">{formatPrice(r.price)}</span>
+                    <span className="text-xs text-zinc-500">
+                      {formatPrice(r.price)}
+                    </span>
                   )}
                   {r.available ? (
-                    selectedDomain === r.domain
-                      ? <Check className="w-4 h-4 text-[var(--purple)]" />
-                      : <span className="text-xs font-medium text-green-600 dark:text-green-400">Available</span>
+                    selectedDomain === r.domain ? (
+                      <Check className="w-4 h-4 text-[var(--purple)]" />
+                    ) : (
+                      <span className="text-xs font-medium text-green-600 dark:text-green-400">
+                        Available
+                      </span>
+                    )
                   ) : (
                     <span className="text-xs text-zinc-400">Taken</span>
                   )}
@@ -384,14 +468,22 @@ export function IntegrationsStep({
 
         {selectedDomain && (
           <p className="text-xs text-zinc-500 dark:text-zinc-400 pt-1">
-            <span className="font-semibold text-zinc-700 dark:text-zinc-300">{selectedDomain}</span> will be registered and configured automatically on launch.
+            <span className="font-semibold text-zinc-700 dark:text-zinc-300">
+              {selectedDomain}
+            </span>{' '}
+            will be registered and configured automatically on launch.
           </p>
         )}
       </SectionCard>
 
       {/* ── Actions ───────────────────────────────────────────────── */}
       <div className="flex gap-3 pt-2">
-        <Button onClick={onBack} variant="outline" size="md" icon={<ArrowLeft className="w-4 h-4" />}>
+        <Button
+          onClick={onBack}
+          variant="outline"
+          size="md"
+          icon={<ArrowLeft className="w-4 h-4" />}
+        >
           Back
         </Button>
         <Button

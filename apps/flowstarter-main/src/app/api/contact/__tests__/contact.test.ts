@@ -9,10 +9,21 @@ vi.mock('server-only', () => ({}));
 
 // Mirror the schema from the route so we can test validation in isolation
 const ContactSchema = z.object({
-  name: z.string({ required_error: 'Name is required' }).min(1, 'Name is required').max(100),
-  email: z.string({ required_error: 'Email is required' }).email('Please enter a valid email address'),
-  subject: z.string({ required_error: 'Subject is required' }).min(1, 'Subject is required').max(200),
-  message: z.string({ required_error: 'Message is required' }).min(1, 'Message is required').max(5000),
+  name: z
+    .string({ required_error: 'Name is required' })
+    .min(1, 'Name is required')
+    .max(100),
+  email: z
+    .string({ required_error: 'Email is required' })
+    .email('Please enter a valid email address'),
+  subject: z
+    .string({ required_error: 'Subject is required' })
+    .min(1, 'Subject is required')
+    .max(200),
+  message: z
+    .string({ required_error: 'Message is required' })
+    .min(1, 'Message is required')
+    .max(5000),
 });
 
 // ── Mock Supabase ────────────────────────────────────────────────────────────
@@ -21,7 +32,9 @@ let supabaseInsertError: { message: string } | null = null;
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const mockSupabase = {
   from: vi.fn((_table: string) => ({
-    insert: vi.fn((_values: any) => Promise.resolve({ error: supabaseInsertError })),
+    insert: vi.fn((_values: any) =>
+      Promise.resolve({ error: supabaseInsertError })
+    ),
   })),
 } as any;
 /* eslint-enable @typescript-eslint/no-explicit-any */
@@ -38,12 +51,19 @@ async function simulateContact(body: unknown) {
   }
 
   const { name, email, subject, message } = result.data;
-  const { error } = await mockSupabase
-    .from('contact_submissions')
-    .insert({ name, email, subject, message, created_at: new Date().toISOString() });
+  const { error } = await mockSupabase.from('contact_submissions').insert({
+    name,
+    email,
+    subject,
+    message,
+    created_at: new Date().toISOString(),
+  });
 
   if (error) {
-    return { status: 500, error: 'Failed to save your message. Please try again.' };
+    return {
+      status: 500,
+      error: 'Failed to save your message. Please try again.',
+    };
   }
 
   return { status: 200, success: true, message: 'Message sent successfully' };
@@ -163,7 +183,8 @@ describe('POST /api/contact — Zod validation', () => {
       name: 'Ștefan Năstase',
       email: 'stefan@example.ro',
       subject: 'Întrebare despre servicii',
-      message: 'Bună ziua, aș dori să știu mai multe despre ofertele dumneavoastră.',
+      message:
+        'Bună ziua, aș dori să știu mai multe despre ofertele dumneavoastră.',
     });
     expect(result.status).toBe(200);
   });

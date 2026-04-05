@@ -121,9 +121,7 @@ export function ByServiceTab({
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() =>
-                          handleTestConnection(integration)
-                        }
+                        onClick={() => handleTestConnection(integration)}
                         disabled={testing}
                         title="Test connection"
                         className="text-gray-500 hover:text-gray-800 dark:hover:text-white"
@@ -170,8 +168,8 @@ export function ByServiceTab({
               Google Analytics
             </h3>
             <p className="text-sm text-gray-500 dark:text-white/50">
-              Configured per-project via the Analytics section in each
-              project's settings.
+              Configured per-project via the Analytics section in each project's
+              settings.
             </p>
           </div>
         </div>

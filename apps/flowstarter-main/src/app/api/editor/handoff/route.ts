@@ -234,10 +234,32 @@ const handoffBodySchema = z
           .optional(),
         integrations: z
           .object({
-            calendly: z.object({ enabled: z.boolean().optional(), url: z.string().optional() }).optional(),
-            googleAnalytics: z.object({ enabled: z.boolean().optional(), measurementId: z.string().optional() }).optional(),
-            mailchimp: z.object({ enabled: z.boolean().optional(), apiKey: z.string().optional(), audienceId: z.string().optional() }).optional(),
-            stripe: z.object({ enabled: z.boolean().optional(), publishableKey: z.string().optional(), priceId: z.string().optional() }).optional(),
+            calendly: z
+              .object({
+                enabled: z.boolean().optional(),
+                url: z.string().optional(),
+              })
+              .optional(),
+            googleAnalytics: z
+              .object({
+                enabled: z.boolean().optional(),
+                measurementId: z.string().optional(),
+              })
+              .optional(),
+            mailchimp: z
+              .object({
+                enabled: z.boolean().optional(),
+                apiKey: z.string().optional(),
+                audienceId: z.string().optional(),
+              })
+              .optional(),
+            stripe: z
+              .object({
+                enabled: z.boolean().optional(),
+                publishableKey: z.string().optional(),
+                priceId: z.string().optional(),
+              })
+              .optional(),
           })
           .optional(),
         planName: z.string().optional(),
@@ -247,7 +269,10 @@ const handoffBodySchema = z
         templateId: z.string().optional(),
       })
       .optional(),
-    mode: z.enum(['interactive', 'generate', 'concierge']).optional().default('concierge'),
+    mode: z
+      .enum(['interactive', 'generate', 'concierge'])
+      .optional()
+      .default('concierge'),
   })
   .refine((d) => d.projectId || d.projectConfig, {
     message: 'Either projectId or projectConfig is required',
@@ -486,43 +511,69 @@ export async function POST(request: NextRequest) {
       // ── Store integration secrets in Vault (non-fatal, best-effort) ──────
       // Keys collected in the wizard are encrypted at rest via pgsodium.
       // We store secret UUIDs back to the project row for later retrieval.
-      const wizardIntegrations = projectConfig.integrations as {
-        calendly?: { enabled?: boolean; url?: string };
-        googleAnalytics?: { enabled?: boolean; measurementId?: string };
-        mailchimp?: { enabled?: boolean; apiKey?: string; audienceId?: string };
-        stripe?: { enabled?: boolean; publishableKey?: string; priceId?: string };
-      } | null | undefined;
+      const wizardIntegrations = projectConfig.integrations as
+        | {
+            calendly?: { enabled?: boolean; url?: string };
+            googleAnalytics?: { enabled?: boolean; measurementId?: string };
+            mailchimp?: {
+              enabled?: boolean;
+              apiKey?: string;
+              audienceId?: string;
+            };
+            stripe?: {
+              enabled?: boolean;
+              publishableKey?: string;
+              priceId?: string;
+            };
+          }
+        | null
+        | undefined;
 
       if (wizardIntegrations) {
         const vaultUpdates: Record<string, unknown> = {};
         try {
           if (wizardIntegrations.mailchimp?.apiKey) {
             const mcSecretId = await storeSecret(
-              supabase, resolvedProjectId, 'mailchimp_api_key',
-              wizardIntegrations.mailchimp.apiKey, 'Mailchimp API key'
+              supabase,
+              resolvedProjectId,
+              'mailchimp_api_key',
+              wizardIntegrations.mailchimp.apiKey,
+              'Mailchimp API key'
             );
             vaultUpdates.mailchimp_api_key_id = mcSecretId;
-            vaultUpdates.mailchimp_audience_id = wizardIntegrations.mailchimp.audienceId ?? null;
+            vaultUpdates.mailchimp_audience_id =
+              wizardIntegrations.mailchimp.audienceId ?? null;
           }
           if (wizardIntegrations.stripe?.publishableKey) {
             const stripeSecretId = await storeSecret(
-              supabase, resolvedProjectId, 'stripe_publishable_key',
-              wizardIntegrations.stripe.publishableKey, 'Stripe publishable key'
+              supabase,
+              resolvedProjectId,
+              'stripe_publishable_key',
+              wizardIntegrations.stripe.publishableKey,
+              'Stripe publishable key'
             );
             vaultUpdates.stripe_pk_id = stripeSecretId;
-            vaultUpdates.stripe_price_id = wizardIntegrations.stripe.priceId ?? null;
+            vaultUpdates.stripe_price_id =
+              wizardIntegrations.stripe.priceId ?? null;
           }
           if (wizardIntegrations.calendly?.url) {
             vaultUpdates.calendly_url = wizardIntegrations.calendly.url;
           }
           if (wizardIntegrations.googleAnalytics?.measurementId) {
-            vaultUpdates.analytics_ga_measurement_id = wizardIntegrations.googleAnalytics.measurementId;
+            vaultUpdates.analytics_ga_measurement_id =
+              wizardIntegrations.googleAnalytics.measurementId;
           }
           if (Object.keys(vaultUpdates).length > 0) {
-            await supabase.from('projects').update(vaultUpdates).eq('id', resolvedProjectId);
+            await supabase
+              .from('projects')
+              .update(vaultUpdates)
+              .eq('id', resolvedProjectId);
           }
         } catch (vaultErr) {
-          console.warn('[Editor Handoff] Non-fatal: vault storage failed:', vaultErr);
+          console.warn(
+            '[Editor Handoff] Non-fatal: vault storage failed:',
+            vaultErr
+          );
         }
       }
     } else {
@@ -545,10 +596,7 @@ export async function POST(request: NextRequest) {
     {
       const bi = (projectData?.businessInfo ?? {}) as Record<string, unknown>;
       const bp = (projectData?.brandProfile ?? {}) as Record<string, unknown>;
-      const siteInfo = (projectData?.siteInfo ?? {}) as Record<
-        string,
-        unknown
-      >;
+      const siteInfo = (projectData?.siteInfo ?? {}) as Record<string, unknown>;
       const palette = (projectData?.palette ?? null) as Record<
         string,
         unknown
@@ -563,11 +611,7 @@ export async function POST(request: NextRequest) {
       > | null;
       const client = (projectData?.client ?? {}) as Record<string, unknown>;
       const ci = (projectData?.contactInfo ?? {}) as Record<string, unknown>;
-      const hasBusinessData = !!(
-        bi?.uvp ||
-        bi?.industry ||
-        bi?.pricingOffers
-      );
+      const hasBusinessData = !!(bi?.uvp || bi?.industry || bi?.pricingOffers);
 
       const convexBody = JSON.stringify({
         supabaseProjectId: resolvedProjectId,
@@ -676,8 +720,7 @@ export async function POST(request: NextRequest) {
         );
         return NextResponse.json(
           {
-            error:
-              'Failed to initialize editor session. Please try again.',
+            error: 'Failed to initialize editor session. Please try again.',
           },
           { status: 502 }
         );

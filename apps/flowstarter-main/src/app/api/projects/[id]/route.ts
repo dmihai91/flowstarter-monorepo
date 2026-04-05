@@ -45,7 +45,10 @@ export async function PATCH(
     const parseResult = PatchProjectSchema.safeParse(rawBody);
     if (!parseResult.success) {
       return NextResponse.json(
-        { error: 'Validation error', details: parseResult.error.flatten().fieldErrors },
+        {
+          error: 'Validation error',
+          details: parseResult.error.flatten().fieldErrors,
+        },
         { status: 400 }
       );
     }
@@ -62,7 +65,8 @@ export async function PATCH(
 
     const updateData: Record<string, unknown> = {};
     if (body.name !== undefined) updateData.name = body.name;
-    if (body.description !== undefined) updateData.description = body.description;
+    if (body.description !== undefined)
+      updateData.description = body.description;
     if (body.chat !== undefined) updateData.chat = body.chat;
     if (body.is_draft !== undefined) updateData.is_draft = body.is_draft;
     if (body.status !== undefined) updateData.status = body.status;

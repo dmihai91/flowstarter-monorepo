@@ -42,7 +42,9 @@ export function DomainStep({
   onDomainSelected,
   onBack,
 }: DomainStepProps) {
-  const [keyword, setKeyword] = useState(() => slugify(clientName || projectName));
+  const [keyword, setKeyword] = useState(() =>
+    slugify(clientName || projectName)
+  );
   const [results, setResults] = useState<DomainSearchResult[]>([]);
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
@@ -59,7 +61,7 @@ export function DomainStep({
 
     try {
       const res = await fetch(
-        `/api/domains/search?keyword=${encodeURIComponent(q)}`,
+        `/api/domains/search?keyword=${encodeURIComponent(q)}`
       );
       if (!res.ok) throw new Error('Search failed');
       const data = (await res.json()) as { domains: DomainSearchResult[] };
@@ -75,7 +77,7 @@ export function DomainStep({
     (e: React.KeyboardEvent) => {
       if (e.key === 'Enter') handleSearch();
     },
-    [handleSearch],
+    [handleSearch]
   );
 
   return (
@@ -134,8 +136,8 @@ export function DomainStep({
                 selected === r.domain
                   ? 'border-[var(--purple)]/50 bg-[var(--purple)]/5 dark:bg-[var(--purple)]/10 ring-1 ring-[var(--purple)]/30'
                   : r.available
-                    ? 'border-gray-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.06]'
-                    : 'border-gray-200/50 dark:border-white/[0.04] bg-gray-50/50 dark:bg-white/[0.02] opacity-50 cursor-not-allowed'
+                  ? 'border-gray-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.06]'
+                  : 'border-gray-200/50 dark:border-white/[0.04] bg-gray-50/50 dark:bg-white/[0.02] opacity-50 cursor-not-allowed'
               }`}
             >
               <div className="flex items-center gap-2">

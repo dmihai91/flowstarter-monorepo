@@ -76,4 +76,8 @@ export const INTEGRATION_META: Record<
   },
 };
 
-export const ALL_TYPES: IntegrationType[] = ['calendly', 'cal-com', 'mailchimp'];
+export const ALL_TYPES: IntegrationType[] = [
+  'calendly',
+  'cal-com',
+  'mailchimp',
+];

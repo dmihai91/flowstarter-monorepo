@@ -69,7 +69,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   const integrationsCount = useCountUp(4, 800, statsStarted);
 
   const stats = [
-    { value: deliveryValue, suffix: ' days', label: 'avg. delivery' },
+    { value: '5–7', suffix: ' days', label: 'avg. delivery (Starter)' },
     { value: `${skillsCount}`, suffix: '', label: 'coding skills needed' },
     { value: `${trialCount}`, suffix: '-day', label: 'free first month' },
     { value: '50', suffix: '%', label: 'setup refund if not happy' },
@@ -78,7 +78,10 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   const prefixWords = hero.headlinePrefix.split(' ');
 
   return (
-    <section className="relative overflow-hidden flex flex-col justify-center pb-16 sm:pb-20 lg:pb-0 lg:h-[100dvh]" style={{ paddingTop: '96px', boxSizing: 'border-box' }}>
+    <section
+      className="relative overflow-hidden flex flex-col justify-center pb-16 sm:pb-20 lg:pb-16 lg:min-h-[100dvh] pt-24"
+      style={{ boxSizing: 'border-box' }}
+    >
       <FlowBackground
         variant="landing"
         style={{ position: 'absolute', inset: 0, zIndex: 0 }}
@@ -144,7 +147,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         />
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-10">
+      <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-10 lg:mt-28">
         {/* Label */}
         <div
           style={fade('0s')}
@@ -162,7 +165,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
           >
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)] dark:bg-violet-400 shrink-0" />
             <span className="text-[11px] font-semibold tracking-[0.12em] uppercase">
-              Your site live in 5–7 days
+              Done for you. Live in days.
             </span>
           </div>
         </div>
@@ -201,7 +204,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
               style={{
                 fontSize: 'clamp(2.4rem, 6vw, 4.5rem)',
                 background:
-                  'linear-gradient(135deg, var(--purple) 0%, #8B5CF6 100%)',
+                  'linear-gradient(135deg, hsl(241,93%,75%) 0%, var(--purple) 40%, hsl(241,93%,45%) 100%)',
                 backgroundSize: useSimpleHeadlineAnimation
                   ? '100% 100%'
                   : '200% 200%',
@@ -309,7 +312,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         {/* Guarantee line */}
         <p
           style={fade('0.35s')}
-          className="text-center text-xs sm:text-sm text-gray-400 dark:text-white/35 mb-7 sm:mb-8"
+          className="text-center text-sm sm:text-base text-gray-400 dark:text-white/35 mb-7 sm:mb-8"
         >
           {hero.guarantee}
         </p>

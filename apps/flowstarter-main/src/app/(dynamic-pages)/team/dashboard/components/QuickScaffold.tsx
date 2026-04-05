@@ -90,9 +90,11 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
           },
         }),
       });
-      const data = res.ok ? (await res.json() as { projectId?: string }) : {};
+      const data = res.ok ? ((await res.json()) as { projectId?: string }) : {};
       const draftId = data.projectId;
-      router.push(draftId ? `/team/dashboard/new?draft=${draftId}` : '/team/dashboard/new');
+      router.push(
+        draftId ? `/team/dashboard/new?draft=${draftId}` : '/team/dashboard/new'
+      );
     } catch {
       router.push('/team/dashboard/new');
     } finally {

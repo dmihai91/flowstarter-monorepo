@@ -583,10 +583,7 @@ export function useScaffoldForm() {
     []
   );
   const proceedToLogo = useCallback(() => setPhase('logo'), []);
-  const proceedToIntegrations = useCallback(
-    () => setPhase('integrations'),
-    []
-  );
+  const proceedToIntegrations = useCallback(() => setPhase('integrations'), []);
 
   const proceedToBuild = useCallback(() => setPhase('build'), []);
 

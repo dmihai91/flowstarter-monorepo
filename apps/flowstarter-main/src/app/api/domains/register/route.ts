@@ -23,8 +23,11 @@ export async function POST(request: Request) {
   const parsed = bodySchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
-      { error: 'Validation error', details: parsed.error.flatten().fieldErrors },
-      { status: 400 },
+      {
+        error: 'Validation error',
+        details: parsed.error.flatten().fieldErrors,
+      },
+      { status: 400 }
     );
   }
 
@@ -36,7 +39,7 @@ export async function POST(request: Request) {
   if (!username || !token) {
     return NextResponse.json(
       { error: 'Domain registration is not configured' },
-      { status: 503 },
+      { status: 503 }
     );
   }
 
@@ -74,7 +77,7 @@ export async function POST(request: Request) {
     console.error('[domains/register]', err);
     return NextResponse.json(
       { error: 'Failed to register domain' },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

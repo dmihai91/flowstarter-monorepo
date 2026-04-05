@@ -88,7 +88,11 @@ export function readProjectIntegrationSnapshot(
   if (!project) {
     return {
       calendly: { url: null, apiKeySecretId: null },
-      analytics: { propertyId: null, refreshTokenSecretId: null, connectedAt: null },
+      analytics: {
+        propertyId: null,
+        refreshTokenSecretId: null,
+        connectedAt: null,
+      },
       domain: { publishedUrl: null, customDomain: null, status: null },
       mailchimp: { apiKeySecretId: null, audienceId: null },
       stripe: { publishableKeySecretId: null, priceId: null },
@@ -256,7 +260,9 @@ export function buildProjectIntegrationUpdate(
     if (Object.prototype.hasOwnProperty.call(project, 'mailchimp_api_key_id')) {
       update.mailchimp_api_key_id = patch.mailchimp.apiKeySecretId ?? null;
     }
-    if (Object.prototype.hasOwnProperty.call(project, 'mailchimp_audience_id')) {
+    if (
+      Object.prototype.hasOwnProperty.call(project, 'mailchimp_audience_id')
+    ) {
       update.mailchimp_audience_id = patch.mailchimp.audienceId ?? null;
     }
   }

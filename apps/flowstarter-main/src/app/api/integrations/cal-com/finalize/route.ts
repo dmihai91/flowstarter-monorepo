@@ -4,9 +4,11 @@ import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-const FinalizeBodySchema = z.object({
-  api_key: z.string().min(1, 'api_key is required').max(500),
-}).passthrough();
+const FinalizeBodySchema = z
+  .object({
+    api_key: z.string().min(1, 'api_key is required').max(500),
+  })
+  .passthrough();
 
 export async function POST(req: Request) {
   try {
@@ -26,9 +28,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
     }
 
-    const rawIncoming = (rawBody as Record<string, unknown>)?.config
-      || (rawBody as Record<string, unknown>)?.selection
-      || rawBody;
+    const rawIncoming =
+      (rawBody as Record<string, unknown>)?.config ||
+      (rawBody as Record<string, unknown>)?.selection ||
+      rawBody;
 
     const parseResult = FinalizeBodySchema.safeParse(rawIncoming);
     if (!parseResult.success) {

@@ -46,21 +46,20 @@ export const LANDING_COPY = {
     templatesLabel: 'Templates',
   },
   hero: {
-    headlinePrefix:
-      'The right clients are out there looking for you.',
+    headlinePrefix: 'The right clients are out there looking for you.',
     headlineHighlight: "Let's make sure they find you.",
     subheadlineBold: '',
     subheadline:
-      'Starting from scratch or tired of a site that isn\'t working? One call. We build or rebuild your site in 5–7 days. You stay in control with a smart editor. No code, no waiting, no back and forth.',
+      "Starting from scratch or tired of a site that isn't working? One call. Starter sites go live in 5–7 days. You stay in control with a smart editor. No code, no waiting, no back and forth.",
     primaryCta: 'Start getting clients',
     secondaryCta: 'See plans and pricing',
     trustLine:
-      'For coaches, consultants, therapists, freelancers and founders — whether you\'re starting from scratch or ready to relaunch.',
+      "For coaches, consultants, therapists, freelancers and founders — whether you're starting from scratch or ready to relaunch.",
     guarantee:
       'First month free. Not happy in 30 days? We refund 50% of your setup fee. No questions asked.',
   },
   process: {
-    title: "Three steps. One week. A site you're proud of.",
+    title: "Three steps. A site you're proud of.",
     steps: [
       {
         number: '01',
@@ -83,16 +82,19 @@ export const LANDING_COPY = {
     ],
   },
   problem: {
-    title: "Whether you're starting fresh or starting over — getting it right shouldn't take months.",
+    title:
+      "Whether you're starting fresh or starting over — getting it right shouldn't take months.",
     pains: [
       {
         icon: 'globe',
-        title: "No website yet? Every day you wait is a client that found someone else.",
-        body: "You know you need a proper online presence. But between templates, copy, tech, and design decisions, it never gets done. Flowstarter does it for you in a week.",
+        title:
+          'No website yet? Every day you wait is a client that found someone else.',
+        body: 'You know you need a proper online presence. But between templates, copy, tech, and design decisions, it never gets done. Flowstarter does it for you.',
       },
       {
         icon: 'puzzle',
-        title: "Already have a site? If it's not getting you clients, it's not working.",
+        title:
+          "Already have a site? If it's not getting you clients, it's not working.",
         body: "A site that looks outdated or doesn't convert is costing you leads every day. A fresh start with the right structure changes that.",
       },
       {
@@ -103,7 +105,7 @@ export const LANDING_COPY = {
       },
     ],
     closing:
-      'Flowstarter skips all of that. One call, and your site is live within a week — whether it\'s your first or your best.',
+      "Flowstarter skips all of that. One call, and your site gets built properly — whether it's your first or your best.",
   },
   pillars: {
     title: 'Built to help you launch, manage, and improve',
@@ -278,9 +280,9 @@ export const LANDING_COPY = {
       {
         label: 'Flowstarter',
         description:
-          'Done for you in days — whether it\'s your first site or a full relaunch. Smart editor included. Rate locked forever.',
+          "Done for you in days — whether it's your first site or a full relaunch. Smart editor included. Rate locked forever.",
         bullets: [
-          'New site or relaunch — both done in 5–7 days from one 45-min call',
+          'Starter sites live in 5–7 days from one 45-min call',
           'Smart editor: update anything yourself, no code',
           'Booking, contact form, and analytics all connected',
           'One dashboard for your leads, your site, your control',
@@ -295,15 +297,17 @@ export const LANDING_COPY = {
     items: [
       {
         icon: 'globe',
-        label: "You don't have a website yet and want to get online properly from day one",
+        label:
+          "You don't have a website yet and want to get online properly from day one",
       },
       {
         icon: 'mic',
-        label: "You have a site but it's not bringing in clients, and you've tried to fix it",
+        label:
+          "You have a site but it's not bringing in clients, and you've tried to fix it",
       },
       {
         icon: 'clock',
-        label: "Your website has been on the to-do list for too long",
+        label: 'Your website has been on the to-do list for too long',
       },
       {
         icon: 'users',
@@ -323,7 +327,8 @@ export const LANDING_COPY = {
       },
       {
         icon: 'calendar',
-        label: 'You want booking, analytics, and email all connected and ready from day one',
+        label:
+          'You want booking, analytics, and email all connected and ready from day one',
       },
     ],
   },
@@ -333,7 +338,7 @@ export const LANDING_COPY = {
       {
         question: 'What exactly do I get?',
         answer:
-          'A done-for-you launch: your landing page, offer structure, booking setup, and analytics, all connected. Plus your own dashboard and smart editor so you can manage everything after launch, no developer needed. Most clients are live within 5 to 7 days.',
+          'A done-for-you launch: your landing page, offer structure, booking setup, and analytics, all connected. Plus your own dashboard and smart editor so you can manage everything after launch, no developer needed. Starter clients are typically live within 5 to 7 days.',
       },
       {
         question: 'How does payment work? Is there a guarantee?',
@@ -341,14 +346,15 @@ export const LANDING_COPY = {
           'We collect 50% upfront to start your project. You only pay the remaining 50% when you are happy with the result. Your first month of subscription is free. If you are not satisfied within the first 30 days, we refund 50% of the setup fee. No questions asked. Your monthly rate is also locked in for life. New clients who join later pay more.',
       },
       {
-        question: 'My current site exists but it is not getting me clients. Can you help?',
+        question:
+          'My current site exists but it is not getting me clients. Can you help?',
         answer:
-          "Yes, that is exactly what the Relaunch plan is for. We audit what is costing you leads, migrate your content, set up proper SEO redirects so you keep your rankings, and rebuild the structure around converting visitors. Pricing starts at €699 depending on complexity. Book a free discovery call and we will assess it together.",
+          'Yes, that is exactly what the Relaunch plan is for. We audit what is costing you leads, migrate your content, set up proper SEO redirects so you keep your rankings, and rebuild the structure around converting visitors. Pricing starts at €699 depending on complexity. Book a free discovery call and we will assess it together.',
       },
       {
         question: 'How long does launch usually take?',
         answer:
-          'Most sites go live within 5–7 days of your discovery call. We move fast and keep you in the loop throughout.',
+          'Starter sites typically go live within 5–7 days of your discovery call. Relaunch and Growth projects may take a bit longer depending on scope. We move fast and keep you in the loop throughout.',
       },
       {
         question: 'Can I update the site myself after launch?',
@@ -386,7 +392,7 @@ export const LANDING_COPY = {
       },
       {
         quote:
-          "I was skeptical. I had tried Squarespace, Wix, even hired a freelancer. None of it stuck. This was completely different. One call, one draft, done. My site finally looks like a real business.",
+          'I was skeptical. I had tried Squarespace, Wix, even hired a freelancer. None of it stuck. This was completely different. One call, one draft, done. My site finally looks like a real business.',
         name: 'James R.',
         role: 'Strategy Consultant',
         initials: 'JR',

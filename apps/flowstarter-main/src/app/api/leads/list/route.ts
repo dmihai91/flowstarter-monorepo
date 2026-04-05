@@ -21,7 +21,9 @@ const GetLeadsSchema = z.object({
 
 const PatchLeadSchema = z.object({
   leadId: z.string().uuid('Invalid lead ID'),
-  status: z.enum(['new', 'contacted', 'qualified', 'closed', 'spam']).optional(),
+  status: z
+    .enum(['new', 'contacted', 'qualified', 'closed', 'spam'])
+    .optional(),
   notes: z.string().max(5000).optional(),
 });
 
@@ -38,7 +40,8 @@ export async function GET(request: NextRequest) {
   }
 
   const { projectId, status, limit } = result.data;
-  const supabase = createSupabaseServiceRoleClient() as unknown as SupabaseClient<DatabaseExtended>;
+  const supabase =
+    createSupabaseServiceRoleClient() as unknown as SupabaseClient<DatabaseExtended>;
 
   let query = supabase
     .from('leads')
@@ -92,8 +95,12 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: 'Nothing to update' }, { status: 400 });
   }
 
-  const supabase = createSupabaseServiceRoleClient() as unknown as SupabaseClient<DatabaseExtended>;
-  const { error } = await supabase.from('leads').update(update).eq('id', leadId);
+  const supabase =
+    createSupabaseServiceRoleClient() as unknown as SupabaseClient<DatabaseExtended>;
+  const { error } = await supabase
+    .from('leads')
+    .update(update)
+    .eq('id', leadId);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

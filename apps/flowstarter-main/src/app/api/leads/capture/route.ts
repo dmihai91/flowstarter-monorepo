@@ -10,14 +10,16 @@ import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { DatabaseExtended } from '@/lib/database-extensions.types';
 
-const LeadCaptureSchema = z.object({
-  projectId: z.string().uuid('Invalid project ID'),
-  name: z.string().max(200).optional(),
-  email: z.string().email('Invalid email').optional(),
-  phone: z.string().max(50).optional(),
-  message: z.string().max(5000).optional(),
-  source: z.string().max(100).optional(),
-}).passthrough(); // allow extra fields to land in `extra`
+const LeadCaptureSchema = z
+  .object({
+    projectId: z.string().uuid('Invalid project ID'),
+    name: z.string().max(200).optional(),
+    email: z.string().email('Invalid email').optional(),
+    phone: z.string().max(50).optional(),
+    message: z.string().max(5000).optional(),
+    source: z.string().max(100).optional(),
+  })
+  .passthrough(); // allow extra fields to land in `extra`
 
 // Simple in-memory rate limit (per IP, 10 submissions per minute)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -80,10 +82,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { projectId, name, email, phone, message, source, ...extra } = result.data;
+  const { projectId, name, email, phone, message, source, ...extra } =
+    result.data;
 
   try {
-    const supabase = createSupabaseServiceRoleClient() as unknown as SupabaseClient<DatabaseExtended>;
+    const supabase =
+      createSupabaseServiceRoleClient() as unknown as SupabaseClient<DatabaseExtended>;
 
     const { data: project } = await supabase
       .from('projects')
@@ -110,7 +114,10 @@ export async function POST(request: NextRequest) {
       ip_address: ip,
       user_agent: request.headers.get('user-agent') || null,
       referrer: request.headers.get('referer') || null,
-      extra: (Object.keys(extra).length > 0 ? extra : {}) as Record<string, string | number | boolean | null>,
+      extra: (Object.keys(extra).length > 0 ? extra : {}) as Record<
+        string,
+        string | number | boolean | null
+      >,
       status: isSpam ? 'spam' : 'new',
     });
 
@@ -122,7 +129,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ success: true }, { headers: corsHeaders(origin) });
+    return NextResponse.json(
+      { success: true },
+      { headers: corsHeaders(origin) }
+    );
   } catch {
     return NextResponse.json(
       { error: 'Invalid request' },

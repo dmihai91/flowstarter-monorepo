@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/api-auth';
-import { searchDomains, type NameComConfig } from '@flowstarter/editor-engine/publishing';
+import {
+  searchDomains,
+  type NameComConfig,
+} from '@flowstarter/editor-engine/publishing';
 
 export async function GET(request: Request) {
   const authResult = await requireAuth(request);
@@ -14,7 +17,7 @@ export async function GET(request: Request) {
   if (!keyword) {
     return NextResponse.json(
       { error: 'keyword query parameter is required' },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
@@ -24,7 +27,7 @@ export async function GET(request: Request) {
   if (!username || !token) {
     return NextResponse.json(
       { error: 'Domain search is not configured' },
-      { status: 503 },
+      { status: 503 }
     );
   }
 
@@ -41,7 +44,7 @@ export async function GET(request: Request) {
     console.error('[domains/search]', err);
     return NextResponse.json(
       { error: 'Failed to search domains' },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

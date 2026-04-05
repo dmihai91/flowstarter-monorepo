@@ -57,8 +57,8 @@ export function TemplateStep({
                 Palette variants
               </h4>
               <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                Show these during the onboarding call and lock the
-                preferred direction before handoff.
+                Show these during the onboarding call and lock the preferred
+                direction before handoff.
               </p>
             </div>
             <div className="space-y-2">
@@ -82,15 +82,13 @@ export function TemplateStep({
                     </p>
                   </div>
                   <div className="flex items-center gap-1">
-                    {Object.values(palette.colors).map(
-                      (color, index) => (
-                        <span
-                          key={`${palette.id}-${index}`}
-                          className="h-4 w-4 rounded-full border border-black/10"
-                          style={{ backgroundColor: String(color) }}
-                        />
-                      )
-                    )}
+                    {Object.values(palette.colors).map((color, index) => (
+                      <span
+                        key={`${palette.id}-${index}`}
+                        className="h-4 w-4 rounded-full border border-black/10"
+                        style={{ backgroundColor: String(color) }}
+                      />
+                    ))}
                   </div>
                 </button>
               ))}

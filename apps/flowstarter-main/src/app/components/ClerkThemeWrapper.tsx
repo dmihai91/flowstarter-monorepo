@@ -194,5 +194,9 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
     ],
   } as unknown as ComponentProps<typeof ClerkProvider>;
 
-  return <ClerkProvider {...clerkProviderProps} ui={ui}>{children}</ClerkProvider>;
+  return (
+    <ClerkProvider {...clerkProviderProps} ui={ui}>
+      {children}
+    </ClerkProvider>
+  );
 }

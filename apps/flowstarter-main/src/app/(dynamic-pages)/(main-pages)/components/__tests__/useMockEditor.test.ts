@@ -62,8 +62,12 @@ describe('useMockEditor', () => {
   it('handleSend adds user message for known command', () => {
     const { result } = renderHook(() => useMockEditor());
 
-    act(() => { result.current.setInputValue('Add a contact form'); });
-    act(() => { result.current.handleSend(); });
+    act(() => {
+      result.current.setInputValue('Add a contact form');
+    });
+    act(() => {
+      result.current.handleSend();
+    });
 
     const userMessages = result.current.messages.filter(
       (m) => m.text === 'Add a contact form'
@@ -72,7 +76,9 @@ describe('useMockEditor', () => {
     expect(result.current.inputValue).toBe('');
     expect(result.current.isTyping).toBe(true);
 
-    act(() => { vi.advanceTimersByTime(FLUSH_AI_RESPONSE); });
+    act(() => {
+      vi.advanceTimersByTime(FLUSH_AI_RESPONSE);
+    });
 
     expect(result.current.isTyping).toBe(false);
     const aiMessages = result.current.messages.filter((m) =>
@@ -84,10 +90,14 @@ describe('useMockEditor', () => {
   it('handleSend with direct message parameter works', () => {
     const { result } = renderHook(() => useMockEditor());
 
-    act(() => { result.current.handleSend('Add pricing tables'); });
+    act(() => {
+      result.current.handleSend('Add pricing tables');
+    });
     expect(result.current.isTyping).toBe(true);
 
-    act(() => { vi.advanceTimersByTime(FLUSH_AI_RESPONSE); });
+    act(() => {
+      vi.advanceTimersByTime(FLUSH_AI_RESPONSE);
+    });
 
     const aiMessages = result.current.messages.filter((m) =>
       m.text.includes('Pricing section')
@@ -98,24 +108,34 @@ describe('useMockEditor', () => {
   it('handleSend does nothing for empty input', () => {
     const { result } = renderHook(() => useMockEditor());
     const initialCount = result.current.messages.length;
-    act(() => { result.current.handleSend(''); });
+    act(() => {
+      result.current.handleSend('');
+    });
     expect(result.current.messages.length).toBe(initialCount);
   });
 
   it('handleSend does nothing while typing', () => {
     const { result } = renderHook(() => useMockEditor());
-    act(() => { result.current.handleSend('Add a contact form'); });
+    act(() => {
+      result.current.handleSend('Add a contact form');
+    });
     expect(result.current.isTyping).toBe(true);
     const messageCount = result.current.messages.length;
-    act(() => { result.current.handleSend('Another message'); });
+    act(() => {
+      result.current.handleSend('Another message');
+    });
     expect(result.current.messages.length).toBe(messageCount);
   });
 
   it('updates mockSite state for known commands', () => {
     const { result } = renderHook(() => useMockEditor());
-    act(() => { result.current.handleSend('Add testimonials'); });
+    act(() => {
+      result.current.handleSend('Add testimonials');
+    });
     // Advance outer AI delay + action delay (200ms) — don't flush typewriter loop
-    act(() => { vi.advanceTimersByTime(1500); });
+    act(() => {
+      vi.advanceTimersByTime(1500);
+    });
     expect(result.current.mockSite.hasTestimonials).toBe(true);
   });
 
@@ -124,11 +144,15 @@ describe('useMockEditor', () => {
     vi.stubGlobal('open', mockOpen);
 
     const { result } = renderHook(() => useMockEditor());
-    act(() => { result.current.handleSend('Do something completely random'); });
+    act(() => {
+      result.current.handleSend('Do something completely random');
+    });
 
     // window.open fires after outer delay (800ms) + fixed 1500ms = 2300ms.
     // Does NOT depend on typewriter completing.
-    act(() => { vi.advanceTimersByTime(2500); });
+    act(() => {
+      vi.advanceTimersByTime(2500);
+    });
 
     expect(mockOpen).toHaveBeenCalledWith(
       'https://calendly.example.com/discovery',
@@ -143,11 +167,15 @@ describe('useMockEditor', () => {
     const initialCount = result.current.messages.length;
 
     // Fire the first auto-advance (interval fires at ~5000ms per useMockEditor)
-    act(() => { vi.advanceTimersByTime(5000); });
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
     expect(result.current.messages.length).toBeGreaterThan(initialCount);
 
     // Advance for the AI response within the same cycle
-    act(() => { vi.advanceTimersByTime(1500); });
+    act(() => {
+      vi.advanceTimersByTime(1500);
+    });
     expect(result.current.messages.length).toBeGreaterThan(initialCount + 1);
   });
 });

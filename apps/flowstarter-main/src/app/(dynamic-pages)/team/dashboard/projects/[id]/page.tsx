@@ -358,7 +358,11 @@ export default function ProjectDetailPage() {
               onClick={handleCopyUrl}
               className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--purple)] text-white text-xs font-medium hover:opacity-90 transition-all shrink-0"
             >
-              {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+              {copied ? (
+                <Check className="w-3 h-3" />
+              ) : (
+                <Copy className="w-3 h-3" />
+              )}
               {copied ? 'Copied' : 'Copy'}
             </button>
           </div>

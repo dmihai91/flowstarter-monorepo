@@ -27,7 +27,7 @@ const OPTIONS = [
   {
     id: 'unsure',
     name: 'Not sure yet',
-    desc: 'I\'ll explain my situation on the call',
+    desc: "I'll explain my situation on the call",
     price: null,
   },
 ] as const;

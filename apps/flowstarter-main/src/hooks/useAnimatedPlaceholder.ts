@@ -83,8 +83,8 @@ const INDUSTRY_EXAMPLES: Record<string, string[]> = {
     'Community learning centre providing free digital skills training for adults. Programme overview, volunteer opportunities, and donor portal.',
     'Mental health awareness foundation. Resource library, event calendar, donation flow, and corporate partnership inquiry.',
   ],
-  'Other': [
-    'Describe your client\'s business, target audience, main offer, and the tone you\'re going for. The more detail you give, the better the AI brief.',
+  Other: [
+    "Describe your client's business, target audience, main offer, and the tone you're going for. The more detail you give, the better the AI brief.",
   ],
 };
 
@@ -129,7 +129,12 @@ export function useAnimatedPlaceholder(opts: Options = {}): string {
   useEffect(() => {
     if (industryRef.current !== industry) {
       industryRef.current = industry;
-      state.current = { exampleIdx: 0, charIdx: 0, phase: 'typing', cursorVisible: true };
+      state.current = {
+        exampleIdx: 0,
+        charIdx: 0,
+        phase: 'typing',
+        cursorVisible: true,
+      };
       setText('');
     }
   }, [industry]);

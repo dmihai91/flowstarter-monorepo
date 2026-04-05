@@ -118,7 +118,11 @@ async function simulateCapture(body: Record<string, unknown>, ip = '1.2.3.4') {
     status: isSpam ? 'spam' : 'new',
   };
 
-  const result = await (mockSupabase.from('leads') as { insert: (r: Record<string, unknown>) => Promise<{ error: string | null }> }).insert(row);
+  const result = await (
+    mockSupabase.from('leads') as {
+      insert: (r: Record<string, unknown>) => Promise<{ error: string | null }>;
+    }
+  ).insert(row);
   if (result.error) return { status: 500, error: 'Failed to save' };
 
   return { status: 200, success: true, row };

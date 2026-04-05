@@ -33,7 +33,7 @@ export function LogoStep({
       setPreview(url);
       onLogoSelected({ type: 'uploaded', url, name: file.name });
     },
-    [onLogoSelected],
+    [onLogoSelected]
   );
 
   const clearPreview = useCallback(() => {
@@ -44,7 +44,9 @@ export function LogoStep({
   return (
     <div className="space-y-5">
       <div>
-        <h3 className="text-base font-semibold text-zinc-900 dark:text-white">Logo</h3>
+        <h3 className="text-base font-semibold text-zinc-900 dark:text-white">
+          Logo
+        </h3>
         <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
           Upload a logo or skip to use the business name as text.
         </p>
@@ -52,7 +54,11 @@ export function LogoStep({
 
       {preview ? (
         <div className="relative inline-block rounded-2xl border border-gray-200 dark:border-white/[0.06] p-4">
-          <img src={preview} alt="Logo preview" className="max-h-24 object-contain" />
+          <img
+            src={preview}
+            alt="Logo preview"
+            className="max-h-24 object-contain"
+          />
           <button
             onClick={clearPreview}
             className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-zinc-800 text-white flex items-center justify-center"
@@ -67,28 +73,47 @@ export function LogoStep({
             className="flex flex-col items-center gap-2 p-6 rounded-[20px] border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.06] transition-all"
           >
             <Upload className="w-6 h-6 text-zinc-400" />
-            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Upload file</span>
-            <span className="text-xs text-zinc-400">PNG, JPG, SVG — max 5 MB</span>
+            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              Upload file
+            </span>
+            <span className="text-xs text-zinc-400">
+              PNG, JPG, SVG — max 5 MB
+            </span>
           </button>
           <button
             onClick={() => onLogoSelected({ type: 'text' })}
             className="flex flex-col items-center gap-2 p-6 rounded-[20px] border border-gray-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.04] hover:bg-gray-50 dark:hover:bg-white/[0.06] transition-all"
           >
             <Type className="w-6 h-6 text-zinc-400" />
-            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Use text logo</span>
-            <span className="text-xs text-zinc-400">Business name as the logo</span>
+            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              Use text logo
+            </span>
+            <span className="text-xs text-zinc-400">
+              Business name as the logo
+            </span>
           </button>
         </div>
       )}
 
-      <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFile}
+      />
 
       {error && (
         <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
       )}
 
       <div className="flex gap-3 pt-2">
-        <Button onClick={onBack} variant="outline" size="md" icon={<ArrowLeft className="w-4 h-4" />}>
+        <Button
+          onClick={onBack}
+          variant="outline"
+          size="md"
+          icon={<ArrowLeft className="w-4 h-4" />}
+        >
           Back
         </Button>
         <Button

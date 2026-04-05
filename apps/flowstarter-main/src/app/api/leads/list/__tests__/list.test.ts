@@ -16,7 +16,9 @@ const GetLeadsSchema = z.object({
 
 const PatchLeadSchema = z.object({
   leadId: z.string().uuid('Invalid lead ID'),
-  status: z.enum(['new', 'contacted', 'qualified', 'closed', 'spam']).optional(),
+  status: z
+    .enum(['new', 'contacted', 'qualified', 'closed', 'spam'])
+    .optional(),
   notes: z.string().max(5000).optional(),
 });
 
@@ -34,21 +36,32 @@ const mockSupabase = {
           eq: vi.fn(() => ({
             order: vi.fn(() => ({
               limit: vi.fn(() => ({
-                neq: vi.fn(() => Promise.resolve({ data: storedLeads, error: queryError })),
-                eq: vi.fn(() => Promise.resolve({ data: storedLeads, error: queryError })),
+                neq: vi.fn(() =>
+                  Promise.resolve({ data: storedLeads, error: queryError })
+                ),
+                eq: vi.fn(() =>
+                  Promise.resolve({ data: storedLeads, error: queryError })
+                ),
               })),
             })),
           })),
         })),
         update: vi.fn((vals: Record<string, unknown>) => ({
-          eq: vi.fn(() => Promise.resolve({ error: updateError, data: [{ ...storedLeads[0], ...vals }] })),
+          eq: vi.fn(() =>
+            Promise.resolve({
+              error: updateError,
+              data: [{ ...storedLeads[0], ...vals }],
+            })
+          ),
         })),
       };
     }
     return {};
   }),
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  rpc: vi.fn((_fn: string, _args?: any) => Promise.resolve({ data: [], error: null })),
+  rpc: vi.fn((_fn: string, _args?: any) =>
+    Promise.resolve({ data: [], error: null })
+  ),
 } as any;
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -65,7 +78,7 @@ async function simulateGet(params: Record<string, string>) {
 
   const { projectId, status, limit } = result.data;
 
-  let query = mockSupabase
+  const query = mockSupabase
     .from('leads')
     .select('*')
     .eq('project_id', projectId)
@@ -81,7 +94,9 @@ async function simulateGet(params: Record<string, string>) {
   const { data, error } = await (query as any).neq('status', 'spam');
   if (error) return { status: 500, error: error.message };
 
-  const { data: counts } = await mockSupabase.rpc('get_lead_counts', { p_project_id: projectId });
+  const { data: counts } = await mockSupabase.rpc('get_lead_counts', {
+    p_project_id: projectId,
+  });
   return { status: 200, leads: data || [], counts: counts || [] };
 }
 
@@ -101,7 +116,10 @@ async function simulatePatch(body: unknown) {
     return { status: 400, error: 'Nothing to update' };
   }
 
-  const { error } = await mockSupabase.from('leads').update(update).eq('id', leadId);
+  const { error } = await mockSupabase
+    .from('leads')
+    .update(update)
+    .eq('id', leadId);
   if (error) return { status: 500, error: error.message };
   return { status: 200, success: true };
 }
@@ -116,7 +134,9 @@ describe('GET /api/leads/list — validation', () => {
   });
 
   it('accepts valid projectId UUID', async () => {
-    const result = await simulateGet({ projectId: '123e4567-e89b-12d3-a456-426614174000' });
+    const result = await simulateGet({
+      projectId: '123e4567-e89b-12d3-a456-426614174000',
+    });
     expect(result.status).toBe(200);
   });
 
@@ -182,7 +202,9 @@ describe('GET /api/leads/list — validation', () => {
 
   it('returns 500 when Supabase query fails', async () => {
     queryError = { message: 'Connection timeout' };
-    const result = await simulateGet({ projectId: '123e4567-e89b-12d3-a456-426614174000' });
+    const result = await simulateGet({
+      projectId: '123e4567-e89b-12d3-a456-426614174000',
+    });
     expect(result.status).toBe(500);
     expect(result.error).toContain('Connection timeout');
   });
@@ -227,7 +249,10 @@ describe('PATCH /api/leads/list — validation', () => {
   });
 
   it('rejects non-UUID leadId', async () => {
-    const result = await simulatePatch({ leadId: 'not-a-uuid', status: 'contacted' });
+    const result = await simulatePatch({
+      leadId: 'not-a-uuid',
+      status: 'contacted',
+    });
     expect(result.status).toBe(400);
     expect(result.error).toContain('Invalid lead ID');
   });

@@ -6,14 +6,16 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { z } from 'zod';
 
 // Mirror schema from route
-const LeadCaptureSchema = z.object({
-  projectId: z.string().uuid('Invalid project ID'),
-  name: z.string().max(200).optional(),
-  email: z.string().email('Invalid email').optional(),
-  phone: z.string().max(50).optional(),
-  message: z.string().max(5000).optional(),
-  source: z.string().max(100).optional(),
-}).passthrough();
+const LeadCaptureSchema = z
+  .object({
+    projectId: z.string().uuid('Invalid project ID'),
+    name: z.string().max(200).optional(),
+    email: z.string().email('Invalid email').optional(),
+    phone: z.string().max(50).optional(),
+    message: z.string().max(5000).optional(),
+    source: z.string().max(100).optional(),
+  })
+  .passthrough();
 
 // Mirror spam detection from route (updated patterns — crypto/bitcoin removed)
 function detectSpam(name: string, email: string, message: string): boolean {
@@ -67,7 +69,8 @@ describe('LeadCaptureSchema validation', () => {
   it('rejects non-UUID projectId', () => {
     const result = LeadCaptureSchema.safeParse({ projectId: 'not-a-uuid' });
     expect(result.success).toBe(false);
-    if (!result.success) expect(result.error.errors[0].message).toBe('Invalid project ID');
+    if (!result.success)
+      expect(result.error.errors[0].message).toBe('Invalid project ID');
   });
 
   it('rejects missing projectId', () => {
@@ -81,7 +84,8 @@ describe('LeadCaptureSchema validation', () => {
       email: 'not-an-email',
     });
     expect(result.success).toBe(false);
-    if (!result.success) expect(result.error.errors[0].message).toBe('Invalid email');
+    if (!result.success)
+      expect(result.error.errors[0].message).toBe('Invalid email');
   });
 
   it('accepts all optional fields absent', () => {
@@ -116,7 +120,9 @@ describe('LeadCaptureSchema validation', () => {
     });
     expect(result.success).toBe(true);
     if (result.success) {
-      expect((result.data as Record<string, unknown>).company).toBe('Salon Elena');
+      expect((result.data as Record<string, unknown>).company).toBe(
+        'Salon Elena'
+      );
     }
   });
 });
@@ -125,20 +131,34 @@ describe('LeadCaptureSchema validation', () => {
 
 describe('detectSpam', () => {
   it('marks obvious spam with multiple patterns', () => {
-    expect(detectSpam('Casino King', 'spam@test.com', 'Buy cheap viagra now!')).toBe(true);
+    expect(
+      detectSpam('Casino King', 'spam@test.com', 'Buy cheap viagra now!')
+    ).toBe(true);
   });
 
   it('marks link-heavy spam', () => {
-    expect(detectSpam('', '', 'Click here https://evil.com buy now free money')).toBe(true);
+    expect(
+      detectSpam('', '', 'Click here https://evil.com buy now free money')
+    ).toBe(true);
   });
 
   it('allows legitimate Romanian business messages', () => {
-    expect(detectSpam('Elena Popescu', 'elena@salon.ro', 'Doresc o programare pentru vineri')).toBe(false);
-    expect(detectSpam('Ion Dima', 'ion@yahoo.ro', 'Cat costa un tratament facial?')).toBe(false);
+    expect(
+      detectSpam(
+        'Elena Popescu',
+        'elena@salon.ro',
+        'Doresc o programare pentru vineri'
+      )
+    ).toBe(false);
+    expect(
+      detectSpam('Ion Dima', 'ion@yahoo.ro', 'Cat costa un tratament facial?')
+    ).toBe(false);
   });
 
   it('allows messages with single pattern (below threshold)', () => {
-    expect(detectSpam('John', 'john@gmail.com', 'I want to buy your service')).toBe(false);
+    expect(
+      detectSpam('John', 'john@gmail.com', 'I want to buy your service')
+    ).toBe(false);
   });
 
   it('handles empty fields without throwing', () => {
@@ -146,16 +166,24 @@ describe('detectSpam', () => {
   });
 
   it('is case-insensitive', () => {
-    expect(detectSpam('CASINO', 'test@test.com', 'BUY NOW free money')).toBe(true);
+    expect(detectSpam('CASINO', 'test@test.com', 'BUY NOW free money')).toBe(
+      true
+    );
   });
 
   it('does NOT flag crypto/bitcoin (legitimate SaaS terms)', () => {
-    expect(detectSpam('John', 'john@startup.com', 'I run a crypto startup')).toBe(false);
-    expect(detectSpam('Maria', 'maria@test.com', 'We accept bitcoin payments')).toBe(false);
+    expect(
+      detectSpam('John', 'john@startup.com', 'I run a crypto startup')
+    ).toBe(false);
+    expect(
+      detectSpam('Maria', 'maria@test.com', 'We accept bitcoin payments')
+    ).toBe(false);
   });
 
   it('does NOT flag the word "free" alone', () => {
-    expect(detectSpam('Jane', 'jane@test.com', 'Is there a free trial?')).toBe(false);
+    expect(detectSpam('Jane', 'jane@test.com', 'Is there a free trial?')).toBe(
+      false
+    );
   });
 });
 
@@ -164,7 +192,9 @@ describe('detectSpam', () => {
 describe('CORS headers', () => {
   it('echoes back the origin', () => {
     const headers = corsHeaders('https://mysite.flowstarter.site');
-    expect(headers['Access-Control-Allow-Origin']).toBe('https://mysite.flowstarter.site');
+    expect(headers['Access-Control-Allow-Origin']).toBe(
+      'https://mysite.flowstarter.site'
+    );
   });
 
   it('allows POST and OPTIONS', () => {
@@ -243,7 +273,10 @@ describe('Lead data extraction', () => {
     expect(name).toBe('Elena');
     expect(email).toBe('elena@test.com');
     expect(projectId).toBe('123e4567-e89b-12d3-a456-426614174000');
-    expect(extra).toEqual({ company: 'Salon Elena', preferredDate: '2026-03-15' });
+    expect(extra).toEqual({
+      company: 'Salon Elena',
+      preferredDate: '2026-03-15',
+    });
   });
 
   it('produces empty extra object when no extra fields given', () => {

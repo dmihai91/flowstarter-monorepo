@@ -4,6 +4,10 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { ClerkProvider } from '@clerk/nextjs';
 import { experimental__simple as simple } from '@clerk/themes';
 import { ui } from '@clerk/ui';
+import {
+  getAllowedRedirectOrigins,
+  getSharedCookieDomain,
+} from '@flowstarter/platform-config';
 import { useEffect, useState, type ComponentProps } from 'react';
 
 import '@/styles/auth-forms.css';
@@ -161,25 +165,10 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
 
   // Determine shared cookie domain for cross-subdomain session sharing
   // This allows the editor (editor.flowstarter.dev) to share the same Clerk session
-  const getSharedCookieDomain = (): string | undefined => {
-    if (typeof window === 'undefined') return undefined;
-    const hostname = window.location.hostname;
-
-    // Production: flowstarter.app and subdomains
-    if (hostname.includes('flowstarter.app')) {
-      return '.flowstarter.app';
-    }
-
-    // Development/Staging: flowstarter.dev and subdomains
-    if (hostname.includes('flowstarter.dev')) {
-      return '.flowstarter.dev';
-    }
-
-    // Local development - no shared domain needed
-    return undefined;
-  };
-
-  const sharedCookieDomain = getSharedCookieDomain();
+  const sharedCookieDomain =
+    typeof window !== 'undefined'
+      ? getSharedCookieDomain(window.location.hostname)
+      : undefined;
   const clerkProviderProps = {
     appearance,
     domain: sharedCookieDomain,
@@ -187,15 +176,13 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
     signUpUrl: '/login',
     signInFallbackRedirectUrl: '/team/dashboard',
     signUpFallbackRedirectUrl: '/team/dashboard',
-    allowedRedirectOrigins: [
-      'https://editor.flowstarter.dev',
-      'https://editor.flowstarter.app',
-      'http://localhost:5173',
-    ],
+    allowedRedirectOrigins: getAllowedRedirectOrigins(
+      typeof window !== 'undefined' ? window.location.hostname : undefined,
+    ),
   } as unknown as ComponentProps<typeof ClerkProvider>;
 
   return (
-    <ClerkProvider {...clerkProviderProps} ui={ui}>
+    <ClerkProvider {...clerkProviderProps} ui={ui as Parameters<typeof ClerkProvider>[0]['ui']}>
       {children}
     </ClerkProvider>
   );

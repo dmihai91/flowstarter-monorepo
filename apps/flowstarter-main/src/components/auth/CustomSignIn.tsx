@@ -4,9 +4,10 @@ import { AuthSubmitButton } from './AuthSubmitButton';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslations } from '@/lib/i18n';
+import { isTrustedHost, isTeamEmail } from '@flowstarter/platform-config';
 import { useSignIn } from '@clerk/nextjs/legacy';
 import { useFormik } from 'formik';
-import { Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import * as Yup from 'yup';
@@ -48,9 +49,6 @@ export function CustomSignIn() {
     window.location.href = url;
   };
 
-  // Team email domains - redirect to team dashboard
-  const TEAM_EMAIL_DOMAINS = ['flowstarter.app'];
-
   // Get redirect URL based on user email or query params
   const getRedirectUrl = (userEmail?: string): string => {
     // Check for explicit redirect_url param first - if it's an external URL
@@ -59,11 +57,7 @@ export function CustomSignIn() {
     if (redirectUrl) {
       try {
         const url = new URL(redirectUrl);
-        if (
-          url.hostname.endsWith('flowstarter.dev') ||
-          url.hostname.endsWith('flowstarter.app') ||
-          url.hostname === 'localhost'
-        ) {
+        if (isTrustedHost(url.hostname)) {
           return redirectUrl;
         }
       } catch {
@@ -72,11 +66,8 @@ export function CustomSignIn() {
     }
 
     // No external redirect - route team members to team dashboard
-    if (userEmail) {
-      const domain = userEmail.split('@')[1]?.toLowerCase();
-      if (domain && TEAM_EMAIL_DOMAINS.includes(domain)) {
-        return '/team/dashboard';
-      }
+    if (userEmail && isTeamEmail(userEmail)) {
+      return '/team/dashboard';
     }
 
     return '/dashboard';
@@ -262,8 +253,9 @@ export function CustomSignIn() {
                 setError('');
                 setResetEmail('');
               }}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors text-center hover:underline"
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors text-center hover:underline"
             >
+              <ArrowLeft className="w-3.5 h-3.5" />
               {t('auth.forgotPassword.backToSignIn')}
             </button>
           </div>
@@ -355,8 +347,9 @@ export function CustomSignIn() {
                   setNewPassword('');
                   setConfirmPassword('');
                 }}
-                className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors hover:underline"
+                className="inline-flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors hover:underline"
               >
+                <ArrowLeft className="w-3.5 h-3.5" />
                 {t('auth.forgotPassword.backToSignIn')}
               </button>
             </div>

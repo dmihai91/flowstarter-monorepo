@@ -13,6 +13,11 @@ import { ConvexProvider, ConvexReactClient } from 'convex/react';
 import { QueryProvider } from './components/QueryProvider';
 import { ClerkProvider } from '@clerk/remix';
 import { rootAuthLoader } from '@clerk/remix/ssr.server';
+import {
+  getMainUrl,
+  getLoginUrl,
+  getSharedCookieDomain as getSharedCookieDomainFromConfig,
+} from '@flowstarter/platform-config';
 
 // Core styles - loaded immediately (critical for initial render)
 import globalStyles from './styles/index.scss?url';
@@ -89,9 +94,11 @@ function getConvexClient(): ConvexReactClient | null {
  * can initialize the project before the editor route hits the AuthGuard bypass.
  */
 export const loader = (args: LoaderFunctionArgs) => {
+  const loginUrl = getLoginUrl();
+
   return rootAuthLoader(args, {
-    signInUrl: 'https://flowstarter.dev/login',
-    signUpUrl: 'https://flowstarter.dev/login',
+    signInUrl: loginUrl,
+    signUpUrl: loginUrl,
   });
 };
 
@@ -325,20 +332,10 @@ import { logStore } from './lib/stores/logs';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getMainPlatformUrl(): string {
   if (typeof window === 'undefined') {
-    return 'https://flowstarter.dev';
+    return getMainUrl();
   }
 
-  const hostname = window.location.hostname;
-
-  if (hostname.includes('flowstarter.app')) {
-    return 'https://flowstarter.app';
-  }
-
-  if (hostname.includes('flowstarter.dev')) {
-    return 'https://flowstarter.dev';
-  }
-
-  return 'https://flowstarter.dev';
+  return getMainUrl(window.location.hostname);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -347,17 +344,7 @@ function getSharedCookieDomain(): string | undefined {
     return undefined;
   }
 
-  const hostname = window.location.hostname;
-
-  if (hostname.includes('flowstarter.app')) {
-    return '.flowstarter.app';
-  }
-
-  if (hostname.includes('flowstarter.dev')) {
-    return '.flowstarter.dev';
-  }
-
-  return undefined;
+  return getSharedCookieDomainFromConfig(window.location.hostname);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

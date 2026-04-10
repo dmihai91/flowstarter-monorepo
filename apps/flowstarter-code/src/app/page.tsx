@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth';
+import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { AppShell } from '@/components/AppShell';
 import { env } from '@/env';
@@ -6,8 +6,9 @@ import { env } from '@/env';
 export default async function Home() {
   const session = await auth();
 
-  // Not authenticated → send to login
-  if (!session?.user) redirect('/login');
+  if (!session?.userId) {
+    redirect('/login');
+  }
 
-  return <AppShell user={session.user} t3ChatUrl={env.T3_CHAT_URL} />;
+  return <AppShell flowstarterCodeUrl={env.FLOWSTARTER_CODE_URL ?? '/t3'} />;
 }

@@ -1,7 +1,5 @@
 import { isTeamEmail } from '@flowstarter/platform-config';
 
-export { isTeamEmail };
-
 const TEAM_ROLES = new Set(['admin', 'team', 'developer', 'support']);
 
 function readStringRecord(value: unknown): Record<string, unknown> | null {
@@ -21,7 +19,11 @@ function getNestedStringValue(
   return getStringValue(readStringRecord(record?.[parentKey]), childKey);
 }
 
-export function hasServerTeamAccess(sessionClaims: unknown): boolean {
+export function isInternalTeamEmail(email: string | null | undefined): boolean {
+  return isTeamEmail(email);
+}
+
+export function hasInternalTeamAccess(sessionClaims: unknown): boolean {
   const claims = readStringRecord(sessionClaims);
   const publicMetadata = readStringRecord(claims?.public_metadata);
   const privateMetadata = readStringRecord(claims?.private_metadata);

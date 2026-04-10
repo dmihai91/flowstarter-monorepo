@@ -1,4 +1,6 @@
+import { apiError } from '@/lib/api-errors';
 import { auth, clerkClient } from '@clerk/nextjs/server';
+import { isSafeRedirectUrl } from '@flowstarter/platform-config';
 import { NextResponse } from 'next/server';
 
 /**
@@ -11,10 +13,26 @@ import { NextResponse } from 'next/server';
 export async function POST(req: Request) {
   const { userId } = await auth();
   if (!userId) {
-    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    return apiError('Not authenticated', 'UNAUTHORIZED');
   }
 
-  const { redirectUrl } = await req.json();
+  let body: { redirectUrl?: string };
+  try {
+    body = await req.json();
+  } catch {
+    return apiError('Invalid JSON', 'BAD_REQUEST');
+  }
+
+  const { redirectUrl } = body;
+
+  if (!redirectUrl || typeof redirectUrl !== 'string') {
+    return apiError('redirectUrl is required', 'BAD_REQUEST');
+  }
+
+  // Validate the redirect URL against the platform's trusted domain allowlist
+  if (!isSafeRedirectUrl(redirectUrl)) {
+    return apiError('Untrusted redirect URL', 'FORBIDDEN');
+  }
 
   try {
     const clerk = await clerkClient();
@@ -30,9 +48,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ url: url.toString() });
   } catch (err) {
     console.error('[transfer-token] Failed to create sign-in token:', err);
-    return NextResponse.json(
-      { error: 'Failed to create token' },
-      { status: 500 }
-    );
+    return apiError('Failed to create token', 'INTERNAL_ERROR');
   }
 }

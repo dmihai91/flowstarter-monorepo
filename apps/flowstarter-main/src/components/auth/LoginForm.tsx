@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslations } from '@/lib/i18n';
 import { useSignIn } from '@clerk/nextjs/legacy';
-import { Eye, EyeOff, ShieldCheck } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
@@ -14,6 +14,9 @@ import {
   useSocialAuth,
 } from './hooks';
 import { SocialAuth } from './SocialAuth';
+import { TOTPStep } from './TOTPStep';
+import { ForgotPasswordSend, ForgotPasswordReset } from './ForgotPasswordFlow';
+import { isTrustedHost, isTeamEmail } from '@flowstarter/platform-config';
 
 type FlowStep = 'credentials' | 'totp' | 'forgot' | 'forgot-code';
 
@@ -21,8 +24,6 @@ interface LoginFormProps {
   /** Controls social auth, 2FA, forgot password, and redirect behaviour. */
   variant: 'client' | 'team';
 }
-
-const TEAM_EMAIL_DOMAINS = ['flowstarter.app'];
 
 function clerkErrorMessage(error: unknown, fallback: string) {
   if (error && typeof error === 'object' && 'errors' in error) {
@@ -62,11 +63,7 @@ export function LoginForm({ variant }: LoginFormProps) {
     if (redirectUrl) {
       try {
         const url = new URL(redirectUrl);
-        if (
-          url.hostname.endsWith('flowstarter.dev') ||
-          url.hostname.endsWith('flowstarter.app') ||
-          url.hostname === 'localhost'
-        ) {
+        if (isTrustedHost(url.hostname)) {
           const isCrossDomain =
             typeof window !== 'undefined' &&
             url.hostname !== window.location.hostname;
@@ -85,10 +82,8 @@ export function LoginForm({ variant }: LoginFormProps) {
     }
 
     // Client: route team-domain emails to team dashboard
-    if (userEmail) {
-      const domain = userEmail.split('@')[1]?.toLowerCase();
-      if (domain && TEAM_EMAIL_DOMAINS.includes(domain))
-        return { url: '/team/dashboard', external: false };
+    if (userEmail && isTeamEmail(userEmail)) {
+      return { url: '/team/dashboard', external: false };
     }
     return { url: '/dashboard', external: false };
   };
@@ -98,9 +93,24 @@ export function LoginForm({ variant }: LoginFormProps) {
 
     const target = getRedirectTarget(userEmail);
     if (target.external) {
-      // Navigate first to avoid brief flash on cross-domain redirect
-      window.location.href = target.url;
+      // Activate session first so transfer-token API can read it
       await setActive({ session: sessionId });
+      // Fetch a short-lived Clerk sign-in token for the cross-domain app
+      try {
+        const res = await fetch('/api/auth/transfer-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ redirectUrl: target.url }),
+        });
+        if (res.ok) {
+          const { url } = await res.json();
+          window.location.href = url;
+          return;
+        }
+      } catch {
+        // fall through to plain redirect
+      }
+      window.location.href = target.url;
     } else {
       await setActive({ session: sessionId });
       window.location.href = target.url;
@@ -296,204 +306,50 @@ export function LoginForm({ variant }: LoginFormProps) {
   /* ---- TOTP step (team) ---- */
   if (isTeam && step === 'totp') {
     return (
-      <div className="space-y-5">
-        <div className="text-center mb-6">
-          <div className="w-12 h-12 rounded-full bg-[var(--purple)]/10 flex items-center justify-center mx-auto mb-4">
-            <ShieldCheck className="w-6 h-6 text-[var(--purple)]" />
-          </div>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            {t('team.login.twoFactorTitle')}
-          </h2>
-          <p className="text-sm text-gray-500 dark:text-white/50 mt-1">
-            {t('team.login.twoFactorSubtitle')}
-          </p>
-        </div>
-
-        <form onSubmit={handleTotpSubmit} className="space-y-5">
-          <div className="space-y-2">
-            <Label htmlFor="code" className="text-sm text-muted-foreground">
-              {t('team.login.codeLabel')}
-            </Label>
-            <Input
-              id="code"
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              maxLength={6}
-              placeholder="000000"
-              value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-              className="h-14 rounded-lg bg-white/80 border border-white/40 dark:border-white/10 text-foreground text-center text-2xl tracking-[0.5em] font-mono placeholder:text-muted-foreground/30 dark:bg-[var(--surface-2)]/80 dark:text-white backdrop-blur-sm"
-              required
-              autoFocus
-            />
-          </div>
-          {error && (
-            <div className="text-red-500 text-sm text-center">{error}</div>
-          )}
-          <AuthSubmitButton
-            type="submit"
-            disabled={isLoading || code.length !== 6}
-          >
-            {isLoading ? t('team.login.verifying') : t('team.login.verify')}
-          </AuthSubmitButton>
-          <button
-            type="button"
-            onClick={goBack}
-            className="w-full text-sm text-gray-500 dark:text-white/50 hover:text-gray-700 dark:hover:text-white/70 transition-colors"
-          >
-            &larr; {t('team.login.back')}
-          </button>
-        </form>
-      </div>
+      <TOTPStep
+        code={code}
+        onCodeChange={setCode}
+        error={error}
+        isLoading={isLoading}
+        onSubmit={handleTotpSubmit}
+        onBack={goBack}
+        t={t}
+      />
     );
   }
 
   /* ---- Forgot-password: send code (client) ---- */
   if (isClient && step === 'forgot') {
     return (
-      <div className="space-y-6">
-        <div className="space-y-3">
-          <h2 className="text-2xl font-semibold">
-            {t('auth.forgotPassword.title')}
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            {t('auth.forgotPassword.description')}
-          </p>
-        </div>
-        <div className="flex flex-col space-y-5">
-          <div className="space-y-2">
-            <Label
-              htmlFor="resetEmail"
-              className="text-sm text-muted-foreground"
-            >
-              {t('auth.email')}
-            </Label>
-            <Input
-              id="resetEmail"
-              type="email"
-              placeholder={t('auth.email.placeholder')}
-              value={resetEmail}
-              onChange={(e) => setResetEmail(e.target.value)}
-              className={inputCls}
-            />
-          </div>
-          {error && <div className="text-red-400 text-xs mt-1">{error}</div>}
-          <AuthSubmitButton
-            type="button"
-            onClick={handleForgotSend}
-            disabled={isResetLoading || !resetEmail}
-            className="mt-4"
-          >
-            {isResetLoading
-              ? t('auth.forgotPassword.sendingCode')
-              : t('auth.forgotPassword.sendCode')}
-          </AuthSubmitButton>
-          <button
-            type="button"
-            onClick={goBack}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors text-center hover:underline"
-          >
-            {t('auth.forgotPassword.backToSignIn')}
-          </button>
-        </div>
-      </div>
+      <ForgotPasswordSend
+        email={resetEmail}
+        onEmailChange={setResetEmail}
+        error={error}
+        isLoading={isResetLoading}
+        onSend={handleForgotSend}
+        onBack={goBack}
+        t={t}
+      />
     );
   }
 
   /* ---- Forgot-password: enter code + new password (client) ---- */
   if (isClient && step === 'forgot-code') {
     return (
-      <div className="space-y-6">
-        <div className="space-y-3">
-          <h2 className="text-2xl font-semibold">
-            {t('auth.forgotPassword.title')}
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            {t('auth.forgotPassword.description')}
-          </p>
-        </div>
-        <div className="flex flex-col space-y-5">
-          <div className="space-y-2">
-            <Label
-              htmlFor="resetCode"
-              className="text-sm text-muted-foreground"
-            >
-              {t('auth.forgotPassword.enterCode')}
-            </Label>
-            <Input
-              id="resetCode"
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              placeholder="123456"
-              value={resetCode}
-              onChange={(e) => setResetCode(e.target.value)}
-              className={inputCls}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label
-              htmlFor="newPassword"
-              className="text-sm text-muted-foreground"
-            >
-              {t('auth.forgotPassword.newPassword')}
-            </Label>
-            <Input
-              id="newPassword"
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className={inputCls}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label
-              htmlFor="confirmPassword"
-              className="text-sm text-muted-foreground"
-            >
-              {t('auth.forgotPassword.confirmPassword')}
-            </Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className={inputCls}
-            />
-          </div>
-          {error && <div className="text-red-400 text-xs mt-1">{error}</div>}
-          <AuthSubmitButton
-            type="button"
-            onClick={handleForgotReset}
-            disabled={
-              isResetLoading || !resetCode || !newPassword || !confirmPassword
-            }
-            className="mt-4"
-          >
-            {isResetLoading
-              ? t('auth.forgotPassword.resettingPassword')
-              : t('auth.forgotPassword.resetPassword')}
-          </AuthSubmitButton>
-          <div className="flex items-center justify-between pt-1">
-            <button
-              type="button"
-              onClick={handleForgotResend}
-              disabled={isResetLoading}
-              className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors hover:underline"
-            >
-              {t('auth.forgotPassword.resendCode')}
-            </button>
-            <button
-              type="button"
-              onClick={goBack}
-              className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors hover:underline"
-            >
-              {t('auth.forgotPassword.backToSignIn')}
-            </button>
-          </div>
-        </div>
-      </div>
+      <ForgotPasswordReset
+        code={resetCode}
+        onCodeChange={setResetCode}
+        newPassword={newPassword}
+        onNewPasswordChange={setNewPassword}
+        confirmPassword={confirmPassword}
+        onConfirmPasswordChange={setConfirmPassword}
+        error={error}
+        isLoading={isResetLoading}
+        onReset={handleForgotReset}
+        onResend={handleForgotResend}
+        onBack={goBack}
+        t={t}
+      />
     );
   }
 

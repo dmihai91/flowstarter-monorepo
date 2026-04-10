@@ -92,7 +92,8 @@ export default async function RootLayout({
                   }
                   // Migrate localStorage to cookie
                   if (!cookieTheme && theme !== 'system') {
-                    var domain = location.hostname.includes('flowstarter.dev') ? '; domain=.flowstarter.dev' : '';
+                    var parts = location.hostname.split('.');
+                    var domain = parts.length > 2 ? '; domain=.' + parts.slice(-2).join('.') : '';
                     document.cookie = 'flowstarter_theme=' + theme + '; path=/; max-age=31536000; SameSite=Lax' + domain;
                   }
                   var systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';

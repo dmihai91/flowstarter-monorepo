@@ -1,9 +1,11 @@
 /**
  * Shared Theme Utilities
- * 
+ *
  * Handles theme persistence across all Flowstarter apps using cookies.
  * Cookies are used instead of localStorage to enable cross-subdomain sharing.
  */
+
+import { getSharedCookieDomain } from '@flowstarter/platform-config';
 
 export type Theme = 'light' | 'dark' | 'system';
 
@@ -15,11 +17,7 @@ const COOKIE_MAX_AGE = 365 * 24 * 60 * 60; // 1 year in seconds
  */
 function getCookieDomain(): string {
   if (typeof window === 'undefined') return '';
-  const hostname = window.location.hostname;
-  
-  if (hostname.includes('flowstarter.app')) return '.flowstarter.app';
-  if (hostname.includes('flowstarter.dev')) return '.flowstarter.dev';
-  return ''; // localhost - no domain needed
+  return getSharedCookieDomain(window.location.hostname) ?? '';
 }
 
 /**

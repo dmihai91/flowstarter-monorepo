@@ -6,28 +6,10 @@
  */
 
 import { auth, currentUser } from '@clerk/nextjs/server';
+import { getAllowedRedirectOrigins, isTeamEmail } from '@flowstarter/platform-config';
 import { NextRequest, NextResponse } from 'next/server';
 
-// Allowed origins for CORS
-// These are the editor subdomains that can check the main platform's session
-const ALLOWED_ORIGINS = [
-  // Local development
-  'http://localhost:5173',
-  'http://localhost:5174',
-  'http://localhost:5175',
-  'http://127.0.0.1:5173',
-  'http://127.0.0.1:5174',
-  'http://127.0.0.1:5175',
-  // Development/Staging (flowstarter.dev)
-  'https://editor.flowstarter.dev',
-  'https://flowstarter.dev',
-  // Production (flowstarter.app)
-  'https://editor.flowstarter.app',
-  'https://flowstarter.app',
-];
-
-// Team email domains
-const TEAM_EMAIL_DOMAINS = ['flowstarter.app'];
+const ALLOWED_ORIGINS = getAllowedRedirectOrigins();
 
 function getCorsHeaders(request: NextRequest) {
   const origin = request.headers.get('origin') || '';
@@ -74,8 +56,7 @@ export async function GET(request: NextRequest) {
     const name = user.fullName || user.firstName || 'User';
 
     // Check if team member
-    const domain = email?.split('@')[1]?.toLowerCase();
-    const isTeam = domain && TEAM_EMAIL_DOMAINS.includes(domain);
+    const isTeam = email ? isTeamEmail(email) : false;
 
     return NextResponse.json(
       {

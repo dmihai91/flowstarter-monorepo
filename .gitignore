@@ -29,6 +29,7 @@ bun.lock
 /.sass-cache
 /connect.lock
 /coverage
+/\.local
 /libpeerconnection.log
 npm-debug.log
 yarn-error.log
@@ -59,3 +60,17 @@ mprocs.log
 m4-sync.sh
 m4-pull.sh
 m4-dev.sh
+
+# Test artifacts & screenshots
+e2e/screenshots/
+playwright-report/
+test-results/
+
+# Dev screenshots / artifacts
+docs/screenshots/
+
+# Next.js build output
+.next/
+
+# Coverage reports (nested)
+**/coverage/

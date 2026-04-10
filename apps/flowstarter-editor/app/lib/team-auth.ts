@@ -75,8 +75,7 @@ const CAPABILITIES: Record<UserMode, ModeCapabilities> = {
   },
 };
 
-// Team email domains
-const TEAM_EMAIL_DOMAINS = ['flowstarter.app', 'flowstarter.dev', 'flowstarter.com'];
+import { isTeamEmail as isTeamEmailCheck } from '@flowstarter/platform-config';
 
 /**
  * Safe localStorage getter (SSR-safe)
@@ -127,8 +126,7 @@ function safeRemoveItem(key: string): void {
  * Check if an email belongs to a team member
  */
 export function isTeamEmail(email: string): boolean {
-  const domain = email.split('@')[1]?.toLowerCase();
-  return domain ? TEAM_EMAIL_DOMAINS.includes(domain) : false;
+  return isTeamEmailCheck(email);
 }
 
 /**

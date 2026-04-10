@@ -6,17 +6,11 @@ export const env = createEnv({
    * ─── Server-side Environment Variables ───────────────────────────────
    */
   server: {
-    // Authentik SSO
-    AUTHENTIK_ISSUER: z.string().url(),
-    AUTHENTIK_CLIENT_ID: z.string().min(1),
-    AUTHENTIK_CLIENT_SECRET: z.string().min(1),
+    // Clerk
+    CLERK_SECRET_KEY: z.string().min(1),
 
-    // NextAuth
-    NEXTAUTH_SECRET: z.string().min(1),
-    NEXTAUTH_URL: z.string().url().default("http://localhost:3100"),
-
-    // T3 Chat integration
-    T3_CHAT_URL: z.string().url().default("http://localhost:3000"),
+    // Self-hosted Flowstarter Code integration
+    FLOWSTARTER_CODE_URL: z.string().min(1).default("/t3"),
 
     // Runtime
     NODE_ENV: z
@@ -26,20 +20,19 @@ export const env = createEnv({
 
   /*
    * ─── Client-side Environment Variables ───────────────────────────────
-   * No client-side env vars for this app currently.
    */
-  client: {},
+  client: {
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
+  },
 
   /*
    * ─── Runtime values ──────────────────────────────────────────────────
    */
   runtimeEnv: {
-    AUTHENTIK_ISSUER: process.env.AUTHENTIK_ISSUER,
-    AUTHENTIK_CLIENT_ID: process.env.AUTHENTIK_CLIENT_ID,
-    AUTHENTIK_CLIENT_SECRET: process.env.AUTHENTIK_CLIENT_SECRET,
-    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
-    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-    T3_CHAT_URL: process.env.T3_CHAT_URL,
+    CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+    FLOWSTARTER_CODE_URL: process.env.FLOWSTARTER_CODE_URL,
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
+      process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     NODE_ENV: process.env.NODE_ENV,
   },
 

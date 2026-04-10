@@ -1,6 +1,7 @@
 'use client';
 
 import { FlowBackground, Logo } from '@flowstarter/flow-design-system';
+import { useTranslations } from '@/lib/i18n';
 import type { ReactNode } from 'react';
 
 interface AuthLayoutProps {
@@ -10,6 +11,8 @@ interface AuthLayoutProps {
 }
 
 export default function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
+  const t = useTranslations();
+
   return (
     <div className="min-h-screen w-full relative flex flex-col">
       {/* Animated gradient background */}
@@ -39,7 +42,7 @@ export default function AuthLayout({ title, subtitle, children }: AuthLayoutProp
                 border: '1px solid rgba(139,92,246,0.20)',
               }}
             >
-              Code
+              {t('code.app.badge')}
             </span>
           </div>
           <div
@@ -49,7 +52,7 @@ export default function AuthLayout({ title, subtitle, children }: AuthLayoutProp
             <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
               <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
             </svg>
-            Secure sign-in
+            {t('code.auth.secureSignIn')}
           </div>
         </div>
       </header>
@@ -88,7 +91,7 @@ export default function AuthLayout({ title, subtitle, children }: AuthLayoutProp
         style={{ borderTop: '1px solid var(--ui-border-base)' }}
       >
         <p className="text-center text-xs" style={{ color: 'var(--ui-text-tertiary)', opacity: 0.5 }}>
-          &copy; {new Date().getFullYear()} Flowstarter. All rights reserved.
+          {t('code.auth.copyright', { year: new Date().getFullYear() })}
         </p>
       </footer>
     </div>

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { CodeClerkProvider } from "@/components/auth/CodeClerkProvider";
+import { I18nProvider } from "@/lib/i18n";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -34,7 +36,9 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-[var(--ui-bg-base)] text-[var(--ui-text-primary)] antialiased transition-colors duration-200">
-        {children}
+        <CodeClerkProvider>
+          <I18nProvider>{children}</I18nProvider>
+        </CodeClerkProvider>
       </body>
     </html>
   );

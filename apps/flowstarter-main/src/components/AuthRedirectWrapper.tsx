@@ -5,47 +5,10 @@ import { useUser } from '@clerk/nextjs';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { LoadingScreen } from '@flowstarter/flow-design-system';
+import { isSafeRedirectUrl } from '@flowstarter/platform-config';
 
 interface AuthRedirectWrapperProps {
   children: React.ReactNode;
-}
-
-/**
- * Check if a redirect URL is safe (same origin or trusted subdomain)
- */
-function isSafeRedirectUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url);
-    const hostname = parsed.hostname;
-
-    // Allow same-origin
-    if (
-      typeof window !== 'undefined' &&
-      hostname === window.location.hostname
-    ) {
-      return true;
-    }
-
-    // Allow trusted Flowstarter subdomains
-    if (
-      hostname.endsWith('.flowstarter.dev') ||
-      hostname.endsWith('.flowstarter.app')
-    ) {
-      return true;
-    }
-    if (hostname === 'flowstarter.dev' || hostname === 'flowstarter.app') {
-      return true;
-    }
-
-    // Allow localhost for development
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return true;
-    }
-
-    return false;
-  } catch {
-    return false;
-  }
 }
 
 export function AuthRedirectWrapper({ children }: AuthRedirectWrapperProps) {

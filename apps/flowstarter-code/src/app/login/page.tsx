@@ -1,25 +1,12 @@
-import AuthLayout from '@/components/auth/AuthLayout';
-import { AuthFormCard } from '@/components/auth/AuthFormCard';
-import { LoginForm } from '@/components/LoginForm';
+import { LoginPageContent } from './LoginPageContent';
+import { auth } from '@clerk/nextjs/server';
+import { redirect } from 'next/navigation';
 
-export default function LoginPage() {
-  return (
-    <AuthLayout
-      title="Welcome back"
-      subtitle="Sign in to access the Flowstarter coding agent"
-    >
-      <AuthFormCard
-        footer={
-          <p className="text-xs text-white/30">
-            Don&apos;t have an account?{' '}
-            <span className="font-medium text-[var(--violet)] hover:text-[var(--accent)] cursor-pointer transition-colors">
-              Contact your admin
-            </span>
-          </p>
-        }
-      >
-        <LoginForm />
-      </AuthFormCard>
-    </AuthLayout>
-  );
+export default async function LoginPage() {
+  const session = await auth();
+  if (session.userId) {
+    redirect('/');
+  }
+
+  return <LoginPageContent />;
 }

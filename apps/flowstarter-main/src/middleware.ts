@@ -8,6 +8,10 @@ import {
   clerkMiddleware,
   createRouteMatcher,
 } from '@clerk/nextjs/server';
+import {
+  getAllowedRedirectOrigins,
+  isSafeRedirectUrl,
+} from '@flowstarter/platform-config';
 import { NextResponse } from 'next/server';
 import { applySecurityHeaders } from './utils/security-headers';
 
@@ -171,8 +175,7 @@ export default clerkMiddleware(async (auth, req) => {
         process.env.NEXT_PUBLIC_VERCEL_URL
           ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
           : undefined,
-        'https://editor.flowstarter.dev',
-        'https://editor.flowstarter.app',
+        ...getAllowedRedirectOrigins(req.headers.get('host') ?? undefined),
       ].filter(Boolean) as string[];
       const isAllowedOrigin = !!origin && allowedOrigins.includes(origin);
       const isSameOrigin =
@@ -301,7 +304,7 @@ export default clerkMiddleware(async (auth, req) => {
         res.cookies.set('fs_country', inferred, {
           path: '/',
           sameSite: 'lax',
-          httpOnly: false,
+          httpOnly: true,
           secure: true,
           maxAge: 60 * 60 * 24 * 30, // 30 days
         });
@@ -347,6 +350,34 @@ export default clerkMiddleware(async (auth, req) => {
       try {
         const { userId, sessionClaims } = await auth();
         if (userId) {
+          // If there's a safe cross-domain redirect_url, redirect through
+          // the transfer-token API route (runs in Node, not Edge).
+          const redirectUrl = req.nextUrl.searchParams.get('redirect_url');
+          if (redirectUrl) {
+            const isSafe = isSafeRedirectUrl(
+              redirectUrl,
+              req.headers.get('host') ?? undefined,
+            );
+            if (isSafe) {
+              try {
+                const parsed = new URL(redirectUrl);
+                const isCrossDomain =
+                  parsed.hostname !== (req.headers.get('host')?.split(':')[0] ?? '');
+                if (isCrossDomain) {
+                  // Redirect to the transfer-token page route which creates
+                  // a Clerk sign-in token and redirects with __clerk_ticket.
+                  const transferUrl = req.nextUrl.clone();
+                  transferUrl.pathname = '/api/auth/transfer-redirect';
+                  transferUrl.searchParams.set('redirect_url', redirectUrl);
+                  return NextResponse.redirect(transferUrl);
+                }
+              } catch {
+                // invalid URL — fall through
+              }
+              return NextResponse.redirect(redirectUrl);
+            }
+          }
+
           const url = req.nextUrl.clone();
           // /team/login always goes to team dashboard — avoids stale session claims
           // causing team members to land on client dashboard right after login.

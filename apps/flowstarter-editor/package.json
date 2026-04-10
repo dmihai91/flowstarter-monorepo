@@ -74,6 +74,7 @@
     "@daytonaio/sdk": "^0.150.0",
     "@flowstarter/editor-engine": "workspace:*",
     "@flowstarter/flow-design-system": "workspace:*",
+    "@flowstarter/platform-config": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.25.2",
     "@monaco-editor/react": "^4.6.0",
     "@nanostores/react": "^0.7.3",

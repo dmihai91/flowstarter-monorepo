@@ -1,19 +1,13 @@
 'use client';
 
-import { Logo } from '@flowstarter/flow-design-system';
-import { signOut } from 'next-auth/react';
+import { Logo, ScrollAwareHeader } from '@flowstarter/flow-design-system';
+import { useClerk, useUser } from '@clerk/nextjs';
+import { useTranslations } from '@/lib/i18n';
 import { LogOut, ChevronDown } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
-interface AppShellUser {
-  name?: string | null;
-  email?: string | null;
-  image?: string | null;
-}
-
 interface AppShellProps {
-  user: AppShellUser;
-  t3ChatUrl: string;
+  flowstarterCodeUrl: string;
 }
 
 function getInitials(name?: string | null, email?: string | null): string {
@@ -26,13 +20,17 @@ function getInitials(name?: string | null, email?: string | null): string {
   return email ? email[0].toUpperCase() : '?';
 }
 
-export function AppShell({ user, t3ChatUrl }: AppShellProps) {
-  const initials  = getInitials(user.name, user.email);
-  const displayName = user.name ?? user.email?.split('@')[0] ?? 'User';
+export function AppShell({ flowstarterCodeUrl }: AppShellProps) {
+  const { signOut } = useClerk();
+  const { user, isLoaded } = useUser();
+  const t = useTranslations();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
+  const displayName = user?.fullName ?? user?.emailAddresses?.[0]?.emailAddress?.split('@')[0] ?? t('code.user.defaultName');
+  const email = user?.emailAddresses?.[0]?.emailAddress ?? null;
+  const initials = getInitials(user?.fullName, email);
+
   useEffect(() => {
     function onOutside(e: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -44,94 +42,124 @@ export function AppShell({ user, t3ChatUrl }: AppShellProps) {
   }, [menuOpen]);
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-[#0a0810]">
-      {/* ── Header ───────────────────────────────────────────────── */}
-      <header className="shrink-0 sticky top-0 z-50 flex items-center justify-between
-                         px-4 sm:px-5 h-12
-                         border-b border-white/[0.06]
-                         bg-[#07070a]/90 backdrop-blur-xl">
-        {/* Left: brand */}
-        <div className="flex items-center gap-2">
-          <Logo size="sm" />
-          <span className="px-2 py-0.5 text-[0.625rem] font-semibold tracking-wide
-                           bg-[var(--violet)]/10 text-[var(--violet)] rounded-full
-                           border border-[var(--violet)]/20 select-none">
-            Code
-          </span>
-        </div>
-
-        {/* Right: user menu */}
-        <div className="relative" ref={menuRef}>
-          <button
-            onClick={() => setMenuOpen(v => !v)}
-            className="flex items-center gap-2.5 pl-1.5 pr-2 py-1
-                       rounded-lg hover:bg-white/[0.05]
-                       transition-colors duration-150 group"
-          >
-            {/* Avatar */}
-            <div className="w-7 h-7 rounded-full flex items-center justify-center
-                            text-[0.625rem] font-bold text-white select-none shrink-0
-                            bg-gradient-to-br from-[#4D5DD9] to-[#8B5CF6]
-                            ring-1 ring-white/10">
-              {initials}
-            </div>
-            {/* Name */}
-            <span className="hidden sm:block text-sm font-medium text-white/70
-                             group-hover:text-white/90 transition-colors max-w-[140px] truncate">
-              {displayName}
+    <div className="flex flex-col min-h-screen w-full bg-[#101014]">
+      <ScrollAwareHeader
+        className="z-[100] h-14"
+        transparentClass="bg-[#101014] border-b border-white/[0.04]"
+        scrolledClass="bg-[#101014]/80 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/[0.06]"
+      >
+        <div className="w-full h-full px-4 lg:px-6 flex items-center justify-between">
+          {/* Left: brand */}
+          <div className="flex items-center gap-3">
+            <span className="sm:hidden"><Logo size="sm" /></span>
+            <span className="hidden sm:block"><Logo size="md" /></span>
+            <span className="px-2 py-0.5 text-[0.625rem] font-medium bg-[var(--purple)]/10 text-[var(--purple)] rounded-full hidden sm:block">
+              {t('code.app.badge')}
             </span>
-            <ChevronDown className={`hidden sm:block w-3.5 h-3.5 text-white/30
-                                     transition-transform duration-200
-                                     ${menuOpen ? 'rotate-180' : ''}`} />
-          </button>
+          </div>
 
-          {/* Dropdown */}
-          {menuOpen && (
-            <div className="absolute right-0 top-full mt-2 w-56
-                            rounded-xl border border-white/[0.08]
-                            bg-[#111118]/95 backdrop-blur-xl
-                            shadow-[0_8px_32px_rgba(0,0,0,0.4)]
-                            overflow-hidden z-50
-                            animate-in fade-in slide-in-from-top-1 duration-150">
-              {/* User info */}
-              <div className="px-4 py-3 border-b border-white/[0.06]">
-                <p className="text-sm font-semibold text-white truncate">
-                  {user.name ?? displayName}
-                </p>
-                {user.email && (
-                  <p className="text-xs text-white/40 truncate mt-0.5">
-                    {user.email}
-                  </p>
+          {/* Right: user menu */}
+          <div className="flex items-center gap-2">
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setMenuOpen(v => !v)}
+                className="flex items-center gap-2.5 pl-1 pr-2 py-1
+                           rounded-lg hover:bg-white/[0.05]
+                           transition-colors duration-150 group"
+              >
+                {!isLoaded ? (
+                  <div className="w-8 h-8 rounded-full bg-white/10 animate-pulse" />
+                ) : user?.imageUrl ? (
+                  <img
+                    src={user.imageUrl}
+                    alt={displayName}
+                    className="w-8 h-8 rounded-full border-2 border-white/20 object-cover"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center
+                                  text-xs font-bold text-white select-none shrink-0
+                                  bg-gradient-to-br from-[var(--purple)] to-blue-500
+                                  border-2 border-white/20">
+                    {initials}
+                  </div>
                 )}
-              </div>
+                <span className="hidden sm:block text-sm font-medium text-white/70
+                                 group-hover:text-white/90 transition-colors max-w-[140px] truncate">
+                  {displayName}
+                </span>
+                <ChevronDown className={`hidden sm:block w-3.5 h-3.5 text-white/30
+                                         transition-transform duration-200
+                                         ${menuOpen ? 'rotate-180' : ''}`} />
+              </button>
 
-              {/* Actions */}
-              <div className="p-1.5">
-                <button
-                  onClick={() => signOut({ callbackUrl: '/login' })}
-                  className="w-full flex items-center gap-2.5 px-3 py-2
-                             text-sm text-white/60 hover:text-white
-                             hover:bg-white/[0.05] rounded-lg
-                             transition-colors duration-150"
-                >
-                  <LogOut className="w-4 h-4 shrink-0" />
-                  Sign out
-                </button>
-              </div>
+              {menuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-60
+                                rounded-xl border border-white/[0.08]
+                                bg-[#1a1a22]/95 backdrop-blur-xl
+                                shadow-[0_8px_32px_rgba(0,0,0,0.4)]
+                                overflow-hidden z-50
+                                animate-in fade-in slide-in-from-top-1 duration-150">
+                  {/* User info */}
+                  <div className="px-4 py-3 border-b border-white/[0.06]">
+                    <div className="flex items-center gap-3">
+                      {user?.imageUrl ? (
+                        <img
+                          src={user.imageUrl}
+                          alt={displayName}
+                          className="w-10 h-10 rounded-full border-2 border-white/20 object-cover shrink-0"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full border-2 border-white/20 bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center text-white text-sm font-semibold shrink-0">
+                          {initials}
+                        </div>
+                      )}
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-white truncate">
+                          {user?.fullName ?? displayName}
+                        </p>
+                        {email && (
+                          <p className="text-xs text-white/40 truncate">
+                            {email}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="p-1.5">
+                    <button
+                      onClick={() =>
+                        signOut({
+                          redirectUrl: `${window.location.origin}`,
+                        })
+                      }
+                      className="w-full flex items-center gap-2.5 px-3 py-2
+                                 text-sm text-red-400/80 hover:text-red-400
+                                 hover:bg-white/[0.05] rounded-lg
+                                 transition-colors duration-150"
+                    >
+                      <LogOut className="w-4 h-4 shrink-0" />
+                      {t('code.user.signOut')}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
-      </header>
+      </ScrollAwareHeader>
 
-      {/* ── T3 Chat iframe ────────────────────────────────────────── */}
+      {/* Spacer for fixed header */}
+      <div className="h-14 shrink-0" />
+
+      {/* T3 Code */}
       <main className="flex-1 relative">
         <iframe
-          src={t3ChatUrl}
-          title="Flowstarter Code — T3 Chat"
+          src={flowstarterCodeUrl}
+          title={t('code.app.iframeTitle')}
           className="absolute inset-0 w-full h-full border-0"
           allow="clipboard-read; clipboard-write; microphone; camera; fullscreen"
-          sandbox="allow-same-origin allow-scripts allow-forms allow-popups
-                   allow-popups-to-escape-sandbox allow-modals allow-downloads"
         />
       </main>
     </div>

@@ -1,0 +1,26 @@
+{
+  "name": "@flowstarter/t3-code",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Forked T3 Code — web server + client (Electron stripped)",
+  "workspaces": [
+    "server",
+    "web",
+    "packages/*"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "turbo run dev --filter=t3 --filter=@t3tools/web",
+    "dev:server": "turbo run dev --filter=t3",
+    "dev:web": "turbo run dev --filter=@t3tools/web",
+    "build": "turbo run build --filter=t3 --filter=@t3tools/web",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -4,6 +4,7 @@
     "es2021": true
   },
   "extends": ["eslint:recommended", "plugin:prettier/recommended"],
+  "ignorePatterns": ["t3/**"],
   "rules": {
     "no-console": "off"
   }

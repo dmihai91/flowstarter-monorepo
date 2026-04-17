@@ -135,13 +135,11 @@ export const create = mutation({
     name: v.string(),
     phone: v.optional(v.string()),
     company: v.optional(v.string()),
-    discoveryNotes: v.optional(v.string()),
-    createdBy: v.optional(v.string()), // Clerk user ID
+    createdBy: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const now = Date.now();
 
-    // Check if client already exists
     const existing = await ctx.db
       .query('clients')
       .withIndex('by_email', (q) => q.eq('email', args.email.toLowerCase()))
@@ -156,8 +154,7 @@ export const create = mutation({
       name: args.name,
       phone: args.phone,
       company: args.company,
-      discoveryNotes: args.discoveryNotes,
-      status: 'invited', // Will change to 'onboarding' when they sign up via magic link
+      status: 'invited',
       createdBy: args.createdBy,
       createdAt: now,
       updatedAt: now,
@@ -177,7 +174,6 @@ export const update = mutation({
     name: v.optional(v.string()),
     phone: v.optional(v.string()),
     company: v.optional(v.string()),
-    discoveryNotes: v.optional(v.string()),
     status: v.optional(
       v.union(v.literal('invited'), v.literal('onboarding'), v.literal('active'), v.literal('churned')),
     ),

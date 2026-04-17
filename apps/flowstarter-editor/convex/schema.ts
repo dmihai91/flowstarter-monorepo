@@ -2,154 +2,91 @@ import { defineSchema, defineTable } from 'convex/server';
 import { v } from 'convex/values';
 
 /**
- * Convex Schema for Flowstarter Editor
+ * Flowstarter Convex schema — T3-backed editor edition.
  *
- * Includes cost tracking for LLM operations
+ * Storage layout:
+ *   - Supabase (flowstarter-main)     : team auth, billing, Supabase `projects`
+ *                                       row (source of truth for project id).
+ *   - Convex (this schema)            : durable cross-editor state shared by
+ *                                       the team editor and the client editor
+ *                                       (project record, sandbox pointer,
+ *                                       thread + checkpoint registry, assets,
+ *                                       costs, magic-link access control).
+ *   - T3 SQLite (apps/t3-code/server) : per-session runtime state — WebSocket
+ *                                       sessions, Claude tool-call streams,
+ *                                       ephemeral projections. NOT mirrored
+ *                                       into Convex; T3 owns it.
+ *   - Daytona sandbox                 : actual project code + dev server.
+ *                                       Spun up per project via flowstarter-
+ *                                       main's /api/daytona/provision.
+ *
+ * Threads and checkpoints below are *registry rows* — just enough metadata
+ * for team/client dashboards to list them and link back into T3. The real
+ * content lives in T3's projection tables.
  */
 
-// Business details collected during onboarding
-const businessDetailsSchema = v.object({
-  businessName: v.string(),
-  description: v.string(),
-  targetAudience: v.optional(v.string()),
-  features: v.optional(v.array(v.string())),
-  goals: v.optional(v.array(v.string())),
+// ─── Shared object schemas ────────────────────────────────────────────────
+
+const paletteColorsSchema = v.object({
+  primary: v.string(),
+  secondary: v.string(),
+  accent: v.string(),
+  background: v.string(),
+  text: v.string(),
 });
 
-// Contact details for footer and contact page
-const contactDetailsSchema = v.object({
-  email: v.optional(v.string()),
-  phone: v.optional(v.string()),
-  address: v.optional(v.string()),
-
-  // Social links
-  website: v.optional(v.string()),
-  facebook: v.optional(v.string()),
-  instagram: v.optional(v.string()),
-  twitter: v.optional(v.string()),
-  linkedin: v.optional(v.string()),
-  youtube: v.optional(v.string()),
-  tiktok: v.optional(v.string()),
-});
-
-// Integration settings for booking systems
-const bookingIntegrationSchema = v.object({
-  enabled: v.boolean(),
-  provider: v.union(v.literal('calendly'), v.literal('calcom'), v.literal('custom'), v.literal('none')),
-  calendlyUrl: v.optional(v.string()),
-  calcomUrl: v.optional(v.string()),
-  title: v.optional(v.string()),
-  description: v.optional(v.string()),
-  phone: v.optional(v.string()),
-});
-
-// Integration settings for newsletter systems
-const newsletterIntegrationSchema = v.object({
-  enabled: v.boolean(),
-  provider: v.union(
-    v.literal('mailchimp'),
-    v.literal('convertkit'),
-    v.literal('buttondown'),
-    v.literal('custom'),
-    v.literal('none'),
-  ),
-  mailchimpUrl: v.optional(v.string()),
-  convertkitFormId: v.optional(v.string()),
-  buttondownUsername: v.optional(v.string()),
-  title: v.optional(v.string()),
-  description: v.optional(v.string()),
-});
-
-// All integrations combined
-const integrationsSchema = v.object({
-  booking: v.optional(bookingIntegrationSchema),
-  newsletter: v.optional(newsletterIntegrationSchema),
-});
-
-const brandProfileSchema = v.object({
-  brandTone: v.object({
-    primary: v.string(),
-    secondary: v.optional(v.array(v.string())),
-    notes: v.optional(v.string()),
-  }),
-  valueProposition: v.optional(v.string()),
-  primaryGoal: v.optional(v.string()),
-  desiredCustomerAction: v.optional(v.string()),
-  differentiators: v.optional(v.array(v.string())),
-  trustSignals: v.optional(v.array(v.string())),
-  contentStylePreference: v.optional(v.string()),
-  operatorNotes: v.optional(v.string()),
-});
-
-const selectedTemplateSchema = v.object({
-  id: v.string(),
-  name: v.optional(v.string()),
-});
-
-const selectedPaletteSchema = v.object({
+const paletteSchema = v.object({
   id: v.string(),
   name: v.string(),
-  colors: v.object({
-    primary: v.string(),
-    secondary: v.string(),
-    accent: v.string(),
-    background: v.string(),
-    text: v.string(),
-  }),
+  colors: paletteColorsSchema,
 });
 
-const selectedFontSchema = v.object({
+const fontFamilySchema = v.object({
+  family: v.string(),
+  weight: v.optional(v.number()),
+});
+
+const fontSchema = v.object({
   id: v.string(),
   name: v.string(),
-  heading: v.object({
-    family: v.string(),
-    weight: v.optional(v.number()),
-  }),
-  body: v.object({
-    family: v.string(),
-    weight: v.optional(v.number()),
-  }),
+  heading: fontFamilySchema,
+  body: fontFamilySchema,
 });
 
 export default defineSchema({
-  /*
-   * ═══════════════════════════════════════════════════════════════════════════
-   * CLIENTS - Client accounts linked to projects
-   * NOTE: Team auth is handled by Clerk in the main platform
-   * ═══════════════════════════════════════════════════════════════════════════
-   */
+  // ─── Clients ───────────────────────────────────────────────────────────
+  // Client accounts that own a published site. Team auth stays in Clerk /
+  // flowstarter-main; this table models the end-customer.
   clients: defineTable({
-    // Contact info (from team input)
     email: v.string(),
     name: v.string(),
     phone: v.optional(v.string()),
     company: v.optional(v.string()),
 
-    // Clerk integration - linked after client signs up via Google/Apple
-    clerkUserId: v.optional(v.string()), // Set when client creates Clerk account
-    signupMethod: v.optional(v.union(v.literal('google'), v.literal('apple'), v.literal('email'))),
-    signedUpAt: v.optional(v.number()), // When they completed signup
+    clerkUserId: v.optional(v.string()),
+    signupMethod: v.optional(
+      v.union(v.literal('google'), v.literal('apple'), v.literal('email')),
+    ),
+    signedUpAt: v.optional(v.number()),
 
-    // Status
     status: v.union(
-      v.literal('invited'), // Magic link sent, hasn't signed up yet
-      v.literal('onboarding'), // Signed up, reviewing site
-      v.literal('active'), // Launched, paying customer
-      v.literal('churned'), // No longer active
+      v.literal('invited'),
+      v.literal('onboarding'),
+      v.literal('active'),
+      v.literal('churned'),
     ),
 
-    // Notes from discovery call
-    discoveryNotes: v.optional(v.string()),
-
-    // Subscription info (for future billing)
     plan: v.optional(
-      v.union(v.literal('trial'), v.literal('starter'), v.literal('professional'), v.literal('enterprise')),
+      v.union(
+        v.literal('trial'),
+        v.literal('starter'),
+        v.literal('professional'),
+        v.literal('enterprise'),
+      ),
     ),
     planStartedAt: v.optional(v.number()),
 
-    // Created by team member (Clerk user ID)
     createdBy: v.optional(v.string()),
-
     createdAt: v.number(),
     updatedAt: v.number(),
   })
@@ -157,119 +94,93 @@ export default defineSchema({
     .index('by_status', ['status'])
     .index('by_clerkUserId', ['clerkUserId']),
 
-  /*
-   * ═══════════════════════════════════════════════════════════════════════════
-   * MAGIC LINKS - Secure access links for clients
-   * ═══════════════════════════════════════════════════════════════════════════
-   */
+  // ─── Magic links ───────────────────────────────────────────────────────
+  // Shareable access tokens for client editor mode.
   magicLinks: defineTable({
-    // Link details
-    token: v.string(), // Unique token (UUID or similar)
-
-    // What this link grants access to
+    token: v.string(),
     clientId: v.id('clients'),
     projectId: v.id('projects'),
 
-    // Access level
     accessLevel: v.union(
-      v.literal('view'), // Can only view the site
-      v.literal('customize'), // Can make customizations (default for clients)
-      v.literal('full'), // Full access (for team sharing)
+      v.literal('view'),
+      v.literal('customize'),
+      v.literal('full'),
     ),
 
-    // Validity
-    expiresAt: v.optional(v.number()), // null = never expires
-    usedAt: v.optional(v.number()), // First use timestamp
-    useCount: v.number(), // How many times used
-    maxUses: v.optional(v.number()), // null = unlimited
+    expiresAt: v.optional(v.number()),
+    usedAt: v.optional(v.number()),
+    useCount: v.number(),
+    maxUses: v.optional(v.number()),
 
-    // Status
     isRevoked: v.boolean(),
     revokedAt: v.optional(v.number()),
     revokedReason: v.optional(v.string()),
 
-    // Created by (Clerk user ID)
     createdBy: v.optional(v.string()),
-
     createdAt: v.number(),
   })
     .index('by_token', ['token'])
     .index('by_client', ['clientId'])
     .index('by_project', ['projectId']),
 
-  /*
-   * ═══════════════════════════════════════════════════════════════════════════
-   * CLIENT SESSIONS - Auth sessions for magic link access
-   * NOTE: Team auth sessions are handled by Clerk in the main platform
-   * ═══════════════════════════════════════════════════════════════════════════
-   */
+  // ─── Client sessions ───────────────────────────────────────────────────
+  // Long-lived per-device sessions backing magic-link access.
   clientSessions: defineTable({
-    // Session token (stored in cookie/localStorage)
     token: v.string(),
-
-    // Client this session belongs to
     clientId: v.id('clients'),
 
-    // For magic link sessions
     magicLinkId: v.optional(v.id('magicLinks')),
-    projectId: v.id('projects'), // Scoped to specific project
-    accessLevel: v.union(v.literal('view'), v.literal('customize'), v.literal('full')),
+    projectId: v.id('projects'),
+    accessLevel: v.union(
+      v.literal('view'),
+      v.literal('customize'),
+      v.literal('full'),
+    ),
 
-    // Session metadata
     userAgent: v.optional(v.string()),
-
-    // Validity
     expiresAt: v.number(),
     lastActiveAt: v.number(),
-
     createdAt: v.number(),
   })
     .index('by_token', ['token'])
     .index('by_client', ['clientId'])
     .index('by_project', ['projectId']),
 
-  // Projects - core project data
+  // ─── Projects ──────────────────────────────────────────────────────────
+  // Minimal durable project record. Code lives in the Daytona sandbox
+  // (currentSandbox*), runtime state lives in T3 SQLite; this row is the
+  // bridge both editors + the team dashboard key off.
   projects: defineTable({
-    // Basic info
-    urlId: v.string(), // URL-friendly identifier
+    urlId: v.string(),
     name: v.string(),
-    description: v.string(),
+    description: v.optional(v.string()),
 
-    // ══════ Client & Team linking ══════
-    clientId: v.optional(v.id('clients')), // Which client owns this
-    createdBy: v.optional(v.string()), // Clerk user ID of team member who created it
+    clientId: v.optional(v.id('clients')),
+    createdBy: v.optional(v.string()),
 
-    // Project status
     status: v.optional(
       v.union(
-        v.literal('draft'), // Being built by team
-        v.literal('review'), // Ready for client review
-        v.literal('approved'), // Client approved
-        v.literal('published'), // Live on the web
-        v.literal('archived'), // No longer active
+        v.literal('draft'),
+        v.literal('review'),
+        v.literal('approved'),
+        v.literal('published'),
+        v.literal('archived'),
       ),
     ),
 
-    // Business details from onboarding
-    businessDetails: businessDetailsSchema,
-    tags: v.array(v.string()),
-
-    // Template
-    templateId: v.string(),
+    templateId: v.optional(v.string()),
     templateName: v.optional(v.string()),
 
-    // Integrations (saved with project)
-    integrations: v.optional(integrationsSchema),
+    selectedPalette: v.optional(paletteSchema),
+    selectedFont: v.optional(fontSchema),
 
-    // Contact details (email, phone, address)
-    contactDetails: v.optional(contactDetailsSchema),
-
-    // Daytona workspace
-    daytonaWorkspaceId: v.optional(v.string()),
-    workspaceUrl: v.optional(v.string()),
-    workspaceStatus: v.optional(
+    // Daytona sandbox the editors are currently wired to.
+    currentSandboxId: v.optional(v.string()),
+    currentSandboxUrl: v.optional(v.string()),
+    currentSandboxPreviewUrl: v.optional(v.string()),
+    currentSandboxStatus: v.optional(
       v.union(
-        v.literal('creating'),
+        v.literal('provisioning'),
         v.literal('ready'),
         v.literal('building'),
         v.literal('running'),
@@ -277,186 +188,77 @@ export default defineSchema({
         v.literal('stopped'),
       ),
     ),
+    sandboxProvisionedAt: v.optional(v.number()),
+    sandboxProvisionedBy: v.optional(v.string()),
 
-    // ══════ Publishing info ══════
-    publishedUrl: v.optional(v.string()), // Live URL (e.g., client.flowstarter.app)
-    customDomain: v.optional(v.string()), // Custom domain if configured
-    publishedAt: v.optional(v.number()), // When it was published
-    lastPublishedBy: v.optional(v.string()), // Clerk user ID
+    publishedUrl: v.optional(v.string()),
+    customDomain: v.optional(v.string()),
+    publishedAt: v.optional(v.number()),
+    lastPublishedBy: v.optional(v.string()),
 
-    // Cross-platform linking
-    supabaseProjectId: v.optional(v.string()), // UUID from Supabase projects table
-    businessInfo: v.optional(v.any()),
-    brandProfile: v.optional(brandProfileSchema),
-    contactInfo: v.optional(v.any()),
-    selectedTemplate: v.optional(selectedTemplateSchema),
-    selectedPalette: v.optional(selectedPaletteSchema),
-    selectedFont: v.optional(selectedFontSchema),
-    selectedIntegrations: v.optional(v.any()),
-    editorState: v.optional(v.string()),
-    buildState: v.optional(v.string()),
-    previewState: v.optional(v.string()),
-    syncVersion: v.optional(v.number()),
+    supabaseProjectId: v.optional(v.string()),
 
-    // Timestamps
     createdAt: v.number(),
     updatedAt: v.number(),
   })
     .index('by_urlId', ['urlId'])
     .index('by_updatedAt', ['updatedAt'])
-    .index('by_workspace', ['daytonaWorkspaceId'])
+    .index('by_currentSandbox', ['currentSandboxId'])
     .index('by_client', ['clientId'])
     .index('by_status', ['status'])
     .index('by_supabaseProjectId', ['supabaseProjectId']),
 
-  // Files - editor file contents
-  files: defineTable({
+  // ─── Threads ───────────────────────────────────────────────────────────
+  // Registry of T3 threads per project. Content lives in T3 SQLite; this
+  // row exists so the team dashboard can list threads and jump into them.
+  threads: defineTable({
     projectId: v.id('projects'),
-    path: v.string(), // File path relative to project root
-    content: v.string(), // File contents
-    type: v.union(v.literal('file'), v.literal('folder')),
-    isBinary: v.boolean(),
+    t3ThreadId: v.string(),
+
+    title: v.optional(v.string()),
+    mode: v.optional(
+      v.union(v.literal('team'), v.literal('client'), v.literal('platform')),
+    ),
+    archivedAt: v.optional(v.number()),
+    lastActivityAt: v.optional(v.number()),
+
+    createdByKind: v.optional(
+      v.union(v.literal('clerk'), v.literal('client'), v.literal('system')),
+    ),
+    createdBy: v.optional(v.string()),
+
+    createdAt: v.number(),
     updatedAt: v.number(),
   })
     .index('by_project', ['projectId'])
-    .index('by_project_path', ['projectId', 'path'])
+    .index('by_t3Id', ['t3ThreadId'])
     .index('by_project_updated', ['projectId', 'updatedAt']),
 
-  // Conversations - lightweight chat state for editor onboarding
-  conversations: defineTable({
-    sessionId: v.string(),
-    title: v.string(),
-    isActive: v.boolean(),
-
-    // Optional project link
-    projectId: v.optional(v.id('projects')),
-    projectName: v.optional(v.string()),
-    projectUrlId: v.optional(v.string()),
-    threadName: v.optional(v.string()),
-    threadOrder: v.optional(v.number()),
-    isDefaultThread: v.optional(v.boolean()),
-
-    // Onboarding state
-    step: v.optional(v.string()),
-    projectDescription: v.optional(v.string()),
-    selectedTemplateId: v.optional(v.string()),
-    selectedTemplateName: v.optional(v.string()),
-    selectedPalette: v.optional(
-      v.object({
-        id: v.string(),
-        name: v.string(),
-        colors: v.array(v.string()),
-      }),
-    ),
-    selectedFont: v.optional(
-      v.object({
-        id: v.string(),
-        name: v.string(),
-        heading: v.string(),
-        body: v.string(),
-      }),
-    ),
-    selectedLogo: v.optional(
-      v.object({
-        url: v.optional(v.string()),
-        storageId: v.optional(v.id('_storage')),
-        type: v.union(v.literal('uploaded'), v.literal('generated'), v.literal('none')),
-        prompt: v.optional(v.string()),
-      }),
-    ),
-    buildPhase: v.optional(v.string()),
-
-    // Integrations (draft state during onboarding)
-    integrations: v.optional(integrationsSchema),
-
-    // Contact details (draft state during onboarding)
-    contactDetails: v.optional(contactDetailsSchema),
-
-    // Business discovery progress
-    businessInfo: v.optional(
-      v.object({
-        description: v.optional(v.string()),
-        uvp: v.optional(v.string()),
-        targetAudience: v.optional(v.string()),
-        businessGoals: v.optional(v.array(v.string())),
-        brandTone: v.optional(v.string()),
-        sellingMethod: v.optional(v.string()),
-        sellingMethodDetails: v.optional(v.string()),
-        pricingOffers: v.optional(v.string()),
-        industry: v.optional(v.string()),
-        businessType: v.optional(v.string()),
-        offerings: v.optional(v.string()),
-        contactEmail: v.optional(v.string()),
-        contactPhone: v.optional(v.string()),
-        contactAddress: v.optional(v.string()),
-        website: v.optional(v.string()),
-      }),
-    ),
-    brandProfile: v.optional(brandProfileSchema),
-    selectedIntegrations: v.optional(v.any()),
-    syncVersion: v.optional(v.number()),
-
-    // Pipeline orchestration state
-    pipelineState: v.optional(
-      v.object({
-        currentStep: v.string(),
-        previousStep: v.optional(v.string()),
-        nextStep: v.optional(v.string()),
-        completedSteps: v.array(v.string()),
-        pendingTransition: v.optional(
-          v.object({
-            fromStep: v.string(),
-            toStep: v.string(),
-            messageGenerated: v.boolean(),
-            timestamp: v.number(),
-          }),
-        ),
-      }),
-    ),
-
-    // Messages embedded on conversation
-    messages: v.optional(
-      v.union(
-        v.array(
-          v.object({
-            id: v.string(),
-            role: v.union(v.literal('user'), v.literal('assistant'), v.literal('system')),
-            content: v.string(),
-            createdAt: v.number(),
-            component: v.optional(v.string()),
-            metadata: v.optional(v.string()),
-          }),
-        ),
-        v.string(),
-      ),
-    ),
-
-    createdAt: v.number(),
-    updatedAt: v.number(),
-  })
-    .index('by_session', ['sessionId'])
-    .index('by_session_updated', ['sessionId', 'updatedAt'])
-    .index('by_project', ['projectId'])
-    .index('by_project_order', ['projectId', 'threadOrder']),
-
-  // Snapshots - for saving project state at key milestones
-  snapshots: defineTable({
+  // ─── Checkpoints ───────────────────────────────────────────────────────
+  // Registry of T3 checkpoints for time-travel / restore UX.
+  checkpoints: defineTable({
     projectId: v.id('projects'),
-    name: v.string(),
+    threadId: v.optional(v.id('threads')),
+    t3CheckpointId: v.string(),
+
     label: v.optional(v.string()),
     description: v.optional(v.string()),
-    blobUrl: v.optional(v.string()),
-    storageId: v.optional(v.id('_storage')),
-    data: v.optional(v.any()),
-    compressedSize: v.optional(v.number()),
-    uncompressedSize: v.optional(v.number()),
-    fileCount: v.optional(v.number()),
+
+    createdByKind: v.optional(
+      v.union(v.literal('clerk'), v.literal('client'), v.literal('system')),
+    ),
+    createdBy: v.optional(v.string()),
+
     createdAt: v.number(),
   })
     .index('by_project', ['projectId'])
+    .index('by_thread', ['threadId'])
+    .index('by_t3Id', ['t3CheckpointId'])
     .index('by_project_created', ['projectId', 'createdAt']),
 
-  // Assets - AI-generated images and media for projects
+  // ─── Assets ────────────────────────────────────────────────────────────
+  // AI-generated media (hero images, logos, etc.). Dropping an asset from
+  // the editor still leaves it here until the team or a cleanup job purges.
   assets: defineTable({
     projectId: v.id('projects'),
     type: v.union(
@@ -480,7 +282,12 @@ export default defineSchema({
         seed: v.optional(v.number()),
       }),
     ),
-    status: v.union(v.literal('pending'), v.literal('generating'), v.literal('ready'), v.literal('error')),
+    status: v.union(
+      v.literal('pending'),
+      v.literal('generating'),
+      v.literal('ready'),
+      v.literal('error'),
+    ),
     errorMessage: v.optional(v.string()),
     createdAt: v.number(),
     updatedAt: v.number(),
@@ -489,48 +296,28 @@ export default defineSchema({
     .index('by_project_type', ['projectId', 'type'])
     .index('by_status', ['status']),
 
-  /*
-   * ═══════════════════════════════════════════════════════════════════════════
-   * COSTS - Track LLM usage and costs for billing/analytics
-   * ═══════════════════════════════════════════════════════════════════════════
-   */
+  // ─── Costs ─────────────────────────────────────────────────────────────
+  // Per-project LLM spend ledger. Mirrored into Supabase for billing.
   costs: defineTable({
-    // Link to project (optional - some costs may be pre-project)
     projectId: v.optional(v.id('projects')),
-
-    // Operation type for grouping
     operation: v.union(
-      v.literal('site_generation'), // Initial site build
-      v.literal('site_modification'), // Gretly/simple mods
-      v.literal('self_healing'), // Build error fixes
-      v.literal('asset_generation'), // fal.ai images
-      v.literal('chat'), // Onboarding chat
-      v.literal('router'), // Modification router
-      v.literal('planning'), // Planning with Opus
+      v.literal('site_generation'),
+      v.literal('site_modification'),
+      v.literal('self_healing'),
+      v.literal('asset_generation'),
+      v.literal('chat'),
+      v.literal('router'),
+      v.literal('planning'),
       v.literal('other'),
     ),
-
-    // Model used
     model: v.string(),
-
-    // Token usage
     promptTokens: v.number(),
     completionTokens: v.number(),
     totalTokens: v.number(),
-
-    // Cost in USD
     costUSD: v.number(),
-
-    // Duration in milliseconds
     durationMs: v.optional(v.number()),
-
-    // Anonymized query for analytics (PII removed)
     anonymizedQuery: v.optional(v.string()),
-
-    // Query fingerprint for grouping similar queries
     queryFingerprint: v.optional(v.string()),
-
-    // Additional context
     metadata: v.optional(
       v.object({
         template: v.optional(v.string()),
@@ -540,7 +327,6 @@ export default defineSchema({
         step: v.optional(v.string()),
       }),
     ),
-
     createdAt: v.number(),
   })
     .index('by_project', ['projectId'])
@@ -549,64 +335,20 @@ export default defineSchema({
     .index('by_project_operation', ['projectId', 'operation'])
     .index('by_fingerprint', ['queryFingerprint']),
 
-  /*
-   * ═══════════════════════════════════════════════════════════════════════════
-   * EDITOR SESSIONS - Persistent editor state for session restore
-   * ═══════════════════════════════════════════════════════════════════════════
-   */
-  editorSessions: defineTable({
-    projectId: v.id('projects'),
-    conversationId: v.optional(v.id('conversations')),
-    daytonaWorkspaceId: v.optional(v.string()),
-    sandboxId: v.optional(v.string()),
-    previewUrl: v.optional(v.string()),
-    status: v.union(
-      v.literal('idle'),
-      v.literal('active'),
-      v.literal('generating'),
-      v.literal('paused'),
-      v.literal('expired'),
-    ),
-    lastPrompt: v.optional(v.string()),
-    lastActiveAt: v.number(),
-    locale: v.optional(v.string()),
-    sessionData: v.optional(v.string()), // JSON blob for additional state
-    createdAt: v.number(),
-    updatedAt: v.number(),
-  })
-    .index('by_project', ['projectId'])
-    .index('by_workspace', ['daytonaWorkspaceId'])
-    .index('by_status', ['status']),
-
-  /*
-   * ═══════════════════════════════════════════════════════════════════════════
-   * UNSUPPORTED REQUESTS - Track requests for features we don't support yet
-   * ═══════════════════════════════════════════════════════════════════════════
-   */
+  // ─── Unsupported requests ──────────────────────────────────────────────
+  // When a prospect asks for something we can't ship yet.
   unsupportedRequests: defineTable({
-    // Type of unsupported request (ecommerce, saas, restaurant, etc.)
     requestType: v.string(),
-
-    // Original user description
     userDescription: v.string(),
-
-    // Anonymized version (PII stripped)
     anonymizedDescription: v.optional(v.string()),
-
-    // Keywords that triggered the detection
     detectedKeywords: v.optional(v.array(v.string())),
-
-    // Session tracking
     sessionId: v.optional(v.string()),
-
-    // Additional metadata
     metadata: v.optional(
       v.object({
         userAgent: v.optional(v.string()),
         referrer: v.optional(v.string()),
       }),
     ),
-
     createdAt: v.number(),
   })
     .index('by_type', ['requestType'])

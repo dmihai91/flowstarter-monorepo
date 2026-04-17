@@ -132,6 +132,9 @@ importers:
       '@trpc/server':
         specifier: ^11.3.2
         version: 11.16.0(typescript@5.9.3)
+      convex:
+        specifier: ^1.27.3
+        version: 1.31.7(@clerk/clerk-react@5.61.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       lucide-react:
         specifier: ^0.513.0
         version: 0.513.0(react@19.2.4)
@@ -622,7 +625,7 @@ importers:
         version: 4.3.2(typescript@5.9.3)(vite@5.4.21(@types/node@25.2.3)(less@4.5.1)(lightningcss@1.32.0)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0))
       vitest:
         specifier: ^3.2.4
-        version: 3.2.4(@types/debug@4.1.12)(@types/node@25.2.3)(@vitest/browser@3.2.4)(@vitest/ui@4.0.18)(happy-dom@20.6.1(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jsdom@26.1.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(less@4.5.1)(lightningcss@1.32.0)(msw@2.12.11(@types/node@25.2.3)(typescript@5.9.3))(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@25.2.3)(@vitest/browser@3.2.4)(@vitest/ui@4.0.18(vitest@4.0.18))(happy-dom@20.6.1(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jsdom@26.1.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(less@4.5.1)(lightningcss@1.32.0)(msw@2.12.11(@types/node@25.2.3)(typescript@5.9.3))(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)
       wrangler:
         specifier: ^4.42.1
         version: 4.65.0(@cloudflare/workers-types@4.20260212.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6)
@@ -31893,7 +31896,7 @@ snapshots:
       magic-string: 0.30.21
       sirv: 3.0.2
       tinyrainbow: 2.0.0
-      vitest: 3.2.4(@types/debug@4.1.12)(@types/node@25.2.3)(@vitest/browser@3.2.4)(@vitest/ui@4.0.18)(happy-dom@20.6.1(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jsdom@26.1.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(less@4.5.1)(lightningcss@1.32.0)(msw@2.12.11(@types/node@25.2.3)(typescript@5.9.3))(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)
+      vitest: 3.2.4(@types/debug@4.1.12)(@types/node@25.2.3)(@vitest/browser@3.2.4)(@vitest/ui@4.0.18(vitest@4.0.18))(happy-dom@20.6.1(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jsdom@26.1.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(less@4.5.1)(lightningcss@1.32.0)(msw@2.12.11(@types/node@25.2.3)(typescript@5.9.3))(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)
       ws: 8.19.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     optionalDependencies:
       playwright: 1.58.2
@@ -38798,7 +38801,7 @@ snapshots:
       metro-cache: 0.83.5
       metro-core: 0.83.5
       metro-runtime: 0.83.5
-      yaml: 2.8.2
+      yaml: 2.8.3
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -44939,7 +44942,7 @@ snapshots:
       '@types/react': 19.1.0
       '@types/react-dom': 19.1.2(@types/react@19.1.0)
 
-  vitest@3.2.4(@types/debug@4.1.12)(@types/node@25.2.3)(@vitest/browser@3.2.4)(@vitest/ui@4.0.18)(happy-dom@20.6.1(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jsdom@26.1.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(less@4.5.1)(lightningcss@1.32.0)(msw@2.12.11(@types/node@25.2.3)(typescript@5.9.3))(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0):
+  vitest@3.2.4(@types/debug@4.1.12)(@types/node@25.2.3)(@vitest/browser@3.2.4)(@vitest/ui@4.0.18(vitest@4.0.18))(happy-dom@20.6.1(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jsdom@26.1.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(less@4.5.1)(lightningcss@1.32.0)(msw@2.12.11(@types/node@25.2.3)(typescript@5.9.3))(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0):
     dependencies:
       '@types/chai': 5.2.3
       '@vitest/expect': 3.2.4

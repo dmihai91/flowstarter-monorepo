@@ -1,26 +1,87 @@
+/**
+ * PM2 ecosystem for the feature/t3-refactor worktree.
+ *
+ * Boundaries with the other worktree at /Users/darius91/flowstarter-monorepo:
+ *   - flowstarter-main is NOT managed here. It stays on whichever worktree it
+ *     was last started from (typically the concierge-pivot worktree).
+ *   - flowstarter-code wrapper + T3 server + T3 Vite web IS managed here.
+ *     These are tightly coupled to apps/t3-code and the effect@beta.50
+ *     overrides that only exist on this branch.
+ *
+ * Ports:
+ *   flowstarter-code (Next.js wrapper) -> 3001
+ *   t3-code-server   (Bun WebSocket)   -> 3774
+ *   t3-code-web      (Vite)            -> 5733
+ */
+
+const path = require('path');
+
+const ROOT = __dirname;
+const LOG_DIR = path.join(process.env.HOME || '', '.pm2', 'logs');
+
+// Shared auth seed. Must match the `T3CODE_AUTH_TOKEN` piped into T3 via its
+// bootstrap envelope (scripts/dev-flowstarter-code-host.sh). Production should
+// inject via pm2 ecosystem env_production or a .env shim at pm2 startup.
+const T3CODE_AUTH_TOKEN = process.env.FLOWSTARTER_CODE_AUTH_TOKEN || '';
+
+const commonRestart = {
+  autorestart: true,
+  watch: false,
+  restart_delay: 3000,
+  max_restarts: 10,
+  min_uptime: '10s',
+};
+
+const commonLog = {
+  log_date_format: 'YYYY-MM-DD HH:mm:ss',
+  merge_logs: true,
+};
+
 module.exports = {
   apps: [
     {
-      name: 'flowstarter-main',
-      cwd: '/Users/darius91/flowstarter-monorepo/apps/flowstarter-main',
+      name: 'flowstarter-code',
+      cwd: path.join(ROOT, 'apps/flowstarter-code'),
       script: 'node_modules/.bin/next',
-      args: 'start -p 3000',
+      args: 'dev -p 3001',
       interpreter: 'none',
       env: {
-        NODE_ENV: 'production',
+        NODE_ENV: 'development',
       },
-      // Restart policy
-      autorestart: true,
-      watch: false,
       max_memory_restart: '1G',
-      restart_delay: 3000,
-      max_restarts: 10,
-      min_uptime: '10s',
-      // Logging
-      out_file: '/Users/darius91/.pm2/logs/flowstarter-main-out.log',
-      error_file: '/Users/darius91/.pm2/logs/flowstarter-main-error.log',
-      log_date_format: 'YYYY-MM-DD HH:mm:ss',
-      merge_logs: true,
+      ...commonRestart,
+      out_file: path.join(LOG_DIR, 'flowstarter-code-out.log'),
+      error_file: path.join(LOG_DIR, 'flowstarter-code-error.log'),
+      ...commonLog,
+    },
+    {
+      name: 't3-code-server',
+      cwd: ROOT,
+      script: 'scripts/dev-flowstarter-code-host.sh',
+      interpreter: 'bash',
+      env: {
+        FLOWSTARTER_CODE_PORT: '3774',
+        FLOWSTARTER_CODE_AUTH_TOKEN: T3CODE_AUTH_TOKEN,
+      },
+      max_memory_restart: '2G',
+      ...commonRestart,
+      out_file: path.join(LOG_DIR, 't3-code-server-out.log'),
+      error_file: path.join(LOG_DIR, 't3-code-server-error.log'),
+      ...commonLog,
+    },
+    {
+      name: 't3-code-web',
+      cwd: ROOT,
+      script: 'scripts/dev-flowstarter-code-web.sh',
+      interpreter: 'bash',
+      env: {
+        FLOWSTARTER_CODE_PORT: '3774',
+      },
+      max_memory_restart: '2G',
+      ...commonRestart,
+      out_file: path.join(LOG_DIR, 't3-code-web-out.log'),
+      error_file: path.join(LOG_DIR, 't3-code-web-error.log'),
+      ...commonLog,
     },
   ],
 };

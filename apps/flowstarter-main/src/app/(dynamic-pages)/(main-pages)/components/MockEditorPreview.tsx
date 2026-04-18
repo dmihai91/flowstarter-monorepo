@@ -211,6 +211,7 @@ export function MockEditorPreview({
                   <button
                     onClick={() => handleSend()}
                     disabled={!inputValue.trim() || isTyping}
+                    aria-label="Send message"
                     className="w-8 h-8 rounded-lg bg-gradient-to-r from-[var(--purple)] to-blue-500 text-white flex items-center justify-center disabled:opacity-30 transition-all hover:shadow-lg hover:scale-105 active:scale-95"
                   >
                     <svg

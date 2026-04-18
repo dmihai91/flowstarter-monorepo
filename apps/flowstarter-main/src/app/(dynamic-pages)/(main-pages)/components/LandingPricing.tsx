@@ -241,11 +241,12 @@ export function LandingPricing() {
           border: 1px solid var(--ls-rule);
         }
         .ls-price-badge--hi {
-          background: var(--ls-accent);
+          background: var(--ls-accent-hot);
           color: #fff;
-          border-color: var(--ls-accent);
-          box-shadow: 0 4px 12px
-            color-mix(in oklab, var(--ls-accent) 40%, transparent);
+          border-color: var(--ls-accent-hot);
+          box-shadow: 0 4px 12px color-mix(in oklab, var(--ls-accent) 40%, transparent);
+          font-weight: 700;
+        }
         }
         .ls-price-badge .dot {
           width: 5px;

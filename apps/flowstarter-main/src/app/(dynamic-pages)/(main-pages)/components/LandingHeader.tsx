@@ -42,7 +42,7 @@ export function LandingHeader({ onOpenModal }: { onOpenModal?: () => void }) {
               <Logo size="md" />
             </Link>
 
-            <nav className="hidden lg:flex items-center gap-6">
+            <nav className="hidden lg:flex items-center gap-6" aria-label="Main navigation">
               <a
                 href="https://library.flowstarter.dev"
                 target="_blank"
@@ -109,7 +109,9 @@ export function LandingHeader({ onOpenModal }: { onOpenModal?: () => void }) {
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
-                aria-label="Toggle menu"
+                aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+                aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-menu"
               >
                 {mobileMenuOpen ? (
                   <svg
@@ -150,7 +152,7 @@ export function LandingHeader({ onOpenModal }: { onOpenModal?: () => void }) {
               mobileMenuOpen ? 'max-h-[36rem] pb-5' : 'max-h-0'
             }`}
           >
-            <nav className="ls-mobile-nav flex flex-col gap-0.5 pt-4 mt-3 border-t border-gray-200/50 dark:border-white/10">
+            <nav id="mobile-menu" aria-label="Mobile navigation" className="ls-mobile-nav flex flex-col gap-0.5 pt-4 mt-3 border-t border-gray-200/50 dark:border-white/10">
               <div className="flex items-center justify-between px-3 py-2">
                 <span className="text-base font-medium text-gray-700 dark:text-white/80">
                   {t('nav.theme')}

@@ -65,7 +65,7 @@ export function PillarsSection() {
                 }ms both`,
               }}
             >
-              <div className="ls-pillar-icon">
+              <div className="ls-pillar-icon" aria-hidden="true">
                 <LandingIcon name={p.icon as IconName} className="h-5 w-5" />
               </div>
               <div className="ls-pillar-sub">{p.subtitle}</div>

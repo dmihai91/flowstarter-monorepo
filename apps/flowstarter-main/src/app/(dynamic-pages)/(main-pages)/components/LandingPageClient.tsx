@@ -42,26 +42,34 @@ export function LandingPageClient() {
     <div className="min-h-screen bg-[var(--landing-bg)] dark:bg-[var(--landing-dark-surface)] text-gray-900 dark:text-white font-display relative transition-colors duration-300">
       <FlowFieldBackground />
       <LandingHeader onOpenModal={open} />
-      <LandingHero onOpenModal={open} />
-      <EditorShowcase />
-      <PreQualModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        source="page"
-      />
-      <AudienceSection />
-      <TemplateGallerySection />
-      <ProcessSection />
-      <ProblemSection />
-      <PillarsSection />
-      <DifferentiationSection />
-      <IncludedSection />
-      <LandingPricing />
-      <TestimonialsSection />
-      <ManifestoSection />
-      <TeamSection />
-      <FAQSection />
-      <FinalCTASection onOpenModal={open} />
+      <main id="main-content">
+        <LandingHero onOpenModal={open} />
+        <EditorShowcase />
+        <PreQualModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          source="page"
+        />
+        <hr className="ls-scope ls-section-divider" aria-hidden="true" />
+        <AudienceSection />
+        <TemplateGallerySection />
+        <hr className="ls-scope ls-section-divider" aria-hidden="true" />
+        <ProcessSection />
+        <ProblemSection />
+        <hr className="ls-scope ls-section-divider" aria-hidden="true" />
+        <PillarsSection />
+        <DifferentiationSection />
+        <IncludedSection />
+        <hr className="ls-scope ls-section-divider" aria-hidden="true" />
+        <LandingPricing />
+        <hr className="ls-scope ls-section-divider" aria-hidden="true" />
+        <TestimonialsSection />
+        <ManifestoSection />
+        <TeamSection />
+        <hr className="ls-scope ls-section-divider" aria-hidden="true" />
+        <FAQSection />
+        <FinalCTASection onOpenModal={open} />
+      </main>
       <Footer />
       <CookieConsent />
       <ScrollFab />

@@ -230,7 +230,7 @@
   font-family: var(--ls-mono);
   font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--ls-ink-faint);
 }
@@ -243,7 +243,7 @@
   letter-spacing: -0.025em;
   line-height: 0.96;
   color: var(--ls-ink);
-  font-size: clamp(2.6rem, 6.2vw, 5.4rem);
+  font-size: clamp(2.8rem, 6.8vw, 6rem);
 }
 .ls-display .line { display: block; }
 .ls-display .flourish,
@@ -253,7 +253,7 @@
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 0.95;
-  font-size: clamp(2.8rem, 6.6vw, 5.8rem);
+  font-size: clamp(3rem, 7.2vw, 6.4rem);
   background: linear-gradient(110deg, hsl(233,65%,40%) 0%, hsl(233,70%,58%) 50%, hsl(233,65%,40%) 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -630,13 +630,51 @@
   z-index: 2;
 }
 
+/* Reveal animation — used by section cards */
+@keyframes ls-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Section divider accent */
+.ls-section-divider {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--ls-accent) 30%, transparent),
+    transparent
+  );
+  margin: 0;
+  position: relative;
+  z-index: 5;
+}
+
+/* Centered hero layout */
+.ls-section--centered {
+  display: flex;
+  align-items: center;
+}
+
 /* Accessibility: respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .ls-flourish,
   .ls-orb,
   .ls-streak,
   .ls-bar-cell.on::after,
-  .ls-caret {
+  .ls-caret,
+  [style*="ls-reveal"] {
     animation: none !important;
+  }
+  @keyframes ls-reveal {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 1; transform: translateY(0); }
   }
 }

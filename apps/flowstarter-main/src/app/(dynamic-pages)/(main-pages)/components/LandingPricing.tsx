@@ -344,12 +344,11 @@ export function LandingPricing() {
           flex-shrink: 0;
           width: 16px;
           height: 16px;
-          border-radius: 4px;
           display: inline-flex;
           align-items: center;
           justify-content: center;
           color: var(--ls-accent);
-          background: color-mix(in oklab, var(--ls-accent) 16%, transparent);
+          margin-top: 1px;
         }
         .ls-price-cta {
           margin-top: auto;

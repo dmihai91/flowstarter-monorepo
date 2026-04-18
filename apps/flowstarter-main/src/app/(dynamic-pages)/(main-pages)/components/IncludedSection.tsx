@@ -65,7 +65,7 @@ export function IncludedSection() {
                 }ms both`,
               }}
             >
-              <div className="ls-included-icon">
+              <div className="ls-included-icon" aria-hidden="true">
                 <LandingIcon name={c.icon as IconName} className="h-4 w-4" />
               </div>
               <h3 className="ls-included-title">{c.title}</h3>
@@ -83,7 +83,7 @@ export function IncludedSection() {
             }}
           >
             <div className="ls-included-icon ls-included-icon--accent">
-              <LandingIcon name={'hardDrive' as IconName} className="h-4 w-4" />
+              <LandingIcon name={'layers' as IconName} className="h-4 w-4" />
             </div>
             <h3 className="ls-included-title">
               {t('landing.storage.tagline')}

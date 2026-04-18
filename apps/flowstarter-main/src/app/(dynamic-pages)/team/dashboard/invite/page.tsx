@@ -1,15 +1,13 @@
 'use client';
-import { useTranslations } from '@/lib/i18n';
 
+import { useTranslations } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useUser } from '@clerk/nextjs';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
-  ArrowLeft,
   UserPlus,
   Mail,
   Loader2,
@@ -17,6 +15,10 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+  TeamDashboardShell,
+  ShellCard,
+} from '../components/TeamDashboardShell';
 
 interface InvitationResult {
   success: boolean;
@@ -34,7 +36,6 @@ export default function TeamInvitePage() {
   const [isSending, setIsSending] = useState(false);
   const [result, setResult] = useState<InvitationResult | null>(null);
 
-  // Check if user is admin
   useEffect(() => {
     if (userLoaded) {
       const metadata = user?.publicMetadata as { role?: string } | undefined;
@@ -83,7 +84,7 @@ export default function TeamInvitePage() {
         });
         toast.error(data.error || t('team.invite.failedToSend'));
       }
-    } catch (error) {
+    } catch {
       setResult({
         success: false,
         message: 'Network error. Please try again.',
@@ -103,35 +104,15 @@ export default function TeamInvitePage() {
   }
 
   return (
-    <div className="py-6 px-4 sm:px-6 max-w-5xl mx-auto">
-      {/* Back link */}
-      <Link
-        href="/team/dashboard"
-        className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors mb-8"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Back to Dashboard
-      </Link>
-
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-12 h-12 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center">
-            <UserPlus className="w-6 h-6 text-[var(--purple)]" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Invite Team Member
-            </h1>
-            <p className="text-sm text-gray-500 dark:text-white/50">
-              Send an invitation to join the team
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Invite Form */}
-      <div className="p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+    <TeamDashboardShell
+      title="Invite Team Member"
+      subtitle="Send an invitation to join the team"
+      icon={<UserPlus className="w-5 h-5 text-[var(--purple)]" />}
+      showBackButton
+      backHref="/team/dashboard/team"
+      backLabel="Team members"
+    >
+      <ShellCard>
         <form onSubmit={handleInvite} className="space-y-6">
           <div className="space-y-2">
             <Label
@@ -148,7 +129,7 @@ export default function TeamInvitePage() {
                 placeholder="colleague@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-12 pl-12 rounded-lg bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10"
+                className="h-11 pl-12 rounded-lg bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10"
                 autoComplete="off"
                 data-form-type="other"
                 required
@@ -159,7 +140,6 @@ export default function TeamInvitePage() {
             </p>
           </div>
 
-          {/* Result message */}
           {result && (
             <div
               className={`p-4 rounded-xl flex items-start gap-3 ${
@@ -177,28 +157,29 @@ export default function TeamInvitePage() {
             </div>
           )}
 
-          <Button
-            type="submit"
-            disabled={isSending || !email.trim()}
-            className="w-full h-12 rounded-lg font-semibold bg-[var(--purple)] text-white hover:bg-[var(--purple)]/90 shadow-md transition-all disabled:opacity-50"
-          >
-            {isSending ? (
-              <span className="flex items-center gap-2">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Sending invitation...
-              </span>
-            ) : (
-              <span className="flex items-center gap-2">
-                <UserPlus className="w-4 h-4" />
-                Send Invitation
-              </span>
-            )}
-          </Button>
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              disabled={isSending || !email.trim()}
+              className="flex items-center gap-2 px-6 py-2 rounded-lg font-semibold text-sm bg-[var(--purple)] text-white hover:bg-[var(--purple)]/90 transition-all disabled:opacity-50"
+            >
+              {isSending ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <UserPlus className="w-4 h-4" />
+                  Send Invitation
+                </>
+              )}
+            </Button>
+          </div>
         </form>
-      </div>
+      </ShellCard>
 
-      {/* Info */}
-      <div className="mt-6 p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
+      <div className="mt-4 p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
         <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
           How it works
         </h3>
@@ -209,6 +190,6 @@ export default function TeamInvitePage() {
           <li>• Only admins can send invitations</li>
         </ul>
       </div>
-    </div>
+    </TeamDashboardShell>
   );
 }

@@ -2,15 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  Wand2,
-  ChevronDown,
-  ArrowRight,
-  X,
-  User,
-  Mail,
-  Phone,
-} from 'lucide-react';
+import { Wand2, ChevronDown, ArrowRight, X } from 'lucide-react';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useTranslations } from '@/lib/i18n';
 
@@ -20,6 +12,7 @@ interface ClientInfo {
   name: string;
   email: string;
   phone: string;
+  businessName: string;
 }
 
 // ── Collapsed pill ─────────────────────────────────────────────────────────────
@@ -52,11 +45,13 @@ const PLACEHOLDER_DESCRIPTIONS = [
 ];
 
 function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
+  const { t } = useTranslations();
   const router = useRouter();
   const [client, setClient] = useState<ClientInfo>({
     name: '',
     email: '',
     phone: '',
+    businessName: '',
   });
   const [description, setDescription] = useState('');
   const [step, setStep] = useState<'client' | 'describe'>('client');
@@ -111,10 +106,10 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
             <Wand2 className="w-3.5 h-3.5 text-[var(--purple)]" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-gray-900 dark:text-white">
+            <p className="text-lg font-semibold text-gray-900 dark:text-white">
               Quick project setup
             </p>
-            <p className="text-xs text-gray-500 dark:text-white/40">
+            <p className="text-sm text-gray-500 dark:text-white/40">
               {step === 'client'
                 ? 'Step 1 — Client details'
                 : 'Step 2 — Describe the project'}
@@ -131,64 +126,100 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
 
       {/* Step 1 — Client */}
       {step === 'client' && (
-        <div className="space-y-2.5">
-          <div className="relative">
-            <User className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 dark:text-white/30 pointer-events-none" />
-            <input
-              type="text"
-              placeholder="Client name *"
-              value={client.name}
-              onChange={(e) =>
-                setClient((p) => ({ ...p, name: e.target.value }))
-              }
-              onKeyDown={(e) => e.key === 'Enter' && handleClientNext()}
-              autoFocus
-              className="w-full pl-9 pr-3 py-2.5 text-sm rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
-            />
+        <div className="space-y-4">
+          {/* Row 1: Name + Email */}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="relative">
+              <input
+                id="qs-name"
+                type="text"
+                placeholder=" "
+                value={client.name}
+                onChange={(e) =>
+                  setClient((p) => ({ ...p, name: e.target.value }))
+                }
+                onKeyDown={(e) => e.key === 'Enter' && handleClientNext()}
+                autoFocus
+                className="peer w-full px-3 pt-5 pb-1.5 text-base rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
+              />
+              <label
+                htmlFor="qs-name"
+                className="absolute left-3 top-1.5 text-[0.6rem] font-medium text-gray-400 dark:text-white/30 pointer-events-none transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-xs peer-focus:top-1.5 peer-focus:text-[0.6rem] peer-focus:text-[var(--purple)]"
+              >
+                {t('scaffold.client.field.name')} *
+              </label>
+            </div>
+            <div className="relative">
+              <input
+                id="qs-email"
+                type="email"
+                placeholder=" "
+                value={client.email}
+                onChange={(e) =>
+                  setClient((p) => ({ ...p, email: e.target.value }))
+                }
+                onKeyDown={(e) => e.key === 'Enter' && handleClientNext()}
+                className="peer w-full px-3 pt-5 pb-1.5 text-base rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
+              />
+              <label
+                htmlFor="qs-email"
+                className="absolute left-3 top-1.5 text-[0.6rem] font-medium text-gray-400 dark:text-white/30 pointer-events-none transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-xs peer-focus:top-1.5 peer-focus:text-[0.6rem] peer-focus:text-[var(--purple)]"
+              >
+                {t('scaffold.client.field.email')} *
+              </label>
+            </div>
           </div>
-          <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 dark:text-white/30 pointer-events-none" />
-            <input
-              type="email"
-              placeholder="Email *"
-              value={client.email}
-              onChange={(e) =>
-                setClient((p) => ({ ...p, email: e.target.value }))
-              }
-              onKeyDown={(e) => e.key === 'Enter' && handleClientNext()}
-              className="w-full pl-9 pr-3 py-2.5 text-sm rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
-            />
-            {client.name.trim() && !client.email.trim() && (
-              <p className="text-[0.6rem] text-amber-500 mt-1 ml-1">
-                Required — used for invoices
-              </p>
-            )}
+          {/* Row 2: Phone + Business name */}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="relative">
+              <input
+                id="qs-phone"
+                type="tel"
+                placeholder=" "
+                value={client.phone}
+                onChange={(e) =>
+                  setClient((p) => ({ ...p, phone: e.target.value }))
+                }
+                onKeyDown={(e) => e.key === 'Enter' && handleClientNext()}
+                className="peer w-full px-3 pt-5 pb-1.5 text-base rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
+              />
+              <label
+                htmlFor="qs-phone"
+                className="absolute left-3 top-1.5 text-[0.6rem] font-medium text-gray-400 dark:text-white/30 pointer-events-none transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-xs peer-focus:top-1.5 peer-focus:text-[0.6rem] peer-focus:text-[var(--purple)]"
+              >
+                {t('scaffold.client.field.phone')} *
+              </label>
+            </div>
+            <div className="relative">
+              <input
+                id="qs-business"
+                type="text"
+                placeholder=" "
+                value={client.businessName}
+                onChange={(e) =>
+                  setClient((p) => ({ ...p, businessName: e.target.value }))
+                }
+                onKeyDown={(e) => e.key === 'Enter' && handleClientNext()}
+                className="peer w-full px-3 pt-5 pb-1.5 text-base rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
+              />
+              <label
+                htmlFor="qs-business"
+                className="absolute left-3 top-1.5 text-[0.6rem] font-medium text-gray-400 dark:text-white/30 pointer-events-none transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-xs peer-focus:top-1.5 peer-focus:text-[0.6rem] peer-focus:text-[var(--purple)]"
+              >
+                {t('scaffold.client.field.businessName')}
+              </label>
+            </div>
           </div>
-          <div className="relative">
-            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 dark:text-white/30 pointer-events-none" />
-            <input
-              type="tel"
-              placeholder="Phone *"
-              value={client.phone}
-              onChange={(e) =>
-                setClient((p) => ({ ...p, phone: e.target.value }))
-              }
-              onKeyDown={(e) => e.key === 'Enter' && handleClientNext()}
-              className="w-full pl-9 pr-3 py-2.5 text-sm rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
-            />
-            {client.email.trim() && !client.phone.trim() && (
-              <p className="text-[0.6rem] text-amber-500 mt-1 ml-1">
-                Required — used for project communication
-              </p>
-            )}
+          {/* Row 3: Next button */}
+          <div className="flex">
+            <button
+              onClick={handleClientNext}
+              disabled={!clientComplete}
+              className="ml-auto flex items-center gap-2 px-5 py-2 rounded-lg bg-[var(--purple)] text-white text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--purple)]/90 transition-all"
+            >
+              Next <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
-          <button
-            onClick={handleClientNext}
-            disabled={!clientComplete}
-            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[var(--purple)] text-white text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--purple)]/90 transition-all"
-          >
-            Next <ArrowRight className="w-3.5 h-3.5" />
-          </button>
         </div>
       )}
 

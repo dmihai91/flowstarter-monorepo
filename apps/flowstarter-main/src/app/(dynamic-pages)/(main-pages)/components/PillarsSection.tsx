@@ -1,68 +1,129 @@
 'use client';
 
-import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { useI18n } from '@/lib/i18n';
 import { LandingIcon, type IconName } from './LandingIcons';
 import { LANDING_COPY } from '../landing-copy';
 
 export function PillarsSection() {
-  const { ref: sectionRef, isVisible } = useScrollAnimation();
+  const { t: tStrict } = useI18n();
+  const t = tStrict as (key: string) => string;
   const pillars = LANDING_COPY.pillars;
 
   return (
-    <>
-      {/* Three Pillars Section */}
-      <section
-        ref={sectionRef}
-        data-section="pillars"
-        className="py-12 lg:py-16 relative"
-      >
-        <div
-          className={`max-w-7xl mx-auto px-6 transition-all duration-1000 ease-out ${
-            isVisible ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
-          <div className="text-center mb-12 lg:mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              {pillars.title}
-            </h2>
-            <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl mx-auto">
-              {pillars.subtitle}
-            </p>
+    <section id="pillars" className="ls-scope ls-section ls-section--pad">
+      <div className="ls-mesh" aria-hidden />
+      <div className="ls-orb ls-orb--warm ls-orb--br" aria-hidden />
+      <div className="ls-grain" aria-hidden />
+
+      <div className="ls-container">
+        <div className="text-center max-w-3xl mx-auto">
+          <div
+            className="ls-eyebrow inline-flex items-center justify-center gap-3"
+            style={{ justifyContent: 'center' }}
+          >
+            <span
+              aria-hidden
+              style={{
+                display: 'inline-block',
+                width: '28px',
+                height: '1px',
+                background: 'var(--ls-ink-faint)',
+              }}
+            />
+            <span className="num">{t('landing.pillars.eyebrow')}</span>
+            <span
+              aria-hidden
+              style={{
+                display: 'inline-block',
+                width: '28px',
+                height: '1px',
+                background: 'var(--ls-ink-faint)',
+              }}
+            />
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {pillars.items.map(({ title, subtitle, body, icon }, index) => (
-              <div
-                key={title}
-                className={`rounded-2xl p-8 lg:p-10 border border-[var(--landing-card-border)] backdrop-blur-sm transition-all duration-[600ms] ${
-                  isVisible
-                    ? 'opacity-100 translate-y-0'
-                    : 'opacity-0 translate-y-5'
-                } ${
-                  index === 0
-                    ? 'bg-gradient-to-br from-violet-500/10 to-indigo-500/10 dark:from-violet-500/5 dark:to-indigo-500/5'
-                    : index === 1
-                    ? 'bg-gradient-to-br from-cyan-500/10 to-blue-500/10 dark:from-cyan-500/5 dark:to-blue-500/5'
-                    : 'bg-gradient-to-br from-amber-500/10 to-orange-500/10 dark:from-amber-500/5 dark:to-orange-500/5'
-                }`}
-                style={{ transitionDelay: `${index * 120}ms` }}
-              >
-                <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white/70 text-[var(--purple-primary)] shadow-sm dark:bg-white/[0.04]">
-                  <LandingIcon name={icon as IconName} className="h-6 w-6" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
-                  {title}
-                </h3>
-                <p className="text-sm font-medium text-[var(--purple)] mb-3">
-                  {subtitle}
-                </p>
-                <p className="text-gray-600 dark:text-white/60 leading-relaxed max-w-[55ch]">
-                  {body}
-                </p>
-              </div>
-            ))}
-          </div>
+
+          <h2 className="ls-display mt-7" style={{ textWrap: 'balance' }}>
+            <span className="line">{t('landing.pillars.headlinePrefix')}</span>
+            <span className="line flourish mt-2">
+              {t('landing.pillars.headlineFlourish')}
+            </span>
+          </h2>
+
+          <p className="ls-body ls-body--lead mt-7 mx-auto">
+            {t('landing.pillars.sub')}
+          </p>
         </div>
-      </section>
-    </>
+
+        <div className="mt-14 grid gap-5 md:grid-cols-3 md:gap-6">
+          {pillars.items.map((p, i) => (
+            <div
+              key={p.title}
+              className="ls-card ls-pillar-card"
+              style={{
+                animation: `ls-reveal 900ms cubic-bezier(0.19,1,0.22,1) ${
+                  i * 120
+                }ms both`,
+              }}
+            >
+              <div className="ls-pillar-icon">
+                <LandingIcon name={p.icon as IconName} className="h-5 w-5" />
+              </div>
+              <div className="ls-pillar-sub">{p.subtitle}</div>
+              <h3 className="ls-pillar-title">{p.title}</h3>
+              <p className="ls-pillar-body">{p.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <style jsx global>{`
+        .ls-pillar-card {
+          padding: 2rem 1.75rem 2rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.7rem;
+          transition: transform 320ms cubic-bezier(0.19, 1, 0.22, 1),
+            border-color 320ms ease;
+        }
+        .ls-pillar-card:hover {
+          transform: translateY(-3px);
+          border-color: color-mix(in oklab, var(--ls-accent) 45%, transparent);
+        }
+        .ls-pillar-icon {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 44px;
+          height: 44px;
+          border-radius: 12px;
+          background: color-mix(in oklab, var(--ls-accent) 14%, transparent);
+          color: var(--ls-accent);
+          border: 1px solid
+            color-mix(in oklab, var(--ls-accent) 28%, transparent);
+          margin-bottom: 0.4rem;
+        }
+        .ls-pillar-sub {
+          font-family: var(--ls-mono);
+          font-size: 10.5px;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: var(--ls-ink-faint);
+        }
+        .ls-pillar-title {
+          font-family: var(--ls-sans);
+          font-size: 1.3rem;
+          font-weight: 600;
+          letter-spacing: -0.02em;
+          line-height: 1.2;
+          color: var(--ls-ink);
+        }
+        .ls-pillar-body {
+          font-family: var(--ls-sans);
+          font-size: 0.93rem;
+          line-height: 1.6;
+          color: var(--ls-ink-dim);
+        }
+      `}</style>
+    </section>
   );
 }

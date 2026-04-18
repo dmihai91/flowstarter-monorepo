@@ -713,6 +713,7 @@ export function useScaffoldForm() {
           name: draft.clientInfo?.name || prev.name,
           email: draft.clientInfo?.email || prev.email,
           phone: draft.clientInfo?.phone || prev.phone,
+          businessName: draft.clientInfo?.businessName || prev.businessName,
         }));
       }
 

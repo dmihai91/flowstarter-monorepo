@@ -1,5 +1,6 @@
 'use client';
 
+import './landing-design.css';
 import Footer from '@/components/Footer';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';

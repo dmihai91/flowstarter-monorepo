@@ -1,6 +1,5 @@
 'use client';
 
-import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useI18n } from '@/lib/i18n';
 import { Linkedin } from 'lucide-react';
 import Image from 'next/image';
@@ -16,129 +15,220 @@ interface TeamMember {
   quoteKey: TranslationKey;
   image: string;
   linkedin: string;
-  gradient: string;
   initials: string;
 }
 
 export function TeamSection() {
-  const { ref: sectionRef, isVisible } = useScrollAnimation();
-  const { t } = useI18n();
+  const { t: tStrict } = useI18n();
+  const t = tStrict as (key: string) => string;
 
   const team: TeamMember[] = [
     {
       key: 'darius',
-      nameKey: 'landing.team.darius.name',
-      roleKey: 'landing.team.darius.role',
-      bioKey: 'landing.team.darius.bio',
-      quoteKey: 'landing.team.darius.quote',
+      nameKey: 'landing.team.darius.name' as TranslationKey,
+      roleKey: 'landing.team.darius.role' as TranslationKey,
+      bioKey: 'landing.team.darius.bio' as TranslationKey,
+      quoteKey: 'landing.team.darius.quote' as TranslationKey,
       image: '/images/team/darius.png',
       linkedin: 'https://www.linkedin.com/in/darius-mihai-popescu-346ab680',
-      gradient: 'from-[var(--purple)] to-blue-500',
       initials: 'D',
     },
     {
       key: 'dorin',
-      nameKey: 'landing.team.dorin.name',
-      roleKey: 'landing.team.dorin.role',
-      bioKey: 'landing.team.dorin.bio',
-      quoteKey: 'landing.team.dorin.quote',
+      nameKey: 'landing.team.dorin.name' as TranslationKey,
+      roleKey: 'landing.team.dorin.role' as TranslationKey,
+      bioKey: 'landing.team.dorin.bio' as TranslationKey,
+      quoteKey: 'landing.team.dorin.quote' as TranslationKey,
       image: '/images/team/dorin.jpeg',
       linkedin: 'https://www.linkedin.com/in/dorinux',
-      gradient: 'from-pink-500 to-[var(--purple)]',
       initials: 'D',
     },
   ];
 
   return (
-    <section ref={sectionRef} className="py-12 lg:py-18" id="team">
-      <div
-        className={`max-w-3xl mx-auto px-6 sm:px-8 transition-all duration-1000 ease-out ${
-          isVisible ? 'opacity-100' : 'opacity-0'
-        }`}
-      >
-        <div className="text-center mb-10 lg:mb-14">
-          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-3">
-            {t('landing.team.title')}
+    <section id="team" className="ls-scope ls-section ls-section--pad">
+      <div className="ls-mesh" aria-hidden />
+      <div className="ls-orb ls-orb--warm ls-orb--br" aria-hidden />
+      <div className="ls-grain" aria-hidden />
+
+      <div className="ls-container">
+        <div className="text-center max-w-3xl mx-auto">
+          <div
+            className="ls-eyebrow inline-flex items-center justify-center gap-3"
+            style={{ justifyContent: 'center' }}
+          >
+            <span
+              aria-hidden
+              style={{
+                display: 'inline-block',
+                width: '28px',
+                height: '1px',
+                background: 'var(--ls-ink-faint)',
+              }}
+            />
+            <span className="num">{t('landing.team.eyebrow')}</span>
+            <span
+              aria-hidden
+              style={{
+                display: 'inline-block',
+                width: '28px',
+                height: '1px',
+                background: 'var(--ls-ink-faint)',
+              }}
+            />
+          </div>
+          <h2 className="ls-display mt-7" style={{ textWrap: 'balance' }}>
+            <span className="line">{t('landing.team.headlinePrefix')}</span>
+            <span className="line flourish mt-2">
+              {t('landing.team.headlineFlourish')}
+            </span>
           </h2>
-          <p className="text-base text-gray-500 dark:text-white/40">
-            {t('landing.team.subtitle')}
-          </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-6 lg:gap-8">
-          {team.map((member) => (
-            <TeamCard key={member.key} member={member} />
+        <div className="mt-14 grid gap-6 sm:grid-cols-2 md:gap-8 max-w-3xl mx-auto">
+          {team.map((m, i) => (
+            <TeamCard key={m.key} member={m} t={t} delay={i * 120} />
           ))}
         </div>
       </div>
+
+      <style jsx global>{`
+        .ls-team-card {
+          padding: 2rem 1.75rem 2rem;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          gap: 0.5rem;
+          transition: transform 320ms cubic-bezier(0.19, 1, 0.22, 1),
+            border-color 320ms ease;
+        }
+        .ls-team-card:hover {
+          transform: translateY(-2px);
+          border-color: color-mix(in oklab, var(--ls-accent) 40%, transparent);
+        }
+        .ls-team-avatar {
+          width: 80px;
+          height: 80px;
+          border-radius: 999px;
+          background: linear-gradient(
+            135deg,
+            var(--ls-accent),
+            var(--ls-accent-warm)
+          );
+          padding: 2px;
+          margin-bottom: 0.75rem;
+          box-shadow: 0 8px 24px
+            color-mix(in oklab, var(--ls-accent) 20%, transparent);
+        }
+        .ls-team-avatar-inner {
+          width: 100%;
+          height: 100%;
+          border-radius: 999px;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: var(--ls-bg-2);
+          color: var(--ls-ink);
+          font-family: var(--ls-sans);
+          font-weight: 700;
+          font-size: 1.3rem;
+        }
+        .ls-team-name {
+          font-family: var(--ls-sans);
+          font-size: 1.1rem;
+          font-weight: 600;
+          letter-spacing: -0.015em;
+          color: var(--ls-ink);
+        }
+        .ls-team-role {
+          font-family: var(--ls-mono);
+          font-size: 10.5px;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: var(--ls-accent);
+          margin-bottom: 0.75rem;
+        }
+        .ls-team-bio {
+          font-family: var(--ls-sans);
+          font-size: 0.88rem;
+          line-height: 1.55;
+          color: var(--ls-ink-dim);
+          max-width: 30ch;
+        }
+        .ls-team-quote {
+          font-family: var(--ls-sans);
+          font-size: 0.85rem;
+          line-height: 1.5;
+          color: var(--ls-ink-faint);
+          margin-top: 0.4rem;
+          font-style: italic;
+        }
+        .ls-team-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          margin-top: 1rem;
+          font-family: var(--ls-mono);
+          font-size: 10.5px;
+          letter-spacing: 0.15em;
+          text-transform: uppercase;
+          color: var(--ls-ink-faint);
+          transition: color 240ms ease;
+        }
+        .ls-team-link:hover {
+          color: var(--ls-accent);
+        }
+      `}</style>
     </section>
   );
 }
 
-function TeamCard({ member }: { member: TeamMember }) {
-  const {
-    nameKey,
-    roleKey,
-    bioKey,
-    quoteKey,
-    image,
-    linkedin,
-    gradient,
-    initials,
-  } = member;
-  const { t } = useI18n();
+function TeamCard({
+  member,
+  t,
+  delay,
+}: {
+  member: TeamMember;
+  t: (key: string) => string;
+  delay: number;
+}) {
   const [imgError, setImgError] = useState(false);
-
   return (
     <div
-      className="flex flex-col items-center text-center p-8 rounded-2xl backdrop-blur-sm shadow-[var(--glass-shadow)]"
+      className="ls-card ls-team-card"
       style={{
-        backgroundColor:
-          'color-mix(in srgb, var(--glass-surface) 80%, transparent)',
-        borderTop: '1px solid var(--glass-border-highlight)',
-        borderLeft: '1px solid var(--glass-border-highlight)',
-        borderBottom: '1px solid var(--glass-border-shadow)',
-        borderRight: '1px solid var(--glass-border-shadow)',
+        animation: `ls-reveal 900ms cubic-bezier(0.19,1,0.22,1) ${delay}ms both`,
       }}
     >
-      {/* Avatar */}
-      <div
-        className={`w-20 h-20 rounded-full bg-gradient-to-br ${gradient} p-[2px] mb-4 shadow-lg`}
-      >
-        {imgError ? (
-          <div className="w-full h-full rounded-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
-            <span className="text-xl font-bold text-white">{initials}</span>
-          </div>
-        ) : (
-          <Image
-            src={image}
-            alt={t(nameKey)}
-            width={80}
-            height={80}
-            className="w-full h-full rounded-full object-cover"
-            onError={() => setImgError(true)}
-          />
-        )}
+      <div className="ls-team-avatar">
+        <div className="ls-team-avatar-inner">
+          {imgError ? (
+            <span>{member.initials}</span>
+          ) : (
+            <Image
+              src={member.image}
+              alt={t(member.nameKey)}
+              width={76}
+              height={76}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              onError={() => setImgError(true)}
+            />
+          )}
+        </div>
       </div>
-      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-        {t(nameKey)}
-      </h3>
-      <p className="text-sm font-medium text-[var(--purple)] mb-3">
-        {t(roleKey)}
-      </p>
-      <p className="text-sm text-gray-500 dark:text-white/45 leading-relaxed max-w-[30ch]">
-        {t(bioKey)}
-      </p>
-      <p className="text-xs italic text-gray-400 dark:text-white/30 mt-2">
-        &ldquo;{t(quoteKey)}&rdquo;
-      </p>
+      <h3 className="ls-team-name">{t(member.nameKey)}</h3>
+      <p className="ls-team-role">{t(member.roleKey)}</p>
+      <p className="ls-team-bio">{t(member.bioKey)}</p>
+      <p className="ls-team-quote">&ldquo;{t(member.quoteKey)}&rdquo;</p>
       <a
-        href={linkedin}
+        href={member.linkedin}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-4 inline-flex items-center gap-1.5 text-sm text-gray-400 dark:text-white/30 hover:text-[var(--purple)] dark:hover:text-[var(--purple)] transition-colors"
+        className="ls-team-link"
       >
-        <Linkedin className="w-4 h-4" />
+        <Linkedin className="w-3.5 h-3.5" />
         {t('landing.team.linkedin')}
       </a>
     </div>

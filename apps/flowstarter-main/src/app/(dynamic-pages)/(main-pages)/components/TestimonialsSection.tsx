@@ -1,63 +1,164 @@
 'use client';
 
-import { SectionWrapper, SectionHeading } from './SectionWrapper';
+import { useI18n } from '@/lib/i18n';
 import { LANDING_COPY } from '../landing-copy';
 
 export function TestimonialsSection() {
-  const { testimonials } = LANDING_COPY;
+  const { t: tStrict } = useI18n();
+  const t = tStrict as (key: string) => string;
+  const data = LANDING_COPY.testimonials;
 
   return (
-    <SectionWrapper id="testimonials">
-      <div className="text-center mb-10">
-        <SectionHeading className="text-center mb-3">
-          {testimonials.title}
-        </SectionHeading>
-        <p className="text-sm font-medium text-[var(--purple)] tracking-wide">
-          {testimonials.subtitle}
-        </p>
-      </div>
+    <section id="testimonials" className="ls-scope ls-section ls-section--pad">
+      <div className="ls-mesh" aria-hidden />
+      <div className="ls-orb ls-orb--violet ls-orb--tl" aria-hidden />
+      <div className="ls-grain" aria-hidden />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {testimonials.items.map((t, i) => (
+      <div className="ls-container">
+        <div className="text-center max-w-3xl mx-auto">
           <div
-            key={i}
-            className="flex flex-col gap-4 rounded-2xl border border-gray-200/60 dark:border-white/[0.06] bg-white/80 dark:bg-white/[0.03] backdrop-blur-sm p-6 shadow-sm"
+            className="ls-eyebrow inline-flex items-center justify-center gap-3"
+            style={{ justifyContent: 'center' }}
           >
-            {/* Stars */}
-            <div className="flex gap-0.5">
-              {[...Array(5)].map((_, s) => (
-                <svg
-                  key={s}
-                  className="w-4 h-4 text-amber-400 fill-amber-400"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-
-            {/* Quote */}
-            <p className="text-sm leading-relaxed text-gray-600 dark:text-white/60 flex-1">
-              &ldquo;{t.quote}&rdquo;
-            </p>
-
-            {/* Author */}
-            <div className="flex items-center gap-3 pt-2 border-t border-gray-100 dark:border-white/[0.06]">
-              <div className="w-9 h-9 rounded-full bg-[var(--purple-primary-lightest)] text-[var(--purple-primary)] flex items-center justify-center text-xs font-bold shrink-0">
-                {t.initials}
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                  {t.name}
-                </p>
-                <p className="text-xs text-gray-400 dark:text-white/35">
-                  {t.role}
-                </p>
-              </div>
-            </div>
+            <span
+              aria-hidden
+              style={{
+                display: 'inline-block',
+                width: '28px',
+                height: '1px',
+                background: 'var(--ls-ink-faint)',
+              }}
+            />
+            <span className="num">{t('landing.testimonials.eyebrow')}</span>
+            <span
+              aria-hidden
+              style={{
+                display: 'inline-block',
+                width: '28px',
+                height: '1px',
+                background: 'var(--ls-ink-faint)',
+              }}
+            />
           </div>
-        ))}
+          <h2 className="ls-display mt-7" style={{ textWrap: 'balance' }}>
+            <span className="line">
+              {t('landing.testimonials.headlinePrefix')}
+            </span>
+            <span className="line flourish mt-2">
+              {t('landing.testimonials.headlineFlourish')}
+            </span>
+          </h2>
+          <p
+            className="ls-body mt-5"
+            style={{
+              color: 'var(--ls-ink-faint)',
+              fontFamily: 'var(--ls-mono)',
+              fontSize: '11px',
+              letterSpacing: '0.2em',
+              textTransform: 'uppercase',
+            }}
+          >
+            {data.subtitle}
+          </p>
+        </div>
+
+        <div className="mt-14 grid gap-5 md:grid-cols-3 md:gap-6">
+          {data.items.map((item, i) => (
+            <figure
+              key={item.name}
+              className="ls-card ls-testimonial-card"
+              style={{
+                animation: `ls-reveal 900ms cubic-bezier(0.19,1,0.22,1) ${
+                  i * 110
+                }ms both`,
+              }}
+            >
+              <div className="ls-testimonial-mark" aria-hidden>
+                &ldquo;
+              </div>
+              <blockquote className="ls-testimonial-quote">
+                {item.quote}
+              </blockquote>
+              <figcaption className="ls-testimonial-cap">
+                <span className="ls-testimonial-initials">{item.initials}</span>
+                <span className="ls-testimonial-meta">
+                  <span className="name">{item.name}</span>
+                  <span className="role">{item.role}</span>
+                </span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
       </div>
-    </SectionWrapper>
+
+      <style jsx global>{`
+        .ls-testimonial-card {
+          padding: 2rem 1.75rem 1.75rem;
+          display: flex;
+          flex-direction: column;
+          gap: 1.1rem;
+          position: relative;
+        }
+        .ls-testimonial-mark {
+          font-family: var(--ls-sans);
+          font-size: 4rem;
+          font-weight: 700;
+          line-height: 0.7;
+          color: var(--ls-accent);
+          opacity: 0.4;
+          margin-bottom: -0.5rem;
+        }
+        .ls-testimonial-quote {
+          font-family: var(--ls-sans);
+          font-size: 1rem;
+          line-height: 1.55;
+          color: var(--ls-ink);
+          margin: 0;
+          font-weight: 400;
+        }
+        .ls-testimonial-cap {
+          display: flex;
+          align-items: center;
+          gap: 0.8rem;
+          padding-top: 1rem;
+          border-top: 1px solid var(--ls-rule);
+          margin-top: auto;
+        }
+        .ls-testimonial-initials {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 36px;
+          height: 36px;
+          border-radius: 999px;
+          background: color-mix(in oklab, var(--ls-accent) 14%, transparent);
+          color: var(--ls-accent);
+          font-family: var(--ls-mono);
+          font-size: 11px;
+          font-weight: 500;
+          letter-spacing: 0.05em;
+          border: 1px solid
+            color-mix(in oklab, var(--ls-accent) 24%, transparent);
+        }
+        .ls-testimonial-meta {
+          display: flex;
+          flex-direction: column;
+          gap: 0.1rem;
+        }
+        .ls-testimonial-meta .name {
+          font-family: var(--ls-sans);
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: var(--ls-ink);
+        }
+        .ls-testimonial-meta .role {
+          font-family: var(--ls-mono);
+          font-size: 10px;
+          letter-spacing: 0.15em;
+          text-transform: uppercase;
+          color: var(--ls-ink-faint);
+        }
+      `}</style>
+    </section>
   );
 }

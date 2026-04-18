@@ -65,6 +65,7 @@ export const wizardKeys = {
   'scaffold.client.field.name': 'Client Name',
   'scaffold.client.field.email': 'Client Email',
   'scaffold.client.field.phone': 'Client Phone',
+  'scaffold.client.field.businessName': 'Business Name',
   'scaffold.client.placeholder.name': 'John Smith',
   'scaffold.client.placeholder.email': 'john@example.com',
   'scaffold.client.placeholder.phone': '+40 7XX XXX XXX',

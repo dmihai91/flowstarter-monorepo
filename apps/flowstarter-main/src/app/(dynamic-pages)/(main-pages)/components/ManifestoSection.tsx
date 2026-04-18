@@ -1,52 +1,106 @@
 'use client';
 
 import { useI18n } from '@/lib/i18n';
-import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 export function ManifestoSection() {
-  const { t } = useI18n();
-  const { ref: sectionRef, isVisible } = useScrollAnimation();
+  const { t: tStrict } = useI18n();
+  const t = tStrict as (key: string) => string;
+
+  const paragraphs = ['p1', 'p2', 'p3', 'p4']
+    .map((k) => t(`landing.manifesto.${k}`))
+    .filter((v) => v && !v.startsWith('landing.manifesto'));
 
   return (
     <section
-      ref={sectionRef}
       data-section="manifesto"
-      className="pt-4 lg:pt-8 pb-12 lg:pb-18 relative"
+      className="ls-scope ls-section ls-section--pad"
     >
-      <div
-        className={`max-w-3xl mx-auto px-6 sm:px-8 transition-all duration-1000 ease-out ${
-          isVisible ? 'opacity-100' : 'opacity-0'
-        }`}
-      >
-        {/* Label + heading */}
-        <div className="text-center mb-14 lg:mb-16">
-          <span className="inline-block text-xs font-bold tracking-[0.2em] uppercase text-[var(--purple)] mb-6">
-            {t('landing.manifesto.title')}
-          </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white italic leading-tight">
-            {t('landing.manifesto.headline')}
+      <div className="ls-mesh" aria-hidden />
+      <div className="ls-orb ls-orb--violet ls-orb--c" aria-hidden />
+      <div className="ls-grain" aria-hidden />
+
+      <div className="ls-container">
+        <div className="text-center max-w-3xl mx-auto">
+          <div
+            className="ls-eyebrow inline-flex items-center justify-center gap-3"
+            style={{ justifyContent: 'center' }}
+          >
+            <span
+              aria-hidden
+              style={{
+                display: 'inline-block',
+                width: '28px',
+                height: '1px',
+                background: 'var(--ls-ink-faint)',
+              }}
+            />
+            <span className="num">{t('landing.manifesto.eyebrow')}</span>
+            <span
+              aria-hidden
+              style={{
+                display: 'inline-block',
+                width: '28px',
+                height: '1px',
+                background: 'var(--ls-ink-faint)',
+              }}
+            />
+          </div>
+
+          <h2 className="ls-display mt-7" style={{ textWrap: 'balance' }}>
+            <span className="line">
+              {t('landing.manifesto.headlinePrefix')}
+            </span>
+            <span className="line flourish mt-2">
+              {t('landing.manifesto.headlineFlourish')}
+            </span>
           </h2>
         </div>
 
-        {/* Body */}
-        <div className="space-y-8 text-base md:text-lg text-gray-500 dark:text-white/50 leading-relaxed max-w-[60ch] mx-auto">
-          {t('landing.manifesto.p1') && <p>{t('landing.manifesto.p1')}</p>}
-          {t('landing.manifesto.p2') && <p>{t('landing.manifesto.p2')}</p>}
-          {t('landing.manifesto.p3') && (
-            <p className="text-gray-600 dark:text-white/60">
-              {t('landing.manifesto.p3')}
-            </p>
-          )}
-          {t('landing.manifesto.p4') && <p>{t('landing.manifesto.p4')}</p>}
-        </div>
+        {paragraphs.length > 0 && (
+          <div className="ls-manifesto-body mx-auto mt-14 max-w-[60ch]">
+            {paragraphs.map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
+          </div>
+        )}
 
-        {/* Pull quote — visually distinct */}
-        <div className="mt-12 lg:mt-16 py-8 px-8 sm:px-10 border-l-4 border-[var(--purple)] bg-[var(--purple)]/[0.03] dark:bg-[var(--purple)]/[0.05] rounded-r-2xl max-w-[60ch] mx-auto">
-          <p className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white leading-snug">
-            {t('landing.manifesto.closing')}
-          </p>
+        <div className="ls-manifesto-pull mx-auto mt-10 max-w-[60ch]">
+          <div className="ls-manifesto-rule" aria-hidden />
+          <p>{t('landing.manifesto.closing')}</p>
         </div>
       </div>
+
+      <style jsx global>{`
+        .ls-manifesto-body {
+          display: flex;
+          flex-direction: column;
+          gap: 1.4rem;
+          text-align: center;
+        }
+        .ls-manifesto-body p {
+          font-family: var(--ls-sans);
+          font-size: clamp(1rem, 1.2vw, 1.15rem);
+          line-height: 1.7;
+          color: var(--ls-ink-dim);
+          margin: 0;
+        }
+        .ls-manifesto-pull {
+          text-align: center;
+          padding: 2rem 1.5rem 0;
+          border-top: 1px solid var(--ls-rule);
+          margin-top: 3rem;
+          position: relative;
+        }
+        .ls-manifesto-pull p {
+          font-family: var(--ls-sans);
+          font-size: clamp(1.35rem, 2.3vw, 1.85rem);
+          font-weight: 600;
+          letter-spacing: -0.02em;
+          line-height: 1.3;
+          color: var(--ls-ink);
+          margin: 0;
+        }
+      `}</style>
     </section>
   );
 }

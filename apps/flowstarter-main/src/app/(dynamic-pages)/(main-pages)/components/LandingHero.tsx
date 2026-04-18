@@ -1,350 +1,496 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { LANDING_COPY } from '../landing-copy';
-import { FlowBackground } from '@flowstarter/flow-design-system';
+import { useI18n } from '@/lib/i18n';
 
-function useCountUp(
-  target: number,
-  duration: number = 1200,
-  start: boolean = false
+const PROGRESS_STEPS = 4;
+
+function useBriefTypewriter(
+  sequence: { label: string; value: string }[],
+  startDelay: number
 ) {
-  const [count, setCount] = useState(0);
+  const [values, setValues] = useState<string[]>(() => sequence.map(() => ''));
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const [done, setDone] = useState(false);
+
   useEffect(() => {
-    if (!start) return;
-    let startTime: number | null = null;
-    const step = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.floor(eased * target));
-      if (progress < 1) requestAnimationFrame(step);
+    let cancelled = false;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const sleep = (ms: number) =>
+      new Promise<void>((resolve) => {
+        const id = setTimeout(resolve, ms);
+        timers.push(id);
+      });
+
+    const run = async () => {
+      await sleep(startDelay);
+      for (let step = 0; step < sequence.length; step++) {
+        if (cancelled) return;
+        setActiveIndex(step);
+        const target = sequence[step].value;
+        for (let i = 1; i <= target.length; i++) {
+          if (cancelled) return;
+          setValues((prev) => {
+            const next = prev.slice();
+            next[step] = target.slice(0, i);
+            return next;
+          });
+          await sleep(28 + Math.random() * 32);
+        }
+        await sleep(520);
+      }
+      if (!cancelled) {
+        setActiveIndex(sequence.length);
+        setDone(true);
+      }
     };
-    requestAnimationFrame(step);
-  }, [start, target, duration]);
-  return count;
+
+    run();
+    return () => {
+      cancelled = true;
+      timers.forEach(clearTimeout);
+    };
+  }, [sequence, startDelay]);
+
+  return { values, activeIndex, done };
 }
 
 export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
-  const [ready] = useState(true);
-  const [useSimpleHeadlineAnimation, setUseSimpleHeadlineAnimation] =
-    useState(false);
-  const hero = LANDING_COPY.hero;
+  const { t: tStrict } = useI18n();
+  const t = tStrict as (key: string) => string;
+  const rootRef = useRef<HTMLElement | null>(null);
+  const [revealed, setRevealed] = useState(false);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const mediaQuery = window.matchMedia(
-      '(hover: none), (pointer: coarse), (prefers-reduced-motion: reduce)'
-    );
-
-    const updateHeadlineMode = () => {
-      setUseSimpleHeadlineAnimation(mediaQuery.matches);
-    };
-
-    updateHeadlineMode();
-
-    if (typeof mediaQuery.addEventListener === 'function') {
-      mediaQuery.addEventListener('change', updateHeadlineMode);
-      return () => mediaQuery.removeEventListener('change', updateHeadlineMode);
-    }
-
-    mediaQuery.addListener(updateHeadlineMode);
-    return () => mediaQuery.removeListener(updateHeadlineMode);
+    const id = requestAnimationFrame(() => setRevealed(true));
+    return () => cancelAnimationFrame(id);
   }, []);
 
-  const fade = (delay: string) => ({
-    opacity: ready ? 1 : 0,
-    transform: ready ? 'translateY(0)' : 'translateY(20px)',
-    transition: `opacity 0.7s ease ${delay}, transform 0.7s ease ${delay}`,
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const mq = window.matchMedia('(hover: none), (pointer: coarse)');
+    if (mq.matches) return;
+    const onMove = (e: MouseEvent) => {
+      const rect = el.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      el.style.setProperty('--ls-mx', `${x}%`);
+      el.style.setProperty('--ls-my', `${y}%`);
+    };
+    el.addEventListener('mousemove', onMove);
+    return () => el.removeEventListener('mousemove', onMove);
+  }, []);
+
+  const briefSequence = useMemo(
+    () => [
+      {
+        label: t('landing.hero.brief.field1Label'),
+        value: t('landing.hero.brief.field1Value'),
+      },
+      {
+        label: t('landing.hero.brief.field2Label'),
+        value: t('landing.hero.brief.field2Value'),
+      },
+      {
+        label: t('landing.hero.brief.field3Label'),
+        value: t('landing.hero.brief.field3Value'),
+      },
+    ],
+    [t]
+  );
+
+  const {
+    values: briefValues,
+    activeIndex,
+    done: briefDone,
+  } = useBriefTypewriter(briefSequence, 900);
+
+  const reveal = (order: number): React.CSSProperties => ({
+    opacity: revealed ? 1 : 0,
+    transform: revealed ? 'translateY(0)' : 'translateY(22px)',
+    transition: `opacity 900ms cubic-bezier(0.19,1,0.22,1) ${
+      order * 110
+    }ms, transform 900ms cubic-bezier(0.19,1,0.22,1) ${order * 110}ms`,
   });
 
-  const statsStarted = ready;
-  const deliveryCount = useCountUp(7, 1200, statsStarted);
-  const displayDelivery = 14 - deliveryCount;
-  const deliveryValue = displayDelivery <= 7 ? '5–7' : `${displayDelivery}`;
-  const skillsCount = useCountUp(0, 600, statsStarted);
-  const trialCount = useCountUp(30, 1000, statsStarted);
-  const integrationsCount = useCountUp(4, 800, statsStarted);
+  const filled = briefDone
+    ? PROGRESS_STEPS
+    : Math.min(PROGRESS_STEPS - 1, Math.max(0, activeIndex));
 
   const stats = [
-    { value: '5–7', suffix: ' days', label: 'avg. delivery (Starter)' },
-    { value: `${skillsCount}`, suffix: '', label: 'coding skills needed' },
-    { value: `${trialCount}`, suffix: '-day', label: 'free first month' },
-    { value: '50', suffix: '%', label: 'setup refund if not happy' },
+    { val: t('landing.hero.stat1Value'), lbl: t('landing.hero.stat1Label') },
+    { val: t('landing.hero.stat2Value'), lbl: t('landing.hero.stat2Label') },
+    { val: t('landing.hero.stat3Value'), lbl: t('landing.hero.stat3Label') },
+    { val: t('landing.hero.stat4Value'), lbl: t('landing.hero.stat4Label') },
   ];
-
-  const prefixWords = hero.headlinePrefix.split(' ');
 
   return (
     <section
-      className="relative overflow-hidden flex flex-col justify-center lg:justify-start pb-16 sm:pb-20 lg:pb-16 lg:min-h-[100dvh] pt-24 lg:pt-40"
-      style={{ boxSizing: 'border-box' }}
+      ref={rootRef}
+      className="ls-scope ls-section ls-section--pad-lg ls-fade-bottom"
+      style={{ minHeight: '100svh' }}
     >
-      <FlowBackground
-        variant="landing"
-        style={{ position: 'absolute', inset: 0, zIndex: 0 }}
-      />
+      <style jsx global>{`
+        .ls-hero-trust {
+          border-color: var(--ls-rule);
+          padding-top: 1.6rem;
+        }
+        .ls-hero-stat {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+          padding: 0 1.4rem;
+          border-left: 1px solid var(--ls-rule);
+        }
+        .ls-hero-stat:first-child {
+          padding-left: 0;
+          border-left: 0;
+        }
+        .ls-hero-stat .val {
+          font-family: var(--ls-mono);
+          font-size: 0.95rem;
+          font-weight: 500;
+          color: var(--ls-ink);
+          letter-spacing: -0.01em;
+        }
+        .ls-hero-stat .lbl {
+          font-family: var(--ls-sans);
+          font-size: 0.72rem;
+          color: var(--ls-ink-faint);
+          letter-spacing: 0.03em;
+        }
 
-      {/* Top-center gradient crown */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 z-[1]"
-        style={{
-          height: '520px',
-          background:
-            'radial-gradient(ellipse 70% 55% at 50% -5%, rgba(124,58,237,0.18) 0%, rgba(99,102,241,0.10) 40%, transparent 70%)',
-        }}
-      />
+        .ls-brief-hdr {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-bottom: 1.1rem;
+          margin-bottom: 1.2rem;
+          border-bottom: 1px solid var(--ls-rule);
+        }
+        .ls-brief-live {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.55rem;
+          font-family: var(--ls-mono);
+          font-size: 10.5px;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: var(--ls-ink-dim);
+        }
+        .ls-brief-live .dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: #22c55e;
+          animation: ls-pulse 2s ease-in-out infinite;
+        }
+        .dark .ls-brief-live .dot {
+          background: #6cf2a0;
+        }
+        @keyframes ls-pulse {
+          0%,
+          100% {
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+          }
+          50% {
+            box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+          }
+        }
+        .ls-brief-serial {
+          font-family: var(--ls-mono);
+          font-size: 10.5px;
+          letter-spacing: 0.2em;
+          color: var(--ls-ink-faint);
+        }
+        .ls-brief-title {
+          font-family: var(--ls-sans);
+          font-weight: 600;
+          letter-spacing: -0.02em;
+          font-size: 1.5rem;
+          line-height: 1.1;
+          color: var(--ls-ink);
+          margin-bottom: 0.35rem;
+        }
+        .ls-brief-subtitle {
+          font-family: var(--ls-mono);
+          font-size: 10.5px;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: var(--ls-ink-faint);
+          margin-bottom: 1.3rem;
+        }
+        .ls-brief-delivery {
+          margin-top: 1.2rem;
+          padding-top: 1.1rem;
+          border-top: 1px solid var(--ls-rule);
+          display: flex;
+          flex-direction: column;
+          gap: 0.6rem;
+        }
+        .ls-brief-delivery .row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .ls-brief-delivery .lbl {
+          font-family: var(--ls-mono);
+          font-size: 10px;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: var(--ls-ink-faint);
+        }
+        .ls-brief-delivery .val {
+          font-family: var(--ls-mono);
+          font-size: 11px;
+          letter-spacing: 0.12em;
+          color: var(--ls-ink-dim);
+        }
+        .ls-brief-finish {
+          margin-top: 1.3rem;
+          width: 100%;
+          height: 44px;
+          border-radius: 12px;
+          background: transparent;
+          border: 1px solid var(--ls-rule);
+          color: var(--ls-ink);
+          font-family: var(--ls-sans);
+          font-size: 0.88rem;
+          font-weight: 500;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          cursor: pointer;
+          transition: background 220ms ease, border-color 220ms ease,
+            transform 220ms ease;
+        }
+        .ls-brief-finish:hover {
+          background: var(--ls-rule);
+          border-color: var(--ls-ink-faint);
+          transform: translateY(-1px);
+        }
+        .ls-brief-finish.ready {
+          background: linear-gradient(
+            135deg,
+            color-mix(in oklab, var(--ls-accent) 14%, transparent),
+            color-mix(in oklab, var(--ls-accent-warm) 12%, transparent)
+          );
+          border-color: var(--ls-accent);
+        }
+      `}</style>
 
-      {/* Floating gradient orbs */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden z-[1]">
-        {/* Left-purple orb */}
-        <div
-          style={{
-            position: 'absolute',
-            width: '420px',
-            height: '420px',
-            top: '-120px',
-            left: '-60px',
-            borderRadius: '50%',
-            background:
-              'radial-gradient(circle, rgba(124,58,237,0.22) 0%, rgba(99,102,241,0.08) 50%, transparent 70%)',
-            filter: 'blur(48px)',
-            animation: 'flow-drift-1 22s ease-in-out infinite',
-          }}
-        />
-        {/* Right-cyan orb */}
-        <div
-          style={{
-            position: 'absolute',
-            width: '360px',
-            height: '360px',
-            top: '-60px',
-            right: '-40px',
-            borderRadius: '50%',
-            background:
-              'radial-gradient(circle, rgba(6,182,212,0.18) 0%, rgba(59,130,246,0.07) 50%, transparent 70%)',
-            filter: 'blur(48px)',
-            animation: 'flow-drift-2 28s ease-in-out infinite',
-          }}
-        />
-        {/* Bottom-center warm glow */}
-        <div
-          style={{
-            position: 'absolute',
-            width: '500px',
-            height: '200px',
-            bottom: '-40px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            borderRadius: '50%',
-            background:
-              'radial-gradient(ellipse, rgba(139,92,246,0.10) 0%, transparent 70%)',
-            filter: 'blur(40px)',
-            animation: 'flow-drift-3 18s ease-in-out infinite',
-          }}
-        />
-      </div>
+      <div className="ls-mesh" aria-hidden />
+      <div className="ls-orb ls-orb--violet ls-orb--tl" aria-hidden />
+      <div className="ls-orb ls-orb--warm ls-orb--br" aria-hidden />
+      <div className="ls-streak" aria-hidden />
+      <div className="ls-grain" aria-hidden />
 
-      <div className="relative z-10 max-w-5xl mx-auto px-5 sm:px-10">
-        {/* Label */}
-        <div
-          style={fade('0s')}
-          className="flex items-center justify-center mb-5 sm:mb-6 md:mb-5 tablet:mb-5 lg:mb-6"
-        >
-          <div
-            className="hero-badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[var(--purple)] dark:text-white"
-            style={{
-              background:
-                'linear-gradient(135deg, rgba(124,58,237,0.18), rgba(99,102,241,0.13))',
-              border: '1.5px solid rgba(124,58,237,0.55)',
-              boxShadow:
-                '0 0 14px rgba(124,58,237,0.22), inset 0 0 0 1px rgba(255,255,255,0.6)',
-            }}
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)] dark:bg-violet-400 shrink-0" />
-            <span className="text-[11px] font-semibold tracking-[0.12em] uppercase">
-              Done for you. Live in days.
-            </span>
-          </div>
-        </div>
-
-        {/* Headline */}
-        <div className="text-center mb-5 sm:mb-6" style={fade('0.05s')}>
-          <h1 className="leading-[1.15] tracking-tight">
-            {/* Prefix: word-by-word entrance */}
-            <span
-              className="block font-light text-gray-900 dark:text-white"
-              style={{ fontSize: 'clamp(1.6rem, 4vw, 3rem)' }}
+      <div className="ls-container">
+        <div className="grid items-center gap-10 md:grid-cols-[1.15fr_0.85fr] md:gap-14 lg:gap-20">
+          <div>
+            <div
+              style={reveal(0)}
+              className="ls-eyebrow flex flex-wrap items-center gap-1"
             >
-              {prefixWords.map((word, i) => (
-                <span
-                  key={i}
-                  className="inline-block"
-                  style={{
-                    animationName: 'wordReveal',
-                    animationDuration: useSimpleHeadlineAnimation
-                      ? '0.45s'
-                      : '0.6s',
-                    animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
-                    animationFillMode: 'both',
-                    animationDelay: `${0.15 + i * 0.07}s`,
-                    marginRight: '0.25em',
-                    filter: useSimpleHeadlineAnimation ? 'none' : undefined,
-                  }}
-                >
-                  {word}
-                </span>
-              ))}
-            </span>
-            {/* Highlight: animated gradient */}
-            <span
-              className="block font-black"
-              style={{
-                fontSize: 'clamp(2rem, 5vw, 3.6rem)',
-                background:
-                  'linear-gradient(135deg, hsl(241,93%,75%) 0%, var(--purple) 40%, hsl(241,93%,45%) 100%)',
-                backgroundSize: useSimpleHeadlineAnimation
-                  ? '100% 100%'
-                  : '200% 200%',
-                WebkitBackgroundClip: 'text',
-                backgroundClip: 'text',
-                color: 'transparent',
-                WebkitTextFillColor: 'transparent',
-                animation: useSimpleHeadlineAnimation
-                  ? `wordReveal 0.45s cubic-bezier(0.16, 1, 0.3, 1) both ${
-                      0.15 + prefixWords.length * 0.07
-                    }s`
-                  : `wordReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) both ${
-                      0.15 + prefixWords.length * 0.07
-                    }s, textFlow 6s ease infinite ${
-                      0.85 + prefixWords.length * 0.07
-                    }s`,
-              }}
-            >
-              {hero.headlineHighlight}
-            </span>
-          </h1>
-        </div>
-
-        {/* Body */}
-        <p
-          style={fade('0.2s')}
-          className="text-center text-base sm:text-lg text-gray-500 dark:text-white/55 leading-relaxed max-w-xl mx-auto mb-5 sm:mb-6"
-        >
-          {hero.subheadline}
-        </p>
-
-        {/* Audience pills */}
-        <div
-          style={fade('0.25s')}
-          className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mb-5 sm:mb-6"
-        >
-          {[
-            'Coaches',
-            'Consultants',
-            'Therapists',
-            'Freelancers',
-            'Founders',
-          ].map((label) => (
-            <span
-              key={label}
-              className="text-[0.65rem] sm:text-xs font-medium px-2.5 sm:px-3 py-1 rounded-full border border-gray-200 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] text-gray-500 dark:text-white/40 backdrop-blur-sm transition-colors hover:border-[var(--purple)]/30 hover:text-[var(--purple)] dark:hover:text-[var(--purple)]"
-            >
-              {label}
-            </span>
-          ))}
-        </div>
-
-        {/* CTA row */}
-        <div
-          style={fade('0.3s')}
-          className="flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-6 mb-7 sm:mb-10"
-        >
-          <Button
-            variant="brand-gradient"
-            onClick={() => onOpenModal?.()}
-            className="relative overflow-hidden bg-[length:200%_100%] animate-[shimmerBtn_3s_ease-in-out_infinite] px-9 h-13 text-base sm:text-lg font-semibold rounded-2xl shadow-[0_4px_24px_rgba(124,58,237,0.3)] hover:shadow-[0_6px_32px_rgba(124,58,237,0.45)] hover:scale-[1.02] active:scale-[0.98] group"
-          >
-            {hero.primaryCta}
-            <svg
-              className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-0.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2.5}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
-              />
-            </svg>
-          </Button>
-          <a
-            href="#pricing"
-            onClick={(e) => {
-              e.preventDefault();
-              document
-                .getElementById('pricing')
-                ?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="inline-flex items-center gap-1 text-sm sm:text-base font-medium text-gray-500 dark:text-white/50 hover:text-gray-800 dark:hover:text-white/80 underline underline-offset-4 decoration-gray-300 dark:decoration-white/20 hover:decoration-gray-500 dark:hover:decoration-white/50 transition-all"
-          >
-            {hero.secondaryCta}
-            <svg
-              className="w-3.5 h-3.5 mt-0.5 opacity-70"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2.5}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </a>
-        </div>
-
-        {/* Guarantee line */}
-        <p
-          style={{ ...fade('0.35s'), fontSize: '0.85rem' }}
-          className="text-center text-gray-400 dark:text-white/35 mb-7 sm:mb-8"
-        >
-          {hero.guarantee}
-        </p>
-
-        {/* Stats */}
-        <div
-          style={fade('0.4s')}
-          className="flex items-start justify-center gap-4 sm:gap-14 pt-7 sm:pt-8 border-t border-gray-300 dark:border-white/[0.07] w-full"
-        >
-          {stats.map((s, i) => (
-            <div key={i} className="text-center flex-1 min-w-0">
-              <p className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white leading-none tabular-nums">
-                {s.value}
-                <span className="text-base sm:text-lg font-semibold text-[var(--purple)]">
-                  {s.suffix}
-                </span>
-              </p>
-              <p className="text-[0.5rem] sm:text-[0.65rem] uppercase tracking-widest text-gray-400 dark:text-white/30 mt-1 leading-tight">
-                {s.label}
-              </p>
+              <span className="num">{t('landing.hero.eyebrowSerial')}</span>
+              <span className="dot">·</span>
+              <span>{t('landing.hero.eyebrowLabel')}</span>
+              <span className="dot">·</span>
+              <span>{t('landing.hero.eyebrowTagline')}</span>
             </div>
-          ))}
+
+            <h1 className="ls-display mt-9">
+              <span className="line" style={reveal(1)}>
+                {t('landing.hero.displayPrefix')}
+              </span>
+              <span className="line flourish mt-2" style={reveal(2)}>
+                {t('landing.hero.displayFlourish')}
+              </span>
+            </h1>
+
+            <p style={reveal(3)} className="ls-body ls-body--lead mt-8">
+              {t('landing.hero.subhead')}
+            </p>
+
+            <div
+              style={reveal(4)}
+              className="mt-10 flex flex-wrap items-center gap-6"
+            >
+              <Button onClick={() => onOpenModal?.()} className="ls-cta">
+                {t('landing.hero.primaryCta')}
+                <svg
+                  className="arrow ml-2 h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.4}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 12h14m-5-6l6 6-6 6"
+                  />
+                </svg>
+              </Button>
+              <a
+                href="#pricing"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document
+                    .getElementById('pricing')
+                    ?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="ls-link"
+              >
+                {t('landing.hero.secondaryCta')}
+              </a>
+            </div>
+
+            <p
+              style={{
+                ...reveal(5),
+                color: 'var(--ls-ink-faint)',
+                fontFamily: 'var(--ls-mono)',
+              }}
+              className="mt-5 text-[10.5px] uppercase tracking-[0.18em]"
+            >
+              {t('landing.hero.guaranteeShort')}
+            </p>
+
+            <div
+              style={reveal(6)}
+              className="ls-hero-trust mt-10 flex flex-wrap items-stretch border-t"
+            >
+              {stats.map((s) => (
+                <div key={s.lbl} className="ls-hero-stat">
+                  <span className="val">{s.val}</span>
+                  <span className="lbl">{s.lbl}</span>
+                </div>
+              ))}
+            </div>
+
+            <div
+              style={reveal(7)}
+              className="mt-6 flex flex-wrap items-center gap-3"
+            >
+              <span className="ls-pill ls-pill--accent">
+                {t('landing.storage.tagline')}
+              </span>
+              <span className="ls-pill">
+                {t('landing.storage.starter.tier')}{' '}
+                <b style={{ color: 'var(--ls-ink)', fontWeight: 600 }}>
+                  {t('landing.storage.starter.amount')}
+                </b>
+              </span>
+              <span className="ls-pill">
+                {t('landing.storage.growth.tier')}{' '}
+                <b style={{ color: 'var(--ls-ink)', fontWeight: 600 }}>
+                  {t('landing.storage.growth.amount')}
+                </b>
+              </span>
+              <span className="ls-pill">
+                {t('landing.storage.pro.tier')}{' '}
+                <b style={{ color: 'var(--ls-ink)', fontWeight: 600 }}>
+                  {t('landing.storage.pro.amount')}
+                </b>
+              </span>
+            </div>
+          </div>
+
+          <aside
+            style={{
+              ...reveal(2),
+              transform: revealed
+                ? 'translateY(0) translateX(0)'
+                : 'translateY(22px) translateX(16px)',
+            }}
+            className="ls-card ls-brief"
+          >
+            <div className="ls-brief-hdr">
+              <span className="ls-brief-live">
+                <span className="dot" />
+                {t('landing.hero.brief.live')}
+              </span>
+              <span className="ls-brief-serial">
+                {t('landing.hero.brief.serial')}
+              </span>
+            </div>
+
+            <div className="ls-brief-title">
+              {t('landing.hero.brief.title')}
+            </div>
+            <div className="ls-brief-subtitle">
+              {t('landing.hero.brief.subtitle')}
+            </div>
+
+            {briefSequence.map((field, i) => {
+              const shown = briefValues[i];
+              const isActive = activeIndex === i && !briefDone;
+              const isPending = activeIndex < i;
+              return (
+                <div key={field.label} className="ls-field">
+                  <span className="lbl">{field.label}</span>
+                  <span
+                    className="val"
+                    style={{ opacity: isPending ? 0.3 : 1 }}
+                  >
+                    {isPending ? '·' : shown || '\u00A0'}
+                    {isActive && <span className="ls-caret" />}
+                  </span>
+                </div>
+              );
+            })}
+
+            <div className="ls-brief-delivery">
+              <div className="row">
+                <span className="lbl">
+                  {t('landing.hero.brief.progressLabel')}
+                </span>
+                <span className="val">
+                  {briefDone
+                    ? t('landing.hero.brief.progressReady')
+                    : t('landing.hero.brief.progressBuilding')}
+                </span>
+              </div>
+              <div className="ls-bar">
+                {Array.from({ length: PROGRESS_STEPS }).map((_, i) => (
+                  <div
+                    key={i}
+                    className={`ls-bar-cell ${i < filled ? 'on' : ''}`}
+                    style={{ animationDelay: `${i * 90}ms` }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => onOpenModal?.()}
+              className={`ls-brief-finish ${briefDone ? 'ready' : ''}`}
+            >
+              {briefDone
+                ? t('landing.hero.brief.ctaReady')
+                : t('landing.hero.brief.ctaPending')}
+              <svg
+                className="h-3.5 w-3.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 12h14m-5-6l6 6-6 6"
+                />
+              </svg>
+            </button>
+          </aside>
         </div>
       </div>
-      {/* Bottom fade — blend into next section */}
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-48 hidden dark:block"
-        style={{
-          background:
-            'linear-gradient(to bottom, transparent 0%, #0a0a12 100%)',
-        }}
-      />
     </section>
   );
 }

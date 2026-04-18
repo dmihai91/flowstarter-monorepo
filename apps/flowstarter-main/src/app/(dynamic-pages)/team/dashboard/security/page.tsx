@@ -204,7 +204,6 @@ export default function TeamSecurityPage() {
       title="Security"
       subtitle="Password and two-factor authentication"
       icon={<Shield className="w-5 h-5 text-[var(--purple)]" />}
-      maxWidth="2xl"
     >
       <ShellCard>
         {/* 2FA Card */}

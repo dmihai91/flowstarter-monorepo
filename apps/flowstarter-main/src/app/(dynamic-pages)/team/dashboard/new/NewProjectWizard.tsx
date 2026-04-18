@@ -728,8 +728,17 @@ export function NewProjectWizard() {
     null;
 
   return (
-    <div className="py-4 sm:py-8 px-3 sm:px-6">
+    <div className="pt-8 pb-10 px-3 sm:px-6">
       <div className="max-w-4xl mx-auto">
+        {/* Back to dashboard */}
+        <button
+          onClick={() => router.push('/team/dashboard')}
+          className="inline-flex items-center gap-1.5 text-sm text-zinc-500 dark:text-zinc-300 hover:text-zinc-800 dark:hover:text-white mb-6 transition-colors"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Dashboard
+        </button>
+
         {/* Step indicator — hide during progress/clarify */}
         {!['progress', 'clarify'].includes(form.phase) && (
           <StepIndicator

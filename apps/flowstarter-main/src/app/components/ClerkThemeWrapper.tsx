@@ -177,12 +177,15 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
     signInFallbackRedirectUrl: '/team/dashboard',
     signUpFallbackRedirectUrl: '/team/dashboard',
     allowedRedirectOrigins: getAllowedRedirectOrigins(
-      typeof window !== 'undefined' ? window.location.hostname : undefined,
+      typeof window !== 'undefined' ? window.location.hostname : undefined
     ),
   } as unknown as ComponentProps<typeof ClerkProvider>;
 
   return (
-    <ClerkProvider {...clerkProviderProps} ui={ui as Parameters<typeof ClerkProvider>[0]['ui']}>
+    <ClerkProvider
+      {...clerkProviderProps}
+      ui={ui as Parameters<typeof ClerkProvider>[0]['ui']}
+    >
       {children}
     </ClerkProvider>
   );

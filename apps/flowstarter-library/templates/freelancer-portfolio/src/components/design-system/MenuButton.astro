@@ -1,0 +1,46 @@
+---
+interface Props {
+  ariaLabel: string;
+  className?: string;
+}
+
+const { ariaLabel, className = '' } = Astro.props;
+---
+
+<button class={`ds-menu-button ${className}`.trim()} aria-label={ariaLabel}>
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<style>
+  .ds-menu-button {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 4px;
+    border-radius: 0;
+  }
+
+  .ds-menu-button span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--text-on-dark);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform-origin: center;
+  }
+
+  .ds-menu-button.is-open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .ds-menu-button.is-open span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  .ds-menu-button.is-open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+</style>

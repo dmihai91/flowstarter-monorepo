@@ -6,7 +6,10 @@
  */
 
 import { auth, currentUser } from '@clerk/nextjs/server';
-import { getAllowedRedirectOrigins, isTeamEmail } from '@flowstarter/platform-config';
+import {
+  getAllowedRedirectOrigins,
+  isTeamEmail,
+} from '@flowstarter/platform-config';
 import { NextRequest, NextResponse } from 'next/server';
 
 const ALLOWED_ORIGINS = getAllowedRedirectOrigins();

@@ -5,6 +5,7 @@ import { ProjectWithOwner } from '@/hooks/useTeamProjects';
 import { useFormatDate } from '@/hooks/useFormatDate';
 import { useTranslations } from '@/lib/i18n';
 import { GlassPanel } from '@flowstarter/flow-design-system';
+import { ClientRequestsKpiCard } from './ClientRequestsKpiCard';
 
 // Status groupings - single source of truth
 const LIVE_STATUSES = ['completed', 'live'] as const;
@@ -100,7 +101,7 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 w-full min-w-0">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full min-w-0">
       {/* Total Projects Card */}
       <GlassPanel
         shadow="glass"
@@ -111,12 +112,6 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
           <span className="text-sm text-gray-500 dark:text-white/50">
             {t('team.dashboard.totalProjects')}
           </span>
-          <Link
-            href="/team/dashboard/projects/list"
-            className="text-xs text-[var(--purple)] hover:underline font-medium"
-          >
-            {t('team.dashboard.details')} →
-          </Link>
         </div>
         <p className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
           {totalProjects}
@@ -226,41 +221,42 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
       </GlassPanel>
 
       {/* AI Usage Card */}
-      <div className="sm:col-span-2 lg:col-span-1">
-        <GlassPanel
-          shadow="glass"
-          padding="md"
-          className="rounded-[28px] bg-white/55 backdrop-blur-2xl backdrop-saturate-200 border border-white/80 shadow-[0_8px_32px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.95)] dark:bg-[rgba(18,12,42,0.55)] dark:backdrop-blur-2xl dark:backdrop-saturate-150 dark:border-white/[0.08] dark:shadow-[0_8px_40px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.06)]"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-500 dark:text-white/50">
-              AI Usage
+      <GlassPanel
+        shadow="glass"
+        padding="md"
+        className="rounded-[28px] bg-white/55 backdrop-blur-2xl backdrop-saturate-200 border border-white/80 shadow-[0_8px_32px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.95)] dark:bg-[rgba(18,12,42,0.55)] dark:backdrop-blur-2xl dark:backdrop-saturate-150 dark:border-white/[0.08] dark:shadow-[0_8px_40px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.06)]"
+      >
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm text-gray-500 dark:text-white/50">
+            AI Usage
+          </span>
+          <Link
+            href="/team/dashboard/ai-usage"
+            className="text-xs text-[var(--purple)] hover:underline font-medium"
+          >
+            {t('team.dashboard.details')} →
+          </Link>
+        </div>
+        <div className="mb-3">
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">
+            {totalCredits} credits
+          </p>
+          <p className="text-lg font-semibold text-[var(--purple)] dark:text-[var(--purple)]">
+            €{totalCostEur.toFixed(2)}
+          </p>
+        </div>
+        <div className="flex items-center gap-3 text-xs">
+          <span className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-[var(--purple)]" />
+            <span className="text-gray-600 dark:text-white/60">
+              {sitesGenerated} sites generated
             </span>
-            <Link
-              href="/team/dashboard/ai-usage"
-              className="text-xs text-[var(--purple)] hover:underline font-medium"
-            >
-              {t('team.dashboard.details')} →
-            </Link>
-          </div>
-          <div className="mb-3">
-            <p className="text-3xl font-bold text-gray-900 dark:text-white">
-              {totalCredits} credits
-            </p>
-            <p className="text-lg font-semibold text-[var(--purple)] dark:text-[var(--purple)]">
-              €{totalCostEur.toFixed(2)}
-            </p>
-          </div>
-          <div className="flex items-center gap-3 text-xs">
-            <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[var(--purple)]" />
-              <span className="text-gray-600 dark:text-white/60">
-                {sitesGenerated} sites generated
-              </span>
-            </span>
-          </div>
-        </GlassPanel>
-      </div>
+          </span>
+        </div>
+      </GlassPanel>
+
+      {/* Client Requests KPI */}
+      <ClientRequestsKpiCard />
     </div>
   );
 }

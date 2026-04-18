@@ -1,0 +1,20 @@
+---
+interface Props {
+  label: string;
+  className?: string;
+}
+
+const { label, className = '' } = Astro.props;
+---
+
+<span class={`ds-tag-pill ${className}`.trim()}>{label}</span>
+
+<style>
+  .ds-tag-pill {
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    padding: 6px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+  }
+</style>

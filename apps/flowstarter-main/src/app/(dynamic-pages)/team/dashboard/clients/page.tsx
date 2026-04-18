@@ -132,7 +132,6 @@ export default function ClientsPage() {
       title={`Clients · ${clients.length}`}
       subtitle="All clients derived from your projects"
       icon={<Users className="w-5 h-5 text-[var(--purple)]" />}
-      maxWidth="5xl"
     >
       <div className="flex justify-end mb-4">
         <button
@@ -155,14 +154,22 @@ export default function ClientsPage() {
       )}
       {error && <p className="text-sm text-red-500">Failed to load clients.</p>}
       {!isLoading && !error && clients.length === 0 && (
-        <div className="text-center py-20">
-          <Users className="w-10 h-10 text-gray-300 dark:text-white/20 mx-auto mb-3" />
-          <p className="text-sm font-medium text-gray-500 dark:text-white/40">
+        <div className="rounded-2xl border border-gray-200/80 bg-white/95 dark:border-white/[0.06] dark:bg-white/[0.05] shadow-[0_8px_32px_rgba(0,0,0,0.08)] p-12 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/50 bg-white/55 backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.08]">
+            <Users className="w-8 h-8 text-gray-400 dark:text-white/30" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
             No clients yet
+          </h3>
+          <p className="text-gray-500 dark:text-white/50 mb-6 max-w-sm mx-auto text-sm">
+            Create your first project to see clients here.
           </p>
-          <p className="text-xs text-gray-400 dark:text-white/25 mt-1">
-            Create your first project to see clients here
-          </p>
+          <button
+            onClick={() => router.push('/team/dashboard/new')}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--purple)] text-white text-sm font-semibold hover:bg-[var(--purple)]/90 transition-all"
+          >
+            <Plus className="w-4 h-4" /> New project
+          </button>
         </div>
       )}
       {!isLoading && clients.length > 0 && (

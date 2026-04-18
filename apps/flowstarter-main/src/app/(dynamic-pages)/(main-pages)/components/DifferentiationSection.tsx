@@ -1,81 +1,183 @@
 'use client';
 
-import { SectionWrapper, SectionHeading } from './SectionWrapper';
-import { LANDING_COPY, type DifferentiationCard } from '../landing-copy';
+import { useI18n } from '@/lib/i18n';
+import { LANDING_COPY } from '../landing-copy';
 
 export function DifferentiationSection() {
-  const differentiation = LANDING_COPY.differentiation;
+  const { t: tStrict } = useI18n();
+  const t = tStrict as (key: string) => string;
+  const diff = LANDING_COPY.differentiation;
 
   return (
-    <SectionWrapper tinted>
-      <SectionHeading className="text-center">
-        {differentiation.title}
-      </SectionHeading>
+    <section
+      id="differentiation"
+      className="ls-scope ls-section ls-section--pad"
+    >
+      <div className="ls-mesh" aria-hidden />
+      <div className="ls-orb ls-orb--warm ls-orb--br" aria-hidden />
+      <div className="ls-grain" aria-hidden />
 
-      <div className="mt-8 sm:mt-12 grid gap-3 sm:gap-5 md:grid-cols-3">
-        {differentiation.cards.map((card: DifferentiationCard) => (
+      <div className="ls-container">
+        <div className="text-center max-w-3xl mx-auto">
           <div
-            key={card.label}
-            className={`rounded-xl sm:rounded-2xl px-5 py-4 sm:p-7 transition-all ${
-              card.highlighted
-                ? 'bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] text-white shadow-xl shadow-[var(--landing-text-accent)]/20 ring-2 ring-[var(--purple-primary)]/40'
-                : 'bg-gray-50/80 dark:bg-white/[0.04] ring-1 ring-gray-200/60 dark:ring-white/[0.08]'
-            }`}
+            className="ls-eyebrow inline-flex items-center justify-center gap-3"
+            style={{ justifyContent: 'center' }}
           >
-            <h3
-              className={`text-base sm:text-lg font-semibold ${
-                card.highlighted
-                  ? 'text-white'
-                  : 'text-gray-900 dark:text-white'
-              }`}
-            >
-              {card.label}
-            </h3>
-            <div
-              className={`mt-3 mb-3 h-px ${
-                card.highlighted
-                  ? 'bg-white/20'
-                  : 'bg-gray-200 dark:bg-white/10'
-              }`}
+            <span
+              aria-hidden
+              style={{
+                display: 'inline-block',
+                width: '28px',
+                height: '1px',
+                background: 'var(--ls-ink-faint)',
+              }}
             />
-            <p
-              className={`mt-2 text-sm leading-relaxed ${
-                card.highlighted
-                  ? 'text-white/80'
-                  : 'text-gray-500 dark:text-gray-400'
-              }`}
-            >
-              {card.description}
-            </p>
-            {card.bullets && (
-              <ul className="mt-3 space-y-1.5 text-left">
-                {card.bullets.map((b: string) => (
-                  <li key={b} className="flex items-start gap-2 text-sm">
-                    <span
-                      className={`mt-0.5 shrink-0 ${
-                        card.highlighted
-                          ? 'text-white/90'
-                          : 'text-[var(--purple-primary)]'
-                      }`}
-                    >
-                      ✓
-                    </span>
-                    <span
-                      className={
-                        card.highlighted
-                          ? 'text-white/80'
-                          : 'text-gray-500 dark:text-gray-400'
-                      }
-                    >
-                      {b}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <span className="num">{t('landing.differentiation.eyebrow')}</span>
+            <span
+              aria-hidden
+              style={{
+                display: 'inline-block',
+                width: '28px',
+                height: '1px',
+                background: 'var(--ls-ink-faint)',
+              }}
+            />
           </div>
-        ))}
+
+          <h2 className="ls-display mt-7" style={{ textWrap: 'balance' }}>
+            <span className="line">
+              {t('landing.differentiation.headlinePrefix')}
+            </span>
+            <span className="line flourish mt-2">
+              {t('landing.differentiation.headlineFlourish')}
+            </span>
+          </h2>
+
+          <p className="ls-body ls-body--lead mt-7 mx-auto">
+            {t('landing.differentiation.sub')}
+          </p>
+        </div>
+
+        <div className="mt-14 grid gap-5 md:grid-cols-3 md:gap-6">
+          {diff.cards.map((c, i) => {
+            const highlighted =
+              'highlighted' in c &&
+              (c as { highlighted?: boolean }).highlighted;
+            const bullets =
+              'bullets' in c
+                ? (c as { bullets?: string[] }).bullets
+                : undefined;
+            return (
+              <div
+                key={c.label}
+                className={`ls-card ls-diff-card ${
+                  highlighted ? 'ls-diff-card--hi' : ''
+                }`}
+                style={{
+                  animation: `ls-reveal 900ms cubic-bezier(0.19,1,0.22,1) ${
+                    i * 130
+                  }ms both`,
+                }}
+              >
+                <div className="ls-diff-label">{c.label}</div>
+                <p className="ls-diff-body">{c.description}</p>
+                {bullets && bullets.length > 0 && (
+                  <ul className="ls-diff-bullets">
+                    {bullets.map((b) => (
+                      <li key={b}>
+                        <span className="ls-diff-check" aria-hidden>
+                          <svg
+                            viewBox="0 0 14 14"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <path
+                              d="M2 7.5l3 3 7-7"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </span>
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
-    </SectionWrapper>
+
+      <style jsx global>{`
+        .ls-diff-card {
+          padding: 1.75rem 1.6rem 1.9rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.9rem;
+          transition: transform 320ms cubic-bezier(0.19, 1, 0.22, 1),
+            border-color 320ms ease;
+        }
+        .ls-diff-card:hover {
+          transform: translateY(-3px);
+        }
+        .ls-diff-card--hi {
+          border-color: color-mix(in oklab, var(--ls-accent) 55%, transparent);
+          background: linear-gradient(
+            135deg,
+            color-mix(in oklab, var(--ls-accent) 14%, var(--ls-glass-bg)),
+            var(--ls-glass-bg) 60%
+          );
+        }
+        .ls-diff-label {
+          font-family: var(--ls-mono);
+          font-size: 11px;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: var(--ls-ink-faint);
+        }
+        .ls-diff-card--hi .ls-diff-label {
+          color: var(--ls-accent);
+        }
+        .ls-diff-body {
+          font-family: var(--ls-sans);
+          font-size: 1rem;
+          line-height: 1.5;
+          color: var(--ls-ink);
+          letter-spacing: -0.01em;
+        }
+        .ls-diff-bullets {
+          list-style: none;
+          margin: 0.6rem 0 0;
+          padding: 0;
+          border-top: 1px solid var(--ls-rule);
+          padding-top: 0.9rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.55rem;
+        }
+        .ls-diff-bullets li {
+          font-family: var(--ls-sans);
+          font-size: 0.88rem;
+          line-height: 1.4;
+          color: var(--ls-ink-dim);
+          display: flex;
+          align-items: flex-start;
+          gap: 0.55rem;
+        }
+        .ls-diff-check {
+          flex-shrink: 0;
+          width: 16px;
+          height: 16px;
+          border-radius: 4px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--ls-accent);
+          background: color-mix(in oklab, var(--ls-accent) 18%, transparent);
+        }
+      `}</style>
+    </section>
   );
 }

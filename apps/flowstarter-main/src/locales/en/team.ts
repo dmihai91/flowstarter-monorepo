@@ -107,4 +107,10 @@ export const teamKeys = {
   'team.invite.failedToSend': 'Failed to send invitation',
   'team.login.invalidCredentials': 'Invalid credentials',
   'team.login.invalidCode': 'Invalid code',
+
+  // Client requests
+  'team.dashboard.clientRequests': 'Client Requests',
+  'team.dashboard.clientRequests.allCaughtUp': 'All caught up',
+  'team.dashboard.clientRequests.noRequests': 'No client requests yet',
+  'team.sidebar.clientRequests': 'Client Requests',
 } as const;

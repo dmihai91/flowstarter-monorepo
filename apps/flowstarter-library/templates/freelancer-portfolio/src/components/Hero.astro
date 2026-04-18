@@ -1,0 +1,288 @@
+---
+import { frontmatter as siteLabels } from '../content/site-labels.md';
+import SectionBlock from './design-system/SectionBlock.astro';
+import ActionButton from './design-system/ActionButton.astro';
+
+const { hero } = siteLabels;
+const heroImageUrl = `${import.meta.env.BASE_URL}images/hero.png`;
+const heroHighlights = [
+  'that solve real problems',
+  'move complex products forward',
+  'insight to handoff',
+  'confusion into clear usable experiences',
+];
+
+const escapeRegex = (value = '') => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const heroParagraphs = String(hero.text ?? '')
+  .split(/\n\s*\n/)
+  .map((paragraph) => paragraph.replace(/\s*\n\s*/g, ' ').trim())
+  .filter(Boolean);
+
+const highlightPattern = new RegExp(`(${heroHighlights.map(escapeRegex).join('|')})`, 'gi');
+
+const heroParagraphSegments = heroParagraphs.map((paragraph) =>
+  paragraph
+    .split(highlightPattern)
+    .filter(Boolean)
+    .map((segment) => ({
+      text: segment,
+      highlighted: heroHighlights.some((phrase) => phrase.toLowerCase() === segment.toLowerCase()),
+    }))
+);
+---
+
+<div class="hero__intro-overlay" aria-hidden="true">
+  <span class="hero__intro-text">{hero.title}</span>
+</div>
+
+<SectionBlock id="home" className="hero" tone="dark" padding="none">
+  <div class="hero__inner container">
+    <div class="hero__content-wrap">
+      <div class="hero__content">
+        <h1 class="hero__title">{hero.title}</h1>
+        <p class="hero__text">
+          {heroParagraphSegments.map((paragraph, index) => (
+            <>
+              {index > 0 && (
+                <>
+                  <br />
+                  <br />
+                </>
+              )}
+              {paragraph.map((segment) =>
+                segment.highlighted ? (
+                  <span class="hero__text-highlight">{segment.text}</span>
+                ) : (
+                  segment.text
+                )
+              )}
+            </>
+          ))}
+        </p>
+        <div class="hero__actions">
+          {hero.actions.map((action) => (
+            <ActionButton
+              href={action.href}
+              label={action.label}
+              variant={action.outline ? 'outline' : 'primary'}
+              className={action.outline ? 'ds-action-button--outline-light' : 'ds-action-button--primary-light'}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+    <div class="hero__image">
+      <div class="hero__photo" role="img" aria-label="Hero portrait"></div>
+    </div>
+  </div>
+</SectionBlock>
+
+<style>
+  .hero {
+    overflow: clip;
+    min-height: 100vh;
+  }
+
+  .hero__inner {
+    --hero-image-top-offset: 56px;
+    --hero-image-bleed: max(calc((100vw - var(--container-width)) / 2), 0px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(420px, 48%);
+    gap: 56px;
+    align-items: center;
+    justify-content: space-between;
+    min-height: max(760px, calc(100vh - 64px));
+    padding-top: 100px;
+    padding-bottom: 100px;
+  }
+
+  .hero__content-wrap {
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero__content {
+    max-width: 680px;
+  }
+
+  .hero__title {
+    font-size: var(--fs-display);
+    font-weight: var(--fw-headline);
+    line-height: 1.05;
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: hero-enter 750ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: 1300ms;
+  }
+
+  .hero__text {
+    font-size: var(--fs-h5);
+    line-height: 1.4;
+    max-width: 480px;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: hero-enter 750ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: 1500ms;
+  }
+
+  .hero__text-highlight {
+    color: var(--brand-primary);
+  }
+
+  /* ── Intro overlay ── */
+  .hero__intro-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: var(--bg-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 clamp(20px, 5vw, 80px);
+    pointer-events: none;
+    animation: intro-overlay-exit 600ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation-delay: 1000ms;
+  }
+
+  .hero__intro-text {
+    font-family: var(--font-title);
+    font-weight: var(--fw-headline);
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    color: #fff;
+    text-align: center;
+    line-height: 1.05;
+    font-size: clamp(3rem, 11vw, 10rem);
+    opacity: 0;
+    animation: intro-text-enter 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: 80ms;
+  }
+
+  @keyframes intro-text-enter {
+    from {
+      opacity: 0;
+      filter: blur(24px);
+      transform: scale(0.88);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0);
+      transform: scale(1);
+    }
+  }
+
+  @keyframes intro-overlay-exit {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  @keyframes hero-enter {
+    from {
+      opacity: 0;
+      transform: translateX(-28px);
+      filter: blur(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+      filter: blur(0px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__intro-overlay,
+    .hero__intro-text,
+    .hero__title,
+    .hero__text,
+    .hero__actions {
+      opacity: 1;
+      animation: none;
+    }
+  }
+
+  .hero__actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: hero-enter 750ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: 1700ms;
+  }
+
+  .hero__actions :global(.ds-action-button) {
+    font-weight: var(--fw-semibold);
+    min-width: 210px;
+    text-align: center;
+  }
+
+  .hero__image {
+    position: relative;
+    min-height: inherit;
+    height: 100%;
+    align-self: stretch;
+    justify-self: stretch;
+    overflow: visible;
+  }
+
+  .hero__photo {
+    position: absolute;
+    top: var(--hero-image-top-offset);
+    right: calc((var(--hero-image-bleed) + 24px) * -1);
+    bottom: 0;
+    left: 0;
+    background-image: var(--hero-image-src);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center top;
+  }
+
+  @media (max-width: 768px) {
+    .hero__inner {
+      --hero-image-top-offset: 0px;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      min-height: auto;
+      padding-top: 32px;
+      padding-bottom: 48px;
+    }
+
+    .hero__content-wrap {
+      padding: 0;
+    }
+
+    .hero__image {
+      order: -1;
+      margin-top: 64px;
+      min-height: 560px;
+      height: auto;
+      overflow: hidden;
+    }
+
+    .hero__photo {
+      position: relative;
+      top: auto;
+      right: auto;
+      bottom: auto;
+      left: auto;
+      min-height: 560px;
+      background-position: center top;
+    }
+
+    .hero__actions {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hero__actions :global(.ds-action-button) {
+      width: 100%;
+      min-width: 0;
+    }
+  }
+</style>

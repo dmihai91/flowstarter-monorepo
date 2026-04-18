@@ -11,11 +11,10 @@ import { useSidebar } from '@/contexts/SidebarContext';
 import {
   LayoutDashboard,
   BarChart3,
-  UserPlus,
   Users,
   ShieldCheck,
-  FolderOpen,
   Sparkles as SparklesIcon,
+  Inbox,
   ChevronsLeft,
   ChevronsRight,
   X,
@@ -26,7 +25,7 @@ import { useEffect } from 'react';
 
 export function TeamSidebar() {
   const pathname = usePathname();
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const { t } = useTranslations();
   const [collapsed, setCollapsed] = useLocalStorage(
     'team-sidebar-collapsed',
@@ -35,30 +34,17 @@ export function TeamSidebar() {
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
 
   const metadata = user?.publicMetadata as { role?: string } | undefined;
-  const isAdmin = metadata?.role?.toLowerCase() === 'admin';
-
-  const configItems = [
-    {
-      label: t('team.sidebar.analytics'),
-      href: '/team/dashboard/analytics',
-      icon: BarChart3,
-    },
-  ];
-
-  const adminItems = [
-    {
-      label: t('team.sidebar.invite'),
-      href: '/team/dashboard/invite',
-      icon: UserPlus,
-    },
-  ];
+  const role = metadata?.role?.toLowerCase();
+  // Show admin items optimistically until auth loads, then gate on actual role
+  const isAdmin = !isLoaded || role === 'admin' || role === 'team';
 
   const adminOnlyItems = [
     {
-      label: 'All projects',
-      href: '/team/dashboard/projects/list',
-      icon: FolderOpen,
+      label: 'Client requests',
+      href: '/team/dashboard#client-requests-list',
+      icon: Inbox,
     },
+    { label: 'Analytics', href: '/team/dashboard/analytics', icon: BarChart3 },
     { label: 'AI usage', href: '/team/dashboard/ai-usage', icon: SparklesIcon },
     { label: 'Clients', href: '/team/dashboard/clients', icon: Users },
     { label: 'Team members', href: '/team/dashboard/team', icon: ShieldCheck },
@@ -161,36 +147,6 @@ export function TeamSidebar() {
           showLabel={showLabel}
         />
       </div>
-
-      {/* Configuration */}
-      <div className={cn(!showLabel && 'w-full')}>
-        {showLabel && (
-          <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
-            {t('team.sidebar.configuration')}
-          </h3>
-        )}
-        <div className="space-y-1">
-          {configItems.map((item) => (
-            <NavLink key={item.href} {...item} showLabel={showLabel} />
-          ))}
-        </div>
-      </div>
-
-      {/* Admin Only */}
-      {isAdmin && (
-        <div className={cn(!showLabel && 'w-full')}>
-          {showLabel && (
-            <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
-              {t('team.sidebar.team')}
-            </h3>
-          )}
-          <div className="space-y-1">
-            {adminItems.map((item) => (
-              <NavLink key={item.href} {...item} showLabel={showLabel} />
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Admin-only pages */}
       {isAdmin && (

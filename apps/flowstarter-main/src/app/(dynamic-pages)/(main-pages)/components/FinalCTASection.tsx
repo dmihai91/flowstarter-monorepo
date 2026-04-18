@@ -1,85 +1,104 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { LANDING_COPY } from '../landing-copy';
+import { useI18n } from '@/lib/i18n';
 
 export function FinalCTASection({ onOpenModal }: { onOpenModal?: () => void }) {
-  const finalCta = LANDING_COPY.finalCta;
+  const { t: tStrict } = useI18n();
+  const t = tStrict as (key: string) => string;
+  const rootRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const mq = window.matchMedia('(hover: none), (pointer: coarse)');
+    if (mq.matches) return;
+    const onMove = (e: MouseEvent) => {
+      const rect = el.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      el.style.setProperty('--ls-mx', `${x}%`);
+      el.style.setProperty('--ls-my', `${y}%`);
+    };
+    el.addEventListener('mousemove', onMove);
+    return () => el.removeEventListener('mousemove', onMove);
+  }, []);
 
   return (
-    <section className="relative overflow-hidden mt-8">
-      {/* Light mode background */}
-      <div
-        className="absolute inset-0 dark:hidden"
-        style={{
-          background:
-            'linear-gradient(135deg, hsl(241,70%,91%) 0%, hsl(241,65%,85%) 100%)',
-        }}
-      />
+    <section ref={rootRef} className="ls-scope ls-section ls-cta-section">
+      <div className="ls-cta-bg" aria-hidden />
+      <div className="ls-cta-glow" aria-hidden />
+      <div className="ls-streak" aria-hidden />
+      <div className="ls-grain" aria-hidden />
 
-      {/* Dark mode background */}
-      <div
-        className="absolute inset-0 hidden dark:block"
-        style={{
-          background: 'hsl(240, 16%, 11%)',
-        }}
-      />
+      <div className="ls-container text-center">
+        <div
+          className="ls-eyebrow mx-auto inline-flex items-center justify-center gap-3"
+          style={{ justifyContent: 'center' }}
+        >
+          <span
+            aria-hidden
+            style={{
+              display: 'inline-block',
+              width: '28px',
+              height: '1px',
+              background: 'var(--ls-ink-faint)',
+            }}
+          />
+          <span className="num">{t('landing.finalCta.eyebrow')}</span>
+          <span
+            aria-hidden
+            style={{
+              display: 'inline-block',
+              width: '28px',
+              height: '1px',
+              background: 'var(--ls-ink-faint)',
+            }}
+          />
+        </div>
 
-      {/* Soft glow — light mode (on dark bg) */}
-      <div
-        className="pointer-events-none absolute inset-0 dark:hidden"
-        style={{
-          background:
-            'radial-gradient(ellipse 70% 55% at 50% 55%, rgba(99,102,241,0.15) 0%, transparent 70%)',
-        }}
-      />
-
-      {/* Soft glow — dark mode */}
-      <div
-        className="pointer-events-none absolute inset-0 hidden dark:block"
-        style={{
-          background:
-            'radial-gradient(ellipse 60% 50% at 50% 55%, rgba(109,40,217,0.08) 0%, transparent 70%)',
-        }}
-      />
-
-      {/* Content */}
-      <div className="relative z-10 max-w-xl lg:max-w-3xl xl:max-w-5xl mx-auto px-6 py-12 sm:py-16 xl:py-20 text-center">
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-semibold text-gray-900 dark:text-white leading-[1.12] tracking-tight mb-5 [text-wrap:balance]">
-          {finalCta.headline}
+        <h2 className="ls-display mt-7" style={{ textWrap: 'balance' }}>
+          <span className="line">{t('landing.finalCta.headlinePrefix')}</span>
+          <span className="line flourish mt-2">
+            {t('landing.finalCta.headlineFlourish')}
+          </span>
         </h2>
-        <p className="text-base lg:text-lg xl:text-xl text-gray-500 dark:text-slate-400 mb-6 max-w-xs lg:max-w-sm xl:max-w-md mx-auto leading-relaxed">
-          One free call. Live in a week.
+
+        <p
+          className="ls-body ls-body--lead mt-7 mx-auto"
+          style={{ marginLeft: 'auto', marginRight: 'auto' }}
+        >
+          {t('landing.finalCta.subhead')}
         </p>
 
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            onOpenModal?.();
-          }}
-          className="inline-flex justify-center w-full sm:w-auto"
-        >
-          <Button className="w-full sm:w-auto rounded-xl px-8 h-12 sm:px-10 text-base font-semibold bg-indigo-500 text-white hover:bg-indigo-400 transition-all duration-300 hover:scale-[1.02] shadow-[0_8px_30px_rgba(99,102,241,0.3)] hover:shadow-[0_12px_40px_rgba(99,102,241,0.4)] border-0 group cursor-pointer">
-            {finalCta.cta}
+        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-5">
+          <Button onClick={() => onOpenModal?.()} className="ls-cta">
+            {t('landing.finalCta.primaryCta')}
             <svg
-              className="w-4 h-4 ml-2.5 transition-transform group-hover:translate-x-0.5"
+              className="arrow ml-2 h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              strokeWidth={2.5}
+              strokeWidth={2.4}
             >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
+                d="M5 12h14m-5-6l6 6-6 6"
               />
             </svg>
           </Button>
-        </a>
+        </div>
 
-        <p className="mt-6 text-sm text-slate-500">
-          No commitment. No tech knowledge needed.
+        <p
+          className="mt-6 text-[10.5px] uppercase tracking-[0.18em]"
+          style={{
+            color: 'var(--ls-ink-faint)',
+            fontFamily: 'var(--ls-mono)',
+          }}
+        >
+          {t('landing.finalCta.microNote')}
         </p>
       </div>
     </section>

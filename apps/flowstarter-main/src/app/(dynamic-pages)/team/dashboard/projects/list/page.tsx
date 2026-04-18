@@ -23,7 +23,6 @@ export default function AllProjectsPage() {
       title="All Projects"
       subtitle="Every project across all clients"
       icon={<FolderOpen className="w-5 h-5 text-[var(--purple)]" />}
-      maxWidth="5xl"
     >
       <div className="flex justify-end mb-4">
         <button

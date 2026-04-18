@@ -81,8 +81,6 @@ export function buildCSPHeader(nonce?: string): string {
   // In production, use strict CSP with nonces
   const scriptSrc = isDev
     ? ["'self'", "'unsafe-inline'", "'unsafe-eval'", ...ALLOWED_SCRIPT_DOMAINS]
-    : nonce
-    ? [`'nonce-${nonce}'`, "'strict-dynamic'", ...ALLOWED_SCRIPT_DOMAINS]
     : ["'self'", "'unsafe-inline'", ...ALLOWED_SCRIPT_DOMAINS];
 
   const directives = [

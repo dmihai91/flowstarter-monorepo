@@ -576,6 +576,12 @@ const en = {
   'team.dashboard.aiCredits': 'AI credits',
   'team.dashboard.cost': 'cost',
 
+  // Client requests
+  'team.dashboard.clientRequests': 'Client Requests',
+  'team.dashboard.clientRequests.allCaughtUp': 'All caught up',
+  'team.dashboard.clientRequests.noRequests': 'No client requests yet',
+  'team.sidebar.clientRequests': 'Client Requests',
+
   // Common action labels
   'app.save': 'Save',
   'app.delete': 'Delete',
@@ -2146,6 +2152,7 @@ const en = {
   'scaffold.client.field.name': 'Client Name',
   'scaffold.client.field.email': 'Client Email',
   'scaffold.client.field.phone': 'Client Phone',
+  'scaffold.client.field.businessName': 'Business Name',
   'scaffold.client.placeholder.name': 'John Smith',
   'scaffold.client.placeholder.email': 'john@example.com',
   'scaffold.client.placeholder.phone': '+40 7XX XXX XXX',
@@ -2229,6 +2236,150 @@ const en = {
   'landing.manifesto.p4': '',
   'landing.manifesto.closing':
     'Your expertise changed lives. Now let people find you.',
+
+  // Storage promise (shared across hero, included, pricing)
+  'landing.storage.tagline': 'Generous storage on every plan.',
+  'landing.storage.starter.tier': 'Starter',
+  'landing.storage.starter.amount': '10 GB',
+  'landing.storage.growth.tier': 'Growth',
+  'landing.storage.growth.amount': '50 GB',
+  'landing.storage.pro.tier': 'Pro',
+  'landing.storage.pro.amount': '150 GB',
+  'landing.storage.includedNote':
+    'Room for images, video, downloads, and client assets. Starter starts at 10 GB, Growth 50 GB, Pro 150 GB.',
+
+  // Landing Hero — editorial redesign
+  'landing.hero.displayPrefix':
+    'The right clients are out there looking for you.',
+  'landing.hero.displayFlourish': "Let's make sure they find you.",
+  'landing.hero.subhead':
+    "Starting from scratch or tired of a site that isn't working? One call. Your site is delivered quickly. You stay in control with a smart editor. No code, no waiting, no back and forth.",
+  'landing.hero.primaryCta': 'Start getting clients',
+  'landing.hero.secondaryCta': 'See plans and pricing',
+  'landing.hero.eyebrowSerial': 'Done for you',
+  'landing.hero.eyebrowLabel': 'Live quickly',
+  'landing.hero.eyebrowTagline': 'No code',
+  'landing.hero.guaranteeShort':
+    'First month free. 50% refund in 30 days if not delighted.',
+  'landing.hero.stat1Value': 'Quick',
+  'landing.hero.stat1Label': 'Typical turnaround',
+  'landing.hero.stat2Value': '0',
+  'landing.hero.stat2Label': 'Lines of code you write',
+  'landing.hero.stat3Value': '1 call',
+  'landing.hero.stat3Label': 'From brief to draft',
+  'landing.hero.stat4Value': '50%',
+  'landing.hero.stat4Label': 'Setup refund, any reason',
+  'landing.hero.brief.live': 'Live brief',
+  'landing.hero.brief.serial': 'Live preview',
+  'landing.hero.brief.title': 'Your brief, typed out loud.',
+  'landing.hero.brief.subtitle': 'Auto-generated from your discovery call.',
+  'landing.hero.brief.field1Label': 'Profession',
+  'landing.hero.brief.field1Value': 'Business coach, 1:1 clients',
+  'landing.hero.brief.field2Label': 'Must-haves',
+  'landing.hero.brief.field2Value': 'Calendly, testimonials, Stripe',
+  'landing.hero.brief.field3Label': 'Voice',
+  'landing.hero.brief.field3Value': 'Warm, direct, no fluff',
+  'landing.hero.brief.progressLabel': 'Progress',
+  'landing.hero.brief.progressBuilding': 'Now drafting',
+  'landing.hero.brief.progressReady': 'Brief ready',
+  'landing.hero.brief.ctaPending': 'Book your discovery call',
+  'landing.hero.brief.ctaReady': 'Brief ready. Book your call.',
+  'landing.hero.scrollHint': 'Scroll',
+
+  // Templates — editorial redesign
+  'landing.templates.eyebrow': 'A design for every industry',
+  'landing.templates.headlinePrefix': 'Your site,',
+  'landing.templates.headlineFlourish': 'ready to launch.',
+  'landing.templates.sub':
+    'Pick the one that fits. We customize it to your brand, your copy, and the clients you want to reach.',
+  'landing.templates.ctaBrowse': 'Browse the library',
+  'landing.templates.preview': 'Preview',
+
+  // Editor showcase — editorial redesign
+  'landing.editorShowcase.eyebrow': 'Your site, your words',
+  'landing.editorShowcase.headlinePrefix': 'Type what you want.',
+  'landing.editorShowcase.headlineFlourish': 'Watch it change.',
+  'landing.editorShowcase.sub':
+    'No drag-and-drop, no code, no waiting on a developer. Talk to your site in plain language, it updates instantly.',
+
+  // Problem — editorial redesign
+  'landing.problem.eyebrow': 'The real cost of waiting',
+  'landing.problem.headlinePrefix': 'Every week without a working site',
+  'landing.problem.headlineFlourish': 'is a client found by someone else.',
+  'landing.problem.sub':
+    "Starting fresh or starting over. Getting it right shouldn't take months of decisions, revisions, and late-night tutorials.",
+
+  // Pillars — editorial redesign
+  'landing.pillars.eyebrow': 'What you actually get',
+  'landing.pillars.headlinePrefix': 'Launch. Manage.',
+  'landing.pillars.headlineFlourish': 'Keep improving.',
+  'landing.pillars.sub':
+    'Flowstarter combines done-for-you setup with the flexibility to keep moving on your own.',
+
+  // Included — editorial redesign
+  'landing.included.eyebrow': 'Everything included',
+  'landing.included.headlinePrefix': 'Live from day one.',
+  'landing.included.headlineFlourish': 'Everything wired.',
+  'landing.included.sub':
+    'Every site ships with the essentials already wired, so you start collecting clients, not configuring tools.',
+
+  // Differentiation — editorial redesign
+  'landing.differentiation.eyebrow': 'Why we are different',
+  'landing.differentiation.headlinePrefix': 'Not a builder.',
+  'landing.differentiation.headlineFlourish': 'Not an agency.',
+  'landing.differentiation.sub':
+    'The middle ground that actually works: the speed of a builder, the quality of an agency, none of the tradeoffs.',
+
+  // Pricing — editorial redesign
+  'landing.pricing.eyebrow': 'Pricing',
+  'landing.pricing.headlinePrefix': 'Clear pricing.',
+  'landing.pricing.headlineFlourish': 'Rate locked forever.',
+  'landing.pricing.sub':
+    'Pay once to launch. A flat monthly keeps everything running. Your rate is locked for life.',
+
+  // Testimonials — editorial redesign
+  'landing.testimonials.eyebrow': 'The work speaks',
+  'landing.testimonials.headlinePrefix': 'Real launches.',
+  'landing.testimonials.headlineFlourish': 'Real clients found.',
+
+  // Manifesto — editorial redesign
+  'landing.manifesto.eyebrow': 'What we believe',
+  'landing.manifesto.headlinePrefix': 'Every real expert',
+  'landing.manifesto.headlineFlourish': 'deserves to be found.',
+
+  // Team — editorial redesign
+  'landing.team.eyebrow': 'Who builds it',
+  'landing.team.headlinePrefix': 'Two people.',
+  'landing.team.headlineFlourish': 'Obsessed with the craft.',
+
+  // FAQ — editorial redesign
+  'landing.faq.eyebrow': 'Questions',
+  'landing.faq.headlinePrefix': 'Before you book,',
+  'landing.faq.headlineFlourish': 'here is what people ask.',
+
+  // Audience — editorial redesign
+  'landing.audience.eyebrow': 'Who this is for',
+  'landing.audience.headlinePrefix': 'Built for experts who want to',
+  'landing.audience.headlineFlourish': 'stop losing clients to worse sites.',
+  'landing.audience.sub':
+    "If any of these sound familiar, you're exactly who we built Flowstarter for.",
+
+  // Process — editorial redesign
+  'landing.process.eyebrow': 'How it works',
+  'landing.process.headlinePrefix': 'Three steps.',
+  'landing.process.headlineFlourish': "A site you're proud of.",
+  'landing.process.sub':
+    'No questionnaires, no revisions hell, no chasing us for updates. We run a tight process on purpose.',
+
+  // Final CTA — editorial redesign
+  'landing.finalCta.eyebrow': 'Your move',
+  'landing.finalCta.headlinePrefix': 'One call.',
+  'landing.finalCta.headlineFlourish': 'Live before you overthink it.',
+  'landing.finalCta.subhead':
+    'Zero pressure. We listen, we scope, we tell you honestly if we can help. If yes, your site lands quickly.',
+  'landing.finalCta.primaryCta': 'Book your discovery call',
+  'landing.finalCta.microNote':
+    'No commitment. No tech knowledge needed. Human on the other end.',
 } as const;
 
 export default en;

@@ -8,7 +8,6 @@ export default function TeamProfilePage() {
       title="Profile"
       subtitle="Manage your personal information"
       icon={<User className="w-5 h-5 text-[var(--purple)]" />}
-      maxWidth="2xl"
     >
       <ProfileContent embedded />
     </TeamDashboardShell>

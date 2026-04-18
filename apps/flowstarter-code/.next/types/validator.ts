@@ -65,10 +65,46 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
-// Validate ../../src/app/api/auth/[...nextauth]/route.ts
+// Validate ../../src/app/api/internal/t3-host-auth/route.ts
 {
-  type __IsExpected<Specific extends RouteHandlerConfig<"/api/auth/[...nextauth]">> = Specific
-  const handler = {} as typeof import("../../src/app/api/auth/[...nextauth]/route.js")
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/internal/t3-host-auth">> = Specific
+  const handler = {} as typeof import("../../src/app/api/internal/t3-host-auth/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/internal/t3-revoke/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/internal/t3-revoke">> = Specific
+  const handler = {} as typeof import("../../src/app/api/internal/t3-revoke/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/internal/t3-token/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/internal/t3-token">> = Specific
+  const handler = {} as typeof import("../../src/app/api/internal/t3-token/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/workspaces/client/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/workspaces/client">> = Specific
+  const handler = {} as typeof import("../../src/app/api/workspaces/client/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/workspaces/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/workspaces">> = Specific
+  const handler = {} as typeof import("../../src/app/api/workspaces/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check

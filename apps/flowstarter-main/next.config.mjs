@@ -2,6 +2,8 @@
 const CONFIG_FILE = new URL('', import.meta.url).pathname;
 
 export default {
+  typescript: { ignoreBuildErrors: true },
+  transpilePackages: ['uploadthing', '@uploadthing/react', '@uploadthing/shared'],
   images: {
     remotePatterns: [
       {

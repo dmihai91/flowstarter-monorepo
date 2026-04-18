@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
 const card =
-  'rounded-[24px] border border-gray-200/80 bg-white/95 dark:border-white/[0.06] dark:bg-white/[0.05] shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-2xl backdrop-saturate-150 dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]';
+  'rounded-2xl border border-gray-200/80 bg-white/95 dark:border-white/[0.06] dark:bg-white/[0.05] shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-2xl backdrop-saturate-150 dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]';
 
 interface TeamDashboardShellProps {
   icon?: React.ReactNode;
@@ -12,8 +12,20 @@ interface TeamDashboardShellProps {
   subtitle?: string;
   backHref?: string;
   backLabel?: string;
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
+  showBackButton?: boolean;
+  maxWidth?:
+    | 'sm'
+    | 'md'
+    | 'lg'
+    | 'xl'
+    | '2xl'
+    | '3xl'
+    | '4xl'
+    | '5xl'
+    | '6xl'
+    | '7xl';
   children: React.ReactNode;
+  actions?: React.ReactNode;
 }
 
 export function TeamDashboardShell({
@@ -21,9 +33,11 @@ export function TeamDashboardShell({
   title,
   subtitle,
   backHref = '/team/dashboard',
-  backLabel = 'Back to Dashboard',
-  maxWidth = '3xl',
+  backLabel = 'Dashboard',
+  showBackButton = false,
+  maxWidth = '4xl',
   children,
+  actions,
 }: TeamDashboardShellProps) {
   const maxWidthClass = {
     sm: 'max-w-sm',
@@ -34,38 +48,47 @@ export function TeamDashboardShell({
     '3xl': 'max-w-3xl',
     '4xl': 'max-w-4xl',
     '5xl': 'max-w-5xl',
+    '6xl': 'max-w-6xl',
+    '7xl': 'max-w-7xl',
   }[maxWidth];
 
   return (
-    <div className="py-6 px-4 sm:px-6">
+    <div className="pt-10 pb-10 px-4 sm:px-6">
       <div className={`${maxWidthClass} mx-auto`}>
         {/* Back */}
-        <Link
-          href={backHref}
-          className="inline-flex items-center gap-2 text-sm text-gray-400 dark:text-white/30 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          {backLabel}
-        </Link>
+        {showBackButton && (
+          <Link
+            href={backHref}
+            className="inline-flex items-center gap-1.5 text-sm text-zinc-500 dark:text-zinc-300 hover:text-zinc-800 dark:hover:text-white mb-6 transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            {backLabel}
+          </Link>
+        )}
 
         {/* Page header */}
         {(icon || title) && (
-          <div className="flex items-center gap-3 mb-6">
-            {icon && (
-              <div className="w-10 h-10 rounded-2xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center shrink-0">
-                {icon}
-              </div>
-            )}
-            <div>
-              <h1 className="text-lg font-bold text-gray-900 dark:text-white">
-                {title}
-              </h1>
-              {subtitle && (
-                <p className="text-xs text-gray-500 dark:text-white/40 mt-0.5">
-                  {subtitle}
-                </p>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              {icon && (
+                <div className="w-10 h-10 rounded-2xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center shrink-0">
+                  {icon}
+                </div>
               )}
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {title}
+                </h1>
+                {subtitle && (
+                  <p className="text-sm text-gray-500 dark:text-white/40 mt-0.5">
+                    {subtitle}
+                  </p>
+                )}
+              </div>
             </div>
+            {actions && (
+              <div className="flex items-center gap-2">{actions}</div>
+            )}
           </div>
         )}
 

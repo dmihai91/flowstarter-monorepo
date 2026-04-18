@@ -1,0 +1,90 @@
+---
+interface Props {
+  icon: string;
+  title: string;
+  description: string;
+  className?: string;
+}
+
+const { icon, title, description, className = '' } = Astro.props;
+---
+
+<div
+  class={`ds-service-card ${className}`.trim()}
+  data-service-card
+  style="--service-reveal-progress: 0; --service-hover-y: 0px;"
+>
+  <div class="ds-service-card__icon" set:html={icon} />
+  <h4 class="ds-service-card__title">{title}</h4>
+  <p class="ds-service-card__desc">{description}</p>
+</div>
+
+<style>
+  .ds-service-card {
+    --service-reveal-progress: 0;
+    --service-hover-y: 0px;
+    position: relative;
+    overflow: hidden;
+    padding: 32px 24px;
+    border: none;
+    border-radius: var(--radius-lg);
+    background: var(--surface-subtle);
+    opacity: var(--service-reveal-progress);
+    transform:
+      translateY(calc((1 - var(--service-reveal-progress)) * 120px))
+      translateY(var(--service-hover-y));
+    transition:
+      opacity 180ms linear,
+      transform var(--transition),
+      box-shadow var(--transition),
+      background-color var(--transition);
+  }
+
+  .ds-service-card:hover {
+    --service-hover-y: -8px;
+    box-shadow: none;
+    background: var(--brand-primary);
+  }
+
+  .ds-service-card__icon {
+    position: relative;
+    z-index: 1;
+    color: var(--bg-dark);
+    margin-bottom: 20px;
+    transition: transform 0.35s ease, color 0.35s ease;
+  }
+
+  .ds-service-card__title {
+    position: relative;
+    z-index: 1;
+    font-size: var(--fs-h4);
+    font-weight: var(--fw-semibold);
+    color: var(--bg-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    transition: transform 0.35s ease, letter-spacing 0.35s ease;
+  }
+
+  .ds-service-card__desc {
+    position: relative;
+    z-index: 1;
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    transition: transform 0.35s ease;
+  }
+
+  .ds-service-card:hover .ds-service-card__icon {
+    transform: translateY(-4px) rotate(-6deg) scale(1.04);
+    color: var(--bg-dark);
+  }
+
+  .ds-service-card:hover .ds-service-card__title {
+    transform: translateX(6px);
+    letter-spacing: 0.9px;
+  }
+
+  .ds-service-card:hover .ds-service-card__desc {
+    transform: translateX(6px);
+  }
+</style>

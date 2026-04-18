@@ -18,6 +18,55 @@ export const landingKeys = {
   'landing.hero.priceBuild': '€499',
   'landing.hero.priceMonthly': '€39',
 
+  // Storage promise (shared across hero, included, pricing)
+  'landing.storage.tagline': 'Generous storage on every plan.',
+  'landing.storage.starter.tier': 'Starter',
+  'landing.storage.starter.amount': '10 GB',
+  'landing.storage.growth.tier': 'Growth',
+  'landing.storage.growth.amount': '50 GB',
+  'landing.storage.pro.tier': 'Pro',
+  'landing.storage.pro.amount': '150 GB',
+  'landing.storage.includedNote':
+    'Room for images, video, downloads, and client assets. Starter starts at 10 GB, Growth 50 GB, Pro 150 GB.',
+
+  // Landing Hero — editorial redesign
+  'landing.hero.displayPrefix':
+    'The right clients are out there looking for you.',
+  'landing.hero.displayFlourish': "Let's make sure they find you.",
+  'landing.hero.subhead':
+    "Starting from scratch or tired of a site that isn't working? One call. Your site is delivered quickly. You stay in control with a smart editor. No code, no waiting, no back and forth.",
+  'landing.hero.primaryCta': 'Start getting clients',
+  'landing.hero.secondaryCta': 'See plans and pricing',
+  'landing.hero.eyebrowSerial': 'N° 001',
+  'landing.hero.eyebrowLabel': 'Concierge',
+  'landing.hero.eyebrowTagline': 'Quick turnaround',
+  'landing.hero.guaranteeShort':
+    'First month free. 50% refund in 30 days if not delighted.',
+  'landing.hero.stat1Value': 'Quick',
+  'landing.hero.stat1Label': 'Typical turnaround',
+  'landing.hero.stat2Value': '0',
+  'landing.hero.stat2Label': 'Lines of code you write',
+  'landing.hero.stat3Value': '1 call',
+  'landing.hero.stat3Label': 'From brief to draft',
+  'landing.hero.stat4Value': '50%',
+  'landing.hero.stat4Label': 'Setup refund, any reason',
+  'landing.hero.brief.live': 'Live brief',
+  'landing.hero.brief.serial': 'N° 001 / FS',
+  'landing.hero.brief.title': 'Your brief, typed out loud.',
+  'landing.hero.brief.subtitle': 'Auto-generated from your discovery call.',
+  'landing.hero.brief.field1Label': 'Profession',
+  'landing.hero.brief.field1Value': 'Business coach, 1:1 clients',
+  'landing.hero.brief.field2Label': 'Must-haves',
+  'landing.hero.brief.field2Value': 'Calendly, testimonials, Stripe',
+  'landing.hero.brief.field3Label': 'Voice',
+  'landing.hero.brief.field3Value': 'Warm, direct, no fluff',
+  'landing.hero.brief.progressLabel': 'Progress',
+  'landing.hero.brief.progressBuilding': 'Now drafting',
+  'landing.hero.brief.progressReady': 'Brief ready',
+  'landing.hero.brief.ctaPending': 'Book your discovery call',
+  'landing.hero.brief.ctaReady': 'Brief ready. Book your call.',
+  'landing.hero.scrollHint': 'Scroll',
+
   // What's Included section
   'landing.included.title': 'Everything you need to get found and get booked.',
   'landing.included.subtitle':

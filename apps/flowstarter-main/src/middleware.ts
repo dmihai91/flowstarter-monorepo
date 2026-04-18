@@ -121,10 +121,14 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
-  const res = NextResponse.next();
-
-  // Generate nonce for CSP - passed to layouts via header
+  // Generate nonce for CSP - must be forwarded as a REQUEST header so
+  // server components (layout.tsx) can read it via headers(). Setting it
+  // only on the response headers is not visible to server components.
   const nonce = generateNonce();
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set('x-nonce', nonce);
+  const res = NextResponse.next({ request: { headers: requestHeaders } });
+  // Also set on response so it can be inspected during debugging
   res.headers.set('x-nonce', nonce);
 
   // --- Path traversal protection ---
@@ -356,13 +360,14 @@ export default clerkMiddleware(async (auth, req) => {
           if (redirectUrl) {
             const isSafe = isSafeRedirectUrl(
               redirectUrl,
-              req.headers.get('host') ?? undefined,
+              req.headers.get('host') ?? undefined
             );
             if (isSafe) {
               try {
                 const parsed = new URL(redirectUrl);
                 const isCrossDomain =
-                  parsed.hostname !== (req.headers.get('host')?.split(':')[0] ?? '');
+                  parsed.hostname !==
+                  (req.headers.get('host')?.split(':')[0] ?? '');
                 if (isCrossDomain) {
                   // Redirect to the transfer-token page route which creates
                   // a Clerk sign-in token and redirects with __clerk_ticket.

@@ -28,7 +28,7 @@ export function LandingHeader({ onOpenModal }: { onOpenModal?: () => void }) {
 
       {/* Header */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        className={`ls-theme fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isLoaded ? 'opacity-100' : 'opacity-0'
         } ${
           scrolled || mobileMenuOpen
@@ -100,9 +100,7 @@ export function LandingHeader({ onOpenModal }: { onOpenModal?: () => void }) {
                 {t('nav.signIn')}
               </Link>
               <Button
-                variant="brand-gradient"
-                size="sm"
-                className="hidden lg:flex rounded-lg px-6 shadow-lg"
+                className="ls-cta ls-cta--sm !hidden lg:!inline-flex"
                 onClick={() => onOpenModal?.()}
               >
                 {t('landing.header.cta')}
@@ -148,11 +146,11 @@ export function LandingHeader({ onOpenModal }: { onOpenModal?: () => void }) {
 
           {/* Mobile menu dropdown */}
           <div
-            className={`lg:hidden overflow-hidden transition-all duration-300 ${
-              mobileMenuOpen ? 'max-h-[36rem] pb-4' : 'max-h-0'
+            className={`ls-mobile-menu lg:hidden overflow-hidden transition-all duration-[420ms] ease-[cubic-bezier(0.19,1,0.22,1)] ${
+              mobileMenuOpen ? 'max-h-[36rem] pb-5' : 'max-h-0'
             }`}
           >
-            <nav className="flex flex-col gap-1 pt-3 mt-2 border-t border-gray-200/50 dark:border-white/10">
+            <nav className="ls-mobile-nav flex flex-col gap-0.5 pt-4 mt-3 border-t border-gray-200/50 dark:border-white/10">
               <div className="flex items-center justify-between px-3 py-2">
                 <span className="text-base font-medium text-gray-700 dark:text-white/80">
                   {t('nav.theme')}
@@ -215,9 +213,7 @@ export function LandingHeader({ onOpenModal }: { onOpenModal?: () => void }) {
                 {t('nav.signIn')}
               </Link>
               <Button
-                variant="brand-gradient"
-                size="sm"
-                className="mt-2 w-full rounded-lg"
+                className="ls-cta mt-3 w-full"
                 onClick={() => {
                   setMobileMenuOpen(false);
                   onOpenModal?.();

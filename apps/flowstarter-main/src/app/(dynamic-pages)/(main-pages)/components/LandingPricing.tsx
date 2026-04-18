@@ -1,19 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-
-import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { Button } from '@/components/ui/button';
+import { useI18n } from '@/lib/i18n';
 import { LANDING_COPY } from '../landing-copy';
 import { PreQualModal } from './PreQualModal';
 
-/**
- * Landing page pricing section with plans and comparison.
- * Clicking a plan CTA opens the PreQualModal with the plan pre-selected,
- * which then shows the Calendly inline widget.
- */
+const STORAGE_BY_PLAN: Record<string, string> = {
+  STARTER: '10 GB',
+  RELAUNCH: '10 GB',
+  GROWTH: '50 GB',
+  PRO: '150 GB',
+};
+
 export function LandingPricing() {
-  const { ref: sectionRef, isVisible } = useScrollAnimation();
+  const { t: tStrict } = useI18n();
+  const t = tStrict as (key: string) => string;
   const pricing = LANDING_COPY.pricing;
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -25,200 +27,369 @@ export function LandingPricing() {
   };
 
   return (
-    <div ref={sectionRef}>
-      {/* Pricing Section */}
-      <section
-        data-section="pricing"
-        id="pricing"
-        className="py-8 lg:py-18 pb-4 lg:pb-8 relative"
-      >
-        {/* Gradient accent - lavender tint */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--landing-bg-tint)] to-transparent dark:via-[var(--landing-dark-surface-tint)] pointer-events-none" />
+    <section id="pricing" className="ls-scope ls-section ls-section--pad">
+      <div className="ls-mesh" aria-hidden />
+      <div className="ls-orb ls-orb--violet ls-orb--c" aria-hidden />
+      <div className="ls-grain" aria-hidden />
 
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
-          <div className="text-center mb-12 lg:mb-16">
-            <h2 className="text-3xl lg:text-5xl font-bold leading-tight text-gray-900 dark:text-white">
-              {pricing.title}
-            </h2>
-            <p className="mt-3 text-base text-gray-500 dark:text-white/50">
-              {pricing.subtitle}
-            </p>
-            {pricing.socialProof && (
-              <p className="mt-3 text-sm font-medium text-[var(--purple-primary)]">
-                ● {pricing.socialProof}
-              </p>
-            )}
+      <div className="ls-container">
+        <div className="text-center max-w-3xl mx-auto">
+          <div
+            className="ls-eyebrow inline-flex items-center justify-center gap-3"
+            style={{ justifyContent: 'center' }}
+          >
+            <span
+              aria-hidden
+              style={{
+                display: 'inline-block',
+                width: '28px',
+                height: '1px',
+                background: 'var(--ls-ink-faint)',
+              }}
+            />
+            <span className="num">{t('landing.pricing.eyebrow')}</span>
+            <span
+              aria-hidden
+              style={{
+                display: 'inline-block',
+                width: '28px',
+                height: '1px',
+                background: 'var(--ls-ink-faint)',
+              }}
+            />
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 items-stretch">
-            {pricing.plans.map((plan, index) => {
-              const isHighlighted = plan.name === 'GROWTH';
-              const isComingSoon = plan.status === 'coming-soon';
+          <h2 className="ls-display mt-7" style={{ textWrap: 'balance' }}>
+            <span className="line">{t('landing.pricing.headlinePrefix')}</span>
+            <span className="line flourish mt-2">
+              {t('landing.pricing.headlineFlourish')}
+            </span>
+          </h2>
 
-              return (
-                <div
-                  key={plan.name}
-                  className={`relative flex h-full flex-col rounded-[28px] border p-7 sm:p-8 transition-all duration-[600ms] ${
-                    isVisible
-                      ? 'opacity-100 translate-y-0'
-                      : 'opacity-0 translate-y-6'
-                  } ${
-                    isHighlighted
-                      ? 'border-[var(--purple-primary)]/60 bg-white/40 dark:bg-white/[0.04] backdrop-blur-2xl shadow-[0_8px_32px_rgba(124,58,237,0.12)] dark:shadow-[0_8px_32px_rgba(124,58,237,0.20)] ring-1 ring-[var(--purple-primary)]/20'
-                      : 'border-white/40 dark:border-white/[0.07] bg-white/30 dark:bg-white/[0.025] backdrop-blur-2xl shadow-[0_4px_24px_rgba(15,23,42,0.06)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:border-white/60 dark:hover:border-white/[0.12] hover:bg-white/40 dark:hover:bg-white/[0.04]'
-                  } ${
-                    isComingSoon
-                      ? 'opacity-50 saturate-50 pointer-events-none select-none'
-                      : ''
-                  }`}
-                  style={{ transitionDelay: `${index * 120}ms` }}
-                >
-                  {isHighlighted && (
-                    <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-[var(--purple-primary)] to-transparent" />
-                  )}
-
-                  {plan.badge && (
-                    <div className="mb-4 -mt-1">
-                      <span
-                        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
-                          isHighlighted
-                            ? 'bg-[var(--purple-primary)] text-white shadow-[0_4px_14px_rgba(124,58,237,0.35)]'
-                            : 'bg-gray-900/8 text-gray-700 dark:bg-white/10 dark:text-white/70'
-                        }`}
-                      >
-                        {isHighlighted && (
-                          <span className="h-1.5 w-1.5 rounded-full bg-white/80 animate-pulse" />
-                        )}
-                        {plan.badge}
-                      </span>
-                    </div>
-                  )}
-
-                  <div className="mb-8">
-                    <p className="text-xs font-semibold tracking-[0.24em] text-[var(--landing-text-accent)]">
-                      {plan.name}
-                    </p>
-                    <h3 className="mt-3 text-xl font-semibold text-gray-900 dark:text-white">
-                      {plan.label}
-                    </h3>
-                  </div>
-
-                  <div className="mb-8 border-b border-[var(--landing-card-border)] pb-8">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-semibold tracking-tight text-gray-900 dark:text-white">
-                        {plan.setupPrice}
-                      </span>
-                      <span className="text-sm text-gray-500 dark:text-white/45">
-                        setup
-                      </span>
-                    </div>
-                    <p className="mt-3 text-base text-gray-600 dark:text-white/55">
-                      {plan.monthlyPrice}
-                    </p>
-                  </div>
-
-                  <ul className="mb-8 flex-1 space-y-3">
-                    {plan.features.map((feature) => (
-                      <li
-                        key={feature}
-                        className="flex items-start gap-3 text-sm text-gray-700 dark:text-white/60"
-                      >
-                        <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500">
-                          <svg
-                            className="h-3.5 w-3.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={2.5}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                        </span>
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {isComingSoon ? (
-                    <button
-                      type="button"
-                      disabled
-                      className="mt-auto inline-flex h-12 w-full items-center justify-center rounded-xl border border-white/10 bg-gray-200 text-sm font-semibold text-gray-500 dark:bg-white/10 dark:text-white/35"
-                    >
-                      {plan.cta}
-                    </button>
-                  ) : (
-                    <div
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => handlePlanClick(plan.name.toLowerCase())}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          handlePlanClick(plan.name.toLowerCase());
-                        }
-                      }}
-                      className="mt-auto block w-full cursor-pointer"
-                    >
-                      {isHighlighted ? (
-                        <Button
-                          variant="brand-gradient"
-                          size="lg"
-                          className="w-full rounded-xl shadow-[0_14px_40px_rgba(124,58,237,0.28)] pointer-events-none"
-                        >
-                          {plan.cta}
-                        </Button>
-                      ) : (
-                        <span
-                          className="inline-flex h-12 w-full items-center justify-center rounded-xl text-sm font-semibold transition-all duration-200"
-                          style={{
-                            border: '1.5px solid var(--purple-primary)',
-                            color: 'var(--purple-primary)',
-                            background: 'transparent',
-                          }}
-                          onMouseEnter={(e) => {
-                            const el = e.currentTarget as HTMLElement;
-                            el.style.background = 'var(--purple-primary)';
-                            el.style.color = '#fff';
-                          }}
-                          onMouseLeave={(e) => {
-                            const el = e.currentTarget as HTMLElement;
-                            el.style.background = 'transparent';
-                            el.style.color = 'var(--purple-primary)';
-                          }}
-                        >
-                          {plan.cta}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          <p className="mt-8 text-center text-base text-gray-500 dark:text-white/40">
-            {pricing.note}
+          <p className="ls-body ls-body--lead mt-7 mx-auto">
+            {pricing.subtitle}
           </p>
-          {pricing.relaunchNote && (
-            <p className="mt-2 text-center text-sm text-gray-400 dark:text-white/30">
-              {pricing.relaunchNote}
+
+          {pricing.socialProof && (
+            <p
+              className="mt-5"
+              style={{
+                fontFamily: 'var(--ls-mono)',
+                fontSize: '10.5px',
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                color: 'var(--ls-accent)',
+              }}
+            >
+              ● {pricing.socialProof}
             </p>
           )}
         </div>
-      </section>
 
-      {/* Pricing-specific PreQualModal instance */}
+        <div className="ls-pricing-grid mt-14 grid gap-5 sm:grid-cols-2 md:gap-6">
+          {pricing.plans.map((plan, i) => {
+            const isHighlighted = plan.recommended === true;
+            const isComingSoon = plan.status === 'coming-soon';
+            const storage = STORAGE_BY_PLAN[plan.name];
+            return (
+              <div
+                key={plan.name}
+                className={`ls-card ls-price-card ${
+                  isHighlighted ? 'ls-price-card--hi' : ''
+                } ${isComingSoon ? 'ls-price-card--soon' : ''}`}
+                style={{
+                  animation: `ls-reveal 900ms cubic-bezier(0.19,1,0.22,1) ${
+                    i * 110
+                  }ms both`,
+                }}
+              >
+                {plan.badge && (
+                  <div
+                    className={`ls-price-badge ${
+                      isHighlighted ? 'ls-price-badge--hi' : ''
+                    }`}
+                  >
+                    {isHighlighted && <span className="dot" />}
+                    {plan.badge}
+                  </div>
+                )}
+
+                <div className="ls-price-name">{plan.name}</div>
+                <h3 className="ls-price-label">{plan.label}</h3>
+
+                <div className="ls-price-cost">
+                  <span className="setup">{plan.setupPrice}</span>
+                  <span className="setup-label">setup</span>
+                </div>
+                <p className="ls-price-monthly">{plan.monthlyPrice}</p>
+
+                {storage && (
+                  <div className="ls-price-storage">
+                    <span className="lbl">Storage</span>
+                    <span className="val">{storage}</span>
+                  </div>
+                )}
+
+                <ul className="ls-price-features">
+                  {plan.features.map((feature) => (
+                    <li key={feature}>
+                      <span className="check" aria-hidden>
+                        <svg
+                          viewBox="0 0 14 14"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path
+                            d="M2 7.5l3 3 7-7"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </span>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+
+                {isComingSoon ? (
+                  <button
+                    type="button"
+                    disabled
+                    className="ls-price-cta ls-price-cta--disabled"
+                  >
+                    {plan.cta}
+                  </button>
+                ) : isHighlighted ? (
+                  <Button
+                    onClick={() => handlePlanClick(plan.name.toLowerCase())}
+                    className="ls-cta ls-price-cta-primary"
+                  >
+                    {plan.cta}
+                  </Button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => handlePlanClick(plan.name.toLowerCase())}
+                    className="ls-price-cta ls-price-cta--ghost"
+                  >
+                    {plan.cta}
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        <p className="ls-price-note mt-10 mx-auto max-w-2xl text-center">
+          {pricing.note}
+        </p>
+        {pricing.relaunchNote && (
+          <p className="ls-price-relaunch mt-3 mx-auto max-w-2xl text-center">
+            {pricing.relaunchNote}
+          </p>
+        )}
+      </div>
+
       <PreQualModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         source="pricing-section"
         initialPlan={selectedPlan}
       />
-    </div>
+
+      <style jsx global>{`
+        .ls-price-card {
+          padding: 1.75rem 1.6rem 1.75rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.9rem;
+          transition: transform 320ms cubic-bezier(0.19, 1, 0.22, 1),
+            border-color 320ms ease;
+          position: relative;
+        }
+        .ls-price-card:hover {
+          transform: translateY(-3px);
+        }
+        .ls-price-card--hi {
+          border-color: color-mix(in oklab, var(--ls-accent) 60%, transparent);
+          background: linear-gradient(
+            135deg,
+            color-mix(in oklab, var(--ls-accent) 12%, var(--ls-glass-bg)),
+            var(--ls-glass-bg) 60%
+          );
+        }
+        .ls-price-card--soon {
+          opacity: 0.55;
+          filter: saturate(60%);
+          pointer-events: none;
+        }
+        .ls-price-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          align-self: flex-start;
+          font-family: var(--ls-mono);
+          font-size: 10.5px;
+          font-weight: 500;
+          letter-spacing: 0.15em;
+          text-transform: uppercase;
+          padding: 0.3rem 0.7rem;
+          border-radius: 999px;
+          background: color-mix(in oklab, var(--ls-ink) 8%, transparent);
+          color: var(--ls-ink-dim);
+          border: 1px solid var(--ls-rule);
+        }
+        .ls-price-badge--hi {
+          background: var(--ls-accent);
+          color: #fff;
+          border-color: var(--ls-accent);
+          box-shadow: 0 4px 12px
+            color-mix(in oklab, var(--ls-accent) 40%, transparent);
+        }
+        .ls-price-badge .dot {
+          width: 5px;
+          height: 5px;
+          border-radius: 999px;
+          background: #fff;
+          animation: ls-pulse 2s ease-in-out infinite;
+        }
+        .ls-price-name {
+          font-family: var(--ls-mono);
+          font-size: 11px;
+          font-weight: 500;
+          letter-spacing: 0.24em;
+          text-transform: uppercase;
+          color: var(--ls-accent);
+        }
+        .ls-price-label {
+          font-family: var(--ls-sans);
+          font-size: 1.15rem;
+          font-weight: 600;
+          letter-spacing: -0.015em;
+          color: var(--ls-ink);
+          line-height: 1.25;
+        }
+        .ls-price-cost {
+          display: flex;
+          align-items: baseline;
+          gap: 0.6rem;
+          padding-top: 0.7rem;
+          border-top: 1px solid var(--ls-rule);
+          margin-top: 0.3rem;
+        }
+        .ls-price-cost .setup {
+          font-family: var(--ls-sans);
+          font-size: 2.1rem;
+          font-weight: 700;
+          letter-spacing: -0.03em;
+          color: var(--ls-ink);
+        }
+        .ls-price-cost .setup-label {
+          font-family: var(--ls-sans);
+          font-size: 0.88rem;
+          color: var(--ls-ink-faint);
+        }
+        .ls-price-monthly {
+          font-family: var(--ls-sans);
+          font-size: 0.92rem;
+          color: var(--ls-ink-dim);
+          margin: 0;
+        }
+        .ls-price-storage {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.6rem;
+          align-self: flex-start;
+          padding: 0.45rem 0.8rem;
+          border-radius: 10px;
+          background: color-mix(in oklab, var(--ls-accent) 10%, transparent);
+          border: 1px solid
+            color-mix(in oklab, var(--ls-accent) 24%, transparent);
+          font-family: var(--ls-mono);
+          font-size: 11px;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          margin-top: 0.1rem;
+        }
+        .ls-price-storage .lbl {
+          color: var(--ls-ink-faint);
+        }
+        .ls-price-storage .val {
+          color: var(--ls-ink);
+          font-weight: 600;
+          letter-spacing: 0.05em;
+        }
+        .ls-price-features {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 0.55rem;
+          flex: 1;
+          padding-top: 0.4rem;
+          border-top: 1px dashed var(--ls-rule);
+        }
+        .ls-price-features li {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.55rem;
+          font-family: var(--ls-sans);
+          font-size: 0.88rem;
+          line-height: 1.45;
+          color: var(--ls-ink-dim);
+        }
+        .ls-price-features .check {
+          flex-shrink: 0;
+          width: 16px;
+          height: 16px;
+          border-radius: 4px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--ls-accent);
+          background: color-mix(in oklab, var(--ls-accent) 16%, transparent);
+        }
+        .ls-price-cta {
+          margin-top: auto;
+          width: 100%;
+          height: 46px;
+          border-radius: 12px;
+          border: 1px solid var(--ls-accent);
+          background: transparent;
+          color: var(--ls-accent);
+          font-family: var(--ls-sans);
+          font-size: 0.9rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 260ms cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .ls-price-cta--ghost:hover {
+          background: var(--ls-accent);
+          color: #fff;
+        }
+        .ls-price-cta--disabled {
+          border-color: var(--ls-rule);
+          color: var(--ls-ink-faint);
+          cursor: not-allowed;
+        }
+        .ls-price-cta-primary {
+          margin-top: auto;
+          width: 100%;
+          justify-content: center;
+        }
+        .ls-price-note {
+          font-family: var(--ls-sans);
+          font-size: 0.95rem;
+          color: var(--ls-ink-dim);
+        }
+        .ls-price-relaunch {
+          font-family: var(--ls-sans);
+          font-size: 0.85rem;
+          color: var(--ls-ink-faint);
+        }
+      `}</style>
+    </section>
   );
 }

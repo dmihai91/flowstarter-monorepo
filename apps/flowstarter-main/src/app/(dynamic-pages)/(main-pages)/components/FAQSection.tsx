@@ -1,91 +1,169 @@
 'use client';
 
-import { useScrollAnimation } from '@/hooks/useScrollAnimation';
-import { GlassCard } from '@flowstarter/flow-design-system';
+import { useI18n } from '@/lib/i18n';
 import { useFAQAccordion } from './hooks/useFAQAccordion';
 import { LANDING_COPY } from '../landing-copy';
 
 export function FAQSection() {
-  const { ref: sectionRef, isVisible } = useScrollAnimation();
-  const { openIndex: openFaq, toggle: toggleFaq } = useFAQAccordion(0);
+  const { t: tStrict } = useI18n();
+  const t = tStrict as (key: string) => string;
+  const { openIndex, toggle } = useFAQAccordion(0);
   const faq = LANDING_COPY.faq;
 
   return (
-    <>
-      {/* FAQ Section */}
-      <section
-        ref={sectionRef}
-        id="faq"
-        className="pt-12 pb-6 lg:pt-18 lg:pb-18"
-      >
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div
-            id="faq-content"
-            data-animate
-            className={`grid lg:grid-cols-1 gap-10 transition-all duration-[350ms] ${
-              isVisible ? 'opacity-100' : 'opacity-0'
-            }`}
-          >
-            <div className="col-span-2 text-center mb-6 lg:mb-8">
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4 text-gray-900 dark:text-white">
-                {faq.title}
-              </h2>
-            </div>
+    <section id="faq" className="ls-scope ls-section ls-section--pad">
+      <div className="ls-mesh" aria-hidden />
+      <div className="ls-orb ls-orb--warm ls-orb--br" aria-hidden />
+      <div className="ls-grain" aria-hidden />
 
-            <div className="col-span-2 space-y-3 max-w-3xl mx-auto w-full">
-              {faq.items.map((item, i) => (
-                <GlassCard
-                  key={i}
-                  variant="subtle"
-                  noHover
-                  className={`overflow-hidden !p-0 ${
-                    isVisible ? 'opacity-100' : 'opacity-0'
-                  }`}
-                  style={{
-                    transitionProperty: 'opacity, transform',
-                    transitionDuration: '0.5s',
-                    transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
-                    transitionDelay: isVisible ? `${i * 80}ms` : '0ms',
-                  }}
+      <div className="ls-container">
+        <div className="text-center max-w-3xl mx-auto">
+          <div
+            className="ls-eyebrow inline-flex items-center justify-center gap-3"
+            style={{ justifyContent: 'center' }}
+          >
+            <span
+              aria-hidden
+              style={{
+                display: 'inline-block',
+                width: '28px',
+                height: '1px',
+                background: 'var(--ls-ink-faint)',
+              }}
+            />
+            <span className="num">{t('landing.faq.eyebrow')}</span>
+            <span
+              aria-hidden
+              style={{
+                display: 'inline-block',
+                width: '28px',
+                height: '1px',
+                background: 'var(--ls-ink-faint)',
+              }}
+            />
+          </div>
+          <h2 className="ls-display mt-7" style={{ textWrap: 'balance' }}>
+            <span className="line">{t('landing.faq.headlinePrefix')}</span>
+            <span className="line flourish mt-2">
+              {t('landing.faq.headlineFlourish')}
+            </span>
+          </h2>
+        </div>
+
+        <div className="ls-faq-list mx-auto mt-14 max-w-3xl">
+          {faq.items.map((item, i) => {
+            const isOpen = openIndex === i;
+            return (
+              <div
+                key={item.question}
+                className={`ls-faq-item ${isOpen ? 'open' : ''}`}
+              >
+                <button
+                  type="button"
+                  onClick={() => toggle(i)}
+                  className="ls-faq-trigger"
+                  aria-expanded={isOpen}
                 >
-                  <button
-                    onClick={() => toggleFaq(i)}
-                    className="group/faq w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors"
-                  >
-                    <h3 className="text-base font-semibold pr-4">
-                      {item.question}
-                    </h3>
+                  <span className="ls-faq-idx">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span className="ls-faq-q">{item.question}</span>
+                  <span className="ls-faq-chev" aria-hidden>
                     <svg
-                      className={`w-5 h-5 text-gray-400 group-hover/faq:text-[var(--purple)] flex-shrink-0 transition-all duration-200 ${
-                        openFaq === i ? 'rotate-180 text-[var(--purple)]' : ''
-                      }`}
-                      fill="none"
                       viewBox="0 0 24 24"
+                      fill="none"
                       stroke="currentColor"
-                      strokeWidth={2}
+                      strokeWidth="2"
                     >
                       <path
+                        d="M6 9l6 6 6-6"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        d="M19 9l-7 7-7-7"
                       />
                     </svg>
-                  </button>
-                  <div
-                    className={`overflow-hidden transition-all duration-300 ${
-                      openFaq === i ? 'max-h-48 pb-5' : 'max-h-0'
-                    }`}
-                  >
-                    <p className="px-6 text-gray-500 dark:text-white/40 leading-relaxed text-sm max-w-[60ch]">
-                      {item.answer}
-                    </p>
-                  </div>
-                </GlassCard>
-              ))}
-            </div>
-          </div>
+                  </span>
+                </button>
+                <div className="ls-faq-body">
+                  <p>{item.answer}</p>
+                </div>
+              </div>
+            );
+          })}
         </div>
-      </section>
-    </>
+      </div>
+
+      <style jsx global>{`
+        .ls-faq-item {
+          border-top: 1px solid var(--ls-rule);
+        }
+        .ls-faq-item:last-child {
+          border-bottom: 1px solid var(--ls-rule);
+        }
+        .ls-faq-trigger {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          width: 100%;
+          padding: 1.3rem 0;
+          background: transparent;
+          border: 0;
+          text-align: left;
+          cursor: pointer;
+          color: var(--ls-ink);
+          transition: padding 320ms ease;
+        }
+        .ls-faq-trigger:hover .ls-faq-q {
+          color: var(--ls-accent);
+        }
+        .ls-faq-idx {
+          font-family: var(--ls-mono);
+          font-size: 10.5px;
+          letter-spacing: 0.2em;
+          color: var(--ls-ink-faint);
+          flex-shrink: 0;
+          min-width: 28px;
+        }
+        .ls-faq-q {
+          flex: 1;
+          font-family: var(--ls-sans);
+          font-size: 1rem;
+          font-weight: 500;
+          letter-spacing: -0.01em;
+          color: var(--ls-ink);
+          transition: color 280ms ease;
+        }
+        .ls-faq-chev {
+          display: inline-flex;
+          width: 18px;
+          height: 18px;
+          color: var(--ls-ink-faint);
+          transition: transform 320ms cubic-bezier(0.19, 1, 0.22, 1),
+            color 280ms ease;
+          flex-shrink: 0;
+        }
+        .ls-faq-item.open .ls-faq-chev {
+          transform: rotate(180deg);
+          color: var(--ls-accent);
+        }
+        .ls-faq-body {
+          max-height: 0;
+          overflow: hidden;
+          padding-left: calc(28px + 1rem);
+          transition: max-height 420ms cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .ls-faq-item.open .ls-faq-body {
+          max-height: 520px;
+          padding-bottom: 1.3rem;
+        }
+        .ls-faq-body p {
+          font-family: var(--ls-sans);
+          font-size: 0.95rem;
+          line-height: 1.6;
+          color: var(--ls-ink-dim);
+          margin: 0;
+          padding-right: 2rem;
+        }
+      `}</style>
+    </section>
   );
 }

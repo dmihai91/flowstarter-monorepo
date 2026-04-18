@@ -280,7 +280,6 @@ export default function ProjectDetailPage() {
         projectStatus.charAt(0).toUpperCase() + projectStatus.slice(1)
       } · ${p.plan_name ?? ''}`}
       icon={<FolderOpen className="w-5 h-5 text-[var(--purple)]" />}
-      maxWidth="5xl"
     >
       {/* Project header */}
       <div className={card + ' p-6 mb-6'}>

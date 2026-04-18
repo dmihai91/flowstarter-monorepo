@@ -135,10 +135,10 @@ export function ScaffoldClientInfo({
       </div>
 
       <div className="space-y-6">
-        <section className="rounded-[32px] border border-gray-200/80 bg-white/95 p-6 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]">
+        <section className="rounded-[32px] border border-gray-200/80 bg-white/95 dark:bg-white/[0.04] p-6 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:border-white/[0.08] dark:shadow-[0_8px_32px_rgba(0,0,0,0.30)]">
           <div className="flex items-center gap-2 mb-4">
             <User className="w-4 h-4 text-zinc-400" />
-            <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+            <p className="text-base font-semibold text-zinc-800 dark:text-zinc-200">
               Client details
             </p>
           </div>
@@ -171,7 +171,7 @@ export function ScaffoldClientInfo({
             />
           </div>
 
-          <div className="mt-4 sm:max-w-[calc(50%-0.5rem)]">
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FlowInput
               label={t('scaffold.client.field.phone')}
               placeholder={t('scaffold.client.placeholder.phone')}
@@ -185,11 +185,20 @@ export function ScaffoldClientInfo({
               errorText={errors.phone}
               inputSize="lg"
             />
+            <FlowInput
+              label={t('scaffold.client.field.businessName')}
+              placeholder="e.g. Bright Smile Dental"
+              value={clientInfo.businessName ?? ''}
+              onChange={(e) =>
+                onUpdate('businessName' as keyof ClientInfo, e.target.value)
+              }
+              inputSize="lg"
+            />
           </div>
         </section>
 
-        <section className="rounded-[32px] border border-gray-200/80 bg-white/95 p-6 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]">
-          <p className="text-sm font-medium text-zinc-900 dark:text-white mb-1">
+        <section className="rounded-[32px] border border-gray-200/80 bg-white/95 dark:bg-white/[0.04] p-6 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:border-white/[0.08] dark:shadow-[0_8px_32px_rgba(0,0,0,0.30)]">
+          <p className="text-base font-medium text-zinc-900 dark:text-white mb-1">
             Industry
           </p>
           <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">
@@ -225,9 +234,9 @@ export function ScaffoldClientInfo({
           </div>
         </section>
 
-        <section className="space-y-5 rounded-[32px] border border-gray-200/80 bg-white/95 p-6 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:border-white/[0.06] dark:bg-white/[0.04] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]">
+        <section className="space-y-5 rounded-[32px] border border-gray-200/80 bg-white/95 dark:bg-white/[0.04] p-6 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:border-white/[0.06] dark:bg-white/[0.04] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]">
           <div>
-            <p className="text-sm font-medium text-zinc-900 dark:text-white mb-1">
+            <p className="text-base font-medium text-zinc-900 dark:text-white mb-1">
               How do you want to proceed?
             </p>
             <p className="text-xs text-zinc-500 dark:text-zinc-400">
@@ -249,7 +258,7 @@ export function ScaffoldClientInfo({
               <Sparkles className="h-4.5 w-4.5 text-[var(--purple)]" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-zinc-900 dark:text-white">
+              <p className="text-base font-semibold text-zinc-900 dark:text-white">
                 Generate with AI
               </p>
               <p className="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
@@ -283,7 +292,7 @@ export function ScaffoldClientInfo({
               <PenLine className="h-4.5 w-4.5 text-zinc-500 dark:text-zinc-400" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-zinc-900 dark:text-white">
+              <p className="text-base font-semibold text-zinc-900 dark:text-white">
                 Fill in manually
               </p>
               <p className="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
@@ -307,10 +316,10 @@ export function ScaffoldClientInfo({
       </div>
 
       {mode === 'ai' && (
-        <section className="rounded-[32px] border border-gray-200/80 bg-white/95 p-6 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]">
+        <section className="rounded-[32px] border border-gray-200/80 bg-white/95 dark:bg-white/[0.04] p-6 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:border-white/[0.08] dark:shadow-[0_8px_32px_rgba(0,0,0,0.30)]">
           <div className="flex items-center gap-2 mb-1.5">
             <Sparkles className="w-4 h-4 text-[var(--purple)]" />
-            <p className="text-sm font-medium text-zinc-900 dark:text-white">
+            <p className="text-base font-medium text-zinc-900 dark:text-white">
               Assistant prompt
             </p>
           </div>
@@ -335,9 +344,11 @@ export function ScaffoldClientInfo({
             </span>
             <span
               className={
-                prompt.trim().length < 20
-                  ? 'text-amber-600 dark:text-amber-400'
-                  : ''
+                prompt.trim().length === 0
+                  ? 'text-zinc-400 dark:text-zinc-500'
+                  : prompt.trim().length < 20
+                  ? 'text-amber-500 dark:text-amber-400'
+                  : 'text-[var(--purple)]/70 dark:text-[var(--purple)]/60 font-medium'
               }
             >
               {prompt.trim().length} chars

@@ -10,7 +10,10 @@
       "Bash(echo \"=== $f ===\")",
       "Bash(find /Users/darius91/flowstarter-monorepo/apps -type d -name \"$f\" -not -path '*/node_modules/*' -not -path '*/.next/*')",
       "Bash(done)",
-      "Bash(npx t3:*)"
+      "Bash(npx t3:*)",
+      "Bash(npx vitest *)",
+      "Bash(npx tsc *)",
+      "Bash(grep -n \"editor_workspaces:\\\\|^      [a-z_]*: {$\" /Users/darius91/flowstarter-monorepo/apps/flowstarter-main/src/lib/database.types.ts)"
     ]
   }
 }

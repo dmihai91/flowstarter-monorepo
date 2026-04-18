@@ -50,30 +50,30 @@ function MemberRow({ member }: { member: Member }) {
     : 'Never';
 
   return (
-    <div className="flex items-center gap-4 px-4 py-3">
-      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center shrink-0 text-sm font-bold text-[var(--purple)]">
+    <div className="flex items-center gap-4 px-4 py-4">
+      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center shrink-0 text-base font-bold text-[var(--purple)]">
         {initials}
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <p className="text-sm font-semibold text-gray-900 dark:text-white">
+          <p className="text-base font-semibold text-gray-900 dark:text-white">
             {member.name}
           </p>
           <RoleBadge role={member.role} />
         </div>
         <div className="flex items-center gap-1 mt-0.5">
-          <Mail className="w-3 h-3 text-gray-400 dark:text-white/30 shrink-0" />
-          <span className="text-xs text-gray-500 dark:text-white/40 truncate">
+          <Mail className="w-3.5 h-3.5 text-gray-400 dark:text-white/30 shrink-0" />
+          <span className="text-sm text-gray-500 dark:text-white/40 truncate">
             {member.email}
           </span>
         </div>
       </div>
       <div className="hidden sm:flex flex-col items-end gap-0.5 shrink-0">
-        <div className="flex items-center gap-1 text-xs text-gray-400 dark:text-white/30">
-          <Clock className="w-3 h-3" />
+        <div className="flex items-center gap-1 text-sm text-gray-400 dark:text-white/30">
+          <Clock className="w-3.5 h-3.5" />
           <span>{lastSeenAgo}</span>
         </div>
-        <span className="text-[0.6rem] text-gray-400 dark:text-white/25">
+        <span className="text-xs text-gray-400 dark:text-white/25">
           Joined {joinedAgo}
         </span>
       </div>
@@ -103,7 +103,6 @@ export default function TeamPage() {
       }`}
       subtitle="Manage who has access to the dashboard"
       icon={<ShieldCheck className="w-5 h-5 text-[var(--purple)]" />}
-      maxWidth="5xl"
     >
       <div className="flex justify-end mb-4">
         <button
@@ -132,8 +131,8 @@ export default function TeamPage() {
         <div className="space-y-4">
           {admins.length > 0 && (
             <ShellCard className="!p-0 overflow-hidden">
-              <p className="px-4 pt-3 pb-2 text-[0.65rem] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider flex items-center gap-1.5">
-                <Crown className="w-3 h-3" />
+              <p className="px-4 pt-4 pb-2 text-sm font-semibold text-gray-600 dark:text-white/50 flex items-center gap-1.5">
+                <Crown className="w-4 h-4" />
                 Admins
               </p>
               <div className="divide-y divide-gray-100 dark:divide-white/[0.05]">
@@ -145,8 +144,8 @@ export default function TeamPage() {
           )}
           {team.length > 0 && (
             <ShellCard className="!p-0 overflow-hidden">
-              <p className="px-4 pt-3 pb-2 text-[0.65rem] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider flex items-center gap-1.5">
-                <Users className="w-3 h-3" />
+              <p className="px-4 pt-4 pb-2 text-sm font-semibold text-gray-600 dark:text-white/50 flex items-center gap-1.5">
+                <Users className="w-4 h-4" />
                 Team members
               </p>
               <div className="divide-y divide-gray-100 dark:divide-white/[0.05]">

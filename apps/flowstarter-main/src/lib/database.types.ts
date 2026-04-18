@@ -89,6 +89,60 @@ export type Database = {
         }
         Relationships: []
       }
+      client_requests: {
+        Row: {
+          id: string
+          project_id: string
+          client_user_id: string
+          title: string
+          description: string
+          original_prompt: string | null
+          editor_context: Json | null
+          status: string
+          priority: string
+          assigned_to: string | null
+          rejection_reason: string | null
+          created_at: string
+          accepted_at: string | null
+          resolved_at: string | null
+          workspace_session_id: string | null
+        }
+        Insert: {
+          id?: string
+          project_id: string
+          client_user_id: string
+          title: string
+          description: string
+          original_prompt?: string | null
+          editor_context?: Json | null
+          status?: string
+          priority?: string
+          assigned_to?: string | null
+          rejection_reason?: string | null
+          created_at?: string
+          accepted_at?: string | null
+          resolved_at?: string | null
+          workspace_session_id?: string | null
+        }
+        Update: {
+          id?: string
+          project_id?: string
+          client_user_id?: string
+          title?: string
+          description?: string
+          original_prompt?: string | null
+          editor_context?: Json | null
+          status?: string
+          priority?: string
+          assigned_to?: string | null
+          rejection_reason?: string | null
+          created_at?: string
+          accepted_at?: string | null
+          resolved_at?: string | null
+          workspace_session_id?: string | null
+        }
+        Relationships: []
+      }
       deployment_configs: {
         Row: {
           config: Json

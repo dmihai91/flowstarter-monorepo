@@ -1,0 +1,105 @@
+---
+import type { TitleLine } from '../../lib/site-data';
+import MultiLineTitle from '../shared/MultiLineTitle.astro';
+
+interface Props {
+  freeTime: {
+    titleLines: TitleLine[];
+    paragraphs: string[];
+    imageSrc: string;
+    imageAlt: string;
+  };
+}
+
+const { freeTime } = Astro.props;
+---
+
+<section class="about-free-time-section container" data-zigzag-section>
+  <div class="about-free-time-section__copy" data-zigzag-part="left">
+    <MultiLineTitle as="h2" lines={freeTime.titleLines} className="about-free-time-section__title" />
+    <div class="about-free-time-section__text">
+      {freeTime.paragraphs.map((paragraph) => (
+        <p>{paragraph}</p>
+      ))}
+    </div>
+  </div>
+  <div class="about-free-time-section__media" data-zigzag-part="right">
+    <img src={freeTime.imageSrc} alt={freeTime.imageAlt} loading="lazy" />
+  </div>
+</section>
+
+<style>
+  .about-free-time-section {
+    --split-gap: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--split-gap);
+  }
+
+  .about-free-time-section__copy {
+    flex: 1 1 56%;
+    min-width: 0;
+    text-align: left;
+  }
+
+  .about-free-time-section__title {
+    max-width: 100%;
+    margin-bottom: 1.5rem;
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+
+  .about-free-time-section__title :global(.multi-line-title__accent),
+  .about-free-time-section__title :global(.multi-line-title__suffix) {
+    display: inline;
+    white-space: normal;
+  }
+
+  .about-free-time-section__text {
+    display: grid;
+    gap: 1rem;
+    max-width: 620px;
+  }
+
+  .about-free-time-section__text p {
+    font-size: clamp(1.1rem, 1.3vw, 1.3rem);
+    line-height: 1.5;
+    color: var(--bg-dark);
+    text-align: left;
+  }
+
+  .about-free-time-section__media {
+    flex: 1 1 44%;
+    min-width: 0;
+    width: min(100%, 560px);
+    margin-left: auto;
+  }
+
+  .about-free-time-section__media img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  @media (max-width: 1024px) {
+    .about-free-time-section {
+      --split-gap: 48px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .about-free-time-section {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .about-free-time-section__media {
+      width: 100%;
+      margin-left: 0;
+      justify-self: stretch;
+    }
+
+  }
+</style>

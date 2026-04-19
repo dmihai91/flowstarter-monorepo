@@ -139,6 +139,13 @@
 .ls-section {
   position: relative;
   isolation: isolate;
+  /* No overflow:hidden — that clips section-level gradients and creates
+     a visible card-box edge on mobile (sections appear boxed in) */
+}
+
+/* Sections that have ls-mesh need clip to contain the -10% inset */
+.ls-section:has(.ls-mesh),
+.ls-section:has(.ls-streak) {
   overflow: hidden;
 }
 
@@ -661,33 +668,38 @@
   z-index: 5;
 }
 
-/* Hero-specific bloom — anchors the glow behind the headline (left side of two-column layout) */
+/* Hero-specific bloom — anchors the glow behind the headline */
 .ls-hero-bloom {
   position: absolute;
-  top: -20%;
+  top: 0%;
   left: -5%;
-  width: 65%;
-  height: 90%;
+  width: 70%;
+  height: 100%;
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.18;
+  opacity: 0.20;
   background: radial-gradient(
-    ellipse at center,
-    rgba(88, 106, 240, 0.65) 0%,
-    rgba(78, 94, 218, 0.18) 45%,
-    transparent 72%
+    ellipse at 40% 30%,
+    rgba(88, 106, 240, 0.70) 0%,
+    rgba(78, 94, 218, 0.18) 50%,
+    transparent 75%
   );
 }
 .dark .ls-hero-bloom {
-  opacity: 0.28;
+  opacity: 0.32;
 }
 @media (max-width: 900px) {
-  /* On mobile the layout is single column — center the bloom */
   .ls-hero-bloom {
+    top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 100%;
+    width: 140%;
+    height: 60%;
+    opacity: 0.22;
+  }
+  .dark .ls-hero-bloom {
+    opacity: 0.35;
   }
 }
 

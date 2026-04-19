@@ -41,7 +41,7 @@ export default function AuthLayout({
       />
 
       {/* Header */}
-      <header className="sticky top-0 z-50 shrink-0 border-b border-[var(--fs-rule)]/40 bg-[var(--fs-bg-base)]/30 backdrop-blur-md">
+      <header className="sticky top-0 z-50 shrink-0 border-b border-[var(--fs-rule)]/50 bg-[var(--fs-bg-base)]/70 backdrop-blur-xl backdrop-saturate-150">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
             <Logo size="md" />

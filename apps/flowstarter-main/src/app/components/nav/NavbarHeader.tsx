@@ -20,13 +20,11 @@ export function NavbarHeader({
   return (
     <header
       className={`fixed top-0 z-50 w-full transition-all duration-500 ${
-        isScrolled
-          ? 'border-b bg-white/50 dark:bg-[var(--fs-bg-base)]/60 backdrop-blur-2xl backdrop-saturate-150 border-[var(--fs-rule)] shadow-[0_1px_2px_rgba(0,0,0,0.03)]'
-          : 'border-b border-[var(--fs-rule)] bg-white/60 dark:bg-[var(--fs-bg-base)]/95 backdrop-blur-xl'
+        'border-b bg-[var(--fs-bg-base)]/70 backdrop-blur-xl backdrop-saturate-150 border-[var(--fs-rule)]/50'
       } ${
         isScrolled
-          ? 'border-white/40 dark:border-white/10 shadow-[0_1px_3px_rgba(0,0,0,0.05)]'
-          : 'border-white/30 dark:border-white/5 shadow-[0_1px_2px_rgba(0,0,0,0.02)]'
+          ? 'shadow-[0_1px_3px_rgba(0,0,0,0.06)]'
+          : ''
       }`}
       style={{
         paddingTop: 'calc(env(safe-area-inset-top, 0px))',

@@ -168,39 +168,30 @@ export function TeamSidebar() {
 
   return (
     <>
-      {/* Mobile overlay */}
+      {/* Mobile overlay — below header */}
       {isMobileOpen && (
         <div
-          className="md:hidden fixed inset-0 z-[150] bg-black/50 backdrop-blur-sm"
+          className="md:hidden fixed top-16 inset-x-0 bottom-0 z-[150] bg-black/40 backdrop-blur-sm"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
 
-      {/* Mobile sidebar */}
+      {/* Mobile sidebar — starts below header (top-16 = 64px) */}
       <aside
-        style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)' }}
+        style={{
+          background: 'var(--fs-bg-base)',
+          borderColor: 'var(--fs-glass-edge)',
+          backdropFilter: 'blur(24px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+        }}
         className={cn(
-          'md:hidden fixed inset-y-0 left-0 z-[160] w-72 rounded-r-2xl',
-          'backdrop-blur-2xl backdrop-saturate-150',
+          'md:hidden fixed top-16 bottom-0 left-0 z-[160] w-72 rounded-r-2xl',
           'border',
-          'shadow-[8px_0_32px_rgba(0,0,0,0.08)] dark:shadow-[8px_0_32px_rgba(0,0,0,0.25)]',
+          'shadow-[8px_0_32px_rgba(0,0,0,0.12)] dark:shadow-[8px_0_32px_rgba(0,0,0,0.35)]',
           'transform transition-transform duration-300 ease-in-out',
           isMobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        {/* Mobile header */}
-        <div className="flex items-center justify-between p-4 border-b border-[var(--fs-rule)]">
-          <Link href="/team/dashboard" onClick={() => setIsMobileOpen(false)}>
-            <Logo size="sm" />
-          </Link>
-          <button
-            onClick={() => setIsMobileOpen(false)}
-              className="p-2 rounded-xl text-[var(--fs-ink-faint)] hover:text-[var(--fs-ink)] hover:bg-white/55 dark:hover:bg-white/10"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
         {/* ThemeToggle with label */}
         <div className="px-4 py-3 border-b border-[var(--fs-rule)] flex items-center justify-between">
           <span className="text-sm text-[var(--fs-ink-dim)]">
@@ -213,14 +204,18 @@ export function TeamSidebar() {
         <SidebarContent showLabel />
       </aside>
 
-      {/* Desktop/Tablet sidebar - Glassmorphism */}
+      {/* Desktop/Tablet sidebar */}
       <aside
-        style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)' }}
+        style={{
+          background: 'color-mix(in srgb, var(--fs-bg-base) 70%, transparent)',
+          borderColor: 'var(--fs-glass-edge)',
+          backdropFilter: 'blur(24px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+        }}
         className={cn(
           'hidden md:flex flex-col flex-shrink-0 overflow-hidden transition-all duration-300',
-          'backdrop-blur-2xl backdrop-saturate-150',
           'border-r',
-          'shadow-[4px_0_24px_rgba(0,0,0,0.06),inset_-1px_0_0_rgba(255,255,255,0.9)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.2),inset_-1px_0_0_rgba(255,255,255,0.04)]',
+          'shadow-[4px_0_24px_rgba(0,0,0,0.06)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.2)]',
           collapsed ? 'w-[68px]' : 'w-48 lg:w-64'
         )}
       >

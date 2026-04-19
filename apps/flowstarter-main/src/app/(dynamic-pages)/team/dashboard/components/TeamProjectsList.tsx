@@ -12,7 +12,8 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import type { Table as TableType } from '@/types';
-import { LayoutGrid, List } from 'lucide-react';
+import { FolderOpen } from 'lucide-react';
+import { ListShell, ViewToggle } from './ListShell';
 import { useFormatDate } from '@/hooks/useFormatDate';
 import { useTranslations } from '@/lib/i18n';
 import { isLive, isBuilding } from './TeamProjectsStats';
@@ -57,8 +58,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
   const { t } = useTranslations();
   const { formatTimeAgo } = useFormatDate();
   const { viewMode, setViewMode } = useTeamProjectsView();
-  const glassPanelClass = 'rounded-[var(--fs-radius-2xl)] border backdrop-blur-2xl backdrop-saturate-150';
-  const glassPanelStyle = { background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' };
+
 
   const {
     deleteDialogOpen,
@@ -92,63 +92,18 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
     isUpdatingPricing,
   } = useTeamProjectActions();
 
-  if (projects.length === 0) {
-    return (
-      <>
-        <div className="flex items-end justify-between mb-4">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-medium text-gray-900 dark:text-gray-100 tracking-tight">
-              {t('team.dashboard.allProjects')}
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm">
-              {t('team.dashboard.allProjectsDescription')}
-            </p>
-          </div>
-        </div>
-        <div className={`${glassPanelClass} p-12 text-center`} style={glassPanelStyle}>
-          <p className="text-gray-500 dark:text-white/50 text-sm">
-            {t('team.dashboard.noProjects')}
-          </p>
-        </div>
-      </>
-    );
-  }
-
   return (
-    <div className="space-y-4">
-      {/* Header with View Toggle */}
-      <div className="flex items-end justify-between">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-medium text-gray-900 dark:text-gray-100 tracking-tight">
-            {t('team.dashboard.allProjects')}
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm">
-            {t('team.dashboard.allProjectsDescription')}
-          </p>
-        </div>
-        <div className="inline-flex items-center rounded-[var(--fs-radius-md)] border p-1" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-shadow-xs)' }}>
-          <button
-            onClick={() => setViewMode('list')}
-            className={`p-2 rounded-md transition-colors ${
-              viewMode === 'list'
-                ? 'bg-[var(--fs-bg-elevated)] text-[var(--fs-ink)] shadow-sm'
-                : 'text-[var(--fs-ink-faint)] hover:text-[var(--fs-ink-dim)]'
-            }`}
-          >
-            <List className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setViewMode('grid')}
-            className={`p-2 rounded-md transition-colors ${
-              viewMode === 'grid'
-                ? 'bg-[var(--fs-bg-elevated)] text-[var(--fs-ink)] shadow-sm'
-                : 'text-[var(--fs-ink-faint)] hover:text-[var(--fs-ink-dim)]'
-            }`}
-          >
-            <LayoutGrid className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
+    <ListShell
+      title={t('team.dashboard.allProjects')}
+      count={projects.length > 0 ? projects.length : undefined}
+      empty={projects.length === 0}
+      emptyIcon={<FolderOpen className="w-8 h-8" />}
+      emptyTitle={t('team.dashboard.noProjects')}
+      emptyDescription={t('team.dashboard.allProjectsDescription')}
+      headerRight={
+        <ViewToggle value={viewMode} onChange={setViewMode} />
+      }
+    >
 
       {/* List View */}
       {viewMode === 'list' && (
@@ -558,6 +513,6 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </ListShell>
   );
 }

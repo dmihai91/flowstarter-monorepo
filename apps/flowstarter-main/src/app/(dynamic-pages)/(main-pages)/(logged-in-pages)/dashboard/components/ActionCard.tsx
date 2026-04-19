@@ -67,14 +67,14 @@ export function ActionCard({
             </span>
           )}
           {badge && (
-            <span className="text-[0.6rem] font-medium text-white/50 bg-white/[0.06] px-1.5 py-0.5 rounded-full border border-white/10">
+            <span className="text-[0.6rem] font-medium text-[var(--fs-ink-faint)] bg-white/[0.06] px-1.5 py-0.5 rounded-full border border-white/10">
               {badge}
             </span>
           )}
         </div>
-        <p className="text-xs text-white/50 leading-relaxed">{description}</p>
+        <p className="text-xs text-[var(--fs-ink-faint)] leading-relaxed">{description}</p>
         {elevated && (
-          <p className="text-xs text-white/30 mt-1">
+          <p className="text-xs text-[var(--fs-ink-faint)] mt-1">
             First step to getting your site live
           </p>
         )}
@@ -85,7 +85,7 @@ export function ActionCard({
           'w-4 h-4 flex-shrink-0 transition-all duration-300 group-hover:translate-x-1',
           elevated
             ? 'text-[var(--purple)]'
-            : 'text-white/30 group-hover:text-white/60'
+            : 'text-[var(--fs-ink-faint)] group-hover:text-[var(--fs-ink-dim)]'
         )}
       />
     </div>

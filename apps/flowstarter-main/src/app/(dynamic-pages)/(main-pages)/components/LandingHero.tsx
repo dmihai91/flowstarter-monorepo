@@ -322,7 +322,8 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
               <Button onClick={() => onOpenModal?.()} className="ls-cta">
                 {t('landing.hero.primaryCta')}
                 <svg
-                  className="arrow ml-2 h-4 w-4" aria-hidden="true"
+                  className="arrow ml-2 h-4 w-4"
+                  aria-hidden="true"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

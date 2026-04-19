@@ -14,43 +14,9 @@ export interface GlassCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'ch
 }
 
 // ── Liquid-glass tokens ────────────────────────────────────────────────────────
-// Light: visible card with gray border, high-opacity white bg, soft inset glow
-// Dark: subtle translucent panel, very faint borders, low-key inset highlight
-
-const bgByVariant = {
-  default: 'bg-white/95 dark:bg-white/[0.05]',
-  elevated: 'bg-white/95 dark:bg-white/[0.06]',
-  subtle: 'bg-white/80 dark:bg-white/[0.03]',
-} as const;
-
-const borderByVariant = {
-  default: 'border border-gray-200/80 dark:border-white/[0.06]',
-  elevated: 'border border-gray-200/80 dark:border-white/[0.07]',
-  subtle: 'border border-gray-200/50 dark:border-white/[0.05]',
-} as const;
-
-const shadowByVariant = {
-  default: [
-    'shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset]',
-    'dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]',
-  ].join(' '),
-  elevated: [
-    'shadow-[0_12px_40px_rgba(0,0,0,0.10),0_1px_0_rgba(255,255,255,0.9)_inset]',
-    'dark:shadow-[0_12px_40px_rgba(0,0,0,0.30),0_1px_0_rgba(255,255,255,0.08)_inset]',
-  ].join(' '),
-  subtle: [
-    'shadow-[0_4px_20px_rgba(0,0,0,0.05),0_1px_0_rgba(255,255,255,0.9)_inset]',
-    'dark:shadow-[0_4px_20px_rgba(0,0,0,0.20),0_1px_0_rgba(255,255,255,0.04)_inset]',
-  ].join(' '),
-} as const;
-
-const hoverClasses = [
-  'hover:-translate-y-[2px]',
-  'hover:shadow-[0_16px_48px_rgba(0,0,0,0.12),0_1px_0_rgba(255,255,255,0.9)_inset]',
-  'hover:border-gray-300/80',
-  'dark:hover:shadow-[0_16px_48px_rgba(0,0,0,0.35),0_1px_0_rgba(255,255,255,0.08)_inset]',
-  'dark:hover:border-white/[0.10]',
-].join(' ');
+// All colors resolved from --fs-* design tokens (brand.css).
+// bg / border / shadow are applied via inline style so they respond to
+// both .dark class and data-theme="dark" without needing Tailwind dark: prefixes.
 
 export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
   (
@@ -67,22 +33,29 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
     },
     ref,
   ) => {
+    // Opacity multiplier per variant — applied to the token values
+    const bgOpacity = variant === 'elevated' ? 0.06 : variant === 'subtle' ? 0.03 : 0.55;
+    const edgeOpacity = variant === 'subtle' ? 0.05 : 0.10;
+
+    const tokenStyle: CSSProperties = {
+      background: 'var(--fs-glass-bg)',
+      borderColor: 'var(--fs-glass-edge)',
+      boxShadow: 'var(--fs-card-shadow)',
+      borderRadius: 'var(--fs-radius-2xl)',
+      ...style,
+    };
+
     const classes = [
       // Structure
-      'group relative overflow-hidden rounded-[28px]',
+      'group relative overflow-hidden',
       'px-6 py-5',
       // Glassmorphism
-      bgByVariant[variant],
       'backdrop-blur-2xl backdrop-saturate-150',
-      borderByVariant[variant],
-      // Shadow + 3D inset
-      shadowByVariant[variant],
+      'border',
       // Transitions
       'transition-all duration-300 ease-out',
       // Hover
-      !noHover ? hoverClasses : '',
-      // Active
-      'active:scale-[0.99]',
+      !noHover ? 'hover:-translate-y-[2px] hover:shadow-[var(--fs-shadow-xl)] active:translate-y-0' : '',
       // Layout
       'flex flex-col',
       className,
@@ -91,9 +64,9 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
       .join(' ');
 
     const content = (
-      <div ref={ref} className={classes} onClick={onClick} style={style} {...props}>
+      <div ref={ref} className={classes} onClick={onClick} style={tokenStyle} {...props}>
         {/* Subtle gradient overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-blue-500/0 group-hover:from-purple-500/[0.02] group-hover:to-blue-500/[0.02] transition-all duration-300 rounded-[28px]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--fs-accent)]/0 to-[var(--fs-accent)]/0 group-hover:from-[var(--fs-accent)]/[0.02] group-hover:to-transparent transition-all duration-300 rounded-[var(--fs-radius-2xl)]" />
         <div className="relative z-10 flex flex-col gap-[inherit] h-full">{children}</div>
       </div>
     );

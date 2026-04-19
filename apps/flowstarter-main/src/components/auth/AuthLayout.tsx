@@ -27,7 +27,7 @@ export default function AuthLayout({
   useTheme();
   const { t } = useTranslations();
   return (
-    <div className="min-h-screen w-full relative flex flex-col">
+    <div className="min-h-screen w-full relative flex flex-col" data-density="comfortable">
       <FlowBackground
         variant="auth"
         style={{
@@ -41,7 +41,7 @@ export default function AuthLayout({
       />
 
       {/* Header */}
-      <header className="sticky top-0 z-50 shrink-0 border-b border-gray-200/30 dark:border-white/5 bg-white/80 dark:bg-[#0a0810]/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 shrink-0 border-b border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/80 dark:bg-[var(--fs-bg-base)]/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
             <Logo size="md" />
@@ -64,7 +64,7 @@ export default function AuthLayout({
                 <span
                   style={{
                     backgroundImage:
-                      'linear-gradient(to right, #4338CA, #8B5CF6)',
+                      'linear-gradient(110deg, var(--fs-accent-hot), var(--fs-accent))',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
                     backgroundClip: 'text',
@@ -73,14 +73,14 @@ export default function AuthLayout({
                   {title.split(' ')[0]}
                 </span>
                 {title.split(' ').length > 1 && (
-                  <span className="text-gray-900 dark:text-white">
+                  <span className="text-[var(--fs-ink)]">
                     {' '}
                     {title.split(' ').slice(1).join(' ')}
                   </span>
                 )}
               </h1>
               {subtitle && (
-                <p className="text-gray-500 dark:text-white/50 text-sm">
+                <p className="text-[var(--fs-ink-faint)] text-sm">
                   {subtitle}
                 </p>
               )}

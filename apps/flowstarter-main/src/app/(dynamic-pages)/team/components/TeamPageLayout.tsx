@@ -53,12 +53,12 @@ export function TeamPageLayout({
   }
 
   return (
-    <div className="p-6 lg:p-8 max-w-4xl mx-auto">
+    <div className="p-6 lg:p-8 max-w-4xl mx-auto" data-density="compact">
       {/* Back button */}
       {showBackButton && (
         <Link
           href={backHref}
-          className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-[var(--fs-ink-faint)] hover:text-[var(--fs-ink)] mb-6 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Dashboard
@@ -74,11 +74,11 @@ export function TeamPageLayout({
             </div>
           )}
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-2xl font-bold text-[var(--fs-ink)]">
               {title}
             </h1>
             {subtitle && (
-              <p className="text-sm text-gray-500 dark:text-white/50 mt-1">
+              <p className="text-sm text-[var(--fs-ink-faint)] mt-1">
                 {subtitle}
               </p>
             )}

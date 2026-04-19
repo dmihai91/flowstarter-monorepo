@@ -3,5 +3,5 @@
 import React from 'react';
 
 export function DashboardWrapper({ children }: React.PropsWithChildren) {
-  return <>{children}</>;
+  return <div data-density="comfortable">{children}</div>;
 }

@@ -24,14 +24,21 @@ export function AuthSubmitButton({
       type={type}
       disabled={disabled}
       onClick={onClick}
+      style={{
+        background: 'var(--fs-cta-bg)',
+        color: 'var(--fs-cta-fg)',
+        boxShadow: 'var(--fs-cta-shadow)',
+        height: 'var(--fs-btn-h)',
+        paddingInline: 'var(--fs-btn-px)',
+        fontSize: 'var(--fs-btn-fs)',
+        borderRadius: 'var(--fs-radius-md)',
+      }}
       className={[
-        'w-full h-12 px-6 rounded-lg',
-        'font-semibold text-base text-white',
-        'bg-[var(--purple)]',
-        'hover:brightness-110 hover:shadow-lg hover:shadow-[var(--purple)]/20',
-        'active:scale-[0.99]',
-        'transition-all duration-200',
-        'disabled:opacity-60 disabled:pointer-events-none disabled:cursor-not-allowed disabled:brightness-90',
+        'w-full font-semibold',
+        'hover:translate-y-[-1px]',
+        'active:translate-y-0',
+        'transition-transform duration-[var(--fs-dur-micro)]',
+        'disabled:opacity-60 disabled:pointer-events-none disabled:cursor-not-allowed',
         className,
       ].join(' ')}
     >

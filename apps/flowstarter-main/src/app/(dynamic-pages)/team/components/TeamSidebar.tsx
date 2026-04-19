@@ -88,9 +88,9 @@ export function TeamSidebar() {
       onClick={() => setIsMobileOpen(false)}
       className={cn(
         'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
-        isActive(href, exact)
-          ? 'bg-[var(--purple)] text-white shadow-lg shadow-[var(--purple)]/25'
-          : 'text-gray-600 dark:text-white/60 hover:bg-white/55 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
+          isActive(href, exact)
+          ? 'bg-[var(--fs-accent)] text-white shadow-lg shadow-[var(--fs-accent)]/25'
+          : 'text-[var(--fs-ink-dim)] hover:bg-white/55 dark:hover:bg-white/5 hover:text-[var(--fs-ink)]',
         !showLabel && 'justify-center !px-2'
       )}
     >
@@ -124,7 +124,7 @@ export function TeamSidebar() {
             onClick={() => setCollapsed(!collapsed)}
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             className={cn(
-              'p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:text-white/40 dark:hover:text-white/60',
+              'p-2 rounded-lg text-[var(--fs-ink-faint)] hover:text-[var(--fs-ink-dim)]',
               'hover:bg-white/55 dark:hover:bg-white/5 transition-all'
             )}
           >
@@ -152,7 +152,7 @@ export function TeamSidebar() {
       {isAdmin && (
         <div className={cn(!showLabel && 'w-full')}>
           {showLabel && (
-            <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
+              <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-[var(--fs-ink-faint)] uppercase tracking-wider">
               Admin
             </h3>
           )}
@@ -178,31 +178,32 @@ export function TeamSidebar() {
 
       {/* Mobile sidebar */}
       <aside
+        style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)' }}
         className={cn(
           'md:hidden fixed inset-y-0 left-0 z-[160] w-72 rounded-r-2xl',
-          'bg-white/95 dark:bg-white/[0.05] backdrop-blur-2xl backdrop-saturate-150',
-          'border border-white/80 dark:border-white/[0.06]',
-          'shadow-[8px_0_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:shadow-[8px_0_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]',
+          'backdrop-blur-2xl backdrop-saturate-150',
+          'border',
+          'shadow-[8px_0_32px_rgba(0,0,0,0.08)] dark:shadow-[8px_0_32px_rgba(0,0,0,0.25)]',
           'transform transition-transform duration-300 ease-in-out',
           isMobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
         {/* Mobile header */}
-        <div className="flex items-center justify-between p-4 border-b border-white/60 dark:border-white/10">
+        <div className="flex items-center justify-between p-4 border-b border-[var(--fs-rule)]">
           <Link href="/team/dashboard" onClick={() => setIsMobileOpen(false)}>
             <Logo size="sm" />
           </Link>
           <button
             onClick={() => setIsMobileOpen(false)}
-            className="p-2 rounded-xl text-gray-400 hover:text-gray-600 dark:hover:text-white hover:bg-white/55 dark:hover:bg-white/10"
+              className="p-2 rounded-xl text-[var(--fs-ink-faint)] hover:text-[var(--fs-ink)] hover:bg-white/55 dark:hover:bg-white/10"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* ThemeToggle with label */}
-        <div className="px-4 py-3 border-b border-white/60 dark:border-white/10 flex items-center justify-between">
-          <span className="text-sm text-gray-600 dark:text-white/70">
+        <div className="px-4 py-3 border-b border-[var(--fs-rule)] flex items-center justify-between">
+          <span className="text-sm text-[var(--fs-ink-dim)]">
             Theme
           </span>
           <ThemeToggle />
@@ -214,10 +215,11 @@ export function TeamSidebar() {
 
       {/* Desktop/Tablet sidebar - Glassmorphism */}
       <aside
+        style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)' }}
         className={cn(
           'hidden md:flex flex-col flex-shrink-0 overflow-hidden transition-all duration-300',
-          'bg-white/95 dark:bg-white/[0.05] backdrop-blur-2xl backdrop-saturate-150',
-          'border-r border-white/80 dark:border-white/[0.06]',
+          'backdrop-blur-2xl backdrop-saturate-150',
+          'border-r',
           'shadow-[4px_0_24px_rgba(0,0,0,0.06),inset_-1px_0_0_rgba(255,255,255,0.9)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.2),inset_-1px_0_0_rgba(255,255,255,0.04)]',
           collapsed ? 'w-[68px]' : 'w-48 lg:w-64'
         )}

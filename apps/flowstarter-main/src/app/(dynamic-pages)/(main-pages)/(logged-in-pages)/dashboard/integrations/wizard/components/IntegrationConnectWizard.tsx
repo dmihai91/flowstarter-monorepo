@@ -67,7 +67,7 @@ export default function IntegrationConnectWizard({
     }
   }, [resourcesQuery.error]);
 
-  const startOAuthMutation=***
+  const startOAuthMutation = useMutation({
     mutationFn: async () => {
       const res = await fetch(`/api/integrations/${provider}/oauth/start`, {
         method: 'POST',
@@ -121,7 +121,7 @@ export default function IntegrationConnectWizard({
     }
   }, [provider]);
 
-  const startOAuth=*** => {
+  const startOAuth = () => {
     setError(null);
     startOAuthMutation.mutate();
   };
@@ -147,7 +147,7 @@ export default function IntegrationConnectWizard({
           <div className="rounded-xl border border-black/5 dark:border-white/10 bg-white/55 dark:bg-white/5 backdrop-blur-xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.06)]">
             {loading && (
               <div className="text-center py-8">
-                <p className="text-[var(--fs-ink-dim)] mb-4">
+                <p className="text-gray-700 dark:text-gray-300 mb-4">
                   Starting authorization...
                 </p>
               </div>

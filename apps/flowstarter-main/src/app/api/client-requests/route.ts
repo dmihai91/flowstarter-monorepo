@@ -1,5 +1,5 @@
 import 'server-only';
-import { auth, currentUser } from '@clerk/nextjs/server';
+import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
@@ -24,18 +24,15 @@ const bodySchema = z.object({
     .default('normal'),
 });
 
+/**
+ * Resolve role from session claims only — no currentUser() network call.
+ * Clerk embeds publicMetadata into the JWT so this is always fast.
+ */
 async function resolveRole(): Promise<string | undefined> {
   const { sessionClaims } = await auth();
-  let role = (
+  return (
     sessionClaims?.metadata as { role?: string } | undefined
   )?.role?.toLowerCase();
-  if (!role) {
-    const user = await currentUser();
-    role = (
-      user?.publicMetadata as { role?: string } | undefined
-    )?.role?.toLowerCase();
-  }
-  return role;
 }
 
 // POST — called by the constrained client editor when a request is out of scope.
@@ -152,6 +149,9 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false });
   }
 
+  // Limit to 100 rows — no need to load everything
+  query = query.limit(100);
+
   const { data, error } = await query;
 
   if (error) {
@@ -159,5 +159,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ requests: data ?? [] });
+  return NextResponse.json(
+    { requests: data ?? [] },
+    {
+      headers: {
+        // Allow CDN/browser to cache for 10s, revalidate in background
+        'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=30',
+      },
+    }
+  );
 }

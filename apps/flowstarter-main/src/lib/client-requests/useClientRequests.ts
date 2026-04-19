@@ -37,6 +37,8 @@ export function useClientRequests(params: {
       if (!res.ok) throw new Error('Failed to load requests');
       return res.json();
     },
+    staleTime: 20_000,      // 20s — re-fetch silently in background
+    gcTime: 5 * 60_000,     // Keep in cache for 5 min
   });
 }
 

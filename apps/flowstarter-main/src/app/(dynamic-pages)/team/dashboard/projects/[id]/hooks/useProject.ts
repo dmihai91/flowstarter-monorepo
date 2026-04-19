@@ -1,7 +1,8 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
 export interface ProjectData {
   id: string;
@@ -38,46 +39,33 @@ export interface ParsedChat {
   generatedByAI?: boolean;
 }
 
+async function fetchProject(id: string): Promise<{ project: ProjectData }> {
+  const res = await fetch(`/api/projects/${id}`);
+  if (!res.ok) throw new Error('Project not found');
+  return res.json();
+}
+
 export function useProject() {
   const { id } = useParams();
   const router = useRouter();
+  const projectId = Array.isArray(id) ? id[0] : id;
 
-  const [project, setProject] = useState<ProjectData | null>(null);
-  const [parsedChat, setParsedChat] = useState<ParsedChat | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['project', projectId],
+    queryFn: () => fetchProject(projectId!),
+    enabled: !!projectId,
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
+  });
 
-  // Fetch project data
-  useEffect(() => {
-    if (!id) return;
+  const project = data?.project ?? null;
 
-    const fetchProject = async () => {
-      try {
-        const response = await fetch(`/api/projects/${id}`);
-        if (!response.ok) {
-          throw new Error('Project not found');
-        }
-        const data = await response.json();
-        setProject(data.project);
+  const parsedChat = useMemo<ParsedChat | null>(() => {
+    if (!project?.chat) return null;
+    try { return JSON.parse(project.chat); }
+    catch { return null; }
+  }, [project?.chat]);
 
-        if (data.project.chat) {
-          try {
-            setParsedChat(JSON.parse(data.project.chat));
-          } catch (e) {
-            console.error('Failed to parse chat:', e);
-          }
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load project');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProject();
-  }, [id]);
-
-  // Check if project is complete
   const isComplete = !!(
     parsedChat?.businessInfo?.name &&
     parsedChat?.businessInfo?.description &&
@@ -86,30 +74,6 @@ export function useProject() {
     parsedChat?.clientInfo?.email
   );
 
-  // Build wizard data from project
-  const _buildWizardData = () => ({
-    clientName: parsedChat?.clientInfo?.name || '',
-    clientEmail: parsedChat?.clientInfo?.email || '',
-    clientPhone: parsedChat?.clientInfo?.phone || '',
-    businessName: parsedChat?.businessInfo?.name || project?.name || '',
-    description:
-      parsedChat?.businessInfo?.description || project?.description || '',
-    industry: parsedChat?.businessInfo?.industry || '',
-    targetAudience: parsedChat?.businessInfo?.targetAudience || '',
-    uvp: parsedChat?.businessInfo?.uvp || '',
-    goal: parsedChat?.businessInfo?.goal || '',
-    offerType: parsedChat?.businessInfo?.offerType || '',
-    brandTone: parsedChat?.businessInfo?.brandTone || '',
-    businessEmail: parsedChat?.contactInfo?.email || '',
-    businessPhone: parsedChat?.contactInfo?.phone || '',
-    businessAddress: parsedChat?.contactInfo?.address || '',
-    website: parsedChat?.contactInfo?.website || '',
-    step: 1,
-    isAIMode: parsedChat?.generatedByAI || false,
-    projectId: project?.id || '',
-  });
-
-  // Edit project handler
   const handleEdit = () => {
     if (!project) return;
     router.push(`/team/dashboard/new?id=${project.id}`);
@@ -119,7 +83,7 @@ export function useProject() {
     project,
     parsedChat,
     isLoading,
-    error,
+    error: error ? (error instanceof Error ? error.message : 'Failed to load project') : null,
     isComplete,
     handleEdit,
   };

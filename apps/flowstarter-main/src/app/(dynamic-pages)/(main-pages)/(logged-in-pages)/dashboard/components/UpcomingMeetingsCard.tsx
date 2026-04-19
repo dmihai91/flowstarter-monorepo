@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { GlassCard } from '@/components/ui/glass-card';
 import {
   Calendar,
@@ -63,35 +63,24 @@ function LocationIcon({ type }: { type?: string }) {
 }
 
 export function UpcomingMeetingsCard({ projectId }: Props) {
-  const [events, setEvents] = useState<CalendlyEvent[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const qc = useQueryClient();
 
-  const fetchEvents = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `/api/calendly/events?projectId=${projectId}&days=14`
-      );
-      const data = (await res.json()) as {
-        events?: CalendlyEvent[];
-        error?: string;
-      };
-      if (data.events) {
-        setEvents(data.events);
-        setError(null);
-      } else {
-        setError(data.error || 'No events');
-      }
-    } catch {
-      setError('Failed to load');
-    }
-    setLoading(false);
-  }, [projectId]);
+  const { data, isLoading: loading, error: queryError } = useQuery({
+    queryKey: ['calendly-events', projectId],
+    queryFn: async () => {
+      const res = await fetch(`/api/calendly/events?projectId=${projectId}&days=14`);
+      const data = await res.json() as { events?: CalendlyEvent[]; error?: string };
+      if (data.error) throw new Error(data.error);
+      return data.events ?? [];
+    },
+    staleTime: 5 * 60_000,   // Calendly data is slow to change — 5 min
+    gcTime: 10 * 60_000,
+    retry: false,             // Don't retry on "not configured" errors
+  });
 
-  useEffect(() => {
-    fetchEvents();
-  }, [fetchEvents]);
+  const events = data ?? [];
+  const error = queryError instanceof Error ? queryError.message : null;
+  const fetchEvents = () => qc.invalidateQueries({ queryKey: ['calendly-events', projectId] });
 
   // Don't render if Calendly not configured
   if (error === 'Calendly not configured with API key') return null;

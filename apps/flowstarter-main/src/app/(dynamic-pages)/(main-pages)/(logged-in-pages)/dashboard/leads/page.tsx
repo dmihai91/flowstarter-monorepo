@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { GlassCard } from '@/components/ui/glass-card';
 import { Button } from '@/components/ui/button';
 import {
@@ -85,43 +86,41 @@ function timeAgo(iso: string): string {
 export default function LeadsPage() {
   const searchParams = useSearchParams();
   const projectId = searchParams.get('projectId');
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const [counts, setCounts] = useState<StatusCount[]>([]);
-  const [loading, setLoading] = useState(true);
+  const qc = useQueryClient();
   const [filter, setFilter] = useState('all');
   const [expandedLead, setExpandedLead] = useState<string | null>(null);
 
-  const fetchLeads = useCallback(async () => {
-    if (!projectId) return;
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `/api/leads/list?projectId=${projectId}&status=${filter}`
-      );
-      const data = (await res.json()) as {
-        leads: Lead[];
-        counts: StatusCount[];
-      };
-      setLeads(data.leads || []);
-      setCounts(data.counts || []);
-    } catch {
-      /* ignore */
-    }
-    setLoading(false);
-  }, [projectId, filter]);
+  const leadsKey = ['leads', projectId, filter] as const;
 
-  useEffect(() => {
-    fetchLeads();
-  }, [fetchLeads]);
+  const { data, isLoading: loading } = useQuery({
+    queryKey: leadsKey,
+    queryFn: async () => {
+      const res = await fetch(`/api/leads/list?projectId=${projectId}&status=${filter}`);
+      return res.json() as Promise<{ leads: Lead[]; counts: StatusCount[] }>;
+    },
+    enabled: !!projectId,
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
+  });
 
-  const updateStatus = async (leadId: string, status: string) => {
-    await fetch('/api/leads/list', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ leadId, status }),
-    });
-    fetchLeads();
-  };
+  const leads = data?.leads ?? [];
+  const counts = data?.counts ?? [];
+
+  const statusMutation = useMutation({
+    mutationFn: async ({ leadId, status }: { leadId: string; status: string }) => {
+      await fetch('/api/leads/list', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ leadId, status }),
+      });
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['leads', projectId] }),
+  });
+
+  const updateStatus = (leadId: string, status: string) =>
+    statusMutation.mutate({ leadId, status });
+
+  const fetchLeads = () => qc.invalidateQueries({ queryKey: leadsKey });
 
   const totalNew = counts.find((c) => c.status === 'new')?.count || 0;
   const totalAll = counts.reduce(

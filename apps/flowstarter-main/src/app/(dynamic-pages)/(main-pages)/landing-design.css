@@ -689,6 +689,12 @@
   z-index: 5;
 }
 
+/* Hero section clips its own bloom to prevent arc artifacts on mobile */
+.ls-cta-section,
+.ls-section:has(.ls-hero-bloom) {
+  overflow: clip;
+}
+
 /* Hero-specific bloom — anchors the glow behind the headline */
 .ls-hero-bloom {
   position: absolute;
@@ -700,6 +706,7 @@
   pointer-events: none;
   z-index: 0;
   opacity: 0.20;
+  clip-path: inset(0 0 0 0);
   background: radial-gradient(
     ellipse at 40% 30%,
     rgba(88, 106, 240, 0.70) 0%,

@@ -23,12 +23,18 @@ function CollapsedPill({ onExpand }: { onExpand: () => void }) {
     <button
       onClick={onExpand}
       type="button"
-      className="group flex w-full items-center gap-2.5 rounded-[28px] border border-gray-200/80 bg-white/95 px-3 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-2xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_40px_rgba(0,0,0,0.10)] dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25)] sm:px-4 sm:py-3.5"
+      style={{
+        background: 'var(--fs-glass-bg)',
+        borderColor: 'var(--fs-glass-edge)',
+        boxShadow: 'var(--fs-card-shadow)',
+        borderRadius: 'var(--fs-radius-2xl)',
+      }}
+      className="group flex w-full items-center gap-2.5 border px-3 py-3 backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 hover:-translate-y-0.5 sm:px-4 sm:py-3.5"
     >
       <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center shrink-0">
         <Wand2 className="w-4 h-4 text-[var(--purple)]" />
       </div>
-      <span className="flex-1 text-left text-sm text-gray-600 dark:text-white/60 group-hover:text-gray-900 dark:group-hover:text-white transition-colors truncate">
+      <span className="flex-1 text-left text-sm text-[var(--fs-ink-dim)] group-hover:text-[var(--fs-ink)] transition-colors truncate">
         {t('scaffold.collapsed.prompt')}
       </span>
       <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-[var(--purple)] shrink-0 transition-colors" />

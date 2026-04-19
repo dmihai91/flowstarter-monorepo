@@ -19,8 +19,14 @@ import { Plus, FolderOpen } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
-const glassPanelClass =
-  'rounded-2xl border border-gray-200/80 bg-white/95 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-2xl backdrop-saturate-150 dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]';
+// Use inline style for glass panel so --fs-* tokens apply in both light and dark
+const glassPanelStyle = {
+  background: 'var(--fs-glass-bg)',
+  borderColor: 'var(--fs-glass-edge)',
+  boxShadow: 'var(--fs-card-shadow)',
+  borderRadius: 'var(--fs-radius-2xl)',
+};
+const glassPanelClass = 'border backdrop-blur-2xl backdrop-saturate-150';
 
 export default function TeamDashboardPage() {
   const { user, isLoaded: userLoaded } = useUser();
@@ -88,7 +94,7 @@ export default function TeamDashboardPage() {
         ) : projects && projects.length > 0 ? (
           <TeamProjectsList projects={projects} />
         ) : (
-          <div className={`${glassPanelClass} p-12 text-center`}>
+          <div className={`${glassPanelClass} p-12 text-center`} style={glassPanelStyle}>
             <div className="mx-auto mb-1 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/50 bg-white/55 backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.08]">
               <FolderOpen className="w-8 h-8 text-gray-400 dark:text-white/30" />
             </div>

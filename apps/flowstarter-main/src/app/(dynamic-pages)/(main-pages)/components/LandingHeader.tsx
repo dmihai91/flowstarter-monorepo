@@ -32,7 +32,7 @@ export function LandingHeader({ onOpenModal }: { onOpenModal?: () => void }) {
           isLoaded ? 'opacity-100' : 'opacity-0'
         } ${
           scrolled || mobileMenuOpen
-            ? 'border-b border-[var(--fs-rule)]/50 bg-white/85 dark:bg-[var(--fs-bg-base)]/80 backdrop-blur-xl backdrop-saturate-150 shadow-[0_1px_3px_rgba(0,0,0,0.06)]'
+            ? 'border-b border-[var(--fs-rule)]/60 bg-white/90 dark:bg-[var(--fs-bg-base)]/85 backdrop-blur-2xl backdrop-saturate-180 shadow-[0_2px_16px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.6)_inset] dark:shadow-[0_2px_16px_rgba(0,0,0,0.4),0_1px_0_rgba(255,255,255,0.06)_inset]'
             : ''
         }`}
       >

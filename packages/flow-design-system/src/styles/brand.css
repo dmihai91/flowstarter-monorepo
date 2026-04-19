@@ -413,6 +413,138 @@
 }
 
 /* ─────────────────────────────────────────────
+   FLOWBACKGROUND — pure CSS, zero JS
+   All variant + dark/light logic lives here.
+   Component renders only DOM structure.
+   ───────────────────────────────────────────── */
+
+/* Base */
+.fs-bg__base     { position: absolute; inset: 0; background: var(--fs-bg-base); }
+
+/* Shared orb shape */
+.fs-bg__bloom,
+.fs-bg__secondary,
+.fs-bg__warm,
+.fs-bg__tertiary { position: absolute; border-radius: 50%; pointer-events: none; }
+
+/* Primary bloom — top-center */
+.fs-bg__bloom {
+  top: -15%; left: 50%; transform: translateX(-50%);
+  width: 100%; height: 75%;
+  background: radial-gradient(ellipse at center, var(--fs-bloom-core) 0%, var(--fs-bloom-mid) 45%, transparent 72%);
+}
+/* Secondary — top-right */
+.fs-bg__secondary {
+  top: 5%; right: 5%; width: 40%; height: 45%;
+  background: radial-gradient(ellipse at center, var(--fs-secondary-bloom) 0%, transparent 65%);
+}
+/* Warm anchor — bottom-left */
+.fs-bg__warm {
+  bottom: -12%; left: -5%; width: 55%; height: 50%;
+  background: radial-gradient(ellipse at center, var(--fs-warm-core) 0%, var(--fs-warm-mid) 45%, transparent 72%);
+}
+/* Tertiary — bottom-right */
+.fs-bg__tertiary {
+  bottom: -8%; right: 10%; width: 45%; height: 40%;
+  background: radial-gradient(ellipse at center, var(--fs-bloom-mid) 0%, transparent 65%);
+}
+
+/* SVG lines */
+.fs-bg__lines { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* ── Variant opacities — light mode ── */
+.fs-bg--auth      .fs-bg__bloom { opacity: 0.22; }
+.fs-bg--auth      .fs-bg__secondary { opacity: 0.10; }
+.fs-bg--auth      .fs-bg__warm  { opacity: 0.12; }
+.fs-bg--auth      .fs-bg__tertiary { opacity: 0.07; }
+.fs-bg--auth      .fs-bg__lines { opacity: 0.08; }
+
+.fs-bg--landing   .fs-bg__bloom { opacity: 0.18; }
+.fs-bg--landing   .fs-bg__secondary { opacity: 0.08; }
+.fs-bg--landing   .fs-bg__warm  { opacity: 0.09; }
+.fs-bg--landing   .fs-bg__tertiary { opacity: 0.05; }
+.fs-bg--landing   .fs-bg__lines { opacity: 0.06; }
+
+.fs-bg--dashboard .fs-bg__bloom { opacity: 0.14; }
+.fs-bg--dashboard .fs-bg__secondary { opacity: 0.06; }
+.fs-bg--dashboard .fs-bg__warm  { opacity: 0.07; }
+.fs-bg--dashboard .fs-bg__tertiary { opacity: 0.04; }
+.fs-bg--dashboard .fs-bg__lines { opacity: 0.05; }
+
+.fs-bg--wizard    .fs-bg__bloom { opacity: 0.14; }
+.fs-bg--wizard    .fs-bg__secondary { opacity: 0.06; }
+.fs-bg--wizard    .fs-bg__warm  { opacity: 0.07; }
+.fs-bg--wizard    .fs-bg__tertiary { opacity: 0.04; }
+.fs-bg--wizard    .fs-bg__lines { opacity: 0.05; }
+
+.fs-bg--editor    .fs-bg__bloom { opacity: 0.10; }
+.fs-bg--editor    .fs-bg__secondary { opacity: 0.05; }
+.fs-bg--editor    .fs-bg__warm  { opacity: 0.05; }
+.fs-bg--editor    .fs-bg__tertiary { opacity: 0.03; }
+.fs-bg--editor    .fs-bg__lines { opacity: 0.03; }
+
+/* ── Dark mode overrides ── */
+.dark .fs-bg--auth      .fs-bg__bloom { opacity: 0.28; }
+.dark .fs-bg--auth      .fs-bg__secondary { opacity: 0.14; }
+.dark .fs-bg--auth      .fs-bg__warm  { opacity: 0.15; }
+.dark .fs-bg--auth      .fs-bg__tertiary { opacity: 0.09; }
+.dark .fs-bg--auth      .fs-bg__lines { opacity: 0.10; }
+
+.dark .fs-bg--landing   .fs-bg__bloom { opacity: 0.24; }
+.dark .fs-bg--landing   .fs-bg__secondary { opacity: 0.11; }
+.dark .fs-bg--landing   .fs-bg__warm  { opacity: 0.13; }
+.dark .fs-bg--landing   .fs-bg__tertiary { opacity: 0.07; }
+.dark .fs-bg--landing   .fs-bg__lines { opacity: 0.08; }
+
+.dark .fs-bg--dashboard .fs-bg__bloom { opacity: 0.20; }
+.dark .fs-bg--dashboard .fs-bg__secondary { opacity: 0.09; }
+.dark .fs-bg--dashboard .fs-bg__warm  { opacity: 0.10; }
+.dark .fs-bg--dashboard .fs-bg__tertiary { opacity: 0.06; }
+.dark .fs-bg--dashboard .fs-bg__lines { opacity: 0.07; }
+
+.dark .fs-bg--wizard    .fs-bg__bloom { opacity: 0.18; }
+.dark .fs-bg--wizard    .fs-bg__secondary { opacity: 0.08; }
+.dark .fs-bg--wizard    .fs-bg__warm  { opacity: 0.09; }
+.dark .fs-bg--wizard    .fs-bg__tertiary { opacity: 0.05; }
+.dark .fs-bg--wizard    .fs-bg__lines { opacity: 0.06; }
+
+.dark .fs-bg--editor    .fs-bg__bloom { opacity: 0.14; }
+.dark .fs-bg--editor    .fs-bg__secondary { opacity: 0.06; }
+.dark .fs-bg--editor    .fs-bg__warm  { opacity: 0.07; }
+.dark .fs-bg--editor    .fs-bg__tertiary { opacity: 0.04; }
+.dark .fs-bg--editor    .fs-bg__lines { opacity: 0.05; }
+
+/* ── Animations — opt-in via fs-bg--animated ── */
+@keyframes fs-bloom-drift {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50%       { transform: translateX(-50%) scale(1.04) translateY(-12px); }
+}
+@keyframes fs-warm-drift {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.06) translate(10px, -8px); }
+}
+@keyframes fs-line-drift-1 {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+@keyframes fs-line-drift-2 {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(6px); }
+}
+.fs-bg--animated .fs-bg__bloom  { animation: fs-bloom-drift 18s ease-in-out infinite; }
+.fs-bg--animated .fs-bg__warm   { animation: fs-warm-drift  22s ease-in-out infinite; }
+.fs-bg--animated .fs-bg__lines-a { animation: fs-line-drift-1 20s ease-in-out infinite; }
+.fs-bg--animated .fs-bg__lines-b { animation: fs-line-drift-2 26s ease-in-out infinite; }
+
+/* Disable animations on mobile */
+@media (max-width: 768px) {
+  .fs-bg--animated .fs-bg__bloom,
+  .fs-bg--animated .fs-bg__warm,
+  .fs-bg--animated .fs-bg__lines-a,
+  .fs-bg--animated .fs-bg__lines-b { animation: none; }
+}
+
+/* ─────────────────────────────────────────────
    LEGACY UTILITIES (kept from original brand.css)
    ───────────────────────────────────────────── */
 .flow-glass {

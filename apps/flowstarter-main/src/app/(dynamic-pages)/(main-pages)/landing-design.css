@@ -139,14 +139,7 @@
 .ls-section {
   position: relative;
   isolation: isolate;
-  /* No overflow:hidden — that clips section-level gradients and creates
-     a visible card-box edge on mobile (sections appear boxed in) */
-}
-
-/* Sections that have ls-mesh need clip to contain the -10% inset */
-.ls-section:has(.ls-mesh),
-.ls-section:has(.ls-streak) {
-  overflow: hidden;
+  /* No overflow:hidden — clips gradients creating a card-box edge on mobile */
 }
 
 /* Atmospheric layers — micro accent on top of FlowBackground.
@@ -154,9 +147,10 @@
    ls-mesh only adds the interactive mouse-follow accent. */
 .ls-mesh {
   position: absolute;
-  inset: -10%;
+  inset: 0;
   z-index: 0;
   pointer-events: none;
+  clip-path: inset(0);
   background:
     radial-gradient(
       75% 65% at var(--ls-mx, 50%) var(--ls-my, 50%),
@@ -540,8 +534,35 @@
     padding-block: 3rem;
   }
 }
-/* CTA background — no solid fill, just a centered bloom that sits on top
-   of the fixed FlowBackground. Blends into the page naturally. */
+/* CTA glass card */
+.ls-cta-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--fs-radius-2xl, 24px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(40px) saturate(160%);
+  -webkit-backdrop-filter: blur(40px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.70),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05),
+    0 32px 80px rgba(78, 94, 218, 0.14),
+    0 8px 24px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(78, 94, 218, 0.06);
+  padding: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 6vw, 5rem);
+}
+.dark .ls-cta-card {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.30),
+    0 32px 80px rgba(0, 0, 0, 0.40),
+    0 8px 24px rgba(78, 94, 218, 0.18),
+    0 0 0 1px rgba(78, 94, 218, 0.10);
+}
+
+/* CTA background — centered bloom on top of FlowBackground */
 .ls-cta-bg {
   position: absolute;
   inset: 0;

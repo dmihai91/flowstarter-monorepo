@@ -36,7 +36,7 @@ function LogoWordmark({ size = 'md' }: { size?: LogoProps['size'] }) {
         >
           Flow
         </span>
-        <span style={{ color: 'var(--text-primary, #09090b)' }}>starter</span>
+        <span style={{ color: 'var(--fs-ink)' }}>starter</span>
       </span>
     </div>
   );

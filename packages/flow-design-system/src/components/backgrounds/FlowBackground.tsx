@@ -35,24 +35,24 @@ interface VariantConfig {
 
 const variants: Record<FlowBackgroundVariant, { light: VariantConfig; dark: VariantConfig }> = {
   auth: {
-    light: { bloomOpacity: 0.55, warmOpacity: 0.28, lineOpacity: 0.18 },
-    dark:  { bloomOpacity: 0.70, warmOpacity: 0.35, lineOpacity: 0.22 },
+    light: { bloomOpacity: 0.28, warmOpacity: 0.16, lineOpacity: 0.10 },
+    dark:  { bloomOpacity: 0.38, warmOpacity: 0.20, lineOpacity: 0.12 },
   },
   dashboard: {
-    light: { bloomOpacity: 0.30, warmOpacity: 0.15, lineOpacity: 0.10 },
-    dark:  { bloomOpacity: 0.45, warmOpacity: 0.20, lineOpacity: 0.14 },
+    light: { bloomOpacity: 0.18, warmOpacity: 0.10, lineOpacity: 0.06 },
+    dark:  { bloomOpacity: 0.26, warmOpacity: 0.13, lineOpacity: 0.08 },
   },
   landing: {
-    light: { bloomOpacity: 0.45, warmOpacity: 0.22, lineOpacity: 0.14 },
-    dark:  { bloomOpacity: 0.65, warmOpacity: 0.30, lineOpacity: 0.20 },
+    light: { bloomOpacity: 0.22, warmOpacity: 0.12, lineOpacity: 0.07 },
+    dark:  { bloomOpacity: 0.32, warmOpacity: 0.17, lineOpacity: 0.10 },
   },
   wizard: {
-    light: { bloomOpacity: 0.35, warmOpacity: 0.18, lineOpacity: 0.10 },
-    dark:  { bloomOpacity: 0.50, warmOpacity: 0.22, lineOpacity: 0.14 },
+    light: { bloomOpacity: 0.16, warmOpacity: 0.08, lineOpacity: 0.05 },
+    dark:  { bloomOpacity: 0.24, warmOpacity: 0.11, lineOpacity: 0.07 },
   },
   editor: {
-    light: { bloomOpacity: 0.25, warmOpacity: 0.12, lineOpacity: 0.08 },
-    dark:  { bloomOpacity: 0.38, warmOpacity: 0.16, lineOpacity: 0.12 },
+    light: { bloomOpacity: 0.12, warmOpacity: 0.06, lineOpacity: 0.04 },
+    dark:  { bloomOpacity: 0.18, warmOpacity: 0.08, lineOpacity: 0.06 },
   },
 };
 
@@ -104,17 +104,16 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
     const baseBg = isDark ? '#040308' : '#fbf7ef';
 
     // Indigo bloom — hsl(233) core, feathers to transparent
-    // Light: medium saturation so it reads on cream without looking garish
-    // Dark: higher saturation — electric indigo against near-black
-    const bloomCore  = isDark ? 'rgba(78, 94, 218, 0.80)'  : 'rgba(78, 94, 218, 0.55)';
-    const bloomMid   = isDark ? 'rgba(78, 94, 218, 0.22)'  : 'rgba(78, 94, 218, 0.16)';
+    // Saturated enough to read clearly on both cream and near-black.
+    const bloomCore  = isDark ? 'rgba(88, 106, 240, 0.90)'  : 'rgba(78, 94, 218, 0.72)';
+    const bloomMid   = isDark ? 'rgba(78, 94, 218, 0.28)'   : 'rgba(78, 94, 218, 0.22)';
 
-    // Warm anchor — amber/sienna bottom-left
-    const warmCore   = isDark ? 'rgba(255, 178, 122, 0.65)' : 'rgba(180, 83, 9, 0.45)';
-    const warmMid    = isDark ? 'rgba(255, 178, 122, 0.18)' : 'rgba(180, 83, 9, 0.12)';
+    // Warm anchor — amber bottom-left, distinctly different hue to the indigo
+    const warmCore   = isDark ? 'rgba(255, 160, 80, 0.80)'  : 'rgba(200, 100, 20, 0.60)';
+    const warmMid    = isDark ? 'rgba(255, 160, 80, 0.22)'  : 'rgba(200, 100, 20, 0.18)';
 
     // Secondary indigo — softer, bottom-right counterbalance
-    const secondary  = isDark ? 'rgba(130, 148, 255, 0.35)' : 'rgba(78, 94, 218, 0.20)';
+    const secondary  = isDark ? 'rgba(130, 148, 255, 0.45)' : 'rgba(78, 94, 218, 0.28)';
 
     const driftAnim  = animated ? 'fs-bloom-drift 18s ease-in-out infinite' : undefined;
     const warmAnim   = animated ? 'fs-warm-drift 22s ease-in-out infinite' : undefined;

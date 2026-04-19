@@ -82,14 +82,24 @@ const animationCSS = `
 
 export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
   ({ variant = 'dashboard', animated = true, className = '', style, ...props }, ref) => {
+    // Read theme synchronously on first render — avoids flash/repaint on mobile
     const [isDark, setIsDark] = useState(() => {
-      if (typeof window === 'undefined') return true;
-      return getEffectiveTheme() === 'dark';
+      if (typeof document === 'undefined') return false;
+      const el = document.documentElement;
+      return el.classList.contains('dark') ||
+        el.getAttribute('data-theme') === 'dark' ||
+        window.matchMedia('(prefers-color-scheme: dark)').matches;
     });
 
     useEffect(() => {
-      const update = () => setIsDark(getEffectiveTheme() === 'dark');
-      update();
+      const update = () => {
+        const el = document.documentElement;
+        setIsDark(
+          el.classList.contains('dark') ||
+          el.getAttribute('data-theme') === 'dark' ||
+          window.matchMedia('(prefers-color-scheme: dark)').matches
+        );
+      };
       const observer = new MutationObserver(update);
       observer.observe(document.documentElement, {
         attributes: true,

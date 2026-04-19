@@ -213,7 +213,7 @@ export function SortSelect({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="text-xs rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)] text-[var(--fs-ink-dim)] px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[var(--fs-accent-ring)]"
+      className="shrink-0 min-w-[90px] text-xs rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)] text-[var(--fs-ink-dim)] px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[var(--fs-accent-ring)]"
     >
       {options.map((o) => (
         <option key={o.value} value={o.value}>

@@ -3,6 +3,17 @@ const CONFIG_FILE = new URL('', import.meta.url).pathname;
 
 export default {
   typescript: { ignoreBuildErrors: true },
+  async headers() {
+    return [
+      {
+        // Prevent browser caching error/down states on HTML pages
+        source: '/(.*)',
+        headers: [
+          { key: 'Cache-Control', value: 'no-cache, must-revalidate' },
+        ],
+      },
+    ];
+  },
   transpilePackages: ['uploadthing', '@uploadthing/react', '@uploadthing/shared'],
   images: {
     remotePatterns: [

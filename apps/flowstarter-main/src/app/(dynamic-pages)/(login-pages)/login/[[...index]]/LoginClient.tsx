@@ -93,7 +93,7 @@ export function LoginClient() {
       <AuthLayout
         title="Client Login"
         subtitle="Sign in to manage your website and access Flowstarter Editor."
-        showStats={true}
+        showStats={false}
       >
         {noticeContent ? (
           <div

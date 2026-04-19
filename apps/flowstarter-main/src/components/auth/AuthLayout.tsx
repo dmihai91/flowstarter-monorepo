@@ -41,7 +41,7 @@ export default function AuthLayout({
       />
 
       {/* Header */}
-      <header className="sticky top-0 z-50 shrink-0 border-b border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/80 dark:bg-[var(--fs-bg-base)]/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 shrink-0 border-b border-[var(--fs-rule)]/40 bg-[var(--fs-bg-base)]/30 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
             <Logo size="md" />
@@ -56,7 +56,7 @@ export default function AuthLayout({
       </header>
 
       {/* Content — fills remaining space, scrolls if needed */}
-      <main className="relative z-10 flex-1 flex flex-col items-center px-4 py-8">
+      <main className="relative z-10 flex-1 flex flex-col items-center px-4 pt-8 pb-16 sm:pt-10 sm:pb-20">
         <div className="w-full max-w-lg my-auto">
           {title && (
             <div className="text-center mb-6">

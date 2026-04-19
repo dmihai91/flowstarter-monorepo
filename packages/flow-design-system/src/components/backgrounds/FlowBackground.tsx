@@ -8,35 +8,70 @@ export interface FlowBackgroundProps extends HTMLAttributes<HTMLDivElement> {
   animated?: boolean;
 }
 
+/**
+ * FlowBackground — unified Flowstarter editorial gradient.
+ *
+ * Design language:
+ *   Light: warm cream base (#fbf7ef) with a large cool-indigo bloom top-center
+ *          and a smaller warm-amber anchor bottom-left. Clean, editorial.
+ *   Dark:  near-black base (#040308) with the same indigo bloom at higher opacity
+ *          and the warm accent more saturated. Moody, professional.
+ *
+ * Accent hue: hsl(233,*,*) — matches --fs-accent throughout the system.
+ * Warm accent: rgba(180,83,9) / rgba(255,178,122) — matches --fs-accent-warm.
+ *
+ * Flow lines are subtle vector paths overlaid on top using the same hues.
+ * They are always visible (lineOpacity scaled per variant).
+ */
+
 interface VariantConfig {
-  glowLight: number;
-  glowDark: number;
-  lineLight: number;
-  lineDark: number;
+  /** Primary indigo bloom opacity */
+  bloomOpacity: number;
+  /** Warm anchor opacity */
+  warmOpacity: number;
+  /** SVG flow line opacity */
+  lineOpacity: number;
 }
 
-// Backgrounds now use --fs-bg-* tokens resolved at runtime.
-// Only glow/line opacities vary per variant — base color comes from the token system.
-const variants: Record<FlowBackgroundVariant, VariantConfig> = {
-  dashboard: { glowLight: 0.10, glowDark: 0.14, lineLight: 0,    lineDark: 0    },
-  editor:    { glowLight: 0.12, glowDark: 0.10, lineLight: 0.04, lineDark: 0.05 },
-  landing:   { glowLight: 0.55, glowDark: 0.38, lineLight: 0.08, lineDark: 0.08 },
-  auth:      { glowLight: 0.14, glowDark: 0.18, lineLight: 0.06, lineDark: 0.08 },
-  wizard:    { glowLight: 0.16, glowDark: 0.08, lineLight: 0.03, lineDark: 0.03 },
+const variants: Record<FlowBackgroundVariant, { light: VariantConfig; dark: VariantConfig }> = {
+  auth: {
+    light: { bloomOpacity: 0.55, warmOpacity: 0.28, lineOpacity: 0.18 },
+    dark:  { bloomOpacity: 0.70, warmOpacity: 0.35, lineOpacity: 0.22 },
+  },
+  dashboard: {
+    light: { bloomOpacity: 0.30, warmOpacity: 0.15, lineOpacity: 0.10 },
+    dark:  { bloomOpacity: 0.45, warmOpacity: 0.20, lineOpacity: 0.14 },
+  },
+  landing: {
+    light: { bloomOpacity: 0.45, warmOpacity: 0.22, lineOpacity: 0.14 },
+    dark:  { bloomOpacity: 0.65, warmOpacity: 0.30, lineOpacity: 0.20 },
+  },
+  wizard: {
+    light: { bloomOpacity: 0.35, warmOpacity: 0.18, lineOpacity: 0.10 },
+    dark:  { bloomOpacity: 0.50, warmOpacity: 0.22, lineOpacity: 0.14 },
+  },
+  editor: {
+    light: { bloomOpacity: 0.25, warmOpacity: 0.12, lineOpacity: 0.08 },
+    dark:  { bloomOpacity: 0.38, warmOpacity: 0.16, lineOpacity: 0.12 },
+  },
 };
 
 const animationCSS = `
-  @keyframes flow-drift-1 {
-    0%, 100% { transform: translateY(0px) translateX(0px); }
-    50% { transform: translateY(-10px) translateX(15px); }
+  @keyframes fs-bloom-drift {
+    0%, 100% { transform: translateX(-50%) scale(1); }
+    50%       { transform: translateX(-50%) scale(1.04) translateY(-12px); }
   }
-  @keyframes flow-drift-2 {
-    0%, 100% { transform: translateY(0px) translateX(0px); }
-    50% { transform: translateY(8px) translateX(-12px); }
+  @keyframes fs-warm-drift {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.06) translate(10px, -8px); }
   }
-  @keyframes flow-drift-3 {
-    0%, 100% { transform: translateY(0px) translateX(0px); }
-    50% { transform: translateY(-6px) translateX(10px); }
+  @keyframes fs-line-drift-1 {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-8px); }
+  }
+  @keyframes fs-line-drift-2 {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(6px); }
   }
 `;
 
@@ -50,8 +85,11 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
     useEffect(() => {
       const update = () => setIsDark(getEffectiveTheme() === 'dark');
       update();
-      const observer = new MutationObserver(() => update());
-      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class'] });
+      const observer = new MutationObserver(update);
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme', 'class'],
+      });
       const mq = window.matchMedia('(prefers-color-scheme: dark)');
       mq.addEventListener('change', update);
       return () => {
@@ -60,117 +98,177 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
       };
     }, []);
 
-    const config = variants[variant];
-    const glowOpacity = isDark ? config.glowDark : config.glowLight;
-    const lineOpacity = isDark ? config.lineDark : config.lineLight;
-    const warmOpacity = isDark ? 0.10 : 0.06;
-    const accentSecondOpacity = isDark ? 0.08 : 0.04;
+    const cfg = isDark ? variants[variant].dark : variants[variant].light;
 
-    // Glow colors aligned with --fs-accent (hsl 233) and --fs-accent-warm
-    // These match the landing-design.css orb colors exactly
-    const accentGlow    = isDark ? 'rgba(130, 148, 255, 1)' : 'rgba(78, 94, 218, 1)';   // --fs-accent hsl 233
-    const accentHot     = isDark ? 'rgba(78, 94, 218, 1)'   : 'rgba(30, 45, 107, 1)';   // darker indigo
-    const warmGlow      = isDark ? 'rgba(255, 178, 122, 1)' : 'rgba(180, 83, 9, 1)';    // --fs-accent-warm
-    const accentSecond  = isDark ? 'rgba(130, 148, 255, 1)' : 'rgba(78, 94, 218, 1)';
+    // Base background color — from fs token system
+    const baseBg = isDark ? '#040308' : '#fbf7ef';
+
+    // Indigo bloom — hsl(233) core, feathers to transparent
+    // Light: medium saturation so it reads on cream without looking garish
+    // Dark: higher saturation — electric indigo against near-black
+    const bloomCore  = isDark ? 'rgba(78, 94, 218, 0.80)'  : 'rgba(78, 94, 218, 0.55)';
+    const bloomMid   = isDark ? 'rgba(78, 94, 218, 0.22)'  : 'rgba(78, 94, 218, 0.16)';
+
+    // Warm anchor — amber/sienna bottom-left
+    const warmCore   = isDark ? 'rgba(255, 178, 122, 0.65)' : 'rgba(180, 83, 9, 0.45)';
+    const warmMid    = isDark ? 'rgba(255, 178, 122, 0.18)' : 'rgba(180, 83, 9, 0.12)';
+
+    // Secondary indigo — softer, bottom-right counterbalance
+    const secondary  = isDark ? 'rgba(130, 148, 255, 0.35)' : 'rgba(78, 94, 218, 0.20)';
+
+    const driftAnim  = animated ? 'fs-bloom-drift 18s ease-in-out infinite' : undefined;
+    const warmAnim   = animated ? 'fs-warm-drift 22s ease-in-out infinite' : undefined;
 
     return (
       <div
         ref={ref}
         className={className}
-        style={{ pointerEvents: 'none', position: 'absolute', inset: 0, zIndex: -1, overflow: 'hidden', ...style }}
+        style={{
+          pointerEvents: 'none',
+          position: 'absolute',
+          inset: 0,
+          zIndex: -1,
+          overflow: 'hidden',
+          ...style,
+        }}
         {...props}
       >
         {animated && <style dangerouslySetInnerHTML={{ __html: animationCSS }} />}
 
-        {/* Base background — uses fs token */}
+        {/* ── Base fill ── */}
+        <div style={{ position: 'absolute', inset: 0, background: baseBg }} />
+
+        {/* ── Primary indigo bloom — top-center ──
+            Large soft ellipse. The dominant color element.
+            Gives every surface the editorial indigo identity. */}
         <div style={{
-          position: 'absolute', inset: 0,
-          background: isDark ? 'var(--fs-bg-base)' : 'var(--fs-bg-base)',
+          position: 'absolute',
+          top: '-15%',
+          left: '50%',
+          width: '120%',
+          height: '75%',
+          borderRadius: '50%',
+          opacity: cfg.bloomOpacity,
+          animation: driftAnim,
+          background: `radial-gradient(ellipse at center,
+            ${bloomCore} 0%,
+            ${bloomMid} 45%,
+            transparent 72%)`,
+          willChange: animated ? 'transform' : undefined,
         }} />
 
-        {/* Top-center primary glow */}
+        {/* ── Secondary indigo — top-right ──
+            Smaller, offset. Creates asymmetry and depth. */}
         <div style={{
-          position: 'absolute', top: '-180px', left: '50%', transform: 'translateX(-50%)',
-          width: '1100px', height: '550px', borderRadius: '9999px', opacity: glowOpacity,
-          background: `radial-gradient(ellipse, ${accentGlow.replace('1)', '0.5)')} 0%, ${accentGlow.replace('1)', '0.12)')} 40%, transparent 70%)`,
+          position: 'absolute',
+          top: '-5%',
+          right: '-8%',
+          width: '55%',
+          height: '55%',
+          borderRadius: '50%',
+          opacity: cfg.bloomOpacity * 0.55,
+          background: `radial-gradient(ellipse at center,
+            ${secondary} 0%,
+            transparent 65%)`,
         }} />
 
-        {/* Top-left accent */}
+        {/* ── Warm anchor — bottom-left ──
+            Amber/sienna. Grounds the composition.
+            Mirrors --fs-accent-warm in the landing orbs. */}
         <div style={{
-          position: 'absolute', top: '-50px', left: '-150px',
-          width: '600px', height: '400px', borderRadius: '9999px', opacity: glowOpacity * 0.65,
-          background: `radial-gradient(ellipse, ${accentHot.replace('1)', '0.35)')} 0%, transparent 65%)`,
+          position: 'absolute',
+          bottom: '-12%',
+          left: '-5%',
+          width: '55%',
+          height: '50%',
+          borderRadius: '50%',
+          opacity: cfg.warmOpacity,
+          animation: warmAnim,
+          background: `radial-gradient(ellipse at center,
+            ${warmCore} 0%,
+            ${warmMid} 45%,
+            transparent 72%)`,
+          willChange: animated ? 'transform' : undefined,
         }} />
 
-        {/* Right secondary glow */}
+        {/* ── Tertiary cool — bottom-right ──
+            Faint indigo echo. Ties the composition together. */}
         <div style={{
-          position: 'absolute', top: '20%', right: '-80px',
-          width: '550px', height: '550px', borderRadius: '9999px', opacity: glowOpacity,
-          background: `radial-gradient(ellipse, ${accentGlow.replace('1)', '0.3)')} 0%, ${accentGlow.replace('1)', '0.08)')} 45%, transparent 70%)`,
+          position: 'absolute',
+          bottom: '-8%',
+          right: '10%',
+          width: '45%',
+          height: '40%',
+          borderRadius: '50%',
+          opacity: cfg.bloomOpacity * 0.30,
+          background: `radial-gradient(ellipse at center,
+            ${bloomMid} 0%,
+            transparent 65%)`,
         }} />
 
-        {/* Centre-left cool accent */}
-        <div style={{
-          position: 'absolute', top: '45%', left: '-50px',
-          width: '450px', height: '350px', borderRadius: '9999px', opacity: glowOpacity * 0.55,
-          background: `radial-gradient(ellipse, ${accentSecond.replace('1)', '0.25)')} 0%, transparent 65%)`,
-        }} />
+        {/* ── Flow lines SVG ──
+            Elegant curved paths in the same indigo-warm hue range.
+            Two groups drifting at slightly different speeds. */}
+        <svg
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            opacity: cfg.lineOpacity,
+          }}
+          viewBox="0 0 1440 900"
+          preserveAspectRatio="xMidYMid slice"
+          fill="none"
+          aria-hidden="true"
+        >
+          <defs>
+            {/* Indigo gradient along the line */}
+            <linearGradient id="fs-line-grad-a" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"   stopColor="transparent" />
+              <stop offset="20%"  stopColor={isDark ? 'hsl(233,70%,68%)' : 'hsl(233,65%,50%)'} stopOpacity="0.6" />
+              <stop offset="60%"  stopColor={isDark ? 'hsl(233,70%,74%)' : 'hsl(233,65%,44%)'} stopOpacity="0.8" />
+              <stop offset="100%" stopColor="transparent" />
+            </linearGradient>
+            {/* Warm gradient for lower lines */}
+            <linearGradient id="fs-line-grad-b" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"   stopColor="transparent" />
+              <stop offset="25%"  stopColor={isDark ? 'hsl(233,60%,60%)' : 'hsl(233,55%,52%)'} stopOpacity="0.5" />
+              <stop offset="75%"  stopColor={isDark ? 'hsl(30,80%,65%)' : 'hsl(30,70%,40%)'} stopOpacity="0.45" />
+              <stop offset="100%" stopColor="transparent" />
+            </linearGradient>
+          </defs>
 
-        {/* Bottom-left warm accent */}
-        <div style={{
-          position: 'absolute', bottom: '-80px', left: '-80px',
-          width: '600px', height: '400px', borderRadius: '9999px', opacity: warmOpacity,
-          background: `radial-gradient(ellipse, ${warmGlow.replace('1)', '0.28)')} 0%, ${warmGlow.replace('1)', '0.08)')} 40%, transparent 70%)`,
-        }} />
-
-        {/* Bottom-right accent */}
-        <div style={{
-          position: 'absolute', bottom: '-120px', right: '20%',
-          width: '550px', height: '450px', borderRadius: '9999px', opacity: accentSecondOpacity,
-          background: `radial-gradient(ellipse, ${accentGlow.replace('1)', '0.3)')} 0%, transparent 70%)`,
-        }} />
-
-        {/* Flow lines SVG */}
-        {lineOpacity > 0 && (
-          <svg
-            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: lineOpacity }}
-            viewBox="0 0 1200 800"
-            preserveAspectRatio="xMidYMid slice"
-            fill="none"
+          {/* Group A — gentle, wide curves */}
+          <g
+            stroke="url(#fs-line-grad-a)"
+            strokeWidth="1.0"
+            style={animated ? {
+              animation: 'fs-line-drift-1 20s ease-in-out infinite',
+              willChange: 'transform',
+            } : undefined}
           >
-            <defs>
-              <linearGradient id="flow-bg-grad-1" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%"   stopColor="hsl(233,65%,44%)" />
-                <stop offset="50%"  stopColor="hsl(233,70%,58%)" />
-                <stop offset="100%" stopColor="hsl(211,93%,61%)" />
-              </linearGradient>
-              <linearGradient id="flow-bg-grad-2" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%"   stopColor="hsl(211,93%,61%)" />
-                <stop offset="50%"  stopColor="hsl(233,70%,58%)" />
-                <stop offset="100%" stopColor="hsl(233,65%,44%)" />
-              </linearGradient>
-            </defs>
-            <g stroke="url(#flow-bg-grad-1)" strokeWidth="1.2"
-              style={animated ? { animation: 'flow-drift-1 20s ease-in-out infinite', willChange: 'transform' } : undefined}>
-              <path d="M-100,150 Q200,120 400,180 T800,140 T1300,200" />
-              <path d="M-100,300 Q300,270 500,330 T900,290 T1300,350" />
-              <path d="M-100,450 Q250,420 450,480 T850,440 T1300,500" />
-            </g>
-            <g stroke="url(#flow-bg-grad-2)" strokeWidth="0.8"
-              style={animated ? { animation: 'flow-drift-2 25s ease-in-out infinite', willChange: 'transform' } : undefined}>
-              <path d="M-100,200 Q150,230 350,170 T750,230 T1300,190" />
-              <path d="M-100,380 Q200,350 400,410 T800,370 T1300,430" />
-              <path d="M-100,550 Q180,580 380,520 T780,580 T1300,540" />
-            </g>
-            <g stroke="url(#flow-bg-grad-1)" strokeWidth="0.5"
-              style={animated ? { animation: 'flow-drift-3 30s ease-in-out infinite', willChange: 'transform' } : undefined}>
-              <path d="M-100,100 Q200,80 400,120 T800,100 T1300,140" />
-              <path d="M-100,250 Q250,280 450,220 T850,280 T1300,240" />
-              <path d="M-100,600 Q200,620 400,580 T800,620 T1300,600" />
-              <path d="M-100,700 Q250,680 450,720 T850,690 T1300,730" />
-            </g>
-          </svg>
-        )}
+            <path d="M-60,180 C200,140 420,220 720,175 S1100,135 1500,195" />
+            <path d="M-60,340 C180,300 400,380 720,330 S1060,295 1500,360" />
+            <path d="M-60,520 C220,480 440,555 720,505 S1080,470 1500,530" />
+            <path d="M-60,700 C200,665 440,730 720,685 S1100,650 1500,710" />
+          </g>
+
+          {/* Group B — slightly tighter, offset phase */}
+          <g
+            stroke="url(#fs-line-grad-b)"
+            strokeWidth="0.7"
+            style={animated ? {
+              animation: 'fs-line-drift-2 26s ease-in-out infinite',
+              willChange: 'transform',
+            } : undefined}
+          >
+            <path d="M-60,260 C240,220 460,300 720,255 S1080,215 1500,280" />
+            <path d="M-60,430 C200,395 420,465 720,420 S1060,385 1500,445" />
+            <path d="M-60,610 C210,575 440,645 720,600 S1080,565 1500,625" />
+            <path d="M-60,800 C240,765 460,840 720,795 S1090,755 1500,815" />
+          </g>
+        </svg>
       </div>
     );
   }

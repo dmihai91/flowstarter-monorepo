@@ -540,32 +540,30 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  /* Indigo bloom centered — intensifies the FlowBackground glow at this spot */
   background:
     radial-gradient(
-      ellipse 85% 70% at 50% 55%,
-      rgba(88, 106, 240, 0.14) 0%,
-      rgba(88, 106, 240, 0.06) 45%,
-      transparent 72%
+      ellipse 100% 80% at 50% 60%,
+      rgba(88, 106, 240, 0.22) 0%,
+      rgba(88, 106, 240, 0.08) 50%,
+      transparent 75%
     ),
-    /* Warm anchor bottom-right — mirrors FlowBackground warm layer */
     radial-gradient(
-      ellipse 50% 45% at 80% 85%,
-      rgba(200, 100, 20, 0.08) 0%,
+      ellipse 55% 45% at 15% 80%,
+      rgba(200, 100, 20, 0.10) 0%,
       transparent 65%
     );
 }
 .dark .ls-cta-bg {
   background:
     radial-gradient(
-      ellipse 85% 70% at 50% 55%,
-      rgba(88, 106, 240, 0.22) 0%,
-      rgba(88, 106, 240, 0.08) 45%,
-      transparent 72%
+      ellipse 100% 80% at 50% 60%,
+      rgba(88, 106, 240, 0.32) 0%,
+      rgba(88, 106, 240, 0.12) 50%,
+      transparent 75%
     ),
     radial-gradient(
-      ellipse 50% 45% at 80% 85%,
-      rgba(255, 160, 80, 0.12) 0%,
+      ellipse 55% 45% at 15% 80%,
+      rgba(255, 160, 80, 0.18) 0%,
       transparent 65%
     );
 }

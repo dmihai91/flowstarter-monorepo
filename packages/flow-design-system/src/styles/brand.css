@@ -93,6 +93,13 @@
   --fs-primitive-accent-warm:  #b45309;
   --fs-primitive-accent-warm-dark: #ffb27a;
 
+  /* Bloom colors — used by FlowBackground via CSS, no JS needed */
+  --fs-bloom-core:     rgba(78, 94, 218, 0.55);
+  --fs-bloom-mid:      rgba(78, 94, 218, 0.14);
+  --fs-warm-core:      rgba(180, 83, 9, 0.45);
+  --fs-warm-mid:       rgba(180, 83, 9, 0.12);
+  --fs-secondary-bloom: rgba(78, 94, 218, 0.18);
+
   /* Semantic fixed */
   --fs-primitive-success: hsl(142, 71%, 45%);
   --fs-primitive-success-dark: hsl(142, 69%, 58%);
@@ -220,6 +227,13 @@
   --fs-warning: var(--fs-primitive-warning-dark);
   --fs-error:   var(--fs-primitive-error-dark);
   --fs-info:    var(--fs-primitive-info-dark);
+
+  /* Bloom colors — dark mode overrides */
+  --fs-bloom-core:      rgba(88, 106, 240, 0.70);
+  --fs-bloom-mid:       rgba(78, 94, 218, 0.20);
+  --fs-warm-core:       rgba(255, 160, 80, 0.60);
+  --fs-warm-mid:        rgba(255, 160, 80, 0.15);
+  --fs-secondary-bloom: rgba(130, 148, 255, 0.30);
 
   /* Atmospheric */
   --fs-orb-blend:   screen;

@@ -3,17 +3,11 @@
 import { Button } from '@/components/ui/button';
 import { useTranslations } from '@/lib/i18n';
 import { AlertTriangle, RefreshCw, Wifi, WifiOff } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface DatabaseOfflineHandlerProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;
-}
-
-interface DatabaseStatus {
-  isOnline: boolean;
-  lastChecked: Date;
-  error?: string;
 }
 
 export function DatabaseOfflineHandler({
@@ -21,65 +15,38 @@ export function DatabaseOfflineHandler({
   fallback,
 }: DatabaseOfflineHandlerProps) {
   const { t } = useTranslations();
-  const [dbStatus, setDbStatus] = useState<DatabaseStatus>({
-    isOnline: true,
-    lastChecked: new Date(),
-  });
-  const [isChecking, setIsChecking] = useState(false);
+  const queryClient = useQueryClient();
 
-  const checkDatabaseConnection = async () => {
-    setIsChecking(true);
-    try {
-      // Test Supabase connection with a simple query
+  const dbQuery = useQuery({
+    queryKey: ['health', 'database'],
+    queryFn: async () => {
       const response = await fetch('/api/health/database', {
         method: 'GET',
         cache: 'no-store',
       });
-
-      if (response.ok) {
-        setDbStatus({
-          isOnline: true,
-          lastChecked: new Date(),
-        });
-      } else {
+      if (!response.ok) {
         throw new Error(`Database check failed: ${response.status}`);
       }
-    } catch (error) {
-      // Log detailed error information for debugging
-      console.error('Database connection check failed:', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined,
-        timestamp: new Date().toISOString(),
-        endpoint: '/api/health/database',
-      });
+      return { isOnline: true, lastChecked: new Date() };
+    },
+    // Re-check every 30 seconds when query fails (offline); React Query retries automatically
+    refetchInterval: (query) =>
+      query.state.status === 'error' ? 30_000 : false,
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
+    retry: false,
+  });
 
-      setDbStatus({
-        isOnline: false,
-        lastChecked: new Date(),
-        error: 'Connection failed',
-      });
-    } finally {
-      setIsChecking(false);
-    }
+  const isOnline = dbQuery.status !== 'error';
+  const isChecking = dbQuery.isFetching;
+  const lastChecked = dbQuery.data?.lastChecked ?? new Date();
+
+  const handleRetry = () => {
+    void queryClient.invalidateQueries({ queryKey: ['health', 'database'] });
   };
 
-  useEffect(() => {
-    // Check database connection on mount
-    checkDatabaseConnection();
-
-    // Set up periodic checks every 30 seconds when offline
-    let interval: NodeJS.Timeout;
-    if (!dbStatus.isOnline) {
-      interval = setInterval(checkDatabaseConnection, 30000);
-    }
-
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [dbStatus.isOnline]);
-
   // Show fallback when database is offline
-  if (!dbStatus.isOnline) {
+  if (!isOnline) {
     if (fallback) {
       return <>{fallback}</>;
     }
@@ -145,7 +112,7 @@ export function DatabaseOfflineHandler({
                 </p>
                 <p className="text-sm text-gray-500 dark:text-white/50 mt-0.5">
                   {t('database.offline.offlineSince', {
-                    time: dbStatus.lastChecked.toLocaleTimeString(),
+                    time: lastChecked.toLocaleTimeString(),
                   })}
                 </p>
               </div>
@@ -154,7 +121,7 @@ export function DatabaseOfflineHandler({
 
           {/* Retry Button */}
           <Button
-            onClick={checkDatabaseConnection}
+            onClick={handleRetry}
             disabled={isChecking}
             className="w-full h-12 rounded-xl font-semibold shadow-lg shadow-[var(--purple)]/20 hover:shadow-[var(--purple)]/30 transition-all"
             size="lg"
@@ -209,24 +176,21 @@ export function DatabaseOfflineHandler({
 
 // Hook for checking database status in components
 export function useDatabaseStatus() {
-  const [isOnline, setIsOnline] = useState(true);
-  const [isChecking, setIsChecking] = useState(false);
-
-  const checkStatus = async () => {
-    setIsChecking(true);
-    try {
+  const dbQuery = useQuery({
+    queryKey: ['health', 'database'],
+    queryFn: async () => {
       const response = await fetch('/api/health/database');
-      setIsOnline(response.ok);
-    } catch (error) {
-      setIsOnline(false);
-    } finally {
-      setIsChecking(false);
-    }
+      if (!response.ok) throw new Error('offline');
+      return { isOnline: true };
+    },
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
+    retry: false,
+  });
+
+  return {
+    isOnline: dbQuery.status !== 'error',
+    isChecking: dbQuery.isFetching,
+    checkStatus: () => dbQuery.refetch(),
   };
-
-  useEffect(() => {
-    checkStatus();
-  }, []);
-
-  return { isOnline, isChecking, checkStatus };
 }

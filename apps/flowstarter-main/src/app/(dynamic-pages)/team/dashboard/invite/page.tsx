@@ -19,6 +19,7 @@ import {
   TeamDashboardShell,
   ShellCard,
 } from '../components/TeamDashboardShell';
+import { useMutation } from '@tanstack/react-query';
 
 interface InvitationResult {
   success: boolean;
@@ -33,7 +34,6 @@ export default function TeamInvitePage() {
 
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [isSending, setIsSending] = useState(false);
   const [result, setResult] = useState<InvitationResult | null>(null);
 
   useEffect(() => {
@@ -52,47 +52,41 @@ export default function TeamInvitePage() {
     }
   }, [user, userLoaded, router]);
 
-  const handleInvite = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim()) return;
-
-    setIsSending(true);
-    setResult(null);
-
-    try {
+  const inviteMutation = useMutation({
+    mutationFn: async (inviteEmail: string) => {
       const response = await fetch('/api/team/invite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify({ email: inviteEmail }),
       });
-
       const data = await response.json();
-
-      if (response.ok) {
-        setResult({
-          success: true,
-          message: `Invitation sent to ${email}`,
-          invitationId: data.invitationId,
-        });
-        setEmail('');
-        toast.success('Invitation sent!');
-      } else {
-        setResult({
-          success: false,
-          message: data.error || t('team.invite.failedToSend'),
-        });
-        toast.error(data.error || t('team.invite.failedToSend'));
+      if (!response.ok) {
+        throw new Error(data.error || t('team.invite.failedToSend'));
       }
-    } catch {
+      return data as { invitationId?: string };
+    },
+    onSuccess: (data) => {
       setResult({
-        success: false,
-        message: 'Network error. Please try again.',
+        success: true,
+        message: `Invitation sent to ${email}`,
+        invitationId: data.invitationId,
       });
-      toast.error('Network error');
-    } finally {
-      setIsSending(false);
-    }
+      setEmail('');
+      toast.success('Invitation sent!');
+    },
+    onError: (err) => {
+      const message = (err as Error).message || t('team.invite.failedToSend');
+      setResult({ success: false, message });
+      toast.error(message);
+    },
+  });
+
+  const handleInvite = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setResult(null);
+    inviteMutation.mutate(email.trim());
   };
 
   if (isLoading || !userLoaded) {
@@ -160,10 +154,10 @@ export default function TeamInvitePage() {
           <div className="flex justify-end">
             <Button
               type="submit"
-              disabled={isSending || !email.trim()}
+              disabled={inviteMutation.isPending || !email.trim()}
               className="flex items-center gap-2 px-6 py-2 rounded-lg font-semibold text-sm bg-[var(--purple)] text-white hover:bg-[var(--purple)]/90 transition-all disabled:opacity-50"
             >
-              {isSending ? (
+              {inviteMutation.isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
                   Sending...

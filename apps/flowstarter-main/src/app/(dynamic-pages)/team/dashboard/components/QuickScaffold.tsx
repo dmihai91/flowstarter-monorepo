@@ -104,7 +104,7 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
   }, [description, client, router]);
 
   return (
-    <div className="rounded-[28px] border border-gray-200/80 bg-white/95 p-5 shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25)]">
+    <div className="rounded-[var(--fs-radius-2xl)] border p-5 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
@@ -112,10 +112,10 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
             <Wand2 className="w-3.5 h-3.5 text-[var(--purple)]" />
           </div>
           <div>
-            <p className="text-lg font-semibold text-gray-900 dark:text-white">
+            <p className="text-lg font-semibold text-[var(--fs-ink)]">
               Quick project setup
             </p>
-            <p className="text-sm text-gray-500 dark:text-white/40">
+            <p className="text-sm text-[var(--fs-ink-faint)]">
               {step === 'client'
                 ? 'Step 1 — Client details'
                 : 'Step 2 — Describe the project'}

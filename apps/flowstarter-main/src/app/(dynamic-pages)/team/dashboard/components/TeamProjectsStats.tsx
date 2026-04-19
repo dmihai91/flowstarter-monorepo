@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 import Link from 'next/link';
 
 import { ProjectWithOwner } from '@/hooks/useTeamProjects';
@@ -106,34 +107,35 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
       <GlassPanel
         shadow="glass"
         padding="md"
-        className="rounded-[28px] bg-white/55 backdrop-blur-2xl backdrop-saturate-200 border border-white/80 shadow-[0_8px_32px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.95)] dark:bg-[rgba(18,12,42,0.55)] dark:backdrop-blur-2xl dark:backdrop-saturate-150 dark:border-white/[0.08] dark:shadow-[0_8px_40px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.06)]"
+        className="rounded-[var(--fs-radius-2xl)] border backdrop-blur-2xl backdrop-saturate-150"
+        style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' } as React.CSSProperties}
       >
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-500 dark:text-white/50">
+          <span className="text-sm text-[var(--fs-ink-faint)]">
             {t('team.dashboard.totalProjects')}
           </span>
         </div>
-        <p className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
+        <p className="text-3xl font-bold text-[var(--fs-ink)] mb-3">
           {totalProjects}
         </p>
         <div className="flex items-center gap-3 text-xs mb-4">
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span className="text-gray-600 dark:text-white/60">
+            <span className="text-[var(--fs-ink-dim)]">
               {t('team.dashboard.countLive', { count: liveCount })}
             </span>
           </span>
           {inProgressCount > 0 && (
             <span className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-blue-500" />
-              <span className="text-gray-600 dark:text-white/60">
+              <span className="text-[var(--fs-ink-dim)]">
                 {t('team.dashboard.countBuilding', { count: inProgressCount })}
               </span>
             </span>
           )}
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-gray-400" />
-            <span className="text-gray-600 dark:text-white/60">
+            <span className="text-[var(--fs-ink-dim)]">
               {t('team.dashboard.countDraft', { count: draftCount })}
             </span>
           </span>
@@ -141,7 +143,7 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
 
         {/* Recent Project */}
         {recentProject && (
-          <div className="pt-3 border-t border-white/50 dark:border-white/10">
+          <div className="pt-3 border-t border-[var(--fs-rule)]">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center text-lg">
                 {recentProject.name?.charAt(0) || 'P'}
@@ -156,10 +158,10 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
                     {getStatusLabel(recentProject.status)}
                   </span>
                 </div>
-                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                <p className="text-sm font-medium text-[var(--fs-ink)] truncate">
                   {recentProject.name || t('app.untitled')}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-white/40">
+                <p className="text-xs text-[var(--fs-ink-faint)]">
                   {t('team.dashboard.lastEdit', {
                     time: formatTimeAgo(
                       recentProject.updated_at || recentProject.created_at
@@ -176,10 +178,11 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
       <GlassPanel
         shadow="glass"
         padding="md"
-        className="rounded-[28px] bg-white/55 backdrop-blur-2xl backdrop-saturate-200 border border-white/80 shadow-[0_8px_32px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.95)] dark:bg-[rgba(18,12,42,0.55)] dark:backdrop-blur-2xl dark:backdrop-saturate-150 dark:border-white/[0.08] dark:shadow-[0_8px_40px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.06)]"
+        className="rounded-[var(--fs-radius-2xl)] border backdrop-blur-2xl backdrop-saturate-150"
+        style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' } as React.CSSProperties}
       >
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-500 dark:text-white/50">
+          <span className="text-sm text-[var(--fs-ink-faint)]">
             {t('team.dashboard.revenue')}
           </span>
           <a
@@ -191,13 +194,13 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
             {t('team.dashboard.details')} →
           </a>
         </div>
-        <p className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
+        <p className="text-3xl font-bold text-[var(--fs-ink)] mb-3">
           {formatCurrency(totalSetupFees + monthlyRevenue)}
         </p>
         <div className="flex items-center gap-3 text-xs">
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-blue-500" />
-            <span className="text-gray-600 dark:text-white/60">
+            <span className="text-[var(--fs-ink-dim)]">
               {t('team.dashboard.setupFees', {
                 amount: formatCurrency(totalSetupFees),
               })}
@@ -205,7 +208,7 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
           </span>
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span className="text-gray-600 dark:text-white/60">
+            <span className="text-[var(--fs-ink-dim)]">
               {t('team.dashboard.monthlyRevenue', {
                 amount: formatCurrency(monthlyRevenue),
               })}
@@ -213,7 +216,7 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
           </span>
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-[var(--purple)]" />
-            <span className="text-gray-600 dark:text-white/60">
+            <span className="text-[var(--fs-ink-dim)]">
               {t('team.dashboard.countPaid', { count: paidCount })}
             </span>
           </span>
@@ -224,10 +227,11 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
       <GlassPanel
         shadow="glass"
         padding="md"
-        className="rounded-[28px] bg-white/55 backdrop-blur-2xl backdrop-saturate-200 border border-white/80 shadow-[0_8px_32px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.95)] dark:bg-[rgba(18,12,42,0.55)] dark:backdrop-blur-2xl dark:backdrop-saturate-150 dark:border-white/[0.08] dark:shadow-[0_8px_40px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.06)]"
+        className="rounded-[var(--fs-radius-2xl)] border backdrop-blur-2xl backdrop-saturate-150"
+        style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' } as React.CSSProperties}
       >
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-500 dark:text-white/50">
+          <span className="text-sm text-[var(--fs-ink-faint)]">
             AI Usage
           </span>
           <Link
@@ -238,7 +242,7 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
           </Link>
         </div>
         <div className="mb-3">
-          <p className="text-3xl font-bold text-gray-900 dark:text-white">
+          <p className="text-3xl font-bold text-[var(--fs-ink)]">
             {totalCredits} credits
           </p>
           <p className="text-lg font-semibold text-[var(--purple)] dark:text-[var(--purple)]">
@@ -248,7 +252,7 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
         <div className="flex items-center gap-3 text-xs">
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-[var(--purple)]" />
-            <span className="text-gray-600 dark:text-white/60">
+            <span className="text-[var(--fs-ink-dim)]">
               {sitesGenerated} sites generated
             </span>
           </span>

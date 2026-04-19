@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -24,28 +25,88 @@ export default function IntegrationConnectWizard({
   const [step, setStep] = useState<1 | 2 | 3>(
     initialStatus === 'success' ? 2 : 1
   );
-  const [loading, setLoading] = useState(initialStatus !== 'success');
   const [error, setError] = useState<string | null>(null);
 
   // Normalized resource state (MVP: support GA first)
-  const [gaTree, setGaTree] = useState<GAAccountTree[] | null>(null);
   const [selection, setSelection] = useState<{
     accountId?: string;
     propertyId?: string;
     streamId?: string;
     measurementId?: string;
   }>({});
-  const disabled = loading;
 
+  // Load resources when already connected (initialStatus === 'success')
+  const resourcesQuery = useQuery({
+    queryKey: ['integrations', provider, 'resources'],
+    queryFn: async () => {
+      const res = await fetch(`/api/integrations/${provider}/resources`);
+      if (!res.ok) throw new Error('Failed to load resources');
+      return res.json() as Promise<{ accounts?: GAAccountTree[] }>;
+    },
+    enabled: initialStatus === 'success',
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
+  });
+
+  const gaTree =
+    provider === 'google-analytics'
+      ? (resourcesQuery.data?.accounts ?? null)
+      : null;
+
+  // Advance step once resources load
   useEffect(() => {
-    if (initialStatus === 'success') {
-      void loadResources();
-    } else {
-      // Automatically start OAuth flow when wizard loads
-      void startOAuth();
+    if (resourcesQuery.data) {
+      setStep(2);
+    }
+  }, [resourcesQuery.data]);
+
+  // Surface query error
+  useEffect(() => {
+    if (resourcesQuery.error) {
+      setError((resourcesQuery.error as Error).message);
+    }
+  }, [resourcesQuery.error]);
+
+  const startOAuthMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`/api/integrations/${provider}/oauth/start`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error('Failed to start OAuth');
+      return res.json() as Promise<{ authorizeUrl: string }>;
+    },
+    onSuccess: ({ authorizeUrl }) => {
+      window.location.href = authorizeUrl;
+    },
+    onError: (e) => setError((e as Error).message),
+  });
+
+  const finalizeMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`/api/integrations/${provider}/finalize`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ selection }),
+      });
+      if (!res.ok) throw new Error('Failed to save configuration');
+    },
+    onSuccess: () => setStep(3),
+    onError: (e) => setError((e as Error).message),
+  });
+
+  // On mount: automatically start OAuth if not coming back from callback
+  useEffect(() => {
+    if (initialStatus !== 'success') {
+      startOAuthMutation.mutate();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const loading =
+    startOAuthMutation.isPending ||
+    resourcesQuery.isFetching ||
+    finalizeMutation.isPending;
+  const disabled = loading;
 
   const title = useMemo(() => {
     switch (provider) {
@@ -60,57 +121,15 @@ export default function IntegrationConnectWizard({
     }
   }, [provider]);
 
-  async function startOAuth() {
+  const startOAuth = () => {
     setError(null);
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/integrations/${provider}/oauth/start`, {
-        method: 'POST',
-      });
-      if (!res.ok) throw new Error('Failed to start OAuth');
-      const { authorizeUrl } = (await res.json()) as { authorizeUrl: string };
-      window.location.href = authorizeUrl;
-    } catch (e) {
-      setError((e as Error).message);
-      setLoading(false);
-    }
-  }
+    startOAuthMutation.mutate();
+  };
 
-  async function loadResources() {
+  const finalize = () => {
     setError(null);
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/integrations/${provider}/resources`);
-      if (!res.ok) throw new Error('Failed to load resources');
-      const data = await res.json();
-      if (provider === 'google-analytics') {
-        setGaTree(data.accounts as GAAccountTree[]);
-      }
-      setStep(2);
-    } catch (e) {
-      setError((e as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function finalize() {
-    setError(null);
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/integrations/${provider}/finalize`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ selection }),
-      });
-      if (!res.ok) throw new Error('Failed to save configuration');
-      setStep(3);
-    } catch (e) {
-      setError((e as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  }
+    finalizeMutation.mutate();
+  };
 
   return (
     <div className="space-y-8">
@@ -241,7 +260,7 @@ export default function IntegrationConnectWizard({
                     onClick={finalize}
                     disabled={!selection.streamId || disabled}
                   >
-                    {loading ? 'Saving…' : 'Save & Connect'}
+                    {finalizeMutation.isPending ? 'Saving…' : 'Save & Connect'}
                   </Button>
                 </div>
                 {error && (

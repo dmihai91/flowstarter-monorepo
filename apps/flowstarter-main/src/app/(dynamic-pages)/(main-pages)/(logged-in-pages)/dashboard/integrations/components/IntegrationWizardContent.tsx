@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useTranslations } from '@/lib/i18n';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
 type Provider = 'google-analytics' | 'calendly' | 'cal-com' | 'mailchimp';
@@ -34,11 +35,9 @@ export function IntegrationWizardContent({
   const [step, setStep] = useState<1 | 2 | 3>(
     initialStatus === 'success' ? 2 : 1
   );
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // GA resource selection state
-  const [gaTree, setGaTree] = useState<GAAccountTree[] | null>(null);
   const [selection, setSelection] = useState<{
     accountId?: string;
     propertyId?: string;
@@ -49,41 +48,58 @@ export function IntegrationWizardContent({
   // API key provider state (Cal.com)
   const [apiKey, setApiKey] = useState('');
   const [eventUrl, setEventUrl] = useState('');
-  const [verifying, setVerifying] = useState(false);
 
-  const disabled = loading || verifying;
+  // Load GA resources when already connected (initialStatus === 'success')
+  const resourcesQuery = useQuery({
+    queryKey: ['integrations', provider, 'resources'],
+    queryFn: async () => {
+      const res = await fetch(`/api/integrations/${provider}/resources`);
+      if (!res.ok) throw new Error('Failed to load resources');
+      return res.json() as Promise<{ accounts?: GAAccountTree[] }>;
+    },
+    enabled: initialStatus === 'success',
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
+  });
 
+  // Derive gaTree from query data
+  const gaTree =
+    provider === 'google-analytics'
+      ? (resourcesQuery.data?.accounts ?? null)
+      : null;
+
+  // Advance step once resources load
   useEffect(() => {
-    if (initialStatus === 'success') {
-      void loadResources();
+    if (resourcesQuery.data) {
+      setStep(2);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [resourcesQuery.data]);
 
-  async function startOAuth() {
-    setError(null);
-    setLoading(true);
-    try {
+  // Surface query error
+  useEffect(() => {
+    if (resourcesQuery.error) {
+      setError((resourcesQuery.error as Error).message);
+    }
+  }, [resourcesQuery.error]);
+
+  const startOAuthMutation = useMutation({
+    mutationFn: async () => {
       const res = await fetch(`/api/integrations/${provider}/oauth/start`, {
         method: 'POST',
       });
       if (!res.ok) throw new Error('Failed to start OAuth');
-      const { authorizeUrl } = (await res.json()) as { authorizeUrl: string };
+      return res.json() as Promise<{ authorizeUrl: string }>;
+    },
+    onSuccess: ({ authorizeUrl }) => {
       window.location.href = authorizeUrl;
-    } catch (e) {
-      setError((e as Error).message);
-      setLoading(false);
-    }
-  }
+    },
+    onError: (e) => setError((e as Error).message),
+  });
 
-  async function connectWithApiKey() {
-    setError(null);
-    if (!apiKey.trim()) {
-      setError('Please enter an API key');
-      return;
-    }
-    setVerifying(true);
-    try {
+  const connectWithApiKeyMutation = useMutation({
+    mutationFn: async () => {
+      if (!apiKey.trim()) throw new Error('Please enter an API key');
+
       // Verify the key first
       const verifyRes = await fetch(`/api/integrations/${provider}/verify`, {
         method: 'POST',
@@ -113,52 +129,55 @@ export function IntegrationWizardContent({
         }
       );
       if (!finalizeRes.ok) throw new Error('Failed to save credentials');
-
+    },
+    onSuccess: () => {
       setStep(3);
       setTimeout(() => onComplete?.(), 1500);
-    } catch (e) {
-      setError((e as Error).message);
-    } finally {
-      setVerifying(false);
-    }
-  }
+    },
+    onError: (e) => setError((e as Error).message),
+  });
 
-  async function loadResources() {
-    setError(null);
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/integrations/${provider}/resources`);
-      if (!res.ok) throw new Error('Failed to load resources');
-      const data = await res.json();
-      if (provider === 'google-analytics') {
-        setGaTree(data.accounts as GAAccountTree[]);
-      }
-      setStep(2);
-    } catch (e) {
-      setError((e as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function finalize() {
-    setError(null);
-    setLoading(true);
-    try {
+  const finalizeMutation = useMutation({
+    mutationFn: async () => {
       const res = await fetch(`/api/integrations/${provider}/finalize`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ selection }),
       });
       if (!res.ok) throw new Error('Failed to save configuration');
+    },
+    onSuccess: () => {
       setStep(3);
       setTimeout(() => onComplete?.(), 1500);
-    } catch (e) {
-      setError((e as Error).message);
-    } finally {
-      setLoading(false);
+    },
+    onError: (e) => setError((e as Error).message),
+  });
+
+  const loading =
+    startOAuthMutation.isPending ||
+    resourcesQuery.isFetching ||
+    finalizeMutation.isPending;
+  const verifying = connectWithApiKeyMutation.isPending;
+  const disabled = loading || verifying;
+
+  const startOAuth = () => {
+    setError(null);
+    startOAuthMutation.mutate();
+  };
+
+  const connectWithApiKey = () => {
+    setError(null);
+    if (!apiKey.trim()) {
+      setError('Please enter an API key');
+      return;
     }
-  }
+    connectWithApiKeyMutation.mutate();
+  };
+
+  const finalize = () => {
+    setError(null);
+    finalizeMutation.mutate();
+  };
 
   const providerLabel =
     provider === 'google-analytics'
@@ -370,7 +389,7 @@ export function IntegrationWizardContent({
                     onClick={finalize}
                     disabled={!selection.streamId || disabled}
                   >
-                    {loading ? 'Saving…' : 'Save & Connect'}
+                    {finalizeMutation.isPending ? 'Saving…' : 'Save & Connect'}
                   </Button>
                   {onClose && (
                     <Button

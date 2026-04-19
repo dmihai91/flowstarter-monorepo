@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -33,9 +34,7 @@ interface IntegrationStatus {
 }
 
 export function IntegrationSettings({ projectId }: { projectId: string }) {
-  const [status, setStatus] = useState<IntegrationStatus | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   // Calendly fields
   const [calendlyUrl, setCalendlyUrl] = useState('');
@@ -45,55 +44,71 @@ export function IntegrationSettings({ projectId }: { projectId: string }) {
   // Analytics fields
   const [gaPropertyId, setGaPropertyId] = useState('');
 
-  const fetchStatus = useCallback(async () => {
-    try {
+  const statusQuery = useQuery({
+    queryKey: ['projects', projectId, 'integrations'],
+    queryFn: async () => {
       const res = await fetch(`/api/projects/${projectId}/integrations`);
       const data = (await res.json()) as IntegrationStatus;
-      setStatus(data);
-      if (data.calendly.url) setCalendlyUrl(data.calendly.url);
-      if (data.analytics.propertyId) setGaPropertyId(data.analytics.propertyId);
-    } catch {
-      /* ignore */
-    }
-    setLoading(false);
-  }, [projectId]);
+      return data;
+    },
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
+  });
 
-  useEffect(() => {
-    fetchStatus();
-  }, [fetchStatus]);
+  const status = statusQuery.data ?? null;
 
-  const saveIntegration = async (
-    integration: string,
-    body: Record<string, unknown>
-  ) => {
-    setSaving(integration);
-    try {
+  // Sync local state with fetched status (only on first load)
+  const [syncedFromServer, setSyncedFromServer] = useState(false);
+  if (status && !syncedFromServer) {
+    if (status.calendly.url) setCalendlyUrl(status.calendly.url);
+    if (status.analytics.propertyId) setGaPropertyId(status.analytics.propertyId);
+    setSyncedFromServer(true);
+  }
+
+  const [saving, setSaving] = useState<string | null>(null);
+
+  const saveIntegrationMutation = useMutation({
+    mutationFn: async ({
+      integration,
+      body,
+    }: {
+      integration: string;
+      body: Record<string, unknown>;
+    }) => {
       const res = await fetch(`/api/projects/${projectId}/integrations`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ integration, ...body }),
       });
-      const data = (await res.json()) as {
-        success?: boolean;
-        message?: string;
-      };
+      return res.json() as Promise<{ success?: boolean; message?: string }>;
+    },
+    onMutate: ({ integration }) => setSaving(integration),
+    onSuccess: (data) => {
       if (data.success) {
         toast.success(data.message || 'Saved');
-        await fetchStatus();
         setCalendlyApiKey(''); // Clear sensitive field after save
+        void queryClient.invalidateQueries({
+          queryKey: ['projects', projectId, 'integrations'],
+        });
       } else {
         toast.error('Failed to save');
       }
-    } catch {
-      toast.error('Network error');
-    }
-    setSaving(null);
+    },
+    onError: () => toast.error('Network error'),
+    onSettled: () => setSaving(null),
+  });
+
+  const saveIntegration = (
+    integration: string,
+    body: Record<string, unknown>
+  ) => {
+    saveIntegrationMutation.mutate({ integration, body });
   };
 
   const cardClass =
     'rounded-2xl border border-gray-200/50 dark:border-white/5 bg-white/80 dark:bg-white/[0.03] backdrop-blur-xl p-6';
 
-  if (loading)
+  if (statusQuery.isLoading)
     return (
       <div className="animate-pulse h-48 rounded-2xl bg-gray-100 dark:bg-white/5" />
     );

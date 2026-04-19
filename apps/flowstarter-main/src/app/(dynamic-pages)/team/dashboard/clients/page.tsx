@@ -42,7 +42,8 @@ function ClientCard({ client }: { client: Client }) {
   return (
     <div
       onClick={() => router.push(`/team/dashboard?client=${client.userId}`)}
-      className="group cursor-pointer rounded-[24px] border border-gray-200/80 bg-white/95 p-5 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.12)] dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]"
+      className="group cursor-pointer rounded-[var(--fs-radius-2xl)] border p-5 backdrop-blur-2xl backdrop-saturate-150 transition-all duration-200 hover:-translate-y-0.5"
+      style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}
     >
       <div className="flex items-start gap-4">
         <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center shrink-0 text-sm font-bold text-[var(--purple)]">
@@ -50,7 +51,7 @@ function ClientCard({ client }: { client: Client }) {
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+            <h3 className="text-sm font-semibold text-[var(--fs-ink)] truncate">
               {client.name}
             </h3>
             {hasLive && (
@@ -75,12 +76,12 @@ function ClientCard({ client }: { client: Client }) {
           )}
         </div>
       </div>
-      <div className="mt-4 pt-3 border-t border-gray-100 dark:border-white/[0.06] grid grid-cols-3 gap-3">
+      <div className="mt-4 pt-3 border-t border-[var(--fs-rule)] grid grid-cols-3 gap-3">
         <div className="text-center">
           <div className="flex items-center justify-center mb-0.5">
             <FolderOpen className="w-3 h-3 text-gray-400 dark:text-white/30" />
           </div>
-          <p className="text-sm font-bold text-gray-900 dark:text-white">
+          <p className="text-sm font-bold text-[var(--fs-ink)]">
             {client.projectCount}
           </p>
           <p className="text-[0.6rem] text-gray-400 dark:text-white/30">
@@ -91,7 +92,7 @@ function ClientCard({ client }: { client: Client }) {
           <div className="flex items-center justify-center mb-0.5">
             <TrendingUp className="w-3 h-3 text-gray-400 dark:text-white/30" />
           </div>
-          <p className="text-sm font-bold text-gray-900 dark:text-white">
+          <p className="text-sm font-bold text-[var(--fs-ink)]">
             €{client.totalFee.toLocaleString()}
           </p>
           <p className="text-[0.6rem] text-gray-400 dark:text-white/30">
@@ -147,21 +148,22 @@ export default function ClientsPage() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="rounded-[24px] border border-gray-200/80 bg-white/95 dark:border-white/[0.06] dark:bg-white/[0.05] h-48 animate-pulse"
+              className="rounded-[var(--fs-radius-2xl)] border h-48 animate-pulse"
+              style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)' }}
             />
           ))}
         </div>
       )}
       {error && <p className="text-sm text-red-500">Failed to load clients.</p>}
       {!isLoading && !error && clients.length === 0 && (
-        <div className="rounded-2xl border border-gray-200/80 bg-white/95 dark:border-white/[0.06] dark:bg-white/[0.05] shadow-[0_8px_32px_rgba(0,0,0,0.08)] p-12 text-center">
+        <div className="rounded-[var(--fs-radius-2xl)] border p-12 text-center backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/50 bg-white/55 backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.08]">
             <Users className="w-8 h-8 text-gray-400 dark:text-white/30" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          <h3 className="text-lg font-semibold text-[var(--fs-ink)] mb-2">
             No clients yet
           </h3>
-          <p className="text-gray-500 dark:text-white/50 mb-6 max-w-sm mx-auto text-sm">
+          <p className="text-[var(--fs-ink-faint)] mb-6 max-w-sm mx-auto text-sm">
             Create your first project to see clients here.
           </p>
           <button

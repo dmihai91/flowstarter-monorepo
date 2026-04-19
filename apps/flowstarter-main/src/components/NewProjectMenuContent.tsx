@@ -3,7 +3,7 @@
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { useTranslations } from '@/lib/i18n';
 import { MessageCircle } from 'lucide-react';
-import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 
 // Editor URL - configure in environment
 const EDITOR_URL =
@@ -11,12 +11,9 @@ const EDITOR_URL =
 
 export function NewProjectMenuContent() {
   const { t } = useTranslations();
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleOpenEditor = async () => {
-    setIsLoading(true);
-    try {
-      // Create a handoff to the editor with interactive mode
+  const handoffMutation = useMutation({
+    mutationFn: async () => {
       const response = await fetch('/api/editor/handoff', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -31,26 +28,23 @@ export function NewProjectMenuContent() {
 
       if (response.ok) {
         const data = await response.json();
-        // Redirect to editor with handoff token
-        window.location.href = data.editorUrl;
-      } else {
-        console.error('Failed to create handoff');
-        // Fallback to editor without token
-        window.location.href = EDITOR_URL;
+        return data as { editorUrl: string };
       }
-    } catch (error) {
-      console.error('Handoff error:', error);
+      throw new Error('Failed to create handoff');
+    },
+    onSuccess: (data) => {
+      window.location.href = data.editorUrl;
+    },
+    onError: () => {
       // Fallback to editor without token
       window.location.href = EDITOR_URL;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+  });
 
   return (
     <DropdownMenuItem
-      onClick={handleOpenEditor}
-      disabled={isLoading}
+      onClick={() => handoffMutation.mutate()}
+      disabled={handoffMutation.isPending}
       className="flex items-start gap-3 p-4 cursor-pointer"
     >
       <MessageCircle className="h-5 w-5 text-[var(--purple)] mt-0.5" />

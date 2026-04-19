@@ -39,8 +39,12 @@ export function LandingPageClient() {
   const open = () => setModalOpen(true);
 
   return (
-    <div className="min-h-screen text-[var(--fs-ink)] font-display relative" style={{ overflowX: 'clip' }}>
+    <>
+      {/* FlowBackground is OUTSIDE the overflow:clip container so it covers
+          the full viewport. Mobile browsers trap fixed children inside
+          overflow:clip ancestors, causing right-edge clipping. */}
       <FlowBackground variant="landing" style={{ position: 'fixed', inset: 0, zIndex: 0 }} />
+    <div className="min-h-screen text-[var(--fs-ink)] font-display relative" style={{ overflowX: 'clip' }}>
       <LandingHeader onOpenModal={open} />
       <main id="main-content">
         <LandingHero onOpenModal={open} />
@@ -74,5 +78,6 @@ export function LandingPageClient() {
       <CookieConsent />
       <ScrollFab />
     </div>
+    </>
   );
 }

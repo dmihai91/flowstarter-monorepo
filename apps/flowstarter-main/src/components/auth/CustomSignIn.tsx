@@ -332,7 +332,7 @@ export function CustomSignIn() {
                 type="button"
                 onClick={handleResendResetCode}
                 disabled={isResetLoading}
-                className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors hover:underline"
+                className="text-sm text-[var(--fs-ink-dim)] hover:text-[var(--fs-ink)] transition-colors hover:underline"
               >
                 {t('auth.forgotPassword.resendCode')}
               </button>
@@ -347,7 +347,7 @@ export function CustomSignIn() {
                   setNewPassword('');
                   setConfirmPassword('');
                 }}
-                className="inline-flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors hover:underline"
+                className="inline-flex items-center gap-1.5 text-sm text-[var(--fs-ink-dim)] hover:text-[var(--fs-ink)] transition-colors hover:underline"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 {t('auth.forgotPassword.backToSignIn')}
@@ -437,7 +437,7 @@ export function CustomSignIn() {
                 setShowForgotPassword(true);
                 setResetEmail(formik.values.email);
               }}
-              className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors hover:underline"
+              className="text-sm text-[var(--fs-ink-dim)] hover:text-[var(--fs-ink)] transition-colors hover:underline"
             >
               {t('auth.forgotPassword')}
             </button>

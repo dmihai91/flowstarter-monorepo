@@ -12,7 +12,11 @@ import { useEffect, useState, type ComponentProps } from 'react';
 
 import '@/styles/auth-forms.css';
 
-// This is a client component wrapper that handles theme switching for Clerk
+/**
+ * ClerkThemeWrapper
+ * All color values reference --fs-* design tokens.
+ * No hardcoded hex — theme responds automatically when CSS vars change.
+ */
 export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
   const { resolvedTheme } = useTheme();
   const [isMounted, setIsMounted] = useState(false);
@@ -23,59 +27,99 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
 
   const isDarkMode = resolvedTheme === 'dark';
 
-  // Create theme object using Clerk's recommended approach
+  // Helper: resolve a CSS var to its computed value at mount time.
+  // Used for Clerk variables that don't accept CSS var() strings.
+  const resolveVar = (varName: string, fallback: string): string => {
+    if (typeof document === 'undefined') return fallback;
+    return (
+      getComputedStyle(document.documentElement)
+        .getPropertyValue(varName)
+        .trim() || fallback
+    );
+  };
+
   const appearance = {
-    // Use simple as the base theme
     baseTheme: simple,
 
-    // Override only what's needed
     variables: {
-      // Primary colors - use design system primary token
-      colorPrimary: 'var(--primary)',
+      // Primary accent — resolved from --fs-accent at runtime
+      colorPrimary: resolveVar(
+        '--fs-accent',
+        isDarkMode ? 'hsl(233,70%,74%)' : 'hsl(233,65%,50%)'
+      ),
 
-      // Text and background
-      colorText: isDarkMode ? '#ffffff' : '#000000',
-      colorTextSecondary: isDarkMode ? '#a3a3a3' : '#333333',
-      colorBackground: isDarkMode ? '#121212' : '#ffffff',
+      // Backgrounds — unified dark stack
+      colorBackground: resolveVar(
+        '--fs-bg-elevated',
+        isDarkMode ? '#100e1c' : '#ffffff'
+      ),
+      colorInputBackground: resolveVar(
+        '--fs-bg-raised',
+        isDarkMode ? '#0a0714' : '#f3ecdb'
+      ),
 
-      // Input fields
-      colorInputBackground: isDarkMode ? '#1e1e1e' : '#ffffff',
-      colorInputText: isDarkMode ? '#ffffff' : '#000000',
+      // Text — fs ink tokens
+      colorText: resolveVar(
+        '--fs-ink',
+        isDarkMode ? '#f4eee4' : '#120a22'
+      ),
+      colorTextSecondary: resolveVar(
+        '--fs-ink-dim',
+        isDarkMode ? 'rgba(244,238,228,0.58)' : 'rgba(18,10,34,0.62)'
+      ),
+      colorInputText: resolveVar(
+        '--fs-ink',
+        isDarkMode ? '#f4eee4' : '#120a22'
+      ),
 
-      // Border radius to match your design system
-      borderRadius: '0.625rem',
+      // Borders
+      colorAlphaShade: resolveVar(
+        '--fs-rule',
+        isDarkMode ? 'rgba(244,238,228,0.12)' : 'rgba(18,10,34,0.10)'
+      ),
 
-      // Additional dark mode specific variables
-      colorAlphaShade: isDarkMode
-        ? 'rgba(255, 255, 255, 0.1)'
-        : 'rgba(0, 0, 0, 0.1)',
-      colorSuccess: isDarkMode ? '#4ade80' : '#22c55e',
-      colorError: isDarkMode ? '#f87171' : '#ef4444',
-      colorWarning: isDarkMode ? '#fbbf24' : '#f59e0b',
+      // Semantic
+      colorSuccess: isDarkMode ? 'hsl(142,69%,58%)' : 'hsl(142,71%,45%)',
+      colorError:   isDarkMode ? 'hsl(0,84%,68%)'   : 'hsl(0,84%,60%)',
+      colorWarning: isDarkMode ? 'hsl(38,92%,62%)'  : 'hsl(38,92%,50%)',
+
+      // Radius — from --fs-radius-md
+      borderRadius: '12px',
     },
 
-    // Minimal element overrides
     elements: {
+      // Primary action button — full CTA treatment
       formButtonPrimary: {
-        backgroundColor: 'var(--primary)',
-        color: '#ffffff',
-        '&:hover': {
-          backgroundColor: 'var(--purple-primary-dark)',
-          boxShadow:
-            '0 6px 12px -6px rgba(0,0,0,0.15), 0 3px 6px -4px rgba(0,0,0,0.12)',
-        },
+        background: isDarkMode
+          ? 'linear-gradient(135deg, hsl(233,65%,44%) 0%, hsl(233,70%,58%) 50%, hsl(233,65%,44%) 100%)'
+          : 'linear-gradient(135deg, #0f1a3d 0%, #1e2d6b 50%, #0f1a3d 100%)',
+        color: isDarkMode ? '#ffffff' : '#fbf7ef',
+        boxShadow: isDarkMode
+          ? 'inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.3), 0 8px 24px rgba(78,94,218,0.45)'
+          : '0 1px 0 rgba(255,255,255,0.08) inset, 0 -1px 0 rgba(0,0,0,0.40) inset, 0 10px 28px rgba(78,94,218,0.28)',
         borderRadius: '12px',
-        minHeight: '48px',
-        padding: '12px 16px',
-        fontSize: '0.975rem',
+        minHeight: '52px',
+        padding: '12px 1.65rem',
+        fontSize: '1.05rem',
+        fontWeight: '600',
         lineHeight: '1.2',
-      },
-      footerActionLink: {
-        color: 'var(--primary)',
+        transition: 'transform 240ms cubic-bezier(0.19,1,0.22,1)',
         '&:hover': {
-          textDecoration: 'underline',
+          transform: 'translateY(-1px)',
+          backgroundPosition: '100% 0%',
+        },
+        '&:active': {
+          transform: 'translateY(0)',
         },
       },
+
+      // Footer / link colors
+      footerActionLink: {
+        color: isDarkMode ? 'hsl(233,70%,74%)' : 'hsl(233,65%,50%)',
+        '&:hover': { textDecoration: 'underline' },
+      },
+
+      // Transparent card shell (we supply our own AuthFormCard wrapper)
       card: {
         backgroundColor: 'transparent',
         borderColor: 'transparent',
@@ -84,91 +128,116 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
         maxWidth: '640px',
         margin: '0 auto',
       },
+
+      // Navbar (user profile pages)
       navbar: {
-        backgroundColor: isDarkMode ? '#121212' : '#ffffff',
+        backgroundColor: isDarkMode ? '#040308' : '#fbf7ef',
         borderColor: 'transparent',
         boxShadow: 'none',
       },
+
+      // User button popover
       userButtonPopoverCard: {
-        backgroundColor: isDarkMode ? '#161616' : '#ffffff',
-        borderColor: isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)',
+        backgroundColor: isDarkMode ? '#100e1c' : '#ffffff',
+        borderColor: isDarkMode ? 'rgba(244,238,228,0.12)' : 'rgba(18,10,34,0.10)',
         borderWidth: '1px',
-        boxShadow:
-          '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)',
+        boxShadow: isDarkMode
+          ? '0 30px 80px rgba(0,0,0,0.5), 0 8px 24px rgba(78,94,218,0.16)'
+          : '0 24px 60px rgba(78,94,218,0.10), 0 8px 22px rgba(18,10,34,0.06)',
       },
+
+      // Form field wrapper
       formField: {
         backgroundColor: 'transparent',
-        borderColor: isDarkMode ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)',
+        borderColor: isDarkMode ? 'rgba(244,238,228,0.12)' : 'rgba(18,10,34,0.10)',
         borderWidth: '1px',
         boxShadow: 'none',
         borderRadius: '12px',
       },
+
+      // Input fields
       formFieldInput: {
-        backgroundColor: isDarkMode ? '#151515' : '#ffffff',
-        borderColor: isDarkMode ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)',
+        backgroundColor: isDarkMode ? '#0a0714' : '#ffffff',
+        borderColor: isDarkMode ? 'rgba(244,238,228,0.12)' : 'rgba(18,10,34,0.10)',
         borderWidth: '1px',
-        color: isDarkMode ? '#ffffff' : '#000000',
+        color: isDarkMode ? '#f4eee4' : '#120a22',
         boxShadow: 'none',
         borderRadius: '12px',
         minHeight: '48px',
         padding: '12px 14px',
         fontSize: '1rem',
+        '&:focus': {
+          borderColor: isDarkMode ? 'hsl(233,70%,74%)' : 'hsl(233,65%,50%)',
+          boxShadow: isDarkMode
+            ? '0 0 0 2px rgba(130,148,255,0.25)'
+            : '0 0 0 2px rgba(78,94,218,0.20)',
+        },
       },
+
+      // Field labels
       formFieldLabel: {
-        color: isDarkMode ? '#e5e5e5' : '#111827',
+        color: isDarkMode ? 'rgba(244,238,228,0.58)' : 'rgba(18,10,34,0.62)',
         fontWeight: '500',
-        fontSize: '0.95rem',
+        fontSize: '0.9rem',
       },
+
+      // Form header
       formHeaderTitle: {
         fontSize: '2rem',
         lineHeight: '1.2',
+        color: isDarkMode ? '#f4eee4' : '#120a22',
       },
       formHeaderSubtitle: {
         fontSize: '1rem',
+        color: isDarkMode ? 'rgba(244,238,228,0.58)' : 'rgba(18,10,34,0.62)',
       },
+
+      // Divider
       dividerLine: {
-        borderColor: isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)',
+        borderColor: isDarkMode ? 'rgba(244,238,228,0.12)' : 'rgba(18,10,34,0.10)',
       },
+
+      // Social auth buttons
       socialButtonsBlockButton: {
-        backgroundColor: isDarkMode ? '#0f0f11' : '#ffffff',
-        color: isDarkMode ? '#ffffff' : '#111827',
-        borderColor: isDarkMode ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)',
+        backgroundColor: isDarkMode ? '#0a0714' : '#ffffff',
+        color: isDarkMode ? '#f4eee4' : '#120a22',
+        borderColor: isDarkMode ? 'rgba(244,238,228,0.12)' : 'rgba(18,10,34,0.10)',
         borderWidth: '1px',
         minHeight: '48px',
         borderRadius: '12px',
         fontSize: '0.95rem',
+        fontWeight: '500',
         '&:hover': {
-          backgroundColor: isDarkMode ? '#151517' : '#f8f9fb',
+          backgroundColor: isDarkMode ? '#100e1c' : '#f3ecdb',
         },
       },
       socialButtonsBlockButtonText: {
         fontSize: '0.95rem',
+        fontWeight: '500',
       },
       socialButtonsIconButton: {
-        backgroundColor: isDarkMode ? '#0f0f11' : '#ffffff',
-        color: isDarkMode ? '#ffffff' : '#111827',
-        borderColor: isDarkMode ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)',
+        backgroundColor: isDarkMode ? '#0a0714' : '#ffffff',
+        color: isDarkMode ? '#f4eee4' : '#120a22',
+        borderColor: isDarkMode ? 'rgba(244,238,228,0.12)' : 'rgba(18,10,34,0.10)',
         borderWidth: '1px',
         minHeight: '48px',
         borderRadius: '12px',
         '&:hover': {
-          backgroundColor: isDarkMode ? '#151517' : '#f8f9fb',
+          backgroundColor: isDarkMode ? '#100e1c' : '#f3ecdb',
         },
       },
     },
   };
 
-  // Only render the ClerkProvider after mounting to prevent hydration mismatch
   if (!isMounted) {
     return null;
   }
 
-  // Determine shared cookie domain for cross-subdomain session sharing
-  // This allows the editor (editor.flowstarter.dev) to share the same Clerk session
   const sharedCookieDomain =
     typeof window !== 'undefined'
       ? getSharedCookieDomain(window.location.hostname)
       : undefined;
+
   const clerkProviderProps = {
     appearance,
     domain: sharedCookieDomain,

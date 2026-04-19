@@ -435,7 +435,7 @@ export function LoginForm({ variant }: LoginFormProps) {
                   setStep('forgot');
                   setResetEmail(email);
                 }}
-                className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors hover:underline"
+                className="text-sm text-[var(--fs-ink-dim)] hover:text-[var(--fs-ink)] transition-colors hover:underline"
               >
                 {t('auth.forgotPassword')}
               </button>

@@ -9,7 +9,7 @@ export default function AuthTabs() {
       footer={
         <a
           href="/team/login"
-          className="text-sm text-gray-500 dark:text-white/50 hover:text-[var(--purple)] transition-colors"
+          className="text-sm text-[var(--fs-ink-faint)] hover:text-[var(--fs-accent)] transition-colors"
         >
           Team member? Sign in here →
         </a>

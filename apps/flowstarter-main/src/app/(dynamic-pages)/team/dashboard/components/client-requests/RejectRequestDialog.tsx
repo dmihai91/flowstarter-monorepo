@@ -51,7 +51,7 @@ export function RejectRequestDialog({
           onChange={(e) => setReason(e.target.value)}
           rows={4}
           placeholder="Explain why this request is being rejected so the client understands..."
-          className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.06] px-3 py-2.5 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/40 resize-none"
+          className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.06] px-3 py-2.5 text-sm text-[var(--fs-ink)] placeholder:text-gray-400 dark:placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/40 resize-none"
         />
         <p className="text-xs text-gray-400 dark:text-white/30 mt-1">
           {reason.trim().length}/10 min
@@ -60,7 +60,7 @@ export function RejectRequestDialog({
         <div className="flex items-center justify-end gap-3 mt-5">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg text-sm text-gray-600 dark:text-white/60 hover:bg-gray-100 dark:hover:bg-white/[0.06] transition-colors"
+            className="px-4 py-2 rounded-lg text-sm text-[var(--fs-ink-dim)] hover:bg-gray-100 dark:hover:bg-white/[0.06] transition-colors"
           >
             Cancel
           </button>

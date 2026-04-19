@@ -82,7 +82,7 @@ function StepIndicator({
     ? REVIEW_STEPS[reviewStep] ?? activeStep.label
     : activeStep.label;
   return (
-    <div className="w-full mb-6 rounded-[28px] border border-gray-200/60 bg-white/65 px-4 sm:px-6 py-4 sm:py-5 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:border-white/[0.06] dark:bg-white/[0.04] dark:shadow-[0_8px_32px_rgba(0,0,0,0.20)]">
+    <div className="w-full mb-6 rounded-[var(--fs-radius-2xl)] border px-4 sm:px-6 py-4 sm:py-5 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
       {/* Mobile: compact progress */}
       <div className="sm:hidden">
         <div className="flex items-center justify-between mb-2.5">
@@ -297,7 +297,7 @@ function BuildStep({
           Review the summary below, then hand off to the editor.
         </p>
       </div>
-      <div className="rounded-[20px] border border-gray-200/80 bg-white/95 p-5 space-y-3 dark:border-white/[0.06] dark:bg-white/[0.04]">
+      <div className="rounded-[var(--fs-radius-2xl)] border p-5 space-y-3 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
         {rows.map((row) => (
           <div key={row.label} className="flex justify-between items-center">
             <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
@@ -750,7 +750,7 @@ export function NewProjectWizard() {
         )}
 
         {/* Content card */}
-        <div className="rounded-[28px] sm:rounded-[36px] border border-gray-200/60 bg-white/70 px-4 py-6 sm:px-10 sm:py-10 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.08)] sm:shadow-[0_24px_64px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:border-white/[0.06] dark:bg-white/[0.04] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25)]">
+        <div className="rounded-[var(--fs-radius-2xl)] border px-4 py-6 sm:px-10 sm:py-10 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
           {form.phase === 'client' && (
             <ScaffoldClientInfo
               clientInfo={form.clientInfo}

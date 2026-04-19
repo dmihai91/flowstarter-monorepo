@@ -132,7 +132,7 @@ export function PaymentStep({
       </div>
 
       {setupFee > 0 && (
-        <div className="space-y-4 rounded-[28px] border border-gray-200/80 bg-white/95 p-5 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]">
+        <div className="space-y-4 rounded-[var(--fs-radius-2xl)] border p-5 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
           <p className="text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
             Payment breakdown
           </p>

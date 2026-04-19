@@ -70,7 +70,7 @@ export function RequestCard({ request }: Props) {
           <div className="flex-1 min-w-0">
             {/* Header row */}
             <div className="flex items-start justify-between gap-2 mb-0.5">
-              <h4 className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+              <h4 className="text-sm font-semibold text-[var(--fs-ink)] truncate">
                 {request.title}
               </h4>
               <span className="text-xs text-gray-400 dark:text-white/30 shrink-0 whitespace-nowrap">
@@ -84,7 +84,7 @@ export function RequestCard({ request }: Props) {
             </p>
 
             {/* Description preview */}
-            <p className="text-sm text-gray-600 dark:text-white/60 line-clamp-2 mb-3">
+            <p className="text-sm text-[var(--fs-ink-dim)] line-clamp-2 mb-3">
               {request.description}
             </p>
 
@@ -118,7 +118,7 @@ export function RequestCard({ request }: Props) {
                   <MoreHorizontal className="w-4 h-4" />
                 </button>
                 {showMenu && (
-                  <div className="absolute right-0 top-8 z-10 w-44 rounded-xl border border-gray-200/80 dark:border-white/[0.08] bg-white dark:bg-[rgba(18,12,42,0.95)] shadow-lg py-1">
+                  <div className="absolute right-0 top-8 z-10 w-44 rounded-xl border border-[var(--fs-rule)] bg-white dark:bg-[rgba(18,12,42,0.95)] shadow-lg py-1">
                     {(['urgent', 'high', 'normal', 'low'] as const).map((p) => (
                       <button
                         key={p}

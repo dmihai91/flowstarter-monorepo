@@ -56,7 +56,7 @@ function MemberRow({ member }: { member: Member }) {
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <p className="text-base font-semibold text-gray-900 dark:text-white">
+          <p className="text-base font-semibold text-[var(--fs-ink)]">
             {member.name}
           </p>
           <RoleBadge role={member.role} />
@@ -118,7 +118,7 @@ export default function TeamPage() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-16 rounded-2xl border border-gray-200/80 dark:border-white/[0.06] bg-white/95 dark:bg-white/[0.05] animate-pulse"
+              className="h-16 rounded-2xl border border-[var(--fs-rule)]  animate-pulse"
             />
           ))}
         </div>

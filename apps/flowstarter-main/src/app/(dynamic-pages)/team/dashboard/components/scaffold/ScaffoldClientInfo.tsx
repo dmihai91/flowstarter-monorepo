@@ -234,7 +234,7 @@ export function ScaffoldClientInfo({
           </div>
         </section>
 
-        <section className="space-y-5 rounded-[var(--fs-radius-2xl)] border backdrop-blur-2xl backdrop-saturate-150 p-6 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] dark:border-white/[0.06] dark:bg-white/[0.04] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]">
+        <section className="space-y-5 rounded-[var(--fs-radius-2xl)] border p-6 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
           <div>
             <p className="text-base font-medium text-zinc-900 dark:text-white mb-1">
               How do you want to proceed?

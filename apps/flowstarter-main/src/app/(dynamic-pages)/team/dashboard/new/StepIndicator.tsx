@@ -30,7 +30,7 @@ export function StepIndicator({
     ? REVIEW_STEPS[reviewStep] ?? activeStep.label
     : activeStep.label;
   return (
-    <div className="w-full mb-6 rounded-[28px] border border-gray-200/60 bg-white/65 px-4 sm:px-6 py-4 sm:py-5 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:border-white/[0.06] dark:bg-white/[0.04] dark:shadow-[0_8px_32px_rgba(0,0,0,0.20)]">
+    <div className="w-full mb-6 rounded-[var(--fs-radius-2xl)] border px-4 sm:px-6 py-4 sm:py-5 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
       {/* Mobile: compact progress */}
       <div className="sm:hidden">
         <div className="flex items-center justify-between mb-2.5">

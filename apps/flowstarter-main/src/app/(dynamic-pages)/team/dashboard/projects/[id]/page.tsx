@@ -29,7 +29,8 @@ import { TeamDashboardShell } from '../../components/TeamDashboardShell';
 import { IntegrationSettings } from './components/IntegrationSettings';
 
 const card =
-  'rounded-[24px] border border-gray-200/80 bg-white/95 dark:border-white/[0.06] dark:bg-white/[0.05] shadow-[0_4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.2)]';
+  'rounded-[var(--fs-radius-2xl)] border backdrop-blur-2xl backdrop-saturate-150';
+const cardStyle = { background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' };
 
 // ── Status pill ──────────────────────────────────────────────────────────────
 function StatusPill({ status }: { status: string | null | undefined }) {
@@ -101,7 +102,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className={card + ' p-6'}>
+    <div className={card + ' p-6'} style={cardStyle}>
       <div className="flex items-center gap-3 mb-5">
         <div
           className={`w-10 h-10 rounded-xl ${iconBg} flex items-center justify-center`}
@@ -239,7 +240,7 @@ export default function ProjectDetailPage() {
   if (error || !project) {
     return (
       <div className="flex items-center justify-center py-32">
-        <div className={card + ' p-8 max-w-md text-center'}>
+        <div className={card + ' p-8 max-w-md text-center'} style={cardStyle}>
           <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center mx-auto mb-4">
             <AlertCircle className="w-6 h-6 text-red-500" />
           </div>
@@ -282,7 +283,7 @@ export default function ProjectDetailPage() {
       icon={<FolderOpen className="w-5 h-5 text-[var(--purple)]" />}
     >
       {/* Project header */}
-      <div className={card + ' p-6 mb-6'}>
+      <div className={card + ' p-6 mb-6'} style={cardStyle}>
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-[var(--purple)]/20 shrink-0">

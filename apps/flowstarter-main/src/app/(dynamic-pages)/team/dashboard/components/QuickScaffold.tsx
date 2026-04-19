@@ -146,7 +146,7 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
                 }
                 onKeyDown={(e) => e.key === 'Enter' && handleClientNext()}
                 autoFocus
-                className="peer w-full px-3 pt-5 pb-1.5 text-base rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
+                className="peer w-full px-3 pt-5 pb-1.5 text-base rounded-xl bg-[var(--fs-bg-elevated)] border border-[var(--fs-rule)] text-[var(--fs-ink)] focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
               />
               <label
                 htmlFor="qs-name"
@@ -165,7 +165,7 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
                   setClient((p) => ({ ...p, email: e.target.value }))
                 }
                 onKeyDown={(e) => e.key === 'Enter' && handleClientNext()}
-                className="peer w-full px-3 pt-5 pb-1.5 text-base rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
+                className="peer w-full px-3 pt-5 pb-1.5 text-base rounded-xl bg-[var(--fs-bg-elevated)] border border-[var(--fs-rule)] text-[var(--fs-ink)] focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
               />
               <label
                 htmlFor="qs-email"
@@ -187,7 +187,7 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
                   setClient((p) => ({ ...p, phone: e.target.value }))
                 }
                 onKeyDown={(e) => e.key === 'Enter' && handleClientNext()}
-                className="peer w-full px-3 pt-5 pb-1.5 text-base rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
+                className="peer w-full px-3 pt-5 pb-1.5 text-base rounded-xl bg-[var(--fs-bg-elevated)] border border-[var(--fs-rule)] text-[var(--fs-ink)] focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
               />
               <label
                 htmlFor="qs-phone"
@@ -206,7 +206,7 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
                   setClient((p) => ({ ...p, businessName: e.target.value }))
                 }
                 onKeyDown={(e) => e.key === 'Enter' && handleClientNext()}
-                className="peer w-full px-3 pt-5 pb-1.5 text-base rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
+                className="peer w-full px-3 pt-5 pb-1.5 text-base rounded-xl bg-[var(--fs-bg-elevated)] border border-[var(--fs-rule)] text-[var(--fs-ink)] focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
               />
               <label
                 htmlFor="qs-business"
@@ -238,12 +238,12 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={4}
-            className="w-full px-3 py-2.5 text-sm rounded-xl bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/20 focus:outline-none focus:border-[var(--purple)]/50 transition-colors resize-none"
+            className="w-full px-3 py-2.5 text-sm rounded-xl bg-[var(--fs-bg-elevated)] border border-[var(--fs-rule)] text-[var(--fs-ink)] placeholder:text-gray-400 dark:placeholder:text-white/20 focus:outline-none focus:border-[var(--purple)]/50 transition-colors resize-none"
           />
           <div className="flex gap-2">
             <button
               onClick={() => setStep('client')}
-              className="px-4 py-2.5 rounded-xl text-sm text-gray-500 dark:text-white/50 bg-gray-100 dark:bg-white/[0.05] hover:bg-gray-200 dark:hover:bg-white/[0.08] transition-all"
+              className="px-4 py-2.5 rounded-xl text-sm text-[var(--fs-ink-faint)] bg-gray-100 dark:bg-white/[0.05] hover:bg-gray-200 dark:hover:bg-white/[0.08] transition-all"
             >
               Back
             </button>

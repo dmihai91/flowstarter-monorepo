@@ -118,7 +118,7 @@ export function MockEditorPreview({
           <div className="flex flex-col sm:flex-row sm:divide-x divide-gray-200/30 dark:divide-white/5 h-[900px] sm:h-[760px] lg:h-[860px]">
             {/* Chat Panel */}
             <div className="w-full sm:w-1/2 p-3 sm:p-4 flex flex-col border-b sm:border-b-0 h-[420px] sm:h-auto border-gray-200/30 dark:border-white/5">
-              <div className="text-xs tracking-[0.12em] uppercase font-bold mb-2 sm:mb-3 bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
+              <div className="text-xs tracking-[0.12em] uppercase font-bold mb-2 sm:mb-3 bg-gradient-to-r from-[var(--fs-accent)] to-blue-500 bg-clip-text text-transparent">
                 {t('mockEditor.chatTitle')}
               </div>
 
@@ -127,13 +127,13 @@ export function MockEditorPreview({
                 {messages.map((msg, i) =>
                   msg.role === 'user' ? (
                     <div key={i} className="flex justify-end">
-                      <div className="max-w-[95%] px-3 py-2 rounded-xl rounded-tr-sm bg-gradient-to-r from-[var(--purple)] to-blue-500 text-white text-sm shadow-sm">
+                      <div className="max-w-[95%] px-3 py-2 rounded-xl rounded-tr-sm bg-gradient-to-r from-[var(--fs-accent)] to-blue-500 text-white text-sm shadow-sm">
                         {msg.text}
                       </div>
                     </div>
                   ) : (
                     <div key={i} className="flex gap-2.5 items-start">
-                      <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center flex-shrink-0 shadow-sm mt-2">
+                      <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--fs-accent)] to-blue-500 flex items-center justify-center flex-shrink-0 shadow-sm mt-2">
                         <svg
                           className="w-3 h-3 text-white"
                           viewBox="0 0 16 16"
@@ -143,7 +143,7 @@ export function MockEditorPreview({
                         </svg>
                       </div>
                       <div className="flex-1 px-3 py-2 rounded-xl rounded-tl-sm bg-white/55 dark:bg-white/[0.05] border border-white/50 dark:border-white/10">
-                        <div className="text-[0.625rem] font-bold text-[var(--purple)] uppercase tracking-wider mb-1">
+                        <div className="text-[0.625rem] font-bold text-[var(--fs-accent)] uppercase tracking-wider mb-1">
                           {t('mockEditor.assistantName')}
                         </div>
                         <div className="text-sm text-gray-600 dark:text-white/70">
@@ -158,14 +158,14 @@ export function MockEditorPreview({
                     <div className="rounded-2xl rounded-tl-sm bg-white dark:bg-white/10 px-3.5 py-2.5 shadow-sm ring-1 ring-black/5 dark:ring-white/10 max-w-[85%]">
                       <div className="text-sm text-gray-600 dark:text-white/70">
                         {typingText}
-                        <span className="inline-block w-0.5 h-3.5 bg-purple-500 ml-0.5 animate-pulse align-middle" />
+                        <span className="inline-block w-0.5 h-3.5 bg-[var(--fs-accent)] ml-0.5 animate-pulse align-middle" />
                       </div>
                     </div>
                   </div>
                 ) : (
                   isTyping && (
                     <div className="flex gap-2">
-                      <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--purple)] to-blue-500 inline-flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[var(--fs-accent)] to-blue-500 inline-flex items-center justify-center flex-shrink-0 shadow-sm">
                         <svg
                           className="w-3 h-3 text-white"
                           viewBox="0 0 16 16"
@@ -212,7 +212,7 @@ export function MockEditorPreview({
                     onClick={() => handleSend()}
                     disabled={!inputValue.trim() || isTyping}
                     aria-label="Send message"
-                    className="w-8 h-8 rounded-lg bg-gradient-to-r from-[var(--purple)] to-blue-500 text-white flex items-center justify-center disabled:opacity-30 transition-all hover:shadow-lg hover:scale-105 active:scale-95"
+                    className="w-8 h-8 rounded-lg bg-gradient-to-r from-[var(--fs-accent)] to-blue-500 text-white flex items-center justify-center disabled:opacity-30 transition-all hover:shadow-lg hover:scale-105 active:scale-95"
                   >
                     <svg
                       className="w-4 h-4"
@@ -269,7 +269,7 @@ export function MockEditorPreview({
                   <div
                     className={`w-5 h-5 rounded-md flex items-center justify-center text-[0.5rem] font-bold text-white transition-colors duration-500 ${
                       mockSite.primaryColor === 'violet'
-                        ? 'bg-[var(--purple)]/50'
+                        ? 'bg-[var(--fs-accent)]/50'
                         : 'bg-emerald-500'
                     }`}
                   >
@@ -287,7 +287,7 @@ export function MockEditorPreview({
                     <span
                       className={`font-medium transition-all duration-500 ${
                         mockSite.primaryColor === 'violet'
-                          ? 'text-[var(--purple)]'
+                          ? 'text-[var(--fs-accent)]'
                           : 'text-emerald-500'
                       }`}
                     >
@@ -307,7 +307,7 @@ export function MockEditorPreview({
                     <div
                       className={`h-3 w-20 rounded mb-2 transition-colors duration-500 ${
                         mockSite.primaryColor === 'violet'
-                          ? 'bg-[var(--purple)]/50'
+                          ? 'bg-[var(--fs-accent)]/50'
                           : 'bg-emerald-500'
                       }`}
                     />
@@ -316,7 +316,7 @@ export function MockEditorPreview({
                     <div
                       className={`h-5 w-16 rounded-full text-[0.5625rem] text-white flex items-center justify-center transition-colors duration-500 ${
                         mockSite.primaryColor === 'violet'
-                          ? 'bg-[var(--purple)]/50'
+                          ? 'bg-[var(--fs-accent)]/50'
                           : 'bg-emerald-500'
                       }`}
                     >
@@ -361,7 +361,7 @@ export function MockEditorPreview({
                   <div
                     className={`h-5 w-14 rounded text-[0.5625rem] text-white flex items-center justify-center transition-colors duration-500 ${
                       mockSite.primaryColor === 'violet'
-                        ? 'bg-[var(--purple)]/50'
+                        ? 'bg-[var(--fs-accent)]/50'
                         : 'bg-emerald-500'
                     }`}
                   >
@@ -386,7 +386,7 @@ export function MockEditorPreview({
                       <div
                         className={`h-1.5 w-6 mx-auto rounded transition-colors duration-500 ${
                           mockSite.primaryColor === 'violet'
-                            ? 'bg-[var(--purple)]/40'
+                            ? 'bg-[var(--fs-accent)]/40'
                             : 'bg-emerald-400'
                         }`}
                       />
@@ -425,7 +425,7 @@ export function MockEditorPreview({
                               key={s}
                               className={`text-[0.5625rem] ${
                                 mockSite.primaryColor === 'violet'
-                                  ? 'text-[var(--purple)]'
+                                  ? 'text-[var(--fs-accent)]'
                                   : 'text-emerald-400'
                               }`}
                             >
@@ -459,7 +459,7 @@ export function MockEditorPreview({
                       <div
                         className={`text-sm font-bold transition-colors duration-500 ${
                           mockSite.primaryColor === 'violet'
-                            ? 'text-[var(--purple)]'
+                            ? 'text-[var(--fs-accent)]'
                             : 'text-emerald-600'
                         }`}
                       >
@@ -471,7 +471,7 @@ export function MockEditorPreview({
                     <div
                       className={`flex-1 p-2 rounded-lg border-2 transition-colors duration-500 ${
                         mockSite.primaryColor === 'violet'
-                          ? 'bg-[var(--purple)]/5 dark:bg-[var(--purple)]/20 border-[var(--purple)]/30 dark:border-[var(--purple)]'
+                          ? 'bg-[var(--fs-accent)]/5 dark:bg-[var(--fs-accent)]/20 border-[var(--fs-accent)]/30 dark:border-[var(--fs-accent)]'
                           : 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-300 dark:border-emerald-700'
                       }`}
                     >
@@ -482,7 +482,7 @@ export function MockEditorPreview({
                         <div
                           className={`text-[0.5rem] px-1 py-0.5 rounded-full text-white transition-colors duration-500 ${
                             mockSite.primaryColor === 'violet'
-                              ? 'bg-[var(--purple)]/50'
+                              ? 'bg-[var(--fs-accent)]/50'
                               : 'bg-emerald-500'
                           }`}
                         >
@@ -492,7 +492,7 @@ export function MockEditorPreview({
                       <div
                         className={`text-sm font-bold transition-colors duration-500 ${
                           mockSite.primaryColor === 'violet'
-                            ? 'text-[var(--purple)]'
+                            ? 'text-[var(--fs-accent)]'
                             : 'text-emerald-600'
                         }`}
                       >
@@ -574,7 +574,7 @@ export function MockEditorPreview({
                       <div
                         className={`h-5 px-2 rounded text-[0.5625rem] text-white flex items-center transition-colors duration-500 ${
                           mockSite.primaryColor === 'violet'
-                            ? 'bg-[var(--purple)]/50'
+                            ? 'bg-[var(--fs-accent)]/50'
                             : 'bg-emerald-500'
                         }`}
                       >
@@ -603,27 +603,6 @@ export function MockEditorPreview({
             </div>
           </div>
         </div>
-
-        {/* Floating elements - hidden on small mobile */}
-        <div
-          className="absolute -bottom-3 -right-3 sm:-bottom-4 sm:-right-4 w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--purple)] to-blue-500 shadow-xl hidden xs:flex flex-col items-center justify-center animate-float text-white"
-          style={{ animationDelay: '1s' }}
-        >
-          <div className="text-base sm:text-lg lg:text-2xl font-bold">
-            {t('mockEditor.floatingDraft')}
-          </div>
-          <div className="text-[0.5rem] sm:text-[0.625rem] lg:text-xs text-white/70">
-            {t('mockEditor.floatingTime')}
-          </div>
-        </div>
-
-        <div
-          className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 lg:-top-6 lg:-left-6 w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 rounded-lg sm:rounded-xl lg:rounded-2xl bg-white/55 dark:bg-white/[0.08] backdrop-blur-xl border border-white/50 dark:border-white/10 hidden xs:flex items-center justify-center animate-float shadow-xl"
-          style={{ animationDelay: '0s' }}
-        >
-          <div className="text-base sm:text-lg lg:text-2xl font-bold bg-gradient-to-r from-[var(--purple)] to-blue-500 bg-clip-text text-transparent">
-            98
-          </div>
         </div>
       </div>
     </>

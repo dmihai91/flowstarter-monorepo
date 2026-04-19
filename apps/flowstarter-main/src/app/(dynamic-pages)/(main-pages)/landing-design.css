@@ -3,7 +3,7 @@
  * Light is default; dark via ancestor .dark class (Tailwind class mode).
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+/* Fonts loaded via layout.tsx (@fontsource-variable/onest, @fontsource/roboto-mono) */
 
 /* Tokens-only variant — applies CSS vars without forcing bg/color/font on ancestor.
    Use on elements outside the main section flow (e.g. sticky header) that still need .ls-cta, .ls-link, etc. */
@@ -27,9 +27,9 @@
     0 -1px 0 rgba(0, 0, 0, 0.4) inset,
     0 10px 28px rgba(78, 94, 218, 0.28),
     0 2px 8px rgba(18, 10, 34, 0.14);
-  --ls-serif: 'Onest', 'Plus Jakarta Sans', system-ui, sans-serif;
-  --ls-sans: 'Onest', 'Plus Jakarta Sans', system-ui, sans-serif;
-  --ls-mono: 'JetBrains Mono', 'Roboto Mono', ui-monospace, monospace;
+  --ls-serif: var(--fs-font-sans);
+  --ls-sans:  var(--fs-font-sans);
+  --ls-mono:  var(--fs-font-mono);
 }
 .dark .ls-theme {
   --ls-bg: #040308;
@@ -84,9 +84,9 @@
   --ls-orb-opacity: 0.55;
   --ls-streak-color: rgba(18, 10, 34, 0.05);
 
-  --ls-serif: 'Onest', 'Plus Jakarta Sans', system-ui, sans-serif;
-  --ls-sans: 'Onest', 'Plus Jakarta Sans', system-ui, sans-serif;
-  --ls-mono: 'JetBrains Mono', 'Roboto Mono', ui-monospace, monospace;
+  --ls-serif: var(--fs-font-sans);
+  --ls-sans:  var(--fs-font-sans);
+  --ls-mono:  var(--fs-font-mono);
 
   background: var(--ls-bg);
   color: var(--ls-ink);
@@ -150,26 +150,26 @@
   pointer-events: none;
   background:
     radial-gradient(
-      60% 55% at var(--ls-mx, 50%) var(--ls-my, 50%),
-      rgba(78, 94, 218, 0.1) 0%,
-      rgba(78, 94, 218, 0) 55%
+      75% 65% at var(--ls-mx, 50%) var(--ls-my, 50%),
+      rgba(78, 94, 218, 0.07) 0%,
+      rgba(78, 94, 218, 0) 70%
     ),
-    radial-gradient(42% 38% at 82% 18%, rgba(180, 83, 9, 0.08) 0%, rgba(180, 83, 9, 0) 60%),
-    radial-gradient(55% 50% at 10% 85%, rgba(78, 94, 218, 0.08) 0%, rgba(78, 94, 218, 0) 65%),
-    radial-gradient(120% 80% at 50% 0%, rgba(255, 251, 244, 1) 0%, rgba(251, 247, 239, 1) 65%);
+    radial-gradient(55% 48% at 82% 18%, rgba(180, 83, 9, 0.05) 0%, rgba(180, 83, 9, 0) 75%),
+    radial-gradient(65% 58% at 10% 85%, rgba(78, 94, 218, 0.06) 0%, rgba(78, 94, 218, 0) 80%),
+    radial-gradient(130% 90% at 50% 0%, rgba(255, 251, 244, 1) 0%, rgba(251, 247, 239, 1) 80%);
   filter: saturate(110%);
   transition: background 400ms ease-out;
 }
 .dark .ls-mesh {
   background:
     radial-gradient(
-      60% 55% at var(--ls-mx, 50%) var(--ls-my, 50%),
-      rgba(78, 94, 218, 0.14) 0%,
-      rgba(78, 94, 218, 0) 55%
+      75% 65% at var(--ls-mx, 50%) var(--ls-my, 50%),
+      rgba(78, 94, 218, 0.1) 0%,
+      rgba(78, 94, 218, 0) 70%
     ),
-    radial-gradient(42% 38% at 82% 18%, rgba(255, 178, 122, 0.07) 0%, rgba(255, 178, 122, 0) 60%),
-    radial-gradient(55% 50% at 10% 85%, rgba(130, 148, 255, 0.12) 0%, rgba(130, 148, 255, 0) 65%),
-    radial-gradient(120% 85% at 50% 0%, rgba(10, 7, 22, 1) 0%, rgba(3, 2, 6, 1) 70%);
+    radial-gradient(55% 48% at 82% 18%, rgba(255, 178, 122, 0.05) 0%, rgba(255, 178, 122, 0) 75%),
+    radial-gradient(65% 58% at 10% 85%, rgba(130, 148, 255, 0.08) 0%, rgba(130, 148, 255, 0) 80%),
+    radial-gradient(130% 95% at 50% 0%, rgba(10, 7, 22, 1) 0%, rgba(3, 2, 6, 1) 85%);
 }
 
 .ls-grain {
@@ -228,7 +228,7 @@
 /* Typography */
 .ls-eyebrow {
   font-family: var(--ls-mono);
-  font-size: 11px;
+  font-size: 0.69rem;
   font-weight: 500;
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -308,7 +308,7 @@
 .ls-cta {
   font-family: var(--ls-sans);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   height: 52px;
   padding-inline: 1.65rem;
   border-radius: 14px;
@@ -665,16 +665,21 @@
 
 /* Accessibility: respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
+  .ls-scope *,
+  .ls-section * {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+  }
   .ls-flourish,
   .ls-orb,
   .ls-streak,
   .ls-bar-cell.on::after,
-  .ls-caret,
-  [style*="ls-reveal"] {
+  .ls-caret {
     animation: none !important;
   }
   @keyframes ls-reveal {
-    from { opacity: 1; transform: translateY(0); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 1; transform: none; }
+    to   { opacity: 1; transform: none; }
   }
 }

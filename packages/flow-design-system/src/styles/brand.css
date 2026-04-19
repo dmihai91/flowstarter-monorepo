@@ -1,69 +1,421 @@
-/* Flowstarter Brand Colors - Shared across all apps */
+/**
+ * Flowstarter Design System — brand.css
+ * Single source of truth for all --fs-* design tokens.
+ *
+ * Structure:
+ *   1. Typography
+ *   2. Color primitives (raw values)
+ *   3. Semantic tokens — light (default)
+ *   4. Semantic tokens — dark (.dark override)
+ *   5. Spacing scale
+ *   6. Radii scale
+ *   7. Shadow scale
+ *   8. Motion tokens
+ *   9. Density tokens (comfortable / compact)
+ *  10. Backward-compat aliases (old token names → new --fs-* tokens)
+ */
+
+/* ─────────────────────────────────────────────
+   1. TYPOGRAPHY
+   ───────────────────────────────────────────── */
 :root {
-  /* Primary brand color */
-  --purple: hsl(241, 93%, 61%);
-  --purple-rgb: 77, 93, 217;
+  /* Faces */
+  --fs-font-sans:  'Onest Variable', 'Onest', 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --fs-font-mono:  'JetBrains Mono', 'Roboto Mono', ui-monospace, monospace;
 
-  /* Brand gradient */
-  --brand-gradient: linear-gradient(135deg, #8B5CF6 0%, #06B6D4 100%);
-  --brand-gradient-hover: linear-gradient(135deg, #7C3AED 0%, #0891B2 100%);
+  /* Type scale — fluid where viewport-sensitive, fixed elsewhere */
+  --fs-text-display-2xl: clamp(3rem, 7.2vw, 6.4rem);   /* gradient flourish headline */
+  --fs-text-display-xl:  clamp(2.8rem, 6.8vw, 6rem);   /* primary display */
+  --fs-text-display-lg:  clamp(2rem, 3.6vw, 3.2rem);   /* section heading */
+  --fs-text-display-md:  clamp(1.35rem, 2.3vw, 1.85rem); /* sub-heading large */
+  --fs-text-heading:     1.5rem;
+  --fs-text-subheading:  1.15rem;
+  --fs-text-body-lg:     1.1rem;
+  --fs-text-body:        1rem;
+  --fs-text-body-sm:     0.9rem;
+  --fs-text-caption:     0.8rem;
+  --fs-text-overline:    0.68rem;   /* uppercase + tracking */
+  --fs-text-label:       0.65rem;   /* uppercase + tracking */
 
-  /* Primary colors */
-  --primary: hsl(241, 93%, 61%);
-  --primary-light: hsl(241, 93%, 61%, 0.8);
-  --primary-lighter: hsl(241, 93%, 61%, 0.6);
-  --primary-lightest: hsl(241, 93%, 61%, 0.1);
+  /* Weights */
+  --fs-weight-light:     300;
+  --fs-weight-regular:   400;
+  --fs-weight-medium:    500;
+  --fs-weight-semibold:  600;
+  --fs-weight-bold:      700;
 
+  /* Line heights */
+  --fs-lh-display:  0.96;
+  --fs-lh-heading:  1.1;
+  --fs-lh-tight:    1.25;
+  --fs-lh-snug:     1.35;
+  --fs-lh-normal:   1.55;
+  --fs-lh-relaxed:  1.6;
+  --fs-lh-loose:    1.7;
 
-  /* Full purple scale */
-  --purple-primary: hsl(241 93% 61%);
-  --purple-primary-light: hsl(241 93% 61% / 0.8);
-  --purple-primary-lighter: hsl(241 93% 61% / 0.6);
-  --purple-primary-lightest: hsl(241 93% 61% / 0.1);
-  --purple-primary-dark: hsl(241 92% 57%);
-
-  /* Gradient stops */
-  --flow-start: #4D5DD9;
-  --flow-mid: #7C3AED;
-  --flow-end: #06B6D4;
-
-  /* Card surfaces */
-  --card-bg: rgba(255, 255, 255, 0.50);
-  --card-border: rgba(229, 231, 235, 0.40);
-  --glass-surface: #ffffff;
-  /* Accent */
-  --accent-blue: #3B82F6;
-  --accent-cyan: #06B6D4;
-
-  /* Semantic tokens - light mode defaults */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f4f4f5;
-  --bg-tertiary: #e4e4e7;
-  --bg-elevated: #ffffff;
-  --text-primary: #09090b;
-  --text-secondary: #71717a;
-  --text-tertiary: #a1a1aa;
-  --border-default: #e4e4e7;
-  --border-light: #f4f4f5;
+  /* Letter spacing */
+  --fs-ls-display:   -0.025em;
+  --fs-ls-heading:   -0.02em;
+  --fs-ls-body:      -0.005em;
+  --fs-ls-overline:   0.2em;
+  --fs-ls-label:      0.22em;
 }
 
-/* Dark mode */
-[data-theme='dark'] {
-  --purple: hsl(241, 96%, 63%);
+/* ─────────────────────────────────────────────
+   2. COLOR PRIMITIVES
+   Raw values — don't use directly in components.
+   Use semantic tokens below instead.
+   ───────────────────────────────────────────── */
+:root {
+  /* Accent hue — hsl(233,*,*): electric indigo-blue */
+  --fs-hue-accent: 233;
 
-  --purple-primary: hsl(241, 96%, 63%);
-  --purple-primary-light: hsl(241 96% 63% / 0.8);
-  --purple-primary-lightest: hsl(241 96% 63% / 0.12);
-  --card-bg: rgba(255, 255, 255, 0.03);
-  --card-border: rgba(255, 255, 255, 0.08);
-  --glass-surface: rgba(18, 18, 22, 0.95);
-  --bg-primary: #09090b;
-  --bg-secondary: #18181b;
-  --bg-tertiary: #27272a;
-  --bg-elevated: #1c1c1f;
-  --text-primary: #fafafa;
-  --text-secondary: #a1a1aa;
-  --text-tertiary: #71717a;
-  --border-default: #27272a;
-  --border-light: #3f3f46;
+  /* Backgrounds */
+  --fs-primitive-dark-base:     #040308;
+  --fs-primitive-dark-raised:   #0a0714;
+  --fs-primitive-dark-elevated: #100e1c;
+  --fs-primitive-dark-overlay:  #1a172a;
+
+  --fs-primitive-light-base:     #fbf7ef;
+  --fs-primitive-light-raised:   #f3ecdb;
+  --fs-primitive-light-elevated: #ffffff;
+  --fs-primitive-light-overlay:  #ffffff;
+
+  /* Ink */
+  --fs-primitive-ink-dark:   #120a22;
+  --fs-primitive-ink-light:  #f4eee4;
+
+  /* Accent */
+  --fs-primitive-accent-mid:   hsl(233, 65%, 58%);
+  --fs-primitive-accent-dim:   hsl(233, 65%, 50%);
+  --fs-primitive-accent-hot:   hsl(233, 70%, 40%);
+  --fs-primitive-accent-pale:  hsl(233, 70%, 74%);
+  --fs-primitive-accent-warm:  #b45309;
+  --fs-primitive-accent-warm-dark: #ffb27a;
+
+  /* Semantic fixed */
+  --fs-primitive-success: hsl(142, 71%, 45%);
+  --fs-primitive-success-dark: hsl(142, 69%, 58%);
+  --fs-primitive-warning: hsl(38, 92%, 50%);
+  --fs-primitive-warning-dark: hsl(38, 92%, 62%);
+  --fs-primitive-error:   hsl(0, 84%, 60%);
+  --fs-primitive-error-dark: hsl(0, 84%, 68%);
+  --fs-primitive-info:    hsl(211, 93%, 61%);
+  --fs-primitive-info-dark: hsl(211, 93%, 72%);
+}
+
+/* ─────────────────────────────────────────────
+   3. SEMANTIC TOKENS — LIGHT (default)
+   ───────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --fs-bg-base:     var(--fs-primitive-light-base);
+  --fs-bg-raised:   var(--fs-primitive-light-raised);
+  --fs-bg-elevated: var(--fs-primitive-light-elevated);
+  --fs-bg-overlay:  var(--fs-primitive-light-overlay);
+
+  /* Glass surfaces */
+  --fs-glass-bg:    rgba(255, 255, 255, 0.55);
+  --fs-glass-edge:  rgba(18, 10, 34, 0.10);
+
+  /* Ink / text */
+  --fs-ink:          var(--fs-primitive-ink-dark);
+  --fs-ink-dim:      rgba(18, 10, 34, 0.62);
+  --fs-ink-faint:    rgba(18, 10, 34, 0.36);
+  --fs-ink-disabled: rgba(18, 10, 34, 0.20);
+
+  /* Accent */
+  --fs-accent:       var(--fs-primitive-accent-dim);
+  --fs-accent-hot:   var(--fs-primitive-accent-hot);
+  --fs-accent-warm:  var(--fs-primitive-accent-warm);
+  --fs-accent-bg:    color-mix(in oklab, var(--fs-accent) 8%, transparent);
+  --fs-accent-ring:  color-mix(in oklab, var(--fs-accent) 40%, transparent);
+
+  /* CTA button */
+  --fs-cta-bg: linear-gradient(135deg, #0f1a3d 0%, #1e2d6b 50%, #0f1a3d 100%);
+  --fs-cta-fg: #fbf7ef;
+  --fs-cta-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.40) inset,
+    0 10px 28px rgba(78, 94, 218, 0.28),
+    0 2px 8px rgba(18, 10, 34, 0.14);
+
+  /* Card shadow */
+  --fs-card-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1px 0 rgba(18, 10, 34, 0.04),
+    0 24px 60px rgba(78, 94, 218, 0.10),
+    0 8px 22px rgba(18, 10, 34, 0.06);
+
+  /* Borders / rules */
+  --fs-rule:        rgba(18, 10, 34, 0.10);
+  --fs-rule-strong: rgba(18, 10, 34, 0.18);
+  --fs-rule-accent: color-mix(in oklab, var(--fs-accent) 30%, transparent);
+
+  /* Semantic */
+  --fs-success: var(--fs-primitive-success);
+  --fs-warning: var(--fs-primitive-warning);
+  --fs-error:   var(--fs-primitive-error);
+  --fs-info:    var(--fs-primitive-info);
+
+  /* Atmospheric (orb blending) */
+  --fs-orb-blend:   multiply;
+  --fs-orb-opacity: 0.55;
+  --fs-grain-blend: multiply;
+  --fs-grain-opacity: 0.055;
+  --fs-streak-color: rgba(18, 10, 34, 0.05);
+}
+
+/* ─────────────────────────────────────────────
+   4. SEMANTIC TOKENS — DARK (.dark override)
+   ───────────────────────────────────────────── */
+.dark {
+  /* Backgrounds */
+  --fs-bg-base:     var(--fs-primitive-dark-base);
+  --fs-bg-raised:   var(--fs-primitive-dark-raised);
+  --fs-bg-elevated: var(--fs-primitive-dark-elevated);
+  --fs-bg-overlay:  var(--fs-primitive-dark-overlay);
+
+  /* Glass surfaces */
+  --fs-glass-bg:    rgba(255, 255, 255, 0.035);
+  --fs-glass-edge:  rgba(255, 255, 255, 0.08);
+
+  /* Ink / text */
+  --fs-ink:          var(--fs-primitive-ink-light);
+  --fs-ink-dim:      rgba(244, 238, 228, 0.58);
+  --fs-ink-faint:    rgba(244, 238, 228, 0.32);
+  --fs-ink-disabled: rgba(244, 238, 228, 0.18);
+
+  /* Accent */
+  --fs-accent:       var(--fs-primitive-accent-pale);
+  --fs-accent-hot:   var(--fs-primitive-accent-mid);
+  --fs-accent-warm:  var(--fs-primitive-accent-warm-dark);
+  --fs-accent-bg:    color-mix(in oklab, var(--fs-accent) 12%, transparent);
+  --fs-accent-ring:  color-mix(in oklab, var(--fs-accent) 40%, transparent);
+
+  /* CTA button */
+  --fs-cta-bg: linear-gradient(135deg, hsl(233,65%,44%) 0%, hsl(233,70%,58%) 50%, hsl(233,65%,44%) 100%);
+  --fs-cta-fg: #ffffff;
+  --fs-cta-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.30),
+    0 0 0 1px rgba(78, 94, 218, 0.40),
+    0 8px 24px rgba(78, 94, 218, 0.45),
+    0 16px 48px rgba(78, 94, 218, 0.20);
+
+  /* Card shadow */
+  --fs-card-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.40),
+    0 30px 80px rgba(0, 0, 0, 0.50),
+    0 8px 24px rgba(78, 94, 218, 0.16);
+
+  /* Borders / rules */
+  --fs-rule:        rgba(244, 238, 228, 0.12);
+  --fs-rule-strong: rgba(244, 238, 228, 0.20);
+  --fs-rule-accent: color-mix(in oklab, var(--fs-accent) 30%, transparent);
+
+  /* Semantic */
+  --fs-success: var(--fs-primitive-success-dark);
+  --fs-warning: var(--fs-primitive-warning-dark);
+  --fs-error:   var(--fs-primitive-error-dark);
+  --fs-info:    var(--fs-primitive-info-dark);
+
+  /* Atmospheric */
+  --fs-orb-blend:   screen;
+  --fs-orb-opacity: 1;
+  --fs-grain-blend: overlay;
+  --fs-grain-opacity: 0.07;
+  --fs-streak-color: rgba(244, 238, 228, 0.045);
+}
+
+/* ─────────────────────────────────────────────
+   5. SPACING SCALE (4px base unit)
+   ───────────────────────────────────────────── */
+:root {
+  --fs-space-1:   4px;
+  --fs-space-2:   8px;
+  --fs-space-3:  12px;
+  --fs-space-4:  16px;
+  --fs-space-5:  20px;
+  --fs-space-6:  24px;
+  --fs-space-8:  32px;
+  --fs-space-10: 40px;
+  --fs-space-12: 48px;
+  --fs-space-16: 64px;
+  --fs-space-20: 80px;
+  --fs-space-24: 96px;
+}
+
+/* ─────────────────────────────────────────────
+   6. RADII SCALE
+   ───────────────────────────────────────────── */
+:root {
+  --fs-radius-xs:   6px;
+  --fs-radius-sm:   8px;
+  --fs-radius-md:  12px;
+  --fs-radius-lg:  16px;
+  --fs-radius-xl:  20px;
+  --fs-radius-2xl: 24px;
+  --fs-radius-full: 9999px;
+}
+
+/* ─────────────────────────────────────────────
+   7. SHADOW SCALE
+   ───────────────────────────────────────────── */
+:root {
+  --fs-shadow-xs:  0 1px 2px rgba(18, 10, 34, 0.06);
+  --fs-shadow-sm:  0 2px 6px rgba(18, 10, 34, 0.08), 0 1px 2px rgba(18, 10, 34, 0.04);
+  --fs-shadow-md:  0 8px 24px rgba(18, 10, 34, 0.08), 0 2px 6px rgba(18, 10, 34, 0.04);
+  --fs-shadow-lg:  0 24px 60px rgba(78, 94, 218, 0.10), 0 8px 22px rgba(18, 10, 34, 0.06);
+  --fs-shadow-xl:  0 40px 100px rgba(18, 10, 34, 0.12), 0 16px 40px rgba(78, 94, 218, 0.08);
+}
+.dark {
+  --fs-shadow-xs:  0 1px 2px rgba(0, 0, 0, 0.30);
+  --fs-shadow-sm:  0 2px 6px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.20);
+  --fs-shadow-md:  0 8px 24px rgba(0, 0, 0, 0.40), 0 2px 6px rgba(0, 0, 0, 0.25);
+  --fs-shadow-lg:  0 30px 80px rgba(0, 0, 0, 0.50), 0 8px 24px rgba(78, 94, 218, 0.16);
+  --fs-shadow-xl:  0 40px 120px rgba(0, 0, 0, 0.60), 0 16px 48px rgba(78, 94, 218, 0.20);
+}
+
+/* ─────────────────────────────────────────────
+   8. MOTION TOKENS
+   ───────────────────────────────────────────── */
+:root {
+  /* Easing */
+  --fs-ease-spring:  cubic-bezier(0.19, 1, 0.22, 1);  /* signature — most interactions */
+  --fs-ease-out:     cubic-bezier(0.16, 1, 0.30, 1);  /* modals, panels */
+  --fs-ease-in-out:  ease-in-out;                      /* ambient loops */
+
+  /* Durations */
+  --fs-dur-micro:    240ms;   /* hover, active, focus */
+  --fs-dur-standard: 340ms;   /* panels, cards, dropdowns */
+  --fs-dur-reveal:   880ms;   /* scroll reveals, hero entrances */
+  --fs-dur-ambient:  9s;      /* background atmospherics */
+}
+
+/* Accessibility — collapse all animation for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --fs-dur-micro:    1ms;
+    --fs-dur-standard: 1ms;
+    --fs-dur-reveal:   1ms;
+    --fs-dur-ambient:  1ms;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   9. DENSITY TOKENS
+   Apply data-density="comfortable|compact" on
+   a wrapper element (body, layout shell, etc.)
+   ───────────────────────────────────────────── */
+:root,
+[data-density="comfortable"] {
+  --fs-btn-h:      52px;
+  --fs-btn-px:     1.65rem;
+  --fs-btn-fs:     1.05rem;
+  --fs-btn-radius: var(--fs-radius-md);
+  --fs-input-h:    48px;
+  --fs-input-px:   1rem;
+  --fs-card-p:     2rem 1.75rem;
+}
+
+[data-density="compact"] {
+  --fs-btn-h:      40px;
+  --fs-btn-px:     1.15rem;
+  --fs-btn-fs:     0.9rem;
+  --fs-btn-radius: var(--fs-radius-sm);
+  --fs-input-h:    36px;
+  --fs-input-px:   0.75rem;
+  --fs-card-p:     1.25rem 1.25rem;
+}
+
+/* ─────────────────────────────────────────────
+   10. BACKWARD-COMPAT ALIASES
+   Old token names → new --fs-* tokens.
+   Keep until all surfaces are migrated, then remove.
+   ───────────────────────────────────────────── */
+:root {
+  /* Brand color aliases */
+  --purple:                    var(--fs-accent);
+  --purple-primary:            var(--fs-accent);
+  --purple-primary-light:      color-mix(in oklab, var(--fs-accent) 80%, transparent);
+  --purple-primary-lighter:    color-mix(in oklab, var(--fs-accent) 60%, transparent);
+  --purple-primary-lightest:   color-mix(in oklab, var(--fs-accent) 10%, transparent);
+  --purple-primary-dark:       var(--fs-accent-hot);
+  --accent-primary:            var(--fs-accent);
+  --accent-light:              color-mix(in oklab, var(--fs-accent) 80%, transparent);
+  --accent-lighter:            color-mix(in oklab, var(--fs-accent) 60%, transparent);
+  --accent-lightest:           color-mix(in oklab, var(--fs-accent) 10%, transparent);
+  --accent-dark:               var(--fs-accent-hot);
+
+  /* Secondary (blue) — unchanged, not being migrated */
+  --secondary-primary:  hsl(211, 93%, 61%);
+
+  /* Glass */
+  --glass-surface:        var(--fs-bg-elevated);
+  --glass-border-highlight: rgba(255, 255, 255, 0.95);
+  --glass-border-shadow:  rgba(0, 0, 0, 0.08);
+
+  /* Landing aliases */
+  --ls-bg:           var(--fs-bg-base);
+  --ls-bg-2:         var(--fs-bg-raised);
+  --ls-ink:          var(--fs-ink);
+  --ls-ink-dim:      var(--fs-ink-dim);
+  --ls-ink-faint:    var(--fs-ink-faint);
+  --ls-accent:       var(--fs-accent);
+  --ls-accent-hot:   var(--fs-accent-hot);
+  --ls-accent-warm:  var(--fs-accent-warm);
+  --ls-rule:         var(--fs-rule);
+  --ls-rule-strong:  var(--fs-rule-strong);
+  --ls-glass-bg:     var(--fs-glass-bg);
+  --ls-glass-edge:   var(--fs-glass-edge);
+  --ls-card-shadow:  var(--fs-card-shadow);
+  --ls-cta-bg:       var(--fs-cta-bg);
+  --ls-cta-fg:       var(--fs-cta-fg);
+  --ls-cta-shadow:   var(--fs-cta-shadow);
+  --ls-grain-blend:  var(--fs-grain-blend);
+  --ls-grain-opacity: var(--fs-grain-opacity);
+  --ls-orb-blend:    var(--fs-orb-blend);
+  --ls-orb-opacity:  var(--fs-orb-opacity);
+  --ls-streak-color: var(--fs-streak-color);
+  --ls-serif:        var(--fs-font-sans);
+  --ls-sans:         var(--fs-font-sans);
+  --ls-mono:         var(--fs-font-mono);
+
+  /* Figma token aliases */
+  --ui-accent-purple:       var(--fs-accent);
+  --ui-accent-purple-light: color-mix(in oklab, var(--fs-accent) 74%, transparent);
+  --ui-accent-purple-bg:    var(--fs-accent-bg);
+  --status-success: var(--fs-success);
+  --status-warning: var(--fs-warning);
+  --status-error:   var(--fs-error);
+}
+
+/* Dark mode alias overrides */
+.dark {
+  --glass-border-highlight: rgba(255, 255, 255, 0.12);
+  --glass-border-shadow:    rgba(0, 0, 0, 0.40);
+}
+
+/* ─────────────────────────────────────────────
+   LEGACY UTILITIES (kept from original brand.css)
+   ───────────────────────────────────────────── */
+.flow-glass {
+  background: var(--fs-glass-bg);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid var(--fs-glass-edge);
+}
+
+.flow-gradient-text {
+  background: linear-gradient(135deg, var(--fs-accent) 0%, hsl(211, 93%, 61%) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.flow-focus-ring:focus-visible {
+  outline: 2px solid var(--fs-accent);
+  outline-offset: 2px;
 }

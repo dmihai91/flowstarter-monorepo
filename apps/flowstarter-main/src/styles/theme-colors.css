@@ -1,193 +1,137 @@
+/**
+ * theme-colors.css
+ * Consumes --fs-* tokens from brand.css (via flow-design-system).
+ * Defines Shadcn/Radix HSL vars, Figma token aliases, and app-specific
+ * surface tokens that still reference old names for compatibility.
+ *
+ * Rule: no hardcoded color values for anything already in brand.css.
+ *       Use var(--fs-*) instead.
+ */
+
+/* ── Light mode ── */
 :root {
-  --purple-primary: hsl(241 93% 61%);
-  --purple-primary-light: hsl(241 93% 61% / 0.8);
-  --purple-primary-lighter: hsl(241 93% 61% / 0.6);
-  --purple-primary-lightest: hsl(241 93% 61% / 0.1);
-  --purple-primary-dark: hsl(241 92% 57%);
+  /* Secondary (warm blue) — not part of accent unification, stays as-is */
+  --secondary-primary:  hsl(211, 93%, 61%);
+  --secondary-light:    hsl(211, 93%, 61% / 0.8);
+  --secondary-lighter:  hsl(211, 93%, 61% / 0.6);
+  --secondary-lightest: hsl(211, 93%, 61% / 0.1);
+  --secondary-dark:     hsl(213, 85%, 54%);
 
-  --accent-primary: hsl(250 93% 65%);
-  --accent-light: hsl(250 93% 65% / 0.8);
-  --accent-lighter: hsl(250 93% 65% / 0.6);
-  --accent-lightest: hsl(250 93% 65% / 0.1);
-  --accent-dark: hsl(250 92% 60%);
+  /* Glass surface — now from fs tokens (defined as alias in brand.css) */
+  --glass-shadow:
+    0 1px 3px rgba(0,0,0,0.06),
+    0 8px 24px rgba(0,0,0,0.04),
+    0 1px 0 rgba(255,255,255,1) inset,
+    -1px -1px 0 rgba(255,255,255,0.8) inset,
+    0 -1px 0 rgba(0,0,0,0.04) inset;
 
-  /* Secondary colors - warm blue to complement purple */
-  --secondary-primary: hsl(211 93% 61%);
-  --secondary-light: hsl(211 93% 61% / 0.8);
-  --secondary-lighter: hsl(211 93% 61% / 0.6);
-  --secondary-lightest: hsl(211 93% 61% / 0.1);
-  --secondary-dark: hsl(213, 85%, 54%);
+  /* Figma Design Tokens — backgrounds */
+  --ui-bg-base:         var(--fs-bg-elevated);
+  --ui-bg-subtle:       var(--fs-bg-raised);
+  --ui-bg-elevated:     var(--fs-bg-elevated);
+  --ui-bg-overlay:      rgba(58, 58, 74, 0.30);
+  --ui-bg-overlay-hover: rgba(75, 75, 94, 0.30);
+  --ui-bg-input:        rgba(51, 51, 61, 0.30);
 
-  /* Glass surface (used for modals, cards, popovers) */
-  --glass-surface: #ffffff;
-  --glass-border-highlight: rgba(255, 255, 255, 0.95);
-  --glass-border-shadow: rgba(0, 0, 0, 0.08);
-  --glass-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04), 0 1px 0 rgba(255,255,255,1) inset, -1px -1px 0 rgba(255,255,255,0.8) inset, 0 -1px 0 rgba(0,0,0,0.04) inset;
-
-  /* Figma Design Tokens - Light Mode */
-  /* Neutral backgrounds */
-  --ui-bg-base: hsl(0 0% 100%);
-  --ui-bg-subtle: hsl(0 0% 95.3%);
-  --ui-bg-elevated: hsl(210 40% 98%);
-  --ui-bg-overlay: rgba(58, 58, 74, 0.3);
-  --ui-bg-overlay-hover: rgba(75, 75, 94, 0.3);
-  --ui-bg-input: rgba(51, 51, 61, 0.3);
-
-  /* UI Borders */
-  --ui-border-base: hsl(0 0% 34.12%);
+  /* Figma Design Tokens — borders */
+  --ui-border-base:   hsl(0 0% 34.12%);
   --ui-border-strong: hsl(240 7% 40.78%);
-  --ui-border-focus: hsl(233 72% 74%);
+  --ui-border-focus:  var(--fs-accent);
 
-  /* Text colors */
-  --ui-text-primary: hsl(0 0% 100%);
-  --ui-text-secondary: hsl(240 5% 75.29%);
-  --ui-text-tertiary: hsl(240 5% 63.14%);
-  --ui-text-dark: hsl(240 17% 10.78%);
+  /* Figma Design Tokens — text */
+  --ui-text-primary:     hsl(0 0% 100%);
+  --ui-text-secondary:   hsl(240 5% 75.29%);
+  --ui-text-tertiary:    hsl(240 5% 63.14%);
+  --ui-text-dark:        hsl(240 17% 10.78%);
   --ui-text-placeholder: hsl(240 4% 64.31%);
 
-  /* Accent colors */
-  --ui-accent-purple: hsl(233 65% 58%);
-  --ui-accent-purple-light: hsl(233 72% 74%);
-  --ui-accent-purple-bg: rgba(193, 200, 255, 0.2);
-  --ui-accent-green: hsl(119 100% 89.41%);
+  /* Figma Design Tokens — accents (consumed from brand.css aliases) */
+  --ui-accent-green:    hsl(119, 100%, 89.41%);
   --ui-accent-green-bg: rgba(200, 255, 199, 0.2);
-  --ui-accent-orange: hsl(23 93% 59.41%);
-  --ui-accent-blue: hsl(211 93% 61%);
+  --ui-accent-orange:   hsl(23, 93%, 59.41%);
+  --ui-accent-blue:     var(--secondary-primary);
 
-  /* Status colors */
-  --status-success: hsl(119 100% 89.41%);
-  --status-warning: hsl(23 93% 59.41%);
-  --status-error: hsl(0 84% 60%);
+  /* Landing-specific tokens — now pointing at fs layer */
+  --landing-bg:              var(--fs-bg-base);
+  --landing-bg-tint:         var(--fs-accent-bg);
+  --landing-card-bg:         var(--fs-glass-bg);
+  --landing-card-border:     var(--fs-glass-edge);
+  --landing-glow:            rgba(96, 165, 250, 0.05);
+  --landing-text-accent:     var(--fs-accent);
+  --landing-btn-from:        var(--fs-accent);
+  --landing-btn-via:         var(--fs-accent);
+  --landing-btn-hover-from:  var(--fs-accent-hot);
+  --landing-btn-hover-via:   hsl(280, 70%, 40%);
 
-  /* ── Landing page tokens ── */
-  /* Page backgrounds */
-  --landing-bg: #fafafa;
-  --landing-bg-tint: rgba(124, 58, 237, 0.025);
-  --landing-dark-surface: #080810;
-  --landing-dark-surface-tint: rgba(124, 58, 237, 0.04);
+  /* Hero washes — light */
+  --hero-wash-from: var(--fs-bg-elevated);
+  --hero-wash-via:  var(--fs-bg-raised);
+  --hero-wash-to:   var(--fs-bg-base);
 
-  /* Hero gradient — base wash */
-  --hero-wash-from: #ffffff;
-  --hero-wash-via: #f5f3ff;
-  --hero-wash-to: #eef2ff;
-  /* Hero gradient — glow orbs (light mode: muted, professional) */
-  --hero-glow-primary: var(--purple);
-  --hero-glow-secondary: #4338ca;
-  --hero-glow-accent: #06B6D4;
-  --hero-glow-focal: #6d28d9;
-
-  /* Flow-line SVG gradient stops */
-  --landing-flow-start: var(--purple);
-  --landing-flow-end: var(--purple);
-  --landing-flow-alt-start: var(--purple);
-  --landing-flow-alt-end: #06B6D4;
-  --landing-flow-end-light: #38bdf8;
-
-  /* Hero text-flow accent — matches library logo gradient */
-  --landing-text-accent: var(--purple);
-
-  /* CTA button gradient (deep indigo, Stripe-style) */
-  --landing-btn-from: var(--purple);
-  --landing-btn-via: var(--purple);
-  --landing-btn-hover-from: #3d4dc9;
-  --landing-btn-hover-via: #6d28d9;
-
-  /* Card surfaces */
-  --landing-card-bg: rgba(255, 255, 255, 0.50);
-  --landing-card-border: rgba(229, 231, 235, 0.40);
-
-  /* Glow */
-  --landing-glow: rgba(96, 165, 250, 0.05);
-
-  /* Page gradient (used on marketing, auth, support pages) */
+  /* Page gradient */
   --page-gradient-from: hsl(226 100% 97% / 0.8);
-  --page-gradient-via: hsl(0 0% 100%);
-  --page-gradient-to: hsl(270 100% 97% / 0.6);
+  --page-gradient-via:  var(--fs-bg-elevated);
+  --page-gradient-to:   hsl(270 100% 97% / 0.6);
+
+  /* Dashboard gradient blobs (kept separate — design decision TBD) */
+  --dashboard-gradient-top-1:      rgba(165, 90, 172, 0.40);
+  --dashboard-gradient-top-1-blur: 290px;
+  --dashboard-gradient-top-2:      rgba(77, 93, 217, 0.35);
+  --dashboard-gradient-top-2-blur: 290px;
+  --dashboard-gradient-bottom:     rgba(145, 140, 69, 0.35);
+  --dashboard-gradient-bottom-blur: 230px;
+
+  --wizard-gradient-left:        rgba(165, 90, 172, 0.50);
+  --wizard-gradient-left-radius: 1200px;
+  --wizard-gradient-left-blur:   320px;
+  --wizard-gradient-right:       rgba(77, 93, 217, 0.45);
+  --wizard-gradient-right-radius: 1100px;
+  --wizard-gradient-right-blur:  320px;
+
+  --integrations-gradient-top-1:  rgba(34, 197, 94, 0.28);
+  --integrations-gradient-top-2:  rgba(20, 184, 166, 0.25);
+  --integrations-gradient-bottom: rgba(132, 204, 22, 0.22);
+
+  --help-gradient-top-1:  rgba(59, 130, 246, 0.28);
+  --help-gradient-top-2:  rgba(99, 102, 241, 0.25);
+  --help-gradient-bottom: rgba(6, 182, 212, 0.22);
 }
 
-/* Dark mode adjustments */
+/* ── Dark mode ── */
 .dark {
-  --purple-primary: hsl(241 96% 63%);
-  --purple-primary-light: hsl(241 96% 63% / 0.8);
-  --purple-primary-lighter: hsl(241 94% 67% / 0.6);
-  --purple-primary-lightest: hsl(241 94% 67% / 0.1);
-  --purple-primary-dark: hsl(241 92% 57%);
+  --glass-shadow:
+    0 1px 3px rgba(0,0,0,0.30),
+    0 8px 24px rgba(0,0,0,0.20),
+    0 1px 0 rgba(255,255,255,0.08) inset,
+    -1px -1px 0 rgba(255,255,255,0.05) inset,
+    0 -1px 0 rgba(0,0,0,0.30) inset;
 
-  --accent-primary: hsl(250 96% 68%);
-  --accent-light: hsl(250 96% 68% / 0.8);
-  --accent-lighter: hsl(250 96% 68% / 0.6);
-  --accent-lightest: hsl(250 96% 68% / 0.1);
-  --accent-dark: hsl(250 93% 63%);
+  /* Figma backgrounds — now match unified dark stack */
+  --ui-bg-base:         var(--fs-bg-base);
+  --ui-bg-subtle:       var(--fs-bg-raised);
+  --ui-bg-elevated:     var(--fs-bg-elevated);
+  --ui-bg-overlay:      rgba(58, 58, 74, 0.30);
+  --ui-bg-overlay-hover: rgba(75, 75, 94, 0.30);
+  --ui-bg-input:        rgba(51, 51, 61, 0.30);
 
-  --secondary-primary: hsl(212 100% 61%);
-  --secondary-light: hsl(212 100% 61% / 0.8);
-  --secondary-lighter: hsl(212 100% 61% / 0.6);
-  --secondary-lightest: hsl(212 100% 61% / 0.1);
-  --secondary-dark: hsl(213 75% 54%);
+  /* Borders */
+  --ui-border-focus: var(--fs-accent);
 
-  /* Glass surface (dark) */
-  --glass-surface: #1a1a1f;
-  --glass-border-highlight: rgba(255, 255, 255, 0.12);
-  --glass-border-shadow: rgba(0, 0, 0, 0.40);
-  --glass-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.08) inset, -1px -1px 0 rgba(255,255,255,0.05) inset, 0 -1px 0 rgba(0,0,0,0.3) inset;
+  /* Landing tokens — dark overrides */
+  --landing-bg:        var(--fs-bg-base);
+  --landing-card-bg:   var(--fs-glass-bg);
+  --landing-card-border: var(--fs-glass-edge);
+  --landing-glow:      rgba(96, 165, 250, 0.08);
+  --landing-btn-from:  var(--fs-accent-hot);
+  --landing-btn-via:   var(--fs-accent);
 
-  /* Figma Design Tokens - Dark Mode */
-  /* Neutral backgrounds */
-  --ui-bg-base: hsl(240 16% 20%);
-  --ui-bg-subtle: hsl(240 9% 22%);
-  --ui-bg-elevated: hsl(215 13% 18%);
-  --ui-bg-overlay: rgba(58, 58, 74, 0.3);
-  --ui-bg-overlay-hover: rgba(75, 75, 94, 0.3);
-  --ui-bg-input: rgba(51, 51, 61, 0.3);
+  /* Hero washes — dark */
+  --hero-wash-from: var(--fs-bg-base);
+  --hero-wash-via:  var(--fs-bg-raised);
+  --hero-wash-to:   var(--fs-bg-elevated);
 
-  /* UI Borders */
-  --ui-border-base: hsl(0 0% 34.12%);
-  --ui-border-strong: hsl(240 7% 40.78%);
-  --ui-border-focus: hsl(233 72% 74%);
-
-  /* Text colors */
-  --ui-text-primary: hsl(0 0% 100%);
-  --ui-text-secondary: hsl(240 5% 75.29%);
-  --ui-text-tertiary: hsl(240 5% 63.14%);
-  --ui-text-dark: hsl(240 17% 10.78%);
-  --ui-text-placeholder: hsl(240 4% 64.31%);
-
-  /* Accent colors */
-  --ui-accent-purple: hsl(233 65% 58%);
-  --ui-accent-purple-light: hsl(233 72% 74%);
-  --ui-accent-purple-bg: rgba(193, 200, 255, 0.2);
-  --ui-accent-green: hsl(119 100% 89.41%);
-  --ui-accent-green-bg: rgba(200, 255, 199, 0.2);
-  --ui-accent-orange: hsl(23 93% 59.41%);
-  --ui-accent-blue: hsl(211 93% 61%);
-
-  /* Status colors */
-  --status-success: hsl(119 100% 89.41%);
-  --status-warning: hsl(23 93% 59.41%);
-  --status-error: hsl(0 84% 60%);
-
-  /* ── Landing page tokens (dark overrides) ── */
-  --landing-btn-from: #6366F1;
-  --landing-btn-via: #818CF8;
-  --landing-btn-hover-from: #4F46E5;
-  --landing-btn-hover-via: #6366F1;
-
-  /* Hero gradient — dark wash */
-  --hero-wash-from: #07040f;
-  --hero-wash-via: #0d0818;
-  --hero-wash-to: #060410;
-  /* Hero gradient — dark glow orbs */
-  --hero-glow-primary: #6d28d9;
-  --hero-glow-secondary: var(--purple);
-  --hero-glow-accent: #0891b2;
-  --hero-glow-focal: var(--purple);
-
-  --landing-card-bg: rgba(255, 255, 255, 0.02);
-  --landing-card-border: rgba(255, 255, 255, 0.05);
-  --landing-glow: rgba(96, 165, 250, 0.08);
-
-  /* Page gradient (dark overrides) */
-  --page-gradient-from: #0a0a12;
-  --page-gradient-via: #0d0d18;
-  --page-gradient-to: #10081a;
+  /* Page gradient — dark */
+  --page-gradient-from: var(--fs-bg-base);
+  --page-gradient-via:  var(--fs-bg-raised);
+  --page-gradient-to:   var(--fs-bg-elevated);
 }

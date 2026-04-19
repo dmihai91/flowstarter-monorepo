@@ -11,6 +11,7 @@ import { getServerT } from '@/lib/i18n-server';
 import en from '@/locales/en';
 import '@/styles/globals.css';
 import '@fontsource-variable/plus-jakarta-sans';
+import '@fontsource-variable/onest';
 import '@fontsource/roboto-mono/latin.css';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';

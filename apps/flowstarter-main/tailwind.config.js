@@ -42,9 +42,10 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['var(--font-jakarta)', 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', 'sans-serif'],
+        sans: ['var(--font-onest)', 'Onest Variable', 'Onest', 'var(--font-jakarta)', 'Plus Jakarta Sans Variable', 'sans-serif'],
+        jakarta: ['var(--font-jakarta)', 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', 'sans-serif'],
         poppins: ['var(--font-poppins)', 'sans-serif'],
-        mono: ['var(--font-roboto-mono)', 'monospace'],
+        mono: ['JetBrains Mono', 'var(--font-roboto-mono)', 'Roboto Mono', 'monospace'],
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -134,6 +135,13 @@ export default {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+        /* Design system scale */
+        'fs-xs':   'var(--fs-radius-xs)',
+        'fs-sm':   'var(--fs-radius-sm)',
+        'fs-md':   'var(--fs-radius-md)',
+        'fs-lg':   'var(--fs-radius-lg)',
+        'fs-xl':   'var(--fs-radius-xl)',
+        'fs-2xl':  'var(--fs-radius-2xl)',
       },
 
       keyframes: {

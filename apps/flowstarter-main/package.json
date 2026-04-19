@@ -41,6 +41,7 @@
     "@flowstarter/editor-engine": "workspace:*",
     "@flowstarter/flow-design-system": "workspace:*",
     "@flowstarter/platform-config": "workspace:*",
+    "@fontsource-variable/onest": "^5.2.11",
     "@fontsource-variable/plus-jakarta-sans": "^5.2.8",
     "@fontsource/inter": "^5.2.8",
     "@fontsource/lato": "^5.2.7",

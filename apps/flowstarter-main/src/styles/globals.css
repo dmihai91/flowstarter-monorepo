@@ -1,13 +1,15 @@
 @import './animations.css';
 
 @import 'tailwindcss';
-@import './theme-colors.css';
+/* flow-design-system must come BEFORE theme-colors so --fs-* tokens are defined first */
 @import '@flowstarter/flow-design-system/styles';
+@import './theme-colors.css';
 
 @source "../../../../packages/flow-design-system/src";
 
 /* Font family CSS variables */
 :root {
+  --font-onest: 'Onest Variable', 'Onest', 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', system-ui, sans-serif;
   --font-jakarta: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', sans-serif;
   --font-poppins: 'Poppins', sans-serif;
   --font-roboto-mono: 'Roboto Mono', monospace;
@@ -82,7 +84,7 @@ body {
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
+  --radius: var(--fs-radius-md, 12px);
   --sidebar: var(--surface-2);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: var(--purple-primary);
@@ -183,17 +185,17 @@ body {
 }
 
 .dark {
-  --page-background: hsl(240, 16%, 20%);
-  --surface-1: hsl(215, 13%, 18%);
-  --surface-2: hsl(240, 8%, 18%);
-  --surface-3: hsl(220, 12%, 12%);
+  --page-background: var(--fs-primitive-dark-base);
+  --surface-1: var(--fs-primitive-dark-elevated);
+  --surface-2: var(--fs-primitive-dark-raised);
+  --surface-3: var(--fs-primitive-dark-base);
   --border-subtle: rgba(163, 163, 163, 0.35);
   --border-strong: rgba(163, 163, 163, 0.5);
 
-  /* Dashboard components - True neutral grays */
-  --dashboard-card-bg: hsl(0, 0%, 20%);
-  --dashboard-card-hover: hsl(0, 0%, 21%);
-  --dashboard-sidebar-bg: hsl(240, 9%, 22%);
+  /* Dashboard components — unified dark stack */
+  --dashboard-card-bg:    var(--fs-primitive-dark-elevated);
+  --dashboard-card-hover: var(--fs-primitive-dark-overlay);
+  --dashboard-sidebar-bg: var(--fs-primitive-dark-raised);
 
   --background: var(--page-background);
   --foreground: oklch(0.985 0 0);

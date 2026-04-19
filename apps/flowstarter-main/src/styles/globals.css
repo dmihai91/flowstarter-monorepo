@@ -46,17 +46,19 @@ body {
   overflow-x: clip;
   margin: 0;
   padding: 0;
-  background-color: var(--landing-bg, #fafafa);
+  background-color: var(--fs-bg-base);
+  color: var(--fs-ink);
+  font-family: var(--fs-font-sans);
 }
 
 @import './device-optimizations.css';
 
 :root {
   /* Platform theme tokens (defined here to ensure availability) */
-  --page-background: hsl(0, 0%, 100%);
-  --surface-1: hsl(0, 0%, 100%);
-  --surface-2: hsl(210, 40%, 98%);
-  --surface-3: hsl(210, 40%, 96%);
+  --page-background: var(--fs-primitive-light-base);
+  --surface-1: var(--fs-primitive-light-elevated);
+  --surface-2: var(--fs-primitive-light-raised);
+  --surface-3: var(--fs-primitive-light-base);
   --border-subtle: rgba(2, 6, 23, 0.08);
   --border-strong: rgba(2, 6, 23, 0.14);
   --notice-amber-border: hsl(48, 100%, 80%);

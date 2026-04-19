@@ -644,6 +644,36 @@
   z-index: 5;
 }
 
+/* Hero-specific bloom — anchors the glow behind the headline (left side of two-column layout) */
+.ls-hero-bloom {
+  position: absolute;
+  top: -20%;
+  left: -5%;
+  width: 65%;
+  height: 90%;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.18;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(88, 106, 240, 0.65) 0%,
+    rgba(78, 94, 218, 0.18) 45%,
+    transparent 72%
+  );
+}
+.dark .ls-hero-bloom {
+  opacity: 0.28;
+}
+@media (max-width: 900px) {
+  /* On mobile the layout is single column — center the bloom */
+  .ls-hero-bloom {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+  }
+}
+
 /* Centered hero layout */
 .ls-section--centered {
   display: flex;

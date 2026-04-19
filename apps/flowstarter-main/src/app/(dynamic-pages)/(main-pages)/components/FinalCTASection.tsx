@@ -50,9 +50,9 @@ export function FinalCTASection({ onOpenModal }: { onOpenModal?: () => void }) {
         {/* Glass card wrapping the entire CTA */}
         <div
           style={{
-            background: 'var(--fs-glass-bg)',
-            borderColor: 'var(--fs-glass-edge)',
-            boxShadow: 'var(--fs-card-shadow), 0 0 80px rgba(88,106,240,0.10)',
+          background: 'color-mix(in srgb, var(--fs-bg-elevated) 80%, transparent)',
+          borderColor: 'var(--fs-glass-edge)',
+          boxShadow: 'var(--fs-card-shadow), 0 0 80px rgba(88,106,240,0.12)',
             borderRadius: 'var(--fs-radius-2xl)',
             border: '1px solid',
             backdropFilter: 'blur(40px) saturate(160%)',

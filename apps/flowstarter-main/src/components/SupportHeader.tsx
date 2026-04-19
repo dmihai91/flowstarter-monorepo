@@ -24,7 +24,7 @@ export function SupportHeader() {
   const { signOut } = useClerk();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[var(--fs-bg-base)]/70 backdrop-blur-xl backdrop-saturate-150 border-b border-[var(--fs-rule)]/50 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/85 dark:bg-[var(--fs-bg-base)]/80 backdrop-blur-xl backdrop-saturate-150 border-b border-[var(--fs-rule)]/50 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
         <Link href="/" className="flex items-center shrink-0">
           <Logo size="md" />

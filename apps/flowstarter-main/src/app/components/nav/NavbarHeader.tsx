@@ -20,7 +20,7 @@ export function NavbarHeader({
   return (
     <header
       className={`fixed top-0 z-50 w-full transition-all duration-500 ${
-        'border-b bg-[var(--fs-bg-base)]/70 backdrop-blur-xl backdrop-saturate-150 border-[var(--fs-rule)]/50'
+        'border-b bg-white/85 dark:bg-[var(--fs-bg-base)]/80 backdrop-blur-xl backdrop-saturate-150 border-[var(--fs-rule)]/50'
       } ${
         isScrolled
           ? 'shadow-[0_1px_3px_rgba(0,0,0,0.06)]'

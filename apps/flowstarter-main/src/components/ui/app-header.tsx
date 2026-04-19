@@ -19,8 +19,8 @@ export function AppHeader() {
   return (
     <ScrollAwareHeader
       className="z-[100] h-16"
-      transparentClass="bg-[var(--fs-bg-base)]/70 backdrop-blur-xl backdrop-saturate-150 border-b border-[var(--fs-rule)]/50"
-      scrolledClass="bg-[var(--fs-bg-base)]/70 backdrop-blur-xl backdrop-saturate-150 border-b border-[var(--fs-rule)]/50 shadow-[0_1px_3px_rgba(0,0,0,0.06)]"
+      transparentClass="bg-white/85 dark:bg-[var(--fs-bg-base)]/80 backdrop-blur-xl backdrop-saturate-150 border-b border-[var(--fs-rule)]/50"
+      scrolledClass="bg-white/85 dark:bg-[var(--fs-bg-base)]/80 backdrop-blur-xl backdrop-saturate-150 border-b border-[var(--fs-rule)]/50 shadow-[0_1px_3px_rgba(0,0,0,0.06)]"
     >
       <div className="w-full h-full px-4 lg:px-6 flex items-center justify-between">
         {/* Left: hamburger + logo */}

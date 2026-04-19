@@ -32,7 +32,7 @@ export function LandingHeader({ onOpenModal }: { onOpenModal?: () => void }) {
           isLoaded ? 'opacity-100' : 'opacity-0'
         } ${
           scrolled || mobileMenuOpen
-            ? 'border-b border-[var(--fs-rule)]/50 bg-[var(--fs-bg-base)]/70 backdrop-blur-xl backdrop-saturate-150 shadow-[0_1px_3px_rgba(0,0,0,0.06)]'
+            ? 'border-b border-[var(--fs-rule)]/50 bg-white/85 dark:bg-[var(--fs-bg-base)]/80 backdrop-blur-xl backdrop-saturate-150 shadow-[0_1px_3px_rgba(0,0,0,0.06)]'
             : ''
         }`}
       >

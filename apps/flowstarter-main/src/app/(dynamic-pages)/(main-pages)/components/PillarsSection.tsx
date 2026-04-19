@@ -11,9 +11,7 @@ export function PillarsSection() {
 
   return (
     <section id="pillars" className="ls-scope ls-section ls-section--pad">
-      <div className="ls-mesh" aria-hidden />
-      <div className="ls-orb ls-orb--warm ls-orb--br" aria-hidden />
-      <div className="ls-grain" aria-hidden />
+      <div className="ls-mesh" aria-hidden />      <div className="ls-grain" aria-hidden />
 
       <div className="ls-container">
         <div className="text-center max-w-3xl mx-auto">

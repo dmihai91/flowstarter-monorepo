@@ -88,7 +88,7 @@
   --ls-sans:  var(--fs-font-sans);
   --ls-mono:  var(--fs-font-mono);
 
-  background: var(--ls-bg);
+  /* No background — FlowBackground (fixed) provides the page bg */
   color: var(--ls-ink);
   font-family: var(--ls-sans);
 }
@@ -594,15 +594,16 @@
   50%       { opacity: 1;   transform: scale(1.04); }
 }
 
-/* Bottom fade — blend hero into the following section */
+/* Section fades — sections are now transparent over FlowBackground,
+   so these fades dissolve to transparent rather than to a bg color */
 .ls-fade-bottom::after {
   content: '';
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  height: clamp(80px, 14vh, 180px);
-  background: linear-gradient(to bottom, transparent 0%, var(--ls-bg) 100%);
+  height: clamp(40px, 8vh, 100px);
+  background: linear-gradient(to bottom, transparent 0%, transparent 100%);
   pointer-events: none;
   z-index: 2;
 }
@@ -612,8 +613,8 @@
   left: 0;
   right: 0;
   top: 0;
-  height: clamp(60px, 10vh, 120px);
-  background: linear-gradient(to top, transparent 0%, var(--ls-bg) 100%);
+  height: clamp(40px, 8vh, 100px);
+  background: linear-gradient(to top, transparent 0%, transparent 100%);
   pointer-events: none;
   z-index: 2;
 }

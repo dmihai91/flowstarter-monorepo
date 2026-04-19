@@ -282,10 +282,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
         }
       `}</style>
 
-      <div className="ls-mesh" aria-hidden />
-      <div className="ls-orb ls-orb--violet ls-orb--tl" aria-hidden />
-      <div className="ls-orb ls-orb--warm ls-orb--br" aria-hidden />
-      <div className="ls-streak" aria-hidden />
+      <div className="ls-mesh" aria-hidden />      <div className="ls-streak" aria-hidden />
       <div className="ls-grain" aria-hidden />
 
       <div className="ls-container">

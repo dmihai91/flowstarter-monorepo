@@ -603,7 +603,6 @@ export function MockEditorPreview({
             </div>
           </div>
         </div>
-        </div>
       </div>
     </>
   );

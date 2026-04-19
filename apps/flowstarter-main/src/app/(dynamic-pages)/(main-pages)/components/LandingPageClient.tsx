@@ -6,7 +6,7 @@ import { PreQualModal } from './PreQualModal';
 import Footer from '@/components/Footer';
 import { CookieConsent } from '@/components/CookieConsent';
 import { ScrollFab } from './ScrollFab';
-import { FlowFieldBackground } from './FlowFieldBackground';
+import { FlowBackground } from '@flowstarter/flow-design-system';
 import { LandingHeader } from './LandingHeader';
 import { LandingHero } from './LandingHero';
 import { EditorShowcase } from './EditorShowcase';
@@ -39,8 +39,8 @@ export function LandingPageClient() {
   const open = () => setModalOpen(true);
 
   return (
-    <div className="min-h-screen bg-[var(--landing-bg)] dark:bg-[var(--landing-dark-surface)] text-gray-900 dark:text-white font-display relative transition-colors duration-300">
-      <FlowFieldBackground />
+    <div className="min-h-screen text-[var(--fs-ink)] font-display relative">
+      <FlowBackground variant="landing" style={{ position: 'fixed', inset: 0, zIndex: 0 }} />
       <LandingHeader onOpenModal={open} />
       <main id="main-content">
         <LandingHero onOpenModal={open} />

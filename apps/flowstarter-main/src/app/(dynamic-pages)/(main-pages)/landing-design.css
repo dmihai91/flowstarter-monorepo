@@ -142,7 +142,9 @@
   overflow: hidden;
 }
 
-/* Atmospheric layers */
+/* Atmospheric layers — micro accent on top of FlowBackground.
+   No base fill here; FlowBackground (fixed) provides bg + primary glow.
+   ls-mesh only adds the interactive mouse-follow accent. */
 .ls-mesh {
   position: absolute;
   inset: -10%;
@@ -151,25 +153,18 @@
   background:
     radial-gradient(
       75% 65% at var(--ls-mx, 50%) var(--ls-my, 50%),
-      rgba(78, 94, 218, 0.07) 0%,
-      rgba(78, 94, 218, 0) 70%
-    ),
-    radial-gradient(55% 48% at 82% 18%, rgba(180, 83, 9, 0.05) 0%, rgba(180, 83, 9, 0) 75%),
-    radial-gradient(65% 58% at 10% 85%, rgba(78, 94, 218, 0.06) 0%, rgba(78, 94, 218, 0) 80%),
-    radial-gradient(130% 90% at 50% 0%, rgba(255, 251, 244, 1) 0%, rgba(251, 247, 239, 1) 80%);
-  filter: saturate(110%);
+      rgba(88, 106, 240, 0.08) 0%,
+      rgba(88, 106, 240, 0) 65%
+    );
   transition: background 400ms ease-out;
 }
 .dark .ls-mesh {
   background:
     radial-gradient(
       75% 65% at var(--ls-mx, 50%) var(--ls-my, 50%),
-      rgba(78, 94, 218, 0.1) 0%,
-      rgba(78, 94, 218, 0) 70%
-    ),
-    radial-gradient(55% 48% at 82% 18%, rgba(255, 178, 122, 0.05) 0%, rgba(255, 178, 122, 0) 75%),
-    radial-gradient(65% 58% at 10% 85%, rgba(130, 148, 255, 0.08) 0%, rgba(130, 148, 255, 0) 80%),
-    radial-gradient(130% 95% at 50% 0%, rgba(10, 7, 22, 1) 0%, rgba(3, 2, 6, 1) 85%);
+      rgba(88, 106, 240, 0.12) 0%,
+      rgba(88, 106, 240, 0) 65%
+    );
 }
 
 .ls-grain {
@@ -213,16 +208,16 @@
   pointer-events: none;
 }
 .ls-orb--violet {
-  background: radial-gradient(circle, rgba(78, 94, 218, 0.28) 0%, rgba(78, 94, 218, 0) 70%);
+  background: radial-gradient(circle, rgba(88, 106, 240, 0.32) 0%, rgba(88, 106, 240, 0) 70%);
 }
 .dark .ls-orb--violet {
-  background: radial-gradient(circle, rgba(78, 94, 218, 0.5) 0%, rgba(78, 94, 218, 0) 70%);
+  background: radial-gradient(circle, rgba(88, 106, 240, 0.55) 0%, rgba(88, 106, 240, 0) 70%);
 }
 .ls-orb--warm {
-  background: radial-gradient(circle, rgba(180, 83, 9, 0.18) 0%, rgba(180, 83, 9, 0) 70%);
+  background: radial-gradient(circle, rgba(200, 100, 20, 0.22) 0%, rgba(200, 100, 20, 0) 70%);
 }
 .dark .ls-orb--warm {
-  background: radial-gradient(circle, rgba(255, 178, 122, 0.32) 0%, rgba(255, 178, 122, 0) 70%);
+  background: radial-gradient(circle, rgba(255, 160, 80, 0.38) 0%, rgba(255, 160, 80, 0) 70%);
 }
 
 /* Typography */
@@ -538,72 +533,65 @@
     padding-block: 3rem;
   }
 }
+/* CTA background — no solid fill, just a centered bloom that sits on top
+   of the fixed FlowBackground. Blends into the page naturally. */
 .ls-cta-bg {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  /* Indigo bloom centered — intensifies the FlowBackground glow at this spot */
   background:
     radial-gradient(
-      70% 60% at 50% 65%,
-      rgba(78, 94, 218, 0.2) 0%,
-      rgba(78, 94, 218, 0) 55%
+      ellipse 85% 70% at 50% 55%,
+      rgba(88, 106, 240, 0.14) 0%,
+      rgba(88, 106, 240, 0.06) 45%,
+      transparent 72%
     ),
+    /* Warm anchor bottom-right — mirrors FlowBackground warm layer */
     radial-gradient(
-      40% 35% at 85% 75%,
-      rgba(78, 94, 218, 0.14) 0%,
-      rgba(78, 94, 218, 0) 60%
-    ),
-    linear-gradient(
-      180deg,
-      var(--ls-bg) 0%,
-      var(--ls-bg-2) 45%,
-      var(--ls-bg-2) 70%,
-      var(--ls-bg) 100%
+      ellipse 50% 45% at 80% 85%,
+      rgba(200, 100, 20, 0.08) 0%,
+      transparent 65%
     );
 }
 .dark .ls-cta-bg {
   background:
     radial-gradient(
-      72% 62% at 50% 65%,
-      rgba(78, 94, 218, 0.28) 0%,
-      rgba(78, 94, 218, 0) 58%
+      ellipse 85% 70% at 50% 55%,
+      rgba(88, 106, 240, 0.22) 0%,
+      rgba(88, 106, 240, 0.08) 45%,
+      transparent 72%
     ),
     radial-gradient(
-      42% 35% at 85% 75%,
-      rgba(78, 94, 218, 0.28) 0%,
-      rgba(78, 94, 218, 0) 60%
-    ),
-    linear-gradient(
-      180deg,
-      var(--ls-bg) 0%,
-      rgba(10, 7, 22, 1) 40%,
-      rgba(10, 7, 22, 1) 70%,
-      var(--ls-bg) 100%
+      ellipse 50% 45% at 80% 85%,
+      rgba(255, 160, 80, 0.12) 0%,
+      transparent 65%
     );
 }
+/* Subtle animated accent pulse — same hue as FlowBackground bloom */
 .ls-cta-glow {
   position: absolute;
   inset: 0;
   z-index: 1;
   pointer-events: none;
   background: radial-gradient(
-    ellipse 55% 45% at 50% 58%,
-    rgba(168, 85, 247, 0.16) 0%,
-    rgba(168, 85, 247, 0) 70%
+    ellipse 60% 50% at 50% 52%,
+    rgba(88, 106, 240, 0.10) 0%,
+    transparent 68%
   );
-  animation: ls-cta-pulse 7s ease-in-out infinite;
+  animation: ls-cta-pulse 8s ease-in-out infinite;
 }
 .dark .ls-cta-glow {
   background: radial-gradient(
-    ellipse 55% 45% at 50% 58%,
-    rgba(200, 162, 255, 0.18) 0%,
-    rgba(200, 162, 255, 0) 70%
+    ellipse 60% 50% at 50% 52%,
+    rgba(88, 106, 240, 0.16) 0%,
+    transparent 68%
   );
 }
 @keyframes ls-cta-pulse {
-  0%, 100% { opacity: 0.65; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.06); }
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.04); }
 }
 
 /* Bottom fade — blend hero into the following section */

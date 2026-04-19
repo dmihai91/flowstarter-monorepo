@@ -120,12 +120,12 @@ export default async function RootLayout({
           <ThemeProvider>
             <I18nProvider initialLocale="en" initialMessages={{ en, ro }}>
               <ClerkThemeWrapper>
-                <DatabaseOfflineHandler>
-                  <ClientLayout>
+                <ClientLayout>
+                  <DatabaseOfflineHandler>
                     <NavigationWrapper />
                     {children}
-                  </ClientLayout>
-                </DatabaseOfflineHandler>
+                  </DatabaseOfflineHandler>
+                </ClientLayout>
               </ClerkThemeWrapper>
             </I18nProvider>
           </ThemeProvider>
